@@ -83,6 +83,19 @@ GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const 
 
 GxsForumMsgItem::~GxsForumMsgItem()
 {
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(300);
+
+    while( (mLoadingGroup || mLoadingMessage || mLoadingSetAsRead || mLoadingParentMessage)
+           && std::chrono::steady_clock::now() < timeout)
+    {
+        RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for "
+                << (mLoadingGroup ? "Group " : "")
+                << (mLoadingMessage ? "Message " : "")
+                << (mLoadingParentMessage ? "Parent message " : "")
+                << (mLoadingSetAsRead ? "Set as read" : "")
+                << "loading." << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
 	delete(ui);
 }
 
@@ -167,6 +180,8 @@ QString GxsForumMsgItem::groupName()
 
 void GxsForumMsgItem::loadGroup()
 {
+    mLoadingGroup = true;
+
 	RsThread::async([this]()
 	{
 		// 1 - get group data
@@ -199,6 +214,7 @@ void GxsForumMsgItem::loadGroup()
 			 * after a blocking call to RetroShare API complete */
 
 			setGroup(group);
+            mLoadingGroup = false;
 
 		}, this );
 	});
@@ -210,6 +226,7 @@ void GxsForumMsgItem::loadMessage()
     std::cerr << "GxsForumMsgItem::loadMessage(): messageId=" << messageId() << " groupId=" << groupId() ;
 	std::cerr << std::endl;
 #endif
+    mLoadingMessage = true;
 
 	RsThread::async([this]()
 	{
@@ -244,6 +261,7 @@ void GxsForumMsgItem::loadMessage()
 			 * after a blocking call to RetroShare API complete */
 
 			setMessage(msg);
+            mLoadingMessage = false;
 
 		}, this );
 	});
@@ -255,6 +273,7 @@ void GxsForumMsgItem::loadParentMessage(const RsGxsMessageId& parent_msg)
 	std::cerr << "GxsForumMsgItem::loadParentMessage()";
 	std::cerr << std::endl;
 #endif
+    mLoadingParentMessage = true;
 
 	RsThread::async([parent_msg,this]()
 	{
@@ -290,6 +309,8 @@ void GxsForumMsgItem::loadParentMessage(const RsGxsMessageId& parent_msg)
 
 			mParentMessage = msg;
             fillParentMessage();
+
+            mLoadingParentMessage = false;
 
 		}, this );
 	});
@@ -480,6 +501,7 @@ void GxsForumMsgItem::setAsRead(bool doUpdate)
     }
 
     mCloseOnRead = false;
+    mLoadingSetAsRead = true;
 
     RsThread::async( [this, doUpdate]() {
         RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
@@ -489,6 +511,7 @@ void GxsForumMsgItem::setAsRead(bool doUpdate)
         if (doUpdate) {
             RsQThreadUtils::postToObject( [this]() {
                 setReadStatus(false, true);
+                mLoadingSetAsRead = false;
             } );
         }
     });

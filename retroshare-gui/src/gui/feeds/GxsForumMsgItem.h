@@ -87,6 +87,10 @@ private:
 private:
 	bool mInFill;
 	bool mCloseOnRead;
+    bool mLoadingMessage;
+    bool mLoadingParentMessage;
+    bool mLoadingGroup;
+    bool mLoadingSetAsRead;
 
 	RsGxsForumGroup mGroup;
 	RsGxsForumMsg mMessage;

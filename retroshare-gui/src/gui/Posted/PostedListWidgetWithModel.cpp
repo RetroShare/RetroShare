@@ -22,6 +22,7 @@
 #include <QMenu>
 #include <QSignalMapper>
 #include <QPainter>
+#include <QClipboard>
 #include <QMessageBox>
 
 #include "retroshare/rsgxscircles.h"
@@ -72,6 +73,7 @@ static const int POSTED_TABS_POSTS  = 1;
 //
 #define IMAGE_COPYLINK     ":/images/copyrslink.png"
 #define IMAGE_AUTHOR       ":/images/user/personal64.png"
+#define IMAGE_COPYHTTP     ":/images/emblem-web.png"
 
 Q_DECLARE_METATYPE(RsPostedPost);
 
@@ -340,7 +342,18 @@ void PostedListWidgetWithModel::postContextMenu(const QPoint& point)
 
     // 2 - generate the menu for that post.
 
+    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
+
     menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()))->setData(index);
+
+    QByteArray urlarray(post.mLink.c_str());
+    QUrl url = QUrl::fromEncoded(urlarray.trimmed());
+
+    std::cerr << "Using link: \"" << post.mLink << "\"" << std::endl;
+
+    if(url.scheme()=="http" || url.scheme()=="https")
+        menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYHTTP), tr("Copy http Link"), this, SLOT(copyHttpLink()))->setData(index);
+
     menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR), tr("Show author in People tab"), this, SLOT(showAuthorInPeople()))->setData(index);
 
 #ifdef TODO
@@ -455,6 +468,31 @@ void PostedListWidgetWithModel::showAuthorInPeople()
 
     MainWindow::showWindow(MainWindow::People);
     idDialog->navigate(RsGxsId(post.mMeta.mAuthorId));
+}
+void PostedListWidgetWithModel::copyHttpLink()
+{
+    try
+    {
+        if (groupId().isNull())
+            throw std::runtime_error("No channel currently selected!");
+
+        QModelIndex index = qobject_cast<QAction*>(QObject::sender())->data().toModelIndex();
+
+        if(!index.isValid())
+            throw std::runtime_error("No post under mouse!");
+
+        RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
+
+        if(post.mMeta.mMsgId.isNull())
+            throw std::runtime_error("Post has empty MsgId!");
+
+        QApplication::clipboard()->setText(QString::fromStdString(post.mLink)) ;
+        QMessageBox::information(NULL,tr("information"),tr("The Retrohare link was copied to your clipboard.")) ;
+    }
+    catch(std::exception& e)
+    {
+        QMessageBox::critical(NULL,tr("Link creation error"),tr("Link could not be created: ")+e.what());
+    }
 }
 void PostedListWidgetWithModel::copyMessageLink()
 {
@@ -823,6 +861,7 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 		ui->subscribeToolButton->setText(tr("Subscribe"));
 
 	ui->infoPosts->setText(QString::number(group.mMeta.mVisibleMsgCount));
+    ui->poplabel->setText(QString::number(group.mMeta.mPop));
 
     if(group.mMeta.mLastPost==0)
         ui->infoLastPost->setText(tr("Never"));
