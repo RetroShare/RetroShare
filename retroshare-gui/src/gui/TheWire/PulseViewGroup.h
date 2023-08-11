@@ -35,10 +35,13 @@ public:
 
 private slots:
 	void actionFollow();
+	void editProfile();
 
 protected:
 	void setup();
 
+private:
+	void setGroupSet();
 
 protected:
 	RsWireGroupSPtr mGroup;
