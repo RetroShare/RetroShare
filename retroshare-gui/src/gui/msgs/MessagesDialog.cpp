@@ -144,7 +144,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     msgWidget = new MessageWidget(true, this);
 	ui.msgLayout->addWidget(msgWidget);
-	connect(msgWidget, SIGNAL(messageRemoved()), this, SLOT(messageRemoved()));
+    connect(msgWidget, SIGNAL(messageRemovalRequested(std::string)), this, SLOT(removemessage()));
 
     connectActions();
 
@@ -838,7 +838,7 @@ void MessagesDialog::openAsWindow()
     }
 
     msgWidget->activateWindow();
-	connect(msgWidget, SIGNAL(messageRemoved()), this, SLOT(messageRemoved()));
+    connect(msgWidget, SIGNAL(messageRemovalRequested(std::string)), this, SLOT(removemessage()));
 
     /* window will destroy itself! */
 }
@@ -858,7 +858,7 @@ void MessagesDialog::openAsTab()
 
     ui.tabWidget->addTab(msgWidget,FilesDefs::getIconFromQtResourcePath(IMAGE_MAIL), msgWidget->subject(true));
     ui.tabWidget->setCurrentWidget(msgWidget);
-	connect(msgWidget, SIGNAL(messageRemoved()), this, SLOT(messageRemoved()));
+    connect(msgWidget, SIGNAL(messageRemovalRequested(std::string)), this, SLOT(removemessage()));
 
     /* window will destroy itself! */
 }
