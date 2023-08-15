@@ -75,7 +75,8 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 		ui.cmboLanguage->addItem(FilesDefs::getIconFromQtResourcePath(":/images/flags/" + code + ".png"), LanguageSupport::languageName(code), code);
 	}
 	foreach (QString style, QStyleFactory::keys()) {
-		ui.cmboStyle->addItem(style, style.toLower());
+        if(style.toLower() != "gtk2" || (getenv("QT_QPA_PLATFORMTHEME")!=nullptr && !strcmp(getenv("QT_QPA_PLATFORMTHEME"),"gtk2")))	// make sure that if style is gtk2, the system has the correct environment variable set.
+            ui.cmboStyle->addItem(style, style.toLower());
 	}
 
 	QMap<QString, QString> styleSheets;
