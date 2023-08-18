@@ -267,9 +267,9 @@ void AppearancePage::load()
 	
 	index = ui.mainPageButtonType_CB->findData(Settings->getPageButtonLoc());
 	if (index != 0) {
-		ui.cmboTollButtonsStyle->hide();
-	}else {
-		ui.cmboTollButtonsStyle->show();
+        ui.cmboTollButtonsStyle->show();
+    }else {
+        ui.cmboTollButtonsStyle->hide();
 	}
 
 	whileBlocking(ui.mainPageButtonType_CB)->setCurrentIndex(!Settings->getPageButtonLoc());
