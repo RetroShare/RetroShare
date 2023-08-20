@@ -25,6 +25,7 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 
 #include "PulseAddDialog.h"
 
@@ -98,11 +99,32 @@ void PulseAddDialog::setGroup(RsWireGroup &group)
 // set ReplyWith Group.
 void PulseAddDialog::setGroup(const RsGxsGroupId &grpId)
 {
-	/* fetch in the background */
-	RsWireGroupSPtr pGroup;
-	rsWire->getWireGroup(grpId, pGroup);
+    if(grpId.isNull()){
+        return;
+    }
 
-	setGroup(*pGroup);
+    RsWireGroupSPtr pGroup;
+
+    RsThread::async([this,grpId,&pGroup](){
+
+        if(!rsWire->getWireGroup(grpId,pGroup))
+        {
+            std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve wire group info for wire id:  " << grpId << std::endl;
+            return;
+        }
+
+        RsQThreadUtils::postToObject( [pGroup,this]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete, note that
+             * Qt::QueuedConnection is important!
+             */
+
+            setGroup(*pGroup);
+        }, this );
+
+    });
 }
 
 void PulseAddDialog::cleanup()
@@ -234,30 +256,46 @@ void PulseAddDialog::setReplyTo(const RsWirePulse &pulse, RsWirePulseSPtr pPulse
 
 void PulseAddDialog::setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, uint32_t replyType)
 {
+    if(grpId.isNull()){
+        return;
+    }
 	/* fetch in the background */
-	RsWireGroupSPtr pGroup;
-	if (!rsWire->getWireGroup(grpId, pGroup))
-	{
-		std::cerr << "PulseAddDialog::setRplyTo() failed to fetch group";
-		std::cerr << std::endl;
-		return;
-	}
+    RsWireGroupSPtr pGroup;
+    RsWirePulseSPtr pPulse;
 
-	RsWirePulseSPtr pPulse;
-	if (!rsWire->getWirePulse(grpId, msgId, pPulse))
-	{
-		std::cerr << "PulseAddDialog::setRplyTo() failed to fetch pulse";
-		std::cerr << std::endl;
-		return;
-	}
+    RsThread::async([this,grpId,&pGroup,&pPulse,msgId,replyType](){
 
-	// update GroupPtr
-	// TODO - this should be handled in libretroshare if possible.
-	if (pPulse->mGroupPtr == NULL) {
-		pPulse->mGroupPtr = pGroup;
-	}
+        if(!rsWire->getWireGroup(grpId,pGroup))
+        {
+            std::cerr << __PRETTY_FUNCTION__ << "PulseAddDialog::setRplyTo() failed to fetch group id: "  << grpId << std::endl;
+            return;
+        }
 
-	setReplyTo(*pPulse, pPulse, pGroup->mMeta.mGroupName, replyType);
+        if (!rsWire->getWirePulse(grpId, msgId, pPulse))
+        {
+            std::cerr << "PulseAddDialog::setRplyTo() failed to fetch pulse of group id: " << grpId << std::endl;
+            return;
+        }
+
+        // update GroupPtr
+        // TODO - this should be handled in libretroshare if possible.
+        if (pPulse->mGroupPtr == NULL) {
+            pPulse->mGroupPtr = pGroup;
+        }
+
+        RsQThreadUtils::postToObject( [pGroup,this,pPulse,replyType]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete, note that
+             * Qt::QueuedConnection is important!
+             */
+
+            setReplyTo(*pPulse, pPulse, pGroup->mMeta.mGroupName, replyType);
+        }, this );
+
+    });
+
 }
 
 void PulseAddDialog::addURL()
@@ -307,26 +345,39 @@ void PulseAddDialog::postOriginalPulse()
 	std::cerr << "PulseAddDialog::postOriginalPulse()";
 	std::cerr << std::endl;
 
-	RsWirePulseSPtr pPulse(new RsWirePulse());
+    RsWirePulseSPtr pPulse;
 
-	pPulse->mSentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
-	pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
-	// set images here too.
-	pPulse->mImage1 = mImage1;
-	pPulse->mImage2 = mImage2;
-	pPulse->mImage3 = mImage3;
-	pPulse->mImage4 = mImage4;
+    pPulse->mSentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
+    pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
+    // set images here too.
+    pPulse->mImage1 = mImage1;
+    pPulse->mImage2 = mImage2;
+    pPulse->mImage3 = mImage3;
+    pPulse->mImage4 = mImage4;
 
-	// this should be in async thread, so doesn't block UI thread.
-	if (!rsWire->createOriginalPulse(mGroup.mMeta.mGroupId, pPulse))
-	{
-		std::cerr << "PulseAddDialog::postOriginalPulse() FAILED";
-		std::cerr << std::endl;
-		return;
-	}
+    RsThread::async([this,pPulse](){
 
-	clearDialog();
-	hide();
+        if (!rsWire->createOriginalPulse(mGroup.mMeta.mGroupId, pPulse))
+        {
+            std::cerr << "PulseAddDialog::postOriginalPulse() FAILED";
+            std::cerr << std::endl;
+            return;
+        }
+
+        RsQThreadUtils::postToObject( [this]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete, note that
+             * Qt::QueuedConnection is important!
+             */
+
+            clearDialog();
+            hide();
+        }, this );
+
+    });
+
 }
 
 uint32_t PulseAddDialog::toPulseSentiment(int index)
@@ -356,15 +407,15 @@ void PulseAddDialog::postReplyPulse()
 	std::cerr << "PulseAddDialog::postReplyPulse()";
 	std::cerr << std::endl;
 
-	RsWirePulseSPtr pPulse(new RsWirePulse());
+    RsWirePulseSPtr pPulse;
 
-	pPulse->mSentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
-	pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
-	// set images here too.
-	pPulse->mImage1 = mImage1;
-	pPulse->mImage2 = mImage2;
-	pPulse->mImage3 = mImage3;
-	pPulse->mImage4 = mImage4;
+    pPulse->mSentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
+    pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
+    // set images here too.
+    pPulse->mImage1 = mImage1;
+    pPulse->mImage2 = mImage2;
+    pPulse->mImage3 = mImage3;
+    pPulse->mImage4 = mImage4;
 
 	if (mReplyType & WIRE_PULSE_TYPE_REPUBLISH) {
 		// Copy details from parent, and override
@@ -378,20 +429,33 @@ void PulseAddDialog::postReplyPulse()
 		pPulse->mImage4 = mReplyToPulse.mImage4;
 	}
 
-	// this should be in async thread, so doesn't block UI thread.
-	if (!rsWire->createReplyPulse(mReplyToPulse.mMeta.mGroupId,
-			mReplyToPulse.mMeta.mOrigMsgId,
-			mGroup.mMeta.mGroupId,
-			mReplyType,
-			pPulse))
-	{
-		std::cerr << "PulseAddDialog::postReplyPulse() FAILED";
-		std::cerr << std::endl;
-		return;
-	}
+    RsThread::async([this, pPulse](){
 
-	clearDialog();
-	hide();
+        if (!rsWire->createReplyPulse(mReplyToPulse.mMeta.mGroupId,
+                mReplyToPulse.mMeta.mOrigMsgId,
+                mGroup.mMeta.mGroupId,
+                mReplyType,
+                pPulse))
+        {
+            std::cerr << "PulseAddDialog::postReplyPulse() FAILED";
+            std::cerr << std::endl;
+            return;
+        }
+
+        RsQThreadUtils::postToObject( [this]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete, note that
+             * Qt::QueuedConnection is important!
+             */
+
+            clearDialog();
+            hide();
+        }, this );
+
+    });
+
 }
 
 void PulseAddDialog::clearDialog()
