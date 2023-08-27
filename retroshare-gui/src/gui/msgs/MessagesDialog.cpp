@@ -95,6 +95,7 @@
 #define ROW_SENTBOX       3
 #define ROW_TRASHBOX      4
 
+// #define DEBUG_MESSAGES_DIALOG 1
 
 class MessageSortFilterProxyModel: public QSortFilterProxyModel
 {
@@ -365,15 +366,18 @@ void MessagesDialog::preModelUpdate()
     if (m.isValid()) {
         mTmpSavedCurrentId = m.sibling(m.row(), RsMessageModel::COLUMN_THREAD_MSGID).data(RsMessageModel::MsgIdRole).toString();
     }
-
+#ifdef DEBUG_MESSAGES_DIALOG
     std::cerr << "Pre-change: saving selection for " << mTmpSavedSelectedIds.size() << " indexes" << std::endl;
+#endif
 }
 
 void MessagesDialog::postModelUpdate()
 {
     // restore selection
 
+#ifdef DEBUG_MESSAGES_DIALOG
     std::cerr << "Post-change: restoring selection for " << mTmpSavedSelectedIds.size() << " indexes" << std::endl;
+#endif
     QItemSelection sel;
 
     foreach(const QString& s,mTmpSavedSelectedIds)
