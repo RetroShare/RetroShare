@@ -35,6 +35,7 @@
 #include "util/rsdir.h"
 #include "util/qtthreadsutils.h"
 #include "util/RichTextEdit.h"
+#include "util/imageutil.h"
 
 #include <retroshare/rsfiles.h>
 
@@ -610,8 +611,10 @@ bool CreateGxsChannelMsg::setThumbNail(const std::string& path, int frame){
 	QImage tNail(imageBuffer, width, height, QImage::Format_RGB32);
 	QByteArray ba;
 	QBuffer buffer(&ba);
+	bool has_transparency = ImageUtil::hasAlphaContent(tNail.toImage());
+
 	buffer.open(QIODevice::WriteOnly);
-    tNail.save(&buffer, "JPG");
+	tNail.save(&buffer, has_transparency?"PNG":"JPG");
 	QPixmap img;
 	img.loadFromData(ba, "PNG");
 	img = img.scaled(thumbnail_label->width(), thumbnail_label->height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
@@ -797,15 +800,16 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 		QByteArray ba;
 		QBuffer buffer(&ba);
 
-        RsGxsImage image;
+		RsGxsImage image;
+		bool has_transparency = ImageUtil::hasAlphaContent(picture.toImage());
 
 		if(!picture.isNull())
 		{
 			// send chan image
 
 			buffer.open(QIODevice::WriteOnly);
-            preview_W->getCroppedScaledPicture().save(&buffer, "JPG"); // writes image into ba in PNG format
-            image.copy((uint8_t *) ba.data(), ba.size());
+			preview_W->getCroppedScaledPicture().save(&buffer, has_transparency?"PNG":"JPG"); // writes image into ba in PNG format
+			image.copy((uint8_t *) ba.data(), ba.size());
 		}
 
         std::string error_string;
