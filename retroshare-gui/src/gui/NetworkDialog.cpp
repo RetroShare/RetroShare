@@ -127,8 +127,8 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 	if(!rsPeers->getGPGDetails(peer_id, detail))		// that is not suppose to fail.
 		return ;
 
-	if(peer_id == rsPeers->getGPGOwnId())
-		contextMnu->addAction(QIcon(), tr("Export/create a new node"), this, SLOT(on_actionExportKey_activated()));
+    //if(peer_id == rsPeers->getGPGOwnId())
+    //	contextMnu->addAction(QIcon(), tr("Export/create a new node"), this, SLOT(on_actionExportKey_activated()));
 
 	contextMnu->addAction(QIcon(IMAGE_PEERDETAILS), tr("Profile details..."), this, SLOT(peerdetails()));
 	contextMnu->addSeparator() ;

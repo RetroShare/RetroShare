@@ -107,6 +107,8 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
           ui.hiddenpage_proxyPort_tor->setEnabled(false) ;
           ui.hiddenpage_localAddress->setEnabled(false) ;
           ui.hiddenpage_localPort->setEnabled(false) ;
+          ui.hiddenpage_serviceAddress->setEnabled(false) ;
+          ui.hiddenpage_servicePort->setEnabled(false) ;
           ui.testIncoming_PB->hide() ;
           ui.l_incomingTestResult->hide() ;
           ui.iconlabel_service_incoming->hide() ;
