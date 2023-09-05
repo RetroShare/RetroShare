@@ -176,6 +176,25 @@ int RsGxsChannelPostsModel::rowCount(const QModelIndex& parent) const
     return 0;
 }
 
+int RsGxsChannelPostsModel::columnCount(int row) const
+{
+    if(mTreeMode == TREE_MODE_GRID)
+    {
+        if(row+1 == rowCount())
+        {
+            int r = ((int)mFilteredPosts.size() % (int)mColumns);
+
+            if(r > 0)
+                return r;
+            else
+                return columnCount();
+        }
+        else
+            return columnCount();
+    }
+    else
+        return 2;
+}
 int RsGxsChannelPostsModel::columnCount(const QModelIndex &/*parent*/) const
 {
     if(mTreeMode == TREE_MODE_GRID)
@@ -245,7 +264,7 @@ bool RsGxsChannelPostsModel::convertRefPointerToTabEntry(quintptr ref, uint32_t&
 
 QModelIndex RsGxsChannelPostsModel::index(int row, int column, const QModelIndex & parent) const
 {
-    if(row < 0 || column < 0 || column >= (int)mColumns)
+    if(row < 0 || column < 0 || row >= rowCount() || column >= columnCount(row))
 		return QModelIndex();
 
     quintptr ref = getChildRef(parent.internalId(),(mTreeMode == TREE_MODE_GRID)?(column + row*mColumns):row);
