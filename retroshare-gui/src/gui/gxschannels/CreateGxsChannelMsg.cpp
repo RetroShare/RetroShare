@@ -608,7 +608,7 @@ bool CreateGxsChannelMsg::setThumbNail(const std::string& path, int frame){
 	if(imageBuffer == NULL)
 		return false;
 
-	QImage tNail(imageBuffer, width, height, QImage::Format_RGB32);
+	QImage tNail(imageBuffer, width, height, QImage::Format_RGBA32);
 	QByteArray ba;
 	QBuffer buffer(&ba);
 	bool has_transparency = ImageUtil::hasAlphaContent(tNail.toImage());
