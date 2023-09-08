@@ -59,7 +59,15 @@ JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
     ui.listenAddressLineEdit->setValidator(ipValidator);
 
 }
-
+QString JsonApiPage::helpText() const
+{
+    return tr("<h1><img width=\"24\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Webinterface</h1>  \
+     <p>Retroshare provides a JSON API allowing other softwares to communicate with its core using token-controlled HTTP requests to http://localhost:[port]. \
+        Please refer to the Retroshare documentation for how to use this feature. </p>\
+        <p>Unless you know what you're doing, you shouldn't need to change anything in this page. \
+       The web interface for instance will automatically register its own token to the JSON API which will be visible \
+        in the list of authenticated tokens after you enable it.</p>");
+}
 void JsonApiPage::enableJsonApi(bool checked)
 {
 	ui.addTokenPushButton->setEnabled(checked);
@@ -106,8 +114,6 @@ void JsonApiPage::load()
 
 	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
 }
-
-QString JsonApiPage::helpText() const { return ""; }
 
 bool JsonApiPage::checkStartJsonApi()
 {
