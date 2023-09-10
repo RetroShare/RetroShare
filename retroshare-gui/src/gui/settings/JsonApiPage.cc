@@ -23,6 +23,7 @@
 #include "rsharesettings.h"
 #include "jsonapi/jsonapi.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 
 #include <QTimer>
 #include <QStringListModel>
@@ -58,7 +59,16 @@ JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 
     ui.listenAddressLineEdit->setValidator(ipValidator);
 
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> /* event */)
+    {
+        std::cerr << "Caught JSONAPI event!" << std::endl;
+        RsQThreadUtils::postToObject([=]() { load(); }, this );
+    },
+    mEventHandlerId, RsEventType::JSON_API );
 }
+
 QString JsonApiPage::helpText() const
 {
     return tr("<h1><img width=\"24\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Webinterface</h1>  \
@@ -101,9 +111,9 @@ bool JsonApiPage::updateParams()
 
 void JsonApiPage::load()
 {
-	whileBlocking(ui.portSpinBox)->setValue(Settings->getJsonApiPort());
-	whileBlocking(ui.listenAddressLineEdit)->setText(Settings->getJsonApiListenAddress());
-	whileBlocking(ui.enableCheckBox)->setChecked(Settings->getJsonApiEnabled());
+    whileBlocking(ui.portSpinBox)->setValue(rsJsonApi->listeningPort());
+    whileBlocking(ui.listenAddressLineEdit)->setText(QString::fromStdString(rsJsonApi->getBindingAddress()));
+    whileBlocking(ui.enableCheckBox)->setChecked(rsJsonApi->isRunning());
 
     QStringList newTk;
 

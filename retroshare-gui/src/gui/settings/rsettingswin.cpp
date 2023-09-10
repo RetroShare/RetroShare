@@ -180,8 +180,6 @@ SettingsPage::initStackedWidget()
 #ifdef RS_WEBUI
     WebuiPage *webui_p = new WebuiPage() ;
     addPage(new WebuiPage() );
-
-    QObject::connect(webui_p,SIGNAL(passwordChanged()),jsonapi_p,SLOT(load()));
 #endif
 #endif
 

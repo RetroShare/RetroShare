@@ -42,11 +42,11 @@ public:
   ~WebuiPage();
 
   /** Loads the settings for this page */
-  virtual void load();
+  virtual void load() override { loadParams() ; }
 
-  virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/webinterface.svg") ; }
-  virtual QString pageName() const { return tr("Webinterface") ; }
-  virtual QString helpText() const;
+  virtual QPixmap iconPixmap() const override { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/webinterface.svg") ; }
+  virtual QString pageName() const override { return tr("Webinterface") ; }
+  virtual QString helpText() const override ;
 
   // call this after start of libretroshare/Retroshare
   // checks the settings and starts the webinterface if required
@@ -67,10 +67,9 @@ public slots:
   void onApplyClicked();
   void onStartWebBrowserClicked();
 
-signals:
-  void passwordChanged();
-
 private:
+  virtual void loadParams();
+
   /** Qt Designer generated object */
   Ui::WebuiPage ui;
 
