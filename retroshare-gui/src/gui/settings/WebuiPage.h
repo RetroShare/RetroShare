@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "retroshare/rsevents.h"
+
 #include "retroshare-gui/configpage.h"
 #include "gui/common/FilesDefs.h"
 #include "ui_WebuiPage.h"
@@ -82,4 +84,6 @@ private:
   static resource_api::ApiServerLocal* apiServerLocal;
  #endif
   static resource_api::RsControlModule* controlModule;
+
+  RsEventsHandlerId_t mEventsHandlerId;
 };

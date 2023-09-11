@@ -29,6 +29,8 @@
 #include <QStringListModel>
 #include <QProgressDialog>
 
+#define IMAGE_LEDOFF  ":/images/ledoff1.png"
+#define IMAGE_LEDON   ":/images/ledon1.png"
 
 JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 {
@@ -122,7 +124,19 @@ void JsonApiPage::load()
 		            QString::fromStdString(it.first) + ":" +
 		            QString::fromStdString(it.second) );
 
-	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
+    whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
+
+    QStringList newTk2;
+
+    for(const auto& it : rsJsonApi->getResourceProviders())
+        newTk2.push_back( QString::fromStdString(it.get().getName())) ;
+
+    whileBlocking(ui.providersListView)->setModel(new QStringListModel(newTk2));
+
+    if(rsJsonApi->isRunning())
+        ui.statusLabelLED->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_LEDON)) ;
+    else
+        ui.statusLabelLED->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_LEDOFF)) ;
 }
 
 bool JsonApiPage::checkStartJsonApi()

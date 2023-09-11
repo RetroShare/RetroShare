@@ -27,6 +27,7 @@
 #include <QSpinBox>
 
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 #include "retroshare/rswebui.h"
 #include "retroshare/rsjsonapi.h"
 
@@ -40,6 +41,8 @@ resource_api::ApiServerLocal* WebuiPage::apiServerLocal = 0;
 #endif
 resource_api::RsControlModule* WebuiPage::controlModule = 0;
 
+#define IMAGE_LEDOFF  ":/images/ledoff1.png"
+#define IMAGE_LEDON   ":/images/ledon1.png"
 
 WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 {
@@ -50,6 +53,15 @@ WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
     connect(ui.password_LE, SIGNAL(textChanged(QString)), this, SLOT(onPasswordValueChanged(QString)));
     connect(ui.startWebBrowser_PB, SIGNAL(clicked()), this, SLOT(onStartWebBrowserClicked()));
     connect(ui.webInterfaceFilesDirectory_PB, SIGNAL(clicked()), this, SLOT(selectWebInterfaceDirectory()));
+
+    mEventsHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> /* event */)
+    {
+        std::cerr << "Caught JSONAPI event in webui!" << std::endl;
+        RsQThreadUtils::postToObject([=]() { load(); }, this );
+    },
+    mEventsHandlerId, RsEventType::JSON_API );
 }
 
 WebuiPage::~WebuiPage()
@@ -127,6 +139,13 @@ void WebuiPage::loadParams()
 
     if(it != smap.end())
 		whileBlocking(ui.password_LE)->setText(QString::fromStdString(it->second));
+
+    if(rsWebUi->isRunning() && rsJsonApi->isRunning())
+        ui.statusLabelLED->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_LEDON)) ;
+    else
+        ui.statusLabelLED->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_LEDOFF)) ;
+#else
+    ui.statusLabelLED->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_LEDOFF)) ;
 #endif
 }
 
@@ -172,7 +191,6 @@ QString WebuiPage::helpText() const
 void WebuiPage::onEnableCBClicked(bool checked)
 {
 	ui.params_GB->setEnabled(checked);
-	ui.apply_PB->setEnabled(checked);
 	ui.startWebBrowser_PB->setEnabled(checked);
 	QString S;
 }
@@ -203,6 +221,7 @@ void WebuiPage::onApplyClicked()
         else
             checkShutdownWebui();
     }
+    load();
 }
 
 void WebuiPage::onStartWebBrowserClicked() { showWebui(); }
