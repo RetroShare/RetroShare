@@ -801,7 +801,10 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 		QBuffer buffer(&ba);
 
 		RsGxsImage image;
-		bool has_transparency = ImageUtil::hasAlphaContent(picture.toImage());
+		QPixmap pixmap;
+		pixmap = preview_W->getCroppedScaledPicture();
+		QImage qimg = pixmap.toImage();
+		bool has_transparency = ImageUtil::hasAlphaContent(qimg);
 
 		if(!picture.isNull())
 		{
