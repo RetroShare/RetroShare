@@ -170,7 +170,7 @@ void NetworkDialog::removeSelectedKeys()
 	std::set<RsPgpId> friends;
 	for (int i = 0; i < l.size(); i++)
 	{
-		RsPgpId peer_id = RsPgpId(ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l[i].row(), COLUMN_PEERID)).toString().toStdString());
+		RsPgpId peer_id = RsPgpId(ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l[i].row(), pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERID)).toString().toStdString());
 		RsPeerDetails details ;
 		if(rsPeers->getGPGDetails(peer_id,details))
 		{
