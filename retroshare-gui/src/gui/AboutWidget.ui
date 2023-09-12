@@ -57,7 +57,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="specialFrame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>

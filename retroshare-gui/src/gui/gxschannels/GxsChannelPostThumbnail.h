@@ -40,18 +40,22 @@ class ZoomableLabel: public QLabel
     Q_OBJECT
 
 public:
-    ZoomableLabel(QWidget *parent): QLabel(parent),mUseStyleSheet(true),mZoomFactor(1.0),mCenterX(0.0),mCenterY(0.0),mZoomEnabled(true) {}
+    ZoomableLabel(QWidget *parent): QLabel(parent),mUseStyleSheet(true),mZoomFactor(1.0),mCenterX(0.0),mCenterY(0.0),mZoomEnabled(true),mClearEnabled(false) {}
 
     void setPicture(const QPixmap& pix);
     void setEnableZoom(bool b) { mZoomEnabled = b; }
+    void setEnableClear(bool b) { mClearEnabled = b; }
     void reset();
     QPixmap extractCroppedScaledPicture() const;
     void updateView();
+
+    virtual void keyPressEvent(QKeyEvent *ev) override;
 
     const QPixmap& originalImage() const { return mFullImage ; }
 
 signals:
     void clicked();
+    void cleared();
 
 protected:
     void mousePressEvent(QMouseEvent *ev) override;
@@ -73,6 +77,7 @@ protected:
     int   mLastX,mLastY;
     bool  mMoving;
     bool  mZoomEnabled;
+    bool  mClearEnabled;
 };
 
 // Class to paint the thumbnails with title
@@ -102,7 +107,7 @@ public:
 	static const int THUMBNAIL_W  = 4;
 	static const int THUMBNAIL_H  = 6;
 
-    static constexpr char *CHAN_DEFAULT_IMAGE = ":images/thumb-default-video.png";
+    static constexpr const char *CHAN_DEFAULT_IMAGE = ":images/thumb-default-video.png";
 
     virtual ~ChannelPostThumbnailView();
     ChannelPostThumbnailView(QWidget *parent=NULL,uint32_t flags=FLAG_ALLOW_PAN | FLAG_SHOW_TEXT | FLAG_SCALE_FONT);

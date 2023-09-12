@@ -37,10 +37,15 @@
     <widget class="HeaderFrame" name="headerFrame"/>
    </item>
    <item>
-    <widget class="QFrame" name="frame">
-     <layout class="QVBoxLayout" name="frameVLayout">
+    <widget class="QFrame" name="gradFrame">
+     <layout class="QVBoxLayout" name="gradFrame_VL">
       <item>
-       <widget class="StyledLabel" name="lobbyInfoLabel">
+       <widget class="QLabel" name="info_Label_Lobby">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>A chat room is a decentralized and anonymous chat group. All participants receive all messages. Once the room is created you can invite other friend nodes with invite button on top right.</string>
         </property>
@@ -103,7 +108,7 @@
               </widget>
              </item>
              <item row="3" column="2">
-              <widget class="QComboBox" name="security_CB">
+              <widget class="RSComboBox" name="security_CB">
                <item>
                 <property name="text">
                  <string>Public (Visible by friends)</string>
@@ -230,6 +235,13 @@
         </item>
         <item>
          <widget class="QPushButton" name="createButton">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
            <string>Create</string>
           </property>
@@ -251,17 +263,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>HeaderFrame</class>
-   <extends>QFrame</extends>
-   <header>gui/common/HeaderFrame.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>FriendSelectionWidget</class>
    <extends>QWidget</extends>
    <header>gui/common/FriendSelectionWidget.h</header>
@@ -271,6 +272,17 @@
    <class>GxsIdChooser</class>
    <extends>QComboBox</extends>
    <header>gui/gxs/GxsIdChooser.h</header>
+  </customwidget>
+  <customwidget>
+   <class>HeaderFrame</class>
+   <extends>QFrame</extends>
+   <header>gui/common/HeaderFrame.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

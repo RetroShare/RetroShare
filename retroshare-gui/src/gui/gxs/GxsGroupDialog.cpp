@@ -92,7 +92,7 @@ GxsGroupDialog::~GxsGroupDialog()
 void GxsGroupDialog::init()
 {
 	// connect up the buttons.
-	connect(ui.createButton, SIGNAL(clicked()), this, SLOT(submitGroup()));
+	connect(ui.postButton, SIGNAL(clicked()), this, SLOT(submitGroup()));
 	connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelDialog()));
 	connect(ui.pubKeyShare_cb, SIGNAL(clicked()), this, SLOT(setShareList()));
 	connect(ui.addAdmins_cb, SIGNAL(clicked()), this, SLOT(setAdminsList()));
@@ -194,7 +194,7 @@ void GxsGroupDialog::setUiText(UiType uiType, const QString &text)
 		//ui.contactsdockWidget->setWindowTitle(text);
 		break;
 	case UITYPE_BUTTONBOX_OK:
-		ui.createButton->setText(text);
+		ui.postButton->setText(text);
 		break;
 	}
 }
@@ -210,7 +210,7 @@ void GxsGroupDialog::setUiToolTip(UiType uiType, const QString &text)
 		ui.addAdmins_cb->setToolTip(text);
 		break;
 	case UITYPE_BUTTONBOX_OK:
-		ui.createButton->setToolTip(text);
+		ui.postButton->setToolTip(text);
     default:
 		break;
 	}
@@ -232,14 +232,14 @@ void GxsGroupDialog::initMode()
 		{
 			ui.stackedWidget->setCurrentIndex(1);
 			mReadonlyFlags = 0xffffffff; // Force all to readonly.
-			ui.createButton->hide();
+			ui.postButton->hide();
 		}
 		break;
 
 		case MODE_EDIT:
 		{
             ui.stackedWidget->setCurrentIndex(0);
-			ui.createButton->setText(tr("Submit Group Changes"));
+			ui.postButton->setText(tr("Submit Group Changes"));
 		}
 		break;
 	}
@@ -370,7 +370,7 @@ void GxsGroupDialog::setupVisibility()
 
 	ui.groupLogo->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
 
-	ui.groupDesc->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
+	ui.groupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
 
 	ui.distribGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
 	ui.distributionLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
@@ -384,8 +384,8 @@ void GxsGroupDialog::setupVisibility()
 
 	ui.pubKeyShare_cb->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_SHAREKEYS);
 	ui.addAdmins_cb->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
-	ui.label_8->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
 	ui.moderatorsLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
+	ui.moderatorsValueLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
 
 	ui.personalGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PERSONALSIGN);
 
@@ -410,11 +410,8 @@ void GxsGroupDialog::setupReadonly()
 {
 
 	ui.publishGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PUBLISHSIGN));
-
 	ui.pubKeyShare_cb->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_SHAREKEYS));
-
 	ui.personalGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PERSONALSIGN));
-	
 	ui.idChooser->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PERSONALSIGN));
 
 	//ui.distribGroupBox_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
@@ -465,12 +462,14 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
         ui.lastpostline->setText(tr("Never"));
     else
         ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
-    ui.authorLabel->setId(mGrpMeta.mAuthorId);
+    ui.authorValueLabel->setId(mGrpMeta.mAuthorId);
 	
     ui.createdline->setText(DateTime::formatLongDateTime(mGrpMeta.mPublishTs));
 
 	link = RetroShareLink::createMessage(mGrpMeta.mAuthorId, "");
-	ui.authorLabel->setText(link.toHtml());
+
+    if(!mGrpMeta.mAuthorId.isNull())
+        ui.authorValueLabel->setText(link.toHtml());
 	
     ui.IDline->setText(QString::fromStdString(mGrpMeta.mGroupId.toStdString()));
     ui.descriptiontextEdit->setPlainText(description);
@@ -673,15 +672,9 @@ void GxsGroupDialog::createGroup()
 
 	if (service_createGroup(meta))
 	{
-        // now update the UI
 #warning Missing code here!
-#ifdef TODO
-        //
-		// get the Queue to handle response. What is this for?
-		if(mExternalTokenQueue != NULL)
-			mExternalTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
-#endif
-	}
+        // now update the UI
+    }
 
 	close();
 }
@@ -721,55 +714,57 @@ uint32_t GxsGroupDialog::getGroupSignFlags()
 
 void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 {
-	if (signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ENCRYPTED) {
-		ui.publish_encrypt->setChecked(true);
-	} else if (signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ALLSIGNED) {
-		ui.publish_required->setChecked(true);
-	} else if (signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD) {
-		ui.publish_threads->setChecked(true);
-	} else if (signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_NONEREQ) {
-		ui.publish_open->setChecked(true);
-	}
+    if (signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ENCRYPTED)
+        ui.publish_encrypt->setChecked(true);
+    else if (signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ALLSIGNED)
+        ui.publish_required->setChecked(true);
+    else if (signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD)
+        ui.publish_threads->setChecked(true);
+    else if (signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_NONEREQ)
+        ui.publish_open->setChecked(true);
 
-	if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED) 
-		ui.personal_required->setChecked(true);
-    
-	if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN) 
-		ui.personal_ifnopub->setChecked(true);
-    
-        		if( (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN) && (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG))
-                    ui.antiSpam_perms_CB->setCurrentIndex(2) ;
-                else if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)
-                    ui.antiSpam_perms_CB->setCurrentIndex(1) ;
-		else
-                    ui.antiSpam_perms_CB->setCurrentIndex(0) ;
-                
-        QString antispam_string ;
-        if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) antispam_string += tr("Message tracking") ;
-	if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN)      antispam_string += (antispam_string.isNull()?"":" and ")+tr("PGP signature from known ID required") ;
-    	else
-	if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)            antispam_string += (antispam_string.isNull()?"":" and ")+tr("PGP signature required") ;
-    
-    	ui.antiSpamValueLabel->setText(antispam_string) ;
-		//ui.antiSpam_trackMessages_2->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
-		//ui.antiSpam_signedIds_2    ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
-		//ui.SignEdIds->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
-		//ui.trackmessagesradioButton->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
-    
-	/* guess at comments */
-	if ((signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD) &&
-	    (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN))
-	{
-        	// (cyril) very weird piece of code. Need to clear this up.
-        
-		ui.comments_allowed->setChecked(true);
-		ui.commentsValueLabel->setText("Allowed") ;
-	}
-	else
-	{
-		ui.comments_no->setChecked(true);
-		ui.commentsValueLabel->setText("Forbidden") ;
-	}
+
+    if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED)
+        ui.personal_required->setChecked(true);
+
+    if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN)
+        ui.personal_ifnopub->setChecked(true);
+
+    if( (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN) && (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG))
+        ui.antiSpam_perms_CB->setCurrentIndex(2) ;
+    else if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)
+        ui.antiSpam_perms_CB->setCurrentIndex(1) ;
+    else
+        ui.antiSpam_perms_CB->setCurrentIndex(0) ;
+
+    QString antispam_string ;
+    if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) antispam_string += tr("Message tracking") ;
+    if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN)      antispam_string += (antispam_string.isNull()?"":" and ")+tr("PGP signature from known ID required") ;
+    else if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)        antispam_string += (antispam_string.isNull()?"":" and ")+tr("PGP signature required") ;
+
+    if(antispam_string.isNull())
+            antispam_string = tr("[None]");
+
+    ui.antiSpamValueLabel->setText(antispam_string) ;
+    //ui.antiSpam_trackMessages_2->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
+    //ui.antiSpam_signedIds_2    ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
+    //ui.SignEdIds->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
+    //ui.trackmessagesradioButton->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
+
+    /* guess at comments */
+    if ((signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD) &&
+                    (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN))
+    {
+        // (cyril) very weird piece of code. Need to clear this up.
+
+        ui.comments_allowed->setChecked(true);
+        ui.commentsValueLabel->setText("Allowed") ;
+    }
+    else
+    {
+        ui.comments_no->setChecked(true);
+        ui.commentsValueLabel->setText("Forbidden") ;
+    }
 }
 
 /**** Above logic is flawed, and will be removed shortly
@@ -894,7 +889,7 @@ void GxsGroupDialog::setSelectedModerators(const std::set<RsGxsId>& ids)
 	ui.adminsList->show();
 	ui.filtercomboBox->show();
 
-	ui.adminsList->setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(ids, false);
+    ui.adminsList->setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(ids, true);
 
 	QString moderatorsListString ;
     RsIdentityDetails det;
@@ -915,8 +910,11 @@ void GxsGroupDialog::setSelectedModerators(const std::set<RsGxsId>& ids)
 				moderatorsListString += link.toHtml() + "   ";
 
     }
-	//ui.moderatorsLabel->setId(det.mId);
-	ui.moderatorsLabel->setText(moderatorsListString);
+
+    if(moderatorsListString.isNull())
+        moderatorsListString = tr("[None]");
+
+	ui.moderatorsValueLabel->setText(moderatorsListString);
 }
 
 /***********************************************************************************

@@ -37,6 +37,7 @@ class QToolButton;
 class QTextEdit;
 class ClickableLabel;
 class GxsIdLabel;
+class ElidedLabel;
 
 struct RsPostedPost;
 
@@ -62,34 +63,37 @@ public:
 
 	static const char *DEFAULT_BOARD_IMAGE;
 
-protected slots:
+protected:
 	/* GxsGroupFeedItem */
 
-    virtual void setup();    // to be overloaded by the different views
+    void baseSetup();
+    virtual void setup() =0;    // to be overloaded by the different views
 
     virtual QToolButton *voteUpButton() =0;
     virtual QToolButton *commentButton() =0;
     virtual QToolButton *voteDownButton() =0;
     virtual QLabel      *newLabel() =0;
-    virtual QLabel      *titleLabel()=0;
+    virtual ElidedLabel *titleLabel()=0;
     virtual GxsIdLabel  *fromLabel()=0;
     virtual QLabel      *dateLabel()=0;
     virtual QLabel      *scoreLabel() =0;
     virtual QLabel      *notes() =0;
     virtual QLabel      *pictureLabel()=0;
     virtual QToolButton *readButton() =0;
-    virtual QPushButton *shareButton() =0;
-    virtual QFrame      *mainFrame() =0;
+//    virtual QToolButton *shareButton() =0;
+    virtual QFrame      *feedFrame() =0;
 
+protected slots:
     void loadComments(bool e);
     void readToggled();
     void setReadStatus(bool isNew, bool isUnread) ;
     void makeUpVote() ;
     void makeDownVote() ;
 	void setCommentsSize(int comNb) ;
+#ifdef TO_REMOVE
     void handleShareButtonClicked() ;
     void handleCopyLinkClicked() ;
-
+#endif
 
 signals:
     void changeReadStatusRequested(const RsGxsMessageId&,bool);
@@ -97,8 +101,8 @@ signals:
     void expand(RsGxsMessageId,bool);
     void commentsRequested(const RsGxsMessageId&,bool);
     void thumbnailOpenned();
-    void shareButtonClicked();
-    void copylinkClicked();
+//    void shareButtonClicked();
+//    void copylinkClicked();
 
 protected:
 	RsPostedPost mPost;
@@ -121,13 +125,15 @@ public:
     QLabel      *newLabel()       override;
     GxsIdLabel  *fromLabel()      override;
     QLabel      *dateLabel()      override;
-    QLabel      *titleLabel()     override;
+    ElidedLabel *titleLabel()     override;
     QLabel      *scoreLabel()     override;
     QLabel      *notes()          override;
     QLabel      *pictureLabel()   override;
     QToolButton *readButton()     override;
-    QPushButton *shareButton()    override;
-    QFrame      *mainFrame()      override;
+#ifdef TO_REMOVE
+    QToolButton *shareButton()    override;
+#endif
+    QFrame      *feedFrame()      override;
 
 public slots:
     void viewPicture() ;
@@ -160,13 +166,13 @@ public:
     QLabel      *newLabel()       override;
     GxsIdLabel  *fromLabel()      override;
     QLabel      *dateLabel()      override;
-    QLabel      *titleLabel()     override;
+    ElidedLabel *titleLabel()     override;
     QLabel      *scoreLabel()     override;
     QLabel      *notes()          override;
     QToolButton *readButton()     override;
-    QPushButton *shareButton()    override;
+//    QToolButton *shareButton()    override;
     QLabel      *pictureLabel()   override;
-    QFrame      *mainFrame()      override;
+    QFrame      *feedFrame()      override;
 
 protected slots:
     /* GxsGroupFeedItem */

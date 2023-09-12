@@ -76,9 +76,9 @@ public:
 	WireDialog(QWidget *parent = 0);
 	~WireDialog();
 
-	virtual QIcon iconPixmap() const { return QIcon(IMAGE_WIRE) ; }
-	virtual QString pageName() const { return tr("The Wire") ; }
-	virtual QString helpText() const { return ""; }
+	virtual QIcon iconPixmap() const override { return QIcon(IMAGE_WIRE) ; }
+	virtual QString pageName() const override { return tr("The Wire") ; }
+	virtual QString helpText() const override { return ""; }
 
 	// WireGroupHolder interface.
 	virtual void subscribe(RsGxsGroupId &groupId) override;
@@ -114,8 +114,8 @@ public:
 	void showGroupFocus(const RsGxsGroupId groupId);
 	void postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr> pulses);
 
-	void requestGroupsPulses(const std::list<RsGxsGroupId> groupIds);
-	void showGroupsPulses(const std::list<RsGxsGroupId> groupIds);
+	void requestGroupsPulses(const std::list<RsGxsGroupId>& groupIds);
+	void showGroupsPulses(const std::list<RsGxsGroupId>& groupIds);
 	void postGroupsPulses(std::list<RsWirePulseSPtr> pulses);
 
 private slots:
@@ -153,7 +153,7 @@ private:
 	bool loadGroupData(const uint32_t &token);
 	void acknowledgeGroup(const uint32_t &token, const uint32_t &userType);
 
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req) override;
 
 	int mGroupSet;
 
@@ -163,6 +163,10 @@ private:
 
 	std::map<RsGxsGroupId, RsWireGroup> mAllGroups;
 	std::vector<RsWireGroup> mOwnGroups;
+
+    // This function and variable below it handle the events for the wire
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+    RsEventsHandlerId_t mEventHandlerId;
 
 	int32_t mHistoryIndex;
 	std::vector<WireViewHistory> mHistory;

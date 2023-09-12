@@ -63,7 +63,7 @@ GxsForumGroupDialog::GxsForumGroupDialog(QWidget *parent)
     : GxsGroupDialog(ForumCreateEnabledFlags, ForumCreateDefaultsFlags, parent)
 {
     ui.pubKeyShare_cb->setEnabled(true) ;
-    ui.label_2->setToolTip(tr("<p>Put one of your identities here to allow others to send feedback and also have moderator rights on the forum. You may as well leave that field blank and keep the forum anonymously administrated.</p>"));
+    ui.idChooserLabel->setToolTip(tr("<p>Put one of your identities here to allow others to send feedback and also have moderator rights on the forum. You may as well leave that field blank and keep the forum anonymously administrated.</p>"));
 }
 
 GxsForumGroupDialog::GxsForumGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent)
@@ -151,6 +151,7 @@ bool GxsForumGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, M
     // Local information. Description should be handled here.
 
     setSelectedModerators(pgroup->mAdminList.ids);
+    ui.adminsList->sortByChecked(true);
 
     mGroupData = *pgroup; // keeps the private information
 

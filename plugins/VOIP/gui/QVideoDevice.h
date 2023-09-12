@@ -21,13 +21,14 @@
 #pragma once
 
 #include <QLabel>
+#include <QCamera>
+#include <QCameraInfo>
 #include "interface/rsVOIP.h"
-
-#include "opencv2/opencv.hpp"
 
 #include "gui/VideoProcessor.h"
 
 class VideoEncoder ;
+class QCameraImageCapture;
 
 // Responsible from displaying the video. The source of the video is
 // a VideoDecoder object, which uses a codec.
@@ -49,7 +50,7 @@ class QVideoInputDevice: public QObject
 	Q_OBJECT
 
 	public:
-		QVideoInputDevice(QWidget *parent = 0) ;
+        QVideoInputDevice(QWidget *parent = 0) ;
 		~QVideoInputDevice() ;
 
 		// Captured images are sent to this encoder. Can be NULL.
@@ -71,19 +72,35 @@ class QVideoInputDevice: public QObject
         
         	// control
         
-		void start() ;
+        void start(const QString &description = QString()) ;
 		void stop() ;
-		bool stopped();
+        bool stopped() const;
+
+        enum CameraStatus {
+            CAMERA_IS_READY           = 0x00,
+            CANNOT_INITIALIZE_CAMERA  = 0x01,
+            CAMERA_CANNOT_GRAB_FRAMES = 0x02
+        };
+
+        // Gets the list of available devices. The id string for each device can be used when creating a QVideoDevice
+
+        static void getAvailableDevices(QList<QString>& device_desc);
+
+        QString currentCameraDescriptionString() const { return _capture_device_info.deviceName(); }
 protected slots:
-		void grabFrame() ;
+        void grabFrame(int id, QVideoFrame f) ;
+        void errorHandling(CameraStatus status,QCamera::Error error);
 
 	signals:
 		void networkPacketReady() ;
+        void cameraCaptureInfo(CameraStatus status,QCamera::Error qt_cam_err_code);
 
 	private:
 		VideoProcessor *_video_processor ;
 		QTimer *_timer ;
-		cv::VideoCapture *_capture_device ;
+        QCamera *_capture_device;
+        QCameraImageCapture *_image_capture;
+        QCameraInfo _capture_device_info;
 
 		QVideoOutputDevice *_echo_output_device ;
 

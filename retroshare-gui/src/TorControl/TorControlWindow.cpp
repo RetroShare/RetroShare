@@ -9,42 +9,59 @@
 #include <iostream>
 #include "util/rstime.h"
 
+#include "retroshare/rstor.h"
+#include "retroshare/rsevents.h"
+
 #include "TorControlWindow.h"
-#include "TorManager.h"
-#include "TorControl.h"
-#include "HiddenService.h"
+#include "util/qtthreadsutils.h"
 
-TorControlDialog::TorControlDialog(Tor::TorManager *tm,QWidget *parent)
-	: mTorManager(tm)
+TorControlDialog::TorControlDialog(QWidget *)
 {
-	setupUi(this) ;
+        setupUi(this) ;
 
-	QObject::connect(tm->control(),SIGNAL(statusChanged(int,int)),this,SLOT(statusChanged())) ;
-    QObject::connect(tm->control(),SIGNAL(connected()),this,SLOT(statusChanged()));
-    QObject::connect(tm->control(),SIGNAL(disconnected()),this,SLOT(statusChanged()));
-    QObject::connect(tm->control(),SIGNAL(bootstrapStatusChanged()),this,SLOT(statusChanged()));
-    QObject::connect(tm->control(),SIGNAL(connectivityChanged()),this,SLOT(statusChanged()));
-    QObject::connect(tm           ,SIGNAL(errorChanged()),this,SLOT(statusChanged()));
+        mEventHandlerId = 0;	// very important!
 
-    //QTimer::singleShot(2000,this,SLOT(checkForHiddenService())) ;
+        rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+        {
+                RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
+        }, mEventHandlerId, RsEventType::TOR_MANAGER );
 
-    mIncomingServer = new QTcpServer(this) ;
-    mHiddenService = NULL ;
-	mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_UNKNOWN;
-	//mBootstrapPhaseFinished = false ;
+        mIncomingServer = new QTcpServer(this) ;
 
-    connect(mIncomingServer, SIGNAL(QTcpServer::newConnection()), this, SLOT(onIncomingConnection()));
+        connect(mIncomingServer, SIGNAL(QTcpServer::newConnection()), this, SLOT(onIncomingConnection()));
 
-	QTimer *timer = new QTimer ;
+        QTimer *timer = new QTimer ;
 
-	QObject::connect(timer,SIGNAL(timeout()),this,SLOT(showLog())) ;
-	timer->start(500) ;
+        QObject::connect(timer,SIGNAL(timeout()),this,SLOT(showLog())) ;
+        timer->start(300) ;
 
-	// Hide some debug output for the released version
+        // Hide some debug output for the released version
 
-	setWindowFlags( Qt::Dialog | Qt::FramelessWindowHint );
+        setWindowFlags( Qt::Dialog | Qt::FramelessWindowHint );
 
-	adjustSize();
+        adjustSize();
+}
+
+TorControlDialog::~TorControlDialog()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
+
+void TorControlDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    if(event->mType != RsEventType::TOR_MANAGER) return;
+
+    const RsTorManagerEvent *fe = dynamic_cast<const RsTorManagerEvent*>(event.get());
+    if(!fe)
+        return;
+
+    switch(fe->mTorManagerEventType)
+    {
+    case RsTorManagerEventCode::TOR_STATUS_CHANGED:
+    case RsTorManagerEventCode::TOR_CONNECTIVITY_CHANGED: statusChanged(fe->mTorStatus,fe->mTorConnectivityStatus);
+                                                        break;
+    default: ;
+    }
 }
 
 void TorControlDialog::onIncomingConnection()
@@ -52,67 +69,66 @@ void TorControlDialog::onIncomingConnection()
     std::cerr << "Incoming connection !!" << std::endl;
 }
 
-void TorControlDialog::statusChanged()
+void TorControlDialog::statusChanged(RsTorStatus torstatus, RsTorConnectivityStatus tor_control_status)
 {
-	int tor_control_status = mTorManager->control()->status();
-	int torstatus = mTorManager->control()->torStatus();
-
 	QString tor_control_status_str,torstatus_str ;
 
-	if(mTorManager->hasError())
-		mErrorMsg = mTorManager->errorMessage() ;
+    if(RsTor::hasError())
+        mErrorMsg = QString::fromStdString(RsTor::errorMessage()) ;
 
 	switch(tor_control_status)
 	{
 	default:
-	case Tor::TorControl::Error :			tor_control_status_str = "Error" ; break ;
-	case Tor::TorControl::NotConnected:		tor_control_status_str = "Not connected" ; break ;
-	case Tor::TorControl::Connecting:		tor_control_status_str = "Connecting" ; break ;
-	case Tor::TorControl::Authenticating:	tor_control_status_str = "Authenticating" ; break ;
-	case Tor::TorControl::Connected:		tor_control_status_str = "Connected" ; break ;
-	}
+    case RsTorConnectivityStatus::ERROR:			tor_control_status_str = tr("Error") ; break ;
+    case RsTorConnectivityStatus::NOT_CONNECTED:	tor_control_status_str = tr("Not connected") ; break ;
+    case RsTorConnectivityStatus::CONNECTING:		tor_control_status_str = tr("Connecting") ; break ;
+    case RsTorConnectivityStatus::SOCKET_CONNECTED:	tor_control_status_str = tr("Socket connected") ; break ;
+    case RsTorConnectivityStatus::AUTHENTICATING:	tor_control_status_str = tr("Authenticating") ; break ;
+    case RsTorConnectivityStatus::AUTHENTICATED:	tor_control_status_str = tr("Authenticated") ; break ;
+    case RsTorConnectivityStatus::HIDDEN_SERVICE_READY:	tor_control_status_str = tr("Hidden service ready") ; break ;
+    case RsTorConnectivityStatus::UNKNOWN:			tor_control_status_str = tr("Unknown") ; break ;
+    }
 
 	switch(torstatus)
 	{
 	default:
-	case Tor::TorControl::TorUnknown: 	torstatus_str = "Unknown" ; break ;
-	case Tor::TorControl::TorOffline: 	torstatus_str = "Tor offline" ; break ;
-	case Tor::TorControl::TorReady: 	torstatus_str = "Tor ready" ; break ;
+    case RsTorStatus::UNKNOWN: 		torstatus_str = tr("Unknown") ; break ;
+    case RsTorStatus::OFFLINE: 		torstatus_str = tr("Tor offline") ; break ;
+    case RsTorStatus::READY: 		torstatus_str = tr("Tor ready") ; break ;
 	}
 
 	torStatus_LB->setText(torstatus_str) ;
 
-	if(torstatus == Tor::TorControl::TorUnknown)
+    if(torstatus == RsTorStatus::UNKNOWN)
 		torStatus_LB->setToolTip(tr("Check that Tor is accessible in your executable path")) ;
 	else
 		torStatus_LB->setToolTip("") ;
 
-	QVariantMap qvm = mTorManager->control()->bootstrapStatus();
+    std::map<std::string,std::string> qvm = RsTor::bootstrapStatus();
 	QString bootstrapstatus_str ;
 
 	std::cerr << "Tor control status: " << tor_control_status_str.toStdString() << std::endl;
 	std::cerr << "Tor status: " << torstatus_str.toStdString() << std::endl;
-
 	std::cerr << "Bootstrap status map: " << std::endl;
 
 	for(auto it(qvm.begin());it!=qvm.end();++it)
-		std::cerr << "  " << it.key().toStdString() << " : " << it.value().toString().toStdString() << std::endl;
+        std::cerr << "  " << it->first << " : " << it->second << std::endl;
 
-	if(!qvm["progress"].toString().isNull())
-		torBootstrapStatus_LB->setText(qvm["progress"].toString() + " % (" + qvm["summary"].toString() + ")") ;
+    if(!qvm["progress"].empty())
+        torBootstrapStatus_LB->setText(QString::fromStdString(qvm["progress"]) + " % (" + QString::fromStdString(qvm["summary"]) + ")") ;
 	else
 		torBootstrapStatus_LB->setText(tr("[Waiting for Tor...]")) ;
 
-	QString service_id ;
-	QString onion_address ;
-	QHostAddress service_target_address ;
+    std::string service_id ;
+    std::string onion_address ;
+    std::string service_target_address ;
 	uint16_t service_port ;
 	uint16_t target_port ;
 
-	if(mTorManager->getHiddenServiceInfo(service_id,onion_address,service_port, service_target_address,target_port))
+    if(RsTor::getHiddenServiceInfo(service_id,onion_address,service_port, service_target_address,target_port))
 	{
-		hiddenServiceAddress_LB->setText(QString::number(service_port) + ":" + service_target_address.toString() + ":" + QString::number(target_port));
-		onionAddress_LB->setText(onion_address);
+        hiddenServiceAddress_LB->setText(QString::number(service_port) + ":" + QString::fromStdString(service_target_address) + ":" + QString::number(target_port));
+        onionAddress_LB->setText(QString::fromStdString(onion_address));
 	}
 	else
 	{
@@ -123,34 +139,39 @@ void TorControlDialog::statusChanged()
 	showLog();
 	adjustSize();
 
-	QCoreApplication::processEvents();	// forces update
+    QCoreApplication::processEvents();	// forces update
 }
 
 void TorControlDialog::showLog()
 {
-	static std::set<QString> already_seen ;
+    static std::set<std::string> already_seen ;
 
-    QString s ;
-    QStringList logmsgs = mTorManager->logMessages() ;
-	bool can_print = false ;
+    std::string s ;
+    std::list<std::string> logmsgs = RsTor::logMessages() ;
+    bool can_print = false ;
 
-    for(QStringList::const_iterator it(logmsgs.begin());it!=logmsgs.end();++it)
-	{
+    for(auto it(logmsgs.begin());it!=logmsgs.end();++it)
+    {
         s += *it + "\n" ;
 
-		if(already_seen.find(*it) == already_seen.end())
-		{
-			can_print = true ;
-			already_seen.insert(*it);
-		}
+        if(already_seen.find(*it) == already_seen.end())
+        {
+            can_print = true ;
+            already_seen.insert(*it);
+        }
 
-		if(can_print)
-			std::cerr << "[TOR DEBUG LOG] " << (*it).toStdString() << std::endl;
-	}
+        if(can_print)
+        {
+            std::cerr << "[TOR DEBUG LOG] " << *it << std::endl;
 
-//    torLog_TB->setText(s) ;:
+            QString s = QString::fromStdString(*it);
+            int n = s.indexOf(QString("Bootstrapped"));
 
-	std::cerr << "Connexion Proxy: " << mTorManager->control()->socksAddress().toString().toStdString() << ":" << mTorManager->control()->socksPort() << std::endl;
+            if(n >= 0)
+                torBootstrapStatus_LB->setText(s.mid(n+QString("Bootstrapped").length()));
+        }
+    }
+    //std::cerr << "Connexion Proxy: " << RsTor::socksAddress()  << ":" << QString::number(RsTor::socksPort()).toStdString() << std::endl;
 }
 
 TorControlDialog::TorStatus TorControlDialog::checkForTor(QString& error_msg)
@@ -161,9 +182,9 @@ TorControlDialog::TorStatus TorControlDialog::checkForTor(QString& error_msg)
 		return TorControlDialog::TOR_STATUS_FAIL ;
 	}
 
-	switch(mTorManager->control()->torStatus())
+    switch(RsTor::torStatus())
 	{
-	case Tor::TorControl::TorReady:  rstime::rs_usleep(1*1000*1000);return TOR_STATUS_OK ;
+    case RsTorStatus::READY:  rstime::rs_usleep(1*1000*1000);return TOR_STATUS_OK ;
 	default:
 		return TOR_STATUS_UNKNOWN ;
 	}
@@ -171,60 +192,35 @@ TorControlDialog::TorStatus TorControlDialog::checkForTor(QString& error_msg)
 
 TorControlDialog::HiddenServiceStatus TorControlDialog::checkForHiddenService()
 {
-	std::cerr << "Checking for hidden services:" ;
+    std::cerr << "Checking for hidden services:" ;
 
-	switch(mHiddenServiceStatus)
-	{
-	default:
-	case HIDDEN_SERVICE_STATUS_UNKNOWN: {
+    std::string service_id;
 
-		std::cerr << " trying to setup. " ;
+    RsTorHiddenServiceStatus service_status = RsTor::getHiddenServiceStatus(service_id);
 
-		if(!mTorManager->setupHiddenService())
-		{
-			mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_FAIL ;
-			std::cerr << "Failed."  << std::endl;
-			return mHiddenServiceStatus ;
-		}
-		std::cerr << "Done."  << std::endl;
-		mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_REQUESTED ;
-		return mHiddenServiceStatus ;
-	}
+    if(service_id.empty())
+    {
+        std::cerr << "Not ready yet." << std::endl;
+        return HIDDEN_SERVICE_STATUS_REQUESTED ;
+    }
+    else
+    {
+        if(mHiddenService.empty())
+            mHiddenService = service_id ;
 
-	case HIDDEN_SERVICE_STATUS_REQUESTED: {
-		QList<Tor::HiddenService*> hidden_services = mTorManager->control()->hiddenServices();
+        std::cerr << "New service acquired. Status is " << (int)service_status ;
 
-		if(hidden_services.empty())
-		{
-			std::cerr << "Not ready yet." << std::endl;
-			return mHiddenServiceStatus ;
-		}
-		else
-		{
-			if(mHiddenService == NULL)
-				mHiddenService = *(hidden_services.begin()) ;
+        if(service_status == RsTorHiddenServiceStatus::ONLINE)
+        {
+            std::cerr << ": published and running!" << std::endl;
 
-			Tor::HiddenService::Status hss = mHiddenService->status();
-
-			std::cerr << "New service acquired. Status is " << hss ;
-
-			if(hss == Tor::HiddenService::Online)
-			{
-				mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_OK ;
-				std::cerr << ": published and running!" << std::endl;
-
-				return mHiddenServiceStatus ;
-			}
-			else
-			{
-				std::cerr << ": not ready yet." << std::endl;
-				return mHiddenServiceStatus ;
-			}
-		}
-	}
-	case  HIDDEN_SERVICE_STATUS_OK :
-			std::cerr << "New service acquired." << std::endl;
-			return mHiddenServiceStatus ;
-	}
+            return HIDDEN_SERVICE_STATUS_OK ;
+        }
+        else
+        {
+            std::cerr << ": not ready yet." << std::endl;
+            return HIDDEN_SERVICE_STATUS_REQUESTED ;
+        }
+    }
 }
 

@@ -46,6 +46,7 @@
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 #include "util/QtVersion.h"
+#include "util/qtthreadsutils.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
@@ -65,7 +66,7 @@
 class RsHtmlMsg : public RsHtml
 {
 public:
-	RsHtmlMsg(uint msgFlags) : RsHtml()
+	explicit RsHtmlMsg(uint msgFlags) : RsHtml()
 	{
 		this->msgFlags = msgFlags;
 	}
@@ -134,6 +135,7 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	isWindow = false;
 	currMsgFlags = 0;
 	expandFiles = false;
+	ui.expandButton->hide();
 
 	ui.actionTextBesideIcon->setData(Qt::ToolButtonTextBesideIcon);
 	ui.actionIconOnly->setData(Qt::ToolButtonIconOnly);
@@ -143,7 +145,8 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
 	connect(ui.msgText, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
 	connect(ui.sendInviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
-	
+	connect(ui.expandButton, SIGNAL(clicked()), this, SLOT(expandTo()));
+
 	connect(ui.replyButton, SIGNAL(clicked()), this, SLOT(reply()));
 	connect(ui.replyallButton, SIGNAL(clicked()), this, SLOT(replyAll()));
 	connect(ui.forwardButton, SIGNAL(clicked()), this, SLOT(forward()));
@@ -158,9 +161,6 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	QAction *viewsource = new QAction(tr("View source"), this);
 	viewsource->setShortcut(QKeySequence("CTRL+O"));
 	connect(viewsource, SIGNAL(triggered()), this, SLOT(viewSource()));
-
-	connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
-	connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(messagesChanged()));
 
 	ui.imageBlockWidget->addButtonAction(tr("Load images always for this message"), this, SLOT(loadImagesAlways()), true);
 	ui.msgText->setImageBlockWidget(ui.imageBlockWidget);
@@ -192,13 +192,13 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	QFont font = QFont("Arial", 10, QFont::Bold);
 	ui.subjectText->setFont(font);
 
-	ui.toText->setMaximumHeight(ui.toText->fontMetrics().lineSpacing()*1.5);
+	ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*1.5);
 	ui.ccLabel->setVisible(false);
-	ui.ccText->setVisible(false);
-	ui.ccText->setMaximumHeight(ui.ccText->fontMetrics().lineSpacing()*1.5);
+	ui.trans_CCText->setVisible(false);
+	ui.trans_CCText->setMaximumHeight(ui.trans_CCText->fontMetrics().lineSpacing()*1.5);
 	ui.bccLabel->setVisible(false);
-	ui.bccText->setVisible(false);
-	ui.bccText->setMaximumHeight(ui.bccText->fontMetrics().lineSpacing()*1.5);
+	ui.trans_BCCText->setVisible(false);
+	ui.trans_BCCText->setMaximumHeight(ui.trans_BCCText->fontMetrics().lineSpacing()*1.5);
 
 	ui.tagsLabel->setVisible(false);
 
@@ -210,13 +210,57 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 
 	ui.dateText-> setText("");
 	
-	ui.inviteFrame->hide();
+	ui.info_Frame_Invite->hide();
+
+	mEventHandlerId = 0;
+	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_STATUS );
 }
 
 MessageWidget::~MessageWidget()
 {
 	if (isControlled == false) {
 		processSettings("MessageWidget", false);
+	}
+
+	rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
+
+void MessageWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+	if(event->mType != RsEventType::MAIL_STATUS) {
+		return;
+	}
+
+	const RsMailStatusEvent *fe = dynamic_cast<const RsMailStatusEvent*>(event.get());
+	if (!fe) {
+		return;
+	}
+
+	switch (fe->mMailStatusEventCode) {
+	case RsMailStatusEventCode::MESSAGE_REMOVED:
+		if (fe->mChangedMsgIds.find(currMsgId) != fe->mChangedMsgIds.end()) {
+			if (isControlled) {
+				/* processed by MessagesDialog */
+				return;
+			}
+
+			/* messages was removed */
+			if (isWindow) {
+				window()->close();
+			} else {
+				deleteLater();
+			}
+		}
+		break;
+	case RsMailStatusEventCode::TAG_CHANGED:
+		messagesTagsChanged();
+		break;
+	case RsMailStatusEventCode::MESSAGE_SENT:
+	case RsMailStatusEventCode::MESSAGE_CHANGED:
+	case RsMailStatusEventCode::NEW_MESSAGE:
+	case RsMailStatusEventCode::MESSAGE_RECEIVED_ACK:
+	case RsMailStatusEventCode::SIGNATURE_FAILED:
+		break;
 	}
 }
 
@@ -349,24 +393,25 @@ void MessageWidget::getcurrentrecommended()
 	}
 
     std::list<RsPeerId> srcIds;
-    srcIds.push_back(msgInfo.rspeerid_srcId);
+    if(msgInfo.from.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
+        srcIds.push_back(msgInfo.from.toRsPeerId());
 
 	QModelIndexList list = ui.msgList->selectionModel()->selectedIndexes();
 
 	std::map<int,FileInfo> files ;
 
-	for (QModelIndexList::const_iterator it(list.begin());it!=list.end();++it) {
-		FileInfo& fi(files[it->row()]) ;
+	for (auto &it : list) {
+		FileInfo& fi(files[it.row()]) ;
 
-		switch (it->column()) {
+		switch (it.column()) {
 		case COLUMN_FILE_NAME:
-			fi.fname = it->data().toString().toUtf8().constData();
+			fi.fname = it.data().toString().toUtf8().constData();
 			break ;
 		case COLUMN_FILE_SIZE:
-			fi.size = it->data(Qt::UserRole).toULongLong() ;
+			fi.size = it.data(Qt::UserRole).toULongLong() ;
 			break ;
 		case COLUMN_FILE_HASH:
-			fi.hash = RsFileHash(it->data().toString().toStdString()) ;
+			fi.hash = RsFileHash(it.data().toString().toStdString()) ;
 			break ;
 		}
 	}
@@ -397,7 +442,10 @@ void MessageWidget::getallrecommended()
 	for(it = recList.begin(); it != recList.end(); ++it) {
 		std::cerr << "MessageWidget::getallrecommended() Calling File Request" << std::endl;
         std::list<RsPeerId> srcIds;
-        srcIds.push_back(msgInfo.rspeerid_srcId);
+
+        if(msgInfo.from.type()==MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
+            srcIds.push_back(msgInfo.from.toRsPeerId());
+
 		rsFiles->FileRequest(it->fname, it->hash, it->size, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
 	}
 }
@@ -405,25 +453,6 @@ void MessageWidget::getallrecommended()
 void MessageWidget::messagesTagsChanged()
 {
     showTagLabels();
-}
-
-void MessageWidget::messagesChanged()
-{
-	if (isControlled) {
-		/* processed by MessagesDialog */
-		return;
-	}
-
-	/* test Message */
-	MessageInfo msgInfo;
-	if (rsMail->getMessage(currMsgId, msgInfo) == false) {
-		/* messages was removed */
-		if (isWindow) {
-			window()->close();
-		} else {
-			deleteLater();
-		}
-	}
 }
 
 void MessageWidget::clearTagLabels()
@@ -448,15 +477,17 @@ void MessageWidget::showTagLabels()
 	MsgTagInfo tagInfo;
 	rsMail->getMessageTag(currMsgId, tagInfo);
 
-	if (tagInfo.tagIds.empty() == false) {
+    if (!tagInfo.empty())
+    {
 		ui.tagsLabel->setVisible(true);
 
 		MsgTagType Tags;
 		rsMail->getMessageTagTypes(Tags);
 
 		std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
-		for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); ++tagId) {
-			Tag = Tags.types.find(*tagId);
+        for (auto tag:tagInfo)
+        {
+            Tag = Tags.types.find(tag);
 			if (Tag != Tags.types.end()) {
 				QLabel *tagLabel = new QLabel(TagDefs::name(Tag->first, Tag->second.first), this);
 				tagLabel->setMaximumHeight(16);
@@ -491,17 +522,17 @@ void MessageWidget::fill(const std::string &msgId)
 	if (currMsgId.empty()) {
 		/* blank it */
 		ui.dateText-> setText("");
-		ui.toText->setText("");
+		ui.trans_ToText->setText("");
 		ui.fromText->setText("");
 		ui.filesText->setText("");
 
 		ui.ccLabel->setVisible(false);
-		ui.ccText->setVisible(false);
-		ui.ccText->clear();
+		ui.trans_CCText->setVisible(false);
+		ui.trans_CCText->clear();
 
 		ui.bccLabel->setVisible(false);
-		ui.bccText->setVisible(false);
-		ui.bccText->clear();
+		ui.trans_BCCText->setVisible(false);
+		ui.trans_BCCText->clear();
 
 		ui.subjectText->setText("");
 		ui.msgList->clear();
@@ -511,7 +542,7 @@ void MessageWidget::fill(const std::string &msgId)
 		clearTagLabels();
 		checkLength();
 
-		ui.inviteFrame->hide();
+		ui.info_Frame_Invite->hide();
 		ui.expandFilesButton->setChecked(false);
 		ui.downloadButton->setEnabled(false);
 		togglefileview(true);
@@ -521,6 +552,9 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.forwardButton->setEnabled(false);
 		ui.deleteButton->setEnabled(false);
 		ui.moreButton->setEnabled(false);
+
+		ui.expandButton->hide();
+		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*1.5);
 
 		currMsgFlags = 0;
 
@@ -542,17 +576,21 @@ void MessageWidget::fill(const std::string &msgId)
 		return;
 	}
 	
-	if ((msgInfo.msgflags & RS_MSG_USER_REQUEST) && msgInfo.rsgxsid_srcId.isNull()){
-		ui.inviteFrame->show();
-		ui.sendInviteButton->hide();
-		ui.infoLabel->setText(tr("You got an invite to make friend! You may accept this request."));
-	} else if ((msgInfo.msgflags & RS_MSG_USER_REQUEST) && (!msgInfo.rsgxsid_srcId.isNull())){
-		ui.inviteFrame->show();
-		ui.sendInviteButton->show();
-		ui.infoLabel->setText(tr("You got an invite to make friend! You may accept this request and send your own Certificate back"));
-	} else {
-		ui.inviteFrame->hide();
-	}
+    if (msgInfo.msgflags & RS_MSG_USER_REQUEST)
+        if(msgInfo.from.type() == MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
+        {
+            ui.info_Frame_Invite->show();
+            ui.sendInviteButton->hide();
+            ui.infoLabel_Invite->setText(tr("You got an invite to make friend! You may accept this request."));
+        }
+        else
+        {
+            ui.info_Frame_Invite->show();
+            ui.sendInviteButton->show();
+            ui.infoLabel_Invite->setText(tr("You got an invite to make friend! You may accept this request and send your own Certificate back"));
+        }
+    else
+        ui.info_Frame_Invite->hide();
 
 	const std::list<FileInfo> &recList = msgInfo.files;
 	std::list<FileInfo>::const_iterator it;
@@ -581,67 +619,60 @@ void MessageWidget::fill(const std::string &msgId)
 
 	/* iterate through the sources */
 	RetroShareLink link;
-	QString text;
+    QString to_text,cc_text,bcc_text;
 
-	for(std::set<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgto.begin(); pit != msgInfo.rspeerid_msgto.end(); ++pit) {
-		link = RetroShareLink::createMessage(*pit, "");
-		if (link.valid())
-			text += link.toHtml() + "   ";
-	}
-	for(std::set<RsGxsId >::const_iterator pit = msgInfo.rsgxsid_msgto.begin(); pit != msgInfo.rsgxsid_msgto.end(); ++pit) {
-		link = RetroShareLink::createMessage(*pit, "");
-		if (link.valid())
-			text += link.toHtml() + "   ";
-	}
-
-	ui.toText->setText(text);
-
-    if (!msgInfo.rspeerid_msgcc.empty() || !msgInfo.rsgxsid_msgcc.empty())
+    for(auto m:msgInfo.destinations)
     {
+        if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+            link = RetroShareLink::createMessage(m.toGxsId(), "");
+        else
+            link = RetroShareLink::createMessage(m.toRsPeerId(), "");
+
+		if (link.valid())
+            switch(m.mode())
+            {
+            case MsgAddress::MSG_ADDRESS_MODE_TO: to_text += link.toHtml() + "   "; break;
+            case MsgAddress::MSG_ADDRESS_MODE_CC: cc_text += link.toHtml() + "   "; break;
+            case MsgAddress::MSG_ADDRESS_MODE_BCC: bcc_text += link.toHtml() + "   "; break;
+            default: break;
+            }
+    }
+
+    ui.trans_ToText->setText(to_text);
+
+	int recipientsCount = ui.trans_ToText->toPlainText().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts).count();
+	ui.expandButton->setText( QString::number(recipientsCount)+ " " + tr("more"));
+
+	if (recipientsCount >=20) {
+		ui.expandButton->show();
+	} else {
+		ui.expandButton->hide();
+		ui.expandButton->setChecked(false);
+		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*1.5);
+	}
+
+    if (!cc_text.isNull())
+	{
 		ui.ccLabel->setVisible(true);
-		ui.ccText->setVisible(true);
+		ui.trans_CCText->setVisible(true);
 
-		text.clear();
-		for(std::set<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgcc.begin(); pit != msgInfo.rspeerid_msgcc.end(); ++pit) {
-			link = RetroShareLink::createMessage(*pit, "");
-			if (link.valid())
-				text += link.toHtml() + "   ";
-		}
-		for(std::set<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgcc.begin(); pit != msgInfo.rsgxsid_msgcc.end(); ++pit) {
-			link = RetroShareLink::createMessage(*pit, "");
-			if (link.valid())
-				text += link.toHtml() + "   ";
-		}
-
-		ui.ccText->setText(text);
+        ui.trans_CCText->setText(cc_text);
 	} else {
 		ui.ccLabel->setVisible(false);
-		ui.ccText->setVisible(false);
-		ui.ccText->clear();
+		ui.trans_CCText->setVisible(false);
+		ui.trans_CCText->clear();
 	}
 
-	if (!msgInfo.rspeerid_msgbcc.empty() || !msgInfo.rsgxsid_msgbcc.empty())
+    if (!bcc_text.isNull())
 	{
 		ui.bccLabel->setVisible(true);
-		ui.bccText->setVisible(true);
+		ui.trans_BCCText->setVisible(true);
 
-		text.clear();
-		for(std::set<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgbcc.begin(); pit != msgInfo.rspeerid_msgbcc.end(); ++pit) {
-			link = RetroShareLink::createMessage(*pit, "");
-			if (link.valid())
-				text += link.toHtml() + "   ";
-		}
-		for(std::set<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgbcc.begin(); pit != msgInfo.rsgxsid_msgbcc.end(); ++pit) {
-			link = RetroShareLink::createMessage(*pit, "");
-			if (link.valid())
-				text += link.toHtml() + "   ";
-		}
-
-		ui.bccText->setText(text);
+        ui.trans_BCCText->setText(bcc_text);
 	} else {
 		ui.bccLabel->setVisible(false);
-		ui.bccText->setVisible(false);
-		ui.bccText->clear();
+		ui.trans_BCCText->setVisible(false);
+		ui.trans_BCCText->clear();
 	}
 
 	ui.dateText->setText(DateTime::formatDateTime(msgInfo.ts));
@@ -655,21 +686,24 @@ void MessageWidget::fill(const std::string &msgId)
 //		link.createMessage(ownId, "");
 //	}
 
-	if(msgInfo.msgflags & RS_MSG_DISTANT)	// distant message
+    if(msgInfo.from.type()==Rs::Msgs::MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)	// distant message
 	{
-		tooltip_string = PeerDefs::rsidFromId(msgInfo.rsgxsid_srcId) ;
-		link = RetroShareLink::createMessage(msgInfo.rsgxsid_srcId, "");
+        tooltip_string = PeerDefs::rsidFromId(msgInfo.from.toGxsId()) ;
+        link = RetroShareLink::createMessage(msgInfo.from.toGxsId(), "");
 	}
 	else
 	{
-		tooltip_string = PeerDefs::rsidFromId(msgInfo.rspeerid_srcId) ;
-		link = RetroShareLink::createMessage(msgInfo.rspeerid_srcId, "");
+        tooltip_string = PeerDefs::rsidFromId(msgInfo.from.toRsPeerId()) ;
+        link = RetroShareLink::createMessage(msgInfo.from.toRsPeerId(), "");
 	}
 
-	if (((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) || msgInfo.rspeerid_srcId.isNull()) {
+    if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.from.toRsPeerId() == ownId)
+    {
 		ui.fromText->setText("[Notification]");
 		if (toolButtonReply) toolButtonReply->setEnabled(false);
-	} else {
+    }
+    else
+    {
 		ui.fromText->setText(link.toHtml());
 		ui.fromText->setToolTip(tooltip_string) ;
 		if (toolButtonReply) toolButtonReply->setEnabled(true);
@@ -683,7 +717,7 @@ void MessageWidget::fill(const std::string &msgId)
 	if (Settings->valueFromGroup(QString("Messages"), QString::fromUtf8("Emoticons"), true).toBool()) {
 		formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
 	}
-	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), formatTextFlag);
+    QString text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), formatTextFlag);
 	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
 	ui.msgText->setHtml(text);
 
@@ -704,7 +738,8 @@ void MessageWidget::remove()
 		return;
 	}
 
-	bool deleteReal = false;
+#ifdef TO_REMOVE
+    bool deleteReal = false;
 	if (msgInfo.msgflags & RS_MSG_TRASH) {
 		deleteReal = true;
 	} else {
@@ -729,8 +764,8 @@ void MessageWidget::remove()
 			deleteLater();
 		}
 	}
-
-	emit messageRemoved();
+#endif
+    emit messageRemovalRequested(currMsgId);
 }
 
 void MessageWidget::print()
@@ -860,19 +895,19 @@ void MessageWidget::loadImagesAlways()
 
 void MessageWidget::sendInvite()
 {
-	MessageInfo mi;
+    MessageInfo mi;
 
-	if (!rsMail) 
-		return;
+    if (!rsMail)
+        return;
 
-	if (!rsMail->getMessage(currMsgId, mi))
-		return;
+    if (!rsMail->getMessage(currMsgId, mi))
+        return;
 
-    //if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
-	//{
-      MessageComposer::sendInvite(mi.rsgxsid_srcId,false);
-	//}
+    if(mi.from.type()!=MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+        return;
 
+    //if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want to send an invite with your Certificate?"),QMessageBox::Yes, QMessageBox::No))== QMessageBox::Yes)
+    MessageComposer::sendInvite(mi.from.toGxsId(),false);
 }
 
 void MessageWidget::setToolbarButtonStyle(Qt::ToolButtonStyle style)
@@ -916,4 +951,15 @@ void MessageWidget::checkLength()
 	text = tr("%1 (%2) ").arg(charlength).arg(misc::friendlyUnit(charlength));
 
 	ui.sizeLabel->setText(text);
+}
+
+void MessageWidget::expandTo()
+{
+	if (ui.expandButton->isChecked()) {
+		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*3.5);
+		ui.expandButton->setToolTip(tr("Show less"));
+	} else {
+		ui.trans_ToText->setMaximumHeight(ui.trans_ToText->fontMetrics().lineSpacing()*1.5);
+		ui.expandButton->setToolTip(tr("Show more"));
+	}
 }

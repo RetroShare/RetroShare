@@ -1,6 +1,6 @@
 # RetroShare service qmake build script
 #
-# Copyright (C) 2018-2019, Gioacchino Mazzurco <gio@eigenlab.org>
+# Copyright (C) 2018-2021, Gioacchino Mazzurco <gio@eigenlab.org>
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU Affero General Public License as published by the
@@ -22,9 +22,6 @@
 
 TARGET = retroshare-service
 
-QT += core
-QT -= gui
-
 !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 
 SOURCES += retroshare-service.cc
@@ -32,8 +29,6 @@ SOURCES += retroshare-service.cc
 ################################# Linux ##########################################
 
 android-* {
-    QT += androidextras
-
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
     DISTFILES += android/AndroidManifest.xml \
@@ -45,6 +40,9 @@ android-* {
         android/build.gradle \
         android/gradle/wrapper/gradle-wrapper.properties \
         android/gradlew.bat
+
+    SOURCES -= retroshare-service.cc
+    SOURCES += retroshare-service-android.cc
 }
 
 
@@ -89,16 +87,7 @@ macx {
 ################################# Windows ##########################################
 
 win32-g++|win32-clang-g++ {
-	CONFIG(debug, debug|release) {
-		# show console output
-		CONFIG += console
-	} else {
-		CONFIG -= console
-	}
-
-	# Switch on extra warnings
-	QMAKE_CFLAGS += -Wextra
-	QMAKE_CXXFLAGS += -Wextra
+	CONFIG += console
 
 	CONFIG(debug, debug|release) {
 	} else {

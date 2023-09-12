@@ -113,7 +113,6 @@ CONFIG += gxscircles
 
 # Other Disabled Bits.
 #CONFIG += framecatcher
-#CONFIG += blogs
 
 ## To enable unfinished services
 #CONFIG += wikipoos
@@ -147,11 +146,11 @@ unix {
 	target.path = "$${BIN_DIR}"
 	INSTALLS += target
 
-	data_files.path="$${DATA_DIR}/"
+        data_files.path="$${RS_DATA_DIR}/"
 	data_files.files=sounds qss
 	INSTALLS += data_files
 
-	style_files.path="$${DATA_DIR}/stylesheets"
+        style_files.path="$${RS_DATA_DIR}/stylesheets"
 	style_files.files=gui/qss/chat/Bubble gui/qss/chat/Bubble_Compact
 	INSTALLS += style_files
 
@@ -218,10 +217,6 @@ win32-g++|win32-clang-g++ {
 		CONFIG -= console
 	}
 
-	# Switch on extra warnings
-	QMAKE_CFLAGS += -Wextra
-	QMAKE_CXXFLAGS += -Wextra
-
 	CONFIG(debug, debug|release) {
 	} else {
 		# Tell linker to use ASLR protection
@@ -280,13 +275,22 @@ macx {
 	mac_icon.files = $$files($$PWD/rsMacIcon.icns)
 	mac_icon.path = Contents/Resources
 	QMAKE_BUNDLE_DATA += mac_icon
+	dplQSS.files = $$PWD/qss
+	dplQSS.path = Contents/Resources
+	QMAKE_BUNDLE_DATA += dplQSS
+	dplChatStyles.files = \
+		$$PWD/gui/qss/chat/Bubble \
+		$$PWD/gui/qss/chat/Bubble_Compact
+	dplChatStyles.path = Contents/Resources/stylesheets
+	QMAKE_BUNDLE_DATA += dplChatStyles 
 #	mac_webui.files = $$files($$PWD/../../libresapi/src/webui)
 #	mac_webui.path = Contents/Resources
 #	QMAKE_BUNDLE_DATA += mac_webui
 
+	OBJECTS_DIR = temp/obj
+
 	CONFIG += version_detail_bash_script
-        LIBS += -lssl -lcrypto -lz 
-        #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
+	LIBS += -lssl -lcrypto -lz 
 	for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
@@ -354,46 +358,6 @@ wikipoos {
 }
 
 ################################### HEADERS & SOURCES #############################
-
-# Tor controller
-
-HEADERS += 	TorControl/AddOnionCommand.h \
-           	TorControl/AuthenticateCommand.h \
-           	TorControl/CryptoKey.h \
-           	TorControl/GetConfCommand.h \
-           	TorControl/HiddenService.h \
-           	TorControl/PendingOperation.h  \
-           	TorControl/ProtocolInfoCommand.h \
-           	TorControl/SecureRNG.h \
-           	TorControl/SetConfCommand.h \
-           	TorControl/Settings.h \
-           	TorControl/StrUtil.h \
-           	TorControl/TorControl.h \
-           	TorControl/TorControlCommand.h \
-           	TorControl/TorControlSocket.h \
-           	TorControl/TorManager.h \
-           	TorControl/TorProcess.h \
-           	TorControl/TorProcess_p.h \
-           	TorControl/TorSocket.h \
-           	TorControl/Useful.h
-
-SOURCES += 	TorControl/AddOnionCommand.cpp \
-				TorControl/AuthenticateCommand.cpp \
-				TorControl/GetConfCommand.cpp \
-				TorControl/HiddenService.cpp \
-				TorControl/ProtocolInfoCommand.cpp \
-				TorControl/SetConfCommand.cpp \
-				TorControl/TorControlCommand.cpp \
-				TorControl/TorControl.cpp \
-				TorControl/TorControlSocket.cpp \
-				TorControl/TorManager.cpp \
-				TorControl/TorProcess.cpp \
-				TorControl/TorSocket.cpp \
-				TorControl/CryptoKey.cpp         \
-				TorControl/PendingOperation.cpp  \
-				TorControl/SecureRNG.cpp         \
-				TorControl/Settings.cpp          \
-				TorControl/StrUtil.cpp        
 
 # Input
 HEADERS +=  rshare.h \
@@ -562,6 +526,7 @@ HEADERS +=  rshare.h \
             gui/common/TagDefs.h \
             gui/common/GroupDefs.h \
             gui/common/Emoticons.h \
+            gui/common/RSComboBox.h \
             gui/common/RSListWidgetItem.h \
             gui/common/RSTextEdit.h \
             gui/common/RSPlainTextEdit.h \
@@ -597,8 +562,6 @@ HEADERS +=  rshare.h \
             gui/common/RsBanListToolButton.h \
             gui/common/FlowLayout.h \
             gui/common/PictureFlow.h \
-            gui/common/StyledLabel.h \
-            gui/common/StyledElidedLabel.h \
             gui/common/ToasterNotify.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
@@ -891,6 +854,7 @@ SOURCES +=  main.cpp \
             gui/common/TagDefs.cpp \
             gui/common/GroupDefs.cpp \
             gui/common/Emoticons.cpp \
+            gui/common/RSComboBox.cpp \
             gui/common/RSListWidgetItem.cpp \
             gui/common/RSTextEdit.cpp \
             gui/common/RSPlainTextEdit.cpp \
@@ -926,8 +890,6 @@ SOURCES +=  main.cpp \
             gui/common/RsBanListToolButton.cpp \
             gui/common/FlowLayout.cpp \
             gui/common/PictureFlow.cpp \
-            gui/common/StyledLabel.cpp \
-            gui/common/StyledElidedLabel.cpp \
             gui/common/ToasterNotify.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
@@ -1038,7 +1000,9 @@ SOURCES +=  main.cpp \
 #            gui/feeds/ChanNewItem.cpp \
 #            gui/feeds/ChanMsgItem.cpp \
 
-RESOURCES += gui/images.qrc gui/icons.qrc lang/lang.qrc gui/help/content/content.qrc gui/emojione.qrc
+RESOURCES += gui/images.qrc gui/icons.qrc lang/lang.qrc gui/help/content/content.qrc gui/emojione.qrc \
+  gui/qss/stylesheet/qdarkstyle/dark/Standard_Dark.qrc \
+  gui/qss/stylesheet/qdarkstyle/light/Standard_Light.qrc
 
 TRANSLATIONS +=  \
             lang/retroshare_ca_ES.ts \
@@ -1121,6 +1085,14 @@ DEFINES *= CHANNELS_FRAME_CATCHER
 
 }
 
+# Embedded Friend Server
+
+rs_efs {
+	DEFINES *= RS_EMBEDED_FRIEND_SERVER
+        SOURCES += gui/FriendServerControl.cpp
+        HEADERS += gui/FriendServerControl.h
+        FORMS   += gui/FriendServerControl.ui
+}
 
 # BELOW IS GXS Unfinished Services.
 	
@@ -1248,6 +1220,7 @@ gxsthewire {
 		gui/TheWire/PulseReply.h \
 		gui/TheWire/PulseReplySeperator.h \
 		gui/TheWire/PulseMessage.h \
+                gui/TheWire/CustomFrame.h \
 
 	FORMS += gui/TheWire/WireDialog.ui \
 		gui/TheWire/WireGroupItem.ui \
@@ -1270,6 +1243,7 @@ gxsthewire {
 		gui/TheWire/PulseReply.cpp \
 		gui/TheWire/PulseReplySeperator.cpp \
 		gui/TheWire/PulseMessage.cpp \
+                gui/TheWire/CustomFrame.cpp \
 
 	RESOURCES += gui/TheWire/TheWire_images.qrc
 }

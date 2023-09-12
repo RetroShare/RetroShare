@@ -20,27 +20,30 @@
 
 #include "QuickStartWizard.h"
 
-#include <QFileDialog>
-#include <QSettings>
-#include <QCheckBox>
-#include <QMessageBox>
-#include <QComboBox>
-#include <QHeaderView>
-
-#include <retroshare/rsfiles.h>
-#include <retroshare/rsconfig.h>
-#include <retroshare/rspeers.h>
-#include <retroshare/rstypes.h>
+#include "gui/common/FilesDefs.h"
+#ifdef USE_COMBOBOX
+#include "gui/common/RSComboBox.h"
+#endif
 #include "settings/rsharesettings.h"
 #include "util/QtVersion.h"
-#include "gui/common/FilesDefs.h"
+
+#include "retroshare/rsfiles.h"
+#include "retroshare/rsconfig.h"
+#include "retroshare/rspeers.h"
+#include "retroshare/rstypes.h"
+
+#include <QCheckBox>
+#include <QFileDialog>
+#include <QHeaderView>
+#include <QMessageBox>
+#include <QSettings>
 
 QuickStartWizard::QuickStartWizard(QWidget *parent) :
     QDialog(parent)
 {
     ui.setupUi(this);
 
-    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/rs_wizard.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/tools_wizard.png"));
     ui.headerFrame->setHeaderText("RetroShare");
 
 	  ui.pagesWizard->setCurrentIndex(0);
@@ -53,7 +56,7 @@ QuickStartWizard::QuickStartWizard(QWidget *parent) :
 //	   ui.checkBoxF2FRouting->setChecked(true) ;
 //	   ui.checkBoxF2FRouting->setEnabled(false) ;
 	  
-	  connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
+	  connect( ui.netModeComboBox, SIGNAL( activated(int) ), this, SLOT( toggleUPnP() ) );
 //	  connect( ui.checkBoxTunnelConnection, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
 	  
 //	  bool b = rsPeers->getAllowTunnelConnection() ;
@@ -299,7 +302,7 @@ void QuickStartWizard::loadShare()
 		listWidget->insertRow(row) ;
 		listWidget->setItem(row,0,new QTableWidgetItem(QString::fromStdString((*it).filename)));
 #ifdef USE_COMBOBOX
-		QComboBox *cb = new QComboBox ;
+		RSComboBox *cb = new RSComboBox ;
 		cb->addItem(tr("Network Wide")) ;
 		cb->addItem(tr("Browsable")) ;
 		cb->addItem(tr("Universal")) ;
@@ -494,7 +497,6 @@ void QuickStartWizard::loadNetwork()
 
 void QuickStartWizard::saveChanges()
 {
-	QString str;
 
 	//bool saveAddr = false;
 

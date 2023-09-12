@@ -25,6 +25,7 @@
 #include "gui/Circles/CirclesDialog.h"
 #include "gui/Circles/CreateCircleDialog.h"
 #include "gui/common/UIStateHelper.h"
+#include "util/qtthreadsutils.h"
 
 #include <retroshare/rsgxscircles.h>
 #include <retroshare/rspeers.h>
@@ -72,9 +73,6 @@ CirclesDialog::CirclesDialog(QWidget *parent)
 
 	connect(ui.treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
 
-	/* Setup TokenQueue */
-	mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
-	
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * membership_header = ui.treeWidget_membership->header () ;
 	membership_header->resizeSection ( CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 200 );
@@ -82,7 +80,6 @@ CirclesDialog::CirclesDialog(QWidget *parent)
 
 CirclesDialog::~CirclesDialog()
 {
-	delete mCircleQueue;
 }
 
 void CirclesDialog::todo()
@@ -564,37 +561,35 @@ void CirclesDialog::requestGroupMeta()
 {
 	mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, true);
 
-	std::cerr << "CirclesDialog::requestGroupMeta()";
-	std::cerr << std::endl;
+    RsThread::async([this]()
+    {
+        std::list<RsGroupMetaData> circles;
 
-	mCircleQueue->cancelActiveRequestTokens(CIRCLESDIALOG_GROUPMETA);
+        if(!rsGxsCircles->getCirclesSummaries(circles))
+        {
+            std::cerr << __PRETTY_FUNCTION__ << " failed to get circles summaries " << std::endl;
+            return;
+        }
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+        RsQThreadUtils::postToObject( [this,circles]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete, note that
+             * Qt::QueuedConnection is important!
+             */
 
-	uint32_t token;
-	mCircleQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, CIRCLESDIALOG_GROUPMETA);
+            loadGroupMeta(circles);
+
+        }, this );
+    });
 }
 
-void CirclesDialog::loadGroupMeta(const uint32_t &token)
+void CirclesDialog::loadGroupMeta(const std::list<RsGroupMetaData>& groupInfo)
 {
 	mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, false);
 
-	std::cerr << "CirclesDialog::loadGroupMeta()";
-	std::cerr << std::endl;
-
 	ui.treeWidget_membership->clear();
-
-	std::list<RsGroupMetaData> groupInfo;
-	std::list<RsGroupMetaData>::iterator vit;
-
-	if (!rsGxsCircles->getGroupSummary(token,groupInfo))
-	{
-		std::cerr << "CirclesDialog::loadGroupMeta() Error getting GroupMeta";
-		std::cerr << std::endl;
-		mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, false);
-		return;
-	}
 
 	mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
 
@@ -615,7 +610,7 @@ void CirclesDialog::loadGroupMeta(const uint32_t &token)
 	externalOtherCirclesItem->setText(0, tr("External Circles (Other)"));
 	ui.treeWidget_membership->addTopLevelItem(externalOtherCirclesItem);
 
-	for(vit = groupInfo.begin(); vit != groupInfo.end(); ++vit)
+    for(auto vit = groupInfo.begin(); vit != groupInfo.end(); ++vit)
 	{
 		/* Add Widget, and request Pages */
 		std::cerr << "CirclesDialog::loadGroupMeta() GroupId: " << vit->mGroupId;
@@ -644,28 +639,6 @@ void CirclesDialog::loadGroupMeta(const uint32_t &token)
 			{
 				externalOtherCirclesItem->addChild(groupItem);
 			}
-		}
-	}
-}
-
-void CirclesDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-	std::cerr << "CirclesDialog::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
-	
-	if (queue == mCircleQueue)
-	{
-		/* now switch on req */
-		switch(req.mUserType)
-		{
-			case CIRCLESDIALOG_GROUPMETA:
-				loadGroupMeta(req.mToken);
-				break;
-
-			default:
-				std::cerr << "CirclesDialog::loadRequest() ERROR: INVALID TYPE";
-				std::cerr << std::endl;
-				break;
 		}
 	}
 }

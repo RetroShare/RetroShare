@@ -16,7 +16,7 @@
     <verstretch>1</verstretch>
    </sizepolicy>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="SearchDialog_VL">
    <item>
     <widget class="QFrame" name="titleBarFrame">
      <property name="sizePolicy">
@@ -31,7 +31,7 @@
      <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <layout class="QHBoxLayout" name="titleBarFrame_HL">
       <property name="leftMargin">
        <number>3</number>
       </property>
@@ -45,42 +45,27 @@
        <number>3</number>
       </property>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="searchButton_HL">
         <property name="spacing">
          <number>2</number>
         </property>
         <item>
          <widget class="QFrame" name="searchLineFrame">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>22</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>22</height>
-           </size>
-          </property>
-          <layout class="QGridLayout" name="gridLayout">
+          <layout class="QGridLayout" name="searchLineFrame_GL">
            <property name="leftMargin">
-            <number>0</number>
+            <number>2</number>
            </property>
            <property name="topMargin">
-            <number>0</number>
+            <number>2</number>
            </property>
            <property name="rightMargin">
-            <number>0</number>
+            <number>2</number>
            </property>
            <property name="bottomMargin">
-            <number>0</number>
+            <number>2</number>
            </property>
-           <property name="horizontalSpacing">
+           <property name="spacing">
             <number>0</number>
-           </property>
-           <property name="verticalSpacing">
-            <number>1</number>
            </property>
            <item row="0" column="0">
             <widget class="LineEditClear" name="lineEdit">
@@ -93,7 +78,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButtonSearch">
+         <widget class="QPushButton" name="searchButton">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="focusPolicy">
            <enum>Qt::NoFocus</enum>
           </property>
@@ -223,6 +215,9 @@
       <property name="sortingEnabled">
        <bool>true</bool>
       </property>
+      <property name="animated">
+       <bool>false</bool>
+      </property>
       <column>
        <property name="text">
         <string>KeyWords</string>
@@ -260,6 +255,9 @@
          </property>
          <property name="sortingEnabled">
           <bool>true</bool>
+         </property>
+         <property name="animated">
+          <bool>false</bool>
          </property>
          <column>
           <property name="text">
@@ -336,14 +334,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="FileTypeComboBox">
+          <widget class="RSComboBox" name="FileTypeComboBox">
            <item>
             <property name="text">
              <string>Any</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/FileTypeAny.png</normaloff>:/images/FileTypeAny.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/filetype/any.svg</normaloff>:/icons/filetype/any.svg</iconset>
             </property>
            </item>
            <item>
@@ -351,8 +349,8 @@
              <string>Archive</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/FileTypeArchive.png</normaloff>:/images/FileTypeArchive.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/filetype/archive.svg</normaloff>:/icons/filetype/archive.svg</iconset>
             </property>
            </item>
            <item>
@@ -360,8 +358,8 @@
              <string>Audio</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/FileTypeAudio.png</normaloff>:/images/FileTypeAudio.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/filetype/audio.svg</normaloff>:/icons/filetype/audio.svg</iconset>
             </property>
            </item>
            <item>
@@ -369,8 +367,8 @@
              <string>CD-Image</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/FileTypeCDImage.png</normaloff>:/images/FileTypeCDImage.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/filetype/img.svg</normaloff>:/icons/filetype/img.svg</iconset>
             </property>
            </item>
            <item>
@@ -378,8 +376,8 @@
              <string>Document</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/FileTypeDocument.png</normaloff>:/images/FileTypeDocument.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/filetype/document.svg</normaloff>:/icons/filetype/document.svg</iconset>
             </property>
            </item>
            <item>
@@ -387,8 +385,8 @@
              <string>Picture</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/FileTypePicture.png</normaloff>:/images/FileTypePicture.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/filetype/picture.svg</normaloff>:/icons/filetype/picture.svg</iconset>
             </property>
            </item>
            <item>
@@ -396,8 +394,8 @@
              <string>Program</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/FileTypeProgram.png</normaloff>:/images/FileTypeProgram.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/filetype/program.svg</normaloff>:/icons/filetype/program.svg</iconset>
             </property>
            </item>
            <item>
@@ -405,8 +403,8 @@
              <string>Video</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/FileTypeVideo.png</normaloff>:/images/FileTypeVideo.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/filetype/video.svg</normaloff>:/icons/filetype/video.svg</iconset>
             </property>
            </item>
            <item>
@@ -414,8 +412,8 @@
              <string>Directory</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/foldermail.png</normaloff>:/images/foldermail.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/folder.png</normaloff>:/icons/folder.png</iconset>
             </property>
            </item>
           </widget>
@@ -461,14 +459,19 @@
    <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>SearchTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>gui/SearchTreeWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -334,6 +334,29 @@ void RsHtml::replaceAnchorWithImg(QDomDocument &doc, QDomElement &element, QText
 	element.appendChild(img);
 }
 
+void RsHtml::filterEmbeddedImages(QDomDocument &doc, QDomElement &currentElement)
+{
+	QDomNodeList children = currentElement.childNodes();
+	for(uint index = 0; index < (uint)children.length(); index++) {
+		QDomNode node = children.item(index);
+		if(node.isElement()) {
+			QDomElement element = node.toElement();
+			if(element.tagName().toLower() == "img") {
+				if(element.hasAttribute("src")) {
+					QString src = element.attribute("src");
+					// Do not allow things in the image source, except these:
+					// :/          internal resource		needed for emotes
+					// data:image  base64 embedded image	needed for stickers
+					if(!src.startsWith(":/") && !src.startsWith("data:image", Qt::CaseInsensitive)) {
+						element.setAttribute("src", ":/images/imageblocked_24.png");
+					}
+				}
+			}
+			filterEmbeddedImages(doc, element);
+		}
+	}
+}
+
 int RsHtml::indexInWithValidation(QRegExp &rx, const QString &text, EmbedInHtml &embedInfos, int pos)
 {
 	int index = rx.indexIn(text, pos);
@@ -618,13 +641,17 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 
 	QString errorMsg; int errorLine; int errorColumn;
 
-  QDomDocument doc;
+	QDomDocument doc;
 	if (doc.setContent(formattedText, &errorMsg, &errorLine, &errorColumn) == false) {
 
-		// convert text with QTextBrowser
-		QTextBrowser textBrowser;
-		textBrowser.setText(text);
-		formattedText=textBrowser.toHtml();
+		// convert text with QTextDocument
+		QTextDocument textDoc;
+		if (Qt::mightBeRichText(formattedText))
+			textDoc.setHtml(formattedText);
+		else
+			textDoc.setPlainText(text);
+
+		formattedText=textDoc.toHtml();
 		formattedText.remove(0,formattedText.indexOf("<"));
 		formattedText=saveSpace(formattedText);
 		doc.setContent(formattedText, &errorMsg, &errorLine, &errorColumn);
@@ -632,6 +659,7 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 	}
 
 	QDomElement body = doc.documentElement();
+	filterEmbeddedImages(doc, body);	// This should be first, becuse it should not overwrite embedded custom smileys
 	if (flag & RSHTML_FORMATTEXT_EMBED_SMILEYS) {
 		embedHtml(textDocument, doc, body, defEmbedImg, flag);
 	}
@@ -1188,7 +1216,7 @@ bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, 
 		fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", fileName.toLatin1().constData());
 		return false;
 	}
-	return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels, maxBytes);
+    return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels, maxBytes);
 }
 
 /** Converts image to embedded image HTML fragment **/
@@ -1196,7 +1224,7 @@ bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedIma
 {
 	rstime::RsScopeTimer s("Embed image");
 	QImage opt;
-	return ImageUtil::optimizeSizeHtml(embeddedImage, originalImage, opt, maxPixels, maxBytes);
+    return ImageUtil::optimizeSizeHtml(embeddedImage, originalImage, opt, maxPixels, maxBytes);
 }
 
 QString RsHtml::plainText(const QString &text)

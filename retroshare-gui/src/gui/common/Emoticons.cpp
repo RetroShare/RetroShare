@@ -51,7 +51,7 @@ static QHash<QString, QPixmap> iconcache;
 void Emoticons::load()
 {
 	loadSmiley();
-	filters << "*.png" << "*.jpg" << "*.gif";
+	filters << "*.png" << "*.jpg" << "*.jpeg" << "*.gif" << "*.webp";
 	stickerFolders << (QString::fromStdString(RsAccounts::AccountDirectory()) + "/stickers");		//under account, unique for user
 	stickerFolders << (QString::fromStdString(RsAccounts::ConfigDirectory()) + "/stickers");		//under .retroshare, shared between users
 	stickerFolders << (QString::fromStdString(RsAccounts::systemDataDirectory()) + "/stickers");	//exe's folder, shipped with RS
@@ -205,10 +205,11 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 			// (Cyril) Never use an absolute size. It needs to be scaled to the actual font size on the screen.
 			//
 			QFontMetricsF fm(parent->font()) ;
-			smTab->setIconSize(QSize(28*fm.height()/14.0,28*fm.height()/14.0));
+			QSize size(28*fm.height()/14.0,28*fm.height()/14.0);
+			smTab->setIconSize(size);
 			smTab->setMinimumWidth(400);
 			smTab->setTabPosition(QTabWidget::South);
-			smTab->setStyleSheet("QTabBar::tab { height: 44px; width: 44px; }");
+			smTab->setStyleSheet(QString("QTabBar::tab { height: %1px; width: %1px; padding: 0px; margin: 0px;}").arg(size.width()*1.1));
 
 			if (groupName.right(4).toLower() == ".png")
                 smTab->addTab( tabGrpWidget, FilesDefs::getIconFromQtResourcePath(groupName), "");

@@ -22,6 +22,7 @@
 #define _MESSAGEWIDGET_H
 
 #include <QWidget>
+#include <retroshare/rsevents.h>
 #include "ui_MessageWidget.h"
 
 class QToolButton;
@@ -60,6 +61,7 @@ public:
 
 signals:
 	void messageRemoved();
+    void messageRemovalRequested(std::string);
 
 private slots:
 	void reply();
@@ -71,11 +73,10 @@ private slots:
 	void saveAs();
 	void refill();
 	void sendInvite();
-
+	void expandTo();
 
 	void msgfilelistWidgetCostumPopupMenu(QPoint);
 	void messagesTagsChanged();
-	void messagesChanged();
 
 	void togglefileview(bool noUpdate = false);
 	void getcurrentrecommended();
@@ -93,11 +94,14 @@ private:
 	void showTagLabels();
 	void setToolbarButtonStyle(Qt::ToolButtonStyle style);
 
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+
 	bool isControlled;
 	bool isWindow;
 	std::string currMsgId;
 	unsigned int currMsgFlags;
 	bool expandFiles;
+	RsEventsHandlerId_t mEventHandlerId;
 
 	QList<QLabel*> tagLabels;
 

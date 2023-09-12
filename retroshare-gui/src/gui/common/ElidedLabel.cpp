@@ -126,7 +126,12 @@ bool ElidedLabel::paintElidedLine( QPainter* painter, QString plainText
 	to.setWrapMode(wordWrap ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
 	textLayout.setTextOption(to);
 
-	if (painter) painter->save();
+	if (painter)
+	{
+		useFont.setPointSize(useFont.pointSize()); //Modify it to be copied in painter. Else painter keep defaut font size.
+		painter->save();
+		painter->setFont(useFont);
+	}
 	textLayout.beginLayout();
 	forever {
 		//Get new line for text.
@@ -148,7 +153,7 @@ bool ElidedLabel::paintElidedLine( QPainter* painter, QString plainText
 			QTextLine lineEnd = textLayout.createLine();
 			if (!lineEnd.isValid() && (wordWrap
 #if QT_VERSION < QT_VERSION_CHECK(5,11,0)
-		                               || (fontMetrics.width(lastLine) < cr.width()) ))
+			                           || (fontMetrics.width(lastLine) < cr.width()) ))
 #else
 			                           || (fontMetrics.horizontalAdvance(lastLine) < cr.width()) ))
 #endif
@@ -220,10 +225,7 @@ bool ElidedLabel::paintElidedLine( QPainter* painter, QString plainText
 
 		if(width+iTransX+cr.left() <= cr.right())
 			if (painter)
-			{
-				painter->setFont(useFont);
 				painter->drawText(QPoint(iTransX + cr.left(), y + fontMetrics.ascent() + cr.top()), elidedLastLine);
-			}
 
 		//Draw button to get ToolTip
 #if QT_VERSION < QT_VERSION_CHECK(5,11,0)
@@ -256,7 +258,11 @@ void ElidedLabel::mousePressEvent(QMouseEvent *ev)
 		return; // eat event
 	}
 	QLabel::mousePressEvent(ev);
-	emit clicked(ev->pos());
+
+    if(ev->buttons()==Qt::LeftButton)
+        emit clicked(ev->pos());
+    else if(ev->buttons()==Qt::RightButton)
+        emit rightClicked(ev->pos());
 }
 
 void ElidedLabel::setTextColor(const QColor &color)

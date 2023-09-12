@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>804</width>
+    <width>809</width>
     <height>586</height>
    </rect>
   </property>
@@ -33,7 +33,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QFrame" name="frame_toolbar">
+    <widget class="QFrame" name="toolBarFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -46,7 +46,7 @@
      <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="toolBarFrame_HL">
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -101,14 +101,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QToolButton" name="toolButton_refresh">
-        <property name="text">
-         <string>Refresh</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="groupChooser"/>
+       <widget class="RSComboBox" name="groupChooser"/>
       </item>
       <item>
        <widget class="QToolButton" name="toolButton_Settings">
@@ -134,7 +127,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QFrame" name="frame">
+     <widget class="QFrame" name="plainFrame_GroupSet">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>1</horstretch>
@@ -159,9 +152,9 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="plainFrame_GroupSet_VL">
        <item>
-        <widget class="QComboBox" name="comboBox_groupSet">
+        <widget class="RSComboBox" name="comboBox_groupSet">
          <item>
           <property name="text">
            <string>All</string>
@@ -189,7 +182,6 @@
          <property name="font">
           <font>
            <pointsize>10</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -199,22 +191,22 @@
         </widget>
        </item>
        <item>
-        <widget class="QScrollArea" name="scrollArea_2">
+        <widget class="QScrollArea" name="trans_scrollAreaWidgetContents_groups">
          <property name="widgetResizable">
           <bool>true</bool>
          </property>
-         <widget class="QWidget" name="scrollAreaWidgetContents_groups">
+         <widget class="QWidget" name="groupsWidget">
           <property name="geometry">
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>228</width>
-            <height>488</height>
+            <width>224</width>
+            <height>465</height>
            </rect>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
+          <layout class="QVBoxLayout" name="groupsWidget_VL">
            <item>
-            <spacer name="verticalSpacer_2">
+            <spacer name="groupsWidget_VSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -305,6 +297,11 @@
            </item>
            <item>
             <widget class="QLabel" name="label_viewMode">
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+              </font>
+             </property>
              <property name="text">
               <string>Most Recent</string>
              </property>
@@ -337,7 +334,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="comboBox_filterTime">
+            <widget class="RSComboBox" name="comboBox_filterTime">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -383,7 +380,7 @@
              <x>0</x>
              <y>0</y>
              <width>523</width>
-             <height>484</height>
+             <height>462</height>
             </rect>
            </property>
            <property name="styleSheet">
@@ -429,9 +426,16 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
-  <include location="TheWire_images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="TheWire_images.qrc"/>
  </resources>
  <connections/>
 </ui>

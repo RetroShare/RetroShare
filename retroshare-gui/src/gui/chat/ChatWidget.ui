@@ -32,7 +32,7 @@
       <enum>QLayout::SetMaximumSize</enum>
      </property>
      <item>
-      <widget class="QFrame" name="titleBarFrame">
+      <widget class="QFrame" name="headerBFrame">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -51,7 +51,7 @@
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>
-       <layout class="QHBoxLayout" name="titleBarFrameHLayout">
+       <layout class="QHBoxLayout" name="headerBFrameHLayout">
         <property name="leftMargin">
          <number>2</number>
         </property>
@@ -84,10 +84,12 @@
           <item>
            <layout class="QHBoxLayout" name="nameLayout">
             <item>
-             <widget class="StyledLabel" name="titleLabel">
+             <widget class="QLabel" name="titleLabel">
               <property name="font">
                <font>
+                <pointsize>11</pointsize>
                 <weight>75</weight>
+                <italic>true</italic>
                 <bold>true</bold>
                </font>
               </property>
@@ -100,7 +102,14 @@
              </widget>
             </item>
             <item>
-             <widget class="StyledLabel" name="statusLabel">
+             <widget class="QLabel" name="statusLabel">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
                <string>(Status)</string>
               </property>
@@ -121,14 +130,14 @@
          </layout>
         </item>
         <item>
-         <widget class="QFrame" name="pluginTopFrame">
+         <widget class="QFrame" name="trans_Frame_PluginTop">
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
           </property>
           <property name="frameShadow">
            <enum>QFrame::Plain</enum>
           </property>
-          <layout class="QHBoxLayout" name="pluginTitleFrameHLayout_2">
+          <layout class="QHBoxLayout" name="trans_Frame_PluginTop_HL">
            <property name="spacing">
             <number>3</number>
            </property>
@@ -311,14 +320,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="pluginTitleFrame">
+         <widget class="QFrame" name="trans_Frame_PluginTitle">
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
           </property>
           <property name="frameShadow">
            <enum>QFrame::Plain</enum>
           </property>
-          <layout class="QHBoxLayout" name="pluginTitleFrameHLayout">
+          <layout class="QHBoxLayout" name="trans_Frame_PluginTitle_HL">
            <property name="spacing">
             <number>3</number>
            </property>
@@ -355,12 +364,6 @@
          <height>0</height>
         </size>
        </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
        <layout class="QVBoxLayout" name="chatTextFrameVLayout">
         <property name="leftMargin">
          <number>0</number>
@@ -375,10 +378,19 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QFrame" name="infoFrame">
+         <widget class="QFrame" name="info_Frame">
           <property name="palette">
            <palette>
             <active>
+             <colorrole role="WindowText">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>0</red>
+                <green>0</green>
+                <blue>0</blue>
+               </color>
+              </brush>
+             </colorrole>
              <colorrole role="Base">
               <brush brushstyle="SolidPattern">
                <color alpha="255">
@@ -399,6 +411,15 @@
              </colorrole>
             </active>
             <inactive>
+             <colorrole role="WindowText">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>0</red>
+                <green>0</green>
+                <blue>0</blue>
+               </color>
+              </brush>
+             </colorrole>
              <colorrole role="Base">
               <brush brushstyle="SolidPattern">
                <color alpha="255">
@@ -419,6 +440,15 @@
              </colorrole>
             </inactive>
             <disabled>
+             <colorrole role="WindowText">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>154</red>
+                <green>154</green>
+                <blue>154</blue>
+               </color>
+              </brush>
+             </colorrole>
              <colorrole role="Base">
               <brush brushstyle="SolidPattern">
                <color alpha="255">
@@ -631,7 +661,7 @@ border-image: url(:/images/closepressed.png)
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>30</height>
+                 <height>40</height>
                 </size>
                </property>
                <property name="placeholderText">
@@ -1019,15 +1049,6 @@ border-image: url(:/images/closepressed.png)
     <string>Insert horizontal rule</string>
    </property>
   </action>
-  <action name="actionSave_image">
-   <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/document_save.png</normaloff>:/images/document_save.png</iconset>
-   </property>
-   <property name="text">
-    <string>Save image</string>
-   </property>
-  </action>
   <action name="actionImport_sticker">
    <property name="icon">
     <iconset resource="../icons.qrc">
@@ -1090,21 +1111,6 @@ border-image: url(:/images/closepressed.png)
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/RSTextBrowser.h</header>
-  </customwidget>
-  <customwidget>
    <class>HashBox</class>
    <extends>QScrollArea</extends>
    <header location="global">gui/common/HashBox.h</header>
@@ -1115,11 +1121,20 @@ border-image: url(:/images/closepressed.png)
    <extends>QTextEdit</extends>
    <header location="global">gui/common/MimeTextEdit.h</header>
   </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../WikiPoos/Wiki_images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

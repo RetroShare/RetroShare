@@ -53,7 +53,7 @@ const QString RsMessageModel::FilterString("filtered");
 RsMessageModel::RsMessageModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
-    mCurrentBox = BOX_NONE;
+    mCurrentBox = Rs::Msgs::BoxName::BOX_NONE;
     mQuickViewFilter = QUICK_VIEW_ALL;
     mFilterType = FILTER_TYPE_NONE;
     mFilterStrings.clear();
@@ -88,7 +88,7 @@ int RsMessageModel::rowCount(const QModelIndex& parent) const
 
 int RsMessageModel::columnCount(const QModelIndex &/*parent*/) const
 {
-	return COLUMN_THREAD_NB_COLUMNS ;
+    return COLUMN_THREAD_NB_COLUMNS;
 }
 
 bool RsMessageModel::getMessageData(const QModelIndex& i,Rs::Msgs::MessageInfo& fmpe) const
@@ -167,7 +167,8 @@ QVariant RsMessageModel::headerData(int section, Qt::Orientation /*orientation*/
 		{
 		case COLUMN_THREAD_DATE:         return tr("Date");
 		case COLUMN_THREAD_AUTHOR:       return tr("From");
-		case COLUMN_THREAD_SUBJECT:      return tr("Subject");
+        case COLUMN_THREAD_TO:           return tr("To");
+        case COLUMN_THREAD_SUBJECT:      return tr("Subject");
 		case COLUMN_THREAD_TAGS:         return tr("Tags");
 		default:
 			return QVariant();
@@ -189,8 +190,9 @@ QVariant RsMessageModel::headerData(int section, Qt::Orientation /*orientation*/
         {
         case COLUMN_THREAD_ATTACHMENT: return tr("Click to sort by attachments");
         case COLUMN_THREAD_SUBJECT:    return tr("Click to sort by subject");
-        case COLUMN_THREAD_READ:       return tr("Click to sort by read");
-        case COLUMN_THREAD_AUTHOR:     return tr("Click to sort by from");
+        case COLUMN_THREAD_READ:       return tr("Click to sort by read status");
+        case COLUMN_THREAD_AUTHOR:     return tr("Click to sort by author");
+        case COLUMN_THREAD_TO:         return tr("Click to sort by destination");
         case COLUMN_THREAD_DATE:       return tr("Click to sort by date");
         case COLUMN_THREAD_TAGS:       return tr("Click to sort by tags");
         case COLUMN_THREAD_STAR:       return tr("Click to sort by star");
@@ -269,7 +271,7 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
 	case MsgFlagsRole:       return fmpe.msgflags ;
 	case UnreadRole: 		 return fmpe.msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER);
 	case MsgIdRole:          return QString::fromStdString(fmpe.msgId) ;
-	case SrcIdRole:          return QString::fromStdString(fmpe.srcId.toStdString()) ;
+    case SrcIdRole:          return QString::fromStdString(fmpe.from.toStdString()) ;
 	default:
 		return QVariant();
 	}
@@ -312,6 +314,11 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int /*col
 			if(s.isNull())
 				passes_strings = false;
 			break;
+        case FILTER_TYPE_TO:        s = sortRole(fmpe,COLUMN_THREAD_TO).toString();
+            if(s.isNull())
+                passes_strings = false;
+            break;
+
 		case FILTER_TYPE_DATE:   	s = displayRole(fmpe,COLUMN_THREAD_DATE).toString();
 			break;
 		case FILTER_TYPE_CONTENT:   {
@@ -380,30 +387,35 @@ void RsMessageModel::setFilter(FilterType filter_type, const QStringList& string
 	std::cerr << std::endl;
 #endif
 
-	preMods();
-
 	mFilterType = filter_type;
 	mFilterStrings = strings;
 
-	postMods();
+        if(rowCount() > 0)
+            emit dataChanged(createIndex(0,0),createIndex(rowCount()-1,RsMessageModel::columnCount()-1));
 }
 
 QVariant RsMessageModel::toolTipRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
 {
-	if(column == COLUMN_THREAD_AUTHOR)
+    if(column == COLUMN_THREAD_AUTHOR || column == COLUMN_THREAD_TO)
 	{
 		QString str,comment ;
 		QList<QIcon> icons;
 
-		if(!GxsIdDetails::MakeIdDesc(RsGxsId(fmpe.srcId.toStdString()), true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
+        if(column == COLUMN_THREAD_AUTHOR && !GxsIdDetails::MakeIdDesc(RsGxsId(fmpe.from.toStdString()), true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
 			return QVariant();
 
-		int S = QFontMetricsF(QApplication::font()).height();
-		QImage pix( (*icons.begin()).pixmap(QSize(4*S,4*S)).toImage());
+        if(column == COLUMN_THREAD_TO && !GxsIdDetails::MakeIdDesc(RsGxsId(fmpe.to.toStdString()), true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
+            return QVariant();
+
+        int S = QFontMetricsF(QApplication::font()).height();
+		QImage pix( (*icons.begin()).pixmap(QSize(5*S,5*S)).toImage());
 
 		QString embeddedImage;
-		if(RsHtml::makeEmbeddedImage(pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, 8*S * 8*S))
+		if(RsHtml::makeEmbeddedImage(pix.scaled(QSize(5*S,5*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, -1))
+		{
+			embeddedImage.insert(embeddedImage.indexOf("src="), "style=\"float:left\" ");
 			comment = "<table><tr><td>" + embeddedImage + "</td><td>" + comment + "</td></table>";
+		}
 
 		return comment;
 	}
@@ -426,7 +438,8 @@ QVariant RsMessageModel::sizeHintRole(int col) const
 	case COLUMN_THREAD_SUBJECT:      return QVariant( QSize(factor * 170, factor*14 ));
 	case COLUMN_THREAD_DATE:         return QVariant( QSize(factor * 75 , factor*14 ));
 	case COLUMN_THREAD_AUTHOR:       return QVariant( QSize(factor * 75 , factor*14 ));
-	}
+    case COLUMN_THREAD_TO:           return QVariant( QSize(factor * 75 , factor*14 ));
+    }
 }
 
 QVariant RsMessageModel::authorRole(const Rs::Msgs::MsgInfoSummary& /*fmpe*/,int /*column*/) const
@@ -446,84 +459,138 @@ QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 
 	case COLUMN_THREAD_SPAM:  return QVariant((fmpe.msgflags & RS_MSG_SPAM)? 1:0);
 
-	case COLUMN_THREAD_AUTHOR:{
+    case COLUMN_THREAD_AUTHOR:{
 			QString name;
 
-			if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.srcId.toStdString()),name))
+            if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.from.toStdString()),name))
 				return name;
 			return ""; //Not Found
 		}
-	default:
-		return displayRole(fmpe,column);
+
+    case COLUMN_THREAD_TO:    // fallthrough. In this case, the "to" field is not filled because the msg potentially has multiple destinations.
+    default:
+        return displayRole(fmpe,column);
 	}
 }
 
 QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) const
 {
-	switch(col)
-	{
-		case COLUMN_THREAD_SUBJECT:   return QVariant(QString::fromUtf8(fmpe.title.c_str()));
-		case COLUMN_THREAD_ATTACHMENT:return QVariant(QString::number(fmpe.count));
+    switch(col)
+    {
+    case COLUMN_THREAD_SUBJECT:   return QVariant(QString::fromUtf8(fmpe.title.c_str()));
+    case COLUMN_THREAD_ATTACHMENT:return QVariant(QString::number(fmpe.count));
 
-		case COLUMN_THREAD_STAR:
-		case COLUMN_THREAD_SPAM:
-		case COLUMN_THREAD_READ:return QVariant();
-		case COLUMN_THREAD_DATE:{
-			QDateTime qtime;
-			qtime.setTime_t(fmpe.ts);
+    case COLUMN_THREAD_STAR:
+    case COLUMN_THREAD_SPAM:
+    case COLUMN_THREAD_READ:return QVariant();
+    case COLUMN_THREAD_DATE:{
+        QDateTime qtime;
+        qtime.setTime_t(fmpe.ts);
 
-			return QVariant(DateTime::formatDateTime(qtime));
-		}
+        return QVariant(DateTime::formatDateTime(qtime));
+    }
 
-		case COLUMN_THREAD_TAGS:{
-			// Tags
-			Rs::Msgs::MsgTagInfo tagInfo;
-			rsMsgs->getMessageTag(fmpe.msgId, tagInfo);
+    case COLUMN_THREAD_TAGS:{
+        // Tags
+        Rs::Msgs::MsgTagInfo tagInfo;
+        rsMsgs->getMessageTag(fmpe.msgId, tagInfo);
 
-			Rs::Msgs::MsgTagType Tags;
-			rsMsgs->getMessageTagTypes(Tags);
+        Rs::Msgs::MsgTagType Tags;
+        rsMsgs->getMessageTagTypes(Tags);
 
-			QString text;
+        QString text;
 
-			// build tag names
-			for (auto tagit = tagInfo.tagIds.begin(); tagit != tagInfo.tagIds.end(); ++tagit)
-			{
-				if (!text.isNull())
-					text += ",";
+        // build tag names
+        for (auto tag:tagInfo)
+        {
+            if (!text.isNull())
+                text += ",";
 
-				auto Tag = Tags.types.find(*tagit);
+            auto Tag = Tags.types.find(tag);
 
-				if (Tag != Tags.types.end())
-					text += TagDefs::name(Tag->first, Tag->second.first);
-				else
-					RS_WARN("Unknown tag ", (int)Tag->first, " in message ", fmpe.msgId);
-			}
-			return text;
-		}
-		case COLUMN_THREAD_AUTHOR:{
-			QString name;
-			RsGxsId id = RsGxsId(fmpe.srcId.toStdString());
+            if (Tag != Tags.types.end())
+                text += TagDefs::name(Tag->first, Tag->second.first);
+            else
+                RS_WARN("Unknown tag ", (int)Tag->first, " in message ", fmpe.msgId);
+        }
+        return text;
+    }
+    case COLUMN_THREAD_TO: {
+        QString name;
 
-			if(id.isNull())
-				return QVariant(tr("[Notification]"));
-			if(GxsIdTreeItemDelegate::computeName(id,name))
-				return name;
-			return QVariant(tr("[Unknown]"));
-		}
+        switch(mCurrentBox)
+        {
+        case Rs::Msgs::BoxName::BOX_DRAFTS:	// in this case, we display the full list of destinations
+        case Rs::Msgs::BoxName::BOX_TRASH:	// in this case, we display the full list of destinations
+        case Rs::Msgs::BoxName::BOX_SENT:	// in this case, we display the full list of destinations
+        {
+            for(auto d:fmpe.destinations)
+            {
+                QString tmp;
+                GxsIdTreeItemDelegate::computeName(RsGxsId(d.toStdString()),tmp);	// not nice, but works.
+                if(tmp.isNull())
+                    name += QString(tr("[Notification]") + ", ");
+                else
+                    name += tmp + ", " ;
+            }
+            name.chop(2);
+            return name;
+        }
+            break;
+        case Rs::Msgs::BoxName::BOX_NONE:	// in these cases, we display the actual destination
+        case Rs::Msgs::BoxName::BOX_INBOX:	// in these cases, we display the actual destination
+        case Rs::Msgs::BoxName::BOX_OUTBOX:
+        {
+            RsGxsId id = RsGxsId(fmpe.to.toStdString());	// use "to" field, which is populated in Outbox, .
+            if(id.isNull())
+                return QVariant(tr("[Notification]"));
+            else
+            {
+                GxsIdTreeItemDelegate::computeName(id,name);
+                return name;
+            }
+        }
+            break;
+        }
+    }
+        break;
 
-		default:
-		return QVariant("[ TODO ]");
-	}
+    case COLUMN_THREAD_AUTHOR:{
+        QString name;
+        RsGxsId id = RsGxsId(fmpe.from.toStdString());
 
-	return QVariant("[ERROR]");
+        if(id.isNull())
+            return QVariant(tr("[Notification]"));
+        if(GxsIdTreeItemDelegate::computeName(id,name))
+            return name;
+        return QVariant(tr("[Unknown]"));
+    }
+
+    default:
+        return QVariant("[ TODO ]");
+    }
+
+    return QVariant("[ERROR]");
 }
 
 QVariant RsMessageModel::userRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) const
 {
 	switch(col)
     {
-     	case COLUMN_THREAD_AUTHOR:   return QVariant(QString::fromStdString(fmpe.srcId.toStdString()));
-     	case COLUMN_THREAD_MSGID:    return QVariant(QString::fromStdString(fmpe.msgId));
+        case COLUMN_THREAD_AUTHOR:   return QVariant(QString::fromStdString(fmpe.from.toStdString()));
+        case COLUMN_THREAD_MSGID:    return QVariant(QString::fromStdString(fmpe.msgId));
+        case COLUMN_THREAD_TO:
+        {
+            // First check if the .to field is filled.
+
+            if(!fmpe.to.toStdString().empty())
+                return QVariant(QString::fromStdString(fmpe.to.toStdString()));
+
+            // In the Send box, .to is never filled. In this case we look into destinations.
+
+            if(fmpe.destinations.size()==1)
+                return QVariant(QString::fromStdString((*fmpe.destinations.begin()).toStdString()));
+        }
     default:
         return QVariant();
     }
@@ -541,8 +608,8 @@ QVariant RsMessageModel::decorationRole(const Rs::Msgs::MsgInfoSummary& fmpe,int
 		case COLUMN_THREAD_SUBJECT:
 		{
 			if(fmpe.msgflags & RS_MSG_NEW         )  return FilesDefs::getIconFromQtResourcePath(":/images/message-state-new.png");
-			if(fmpe.msgflags & RS_MSG_USER_REQUEST)  return FilesDefs::getIconFromQtResourcePath(":/images/user/user_request16.png");
-			if(fmpe.msgflags & RS_MSG_FRIEND_RECOMMENDATION) return FilesDefs::getIconFromQtResourcePath(":/images/user/friend_suggestion16.png");
+			if(fmpe.msgflags & RS_MSG_USER_REQUEST)  return FilesDefs::getIconFromQtResourcePath(":/images/user/user_request48.png");
+			if(fmpe.msgflags & RS_MSG_FRIEND_RECOMMENDATION) return FilesDefs::getIconFromQtResourcePath(":/images/user/invite24.png");
 			if(fmpe.msgflags & RS_MSG_PUBLISH_KEY) return FilesDefs::getIconFromQtResourcePath(":/images/share-icon-16.png");
 
 			if(fmpe.msgflags & RS_MSG_UNREAD_BY_USER)
@@ -566,8 +633,10 @@ QVariant RsMessageModel::decorationRole(const Rs::Msgs::MsgInfoSummary& fmpe,int
 		case COLUMN_THREAD_SPAM:
 		return FilesDefs::getIconFromQtResourcePath((fmpe.msgflags & RS_MSG_SPAM) ? (IMAGE_SPAM_ON ): (IMAGE_SPAM_OFF));
 
-		case COLUMN_THREAD_AUTHOR://Return icon as place holder.
-		return FilesDefs::getIconFromGxsIdCache(RsGxsId(fmpe.srcId.toStdString()),QIcon(), exist);
+        case COLUMN_THREAD_TO://Return icon as place holder.
+            return FilesDefs::getIconFromGxsIdCache(RsGxsId(fmpe.to.toStdString()),QIcon(), exist);
+        case COLUMN_THREAD_AUTHOR://Return icon as place holder.
+            return FilesDefs::getIconFromGxsIdCache(RsGxsId(fmpe.from.toStdString()),QIcon(), exist);
 	}
 	return QVariant();
 }
@@ -594,7 +663,7 @@ void RsMessageModel::setMessages(const std::list<Rs::Msgs::MsgInfoSummary>& msgs
 	for(auto it(msgs.begin());it!=msgs.end();++it)
 	{
 		mMessagesMap[(*it).msgId] = mMessages.size();
-		mMessages.push_back(*it);
+        mMessages.push_back(*it);
 	}
 
 	// now update prow for all posts
@@ -612,7 +681,7 @@ void RsMessageModel::setMessages(const std::list<Rs::Msgs::MsgInfoSummary>& msgs
 	emit messagesLoaded();
 }
 
-void RsMessageModel::setCurrentBox(BoxName bn)
+void RsMessageModel::setCurrentBox(Rs::Msgs::BoxName bn)
 {
 	if(mCurrentBox != bn)
 	{
@@ -629,38 +698,11 @@ void RsMessageModel::setQuickViewFilter(QuickViewFilter fn)
 		std::cerr << "Changing new quickview filter to " << fn << std::endl;
 #endif
 
-		mQuickViewFilter = fn ;
-		updateMessages();
+        mQuickViewFilter = fn ;
+
+        if(rowCount() > 0)
+            emit dataChanged(createIndex(0,0),createIndex(rowCount()-1,RsMessageModel::columnCount()-1));
 	}
-}
-
-void RsMessageModel::getMessageSummaries(BoxName box,std::list<Rs::Msgs::MsgInfoSummary>& msgs)
-{
-    rsMsgs->getMessageSummaries(msgs);
-
-    // filter out messages that are not in the right box.
-
-    for(auto it(msgs.begin());it!=msgs.end();)
-    {
-        bool ok = false;
-
-        switch(box)
-        {
-		case BOX_INBOX  : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX     && !(it->msgflags & RS_MSG_TRASH); break ;
-        case BOX_SENT   : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_SENTBOX   && !(it->msgflags & RS_MSG_TRASH); break ;
-        case BOX_OUTBOX : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX    && !(it->msgflags & RS_MSG_TRASH); break ;
-        case BOX_DRAFTS : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_DRAFTBOX  && !(it->msgflags & RS_MSG_TRASH); break ;
-        case BOX_TRASH  : ok = (it->msgflags & RS_MSG_TRASH) ; break ;
-        default:
-            			++it;
-                        continue;
-		}
-
-        if(ok)
-            ++it;
-		else
-           it = msgs.erase(it) ;
-    }
 }
 
 void RsMessageModel::updateMessages()
@@ -669,7 +711,7 @@ void RsMessageModel::updateMessages()
 
     std::list<Rs::Msgs::MsgInfoSummary> msgs;
 
-    getMessageSummaries(mCurrentBox,msgs);
+    rsMsgs->getMessageSummaries(mCurrentBox,msgs);
 	setMessages(msgs);
 
     emit messagesLoaded();

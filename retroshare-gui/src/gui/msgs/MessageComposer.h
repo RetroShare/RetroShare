@@ -163,8 +163,8 @@ private slots:
     void tagSet(int tagId, bool set);
     void tagRemoveAll();
     
-    void on_closeInfoFrameButton_clicked();
-    void on_closeSizeLimitFrameButton_clicked();
+    void on_closeInfoFrameButton_Distant_clicked();
+    void on_closeInfoFrameButton_SizeLimit_clicked();
 
     static QString inviteMessage();
 
@@ -172,6 +172,7 @@ private slots:
 
 private:
     static QString buildReplyHeader(const MessageInfo &msgInfo);
+    bool buildMessage(MessageInfo& mi);
 
     void processSettings(bool bLoad);
 
@@ -250,7 +251,7 @@ private:
     std::string m_msgParentId; // parent message id
     std::string m_sDraftMsgId; // existing message id
     enumMessageType m_msgType;
-    std::list<uint32_t> m_tagIds;
+    std::set<uint32_t> m_tagIds;
     QList<QLabel*> tagLabels;
 
     // needed to send system flags with reply
@@ -264,6 +265,7 @@ private:
 	QLabel *lineLabel;
 
 	bool has_gxs;
+    bool mAlreadySent; // prevents a Qt bug that calls the same action twice.
 
     /** Qt Designer generated object */
     Ui::MessageComposer ui;

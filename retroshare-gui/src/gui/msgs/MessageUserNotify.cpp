@@ -22,13 +22,21 @@
 #include "MessageUserNotify.h"
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
+#include "util/qtthreadsutils.h"
+#include "gui/settings/rsharesettings.h"
 
 #include "gui/msgs/MessageInterface.h"
 
 MessageUserNotify::MessageUserNotify(QObject *parent) :
 	UserNotify(parent)
 {
-	connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(updateIcon()));
+	mEventHandlerId = 0;
+	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_STATUS );
+}
+
+MessageUserNotify::~MessageUserNotify()
+{
+	rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 bool MessageUserNotify::hasSetting(QString *name, QString *group)
@@ -71,4 +79,40 @@ QString MessageUserNotify::getNotifyMessage(bool plural)
 void MessageUserNotify::iconClicked()
 {
 	MainWindow::showWindow(MainWindow::Messages);
+}
+
+void MessageUserNotify::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+	if(event->mType != RsEventType::MAIL_STATUS) {
+		return;
+	}
+
+	const RsMailStatusEvent *fe = dynamic_cast<const RsMailStatusEvent*>(event.get());
+	if (!fe) {
+		return;
+	}
+
+	std::set<RsMailMessageId>::const_iterator it;
+
+    switch (fe->mMailStatusEventCode)
+    {
+	case RsMailStatusEventCode::NEW_MESSAGE:
+		for (it = fe->mChangedMsgIds.begin(); it != fe->mChangedMsgIds.end(); ++it) {
+			MessageInfo msgInfo;
+			if (rsMail->getMessage(*it, msgInfo)) {
+					NotifyQt::getInstance()->addToaster(RS_POPUP_MSG, msgInfo.msgId.c_str(), msgInfo.title.c_str(), msgInfo.msg.c_str() );
+			}
+		}
+        updateIcon();
+        break;
+	case RsMailStatusEventCode::MESSAGE_CHANGED:
+	case RsMailStatusEventCode::MESSAGE_REMOVED:
+		updateIcon();
+		break;
+	case RsMailStatusEventCode::MESSAGE_SENT:
+	case RsMailStatusEventCode::TAG_CHANGED:
+	case RsMailStatusEventCode::MESSAGE_RECEIVED_ACK:
+	case RsMailStatusEventCode::SIGNATURE_FAILED:
+		break;
+	}
 }

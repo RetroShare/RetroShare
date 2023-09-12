@@ -23,6 +23,8 @@
 #include "WireGroupDialog.h"
 #include "WireGroupItem.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 
 #include "PulseViewGroup.h"
 #include "PulseReplySeperator.h"
@@ -57,17 +59,14 @@
 
 /** Constructor */
 WireDialog::WireDialog(QWidget *parent)
-: MainPage(parent), mGroupSet(GROUP_SET_ALL)
+    : MainPage(parent), mGroupSet(GROUP_SET_ALL)
+    , mAddDialog(nullptr), mGroupSelected(nullptr), mWireQueue(nullptr)
+    , mHistoryIndex(-1), mEventHandlerId(0)
 {
 	ui.setupUi(this);
 
-	mAddDialog = NULL;
-	mGroupSelected = NULL;
-	mHistoryIndex = -1;
-
 	connect( ui.toolButton_createAccount, SIGNAL(clicked()), this, SLOT(createGroup()));
 	connect( ui.toolButton_createPulse, SIGNAL(clicked()), this, SLOT(createPulse()));
-	connect( ui.toolButton_refresh, SIGNAL(clicked()), this, SLOT(refreshGroups()));
 
 	connect(ui.comboBox_groupSet, SIGNAL(currentIndexChanged(int)), this, SLOT(selectGroupSet(int)));
 	connect(ui.comboBox_filterTime, SIGNAL(currentIndexChanged(int)), this, SLOT(selectFilterTime(int)));
@@ -91,6 +90,48 @@ WireDialog::WireDialog(QWidget *parent)
 
 	// load settings
 	processSettings(true);
+
+    // Needs to be asynced because this function is called by another thread!
+    rsEvents->registerEventsHandler(
+                [this](std::shared_ptr<const RsEvent> event)
+    { RsQThreadUtils::postToObject([=]() { handleEvent_main_thread(event); }, this ); },
+                mEventHandlerId, RsEventType::WIRE );
+}
+
+void WireDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    const RsWireEvent *e = dynamic_cast<const RsWireEvent*>(event.get());
+
+    if(e)
+    {
+
+#ifdef GXSWIRE_DEBUG
+                RsDbg() << " Refreshing the feed if there is a matching event. "<< std::endl;
+#endif
+
+        // The following switch statements refresh the wire feed whenever there is a new event
+        switch(e->mWireEventCode)
+        {
+        case RsWireEventCode::NEW_POST:
+
+        case RsWireEventCode::NEW_REPLY:
+
+        case RsWireEventCode::NEW_LIKE:
+
+        case RsWireEventCode::NEW_REPUBLISH:
+
+        case RsWireEventCode::POST_UPDATED:
+
+        case RsWireEventCode::NEW_WIRE:
+
+        case RsWireEventCode::FOLLOW_STATUS_CHANGED:
+
+        default:
+            refreshGroups();
+            break;
+
+        }
+    }
 }
 
 WireDialog::~WireDialog()
@@ -98,7 +139,10 @@ WireDialog::~WireDialog()
 	// save settings
 	processSettings(false);
 	
-	delete(mWireQueue);
+	clearTwitterView();
+    delete(mWireQueue);
+
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 void WireDialog::processSettings(bool load)
@@ -127,7 +171,7 @@ void WireDialog::refreshGroups()
 
 void WireDialog::addGroup(QWidget *item)
 {
-	QLayout *alayout = ui.scrollAreaWidgetContents_groups->layout();
+	QLayout *alayout = ui.groupsWidget->layout();
 	alayout->addWidget(item);
 }
 
@@ -268,7 +312,7 @@ void WireDialog::deleteGroups()
 
 	mGroupSelected = NULL;
 
-	QLayout *alayout = ui.scrollAreaWidgetContents_groups->layout();
+	QLayout *alayout = ui.groupsWidget->layout();
 	QLayoutItem *item;
 	int i = 0;
 	while (i < alayout->count())
@@ -300,17 +344,28 @@ void WireDialog::updateGroups(std::vector<RsWireGroup>& groups)
 	mOwnGroups.clear();
 	ui.groupChooser->clear();
 
-	std::vector<RsWireGroup>::const_iterator it;
-	for(it = groups.begin(); it != groups.end(); it++) {
+	for(auto &it : groups) {
 		// save list of all groups.
-		mAllGroups[it->mMeta.mGroupId] = *it;
+		mAllGroups[it.mMeta.mGroupId] = it;
 
-		if (it->mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+		if (it.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 		{
 			// grab own groups.
 			// setup Chooser too.
-			mOwnGroups.push_back(*it);
-			ui.groupChooser->addItem(QString::fromStdString(it->mMeta.mGroupName));
+			mOwnGroups.push_back(it); 
+			QPixmap pixmap;
+			if (it.mHeadshot.mData)
+			{
+				if (GxsIdDetails::loadPixmapFromData( it.mHeadshot.mData,it.mHeadshot.mSize,pixmap,GxsIdDetails::ORIGINAL))
+					pixmap = pixmap.scaled(32,32);
+			} 
+			else 
+			{
+				// default.
+				pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(32,32);
+			}
+
+			ui.groupChooser->addItem(QPixmap(pixmap),QString::fromStdString(it.mMeta.mGroupName));
 		}
 	}
 }
@@ -362,16 +417,15 @@ void WireDialog::showGroups()
 	std::list<RsGxsGroupId> allGroupIds;
 
 	/* depends on the comboBox */
-	std::map<RsGxsGroupId, RsWireGroup>::const_iterator it;
-	for (it = mAllGroups.begin(); it != mAllGroups.end(); it++)
+	for (auto &it : mAllGroups)
 	{
 		bool add = (mGroupSet == GROUP_SET_ALL);
-		if (it->second.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
+		if (it.second.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
 			if (mGroupSet == GROUP_SET_OWN) {
 				add = true;
 			}
 		}
-		else if (it->second.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) {
+		else if (it.second.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) {
 			if (mGroupSet == GROUP_SET_SUBSCRIBED) {
 				add = true;
 			}
@@ -383,11 +437,11 @@ void WireDialog::showGroups()
 		}
 
 		if (add) {
-			addGroup(it->second);
+			addGroup(it.second);
 			// request data.
 			std::list<RsGxsGroupId> grpIds;
-			grpIds.push_back(it->second.mMeta.mGroupId);
-			allGroupIds.push_back(it->second.mMeta.mGroupId);
+			grpIds.push_back(it.second.mMeta.mGroupId);
+			allGroupIds.push_back(it.second.mMeta.mGroupId);
 		}
 	}
 
@@ -790,20 +844,21 @@ void WireDialog::showPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId
 		// fetch data from backend.
 		RsWirePulseSPtr pPulse;
 		int type = 0;
-		bool success = rsWire->getPulseFocus(groupId, msgId, type, pPulse);
-
-		// sleep(2);
-
-		/* now insert the pulse + children into the layput */
-		RsQThreadUtils::postToObject([pPulse,this]()
+		if(rsWire->getPulseFocus(groupId, msgId, type, pPulse))
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
+			// sleep(2);
+
+			/* now insert the pulse + children into the layput */
+			RsQThreadUtils::postToObject([pPulse,this]()
+			{
+				/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			postPulseFocus(pPulse);
+				postPulseFocus(pPulse);
 
-		}, this);
+			}, this);
+		}
 	});
 }
 
@@ -822,10 +877,9 @@ void WireDialog::postPulseFocus(RsWirePulseSPtr pPulse)
 
 	addTwitterView(new PulseTopLevel(this, pPulse));
 
-	std::list<RsWirePulseSPtr>::iterator it;
-	for(it = pPulse->mReplies.begin(); it != pPulse->mReplies.end(); it++)
+	for(auto &it : pPulse->mReplies)
 	{
-		RsWirePulseSPtr reply = *it;
+		RsWirePulseSPtr reply = it;
 		PulseReply *firstReply = new PulseReply(this, reply);
 		addTwitterView(firstReply);
 
@@ -857,9 +911,9 @@ void WireDialog::postPulseFocus(RsWirePulseSPtr pPulse)
 		addTwitterView(new PulseReplySeperator());
 	}
 
-	for(it = pPulse->mRepublishes.begin(); it != pPulse->mRepublishes.end(); it++)
+	for(auto &it : pPulse->mRepublishes)
 	{
-		RsWirePulseSPtr repub = *it;
+		RsWirePulseSPtr repub = it;
 
 		PulseReply *firstRepub = new PulseReply(this, repub);
 		firstRepub->showReplyLine(false);
@@ -928,10 +982,9 @@ void WireDialog::postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr
 
 	addTwitterView(new PulseViewGroup(this, group));
 
-	std::list<RsWirePulseSPtr>::iterator it;
-	for(it = pulses.begin(); it != pulses.end(); it++)
+	for(auto &it : pulses)
 	{
-		RsWirePulseSPtr reply = *it;
+		RsWirePulseSPtr reply = it;
 
 		// don't show likes
 		if (reply->mPulseType & WIRE_PULSE_TYPE_LIKE) {
@@ -949,7 +1002,7 @@ void WireDialog::postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr
 	}
 }
 
-void WireDialog::requestGroupsPulses(const std::list<RsGxsGroupId> groupIds)
+void WireDialog::requestGroupsPulses(const std::list<RsGxsGroupId>& groupIds)
 {
 	WireViewHistory view;
 	view.viewType = WireViewType::GROUPS;
@@ -959,7 +1012,7 @@ void WireDialog::requestGroupsPulses(const std::list<RsGxsGroupId> groupIds)
 	showGroupsPulses(groupIds);
 }
 
-void WireDialog::showGroupsPulses(const std::list<RsGxsGroupId> groupIds)
+void WireDialog::showGroupsPulses(const std::list<RsGxsGroupId>& groupIds)
 {
 	clearTwitterView();
 
@@ -968,20 +1021,21 @@ void WireDialog::showGroupsPulses(const std::list<RsGxsGroupId> groupIds)
 	{
 		// fetch data from backend.
 		std::list<RsWirePulseSPtr> pulses;
-		bool success = rsWire->getPulsesForGroups(groupIds, pulses);
-
-		// sleep(2);
-
-		/* now insert the pulse + children into the layput */
-		RsQThreadUtils::postToObject([pulses,this]()
+		if(rsWire->getPulsesForGroups(groupIds, pulses))
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
+			// sleep(2);
+
+			/* now insert the pulse + children into the layput */
+			RsQThreadUtils::postToObject([pulses,this]()
+			{
+				/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			postGroupsPulses(pulses);
+				postGroupsPulses(pulses);
 
-		}, this);
+			}, this);
+		}
 	});
 }
 
@@ -992,10 +1046,9 @@ void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
 
 	ui.label_viewMode->setText("Groups Pulses");
 
-	std::list<RsWirePulseSPtr>::iterator it;
-	for(it = pulses.begin(); it != pulses.end(); it++)
+	for(auto &it : pulses)
 	{
-		RsWirePulseSPtr reply = *it;
+		RsWirePulseSPtr reply = it;
 		// don't show likes
 		if (reply->mPulseType & WIRE_PULSE_TYPE_LIKE) {
 			std::cerr << "WireDialog::postGroupsPulses() Not showing LIKE";

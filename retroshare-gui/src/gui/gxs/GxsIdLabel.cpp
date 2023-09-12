@@ -60,7 +60,10 @@ void GxsIdLabel::setId(const RsGxsId &id)
 {
 	mId = id;
 
-	GxsIdDetails::process(mId, fillLabelCallback, this);
+    if(id.isNull())
+        setText(tr("[Nobody]"));
+    else
+        GxsIdDetails::process(mId, fillLabelCallback, this);
 }
 
 bool GxsIdLabel::getId(RsGxsId &id)

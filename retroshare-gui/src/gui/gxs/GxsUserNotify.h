@@ -24,9 +24,8 @@
 #include <QObject>
 #include "gui/common/UserNotify.h"
 #include "gui/gxs/GxsGroupFrameDialog.h"
-#include "util/TokenQueue.h"
 
-struct RsGxsIfaceHelper;
+class RsGxsIfaceHelper;
 class RsGxsUpdateBroadcastBase;
 
 class GxsUserNotify : public UserNotify
@@ -47,7 +46,6 @@ protected:
 	bool mCountChildMsgs; // Count new child messages?
 
 private:
-	RsGxsUpdateBroadcastBase *mBase;
     const GxsGroupFrameDialog      *mGroupFrameDialog;
 
 	unsigned int mNewThreadMessageCount;

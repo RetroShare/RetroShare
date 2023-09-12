@@ -109,7 +109,7 @@ void WireGroupDialog::prepareWireGroup(RsWireGroup &group, const RsGroupMetaData
 		QBuffer buffer(&ba);
 
 		buffer.open(QIODevice::WriteOnly);
-		pixmap.save(&buffer, "PNG"); // writes image into ba in PNG format
+        pixmap.save(&buffer, "PNG"); // writes image into ba in PNG format
 
 		group.mHeadshot.copy((uint8_t *) ba.data(), ba.size());
 	} else {
@@ -126,7 +126,7 @@ void WireGroupDialog::prepareWireGroup(RsWireGroup &group, const RsGroupMetaData
 		QBuffer buffer(&ba);
 
 		buffer.open(QIODevice::WriteOnly);
-		pixmap.save(&buffer, "JPG");
+        pixmap.save(&buffer, "PNG");
 
 		group.mMasthead.copy((uint8_t *) ba.data(), ba.size());
 	} else {
@@ -152,7 +152,7 @@ bool WireGroupDialog::service_updateGroup(const RsGroupMetaData &editedMeta)
 	std::cerr << "WireGroupDialog::service_updateGroup() submitting changes";
 	std::cerr << std::endl;
 
-	bool success = rsWire->updateGroup(grp);
+    bool success = rsWire->editWire(grp);
 	// TODO updateGroup should refresh groupId or Data
 	return success;
 }

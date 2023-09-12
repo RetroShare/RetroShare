@@ -71,7 +71,7 @@ public:
 	};
 
 public:
-	GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = 0,bool allow_dist_sync=false);
+    GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, const QString& settings_name,QWidget *parent = 0,bool allow_dist_sync=false);
 	virtual ~GxsGroupFrameDialog();
 
 	bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId);

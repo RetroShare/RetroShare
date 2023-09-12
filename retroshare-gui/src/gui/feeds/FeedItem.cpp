@@ -23,7 +23,7 @@
 #include "FeedHolder.h"
 
 /** Constructor */
-FeedItem::FeedItem(FeedHolder *fh, uint32_t feedId, QWidget *parent) : QWidget(parent), mHash(0),mFeedHolder(fh),mFeedId(feedId)
+FeedItem::FeedItem(FeedHolder *fh, uint32_t feedId, QWidget *parent) : QWidget(parent),mFeedHolder(fh),mFeedId(feedId),mHash(0)
 {
 	mWasExpanded = false;
 }

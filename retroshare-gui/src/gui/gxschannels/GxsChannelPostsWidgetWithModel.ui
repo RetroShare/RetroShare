@@ -55,6 +55,13 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string notr="true">Subscribe</string>
         </property>
@@ -77,6 +84,12 @@
       </item>
       <item>
        <widget class="QToolButton" name="postButton">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
         </property>
@@ -181,7 +194,7 @@
    <item>
     <widget class="QTabWidget" name="channel_TW">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -189,12 +202,12 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="StyledElidedLabel" name="channelName_LB">
+        <widget class="ElidedLabel" name="channelName_LB">
          <property name="font">
           <font>
+           <pointsize>25</pointsize>
            <weight>75</weight>
            <bold>true</bold>
-           <strikeout>false</strikeout>
           </font>
          </property>
          <property name="text">
@@ -322,7 +335,7 @@
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Includes all posts, comments and votes. This number is progressively updated when new friend connect. The local vs. at friends difference may indicate that you would get older posts by increasing the synchronization period.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
-              <string>Posts (locally / at friends):</string>
+              <string>Items (locally / at friends):</string>
              </property>
             </widget>
            </item>
@@ -521,7 +534,7 @@ p, li { white-space: pre-wrap; }
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
-               <widget class="QLabel" name="postName_LB">
+               <widget class="ElidedLabel" name="postName_LB">
                 <property name="font">
                  <font>
                   <weight>75</weight>
@@ -645,9 +658,21 @@ p, li { white-space: pre-wrap; }
    <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
+   <class>RSTreeView</class>
+   <extends>QTreeView</extends>
+   <header>gui/common/RSTreeView.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>GxsIdLabel</class>
    <extends>QLabel</extends>
    <header>gui/gxs/GxsIdLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/ElidedLabel.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>SubscribeToolButton</class>
@@ -655,21 +680,10 @@ p, li { white-space: pre-wrap; }
    <header>gui/common/SubscribeToolButton.h</header>
   </customwidget>
   <customwidget>
-   <class>RSTreeView</class>
-   <extends>QTreeView</extends>
-   <header>gui/common/RSTreeView.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>GxsCommentDialog</class>
    <extends>QWidget</extends>
    <header>gui/gxs/GxsCommentDialog.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>StyledElidedLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledElidedLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

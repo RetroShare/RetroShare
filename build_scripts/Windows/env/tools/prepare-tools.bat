@@ -16,6 +16,9 @@ set NSISInstallPath=%EnvToolsPath%\NSIS
 set MinGitInstall=MinGit-2.28.0-32-bit.zip
 set MinGitUrl=https://github.com/git-for-windows/git/releases/download/v2.28.0.windows.1/%MinGitInstall%
 set MinGitInstallPath=%EnvToolsPath%\MinGit
+set DoxygenInstall=doxygen-1.9.6.windows.x64.bin.zip
+set DoxygenUrl=https://github.com/doxygen/doxygen/releases/download/Release_1_9_6/%DoxygenInstall%
+set DoxygenInstallPath=%EnvToolsPath%\doxygen
 set CMakeVersion=cmake-3.19.0-win32-x86
 set CMakeInstall=%CMakeVersion%.zip
 set CMakeUrl=https://github.com/Kitware/CMake/releases/download/v3.19.0/%CMakeInstall%
@@ -135,6 +138,19 @@ if not exist "%MinGitInstallPath%\cmd\git.exe" (
 	"%EnvSevenZipExe%" x -o"%MinGitInstallPath%" "%EnvDownloadPath%\%MinGitInstall%"
 )
 
+if not exist "%EnvDownloadPath%\%DoxygenInstall%" call "%ToolsPath%\remove-dir.bat" "%DoxygenInstallPath%"
+if not exist "%DoxygenInstallPath%\doxygen.exe" (
+	if exist "%DoxygenInstallPath%" call "%ToolsPath%\remove-dir.bat" "%DoxygenInstallPath%"
+
+	%cecho% info "Download Doxygen installation"
+
+	if not exist "%EnvDownloadPath%\%DoxygenInstall%" call "%ToolsPath%\download-file.bat" "%DoxygenUrl%" "%EnvDownloadPath%\%DoxygenInstall%"
+	if not exist "%EnvDownloadPath%\%DoxygenInstall%" %cecho% error "Cannot download doxygen installation" & goto error
+
+	%cecho% info "Unpack Doxygen"
+	"%EnvSevenZipExe%" x -o"%DoxygenInstallPath%" "%EnvDownloadPath%\%DoxygenInstall%"
+)
+
 if not exist "%EnvDownloadPath%\%CMakeInstall%" call "%ToolsPath%\remove-dir.bat" "%CMakeInstallPath%"
 if not exist "%CMakeInstallPath%\bin\cmake.exe" (
 	%cecho% info "Download CMake installation"
@@ -160,7 +176,7 @@ mkdir "%EnvTempPath%"
 call "%ToolsPath%\download-file.bat" "%TorDownloadIndexUrl%" "%EnvTempPath%\index.html"
 if not exist "%EnvTempPath%\index.html" %cecho% error "Cannot download Tor installation" & goto error
 
-for /F "tokens=1,2 delims= " %%A in ('%EnvSedExe% -r -n -e"s/.*href=\"^(.*^)^(tor-win32.*\.zip^)\".*/\2 \1\2/p" "%EnvTempPath%\index.html"') do set TorInstall=%%A& set TorDownloadUrl=%TorProjectUrl%%%B
+for /F "tokens=1,2 delims= " %%A in ('%EnvSedExe% -r -n -e"s/.*href=\"^(.*^)^(tor-.*windows-i686\.tar\.gz^)\".*/\2 \1\2/p" "%EnvTempPath%\index.html"') do set TorInstall=%%A& set TorDownloadUrl=%%B
 call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
 if "%TorInstall%"=="" %cecho% error "Cannot download Tor installation" & goto error
 if "%TorDownloadUrl%"=="" %cecho% error "Cannot download Tor installation" & goto error
@@ -173,7 +189,7 @@ if not exist "%EnvTorPath%\Tor\tor.exe" (
 	if not exist "%EnvDownloadPath%\%TorInstall%" %cecho% error "Cannot download Tor installation" & goto error
 
 	%cecho% info "Unpack Tor"
-	"%EnvSevenZipExe%" x -o"%EnvTorPath%" "%EnvDownloadPath%\%TorInstall%"
+	"%EnvSevenZipExe%" x -so "%EnvDownloadPath%\%TorInstall%" | "%EnvSevenZipExe%" x -si -ttar -o"%EnvTorPath%" 
 )
 
 :exit

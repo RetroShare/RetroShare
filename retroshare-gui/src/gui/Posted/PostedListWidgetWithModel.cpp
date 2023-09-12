@@ -22,6 +22,7 @@
 #include <QMenu>
 #include <QSignalMapper>
 #include <QPainter>
+#include <QClipboard>
 #include <QMessageBox>
 
 #include "retroshare/rsgxscircles.h"
@@ -58,9 +59,7 @@
 // number of posts to show at once.
 #define POSTS_CHUNK_SIZE 25
 
-/****
- * #define DEBUG_POSTED
- ***/
+//#define DEBUG_POSTED
 
 static const int POSTED_TABS_POSTS  = 1;
 
@@ -74,6 +73,7 @@ static const int POSTED_TABS_POSTS  = 1;
 //
 #define IMAGE_COPYLINK     ":/images/copyrslink.png"
 #define IMAGE_AUTHOR       ":/images/user/personal64.png"
+#define IMAGE_COPYHTTP     ":/images/emblem-web.png"
 
 Q_DECLARE_METATYPE(RsPostedPost);
 
@@ -87,8 +87,12 @@ std::ostream& operator<<(std::ostream& o,const QSize& s) { return o << s.width()
 
 void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
+#ifdef DEBUG_POSTED
+	if(option.state & QStyle::State_Selected) RS_DBG("Selected");
+#endif
+
 	if((option.state & QStyle::State_Selected)) // Avoids double display. The selected widget is never exactly the size of the rendered one,
-        return;                                 // so when selected, we only draw the selected one.
+		return;                                 // so when selected, we only draw the selected one.
 
 	// prepare
 	painter->save();
@@ -98,7 +102,7 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 
 	painter->save();
 
-    painter->fillRect( option.rect, option.palette.background());
+    painter->fillRect( option.rect, option.palette.window());
 	painter->restore();
 
     QPixmap pixmap(option.rect.size());
@@ -109,9 +113,9 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
         BoardPostDisplayWidget_compact w(post,displayFlags(post.mMeta.mMsgId),nullptr);
 
         w.setFixedSize(option.rect.size());
-
         w.updateGeometry();
         w.adjustSize();
+
         w.render(&pixmap,QPoint(0,0),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
     }
     else
@@ -121,6 +125,7 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
         w.setFixedSize(option.rect.size());
         w.updateGeometry();
         w.adjustSize();
+
         w.render(&pixmap,QPoint(0,0),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
     }
 
@@ -145,6 +150,10 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 
 	painter->save();
 	painter->drawPixmap(option.rect.topLeft(), pixmap /*,.scaled(option.rect.width(),option.rect.width()*w.height()/(float)w.width(),Qt::KeepAspectRatio,Qt::SmoothTransformation)*/);
+#ifdef DEBUG_POSTED
+	painter->drawText(option.rect.bottomLeft(),QString::number(time(nullptr)));
+	RS_DBG("DisplayMode=", mDisplayMode == BoardPostDisplayWidget_compact::DISPLAY_MODE_COMPACT? "Compact":"Card", " Title:", post.mMeta.mMsgName.c_str());
+#endif
 	painter->restore();
 }
 
@@ -193,40 +202,45 @@ uint8_t PostedPostDelegate::displayFlags(const RsGxsMessageId &id) const
 
 QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex& index) const
 {
-    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
 
-    if(index.column() == RsPostedPostsModel::COLUMN_POSTS)
-    {
-        QWidget *w ;
+	if (!index.isValid())
+		return nullptr;
 
-        if(mDisplayMode==BoardPostDisplayWidget_compact::DISPLAY_MODE_COMPACT)
-            w = new BoardPostDisplayWidget_compact(post,displayFlags(post.mMeta.mMsgId),parent);
-        else
-            w = new BoardPostDisplayWidget_card(post,displayFlags(post.mMeta.mMsgId),parent);
+	if(index.column() != RsPostedPostsModel::COLUMN_POSTS)
+		return nullptr;
 
-        QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(voteMsg(RsGxsGrpMsgIdPair,bool)));
-        QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(expandItem(RsGxsMessageId,bool)));
-        QObject::connect(w,SIGNAL(commentsRequested(const RsGxsMessageId&,bool)),mPostListWidget,SLOT(openComments(const RsGxsMessageId&)));
-        QObject::connect(w,SIGNAL(changeReadStatusRequested(const RsGxsMessageId&,bool)),mPostListWidget,SLOT(changeReadStatus(const RsGxsMessageId&,bool)));
+	QWidget *w ;
+	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
 
-        // All other interactions with the widget should cause the msg to be set as read.
-        QObject::connect(w,SIGNAL(thumbnailOpenned()),mPostListWidget,SLOT(markCurrentPostAsRead()));
-        QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(markCurrentPostAsRead()));
-        QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(markCurrentPostAsRead()));
-        QObject::connect(w,SIGNAL(commentsRequested(const RsGxsMessageId&,bool)),mPostListWidget,SLOT(markCurrentPostAsRead()));
-        QObject::connect(w,SIGNAL(shareButtonClicked()),mPostListWidget,SLOT(markCurrentPostAsRead()));
-        QObject::connect(w,SIGNAL(copylinkClicked()),mPostListWidget,SLOT(copyMessageLink()));
+#ifdef DEBUG_POSTED
+	RS_DBG("Title:", post.mMeta.mMsgName.c_str());
+#endif
 
-        w->setFixedSize(option.rect.size());
-        w->adjustSize();
-        w->updateGeometry();
-        w->adjustSize();
+	if(mDisplayMode==BoardPostDisplayWidget_compact::DISPLAY_MODE_COMPACT)
+		w = new BoardPostDisplayWidget_compact(post,displayFlags(post.mMeta.mMsgId),parent);
+	else
+		w = new BoardPostDisplayWidget_card(post,displayFlags(post.mMeta.mMsgId),parent);
 
-        return w;
-    }
-    else
-        return NULL;
+    QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(voteMsg(RsGxsGrpMsgIdPair,bool)));
+	QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(expandItem(RsGxsMessageId,bool)));
+	QObject::connect(w,SIGNAL(commentsRequested(RsGxsMessageId,bool)),mPostListWidget,SLOT(openComments(RsGxsMessageId)));
+	QObject::connect(w,SIGNAL(changeReadStatusRequested(RsGxsMessageId,bool)),mPostListWidget,SLOT(changeReadStatus(RsGxsMessageId,bool)));
+
+	// All other interactions with the widget should cause the msg to be set as read.
+	QObject::connect(w,SIGNAL(thumbnailOpenned()),mPostListWidget,SLOT(markCurrentPostAsRead()));
+	QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(markCurrentPostAsRead()));
+	QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(markCurrentPostAsRead()));
+	QObject::connect(w,SIGNAL(commentsRequested(RsGxsMessageId,bool)),mPostListWidget,SLOT(markCurrentPostAsRead()));
+	QObject::connect(w,SIGNAL(shareButtonClicked()),mPostListWidget,SLOT(markCurrentPostAsRead()));
+
+	w->setGeometry(option.rect);
+	w->adjustSize();
+	w->updateGeometry();
+	w->adjustSize();
+
+	return w;
 }
+
 void PostedPostDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
 {
 	editor->setGeometry(option.rect);
@@ -264,12 +278,9 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
     connect(ui->nextButton,SIGNAL(clicked()),this,SLOT(nextPosts()));
     connect(ui->prevButton,SIGNAL(clicked()),this,SLOT(prevPosts()));
 
-    connect(ui->postsTree,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(postContextMenu(const QPoint&)));
     connect(ui->viewModeButton,SIGNAL(clicked()),this,SLOT(switchDisplayMode()));
 
     connect(mPostedPostsModel,SIGNAL(boardPostsLoaded()),this,SLOT(postPostLoad()));
-
-    QFontMetricsF fm(font());
 
 	/* Setup UI helper */
 
@@ -285,7 +296,11 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 
     connect(ui->postsTree,SIGNAL(sizeChanged(QSize)),this,SLOT(handlePostsTreeSizeChange(QSize)));
 
-	/* load settings */
+    ui->postsTree->setContextMenuPolicy(Qt::CustomContextMenu);
+    //QObject::connect(this,SIGNAL(copylinkClicked()),this,SLOT(copyMessageLink()));
+    connect(ui->postsTree,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(postContextMenu(const QPoint&)));
+
+    /* load settings */
 	processSettings(true);
 
 	/* Initialize subscribe button */
@@ -312,6 +327,43 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
     {
         RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
     }, mEventHandlerId, RsEventType::GXS_POSTED );
+}
+
+void PostedListWidgetWithModel::postContextMenu(const QPoint& point)
+{
+    QMenu menu(this);
+
+    // 1 - check that we are clicking on a post
+
+    QModelIndex index = ui->postsTree->indexAt(point);
+
+    if(!index.isValid())
+        return;
+
+    // 2 - generate the menu for that post.
+
+    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
+
+    menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()))->setData(index);
+
+    QByteArray urlarray(post.mLink.c_str());
+    QUrl url = QUrl::fromEncoded(urlarray.trimmed());
+
+    std::cerr << "Using link: \"" << post.mLink << "\"" << std::endl;
+
+    if(url.scheme()=="http" || url.scheme()=="https")
+        menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYHTTP), tr("Copy http Link"), this, SLOT(copyHttpLink()))->setData(index);
+
+    menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR), tr("Show author in People tab"), this, SLOT(showAuthorInPeople()))->setData(index);
+
+#ifdef TODO
+    // This feature is not implemented yet in libretroshare.
+
+    if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
+        menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
+#endif
+
+    menu.exec(QCursor::pos());
 }
 
 void PostedListWidgetWithModel::switchDisplayMode()
@@ -374,28 +426,25 @@ void PostedListWidgetWithModel::filterItems(QString text)
 
 void PostedListWidgetWithModel::nextPosts()
 {
-	ui->postsTree->selectionModel()->clear();
-    if(mPostedPostsModel->displayedStartPostIndex() + POSTS_CHUNK_SIZE < mPostedPostsModel->filteredPostsCount())
-    {
-        mPostedPostsModel->setPostsInterval(POSTS_CHUNK_SIZE+mPostedPostsModel->displayedStartPostIndex(),POSTS_CHUNK_SIZE);
+	if(mPostedPostsModel->displayedStartPostIndex() + POSTS_CHUNK_SIZE < mPostedPostsModel->filteredPostsCount())
+	{
+		mPostedPostsModel->setPostsInterval(POSTS_CHUNK_SIZE+mPostedPostsModel->displayedStartPostIndex(),POSTS_CHUNK_SIZE);
 		updateShowLabel();
-    }
+	}
 }
 
 void PostedListWidgetWithModel::prevPosts()
 {
-    ui->postsTree->selectionModel()->clear();
-
-    if((int)mPostedPostsModel->displayedStartPostIndex() > 0)
-    {
-        mPostedPostsModel->setPostsInterval((int)mPostedPostsModel->displayedStartPostIndex()-POSTS_CHUNK_SIZE,POSTS_CHUNK_SIZE);
-        updateShowLabel();
-    }
+	if((int)mPostedPostsModel->displayedStartPostIndex() > 0)
+	{
+		mPostedPostsModel->setPostsInterval((int)mPostedPostsModel->displayedStartPostIndex()-POSTS_CHUNK_SIZE,POSTS_CHUNK_SIZE);
+		updateShowLabel();
+	}
 }
 
 void PostedListWidgetWithModel::showAuthorInPeople()
 {
-    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+    QModelIndex index = qobject_cast<QAction*>(QObject::sender())->data().toModelIndex();
 
     if(!index.isValid())
         throw std::runtime_error("No post under mouse!");
@@ -420,23 +469,31 @@ void PostedListWidgetWithModel::showAuthorInPeople()
     MainWindow::showWindow(MainWindow::People);
     idDialog->navigate(RsGxsId(post.mMeta.mAuthorId));
 }
-void PostedListWidgetWithModel::postContextMenu(const QPoint&)
+void PostedListWidgetWithModel::copyHttpLink()
 {
-    QMenu menu(this);
+    try
+    {
+        if (groupId().isNull())
+            throw std::runtime_error("No channel currently selected!");
 
-	menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
-    menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR), tr("Show author in People tab"), this, SLOT(showAuthorInPeople()));
+        QModelIndex index = qobject_cast<QAction*>(QObject::sender())->data().toModelIndex();
 
-#ifdef TODO
-    // This feature is not implemented yet in libretroshare.
+        if(!index.isValid())
+            throw std::runtime_error("No post under mouse!");
 
-	if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
-		menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
-#endif
+        RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
 
-	menu.exec(QCursor::pos());
+        if(post.mMeta.mMsgId.isNull())
+            throw std::runtime_error("Post has empty MsgId!");
+
+        QApplication::clipboard()->setText(QString::fromStdString(post.mLink)) ;
+        QMessageBox::information(NULL,tr("information"),tr("The Retrohare link was copied to your clipboard.")) ;
+    }
+    catch(std::exception& e)
+    {
+        QMessageBox::critical(NULL,tr("Link creation error"),tr("Link could not be created: ")+e.what());
+    }
 }
-
 void PostedListWidgetWithModel::copyMessageLink()
 {
     try
@@ -444,7 +501,7 @@ void PostedListWidgetWithModel::copyMessageLink()
 		if (groupId().isNull())
 			throw std::runtime_error("No channel currently selected!");
 
-		QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+        QModelIndex index = qobject_cast<QAction*>(QObject::sender())->data().toModelIndex();
 
 		if(!index.isValid())
 			throw std::runtime_error("No post under mouse!");
@@ -490,115 +547,35 @@ void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const Rs
 
 	switch(e->mPostedEventCode)
 	{
-        case RsPostedEventCode::NEW_COMMENT:     // [[fallthrough]];
-        case RsPostedEventCode::NEW_VOTE:        // [[fallthrough]];
-        {
-            // special treatment here because the message might be a comment, so we need to refresh the comment tab if openned
+		case RsPostedEventCode::NEW_COMMENT:             [[fallthrough]];
+		case RsPostedEventCode::NEW_VOTE:
+		{
+			// special treatment here because the message might be a comment, so we need to refresh the comment tab if openned
 
-            for(int i=2;i<ui->tabWidget->count();++i)
-            {
-                auto *t = dynamic_cast<GxsCommentDialog*>(ui->tabWidget->widget(i));
+			for(int i=2;i<ui->tabWidget->count();++i)
+			{
+				auto *t = dynamic_cast<GxsCommentDialog*>(ui->tabWidget->widget(i));
 
-                if(t->groupId() == e->mPostedGroupId)
-                    t->refresh();
-            }
-        }
-        case RsPostedEventCode::NEW_MESSAGE:          // [[fallthrough]];
-        case RsPostedEventCode::NEW_POSTED_GROUP:     // [[fallthrough]];
-		case RsPostedEventCode::UPDATED_POSTED_GROUP: // [[fallthrough]];
-		case RsPostedEventCode::UPDATED_MESSAGE:
-        case RsPostedEventCode::BOARD_DELETED:
-        case RsPostedEventCode::SYNC_PARAMETERS_UPDATED:
-        {
+				if(t->groupId() == e->mPostedGroupId)
+					t->refresh();
+			}
+		}
+			[[clang::fallthrough]];
+		case RsPostedEventCode::NEW_MESSAGE:             [[fallthrough]];
+		case RsPostedEventCode::NEW_POSTED_GROUP:        [[fallthrough]];
+		case RsPostedEventCode::UPDATED_POSTED_GROUP:    [[fallthrough]];
+		case RsPostedEventCode::UPDATED_MESSAGE:         [[fallthrough]];
+		case RsPostedEventCode::BOARD_DELETED:           [[fallthrough]];
+		case RsPostedEventCode::SYNC_PARAMETERS_UPDATED:
+		{
 			if(e->mPostedGroupId == groupId())
 				updateDisplay(true);
-    	}
+		}
 
 		default:
 		break;
 	}
 }
-
-#ifdef TO_REMOVE
-void PostedListWidgetWithModel::showPostDetails()
-{
-    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
-	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
-
-	QTextDocument doc;
-	doc.setHtml(post.mMsg.c_str());
-
-    if(post.mMeta.mPublishTs == 0)
-    {
-        ui->postDetails_TE->clear();
-        ui->postLogo_LB->hide();
-		ui->postName_LB->hide();
-		ui->postTime_LB->hide();
-		mChannelPostFilesModel->clear();
-
-        return;
-    }
-
-	ui->postLogo_LB->show();
-	ui->postName_LB->show();
-	ui->postTime_LB->show();
-
-    if(index.row()==0 && index.column()==0)
-        std::cerr << "here" << std::endl;
-
-	std::cerr << "showPostDetails: setting mLastSelectedPosts[groupId()] to current post Id " << post.mMeta.mMsgId << ". Previous value: " << mLastSelectedPosts[groupId()] << std::endl;
-    mLastSelectedPosts[groupId()] = post.mMeta.mMsgId;
-
-    std::list<ChannelPostFileInfo> files;
-    for(auto& file:post.mFiles)
-        files.push_back(ChannelPostFileInfo(file,post.mMeta.mPublishTs));
-
-    mChannelPostFilesModel->setFiles(files);
-
-    auto all_msgs_versions(post.mOlderVersions);
-    all_msgs_versions.insert(post.mMeta.mMsgId);
-
-    ui->commentsDialog->commentLoad(post.mMeta.mGroupId, all_msgs_versions, post.mMeta.mMsgId);
-
-    std::cerr << "Showing details about selected index : "<< index.row() << "," << index.column() << std::endl;
-
-    ui->postDetails_TE->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
-
-	QPixmap postImage;
-
-	if (post.mThumbnail.mData != NULL)
-		GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, postImage,GxsIdDetails::ORIGINAL);
-	else
-		postImage = FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE);
-
-    int W = QFontMetricsF(font()).height() * 8;
-
-    // Using fixed width so that the post will not displace the text when we browse.
-
-	ui->postLogo_LB->setPixmap(postImage);
-	ui->postLogo_LB->setFixedSize(W,postImage.height()/(float)postImage.width()*W);
-
-	ui->postName_LB->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
-	ui->postName_LB->setFixedWidth(W);
-	ui->postTime_LB->setText(QDateTime::fromMSecsSinceEpoch(post.mMeta.mPublishTs*1000).toString("MM/dd/yyyy, hh:mm"));
-	ui->postTime_LB->setFixedWidth(W);
-
-    //ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
-    //ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
-    ui->channelPostFiles_TV->setAutoSelect(true);
-
- 	// Now also set the post as read
-
-	if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
-	{
-		RsGxsGrpMsgIdPair postId;
-		postId.second = post.mMeta.mMsgId;
-		postId.first  = post.mMeta.mGroupId;
-
-		RsThread::async([postId]() { rsGxsChannels->markRead(postId, true) ; } );
-	}
-}
-#endif
 
 void PostedListWidgetWithModel::updateGroupData()
 {
@@ -764,7 +741,7 @@ QIcon PostedListWidgetWithModel::groupIcon()
 	return QIcon(postedImage);
 }
 
-void PostedListWidgetWithModel::setAllMessagesReadDo(bool read, uint32_t &/*token*/)
+void PostedListWidgetWithModel::setAllMessagesReadDo(bool read)
 {
     if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags))
         return;
@@ -786,7 +763,7 @@ void PostedListWidgetWithModel::openComments(const RsGxsMessageId& msgId)
     ui->idChooser->getChosenId(current_author);
 
     RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
-    auto *commentDialog = new GxsCommentDialog(this,current_author,rsPosted->getTokenService(),rsPosted);
+    auto *commentDialog = new GxsCommentDialog(this,current_author,rsPosted);
 
     std::set<RsGxsMessageId> msg_versions({post.mMeta.mMsgId});
     commentDialog->commentLoad(post.mMeta.mGroupId, msg_versions, post.mMeta.mMsgId);
@@ -884,6 +861,7 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 		ui->subscribeToolButton->setText(tr("Subscribe"));
 
 	ui->infoPosts->setText(QString::number(group.mMeta.mVisibleMsgCount));
+    ui->poplabel->setText(QString::number(group.mMeta.mPop));
 
     if(group.mMeta.mLastPost==0)
         ui->infoLastPost->setText(tr("Never"));
@@ -923,7 +901,7 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 
 	formatDescription = RsHtml().formatText(NULL, formatDescription, formatFlag);
 
-	ui->infoDescription->setText(formatDescription);
+	ui->trans_Description->setText(formatDescription);
 	ui->infoAdministrator->setId(group.mMeta.mAuthorId) ;
 
 	link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
@@ -1181,8 +1159,7 @@ void PostedListWidgetWithModel::subscribeGroup(bool subscribe)
 
 	RsThread::async([=]()
 	{
-        uint32_t token;
-		rsPosted->subscribeToGroup(token,grpId, subscribe);
+		rsPosted->subscribeToBoard(grpId, subscribe);
 	} );
 }
 
@@ -1195,51 +1172,13 @@ void PostedListWidgetWithModel::voteMsg(RsGxsGrpMsgIdPair msg,bool up_or_down)
         return;
     }
 
-    rsPosted->voteForPost(up_or_down,msg.first,msg.second,voter_id);
+    RsGxsVoteType tvote = up_or_down?(RsGxsVoteType::UP):(RsGxsVoteType::DOWN);
+
+    std::string error_str;
+    RsGxsMessageId vote_id;
+    if(!rsPosted->voteForPost(msg.first,msg.second,voter_id,tvote,vote_id,error_str))
+        QMessageBox::critical(nullptr,tr("Could not vote"), tr("Error occured while voting: ")+QString::fromStdString(error_str));
+    else
+        updateDisplay(true);
 }
 
-#ifdef TODO
-class PostedPostsReadData
-{
-public:
-	PostedPostsReadData(bool read)
-	{
-		mRead = read;
-		mLastToken = 0;
-	}
-
-public:
-	bool mRead;
-	uint32_t mLastToken;
-};
-
-static void setAllMessagesReadCallback(FeedItem *feedItem, void *data)
-{
-	GxsChannelPostItem *channelPostItem = dynamic_cast<GxsChannelPostItem*>(feedItem);
-	if (!channelPostItem) {
-		return;
-	}
-
-	GxsChannelPostsReadData *readData = (GxsChannelPostsReadData*) data;
-	bool isRead = !channelPostItem->isUnread() ;
-
-	if(channelPostItem->isLoaded() && (isRead == readData->mRead))
-		return ;
-
-	RsGxsGrpMsgIdPair msgPair = std::make_pair(channelPostItem->groupId(), channelPostItem->messageId());
-	rsGxsChannels->setMessageReadStatus(readData->mLastToken, msgPair, readData->mRead);
-}
-
-void PostedListWidgetWithModel::setAllMessagesReadDo(bool read, uint32_t &token)
-{
-	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {
-		return;
-	}
-
-	GxsChannelPostsReadData data(read);
-	//ui->feedWidget->withAll(setAllMessagesReadCallback, &data);
-
-	token = data.mLastToken;
-}
-
-#endif

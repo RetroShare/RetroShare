@@ -25,6 +25,7 @@
 #include <QDesktopServices>
 #include <QTimer>
 #include <QPainter>
+#include <QMimeData>
 
 #include "FeedReaderMessageWidget.h"
 #include "ui_FeedReaderMessageWidget.h"
@@ -36,8 +37,14 @@
 #include "gui/settings/rsharesettings.h"
 #include "util/HandleRichText.h"
 #include "util/QtVersion.h"
+#include "gui/Posted/PostedCreatePostDialog.h"
+#include "gui/gxsforums/CreateGxsForumMsg.h"
+#include "gui/common/FilesDefs.h"
+#include "util/imageutil.h"
 
 #include "retroshare/rsiface.h"
+#include "retroshare/rsgxsforums.h"
+#include "retroshare/rsposted.h"
 
 #define COLUMN_MSG_COUNT    4
 #define COLUMN_MSG_TITLE    0
@@ -83,6 +90,12 @@ FeedReaderMessageWidget::FeedReaderMessageWidget(uint32_t feedId, RsFeedReader *
 	connect(ui->msgRemoveButton, SIGNAL(clicked()), this, SLOT(removeMsg()));
 	connect(ui->feedProcessButton, SIGNAL(clicked()), this, SLOT(processFeed()));
 
+	/* Set initial size the splitter */
+    QList<int> sizes;
+    sizes << 250 << width(); // Qt calculates the right sizes
+    ui->pictureSplitter->setSizes(sizes);
+	ui->pictureSplitter->hide();
+
 	// create timer for navigation
 	mTimer = new QTimer(this);
 	mTimer->setInterval(300);
@@ -114,6 +127,10 @@ FeedReaderMessageWidget::FeedReaderMessageWidget(uint32_t feedId, RsFeedReader *
 	ui->filterLineEdit->addFilter(QIcon(), tr("Date"), COLUMN_MSG_PUBDATE, tr("Search Date"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Author"), COLUMN_MSG_AUTHOR, tr("Search Author"));
 	ui->filterLineEdit->setCurrentFilter(COLUMN_MSG_TITLE);
+
+	/* add image actions */
+	ui->attachmentLabel->addContextMenuAction(ui->actionAttachmentCopyLinkLocation);
+	connect(ui->actionAttachmentCopyLinkLocation, &QAction::triggered, this, &FeedReaderMessageWidget::attachmentCopyLinkLocation);
 
 	/* load settings */
 	processSettings(true);
@@ -175,6 +192,7 @@ void FeedReaderMessageWidget::processSettings(bool load)
 
 		// state of splitter
 		ui->msgSplitter->restoreState(Settings->value("msgSplitter").toByteArray());
+		ui->pictureSplitter->restoreState(Settings->value("pictureSplitter").toByteArray());
 	} else {
 		// save settings
 
@@ -183,6 +201,7 @@ void FeedReaderMessageWidget::processSettings(bool load)
 
 		// state of splitter
 		Settings->setValue("msgSplitter", ui->msgSplitter->saveState());
+		Settings->setValue("pictureSplitter", ui->pictureSplitter->saveState());
 	}
 
 	Settings->endGroup();
@@ -245,9 +264,19 @@ void FeedReaderMessageWidget::setFeedId(uint32_t feedId)
 		ui->msgReadAllButton->setEnabled(false);
 		ui->msgTreeWidget->setPlaceholderText("");
 	} else {
-		if (mFeedInfo.flag.forum) {
+		if (mFeedInfo.flag.forum || mFeedInfo.flag.posted) {
 			ui->msgReadAllButton->setEnabled(false);
-			ui->msgTreeWidget->setPlaceholderText(tr("The messages will be added to the forum"));
+
+			if (mFeedInfo.flag.forum && mFeedInfo.flag.posted) {
+				ui->msgTreeWidget->setPlaceholderText(tr("The messages will be added to the forum and the board"));
+			} else {
+				if (mFeedInfo.flag.forum) {
+					ui->msgTreeWidget->setPlaceholderText(tr("The messages will be added to the forum"));
+				}
+				if (mFeedInfo.flag.posted) {
+					ui->msgTreeWidget->setPlaceholderText(tr("The messages will be added to the board"));
+				}
+			}
 		} else {
 			ui->msgReadAllButton->setEnabled(true);
 			ui->msgTreeWidget->setPlaceholderText("");
@@ -339,6 +368,20 @@ void FeedReaderMessageWidget::msgTreeCustomPopupMenu(QPoint /*point*/)
 
 	action = contextMnu.addAction(QIcon(""), tr("Remove"), this, SLOT(removeMsg()));
 	action->setEnabled(!selectedItems.empty());
+
+	if (selectedItems.size() == 1 && (mFeedReader->forums() || mFeedReader->posted())) {
+		contextMnu.addSeparator();
+
+		if (mFeedReader->forums()) {
+			QMenu *menu = contextMnu.addMenu(tr("Add to forum"));
+			connect(menu, SIGNAL(aboutToShow()), this, SLOT(fillForumMenu()));
+		}
+
+		if (mFeedReader->posted()) {
+			QMenu *menu = contextMnu.addMenu(tr("Add to board"));
+			connect(menu, SIGNAL(aboutToShow()), this, SLOT(fillPostedMenu()));
+		}
+	}
 
 	contextMnu.addSeparator();
 
@@ -571,6 +614,21 @@ void FeedReaderMessageWidget::msgItemChanged()
 	mTimer->start();
 }
 
+void FeedReaderMessageWidget::clearMessage()
+{
+	ui->msgTitle->clear();
+//		ui->msgLink->clear();
+	ui->msgText->clear();
+	ui->msgTextSplitter->clear();
+	ui->attachmentLabel->clear();
+	ui->linkButton->setEnabled(false);
+	ui->msgText->show();
+	ui->pictureSplitter->hide();
+
+	ui->actionAttachmentCopyLinkLocation->setData(QVariant());
+	ui->actionAttachmentCopyLinkLocation->setEnabled(false);
+}
+
 void FeedReaderMessageWidget::updateCurrentMessage()
 {
 	mTimer->stop();
@@ -580,10 +638,7 @@ void FeedReaderMessageWidget::updateCurrentMessage()
 	std::string msgId = currentMsgId();
 
 	if (mFeedId == 0 || msgId.empty()) {
-		ui->msgTitle->clear();
-//		ui->msgLink->clear();
-		ui->msgText->clear();
-		ui->linkButton->setEnabled(false);
+		clearMessage();
 
 		ui->msgReadButton->setEnabled(false);
 		ui->msgUnreadButton->setEnabled(false);
@@ -594,10 +649,7 @@ void FeedReaderMessageWidget::updateCurrentMessage()
 	QTreeWidgetItem *item = ui->msgTreeWidget->currentItem();
 	if (!item) {
 		/* there is something wrong */
-		ui->msgTitle->clear();
-//		ui->msgLink->clear();
-		ui->msgText->clear();
-		ui->linkButton->setEnabled(false);
+		clearMessage();
 
 		ui->msgReadButton->setEnabled(false);
 		ui->msgUnreadButton->setEnabled(false);
@@ -612,10 +664,7 @@ void FeedReaderMessageWidget::updateCurrentMessage()
 	/* get msg */
 	FeedMsgInfo msgInfo;
 	if (!mFeedReader->getMsgInfo(mFeedId, msgId, msgInfo)) {
-		ui->msgTitle->clear();
-//		ui->msgLink->clear();
-		ui->msgText->clear();
-		ui->linkButton->setEnabled(false);
+		clearMessage();
 		return;
 	}
 
@@ -635,9 +684,41 @@ void FeedReaderMessageWidget::updateCurrentMessage()
 		setMsgAsReadUnread(row, setToReadOnActive);
 	}
 
+	ui->actionAttachmentCopyLinkLocation->setData(QVariant());
+	ui->actionAttachmentCopyLinkLocation->setEnabled(false);
+
+	if (!msgInfo.attachment.empty()) {
+		QByteArray imageData((char*) msgInfo.attachment.data(), msgInfo.attachment.size());
+		QPixmap pixmap;
+		if (pixmap.loadFromData(imageData)) {
+			ui->attachmentLabel->setPixmap(pixmap);
+			ui->pictureSplitter->show();
+			ui->msgText->hide();
+		} else {
+			ui->pictureSplitter->hide();
+			ui->msgText->show();
+		}
+
+		if (!msgInfo.attachmentLink.empty()) {
+			ui->actionAttachmentCopyLinkLocation->setData(QString::fromUtf8(msgInfo.attachmentLink.c_str()));
+			ui->actionAttachmentCopyLinkLocation->setEnabled(true);
+		}
+	} else {
+		ui->pictureSplitter->hide();
+		ui->msgText->show();
+	}
+
 	QString msgTxt = RsHtml().formatText(ui->msgText->document(), QString::fromUtf8((msgInfo.descriptionTransformed.empty() ? msgInfo.description : msgInfo.descriptionTransformed).c_str()), RSHTML_FORMATTEXT_EMBED_LINKS);
 
-	ui->msgText->setHtml(msgTxt);
+	if (ui->pictureSplitter->isVisible()) {
+		ui->msgTextSplitter->setHtml(msgTxt);
+		ui->msgText->clear();
+	} else {
+		ui->msgText->setHtml(msgTxt);
+		ui->msgTextSplitter->clear();
+		ui->attachmentLabel->clear();
+	}
+
 	ui->msgTitle->setText(QString::fromUtf8(msgInfo.title.c_str()));
 
 	ui->linkButton->setEnabled(!msgInfo.link.empty());
@@ -714,11 +795,11 @@ void FeedReaderMessageWidget::toggleMsgText()
 void FeedReaderMessageWidget::toggleMsgText_internal()
 {
 	if (ui->expandButton->isChecked()) {
-		ui->msgText->setVisible(true);
+		ui->horizontalLayoutWidget->setVisible(true);
 		ui->expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 	} else  {
-		ui->msgText->setVisible(false);
+		ui->horizontalLayoutWidget->setVisible(false);
 		ui->expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
@@ -839,4 +920,124 @@ void FeedReaderMessageWidget::openLinkMsg()
 	}
 
 	QDesktopServices::openUrl(QUrl(link));
+}
+
+void FeedReaderMessageWidget::fillForumMenu()
+{
+	QMenu *menu = dynamic_cast<QMenu*>(sender()) ;
+	if (!menu) {
+		return;
+	}
+
+	disconnect(menu, SIGNAL(aboutToShow()), this, SLOT(fillForumMenu()));
+
+	std::vector<RsGxsForumGroup> groups;
+	if (mFeedReader->getForumGroups(groups, true)) {
+		for (std::vector<RsGxsForumGroup>::iterator it = groups.begin(); it != groups.end(); ++it) {
+			const RsGxsForumGroup &group = *it;
+			QAction *action = menu->addAction(QString::fromUtf8(group.mMeta.mGroupName.c_str()), this, SLOT(addToForum()));
+			action->setData(QString::fromUtf8(group.mMeta.mGroupId.toStdString().c_str()));
+		}
+	}
+}
+
+void FeedReaderMessageWidget::fillPostedMenu()
+{
+	QMenu *menu = dynamic_cast<QMenu*>(sender()) ;
+	if (!menu) {
+		return;
+	}
+
+	disconnect(menu, SIGNAL(aboutToShow()), this, SLOT(fillPostedMenu()));
+
+	std::vector<RsPostedGroup> groups;
+	if (mFeedReader->getPostedGroups(groups, true)) {
+		for (std::vector<RsPostedGroup>::iterator it = groups.begin(); it != groups.end(); ++it) {
+			const RsPostedGroup &group = *it;
+			QAction *action = menu->addAction(QString::fromUtf8(group.mMeta.mGroupName.c_str()), this, SLOT(addToPosted()));
+			action->setData(QString::fromUtf8(group.mMeta.mGroupId.toStdString().c_str()));
+		}
+	}
+}
+
+void FeedReaderMessageWidget::addToForum()
+{
+	QAction *action = dynamic_cast<QAction*>(sender()) ;
+	if (!action) {
+		return;
+	}
+
+	QString id = action->data().toString();
+	if (id.isEmpty()) {
+		return;
+	}
+
+	QList<QTreeWidgetItem*> selectedItems = ui->msgTreeWidget->selectedItems();
+	if (selectedItems.size() != 1) {
+		return;
+	}
+
+	std::string msgId = selectedItems[0]->data(COLUMN_MSG_DATA, ROLE_MSG_ID).toString().toStdString();
+	FeedMsgInfo msgInfo;
+	if (!mFeedReader->getMsgInfo(mFeedId, msgId, msgInfo)) {
+		return;
+	}
+
+	RsGxsGroupId forumId(id.toStdString());
+
+	CreateGxsForumMsg *msgDialog = new CreateGxsForumMsg(forumId, RsGxsMessageId(), RsGxsMessageId(), RsGxsId()) ;
+	msgDialog->setSubject(QString::fromUtf8(msgInfo.title.c_str()));
+	msgDialog->insertPastedText(QString::fromUtf8(msgInfo.description.c_str()));
+	msgDialog->show();
+}
+
+void FeedReaderMessageWidget::addToPosted()
+{
+	QAction *action = dynamic_cast<QAction*>(sender()) ;
+	if (!action) {
+		return;
+	}
+
+	QString id = action->data().toString();
+	if (id.isEmpty()) {
+		return;
+	}
+
+	QList<QTreeWidgetItem*> selectedItems = ui->msgTreeWidget->selectedItems();
+	if (selectedItems.size() != 1) {
+		return;
+	}
+
+	std::string msgId = selectedItems[0]->data(COLUMN_MSG_DATA, ROLE_MSG_ID).toString().toStdString();
+	FeedMsgInfo msgInfo;
+	if (!mFeedReader->getMsgInfo(mFeedId, msgId, msgInfo)) {
+		return;
+	}
+
+	RsGxsGroupId postedId(id.toStdString());
+
+	PostedCreatePostDialog *msgDialog = new PostedCreatePostDialog(mFeedReader->posted(), postedId);
+	msgDialog->setTitle(QString::fromUtf8(msgInfo.title.c_str()));
+	msgDialog->setNotes(QString::fromUtf8(msgInfo.description.c_str()));
+	msgDialog->setLink(QString::fromUtf8(msgInfo.link.c_str()));
+	msgDialog->show();
+}
+
+void FeedReaderMessageWidget::attachmentCopyLinkLocation()
+{
+	QAction *action = dynamic_cast<QAction*>(sender()) ;
+	if (!action) {
+		return;
+	}
+
+	QVariant data = action->data();
+	if (!data.isValid()) {
+		return;
+	}
+
+	if (data.type() != QVariant::String) {
+		return;
+	}
+
+	QApplication::clipboard()->setText(data.toString());
 }

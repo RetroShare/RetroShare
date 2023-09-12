@@ -229,7 +229,7 @@ void ChatMsgItem::sendMessage()
     
     mi.title = tr("Quick Message").toUtf8().constData();
     mi.msg =   quickmsgText->toHtml().toUtf8().constData();
-    mi.rspeerid_msgto.insert(mPeerId);
+    mi.destinations.insert(MsgAddress(mPeerId,MsgAddress::MSG_ADDRESS_MODE_TO));
     
     rsMail->MessageSend(mi);
 

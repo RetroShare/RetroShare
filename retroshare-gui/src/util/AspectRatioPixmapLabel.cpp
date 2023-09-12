@@ -18,8 +18,14 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <QApplication>
+#include <QClipboard>
+#include <QMenu>
+
 #include "AspectRatioPixmapLabel.h"
 #include <iostream>
+#include "util/imageutil.h"
+#include "gui/common/FilesDefs.h"
 
 AspectRatioPixmapLabel::AspectRatioPixmapLabel(QWidget *parent) :
     QLabel(parent)
@@ -31,7 +37,7 @@ AspectRatioPixmapLabel::AspectRatioPixmapLabel(QWidget *parent) :
 void AspectRatioPixmapLabel::setPixmap ( const QPixmap & p)
 {
     pix = p;
-	QLabel::setPixmap(pix);
+	QLabel::setPixmap(scaledPixmap());
 	//std::cout << "Information size: " << pix.width() << 'x' << pix.height() << std::endl;
 }
 
@@ -56,4 +62,54 @@ void AspectRatioPixmapLabel::resizeEvent(QResizeEvent * e)
         QLabel::setPixmap(scaledPixmap());
 	QLabel::resizeEvent(e);
 	//std::cout << "Information resized: " << e->oldSize().width() << 'x' << e->oldSize().height() << " to " << e->size().width() << 'x' << e->size().height() << std::endl;
+}
+
+void AspectRatioPixmapLabel::addContextMenuAction(QAction *action)
+{
+	mContextMenuActions.push_back(action);
+}
+
+void AspectRatioPixmapLabel::contextMenuEvent(QContextMenuEvent *event)
+{
+	emit calculateContextMenuActions();
+
+	QMenu *contextMenu = new QMenu();
+
+	QAction *actionSaveImage = contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/document_save.png"), tr("Save image"), this, SLOT(saveImage()));
+	QAction *actionCopyImage = contextMenu->addAction(tr("Copy image"), this, SLOT(copyImage()));
+
+	if (pix.isNull()) {
+		actionSaveImage->setEnabled(false);
+		actionCopyImage->setEnabled(false);
+	} else {
+		actionSaveImage->setEnabled(true);
+		actionCopyImage->setEnabled(true);
+	}
+
+	QList<QAction*>::iterator it;
+	for (it = mContextMenuActions.begin(); it != mContextMenuActions.end(); ++it) {
+		contextMenu->addAction(*it);
+	}
+
+	contextMenu->exec(event->globalPos());
+
+	delete(contextMenu);
+}
+
+void AspectRatioPixmapLabel::copyImage()
+{
+	if (pix.isNull()) {
+		return;
+	}
+
+	QApplication::clipboard()->setPixmap(pix, QClipboard::Clipboard);
+}
+
+void AspectRatioPixmapLabel::saveImage()
+{
+	if (pix.isNull()) {
+		return;
+	}
+
+	ImageUtil::saveImage(window(), pix.toImage());
 }

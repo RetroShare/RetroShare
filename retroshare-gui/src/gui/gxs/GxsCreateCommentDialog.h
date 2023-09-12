@@ -25,7 +25,6 @@
 #include <retroshare/rsidentity.h>
 
 #include "retroshare/rsgxscommon.h"
-#include "util/TokenQueue.h"
 
 namespace Ui {
 	class GxsCreateCommentDialog;

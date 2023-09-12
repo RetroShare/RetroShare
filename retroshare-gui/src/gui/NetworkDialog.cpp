@@ -73,7 +73,7 @@ NetworkDialog::NetworkDialog(QWidget */*parent*/)
     PGPIdItemProxy = new pgpid_item_proxy(this);
     connect(ui.onlyTrustedKeys, SIGNAL(toggled(bool)), PGPIdItemProxy, SLOT(use_only_trusted_keys(bool)));
     PGPIdItemProxy->setSourceModel(PGPIdItemModel);
-    PGPIdItemProxy->setFilterKeyColumn(COLUMN_PEERNAME);
+    PGPIdItemProxy->setFilterKeyColumn(pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERNAME);
     PGPIdItemProxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
     PGPIdItemProxy->setSortRole(Qt::EditRole); //use edit role to get raw data since we do not have edit for this model.
     ui.connectTreeWidget->setModel(PGPIdItemProxy);
@@ -90,9 +90,9 @@ NetworkDialog::NetworkDialog(QWidget */*parent*/)
     ui.onlyTrustedKeys->setMinimumWidth(20*f);
 
     /* add filter actions */
-    ui.filterLineEdit->addFilter(QIcon(), tr("Name"), COLUMN_PEERNAME, tr("Search name"));
-    ui.filterLineEdit->addFilter(QIcon(), tr("Peer ID"), COLUMN_PEERID, tr("Search peer ID"));
-    ui.filterLineEdit->setCurrentFilter(COLUMN_PEERNAME);
+    ui.filterLineEdit->addFilter(QIcon(), tr("Name"), pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERNAME, tr("Search name"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Peer ID"), pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERID, tr("Search peer ID"));
+    ui.filterLineEdit->setCurrentFilter(pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERNAME);
     connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), PGPIdItemProxy, SLOT(setFilterWildcard(QString)));
 }
 
@@ -118,6 +118,7 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 		return;
 	}
 	QMenu *contextMnu = new QMenu;
+
 	contextMnu->addAction(QIcon(IMAGE_PEERDETAILS), tr("Profile details..."), this, SLOT(peerdetails()));
 	contextMnu->addSeparator() ;
 	contextMnu->addAction(QIcon(), tr("Remove unused keys..."), this, SLOT(removeUnusedKeys()));
@@ -165,6 +166,7 @@ void NetworkDialog::removeSelectedKeys()
 	if(l.empty())
 		return;
 	std::set<RsPgpId> selected;
+
 	std::set<RsPgpId> friends;
 	for (int i = 0; i < l.size(); i++)
 	{
@@ -189,6 +191,7 @@ void NetworkDialog::removeSelectedKeys()
 	}
 	if(!selected.empty())
 		removeKeys(selected);
+  
 	updateDisplay();
 }
 
@@ -236,7 +239,7 @@ void NetworkDialog::denyFriend()
     if(l.empty())
         return;
 
-    RsPgpId peer_id(ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l.begin()->row(), COLUMN_PEERID)).toString().toStdString());
+    RsPgpId peer_id(ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l.begin()->row(), pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERID)).toString().toStdString());
 	rsPeers->removeFriend(peer_id) ;
 
 	securedUpdateDisplay();
@@ -249,7 +252,7 @@ void NetworkDialog::makeFriend()
     if(l.empty())
         return;
 
-    PGPKeyDialog::showIt(RsPgpId(ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l.begin()->row(), COLUMN_PEERID)).toString().toStdString()), PGPKeyDialog::PageDetails);
+    PGPKeyDialog::showIt(RsPgpId(ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l.begin()->row(), pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERID)).toString().toStdString()), PGPKeyDialog::PageDetails);
 }
 
 /** Shows Peer Information/Auth Dialog */
@@ -259,7 +262,7 @@ void NetworkDialog::peerdetails()
     if(l.empty())
         return;
 
-    PGPKeyDialog::showIt(RsPgpId(ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l.begin()->row(), COLUMN_PEERID)).toString().toStdString()), PGPKeyDialog::PageDetails);
+    PGPKeyDialog::showIt(RsPgpId(ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l.begin()->row(), pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERID)).toString().toStdString()), PGPKeyDialog::PageDetails);
 }
 
 void NetworkDialog::copyLink()
@@ -269,7 +272,7 @@ void NetworkDialog::copyLink()
         return;
 
 
-    RsPgpId peer_id (ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l.begin()->row(), COLUMN_PEERID)).toString().toStdString()) ;
+    RsPgpId peer_id (ui.connectTreeWidget->model()->data(ui.connectTreeWidget->model()->index(l.begin()->row(), pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERID)).toString().toStdString()) ;
 
 	QList<RetroShareLink> urls;
 	RetroShareLink link = RetroShareLink::createPerson(peer_id);

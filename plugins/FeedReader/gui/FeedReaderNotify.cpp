@@ -33,3 +33,8 @@ void FeedReaderNotify::notifyMsgChanged(uint32_t feedId, const std::string &msgI
 {
 	emit msgChanged(feedId, QString::fromStdString(msgId), type);
 }
+
+void FeedReaderNotify::notifyOptimizeImage()
+{
+	emit optimizeImage();
+}

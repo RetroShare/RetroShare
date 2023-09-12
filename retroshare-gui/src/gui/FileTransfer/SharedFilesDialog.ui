@@ -61,7 +61,14 @@
        </widget>
       </item>
       <item>
-       <widget class="StyledLabel" name="titleBarLabel">
+       <widget class="QLabel" name="titleBarLabel">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string>Files</string>
         </property>
@@ -216,7 +223,7 @@ border-image: url(:/images/closepressed.png)
        </layout>
       </item>
       <item>
-       <widget class="QComboBox" name="viewType_CB">
+       <widget class="RSComboBox" name="viewType_CB">
         <item>
          <property name="text">
           <string>Tree view</string>
@@ -230,14 +237,14 @@ border-image: url(:/images/closepressed.png)
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="indicatorCBox">
+       <widget class="RSComboBox" name="indicatorCBox">
         <item>
          <property name="text">
           <string>All</string>
          </property>
          <property name="icon">
-          <iconset resource="../images.qrc">
-           <normaloff>:/images/view_calendar_list.png</normaloff>:/images/view_calendar_list.png</iconset>
+          <iconset resource="../icons.qrc">
+           <normaloff>:/icons/svg/calendar-blank.svg</normaloff>:/icons/svg/calendar-blank.svg</iconset>
          </property>
         </item>
         <item>
@@ -245,8 +252,8 @@ border-image: url(:/images/closepressed.png)
           <string>One day old</string>
          </property>
          <property name="icon">
-          <iconset resource="../images.qrc">
-           <normaloff>:/images/view_calendar_day.png</normaloff>:/images/view_calendar_day.png</iconset>
+          <iconset resource="../icons.qrc">
+           <normaloff>:/icons/svg/calendar-today.svg</normaloff>:/icons/svg/calendar-today.svg</iconset>
          </property>
         </item>
         <item>
@@ -254,8 +261,8 @@ border-image: url(:/images/closepressed.png)
           <string>One Week old</string>
          </property>
          <property name="icon">
-          <iconset resource="../images.qrc">
-           <normaloff>:/images/view_calendar_week.png</normaloff>:/images/view_calendar_week.png</iconset>
+          <iconset resource="../icons.qrc">
+           <normaloff>:/icons/svg/calendar-week.svg</normaloff>:/icons/svg/calendar-week.svg</iconset>
          </property>
         </item>
         <item>
@@ -263,8 +270,8 @@ border-image: url(:/images/closepressed.png)
           <string>One month old</string>
          </property>
          <property name="icon">
-          <iconset resource="../images.qrc">
-           <normaloff>:/images/view_calendar_month.png</normaloff>:/images/view_calendar_month.png</iconset>
+          <iconset resource="../icons.qrc">
+           <normaloff>:/icons/svg/calendar-month.svg</normaloff>:/icons/svg/calendar-month.svg</iconset>
          </property>
         </item>
        </widget>
@@ -278,8 +285,15 @@ border-image: url(:/images/closepressed.png)
       </item>
       <item>
        <widget class="QPushButton" name="checkButton">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Forces the re-check of all shared directories. While automatic file checking only cares for new/removed files for efficiency reasons, this button will force the re-scan of all files, possibly re-hashing existing files that may have changed. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>check files</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/svg/refresh.svg</normaloff>:/icons/svg/refresh.svg</iconset>
         </property>
        </widget>
       </item>
@@ -304,8 +318,8 @@ border-image: url(:/images/closepressed.png)
          <string>Download</string>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/download16.png</normaloff>:/images/download16.png</iconset>
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/png/download.png</normaloff>:/icons/png/download.png</iconset>
         </property>
        </widget>
       </item>
@@ -366,9 +380,9 @@ border-image: url(:/images/closepressed.png)
          <property name="sortingEnabled">
           <bool>true</bool>
          </property>
-         <attribute name="headerStretchLastSection">
+         <property name="animated">
           <bool>false</bool>
-         </attribute>
+         </property>
         </widget>
        </item>
       </layout>
@@ -379,14 +393,14 @@ border-image: url(:/images/closepressed.png)
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

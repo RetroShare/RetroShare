@@ -10,7 +10,14 @@
     <height>157</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
+  <property name="font">
+   <font>
+    <pointsize>12</pointsize>
+    <weight>75</weight>
+    <bold>true</bold>
+   </font>
+  </property>
+  <layout class="QGridLayout" name="BoardsCommentsItem_GL">
    <property name="leftMargin">
     <number>1</number>
    </property>
@@ -24,7 +31,7 @@
     <number>1</number>
    </property>
    <item row="1" column="0">
-    <widget class="QFrame" name="mainFrame">
+    <widget class="QFrame" name="feedFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -40,9 +47,12 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="feedFrame_GL">
       <property name="topMargin">
        <number>9</number>
+      </property>
+      <property name="verticalSpacing">
+       <number>3</number>
       </property>
       <item row="2" column="1">
        <layout class="QHBoxLayout" name="buttonHLayout">
@@ -50,7 +60,7 @@
          <number>8</number>
         </property>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
+         <layout class="QHBoxLayout" name="vote_HL">
           <item>
            <widget class="QPushButton" name="voteUpButton">
             <property name="toolTip">
@@ -65,6 +75,7 @@
            <widget class="QLabel" name="scoreLabel">
             <property name="font">
              <font>
+              <pointsize>12</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
@@ -128,6 +139,7 @@
           </property>
           <property name="font">
            <font>
+            <pointsize>12</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -144,6 +156,7 @@
          <widget class="QLabel" name="subjectLabel">
           <property name="font">
            <font>
+            <pointsize>12</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -157,7 +170,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_2">
+         <spacer name="buttons_HSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -239,7 +252,7 @@
        </layout>
       </item>
       <item row="0" column="0" rowspan="3">
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QVBoxLayout" name="avatar_VL">
         <item>
          <widget class="QLabel" name="avatarLabel">
           <property name="sizePolicy">
@@ -272,14 +285,14 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer">
+         <spacer name="avatar_VSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>10</height>
+            <height>6</height>
            </size>
           </property>
          </spacer>
@@ -288,7 +301,7 @@
       </item>
       <item row="3" column="0" colspan="2">
        <widget class="QFrame" name="expandFrame">
-        <layout class="QVBoxLayout" name="expandFrameVLayout">
+        <layout class="QVBoxLayout" name="expandFrame_VL">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -309,7 +322,7 @@
            <property name="frameShadow">
             <enum>QFrame::Sunken</enum>
            </property>
-           <layout class="QVBoxLayout" name="msgFrameVLayout">
+           <layout class="QVBoxLayout" name="replyFrame_VL">
             <property name="leftMargin">
              <number>5</number>
             </property>
@@ -364,12 +377,12 @@
         <property name="styleSheet">
          <string notr="true"/>
         </property>
-        <layout class="QGridLayout" name="gridLayout">
+        <layout class="QGridLayout" name="commentFrame_GL">
          <property name="leftMargin">
           <number>3</number>
          </property>
          <property name="topMargin">
-          <number>3</number>
+          <number>0</number>
          </property>
          <property name="rightMargin">
           <number>9</number>
@@ -377,8 +390,11 @@
          <property name="bottomMargin">
           <number>0</number>
          </property>
+         <property name="verticalSpacing">
+          <number>3</number>
+         </property>
          <item row="0" column="2">
-          <spacer name="horizontalSpacer_3">
+          <spacer name="comment_HSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -397,6 +413,7 @@
           <widget class="QLabel" name="datetimeLabel">
            <property name="font">
             <font>
+             <pointsize>12</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
@@ -419,7 +436,9 @@
            </property>
            <property name="font">
             <font>
+             <pointsize>12</pointsize>
              <weight>75</weight>
+             <italic>true</italic>
              <bold>true</bold>
             </font>
            </property>
@@ -427,7 +446,7 @@
             <string>Name</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
            </property>
           </widget>
          </item>
@@ -443,6 +462,8 @@
             <font>
              <family>MS Sans Serif</family>
              <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
             </font>
            </property>
            <property name="text">
@@ -477,8 +498,6 @@
    <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../icons.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

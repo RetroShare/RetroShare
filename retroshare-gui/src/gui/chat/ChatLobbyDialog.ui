@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string notr="true">MainWindow</string>
   </property>
-  <layout class="QHBoxLayout" name="ChatLobbyDialogHLayout">
+  <layout class="QHBoxLayout" name="ChatLobbyDialog_HL">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -48,7 +48,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QFrame" name="participantsFrame">
+     <widget class="QFrame" name="trans_Frame_Participants">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -61,7 +61,10 @@
         <height>0</height>
        </size>
       </property>
-      <layout class="QVBoxLayout" name="participantsFrameVLayout">
+      <layout class="QVBoxLayout" name="trans_Frame_Participants_VL">
+       <property name="spacing">
+        <number>2</number>
+       </property>
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -82,7 +85,7 @@
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QHBoxLayout" name="toolBarFrameHLayout">
+         <layout class="QHBoxLayout" name="toolBarFrame_HL">
           <property name="leftMargin">
            <number>2</number>
           </property>

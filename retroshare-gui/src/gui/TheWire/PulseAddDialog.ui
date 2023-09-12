@@ -6,22 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
-    <height>449</height>
+    <width>735</width>
+    <height>513</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
-   <property name="topMargin">
-    <number>0</number>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="spacing">
     <number>6</number>
    </property>
-   <item row="0" column="0">
-    <widget class="QFrame" name="frame">
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="frame_from">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -34,18 +34,15 @@
        <height>16777215</height>
       </size>
      </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_4">
+     <layout class="QGridLayout" name="frame_from_GL">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
       <property name="bottomMargin">
        <number>0</number>
       </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="fromLabel">
         <property name="maximumSize">
          <size>
           <width>100</width>
@@ -72,7 +69,7 @@
        </widget>
       </item>
       <item row="0" column="4">
-       <spacer name="horizontalSpacer">
+       <spacer name="frame_from_HSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -86,6 +83,11 @@
       </item>
       <item row="0" column="2">
        <widget class="QLabel" name="label_groupName">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>GroupLabel</string>
         </property>
@@ -116,15 +118,9 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item>
     <widget class="QFrame" name="frame_reply">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <layout class="QVBoxLayout" name="frame_reply_VL">
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -142,7 +138,7 @@
       </item>
       <item>
        <widget class="QWidget" name="widget_sentiment" native="true">
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QHBoxLayout" name="widget_sentiment_HL">
          <property name="leftMargin">
           <number>20</number>
          </property>
@@ -175,7 +171,7 @@
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_3">
+          <spacer name="widget_sentiment_HSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -188,14 +184,14 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="label_4">
+          <widget class="QLabel" name="label_sentiment">
            <property name="text">
             <string>Response Sentiment: </string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="comboBox_sentiment">
+          <widget class="RSComboBox" name="comboBox_sentiment">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -236,16 +232,19 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item>
     <widget class="QFrame" name="frame_input">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_5">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
       <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
        <number>0</number>
       </property>
       <item>
@@ -263,10 +262,16 @@
       </item>
       <item>
        <widget class="QFrame" name="frame_picture">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>100</height>
+          <height>80</height>
          </size>
         </property>
         <property name="frameShape">
@@ -275,45 +280,13 @@
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QGridLayout" name="gridLayout_2">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_image1">
-           <property name="minimumSize">
-            <size>
-             <width>80</width>
-             <height>80</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Drag and Drop Image</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
+        <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="1">
           <widget class="QLabel" name="label_image2">
            <property name="minimumSize">
             <size>
-             <width>80</width>
-             <height>80</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Drag and Drop Image</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_image3">
-           <property name="minimumSize">
-            <size>
-             <width>80</width>
-             <height>80</height>
+             <width>40</width>
+             <height>40</height>
             </size>
            </property>
            <property name="text">
@@ -328,8 +301,8 @@
           <widget class="QLabel" name="label_image4">
            <property name="minimumSize">
             <size>
-             <width>80</width>
-             <height>80</height>
+             <width>40</width>
+             <height>40</height>
             </size>
            </property>
            <property name="text">
@@ -340,19 +313,60 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_image3">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Drag and Drop Image</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_image1">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Drag and Drop Image</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" rowspan="2">
+          <widget class="QToolButton" name="pushButton_remove">
+           <property name="toolTip">
+            <string>Remove all images</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
       <item>
        <widget class="QFrame" name="frame_URL">
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>URL</string>
-           </property>
-          </widget>
-         </item>
+        <layout class="QGridLayout" name="frame_URL_GL">
          <item row="0" column="1">
           <widget class="QLineEdit" name="lineEdit_URL"/>
          </item>
@@ -360,13 +374,6 @@
           <widget class="QPushButton" name="pushButton_AddURL">
            <property name="text">
             <string>Add to Pulse</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Display As</string>
            </property>
           </widget>
          </item>
@@ -380,19 +387,36 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_DisplayAs">
+           <property name="text">
+            <string>Display As</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_URL">
+           <property name="text">
+            <string>URL</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
      </layout>
+     <zorder>frame_URL</zorder>
+     <zorder>frame_picture</zorder>
+     <zorder>textEdit_Pulse</zorder>
     </widget>
    </item>
-   <item row="3" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <item>
+    <layout class="QHBoxLayout" name="butons_HL">
      <property name="leftMargin">
       <number>6</number>
      </property>
      <item>
-      <widget class="QPushButton" name="pushButton_picture">
+      <widget class="QToolButton" name="pushButton_picture">
        <property name="text">
         <string/>
        </property>
@@ -408,7 +432,23 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_2">
+      <widget class="QToolButton" name="pushButton_Browse">
+       <property name="toolTip">
+        <string>Add Picture</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="buttonHSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -421,7 +461,14 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_Post">
+      <widget class="QPushButton" name="postButton">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="text">
         <string>Post </string>
        </property>
@@ -444,9 +491,12 @@
    <extends>QLabel</extends>
    <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
  </customwidgets>
- <resources>
-  <include location="TheWire_images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

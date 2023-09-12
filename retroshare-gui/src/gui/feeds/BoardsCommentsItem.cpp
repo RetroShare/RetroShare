@@ -28,6 +28,7 @@
 #include "gui/feeds/FeedHolder.h"
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "util/qtthreadsutils.h"
 #include "util/DateTime.h"
 #include "util/misc.h"
 #include "util/stringutil.h"
@@ -185,13 +186,13 @@ void BaseBoardsCommentsItem::loadMessage()
 		if (posts.size() == 1)
 		{
 			std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
-			const RsPostedPost& post(posts[0]);
+            RsPostedPost post(posts[0]);	// no reference to temporary because it's passed to a thread!
 
 			RsQThreadUtils::postToObject( [post,this]() { setPost(post,true); mIsLoadingMessage = false;}, this );
 		}
 		else if(comments.size() == 1)
 		{
-			const RsGxsComment& cmt = comments[0];
+            RsGxsComment cmt(comments[0]);
 			std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
 
 			RsQThreadUtils::postToObject( [cmt,this]()
@@ -286,12 +287,14 @@ void BaseBoardsCommentsItem::readToggled(bool checked)
 		return;
 	}
 
-	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
+    setReadStatus(false, checked);	// Can't call this inside an async call since the widget may be destroyed afterwards!
+                                    // So we do it right away.
 
-	uint32_t token;
-	rsPosted->setMessageReadStatus(token, msgPair, !checked);
-
-	setReadStatus(false, checked);
+    RsThread::async( [this,checked]() {
+		RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
+        
+        rsPosted->setCommentReadStatus(msgPair, !checked);
+    });
 }
 
 void BaseBoardsCommentsItem::readAndClearItem()
@@ -422,7 +425,9 @@ void BoardsCommentsItem::makeUpVote()
 
 void BoardsCommentsItem::setComment(const RsGxsComment& cmt)
 {
-	ui->commLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(cmt.mComment.c_str()), RSHTML_FORMATTEXT_EMBED_LINKS));
+	uint32_t autorized_lines = (int)floor((ui->avatarLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
+
+	ui->commLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(cmt.mComment.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_LINKS));;
 
 	ui->nameLabel->setId(cmt.mMeta.mAuthorId);
 	ui->datetimeLabel->setText(DateTime::formatLongDateTime(cmt.mMeta.mPublishTs));
@@ -534,9 +539,9 @@ void BoardsCommentsItem::setReadStatus(bool isNew, bool isUnread)
 		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 	}
 
-	ui->mainFrame->setProperty("new", isNew);
-	ui->mainFrame->style()->unpolish(ui->mainFrame);
-	ui->mainFrame->style()->polish(  ui->mainFrame);
+	ui->feedFrame->setProperty("new", isNew);
+	ui->feedFrame->style()->unpolish(ui->feedFrame);
+	ui->feedFrame->style()->polish(  ui->feedFrame);
 }
 
 void BoardsCommentsItem::toggle()

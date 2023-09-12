@@ -34,7 +34,6 @@ public:
 
 	void setMasthead(const QPixmap &pixmap);
 	QPixmap getMasthead();
-
 	void setTagline(const std::string &str);
 	void setLocation(const std::string &str);
 
@@ -43,7 +42,7 @@ public:
 
 private slots:
 	void addMasthead();
-
+	void on_removeButton_clicked();
 private:
 	void setUp();
 private:

@@ -22,24 +22,17 @@
 #ifndef _GuiExprElement_h_
 #define _GuiExprElement_h_
 
-#include <QWidget>
-#include <QObject>
-#include <QString>
-#include <QStringList>
-#include <QComboBox>
+#include "gui/common/RSComboBox.h"
+
+#include "retroshare/rsexpr.h"
+
 #include <QCheckBox>
-#include <QVariant>
-#include <QLineEdit>
 #include <QDateEdit>
-#include <QLabel>
-#include <QRegExp>
-#include <QRegExpValidator>
 #include <QHBoxLayout>
-#include <QMap>
+#include <QLabel>
+#include <QLineEdit>
 
 #include <iostream>
-
-#include <retroshare/rsexpr.h>
 
 enum ExprSearchType
 {
@@ -53,13 +46,13 @@ enum ExprSearchType
 
 };
 
-class GuiExprElement: public QWidget
+class GuiExprElement: public QFrame
 {
     Q_OBJECT
 
 public:
     GuiExprElement(QWidget * parent = 0);
-    virtual void adjustForSearchType(ExprSearchType) {}
+    void adjustForSearchType(ExprSearchType) {}
     virtual ~GuiExprElement(){}
     virtual void set(int){}
     virtual void set(QObject*){}
@@ -103,8 +96,8 @@ protected:
         condition combobox */
     QStringList getConditionOptions(ExprSearchType t);
     
-    QHBoxLayout* createLayout(QWidget* parent = 0);
-    QFrame * internalframe;
+    QHBoxLayout* createLayout(QWidget* parent = nullptr);
+    QSize getMinSize(float widthFactor = 1.0, float heightFactor = 1.0);
 
     ExprSearchType searchType;
 
@@ -125,7 +118,6 @@ protected:
     static QMap<int, QString> strConditionStrMap;
     static QMap<int, QString> relConditionStrMap;
 
-
 };
 
 /** the Expression operator combobox element */
@@ -134,11 +126,11 @@ class ExprOpElement : public GuiExprElement
     Q_OBJECT
     
 public:
-    ExprOpElement(QWidget * parent = 0);
+    ExprOpElement(QWidget * parent = nullptr);
     RsRegularExpression::LogicalOperator getLogicalOperator();
     QString toString();
 private:
-    QComboBox * cb;
+    RSComboBox * cb;
 };
 
 /** the Terms combobox element */
@@ -147,7 +139,7 @@ class ExprTermsElement : public GuiExprElement
     Q_OBJECT
     
 public:
-    ExprTermsElement(QWidget * parent = 0);
+    ExprTermsElement(QWidget * parent = nullptr);
     int getTermsIndex();
     RsRegularExpression::RelOperator getRelOperator();
     RsRegularExpression::StringOperator getStringOperator();
@@ -158,7 +150,7 @@ signals:
     void currentIndexChanged(int);
 
 private:
-    QComboBox * cb;
+    RSComboBox * cb;
 };
 
 /** the Conditions combobox element */
@@ -167,7 +159,7 @@ class ExprConditionElement : public GuiExprElement
     Q_OBJECT
     
 public:
-    ExprConditionElement(ExprSearchType, QWidget * parent = 0);
+    ExprConditionElement(QWidget * parent = nullptr, ExprSearchType type = NameSearch);
     RsRegularExpression::RelOperator getRelOperator();
     RsRegularExpression::StringOperator getStringOperator();
     void adjustForSearchType(ExprSearchType);
@@ -178,7 +170,7 @@ signals:
     void currentIndexChanged(int);
 
 private:
-    QComboBox * cb;
+    RSComboBox * cb;
 };
 
 /** the Parameter element */
@@ -187,7 +179,7 @@ class ExprParamElement : public GuiExprElement
     Q_OBJECT
     
 public:
-    ExprParamElement(ExprSearchType, QWidget * parent = 0);
+    ExprParamElement(QWidget * parent = nullptr, ExprSearchType type = NameSearch);
     QVariant* getRSExprValue();
     void adjustForSearchType(ExprSearchType);
     void setRangedSearch(bool ranged = true);

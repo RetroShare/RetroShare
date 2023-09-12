@@ -25,8 +25,20 @@
    <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="plainFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -48,9 +60,12 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="plainFrame_GL">
       <property name="bottomMargin">
        <number>0</number>
+      </property>
+      <property name="spacing">
+       <number>1</number>
       </property>
       <item row="0" column="0" colspan="2">
        <widget class="QWidget" name="widget_prefix" native="true">
@@ -149,6 +164,9 @@
          </size>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <property name="leftMargin">
+          <number>9</number>
+         </property>
          <property name="topMargin">
           <number>0</number>
          </property>
@@ -380,7 +398,14 @@
           </spacer>
          </item>
          <item>
-          <widget class="QToolButton" name="toolButton_follow">
+          <widget class="QToolButton" name="followButton">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
            <property name="text">
             <string>FOLLOW</string>
            </property>
@@ -433,10 +458,22 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>40</height>
+          <height>0</height>
          </size>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_12">
+         <property name="leftMargin">
+          <number>6</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="label_authorName">
            <property name="font">
@@ -604,11 +641,17 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>40</height>
+          <height>0</height>
          </size>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_13">
+         <property name="leftMargin">
+          <number>6</number>
+         </property>
          <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">

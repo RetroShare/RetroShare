@@ -18,20 +18,13 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <QCheckBox>
-#include <QDir>
-#include <QFileInfo>
-#include <QGroupBox>
-#include <QStatusBar>
-#include <QStyleFactory>
-
-#include "lang/languagesupport.h"
-#include <rshare.h>
 #include "AppearancePage.h"
-#include "rsharesettings.h"
-#include "util/misc.h"
+
+#include "rshare.h"
 #include "gui/MainWindow.h"
 #include "gui/notifyqt.h"
+#include "gui/common/FilesDefs.h"
+#include "gui/settings/rsharesettings.h"
 #include "gui/statusbar/peerstatus.h"
 #include "gui/statusbar/natstatus.h"
 #include "gui/statusbar/dhtstatus.h"
@@ -42,7 +35,18 @@
 #include "gui/statusbar/SoundStatus.h"
 #include "gui/statusbar/ToasterDisable.h"
 #include "gui/statusbar/SysTrayStatus.h"
-#include "gui/common/FilesDefs.h"
+#include "lang/languagesupport.h"
+#include "util/misc.h"
+
+#include <QAbstractItemView>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QDir>
+#include <QFileInfo>
+#include <QGroupBox>
+#include <QStatusBar>
+#include <QStyledItemDelegate>
+#include <QStyleFactory>
 
 /** Constructor */
 AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
@@ -50,8 +54,6 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
-
-	connect(ui.cmboStyleSheet, SIGNAL(activated(int)), this, SLOT(loadStyleSheet(int)));
 
 	connect(ui.grpStatus,                     SIGNAL(toggled(bool)), this /* pMainWindow->statusBar(),              */, SLOT(switch_status_grpStatus(bool)));
 	connect(ui.checkBoxStatusCompactMode,     SIGNAL(toggled(bool)), this /* pMainWindow,                           */, SLOT(switch_status_compactMode(bool)));
@@ -70,14 +72,16 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 
 	/* Populate combo boxes */
 	foreach (QString code, LanguageSupport::languageCodes()) {
-        ui.cmboLanguage->addItem(FilesDefs::getIconFromQtResourcePath(":/images/flags/" + code + ".png"), LanguageSupport::languageName(code), code);
-	}
-	foreach (QString style, QStyleFactory::keys()) {
-		ui.cmboStyle->addItem(style, style.toLower());
+		ui.cmboLanguage->addItem(FilesDefs::getIconFromQtResourcePath(":/images/flags/" + code + ".png"), LanguageSupport::languageName(code), code);
 	}
 
-	// add empty entry representing "no style sheet"
-	ui.cmboStyleSheet->addItem("", "");
+    // Note: apparently, on some linux systems (e.g. Debian 11), the gtk2 style makes Qt libs crash when the environment variable is not set.
+    //       So we first check that it's here before start.
+
+    foreach (QString style, QStyleFactory::keys()) {
+        if(style.toLower() != "gtk2" || (getenv("QT_QPA_PLATFORMTHEME")!=nullptr && !strcmp(getenv("QT_QPA_PLATFORMTHEME"),"gtk2")))
+            ui.cmboStyle->addItem(style, style.toLower());
+	}
 
 	QMap<QString, QString> styleSheets;
 	Rshare::getAvailableStyleSheets(styleSheets);
@@ -92,7 +96,8 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.cmboLanguage,                  SIGNAL(currentIndexChanged(int)), this, SLOT(updateLanguageCode()       ));
 	connect(ui.cmboStyle,                     SIGNAL(currentIndexChanged(int)), this, SLOT(updateInterfaceStyle()     ));
 	connect(ui.cmboStyleSheet,                SIGNAL(currentIndexChanged(int)), this, SLOT(updateSheetName()          ));
-	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool)),           this, SLOT(updateStatusToolTip()    ));
+	connect(ui.cmboStyleSheet,                SIGNAL(activated(int))          , this, SLOT(loadStyleSheet(int)        ));
+	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool))           , this, SLOT(updateStatusToolTip()      ));
 
 	connect(ui.mainPageButtonType_CB,  SIGNAL(currentIndexChanged(int)),           this, SLOT(updateRbtPageOnToolBar()    ));
 //	connect(ui.menuItemsButtonType_CB, SIGNAL(currentIndexChanged(int)),           this, SLOT(updateActionButtonLoc()    ));
@@ -128,10 +133,31 @@ void AppearancePage::switch_status(MainWindow::StatusElement s,const QString& ke
 void AppearancePage::updateLanguageCode()     { Settings->setLanguageCode(LanguageSupport::languageCode(ui.cmboLanguage->currentText())); }
 void AppearancePage::updateInterfaceStyle()
 {
-    Rshare::setStyle(ui.cmboStyle->currentText());
-    Settings->setInterfaceStyle(ui.cmboStyle->currentText());
+#ifndef QT_NO_CURSOR
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+#endif
+	Rshare::setStyle(ui.cmboStyle->currentText());
+	Settings->setInterfaceStyle(ui.cmboStyle->currentText());
+#ifndef QT_NO_CURSOR
+	QApplication::restoreOverrideCursor();
+#endif
 }
-void AppearancePage::updateSheetName()        { Settings->setSheetName(ui.cmboStyleSheet->itemData(ui.cmboStyleSheet->currentIndex()).toString()); }
+void AppearancePage::updateSheetName()
+{
+	Settings->setSheetName(ui.cmboStyleSheet->itemData(ui.cmboStyleSheet->currentIndex()).toString());
+}
+
+void AppearancePage::loadStyleSheet(int index)
+{
+#ifndef QT_NO_CURSOR
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+#endif
+	Rshare::loadStyleSheet(ui.cmboStyleSheet->itemData(index).toString());
+#ifndef QT_NO_CURSOR
+	QApplication::restoreOverrideCursor();
+#endif
+}
+
 void AppearancePage::updateRbtPageOnToolBar()
 {
     Settings->setPageButtonLoc(!ui.mainPageButtonType_CB->currentIndex());
@@ -245,9 +271,9 @@ void AppearancePage::load()
 	
 	index = ui.mainPageButtonType_CB->findData(Settings->getPageButtonLoc());
 	if (index != 0) {
-		ui.cmboTollButtonsStyle->hide();
-	}else {
-		ui.cmboTollButtonsStyle->show();
+        ui.cmboTollButtonsStyle->show();
+    }else {
+        ui.cmboTollButtonsStyle->hide();
 	}
 
 	whileBlocking(ui.mainPageButtonType_CB)->setCurrentIndex(!Settings->getPageButtonLoc());
@@ -333,9 +359,4 @@ void AppearancePage::load()
 	whileBlocking(ui.checkBoxShowToasterDisable)->setChecked(Settings->valueFromGroup("StatusBar", "ShowToaster", QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowSystrayOnStatus)->setChecked(Settings->valueFromGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(false)).toBool());
 
-}
-
-void AppearancePage::loadStyleSheet(int index)
-{
-	Rshare::loadStyleSheet(ui.cmboStyleSheet->itemData(index).toString());
 }

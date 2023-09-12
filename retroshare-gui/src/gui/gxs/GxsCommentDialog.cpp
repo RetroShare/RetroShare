@@ -30,13 +30,13 @@
 #include <QDateTime>
 
 /** Constructor */
-GxsCommentDialog::GxsCommentDialog(QWidget *parent, const RsGxsId &default_author, RsTokenService *token_service, RsGxsCommentService *comment_service)
+GxsCommentDialog::GxsCommentDialog(QWidget *parent, const RsGxsId &default_author, RsGxsCommentService *comment_service)
 	: QWidget(parent), ui(new Ui::GxsCommentDialog)
 {
 	/* Invoke the Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
 
-    setTokenService(token_service,comment_service);
+    setGxsService(comment_service);
     init(default_author);
 }
 	
@@ -67,9 +67,9 @@ void GxsCommentDialog::init(const RsGxsId& default_author)
 	ui->sortBox->setIconSize(QSize(S*1.5,S*1.5));
 }
 
-void GxsCommentDialog::setTokenService(RsTokenService *token_service, RsGxsCommentService *comment_service)
+void GxsCommentDialog::setGxsService(RsGxsCommentService *comment_service)
 {
-	ui->treeWidget->setup(token_service, comment_service);
+    ui->treeWidget->setup(comment_service);
 }
 
 GxsCommentDialog::GxsCommentDialog(QWidget *parent,const RsGxsId &default_author)
@@ -95,8 +95,10 @@ void GxsCommentDialog::commentClear()
 }
 void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId>& msg_versions,const RsGxsMessageId& most_recent_msgId,bool use_cache)
 {
+#ifdef DEBUG_COMMENT_DIALOG
 	std::cerr << "GxsCommentDialog::commentLoad(" << grpId << ", most recent msg version: " << most_recent_msgId << ")";
 	std::cerr << std::endl;
+#endif
 
 	mGrpId = grpId;
 	mMostRecentMsgId = most_recent_msgId;

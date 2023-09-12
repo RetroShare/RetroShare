@@ -67,7 +67,9 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyChatStatus(const ChatId &chat_id,const std::string& status_string);
 		virtual void notifyChatCleared(const ChatId &chat_id);
 		virtual void notifyCustomState(const std::string& peer_id, const std::string& status_string);
+#ifdef TO_REMOVE
 		virtual void notifyTurtleSearchResult(const RsPeerId &pid, uint32_t search_id, const std::list<TurtleFileInfo>& found_files);
+#endif
 		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleGxsInfo>& found_groups);
 		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
 		virtual void notifyOwnAvatarChanged() ;
@@ -95,6 +97,7 @@ class NotifyQt: public QObject, public NotifyClient
 		void testToaster(ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
 		void testToaster(QString tag, ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
 
+		void addToaster(uint notifyFlags, const std::string& id, const std::string& title, const std::string& msg);
 		void notifySettingsChanged();
 
 	signals:
@@ -109,14 +112,11 @@ class NotifyQt: public QObject, public NotifyClient
 		void lobbyListChanged() const ;
         void chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&) ;
 		void neighboursChanged() const ;
-		void messagesChanged() const ;
-		void messagesTagsChanged() const;
 		void configChanged() const ;
 		void logInfoChanged(const QString&) const ;
 		void chatStatusChanged(const ChatId&,const QString&) const ;
 		void chatCleared(const ChatId&) const ;
 		void peerHasNewCustomStateString(const QString& /* peer_id */, const QString& /* status_string */) const ;
-		void gotTurtleSearchResult(qulonglong search_id,FileDetail file) const ;
 		void peerHasNewAvatar(const QString& peer_id) const ;
 		void ownAvatarChanged() const ;
 		void ownStatusMessageChanged() const ;

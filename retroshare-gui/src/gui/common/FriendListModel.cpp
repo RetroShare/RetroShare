@@ -42,7 +42,12 @@
 
 #define IS_MESSAGE_UNREAD(flags) (flags &  (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
 
-#define IMAGE_GROUP24          ":/images/user/group24.png"
+#define IMAGE_COWORKERS        ":/icons/groups/green.svg"
+#define IMAGE_FRIENDS          ":/icons/groups/blue.svg"
+#define IMAGE_FAMILY           ":/icons/groups/purple.svg"
+#define IMAGE_FAVORITES        ":/icons/groups/yellow.svg"
+#define IMAGE_OTHERCONTACTS    ":/icons/groups/pink.svg"
+#define IMAGE_OTHERGROUPS      ":/icons/groups/red.svg"
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
 
@@ -54,7 +59,7 @@ static const uint16_t UNDEFINED_PROFILE_INDEX_VALUE = (sizeof(uintptr_t)==4)?0xf
 
 const QString RsFriendListModel::FilterString("filtered");
 const uint32_t MAX_INTERNAL_DATA_UPDATE_DELAY = 300 ; 	// re-update the internal data every 5 mins. Should properly cover sleep/wake-up changes.
-const uint32_t MAX_NODE_UPDATE_DELAY = 1 ; 				// re-update the internal data every 5 mins. Should properly cover sleep/wake-up changes.
+const uint32_t MAX_NODE_UPDATE_DELAY = 10 ; 			// re-update the internal data every 5 mins. Should properly cover sleep/wake-up changes.
 
 static const uint32_t NODE_DETAILS_UPDATE_DELAY = 5;	// update each node every 5 secs.
 
@@ -236,7 +241,8 @@ RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::parent() const
 			i.node_index = UNDEFINED_NODE_INDEX_VALUE;
 		break;
 		case ENTRY_TYPE_UNKNOWN:
-			RS_ERR("Unknown Entry type for parent.");
+			//Can be when request root index.
+		break;
 	}
 
 	return i;
@@ -496,7 +502,7 @@ QVariant RsFriendListModel::sizeHintRole(const EntryIndex& e,int col) const
 		y_factor *= 3.0;
 
 	if(e.type == ENTRY_TYPE_GROUP)
-		y_factor = std::max(y_factor, 24.0f / 14.0f ); // allows to fit the 24 pixels icon for groups in the line
+		y_factor *= 1.5;
 
 	switch(col)
 	{
@@ -663,7 +669,8 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 					else
 						return QVariant(QString::fromUtf8(group->group_info.name.c_str()));
 
-				//case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(group->group_info.id.toStdString()));
+                case COLUMN_THREAD_ID:  return QVariant(QString::fromStdString(group->group_info.id.toStdString()));
+
 				default:
 				return QVariant();
 			}
@@ -771,24 +778,29 @@ void RsFriendListModel::checkInternalData(bool force)
 {
 	rstime_t now = time(NULL);
 
-	if(mLastInternalDataUpdate + MAX_INTERNAL_DATA_UPDATE_DELAY < now || force)
+    if( (mLastInternalDataUpdate + MAX_INTERNAL_DATA_UPDATE_DELAY < now) || force)
 		updateInternalData();
-
-	if(mLastNodeUpdate + MAX_NODE_UPDATE_DELAY < now)
-	{
-		for(uint32_t i=0;i<mLocations.size();++i)
-			if(mLocations[i].last_update_ts + NODE_DETAILS_UPDATE_DELAY < now)
-			{
-#ifdef DEBUG_MODEL
-				std::cerr << "Updating ID " << mLocations[i].node_info.id << std::endl;
-#endif
-				RsPeerId id(mLocations[i].node_info.id);				// this avoids zeroing the id field when writing the node data
-				rsPeers->getPeerDetails(id,mLocations[i].node_info);
-				mLocations[i].last_update_ts = now;
-			}
-
-		mLastNodeUpdate = now;
-	}
+//    else
+//    {
+//        preMods();
+//
+//        if(mLastNodeUpdate + MAX_NODE_UPDATE_DELAY < now)
+//        {
+//            for(uint32_t i=0;i<mLocations.size();++i)
+//                if(mLocations[i].last_update_ts + NODE_DETAILS_UPDATE_DELAY < now)
+//                {
+//#ifdef DEBUG_MODEL
+//                    std::cerr << "Updating ID " << mLocations[i].node_info.id << std::endl;
+//#endif
+//                    RsPeerId id(mLocations[i].node_info.id);				// this avoids zeroing the id field when writing the node data
+//                    rsPeers->getPeerDetails(id,mLocations[i].node_info);
+//                    mLocations[i].last_update_ts = now;
+//                }
+//
+//            mLastNodeUpdate = now;
+//        }
+//        postMods();
+//    }
 }
 
 const RsFriendListModel::HierarchicalGroupInformation *RsFriendListModel::getGroupInfo(const EntryIndex& e) const
@@ -864,8 +876,28 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
 
     switch(entry.type)
     {
-    case ENTRY_TYPE_GROUP: return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP24));
+    case ENTRY_TYPE_GROUP: 
+	{
+		const HierarchicalGroupInformation *groupInfo = getGroupInfo(entry);
 
+		if (groupInfo->group_info.id.toStdString() == RS_GROUP_ID_FRIENDS.toStdString()) {
+			return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_FRIENDS));
+		}
+		if (groupInfo->group_info.id.toStdString() == RS_GROUP_ID_FAMILY.toStdString()) {
+			return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_FAMILY));
+		}
+		if (groupInfo->group_info.id.toStdString() == RS_GROUP_ID_COWORKERS.toStdString()) {
+			return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_COWORKERS));
+		}
+		if (groupInfo->group_info.id.toStdString() == RS_GROUP_ID_OTHERS.toStdString()) {
+			return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_OTHERCONTACTS));
+		}
+		if (groupInfo->group_info.id.toStdString() == RS_GROUP_ID_FAVORITES.toStdString()) {
+			return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_FAVORITES));
+		}
+
+		return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_OTHERGROUPS));
+	}
     case ENTRY_TYPE_PROFILE:
     {
         if(!isProfileExpanded(entry))
@@ -1045,7 +1077,12 @@ std::map<RsPgpId,uint32_t>::const_iterator RsFriendListModel::createInvalidatedP
 
     if(rsPeers->getGPGDetails(pgp_id,hprof.profile_info))
     {
-        std::cerr << "(EE) asked to create an invalidated profile that already exists!" << std::endl;
+        std::cerr << "(EE) asked to create an invalidated profile that already exists: " << pgp_id << std::endl;
+
+        pgp_indices[pgp_id] = mProfiles.size();
+        mProfiles.push_back(hprof);
+        it2 = pgp_indices.find(pgp_id);
+
         return it2;
     }
 

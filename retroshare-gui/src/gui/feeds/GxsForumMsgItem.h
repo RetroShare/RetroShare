@@ -77,15 +77,20 @@ signals:
 
 private:
 	void setup();
-	void fill();
-	void fillExpandFrame();
+    void fillGroup();
+    void fillMessage();
+    void fillParentMessage();
+    void fillExpandFrame();
 	void setReadStatus(bool isNew, bool isUnread);
-	void setAsRead();
-	bool isTop();
+	void setAsRead(bool doUpdate);
 
 private:
 	bool mInFill;
 	bool mCloseOnRead;
+    bool mLoadingMessage;
+    bool mLoadingParentMessage;
+    bool mLoadingGroup;
+    bool mLoadingSetAsRead;
 
 	RsGxsForumGroup mGroup;
 	RsGxsForumMsg mMessage;

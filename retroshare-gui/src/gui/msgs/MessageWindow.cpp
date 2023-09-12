@@ -150,7 +150,7 @@ void MessageWindow::tagAboutToShow()
 	MsgTagInfo tagInfo;
 	rsMail->getMessageTag(msgWidget->msgId(), tagInfo);
 
-	menu->activateActions(tagInfo.tagIds);
+    menu->activateActions(tagInfo);
 }
 
 void MessageWindow::tagRemoveAll()

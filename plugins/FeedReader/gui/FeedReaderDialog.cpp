@@ -23,6 +23,7 @@
 #include <QInputDialog>
 #include <QPainter>
 #include <QMessageBox>
+#include <QBuffer>
 
 #include "FeedReaderDialog.h"
 #include "FeedReaderMessageWidget.h"
@@ -35,6 +36,8 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "FeedReaderUserNotify.h"
+#include "gui/Posted/PostedCreatePostDialog.h"
+#include "util/imageutil.h"
 
 #include "interface/rsFeedReader.h"
 #include "retroshare/rsiface.h"
@@ -55,6 +58,8 @@
 #define ROLE_FEED_ERROR       Qt::UserRole + 9
 #define ROLE_FEED_DEACTIVATED Qt::UserRole + 10
 
+const int MAXMESSAGESIZE = RsSerialiser::MAX_SERIAL_SIZE - 70000;
+
 FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent)
 	: MainPage(parent), mFeedReader(feedReader), mNotify(notify), ui(new Ui::FeedReaderDialog)
 {
@@ -66,6 +71,7 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *n
 	mMessageWidget = NULL;
 
 	connect(mNotify, &FeedReaderNotify::feedChanged, this, &FeedReaderDialog::feedChanged, Qt::QueuedConnection);
+	connect(mNotify, &FeedReaderNotify::optimizeImage, this, &FeedReaderDialog::optimizeImage, Qt::QueuedConnection);
 
 	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 
@@ -84,8 +90,15 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *n
 	connect(ui->feedAddButton, SIGNAL(clicked()), this, SLOT(newFeed()));
 	connect(ui->feedProcessButton, SIGNAL(clicked()), this, SLOT(processFeed()));
 
+	connect(ui->feedTreeWidget, SIGNAL(feedReparent(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(feedTreeReparent(QTreeWidgetItem*,QTreeWidgetItem*)));
+
 	mFeedCompareRole = new RSTreeWidgetItemCompareRole;
 	mFeedCompareRole->setRole(COLUMN_FEED_NAME, ROLE_FEED_SORT);
+
+	/* enable drag and drop */
+	ui->feedTreeWidget->setAcceptDrops(true);
+	ui->feedTreeWidget->setDragEnabled(true);
+	ui->feedTreeWidget->setDragDropMode(QAbstractItemView::InternalMove);
 
 	/* initialize root item */
 	mRootItem = new QTreeWidgetItem(ui->feedTreeWidget);
@@ -395,6 +408,9 @@ void FeedReaderDialog::updateFeeds(uint32_t parentId, QTreeWidgetItem *parentIte
 					mOpenFeedIds->removeAt(index);
 				}
 			}
+		} else {
+			/* disable drop */
+			item->setFlags(item->flags() & ~Qt::ItemIsDropEnabled);
 		}
 	}
 
@@ -594,6 +610,55 @@ void FeedReaderDialog::feedChanged(uint32_t feedId, int type)
 	calculateFeedItems();
 }
 
+void FeedReaderDialog::optimizeImage()
+{
+	while (true) {
+		FeedReaderOptimizeImageTask *optimizeImageTask = mFeedReader->getOptimizeImageTask();
+
+		if (!optimizeImageTask) {
+			return;
+		}
+
+		optimizeImageTask->mResult = false;
+
+		QImage image;
+		if (image.loadFromData(optimizeImageTask->mImage.data(), optimizeImageTask->mImage.size())) {
+			QByteArray optimizedImageData;
+			std::string optimizedImageMimeType;
+			QImage imageOptDummy;
+
+			switch (optimizeImageTask->mType) {
+			case FeedReaderOptimizeImageTask::POSTED:
+				if (PostedCreatePostDialog::optimizeImage(image, optimizedImageData, imageOptDummy)) {
+					optimizedImageMimeType = "image/jpeg";
+					optimizeImageTask->mResult = true;
+				}
+				break;
+			case FeedReaderOptimizeImageTask::SIZE:
+				if (ImageUtil::optimizeSizeBytes(optimizedImageData, image, imageOptDummy, "JPG", 0, MAXMESSAGESIZE)) {
+					optimizedImageMimeType = "image/jpg";
+					optimizeImageTask->mResult = true;
+				}
+				break;
+			}
+
+			if (optimizeImageTask->mResult) {
+				if (optimizedImageData.size() < (ssize_t) optimizeImageTask->mImage.size()) {
+					/* use optimized image */
+					optimizeImageTask->mImageResult.assign(optimizedImageData.begin(), optimizedImageData.end());
+					optimizeImageTask->mMimeTypeResult = optimizedImageMimeType;
+				} else {
+					/* use original image */
+					optimizeImageTask->mImageResult = optimizeImageTask->mImage;
+					optimizeImageTask->mMimeTypeResult = optimizeImageTask->mMimeType;
+				}
+			}
+		}
+
+		mFeedReader->setOptimizeImageTaskResult(optimizeImageTask);
+	}
+}
+
 FeedReaderMessageWidget *FeedReaderDialog::feedMessageWidget(uint32_t id)
 {
 	int tabCount = ui->messageTabWidget->count();
@@ -738,7 +803,7 @@ void FeedReaderDialog::newFolder()
 
 	if (dialog.exec() == QDialog::Accepted && !dialog.textValue().isEmpty()) {
 		uint32_t feedId;
-		RsFeedAddResult result = mFeedReader->addFolder(currentFeedId(), dialog.textValue().toUtf8().constData(), feedId);
+		RsFeedResult result = mFeedReader->addFolder(currentFeedId(), dialog.textValue().toUtf8().constData(), feedId);
 		FeedReaderStringDefs::showError(this, result, tr("Create folder"), tr("Cannot create folder."));
 	}
 }
@@ -791,7 +856,7 @@ void FeedReaderDialog::editFeed()
 		dialog.setTextValue(item->data(COLUMN_FEED_DATA, ROLE_FEED_NAME).toString());
 
 		if (dialog.exec() == QDialog::Accepted && !dialog.textValue().isEmpty()) {
-			RsFeedAddResult result = mFeedReader->setFolder(feedId, dialog.textValue().toUtf8().constData());
+			RsFeedResult result = mFeedReader->setFolder(feedId, dialog.textValue().toUtf8().constData());
 			FeedReaderStringDefs::showError(this, result, tr("Create folder"), tr("Cannot create folder."));
 		}
 	} else {
@@ -831,4 +896,31 @@ void FeedReaderDialog::processFeed()
 	/* empty feed id process all feeds */
 
 	mFeedReader->processFeed(feedId);
+}
+
+void FeedReaderDialog::feedTreeReparent(QTreeWidgetItem *item, QTreeWidgetItem *newParent)
+{
+	if (!item || ! newParent) {
+		return;
+	}
+
+	uint32_t feedId = item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt();
+	uint32_t parentId = newParent->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt();
+
+	if (feedId == 0) {
+		return;
+	}
+
+	RsFeedResult result = mFeedReader->setParent(feedId, parentId);
+	if (FeedReaderStringDefs::showError(this, result, tr("Move feed"), tr("Cannot move feed."))) {
+		return;
+	}
+
+	bool expanded = item->isExpanded();
+	item->parent()->removeChild(item);
+	newParent->addChild(item);
+	item->setExpanded(expanded);
+	newParent->setExpanded(true);
+
+	calculateFeedItems();
 }

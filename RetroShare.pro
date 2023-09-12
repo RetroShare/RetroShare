@@ -55,11 +55,24 @@ retroshare_service {
     retroshare_service.target = retroshare_service
 }
 
+retroshare_friendserver {
+    SUBDIRS += retroshare_friendserver
+    retroshare_friendserver.file = retroshare-friendserver/src/retroshare-friendserver.pro
+    retroshare_friendserver.depends = libretroshare
+    retroshare_friendserver.target = retroshare_friendserver
+}
 retroshare_plugins {
     SUBDIRS += plugins
     plugins.file = plugins/plugins.pro
     plugins.depends = retroshare_gui
     plugins.target = plugins
+}
+
+rs_webui {
+    SUBDIRS += retroshare-webui
+    retroshare-webui.file = retroshare-webui/webui.pro
+    retroshare-webui.target = rs_webui
+    retroshare-webui.depends = retroshare_gui
 }
 
 wikipoos {

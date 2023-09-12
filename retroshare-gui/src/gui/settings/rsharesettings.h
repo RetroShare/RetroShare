@@ -217,6 +217,9 @@ public:
 	bool getChatSendAsPlainTextByDef();
 	void setChatSendAsPlainTextByDef(bool bValue);
 
+	bool getShrinkChatTextEdit();
+	void setShrinkChatTextEdit(bool bValue);
+
 	bool getChatSearchShowBarByDefault();
 	void setChatSearchShowBarByDefault(bool bValue);
 

@@ -45,6 +45,8 @@
 #include "util/DateTime.h"
 #include "util/misc.h"
 
+#define FRIEND_OPTIONS_TAB_INDEX 2
+
 QMap<RsPgpId, PGPKeyDialog*> PGPKeyDialog::instances_pgp;
 
 PGPKeyDialog *PGPKeyDialog::instance(const RsPgpId& pgp_id)
@@ -178,6 +180,7 @@ void PGPKeyDialog::load()
     {
         ui.make_friend_button->hide();
         ui.signKeyButton->hide();
+        ui.label_signKey->hide();
         ui.denyFriendButton->hide();
 
         ui.label_trustlevel->hide();
@@ -199,11 +202,13 @@ void PGPKeyDialog::load()
         {
             ui.make_friend_button->hide();
             ui.denyFriendButton->show();
+            ui.stabWidget->setTabEnabled(FRIEND_OPTIONS_TAB_INDEX,true);
         }
         else
         {
             ui.make_friend_button->show();
             ui.denyFriendButton->hide();
+            ui.stabWidget->setTabEnabled(FRIEND_OPTIONS_TAB_INDEX,false);
         }
 
         //web of trust

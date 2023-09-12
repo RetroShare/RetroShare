@@ -67,7 +67,14 @@
        </widget>
       </item>
       <item>
-       <widget class="StyledLabel" name="titleBarLabel">
+       <widget class="QLabel" name="titleBarLabel">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string>Activity Stream</string>
         </property>
@@ -87,7 +94,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QComboBox" name="sortComboBox"/>
+       <widget class="RSComboBox" name="sortComboBox"/>
       </item>
       <item>
        <widget class="QPushButton" name="feedOptionsButton">
@@ -143,9 +150,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>RSFeedWidget</class>

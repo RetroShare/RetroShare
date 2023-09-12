@@ -66,7 +66,6 @@ protected:
 
 public slots:
   //void insertMessages();
-  void messagesTagsChanged();
   void messageRemoved();
   void preModelUpdate();
   void postModelUpdate();
@@ -80,6 +79,7 @@ private slots:
 
   void changeBox(int newrow);
   void changeQuickView(int newrow);
+  void resetQuickView(const QModelIndex& i);
   void updateCurrentMessage();
   void clicked(const QModelIndex&);
   void doubleClicked(const QModelIndex&);
@@ -112,6 +112,7 @@ private slots:
 
 private:
     void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+    void handleTagEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
   void updateInterface();
 
@@ -138,9 +139,10 @@ private:
   bool inChange;
   int lockUpdate; // use with LockUpdate
 
-  enum { LIST_NOTHING, LIST_BOX, LIST_QUICKVIEW } listMode;
+  // enum { LIST_NOTHING, LIST_BOX, LIST_QUICKVIEW } listMode;
 
   std::string mCurrMsgId;
+  int mLastCurrentQuickViewRow;
 
   // timer and index for showing message
   QTimer *timer;
@@ -152,16 +154,18 @@ private:
   RsMessageModel *mMessageModel;
   MessageSortFilterProxyModel *mMessageProxyModel;
 
-  /* Color definitions (for standard see qss.default) */
+  /* Color definitions (for standard see default.qss) */
   QColor mTextColorInbox;
 
   /** Qt Designer generated object */
   Ui::MessagesDialog ui;
 
   QList<QString> mTmpSavedSelectedIds;
+  QString mTmpSavedCurrentId;
   QModelIndex lastSelectedIndex;
 
   RsEventsHandlerId_t mEventHandlerId;
+  RsEventsHandlerId_t mTagEventHandlerId;
 };
 
 #endif

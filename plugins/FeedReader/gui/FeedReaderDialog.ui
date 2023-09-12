@@ -86,7 +86,14 @@
            </widget>
           </item>
           <item>
-           <widget class="StyledLabel" name="titleBarLabel">
+           <widget class="QLabel" name="titleBarLabel">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Feeds</string>
             </property>
@@ -143,7 +150,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="RSTreeWidget" name="feedTreeWidget">
+        <widget class="FeedTreeWidget" name="feedTreeWidget">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -179,14 +186,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTreeWidget</class>
+   <class>FeedTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
+   <header>gui/FeedTreeWidget.h</header>
   </customwidget>
   <customwidget>
    <class>RSTabWidget</class>

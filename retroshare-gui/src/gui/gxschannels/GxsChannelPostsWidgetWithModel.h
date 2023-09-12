@@ -47,7 +47,7 @@ class ChannelPostFilesDelegate: public QStyledItemDelegate
 	Q_OBJECT
 
 	public:
-		ChannelPostFilesDelegate(QObject *parent=0) : QStyledItemDelegate(parent){}
+        ChannelPostFilesDelegate(QObject *parent=0) : QStyledItemDelegate(parent){}
         virtual ~ChannelPostFilesDelegate(){}
 
 		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
@@ -104,11 +104,11 @@ public:
 
 	/* GxsMessageFrameWidget */
     virtual QIcon groupIcon() override;
-    virtual void groupIdChanged() override { updateDisplay(true); }
+    virtual void groupIdChanged() override { updateDisplay(true,true); }
     virtual QString groupName(bool) override;
     virtual bool navigate(const RsGxsMessageId&) override;
 
-	void updateDisplay(bool complete);
+    void updateDisplay(bool update_group_data, bool update_posts);
 
 #ifdef TODO
 	/* FeedHolder */
@@ -137,11 +137,13 @@ protected:
 #endif
 
 	/* GxsMessageFrameWidget */
-    virtual void setAllMessagesReadDo(bool read, uint32_t &token) override;
+    virtual void setAllMessagesReadDo(bool read) override;
+    virtual void resizeEvent(QResizeEvent *e) override;
+    virtual void keyPressEvent(QKeyEvent *e) override;
 
 private slots:
 	void showPostDetails();
-	void updateGroupData();
+    void updateData(bool update_group_data,bool update_posts);
 	void download();
 	void updateDAll_PB();
 	void createMsg();
@@ -154,20 +156,23 @@ private slots:
 	void editPost();
 	void postContextMenu(const QPoint&);
 	void copyMessageLink();
-	void updateZoomFactor(bool zoom_or_unzoom);
+    void onUpdateZoomFactor(bool zoom_or_unzoom);
     void switchView();
     void switchOnlyUnread(bool b);
     void markMessageUnread();
 
 public slots:
+    void currentTabChanged(int t);
  	void sortColumnFiles(int col,Qt::SortOrder so);
  	void sortColumnPostFiles(int col,Qt::SortOrder so);
     void updateCommentsCount(int n);
     void showChannelFilesContextMenu(QPoint p);
+    void showChannelPostFilesContextMenu(QPoint p);
     void copyChannelFilesLink();
 
 private:
-	void processSettings(bool load);
+    void updateZoomFactor(int what_to_do);	// -1=unzoom, 0=nothing, 1=zoom
+    void processSettings(bool load);
     RsGxsMessageId getCurrentItemId() const;
     void selectItem(const RsGxsMessageId& msg_id);
 

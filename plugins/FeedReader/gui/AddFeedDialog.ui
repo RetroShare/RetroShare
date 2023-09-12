@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>715</width>
-    <height>605</height>
+    <width>739</width>
+    <height>653</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,56 +37,14 @@
     <widget class="HeaderFrame" name="headerFrame"/>
    </item>
    <item>
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="gradFrame">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_7">
-      <item row="3" column="0">
-       <widget class="QGroupBox" name="typeGroupBox">
-        <property name="title">
-         <string>Type</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <property name="leftMargin">
-          <number>6</number>
-         </property>
-         <property name="topMargin">
-          <number>6</number>
-         </property>
-         <property name="rightMargin">
-          <number>6</number>
-         </property>
-         <property name="bottomMargin">
-          <number>6</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QRadioButton" name="typeForumRadio">
-             <property name="text">
-              <string>Forum</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="forumComboBox"/>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="typeLocalRadio">
-           <property name="text">
-            <string>Local Feed</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
+     <layout class="QGridLayout" name="gradFrame_GL">
       <item row="7" column="0">
        <widget class="QGroupBox" name="authenticationGroupBox">
         <property name="title">
@@ -306,6 +264,13 @@
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="nameLabel">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <italic>true</italic>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
            <string>Name:</string>
           </property>
@@ -316,7 +281,44 @@
         </item>
        </layout>
       </item>
-      <item row="4" column="0">
+      <item row="3" column="1">
+       <widget class="QGroupBox" name="flagGroupBox">
+        <property name="title">
+         <string>Misc</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QCheckBox" name="activatedCheckBox">
+           <property name="text">
+            <string>Activated</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="useInfoFromFeedCheckBox">
+           <property name="text">
+            <string>Use name and description from feed</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="embedImagesCheckBox">
+           <property name="text">
+            <string>Embed images</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="saveCompletePageCheckBox">
+           <property name="text">
+            <string>Save complete web page (experimental for local feeds)</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="5" column="1">
        <widget class="QGroupBox" name="groupBox">
         <property name="title">
          <string>Transformation</string>
@@ -349,46 +351,99 @@
         </layout>
        </widget>
       </item>
-      <item row="3" column="1" rowspan="2">
-       <widget class="QGroupBox" name="flagGroupBox">
+      <item row="3" column="0" rowspan="3">
+       <widget class="QGroupBox" name="typeGroupBox">
         <property name="title">
-         <string>Misc</string>
+         <string>Type</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <item>
-          <widget class="QCheckBox" name="activatedCheckBox">
+        <layout class="QGridLayout" name="gridLayout_2">
+         <property name="leftMargin">
+          <number>6</number>
+         </property>
+         <property name="topMargin">
+          <number>6</number>
+         </property>
+         <property name="rightMargin">
+          <number>6</number>
+         </property>
+         <property name="bottomMargin">
+          <number>6</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="typeForumCheckBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
-            <string>Activated</string>
+            <string>Forum</string>
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QCheckBox" name="useInfoFromFeedCheckBox">
+         <item row="0" column="1">
+          <widget class="RSComboBox" name="forumComboBox"/>
+         </item>
+         <item row="8" column="0">
+          <widget class="QCheckBox" name="typeLocalCheckBox">
            <property name="text">
-            <string>Use name and description from feed</string>
+            <string>Local Feed</string>
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QCheckBox" name="updateForumInfoCheckBox">
+         <item row="1" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QCheckBox" name="updateForumInfoCheckBox">
+             <property name="text">
+              <string>Update forum information</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="4" column="1">
+          <widget class="RSComboBox" name="postedComboBox"/>
+         </item>
+         <item row="4" column="0">
+          <widget class="QCheckBox" name="typePostedCheckBox">
            <property name="text">
-            <string>Update forum information</string>
+            <string>Board</string>
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QCheckBox" name="embedImagesCheckBox">
-           <property name="text">
-            <string>Embed images</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="saveCompletePageCheckBox">
-           <property name="text">
-            <string>Save complete web page (experimental for local feeds)</string>
-           </property>
-          </widget>
+         <item row="6" column="1">
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="updatePostedInfoCheckBox">
+             <property name="text">
+              <string>Update board information</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="postedOnlyImageCheckBox">
+             <property name="text">
+              <string>Only image</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="postedFirstImageCheckBox">
+             <property name="text">
+              <string>Use first image as board image</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="postedShinkImageCheckBox">
+             <property name="text">
+              <string>Shrink image</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -405,27 +460,42 @@
    <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>urlLineEdit</tabstop>
   <tabstop>nameLineEdit</tabstop>
   <tabstop>descriptionPlainTextEdit</tabstop>
-  <tabstop>typeForumRadio</tabstop>
+  <tabstop>typeForumCheckBox</tabstop>
   <tabstop>forumComboBox</tabstop>
+  <tabstop>updateForumInfoCheckBox</tabstop>
+  <tabstop>typePostedCheckBox</tabstop>
+  <tabstop>postedComboBox</tabstop>
+  <tabstop>updatePostedInfoCheckBox</tabstop>
+  <tabstop>postedShinkImageCheckBox</tabstop>
+  <tabstop>postedFirstImageCheckBox</tabstop>
+  <tabstop>postedOnlyImageCheckBox</tabstop>
+  <tabstop>typeLocalCheckBox</tabstop>
   <tabstop>activatedCheckBox</tabstop>
   <tabstop>useInfoFromFeedCheckBox</tabstop>
-  <tabstop>updateForumInfoCheckBox</tabstop>
+  <tabstop>embedImagesCheckBox</tabstop>
+  <tabstop>saveCompletePageCheckBox</tabstop>
+  <tabstop>previewButton</tabstop>
   <tabstop>useAuthenticationCheckBox</tabstop>
   <tabstop>userLineEdit</tabstop>
   <tabstop>passwordLineEdit</tabstop>
   <tabstop>useStandardStorageTimeCheckBox</tabstop>
+  <tabstop>clearCachePushButton</tabstop>
   <tabstop>storageTimeSpinBox</tabstop>
   <tabstop>useStandardUpdateInterval</tabstop>
   <tabstop>updateIntervalSpinBox</tabstop>
   <tabstop>useStandardProxyCheckBox</tabstop>
   <tabstop>proxyAddressLineEdit</tabstop>
   <tabstop>proxyPortSpinBox</tabstop>
-  <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

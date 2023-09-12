@@ -53,9 +53,13 @@ linux-* {
 
 	PKGCONFIG += libavcodec libavutil
 	PKGCONFIG += speex speexdsp
-	PKGCONFIG += opencv
 } else {
 	LIBS += -lspeex -lspeexdsp -lavcodec -lavutil
+
+	win32:isEmpty(QMAKE_SH) {
+		# MinGW
+		LIBS += -lbcrypt
+	}
 }
 
 #################################### Windows #####################################
@@ -64,39 +68,6 @@ win32 {
 
 	DEPENDPATH += . $$INC_DIR
 	INCLUDEPATH += . $$INC_DIR
-
-	USE_PRECOMPILED_LIBS =
-	for(lib, RS_LIB_DIR) {
-#message(Scanning $$lib)
-		isEmpty(USE_PRECOMPILED_LIBS) {
-			exists($$lib/opencv/libopencv_core.a) {
-				message(Get pre-compiled opencv libraries here:)
-				message($$lib/opencv)
-				LIBS += -L"$$lib/opencv"
-				USE_PRECOMPILED_LIBS = 1
-			}
-			exists($$lib/libopencv_core.dll.a) {
-				message(Get pre-compiled opencv libraries here:)
-				message($$lib)
-				LIBS += -L"$$lib"
-				USE_PRECOMPILED_LIBS = 1
-			}
-		}
-	}
-	isEmpty(USE_PRECOMPILED_LIBS) {
-		message(Use system opencv libraries.)
-	}
-
-	LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_videoio -lopencv_imgcodecs -llibwebp -llibtiff -llibpng -llibopenjp2 -lIlmImf
-	LIBS += -lole32 -loleaut32 -luuid -lvfw32
-
-	# Check for msys2
-	!isEmpty(PREFIX_MSYS2) {
-		message(Use msys2 opencv4.)
-		INCLUDEPATH += "$${PREFIX_MSYS2}/include/opencv4"
-	} else {
-		LIBS += -llibjpeg-turbo -lzlib
-	}
 }
 
 #################################### MacOSX #####################################
@@ -105,42 +76,16 @@ macx {
 
 	DEPENDPATH += . $$INC_DIR
 	INCLUDEPATH += . $$INC_DIR
-
-	#OPENCV_VERSION = "249"
-	USE_PRECOMPILED_LIBS =
-	for(lib, LIB_DIR) {
-#message(Scanning $$lib)
-		exists( $$lib/opencv/libopencv_core*.dylib) {
-			isEmpty(USE_PRECOMPILED_LIBS) {
-				message(Get pre-compiled opencv libraries here:)
-				message($$lib)
-				LIBS += -L"$$lib/opencv"
-				LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
-				USE_PRECOMPILED_LIBS = 1
-			}
-		}
-		exists( $$lib/libopencv_videoio*.dylib) {
-			message(videoio found in opencv libraries.)
-			message($$lib)
-			LIBS += -lopencv_videoio
-		}
-	}
-	isEmpty(USE_PRECOMPILED_LIBS) {
-		message(Use system opencv libraries.)
-		LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
-	}
 }
 
 
 # ffmpeg (and libavutil: https://github.com/ffms/ffms2/issues/11)
 QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
 
-QMAKE_CXXFLAGS *= -Wall
-
 SOURCES = VOIPPlugin.cpp               \
+          gui/VOIPConfigPanel.cpp \
           services/p3VOIP.cc           \
           services/rsVOIPItems.cc      \
-          gui/AudioInputConfig.cpp     \
           gui/AudioStats.cpp           \
           gui/AudioWizard.cpp          \
           gui/SpeexProcessor.cpp       \
@@ -154,9 +99,9 @@ SOURCES = VOIPPlugin.cpp               \
           gui/VOIPToasterNotify.cpp
 
 HEADERS = VOIPPlugin.h                 \
+          gui/VOIPConfigPanel.h \
           services/p3VOIP.h            \
           services/rsVOIPItems.h       \
-          gui/AudioInputConfig.h       \
           gui/AudioStats.h             \
           gui/AudioWizard.h            \
           gui/SpeexProcessor.h         \
@@ -170,9 +115,10 @@ HEADERS = VOIPPlugin.h                 \
           gui/VOIPToasterNotify.h     \
           interface/rsVOIP.h
 
-FORMS   = gui/AudioInputConfig.ui      \
+FORMS   =      \
           gui/AudioStats.ui            \
           gui/AudioWizard.ui           \
+          gui/VOIPConfigPanel.ui \
           gui/VOIPToasterItem.ui
 
 TARGET = VOIP

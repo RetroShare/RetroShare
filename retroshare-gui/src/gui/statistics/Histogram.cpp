@@ -33,15 +33,15 @@ Histogram::Histogram(double start, double end, int bins)
 		std::cerr << "Null histogram created! Please check your parameters" << std::endl;
 }
 
-void Histogram::draw(QPainter *painter) const
+void Histogram::draw(QPainter */*painter*/) const
 {
 }
 
 void Histogram::insert(double val)
 {
-    long int bin = (uint32_t)floor((val - mStart)/(mEnd - mStart) * mBins.size());
+    long int bin = (long int)floor((val - mStart)/(mEnd - mStart) * mBins.size());
 
-    if(bin >= 0 && bin < mBins.size())
+    if(bin >= 0 && bin < (long int)mBins.size())
 		++mBins[bin];
 }
 

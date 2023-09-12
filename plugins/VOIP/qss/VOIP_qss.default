@@ -1,9 +1,0 @@
-/* Default stylesheet
-   This file is used as default for all stylesheets and can be overloaded */
-
-/* Font */
-
-VOIPToasterItem QLabel#textLabel
-{
-	qproperty-fontSizeFactor: 115;
-}

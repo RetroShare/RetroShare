@@ -30,6 +30,7 @@
 #include "retroshare/rspeers.h"
 
 #include <QCheckBox>
+#include <QMessageBox>
 #include <QToolTip>
 
 #include <iostream>
@@ -40,6 +41,14 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
+    int max_tr_low,max_tr_high;
+    rsTurtle->getMaxTRForwardRateLimits(max_tr_low,max_tr_high);
+
+    ui._max_tr_up_per_sec_SB->setMinimum(max_tr_low);
+    ui._max_tr_up_per_sec_SB->setMaximum(max_tr_high);
+
+    whileBlocking(ui._trustFriendNodesWithBannedFiles_CB)->setChecked(rsFiles->trustFriendNodesWithBannedFiles());
+
     QObject::connect(ui._queueSize_SB,SIGNAL(valueChanged(int)),this,SLOT(updateQueueSize(int))) ;
     QObject::connect(ui._max_up_SB,SIGNAL(valueChanged(int)),this,SLOT(updateMaxUploadSlots(int))) ;
     QObject::connect(ui._defaultStrategy_CB,SIGNAL(activated(int)),this,SLOT(updateDefaultStrategy(int))) ;
@@ -47,12 +56,14 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
     QObject::connect(ui._diskSpaceLimit_SB,SIGNAL(valueChanged(int)),this,SLOT(updateDiskSizeLimit(int))) ;
     QObject::connect(ui._max_tr_up_per_sec_SB, SIGNAL( valueChanged( int ) ), this, SLOT( updateMaxTRUpRate(int) ) );
 	QObject::connect(ui._filePermDirectDL_CB,SIGNAL(activated(int)),this,SLOT(updateFilePermDirectDL(int)));
+    QObject::connect(ui._trustFriendNodesWithBannedFiles_CB,SIGNAL(toggled(bool)),this,SLOT(toggleTrustFriendNodesWithBannedFiles(bool))) ;
 
 	QObject::connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
 	QObject::connect(ui.autoDLColl_CB, SIGNAL(toggled(bool)), this, SLOT(updateAutoDLColl()));
 	QObject::connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
 	QObject::connect(ui.editShareButton, SIGNAL(clicked()), this, SLOT(editDirectories()));
 	QObject::connect(ui.autoCheckDirectories_CB, SIGNAL(clicked(bool)), this, SLOT(toggleAutoCheckDirectories(bool)));
+	QObject::connect(ui.minimumFontSize_SB, SIGNAL(valueChanged(int)), this, SLOT(updateFontSize())) ;
 
 	QObject::connect(ui.autoCheckDirectories_CB,     SIGNAL(toggled(bool)),    this,SLOT(updateAutoCheckDirectories())) ;
 	QObject::connect(ui.autoCheckDirectoriesDelay_SB,SIGNAL(valueChanged(int)),this,SLOT(updateAutoScanDirectoriesPeriod())) ;
@@ -87,7 +98,10 @@ void TransferPage::updateIgnoreLists()
 	std::cerr << "  suffixes: " ; for(auto it(ls.begin());it!=ls.end();++it) std::cerr << "\"" << *it << "\" " ; std::cerr << std::endl;
 #endif
 }
-
+void TransferPage::toggleTrustFriendNodesWithBannedFiles(bool b)
+{
+    rsFiles->setTrustFriendNodesWithBannedFiles(b);
+}
 void TransferPage::updateMaxTRUpRate(int b)
 {
     rsTurtle->setMaxTRForwardRate(b) ;
@@ -188,6 +202,10 @@ void TransferPage::load()
 	whileBlocking(ui.suffixesIgnoreList_CB)->setChecked( ignore_flags & RS_FILE_SHARE_FLAGS_IGNORE_SUFFIXES ) ;
 	whileBlocking(ui.prefixesIgnoreList_LE)->setText( ignore_prefixes_string );
 	whileBlocking(ui.suffixesIgnoreList_LE)->setText( ignore_suffixes_string );
+
+	Settings->beginGroup(QString("File"));
+	whileBlocking(ui.minimumFontSize_SB)->setValue( Settings->value("MinimumFontSize", 11 ).toInt());
+	Settings->endGroup();
 }
 
 void TransferPage::updateDefaultStrategy(int i)
@@ -197,11 +215,19 @@ void TransferPage::updateDefaultStrategy(int i)
 		case 0: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_STREAMING) ;
 				  break ;
 
-		case 2: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
-				  break ;
+        case 2:
+#ifdef WINDOWS_SYS
+                if(QMessageBox::Yes != QMessageBox::warning(nullptr,tr("Warning"),tr("On Windows systems, randomly writing in the middle of large empty files may hang the software for several seconds. Do you want to use this option anyway (otherwise use \"progressive\")?"),QMessageBox::Yes,QMessageBox::No))
+                {
+                    ui._defaultStrategy_CB->setCurrentIndex(1);
+                    return;
+                }
+#endif
+                rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
+                break ;
 
 		case 1: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE) ;
-				  break ;
+                break ;
 		default: ;
 	}
 }
@@ -288,6 +314,13 @@ void TransferPage::toggleAutoCheckDirectories(bool b)
 void TransferPage::editDirectories()
 {
 	ShareManager::showYourself() ;
+}
+
+void TransferPage::updateFontSize()
+{
+	Settings->beginGroup(QString("File"));
+	Settings->setValue("MinimumFontSize", ui.minimumFontSize_SB->value());
+	Settings->endGroup();
 }
 
 void TransferPage::updateAutoCheckDirectories()       {    rsFiles->setWatchEnabled(ui.autoCheckDirectories_CB->isChecked()) ; }

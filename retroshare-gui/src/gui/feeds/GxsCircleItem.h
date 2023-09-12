@@ -24,8 +24,6 @@
 #include <retroshare/rsgxscircles.h>
 #include "FeedItem.h"
 
-#include "util/TokenQueue.h"
-
 namespace Ui {
 class GxsCircleItem;
 }

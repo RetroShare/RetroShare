@@ -66,7 +66,7 @@ CrashStackTrace gCrashStackTrace;
 #	include "gui/settings/JsonApiPage.h"
 #endif // RS_JSONAPI
 
-#include "TorControl/TorManager.h"
+#include "retroshare/rstor.h"
 #include "TorControl/TorControlWindow.h"
 
 #include "retroshare/rsidentity.h"
@@ -98,10 +98,6 @@ __declspec(dllexport) __cdecl BOOL _OPENSSL_isservice(void)
 }
 #endif
 #endif
-
-/*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
-#include <gui/qskinobject/qskinobject.h>
-****/
 
 #include <util/stringutil.h>
 #include <retroshare/rsinit.h>
@@ -243,7 +239,8 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	        >> parameter('d',"debug-level"   ,conf.debugLevel     ,"level"     ,"Set debug level."                                            ,false)
 	        >> parameter('i',"ip-address"    ,conf.forcedInetAddress,"nnn.nnn.nnn.nnn", "Force IP address to use (if cannot be detected)."    ,false)
 	        >> parameter('p',"port"          ,conf.forcedPort     ,"port"      ,"Set listenning port to use."                                 ,false)
-	        >> parameter('o',"opmode"        ,conf.opModeStr      ,"opmode"    ,"Set Operating mode (Full, NoTurtle, Gaming, Minimal)."       ,false);
+            >> parameter('o',"opmode"        ,conf.opModeStr      ,"opmode"    ,"Set Operating mode (Full, NoTurtle, Gaming, Minimal)."       ,false)
+            >> parameter('t',"opmode"        ,conf.userSuppliedTorExecutable,"tor"    ,"supply full tor eecutable path."       ,false);
 #ifdef RS_JSONAPI
 	as      >> parameter('J', "jsonApiPort", conf.jsonApiPort, "jsonApiPort", "Enable JSON API on the specified port", false )
 	        >> parameter('P', "jsonApiBindAddress", conf.jsonApiBindAddress, "jsonApiBindAddress", "JSON API Bind Address.", false);
@@ -397,26 +394,28 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
     if(is_auto_tor)
 	{
+        if(!conf.userSuppliedTorExecutable.empty())
+            RsTor::setTorExecutablePath(conf.userSuppliedTorExecutable);
+
 		// Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
 
-		QString tor_hidden_service_dir = QString::fromStdString(RsAccounts::AccountDirectory()) + QString("/hidden_service/") ;
+        std::string tor_hidden_service_dir = RsAccounts::AccountDirectory() + "/hidden_service/" ;
 
-		Tor::TorManager *torManager = Tor::TorManager::instance();
-		torManager->setTorDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
-		torManager->setHiddenServiceDirectory(tor_hidden_service_dir);	// re-set it, because now it's changed to the specific location that is run
+        RsTor::setTorDataDirectory(Rshare::dataDirectory().toStdString() + "/tor/");
+        RsTor::setHiddenServiceDirectory(tor_hidden_service_dir);	// re-set it, because now it's changed to the specific location that is run
 
-		RsDirUtil::checkCreateDirectory(std::string(tor_hidden_service_dir.toUtf8())) ;
+        RsDirUtil::checkCreateDirectory(std::string(tor_hidden_service_dir)) ;
 
-		torManager->setupHiddenService();
+        //RsTor::setupHiddenService();
 
-		if(! torManager->start() || torManager->hasError())
+        if(! RsTor::start() || RsTor::hasError())
 		{
-			QMessageBox::critical(NULL,QObject::tr("Cannot start Tor Manager!"),QObject::tr("Tor cannot be started on your system: \n\n")+torManager->errorMessage()) ;
+            QMessageBox::critical(NULL,QObject::tr("Cannot start Tor Manager!"),QObject::tr("Tor cannot be started on your system: \n\n")+QString::fromStdString(RsTor::errorMessage())) ;
 			return 1 ;
 		}
 
 		{
-			TorControlDialog tcd(torManager) ;
+            TorControlDialog tcd;
 			QString error_msg ;
 			tcd.show();
 
@@ -460,30 +459,29 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	{
 		// Tor works with viable hidden service. Let's use it!
 
-		QString service_id ;
-		QString onion_address ;
+        std::string service_id ;
+        std::string onion_address ;
 		uint16_t service_port ;
 		uint16_t service_target_port ;
 		uint16_t proxy_server_port ;
-		QHostAddress service_target_address ;
-		QHostAddress proxy_server_address ;
+        std::string service_target_address ;
+        std::string proxy_server_address ;
 
-		Tor::TorManager *torManager = Tor::TorManager::instance();
-		torManager->getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
-		torManager->getProxyServerInfo(proxy_server_address,proxy_server_port) ;
+        RsTor::getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
+        RsTor::getProxyServerInfo(proxy_server_address,proxy_server_port) ;
 
 		std::cerr << "Got hidden service info: " << std::endl;
-		std::cerr << "  onion address  : " << onion_address.toStdString() << std::endl;
-		std::cerr << "  service_id     : " << service_id.toStdString() << std::endl;
+        std::cerr << "  onion address  : " << onion_address << std::endl;
+        std::cerr << "  service_id     : " << service_id << std::endl;
 		std::cerr << "  service port   : " << service_port << std::endl;
 		std::cerr << "  target port    : " << service_target_port << std::endl;
-		std::cerr << "  target address : " << service_target_address.toString().toStdString() << std::endl;
+        std::cerr << "  target address : " << service_target_address << std::endl;
 
-		std::cerr << "Setting proxy server to " << service_target_address.toString().toStdString() << ":" << service_target_port << std::endl;
+        std::cerr << "Setting proxy server to " << service_target_address << ":" << service_target_port << std::endl;
 
-		rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address.toString().toStdString(), service_target_port);
-		rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address.toStdString(), service_port);
-		rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, proxy_server_address.toString().toStdString(),proxy_server_port) ;
+        rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address, service_target_port);
+        rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address, service_port);
+        rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, proxy_server_address,proxy_server_port) ;
 	}
 
 	Rshare::initPlugins();
@@ -538,11 +536,9 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	// avoid clashes between infos from threads.
 	//
 
-	qRegisterMetaType<FileDetail>("FileDetail") ;
 	qRegisterMetaType<RsPeerId>("RsPeerId") ;
 
 	std::cerr << "connecting signals and slots" << std::endl ;
-	QObject::connect(notify,SIGNAL(gotTurtleSearchResult(qulonglong,FileDetail)),w->transfersDialog->searchDialog	,SLOT(updateFiles(qulonglong,FileDetail))) ;
 	QObject::connect(notify,SIGNAL(deferredSignatureHandlingRequested()),notify,SLOT(handleSignatureEvent()),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(chatLobbyTimeShift(int)),notify,SLOT(handleChatLobbyTimeShift(int)),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(diskFull(int,int))						,w                   		,SLOT(displayDiskSpaceWarning(int,int))) ;
@@ -596,6 +592,10 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 #ifdef RS_ENABLE_GXS
 	RsGxsUpdateBroadcast::cleanup();
 #endif
+
+	if (is_auto_tor) {
+		RsTor::stop();
+	}
 
 	RsControl::instance()->rsGlobalShutDown();
 

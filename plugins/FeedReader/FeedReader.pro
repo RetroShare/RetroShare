@@ -44,6 +44,7 @@ SOURCES =	FeedReaderPlugin.cpp \
 			gui/FeedReaderFeedNotify.cpp \
 			gui/FeedReaderUserNotify.cpp \
 			gui/FeedReaderFeedItem.cpp \
+			gui/FeedTreeWidget.cpp \
 			util/CURLWrapper.cpp \
 			util/XMLWrapper.cpp \
 			util/HTMLWrapper.cpp \
@@ -64,6 +65,7 @@ HEADERS =	FeedReaderPlugin.h \
 			gui/FeedReaderFeedNotify.h \
 			gui/FeedReaderUserNotify.h \
 			gui/FeedReaderFeedItem.h \
+			gui/FeedTreeWidget.h \
 			util/CURLWrapper.h \
 			util/XMLWrapper.h \
 			util/HTMLWrapper.h \
@@ -120,6 +122,11 @@ win32 {
 
 	#Have to reorder libs, else got /libs/lib/libcrypto.a(bio_lib.o):bio_lib.c:(.text+0x0): multiple definition of `BIO_new'
 	LIBS = -lcurl -lxml2 -lz -lxslt -lws2_32 -lwldap32 -lssl -lcrypto -lgdi32 $${LIBS}
+
+	isEmpty(QMAKE_SH) {
+		# MinGW
+		LIBS += -lcrypt32
+	}
 
 	# Check for msys2
 	!isEmpty(PREFIX_MSYS2) {

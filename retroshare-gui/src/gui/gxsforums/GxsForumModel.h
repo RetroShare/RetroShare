@@ -23,43 +23,18 @@
 #include <QModelIndex>
 #include <QColor>
 
-// This class holds the actual hierarchy of posts, represented by identifiers
-// It is responsible for auto-updating when necessary and holds a mutex to allow the Model to
-// safely access the data.
-
-// The model contains a post in place 0 that is the parent of all posts.
-
-typedef uint32_t ForumModelIndex;
-
-struct ForumModelPostEntry
+struct ForumModelPostEntry: public ForumPostEntry
 {
-    ForumModelPostEntry() : mPublishTs(0),mMostRecentTsInThread(0),mPostFlags(0),mReputationWarningLevel(0),mMsgStatus(0),prow(0) {}
+    ForumModelPostEntry() : mMostRecentTsInThread(0),prow(0) {}
+    ForumModelPostEntry(const ForumPostEntry& p) : mMostRecentTsInThread(0),prow(0)  { *static_cast<ForumPostEntry*>(this) = p; }
 
-    enum {					// flags for display of posts. To be used in mPostFlags
-        FLAG_POST_IS_PINNED              = 0x0001,
-        FLAG_POST_IS_MISSING             = 0x0002,
-        FLAG_POST_IS_REDACTED            = 0x0004,
-        FLAG_POST_HAS_UNREAD_CHILDREN    = 0x0008,
-        FLAG_POST_HAS_READ_CHILDREN      = 0x0010,
-        FLAG_POST_PASSES_FILTER          = 0x0020,
-        FLAG_POST_CHILDREN_PASSES_FILTER = 0x0040,
-    };
-
-    std::string        mTitle ;
-    RsGxsId            mAuthorId ;
-    RsGxsMessageId     mMsgId;
-    uint32_t           mPublishTs;
-    uint32_t           mMostRecentTsInThread;
-    uint32_t           mPostFlags;
-    int                mReputationWarningLevel;
-    int                mMsgStatus;
-
-    std::vector<ForumModelIndex> mChildren;
-    ForumModelIndex mParent;
-    int prow ;									// parent row
+    uint32_t mMostRecentTsInThread;
+    int prow ;		// parent row. Used by Qt abstract item models.
 };
 
 // This class is the item model used by Qt to display the information
+
+typedef uint32_t ForumModelIndex;
 
 class RsGxsForumModel : public QAbstractItemModel
 {
@@ -102,7 +77,7 @@ public:
 
     static const QString FilterString ;
 
-	std::vector<std::pair<time_t,RsGxsMessageId> > getPostVersions(const RsGxsMessageId& mid) const;
+	std::vector<std::pair<rstime_t,RsGxsMessageId> > getPostVersions(const RsGxsMessageId& mid) const;
 
     // This method will asynchroneously update the data
 	void updateForum(const RsGxsGroupId& forumGroup);
@@ -195,11 +170,11 @@ private:
 	static void convertMsgToPostEntry(const RsGxsForumGroup &mForumGroup, const RsMsgMetaData &msg, bool useChildTS, ForumModelPostEntry& fentry);
 
 	void computeMessagesHierarchy(const RsGxsForumGroup& forum_group, const std::vector<RsMsgMetaData> &msgs_array, std::vector<ForumModelPostEntry>& posts, std::map<RsGxsMessageId, std::vector<std::pair<time_t, RsGxsMessageId> > > &mPostVersions);
-	void setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts,const std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > >& post_versions);
+	void setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts,const std::map<RsGxsMessageId,std::vector<std::pair<rstime_t,RsGxsMessageId> > >& post_versions);
 	void initEmptyHierarchy(std::vector<ForumModelPostEntry>& posts);
 
     std::vector<ForumModelPostEntry> mPosts ; // store the list of posts updated from rsForums.
-	std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > > mPostVersions;
+	std::map<RsGxsMessageId,std::vector<std::pair<rstime_t,RsGxsMessageId> > > mPostVersions;
 
     QColor mTextColorRead          ;
     QColor mTextColorUnread        ;

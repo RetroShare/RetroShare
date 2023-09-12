@@ -24,9 +24,9 @@
   <property name="windowTitle">
    <string notr="true"/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="PulseTopLevel_VL">
    <item>
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="plainFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -48,7 +48,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="plainFrame_VL">
       <item>
        <widget class="QWidget" name="widget_prefix" native="true">
         <property name="sizePolicy">
@@ -63,7 +63,7 @@
           <height>40</height>
          </size>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_10">
+        <layout class="QHBoxLayout" name="widget_prefix_HL">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -77,7 +77,7 @@
           <number>0</number>
          </property>
          <item>
-          <spacer name="horizontalSpacer_14">
+          <spacer name="widget_prefix_LHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -171,7 +171,7 @@
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_15">
+          <spacer name="widget_prefix_RHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -200,9 +200,9 @@
           <height>60</height>
          </size>
         </property>
-        <layout class="QGridLayout" name="gridLayout">
+        <layout class="QGridLayout" name="widget_header_GL">
          <item row="2" column="1">
-          <spacer name="verticalSpacer">
+          <spacer name="widget_header_VSpacer">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -256,7 +256,7 @@
           </widget>
          </item>
          <item row="0" column="3" rowspan="3">
-          <spacer name="horizontalSpacer_13">
+          <spacer name="widget_header_HSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -336,7 +336,7 @@
           <height>16777215</height>
          </size>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_9">
+        <layout class="QHBoxLayout" name="widget_publish_HL">
          <item>
           <widget class="QLabel" name="label_date">
            <property name="text">
@@ -345,7 +345,7 @@
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_12">
+          <spacer name="widget_publish_HSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -361,7 +361,7 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line_2">
+       <widget class="Line" name="line_1">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -381,9 +381,9 @@
           <height>40</height>
          </size>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_8">
+        <layout class="QHBoxLayout" name="widget_replies_HL">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_611">
+          <layout class="QHBoxLayout" name="extra_replies_HL">
            <item>
             <widget class="QLabel" name="label_extra_replies">
              <property name="text">
@@ -392,14 +392,14 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_911">
+            <widget class="QLabel" name="extra_replies_Label">
              <property name="text">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#2e3436;&quot;&gt;Replies&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer_1011">
+            <spacer name="extra_replies_HSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -417,7 +417,7 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <layout class="QHBoxLayout" name="extra_republishes_HL">
            <item>
             <widget class="QLabel" name="label_extra_republishes">
              <property name="text">
@@ -426,14 +426,14 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_9">
+            <widget class="QLabel" name="extra_republishe_Label">
              <property name="text">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#2e3436;&quot;&gt;Republishes&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer_10">
+            <spacer name="extra_republishes_HSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -451,7 +451,7 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <layout class="QHBoxLayout" name="extra_likes_HL">
            <item>
             <widget class="QLabel" name="label_extra_likes">
              <property name="text">
@@ -460,14 +460,14 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_11">
+            <widget class="QLabel" name="extra_likes_Label">
              <property name="text">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#2e3436;&quot;&gt;Likes&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer_11">
+            <spacer name="extra_likes_HSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -485,7 +485,7 @@
           </layout>
          </item>
          <item>
-          <spacer name="horizontalSpacer_9">
+          <spacer name="widget_replies_HSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -501,7 +501,7 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line">
+       <widget class="Line" name="line_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -521,11 +521,11 @@
           <height>40</height>
          </size>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <layout class="QHBoxLayout" name="widget_actions_HL">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
+          <layout class="QHBoxLayout" name="replies_HL">
            <item>
-            <spacer name="horizontalSpacer_8">
+            <spacer name="replies_LHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -562,7 +562,7 @@
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer_7">
+            <spacer name="replies_RHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -577,9 +577,9 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <layout class="QHBoxLayout" name="republishes_HL">
            <item>
-            <spacer name="horizontalSpacer_6">
+            <spacer name="republishes_LHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -616,7 +616,7 @@
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer_5">
+            <spacer name="republishes_RHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -631,9 +631,9 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <layout class="QHBoxLayout" name="likes_HL">
            <item>
-            <spacer name="horizontalSpacer_4">
+            <spacer name="likes_LHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -670,7 +670,7 @@
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer_3">
+            <spacer name="likes_RHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -685,9 +685,9 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <layout class="QHBoxLayout" name="view_HL">
            <item>
-            <spacer name="horizontalSpacer">
+            <spacer name="view_LHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -717,7 +717,7 @@
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer_2">
+            <spacer name="view_RHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -748,9 +748,9 @@
           <height>40</height>
          </size>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_11">
+        <layout class="QHBoxLayout" name="widget_actionsFollow_HL">
          <item>
-          <spacer name="horizontalSpacer_20">
+          <spacer name="widget_actionsFollow_LHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -763,7 +763,13 @@
           </spacer>
          </item>
          <item>
-          <widget class="QToolButton" name="toolButton_follow">
+          <widget class="QToolButton" name="followButton">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
            <property name="text">
             <string>FOLLOW</string>
            </property>
@@ -773,7 +779,7 @@
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_21">
+          <spacer name="widget_actionsFollow_RHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>

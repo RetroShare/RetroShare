@@ -22,8 +22,9 @@
 #include "PostedGroupDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
+#include "util/imageutil.h"
 
-#include <retroshare/rswiki.h>
+#include "retroshare/rswiki.h"
 #include <iostream>
 
 const uint32_t PostedCreateEnabledFlags = ( 
@@ -104,8 +105,10 @@ void PostedGroupDialog::preparePostedGroup(RsPostedGroup &group, const RsGroupMe
 		QByteArray ba;
 		QBuffer buffer(&ba);
 
-		buffer.open(QIODevice::WriteOnly);
-		pixmap.save(&buffer, "PNG"); // writes image into ba in PNG format
+        bool has_transparency = ImageUtil::hasAlphaContent(pixmap.toImage());
+
+        buffer.open(QIODevice::WriteOnly);
+        pixmap.save(&buffer, has_transparency?"PNG":"JPG"); // writes image into ba in PNG format
 
 		group.mGroupImage.copy((uint8_t *) ba.data(), ba.size());
 	} else {
@@ -136,7 +139,7 @@ bool PostedGroupDialog::service_updateGroup(const RsGroupMetaData& editedMeta)
 	return rsPosted->editBoard(grp);
 }
 
-bool PostedGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mode mode, QString& description)
+bool PostedGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mode /*mode*/, QString& description)
 {
 	const RsPostedGroup *pgroup = dynamic_cast<const RsPostedGroup*>(data);
 

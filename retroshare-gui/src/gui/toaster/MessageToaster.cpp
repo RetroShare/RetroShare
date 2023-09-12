@@ -21,7 +21,11 @@
 #include "MessageToaster.h"
 #include "../MainWindow.h"
 
+#include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsidentity.h>
+
+#include "gui/msgs/MessageInterface.h"
 
 MessageToaster::MessageToaster(const std::string &peerId, const QString &title, const QString &message) : QWidget(NULL)
 {
@@ -39,8 +43,24 @@ MessageToaster::MessageToaster(const std::string &peerId, const QString &title, 
 	ui.textLabel->setText(message);
 	ui.textLabel->setToolTip(message);
 
-	std::string name = (!RsPeerId(peerId).isNull())? (rsPeers->getPeerName(RsPeerId(peerId))): (rsPeers->getGPGName(RsPgpId(peerId))) ;
-	ui.toasterLabel->setText(ui.toasterLabel->text() + " " + QString::fromUtf8(name.c_str()));
+	MessageInfo mi;
+
+	if (!rsMail->getMessage(peerId, mi))
+		return;
+
+	QString srcName;
+
+	if(mi.msgflags & RS_MSG_DISTANT)
+	{
+		RsIdentityDetails details ;
+		rsIdentity->getIdDetails(mi.from.toGxsId(), details) ;
+
+		srcName = QString::fromUtf8(details.mNickname.c_str());
+	}
+	else
+		srcName = QString::fromUtf8(rsPeers->getPeerName(mi.from.toRsPeerId()).c_str());
+
+	ui.toasterLabel->setText(ui.toasterLabel->text() + " " + srcName);
 }
 
 void MessageToaster::openmessageClicked()

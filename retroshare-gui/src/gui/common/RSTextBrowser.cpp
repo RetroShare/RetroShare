@@ -22,6 +22,7 @@
 
 #include "RSImageBlockWidget.h"
 #include "gui/common/FilesDefs.h"
+#include "util/imageutil.h"
 
 #include <retroshare/rsinit.h> //To get RsAccounts
 
@@ -33,6 +34,7 @@
 #include <QPainter>
 #include <QPlainTextEdit>
 #include <QTextDocumentFragment>
+#include <QScrollBar>
 
 #include <iostream>
 
@@ -49,6 +51,14 @@ RSTextBrowser::RSTextBrowser(QWidget *parent) :
 	highlighter = new RsSyntaxHighlighter(this);
 
 	connect(this, SIGNAL(anchorClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
+}
+
+void RSTextBrowser::append(const QString &text)
+{
+	//In Win RSTextBrowser don't recognize file:///
+	QString fileText = text;
+	QTextBrowser::append(fileText.replace("file:///","file://"));
+
 }
 
 void RSTextBrowser::linkClicked(const QUrl &url)
@@ -128,14 +138,22 @@ QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
 
 	// case 2: always trust the image if it comes from local Config or Data directories.
 
-	if(type == QTextDocument::ImageResource) {
+	if(type == QTextDocument::ImageResource)
+	{
 		QFileInfo fi = QFileInfo(name.path());
-		if(fi.exists() && fi.isFile()) {
+		if(fi.exists() && fi.isFile())
+		{
 			QString cpath = fi.canonicalFilePath();
-			if (cpath.startsWith(QDir(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str())).canonicalPath(),Qt::CaseInsensitive)
-					|| cpath.startsWith(QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str())).canonicalPath(),Qt::CaseInsensitive))
-				return QTextBrowser::loadResource(type, name);
-		}}
+			QStringList autPath = { QDir(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str())).canonicalPath()
+			                      , QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str())).canonicalPath()
+			                      , QDir(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str())+"/stylesheets/").canonicalPath() //May be link
+			                      , QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str())+"/stylesheets/").canonicalPath() //May be link
+			                      };
+			for(auto& it : autPath)
+				if (!it.isEmpty() && cpath.startsWith(it, Qt::CaseInsensitive))
+					return QPixmap(fi.absoluteFilePath());
+		}
+	}
 
 	// case 3: only display if the user allows it. Data resources can be bad (svg bombs) but we filter them out globally at the network layer.
 	//         It would be good to add here a home-made resource loader that only loads images and not svg crap, just in case.
@@ -145,7 +163,11 @@ QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
 
 	// case 4: otherwise, do not display
 
-	std::cerr << "TEXTBROWSER: refusing load ressource request: type=" << type << " scheme=" << name.scheme().toStdString() << ", url=" << name.toString().toStdString() << std::endl;
+    std::cerr << "TEXTBROWSER: refusing load ressource request: type=" << type << " scheme="
+              << name.scheme().toStdString() << ", url="
+              << name.toString().left(50).toStdString()
+              << ((name.toString().length()>50)?"...":"")
+              << std::endl;
 
 	if (mImageBlockWidget)
 		mImageBlockWidget->show();
@@ -213,64 +235,6 @@ void RSTextBrowser::activateLinkClick(bool active)
 }
 
 /**
- * @brief RSTextBrowser::checkImage
- * @param pos where to check if image is shown in viewport coordinate
- * @param imageStr return html source of cursor
- * @return True if an image is under cursor
- */
-bool RSTextBrowser::checkImage(QPoint pos, QString &imageStr)
-{
-	//Get text cursor under pos. But if pos is under text browser end line this return last cursor.
-	QTextCursor cursor = cursorForPosition(pos);
-	//First get rect of cursor (could be at left or right of image)
-	QRect cursorRectStart = cursorRect(cursor);
-	//Second get text
-	cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 1);//To get character just before
-	QRect cursorRectLeft = cursorRect(cursor);
-	cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 2);
-	QRect cursorRectRight = cursorRect(cursor);
-	imageStr = cursor.selection().toHtml();
-#ifdef RSTEXTBROWSER_CHECKIMAGE_DEBUG
-	mCursorRectStart = cursorRectStart;
-	mCursorRectLeft = cursorRectLeft;
-	mCursorRectRight = cursorRectRight;
-
-	std::cerr << "cursorRect LTRB :" << cursorRectStart.left() << ";" << cursorRectStart.top() << ";" << cursorRectStart.right() << ";" << cursorRectStart.bottom() << std::endl;
-	std::cerr << "cursorRectLeft  :" << cursorRectLeft.left() << ";" << cursorRectLeft.top() << ";" << cursorRectLeft.right() << ";" << cursorRectLeft.bottom() << std::endl;
-	std::cerr << "cursorRectRight :" << cursorRectRight.left() << ";" << cursorRectRight.top() << ";" << cursorRectRight.right() << ";" << cursorRectRight.bottom() << std::endl;
-	std::cerr << "pos XY          :" << pos.x() << ";" << pos.y() << std::endl;
-#endif
-	QRect cursorRectEnd = cursorRectStart;
-	//Finally set left with right of precedent character.
-	if (cursorRectEnd.top() < cursorRectLeft.bottom())
-	{
-		cursorRectEnd.setLeft(cursorRectLeft.right());
-	} else {
-		//Image on new line
-		cursorRectEnd.setLeft(0);
-	}
-	//And set Right with left of next character.
-	if (cursorRectEnd.bottom() > cursorRectRight.top())
-	{
-		cursorRectEnd.setRight(cursorRectRight.left());
-	} else {
-		//New line after Image.
-	}
-#ifdef RSTEXTBROWSER_CHECKIMAGE_DEBUG
-	mCursorRectEnd = cursorRectEnd;
-
-	std::cerr << "final cursorRect:" << cursorRectEnd.left() << ";" << cursorRectEnd.top() << ";" << cursorRectEnd.right() << ";" << cursorRectEnd.bottom() << std::endl;
-	viewport()->update();
-#endif
-	//If pos is on text rect
-	if (cursorRectEnd.contains(pos))
-	{
-		return imageStr.indexOf("base64,") != -1;
-	}
-	return false;
-}
-
-/**
  * @brief RSTextBrowser::anchorForPosition Replace anchorAt that doesn't works as expected.
  * @param pos Where to get anchor from text
  * @return anchor If text at pos is inside anchor, else empty string.
@@ -285,10 +249,10 @@ QString RSTextBrowser::anchorForPosition(const QPoint &pos) const
 		rx.setMinimal(true);
 		QString sel = cursor.selection().toHtml();
 		QStringList anchors;
-		int pos=0;
-		while ((pos = rx.indexIn(sel,pos)) != -1) {
+		int posX=0;
+		while ((posX = rx.indexIn(sel,posX)) != -1) {
 			anchors << rx.cap(1);
-			pos += rx.matchedLength();
+			posX += rx.matchedLength();
 		}
 		if (!anchors.isEmpty()){
 			anchor = anchors.at(0);
@@ -297,17 +261,58 @@ QString RSTextBrowser::anchorForPosition(const QPoint &pos) const
 	return anchor;
 }
 
-QMenu *RSTextBrowser::createStandardContextMenu()
+void RSTextBrowser::addContextMenuAction(QAction *action)
 {
-	return createStandardContextMenu(QPoint());
+	mContextMenuActions.push_back(action);
 }
-QMenu *RSTextBrowser::createStandardContextMenu(const QPoint &position)
+
+void RSTextBrowser::contextMenuEvent(QContextMenuEvent *event)
 {
-	QMenu *menu = QTextBrowser::createStandardContextMenu(position);
+	emit calculateContextMenuActions();
+
+	QMenu *contextMenu = createStandardContextMenuFromPoint(event->pos());
+
+	QList<QAction*>::iterator it;
+	for (it = mContextMenuActions.begin(); it != mContextMenuActions.end(); ++it) {
+		contextMenu->addAction(*it);
+	}
+
+	contextMenu->exec(QCursor::pos());
+
+	delete(contextMenu);
+}
+
+QMenu *RSTextBrowser::createStandardContextMenuFromPoint(const QPoint &widgetPos)
+{
+	QMatrix matrix;
+	matrix.translate(horizontalScrollBar()->value(), verticalScrollBar()->value());
+
+	QMenu *menu = QTextBrowser::createStandardContextMenu(matrix.map(widgetPos));
 
 	menu->addSeparator();
 	QAction *a = menu->addAction(FilesDefs::getIconFromQtResourcePath("://icons/textedit/code.png"), tr("View &Source"), this, SLOT(viewSource()));
 	a->setEnabled(!this->document()->isEmpty());
+
+	if (ImageUtil::checkImage(this, widgetPos
+#ifdef RSTEXTBROWSER_CHECKIMAGE_DEBUG
+	                          , &mCursorRectStart, &mCursorRectLeft, &mCursorRectRight, &mCursorRectEnd
+#endif
+	)) {
+		a = menu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/document_save.png"), tr("Save image"), this, SLOT(saveImage()));
+		a->setData(widgetPos);
+
+		a = menu->addAction( tr("Copy image"), this, SLOT(copyImage()));
+		a->setData(widgetPos);
+	}
+
+#ifdef RSTEXTBROWSER_CHECKIMAGE_DEBUG
+	std::cerr << "cursorRect LTRB :" << mCursorRectStart.left() << ";" << mCursorRectStart.top() << ";" << mCursorRectStart.right() << ";" << mCursorRectStart.bottom() << std::endl;
+	std::cerr << "cursorRectLeft  :" << mCursorRectLeft.left() << ";" << mCursorRectLeft.top() << ";" << mCursorRectLeft.right() << ";" << mCursorRectLeft.bottom() << std::endl;
+	std::cerr << "cursorRectRight :" << mCursorRectRight.left() << ";" << mCursorRectRight.top() << ";" << mCursorRectRight.right() << ";" << mCursorRectRight.bottom() << std::endl;
+	std::cerr << "pos XY          :" << widgetPos.x() << ";" << widgetPos.y() << std::endl;
+	std::cerr << "final cursorRect:" << mCursorRectEnd.left() << ";" << mCursorRectEnd.top() << ";" << mCursorRectEnd.right() << ";" << mCursorRectEnd.bottom() << std::endl;
+	viewport()->update();
+#endif
 
 	return menu;
 }
@@ -329,4 +334,28 @@ void RSTextBrowser::viewSource()
 	dialog->exec();
 
 	delete dialog;
+}
+
+void RSTextBrowser::saveImage()
+{
+	QAction *action = dynamic_cast<QAction*>(sender()) ;
+	if (!action) {
+		return;
+	}
+
+	QPoint point = action->data().toPoint();
+	QTextCursor cursor = cursorForPosition(point);
+	ImageUtil::extractImage(window(), cursor);
+}
+
+void RSTextBrowser::copyImage()
+{
+	QAction *action = dynamic_cast<QAction*>(sender()) ;
+	if (!action) {
+		return;
+	}
+
+	QPoint point = action->data().toPoint();
+	QTextCursor cursor = cursorForPosition(point);
+	ImageUtil::copyImage(window(), cursor);
 }

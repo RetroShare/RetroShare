@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QBuffer>
+#include <QClipboard>
 #include <QMessageBox>
 #include <QByteArray>
 #include <QStringList>
@@ -28,6 +29,7 @@
 #include "ui_PostedCreatePostDialog.h"
 
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 #include "util/RichTextEdit.h"
 #include "gui/feeds/SubFileItem.h"
 #include "util/rsdir.h"
@@ -41,9 +43,14 @@
 #include "gui/common/FilesDefs.h"
 
 /* View Page */
-#define VIEW_POST  1
-#define VIEW_IMAGE  2
-#define VIEW_LINK  3
+#define VIEW_POST   0
+#define VIEW_IMAGE  1
+#define VIEW_LINK   2
+/* View Image */
+#define IMG_ATTACH  0
+#define IMG_PICTURE 1
+
+const int MAXMESSAGESIZE = 199000;
 
 PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGroupId& grpId, const RsGxsId& default_author, QWidget *parent):
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
@@ -53,10 +60,10 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 	ui->setupUi(this);
 	Settings->loadWidgetInformation(this);
 
-	connect(ui->submitButton, SIGNAL(clicked()), this, SLOT(createPost()));
-	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createPost()));
 	connect(ui->addPicButton, SIGNAL(clicked() ), this , SLOT(addPicture()));
-	connect(ui->RichTextEditWidget, SIGNAL(textSizeOk(bool)),ui->submitButton, SLOT(setEnabled(bool)));
+	connect(ui->pasteButton, SIGNAL(clicked() ), this , SLOT(pastePicture()));
+	connect(ui->RichTextEditWidget, SIGNAL(textSizeOk(bool)),ui->postButton, SLOT(setEnabled(bool)));
 
 	ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/postedlinks.png"));
 	ui->headerFrame->setHeaderText(tr("Create a new Post"));
@@ -74,16 +81,17 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
     ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, default_author);
 
 	QSignalMapper *signalMapper = new QSignalMapper(this);
-	connect(ui->postButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-	connect(ui->imageButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-	connect(ui->linkButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	connect(ui->viewPostButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	connect(ui->viewImageButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	connect(ui->viewLinkButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
 
-	signalMapper->setMapping(ui->postButton, VIEW_POST);
-	signalMapper->setMapping(ui->imageButton, VIEW_IMAGE);
-	signalMapper->setMapping(ui->linkButton, VIEW_LINK);
+	signalMapper->setMapping(ui->viewPostButton, VIEW_POST);
+	signalMapper->setMapping(ui->viewImageButton, VIEW_IMAGE);
+	signalMapper->setMapping(ui->viewLinkButton, VIEW_LINK);
 	connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(setPage(int)));
 	
 	ui->removeButton->hide();
+	ui->stackedWidgetPicture->setCurrentIndex(IMG_ATTACH);
 
 	/* load settings */
 	processSettings(true);
@@ -175,10 +183,20 @@ void PostedCreatePostDialog::createPost()
 		return;
 	}
 
-	uint32_t token;
-	mPosted->createPost(token, post);
+    RsThread::async([this,post]()
+    {
+        RsGxsMessageId post_id;
 
-	accept();
+        bool res = rsPosted->createPost(post,post_id);
+
+        RsQThreadUtils::postToObject( [res,this]()
+        {
+            if(!res)
+                QMessageBox::information(nullptr,tr("Error while creating post"),tr("An error occurred while creating the post."));
+
+            accept();
+        }, this );
+    });
 }
 
 void PostedCreatePostDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
@@ -189,7 +207,7 @@ void PostedCreatePostDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
 		link = RetroShareLink::createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()));
 		ui->linkEdit->setText(link.toString());
 	}
-	ui->submitButton->setEnabled(true);
+	ui->postButton->setEnabled(true);
 	ui->addPicButton->setEnabled(true);
 }
 
@@ -202,7 +220,6 @@ void PostedCreatePostDialog::addPicture()
 
 	// select a picture file
 	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", imagefilename)) {
-		QString encodedImage;
 		QImage image;
 		if (image.load(imagefilename) == false) {
 			fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", imagefilename.toLatin1().constData());
@@ -211,9 +228,9 @@ void PostedCreatePostDialog::addPicture()
 		}
 
 		QImage opt;
-		if(ImageUtil::optimizeSizeBytes(imagebytes, image, opt, 640*480, MAXMESSAGESIZE - 2000)) { //Leave space for other stuff
+        if (optimizeImage(image, imagebytes, opt)) {
 			ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
-			ui->stackedWidgetPicture->setCurrentIndex(1);
+			ui->stackedWidgetPicture->setCurrentIndex(IMG_PICTURE);
 			ui->removeButton->show();
 		} else {
 			imagefilename = "";
@@ -233,7 +250,7 @@ void PostedCreatePostDialog::addPicture()
 
 	//If still yes then link it
 	if(answer == QMessageBox::Yes) {
-		ui->submitButton->setEnabled(false);
+		ui->postButton->setEnabled(false);
 		ui->addPicButton->setEnabled(false);
 		QStringList files;
 		files.append(imagefilename);
@@ -243,13 +260,48 @@ void PostedCreatePostDialog::addPicture()
 
 }
 
+void PostedCreatePostDialog::pastePicture()
+{
+	imagefilename = "";
+	imagebytes.clear();
+	QPixmap empty;
+	ui->imageLabel->setPixmap(empty);
+
+	// paste picture from clipboard
+	const QClipboard *clipboard = QApplication::clipboard();
+	const QMimeData *mimeData = clipboard->mimeData();
+
+	QImage image;
+	if (mimeData->hasImage()) {
+		image = (qvariant_cast<QImage>(mimeData->imageData()));
+
+		QImage opt;
+		if (optimizeImage(image, imagebytes, opt)) {
+			ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
+			ui->stackedWidgetPicture->setCurrentIndex(IMG_PICTURE);
+			ui->removeButton->show();
+		} 
+	} else {
+		QMessageBox::information(nullptr,tr("No clipboard image found."),tr("There is no image data in the clipboard to paste"));
+		imagefilename = "";
+		imagebytes.clear();
+		return;
+	}
+}
+
+bool PostedCreatePostDialog::optimizeImage(const QImage &image, QByteArray &imagebytes, QImage &imageOpt)
+{
+	// Leave space for other stuff
+	return ImageUtil::optimizeSizeBytes(imagebytes, image, imageOpt, "JPG", 640*480, MAXMESSAGESIZE - 2000);
+}
+
 int PostedCreatePostDialog::viewMode()
 {
-	if (ui->postButton->isChecked()) {
+	if (ui->viewPostButton->isChecked()) {
 		return VIEW_POST;
-	} else if (ui->imageButton->isChecked()) {
+	} else if (ui->viewImageButton->isChecked()) {
 		return VIEW_IMAGE;
-	} else if (ui->linkButton->isChecked()) {
+	} else if (ui->viewLinkButton->isChecked()) {
 		return VIEW_LINK;
 	}
 
@@ -259,45 +311,24 @@ int PostedCreatePostDialog::viewMode()
 
 void PostedCreatePostDialog::setPage(int viewMode)
 {
-	switch (viewMode) {
-	case VIEW_POST:
-		ui->stackedWidget->setCurrentIndex(0);
+	if( (viewMode < 0) || (viewMode > ui->stackedWidget->count()-1) )
+		viewMode = VIEW_POST;
 
-		ui->postButton->setChecked(true);
-		ui->imageButton->setChecked(false);
-		ui->linkButton->setChecked(false);
+	ui->stackedWidget->setCurrentIndex(viewMode);
 
-		break;
-	case VIEW_IMAGE:
-		ui->stackedWidget->setCurrentIndex(1);
+	ui->viewPostButton ->setChecked(viewMode==VIEW_POST);
+	ui->viewImageButton->setChecked(viewMode==VIEW_IMAGE);
+	ui->viewLinkButton ->setChecked(viewMode==VIEW_LINK);
 
-		ui->imageButton->setChecked(true);
-		ui->postButton->setChecked(false);
-		ui->linkButton->setChecked(false);
-
-		break;
-	case VIEW_LINK:
-		ui->stackedWidget->setCurrentIndex(2);
-
-		ui->linkButton->setChecked(true);
-		ui->postButton->setChecked(false);
-		ui->imageButton->setChecked(false);
-
-		break;
-	default:
-		setPage(VIEW_POST);
-		return;
-	}
 }
 
 void PostedCreatePostDialog::on_removeButton_clicked()
 {
 	imagefilename = "";
 	imagebytes.clear();
-	QPixmap empty;
-	ui->imageLabel->setPixmap(empty);
+	ui->imageLabel->setPixmap(QPixmap());
 	ui->removeButton->hide();
-	ui->stackedWidgetPicture->setCurrentIndex(0);
+	ui->stackedWidgetPicture->setCurrentIndex(IMG_ATTACH);
 }
 
 void PostedCreatePostDialog::reject()
@@ -306,4 +337,19 @@ void PostedCreatePostDialog::reject()
         return;
 
     QDialog::reject();
+}
+
+void PostedCreatePostDialog::setTitle(const QString& title)
+{
+	ui->titleEdit->setText(title);
+}
+
+void PostedCreatePostDialog::setNotes(const QString& notes)
+{
+	ui->RichTextEditWidget->setText(notes);
+}
+
+void PostedCreatePostDialog::setLink(const QString& link)
+{
+	ui->linkEdit->setText(link);
 }

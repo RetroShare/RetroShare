@@ -46,6 +46,7 @@ void RsFeedReaderFeed::clear()
 	storageTime = 0;
 	flag = 0;
 	forumId.clear();
+	postedId.clear();
 	description.clear();
 	icon.clear();
 	errorState = RS_FEED_ERRORSTATE_OK;
@@ -85,6 +86,7 @@ uint32_t RsFeedReaderSerialiser::sizeFeed(RsFeedReaderFeed *item)
 	s += item->xpathsToUse.TlvSize();
 	s += item->xpathsToRemove.TlvSize();
 	s += GetTlvStringSize(item->xslt);
+	s += GetTlvStringSize(item->postedId);
 
 	return s;
 }
@@ -108,7 +110,7 @@ bool RsFeedReaderSerialiser::serialiseFeed(RsFeedReaderFeed *item, void *data, u
 	offset += 8;
 
 	/* add values */
-	ok &= setRawUInt16(data, tlvsize, &offset, 2); /* version */
+	ok &= setRawUInt16(data, tlvsize, &offset, 3); /* version */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->feedId);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->parentId);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LINK, item->url);
@@ -124,6 +126,7 @@ bool RsFeedReaderSerialiser::serialiseFeed(RsFeedReaderFeed *item, void *data, u
 	ok &= setRawUInt32(data, tlvsize, &offset, item->storageTime);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->flag);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->forumId);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->postedId);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->errorState);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->errorString);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->transformationType);
@@ -208,6 +211,9 @@ RsFeedReaderFeed *RsFeedReaderSerialiser::deserialiseFeed(void *data, uint32_t *
 	ok &= getRawUInt32(data, rssize, &offset, &(item->storageTime));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->flag));
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->forumId);
+	if (version >= 3) {
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->postedId);
+	}
 	uint32_t errorState = 0;
 	ok &= getRawUInt32(data, rssize, &offset, &errorState);
 	item->errorState = (RsFeedReaderErrorState) errorState;
@@ -268,6 +274,9 @@ void RsFeedReaderMsg::clear()
 	descriptionTransformed.clear();
 	pubDate = 0;
 	flag = 0;
+	attachmentLink.clear();
+	attachment.clear();
+	attachmentMimeType.clear();
 }
 
 std::ostream &RsFeedReaderMsg::print(std::ostream &out, uint16_t /*indent*/)
@@ -288,6 +297,9 @@ uint32_t RsFeedReaderSerialiser::sizeMsg(RsFeedReaderMsg *item)
 	s += GetTlvStringSize(item->descriptionTransformed);
 	s += sizeof(uint32_t); /* pubDate */
 	s += sizeof(uint32_t); /* flag */
+	s += GetTlvStringSize(item->attachmentLink);
+	s += GetTlvStringSize(item->attachment);
+	s += GetTlvStringSize(item->attachmentMimeType);
 
 	return s;
 }
@@ -311,7 +323,7 @@ bool RsFeedReaderSerialiser::serialiseMsg(RsFeedReaderMsg *item, void *data, uin
 	offset += 8;
 
 	/* add values */
-	ok &= setRawUInt16(data, tlvsize, &offset, 2); /* version */
+	ok &= setRawUInt16(data, tlvsize, &offset, 3); /* version */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GENID, item->msgId);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->feedId);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->title);
@@ -321,6 +333,9 @@ bool RsFeedReaderSerialiser::serialiseMsg(RsFeedReaderMsg *item, void *data, uin
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_COMMENT, item->descriptionTransformed);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->pubDate);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->flag);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LOCATION, item->attachmentLink);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PIC_AUTH, item->attachment);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PIC_TYPE, item->attachmentMimeType);
 
 	if (offset != tlvsize)
 	{
@@ -384,6 +399,11 @@ RsFeedReaderMsg *RsFeedReaderSerialiser::deserialiseMsg(void *data, uint32_t *pk
 	}
 	ok &= getRawUInt32(data, rssize, &offset, (uint32_t*) &(item->pubDate));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->flag));
+	if (version >= 3) {
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LOCATION, item->attachmentLink);
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PIC_AUTH, item->attachment);
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PIC_TYPE, item->attachmentMimeType);
+	}
 
 	if (offset != rssize)
 	{

@@ -21,6 +21,7 @@
 #include <QColorDialog>
 #include <QDesktopServices>
 #include <QIcon>
+#include <QInputDialog>
 #include <QMessageBox>
 #include <QPixmap>
 #include <QStatusBar>
@@ -140,12 +141,10 @@
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
 #define IMAGE_BWGRAPH           ":/icons/png/bandwidth.png"
-#define IMAGE_MESSENGER         ":/images/rsmessenger48.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_NEWRSCOLLECTION   ":/images/library.png"
 #define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
 #define IMAGE_OPTIONS           ":/images/settings.png"
-#define IMAGE_UNFINISHED        ":/images/underconstruction.png"
 #define IMAGE_MINIMIZE          ":/icons/fullscreen.png"
 #define IMAGE_MAXIMIZE          ":/icons/fullscreen-exit.png"
 
@@ -247,12 +246,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     statusBar()->setVisible(Settings->valueFromGroup("StatusBar", "ShowStatusBar", QVariant(true)).toBool());
 
     /* initialize combobox in status bar */
-    statusComboBox = new QComboBox(statusBar());
+    statusComboBox = new RSComboBox(statusBar());
     statusComboBox->setVisible(Settings->valueFromGroup("StatusBar", "ShowStatus", QVariant(true)).toBool());
     statusComboBox->setFocusPolicy(Qt::ClickFocus);
     initializeStatusObject(statusComboBox, true);
 
     QWidget *widget = new QWidget();
+    widget->setObjectName("trans_statusComboBoxFrame");
     QHBoxLayout *hbox = new QHBoxLayout();
     hbox->setMargin(0);
     hbox->setSpacing(6);
@@ -466,9 +466,7 @@ void MainWindow::initStackedPage()
  }
 
 #ifndef RS_RELEASE_VERSION
-#ifdef PLUGINMGR
   addPage(pluginsPage = new gui::PluginsPage(ui->stackPages), grp, NULL);
-#endif
 #endif
 
 #undef GETSTARTED_GUI
@@ -487,11 +485,11 @@ void MainWindow::initStackedPage()
   addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
 
   //List All notify before Setting was created
-  QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;
-  for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
-      UserNotify *userNotify = notifyIt->first->getUserNotify();
+  for (auto notifyIt:notify)
+  {
+      UserNotify *userNotify = notifyIt.first->getUserNotify();
       if (userNotify) {
-          userNotify->initialize(ui->toolBarPage, notifyIt->second.first, notifyIt->second.second);
+          userNotify->initialize(ui->toolBarPage, notifyIt.second.first, notifyIt.second.second);
           connect(userNotify, SIGNAL(countChanged()), this, SLOT(updateTrayCombine()));
           userNotifyList.push_back(userNotify);
       }
@@ -505,7 +503,7 @@ void MainWindow::initStackedPage()
 
 
 #ifdef UNFINISHED
-  addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui->toolBar), &MainWindow::showApplWindow, SLOT(showApplWindow()));
+  addAction(new QAction(QIcon(), tr("Unfinished"), ui->toolBar), &MainWindow::showApplWindow, SLOT(showApplWindow()));
   ui->toolBarAction->addSeparator();
   notify += applicationWindow->getNotify();
 #endif
@@ -623,7 +621,7 @@ void MainWindow::createTrayIcon()
 
     trayMenu->addSeparator();
 #ifdef MESSENGER_WINDOW
-    trayMenu->addAction(QIcon(IMAGE_MESSENGER), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
+    trayMenu->addAction(QIcon(), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
 #endif
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
 #ifdef RS_JSONAPI
@@ -636,7 +634,7 @@ void MainWindow::createTrayIcon()
 
 
 #ifdef UNFINISHED
-    trayMenu->addAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this, SLOT(showApplWindow()));
+    trayMenu->addAction(QIcon(), tr("Applications"), this, SLOT(showApplWindow()));
 #endif
     trayMenu->addAction(QIcon(IMAGE_PREFERENCES), tr("Options"), this, SLOT(showSettings()));
     trayMenu->addAction(QIcon(IMG_HELP), tr("Help"), this, SLOT(showHelpDialog()));
@@ -1081,7 +1079,9 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return _instance->gxsforumDialog;
 		case Posted:
 			return _instance->postedDialog;
-	}
+        case Home:
+            return _instance->homePage;
+    }
 
    return NULL;
 }
@@ -1300,7 +1300,7 @@ static void setStatusObject(QObject *pObject, int nStatus)
         }
         return;
     }
-    QComboBox *pComboBox = dynamic_cast<QComboBox*>(pObject);
+    RSComboBox *pComboBox = dynamic_cast<RSComboBox*>(pObject);
     if (pComboBox) {
         /* set index of combobox */
         int nIndex = pComboBox->findData(nStatus, Qt::UserRole);
@@ -1389,7 +1389,7 @@ void MainWindow::initializeStatusObject(QObject *pObject, bool bConnect)
         }
     } else {
         /* initialize combobox */
-        QComboBox *pComboBox = dynamic_cast<QComboBox*>(pObject);
+        RSComboBox *pComboBox = dynamic_cast<RSComboBox*>(pObject);
         if (pComboBox) {
             pComboBox->addItem(QIcon(StatusDefs::imageStatus(RS_STATUS_ONLINE)), StatusDefs::name(RS_STATUS_ONLINE), RS_STATUS_ONLINE);
             pComboBox->addItem(QIcon(StatusDefs::imageStatus(RS_STATUS_BUSY)), StatusDefs::name(RS_STATUS_BUSY), RS_STATUS_BUSY);
@@ -1613,7 +1613,7 @@ void MainWindow::switchVisibilityStatus(StatusElement e,bool b)
 //{
 //    ServicePermissionDialog::showYourself();
 //}
-QComboBox *MainWindow::statusComboBoxInstance()
+RSComboBox *MainWindow::statusComboBoxInstance()
 {
 	return statusComboBox;
 }
@@ -1628,6 +1628,11 @@ NATStatus *MainWindow::natstatusInstance()
 	return natstatus;
 }
 
+void MainWindow::torstatusReset()
+{
+	if(torstatus != nullptr)
+		torstatus->reset();
+}
 DHTStatus *MainWindow::dhtstatusInstance()
 {
 	return dhtstatus;
@@ -1687,4 +1692,20 @@ void MainWindow::setCompactStatusMode(bool compact)
 	hashingstatus->setCompactMode(compact);
 	ratesstatus->setCompactMode(compact);
 	//opModeStatus: TODO Show only ???
+}
+
+Gui_InputDialogReturn MainWindow::guiInputDialog(const QString& windowTitle, const QString& labelText, QLineEdit::EchoMode textEchoMode, bool modal)
+{
+
+	QInputDialog dialog(this);
+	dialog.setWindowTitle(windowTitle);
+	dialog.setLabelText(labelText);
+	dialog.setTextEchoMode(textEchoMode);
+	dialog.setModal(modal);
+
+	Gui_InputDialogReturn ret;
+	ret.execReturn = dialog.exec();
+	ret.textValue = dialog.textValue();
+
+	return ret;
 }

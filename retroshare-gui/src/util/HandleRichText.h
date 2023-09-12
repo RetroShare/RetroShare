@@ -70,7 +70,7 @@ public:
 	static QString toHtml(QString text, bool realHtml = true);
 
 	static bool    makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels, const int maxBytes = -1);
-	static bool    makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels, const int maxBytes = -1);
+    static bool    makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels, const int maxBytes = -1);
 
 	static QString plainText(const QString &text);
 	static QString plainText(const std::string &text);
@@ -82,6 +82,7 @@ public:
 protected:
 	void embedHtml(QTextDocument *textDocument, QDomDocument &doc, QDomElement &currentElement, EmbedInHtml& embedInfos, ulong flag);
 	void replaceAnchorWithImg(QDomDocument& doc, QDomElement &element, QTextDocument *textDocument, const RetroShareLink &link);
+	void filterEmbeddedImages(QDomDocument &doc, QDomElement &currentElement);
 
 	virtual bool   canReplaceAnchor(QDomDocument &doc, QDomElement &element, const RetroShareLink &link);
 	virtual void   anchorTextForImg(QDomDocument &doc, QDomElement &element, const RetroShareLink &link, QString &text);

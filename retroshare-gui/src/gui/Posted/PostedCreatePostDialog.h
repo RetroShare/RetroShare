@@ -24,7 +24,6 @@
 #include <QDialog>
 #include <gui/common/HashBox.h>
 #include "retroshare/rsposted.h"
-#include "util/RichTextEdit.h"
 
 namespace Ui {
 	class PostedCreatePostDialog;
@@ -42,17 +41,23 @@ public:
     explicit PostedCreatePostDialog(RsPosted* posted, const RsGxsGroupId& grpId, const RsGxsId& default_author=RsGxsId(),QWidget *parent = 0);
 	~PostedCreatePostDialog();
 
+	void setTitle(const QString& title);
+	void setNotes(const QString& notes);
+	void setLink(const QString& link);
+
+	static bool optimizeImage(const QImage &image, QByteArray &imagebytes, QImage &imageOpt);
+
 private:
 	QString imagefilename;
 	QByteArray imagebytes;
-	const int MAXMESSAGESIZE = 199000;
 
 private slots:
 	void createPost();
 	void addPicture();
+	void pastePicture();
 	void on_removeButton_clicked();
 	void fileHashingFinished(QList<HashedFile> hashedFiles);
-	void reject();
+	void reject() override; //QDialog
 
 	void setPage(int viewMode);
 private:

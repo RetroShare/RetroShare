@@ -169,15 +169,18 @@ IdDialog::IdDialog(QWidget *parent)
 	//connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
     
 	ownItem = new QTreeWidgetItem();
-	ownItem->setText(0, tr("My own identities"));
+	ownItem->setText(RSID_COL_NICKNAME, tr("My own identities"));
+	ownItem->setFont(RSID_COL_NICKNAME, ui->idTreeWidget->font());
 	ownItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);	// this is in order to prevent displaying a reputaiton icon next to these items.
 
 	allItem = new QTreeWidgetItem();
-	allItem->setText(0, tr("All"));
+	allItem->setText(RSID_COL_NICKNAME, tr("All"));
+	allItem->setFont(RSID_COL_NICKNAME, ui->idTreeWidget->font());
 	allItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);
 
 	contactsItem = new QTreeWidgetItem();
-	contactsItem->setText(0, tr("My contacts"));
+	contactsItem->setText(RSID_COL_NICKNAME, tr("My contacts"));
+	contactsItem->setFont(RSID_COL_NICKNAME, ui->idTreeWidget->font());
 	contactsItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);
 
 
@@ -252,12 +255,14 @@ IdDialog::IdDialog(QWidget *parent)
 	connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
 	
 	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
+	connect(ui->editButton, SIGNAL(clicked()), this, SLOT(editIdentity()));
 
 	connect( ui->idTreeWidget, &RSTreeWidget::itemDoubleClicked,
 	         this, &IdDialog::chatIdentityItem );
 
+	ui->editButton->hide();
 
-    ui->avlabel_Circles->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/circles.png"));
+	ui->avLabel_Circles->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/circles.png"));
 
 	ui->headerTextLabel_Circles->setText(tr("Circles"));
 
@@ -364,6 +369,7 @@ IdDialog::IdDialog(QWidget *parent)
 	ui->idTreeWidget->setColumnWidth(RSID_COL_IDTYPE, 18 * fontWidth);
 	ui->idTreeWidget->setColumnWidth(RSID_COL_VOTES, 2 * fontWidth);
 	
+	ui->idTreeWidget->setItemDelegate(new RSElidedItemDelegate());
 	ui->idTreeWidget->setItemDelegateForColumn(
 	            RSID_COL_NICKNAME,
 	            new GxsIdTreeItemDelegate());
@@ -379,20 +385,22 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
     mStateHelper->setActive(IDDIALOG_REPLIST, false);
 
+	int H = misc::getFontSizeFactor("HelpButton").height();
 	QString hlp_str = tr(
-			" <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>    \
-			<p>In this tab you can create/edit <b>pseudo-anonymous identities</b>, and <b>circles</b>.</p>                \
-			<p><b>Identities</b> are used to securely identify your data: sign messages in chat lobbies, forum and channel posts,\
-				receive feedback using the Retroshare built-in email system, post comments \
-				after channel posts, chat using secured tunnels, etc.</p> \
-			<p>Identities can optionally be <b>signed</b> by your Retroshare node's certificate.   \
-			Signed identities are easier to trust but are easily linked to your node's IP address.</p>  \
-			<p><b>Anonymous identities</b> allow you to anonymously interact with other users. They cannot be   \
-			spoofed, but noone can prove who really owns a given identity.</p> \
-                    <p><b>Circles</b> are groups of identities (anonymous or signed), that are shared at a distance over the network. They can be \
-                		used to restrict the visibility to forums, channels, etc. </p> \
-                    <p>An <b>circle</b> can be restricted to another circle, thereby limiting its visibility to members of that circle \
-                        or even self-restricted, meaning that it is only visible to invited members.</p>") ;
+	    "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>"
+	    "<p>In this tab you can create/edit <b>pseudo-anonymous identities</b>, and <b>circles</b>.</p>"
+	    "<p><b>Identities</b> are used to securely identify your data: sign messages in chat lobbies, forum and channel posts,"
+	    "   receive feedback using the Retroshare built-in email system, post comments"
+	    "   after channel posts, chat using secured tunnels, etc.</p>"
+	    "<p>Identities can optionally be <b>signed</b> by your Retroshare node's certificate."
+	    "   Signed identities are easier to trust but are easily linked to your node's IP address.</p>"
+	    "<p><b>Anonymous identities</b> allow you to anonymously interact with other users. They cannot be"
+	    "   spoofed, but noone can prove who really owns a given identity.</p>"
+	    "<p><b>Circles</b> are groups of identities (anonymous or signed), that are shared at a distance over the network. They can be"
+	    "   used to restrict the visibility to forums, channels, etc. </p>"
+	    "<p>An <b>circle</b> can be restricted to another circle, thereby limiting its visibility to members of that circle"
+	    "   or even self-restricted, meaning that it is only visible to invited members.</p>"
+	                    ).arg(QString::number(2*H));
 
 	registerHelpButton(ui->helpButton, hlp_str,"PeopleDialog") ;
 
@@ -406,9 +414,7 @@ IdDialog::IdDialog(QWidget *parent)
     connect(ui->autoBanIdentities_CB, SIGNAL(toggled(bool)), this, SLOT(toggleAutoBanIdentities(bool)));
 
 	updateIdTimer.setSingleShot(true);
-	updateCircleTimer.setSingleShot(true);
 	connect(&updateIdTimer, SIGNAL(timeout()), this, SLOT(updateIdList()));
-	connect(&updateCircleTimer, SIGNAL(timeout()), this, SLOT(updateCircles()));
 }
 
 void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -427,7 +433,10 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		case RsGxsIdentityEventCode::UPDATED_IDENTITY:
 			if (isVisible())
 			{
-				updateIdTimer.start(5000);
+                if(rsIdentity->isOwnId(RsGxsId(e->mIdentityId)))
+                    updateIdList();
+                else
+                    updateIdTimer.start(3000);		// use a timer for events not generated by local changes
 			}
 			else
 				needUpdateIdsOnNextShow = true;
@@ -458,9 +467,7 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		case RsGxsCircleEventCode::CACHE_DATA_UPDATED:
 
 			if (isVisible())
-			{
-				updateCircleTimer.start(5000);
-			}
+                updateCircles();
 			else
 				needUpdateCirclesOnNextShow = true;
 		default:
@@ -474,10 +481,10 @@ void IdDialog::clearPerson()
 {
 	QFontMetricsF f(ui->avLabel_Person->font()) ;
 
-    ui->avLabel_Person->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/people.png").scaled(f.height()*4,f.height()*4,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+	ui->avLabel_Person->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/people.png").scaled(f.height()*4,f.height()*4,Qt::KeepAspectRatio,Qt::SmoothTransformation));
 	ui->headerTextLabel_Person->setText(tr("People"));
 
-	ui->inviteFrame->hide();
+	ui->info_Frame_Invite->hide();
 	ui->avatarLabel->clear();
 
 	whileBlocking(ui->ownOpinion_CB)->setCurrentIndex(1);
@@ -647,15 +654,16 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 	if(!mExternalOtherCircleItem)
 	{
 		mExternalOtherCircleItem = new QTreeWidgetItem();
-		mExternalOtherCircleItem->setText(0, tr("Other circles"));
-
+		mExternalOtherCircleItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Other circles"));
+		mExternalOtherCircleItem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, ui->treeWidget_membership->font());
 		ui->treeWidget_membership->addTopLevelItem(mExternalOtherCircleItem);
 	}
 
 	if(!mExternalBelongingCircleItem )
 	{
 		mExternalBelongingCircleItem = new QTreeWidgetItem();
-		mExternalBelongingCircleItem->setText(0, tr("Circles I belong to"));
+		mExternalBelongingCircleItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Circles I belong to"));
+		mExternalBelongingCircleItem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, ui->treeWidget_membership->font());
 		ui->treeWidget_membership->addTopLevelItem(mExternalBelongingCircleItem);
 	}
 #endif
@@ -731,14 +739,11 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 
 		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tooltip);
 
-		if (am_I_admin)
-		{
-			QFont font = item->font(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) ;
-			font.setBold(true) ;
-			item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,font) ;
-			item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPID,font) ;
-			item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS,font) ;
-		}
+		QFont font = ui->treeWidget_membership->font() ;
+		font.setBold(am_I_admin) ;
+		item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,font) ;
+		item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPID,font) ;
+		item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS,font) ;
 
 		// now determine for this circle wether we have pending invites
 		// we add a sub-item to the circle (to show the invite system info) in the following two cases:
@@ -853,12 +858,10 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 				subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(it->second)) ;
 				subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID, Qt::UserRole, QString::fromStdString(it->first.toStdString())) ;
 
-				//subitem->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
-
-                new_sub_items.push_back(subitem);
+				new_sub_items.push_back(subitem);
 			}
-            else
-                subitem = item->child(subitem_index);
+			else
+				subitem = item->child(subitem_index);
 
 			if(invited && !subscrb)
 			{
@@ -877,15 +880,12 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 			if(invited && subscrb)
 				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, tr("Member")) ;
 
-			if (is_own_id)
-			{
-				QFont font = subitem->font(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) ;
-				font.setBold(true) ;
-				subitem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,font) ;
-				subitem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPID,font) ;
-				subitem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS,font) ;
-			}
-		}    
+			QFont font = ui->treeWidget_membership->font() ;
+			font.setBold(is_own_id) ;
+			subitem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,font) ;
+			subitem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPID,font) ;
+			subitem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS,font) ;
+		}
 
         // add all items
         item->addChildren(new_sub_items);
@@ -1111,7 +1111,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
     static const int CANCEL = 3 ; // Admin list: no          Subscription request:  yes
 
     const QString menu_titles[4] = { tr("Request subscription"), tr("Accept circle invitation"), tr("Quit this circle"),tr("Cancel subscribe request")} ;
-    const QString image_names[4] = { ":/images/edit_add24.png",":/images/accepted16.png",":/icons/png/enter.png",":/images/cancel.png" } ;
+    const QString image_names[4] = { ":/images/edit_add24.png",":/images/accepted16.png",":/icons/png/enter.png",":/icons/cancel.svg" } ;
 
     std::vector< std::vector<RsGxsId> > ids(4) ;
 
@@ -1388,73 +1388,42 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	uint32_t item_flags = 0;
 
 	/* do filtering */
-	bool ok = false;
 	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
-    {
-        if (isLinkedToOwnNode && (accept & RSID_FILTER_YOURSELF))
-        {
-            ok = true;
-            item_flags |= RSID_FILTER_YOURSELF ;
-        }
+	{
+		if (isLinkedToOwnNode && (accept & RSID_FILTER_YOURSELF))
+			item_flags |= RSID_FILTER_YOURSELF ;
 
-        if (data.mPgpKnown && (accept & RSID_FILTER_FRIENDS))
-        {
-            ok = true;
-            item_flags |= RSID_FILTER_FRIENDS ;
-        }
+		if (data.mPgpKnown && (accept & RSID_FILTER_FRIENDS))
+			item_flags |= RSID_FILTER_FRIENDS ;
 
-        if (accept & RSID_FILTER_OTHERS)
-        {
-            ok = true;
-            item_flags |= RSID_FILTER_OTHERS ;
-        }
-    }
-    else if (accept & RSID_FILTER_PSEUDONYMS)
-    {
-            ok = true;
-            item_flags |= RSID_FILTER_PSEUDONYMS ;
-    }
+		if (accept & RSID_FILTER_OTHERS)
+			item_flags |= RSID_FILTER_OTHERS ;
+	}
+	else if (accept & RSID_FILTER_PSEUDONYMS)
+		item_flags |= RSID_FILTER_PSEUDONYMS ;
 
-    if (isOwnId && (accept & RSID_FILTER_OWNED_BY_YOU))
-    {
-        ok = true;
-            item_flags |= RSID_FILTER_OWNED_BY_YOU ;
-    }
+	if (isOwnId && (accept & RSID_FILTER_OWNED_BY_YOU))
+		item_flags |= RSID_FILTER_OWNED_BY_YOU ;
 
 	if (isBanned && (accept & RSID_FILTER_BANNED))
-	{
-		ok = true;
 		item_flags |= RSID_FILTER_BANNED ;
-	}
 
-	if (!ok)
+	if (item_flags == 0)
 		return false;
 
 	if (!item)
-    {
-        item = new TreeWidgetItem();
-    }
-        
+		item = new TreeWidgetItem();
+
 
 	item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
 	item->setData(RSID_COL_NICKNAME, Qt::UserRole, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 	item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 
-	if(isBanned)
-	{
-		//TODO (Phenom): Add qproperty for these text colors in stylesheets
-		item->setData(RSID_COL_NICKNAME, Qt::ForegroundRole, QColor(Qt::red));
-		item->setData(RSID_COL_KEYID   , Qt::ForegroundRole, QColor(Qt::red));
-		item->setData(RSID_COL_IDTYPE  , Qt::ForegroundRole, QColor(Qt::red));
-		item->setData(RSID_COL_VOTES   , Qt::ForegroundRole, QColor(Qt::red));
-	}
-	else
-	{
-		item->setData(RSID_COL_NICKNAME, Qt::ForegroundRole, QVariant());
-		item->setData(RSID_COL_KEYID   , Qt::ForegroundRole, QVariant());
-		item->setData(RSID_COL_IDTYPE  , Qt::ForegroundRole, QVariant());
-		item->setData(RSID_COL_VOTES   , Qt::ForegroundRole, QVariant());
-	}
+	//TODO (Phenom): Add qproperty for these text colors in stylesheets
+	item->setData(RSID_COL_NICKNAME, Qt::ForegroundRole, isBanned ? QColor(Qt::red) : QVariant() );
+	item->setData(RSID_COL_KEYID   , Qt::ForegroundRole, isBanned ? QColor(Qt::red) : QVariant() );
+	item->setData(RSID_COL_IDTYPE  , Qt::ForegroundRole, isBanned ? QColor(Qt::red) : QVariant() );
+	item->setData(RSID_COL_VOTES   , Qt::ForegroundRole, isBanned ? QColor(Qt::red) : QVariant() );
 
 	item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
 	item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight | Qt::AlignVCenter);
@@ -1465,16 +1434,9 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	            RSID_COL_VOTES,SortRole,
 	            static_cast<uint32_t>(idd.mReputation.mOverallReputationLevel));
 
-    if(isOwnId)
-    {
-	    QFont font = item->font(RSID_COL_NICKNAME) ;
-
-	    font.setBold(true) ;
-	    item->setFont(RSID_COL_NICKNAME,font) ;
-	    item->setFont(RSID_COL_IDTYPE,font) ;
-	    item->setFont(RSID_COL_KEYID,font) ;
-
-	    QString tooltip = tr("This identity is owned by you");
+	if(isOwnId)
+	{
+		QString tooltip = tr("This identity is owned by you");
 
 		if(idd.mFlags & RS_IDENTITY_FLAGS_IS_DEPRECATED)
 		{
@@ -1486,10 +1448,16 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 			tooltip += tr("\nThis identity has a unsecure fingerprint (It's probably quite old).\nYou should get rid of it now and use a new one.\nThese identities will soon be not supported anymore.") ;
 		}
 
-	    item->setToolTip(RSID_COL_NICKNAME, tooltip) ;
-	    item->setToolTip(RSID_COL_KEYID, tooltip) ;
-	    item->setToolTip(RSID_COL_IDTYPE, tooltip) ;
-    }
+		item->setToolTip(RSID_COL_NICKNAME, tooltip) ;
+		item->setToolTip(RSID_COL_KEYID, tooltip) ;
+		item->setToolTip(RSID_COL_IDTYPE, tooltip) ;
+	}
+	QFont font = ui->idTreeWidget->font() ;
+	font.setBold(isOwnId) ;
+	item->setFont(RSID_COL_NICKNAME,font) ;
+	item->setFont(RSID_COL_IDTYPE,font) ;
+	item->setFont(RSID_COL_KEYID,font) ;
+
 
 	//QPixmap pixmap ;
 	//
@@ -1499,8 +1467,6 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	//item->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
 	// Icon Place Holder
 	item->setIcon(RSID_COL_NICKNAME,FilesDefs::getIconFromQtResourcePath(":/icons/png/anonymous.png"));
-
-	QString tooltip;
 
 	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
 	{
@@ -1512,25 +1478,25 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 			item->setToolTip(RSID_COL_IDTYPE,"Verified signature from node "+QString::fromStdString(data.mPgpId.toStdString())) ;
 			
 			
-			tooltip += tr("Node name:")+" " + QString::fromUtf8(details.name.c_str()) + "\n";
-			tooltip += tr("Node Id  :")+" " + QString::fromStdString(data.mPgpId.toStdString()) ;
+			QString tooltip = tr("Node name:")+" " + QString::fromUtf8(details.name.c_str()) + "\n";
+			tooltip        += tr("Node Id  :")+" " + QString::fromStdString(data.mPgpId.toStdString()) ;
 			item->setToolTip(RSID_COL_KEYID,tooltip) ;
 		}
 		else 
 		{
-            		QString txt =  tr("[Unknown node]");
+			QString txt =  tr("[Unknown node]");
 			item->setText(RSID_COL_IDTYPE, txt);
-            
-            		if(!data.mPgpId.isNull())
-                    {
-			item->setToolTip(RSID_COL_IDTYPE,tr("Unverified signature from node ")+QString::fromStdString(data.mPgpId.toStdString())) ;
-			item->setToolTip(RSID_COL_KEYID,tr("Unverified signature from node ")+QString::fromStdString(data.mPgpId.toStdString())) ;
-                    }
-                    else
-                    {
-			item->setToolTip(RSID_COL_IDTYPE,tr("Unchecked signature")) ;
-			item->setToolTip(RSID_COL_KEYID,tr("Unchecked signature")) ;
-                    }
+
+			if(!data.mPgpId.isNull())
+			{
+				item->setToolTip(RSID_COL_IDTYPE,tr("Unverified signature from node ")+QString::fromStdString(data.mPgpId.toStdString())) ;
+				item->setToolTip(RSID_COL_KEYID,tr("Unverified signature from node ")+QString::fromStdString(data.mPgpId.toStdString())) ;
+			}
+			else
+			{
+				item->setToolTip(RSID_COL_IDTYPE,tr("Unchecked signature")) ;
+				item->setToolTip(RSID_COL_KEYID,tr("Unchecked signature")) ;
+			}
 		}
 	}
 	else
@@ -1810,7 +1776,8 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
         // ui->editIdentity->setEnabled(true);
         // ui->removeIdentity->setEnabled(true);
 		ui->chatIdentity->setEnabled(false);
-		ui->inviteButton->setEnabled(false);
+		ui->inviteButton->hide();
+		ui->editButton->show();
 	}
 	else
 	{
@@ -1820,7 +1787,8 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
         // ui->editIdentity->setEnabled(false);
         // ui->removeIdentity->setEnabled(false);
 		ui->chatIdentity->setEnabled(true);
-		ui->inviteButton->setEnabled(true);
+		ui->inviteButton->show();
+		ui->editButton->hide();
 	}
 
     ui->autoBanIdentities_CB->setChecked(rsReputations->isNodeBanned(data.mPgpId));
@@ -2221,8 +2189,9 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 
 		if(!one_item_owned_by_you)
 		{
-			QWidget *widget = new QWidget(contextMenu);
-			widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
+			QFrame *widget = new QFrame(contextMenu);
+			widget->setObjectName("gradFrame"); //Use qss
+			//widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
 
 			// create menu header
 			QHBoxLayout *hbox = new QHBoxLayout(widget);
@@ -2230,12 +2199,14 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			hbox->setSpacing(6);
 
 			QLabel *iconLabel = new QLabel(widget);
-            QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+			iconLabel->setObjectName("trans_Icon");
+			QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
 			iconLabel->setPixmap(pix);
 			iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
 			hbox->addWidget(iconLabel);
 
 			QLabel *textLabel = new QLabel("<strong>" + ui->titleBarLabel->text() + "</strong>", widget);
+			textLabel->setObjectName("trans_Text");
 			hbox->addWidget(textLabel);
 
 			QSpacerItem *spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -2289,7 +2260,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 				contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 
 			if(n_is_not_a_contact == 0)
-                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
+                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
 
 			contextMenu->addSeparator();
 
@@ -2308,8 +2279,8 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			contextMenu->addSeparator();
 
 			contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
-			contextMenu->addAction(ui->editIdentity);
-			contextMenu->addAction(ui->removeIdentity);
+			contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT),tr("Edit identity"),this,SLOT(editIdentity())) ;
+			contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"),tr("Delete identity"),this,SLOT(removeIdentity())) ;
 		}
 
 	}
@@ -2487,7 +2458,7 @@ void IdDialog::sendInvite()
 	{
         MessageComposer::sendInvite(id,false);
 
-        ui->inviteFrame->show();
+        ui->info_Frame_Invite->show();
         ui->inviteButton->setEnabled(false);
 	}
     
@@ -2569,9 +2540,9 @@ void IdDialog::removefromContacts()
 	updateIdList();
 }
 
-void IdDialog::on_closeInfoFrameButton_clicked()
+void IdDialog::on_closeInfoFrameButton_Invite_clicked()
 {
-	ui->inviteFrame->setVisible(false);
+	ui->info_Frame_Invite->setVisible(false);
 }
 
 // We need to use indexes here because saving items is not possible since they can be re-created.

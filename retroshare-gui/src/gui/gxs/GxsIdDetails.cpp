@@ -61,6 +61,8 @@
 #define MAX_ATTEMPTS                10
 #define MAX_PROCESS_COUNT_PER_TIMER 50
 
+// #define DEBUG_GXSIDDETAILS 1
+
 //const int kRecognTagClass_DEVELOPMENT = 1;
 //
 //const int kRecognTagType_Dev_Ambassador 	= 1;
@@ -405,6 +407,9 @@ const QPixmap GxsIdDetails::makeDefaultIcon(const RsGxsId& id, AvatarSize size)
 
     // now look for the icon
 
+    if(id.isNull())
+        std::cerr << "Weird: null ID" << std::endl;
+
     QMutexLocker lock(&mIconCacheMutex);
     auto& it = mDefaultIconCache[id];
 
@@ -432,6 +437,31 @@ const QPixmap GxsIdDetails::makeDefaultIcon(const RsGxsId& id, AvatarSize size)
     return image;
 }
 
+void GxsIdDetails::debug_dumpImagesCache()
+{
+    QMutexLocker lock(&mIconCacheMutex);
+
+    std::cerr << "Current icon cache:" << std::endl;
+
+    for(const auto& it:mDefaultIconCache)	// the & is important here, otherwise pairs are copied and isDetached() is always false!
+    {
+        std::cerr << "  Identity " << it.first << ":" << std::endl;
+
+        for(uint32_t i=0;i<4;++i)
+        {
+            std::cerr << "    Size #" << i << ": " ;
+
+            if(it.second[i].first>0)
+            {
+                int s = it.second[i].second.width()*it.second[i].second.height()*4;
+                std::cerr << " Present. Size=" << s << " bytes. Age: " << time(nullptr)-it.second[i].first << " secs. ago. Used: " << !it.second[i].second.isDetached() << std::endl;
+            }
+            else
+                std::cerr << " None." << std::endl;
+        }
+    }
+}
+
 void GxsIdDetails::checkCleanImagesCache()
 {
     time_t now = time(NULL);
@@ -440,7 +470,9 @@ void GxsIdDetails::checkCleanImagesCache()
 
     if(mLastIconCacheCleaning + DELAY_BETWEEN_ICON_CACHE_CLEANING < now)
     {
+#ifdef DEBUG_GXSIDDETAILS
         std::cerr << "(II) Cleaning the icons cache." << std::endl;
+#endif
         int nb_deleted = 0;
         uint32_t size_deleted = 0;
         uint32_t total_size = 0;
@@ -450,26 +482,43 @@ void GxsIdDetails::checkCleanImagesCache()
         for(auto it(mDefaultIconCache.begin());it!=mDefaultIconCache.end();)
         {
             bool all_empty = true ;
+#ifdef DEBUG_GXSIDDETAILS
+            std::cerr << "  Examining pixmaps sizes for " << it->first << "." << std::endl;
+#endif
 
             for(int i=0;i<4;++i)
-				if(it->second[i].first + ICON_CACHE_STORAGE_TIME < now && it->second[i].second.isDetached())
-				{
-                    int s = it->second[i].second.width()*it->second[i].second.height()*4;
-
-					std::cerr << "Deleting pixmap " << it->first << " size " << i << " " << s << " bytes." << std::endl;
-
-                    it->second[i].second = QPixmap();
-					++nb_deleted;
-                    size_deleted += s;
-				}
-				else
+                if(it->second[i].first>0)
                 {
-					all_empty = false;
-                    total_size += it->second[i].second.width()*it->second[i].second.height()*4;
+                    if(it->second[i].first + ICON_CACHE_STORAGE_TIME < now && it->second[i].second.isDetached())
+                    {
+                        int s = it->second[i].second.width()*it->second[i].second.height()*4;
+
+#ifdef DEBUG_GXSIDDETAILS
+                        std::cerr << "    Deleting pixmap " << it->first << " size " << i << " " << s << " bytes." << std::endl;
+#endif
+
+                        it->second[i].second = QPixmap();
+                        it->second[i].first = 0;
+                        ++nb_deleted;
+                        size_deleted += s;
+                    }
+                    else
+                    {
+                        all_empty = false;
+                        total_size += it->second[i].second.width()*it->second[i].second.height()*4;
+#ifdef DEBUG_GXSIDDETAILS
+                        std::cerr << "    Keeking " << it->first << " size " << i << std::endl;
+#endif
+                    }
                 }
 
             if(all_empty)
-				it = mDefaultIconCache.erase(it);
+            {
+#ifdef DEBUG_GXSIDDETAILS
+                std::cerr << "    Deleting entry " << it->first << " because no pixmaps are stored here. " << std::endl;
+#endif
+                it = mDefaultIconCache.erase(it);
+            }
 			else
 				++it;
         }
@@ -490,10 +539,16 @@ bool GxsIdDetails::loadPixmapFromData(const unsigned char *data,size_t data_len,
     Sha1CheckSum chksum = RsDirUtil::sha1sum(data,data_len);
     RsGxsId id(chksum.toByteArray());
 
+    if(id.isNull())
+        std::cerr << "Weird: null ID" << std::endl;
+
     // We use a cache for images. QImage has its own smart pointer system, but it does not prevent
     // the same image to be allocated many times. We do this using a cache. The cache is also cleaned-up
     // on a regular time basis so as to get rid of unused images.
 
+#ifdef DEBUG_GXSIDDETAILS
+    debug_dumpImagesCache();
+#endif
     checkCleanImagesCache();
 
     // now look for the icon
@@ -1018,11 +1073,13 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QLi
 
 QString GxsIdDetails::getName(const RsIdentityDetails &details)
 {
-	if( details.mReputation.mOverallReputationLevel ==
-	         RsReputationLevel::LOCALLY_NEGATIVE )
+    if( details.mReputation.mOverallReputationLevel == RsReputationLevel::LOCALLY_NEGATIVE )
 		return tr("[Banned]");
     
-    	QString name = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE);
+    if( details.mId.isNull() )
+        return tr("[Nobody]");
+
+        QString name = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE);
 
 	std::list<RsRecognTag>::const_iterator it;
 	for (it = details.mRecognTags.begin(); it != details.mRecognTags.end(); ++it)
@@ -1049,7 +1106,7 @@ QString nickname ;
             nickname = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE) ;
 
                             
-    comment = QString("%1:%2<br/>%3:%4").arg(QApplication::translate("GxsIdDetails", "Identity&nbsp;name"),
+	comment = QString("%1: %2<br/>%3: %4").arg(QApplication::translate("GxsIdDetails", "Identity&nbsp;name"),
                                              nickname,
                                             QApplication::translate("GxsIdDetails", "Identity&nbsp;Id"),
 	                                        QString::fromStdString(details.mId.toStdString()));

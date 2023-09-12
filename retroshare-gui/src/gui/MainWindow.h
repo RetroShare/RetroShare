@@ -21,16 +21,17 @@
 #ifndef _MainWindow_H
 #define _MainWindow_H
 
+#include <QLineEdit>
 #include <QSystemTrayIcon>
 #include <set>
 
 #include "gui/common/rwindow.h"
+#include "gui/common/RSComboBox.h"
 
 namespace Ui {
 class MainWindow;
 }
 
-class QComboBox;
 class QLabel;
 class QActionGroup;
 class QListWidgetItem;
@@ -74,6 +75,14 @@ class MessengerWindow;
 class ApplicationWindow;
 #endif
 
+
+struct Gui_InputDialogReturn
+{
+	int execReturn;
+	QString textValue;
+};
+Q_DECLARE_METATYPE(Gui_InputDialogReturn);
+
 class MainWindow : public RWindow
 {
   Q_OBJECT
@@ -91,9 +100,10 @@ public:
         Channels           = 6,  /** Channels page. */
         Forums             = 7,  /** Forums page. */
         Search             = 8,  /** Search page. */
-        Posted             = 11,  /** Posted links */
-        People             = 12,   /** People page. */
-        Options            = 13   /** People page. */
+        Posted             = 11, /** Posted links */
+        People             = 12, /** People page. */
+        Options            = 13, /** People page. */
+        Home               = 14  /** Home page. */
     };
 
 
@@ -174,9 +184,10 @@ public:
     void removeStatusObject(QObject *pObject);
     void setStatus(QObject *pObject, int nStatus);
 
-    QComboBox *statusComboBoxInstance();
+    RSComboBox *statusComboBoxInstance();
     PeerStatus *peerstatusInstance();
     NATStatus *natstatusInstance();
+    void torstatusReset();
     DHTStatus *dhtstatusInstance();
     HashingStatus *hashingstatusInstance();
     DiscStatus *discstatusInstance();
@@ -192,7 +203,7 @@ public:
     }
 
     static bool hiddenmode;
-	
+
 public slots:
     void receiveNewArgs(QStringList args);
     void displayErrorMessage(int,int,const QString&) ;
@@ -210,9 +221,35 @@ public slots:
     void showBandwidthGraph();
 
     void toggleStatusToolTip(bool toggle);
+
+	/**
+	 * @brief Create a QInputDialog. This must be called in MainWindow thread because Widgets must be created in the GUI thread.
+	 * Here an exemple how to call it:
+	 *
+	 * bool sameThread = QThread::currentThread() == qApp->thread();
+	 * Gui_InputDialogReturn ret;
+	 * qRegisterMetaType<Gui_InputDialogReturn>("Gui_InputDialogReturn");
+	 * QMetaObject::invokeMethod( MainWindow::getInstance()
+	 *                          , "guiInputDialog"
+	 *                          , sameThread ? Qt::DirectConnection : Qt::BlockingQueuedConnection
+	 *                          , Q_RETURN_ARG(Gui_InputDialogReturn, ret)
+	 *                          , Q_ARG(QString,             windowTitle)
+	 *                          , Q_ARG(QString,             labelText)
+	 *                          , Q_ARG(QLineEdit::EchoMode, textEchoMode)
+	 *                          , Q_ARG(bool,                modal)
+	 *                           );
+	 *
+	 * @param windowTitle: the window title (caption).
+	 * @param labelText: label's text which describes what needs to be input.
+	 * @param textEchoMode: the echo mode for the text value.
+	 * @param modal: pop up the dialog as modal or modeless.
+	 * @return Gui_InputDialogReturn ( Accepted(1)|Rejected(0), text value for the input dialog)
+	 */
+	Gui_InputDialogReturn guiInputDialog(const QString& windowTitle, const QString& labelText, QLineEdit::EchoMode textEchoMode, bool modal);
+
 protected:
     /** Default Constructor */
-    MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
     void closeEvent(QCloseEvent *);
     
@@ -294,7 +331,7 @@ private:
     QAction *toggleVisibilityAction, *toolAct;
     QList<UserNotify*> userNotifyList;
 
-    QComboBox *statusComboBox;
+    RSComboBox *statusComboBox;
     PeerStatus *peerstatus;
     NATStatus *natstatus;
     DHTStatus *dhtstatus;

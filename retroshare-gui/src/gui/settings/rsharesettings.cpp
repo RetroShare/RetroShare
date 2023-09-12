@@ -129,7 +129,7 @@ void RshareSettings::initSettings()
 #endif
 
 	setDefault(SETTING_LANGUAGE, LanguageSupport::defaultLanguageCode());
-	setDefault(SETTING_SHEETNAME, ":Standard");
+	setDefault(SETTING_SHEETNAME, ":Standard_Light");
 
 	/* defaults here are not ideal.... but dusent matter */
 
@@ -535,6 +535,16 @@ bool RshareSettings::getChatSendAsPlainTextByDef()
 void RshareSettings::setChatSendAsPlainTextByDef(bool bValue)
 {
 	setValueToGroup("Chat", "SendAsPlainTextByDef", bValue);
+}
+
+bool RshareSettings::getShrinkChatTextEdit()
+{
+	return valueFromGroup("Chat", "ShrinkChatTextEdit", false).toBool();
+}
+
+void RshareSettings::setShrinkChatTextEdit(bool bValue)
+{
+	setValueToGroup("Chat", "ShrinkChatTextEdit", bValue);
 }
 
 bool RshareSettings::getChatSearchShowBarByDefault()

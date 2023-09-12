@@ -75,6 +75,8 @@ private slots:
 	void pasteOwnCertificateLink();
 	void pastePlainText();
 	void spoiler();
+	void saveImage();
+	void copyImage();
 
 private:
 	QString textUnderCursor() const;

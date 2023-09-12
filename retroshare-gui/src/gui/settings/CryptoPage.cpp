@@ -61,6 +61,10 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
     //connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(profilemanager()));
     connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(exportProfile()));
 
+    // Remove this because it duplicates functionality of the HomePage.
+    ui.retroshareId_LB->hide();
+    ui.retroshareId_content_LB->hide();
+    ui.stackPageCertificate->hide();
 
 	ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
 }
@@ -103,8 +107,8 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr.toStdString())));
 
         std::string invite ;
-        rsPeers->getShortInvite(invite,rsPeers->getOwnId(),RetroshareInviteFlags::RADIX_FORMAT | RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP);
-        ui.retroshareid->setText(QString::fromUtf8(invite.c_str()));
+        rsPeers->getShortInvite(invite,rsPeers->getOwnId(),RetroshareInviteFlags::RADIX_FORMAT | RsPeers::defaultCertificateFlags);
+        ui.retroshareId_content_LB->setText(QString::fromUtf8(invite.c_str()));
 		
         /* set retroshare version */
         ui.version->setText(Rshare::retroshareVersion(true));
@@ -139,7 +143,7 @@ void
 CryptoPage::load()
 {
     std::string cert ;
-    RetroshareInviteFlags flags = RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_IP;
+    RetroshareInviteFlags flags = RetroshareInviteFlags::DNS | RetroshareInviteFlags::CURRENT_LOCAL_IP | RetroshareInviteFlags::CURRENT_EXTERNAL_IP;
 
     if(ui._shortFormat_CB->isChecked())
     {
@@ -161,7 +165,7 @@ CryptoPage::load()
     RsPeerDetails detail;
     rsPeers->getPeerDetails(rsPeers->getOwnId(),detail);
 
-    ui.certplainTextEdit->setToolTip(ConfCertDialog::getCertificateDescription(detail, ui._includeSignatures_CB->isChecked(), ui._shortFormat_CB->isChecked(), ui._includeAllIPs_CB->isChecked() ));
+    ui.certplainTextEdit->setToolTip(ConfCertDialog::getCertificateDescription(detail, ui._includeSignatures_CB->isChecked(), ui._shortFormat_CB->isChecked(), flags));
 }
 
 void

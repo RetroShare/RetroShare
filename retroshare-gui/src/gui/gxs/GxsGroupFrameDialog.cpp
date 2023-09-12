@@ -42,13 +42,11 @@
 
 /* Images for TreeWidget */
 #define IMAGE_SUBSCRIBE      ":/images/edit_add24.png"
-#define IMAGE_UNSUBSCRIBE    ":/images/cancel.png"
+#define IMAGE_UNSUBSCRIBE    ":/icons/cancel.svg"
 #define IMAGE_INFO           ":/images/info16.png"
-//#define IMAGE_GROUPAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
 #define IMAGE_EDIT           ":/icons/png/pencil-edit-button.png"
-#define IMAGE_SHARE          ":/images/share-icon-16.png"
-#define IMAGE_TABNEW         ":/images/tab-new.png"
+#define IMAGE_TABNEW         ":/icons/newtab.svg"
 #define IMAGE_DELETE         ":/images/delete.png"
 #define IMAGE_RETRIEVE       ":/images/edit_add24.png"
 #define IMAGE_COMMENT        ""
@@ -72,8 +70,8 @@ static const uint32_t DELAY_BETWEEN_GROUP_STATISTICS_UPDATE = 120; // do not upd
  */
 
 /** Constructor */
-GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent,bool allow_dist_sync)
-: MainPage(parent)
+GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl,const QString& settings_name, QWidget *parent,bool allow_dist_sync)
+: MainPage(parent),mSettingsName(settings_name)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui = new Ui::GxsGroupFrameDialog();
@@ -120,6 +118,9 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	QList<int> sizes;
 	sizes << 300 << width(); // Qt calculates the right sizes
 	ui->splitter->setSizes(sizes);
+
+	// load settings
+	processSettings(true);
 
 #ifndef UNFINISHED
 	ui->todoPushButton->hide();
@@ -168,7 +169,6 @@ void GxsGroupFrameDialog::initUi()
 	}
 
 	// load settings
-	mSettingsName = settingsGroupName();
 	processSettings(true);
 
 	if (groupFrameSettingsType() != GroupFrameSettings::Nothing) {
@@ -490,7 +490,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 			ctxMenu2->setEnabled(isSubscribed);
 
 			if (shareKeyType()) {
-				action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SHARE), tr("Share publish permissions..."), this, SLOT(sharePublishKey()));
+				action = contextMnu.addAction(QIcon(""), tr("Share publish permissions..."), this, SLOT(sharePublishKey()));
 				action->setEnabled(!mGroupId.isNull() && isPublisher);
 			}
 
@@ -726,7 +726,7 @@ void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const QVector<R
 			comments += "…";
 		}
 
-		commentDialog = new GxsCommentDialog(this,RsGxsId(), mInterface->getTokenService(), commentService);
+        commentDialog = new GxsCommentDialog(this,RsGxsId(), commentService);
 
 		QWidget *commentHeader = createCommentHeaderWidget(grpId, most_recent_msgId);
 		if (commentHeader) {
@@ -1105,7 +1105,12 @@ void GxsGroupFrameDialog::updateGroupSummary()
 			 * Qt::QueuedConnection is important!
 			 */
 
-			insertGroupsData(*groupInfo);
+            // Here we save the focus, and restore it afterwards: there's no need to grab the focus here and
+            // if we do, it may harm the navitation in forums, channels, boards, etc.
+
+            auto w = QApplication::focusWidget();
+
+            insertGroupsData(*groupInfo);
 			updateSearchResults();
 
 			mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, false);
@@ -1132,7 +1137,12 @@ void GxsGroupFrameDialog::updateGroupSummary()
 
             delete groupInfo;
 
-		}, this );
+            // Restore the focus.
+
+            if(w)
+                w->setFocus();
+
+        }, this );
 	});
 }
 
@@ -1165,35 +1175,64 @@ void GxsGroupFrameDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
 			 * Qt::QueuedConnection is important!
 			 */
 
-			QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
-			if (!item)
-				return;
+            QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
 
-			ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+            if (item)
+                ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+
             mCachedGroupStats[groupId] = stats;
 
 			getUserNotify()->updateIcon();
 
-		}, this );
+        }, this );
 	});
 }
 
 void GxsGroupFrameDialog::getServiceStatistics(GxsServiceStatistic& stats) const
 {
-	stats = GxsServiceStatistic(); // clears everything
+    if(!mCachedGroupStats.empty())
+    {
+        stats = GxsServiceStatistic(); // clears everything
 
-	for(auto& it:  mCachedGroupStats)
-	{
-		const GxsGroupStatistic& s(it.second);
+        for(auto& it:  mCachedGroupStats)
+        {
+            const GxsGroupStatistic& s(it.second);
 
-		stats.mNumMsgs             += s.mNumMsgs;
-		stats.mNumGrps             += 1;
-		stats.mSizeOfMsgs          += s.mTotalSizeOfMsgs;
-		stats.mNumThreadMsgsNew    += s.mNumThreadMsgsNew;
-		stats.mNumThreadMsgsUnread += s.mNumThreadMsgsUnread;
-		stats.mNumChildMsgsNew     += s.mNumChildMsgsNew ;
-		stats.mNumChildMsgsUnread  += s.mNumChildMsgsUnread ;
-	}
+            stats.mNumMsgs             += s.mNumMsgs;
+            stats.mNumGrps             += 1;
+            stats.mSizeOfMsgs          += s.mTotalSizeOfMsgs;
+            stats.mNumThreadMsgsNew    += s.mNumThreadMsgsNew;
+            stats.mNumThreadMsgsUnread += s.mNumThreadMsgsUnread;
+            stats.mNumChildMsgsNew     += s.mNumChildMsgsNew ;
+            stats.mNumChildMsgsUnread  += s.mNumChildMsgsUnread ;
+        }
+
+        // Also save the service statistics in conf file, so that we can display it right away at start.
+
+        Settings->beginGroup(mSettingsName);
+        Settings->setValue("NumMsgs",            stats.mNumMsgs            );
+        Settings->setValue("NumGrps",            stats.mNumGrps            );
+        Settings->setValue("SizeOfMessages",     stats.mSizeOfMsgs         );
+        Settings->setValue("NumThreadMsgsNew",   stats.mNumThreadMsgsNew   );
+        Settings->setValue("NumThreadMsgsUnread",stats.mNumThreadMsgsUnread);
+        Settings->setValue("NumChildMsgsNew",    stats.mNumChildMsgsNew    );
+        Settings->setValue("NumChildMsgsUnread", stats.mNumChildMsgsUnread );
+        Settings->endGroup();
+    }
+    else	// Get statistics from settings if no cache is already present: allows to display at start.
+    {
+        Settings->beginGroup(mSettingsName);
+
+        stats.mNumMsgs             = Settings->value("NumMsgs",QVariant(0)).toInt();
+        stats.mNumGrps             = Settings->value("NumGrps",QVariant(0)).toInt();
+        stats.mSizeOfMsgs          = Settings->value("SizeOfMessages",QVariant(0)).toInt();
+        stats.mNumThreadMsgsNew    = Settings->value("NumThreadMsgsNew",QVariant(0)).toInt();
+        stats.mNumThreadMsgsUnread = Settings->value("NumThreadMsgsUnread",QVariant(0)).toInt();
+        stats.mNumChildMsgsNew     = Settings->value("NumChildMsgsNew",QVariant(0)).toInt();
+        stats.mNumChildMsgsUnread  = Settings->value("NumChildMsgsUnread",QVariant(0)).toInt();
+
+        Settings->endGroup();
+    }
 }
 
 TurtleRequestId GxsGroupFrameDialog::distantSearch(const QString& search_string)   // this should be overloaded in the child class

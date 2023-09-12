@@ -52,8 +52,6 @@
 #	include "JsonApiPage.h"
 #endif
 
-#define IMAGE_GENERAL       ":/images/kcmsystem24.png"
-
 #define ITEM_SPACING 2
 
 #include "rsettingswin.h"
@@ -178,7 +176,7 @@ SettingsPage::initStackedWidget()
     addPage(new ServicePermissionsPage() ); // PERMISSIONS
 #ifdef RS_JSONAPI
     JsonApiPage *jsonapi_p = new JsonApiPage() ;
-	addPage(new JsonApiPage());
+	addPage(jsonapi_p);
 #ifdef RS_WEBUI
     WebuiPage *webui_p = new WebuiPage() ;
     addPage(new WebuiPage() );
@@ -226,8 +224,8 @@ SettingsPage::setNewPage(int page)
 		mHelpBrowser->clear();
 		return ;
 	}
-	ui.pageName->setText(pagew->pageName());
-	ui.pageicon->setPixmap(pagew->iconPixmap()) ;
+	ui.pageNameLabel->setText(pagew->pageName());
+	ui.pageIconLabel->setPixmap(pagew->iconPixmap()) ;
 
 	ui.stackedWidget->setCurrentIndex(page);
 	ui.listWidget->setCurrentRow(page);

@@ -7,25 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>869</width>
-    <height>487</height>
+    <height>493</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <widget class="QTabWidget" name="tabWidget">
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="tab">
-      <attribute name="title">
-       <string>Node information</string>
-      </attribute>
+    <widget class="QStackedWidget" name="stackedWidget">
+     <widget class="QWidget" name="stackPageNodeInfo" native="true">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QGroupBox" name="groupBox_1">
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="6" column="0">
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="retroshareId_LB">
             <property name="text">
              <string>Retroshare ID:</string>
             </property>
@@ -211,9 +205,10 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="StyledLabel" name="publicLabel">
+             <widget class="QLabel" name="publicLabel">
               <property name="font">
                <font>
+                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -247,7 +242,7 @@
           <item row="14" column="1">
            <widget class="QPushButton" name="exportprofile">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this to export your profile key. You can then import it in a different computer and make a new node with the same profile. Doing so, existing friends that you also add to the new node will automatically recognise that new node as friend.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this button to export your profile key. You can then import it in a different computer and make a new node with the same profile. Doing so, existing friends that you also add to the new node will automatically recognise that new node as friend.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string>Export</string>
@@ -302,9 +297,10 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="StyledLabel" name="otherLabel">
+             <widget class="QLabel" name="otherLabel">
               <property name="font">
                <font>
+                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -396,9 +392,10 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="StyledLabel" name="otherLabel_2">
+             <widget class="QLabel" name="otherLabel_2">
               <property name="font">
                <font>
+                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -471,7 +468,7 @@
            </widget>
           </item>
           <item row="6" column="1" colspan="3">
-           <widget class="QLabel" name="retroshareid">
+           <widget class="QLabel" name="retroshareId_content_LB">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -536,10 +533,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
-       <string>Certificate</string>
-      </attribute>
+     <widget class="QWidget" name="stackPageCertificate" native="true">
       <layout class="QGridLayout" name="gridLayout_7">
        <item row="0" column="0">
         <widget class="QPlainTextEdit" name="certplainTextEdit">
@@ -638,13 +632,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>

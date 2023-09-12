@@ -53,10 +53,6 @@ win32 {
 		LIBS += -L"$$OUT_PWD/../../libretroshare/src/lib" -lretroshare
 	}
 
-	# Switch on extra warnings
-	QMAKE_CFLAGS += -Wextra
-	QMAKE_CXXFLAGS += -Wextra
-
 	CONFIG(debug, debug|release) {
 	} else {
 		# Tell linker to use ASLR protection
@@ -102,6 +98,9 @@ win32 {
 	for(lib, LIB_DIR):LIBS += -L"$$lib"
 	for(bin, BIN_DIR):LIBS += -L"$$bin"
 	LIBS += -lpthread
+
+	# Do not add for MinGW
+	!isEmpty(QMAKE_SH): QMAKE_LFLAGS += -Wl,--end-group
 }
 
 macx {

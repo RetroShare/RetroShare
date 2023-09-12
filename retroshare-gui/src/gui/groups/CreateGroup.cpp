@@ -41,7 +41,7 @@ CreateGroup::CreateGroup(const RsNodeGroupId &groupId, QWidget *parent)
 
 	mIsStandard = false;
 
-    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/add_group256.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/groups/colored.svg"));
 
 	mGroupId = groupId;
 
@@ -69,7 +69,7 @@ CreateGroup::CreateGroup(const RsNodeGroupId &groupId, QWidget *parent)
 			}
 
 			setWindowTitle(tr("Edit Group"));
-            ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/edit_group64.png"));
+            ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/groups/colored.svg"));
 			ui.headerFrame->setHeaderText(tr("Edit Group"));
 
 			ui.groupName->setDisabled(mIsStandard);

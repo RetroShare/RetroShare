@@ -169,8 +169,11 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 
 			QString embeddedImage;
 
-			if ( RsHtml::makeEmbeddedImage( pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio, Qt::SmoothTransformation ).toImage(), embeddedImage, 8*S * 8*S ) )
+			if ( RsHtml::makeEmbeddedImage( pix.scaled(QSize(5*S,5*S), Qt::KeepAspectRatio, Qt::SmoothTransformation ).toImage(), embeddedImage, -1 ) )
+			{
+				embeddedImage.insert(embeddedImage.indexOf("src="), "style=\"float:left\" ");
 				t = "<table><tr><td>" + embeddedImage + "</td><td>" + t + "</td></table>";
+			}
 
 			return t;
 		}
@@ -190,17 +193,25 @@ void GxsIdTreeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 	QStyleOptionViewItem ownOption (option);
 	initStyleOption(&ownOption, index);
 
-	RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
-	QString cmt;
+    QString dt = index.data(Qt::UserRole).toString();
+    RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
 
-	if(id.isNull())
+    // This is a trick: UserRole in Mail generally is 0000...00000 when there is a notification, and is empty when there are multiple
+    // destinations at once. This is not so nice to do that this way, but it's a quick workaround to a more complex method involving an
+    // additional Qt role only to determine the number of destinations.
+
+    if(dt == "")
+        ownOption.icon = FilesDefs::getIconFromQtResourcePath(":/icons/svg/people2.svg");
+    else if(id.isNull())
+    {
+        if (ownOption.icon.isNull())
+            ownOption.icon = FilesDefs::getIconFromQtResourcePath(":/icons/notification.svg");
+    }
+    else
 	{
-		if (ownOption.icon.isNull())
-			ownOption.icon = FilesDefs::getIconFromQtResourcePath(":/icons/notification.png");
-	}
-	else
-	{
-		if(! computeNameIconAndComment(id,ownOption.text,ownOption.icon,cmt))
+        QString cmt;
+
+        if(! computeNameIconAndComment(id,ownOption.text,ownOption.icon,cmt))
 		{
 			if(mReloadPeriod > 3)
 			{

@@ -51,9 +51,9 @@
 #define ROLE_SORT_STANDARD_GROUP    Qt::UserRole + 2
 #define ROLE_SORT_NAME              Qt::UserRole + 3
 #define ROLE_SORT_STATE             Qt::UserRole + 4
-#define ROLE_FILTER_REASON          Qt::UserRole + 5
+#define ROLE_SORT_SELECTED          Qt::UserRole + 5
+#define ROLE_FILTER_REASON          Qt::UserRole + 6
 
-#define IMAGE_GROUP16    ":/images/user/group16.png"
 #define IMAGE_FRIENDINFO ":/images/peerdetails_16x16.png"
 
 static bool isSelected(FriendSelectionWidget::Modus modus, QTreeWidgetItem *item)
@@ -128,11 +128,45 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 
 	/* Refresh style to have the correct text color */
 	Rshare::refreshStyleSheet(this, false);
+
+    mEventHandlerId_identities = 0;
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) {
+        RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }) ;}, mEventHandlerId_identities, RsEventType::GXS_IDENTITY );
+    mEventHandlerId_peers = 0;
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) {
+        RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }) ;}, mEventHandlerId_peers, RsEventType::PEER_CONNECTION );
 }
+
+void FriendSelectionWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    const RsGxsIdentityEvent *fe = dynamic_cast<const RsGxsIdentityEvent*>(event.get());
+
+    if(fe)
+    {
+        updateDisplay(true);
+        update(); // Qt flush
+        return;
+    }
+    const RsConnectionEvent *fp = dynamic_cast<const RsConnectionEvent*>(event.get());
+
+    if(fp)
+        switch(fp->mConnectionInfoCode)
+        {
+        case RsConnectionEventCode::PEER_REMOVED:
+        case RsConnectionEventCode::PEER_ADDED:
+            updateDisplay(true);
+            update(); // Qt flush
+            break;
+        default: break ;
+        }
+}
+
 
 FriendSelectionWidget::~FriendSelectionWidget()
 {
-	delete ui;
+    rsEvents->unregisterEventsHandler(mEventHandlerId_peers);
+    rsEvents->unregisterEventsHandler(mEventHandlerId_identities);
+    delete ui;
 }
 
 void FriendSelectionWidget::changeEvent(QEvent *e)
@@ -382,12 +416,34 @@ void FriendSelectionWidget::secured_fillList()
 			// Add item to the list
 			ui->friendList->addTopLevelItem(groupItem);
 
+			QFontMetricsF fontMetrics(ui->friendList->font());
+			int avatarHeight = fontMetrics.height() * 1.5;
+			ui->friendList->setIconSize(QSize(avatarHeight, avatarHeight));
+
 			groupItem->setFlags(Qt::ItemIsUserCheckable | groupItem->flags());
 			groupItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
 			groupItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
-            groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP16));
 
-            groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id.toStdString()));
+			if (groupInfo->id.toStdString() == RS_GROUP_ID_FRIENDS.toStdString()) {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/blue.svg"));
+			}
+			else if (groupInfo->id.toStdString() == RS_GROUP_ID_FAMILY.toStdString()) {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/purple.svg"));
+			}
+			else if (groupInfo->id.toStdString() == RS_GROUP_ID_COWORKERS.toStdString()) {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/green.svg"));
+			}
+			else if (groupInfo->id.toStdString() == RS_GROUP_ID_OTHERS.toStdString()) {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/pink.svg"));
+			}
+			else if (groupInfo->id.toStdString() == RS_GROUP_ID_FAVORITES.toStdString()) {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/yellow.svg"));
+			}
+			else {
+				groupItem->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(":/icons/groups/red.svg"));
+			}
+
+			groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id.toStdString()));
 
 			groupItem->setExpanded(true);
 
@@ -612,8 +668,13 @@ void FriendSelectionWidget::secured_fillList()
 				emit itemAdded(IDTYPE_GXS, QString::fromStdString(detail.mId.toStdString()), gxsItem);
 
 				if (std::find(gxsIdsSelected.begin(), gxsIdsSelected.end(), detail.mId) != gxsIdsSelected.end()) 
+                {
 					setSelected(mListModus, gxsItem, true);
-			}
+                    gxsItem->setData(COLUMN_NAME,ROLE_SORT_SELECTED,0);
+                }
+                else
+                    gxsItem->setData(COLUMN_NAME,ROLE_SORT_SELECTED,1);
+            }
 		}
 		if(mShowTypes & SHOW_CONTACTS)
 		{
@@ -1164,9 +1225,18 @@ std::string FriendSelectionWidget::idFromItem(QTreeWidgetItem *item)
 	return item->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
 }
 
+void FriendSelectionWidget::sortByChecked(bool sort)
+{
+    mCompareRole->clear();
+    mCompareRole->setRole(COLUMN_NAME,ROLE_SORT_SELECTED);
+
+    ui->friendList->resort();
+}
+
 void FriendSelectionWidget::sortByState(bool sort)
 {
-	mCompareRole->setRole(COLUMN_NAME, ROLE_SORT_GROUP);
+    mCompareRole->clear();
+    mCompareRole->setRole(COLUMN_NAME, ROLE_SORT_GROUP);
 	mCompareRole->addRole(COLUMN_NAME, ROLE_SORT_STANDARD_GROUP);
 
 	if (sort) {

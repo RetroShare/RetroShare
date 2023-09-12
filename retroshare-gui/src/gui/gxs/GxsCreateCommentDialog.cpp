@@ -51,8 +51,8 @@ void GxsCreateCommentDialog::loadComment(const QString &msgText, const QString &
 	ui->avatarLabel->setGxsId(msgAuthorId);
 	ui->avatarLabel->setFrameType(AvatarWidget::NO_FRAME);
 
-	ui->replaytolabel->setId(msgAuthorId);
-	ui->replaytolabel->setText( tr("Replying to") + " @" + msgAuthor);
+	ui->replyToLabel->setId(msgAuthorId);
+	ui->replyToLabel->setText( tr("Replying to") + " @" + msgAuthor);
 	
 	ui->commentTextEdit->setPlaceholderText( tr("Type your reply"));
 	ui->postButton->setText("Reply");
@@ -99,7 +99,6 @@ void GxsCreateCommentDialog::createComment()
 		return;
 	}
 
-	uint32_t token;
 	mCommentService->createComment(comment);
 	close();
 }
@@ -116,11 +115,11 @@ void GxsCreateCommentDialog::checkLength(){
 	int charRemains = MAX_ALLOWED_GXS_MESSAGE_SIZE - msg.length();
 	if(charRemains >= 0) {
 		text = tr("It remains %1 characters after HTML conversion.").arg(charRemains);
-		ui->infoLabel->setStyleSheet("QLabel#infoLabel { }");
+		ui->info_Label->setStyleSheet("QLabel#info_Label { }");
 	}else{
 		text = tr("Warning: This message is too big of %1 characters after HTML conversion.").arg((0-charRemains));
-		ui->infoLabel->setStyleSheet("QLabel#infoLabel {color: red; font: bold; }");
+		ui->info_Label->setStyleSheet("QLabel#info_Label {color: red; font: bold; }");
 	}
 	ui->postButton->setEnabled(charRemains>=0);
-	ui->infoLabel->setText(text);
+	ui->info_Label->setText(text);
 }

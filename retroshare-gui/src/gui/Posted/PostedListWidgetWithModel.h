@@ -130,12 +130,13 @@ protected:
 #endif
 
 	/* GxsMessageFrameWidget */
-	virtual void setAllMessagesReadDo(bool read, uint32_t &token) override;
+    virtual void setAllMessagesReadDo(bool read) override;
 
 private slots:
 #ifdef TO_REMOVE
 	void showPostDetails();
 #endif
+    void postContextMenu(const QPoint&);
     void showAuthorInPeople();
     void tabCloseRequested(int index);
     void updateSorting(int);
@@ -145,8 +146,8 @@ private slots:
 	void subscribeGroup(bool subscribe);
 	void settingsChanged();
 	void postPostLoad();
-	void postContextMenu(const QPoint&);
 	void copyMessageLink();
+    void copyHttpLink();
     void nextPosts();
     void prevPosts();
 	void filterItems(QString s);

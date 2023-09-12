@@ -72,7 +72,7 @@ void SubscribeToolButton::updateUi()
 		    delete mMenu ;
             
 		mMenu = new QMenu;
-        mMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/cancel.png"), tr("Unsubscribe"), this, SLOT(unsubscribePrivate()));
+        mMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"), tr("Unsubscribe"), this, SLOT(unsubscribePrivate()));
 
 		if (!mSubscribedActions.empty()) {
 			mMenu->addSeparator();

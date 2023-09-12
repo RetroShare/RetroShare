@@ -21,107 +21,60 @@
  *******************************************************************************/
 #include "expressionwidget.h"
 
-ExpressionWidget::ExpressionWidget(QWidget * parent, bool initial) : QWidget(parent)
+ExpressionWidget::ExpressionWidget(QWidget * parent, bool initial)
+    : QWidget(parent)
+    , isFirst (initial), inRangedConfig(false)
+    , searchType (NameSearch) // the default search type
 {
-    setupUi(this);
-    
-    inRangedConfig = false;
-    
-    // the default search type
-    searchType = NameSearch;
-    
-    exprLayout = this->layout();
-    
-    exprOpFrame->setLayout          (createLayout());
-    exprTermFrame->setLayout        (createLayout());
-    exprConditionFrame->setLayout   (createLayout());
-    exprParamFrame->setLayout       (createLayout());
-    exprParamFrame->setSizePolicy(QSizePolicy::MinimumExpanding, 
-                                  QSizePolicy::Fixed);
-        
-    elements = new QList<GuiExprElement*>();
-    
-    exprOpElem = new ExprOpElement();
-    exprOpFrame->layout()->addWidget(exprOpElem);
-    elements->append(exprOpElem);
-        
-    exprTermElem = new ExprTermsElement();
-    exprTermFrame->layout()->addWidget(exprTermElem);
-    elements->append(exprTermElem);
-    connect (exprTermElem, SIGNAL(currentIndexChanged(int)),
-             this, SLOT (adjustExprForTermType(int)));
-    
-    exprCondElem = new ExprConditionElement(searchType);
-    exprConditionFrame->layout()->addWidget(exprCondElem);
-    elements->append(exprCondElem);
-    connect (exprCondElem, SIGNAL (currentIndexChanged(int)),
-             this, SLOT (adjustExprForConditionType(int)));
-             
-    exprParamElem= new ExprParamElement(searchType);
-    exprParamFrame->layout()->addWidget(exprParamElem);
-    elements->append(exprParamElem);
-    
-    // set up the default search: a search on name
-    adjustExprForTermType(searchType);
-    isFirst = initial;
-    deleteExprButton    ->setVisible(!isFirst);
-    exprOpElem         ->setVisible(!isFirst);
-    exprTermFrame       ->show();
-    exprConditionFrame  ->show();
-    exprParamFrame      ->show();
-    
-    // connect the delete button signal        
-    connect (deleteExprButton, SIGNAL (clicked()),
-                this, SLOT(deleteExpression()));
-    
-    this->show();
-}
+	setupUi(this);
 
-QLayout * ExpressionWidget::createLayout(QWidget * parent)
-{
-    QHBoxLayout * hboxLayout;
-    if (parent == 0) 
-    {
-        hboxLayout = new QHBoxLayout();
-    } else {
-        hboxLayout = new QHBoxLayout(parent);
-    }
-    hboxLayout->setSpacing(0);
-    hboxLayout->setMargin(0);
-    return hboxLayout;
+	connect (exprTermElem, SIGNAL(currentIndexChanged(int)),
+	         this, SLOT (adjustExprForTermType(int)));
+
+	connect (exprCondElem, SIGNAL (currentIndexChanged(int)),
+	         this, SLOT (adjustExprForConditionType(int)));
+
+	// set up the default search: a search on name
+	adjustExprForTermType(searchType);
+	exprOpElem         ->setVisible(!isFirst);
+	deleteExprButton   ->setVisible(!isFirst);
+
+	// connect the delete button signal
+	connect (deleteExprButton, SIGNAL (clicked()),
+	         this, SLOT(deleteExpression()) );
+
+	this->show();
 }
 
 bool ExpressionWidget::isStringSearchExpression()
 {
-    return (searchType == NameSearch || searchType == PathSearch 
-		|| searchType == ExtSearch || searchType == HashSearch);
+	return (   searchType == NameSearch || searchType == PathSearch
+	        || searchType == ExtSearch  || searchType == HashSearch);
 }
 
 void ExpressionWidget::adjustExprForTermType(int index)
 {
-    ExprSearchType type = GuiExprElement::TermsIndexMap[index];
-    searchType = type;
-    
-    // now adjust the relevant elements
-    // the condition combobox
-    exprCondElem->adjustForSearchType(type);
-    
-    // the parameter expression: can be a date, 1-2 edit fields
-    //    or a size with units etc
-    exprParamElem->adjustForSearchType(type);
-    exprParamFrame->adjustSize();
-    
-    exprLayout->invalidate();
-    this->adjustSize();
+	ExprSearchType type = GuiExprElement::TermsIndexMap[index];
+	searchType = type;
+
+	// now adjust the relevant elements
+	// the condition combobox
+	exprCondElem->adjustForSearchType(type);
+
+	// the parameter expression: can be a date, 1-2 edit fields
+	//    or a size with units etc
+	exprParamElem->adjustForSearchType(type);
+
+	this->setMinimumWidth( exprOpElem->width()+exprTermElem->width()
+	                     + exprCondElem->width()+exprParamElem->width()
+	                     + deleteExprButton->width() );
 }
 
 void ExpressionWidget::adjustExprForConditionType(int newCondition)
 {
-    // we adjust the appearance for a ranged selection
-    inRangedConfig = (newCondition == GuiExprElement::RANGE_INDEX);
-    exprParamElem->setRangedSearch(inRangedConfig);
-    exprParamFrame->layout()->invalidate();
-    exprParamFrame->adjustSize();
+	// we adjust the appearance for a ranged selection
+	inRangedConfig = (newCondition == GuiExprElement::RANGE_INDEX);
+	exprParamElem->setRangedSearch(inRangedConfig);
 }
 
 void ExpressionWidget::deleteExpression() 
@@ -156,7 +109,11 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
     if (isStringSearchExpression()) 
     {
         QString txt = exprParamElem->getStrSearchValue();
+#if QT_VERSION < QT_VERSION_CHECK(5,15,0)
         QStringList words = txt.split(" ", QString::SkipEmptyParts);
+#else
+        QStringList words = txt.split(" ", Qt::SkipEmptyParts);
+#endif
         for (int i = 0; i < words.size(); ++i)
             wordList.push_back(words.at(i).toUtf8().constData());
     } else if (inRangedConfig){
@@ -165,12 +122,12 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
         highVal = exprParamElem->getIntHighValue();
         if (lowVal >highVal)
         {   
-            lowVal  = lowVal^highVal;	// csoler: wow, that is some style!
-            highVal = lowVal^highVal;
-            lowVal  = lowVal^highVal;
+            auto tmp=lowVal;
+            lowVal = highVal;
+            highVal = tmp;
         }
     }
-            
+
     switch (searchType)
     {
         case NameSearch:
@@ -193,11 +150,33 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
                                       wordList);
             break;
         case DateSearch:
-            if (inRangedConfig) {    
-                expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(lowVal), checkedConversion(highVal));
-            } else {
-                expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(exprParamElem->getIntValue()));
-            }
+        switch(exprCondElem->getRelOperator())	// we need to convert expressions so that the delta is 1 day (i.e. 86400 secs)
+        {
+             // The conditions below account for 3 things:
+             // - the swap between variables in rsexpr.h:214
+             // - the swap of variables when calling getRelOperator() (See guiexprelement.cpp:166)
+             // - the fact that some comparisions in the unit of days may add 86400 seconds.
+
+            default:
+            case RsRegularExpression::Equals:
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::InRange, checkedConversion(exprParamElem->getIntValue()), checkedConversion(86400+exprParamElem->getIntValue()));
+                break;
+            case RsRegularExpression::InRange:
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::InRange, checkedConversion(lowVal), 86400+checkedConversion(highVal));
+                break;
+            case RsRegularExpression::Greater:			// means we expect file.date() <   some day D. So file.date() < D, meaning Exp=Greater
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::Greater,checkedConversion(exprParamElem->getIntValue()));
+                break;
+            case RsRegularExpression::SmallerEquals:	// means we expect file.date() >=  some day D. So file.date() >= D, meaning Exp=SmallerEquals
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::SmallerEquals,checkedConversion(exprParamElem->getIntValue()));
+                break;
+            case RsRegularExpression::Smaller:			// means we expect file.date() >  some day D. So file.date() >= D+86400, meaning Exp=SmallerEquals
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::SmallerEquals, checkedConversion(86400+exprParamElem->getIntValue()-1));
+                break;
+            case RsRegularExpression::GreaterEquals:	// means we expect file.date() <= some day D. So file.date() < D+86400, meaning Exp=Greater
+                expr = new RsRegularExpression::DateExpression(RsRegularExpression::Greater, checkedConversion(86400+exprParamElem->getIntValue()));
+                break;
+        }
             break;
         case PopSearch:
             if (inRangedConfig) {    
@@ -208,20 +187,42 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
             break;
         case SizeSearch:
             if (inRangedConfig) 
-				{    
-						if(lowVal >= (uint64_t)(1024*1024*1024) || highVal >= (uint64_t)(1024*1024*1024)) 
-                                 expr = new RsRegularExpression::SizeExpressionMB(exprCondElem->getRelOperator(), (int)(lowVal / (1024*1024)), (int)(highVal / (1024*1024)));
-						else
-                            expr = new RsRegularExpression::SizeExpression(exprCondElem->getRelOperator(),  lowVal, highVal);
-            } 
-				else 
-				{
-					uint64_t s = exprParamElem->getIntValue() ;
+            {
+                if(lowVal >= (uint64_t)(1024*1024*1024) || highVal >= (uint64_t)(1024*1024*1024))
+                    expr = new RsRegularExpression::SizeExpressionMB(exprCondElem->getRelOperator(), (int)(lowVal / (1024*1024)), (int)(highVal / (1024*1024)));
+                else
+                    expr = new RsRegularExpression::SizeExpression(exprCondElem->getRelOperator(),  lowVal, highVal);
+            }
+            else
+            {
+                uint64_t s = exprParamElem->getIntValue() ;
+                auto cond = exprCondElem->getRelOperator();
+                bool MB = false;
 
-					if(s >= (uint64_t)(1024*1024*1024))
-                        expr = new RsRegularExpression::SizeExpressionMB(exprCondElem->getRelOperator(), (int)(s/(1024*1024))) ;
-					else
-                        expr = new RsRegularExpression::SizeExpression(exprCondElem->getRelOperator(), (int)s) ;
+                if(s >= (uint64_t)(1024*1024*1024))
+                {
+                    MB=true;
+                    s >>= 20;
+                }
+
+                // Specific case for Equal operator, which we convert to a range, so as to avoid matching arbitrary digits
+
+                if(cond == RsRegularExpression::Equals)
+                {
+                    // Now compute a proper interval. There is no optimal solution, so we aim for the simplest: add/remove 20% of the initial value.
+
+                    if(MB)
+                        expr = new RsRegularExpression::SizeExpressionMB(RsRegularExpression::InRange, (int)(s*0.8) , (int)(s*1.2));
+                    else
+                        expr = new RsRegularExpression::SizeExpression(RsRegularExpression::InRange, (int)(s*0.8) , (int)(s*1.2));
+                }
+                else
+                {
+                    if(MB)
+                        expr = new RsRegularExpression::SizeExpressionMB(cond, (int)s);
+                    else
+                        expr = new RsRegularExpression::SizeExpression(cond, (int)s) ;
+                }
             }
             break;
     };

@@ -24,6 +24,9 @@
 #include <QIcon>
 #include <QBrush>
 
+#define IMAGE_AUTHED         ":/images/accepted16.png"
+#define IMAGE_DENIED         ":/images/denied16.png"
+#define IMAGE_TRUSTED        ":/images/rs-2.png"
 
 /*TODO:
  * using list here for internal data storage is not best option
@@ -41,22 +44,22 @@ QVariant pgpid_item_model::headerData(int section, Qt::Orientation orientation, 
         {
             switch(section)
             {
-            case COLUMN_CHECK:
+            case PGP_ITEM_MODEL_COLUMN_CHECK:
                 return QString(tr(" Do you accept connections signed by this profile?"));
                 break;
-            case COLUMN_PEERNAME:
+            case PGP_ITEM_MODEL_COLUMN_PEERNAME:
                 return QString(tr("Name of the profile"));
                 break;
-            case COLUMN_I_AUTH_PEER:
+            case PGP_ITEM_MODEL_COLUMN_I_AUTH_PEER:
                 return QString(tr("This column indicates the trust level you indicated and whether you signed the profile PGP key"));
                 break;
-            case COLUMN_PEER_AUTH_ME:
+            case PGP_ITEM_MODEL_COLUMN_PEER_AUTH_ME:
                 return QString(tr("Did that peer sign your own profile PGP key"));
                 break;
-            case COLUMN_PEERID:
+            case PGP_ITEM_MODEL_COLUMN_PEERID:
                 return QString(tr("PGP Key Id of that profile"));
                 break;
-            case COLUMN_LAST_USED:
+            case PGP_ITEM_MODEL_COLUMN_LAST_USED:
                 return QString(tr("Last time this key was used (received time, or to check connection)"));
                 break;
             }
@@ -65,22 +68,22 @@ QVariant pgpid_item_model::headerData(int section, Qt::Orientation orientation, 
         {
             switch(section)
             {
-            case COLUMN_CHECK:
+            case PGP_ITEM_MODEL_COLUMN_CHECK:
                 return QString(tr("Connections"));
                 break;
-            case COLUMN_PEERNAME:
+            case PGP_ITEM_MODEL_COLUMN_PEERNAME:
                 return QString(tr("Profile"));
                 break;
-            case COLUMN_I_AUTH_PEER:
+            case PGP_ITEM_MODEL_COLUMN_I_AUTH_PEER:
                 return QString(tr("Trust level"));
                 break;
-            case COLUMN_PEER_AUTH_ME:
+            case PGP_ITEM_MODEL_COLUMN_PEER_AUTH_ME:
                 return QString(tr("Has signed your key?"));
                 break;
-            case COLUMN_PEERID:
+            case PGP_ITEM_MODEL_COLUMN_PEERID:
                 return QString(tr("Id"));
                 break;
-            case COLUMN_LAST_USED:
+            case PGP_ITEM_MODEL_COLUMN_LAST_USED:
                 return QString(tr("Last used"));
                 break;
             }
@@ -98,13 +101,13 @@ QVariant pgpid_item_model::headerData(int section, Qt::Orientation orientation, 
         {
             switch(section)
             {
-            case COLUMN_CHECK:
+            case PGP_ITEM_MODEL_COLUMN_CHECK:
                 return 25*font_height;
                 break;
-            case COLUMN_PEERNAME: case COLUMN_I_AUTH_PEER: case COLUMN_PEER_AUTH_ME:
+            case PGP_ITEM_MODEL_COLUMN_PEERNAME: case PGP_ITEM_MODEL_COLUMN_I_AUTH_PEER: case PGP_ITEM_MODEL_COLUMN_PEER_AUTH_ME:
                 return 200*font_height;
                 break;
-            case COLUMN_LAST_USED:
+            case PGP_ITEM_MODEL_COLUMN_LAST_USED:
                 return 75*font_height;
                 break;
             }
@@ -122,7 +125,7 @@ int pgpid_item_model::rowCount(const QModelIndex &/*parent*/) const
 
 int pgpid_item_model::columnCount(const QModelIndex &/*parent*/) const
 {
-    return COLUMN_COUNT;
+    return PGP_ITEM_MODEL_COLUMN_COUNT;
 }
 
 
@@ -148,20 +151,20 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
     {
         switch(index.column())
         {
-        case COLUMN_LAST_USED:
+        case PGP_ITEM_MODEL_COLUMN_LAST_USED:
             return detail.lastUsed;
             break;
-        case COLUMN_I_AUTH_PEER:
+        case PGP_ITEM_MODEL_COLUMN_I_AUTH_PEER:
         {
             if (detail.ownsign)
                 return RS_TRUST_LVL_ULTIMATE;
             return detail.trustLvl;
         }
             break;
-        case COLUMN_PEER_AUTH_ME:
+        case PGP_ITEM_MODEL_COLUMN_PEER_AUTH_ME:
             return detail.hasSignedMe;
             break;
-        case COLUMN_CHECK:
+        case PGP_ITEM_MODEL_COLUMN_CHECK:
             return detail.accept_connection;
             break;
         default:
@@ -174,13 +177,13 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
     {
         switch(index.column())
         {
-        case COLUMN_PEERNAME:
+        case PGP_ITEM_MODEL_COLUMN_PEERNAME:
             return QString::fromUtf8(detail.name.c_str());
             break;
-        case COLUMN_PEERID:
+        case PGP_ITEM_MODEL_COLUMN_PEERID:
             return QString::fromStdString(detail.gpg_id.toStdString());
             break;
-        case COLUMN_I_AUTH_PEER:
+        case PGP_ITEM_MODEL_COLUMN_I_AUTH_PEER:
         {
             if (detail.ownsign)
                 return tr("Personal signature");
@@ -199,7 +202,7 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
             }
         }
             break;
-        case COLUMN_PEER_AUTH_ME:
+        case PGP_ITEM_MODEL_COLUMN_PEER_AUTH_ME:
         {
             if (detail.hasSignedMe)
                 return tr("Yes");
@@ -207,7 +210,7 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
                 return tr("No");
         }
             break;
-        case COLUMN_LAST_USED:
+        case PGP_ITEM_MODEL_COLUMN_LAST_USED:
         {
             time_t now = time(NULL);
             uint64_t last_time_used = now - detail.lastUsed ;
@@ -226,7 +229,7 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
             return lst_used_str;
         }
             break;
-        case COLUMN_CHECK:
+        case PGP_ITEM_MODEL_COLUMN_CHECK:
         {
             if (detail.accept_connection || rsPeers->getGPGOwnId() == detail.gpg_id)
                 return tr("Accepted");
@@ -242,7 +245,7 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
     {
         switch(index.column())
         {
-        case COLUMN_I_AUTH_PEER:
+        case PGP_ITEM_MODEL_COLUMN_I_AUTH_PEER:
         {
             if (detail.ownsign)
                 return tr("PGP key signed by you");
@@ -263,7 +266,7 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
     {
         switch(index.column())
         {
-        case COLUMN_CHECK:
+        case PGP_ITEM_MODEL_COLUMN_CHECK:
         {
             if (detail.accept_connection)
                 return QIcon(IMAGE_AUTHED);
@@ -298,6 +301,10 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
                 return QBrush(mBackgroundColorDenied);
             }
         }
+    }
+    else if(role == Qt::ForegroundRole)
+    {
+        return QBrush(mTextColor);
     }
     return QVariant();
 }
@@ -341,14 +348,14 @@ void pgpid_item_model::data_updated(std::list<RsPgpId> &new_neighs)
                 break;
             if(*i1 != *i2)
             {
-                QModelIndex topLeft = createIndex(ii1,0), bottomRight = createIndex(ii1, COLUMN_COUNT-1);
+                QModelIndex topLeft = createIndex(ii1,0), bottomRight = createIndex(ii1, PGP_ITEM_MODEL_COLUMN_COUNT-1);
                 emit dataChanged(topLeft, bottomRight);
             }
         }
     }
     if(new_size > old_size)
     {
-        QModelIndex topLeft = createIndex(old_size ? old_size -1 : 0 ,0), bottomRight = createIndex(new_size -1, COLUMN_COUNT-1);
+        QModelIndex topLeft = createIndex(old_size ? old_size -1 : 0 ,0), bottomRight = createIndex(new_size -1, PGP_ITEM_MODEL_COLUMN_COUNT-1);
         emit dataChanged(topLeft, bottomRight);
     }
     //dirty solution for initial data fetch

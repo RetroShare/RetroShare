@@ -24,6 +24,7 @@
 #include "PulseReply.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
+#include "util/misc.h"
 
 #include "PulseAddDialog.h"
 
@@ -35,15 +36,32 @@ PulseAddDialog::PulseAddDialog(QWidget *parent)
 {
 	ui.setupUi(this);
 
-	connect(ui.pushButton_Post, SIGNAL( clicked( void ) ), this, SLOT( postPulse( void ) ) );
+	connect(ui.postButton, SIGNAL( clicked( void ) ), this, SLOT( postPulse( void ) ) );
 	connect(ui.pushButton_AddURL, SIGNAL( clicked( void ) ), this, SLOT( addURL( void ) ) );
 	connect(ui.pushButton_ClearDisplayAs, SIGNAL( clicked( void ) ), this, SLOT( clearDisplayAs( void ) ) );
 	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelPulse( void ) ) );
 	connect(ui.textEdit_Pulse, SIGNAL( textChanged( void ) ), this, SLOT( pulseTextChanged( void ) ) );
 	connect(ui.pushButton_picture, SIGNAL(clicked()), this, SLOT( toggle()));
+	connect(ui.pushButton_remove, SIGNAL(clicked()), this, SLOT( removePictures()));
+
+
+    // this connection is from browse push button to the slot function onBrowseButtonClicked()
+    connect(ui.pushButton_Browse, SIGNAL(clicked()), this, SLOT( onBrowseButtonClicked()));
 
 	ui.pushButton_picture->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/photo.png")));
+	ui.pushButton_Browse->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/add-image.png")));
+	ui.pushButton_remove->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/mail/delete.png")));
+
 	ui.frame_picture->hide();
+	ui.pushButton_picture->hide();
+
+    // initially hiding the browse button as the attach image button is not pressed
+	//ui.frame_PictureBrowse->hide();
+
+	ui.label_image1->hide();
+	ui.label_image2->hide();
+	ui.label_image3->hide();
+	ui.label_image4->hide();
 
 	setAcceptDrops(true);
 }
@@ -98,10 +116,9 @@ void PulseAddDialog::cleanup()
 		QLayout *layout = ui.widget_replyto->layout();
 		// completely delete layout and sublayouts
 		QLayoutItem * item;
-		QWidget * widget;
 		while ((item = layout->takeAt(0)))
 		{
-			if ((widget = item->widget()) != 0)
+			if (QWidget *widget = item->widget())
 			{
 				std::cerr << "PulseAddDialog::cleanup() removing widget";
 				std::cerr << std::endl;
@@ -129,8 +146,8 @@ void PulseAddDialog::cleanup()
 	ui.frame_URL->setEnabled(false);
 	ui.frame_URL->hide();
 
-	ui.pushButton_Post->setEnabled(false);
-	ui.pushButton_Post->setText(tr("Post"));
+	ui.postButton->setEnabled(false);
+	ui.postButton->setText(tr("Post"));
 	ui.textEdit_Pulse->setPlaceholderText(tr("Whats happening?"));
 	ui.frame_input->setVisible(true);
 	ui.widget_sentiment->setVisible(true);
@@ -154,8 +171,11 @@ void PulseAddDialog::cleanup()
 	ui.label_image4->clear();
 	ui.label_image4->setText(tr("Drag and Drop Image"));
 
-	// Hide Drag & Drop Frame
-	ui.frame_picture->hide();
+    // Hide Drag & Drop Frame and the browse frame
+    ui.frame_picture->hide();
+    //ui.frame_PictureBrowse->hide();
+	ui.pushButton_picture->hide();
+
 	ui.pushButton_picture->setChecked(false);
 }
 
@@ -163,12 +183,12 @@ void PulseAddDialog::pulseTextChanged()
 {
 	std::string pulseText = ui.textEdit_Pulse->toPlainText().toStdString();
 	bool enable = (pulseText.size() > 0) && (pulseText.size() < PULSE_MAX_SIZE);
-	ui.pushButton_Post->setEnabled(enable);
+	ui.postButton->setEnabled(enable);
 }
 
 // Old Interface, deprecate / make internal.
 // TODO: Convert mReplyToPulse to be an SPtr, and remove &pulse parameter.
-void PulseAddDialog::setReplyTo(RsWirePulse &pulse, RsWirePulseSPtr pPulse, std::string &groupName, uint32_t replyType)
+void PulseAddDialog::setReplyTo(const RsWirePulse &pulse, RsWirePulseSPtr pPulse, std::string &/*groupName*/, uint32_t replyType)
 {
 	mIsReply = true;
 	mReplyToPulse = pulse;
@@ -191,21 +211,21 @@ void PulseAddDialog::setReplyTo(RsWirePulse &pulse, RsWirePulseSPtr pPulse, std:
 
 	if (mReplyType & WIRE_PULSE_TYPE_REPLY)
 	{
-		ui.pushButton_Post->setText(tr("Reply to Pulse"));
+		ui.postButton->setText(tr("Reply to Pulse"));
 		ui.textEdit_Pulse->setPlaceholderText(tr("Pulse your reply"));
 	}
 	else
 	{
 		// cannot add msg for like / republish.
-		ui.pushButton_Post->setEnabled(true);
+		ui.postButton->setEnabled(true);
 		ui.frame_input->setVisible(false);
 		ui.widget_sentiment->setVisible(false);
 		if (mReplyType & WIRE_PULSE_TYPE_REPUBLISH) {
-			ui.pushButton_Post->setText(tr("Republish Pulse"));
+			ui.postButton->setText(tr("Republish Pulse"));
 			ui.pushButton_picture->hide();
 		}
 		else if (mReplyType & WIRE_PULSE_TYPE_LIKE) {
-			ui.pushButton_Post->setText(tr("Like Pulse"));
+			ui.postButton->setText(tr("Like Pulse"));
 			ui.pushButton_picture->hide();
 		}
 	}
@@ -479,24 +499,29 @@ void PulseAddDialog::addImage(const QString &path)
 		std::cerr << "PulseAddDialog::addImage() Installing in Image1";
 		std::cerr << std::endl;
 		ui.label_image1->setPixmap(icon);
+		ui.label_image1->show();
+		ui.frame_picture->show();
 		mImage1.copy((uint8_t *) ba.data(), ba.size());
 		std::cerr << "PulseAddDialog::addImage() Installing in Image1 Size: " << mImage1.mSize;
 		std::cerr << std::endl;
 	}
 	else if (mImage2.empty()) {
 		ui.label_image2->setPixmap(icon);
+		ui.label_image2->show();
 		mImage2.copy((uint8_t *) ba.data(), ba.size());
 		std::cerr << "PulseAddDialog::addImage() Installing in Image2 Size: " << mImage2.mSize;
 		std::cerr << std::endl;
 	}
 	else if (mImage3.empty()) {
 		ui.label_image3->setPixmap(icon);
+		ui.label_image3->show();
 		mImage3.copy((uint8_t *) ba.data(), ba.size());
 		std::cerr << "PulseAddDialog::addImage() Installing in Image3 Size: " << mImage3.mSize;
 		std::cerr << std::endl;
 	}
 	else if (mImage4.empty()) {
 		ui.label_image4->setPixmap(icon);
+		ui.label_image4->show();
 		mImage4.copy((uint8_t *) ba.data(), ba.size());
 		std::cerr << "PulseAddDialog::addImage() Installing in Image4 Size: " << mImage4.mSize;
 		std::cerr << std::endl;
@@ -511,12 +536,47 @@ void PulseAddDialog::toggle()
 {
 	if (ui.pushButton_picture->isChecked())
 	{
+        // Show the input methods (drag and drop field and the browse button)
 		ui.frame_picture->show();
+
 		ui.pushButton_picture->setToolTip(tr("Hide Pictures"));
 	}
 	else
 	{
+        // Hide the input methods (drag and drop field and the browse button)
 		ui.frame_picture->hide();
+
 		ui.pushButton_picture->setToolTip(tr("Add Pictures"));
 	}
+}
+
+// Function to get the file dialog for the browse button
+void PulseAddDialog::onBrowseButtonClicked()
+{
+    QString filePath;
+    misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", filePath);
+    if (!filePath.isEmpty()) {
+        //ui.lineEdit_FilePath->setText(filePath);
+        addImage(filePath);
+    }
+}
+
+void PulseAddDialog::removePictures()
+{
+
+	mImage1.clear();
+	ui.label_image1->clear();
+	mImage2.clear();
+	ui.label_image2->clear();
+	mImage3.clear();
+	ui.label_image3->clear();
+	mImage4.clear();
+	ui.label_image4->clear();
+
+	ui.label_image1->hide();
+	ui.label_image2->hide();
+	ui.label_image3->hide();
+	ui.label_image4->hide();
+
+	ui.frame_picture->hide();
 }
