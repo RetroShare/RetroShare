@@ -122,7 +122,10 @@ bool WebuiPage::restart()
 
     rsWebUi->setUserPassword(ui.password_LE->text().toStdString());
     rsWebUi->setHtmlFilesDirectory(ui.webInterfaceFiles_LE->text().toStdString());
+
+    setCursor(Qt::WaitCursor) ;
     rsWebUi->restart();
+    setCursor(Qt::ArrowCursor) ;
 
     return true;
 }
@@ -140,7 +143,7 @@ void WebuiPage::loadParams()
     if(it != smap.end())
 		whileBlocking(ui.password_LE)->setText(QString::fromStdString(it->second));
 
-    if(rsWebUi->isRunning() && rsJsonApi->isRunning())
+    if(rsWebUi->isRunning())
         ui.statusLabelLED->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_LEDON)) ;
     else
         ui.statusLabelLED->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_LEDOFF)) ;
@@ -190,9 +193,23 @@ QString WebuiPage::helpText() const
 
 void WebuiPage::onEnableCBClicked(bool checked)
 {
-	ui.params_GB->setEnabled(checked);
-	ui.startWebBrowser_PB->setEnabled(checked);
-	QString S;
+    QString errmsg;
+    updateParams(errmsg);
+
+    ui.params_GB->setEnabled(checked);
+    ui.startWebBrowser_PB->setEnabled(checked);
+    ui.apply_PB->setEnabled(checked);
+
+    if(checked)
+    {
+        if(!restart())
+        {
+            QMessageBox::warning(0, tr("failed to start Webinterface"), "Failed to start the webinterface.");
+            return;
+        }
+    }
+    else
+        checkShutdownWebui();
 }
 
 void WebuiPage::onPortValueChanged(int /*value*/)
@@ -211,16 +228,8 @@ void WebuiPage::onApplyClicked()
     QString errmsg;
     updateParams(errmsg);
 
-    if(ui.enableWebUI_CB->isChecked())
-    {
-        if(!restart())
-        {
-            QMessageBox::warning(0, tr("failed to start Webinterface"), "Failed to start the webinterface.");
-            return;
-        }
-        else
-            checkShutdownWebui();
-    }
+    restart();
+
     load();
 }
 
