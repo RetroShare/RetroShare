@@ -178,8 +178,7 @@ SettingsPage::initStackedWidget()
     JsonApiPage *jsonapi_p = new JsonApiPage() ;
 	addPage(jsonapi_p);
 #ifdef RS_WEBUI
-    WebuiPage *webui_p = new WebuiPage() ;
-    addPage(new WebuiPage() );
+    addPage(new WebuiPage());
 #endif
 #endif
 
