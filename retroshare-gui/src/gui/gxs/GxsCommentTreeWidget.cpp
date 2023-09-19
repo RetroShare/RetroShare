@@ -73,6 +73,7 @@ std::map<RsGxsMessageId, std::vector<RsGxsComment> > GxsCommentTreeWidget::mComm
 QMutex GxsCommentTreeWidget::mCacheMutex;
 
 //#define USE_NEW_DELEGATE 1
+//#define DEBUG_GXSCOMMENT_TREEWIDGET 1
 
 // This class allows to draw the item using an appropriate size
 
@@ -508,6 +509,8 @@ void GxsCommentTreeWidget::service_requestComments(const RsGxsGroupId& group_id,
 	/* request comments */
 #ifdef DEBUG_GXSCOMMENT_TREEWIDGET
     std::cerr << "GxsCommentTreeWidget::service_requestComments for group " << group_id << std::endl;
+    for(const auto& mid:msgIds)
+        std::cerr << "  including message " << mid << std::endl;
 #endif
 
    RsThread::async([this,group_id,msgIds]()
