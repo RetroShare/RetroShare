@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "retroshare/rsevents.h"
+
 #include "retroshare-gui/configpage.h"
 #include "gui/common/FilesDefs.h"
 #include "ui_JsonApiPage.h"
@@ -63,4 +65,6 @@ public slots:
 
 private:
 	Ui::JsonApiPage ui; /// Qt Designer generated object
+    RsEventsHandlerId_t mEventHandlerId;
 };
+
