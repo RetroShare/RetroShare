@@ -60,6 +60,7 @@ JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
     QRegExpValidator *ipValidator = new QRegExpValidator(ipRegex, this);
 
     ui.listenAddressLineEdit->setValidator(ipValidator);
+    ui.providersListView->setSelectionMode(QAbstractItemView::NoSelection);	// prevents edition.
 
     mEventHandlerId = 0;
 
