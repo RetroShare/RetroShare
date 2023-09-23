@@ -690,6 +690,10 @@ void RsMessageModel::setCurrentBox(Rs::Msgs::BoxName bn)
 	}
 }
 
+Rs::Msgs::BoxName RsMessageModel::currentBox() const
+{
+    return mCurrentBox;
+}
 void RsMessageModel::setQuickViewFilter(QuickViewFilter fn)
 {
 	if(fn != mQuickViewFilter)

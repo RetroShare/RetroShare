@@ -925,9 +925,9 @@ void MessagesDialog::changeBox(int box_row)
 
 		ui.messageTreeWidget->setPlaceholderText(placeholderText);
         ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_READ,box_row!=ROW_INBOX);
-        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_STAR,box_row==ROW_OUTBOX);
-        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_SPAM,box_row==ROW_OUTBOX);
-        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_TAGS,box_row==ROW_OUTBOX);
+        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_STAR,box_row!=ROW_INBOX);
+        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_SPAM,box_row!=ROW_INBOX);
+        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_TAGS,box_row!=ROW_INBOX);
         ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_MSGID,true);
         ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_CONTENT,true);
     }
@@ -1296,7 +1296,7 @@ void MessagesDialog::updateMessageSummaryList()
     /* calculating the new messages */
 
     std::list<MsgInfoSummary> msgList;
-    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_ALL,msgList);
+    rsMail->getMessageSummaries(mMessageModel->currentBox(),msgList);
 
     QMap<int, int> tagCount;
 
