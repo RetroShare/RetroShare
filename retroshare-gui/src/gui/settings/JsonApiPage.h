@@ -33,7 +33,7 @@ class JsonApiPage : public ConfigPage
 public:
 
 	JsonApiPage(QWidget * parent = nullptr, Qt::WindowFlags flags = 0);
-	~JsonApiPage() override = default;
+    ~JsonApiPage() override ;
 
 	virtual QPixmap iconPixmap() const override
 	{
