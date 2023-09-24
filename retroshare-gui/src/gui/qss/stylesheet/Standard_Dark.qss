@@ -2552,3 +2552,10 @@ OpModeStatus[opMode="Minimal"] {
 [WrongValue="true"] {
 	background-color: #702020;
 }
+
+/**** The Wire ****/
+
+QLabel#label_masthead{
+	border: 2px solid #CCCCCC;
+	border-radius: 4px;
+}

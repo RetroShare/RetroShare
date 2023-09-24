@@ -34,20 +34,25 @@ WireGroupExtra::~WireGroupExtra()
 
 void WireGroupExtra::setUp()
 {
-    connect(ui.pushButton_masthead, SIGNAL(clicked() ), this , SLOT(addMasthead()));
-}
+	connect(ui.pushButton_masthead, SIGNAL(clicked() ), this , SLOT(addMasthead()));
 
+	int desired_height = ui.pushButton_masthead->height() + ui.removeButton->height() + ui.lineEdit_Tagline->height();
+	int desired_width =  3/1.0 * desired_height + ui.lineEdit_Tagline->width(); 
+
+	ui.label_masthead->setFixedSize(desired_width, desired_height);
+
+	setMasthead(QPixmap());
+}
 
 void WireGroupExtra::addMasthead()
 {
-    QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Masthead"), 400, 100);
+    QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Masthead"), 800, 600);
 
     if (img.isNull())
         return;
 
     setMasthead(img);
 }
-
 
 void WireGroupExtra::setTagline(const std::string &str)
 {
@@ -61,8 +66,21 @@ void WireGroupExtra::setLocation(const std::string &str)
 
 void WireGroupExtra::setMasthead(const QPixmap &pixmap)
 {
-    mMasthead = pixmap;
-    ui.label_masthead->setPixmap(mMasthead);
+	mMasthead = pixmap;
+
+	if (!mMasthead.isNull()) {
+		ui.label_masthead->setPicture(mMasthead);
+		ui.label_masthead->setToolTip(tr("Use the mouse to zoom and adjust the image for your background."));
+	} else {
+		ui.label_masthead->setPicture(QPixmap());
+		ui.label_masthead->setText(tr("MastHead background Image"));
+	}
+}
+
+void WireGroupExtra::on_removeButton_clicked()
+{
+	ui.label_masthead->setPicture(QPixmap());
+	ui.label_masthead->setText(tr("MastHead background Image"));
 }
 
 std::string WireGroupExtra::getTagline()
@@ -77,7 +95,5 @@ std::string WireGroupExtra::getLocation()
 
 QPixmap WireGroupExtra::getMasthead()
 {
-	return mMasthead;
+	return ui.label_masthead->extractCroppedScaledPicture();
 }
-
-

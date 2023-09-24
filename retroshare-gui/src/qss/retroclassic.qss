@@ -178,3 +178,9 @@ IdDialog QWidget#idTreeWidget {
 	selection-background-color: #9FCBFF;
 	show-decoration-selected: 1;
 }
+
+/* Wire */
+QLabel#label_masthead{
+	border: 2px solid #CCCCCC;
+	border-radius: 4px;
+}

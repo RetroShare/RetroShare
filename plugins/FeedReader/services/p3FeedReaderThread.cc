@@ -1151,10 +1151,10 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 
 	if (isRunning()) {
 		/* process description */
-		bool processPostedFirstImage = (feed.flag & RS_FEED_FLAG_POSTED_FIRST_IMAGE) ? TRUE : FALSE;
+		bool processPostedFirstImage = (feed.flag & RS_FEED_FLAG_POSTED_FIRST_IMAGE) ? true : false;
 		if (!msg->attachmentBinary.empty()) {
 			/* use attachment as image */
-			processPostedFirstImage = FALSE;
+			processPostedFirstImage = false;
 		}
 
 		//long todo; // encoding

@@ -2687,6 +2687,11 @@ PulseReply QLabel#label_groupName{
 	color: #5b7083;
 }
 
+QLabel#label_masthead{
+	border: 2px solid #CCCCCC;
+	border-radius: 4px;
+}
+
 /**** PhotoShare ****/
 AlbumItem QFrame#albumFrame {
 	border: 2px solid #CCCCCC;
