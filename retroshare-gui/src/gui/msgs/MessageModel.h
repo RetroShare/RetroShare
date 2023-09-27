@@ -100,6 +100,7 @@ public:
     // This method will asynchroneously update the data
 
     void setCurrentBox(Rs::Msgs::BoxName bn) ;
+    Rs::Msgs::BoxName currentBox() const ;
     void setQuickViewFilter(QuickViewFilter fn) ;
 
     void setFilter(FilterType filter_type, const QStringList& strings) ;

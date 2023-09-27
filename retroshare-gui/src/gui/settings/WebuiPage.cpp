@@ -66,7 +66,7 @@ WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 
 WebuiPage::~WebuiPage()
 {
-
+    rsEvents->unregisterEventsHandler(mEventsHandlerId);
 }
 
 void WebuiPage::selectWebInterfaceDirectory()

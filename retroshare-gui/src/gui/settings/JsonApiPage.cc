@@ -72,6 +72,10 @@ JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
     mEventHandlerId, RsEventType::JSON_API );
 }
 
+JsonApiPage::~JsonApiPage()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
 QString JsonApiPage::helpText() const
 {
     return tr("<h1><img width=\"24\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Webinterface</h1>  \
