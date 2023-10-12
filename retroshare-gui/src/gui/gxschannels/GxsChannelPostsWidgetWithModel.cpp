@@ -514,13 +514,13 @@ void GxsChannelPostsWidgetWithModel::keyPressEvent(QKeyEvent *e)
 
         if(e->key() == Qt::Key_Left && index.column()==0)
         {
-            ui->postsTree->setCurrentIndex(index.siblingAtColumn(n));
+            ui->postsTree->setCurrentIndex(index.sibling(index.row(),n));
             e->accept();
             return;
         }
         if(e->key() == Qt::Key_Right && index.column()==n)
         {
-            ui->postsTree->setCurrentIndex(index.siblingAtColumn(0));
+            ui->postsTree->setCurrentIndex(index.sibling(index.row(),0));
             e->accept();
             return;
         }
