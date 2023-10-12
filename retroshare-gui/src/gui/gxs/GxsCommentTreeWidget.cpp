@@ -42,6 +42,8 @@
 
 #include <iostream>
 
+//#define DEBUG_COMMENT_TREE_WIDGET
+
 #define PCITEM_COLUMN_COMMENT		0
 #define PCITEM_COLUMN_AUTHOR		1
 #define PCITEM_COLUMN_DATE		2
@@ -765,8 +767,10 @@ void GxsCommentTreeWidget::insertComments(const std::vector<RsGxsComment>& comme
             new_comments.push_back(comment.mMeta.mMsgId);
 
 		/* convert to a QTreeWidgetItem */
+#ifdef DEBUG_COMMENT_TREE_WIDGET
 		std::cerr << "GxsCommentTreeWidget::service_loadThread() Got Comment: " << comment.mMeta.mMsgId;
 		std::cerr << std::endl;
+#endif
 
 		GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(NULL,GxsIdDetails::ICON_TYPE_AVATAR) ;
 		QString text;
