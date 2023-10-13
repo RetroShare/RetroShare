@@ -10,7 +10,8 @@
 [submodule "supportlibs/udp-discovery-cpp"]
 	path = supportlibs/udp-discovery-cpp
 	url = https://github.com/truvorskameikin/udp-discovery-cpp.git
-	branch = develop
+	branch = master
+# develop branch was removed we were using it at commit f3a3103a6c52e5707629e8d0a7e279a7758fe845
 [submodule "supportlibs/rapidjson"]
 	path = supportlibs/rapidjson
 	url = https://github.com/Tencent/rapidjson.git
