@@ -1,7 +1,7 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/gxschannels/GxsChannelFilesStatusWidget.h            *
+ * gui/TheWire/CustomFrame.h                                                   *
  *                                                                             *
- * Copyright 2014 by Retroshare Team   <retroshare.project@gmail.com>          *
+ * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,66 +18,27 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef GXSCHANNELFILESSTATUSWIDGET_H
-#define GXSCHANNELFILESSTATUSWIDGET_H
+#ifndef CUSTOMFRAMEH_H
+#define CUSTOMFRAMEH_H
 
-#include <QWidget>
+#include <QFrame>
+#include <QPixmap>
 
-#include "retroshare/rsgxscommon.h"
+// This class is made to implement the background image in a Qframe or any widget
 
-namespace Ui {
-class GxsChannelFilesStatusWidget;
-}
-
-class GxsChannelFilesStatusWidget : public QWidget
+class CustomFrame : public QFrame
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-    explicit GxsChannelFilesStatusWidget(const RsGxsFile &file, QWidget *parent = 0,bool used_as_editor=false);
-	~GxsChannelFilesStatusWidget();
+    explicit CustomFrame(QWidget *parent = nullptr);
+    void setPixmap(QPixmap pixmap);
 
-    bool usedAsEditor() const { return mUsedAsEditor; }
-signals:
-
-	void onButtonClick();
-
-private slots:
-	void check();
-	void download();
-	void cancel();
-	void pause();
-	void resume();
-	void openFolder();
-	void openFile();
+protected:
+    void paintEvent(QPaintEvent *event) override;
 
 private:
-	void setSize(uint64_t size);
-    bool haveFile(FileInfo& info);
-
-private:
-	enum State
-	{
-		STATE_LOCAL,
-		STATE_REMOTE,
-		STATE_DOWNLOAD,
-		STATE_PAUSED,
-		STATE_WAITING,
-		STATE_CHECKING,
-		STATE_ERROR
-	} mState;
-
-private:
-	RsGxsGroupId mGroupId;
-	RsGxsMessageId mMessageId;
-	RsGxsFile mFile;
-
-	uint64_t mSize;
-	uint64_t mDivisor;
-
-    bool mUsedAsEditor;
-
-	Ui::GxsChannelFilesStatusWidget *ui;
+    QPixmap backgroundImage;
 };
 
-#endif // GXSCHANNELFILESSTATUSWIDGET_H
+#endif //CUSTOMFRAMEH_H

@@ -738,7 +738,8 @@ void MessageWidget::remove()
 		return;
 	}
 
-	bool deleteReal = false;
+#ifdef TO_REMOVE
+    bool deleteReal = false;
 	if (msgInfo.msgflags & RS_MSG_TRASH) {
 		deleteReal = true;
 	} else {
@@ -763,8 +764,8 @@ void MessageWidget::remove()
 			deleteLater();
 		}
 	}
-
-	emit messageRemoved();
+#endif
+    emit messageRemovalRequested(currMsgId);
 }
 
 void MessageWidget::print()
@@ -905,10 +906,8 @@ void MessageWidget::sendInvite()
     if(mi.from.type()!=MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
         return;
 
-    if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Cancel))== QMessageBox::Yes)
-    {
-        MessageComposer::sendInvite(mi.from.toGxsId(),false);
-    }
+    //if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want to send an invite with your Certificate?"),QMessageBox::Yes, QMessageBox::No))== QMessageBox::Yes)
+    MessageComposer::sendInvite(mi.from.toGxsId(),false);
 }
 
 void MessageWidget::setToolbarButtonStyle(Qt::ToolButtonStyle style)

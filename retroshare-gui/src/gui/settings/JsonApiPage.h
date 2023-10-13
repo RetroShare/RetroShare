@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "retroshare/rsevents.h"
+
 #include "retroshare-gui/configpage.h"
 #include "gui/common/FilesDefs.h"
 #include "ui_JsonApiPage.h"
@@ -31,7 +33,7 @@ class JsonApiPage : public ConfigPage
 public:
 
 	JsonApiPage(QWidget * parent = nullptr, Qt::WindowFlags flags = 0);
-	~JsonApiPage() override = default;
+    ~JsonApiPage() override ;
 
 	virtual QPixmap iconPixmap() const override
 	{
@@ -63,4 +65,6 @@ public slots:
 
 private:
 	Ui::JsonApiPage ui; /// Qt Designer generated object
+    RsEventsHandlerId_t mEventHandlerId;
 };
+

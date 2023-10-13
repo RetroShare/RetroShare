@@ -117,7 +117,6 @@ class NotifyQt: public QObject, public NotifyClient
 		void chatStatusChanged(const ChatId&,const QString&) const ;
 		void chatCleared(const ChatId&) const ;
 		void peerHasNewCustomStateString(const QString& /* peer_id */, const QString& /* status_string */) const ;
-		void gotTurtleSearchResult(qulonglong search_id,FileDetail file) const ;
 		void peerHasNewAvatar(const QString& peer_id) const ;
 		void ownAvatarChanged() const ;
 		void ownStatusMessageChanged() const ;

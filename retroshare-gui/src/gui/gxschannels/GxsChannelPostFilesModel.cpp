@@ -342,10 +342,20 @@ public:
 		case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE:
 		{
 			FileInfo fi1,fi2;
-			rsFiles->FileDetails(f1.mHash,RS_FILE_HINTS_DOWNLOAD,fi1);
-			rsFiles->FileDetails(f2.mHash,RS_FILE_HINTS_DOWNLOAD,fi2);
+            bool r1 = rsFiles->FileDetails(f1.mHash,RS_FILE_HINTS_DOWNLOAD,fi1);
+            bool r2 = rsFiles->FileDetails(f2.mHash,RS_FILE_HINTS_DOWNLOAD,fi2);
 
-			return (ord==Qt::AscendingOrder)?(fi1.transfered<fi2.transfered):(fi1.transfered>fi2.transfered);
+            if(r1 && r2)
+                return (ord==Qt::AscendingOrder)?(fi1.transfered<fi2.transfered):(fi1.transfered>fi2.transfered);
+            else
+            {
+                FileInfo fitmp;
+
+                if(!r1 && rsFiles->alreadyHaveFile(f1.mHash,fitmp)) fi1.downloadStatus = FT_STATE_COMPLETE;
+                if(!r2 && rsFiles->alreadyHaveFile(f2.mHash,fitmp)) fi2.downloadStatus = FT_STATE_COMPLETE;
+
+                return (ord==Qt::AscendingOrder)?(fi1.downloadStatus<fi2.downloadStatus):(fi1.downloadStatus>fi2.downloadStatus);
+            }
 		}
 		}
 

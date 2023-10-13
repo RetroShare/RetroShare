@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>421</width>
-    <height>29</height>
+    <width>473</width>
+    <height>36</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -139,7 +139,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="openFolderToolButton">
+       <widget class="QToolButton" name="openFolderPushButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>

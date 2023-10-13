@@ -27,6 +27,7 @@
 #include <QSpinBox>
 
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 #include "retroshare/rswebui.h"
 #include "retroshare/rsjsonapi.h"
 
@@ -40,6 +41,8 @@ resource_api::ApiServerLocal* WebuiPage::apiServerLocal = 0;
 #endif
 resource_api::RsControlModule* WebuiPage::controlModule = 0;
 
+#define IMAGE_LEDOFF  ":/images/ledoff1.png"
+#define IMAGE_LEDON   ":/images/ledon1.png"
 
 WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 {
@@ -50,11 +53,20 @@ WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
     connect(ui.password_LE, SIGNAL(textChanged(QString)), this, SLOT(onPasswordValueChanged(QString)));
     connect(ui.startWebBrowser_PB, SIGNAL(clicked()), this, SLOT(onStartWebBrowserClicked()));
     connect(ui.webInterfaceFilesDirectory_PB, SIGNAL(clicked()), this, SLOT(selectWebInterfaceDirectory()));
+
+    mEventsHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> /* event */)
+    {
+        std::cerr << "Caught JSONAPI event in webui!" << std::endl;
+        RsQThreadUtils::postToObject([=]() { load(); }, this );
+    },
+    mEventsHandlerId, RsEventType::JSON_API );
 }
 
 WebuiPage::~WebuiPage()
 {
-
+    rsEvents->unregisterEventsHandler(mEventsHandlerId);
 }
 
 void WebuiPage::selectWebInterfaceDirectory()
@@ -73,22 +85,12 @@ void WebuiPage::selectWebInterfaceDirectory()
 bool WebuiPage::updateParams(QString &errmsg)
 {
     std::cerr << "WebuiPage::save()" << std::endl;
-    bool ok = true;
-    bool changed = false;
-    if(ui.enableWebUI_CB->isChecked() != Settings->getWebinterfaceEnabled())
-        changed = true;
-    if(ui.webInterfaceFiles_LE->text() != Settings->getWebinterfaceFilesDirectory())
-        changed = true;
 
-    if(changed)
-    {
-        // store config
-        Settings->setWebinterfaceEnabled(ui.enableWebUI_CB->isChecked());
-        Settings->setWebinterfaceFilesDirectory(ui.webInterfaceFiles_LE->text());
+    // store config
+    Settings->setWebinterfaceEnabled(ui.enableWebUI_CB->isChecked());
+    Settings->setWebinterfaceFilesDirectory(ui.webInterfaceFiles_LE->text());
 
-        rsWebUi->setHtmlFilesDirectory(ui.webInterfaceFiles_LE->text().toStdString());
-    }
-    return ok;
+    return true;
 }
 
 void WebuiPage::onPasswordValueChanged(QString password)
@@ -112,10 +114,23 @@ void WebuiPage::onPasswordValueChanged(QString password)
 
 bool WebuiPage::restart()
 {
-	return checkStartWebui();
+    if(ui.password_LE->text().isNull())
+    {
+        QMessageBox::critical(nullptr,tr("Missing passphrase"),tr("Please set a passphrase to proect the access to the WEB interface."));
+        return false;
+    }
+
+    rsWebUi->setUserPassword(ui.password_LE->text().toStdString());
+    rsWebUi->setHtmlFilesDirectory(ui.webInterfaceFiles_LE->text().toStdString());
+
+    setCursor(Qt::WaitCursor) ;
+    rsWebUi->restart();
+    setCursor(Qt::ArrowCursor) ;
+
+    return true;
 }
 
-void WebuiPage::load()
+void WebuiPage::loadParams()
 {
 	std::cerr << "WebuiPage::load()" << std::endl;
 	whileBlocking(ui.enableWebUI_CB)->setChecked(Settings->getWebinterfaceEnabled());
@@ -127,6 +142,13 @@ void WebuiPage::load()
 
     if(it != smap.end())
 		whileBlocking(ui.password_LE)->setText(QString::fromStdString(it->second));
+
+    if(rsWebUi->isRunning())
+        ui.statusLabelLED->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_LEDON)) ;
+    else
+        ui.statusLabelLED->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_LEDOFF)) ;
+#else
+    ui.statusLabelLED->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_LEDOFF)) ;
 #endif
 }
 
@@ -138,13 +160,11 @@ QString WebuiPage::helpText() const
      <p>Warning: don't expose the webinterface to the internet, because there is no access control and no encryption. If you want to use the webinterface over the internet, use a SSH tunnel or a proxy to secure the connection.</p>");
 }
 
-/*static*/ bool WebuiPage::checkStartWebui()
+/*static*/ bool WebuiPage::checkStartWebui() // This is supposed to be called from main(). But normally the parameters below (including the paswd
+                                            // for the webUI should be saved in p3webui instead.
 {
-    if(!Settings->getWebinterfaceEnabled())
-        return false;
-
-	rsWebUi->setHtmlFilesDirectory(Settings->getWebinterfaceFilesDirectory().toStdString());
-	rsWebUi->restart();
+    rsWebUi->setHtmlFilesDirectory(Settings->getWebinterfaceFilesDirectory().toStdString());
+    rsWebUi->restart();
 
     return true;
 }
@@ -173,15 +193,21 @@ QString WebuiPage::helpText() const
 
 void WebuiPage::onEnableCBClicked(bool checked)
 {
-	ui.params_GB->setEnabled(checked);
-	ui.apply_PB->setEnabled(checked);
-	ui.startWebBrowser_PB->setEnabled(checked);
-	QString S;
+    QString errmsg;
+    updateParams(errmsg);
 
-    Settings->setWebinterfaceEnabled(checked);
+    ui.params_GB->setEnabled(checked);
+    ui.startWebBrowser_PB->setEnabled(checked);
+    ui.apply_PB->setEnabled(checked);
 
     if(checked)
-        checkStartWebui();
+    {
+        if(!restart())
+        {
+            QMessageBox::warning(0, tr("failed to start Webinterface"), "Failed to start the webinterface.");
+            return;
+        }
+    }
     else
         checkShutdownWebui();
 }
@@ -199,18 +225,12 @@ void WebuiPage::onAllIPCBClicked(bool /*checked*/)
 }
 void WebuiPage::onApplyClicked()
 {
-	rsWebUi->setUserPassword(ui.password_LE->text().toStdString());
-
     QString errmsg;
     updateParams(errmsg);
 
-    if(!restart())
-    {
-        QMessageBox::warning(0, tr("failed to start Webinterface"), "Failed to start the webinterface.");
-        return;
-    }
+    restart();
 
-    emit passwordChanged();
+    load();
 }
 
 void WebuiPage::onStartWebBrowserClicked() { showWebui(); }

@@ -173,6 +173,7 @@ signals:
     void playFiles(QStringList files);
 
 private:
+    void openFolder(const FileInfo& info);
 
     RsDownloadListModel *DLListModel;
     QSortFilterProxyModel *DLLFilterModel;

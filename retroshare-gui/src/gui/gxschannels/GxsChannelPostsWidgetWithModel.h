@@ -139,6 +139,7 @@ protected:
 	/* GxsMessageFrameWidget */
     virtual void setAllMessagesReadDo(bool read) override;
     virtual void resizeEvent(QResizeEvent *e) override;
+    virtual void keyPressEvent(QKeyEvent *e) override;
 
 private slots:
 	void showPostDetails();
@@ -166,6 +167,7 @@ public slots:
  	void sortColumnPostFiles(int col,Qt::SortOrder so);
     void updateCommentsCount(int n);
     void showChannelFilesContextMenu(QPoint p);
+    void showChannelPostFilesContextMenu(QPoint p);
     void copyChannelFilesLink();
 
 private:

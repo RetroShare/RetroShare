@@ -31,8 +31,8 @@
 	branch = master
 [submodule "libretroshare"]
 	path = libretroshare
-	url = ../libretroshare
+	url = https://github.com/RetroShare/libretroshare.git
 	branch = master
 [submodule "retroshare-webui"]
 	path = retroshare-webui
-	url = ../RSNewWebUI
+	url = https://github.com/RetroShare/RSNewWebUI.git

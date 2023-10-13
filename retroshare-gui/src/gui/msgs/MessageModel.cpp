@@ -459,14 +459,6 @@ QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 
 	case COLUMN_THREAD_SPAM:  return QVariant((fmpe.msgflags & RS_MSG_SPAM)? 1:0);
 
-    case COLUMN_THREAD_TO: {
-            QString name;
-
-            if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.to.toStdString()),name))
-                return name;
-            return ""; //Not Found
-        }
-
     case COLUMN_THREAD_AUTHOR:{
 			QString name;
 
@@ -474,8 +466,10 @@ QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 				return name;
 			return ""; //Not Found
 		}
-	default:
-		return displayRole(fmpe,column);
+
+    case COLUMN_THREAD_TO:    // fallthrough. In this case, the "to" field is not filled because the msg potentially has multiple destinations.
+    default:
+        return displayRole(fmpe,column);
 	}
 }
 
@@ -585,7 +579,18 @@ QVariant RsMessageModel::userRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) 
     {
         case COLUMN_THREAD_AUTHOR:   return QVariant(QString::fromStdString(fmpe.from.toStdString()));
         case COLUMN_THREAD_MSGID:    return QVariant(QString::fromStdString(fmpe.msgId));
-        case COLUMN_THREAD_TO:       return QVariant(QString::fromStdString(fmpe.to.toStdString()));
+        case COLUMN_THREAD_TO:
+        {
+            // First check if the .to field is filled.
+
+            if(!fmpe.to.toStdString().empty())
+                return QVariant(QString::fromStdString(fmpe.to.toStdString()));
+
+            // In the Send box, .to is never filled. In this case we look into destinations.
+
+            if(fmpe.destinations.size()==1)
+                return QVariant(QString::fromStdString((*fmpe.destinations.begin()).toStdString()));
+        }
     default:
         return QVariant();
     }
@@ -685,6 +690,10 @@ void RsMessageModel::setCurrentBox(Rs::Msgs::BoxName bn)
 	}
 }
 
+Rs::Msgs::BoxName RsMessageModel::currentBox() const
+{
+    return mCurrentBox;
+}
 void RsMessageModel::setQuickViewFilter(QuickViewFilter fn)
 {
 	if(fn != mQuickViewFilter)

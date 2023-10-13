@@ -42,6 +42,8 @@
 
 #include <iostream>
 
+//#define DEBUG_COMMENT_TREE_WIDGET
+
 #define PCITEM_COLUMN_COMMENT		0
 #define PCITEM_COLUMN_AUTHOR		1
 #define PCITEM_COLUMN_DATE		2
@@ -73,6 +75,7 @@ std::map<RsGxsMessageId, std::vector<RsGxsComment> > GxsCommentTreeWidget::mComm
 QMutex GxsCommentTreeWidget::mCacheMutex;
 
 //#define USE_NEW_DELEGATE 1
+//#define DEBUG_GXSCOMMENT_TREEWIDGET 1
 
 // This class allows to draw the item using an appropriate size
 
@@ -464,11 +467,7 @@ void GxsCommentTreeWidget::replyToComment()
 void GxsCommentTreeWidget::copyComment()
 {
     QString txt = dynamic_cast<QAction*>(sender())->data().toString();
-
-	QMimeData *mimeData = new QMimeData();
-    mimeData->setHtml("<html>"+txt+"</html>");
-	QClipboard *clipboard = QApplication::clipboard();
-	clipboard->setMimeData(mimeData, QClipboard::Clipboard);
+    QApplication::clipboard()->setText(txt) ;
 }
 
 void GxsCommentTreeWidget::setup(RsGxsCommentService *comment_service)
@@ -512,6 +511,8 @@ void GxsCommentTreeWidget::service_requestComments(const RsGxsGroupId& group_id,
 	/* request comments */
 #ifdef DEBUG_GXSCOMMENT_TREEWIDGET
     std::cerr << "GxsCommentTreeWidget::service_requestComments for group " << group_id << std::endl;
+    for(const auto& mid:msgIds)
+        std::cerr << "  including message " << mid << std::endl;
 #endif
 
    RsThread::async([this,group_id,msgIds]()
@@ -769,8 +770,10 @@ void GxsCommentTreeWidget::insertComments(const std::vector<RsGxsComment>& comme
             new_comments.push_back(comment.mMeta.mMsgId);
 
 		/* convert to a QTreeWidgetItem */
+#ifdef DEBUG_COMMENT_TREE_WIDGET
 		std::cerr << "GxsCommentTreeWidget::service_loadThread() Got Comment: " << comment.mMeta.mMsgId;
 		std::cerr << std::endl;
+#endif
 
 		GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(NULL,GxsIdDetails::ICON_TYPE_AVATAR) ;
 		QString text;

@@ -1145,8 +1145,6 @@ void RsFriendListModel::updateInternalData()
     mLocations.clear();
     mTopLevel.clear();
 
-    endResetModel();
-
     auto TL = mTopLevel ; // This allows to fill TL without touching mTopLevel outside of [begin/end]InsertRows().
 
     // create a map of profiles and groups
@@ -1282,7 +1280,8 @@ void RsFriendListModel::updateInternalData()
 		endInsertRows();
 	}
 
-	postMods();
+    endResetModel();
+    postMods();
 
 	mLastInternalDataUpdate = time(NULL);
 }

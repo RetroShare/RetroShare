@@ -65,8 +65,7 @@ WireGroupItem::WireGroupItem(WireGroupHolder *holder, const RsWireGroup &grp)
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 	setup();
 
-	// disabled, still not yet functional Edit/Update
-	editButton->setEnabled(false);
+    editButton->setEnabled(true);
 }
 
 RsGxsGroupId &WireGroupItem::groupId()
@@ -93,14 +92,14 @@ void WireGroupItem::setup()
 				QImage circleImage = getCirclePhoto(orginalImage,orginalImage.size().width());
 				pixmap.convertFromImage(circleImage);
 
-				pixmap = pixmap.scaled(40,40);
+				pixmap = pixmap.scaled(40,40, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 				label_headshot->setPixmap(pixmap);
 		}
 	}
 	else
 	{
 		// default.
-        QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(32,32);
+        QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(32,32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 		label_headshot->setPixmap(pixmap);
 	}
 	

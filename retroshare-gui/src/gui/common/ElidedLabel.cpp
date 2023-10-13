@@ -258,7 +258,11 @@ void ElidedLabel::mousePressEvent(QMouseEvent *ev)
 		return; // eat event
 	}
 	QLabel::mousePressEvent(ev);
-	emit clicked(ev->pos());
+
+    if(ev->buttons()==Qt::LeftButton)
+        emit clicked(ev->pos());
+    else if(ev->buttons()==Qt::RightButton)
+        emit rightClicked(ev->pos());
 }
 
 void ElidedLabel::setTextColor(const QColor &color)

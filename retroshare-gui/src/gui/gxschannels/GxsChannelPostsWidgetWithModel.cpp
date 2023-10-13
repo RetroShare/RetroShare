@@ -411,7 +411,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     connect(ui->channelPostFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnPostFiles(int,Qt::SortOrder)));
     connect(ui->channelFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnFiles(int,Qt::SortOrder)));
 
-    connect(ui->channelPostFiles_TV,SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showChannelFilesContextMenu(QPoint)));
+    connect(ui->channelPostFiles_TV,SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showChannelPostFilesContextMenu(QPoint)));
     connect(ui->channelFiles_TV,SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showChannelFilesContextMenu(QPoint)));
 
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
@@ -504,6 +504,30 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     }, mEventHandlerId, RsEventType::GXS_CHANNELS );
 }
 
+void GxsChannelPostsWidgetWithModel::keyPressEvent(QKeyEvent *e)
+{
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+
+    if(index.isValid() && mChannelPostsModel->getMode() == RsGxsChannelPostsModel::TREE_MODE_GRID)
+    {
+        int n = mChannelPostsModel->columnCount(index.row())-1;
+
+        if(e->key() == Qt::Key_Left && index.column()==0)
+        {
+            ui->postsTree->setCurrentIndex(index.sibling(index.row(),n));
+            e->accept();
+            return;
+        }
+        if(e->key() == Qt::Key_Right && index.column()==n)
+        {
+            ui->postsTree->setCurrentIndex(index.sibling(index.row(),0));
+            e->accept();
+            return;
+        }
+    }
+
+    GxsMessageFrameWidget::keyPressEvent(e);
+}
 void GxsChannelPostsWidgetWithModel::resizeEvent(QResizeEvent *e)
 {
     GxsMessageFrameWidget::resizeEvent(e);
@@ -1344,13 +1368,26 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 
     showPostDetails();
 }
-
-void GxsChannelPostsWidgetWithModel::showChannelFilesContextMenu(QPoint /*p*/)
+void GxsChannelPostsWidgetWithModel::showChannelFilesContextMenu(QPoint p)
 {
-    QMenu contextMnu(this) ;
+    QModelIndex index = ui->channelFiles_TV->indexAt(p);
 
-    QAction *action = contextMnu.addAction(QIcon(), tr("Copy Retroshare link"), this, SLOT(copyChannelFilesLink()));
-    action->setData(QVariant::fromValue(sender()));
+    if(!index.isValid())
+        return;
+
+    QMenu contextMnu(this) ;
+    contextMnu.addAction(QIcon(), tr("Copy Retroshare link"), this, SLOT(copyChannelFilesLink()))->setData(QVariant::fromValue(index));
+    contextMnu.exec(QCursor::pos());
+}
+void GxsChannelPostsWidgetWithModel::showChannelPostFilesContextMenu(QPoint p)
+{
+    QModelIndex index = ui->channelPostFiles_TV->indexAt(p);
+
+    if(!index.isValid())
+        return;
+
+    QMenu contextMnu(this) ;
+    contextMnu.addAction(QIcon(), tr("Copy Retroshare link"), this, SLOT(copyChannelFilesLink()))->setData(QVariant::fromValue(index));
     contextMnu.exec(QCursor::pos());
 }
 
@@ -1358,16 +1395,11 @@ void GxsChannelPostsWidgetWithModel::copyChannelFilesLink()
 {
     // Block the popup if no results available
     QAction *action = dynamic_cast<QAction*>(sender());
-    RSTreeView *tree = dynamic_cast<RSTreeView*>(action->data().value<QWidget*>());
 
-    QModelIndexList sel = tree->selectionModel()->selection().indexes();
-
-    if(sel.empty())
-        return;
-
+    QModelIndex s = action->data().toModelIndex();
     ChannelPostFileInfo file;
 
-    if(!static_cast<RsGxsChannelPostFilesModel*>(tree->model())->getFileData(sel.front(),file))
+    if(!static_cast<const RsGxsChannelPostFilesModel*>(s.model())->getFileData(s,file))
         return;
 
     RetroShareLink link = RetroShareLink::createFile(QString::fromUtf8(file.mName.c_str()), file.mSize, QString::fromStdString(file.mHash.toStdString()));

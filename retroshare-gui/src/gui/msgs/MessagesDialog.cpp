@@ -95,6 +95,7 @@
 #define ROW_SENTBOX       3
 #define ROW_TRASHBOX      4
 
+// #define DEBUG_MESSAGES_DIALOG 1
 
 class MessageSortFilterProxyModel: public QSortFilterProxyModel
 {
@@ -144,7 +145,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     msgWidget = new MessageWidget(true, this);
 	ui.msgLayout->addWidget(msgWidget);
-	connect(msgWidget, SIGNAL(messageRemoved()), this, SLOT(messageRemoved()));
+    connect(msgWidget, SIGNAL(messageRemovalRequested(std::string)), this, SLOT(removemessage()));
 
     connectActions();
 
@@ -365,15 +366,18 @@ void MessagesDialog::preModelUpdate()
     if (m.isValid()) {
         mTmpSavedCurrentId = m.sibling(m.row(), RsMessageModel::COLUMN_THREAD_MSGID).data(RsMessageModel::MsgIdRole).toString();
     }
-
+#ifdef DEBUG_MESSAGES_DIALOG
     std::cerr << "Pre-change: saving selection for " << mTmpSavedSelectedIds.size() << " indexes" << std::endl;
+#endif
 }
 
 void MessagesDialog::postModelUpdate()
 {
     // restore selection
 
+#ifdef DEBUG_MESSAGES_DIALOG
     std::cerr << "Post-change: restoring selection for " << mTmpSavedSelectedIds.size() << " indexes" << std::endl;
+#endif
     QItemSelection sel;
 
     foreach(const QString& s,mTmpSavedSelectedIds)
@@ -838,7 +842,7 @@ void MessagesDialog::openAsWindow()
     }
 
     msgWidget->activateWindow();
-	connect(msgWidget, SIGNAL(messageRemoved()), this, SLOT(messageRemoved()));
+    connect(msgWidget, SIGNAL(messageRemovalRequested(std::string)), this, SLOT(removemessage()));
 
     /* window will destroy itself! */
 }
@@ -858,7 +862,7 @@ void MessagesDialog::openAsTab()
 
     ui.tabWidget->addTab(msgWidget,FilesDefs::getIconFromQtResourcePath(IMAGE_MAIL), msgWidget->subject(true));
     ui.tabWidget->setCurrentWidget(msgWidget);
-	connect(msgWidget, SIGNAL(messageRemoved()), this, SLOT(messageRemoved()));
+    connect(msgWidget, SIGNAL(messageRemovalRequested(std::string)), this, SLOT(removemessage()));
 
     /* window will destroy itself! */
 }
@@ -921,9 +925,9 @@ void MessagesDialog::changeBox(int box_row)
 
 		ui.messageTreeWidget->setPlaceholderText(placeholderText);
         ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_READ,box_row!=ROW_INBOX);
-        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_STAR,box_row==ROW_OUTBOX);
-        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_SPAM,box_row==ROW_OUTBOX);
-        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_TAGS,box_row==ROW_OUTBOX);
+        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_STAR,box_row!=ROW_INBOX);
+        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_SPAM,box_row!=ROW_INBOX);
+        ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_TAGS,box_row!=ROW_INBOX);
         ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_MSGID,true);
         ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_CONTENT,true);
     }
@@ -1292,7 +1296,7 @@ void MessagesDialog::updateMessageSummaryList()
     /* calculating the new messages */
 
     std::list<MsgInfoSummary> msgList;
-    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_ALL,msgList);
+    rsMail->getMessageSummaries(mMessageModel->currentBox(),msgList);
 
     QMap<int, int> tagCount;
 
