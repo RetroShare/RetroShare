@@ -176,7 +176,7 @@ mkdir "%EnvTempPath%"
 call "%ToolsPath%\download-file.bat" "%TorDownloadIndexUrl%" "%EnvTempPath%\index.html"
 if not exist "%EnvTempPath%\index.html" %cecho% error "Cannot download Tor installation" & goto error
 
-for /F "tokens=1,2 delims= " %%A in ('%EnvSedExe% -r -n -e"s/.*href=\"^(.*^)^(tor-.*windows-i686\.tar\.gz^)\".*/\2 \1\2/p" "%EnvTempPath%\index.html"') do set TorInstall=%%A& set TorDownloadUrl=%%B
+for /F "tokens=1,2 delims= " %%A in ('%EnvSedExe% -r -n -e"s/.*href=\"^(.*^)^(tor-.*windows-i686.*\.tar\.gz^)\".*/\2 \1\2/p" "%EnvTempPath%\index.html"') do set TorInstall=%%A& set TorDownloadUrl=%%B
 call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
 if "%TorInstall%"=="" %cecho% error "Cannot download Tor installation" & goto error
 if "%TorDownloadUrl%"=="" %cecho% error "Cannot download Tor installation" & goto error
