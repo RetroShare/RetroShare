@@ -52,9 +52,9 @@ CONFIG *= retroshare_service
 no_retroshare_service:CONFIG -= retroshare_service
 
 # To disable RetroShare FriendServer append the following assignation to
-# qmake command line "CONFIG+=no_rs_friendserver"
+# qmake command line "CONFIG+=no_retroshare_friendserver"
 CONFIG *= retroshare_friendserver
-no_rs_friendserver:CONFIG -= retroshare_friendserver
+no_retroshare_friendserver:CONFIG -= retroshare_friendserver
 
 # To disable SQLCipher support append the following assignation to qmake
 # command line "CONFIG+=no_sqlcipher"
