@@ -47,7 +47,6 @@ public:
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);
-	void toggle() override;
 
 	/* GxsGroupFeedItem */
 	virtual QString groupName();
@@ -56,6 +55,7 @@ protected:
 
 private slots:
 	void subscribeForum();
+    void toggle() override;
 
 private:
 	void fill();
