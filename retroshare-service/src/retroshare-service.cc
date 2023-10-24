@@ -60,7 +60,7 @@ public:
 	        bool /*prev_is_bad*/, std::string& password, bool& cancel )
 	{
 		std::string question1 = title +
-		        "\nPlease enter your PGP password for key:\n    " +
+		        "\033[0;32mPlease enter your PGP password for key:\n    \033[0m" +
 		        question + " :";
 		password = RsUtil::rs_getpass(question1.c_str()) ;
 		cancel = false ;
@@ -182,9 +182,9 @@ int main(int argc, char* argv[])
 		while(keepRunning)
 		{
 			webui_pass1 = RsUtil::rs_getpass(
-			            "Please register a password for the web interface: " );
+			            "\033[0;32mPlease register a password for the web interface:\033[0m" );
 			webui_pass2 = RsUtil::rs_getpass(
-			            "Please enter the same password again            : " );
+			            "\033[0;32mPlease enter the same password again            :\033[0m" );
 
 			if(webui_pass1 != webui_pass2)
 			{
@@ -223,12 +223,12 @@ int main(int argc, char* argv[])
 
             if(locations.size() == 0)
             {
-                RsErr() << "No available accounts. You cannot use option -U list" << std::endl;
+                RsErr() << "\033[1;33mNo available accounts. You cannot use option -U list\033[0m" << std::endl;
                 return -RsInit::ERR_NO_AVAILABLE_ACCOUNT;
             }
 
             std::cout << std::endl << std::endl
-                      << "Available accounts:" << std::endl;
+                      << "\033[0;32mAvailable accounts:\033[0m" << std::endl;
 
             int accountCountDigits = static_cast<int>( ceil(log(locations.size())/log(10.0)) );
 
@@ -244,7 +244,7 @@ int main(int argc, char* argv[])
 			uint32_t nacc = 0;
 			while(keepRunning && (nacc < 1 || nacc >= locations.size()))
 			{
-				std::cout << "Please enter account number: ";
+				std::cout << "\033[0;32mPlease enter account number: \033[0m";
 				std::cout.flush();
 
 				std::string inputStr;
