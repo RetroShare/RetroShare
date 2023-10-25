@@ -233,18 +233,18 @@ int main(int argc, char* argv[])
             int accountCountDigits = static_cast<int>( ceil(log(locations.size())/log(10.0)) );
 
 			for( uint32_t i=0; i<locations.size(); ++i )
-				std::cout << "[" << std::setw(accountCountDigits)
-				          << std::setfill('0') << i+1 << "] "
-				          << locations[i].mLocationId << " ("
+				std::cout << "\033[0;32m[" << std::setw(accountCountDigits)
+				          << std::setfill('0') << i+1 << "]\033[0m "
+				          << locations[i].mLocationId << "\033[0;35m ("
 				          << locations[i].mPgpId << "): "
 				          << locations[i].mPgpName
-				          << " \t (" << locations[i].mLocationName << ")"
+				          << "   (" << locations[i].mLocationName << ")\033[0m"
 				          << std::endl;
 
 			uint32_t nacc = 0;
 			while(keepRunning && (nacc < 1 || nacc >= locations.size()))
 			{
-				std::cout << "\033[0;32mPlease enter account number: \033[0m";
+				std::cout << "\033[0;32mPlease enter account number:\n \033[0m";
 				std::cout.flush();
 
 				std::string inputStr;
