@@ -244,7 +244,7 @@ int main(int argc, char* argv[])
 			uint32_t nacc = 0;
 			while(keepRunning && (nacc < 1 || nacc >= locations.size()))
 			{
-				std::cout << "\033[0;32mPlease enter account number:\n \033[0m";
+				std::cout << "\033[0;32mPlease enter account number:\n\033[0m";
 				std::cout.flush();
 
 				std::string inputStr;
