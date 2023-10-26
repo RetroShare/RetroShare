@@ -188,12 +188,12 @@ int main(int argc, char* argv[])
 
 			if(webui_pass1 != webui_pass2)
 			{
-				std::cout << "Passwords do not match!" << std::endl;
+				std::cout << "\033[1;31mPasswords do not match!\033[0m" << std::endl;
 				continue;
 			}
 			if(webui_pass1.empty())
 			{
-				std::cout << "Password cannot be empty!" << std::endl;
+				std::cout << "\033[1;31mPassword cannot be empty!\033[0m" << std::endl;
 				continue;
 			}
 
@@ -223,7 +223,7 @@ int main(int argc, char* argv[])
 
             if(locations.size() == 0)
             {
-                RsErr() << "\033[1;33mNo available accounts. You cannot use option -U list\033[0m" << std::endl;
+                RsErr() << "\033[1;31mNo available accounts. You cannot use option -U list\033[0m" << std::endl;
                 return -RsInit::ERR_NO_AVAILABLE_ACCOUNT;
             }
 
@@ -234,8 +234,8 @@ int main(int argc, char* argv[])
 
 			for( uint32_t i=0; i<locations.size(); ++i )
 				std::cout << "\033[0;32m[" << std::setw(accountCountDigits)
-				          << std::setfill('0') << i+1 << "]\033[0m "
-				          << locations[i].mLocationId << "\033[0;35m ("
+				          << std::setfill('0') << i+1 << "]\033[0m \033[33m"
+				          << locations[i].mLocationId << "\033[0m \033[0;35m ("
 				          << locations[i].mPgpId << "): "
 				          << locations[i].mPgpName
 				          << "   (" << locations[i].mLocationName << ")\033[0m"
@@ -264,7 +264,7 @@ int main(int argc, char* argv[])
 		RsPeerId ssl_id(prefUserString);
 		if(ssl_id.isNull())
 		{
-			RsErr() << "Invalid User location id: a hexadecimal ID is expected."
+			RsErr() << "\033[1;31mInvalid User location id: a hexadecimal ID is expected.\033[0m"
 			        << std::endl;
 			return -EINVAL;
 		}
@@ -299,7 +299,7 @@ int main(int argc, char* argv[])
         if(RsAccounts::isTorAuto())
         {
 
-            std::cerr << "(II) Hidden service is ready:" << std::endl;
+            std::cerr << "\033[0;32(II) Hidden service is ready:\033[0m" << std::endl;
 
             std::string service_id ;
             std::string onion_address ;
