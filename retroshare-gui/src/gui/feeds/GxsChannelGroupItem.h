@@ -66,6 +66,7 @@ private:
 
 	/** Qt Designer generated object */
 	Ui::GxsChannelGroupItem *ui;
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif

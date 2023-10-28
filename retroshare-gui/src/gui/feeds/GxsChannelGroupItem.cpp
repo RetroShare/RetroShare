@@ -39,6 +39,29 @@ GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId
 	setup();
 
 	requestGroup();
+
+    mEventHandlerId = 0;
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            const auto *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
+
+            if(!e || e->mChannelGroupId != this->groupId())
+                return;
+
+            switch(e->mChannelEventCode)
+            {
+                case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:
+                case RsChannelEventCode::UPDATED_CHANNEL:
+                case RsChannelEventCode::RECEIVED_PUBLISH_KEY:
+                    loadGroup();
+                    break;
+                default:
+                    break;
+            }
+        }, this );
+    }, mEventHandlerId, RsEventType::GXS_CHANNELS );
 }
 
 GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, bool isHome, bool autoUpdate) :
@@ -51,6 +74,7 @@ GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId
 
 GxsChannelGroupItem::~GxsChannelGroupItem()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 	delete(ui);
 }
 
