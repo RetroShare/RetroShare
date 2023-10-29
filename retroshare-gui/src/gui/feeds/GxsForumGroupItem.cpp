@@ -79,8 +79,8 @@ GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, co
     GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsGxsForums, autoUpdate)
 {
 	setup();
-
 	setGroup(group);
+    addEventHandler();
 }
 
 GxsForumGroupItem::~GxsForumGroupItem()
