@@ -37,9 +37,20 @@ GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId
     GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsGxsChannels, autoUpdate)
 {
 	setup();
-
 	requestGroup();
+    addEventHandler();
+}
 
+GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, bool isHome, bool autoUpdate) :
+    GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsGxsChannels, autoUpdate)
+{
+    setup();
+    setGroup(group);
+    addEventHandler();
+}
+
+void GxsChannelGroupItem::addEventHandler()
+{
     mEventHandlerId = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
     {
@@ -62,14 +73,6 @@ GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId
             }
         }, this );
     }, mEventHandlerId, RsEventType::GXS_CHANNELS );
-}
-
-GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, bool isHome, bool autoUpdate) :
-    GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsGxsChannels, autoUpdate)
-{
-	setup();
-
-	setGroup(group);
 }
 
 GxsChannelGroupItem::~GxsChannelGroupItem()

@@ -61,6 +61,7 @@ private slots:
 private:
 	void fill();
 	void setup();
+    void addEventHandler();
 
 private:
 	RsGxsForumGroup mGroup;

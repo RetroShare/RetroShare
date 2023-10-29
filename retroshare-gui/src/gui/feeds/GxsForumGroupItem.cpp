@@ -36,8 +36,7 @@ GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, co
 {
 	setup();
 	requestGroup();
-
-
+    addEventHandler();
 }
 
 GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const std::list<RsGxsId>& added_moderators,const std::list<RsGxsId>& removed_moderators,bool isHome, bool autoUpdate):
@@ -46,9 +45,12 @@ GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, co
     mRemovedModerators(removed_moderators)
 {
 	setup();
-
 	requestGroup();
+    addEventHandler();
+}
 
+void GxsForumGroupItem::addEventHandler()
+{
     mEventHandlerId = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
     {
