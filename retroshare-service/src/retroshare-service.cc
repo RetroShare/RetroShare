@@ -312,13 +312,13 @@ int main(int argc, char* argv[])
             RsTor::getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
             RsTor::getProxyServerInfo(proxy_server_address,proxy_server_port) ;
 
-            std::cerr << "  onion address  : " << onion_address << std::endl;
-            std::cerr << "  service_id     : " << service_id << std::endl;
-            std::cerr << "  service port   : " << service_port << std::endl;
-            std::cerr << "  target port    : " << service_target_port << std::endl;
-            std::cerr << "  target address : " << service_target_address << std::endl;
+            std::cerr << "\033[0;32" "  onion address  : " "\033[0m" << onion_address << std::endl;
+            std::cerr << "\033[0;32" "  service_id     : " "\033[0m" << service_id << std::endl;
+            std::cerr << "\033[0;32" "  service port   : " "\033[0m" << service_port << std::endl;
+            std::cerr << "\033[0;32" "  target port    : " "\033[0m" << service_target_port << std::endl;
+            std::cerr << "\033[0;32" "  target address : " "\033[0m" << service_target_address << std::endl;
 
-            std::cerr << "Setting proxy server to " << service_target_address << ":" << service_target_port << std::endl;
+            std::cerr << "\033[0;32" "Setting proxy server to " "\033[0m" << service_target_address << ":" << service_target_port << std::endl;
 
             rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address, service_target_port);
             rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address, service_port);
