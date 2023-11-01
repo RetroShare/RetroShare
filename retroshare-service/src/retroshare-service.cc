@@ -60,7 +60,7 @@ public:
 	        bool /*prev_is_bad*/, std::string& password, bool& cancel )
 	{
 		std::string question1 = title +
-		        "\033[0;32mPlease enter your PGP password for key:\n    \033[0m" +
+		        "\033[0;32m" "Please enter your PGP password for key:\n    " "\033[0m" +
 		        question + " :";
 		password = RsUtil::rs_getpass(question1.c_str()) ;
 		cancel = false ;
@@ -182,18 +182,18 @@ int main(int argc, char* argv[])
 		while(keepRunning)
 		{
 			webui_pass1 = RsUtil::rs_getpass(
-			            "\033[0;32mPlease register a password for the web interface:\033[0m" );
+			            "\033[0;32m" "Please register a password for the web interface:" "\033[0m" );
 			webui_pass2 = RsUtil::rs_getpass(
-			            "\033[0;32mPlease enter the same password again            :\033[0m" );
+			            "\033[0;32m" "Please enter the same password again            :" "\033[0m" );
 
 			if(webui_pass1 != webui_pass2)
 			{
-				std::cout << "Passwords do not match!" << std::endl;
+				std::cout << "\033[1;31m" "Passwords do not match!" "\033[0m" << std::endl;
 				continue;
 			}
 			if(webui_pass1.empty())
 			{
-				std::cout << "Password cannot be empty!" << std::endl;
+				std::cout << "\033[1;31m" "Password cannot be empty!" "\033[0m" << std::endl;
 				continue;
 			}
 
@@ -223,28 +223,28 @@ int main(int argc, char* argv[])
 
             if(locations.size() == 0)
             {
-                RsErr() << "\033[1;33mNo available accounts. You cannot use option -U list\033[0m" << std::endl;
+                RsErr() << "\033[1;31m" "No available accounts. You cannot use option -U list" "\033[0m" << std::endl;
                 return -RsInit::ERR_NO_AVAILABLE_ACCOUNT;
             }
 
             std::cout << std::endl << std::endl
-                      << "\033[0;32mAvailable accounts:\033[0m" << std::endl;
+                      << "\033[0;32m" "Available accounts:" "\033[0m" << std::endl;
 
             int accountCountDigits = static_cast<int>( ceil(log(locations.size())/log(10.0)) );
 
 			for( uint32_t i=0; i<locations.size(); ++i )
-				std::cout << "\033[0;32m[" << std::setw(accountCountDigits)
-				          << std::setfill('0') << i+1 << "]\033[0m "
-				          << locations[i].mLocationId << "\033[0;35m ("
-				          << locations[i].mPgpId << "): "
+				std::cout << "\033[0;32m" "[" << std::setw(accountCountDigits)
+				          << std::setfill('0') << i+1 << "] " "\033[0m" "\033[33m"
+				          << locations[i].mLocationId << "\033[0m" "\033[0;36m" " ("
+				          << locations[i].mPgpId << "): " "\033[0m" "\033[0;35m"
 				          << locations[i].mPgpName
-				          << "   (" << locations[i].mLocationName << ")\033[0m"
+				          << " (" << locations[i].mLocationName << ")" "\033[0m"
 				          << std::endl;
 
 			uint32_t nacc = 0;
 			while(keepRunning && (nacc < 1 || nacc >= locations.size()))
 			{
-				std::cout << "\033[0;32mPlease enter account number:\n\033[0m";
+				std::cout << "\033[0;32m" "Please enter account number:\n" "\033[0m";
 				std::cout.flush();
 
 				std::string inputStr;
@@ -264,7 +264,7 @@ int main(int argc, char* argv[])
 		RsPeerId ssl_id(prefUserString);
 		if(ssl_id.isNull())
 		{
-			RsErr() << "Invalid User location id: a hexadecimal ID is expected."
+			RsErr() << "\033[1;31m" "Invalid User location id: a hexadecimal ID is expected." "\033[0m"
 			        << std::endl;
 			return -EINVAL;
 		}
@@ -299,7 +299,7 @@ int main(int argc, char* argv[])
         if(RsAccounts::isTorAuto())
         {
 
-            std::cerr << "(II) Hidden service is ready:" << std::endl;
+            std::cerr << "\033[0;32" "(II) Hidden service is ready:" "\033[0m" << std::endl;
 
             std::string service_id ;
             std::string onion_address ;
@@ -312,13 +312,13 @@ int main(int argc, char* argv[])
             RsTor::getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
             RsTor::getProxyServerInfo(proxy_server_address,proxy_server_port) ;
 
-            std::cerr << "  onion address  : " << onion_address << std::endl;
-            std::cerr << "  service_id     : " << service_id << std::endl;
-            std::cerr << "  service port   : " << service_port << std::endl;
-            std::cerr << "  target port    : " << service_target_port << std::endl;
-            std::cerr << "  target address : " << service_target_address << std::endl;
+            std::cerr << "\033[0;32" "  onion address  : " "\033[0m" << onion_address << std::endl;
+            std::cerr << "\033[0;32" "  service_id     : " "\033[0m" << service_id << std::endl;
+            std::cerr << "\033[0;32" "  service port   : " "\033[0m" << service_port << std::endl;
+            std::cerr << "\033[0;32" "  target port    : " "\033[0m" << service_target_port << std::endl;
+            std::cerr << "\033[0;32" "  target address : " "\033[0m" << service_target_address << std::endl;
 
-            std::cerr << "Setting proxy server to " << service_target_address << ":" << service_target_port << std::endl;
+            std::cerr << "\033[0;32" "Setting proxy server to " "\033[0m" << service_target_address << ":" << service_target_port << std::endl;
 
             rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address, service_target_port);
             rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address, service_port);
