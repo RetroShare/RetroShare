@@ -35,8 +35,8 @@ GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, co
     GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsGxsForums, autoUpdate)
 {
 	setup();
-
 	requestGroup();
+    addEventHandler();
 }
 
 GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const std::list<RsGxsId>& added_moderators,const std::list<RsGxsId>& removed_moderators,bool isHome, bool autoUpdate):
@@ -45,21 +45,48 @@ GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, co
     mRemovedModerators(removed_moderators)
 {
 	setup();
-
 	requestGroup();
+    addEventHandler();
+}
+
+void GxsForumGroupItem::addEventHandler()
+{
+    mEventHandlerId = 0;
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            const auto *e = dynamic_cast<const RsGxsForumEvent*>(event.get());
+
+            if(!e || e->mForumGroupId != this->groupId())
+                return;
+
+            switch(e->mForumEventCode)
+            {
+                case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
+                case RsForumEventCode::UPDATED_FORUM:
+                case RsForumEventCode::MODERATOR_LIST_CHANGED:
+                    loadGroup();
+                    break;
+                default:
+                    break;
+            }
+        }, this );
+    }, mEventHandlerId, RsEventType::GXS_FORUMS );
 }
 
 GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumGroup &group, bool isHome, bool autoUpdate) :
     GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsGxsForums, autoUpdate)
 {
 	setup();
-
 	setGroup(group);
+    addEventHandler();
 }
 
 GxsForumGroupItem::~GxsForumGroupItem()
 {
-	delete(ui);
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+    delete(ui);
 }
 
 void GxsForumGroupItem::setup()

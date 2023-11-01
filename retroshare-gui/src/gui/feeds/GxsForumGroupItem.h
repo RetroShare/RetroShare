@@ -22,6 +22,7 @@
 #define _GXSFORUMGROUPITEM_H
 
 #include <retroshare/rsgxsforums.h>
+#include <retroshare/rsevents.h>
 #include "gui/gxs/GxsGroupFeedItem.h"
 
 namespace Ui {
@@ -39,19 +40,19 @@ public:
 	GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate);
 	GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const std::list<RsGxsId>& added_moderators,const std::list<RsGxsId>& removed_moderators,bool isHome, bool autoUpdate);
 	GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumGroup &group, bool isHome, bool autoUpdate);
-	~GxsForumGroupItem();
+    virtual ~GxsForumGroupItem() override;
 
 	bool setGroup(const RsGxsForumGroup &group);
 
     uint64_t uniqueIdentifier() const override { return hash_64bits("GxsForumGroupItem " + groupId().toStdString()) ; }
 protected:
 	/* FeedItem */
-	virtual void doExpand(bool open);
+    virtual void doExpand(bool open) override;
 
 	/* GxsGroupFeedItem */
-	virtual QString groupName();
+    virtual QString groupName() override;
 	virtual void loadGroup() override;
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_FORUM; }
+    virtual RetroShareLink::enumType getLinkType() override { return RetroShareLink::TYPE_FORUM; }
 
 private slots:
 	void subscribeForum();
@@ -60,6 +61,7 @@ private slots:
 private:
 	void fill();
 	void setup();
+    void addEventHandler();
 
 private:
 	RsGxsForumGroup mGroup;
@@ -69,6 +71,8 @@ private:
 
     std::list<RsGxsId> mAddedModerators;
     std::list<RsGxsId> mRemovedModerators;
+
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif

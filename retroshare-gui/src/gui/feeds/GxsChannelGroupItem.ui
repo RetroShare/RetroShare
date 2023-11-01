@@ -251,7 +251,7 @@
              <enum>Qt::NoFocus</enum>
             </property>
             <property name="toolTip">
-             <string>Subscribe to Channel</string>
+             <string>Subscribe this Channel</string>
             </property>
             <property name="text">
              <string>Subscribe</string>
