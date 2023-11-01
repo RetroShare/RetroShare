@@ -33,6 +33,7 @@
 #include "retroshare/rsiface.h"
 
 #include "util/stacktrace.h"
+#include "util/rsprint.h"
 #include "util/argstream.h"
 #include "util/rskbdinput.h"
 #include "util/rsdir.h"
@@ -48,6 +49,28 @@
 
 static CrashStackTrace gCrashStackTrace;
 
+// We should move these functions to rsprint in libretroshare
+
+#define COLOR_GREEN  0
+#define COLOR_YELLOW 1
+#define COLOR_BLUE   2
+#define COLOR_PURPLE 3
+#define COLOR_RED    4
+
+std::string colored(int color,const std::string& s)
+{
+    switch(color)
+    {
+    case COLOR_GREEN : return "\033[0;32m"+s+"\033[0m";
+    case COLOR_YELLOW: return "\033[0;33m"+s+"\033[0m";
+    case COLOR_BLUE  : return "\033[0;36m"+s+"\033[0m";
+    case COLOR_PURPLE: return "\033[0;35m"+s+"\033[0m";
+    case COLOR_RED   : return "\033[0;31m"+s+"\033[0m";
+    default:
+        return s;
+    }
+}
+
 #ifdef RS_SERVICE_TERMINAL_LOGIN
 class RsServiceNotify: public NotifyClient
 {
@@ -59,9 +82,7 @@ public:
 	        const std::string& title, const std::string& question,
 	        bool /*prev_is_bad*/, std::string& password, bool& cancel )
 	{
-		std::string question1 = title +
-		        "\033[0;32m" "Please enter your PGP password for key:\n    " "\033[0m" +
-		        question + " :";
+        std::string question1 = title + colored(COLOR_GREEN,"Please enter your PGP password for key:\n    ")  + question + " :";
 		password = RsUtil::rs_getpass(question1.c_str()) ;
 		cancel = false ;
 
@@ -181,19 +202,17 @@ int main(int argc, char* argv[])
 
 		while(keepRunning)
 		{
-			webui_pass1 = RsUtil::rs_getpass(
-			            "\033[0;32m" "Please register a password for the web interface:" "\033[0m" );
-			webui_pass2 = RsUtil::rs_getpass(
-			            "\033[0;32m" "Please enter the same password again            :" "\033[0m" );
+            webui_pass1 = RsUtil::rs_getpass( colored(COLOR_GREEN,"Please register a password for the web interface: "));
+            webui_pass2 = RsUtil::rs_getpass( colored(COLOR_GREEN,"Please enter the same password again            : "));
 
 			if(webui_pass1 != webui_pass2)
 			{
-				std::cout << "\033[1;31m" "Passwords do not match!" "\033[0m" << std::endl;
+                std::cout << colored(COLOR_RED,"Passwords do not match!") << std::endl;
 				continue;
 			}
 			if(webui_pass1.empty())
 			{
-				std::cout << "\033[1;31m" "Password cannot be empty!" "\033[0m" << std::endl;
+                std::cout << colored(COLOR_RED,"Password cannot be empty!") << std::endl;
 				continue;
 			}
 
@@ -223,28 +242,26 @@ int main(int argc, char* argv[])
 
             if(locations.size() == 0)
             {
-                RsErr() << "\033[1;31m" "No available accounts. You cannot use option -U list" "\033[0m" << std::endl;
+                RsErr() << colored(COLOR_RED,"No available accounts. You cannot use option -U list") << std::endl;
                 return -RsInit::ERR_NO_AVAILABLE_ACCOUNT;
             }
 
             std::cout << std::endl << std::endl
-                      << "\033[0;32m" "Available accounts:" "\033[0m" << std::endl;
+                      << colored(COLOR_GREEN,"Available accounts:") << std::endl;
 
             int accountCountDigits = static_cast<int>( ceil(log(locations.size())/log(10.0)) );
 
 			for( uint32_t i=0; i<locations.size(); ++i )
-				std::cout << "\033[0;32m" "[" << std::setw(accountCountDigits)
-				          << std::setfill('0') << i+1 << "] " "\033[0m" "\033[33m"
-				          << locations[i].mLocationId << "\033[0m" "\033[0;36m" " ("
-				          << locations[i].mPgpId << "): " "\033[0m" "\033[0;35m"
-				          << locations[i].mPgpName
-				          << " (" << locations[i].mLocationName << ")" "\033[0m"
+                std::cout << colored(COLOR_GREEN,"[" + RsUtil::NumberToString(i+1,false,'0',accountCountDigits)+"]") << " "
+                          << colored(COLOR_YELLOW,locations[i].mLocationId.toStdString())<< " "
+                          << colored(COLOR_BLUE,"(" + locations[i].mPgpId.toStdString()+ "): ")
+                          << colored(COLOR_PURPLE,locations[i].mPgpName + " (" + locations[i].mLocationName + ")" )
 				          << std::endl;
 
 			uint32_t nacc = 0;
 			while(keepRunning && (nacc < 1 || nacc >= locations.size()))
 			{
-				std::cout << "\033[0;32m" "Please enter account number:\n" "\033[0m";
+                std::cout << colored(COLOR_GREEN,"Please enter account number:\n");
 				std::cout.flush();
 
 				std::string inputStr;
@@ -264,7 +281,7 @@ int main(int argc, char* argv[])
 		RsPeerId ssl_id(prefUserString);
 		if(ssl_id.isNull())
 		{
-			RsErr() << "\033[1;31m" "Invalid User location id: a hexadecimal ID is expected." "\033[0m"
+            RsErr() << colored(COLOR_RED,"Invalid User location id: a hexadecimal ID is expected.")
 			        << std::endl;
 			return -EINVAL;
 		}
@@ -299,7 +316,7 @@ int main(int argc, char* argv[])
         if(RsAccounts::isTorAuto())
         {
 
-            std::cerr << "\033[0;32" "(II) Hidden service is ready:" "\033[0m" << std::endl;
+            std::cerr << colored(COLOR_GREEN,"(II) Hidden service is ready:") << std::endl;
 
             std::string service_id ;
             std::string onion_address ;
@@ -312,13 +329,13 @@ int main(int argc, char* argv[])
             RsTor::getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
             RsTor::getProxyServerInfo(proxy_server_address,proxy_server_port) ;
 
-            std::cerr << "\033[0;32" "  onion address  : " "\033[0m" << onion_address << std::endl;
-            std::cerr << "\033[0;32" "  service_id     : " "\033[0m" << service_id << std::endl;
-            std::cerr << "\033[0;32" "  service port   : " "\033[0m" << service_port << std::endl;
-            std::cerr << "\033[0;32" "  target port    : " "\033[0m" << service_target_port << std::endl;
-            std::cerr << "\033[0;32" "  target address : " "\033[0m" << service_target_address << std::endl;
+            std::cerr << colored(COLOR_GREEN,"  onion address  : ") << onion_address << std::endl;
+            std::cerr << colored(COLOR_GREEN,"  service_id     : ") << service_id << std::endl;
+            std::cerr << colored(COLOR_GREEN,"  service port   : ") << service_port << std::endl;
+            std::cerr << colored(COLOR_GREEN,"  target port    : ") << service_target_port << std::endl;
+            std::cerr << colored(COLOR_GREEN,"  target address : ") << service_target_address << std::endl;
 
-            std::cerr << "\033[0;32" "Setting proxy server to " "\033[0m" << service_target_address << ":" << service_target_port << std::endl;
+            std::cerr << colored(COLOR_GREEN,"Setting proxy server to ") << service_target_address << ":" << service_target_port << std::endl;
 
             rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address, service_target_port);
             rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address, service_port);
