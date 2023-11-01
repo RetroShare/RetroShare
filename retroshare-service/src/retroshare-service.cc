@@ -219,12 +219,23 @@ int main(int argc, char* argv[])
 			break;
 		}
 	}
+#ifdef RS_SERVICE_TERMINAL_WEBUI_PASSWORD
+    if(!webui_pass1.empty())
+    {
+        rsWebUi->setHtmlFilesDirectory(webui_base_directory);
+        conf.webUIPasswd = webui_pass1;	// cannot be set using rsWebUI methods because it calls the still non-existent rsJsonApi
+        conf.enableWebUI = true;
+
+        // JsonApi is started below in InitRetroShare(). Not calling restart here avoids multiple restart.
+    }
+#endif
 #endif /* defined(RS_JSONAPI) && defined(RS_WEBUI)
 	&& defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD) */
 
 	conf.main_executable_path = argv[0];
 
 	int initResult = RsInit::InitRetroShare(conf);
+
 	if(initResult != RS_INIT_OK)
 	{
 		RsFatal() << "Retroshare core initalization failed with: " << initResult
@@ -343,15 +354,6 @@ int main(int argc, char* argv[])
         }
 	}
 #endif // def RS_SERVICE_TERMINAL_LOGIN
-
-#if (defined(RS_JSONAPI) && defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
-	if(rsJsonApi && !webui_pass1.empty())
-	{
-		rsWebUi->setHtmlFilesDirectory(webui_base_directory);
-		rsWebUi->setUserPassword(webui_pass1);
-		rsWebUi->restart();
-	}
-#endif
 
 	rsControl->setShutdownCallback([&](int){keepRunning = false;});
 
