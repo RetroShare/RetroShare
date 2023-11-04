@@ -142,6 +142,8 @@ void WebuiPage::loadParams()
 
     if(it != smap.end())
 		whileBlocking(ui.password_LE)->setText(QString::fromStdString(it->second));
+    else
+        whileBlocking(ui.enableWebUI_CB)->setChecked(false);
 
     if(rsWebUi->isRunning())
         ui.statusLabelLED->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_LEDON)) ;
