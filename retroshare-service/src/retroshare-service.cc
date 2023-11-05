@@ -220,7 +220,7 @@ int main(int argc, char* argv[])
 		}
 	}
 #ifdef RS_SERVICE_TERMINAL_WEBUI_PASSWORD
-    if(!webui_pass1.empty())
+    if(askWebUiPassword && !webui_pass1.empty())
     {
         rsWebUi->setHtmlFilesDirectory(webui_base_directory);
         conf.webUIPasswd = webui_pass1;	// cannot be set using rsWebUI methods because it calls the still non-existent rsJsonApi
@@ -235,6 +235,11 @@ int main(int argc, char* argv[])
 	conf.main_executable_path = argv[0];
 
 	int initResult = RsInit::InitRetroShare(conf);
+
+#ifdef RS_JSONAPI
+    RsInit::startupWebServices(conf);
+    rstime::rs_usleep(1000000); // waits for jas->restart to print stuff
+#endif
 
 	if(initResult != RS_INIT_OK)
 	{
@@ -269,10 +274,11 @@ int main(int argc, char* argv[])
                           << colored(COLOR_PURPLE,locations[i].mPgpName + " (" + locations[i].mLocationName + ")" )
 				          << std::endl;
 
-			uint32_t nacc = 0;
+            std::cout << std::endl;
+            uint32_t nacc = 0;
 			while(keepRunning && (nacc < 1 || nacc >= locations.size()))
 			{
-                std::cout << colored(COLOR_GREEN,"Please enter account number:\n");
+                std::cout << colored(COLOR_GREEN,"Please enter account number: ");
 				std::cout.flush();
 
 				std::string inputStr;
