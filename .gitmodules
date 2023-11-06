@@ -33,6 +33,4 @@
 [submodule "retroshare-webui"]
 	path = retroshare-webui
 	url = https://github.com/RetroShare/RSNewWebUI.git
-[submodule "build_scripts/OBS"]
-	path = build_scripts/OBS
-	url = https://github.com/RetroShare/OBS.git
+
