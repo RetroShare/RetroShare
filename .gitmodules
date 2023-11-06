@@ -4,9 +4,6 @@
 [submodule "cmark"]
 	path = supportlibs/cmark
 	url = https://github.com/commonmark/cmark.git
-[submodule "build_scripts/OBS"]
-	path = build_scripts/OBS
-	url = https://github.com/RetroShare/OBS.git
 [submodule "supportlibs/udp-discovery-cpp"]
 	path = supportlibs/udp-discovery-cpp
 	url = https://github.com/truvorskameikin/udp-discovery-cpp.git
@@ -36,3 +33,6 @@
 [submodule "retroshare-webui"]
 	path = retroshare-webui
 	url = https://github.com/RetroShare/RSNewWebUI.git
+[submodule "build_scripts/OBS"]
+	path = build_scripts/OBS
+	url = https://github.com/RetroShare/OBS.git
