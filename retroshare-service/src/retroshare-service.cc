@@ -111,6 +111,33 @@ int main(int argc, char* argv[])
 	signal(SIGBREAK, signalHandler);
 #endif // ifdef SIGBREAK
 
+#ifdef WINDOWS_SYS
+	// Enable ANSI color support in Windows console
+	{
+#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
+#define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x4
+#endif
+
+		HANDLE hStdin = GetStdHandle(STD_OUTPUT_HANDLE);
+		if (hStdin) {
+			DWORD consoleMode;
+			if (GetConsoleMode(hStdin, &consoleMode)) {
+				if ((consoleMode & ENABLE_VIRTUAL_TERMINAL_PROCESSING) == 0) {
+					if (SetConsoleMode(hStdin, consoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING)) {
+						std::cout << "Enabled ANSI color support in console" << std::endl;
+					} else {
+						RsErr() << "Error getting console mode" << std::endl;
+					}
+				}
+			} else {
+				RsErr() << "Error getting console mode" << std::endl;
+			}
+		} else {
+			RsErr() << "Error getting stdin handle" << std::endl;
+		}
+	}
+#endif
+
 	RsInfo() << "\n" <<
 	    "+================================================================+\n"
 	    "|     o---o                                             o        |\n"
