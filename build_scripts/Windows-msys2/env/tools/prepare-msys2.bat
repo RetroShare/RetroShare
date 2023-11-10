@@ -16,7 +16,13 @@ if "%~1"=="clean" (
 	goto exit
 )
 
-if exist "%EnvMSYS2Path%\msys%MSYS2Base%\usr\bin\pacman.exe" (
+set MSYS2Version=20231026
+
+set MSYS2Install=msys2-base-x86_64-%MSYS2Version%.sfx.exe
+set MSYS2Url=https://github.com/msys2/msys2-installer/releases/download/%MSYS2Version:~0,4%-%MSYS2Version:~4,2%-%MSYS2Version:~6,2%/%MSYS2Install%
+set MSYS2UnpackPath=%EnvMSYS2Path%\msys64
+
+if exist "%MSYS2UnpackPath%\usr\bin\pacman.exe" (
 	if "%~1"=="reinstall" (
 		choice /M "Found existing MSYS2 version. Do you want to proceed?"
 		if !ERRORLEVEL!==2 goto exit
@@ -25,30 +31,26 @@ if exist "%EnvMSYS2Path%\msys%MSYS2Base%\usr\bin\pacman.exe" (
 	)
 )
 
-if "%MSYS2Architecture%"=="i686" set MSYS2Version=20210705
-if "%MSYS2Architecture%"=="x86_64" set MSYS2Version=20210725
+if exist "%MSYS2UnpackPath%" (
+	%cecho% info "Remove previous MSYS2 version"
+	call "%ToolsPath%\remove-dir.bat" "%MSYS2UnpackPath%"
+)
 
-set MSYS2Install=msys2-base-%MSYS2Architecture%-%MSYS2Version%.tar.xz
-set MSYS2Url=https://repo.msys2.org/distrib/%MSYS2Architecture%/%MSYS2Install%
-
-%cecho% info "Remove previous MSYS2 version"
-call "%ToolsPath%\remove-dir.bat" "%EnvMSYS2Path%"
-
-%cecho% info "Download installation files"
+%cecho% info "Download MSYS2 installation files"
 if not exist "%EnvDownloadPath%\%MSYS2Install%" call "%ToolsPath%\download-file.bat" "%MSYS2Url%" "%EnvDownloadPath%\%MSYS2Install%"
 if not exist "%EnvDownloadPath%\%MSYS2Install%" %cecho% error "Cannot download MSYS" & goto error
 
 %cecho% info "Unpack MSYS2"
-"%EnvSevenZipExe%" x -so "%EnvDownloadPath%\%MSYS2Install%" | "%EnvSevenZipExe%" x -y -si -ttar -o"%EnvMSYS2Path%"
+"%EnvDownloadPath%\%MSYS2Install%" -y -o"%EnvMSYS2Path%"
 
-set MSYS2SH=%EnvMSYS2Path%\msys%MSYS2Base%\usr\bin\sh
+set MSYS2SH=%MSYS2UnpackPath%\usr\bin\sh
 
 %cecho% info "Initialize MSYS2"
 "%MSYS2SH%" -lc "yes | pacman --noconfirm -Syuu msys2-keyring"
 "%MSYS2SH%" -lc "pacman --noconfirm -Sy"
 "%MSYS2SH%" -lc "pacman --noconfirm -Su"
 
-call "%EnvMSYS2Path%\msys%MSYS2Base%\autorebase.bat"
+call "%MSYS2UnpackPath%\autorebase.bat"
 
 :exit
 endlocal
