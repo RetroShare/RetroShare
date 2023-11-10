@@ -1619,7 +1619,9 @@ bool NewFriendList::isColumnVisible(int col) const
 }
 void NewFriendList::setColumnVisible(int col,bool visible)
 {
+#ifdef DEBUG_NEW_FRIEND_LIST
     std::cerr << "Setting column " << col << " to be visible: " << visible << std::endl;
+#endif
     ui->peerTreeWidget->setColumnHidden(col, !visible);
 }
 void NewFriendList::toggleColumnVisible()

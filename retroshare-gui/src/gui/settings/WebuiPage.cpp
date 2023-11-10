@@ -58,7 +58,9 @@ WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> /* event */)
     {
+#ifdef DEBUG
         std::cerr << "Caught JSONAPI event in webui!" << std::endl;
+#endif
         RsQThreadUtils::postToObject([=]() { load(); }, this );
     },
     mEventsHandlerId, RsEventType::JSON_API );
@@ -132,7 +134,9 @@ bool WebuiPage::restart()
 
 void WebuiPage::loadParams()
 {
-	std::cerr << "WebuiPage::load()" << std::endl;
+#ifdef DEBUG
+    std::cerr << "WebuiPage::load()" << std::endl;
+#endif
 	whileBlocking(ui.enableWebUI_CB)->setChecked(Settings->getWebinterfaceEnabled());
 	whileBlocking(ui.webInterfaceFiles_LE)->setText(Settings->getWebinterfaceFilesDirectory());
 

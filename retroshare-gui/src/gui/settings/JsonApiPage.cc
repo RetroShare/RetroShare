@@ -73,8 +73,9 @@ JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 
         if(!je)
             return;
-
+#ifdef DEBUG
         std::cerr << "Caught JSONAPI event! code=" << static_cast<int>(je->mJsonApiEventCode) << std::endl;
+#endif
 
         RsQThreadUtils::postToObject([=]() { load(); }, this );
     },
