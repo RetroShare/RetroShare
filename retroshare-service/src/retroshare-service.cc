@@ -264,7 +264,7 @@ int main(int argc, char* argv[])
 	int initResult = RsInit::InitRetroShare(conf);
 
 #ifdef RS_JSONAPI
-    RsInit::startupWebServices(conf);
+    RsInit::startupWebServices(conf,true);
     rstime::rs_usleep(1000000); // waits for jas->restart to print stuff
 #endif
 
@@ -290,12 +290,12 @@ int main(int argc, char* argv[])
             }
 
             std::cout << std::endl << std::endl
-                      << colored(COLOR_GREEN,"Available accounts:") << std::endl;
+                      << colored(COLOR_GREEN,"Available accounts:") << std::endl<<std::endl;
 
             int accountCountDigits = static_cast<int>( ceil(log(locations.size())/log(10.0)) );
 
 			for( uint32_t i=0; i<locations.size(); ++i )
-                std::cout << colored(COLOR_GREEN,"[" + RsUtil::NumberToString(i+1,false,'0',accountCountDigits)+"]") << " "
+                std::cout << colored(COLOR_GREEN,"  [" + RsUtil::NumberToString(i+1,false,'0',accountCountDigits)+"]") << " "
                           << colored(COLOR_YELLOW,locations[i].mLocationId.toStdString())<< " "
                           << colored(COLOR_BLUE,"(" + locations[i].mPgpId.toStdString()+ "): ")
                           << colored(COLOR_PURPLE,locations[i].mPgpName + " (" + locations[i].mLocationName + ")" )

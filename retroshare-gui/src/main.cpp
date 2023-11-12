@@ -538,8 +538,9 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	//
 
 	qRegisterMetaType<RsPeerId>("RsPeerId") ;
-
+#ifdef DEBUG
 	std::cerr << "connecting signals and slots" << std::endl ;
+#endif
 	QObject::connect(notify,SIGNAL(deferredSignatureHandlingRequested()),notify,SLOT(handleSignatureEvent()),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(chatLobbyTimeShift(int)),notify,SLOT(handleChatLobbyTimeShift(int)),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(diskFull(int,int))						,w                   		,SLOT(displayDiskSpaceWarning(int,int))) ;
@@ -582,7 +583,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
     if(!Settings->getWebinterfaceFilesDirectory().isNull())
         rsWebUi->setHtmlFilesDirectory(Settings->getWebinterfaceFilesDirectory().toStdString());
 #endif
-    RsInit::startupWebServices(conf);
+    RsInit::startupWebServices(conf,false);
 #endif
 
 	/* dive into the endless loop */
