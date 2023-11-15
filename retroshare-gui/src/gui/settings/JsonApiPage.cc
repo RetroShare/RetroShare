@@ -64,9 +64,19 @@ JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 
     mEventHandlerId = 0;
 
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> /* event */)
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
     {
-        std::cerr << "Caught JSONAPI event!" << std::endl;
+        if(e->mType != RsEventType::JSON_API)
+            return;
+
+        auto je = dynamic_cast<const RsJsonApiEvent*>(e.get());
+
+        if(!je)
+            return;
+#ifdef DEBUG
+        std::cerr << "Caught JSONAPI event! code=" << static_cast<int>(je->mJsonApiEventCode) << std::endl;
+#endif
+
         RsQThreadUtils::postToObject([=]() { load(); }, this );
     },
     mEventHandlerId, RsEventType::JSON_API );

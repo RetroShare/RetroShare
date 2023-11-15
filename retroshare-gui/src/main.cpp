@@ -22,6 +22,7 @@
 
 #include "util/stacktrace.h"
 #include "util/argstream.h"
+#include "retroshare/rswebui.h"
 
 CrashStackTrace gCrashStackTrace;
 
@@ -380,7 +381,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		return 1;
 	}
 
-	/* recreate global settings object, now with correct path */
+    /* recreate global settings object, now with correct path, specific to the selected node */
 	RshareSettings::Create(true);
 	Rshare::resetLanguageAndStyle();
 
@@ -537,8 +538,9 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	//
 
 	qRegisterMetaType<RsPeerId>("RsPeerId") ;
-
+#ifdef DEBUG
 	std::cerr << "connecting signals and slots" << std::endl ;
+#endif
 	QObject::connect(notify,SIGNAL(deferredSignatureHandlingRequested()),notify,SLOT(handleSignatureEvent()),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(chatLobbyTimeShift(int)),notify,SLOT(handleChatLobbyTimeShift(int)),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(diskFull(int,int))						,w                   		,SLOT(displayDiskSpaceWarning(int,int))) ;
@@ -571,13 +573,18 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	notify->enable() ;	// enable notification system after GUI creation, to avoid data races in Qt.
 
-#ifdef RS_JSONAPI
-	JsonApiPage::checkStartJsonApi();
+    // Read webui params in settings. We cannot save them to some webui.cfg because cfg needs the node id and
+    // jsonapi is started before node ID selection in retroshare-service.
 
+#ifdef RS_JSONAPI
 #ifdef RS_WEBUI
-    WebuiPage::checkStartWebui();	// normally we should rather save the UI flags internally to p3webui
+    conf.enableWebUI = Settings->getWebinterfaceEnabled();
+
+    if(!Settings->getWebinterfaceFilesDirectory().isNull())
+        rsWebUi->setHtmlFilesDirectory(Settings->getWebinterfaceFilesDirectory().toStdString());
 #endif
-#endif // RS_JSONAPI
+    RsInit::startupWebServices(conf,false);
+#endif
 
 	/* dive into the endless loop */
 	int ti = rshare.exec();
