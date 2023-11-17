@@ -113,6 +113,10 @@ private:
 	bool mCloseOnRead;
 	bool mLoaded;
 
+    bool mLoadingGroup;
+    bool mLoadingMessage;
+    bool mLoadingComment;
+
 	RsGroupMetaData mGroupMeta;
 	RsGxsChannelPost mPost;
 

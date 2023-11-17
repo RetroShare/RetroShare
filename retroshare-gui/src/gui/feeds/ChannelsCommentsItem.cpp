@@ -53,6 +53,10 @@ ChannelsCommentsItem::ChannelsCommentsItem(FeedHolder *feedHolder, uint32_t feed
     GxsFeedItem(feedHolder, feedId, group_meta.mGroupId, messageId, isHome, rsGxsChannels, autoUpdate),
     mGroupMeta(group_meta)
 {
+    mLoadingGroup = false;
+    mLoadingMessage = false;
+    mLoadingComment = false;
+
     mPost.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
     mPost.mMeta.mGroupId = mGroupMeta.mGroupId;
 
@@ -74,6 +78,10 @@ ChannelsCommentsItem::ChannelsCommentsItem(FeedHolder *feedHolder, uint32_t feed
 ChannelsCommentsItem::ChannelsCommentsItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
     GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsChannels, autoUpdate) // this one should be in GxsFeedItem
 {
+    mLoadingGroup = false;
+    mLoadingMessage = false;
+    mLoadingComment = false;
+
     mPost.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
 
 	QVector<RsGxsMessageId> v;
@@ -114,6 +122,19 @@ void ChannelsCommentsItem::paintEvent(QPaintEvent *e)
 
 ChannelsCommentsItem::~ChannelsCommentsItem()
 {
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(300);
+
+    while( (mLoadingGroup || mLoadingMessage || mLoadingComment)
+           && std::chrono::steady_clock::now() < timeout)
+    {
+        RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for "
+                << (mLoadingGroup ? "Group " : "")
+                << (mLoadingMessage ? "Message " : "")
+                << (mLoadingComment ? "Comment " : "")
+                << "loading." << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
 	delete(ui);
 }
 
@@ -255,6 +276,7 @@ void ChannelsCommentsItem::loadGroup()
 			return;
 		}
 		RsGxsChannelGroup group(groups[0]);
+        mLoadingGroup = true;
 
 		RsQThreadUtils::postToObject( [group,this]()
 		{
@@ -263,6 +285,7 @@ void ChannelsCommentsItem::loadGroup()
 			 * after a blocking call to RetroShare API complete */
 
 			mGroupMeta = group.mMeta;
+            mLoadingGroup = false;
 
 		}, this );
 	});
@@ -293,8 +316,9 @@ void ChannelsCommentsItem::loadMessage()
 			std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
 #endif
             RsGxsChannelPost post(posts[0]);	// no reference to temporary here, because we pass this to a thread
+            mLoadingMessage = true;
 
-			RsQThreadUtils::postToObject( [post,this]() { setPost(post);  }, this );
+            RsQThreadUtils::postToObject( [post,this]() { setPost(post);  mLoadingMessage=false; }, this );
 		}
 		else if(comments.size() == 1)
 		{
@@ -302,6 +326,7 @@ void ChannelsCommentsItem::loadMessage()
 #ifdef DEBUG_ITEM
 			std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
 #endif
+            mLoadingComment = true;
 
 			RsQThreadUtils::postToObject( [cmt,this]()
 			{
@@ -323,6 +348,7 @@ void ChannelsCommentsItem::loadMessage()
 
 				//Change this item to be uploaded with thread element.
 				setMessageId(cmt.mMeta.mThreadId);
+                mLoadingComment=false;
 				requestMessage();
 
 			}, this );
@@ -344,6 +370,8 @@ void ChannelsCommentsItem::loadMessage()
 
 void ChannelsCommentsItem::loadComment()
 {
+#ifdef DOES_NOTHING
+
 #ifdef DEBUG_ITEM
 	std::cerr << "ChannelsCommentsItem::loadComment()";
 	std::cerr << std::endl;
@@ -369,6 +397,8 @@ void ChannelsCommentsItem::loadComment()
 
 		int comNb = comments.size();
 
+        mLoadingComment=true;
+
 		RsQThreadUtils::postToObject( [comNb]()
 		{
 			QString sComButText = tr("Comment");
@@ -381,6 +411,7 @@ void ChannelsCommentsItem::loadComment()
 
 		}, this );
 	});
+#endif
 }
 
 void ChannelsCommentsItem::fill()
