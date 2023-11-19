@@ -256,11 +256,14 @@
              </property>
              <item row="0" column="0">
               <widget class="QLabel" name="iconlabel_ext">
-               <property name="maximumSize">
-                <size>
-                 <width>16</width>
-                 <height>16</height>
-                </size>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
                </property>
                <property name="text">
                 <string/>
@@ -272,6 +275,12 @@
              </item>
              <item row="0" column="1">
               <widget class="QLabel" name="textlabel_ext">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The bullet turns green as soon as Retroshare manages to get your own IP from the websites listed below, if you enabled that action. Retroshare will also use other means to find out your own IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
@@ -290,26 +299,35 @@
              <property name="rightMargin">
               <number>6</number>
              </property>
+             <item row="0" column="1">
+              <widget class="QLabel" name="textlabel_netLimited">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Local network</string>
+               </property>
+              </widget>
+             </item>
              <item row="0" column="0">
               <widget class="QLabel" name="iconlabel_netLimited">
-               <property name="maximumSize">
-                <size>
-                 <width>16</width>
-                 <height>16</height>
-                </size>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
                </property>
                <property name="text">
                 <string/>
                </property>
                <property name="pixmap">
                 <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="textlabel_netLimited">
-               <property name="text">
-                <string>Local network</string>
                </property>
               </widget>
              </item>
@@ -351,26 +369,35 @@
              <property name="rightMargin">
               <number>6</number>
              </property>
+             <item row="0" column="1">
+              <widget class="QLabel" name="textlabel_upnp">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>UPnP</string>
+               </property>
+              </widget>
+             </item>
              <item row="0" column="0">
               <widget class="QLabel" name="iconlabel_upnp">
-               <property name="maximumSize">
-                <size>
-                 <width>16</width>
-                 <height>16</height>
-                </size>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
                </property>
                <property name="text">
                 <string/>
                </property>
                <property name="pixmap">
                 <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="textlabel_upnp">
-               <property name="text">
-                <string>UPnP</string>
                </property>
               </widget>
              </item>
@@ -386,11 +413,14 @@
              </property>
              <item row="0" column="0">
               <widget class="QLabel" name="iconlabel_hiddenMode">
-               <property name="maximumSize">
-                <size>
-                 <width>16</width>
-                 <height>16</height>
-                </size>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
                </property>
                <property name="text">
                 <string/>
@@ -402,6 +432,12 @@
              </item>
              <item row="0" column="1">
               <widget class="QLabel" name="textlabel_hiddenMode">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -802,12 +838,6 @@ behind a firewall or a VPN.</string>
               <layout class="QHBoxLayout" name="hiddenpage_proxyOKHLayout_tor">
                <item>
                 <widget class="QLabel" name="iconlabel_tor_outgoing">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16</width>
-                   <height>16</height>
-                  </size>
-                 </property>
                  <property name="text">
                   <string/>
                  </property>
