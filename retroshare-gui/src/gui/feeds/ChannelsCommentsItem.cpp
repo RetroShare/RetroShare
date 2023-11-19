@@ -185,16 +185,11 @@ bool ChannelsCommentsItem::setPost(const RsGxsChannelPost& post, bool doFill)
     if (doFill)
 		fill();
 
-    std::cerr << "end setting post." << std::endl;
     return true;
 }
 bool ChannelsCommentsItem::setMissingPost()
 {
-    std::cerr << "setting missing post." << std::endl;
-
     fill(true);
-
-    std::cerr << "end setting missing post." << std::endl;
     return true;
 }
 
@@ -287,7 +282,6 @@ void ChannelsCommentsItem::load()
         return;
 
     mLoading= true;
-    std::cerr << "Loading message " << mPost.mMeta.mMsgId << std::endl;
 
     RsThread::async([this]()
 	{
@@ -304,8 +298,7 @@ void ChannelsCommentsItem::load()
 
         if (groups.size() != 1)
         {
-            std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items";
-            std::cerr << std::endl;
+            std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items" << std::endl;
             return;
         }
         RsGxsChannelGroup group(groups[0]);
@@ -336,7 +329,6 @@ void ChannelsCommentsItem::load()
             {
                 RsGxsComment cmt(comments[0]);
 
-                std::cerr << "setting comment." << std::endl;
                 uint32_t autorized_lines = (int)floor( (ui->avatarLabel->height() - ui->button_HL->sizeHint().height())
                                                       / QFontMetricsF(ui->subjectLabel->font()).height());
 
@@ -353,19 +345,20 @@ void ChannelsCommentsItem::load()
                 ui->avatarLabel->setPixmap(pixmap);
 
                 //Change this item to be uploaded with thread element. This is really bad practice.
-
-                mLoading=false;
             }
             else
+            {
+                mLoading=false;
                 removeItem();
+            }
 
             if (posts.size() == 1)
                 setPost(posts[0]);
             else
                 setMissingPost();
 
-            std::cerr << "End loading channel post comment data" << std::endl;
             emit sizeChanged(this);
+            mLoading=false;
 
         }, this );
     });
