@@ -169,8 +169,9 @@ For building RetroShare with plugins:
 
 You can now compile RetroShare into Qt Creator or with Terminal
 
-       cd retroshare
-       qmake; make
+       $ cd /path/to/retroshare
+       $ qmake ..
+       $ make
 
 You can change Target and SDK in *./retroshare.pri:82* changing value of QMAKE_MACOSX_DEPLOYMENT_TARGET and QMAKE_MAC_SDK
 
