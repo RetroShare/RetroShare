@@ -110,7 +110,7 @@ Edit RetroShare.pro
 
     CONFIG += c++14 rs_macos11.1
 
-and then retroshare.pri
+Edit retroshare.pri
 
     macx:CONFIG *= rs_macos11.1
     rs_macos10.8:CONFIG -= rs_macos11.1
