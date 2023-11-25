@@ -30,13 +30,23 @@ In GitHub Desktop -> Clone Repository -> URL
 
        Add Repository URL: https://github.com/RetroShare/RetroShare.git and Clone
 
+## ***Get XCode & OSX SDK***
+
+Install XCode following this guide: [XCode](http://guide.macports.org/#installing.xcode)
+
+Install XCode command line developer tools:
+
+       $xcode-select --install
+
+Start XCode to get it updated and to able C compiler to create executables.
+
+Get Your OSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
+
 ## ***Choose if you use MacPort or HomeBrew***
 
 ### MacPort Installation
 
-Install MacPort and XCode following this guide: [MacPort and XCode](http://guide.macports.org/#installing.xcode)
-
-Start XCode to get it updated and to able C compiler to create executables.
+Install MacPort following this guide: [MacPort](http://guide.macports.org/#installing.xcode)
 
 #### Install libraries  
 
@@ -51,17 +61,10 @@ For VOIP Plugin:
        $ sudo port install opencv
        $ sudo port install ffmpeg
 
-Get Your OSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
 
 ### HOMEBREW Installation
 
 Install HomeBrew following this guide: [HomeBrew](http://brew.sh/)
-
-Install XCode command line developer tools:
-
-       $xcode-select --install
-
-Start XCode to get it updated and to able C compiler to create executables.
 
 #### Install libraries  
 
@@ -86,7 +89,6 @@ For FeedReader Plugin:
 
        $ brew install libxslt
 
-Get Your OSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
 
 ## Last Settings
 
