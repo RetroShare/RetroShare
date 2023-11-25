@@ -30,7 +30,7 @@ In GitHub Desktop -> Clone Repository -> URL
 
        Add Repository URL: https://github.com/RetroShare/RetroShare.git and Clone
 
-## ***Get XCode & OSX SDK***
+## ***Get XCode & MacOSX SDK***
 
 Install XCode following this guide: [XCode](http://guide.macports.org/#installing.xcode)
 
@@ -40,7 +40,7 @@ Install XCode command line developer tools:
 
 Start XCode to get it updated and to able C compiler to create executables.
 
-Get Your OSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
+Get Your MacOSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
 
 ## ***Choose if you use MacPort or HomeBrew***
 
@@ -143,11 +143,8 @@ alternative via Terminal
     CONFIG+=release \
     ..
 
-For FeedReader Plugin:
 
-    INCLUDEPATH += "/usr/local/opt/libxml2/include/libxml2"
-
-For building RetroShare with plugins:
+With plugins:
 
     $ qmake \
     INCLUDEPATH+="/usr/local/opt/openssl/include" QMAKE_LIBDIR+="/usr/local/opt/openssl/lib" \
