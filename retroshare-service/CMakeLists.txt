@@ -95,7 +95,7 @@ if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/CMakeLists.txt" )
 else()
 	FetchContent_Declare(
 		libretroshare
-		GIT_REPOSITORY "https://gitlab.com/RetroShare/libretroshare.git"
+		GIT_REPOSITORY "https://github.com/RetroShare/libretroshare.git"
 		GIT_TAG "origin/master"
 		GIT_SHALLOW TRUE
 		GIT_PROGRESS TRUE
@@ -151,7 +151,7 @@ if(RS_WEBUI)
 	else()
 		FetchContent_Declare(
 			webui
-			GIT_REPOSITORY "https://gitlab.com/RetroShare/RetroShareWebUI.git"
+			GIT_REPOSITORY "https://github.com/RetroShare/RSNewWebUI.git"
 			GIT_TAG "origin/master"
 			GIT_SHALLOW TRUE
 			GIT_PROGRESS TRUE

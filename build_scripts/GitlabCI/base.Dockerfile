@@ -40,18 +40,23 @@ RUN git clone --depth 1 https://github.com/aetilius/pHash.git && \
 	rm -rf pHash-build pHash
 
 ARG FRESHCLONE=0
-ARG REPO_URL=https://gitlab.com/RetroShare/RetroShare.git
+ARG REPO_URL=https://github.com/RetroShare/RetroShare.git
 ARG REPO_BRANCH=master
 ARG REPO_DEPTH="--depth 2000"
-RUN git clone $REPO_DEPTH $REPO_URL -b $REPO_BRANCH && cd RetroShare && \
+RUN git clone $REPO_DEPTH $REPO_URL -b $REPO_BRANCH && \
+	cd RetroShare && \
 	git fetch --tags && \
-	git submodule update --init --remote --force \
-		libbitdht/ libretroshare/ openpgpsdk/ && \
-	cd ..
+	git submodule update --init \
+		libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/ \
+		supportlibs/restbed/ && \
+	cd supportlibs/restbed/ && \
+	git submodule update --init \
+		dependency/asio/ dependency/kashmir/ && \
+	cd ../../../
 
 RUN \
 	mkdir RetroShare-build && cd RetroShare-build && \
 	cmake -B. -S../RetroShare/retroshare-service \
-		-DRS_FORUM_DEEP_INDEX=ON -DRS_JSON_API=ON && \
-	make -j$(nproc) && make install && \
+		-DRS_FORUM_DEEP_INDEX=ON -DRS_JSON_API=ON -DRS_WEBUI=ON && \
+	make -j$(nproc) -j1 && make install && \
 	cd .. && rm -rf RetroShare-build
