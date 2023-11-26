@@ -174,6 +174,22 @@ You can change Target and SDK in *./retroshare.pri:82* changing value of QMAKE_M
 
 You can find the compiled application at *./retroshare/retroshare-gui/src/retroshare.app*
 
+## Issues
+
+If you have issues with openssl (Undefined symbols for architecture x86_64) try to add to *~/.profile* file this or via Terminal
+
+       export PATH="/usr/local/opt/openssl/bin:$PATH"
+       export LDFLAGS="-L/usr/local/opt/openssl/lib"
+       export CPPFLAGS="-I/usr/local/opt/openssl/include"
+       export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
+
+For Qt Creator -> QtCreator Projects -> Build -> Build Settings -> Build Steps -> Add Additional arguments:
+
+       LDFLAGS="-L/usr/local/opt/openssl/lib"
+       CPPFLAGS="-I/usr/local/opt/openssl/include"
+
+
+
 ## Copy Plugins
 
     $ cp \
