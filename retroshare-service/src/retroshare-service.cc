@@ -180,7 +180,8 @@ int main(int argc, char* argv[])
        >> parameter( 'i', "ip-address", conf.forcedInetAddress, "IP", "Force IP address to use (if cannot be detected).", false )
        >> parameter( 'o', "opmode", conf.opModeStr, "opmode", "Set Operating mode (Full, NoTurtle, Gaming, Minimal).", false )
        >> parameter( 'p', "port", conf.forcedPort, "port", "Set listenning port to use.", false )
-       >> parameter( 't', "tor", conf.userSuppliedTorExecutable, "tor", "Set Tor executable full path.", false );
+       >> parameter( 't', "tor", conf.userSuppliedTorExecutable, "tor", "Set Tor executable full path.", false )
+       >> parameter(      "ssllevel", conf.sslLevel ,"level" ,"Minimum SSL level allowed, set to 0 to allow login with old profiles.",false);
 
 #ifdef RS_SERVICE_TERMINAL_LOGIN
 	as >> parameter( 'U', "user-id", prefUserString, "ID",

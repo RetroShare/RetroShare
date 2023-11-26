@@ -241,7 +241,8 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	        >> parameter('i',"ip-address"    ,conf.forcedInetAddress,"nnn.nnn.nnn.nnn", "Force IP address to use (if cannot be detected)."    ,false)
 	        >> parameter('p',"port"          ,conf.forcedPort     ,"port"      ,"Set listenning port to use."                                 ,false)
             >> parameter('o',"opmode"        ,conf.opModeStr      ,"opmode"    ,"Set Operating mode (Full, NoTurtle, Gaming, Minimal)."       ,false)
-            >> parameter('t',"opmode"        ,conf.userSuppliedTorExecutable,"tor"    ,"supply full tor eecutable path."       ,false);
+            >> parameter('t',"tor"        ,conf.userSuppliedTorExecutable,"tor"    ,"supply full tor eecutable path."       ,false)
+            >> parameter(    "ssllevel"      ,conf.sslLevel       ,"level"     ,"Minimum SSL level allowed, set to 0 to allow login with old profiles.",false);
 #ifdef RS_JSONAPI
 	as      >> parameter('J', "jsonApiPort", conf.jsonApiPort, "jsonApiPort", "Enable JSON API on the specified port", false )
 	        >> parameter('P', "jsonApiBindAddress", conf.jsonApiBindAddress, "jsonApiBindAddress", "JSON API Bind Address.", false);
