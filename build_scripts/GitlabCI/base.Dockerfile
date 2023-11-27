@@ -58,5 +58,5 @@ RUN \
 	mkdir RetroShare-build && cd RetroShare-build && \
 	cmake -B. -S../RetroShare/retroshare-service \
 		-DRS_FORUM_DEEP_INDEX=ON -DRS_JSON_API=ON -DRS_WEBUI=ON && \
-	make -j$(nproc) -j1 && make install && \
+	make -j$(nproc) && make install && \
 	cd .. && rm -rf RetroShare-build
