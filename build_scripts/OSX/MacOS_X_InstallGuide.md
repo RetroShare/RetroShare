@@ -119,7 +119,7 @@ In QtCreator Projects -> Build -> Build Settings -> Build Steps -> Add Additiona
 
 ## Set your Mac OS SDK version
 
-Edit RetroShare.pro  
+Edit RetroShare.pro and set your installed sdk version example for 11.1 -> rs_macos11.1
 
     CONFIG += c++14 rs_macos11.1
 
@@ -137,7 +137,7 @@ Edit retroshare.pri
 
 ## Link Include & Libraries
 
-Edit your retroshare.pri and add to macx-*  section
+When required edit your retroshare.pri macx-* section, check if the Include and Lib path are correct (macx-* section)
 
     INCLUDEPATH += "/usr/local/opt/openssl/include"
     QMAKE_LIBDIR += "/usr/local/opt/openssl/lib"
