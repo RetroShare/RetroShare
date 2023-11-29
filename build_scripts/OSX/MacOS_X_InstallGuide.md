@@ -34,6 +34,19 @@ In GitHub Desktop -> Clone Repository -> URL
 
 Install XCode following this guide: [XCode](http://guide.macports.org/#installing.xcode)
 
+To identify the correct version of Xcode to install, you need to know which OS you are running. Go to the [x] menu -> "About This Mac" and read the macOS version number.
+
+If you are running the macOS Catalina >= 10.15, you can install Xcode directly from App Store using the instructions below. 
+
+You can find older versions of Xcode at [Apple Developer Downloads](https://developer.apple.com/downloads/). Find the appropriate .xip file for your macOS version
+
+To install from App Store:
+
+Select [x] menu - > "App Store…".
+Search for Xcode. Download and install.
+
+Once Xcode has installed, you must drag the XCode icon into your Applications folder. After you have done this, open Xcode from the Applications folder by double-clicking on the icon and then follow the remaining instructions below. 
+
 Install XCode command line developer tools:
 
        $xcode-select --install
