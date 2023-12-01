@@ -32,7 +32,7 @@ MACVERSION=`sw_vers -productVersion`
 #RSVERSION=`git describe --abbrev=0 --tags`
 GITHEAD=`git rev-parse --short HEAD`
 
-mv $APP.dmg "$APP-$RSVERSION-$GITHEAD-$DATE-$MACVERSION-$QTVERSION.dmg"
+mv $APP.dmg "$APP-$RSVERSION-$GITHEAD-$DATE-MacOS-$MACVERSION-$QTVERSION.dmg"
 
 # You can use the appdmg command line app to create your dmg file if
 # you want to use a custom background and icon arrangement. I'm still
