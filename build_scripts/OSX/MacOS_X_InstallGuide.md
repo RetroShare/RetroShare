@@ -120,7 +120,7 @@ In QtCreator Projects -> Build -> Build Settings -> Build Steps -> Add Additiona
 ## Set your Mac OS SDK version
 
 
-Edit retroshare.pri and set your installed sdk version example for 11.1 -> rs_macos11.1 ( line 129:)
+Edit retroshare.pri and set your installed sdk version example for 11.1 -> rs_macos11.1 (line 135:)
 
     macx:CONFIG *= rs_macos11.1
     rs_macos10.8:CONFIG -= rs_macos11.1
