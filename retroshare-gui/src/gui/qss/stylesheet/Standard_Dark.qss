@@ -2436,7 +2436,7 @@ WireGroupItem QFrame#wire_frame QLabel{
 	background: transparent;
 }
 WireGroupItem QFrame#wire_frame:hover {
-	background-color: #2e8bab;
+	background-color: #346792;
 }
 
 PulseTopLevel QFrame#frame,
@@ -2446,13 +2446,6 @@ PulseReply QFrame#frame {
 	border-radius: 6px;
 }
 
-PulseAddDialog QTextEdit#textEdit_Pulse {
-	border: 2px solid #c4cfd6;
-	border-radius: 6px;
-	background: white;
-	color: black;
-}
-
 PulseReply #line_replyLine,
 PulseMessage #line{
 	color: #c4cfd6;
@@ -2460,6 +2453,16 @@ PulseMessage #line{
 
 PulseReply QLabel#label_groupName{
 	color: #5b7083;
+}
+
+PulseReplySeperator QFrame#frame {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #455364, stop: 0.5 #54687A,stop: 0.6 #44586A, stop:1 #455364);
+	border-radius: 10px;
+}
+
+QLabel#label_masthead{
+	border: 2px solid #CCCCCC;
+	border-radius: 4px;
 }
 
 /**** Color definitions ****/
@@ -2551,11 +2554,4 @@ OpModeStatus[opMode="Minimal"] {
 
 [WrongValue="true"] {
 	background-color: #702020;
-}
-
-/**** The Wire ****/
-
-QLabel#label_masthead{
-	border: 2px solid #CCCCCC;
-	border-radius: 4px;
 }
