@@ -131,15 +131,19 @@ void GxsCommentDialog::idChooserReady()
 
 void GxsCommentDialog::voterSelectionChanged( int index )
 {
+#ifdef DEBUG_COMMENT_DIALOG
 	std::cerr << "GxsCommentDialog::voterSelectionChanged(" << index << ")";
 	std::cerr << std::endl;
+#endif
 
 	RsGxsId voterId; 
 	switch (ui->idChooser->getChosenId(voterId)) {
 		case GxsIdChooser::KnowId:
 		case GxsIdChooser::UnKnowId:
-		std::cerr << "GxsCommentDialog::voterSelectionChanged() => " << voterId;
+#ifdef DEBUG_COMMENT_DIALOG
+        std::cerr << "GxsCommentDialog::voterSelectionChanged() => " << voterId;
 		std::cerr << std::endl;
+#endif
 		ui->treeWidget->setVoteId(voterId);
 
 		break;
@@ -160,8 +164,10 @@ void GxsCommentDialog::setCommentHeader(QWidget *header)
 		return;
 	}
 
-	std::cerr << "GxsCommentDialog::setCommentHeader() Adding header to ui,postFrame";
+#ifdef DEBUG_COMMENT_DIALOG
+    std::cerr << "GxsCommentDialog::setCommentHeader() Adding header to ui,postFrame";
 	std::cerr << std::endl;
+#endif
 
 	//header->setParent(ui->postFrame);
 	//ui->postFrame->setVisible(true);

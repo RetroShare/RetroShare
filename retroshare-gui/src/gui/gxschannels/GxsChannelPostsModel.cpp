@@ -38,7 +38,7 @@
 #include "GxsChannelPostFilesModel.h"
 
 //#define DEBUG_CHANNEL_MODEL_DATA
-#define DEBUG_CHANNEL_MODEL
+//#define DEBUG_CHANNEL_MODEL
 
 Q_DECLARE_METATYPE(RsMsgMetaData)
 Q_DECLARE_METATYPE(RsGxsChannelPost)
@@ -592,10 +592,12 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel messages for channel " << group_id << std::endl;
 			return;
 		}
+#ifdef DEBUG_CHANNEL_MODEL
         std::cerr << "Got channel all content for channel " << group_id << std::endl;
         std::cerr << "  posts   : " << posts->size() << std::endl;
         std::cerr << "  comments: " << comments.size() << std::endl;
         std::cerr << "  votes   : " << votes.size() << std::endl;
+#endif
 
         // 2 - update the model in the UI thread.
 

@@ -619,12 +619,13 @@ void PostedListWidgetWithModel::updateGroupData()
 
 void PostedListWidgetWithModel::postPostLoad()
 {
+#ifdef DEBUG_POSTED
 	std::cerr << "Post channel load..." << std::endl;
+#endif
 	whileBlocking(ui->filter_LE)->setText(QString()); //Clear it before navigate, as it will update it.
 
 	if (!mNavigatePendingMsgId.isNull())
 		navigate(mNavigatePendingMsgId);
-
 #ifdef TO_REMOVE
 	else if( (mLastSelectedPosts.count(groupId()) > 0)
 	         && !mLastSelectedPosts[groupId()].isNull())
@@ -639,8 +640,10 @@ void PostedListWidgetWithModel::postPostLoad()
 		ui->postsTree->setFocus();
 	}
 #endif
+#ifdef DEBUG_POSTED
 	else
 		std::cerr << "No pre-selected channel post." << std::endl;
+#endif
 
 	updateShowLabel();
 }

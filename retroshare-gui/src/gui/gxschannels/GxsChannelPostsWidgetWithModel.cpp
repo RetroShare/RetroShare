@@ -781,7 +781,9 @@ void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s,bool forc
         return;
 
     int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(0,font(),ui->postsTree->width()))));
+#ifdef DEBUG_CHANNEL_POSTS_WIDGET
     RsDbg() << "nb columns: " << n_columns << " current count=" << mChannelPostsModel->columnCount() ;
+#endif
 
     // save current post. The setNumColumns() indeed loses selection
 
@@ -825,7 +827,9 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
         {
             if(e->mChannelGroupId == groupId())
             {
+#ifdef DEBUG_CHANNEL_POSTS_WIDGET
                 RsDbg() << "Received new message in current channel, msgId=" << e->mChannelMsgId ;
+#endif
 
                 RsThread::async([this,E=*e]()	// dereferencing to make a copy that will survive while e is deleted by the parent thread.
                 {
@@ -1042,7 +1046,9 @@ void GxsChannelPostsWidgetWithModel::updateData(bool update_group_data, bool upd
 
 void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
 {
+#ifdef DEBUG_CHANNEL_POSTS_WIDGET
     std::cerr << "Post channel load..." << std::endl;
+#endif
 
     if (!mNavigatePendingMsgId.isNull())
         navigate(mNavigatePendingMsgId);
