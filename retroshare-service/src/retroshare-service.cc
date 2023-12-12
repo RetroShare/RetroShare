@@ -111,6 +111,33 @@ int main(int argc, char* argv[])
 	signal(SIGBREAK, signalHandler);
 #endif // ifdef SIGBREAK
 
+#ifdef WINDOWS_SYS
+	// Enable ANSI color support in Windows console
+	{
+#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
+#define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x4
+#endif
+
+		HANDLE hStdin = GetStdHandle(STD_OUTPUT_HANDLE);
+		if (hStdin) {
+			DWORD consoleMode;
+			if (GetConsoleMode(hStdin, &consoleMode)) {
+				if ((consoleMode & ENABLE_VIRTUAL_TERMINAL_PROCESSING) == 0) {
+					if (SetConsoleMode(hStdin, consoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING)) {
+						std::cout << "Enabled ANSI color support in console" << std::endl;
+					} else {
+						RsErr() << "Error getting console mode" << std::endl;
+					}
+				}
+			} else {
+				RsErr() << "Error getting console mode" << std::endl;
+			}
+		} else {
+			RsErr() << "Error getting stdin handle" << std::endl;
+		}
+	}
+#endif
+
 	RsInfo() << "\n" <<
 	    "+================================================================+\n"
 	    "|     o---o                                             o        |\n"
@@ -220,7 +247,7 @@ int main(int argc, char* argv[])
 		}
 	}
 #ifdef RS_SERVICE_TERMINAL_WEBUI_PASSWORD
-    if(!webui_pass1.empty())
+    if(askWebUiPassword && !webui_pass1.empty())
     {
         rsWebUi->setHtmlFilesDirectory(webui_base_directory);
         conf.webUIPasswd = webui_pass1;	// cannot be set using rsWebUI methods because it calls the still non-existent rsJsonApi
@@ -235,6 +262,11 @@ int main(int argc, char* argv[])
 	conf.main_executable_path = argv[0];
 
 	int initResult = RsInit::InitRetroShare(conf);
+
+#ifdef RS_JSONAPI
+    RsInit::startupWebServices(conf,true);
+    rstime::rs_usleep(1000000); // waits for jas->restart to print stuff
+#endif
 
 	if(initResult != RS_INIT_OK)
 	{
@@ -258,21 +290,22 @@ int main(int argc, char* argv[])
             }
 
             std::cout << std::endl << std::endl
-                      << colored(COLOR_GREEN,"Available accounts:") << std::endl;
+                      << colored(COLOR_GREEN,"Available accounts:") << std::endl<<std::endl;
 
             int accountCountDigits = static_cast<int>( ceil(log(locations.size())/log(10.0)) );
 
 			for( uint32_t i=0; i<locations.size(); ++i )
-                std::cout << colored(COLOR_GREEN,"[" + RsUtil::NumberToString(i+1,false,'0',accountCountDigits)+"]") << " "
+                std::cout << colored(COLOR_GREEN,"  [" + RsUtil::NumberToString(i+1,false,'0',accountCountDigits)+"]") << " "
                           << colored(COLOR_YELLOW,locations[i].mLocationId.toStdString())<< " "
                           << colored(COLOR_BLUE,"(" + locations[i].mPgpId.toStdString()+ "): ")
                           << colored(COLOR_PURPLE,locations[i].mPgpName + " (" + locations[i].mLocationName + ")" )
 				          << std::endl;
 
-			uint32_t nacc = 0;
+            std::cout << std::endl;
+            uint32_t nacc = 0;
 			while(keepRunning && (nacc < 1 || nacc >= locations.size()))
 			{
-                std::cout << colored(COLOR_GREEN,"Please enter account number:\n");
+                std::cout << colored(COLOR_GREEN,"Please enter account number: ");
 				std::cout.flush();
 
 				std::string inputStr;

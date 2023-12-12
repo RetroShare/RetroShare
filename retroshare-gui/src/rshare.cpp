@@ -139,17 +139,22 @@ static bool notifyRunningInstance()
     // that a new process had been started
     QLocalSocket localSocket;
     localSocket.connectToServer(QString(TARGET));
-
+#ifdef DEBUG
     std::cerr << "Rshare::Rshare waitForConnected to other instance." << std::endl;
+#endif
     if( localSocket.waitForConnected(100) )
     {
+#ifdef DEBUG
       std::cerr << "Rshare::Rshare Connection etablished. Waiting for disconnection." << std::endl;
+#endif
       localSocket.waitForDisconnected(1000);
       return true;
     }
     else
     {
+#ifdef DEBUG
         std::cerr << "Rshare::Rshare failed to connect to other instance." << std::endl;
+#endif
         return false;
     }
 }

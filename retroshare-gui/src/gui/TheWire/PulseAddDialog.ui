@@ -140,7 +140,7 @@
        <widget class="QWidget" name="widget_sentiment" native="true">
         <layout class="QHBoxLayout" name="widget_sentiment_HL">
          <property name="leftMargin">
-          <number>20</number>
+          <number>9</number>
          </property>
          <property name="topMargin">
           <number>0</number>

@@ -21,7 +21,7 @@ Thumbs.db
 !supportlibs/libsam3/Makefile
 
 # QtCreator cruft
-*CMakeLists.txt.user
+*CMakeLists.txt.user*
 
 # Build artifacts
 /jsonapi-generator/src/jsonapi-generator
