@@ -103,10 +103,9 @@ void PulseAddDialog::setGroup(const RsGxsGroupId &grpId)
         return;
     }
 
-    RsWireGroupSPtr pGroup;
+    RsThread::async([this,grpId](){
 
-    RsThread::async([this,grpId,&pGroup](){
-
+        RsWireGroupSPtr pGroup;
         if(!rsWire->getWireGroup(grpId,pGroup))
         {
             std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve wire group info for wire id:  " << grpId << std::endl;
@@ -260,11 +259,11 @@ void PulseAddDialog::setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId 
         return;
     }
 	/* fetch in the background */
-    RsWireGroupSPtr pGroup;
-    RsWirePulseSPtr pPulse;
 
-    RsThread::async([this,grpId,&pGroup,&pPulse,msgId,replyType](){
+    RsThread::async([this,grpId,msgId,replyType](){
 
+        RsWireGroupSPtr pGroup;
+        RsWirePulseSPtr pPulse;
         if(!rsWire->getWireGroup(grpId,pGroup))
         {
             std::cerr << __PRETTY_FUNCTION__ << "PulseAddDialog::setRplyTo() failed to fetch group id: "  << grpId << std::endl;
@@ -345,7 +344,7 @@ void PulseAddDialog::postOriginalPulse()
 	std::cerr << "PulseAddDialog::postOriginalPulse()";
 	std::cerr << std::endl;
 
-    RsWirePulseSPtr pPulse;
+    RsWirePulseSPtr pPulse(new RsWirePulse());
 
     pPulse->mSentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
     pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
@@ -407,7 +406,7 @@ void PulseAddDialog::postReplyPulse()
 	std::cerr << "PulseAddDialog::postReplyPulse()";
 	std::cerr << std::endl;
 
-    RsWirePulseSPtr pPulse;
+    RsWirePulseSPtr pPulse(new RsWirePulse());
 
     pPulse->mSentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
     pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();

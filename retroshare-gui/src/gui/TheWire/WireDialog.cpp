@@ -140,6 +140,7 @@ WireDialog::~WireDialog()
 	processSettings(false);
 	
 	clearTwitterView();
+    std::cerr << "WireDialog::~WireDialog()" << std::endl;
     delete(mWireQueue);
 
     rsEvents->unregisterEventsHandler(mEventHandlerId);
@@ -467,13 +468,13 @@ bool WireDialog::loadGroupData(const uint32_t &token)
 	std::cerr << "WireDialog::loadGroupData()";
 	std::cerr << std::endl;
 
-	std::vector<RsWireGroup> groups;
-	rsWire->getGroupData(token, groups);
+    std::vector<RsWireGroup> groups;
+    rsWire->getGroupData(token, groups);
 
-	// save list of groups.
-	updateGroups(groups);
-	showGroups();
-	return true;
+    // save list of groups.
+    updateGroups(groups);
+    showGroups();
+    return true;
 }
 
 rstime_t WireDialog::getFilterTimestamp()
@@ -681,6 +682,7 @@ void WireDialog::PVHrate(const RsGxsId &authorId)
 void WireDialog::postTestTwitterView()
 {
 	clearTwitterView();
+    std::cerr << "WireDialog::postTestTwitterView()" << std::endl;
 
 	addTwitterView(new PulseTopLevel(NULL,RsWirePulseSPtr())); 
 	addTwitterView(new PulseReply(NULL,RsWirePulseSPtr()));
@@ -837,6 +839,7 @@ void WireDialog::requestPulseFocus(const RsGxsGroupId groupId, const RsGxsMessag
 void WireDialog::showPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId msgId)
 {
 	clearTwitterView();
+    std::cerr << "WireDialog::showPulseFocus()" << std::endl;
 
 	// background thread for loading.
 	RsThread::async([this, groupId, msgId]()
@@ -866,6 +869,8 @@ void WireDialog::showPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId
 void WireDialog::postPulseFocus(RsWirePulseSPtr pPulse)
 {
 	clearTwitterView();
+    std::cerr << "WireDialog::postPulseFocus()" << std::endl;
+
 	if (!pPulse)
 	{
 		std::cerr << "WireDialog::postPulseFocus() Invalid pulse";
@@ -938,7 +943,7 @@ void WireDialog::requestGroupFocus(const RsGxsGroupId groupId)
 void WireDialog::showGroupFocus(const RsGxsGroupId groupId)
 {
 	clearTwitterView();
-
+    std::cerr << "WireDialog::showGroupFocus()" << std::endl;
 	// background thread for loading.
 	RsThread::async([this, groupId]()
 	{
@@ -1015,6 +1020,7 @@ void WireDialog::requestGroupsPulses(const std::list<RsGxsGroupId>& groupIds)
 void WireDialog::showGroupsPulses(const std::list<RsGxsGroupId>& groupIds)
 {
 	clearTwitterView();
+    std::cerr << "WireDialog::showGroupPulses()" << std::endl;
 
 	// background thread for loading.
 	RsThread::async([this, groupIds]()
