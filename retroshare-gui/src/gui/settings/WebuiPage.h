@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "retroshare/rsevents.h"
+
 #include "retroshare-gui/configpage.h"
 #include "gui/common/FilesDefs.h"
 #include "ui_WebuiPage.h"
@@ -42,11 +44,11 @@ public:
   ~WebuiPage();
 
   /** Loads the settings for this page */
-  virtual void load();
+  virtual void load() override { loadParams() ; }
 
-  virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/webinterface.svg") ; }
-  virtual QString pageName() const { return tr("Webinterface") ; }
-  virtual QString helpText() const;
+  virtual QPixmap iconPixmap() const override { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/webinterface.svg") ; }
+  virtual QString pageName() const override { return tr("Webinterface") ; }
+  virtual QString helpText() const override ;
 
   // call this after start of libretroshare/Retroshare
   // checks the settings and starts the webinterface if required
@@ -67,10 +69,9 @@ public slots:
   void onApplyClicked();
   void onStartWebBrowserClicked();
 
-signals:
-  void passwordChanged();
-
 private:
+  virtual void loadParams();
+
   /** Qt Designer generated object */
   Ui::WebuiPage ui;
 
@@ -83,4 +84,6 @@ private:
   static resource_api::ApiServerLocal* apiServerLocal;
  #endif
   static resource_api::RsControlModule* controlModule;
+
+  RsEventsHandlerId_t mEventsHandlerId;
 };

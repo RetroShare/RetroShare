@@ -155,8 +155,15 @@ void WireDialog::processSettings(bool load)
 
 		// state of splitter
 		ui.splitter->restoreState(Settings->value("SplitterWire").toByteArray());
+
+		// state of filter combobox
+		int index = Settings->value("ShowGroup", 0).toInt();
+		ui.comboBox_groupSet->setCurrentIndex(index);
 	} else {
 		// save settings
+
+		// state of filter combobox
+		Settings->setValue("ShowGroup", ui.comboBox_groupSet->currentIndex());
 
 		// state of splitter
 		Settings->setValue("SplitterWire", ui.splitter->saveState());
@@ -1070,4 +1077,3 @@ void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
 
 	}
 }
-

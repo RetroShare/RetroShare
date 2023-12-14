@@ -504,6 +504,30 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     }, mEventHandlerId, RsEventType::GXS_CHANNELS );
 }
 
+void GxsChannelPostsWidgetWithModel::keyPressEvent(QKeyEvent *e)
+{
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+
+    if(index.isValid() && mChannelPostsModel->getMode() == RsGxsChannelPostsModel::TREE_MODE_GRID)
+    {
+        int n = mChannelPostsModel->columnCount(index.row())-1;
+
+        if(e->key() == Qt::Key_Left && index.column()==0)
+        {
+            ui->postsTree->setCurrentIndex(index.sibling(index.row(),n));
+            e->accept();
+            return;
+        }
+        if(e->key() == Qt::Key_Right && index.column()==n)
+        {
+            ui->postsTree->setCurrentIndex(index.sibling(index.row(),0));
+            e->accept();
+            return;
+        }
+    }
+
+    GxsMessageFrameWidget::keyPressEvent(e);
+}
 void GxsChannelPostsWidgetWithModel::resizeEvent(QResizeEvent *e)
 {
     GxsMessageFrameWidget::resizeEvent(e);

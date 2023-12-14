@@ -105,6 +105,7 @@ public:
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
 	QModelIndex getIndexOfMessage(const RsGxsMessageId& mid) const;
+    int columnCount(int row) const; // columns in the row of this particular index.
 
 	std::vector<std::pair<time_t,RsGxsMessageId> > getPostVersions(const RsGxsMessageId& mid) const;
 

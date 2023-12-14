@@ -95,7 +95,7 @@ if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/CMakeLists.txt" )
 else()
 	FetchContent_Declare(
 		libretroshare
-		GIT_REPOSITORY "https://gitlab.com/RetroShare/libretroshare.git"
+		GIT_REPOSITORY "https://github.com/RetroShare/libretroshare.git"
 		GIT_TAG "origin/master"
 		GIT_SHALLOW TRUE
 		GIT_PROGRESS TRUE
@@ -116,15 +116,17 @@ if(RS_SERVICE_DESKTOP)
 
 		install(
 			FILES data/retroshare-service_48x48.png
-			DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps/retroshare-service.png )
+			DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps/
+			RENAME retroshare-service.png)
 
 		install(
 			FILES data/retroshare-service_128x128.png
-			DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/128x128/apps/retroshare-service.png )
+			DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/128x128/apps/
+			RENAME retroshare-service.png )
 
 		install(
 			FILES data/retroshare-service.desktop
-			DESTINATION ${CMAKE_INSTALL_PREFIX}/data/retroshare-service.desktop )
+			DESTINATION ${CMAKE_INSTALL_PREFIX}/data/ )
 	endif(UNIX AND NOT APPLE)
 endif(RS_SERVICE_DESKTOP)
 
@@ -149,7 +151,7 @@ if(RS_WEBUI)
 	else()
 		FetchContent_Declare(
 			webui
-			GIT_REPOSITORY "https://gitlab.com/RetroShare/RetroShareWebUI.git"
+			GIT_REPOSITORY "https://github.com/RetroShare/RSNewWebUI.git"
 			GIT_TAG "origin/master"
 			GIT_SHALLOW TRUE
 			GIT_PROGRESS TRUE

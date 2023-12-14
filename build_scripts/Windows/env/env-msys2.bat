@@ -22,11 +22,12 @@ if "%GCCArchitecture%"=="x64" (
 )
 
 set EnvMSYS2Path=%EnvRootPath%\msys2
+set EnvMSYS2BasePath=%EnvMSYS2Path%\msys64
 
 call "%~dp0tools\prepare-msys2.bat" %1
 if errorlevel 1 exit /B %ERRORLEVEL%
 
-set EnvMSYS2SH=%EnvMSYS2Path%\msys64\usr\bin\sh.exe
+set EnvMSYS2SH=%EnvMSYS2BasePath%\usr\bin\sh.exe
 if not exist "%EnvMSYS2SH%" if errorlevel 1 goto error_env
 
 set EnvMSYS2Cmd="%EnvMSYS2SH%" -lc

@@ -53,7 +53,7 @@ if not exist "%EnvToolsPath%\cecho.exe" (
 	if not exist "%EnvDownloadPath%\%cCEhoInstall%" echo Cannot download cecho installation& goto error
 
 	echo Unpack cecho
-	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%CEchoInstall%"
+	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%CEchoInstall%" -y -bso0
 	copy "%EnvTempPath%\cecho.exe" "%EnvToolsPath%"
 
 	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
@@ -69,7 +69,7 @@ if not exist "%EnvToolsPath%\depends.exe" (
 	if not exist "%EnvDownloadPath%\%DependsInstall%" %cecho% error "Cannot download Dependendy Walker installation" & goto error
 
 	%cecho% info "Unpack Dependency Walker"
-	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%DependsInstall%"
+	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%DependsInstall%" -y -bso0
 	copy "%EnvTempPath%\*" "%EnvToolsPath%"
 
 	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
@@ -85,7 +85,7 @@ if not exist "%EnvToolsPath%\cut.exe" (
 	if not exist "%EnvDownloadPath%\%UnixToolsInstall%" %cecho% error "Cannot download Unix Tools installation" & goto error
 
 	%cecho% info "Unpack Unix Tools"
-	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%UnixToolsInstall%"
+	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%UnixToolsInstall%" -y -bso0
 	copy "%EnvTempPath%\cut.exe" "%EnvToolsPath%"
 
 	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
@@ -101,7 +101,7 @@ if not exist "%EnvToolsPath%\sed.exe" (
 	if not exist "%EnvDownloadPath%\%UnixToolsInstall%" %cecho% error "Cannot download Unix Tools installation" & goto error
 
 	%cecho% info "Unpack Unix Tools"
-	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%UnixToolsInstall%"
+	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%UnixToolsInstall%" -y -bso0
 	copy "%EnvTempPath%\sed.exe" "%EnvToolsPath%"
 
 	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
@@ -121,7 +121,7 @@ if not exist "%NSISInstallPath%\nsis.exe" (
 	if not exist "%EnvDownloadPath%\%NSISInstall%" %cecho% error "Cannot download NSIS installation" & goto error
 
 	%cecho% info "Unpack NSIS"
-	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%NSISInstall%"
+	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%NSISInstall%" -y -bso0
 	if not exist "%NSISInstallPath%" mkdir "%NSISInstallPath%"
 	xcopy /s "%EnvTempPath%" "%NSISInstallPath%"
 
@@ -135,7 +135,7 @@ if not exist "%MinGitInstallPath%\cmd\git.exe" (
 	if not exist "%EnvDownloadPath%\%MinGitInstall%" %cecho% error "Cannot download MinGit installation" & goto error
 
 	%cecho% info "Unpack MinGit"
-	"%EnvSevenZipExe%" x -o"%MinGitInstallPath%" "%EnvDownloadPath%\%MinGitInstall%"
+	"%EnvSevenZipExe%" x -o"%MinGitInstallPath%" "%EnvDownloadPath%\%MinGitInstall%" -y -bso0
 )
 
 if not exist "%EnvDownloadPath%\%DoxygenInstall%" call "%ToolsPath%\remove-dir.bat" "%DoxygenInstallPath%"
@@ -148,7 +148,7 @@ if not exist "%DoxygenInstallPath%\doxygen.exe" (
 	if not exist "%EnvDownloadPath%\%DoxygenInstall%" %cecho% error "Cannot download doxygen installation" & goto error
 
 	%cecho% info "Unpack Doxygen"
-	"%EnvSevenZipExe%" x -o"%DoxygenInstallPath%" "%EnvDownloadPath%\%DoxygenInstall%"
+	"%EnvSevenZipExe%" x -o"%DoxygenInstallPath%" "%EnvDownloadPath%\%DoxygenInstall%" -y -bso0
 )
 
 if not exist "%EnvDownloadPath%\%CMakeInstall%" call "%ToolsPath%\remove-dir.bat" "%CMakeInstallPath%"
@@ -163,7 +163,7 @@ if not exist "%CMakeInstallPath%\bin\cmake.exe" (
 	if not exist "%EnvDownloadPath%\%CMakeInstall%" %cecho% error "Cannot download CMake installation" & goto error
 
 	%cecho% info "Unpack CMake"
-	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%CMakeInstall%"
+	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%CMakeInstall%" -y -bso0
 
 	move "%EnvTempPath%\%CMakeVersion%" "%CMakeInstallPath%"
 
@@ -176,7 +176,7 @@ mkdir "%EnvTempPath%"
 call "%ToolsPath%\download-file.bat" "%TorDownloadIndexUrl%" "%EnvTempPath%\index.html"
 if not exist "%EnvTempPath%\index.html" %cecho% error "Cannot download Tor installation" & goto error
 
-for /F "tokens=1,2 delims= " %%A in ('%EnvSedExe% -r -n -e"s/.*href=\"^(.*^)^(tor-.*windows-i686\.tar\.gz^)\".*/\2 \1\2/p" "%EnvTempPath%\index.html"') do set TorInstall=%%A& set TorDownloadUrl=%%B
+for /F "tokens=1,2 delims= " %%A in ('%EnvSedExe% -r -n -e"s/.*href=\"^(.*^)^(tor-.*windows-i686.*\.tar\.gz^)\".*/\2 \1\2/p" "%EnvTempPath%\index.html"') do set TorInstall=%%A& set TorDownloadUrl=%%B
 call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
 if "%TorInstall%"=="" %cecho% error "Cannot download Tor installation" & goto error
 if "%TorDownloadUrl%"=="" %cecho% error "Cannot download Tor installation" & goto error
@@ -189,7 +189,7 @@ if not exist "%EnvTorPath%\Tor\tor.exe" (
 	if not exist "%EnvDownloadPath%\%TorInstall%" %cecho% error "Cannot download Tor installation" & goto error
 
 	%cecho% info "Unpack Tor"
-	"%EnvSevenZipExe%" x -so "%EnvDownloadPath%\%TorInstall%" | "%EnvSevenZipExe%" x -si -ttar -o"%EnvTorPath%" 
+	"%EnvSevenZipExe%" x -so "%EnvDownloadPath%\%TorInstall%" | "%EnvSevenZipExe%" x -si -ttar -o"%EnvTorPath%" -y -bso0
 )
 
 :exit

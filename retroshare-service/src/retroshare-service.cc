@@ -33,6 +33,7 @@
 #include "retroshare/rsiface.h"
 
 #include "util/stacktrace.h"
+#include "util/rsprint.h"
 #include "util/argstream.h"
 #include "util/rskbdinput.h"
 #include "util/rsdir.h"
@@ -48,6 +49,28 @@
 
 static CrashStackTrace gCrashStackTrace;
 
+// We should move these functions to rsprint in libretroshare
+
+#define COLOR_GREEN  0
+#define COLOR_YELLOW 1
+#define COLOR_BLUE   2
+#define COLOR_PURPLE 3
+#define COLOR_RED    4
+
+std::string colored(int color,const std::string& s)
+{
+    switch(color)
+    {
+    case COLOR_GREEN : return "\033[0;32m"+s+"\033[0m";
+    case COLOR_YELLOW: return "\033[0;33m"+s+"\033[0m";
+    case COLOR_BLUE  : return "\033[0;36m"+s+"\033[0m";
+    case COLOR_PURPLE: return "\033[0;35m"+s+"\033[0m";
+    case COLOR_RED   : return "\033[0;31m"+s+"\033[0m";
+    default:
+        return s;
+    }
+}
+
 #ifdef RS_SERVICE_TERMINAL_LOGIN
 class RsServiceNotify: public NotifyClient
 {
@@ -59,9 +82,7 @@ public:
 	        const std::string& title, const std::string& question,
 	        bool /*prev_is_bad*/, std::string& password, bool& cancel )
 	{
-		std::string question1 = title +
-		        "\nPlease enter your PGP password for key:\n    " +
-		        question + " :";
+        std::string question1 = title + colored(COLOR_GREEN,"Please enter your PGP password for key:\n    ")  + question + " :";
 		password = RsUtil::rs_getpass(question1.c_str()) ;
 		cancel = false ;
 
@@ -89,6 +110,33 @@ int main(int argc, char* argv[])
 #ifdef SIGBREAK
 	signal(SIGBREAK, signalHandler);
 #endif // ifdef SIGBREAK
+
+#ifdef WINDOWS_SYS
+	// Enable ANSI color support in Windows console
+	{
+#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
+#define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x4
+#endif
+
+		HANDLE hStdin = GetStdHandle(STD_OUTPUT_HANDLE);
+		if (hStdin) {
+			DWORD consoleMode;
+			if (GetConsoleMode(hStdin, &consoleMode)) {
+				if ((consoleMode & ENABLE_VIRTUAL_TERMINAL_PROCESSING) == 0) {
+					if (SetConsoleMode(hStdin, consoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING)) {
+						std::cout << "Enabled ANSI color support in console" << std::endl;
+					} else {
+						RsErr() << "Error getting console mode" << std::endl;
+					}
+				}
+			} else {
+				RsErr() << "Error getting console mode" << std::endl;
+			}
+		} else {
+			RsErr() << "Error getting stdin handle" << std::endl;
+		}
+	}
+#endif
 
 	RsInfo() << "\n" <<
 	    "+================================================================+\n"
@@ -181,31 +229,45 @@ int main(int argc, char* argv[])
 
 		while(keepRunning)
 		{
-			webui_pass1 = RsUtil::rs_getpass(
-			            "Please register a password for the web interface: " );
-			webui_pass2 = RsUtil::rs_getpass(
-			            "Please enter the same password again            : " );
+            webui_pass1 = RsUtil::rs_getpass( colored(COLOR_GREEN,"Please register a password for the web interface: "));
+            webui_pass2 = RsUtil::rs_getpass( colored(COLOR_GREEN,"Please enter the same password again            : "));
 
 			if(webui_pass1 != webui_pass2)
 			{
-				std::cout << "Passwords do not match!" << std::endl;
+                std::cout << colored(COLOR_RED,"Passwords do not match!") << std::endl;
 				continue;
 			}
 			if(webui_pass1.empty())
 			{
-				std::cout << "Password cannot be empty!" << std::endl;
+                std::cout << colored(COLOR_RED,"Password cannot be empty!") << std::endl;
 				continue;
 			}
 
 			break;
 		}
 	}
+#ifdef RS_SERVICE_TERMINAL_WEBUI_PASSWORD
+    if(askWebUiPassword && !webui_pass1.empty())
+    {
+        rsWebUi->setHtmlFilesDirectory(webui_base_directory);
+        conf.webUIPasswd = webui_pass1;	// cannot be set using rsWebUI methods because it calls the still non-existent rsJsonApi
+        conf.enableWebUI = true;
+
+        // JsonApi is started below in InitRetroShare(). Not calling restart here avoids multiple restart.
+    }
+#endif
 #endif /* defined(RS_JSONAPI) && defined(RS_WEBUI)
 	&& defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD) */
 
 	conf.main_executable_path = argv[0];
 
 	int initResult = RsInit::InitRetroShare(conf);
+
+#ifdef RS_JSONAPI
+    RsInit::startupWebServices(conf,true);
+    rstime::rs_usleep(1000000); // waits for jas->restart to print stuff
+#endif
+
 	if(initResult != RS_INIT_OK)
 	{
 		RsFatal() << "Retroshare core initalization failed with: " << initResult
@@ -223,28 +285,27 @@ int main(int argc, char* argv[])
 
             if(locations.size() == 0)
             {
-                RsErr() << "No available accounts. You cannot use option -U list" << std::endl;
+                RsErr() << colored(COLOR_RED,"No available accounts. You cannot use option -U list") << std::endl;
                 return -RsInit::ERR_NO_AVAILABLE_ACCOUNT;
             }
 
             std::cout << std::endl << std::endl
-                      << "Available accounts:" << std::endl;
+                      << colored(COLOR_GREEN,"Available accounts:") << std::endl<<std::endl;
 
             int accountCountDigits = static_cast<int>( ceil(log(locations.size())/log(10.0)) );
 
 			for( uint32_t i=0; i<locations.size(); ++i )
-				std::cout << "[" << std::setw(accountCountDigits)
-				          << std::setfill('0') << i+1 << "] "
-				          << locations[i].mLocationId << " ("
-				          << locations[i].mPgpId << "): "
-				          << locations[i].mPgpName
-				          << " \t (" << locations[i].mLocationName << ")"
+                std::cout << colored(COLOR_GREEN,"  [" + RsUtil::NumberToString(i+1,false,'0',accountCountDigits)+"]") << " "
+                          << colored(COLOR_YELLOW,locations[i].mLocationId.toStdString())<< " "
+                          << colored(COLOR_BLUE,"(" + locations[i].mPgpId.toStdString()+ "): ")
+                          << colored(COLOR_PURPLE,locations[i].mPgpName + " (" + locations[i].mLocationName + ")" )
 				          << std::endl;
 
-			uint32_t nacc = 0;
+            std::cout << std::endl;
+            uint32_t nacc = 0;
 			while(keepRunning && (nacc < 1 || nacc >= locations.size()))
 			{
-				std::cout << "Please enter account number: ";
+                std::cout << colored(COLOR_GREEN,"Please enter account number: ");
 				std::cout.flush();
 
 				std::string inputStr;
@@ -264,7 +325,7 @@ int main(int argc, char* argv[])
 		RsPeerId ssl_id(prefUserString);
 		if(ssl_id.isNull())
 		{
-			RsErr() << "Invalid User location id: a hexadecimal ID is expected."
+            RsErr() << colored(COLOR_RED,"Invalid User location id: a hexadecimal ID is expected.")
 			        << std::endl;
 			return -EINVAL;
 		}
@@ -299,7 +360,7 @@ int main(int argc, char* argv[])
         if(RsAccounts::isTorAuto())
         {
 
-            std::cerr << "(II) Hidden service is ready:" << std::endl;
+            std::cerr << colored(COLOR_GREEN,"(II) Hidden service is ready:") << std::endl;
 
             std::string service_id ;
             std::string onion_address ;
@@ -312,13 +373,13 @@ int main(int argc, char* argv[])
             RsTor::getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
             RsTor::getProxyServerInfo(proxy_server_address,proxy_server_port) ;
 
-            std::cerr << "  onion address  : " << onion_address << std::endl;
-            std::cerr << "  service_id     : " << service_id << std::endl;
-            std::cerr << "  service port   : " << service_port << std::endl;
-            std::cerr << "  target port    : " << service_target_port << std::endl;
-            std::cerr << "  target address : " << service_target_address << std::endl;
+            std::cerr << colored(COLOR_GREEN,"  onion address  : ") << onion_address << std::endl;
+            std::cerr << colored(COLOR_GREEN,"  service_id     : ") << service_id << std::endl;
+            std::cerr << colored(COLOR_GREEN,"  service port   : ") << service_port << std::endl;
+            std::cerr << colored(COLOR_GREEN,"  target port    : ") << service_target_port << std::endl;
+            std::cerr << colored(COLOR_GREEN,"  target address : ") << service_target_address << std::endl;
 
-            std::cerr << "Setting proxy server to " << service_target_address << ":" << service_target_port << std::endl;
+            std::cerr << colored(COLOR_GREEN,"Setting proxy server to ") << service_target_address << ":" << service_target_port << std::endl;
 
             rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address, service_target_port);
             rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address, service_port);
@@ -326,15 +387,6 @@ int main(int argc, char* argv[])
         }
 	}
 #endif // def RS_SERVICE_TERMINAL_LOGIN
-
-#if (defined(RS_JSONAPI) && defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
-	if(rsJsonApi && !webui_pass1.empty())
-	{
-		rsWebUi->setHtmlFilesDirectory(webui_base_directory);
-		rsWebUi->setUserPassword(webui_pass1);
-		rsWebUi->restart();
-	}
-#endif
 
 	rsControl->setShutdownCallback([&](int){keepRunning = false;});
 

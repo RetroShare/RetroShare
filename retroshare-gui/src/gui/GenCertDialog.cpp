@@ -609,7 +609,9 @@ void GenCertDialog::genPerson()
 
 		QCoreApplication::processEvents();
 		QAbstractEventDispatcher* ed = QAbstractEventDispatcher::instance();
-		std::cout << "Waiting ed->processEvents()" << std::endl;
+#ifdef DEBUG_GENCERTDIALOG
+        std::cout << "Waiting ed->processEvents()" << std::endl;
+#endif
 		time_t waitEnd = time(NULL) + 10;//Wait no more than 10 sec to processEvents
 		if (ed->hasPendingEvents())
 			while(ed->processEvents(QEventLoop::AllEvents) && (time(NULL) < waitEnd));

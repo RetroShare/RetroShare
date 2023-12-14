@@ -61,6 +61,7 @@ public:
 
 signals:
 	void messageRemoved();
+    void messageRemovalRequested(std::string);
 
 private slots:
 	void reply();

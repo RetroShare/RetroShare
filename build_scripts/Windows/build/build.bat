@@ -56,7 +56,7 @@ if "%ParamWebui%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% rs_webui
 if "%ParamPlugins%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% retroshare_plugins
 if "%ParamUseNativeDialogs%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% rs_use_native_dialogs
 if "%ParamService%" NEQ "1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% no_retroshare_service
-if "%ParamFriendServer%" NEQ "1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% no_rs_friendserver
+if "%ParamFriendServer%" NEQ "1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% no_retroshare_friendserver
 if "%ParamEmbeddedFriendServer%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% rs_efs
 
 qmake "%SourcePath%\RetroShare.pro" -r -spec win32-g++ "CONFIG+=%RS_QMAKE_CONFIG%" "EXTERNAL_LIB_DIR=%BuildLibsPath%\libs"
