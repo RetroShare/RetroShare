@@ -216,7 +216,7 @@ void PulseAddDialog::setReplyTo(const RsWirePulse &pulse, RsWirePulseSPtr pPulse
 	mReplyToPulse = pulse;
 	mReplyType = replyType;
 	ui.frame_reply->setVisible(true);
-	ui.pushButton_picture->show();
+	ui.pushButton_picture->hide();
 	ui.topheadshot->hide();
 
 	{
@@ -245,10 +245,12 @@ void PulseAddDialog::setReplyTo(const RsWirePulse &pulse, RsWirePulseSPtr pPulse
 		if (mReplyType & WIRE_PULSE_TYPE_REPUBLISH) {
 			ui.postButton->setText(tr("Republish Pulse"));
 			ui.pushButton_picture->hide();
+			ui.pushButton_Browse->hide();
 		}
 		else if (mReplyType & WIRE_PULSE_TYPE_LIKE) {
 			ui.postButton->setText(tr("Like Pulse"));
 			ui.pushButton_picture->hide();
+			ui.pushButton_Browse->hide();
 		}
 	}
 

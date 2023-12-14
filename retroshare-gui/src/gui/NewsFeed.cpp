@@ -299,7 +299,7 @@ void NewsFeed::handleChannelEvent(std::shared_ptr<const RsEvent> event)
 		addFeedItem(new GxsChannelPostItem(this, NEWSFEED_CHANNELNEWLIST, pe->mChannelGroupId, pe->mChannelMsgId, false, true));
 		break;
 	case RsChannelEventCode::NEW_COMMENT:
-		addFeedItem(new ChannelsCommentsItem(this, NEWSFEED_CHANNELNEWLIST, pe->mChannelGroupId, pe->mChannelMsgId, false, true));
+        addFeedItem(new ChannelsCommentsItem(this, NEWSFEED_CHANNELNEWLIST, pe->mChannelGroupId, pe->mChannelMsgId,pe->mChannelThreadId, false, true));
 		break;
 	case RsChannelEventCode::RECEIVED_PUBLISH_KEY:
 		addFeedItem(new GxsChannelGroupItem(this, NEWSFEED_CHANNELPUBKEYLIST, pe->mChannelGroupId, false, true));

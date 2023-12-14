@@ -318,7 +318,7 @@ SectionEnd
 !ifdef TOR_EXISTS
   Section /o $(Section_Tor) Section_Tor
     SetOutPath "$INSTDIR\tor"
-    File /r "${TORDIR}\*"
+    File "${TORDIR}\*"
   SectionEnd
 !endif
 

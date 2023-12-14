@@ -47,7 +47,13 @@ GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const 
 {
     mMessage.mMeta.mMsgId = messageId;	// useful for uniqueIdentifier() before the post is actually loaded
     mMessage.mMeta.mGroupId = groupId;
-	setup();
+
+    mLoadingGroup = false;
+    mLoadingMessage = false;
+    mLoadingSetAsRead = false;
+    mLoadingParentMessage = false;
+
+    setup();
 
 	requestGroup();
 	requestMessage();

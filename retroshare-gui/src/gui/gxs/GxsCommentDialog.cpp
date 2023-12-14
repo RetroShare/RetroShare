@@ -29,6 +29,8 @@
 #include <QMessageBox>
 #include <QDateTime>
 
+//#define DEBUG_COMMENT_DIALOG 1
+
 /** Constructor */
 GxsCommentDialog::GxsCommentDialog(QWidget *parent, const RsGxsId &default_author, RsGxsCommentService *comment_service)
 	: QWidget(parent), ui(new Ui::GxsCommentDialog)
@@ -95,8 +97,11 @@ void GxsCommentDialog::commentClear()
 }
 void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId>& msg_versions,const RsGxsMessageId& most_recent_msgId,bool use_cache)
 {
-	std::cerr << "GxsCommentDialog::commentLoad(" << grpId << ", most recent msg version: " << most_recent_msgId << ")";
-	std::cerr << std::endl;
+#ifdef DEBUG_COMMENT_DIALOG
+    std::cerr << "GxsCommentDialog::commentLoad(" << grpId << ", most recent msg version: " << most_recent_msgId << ")" << std::endl;
+    for(const auto& mid:msg_versions)
+        std::cerr << "  msg version: " << mid << std::endl;
+#endif
 
 	mGrpId = grpId;
 	mMostRecentMsgId = most_recent_msgId;

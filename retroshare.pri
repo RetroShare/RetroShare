@@ -52,9 +52,9 @@ CONFIG *= retroshare_service
 no_retroshare_service:CONFIG -= retroshare_service
 
 # To disable RetroShare FriendServer append the following assignation to
-# qmake command line "CONFIG+=no_rs_friendserver"
+# qmake command line "CONFIG+=no_retroshare_friendserver"
 CONFIG *= retroshare_friendserver
-no_rs_friendserver:CONFIG -= retroshare_friendserver
+no_retroshare_friendserver:CONFIG -= retroshare_friendserver
 
 # To disable SQLCipher support append the following assignation to qmake
 # command line "CONFIG+=no_sqlcipher"
@@ -456,13 +456,26 @@ defined in command line")
         RS_MINOR_VERSION = $$member(RS_GIT_DESCRIBE_SPLIT, 1)
 
         RS_GIT_DESCRIBE_SPLIT = $$member(RS_GIT_DESCRIBE_SPLIT, 2)
-        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE_SPLIT, -)
+        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE_SPLIT, )
 
-        RS_MINI_VERSION = $$member(RS_GIT_DESCRIBE_SPLIT, 0)
-
-        RS_GIT_DESCRIBE_SPLIT = $$member(RS_GIT_DESCRIBE_SPLIT, 1, -1)
-
-        RS_EXTRA_VERSION = $$join(RS_GIT_DESCRIBE_SPLIT,-,-)
+        # Split string into mini version (leading numbers) and extra version (string after the numbers)
+        RS_MINI_VERSION =
+        RS_EXTRA_VERSION =
+        for(CHAR, RS_GIT_DESCRIBE_SPLIT) {
+            isEqual(CHAR, 0) | greaterThan(CHAR, 0):lessThan(CHAR, 9) | isEqual(CHAR, 9) {
+                # Number
+                isEmpty(RS_EXTRA_VERSION) {
+                    # Add leading numbers to mini version
+                    RS_MINI_VERSION = $${RS_MINI_VERSION}$${CHAR}
+                } else {
+                    # Add to extra version
+                    RS_EXTRA_VERSION = $${RS_EXTRA_VERSION}$${CHAR}
+                }
+            } else {
+                # Add to extra version
+                RS_EXTRA_VERSION = $${RS_EXTRA_VERSION}$${CHAR}
+            }
+        }
 
         message("RetroShare version\
 $${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\

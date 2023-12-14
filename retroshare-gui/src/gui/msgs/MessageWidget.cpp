@@ -738,7 +738,8 @@ void MessageWidget::remove()
 		return;
 	}
 
-	bool deleteReal = false;
+#ifdef TO_REMOVE
+    bool deleteReal = false;
 	if (msgInfo.msgflags & RS_MSG_TRASH) {
 		deleteReal = true;
 	} else {
@@ -763,8 +764,8 @@ void MessageWidget::remove()
 			deleteLater();
 		}
 	}
-
-	emit messageRemoved();
+#endif
+    emit messageRemovalRequested(currMsgId);
 }
 
 void MessageWidget::print()
