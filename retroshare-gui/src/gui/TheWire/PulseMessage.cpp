@@ -145,6 +145,10 @@ void PulseMessage::setRefImageCount(uint32_t count)
 
 	if (count < 1) {
 		frame_expand->setVisible(false);
+		label_image1->setVisible(false);
+		label_image2->setVisible(false);
+		label_image3->setVisible(false);
+		label_image4->setVisible(false);
 	}
 }
 
