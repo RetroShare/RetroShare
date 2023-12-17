@@ -28,6 +28,7 @@
 #include <QString>
 #include <QUrl>
 #include <QtDebug>
+#include <QMenuBar>
 
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsconfig.h>
@@ -65,6 +66,7 @@
 #ifdef UNFINISHED
 #include "unfinished/ApplicationWindow.h"
 #endif
+
 
 #define GETSTARTED_GUI  1
 #ifdef GETSTARTED_GUI
@@ -651,8 +653,40 @@ void MainWindow::createTrayIcon()
     trayIcon->setContextMenu(trayMenu);
     trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
 
+#if defined(Q_OS_DARWIN)
+    createMenuBar();
+#endif
+
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
     trayIcon->show();
+}
+
+/** Creates a new menubar for macOS */
+void MainWindow::createMenuBar()
+{
+#if defined(Q_OS_DARWIN)
+    /* Mac users sure like their shortcuts. */
+    actionMinimize = new QAction(tr("Minimize"),this);
+    actionMinimize->setShortcutContext(Qt::ApplicationShortcut);
+    actionMinimize->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_M));
+    actionMinimize->setShortcutVisibleInContextMenu(true);
+    connect(actionMinimize,SIGNAL(triggered()),this,SLOT(showMinimized())) ;
+
+    menuBar = new QMenuBar(this);
+    QMenu *dockMenu = menuBar->addMenu("File");
+    dockMenu->setAsDockMenu();
+    dockMenu->addAction(tr("Open Messages"), this, SLOT(showMess()));
+    dockMenu->addAction(tr("Bandwidth Graph"), this, SLOT(showBandwidthGraph()));
+    dockMenu->addAction(tr("Statistics"), this, SLOT(showStatisticsWindow()));
+    dockMenu->addAction(tr("Settings"), this, SLOT(showSettings()));
+    dockMenu->addAction(tr("Help"), this, SLOT(showHelpDialog()));
+    //dockMenu->addAction(actionMinimize);
+
+    dockMenu->addSeparator();
+    QMenu *statusMenu = dockMenu->addMenu(tr("Status"));
+    initializeStatusObject(statusMenu, true);
+
+#endif
 }
 
 void MainWindow::showBandwidthGraph()

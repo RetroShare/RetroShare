@@ -308,6 +308,8 @@ private:
     void initStackedPage();
     void addPage(MainPage *page, QActionGroup *grp, 	QList<QPair<MainPage *, QPair<QAction *, QListWidgetItem *> > > *notify);
     void createTrayIcon();
+    /** Creates a default menubar on Mac */
+    void createMenuBar();
     void createNotifyIcons();
     static MainWindow *_instance;
 
@@ -323,6 +325,10 @@ private:
     QMap<QString, FunctionType> _functionList;
 
     QString nameAndLocation;
+
+    /** The menubar (Mac OS X only). */
+    QMenuBar *menuBar;
+    QAction* actionMinimize;
 
     QSystemTrayIcon *trayIcon;
     QMenu *notifyMenu;
