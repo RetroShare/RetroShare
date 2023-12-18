@@ -499,8 +499,9 @@ void RsGxsChannelPostFilesModel::update_files(std::set<ChannelPostFileInfo>& add
         else
             ++afit;
     }
-
+#ifdef DEBUG_CHANNEL_FILES_MODEL
     RsDbg() << "  Remains: " << added_files.size() << " added files and " << removed_files.size() << " removed files" ;
+#endif
 
     // 2 - add whatever file remains,
 

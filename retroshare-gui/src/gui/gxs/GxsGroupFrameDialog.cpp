@@ -466,7 +466,9 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 			uint32_t current_store_time = checkDelay(mInterface->getStoragePeriod(mGroupId))/86400 ;
 			uint32_t current_sync_time  = checkDelay(mInterface->getSyncPeriod(mGroupId))/86400 ;
 
+#ifdef DEBUG_GROUPFRAMEDIALOG
 			std::cerr << "Got sync=" << current_sync_time << ". store=" << current_store_time << std::endl;
+#endif
 			QAction *actnn = NULL;
 
 			QMenu *ctxMenu2 = contextMnu.addMenu(tr("Synchronise posts of last...")) ;
