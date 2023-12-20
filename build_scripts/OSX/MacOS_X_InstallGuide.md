@@ -153,6 +153,9 @@ alternative via Terminal
     CONFIG+=release \
     ..
 
+For FeedReader Plugin:
+
+    INCLUDEPATH += "/usr/local/opt/libxml2/include/libxml2"
 
 With plugins:
 
