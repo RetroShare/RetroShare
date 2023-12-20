@@ -101,7 +101,7 @@ For VOIP Plugin:
 For FeedReader Plugin:
 
        $ brew install libxslt
-
+       $ brew install libxml2
 
 ## Last Settings
 
