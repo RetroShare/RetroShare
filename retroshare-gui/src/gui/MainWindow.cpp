@@ -28,6 +28,7 @@
 #include <QString>
 #include <QUrl>
 #include <QtDebug>
+#include <QMenuBar>
 
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsconfig.h>
@@ -377,6 +378,10 @@ MainWindow::~MainWindow()
     delete sysTrayStatus;
     delete trayIcon;
     delete trayMenu;
+#if defined(Q_OS_DARWIN)
+    delete menuBar;
+    delete dockMenu;
+#endif
 //  delete notifyMenu; // already deleted by the deletion of trayMenu
     StatisticsWindow::releaseInstance();
 
@@ -651,9 +656,47 @@ void MainWindow::createTrayIcon()
     trayIcon->setContextMenu(trayMenu);
     trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
 
+#if defined(Q_OS_DARWIN)
+    createMenuBar();
+#endif
+
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
     trayIcon->show();
 }
+
+#if defined(Q_OS_DARWIN)
+/** Creates a new menubar for macOS */
+void MainWindow::createMenuBar()
+{
+    /* Mac users sure like their shortcuts. */
+    actionMinimize = new QAction(tr("Minimize"),this);
+    actionMinimize->setShortcutContext(Qt::ApplicationShortcut);
+    actionMinimize->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_M));
+    actionMinimize->setShortcutVisibleInContextMenu(true);
+    connect(actionMinimize,SIGNAL(triggered()),this,SLOT(showMinimized())) ;
+
+    menuBar = new QMenuBar(this);
+    QMenu *fileMenu = menuBar->addMenu("");
+    fileMenu->addAction(actionMinimize);
+
+    dockMenu = new QMenu(this);
+    dockMenu->setAsDockMenu();
+    dockMenu->addAction(tr("Open Messages"), this, SLOT(Mess()));
+    dockMenu->addAction(tr("Bandwidth Graph"), this, SLOT(showBandwidthGraph()));
+    dockMenu->addAction(tr("Statistics"), this, SLOT(showStatisticsWindow()));
+    dockMenu->addAction(tr("Options"), this, SLOT(showSettings()));
+    dockMenu->addAction(tr("Help"), this, SLOT(showHelpDialog()));
+
+    dockMenu->addSeparator();
+    QObject::connect(dockMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
+    toggleVisibilityAction = dockMenu->addAction(tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
+
+    dockMenu->addSeparator();
+    QMenu *statusMenu = dockMenu->addMenu(tr("Status"));
+    initializeStatusObject(statusMenu, true);
+
+}
+#endif
 
 void MainWindow::showBandwidthGraph()
 {
@@ -1220,7 +1263,11 @@ void MainWindow::updateMenu()
 
 void MainWindow::toggleVisibility(QSystemTrayIcon::ActivationReason e)
 {
+#if defined(Q_OS_DARWIN)
+    if (e == QSystemTrayIcon::DoubleClick) {
+#else
     if (e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick) {
+#endif
         if (isHidden() || isMinimized()) {
             show();
             if (isMinimized()) {
