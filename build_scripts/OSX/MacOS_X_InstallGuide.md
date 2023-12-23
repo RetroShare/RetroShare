@@ -86,6 +86,10 @@ Install HomeBrew following this guide: [HomeBrew](http://brew.sh/)
        $ brew install libmicrohttpd
        $ brew install rapidjson
        $ brew install sqlcipher
+
+#### Install CMake 
+
+       $ brew install cmake
        
 If you have error in linking, run this:
 
