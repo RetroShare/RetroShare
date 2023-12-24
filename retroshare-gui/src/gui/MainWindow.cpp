@@ -681,7 +681,7 @@ void MainWindow::createMenuBar()
 
     dockMenu = new QMenu(this);
     dockMenu->setAsDockMenu();
-    dockMenu->addAction(tr("Open Messages"), this, SLOT(Mess()));
+    dockMenu->addAction(tr("Open Messages"), this, SLOT(showMess()));
     dockMenu->addAction(tr("Bandwidth Graph"), this, SLOT(showBandwidthGraph()));
     dockMenu->addAction(tr("Statistics"), this, SLOT(showStatisticsWindow()));
     dockMenu->addAction(tr("Options"), this, SLOT(showSettings()));
