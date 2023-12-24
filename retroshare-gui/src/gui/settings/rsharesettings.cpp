@@ -109,7 +109,7 @@ void RshareSettings::initSettings()
 	setDefault(SETTING_STYLE, "GTK+");
 #else
 #if defined(Q_OS_MAC)
-	setDefault(SETTING_STYLE, "macintosh (aqua)");
+	setDefault(SETTING_STYLE, "Fusion");
 #else
 	static QStringList styles = QStyleFactory::keys();
 #if defined(Q_OS_WIN)
