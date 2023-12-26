@@ -21,6 +21,8 @@
 #include "GxsCommentTreeWidget.h"
 
 #include "gui/common/FilesDefs.h"
+#include "gui/Identity/IdDialog.h"
+#include "gui/MainWindow.h"
 #include "gui/common/RSElidedItemDelegate.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/gxs/GxsCreateCommentDialog.h"
@@ -346,6 +348,10 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& point)
 	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_VOTEDOWN), tr("Vote Down"), this, SLOT(voteDown()));
 	action->setDisabled(!item || mCurrentCommentMsgId.isNull() || mVoterId.isNull());
 
+	contextMnu.addSeparator();
+
+	action = contextMnu.addAction(tr("Show Author"), this, SLOT(showAuthor()));
+	action->setDisabled(!item || mCurrentCommentMsgId.isNull() || mVoterId.isNull());
 
 	if (!mCurrentCommentMsgId.isNull())
 	{
@@ -462,6 +468,19 @@ void GxsCommentTreeWidget::replyToComment()
 
 	pcc.loadComment(mCurrentCommentText, mCurrentCommentAuthor, mCurrentCommentAuthorId);
 	pcc.exec();
+}
+
+
+void GxsCommentTreeWidget::showAuthor()
+{
+	/* window will destroy itself! */
+	IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
+
+	if (!idDialog)
+		return ;
+
+	MainWindow::showWindow(MainWindow::People);
+	idDialog->navigate(RsGxsId(mCurrentCommentAuthorId));
 }
 
 void GxsCommentTreeWidget::copyComment()
