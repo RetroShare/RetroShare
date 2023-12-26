@@ -66,7 +66,6 @@ Install MacPort following this guide: [MacPort](http://guide.macports.org/#insta
        $ sudo port -v selfupdate
        $ sudo port install openssl
        $ sudo port install miniupnpc
-       $ sudo port install libmicrohttpd
        
 For VOIP Plugin: 
 
@@ -83,7 +82,6 @@ Install HomeBrew following this guide: [HomeBrew](http://brew.sh/)
 
        $ brew install openssl
        $ brew install miniupnpc
-       $ brew install libmicrohttpd
        $ brew install rapidjson
        $ brew install sqlcipher
 
