@@ -1339,6 +1339,10 @@ bool NewFriendList::exportFriendlist(QString &fileName)
         return false;
     }
 
+    // get peers with waiting incoming chats
+    std::vector<RsPeerId> privateChatIds;
+    ChatUserNotify::getPeersWithWaitingChat(privateChatIds);
+	
     std::list<RsPgpId> gpg_ids;
     rsPeers->getGPGAcceptedList(gpg_ids);
 
