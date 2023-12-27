@@ -212,3 +212,13 @@ For Qt Creator -> QtCreator Projects -> Build -> Build Settings -> Build Steps -
     ./plugins/VOIP/lib/libVOIP.dylib \
     ./plugins/RetroChess/lib/libRetroChess.dylib \
     ./retroshare-gui/src/RetroShare.app/Contents/Resources/
+
+### Compile Retroshare-Service & Webui with CMake
+before you can compile overwrite the file "asio/include/asio/detail/config.hpp" here is a fix for macos [
+asio fix](https://github.com/chriskohlhoff/asio/commit/68df16d560c68944809bb2947360fe8035e9ae0a)   
+
+       $ cd retroshare-service
+       $ mkdir build-dir
+       $ cd build-dir
+       $ cmake -DRS_WEBUI=ON -DCMAKE_BUILD_TYPE=Release ..
+       $ make
