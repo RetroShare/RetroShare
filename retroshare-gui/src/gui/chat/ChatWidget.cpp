@@ -982,11 +982,12 @@ void ChatWidget::on_notifyButton_clicked()
 	if(!notify) return;
 	if (chatType() != CHATTYPE_LOBBY) return;
 
-	QMenu* menu = new QMenu(MainWindow::getInstance());
+	QMenu* menu = notify->createMenu();
 	QIcon icoLobby=(ui->notifyButton->icon());
 
 	notify->makeSubMenu(menu, icoLobby, title, chatId.toLobbyId());
 	menu->exec(ui->notifyButton->mapToGlobal(QPoint(0,ui->notifyButton->geometry().height())));
+	delete(menu);
 
 }
 
