@@ -267,6 +267,7 @@ private slots:
 
 #if defined(Q_OS_DARWIN)
     void minimizeWindow();
+    void closeWindow();
 #endif
 
     /** Toolbar fns. */
@@ -337,6 +338,7 @@ private:
     QMenuBar *menuBar;
     QMenu *dockMenu;
     QAction* actionMinimize;
+    QAction* actionCloseWindow;
 #endif
 
     QSystemTrayIcon *trayIcon;

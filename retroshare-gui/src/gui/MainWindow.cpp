@@ -673,11 +673,18 @@ void MainWindow::createMenuBar()
     actionMinimize->setShortcutContext(Qt::ApplicationShortcut);
     actionMinimize->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_M));
     actionMinimize->setShortcutVisibleInContextMenu(true);
-    connect(actionMinimize,SIGNAL(triggered()),this,SLOT(minimizeWindow())) ;
+    connect(actionMinimize,SIGNAL(triggered()),this,SLOT(minimizeWindow())) ; 
+
+    actionCloseWindow = new QAction(tr("Close window"),this);
+    actionCloseWindow->setShortcutContext(Qt::ApplicationShortcut);
+    actionCloseWindow->setShortcut(QKeySequence::Close);
+    actionCloseWindow->setShortcutVisibleInContextMenu(true);
+    connect(actionCloseWindow,SIGNAL(triggered()),this,SLOT(closeWindow())) ;
 
     menuBar = new QMenuBar(this);
     QMenu *fileMenu = menuBar->addMenu("");
     fileMenu->addAction(actionMinimize);
+    fileMenu->addAction(actionCloseWindow);
 
     dockMenu = new QMenu(this);
     dockMenu->setAsDockMenu();
@@ -702,6 +709,14 @@ void MainWindow::createMenuBar()
 void MainWindow::minimizeWindow()
 {
     setWindowState(windowState() | Qt::WindowMinimized);
+}
+#endif
+
+#if defined(Q_OS_DARWIN)
+void MainWindow::closeWindow()
+{
+    // On macOS window close is basically equivalent to window hide.
+    close();
 }
 #endif
 
