@@ -673,7 +673,7 @@ void MainWindow::createMenuBar()
     actionMinimize->setShortcutContext(Qt::ApplicationShortcut);
     actionMinimize->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_M));
     actionMinimize->setShortcutVisibleInContextMenu(true);
-    connect(actionMinimize,SIGNAL(triggered()),this,SLOT(showMinimized())) ;
+    connect(actionMinimize,SIGNAL(triggered()),this,SLOT(minimizeWindow())) ;
 
     menuBar = new QMenuBar(this);
     QMenu *fileMenu = menuBar->addMenu("");
@@ -695,6 +695,13 @@ void MainWindow::createMenuBar()
     QMenu *statusMenu = dockMenu->addMenu(tr("Status"));
     initializeStatusObject(statusMenu, true);
 
+}
+#endif
+
+#if defined(Q_OS_DARWIN)
+void MainWindow::minimizeWindow()
+{
+    setWindowState(windowState() | Qt::WindowMinimized);
 }
 #endif
 

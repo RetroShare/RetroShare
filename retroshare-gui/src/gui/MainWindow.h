@@ -265,6 +265,10 @@ private slots:
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
 
+#if defined(Q_OS_DARWIN)
+    void minimizeWindow();
+#endif
+
     /** Toolbar fns. */
     void addFriend();
     //void newRsCollection();
