@@ -72,6 +72,7 @@ public slots:
 
     void makeComment();
     void replyToComment();
+    void showAuthor();
 
     void copyComment();
 
