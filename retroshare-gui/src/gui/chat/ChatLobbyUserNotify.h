@@ -49,6 +49,7 @@ public:
 	ChatLobbyUserNotify(QObject *parent = 0);
 
 	virtual bool hasSetting(QString *name, QString *group);
+	QMenu* createMenu();
 	void makeSubMenu(QMenu* parentMenu, QIcon icoLobby, QString strLobbyName, ChatLobbyId id);
 	void chatLobbyNewMessage(ChatLobbyId lobby_id, QDateTime time, QString senderName, QString msg);
 	void chatLobbyCleared(ChatLobbyId lobby_id, QString anchor, bool onlyUnread=false);
