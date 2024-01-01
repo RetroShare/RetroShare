@@ -146,6 +146,46 @@ QString ChatLobbyUserNotify::getNotifyMessage(bool plural)
 
 void ChatLobbyUserNotify::iconClicked()
 {
+    #if defined(Q_OS_DARWIN)
+    std::list<ChatLobbyId> lobbies;
+    rsMsgs->getChatLobbyList(lobbies);
+    bool doUpdate=false;
+
+    for (lobby_map::iterator itCL=_listMsg.begin(); itCL!=_listMsg.end();)
+    {
+        bool bFound=false;
+        QString strLobbyName=tr("Unknown Lobby");
+        QIcon icoLobby=QIcon();
+        std::list<ChatLobbyId>::const_iterator lobbyIt;
+        for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
+            ChatLobbyId clId = *lobbyIt;
+            if (clId==itCL->first) {
+                ChatLobbyInfo clInfo;
+                if (rsMsgs->getChatLobbyInfo(clId,clInfo))
+                    strLobbyName=QString::fromUtf8(clInfo.lobby_name.c_str()) ;
+                bFound=true;
+                break;
+            }
+        }
+
+        if (bFound)
+        {
+            MainWindow::showWindow(MainWindow::ChatLobby);
+            ChatLobbyWidget *chatLobbyWidget = dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby));
+            if (chatLobbyWidget) chatLobbyWidget->showLobbyAnchor(itCL->first,strLobbyName);
+            ++itCL ;
+        }
+        else
+        {
+            lobby_map::iterator ittmp(itCL);
+            ++ittmp ;
+            _listMsg.erase(itCL);
+            itCL=ittmp ;
+            doUpdate=true;
+        }
+    }
+    #else
+
 	/// Tray icon Menu ///
 	QMenu* trayMenu = new QMenu(MainWindow::getInstance());
 	std::list<ChatLobbyId> lobbies;
@@ -207,6 +247,7 @@ void ChatLobbyUserNotify::iconClicked()
 	trayMenu->exec(QCursor::pos());
 	if (doUpdate) updateIcon();
 
+	#endif
 }
 
 void ChatLobbyUserNotify::makeSubMenu(QMenu* parentMenu, QIcon icoLobby, QString strLobbyName, ChatLobbyId id)
@@ -250,7 +291,6 @@ void ChatLobbyUserNotify::iconHovered()
 {
 	iconClicked();
 }
-
 
 void ChatLobbyUserNotify::chatLobbyNewMessage(ChatLobbyId lobby_id, QDateTime time, QString senderName, QString msg)
 {
