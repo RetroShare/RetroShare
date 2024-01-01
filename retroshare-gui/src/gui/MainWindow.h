@@ -67,6 +67,7 @@ class BandwidthGraph;
 class MainPage;
 class NewsFeed;
 class UserNotify;
+class WireDialog;
 
 #ifdef MESSENGER_WINDOW
 class MessengerWindow;
@@ -91,19 +92,20 @@ public:
     /** Main dialog pages. */
     enum Page {
         /* Fixed numbers for load and save the last page */
-        Network            = 0,  /** Network page. */
-        Friends            = 1,  /** Friends page. */
-        ChatLobby          = 2,  /** Chat Lobby page. */
-        Transfers          = 3,  /** Transfers page. */
-        SharedDirectories  = 4,  /** Shared Directories page. */
-        Messages           = 5,  /** Messages page. */
-        Channels           = 6,  /** Channels page. */
-        Forums             = 7,  /** Forums page. */
-        Search             = 8,  /** Search page. */
-        Posted             = 11, /** Posted links */
-        People             = 12, /** People page. */
-        Options            = 13, /** People page. */
-        Home               = 14  /** Home page. */
+        Network            = 0,   /** Network page. */
+        Friends            = 1,   /** Friends page. */
+        ChatLobby          = 2,   /** Chat Lobby page. */
+        Transfers          = 3,   /** Transfers page. */
+        SharedDirectories  = 4,   /** Shared Directories page. */
+        Messages           = 5,   /** Messages page. */
+        Channels           = 6,   /** Channels page. */
+        Forums             = 7,   /** Forums page. */
+        Search             = 8,   /** Search page. */
+        Posted             = 11,  /** Posted links */
+        People             = 12,  /** People page. */
+        Options            = 13,  /** People page. */
+        Home               = 14,  /** Home page. */
+        Wire               = 15   /** Wire page. */
     };
 
 
@@ -163,7 +165,7 @@ public:
 	 GxsChannelDialog  *gxschannelDialog ;
 	 GxsForumsDialog   *gxsforumDialog ;
 	 PostedDialog      *postedDialog;
-
+     WireDialog        *wireDialog;
 //    ForumsDialog      *forumsDialog;
 //    ChannelFeed       *channelFeed;
     Idle              *idle;

@@ -27,6 +27,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/RsUserdata.h"
+#include "GxsStatisticsProvider.h"
 
 #include <inttypes.h>
 
@@ -44,7 +45,7 @@ class UIStateHelper;
 struct RsGxsCommentService;
 class GxsCommentDialog;
 
-class GxsGroupFrameDialog : public MainPage
+class GxsGroupFrameDialog : public GxsStatisticsProvider
 {
 	Q_OBJECT
 
@@ -153,8 +154,7 @@ private slots:
 
 private:
 	virtual QString text(TextType type) = 0;
-	virtual QString icon(IconType type) = 0;
-	virtual QString settingsGroupName() = 0;
+    virtual QString icon(IconType type) = 0;
     virtual TurtleRequestId distantSearch(const QString& search_string) ;
 
 	virtual GxsGroupDialog *createNewGroupDialog() = 0;
@@ -203,10 +203,8 @@ private:
 
 	bool mInitialized;
 	bool mInFill;
-    bool mDistSyncAllowed;
-	QString mSettingsName;
+
 	RsGxsGroupId mGroupId;
-	RsGxsIfaceHelper *mInterface;
 
 	QTreeWidgetItem *mYourGroups;
 	QTreeWidgetItem *mSubscribedGroups;
@@ -232,7 +230,6 @@ private:
 	Ui::GxsGroupFrameDialog *ui;
 
 	std::map<RsGxsGroupId,RsGroupMetaData> mCachedGroupMetas;
-	std::map<RsGxsGroupId,GxsGroupStatistic> mCachedGroupStats;
 
     std::map<uint32_t,QTreeWidgetItem*> mSearchGroupsItems ;
     std::map<uint32_t,std::set<RsGxsGroupId> > mKnownGroups;

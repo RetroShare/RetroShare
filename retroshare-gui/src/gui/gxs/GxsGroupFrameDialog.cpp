@@ -71,7 +71,7 @@ static const uint32_t DELAY_BETWEEN_GROUP_STATISTICS_UPDATE = 120; // do not upd
 
 /** Constructor */
 GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl,const QString& settings_name, QWidget *parent,bool allow_dist_sync)
-: MainPage(parent),mSettingsName(settings_name)
+: GxsStatisticsProvider(ifaceImpl,settings_name,parent)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui = new Ui::GxsGroupFrameDialog();

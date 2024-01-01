@@ -137,7 +137,11 @@ void RshareSettings::initSettings()
 	// This is not default... RS_CHAT_FOCUS.
 
 	uint defNotify = (RS_POPUP_CONNECT | RS_POPUP_MSG);
-    uint defNewsFeed = (RS_FEED_TYPE_MSG | RS_FEED_TYPE_FILES | RS_FEED_TYPE_SECURITY | RS_FEED_TYPE_SECURITY_IP | RS_FEED_TYPE_CIRCLE | RS_FEED_TYPE_CHANNEL |RS_FEED_TYPE_FORUM | RS_FEED_TYPE_POSTED);
+    uint defNewsFeed = (RS_FEED_TYPE_MSG | RS_FEED_TYPE_FILES | RS_FEED_TYPE_SECURITY | RS_FEED_TYPE_SECURITY_IP | RS_FEED_TYPE_CIRCLE | RS_FEED_TYPE_CHANNEL | RS_FEED_TYPE_FORUM | RS_FEED_TYPE_POSTED);
+
+#ifdef RS_USE_WIRE
+    defNewsFeed = (defNewsFeed | RS_FEED_TYPE_WIRE);
+#endif
 
 	setDefault(SETTING_NEWSFEED_FLAGS, defNewsFeed);
 	setDefault(SETTING_CHAT_FLAGS, defChat);
@@ -1109,6 +1113,12 @@ static QString groupFrameSettingsTypeToString(GroupFrameSettings::Type type)
 		return "Channel";
 	case GroupFrameSettings::Posted:
 		return "Posted";
+
+#ifdef RS_USE_WIRE
+    case GroupFrameSettings::Wire:
+            return "Wire" ;
+#endif
+
 	}
 
 	return "";

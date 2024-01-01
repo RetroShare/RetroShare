@@ -74,7 +74,8 @@ class RetroShareLink
 			TYPE_POSTED        = 0x0b,
 			TYPE_IDENTITY      = 0x0c,
 			TYPE_FILE_TREE     = 0x0d,
-			TYPE_CHAT_ROOM     = 0x0e
+            TYPE_CHAT_ROOM     = 0x0e,
+            TYPE_WIRE          = 0x0f
 		};
 
 	public:
