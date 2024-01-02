@@ -150,7 +150,7 @@ private:
 
 	// Loading Data.
 	void requestGroupData();
-	bool loadGroupData(const uint32_t &token);
+    bool loadGroupData(const uint32_t &token);
 	void acknowledgeGroup(const uint32_t &token, const uint32_t &userType);
 
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req) override;

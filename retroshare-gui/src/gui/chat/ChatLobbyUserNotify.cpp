@@ -146,8 +146,48 @@ QString ChatLobbyUserNotify::getNotifyMessage(bool plural)
 
 void ChatLobbyUserNotify::iconClicked()
 {
+    #if defined(Q_OS_DARWIN)
+    std::list<ChatLobbyId> lobbies;
+    rsMsgs->getChatLobbyList(lobbies);
+    bool doUpdate=false;
+
+    for (lobby_map::iterator itCL=_listMsg.begin(); itCL!=_listMsg.end();)
+    {
+        bool bFound=false;
+        QString strLobbyName=tr("Unknown Lobby");
+        QIcon icoLobby=QIcon();
+        std::list<ChatLobbyId>::const_iterator lobbyIt;
+        for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
+            ChatLobbyId clId = *lobbyIt;
+            if (clId==itCL->first) {
+                ChatLobbyInfo clInfo;
+                if (rsMsgs->getChatLobbyInfo(clId,clInfo))
+                    strLobbyName=QString::fromUtf8(clInfo.lobby_name.c_str()) ;
+                bFound=true;
+                break;
+            }
+        }
+
+        if (bFound)
+        {
+            MainWindow::showWindow(MainWindow::ChatLobby);
+            ChatLobbyWidget *chatLobbyWidget = dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby));
+            if (chatLobbyWidget) chatLobbyWidget->showLobbyAnchor(itCL->first,strLobbyName);
+            ++itCL ;
+        }
+        else
+        {
+            lobby_map::iterator ittmp(itCL);
+            ++ittmp ;
+            _listMsg.erase(itCL);
+            itCL=ittmp ;
+            doUpdate=true;
+        }
+    }
+    #else
+
 	/// Tray icon Menu ///
-	QMenu* trayMenu = new QMenu(MainWindow::getInstance());
+	QMenu* trayMenu = createMenu();
 	std::list<ChatLobbyId> lobbies;
 	rsMsgs->getChatLobbyList(lobbies);
 	bool doUpdate=false;
@@ -186,27 +226,25 @@ void ChatLobbyUserNotify::iconClicked()
         }
     }
 
-	if (notifyCombined()) {
-		QSystemTrayIcon* trayIcon=getTrayIcon();
-		if (trayIcon!=NULL) trayIcon->setContextMenu(trayMenu);
-	} else {
-		QAction* action=getNotifyIcon();
-		if (action!=NULL) {
-			action->setMenu(trayMenu);
-		}
-	}
-
 	QString strName=tr("Remove All");
 	QAction *pAction = new QAction( QIcon(), strName, trayMenu);
 	ActionTag actionTag={0x0, "", true};
 	pAction->setData(qVariantFromValue(actionTag));
-	connect(trayMenu, SIGNAL(triggered(QAction*)), this, SLOT(subMenuClicked(QAction*)));
-	connect(trayMenu, SIGNAL(hovered(QAction*)), this, SLOT(subMenuHovered(QAction*)));
 	trayMenu->addAction(pAction);
 
 	trayMenu->exec(QCursor::pos());
+	delete(trayMenu);
 	if (doUpdate) updateIcon();
 
+	#endif
+}
+
+QMenu* ChatLobbyUserNotify::createMenu()
+{
+	QMenu* menu = new QMenu(MainWindow::getInstance());
+	connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(subMenuClicked(QAction*)));
+	connect(menu, SIGNAL(hovered(QAction*)), this, SLOT(subMenuHovered(QAction*)));
+	return menu;
 }
 
 void ChatLobbyUserNotify::makeSubMenu(QMenu* parentMenu, QIcon icoLobby, QString strLobbyName, ChatLobbyId id)
@@ -217,11 +255,7 @@ void ChatLobbyUserNotify::makeSubMenu(QMenu* parentMenu, QIcon icoLobby, QString
 
 	unsigned int msgCount=msgMap.size();
 
-	if(!parentMenu) parentMenu = new QMenu(MainWindow::getInstance());
 	QMenu *lobbyMenu = parentMenu->addMenu(icoLobby, strLobbyName);
-	connect(lobbyMenu, SIGNAL(triggered(QAction*)), this, SLOT(subMenuClicked(QAction*)));
-	connect(lobbyMenu, SIGNAL(hovered(QAction*)), this, SLOT(subMenuHovered(QAction*)));
-
 	lobbyMenu->setToolTip(getNotifyMessage(msgCount>1).arg(msgCount));
 
 	for (msg_map::iterator itMsg=msgMap.begin(); itMsg!=msgMap.end(); ++itMsg) {
@@ -243,14 +277,12 @@ void ChatLobbyUserNotify::makeSubMenu(QMenu* parentMenu, QIcon icoLobby, QString
 	ActionTag actionTag={itCL->first, "", true};
 	pAction->setData(qVariantFromValue(actionTag));
 	lobbyMenu->addAction(pAction);
-
 }
 
 void ChatLobbyUserNotify::iconHovered()
 {
 	iconClicked();
 }
-
 
 void ChatLobbyUserNotify::chatLobbyNewMessage(ChatLobbyId lobby_id, QDateTime time, QString senderName, QString msg)
 {

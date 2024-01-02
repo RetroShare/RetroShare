@@ -287,7 +287,7 @@ uint32_t   RsFriendListModel::EntryIndex::parentRow(uint32_t nb_groups) const
 
 QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex& parent) const
 {
-    if(row < 0 || column < 0 || column >= COLUMN_THREAD_NB_COLUMNS)
+    if(row < 0 || column < 0 || column >= columnCount(parent) || row >= rowCount(parent))
 		return QModelIndex();
 
     if(parent.internalId() == 0)

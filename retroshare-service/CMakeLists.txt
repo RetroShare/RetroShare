@@ -10,6 +10,11 @@ project(retroshare-service)
 
 include(CMakeDependentOption)
 
+if(APPLE)
+  include_directories("/usr/local/include") 
+  LINK_DIRECTORIES("/usr/local/lib")
+endif()
+
 set(
 	RS_BIN_INSTALL_DIR
 	"${CMAKE_INSTALL_PREFIX}/bin"
