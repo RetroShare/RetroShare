@@ -33,6 +33,10 @@
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsconfig.h>
 
+#if defined(Q_OS_DARWIN)
+#include "gui/common/MacDockIconHandler.h"
+#endif
+
 #ifdef MESSENGER_WINDOW
 #include "MessengerWindow.h"
 #endif
@@ -381,6 +385,7 @@ MainWindow::~MainWindow()
 #if defined(Q_OS_DARWIN)
     delete menuBar;
     delete dockMenu;
+    MacDockIconHandler::cleanup();
 #endif
 //  delete notifyMenu; // already deleted by the deletion of trayMenu
     StatisticsWindow::releaseInstance();
@@ -657,6 +662,15 @@ void MainWindow::createTrayIcon()
     trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
 
 #if defined(Q_OS_DARWIN)
+    // Note: On macOS, the Dock icon is used to provide the tray's functionality.
+    MacDockIconHandler* dockIconHandler = MacDockIconHandler::instance();
+    connect(dockIconHandler, &MacDockIconHandler::dockIconClicked, [this] {
+        show();
+        activateWindow();
+    });
+#endif
+
+#if defined(Q_OS_DARWIN)
     createMenuBar();
 #endif
 
@@ -693,10 +707,6 @@ void MainWindow::createMenuBar()
     dockMenu->addAction(tr("Statistics"), this, SLOT(showStatisticsWindow()));
     dockMenu->addAction(tr("Options"), this, SLOT(showSettings()));
     dockMenu->addAction(tr("Help"), this, SLOT(showHelpDialog()));
-
-    dockMenu->addSeparator();
-    QObject::connect(dockMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
-    toggleVisibilityAction = dockMenu->addAction(tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
 
     dockMenu->addSeparator();
     QMenu *statusMenu = dockMenu->addMenu(tr("Status"));
