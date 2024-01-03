@@ -304,6 +304,9 @@ macx {
 
 	#DEFINES *= MAC_IDLE # for idle feature
 	CONFIG -= uitools
+
+        OBJECTIVE_SOURCES += gui/common/MacDockIconHandler.mm
+        OBJECTIVE_HEADERS +=  gui/common/MacDockIconHandler.h
 }
 
 ##################################### FreeBSD ######################################

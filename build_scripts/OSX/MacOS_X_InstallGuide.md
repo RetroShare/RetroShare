@@ -66,7 +66,6 @@ Install MacPort following this guide: [MacPort](http://guide.macports.org/#insta
        $ sudo port -v selfupdate
        $ sudo port install openssl
        $ sudo port install miniupnpc
-       $ sudo port install libmicrohttpd
        
 For VOIP Plugin: 
 
@@ -83,9 +82,12 @@ Install HomeBrew following this guide: [HomeBrew](http://brew.sh/)
 
        $ brew install openssl
        $ brew install miniupnpc
-       $ brew install libmicrohttpd
        $ brew install rapidjson
        $ brew install sqlcipher
+
+#### Install CMake 
+
+       $ brew install cmake
        
 If you have error in linking, run this:
 
@@ -101,7 +103,7 @@ For VOIP Plugin:
 For FeedReader Plugin:
 
        $ brew install libxslt
-
+       $ brew install libxml2
 
 ## Last Settings
 
@@ -153,6 +155,9 @@ alternative via Terminal
     CONFIG+=release \
     ..
 
+For FeedReader Plugin:
+
+    INCLUDEPATH += "/usr/local/opt/libxml2/include/libxml2"
 
 With plugins:
 
@@ -207,3 +212,13 @@ For Qt Creator -> QtCreator Projects -> Build -> Build Settings -> Build Steps -
     ./plugins/VOIP/lib/libVOIP.dylib \
     ./plugins/RetroChess/lib/libRetroChess.dylib \
     ./retroshare-gui/src/RetroShare.app/Contents/Resources/
+
+### Compile Retroshare-Service & Webui with CMake
+before you can compile overwrite the file "asio/include/asio/detail/config.hpp" here is a fix for macos [
+asio fix](https://github.com/chriskohlhoff/asio/commit/68df16d560c68944809bb2947360fe8035e9ae0a)   
+
+       $ cd retroshare-service
+       $ mkdir build-dir
+       $ cd build-dir
+       $ cmake -DRS_WEBUI=ON -DCMAKE_BUILD_TYPE=Release ..
+       $ make

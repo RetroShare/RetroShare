@@ -18,7 +18,7 @@ rm -rf obj
 rm -rf qrc
 
 # This sets the CFBundleVersion & CFBundleShortVersionString string
-#/usr/libexec/PlistBuddy -c "Delete :CFBundleGetInfoString" retroshare.app/Contents/Info.plist
+/usr/libexec/PlistBuddy -c "Delete :CFBundleGetInfoString" retroshare.app/Contents/Info.plist
 /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string $RSVERSION" retroshare.app/Contents/Info.plist
 /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string $RSVERSION" retroshare.app/Contents/Info.plist
 
