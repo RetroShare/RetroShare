@@ -383,5 +383,6 @@
         <file>icons/filetype/dll.svg</file>
         <file>icons/filetype/collection.svg</file>
         <file>icons/filetype/patch.svg</file>
+        <file>icons/Tor-logo-2011.png</file>
     </qresource>
 </RCC>
