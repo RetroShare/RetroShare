@@ -999,7 +999,9 @@ if(RS_GXSTHEWIRE)
 		src/gui/TheWire/PulseViewGroup.h 
 		src/gui/TheWire/PulseReply.h 
 		src/gui/TheWire/PulseReplySeperator.h 
-		src/gui/TheWire/PulseMessage.h 
+		src/gui/TheWire/PulseMessage.h
+		src/gui/TheWire/WireUserNotify.h
+		src/gui/feeds/WireNotifyGroupItem.h 
 		)
 
 	list(
@@ -1012,7 +1014,8 @@ if(RS_GXSTHEWIRE)
 		src/gui/TheWire/PulseViewGroup.ui 
 		src/gui/TheWire/PulseReply.ui 
 		src/gui/TheWire/PulseReplySeperator.ui 
-		src/gui/TheWire/PulseMessage.ui 
+		src/gui/TheWire/PulseMessage.ui
+		src/gui/feeds/WireNotifyGroupItem.ui 
 		)
 
 	list(
@@ -1028,6 +1031,8 @@ if(RS_GXSTHEWIRE)
 		src/gui/TheWire/PulseReply.cpp 
 		src/gui/TheWire/PulseReplySeperator.cpp 
 		src/gui/TheWire/PulseMessage.cpp 
+		src/gui/TheWire/WireUserNotify.cpp
+		src/gui/feeds/WireNotifyGroupItem.cpp
 		)
 
 	list(
@@ -1112,6 +1117,7 @@ if(RS_GXSGUI)
 		src/gui/gxs/GxsFeedWidget.h 
 		src/util/TokenQueue.h 
 		src/util/RsGxsUpdateBroadcast.h 
+		src/gui/gxs/GxsStatisticsProvider.h
 		)
 
 	list(
@@ -1147,6 +1153,7 @@ if(RS_GXSGUI)
 		src/gui/gxs/GxsFeedWidget.cpp 
 		src/util/TokenQueue.cpp 
 		src/util/RsGxsUpdateBroadcast.cpp 
+		src/gui/gxs/GxsStatisticsProvider.cpp 
 		)
 endif(RS_GXSGUI)
 	

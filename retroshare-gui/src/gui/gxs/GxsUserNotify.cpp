@@ -26,7 +26,7 @@
 
 #define TOKEN_TYPE_STATISTICS  1
 
-GxsUserNotify::GxsUserNotify(RsGxsIfaceHelper */*ifaceImpl*/, const GxsGroupFrameDialog *g,QObject *parent) : UserNotify(parent), mGroupFrameDialog(g)
+GxsUserNotify::GxsUserNotify(RsGxsIfaceHelper */*ifaceImpl*/, const GxsStatisticsProvider *g,QObject *parent) : UserNotify(parent), mGroupFrameDialog(g)
 {
 	mNewThreadMessageCount = 0;
 	mNewChildMessageCount = 0;

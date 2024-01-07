@@ -25,11 +25,15 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
+#include "gui/gxs/GxsStatisticsProvider.h"
+#include "gui/gxs/GxsGroupShareKey.h"
 
 #include "PulseViewGroup.h"
 #include "PulseReplySeperator.h"
+#include "WireUserNotify.h"
 
 #include "util/qtthreadsutils.h"
+#include "util/misc.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rswire.h>
@@ -59,7 +63,7 @@
 
 /** Constructor */
 WireDialog::WireDialog(QWidget *parent)
-    : MainPage(parent), mGroupSet(GROUP_SET_ALL)
+    : GxsStatisticsProvider(rsWire, settingsGroupName(),parent), mGroupSet(GROUP_SET_ALL)
     , mAddDialog(nullptr), mGroupSelected(nullptr), mWireQueue(nullptr)
     , mHistoryIndex(-1), mEventHandlerId(0)
 {
@@ -144,6 +148,126 @@ WireDialog::~WireDialog()
 
     rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
+
+UserNotify *WireDialog::createUserNotify(QObject *parent)
+{
+    return new WireUserNotify(rsWire, this, parent);
+}
+
+//QString WireDialog::getHelpString() const
+//{
+//    int H = misc::getFontSizeFactor("HelpButton").height();
+
+//    QString hlp_str = tr(
+//        "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Boards</h1>"
+//        "<p>The wire service is a day to day social network service.</p>"
+//        "<p>The Wire service allows you to share your pulses, republish someone else's pulses, like "
+//        "a pulse.</p>"
+//        "<p>A pulse is like a channel or board post. It can be a image or a text or both. You can "
+//        "only see the pulses of the people you follow.</p>"
+//        "<p>Wire posts are kept for %2 days, and sync-ed over the last %3 days, unless you change this.</p>"
+//                        ).arg(  QString::number(2*H)
+//                              , QString::number(rsWire->getDefaultStoragePeriod()/86400)
+//                              , QString::number(rsWire->getDefaultSyncPeriod()/86400));
+
+//    return hlp_str ;
+//}
+
+//QString WireDialog::text(TextType type)
+//{
+//    switch (type) {
+//    case TEXT_NAME:
+//        return tr("Wire");
+//    case TEXT_NEW:
+//        return tr("Create Wire");
+
+//// Dont know what this does
+////	case TEXT_TODO:
+////		return "<b>Open points:</b><ul>"
+////		       "<li>Subreddits/tag to posts support"
+////		       "<li>Picture Support"
+////		       "<li>Navigate channel link"
+////		       "</ul>";
+
+//    case TEXT_YOUR_GROUP:
+//        return tr("My Wire");
+//    case TEXT_SUBSCRIBED_GROUP:
+//        return tr("Followed Wires");
+//    case TEXT_POPULAR_GROUP:
+//        return tr("Popular Wires");
+//    case TEXT_OTHER_GROUP:
+//        return tr("Other Wires");
+//    }
+
+//    return "";
+//}
+
+//QString WireDialog::icon(IconType type)
+//{
+//    switch (type) {
+//    case ICON_NAME:
+//        return ":/icons/png/postedlinks.png";
+//    case ICON_NEW:
+//        return ":/icons/png/add.png";
+//    case ICON_YOUR_GROUP:
+//        return "";
+//    case ICON_SUBSCRIBED_GROUP:
+//        return "";
+//    case ICON_POPULAR_GROUP:
+//        return "";
+//    case ICON_OTHER_GROUP:
+//        return "";
+//    case ICON_SEARCH:
+//        return ":/images/find.png";
+//    case ICON_DEFAULT:
+//        return ":/icons/png/posted.png";
+//    }
+
+//    return "";
+//}
+
+//bool WireDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
+//{
+//    std::vector<RsWireGroup> groups;
+
+//    // request all group infos at once
+
+//    if(! rsWire->getGroups(std::list<RsGxsGroupId>(),groups))
+//        return false;
+
+//    /* Save groups to fill icons and description */
+
+//    for (auto& group: groups)
+//       groupInfo.push_back(new RsWireGroup(group));
+
+//    return true;
+//}
+
+//bool WireDialog::getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat)
+//{
+//    return rsWire->getWireStatistics(groupId,stat);
+//}
+
+//GxsGroupDialog *WireDialog::createNewGroupDialog()
+//{
+//    return new WireGroupDialog(this);
+//}
+
+//GxsGroupDialog *WireDialog::createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
+//{
+//    return new WireGroupDialog(mode, groupId, this);
+//}
+
+//int WireDialog::shareKeyType()
+//{
+//    return GroupShareKey::NO_KEY_SHARE;
+//}
+
+//GxsMessageFrameWidget *WireDialog::createMessageFrameWidget(const RsGxsGroupId &groupId)
+//{
+//    // to do
+////	return new WireListWidgetWithModel(groupId);
+//}
 
 void WireDialog::processSettings(bool load)
 {
@@ -1070,4 +1194,51 @@ void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
 		addTwitterView(new PulseReplySeperator());
 
 	}
+}
+
+void WireDialog::getServiceStatistics(GxsServiceStatistic& stats) const
+{
+    if(!mCachedGroupStats.empty())
+    {
+        stats = GxsServiceStatistic(); // clears everything
+
+        for(auto& it:  mCachedGroupStats)
+        {
+            const GxsGroupStatistic& s(it.second);
+
+            stats.mNumMsgs             += s.mNumMsgs;
+            stats.mNumGrps             += 1;
+            stats.mSizeOfMsgs          += s.mTotalSizeOfMsgs;
+            stats.mNumThreadMsgsNew    += s.mNumThreadMsgsNew;
+            stats.mNumThreadMsgsUnread += s.mNumThreadMsgsUnread;
+            stats.mNumChildMsgsNew     += s.mNumChildMsgsNew ;
+            stats.mNumChildMsgsUnread  += s.mNumChildMsgsUnread ;
+        }
+
+        // Also save the service statistics in conf file, so that we can display it right away at start.
+
+        Settings->beginGroup(mSettingsName);
+        Settings->setValue("NumMsgs",            stats.mNumMsgs            );
+        Settings->setValue("NumGrps",            stats.mNumGrps            );
+        Settings->setValue("SizeOfMessages",     stats.mSizeOfMsgs         );
+        Settings->setValue("NumThreadMsgsNew",   stats.mNumThreadMsgsNew   );
+        Settings->setValue("NumThreadMsgsUnread",stats.mNumThreadMsgsUnread);
+        Settings->setValue("NumChildMsgsNew",    stats.mNumChildMsgsNew    );
+        Settings->setValue("NumChildMsgsUnread", stats.mNumChildMsgsUnread );
+        Settings->endGroup();
+    }
+    else	// Get statistics from settings if no cache is already present: allows to display at start.
+    {
+        Settings->beginGroup(mSettingsName);
+
+        stats.mNumMsgs             = Settings->value("NumMsgs",QVariant(0)).toInt();
+        stats.mNumGrps             = Settings->value("NumGrps",QVariant(0)).toInt();
+        stats.mSizeOfMsgs          = Settings->value("SizeOfMessages",QVariant(0)).toInt();
+        stats.mNumThreadMsgsNew    = Settings->value("NumThreadMsgsNew",QVariant(0)).toInt();
+        stats.mNumThreadMsgsUnread = Settings->value("NumThreadMsgsUnread",QVariant(0)).toInt();
+        stats.mNumChildMsgsNew     = Settings->value("NumChildMsgsNew",QVariant(0)).toInt();
+        stats.mNumChildMsgsUnread  = Settings->value("NumChildMsgsUnread",QVariant(0)).toInt();
+
+        Settings->endGroup();
+    }
 }
