@@ -145,6 +145,11 @@
 #define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
+#define IMAGE_RETROSHARETOR     ":/icons/retroshare-logo-tor.png"
+#define IMAGE_NOONLINETOR       ":/icons/tor-0-connected.png"
+#define IMAGE_ONEONLINETOR      ":/icons/tor-1-connected.png"
+#define IMAGE_TWOONLINETOR      ":/icons/tor-2-connected.png"
+
 #define IMAGE_BWGRAPH           ":/icons/png/bandwidth.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_NEWRSCOLLECTION   ":/images/library.png"
@@ -220,7 +225,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     QDesktopServices::setUrlHandler("https", this, "externalLinkActivated");
 
     // Setting icons
-    this->setWindowIcon(QIcon(QString::fromUtf8(":/icons/logo_128.png")));
+    if(hiddenmode) {
+        this->setWindowIcon(QIcon(QString::fromUtf8(":/icons/retroshare-logo-tor.png")));
+    }
+    else {
+        this->setWindowIcon(QIcon(QString::fromUtf8(":/icons/logo_128.png")));
+    }
 
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = NULL ;
@@ -662,6 +672,13 @@ void MainWindow::createTrayIcon()
     trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
 
 #if defined(Q_OS_DARWIN)
+    // On macOS, change the Dock icon when rs running in hidden mode
+    if(hiddenmode) {
+        QApplication::setWindowIcon(QPixmap(QString::fromUtf8(":/icons/retroshare-logo-tor.png")));
+    }
+#endif
+
+#if defined(Q_OS_DARWIN)
     // Note: On macOS, the Dock icon is used to provide the tray's functionality.
     MacDockIconHandler* dockIconHandler = MacDockIconHandler::instance();
     connect(dockIconHandler, &MacDockIconHandler::dockIconClicked, [this] {
@@ -899,14 +916,26 @@ void MainWindow::updateFriends()
 
     QString trayIconResource;
 
-    if (onlineCount == 0) {
-        trayIconResource = IMAGE_NOONLINE;
-    } else if (onlineCount < 2) {
-        trayIconResource = IMAGE_ONEONLINE;
-    } else if (onlineCount < 3) {
-        trayIconResource = IMAGE_TWOONLINE;
+    if(hiddenmode) {
+        if (onlineCount == 0) {
+            trayIconResource = IMAGE_NOONLINETOR;
+        } else if (onlineCount < 2) {
+            trayIconResource = IMAGE_ONEONLINETOR;
+        } else if (onlineCount < 3) {
+            trayIconResource = IMAGE_TWOONLINETOR;
+        } else {
+            trayIconResource = IMAGE_RETROSHARETOR;
+        }
     } else {
-        trayIconResource = IMAGE_RETROSHARE;
+        if (onlineCount == 0) {
+            trayIconResource = IMAGE_NOONLINE;
+        } else if (onlineCount < 2) {
+            trayIconResource = IMAGE_ONEONLINE;
+        } else if (onlineCount < 3) {
+            trayIconResource = IMAGE_TWOONLINE;
+        } else {
+            trayIconResource = IMAGE_RETROSHARE;
+        }
     }
 
     QIcon icon;

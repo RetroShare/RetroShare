@@ -384,5 +384,9 @@
         <file>icons/filetype/collection.svg</file>
         <file>icons/filetype/patch.svg</file>
         <file>icons/Tor-logo-2011.png</file>
+        <file>icons/tor-2-connected.png</file>
+        <file>icons/tor-1-connected.png</file>
+        <file>icons/tor-0-connected.png</file>
+        <file>icons/retroshare-logo-tor.png</file>
     </qresource>
 </RCC>
