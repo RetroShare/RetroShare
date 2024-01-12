@@ -42,6 +42,7 @@
 #include "retroshare/rsnotify.h"
 #include "retroshare/rsidentity.h"
 
+#include <QFontDatabase>
 #include <QGridLayout>
 #include <QMenu>
 #include <QMessageBox>
@@ -92,6 +93,11 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
   : RsAutoUpdatePage(5000, parent, flags)
 {
 	ui.setupUi(this);
+
+#if defined(Q_OS_DARWIN)
+    QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+    ui.lobbyTreeWidget->setFont(font);
+#endif
 
 	int H = QFontMetricsF(ui.lobbyTreeWidget->font()).height();
 #if QT_VERSION < QT_VERSION_CHECK(5,11,0)

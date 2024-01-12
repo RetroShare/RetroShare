@@ -251,6 +251,11 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
     //setUpdateWhenInvisible(true);
 
+#if defined(Q_OS_DARWIN)
+    QFont fontmac = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+    ui->threadTreeWidget->setFont(fontmac);
+#endif
+
     //mUpdating = false;
     mUnreadCount = 0;
     mNewCount = 0;

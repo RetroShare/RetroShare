@@ -234,6 +234,13 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     /* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
     msgwheader->setStretchLastSection(true);
 
+#if defined(Q_OS_DARWIN)
+    QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+    ui.messageTreeWidget->setFont(font);
+    ui.listWidget->setFont(font);
+    ui.quickViewWidget->setFont(font);
+#endif
+
 	QFontMetricsF fontMetrics(ui.messageTreeWidget->font());
 	int iconHeight = fontMetrics.height() * 1.4;
 	ui.messageTreeWidget->setIconSize(QSize(iconHeight, iconHeight));

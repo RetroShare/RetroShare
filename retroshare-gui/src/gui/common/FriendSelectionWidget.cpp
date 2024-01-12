@@ -20,6 +20,7 @@
 
 #include "gui/common/FilesDefs.h"
 #include <QDialogButtonBox>
+#include <QFontDatabase>
 #include <QMenu>
 #include "FriendSelectionWidget.h"
 #include "ui_FriendSelectionWidget.h"
@@ -94,6 +95,11 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 	mInGpgItemChanged = false;
 	mInSslItemChanged = false;
 	mInFillList = false;
+
+#if defined(Q_OS_DARWIN)
+    QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+    ui->friendList->setFont(font);
+#endif
 
 	connect(ui->friendList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequested(QPoint)));
 	connect(ui->friendList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));

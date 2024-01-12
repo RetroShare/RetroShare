@@ -81,6 +81,11 @@ SettingsPage::SettingsPage(QWidget *parent)
     itemDelegate->setSpacing(QSize(0, ITEM_SPACING));
     ui.listWidget->setItemDelegate(itemDelegate);
 
+#if defined(Q_OS_DARWIN)
+    QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+    ui.listWidget->setFont(font);
+#endif
+
     initStackedWidget();
 
     /* Load window position */

@@ -32,6 +32,7 @@
 #include "util/DateTime.h"
 
 #include <QDesktopWidget>
+#include <QFontDatabase>
 #include <QMenu>
 #include <QToolButton>
 
@@ -66,6 +67,11 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 		// need signal itemClicked too
 		connect(ui->treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(itemActivated(QTreeWidgetItem*,int)));
 	}
+
+#if defined(Q_OS_DARWIN)
+    QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+    ui->treeWidget->setFont(font);
+#endif
 
 	int H = QFontMetricsF(ui->treeWidget->font()).height() ;
 #if QT_VERSION < QT_VERSION_CHECK(5,11,0)

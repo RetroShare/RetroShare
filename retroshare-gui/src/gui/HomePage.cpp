@@ -54,6 +54,11 @@ HomePage::HomePage(QWidget *parent) :
 {
     ui->setupUi(this);
 
+#if defined(Q_OS_DARWIN)
+    QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+    ui->retroshareid->setFont(font);
+#endif
+
     connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addFriend()));
     connect(ui->copyIDButton, SIGNAL(clicked()), this, SLOT(copyId()));
 

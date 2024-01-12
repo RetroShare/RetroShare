@@ -57,6 +57,11 @@ RichTextEdit::RichTextEdit(QWidget *parent) : QWidget(parent) {
     m_fontsize_h3 = 14;
     m_fontsize_h4 = 12;
 
+#if defined(Q_OS_DARWIN)
+    QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+    f_textedit->setFont(font);
+#endif
+
     fontChanged(f_textedit->font());
     bgColorChanged(f_textedit->textColor());
 

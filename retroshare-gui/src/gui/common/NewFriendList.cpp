@@ -184,6 +184,11 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 {
 	ui->setupUi(this);
 
+#if defined(Q_OS_DARWIN)
+    QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+    ui->peerTreeWidget->setFont(font);
+#endif
+
 	int H = QFontMetricsF(ui->peerTreeWidget->font()).height();
 #if QT_VERSION < QT_VERSION_CHECK(5,11,0)
 	int W = QFontMetricsF(ui->peerTreeWidget->font()).width("_");

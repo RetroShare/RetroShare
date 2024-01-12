@@ -167,6 +167,11 @@ IdDialog::IdDialog(QWidget *parent)
 	// This is used to grab the broadcast of changes from p3GxsCircles, which is discarded by the current dialog, since it expects data for p3Identity only.
 	//mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
 	//connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
+
+#if defined(Q_OS_DARWIN)
+    QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+    ui->idTreeWidget->setFont(font);
+#endif
     
 	ownItem = new QTreeWidgetItem();
 	ownItem->setText(RSID_COL_NICKNAME, tr("My own identities"));
