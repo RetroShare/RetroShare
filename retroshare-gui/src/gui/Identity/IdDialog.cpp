@@ -171,6 +171,7 @@ IdDialog::IdDialog(QWidget *parent)
 #if defined(Q_OS_DARWIN)
     QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
     ui->idTreeWidget->setFont(font);
+    ui->treeWidget_membership->setFont(font);
 #endif
     
 	ownItem = new QTreeWidgetItem();
