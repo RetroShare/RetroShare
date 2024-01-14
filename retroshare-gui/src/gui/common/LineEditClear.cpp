@@ -132,10 +132,10 @@ void LineEditClear::showFilterIcon()
 	mFilterButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
 	setFilterButtonIcon(QIcon());
 	mFilterButton->setCursor(Qt::ArrowCursor);
-	mFilterButton->setStyleSheet("QToolButton { background: transparent; border: none; margin: 0px; padding: 0px; }"
-	                             "QToolButton[popupMode=\"2\"] { padding-right: 10px; }"
-	                             "QToolButton::menu-indicator[popupMode=\"2\"] { subcontrol-origin: padding; subcontrol-position: bottom right; top: 5px; left: -3px; width: 7px; }"
-	                             );
+    mFilterButton->setStyleSheet("QToolButton { background: transparent; border: none; margin: 0px; padding-bottom: 5px; }"
+                                 "QToolButton[popupMode=\"2\"] { padding-right: 8px; }"
+                                 "QToolButton::menu-indicator[popupMode=\"2\"] { subcontrol-origin: padding; subcontrol-position: bottom right; top: -4px; left: 0px; width: 7px; }"
+                                 );
 	mFilterButton->move(2, 2);
 
 	reposButtons();
@@ -235,7 +235,7 @@ void LineEditClear::setFilterButtonIcon(const QIcon &icon)
 
 	ensurePolished();
 	QFontMetrics fm(this->font());
-	QSize size(fm.width("___"), fm.height());
-	mFilterButton->setFixedSize(size);
-	mFilterButton->setIconSize(size);
+	int iconHeight = fm.height() * 1.5;
+	mFilterButton->setFixedSize(QSize(iconHeight, iconHeight));
+	mFilterButton->setIconSize(QSize(iconHeight, iconHeight));
 }
