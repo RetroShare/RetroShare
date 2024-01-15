@@ -33,11 +33,6 @@
          <height>0</height>
         </size>
        </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
        <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
        </property>
@@ -157,7 +152,7 @@
   </action>
   <action name="actionOptions">
    <property name="icon">
-    <iconset resource="images.qrc">
+	<iconset resource="images.qrc">
      <normaloff>:/images/kcmsystem24.png</normaloff>:/images/kcmsystem24.png</iconset>
    </property>
    <property name="text">

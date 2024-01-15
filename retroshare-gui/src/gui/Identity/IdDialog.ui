@@ -218,11 +218,6 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -301,8 +296,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>466</width>
-             <height>738</height>
+             <width>481</width>
+             <height>865</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
@@ -1099,11 +1094,6 @@ border-image: url(:/images/closepressed.png)
         </item>
         <item>
          <widget class="QTreeWidget" name="treeWidget_membership">
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-           </font>
-          </property>
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
           </property>
@@ -1162,6 +1152,16 @@ border-image: url(:/images/closepressed.png)
  </widget>
  <customwidgets>
   <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header location="global">gui/common/LineEditClear.h</header>
@@ -1175,16 +1175,6 @@ border-image: url(:/images/closepressed.png)
    <class>ElidedLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/ElidedLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSComboBox</class>
-   <extends>QComboBox</extends>
-   <header>gui/common/RSComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/RSTextBrowser.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

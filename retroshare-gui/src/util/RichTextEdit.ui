@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>703</width>
+    <width>784</width>
     <height>312</height>
    </rect>
   </property>
@@ -563,12 +563,6 @@
    </item>
    <item>
     <widget class="MimeTextEdit" name="f_textedit">
-     <property name="font">
-      <font>
-       <family>MS Sans Serif</family>
-       <pointsize>9</pointsize>
-      </font>
-     </property>
      <property name="autoFormatting">
       <set>QTextEdit::AutoNone</set>
      </property>
