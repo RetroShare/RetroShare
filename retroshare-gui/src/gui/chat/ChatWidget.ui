@@ -85,6 +85,13 @@
            <layout class="QHBoxLayout" name="nameLayout">
             <item>
              <widget class="QLabel" name="titleLabel">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <italic>true</italic>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
                <string notr="true">Title</string>
               </property>
@@ -1102,11 +1109,6 @@ border-image: url(:/images/closepressed.png)
  </widget>
  <customwidgets>
   <customwidget>
-   <class>RSTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/RSTextBrowser.h</header>
-  </customwidget>
-  <customwidget>
    <class>HashBox</class>
    <extends>QScrollArea</extends>
    <header location="global">gui/common/HashBox.h</header>
@@ -1121,6 +1123,11 @@ border-image: url(:/images/closepressed.png)
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header>gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
   </customwidget>
  </customwidgets>
  <resources>
