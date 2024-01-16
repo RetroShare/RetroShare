@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QDate>
+#include <QDomDocument>
 #include <QMessageBox>
 #include <QClipboard>
 #include <QFile>
@@ -60,6 +61,7 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
 
     //connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(profilemanager()));
     connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(exportProfile()));
+    connect(ui.exportfriendslist,SIGNAL(clicked()), this, SLOT(exportFriendlistClicked()));
 
     // Remove this because it duplicates functionality of the HomePage.
     ui.retroshareId_LB->hide();
@@ -228,4 +230,114 @@ bool CryptoPage::fileSaveAs()
 void CryptoPage::showStats()
 {
     StatisticsWindow::showYourself();
+}
+
+void CryptoPage::exportFriendlistClicked()
+{
+   QString fileName = QFileDialog::getSaveFileName(this, tr("Export Friendslist"), "Friendslist", tr("RetroShare Friendslist (*.xml)"));
+
+   if(!exportFriendlist(fileName))
+        // error was already shown - just return
+        return;
+
+    QMessageBox mbox;
+    mbox.setIcon(QMessageBox::Information);
+    mbox.setText(tr("Done!"));
+    mbox.setInformativeText(tr("Your friendlist is stored at:\n") + fileName +
+                            tr("\n(keep in mind that the file is unencrypted!)"));
+    mbox.setStandardButtons(QMessageBox::Ok);
+    mbox.exec();
+}
+
+bool CryptoPage::exportFriendlist(QString &fileName)
+{
+    QDomDocument doc("FriendListWithGroups");
+    QDomElement root = doc.createElement("root");
+    doc.appendChild(root);
+
+    QFile file(fileName);
+
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+        // show error to user
+        QMessageBox mbox;
+        mbox.setIcon(QMessageBox::Warning);
+        mbox.setText(tr("Error"));
+        mbox.setInformativeText(tr("File is not writeable!\n") + fileName);
+        mbox.setStandardButtons(QMessageBox::Ok);
+        mbox.exec();
+        return false;
+    }
+
+    std::list<RsPgpId> gpg_ids;
+    rsPeers->getGPGAcceptedList(gpg_ids);
+
+    std::list<RsGroupInfo> group_info_list;
+    rsPeers->getGroupInfoList(group_info_list);
+
+    QDomElement pgpIDs = doc.createElement("pgpIDs");
+    RsPeerDetails detailPGP;
+    for(std::list<RsPgpId>::iterator list_iter = gpg_ids.begin(); list_iter !=  gpg_ids.end(); ++list_iter)	{
+        rsPeers->getGPGDetails(*list_iter, detailPGP);
+        QDomElement pgpID = doc.createElement("pgpID");
+        // these values aren't used and just stored for better human readability
+        pgpID.setAttribute("id", QString::fromStdString(detailPGP.gpg_id.toStdString()));
+        pgpID.setAttribute("name", QString::fromUtf8(detailPGP.name.c_str()));
+
+        std::list<RsPeerId> ssl_ids;
+        rsPeers->getAssociatedSSLIds(*list_iter, ssl_ids);
+        for(std::list<RsPeerId>::iterator list_iter2 = ssl_ids.begin(); list_iter2 !=  ssl_ids.end(); ++list_iter2) {
+            RsPeerDetails detailSSL;
+            if (!rsPeers->getPeerDetails(*list_iter2, detailSSL))
+                continue;
+
+            std::string certificate = rsPeers->GetRetroshareInvite(detailSSL.id, RsPeers::defaultCertificateFlags | RetroshareInviteFlags::RADIX_FORMAT);
+
+            // remove \n from certificate
+            certificate.erase(std::remove(certificate.begin(), certificate.end(), '\n'), certificate.end());
+
+            QDomElement sslID = doc.createElement("sslID");
+            // these values aren't used and just stored for better human readability
+            sslID.setAttribute("sslID", QString::fromStdString(detailSSL.id.toStdString()));
+            if(!detailSSL.location.empty())
+                sslID.setAttribute("location", QString::fromUtf8(detailSSL.location.c_str()));
+
+            // required values
+            sslID.setAttribute("certificate", QString::fromStdString(certificate));
+            sslID.setAttribute("service_perm_flags", detailSSL.service_perm_flags.toUInt32());
+
+            pgpID.appendChild(sslID);
+        }
+        pgpIDs.appendChild(pgpID);
+    }
+    root.appendChild(pgpIDs);
+
+    QDomElement groups = doc.createElement("groups");
+    for(std::list<RsGroupInfo>::iterator list_iter = group_info_list.begin(); list_iter !=  group_info_list.end(); ++list_iter)	{
+        RsGroupInfo group_info = *list_iter;
+
+        //skip groups without peers
+        if(group_info.peerIds.empty())
+            continue;
+
+        QDomElement group = doc.createElement("group");
+        // id is not needed since it may differ between locatiosn / pgp ids (groups are identified by name)
+        group.setAttribute("name", QString::fromUtf8(group_info.name.c_str()));
+        group.setAttribute("flag", group_info.flag);
+
+        for(std::set<RsPgpId>::iterator i = group_info.peerIds.begin(); i !=  group_info.peerIds.end(); ++i) {
+            QDomElement pgpID = doc.createElement("pgpID");
+            std::string pid = i->toStdString();
+            pgpID.setAttribute("id", QString::fromStdString(pid));
+            group.appendChild(pgpID);
+        }
+        groups.appendChild(group);
+    }
+    root.appendChild(groups);
+
+    QTextStream ts(&file);
+    ts.setCodec("UTF-8");
+    ts << doc.toString();
+    file.close();
+
+    return true;
 }

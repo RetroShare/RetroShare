@@ -43,6 +43,7 @@ class CryptoPage : public ConfigPage
 
   private slots:
       void exportProfile();
+      void exportFriendlistClicked();
       virtual void load();
       void copyPublicKey();
 	  void copyRSLink() ;
@@ -55,6 +56,7 @@ class CryptoPage : public ConfigPage
   private:
       QString fileName;
 
+      bool exportFriendlist(QString &fileName);
       /** Qt Designer generated object */
       Ui::CryptoPage ui;
 };
