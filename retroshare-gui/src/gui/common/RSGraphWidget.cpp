@@ -301,6 +301,8 @@ RSGraphWidget::~RSGraphWidget()
 {
     delete _painter;
     delete _source ;
+    _timer->stop();
+    delete _timer;
 }
 
 void RSGraphWidget::setFiltering(bool b)

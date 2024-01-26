@@ -37,6 +37,7 @@ class LineEditClear : public QLineEdit
 
 public:
 	LineEditClear(QWidget *parent = 0);
+	~LineEditClear();
 
 	void addFilter(const QIcon &icon, const QString &text, int id, const QString &description = "");
 	void setCurrentFilter(int id);

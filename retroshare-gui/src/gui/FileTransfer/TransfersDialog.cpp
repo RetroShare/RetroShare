@@ -1144,6 +1144,9 @@ TransfersDialog::~TransfersDialog()
 
     delete ULDelegate;
     delete DLDelegate;
+    delete ULListModel;
+    delete DLListModel;
+    delete DLLFilterModel;
 }
 
 void TransfersDialog::activatePage(TransfersDialog::Page page)
