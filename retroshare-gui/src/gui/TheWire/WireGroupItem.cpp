@@ -123,21 +123,21 @@ void WireGroupItem::setup()
 void WireGroupItem::setGroupSet()
 {
 	if (mGroup.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
-		toolButton_type->setText("Own");
-		toolButton_subscribe->setText("N/A");
+		toolButton_type->setText(tr("Own"));
+		toolButton_subscribe->setText(tr("N/A"));
 		toolButton_subscribe->setEnabled(false);
 		editButton->show();
 	}
 	else if (mGroup.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
 	{
-		toolButton_type->setText("Following");
-		toolButton_subscribe->setText("Unfollow");
+		toolButton_type->setText(tr("Following"));
+		toolButton_subscribe->setText(tr("Unfollow"));
 		editButton->hide();
 	}
 	else
 	{
-		toolButton_type->setText("Other");
-		toolButton_subscribe->setText("Follow");
+		toolButton_type->setText(tr("Other"));
+		toolButton_subscribe->setText(tr("Follow"));
 		editButton->hide();
 	}
 }
