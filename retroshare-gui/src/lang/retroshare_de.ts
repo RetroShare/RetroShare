@@ -448,7 +448,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+14"/>
         <source>Embedded Only (&lt;50Kb)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nur eingebettet (&lt;50 KB)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -458,37 +458,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+5"/>
         <source>Copy Original Images (extra disk space)</source>
-        <translation type="unfinished"></translation>
+        <translation>Originalbilder kopieren (zusätzlicher Speicherplatz)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Resize Images (&lt; 200Kb)</source>
-        <translation type="unfinished">Bildgröße ändern (&lt; 10Mb) {200K?}</translation>
+        <translation>Bildgröße ändern (&lt; 10Mb) {200K?}</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Resize Images (&lt; 1Mb)</source>
-        <translation type="unfinished">Bildgröße ändern (&lt; 1Mb)</translation>
+        <translation>Bildgröße ändern (&lt; 1Mb)</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Caption:</source>
-        <translation type="unfinished">Überschrift:</translation>
+        <translation>Überschrift:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Photographer:</source>
-        <translation type="unfinished">Fotograf:</translation>
+        <translation>Fotograf:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Where:</source>
-        <translation type="unfinished">Wo:</translation>
+        <translation>Wo:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>When:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wann:</translation>
     </message>
 </context>
 <context>
@@ -501,22 +501,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>Create</source>
-        <translation type="unfinished">Erstellen</translation>
+        <translation>Erstellen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Album</source>
-        <translation type="unfinished">Album</translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Edit ALbum</source>
-        <translation type="unfinished"></translation>
+        <translation>Album bearbeiten</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Update Album</source>
-        <translation type="unfinished"></translation>
+        <translation>Album aktualisieren</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -635,7 +635,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+14"/>
         <source>Choose the style of Tool Buttons.</source>
-        <translation>Wähle den Stil für die Werkzeugschaltflächen</translation>
+        <translation>Wähle den Stil für die Werkzeugschaltflächen.</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -670,7 +670,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+12"/>
         <source>Show Toaster Disable</source>
-        <translation type="unfinished"></translation>
+        <translation>Toaster-Deaktivierung anzeigen</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -680,12 +680,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>Show Network Rate Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Netzwerkrate anzeigen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show Discovery Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Entdeckungsstatus anzeigen</translation>
     </message>
     <message>
         <location line="+59"/>
@@ -695,7 +695,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-52"/>
         <source>Show Hashing Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Hashing Status anzeigen</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -705,17 +705,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-31"/>
         <source>Show Peer Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Peer Status anzeigen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show Status ComboBox</source>
-        <translation type="unfinished"></translation>
+        <translation>Status ComboBox anzeigen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Remove surplus text in status bar.</source>
-        <translation>Überschüssigen Text aus Statusleiste entfernen</translation>
+        <translation>Überschüssigen Text aus Statusleiste entfernen.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -725,7 +725,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+21"/>
         <source>Show Operating Mode Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Betriebsmodusstatus anzeigen</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -735,12 +735,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-28"/>
         <source>Disable SysTray ToolTip</source>
-        <translation type="unfinished"></translation>
+        <translation>SysTray Kurzinfo deaktivieren</translation>
     </message>
     <message>
         <location line="-225"/>
         <source>Main page items:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hauptseitenelemente:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -750,7 +750,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+5"/>
         <source>Item list</source>
-        <translation type="unfinished"></translation>
+        <translation>Item Liste</translation>
     </message>
     <message>
         <location line="+104"/>
@@ -812,7 +812,7 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <message>
         <location line="+1"/>
         <source>Copy image</source>
-        <translation type="unfinished">Bild kopieren</translation>
+        <translation>Bild kopieren</translation>
     </message>
 </context>
 <context>
@@ -853,7 +853,7 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <message>
         <location line="+10"/>
         <source>Browse...</source>
-        <translation type="unfinished"></translation>
+        <translation>Durchsuchen...</translation>
     </message>
     <message>
         <source>Add Avatar</source>
@@ -872,17 +872,17 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <message>
         <location line="+25"/>
         <source>Import image</source>
-        <translation type="unfinished"></translation>
+        <translation>Bild importieren</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Image files (*.jpg *.png);;All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilddateien (*.jpg *.png);;Alle Dateien (*)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Use the mouse to zoom and adjust the image for your avatar.</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzen Sie die Maus, um das Bild für Ihren Avatar zu vergrößern und anzupassen.</translation>
     </message>
     <message>
         <source>Load Avatar</source>
@@ -938,7 +938,7 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <message>
         <location line="+13"/>
         <source>Clears the graph</source>
-        <translation type="unfinished"></translation>
+        <translation>Grafik zurücksetzen</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1050,27 +1050,27 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <message>
         <location line="+26"/>
         <source>Filename</source>
-        <translation type="unfinished">Dateiname</translation>
+        <translation>Dateiname</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hash</source>
-        <translation type="unfinished">Prüfsumme</translation>
+        <translation>Prüfsumme</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Size</source>
-        <translation type="unfinished">Größe</translation>
+        <translation>Größe</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Banned since...</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesperrt seit...</translation>
     </message>
     <message>
         <location filename="../gui/FileTransfer/BannedFilesDialog.cpp" line="+64"/>
         <source>Remove</source>
-        <translation type="unfinished">Entfernen</translation>
+        <translation>Entfernen</translation>
     </message>
 </context>
 <context>
@@ -1078,42 +1078,42 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <message>
         <location filename="../gui/Posted/BoardPostDisplayWidget.cpp" line="+66"/>
         <source>Comment</source>
-        <translation type="unfinished">Kommentar</translation>
+        <translation>Kommentar</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>1 comment</source>
-        <translation type="unfinished"></translation>
+        <translation>1 Kommentar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 comments</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Kommentare</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No comments yet. Click to add one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Noch keine Kommentare. Klicken Sie, um einen hinzuzufügen.</translation>
     </message>
     <message>
         <location line="+85"/>
         <source>Loading</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished">RetroShare-Link kopieren</translation>
+        <translation>RetroShare-Link kopieren</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>&lt;p&gt;&lt;font color=&quot;#ff0000&quot;&gt;&lt;b&gt;The author of this message (with ID %1) is banned.&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;font color=&quot;#ff0000&quot;&gt;&lt;b&gt;Der Autor dieser Nachricht (mit der ID %1) ist gesperrt.&lt;/b&gt;</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>ago</source>
-        <translation type="unfinished"></translation>
+        <translation>vor</translation>
     </message>
 </context>
 <context>
@@ -1121,7 +1121,7 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <message>
         <location filename="../gui/Posted/BoardPostDisplayWidget_card.ui" line="+118"/>
         <source>Vote up</source>
-        <translation type="unfinished">Daumen hoch</translation>
+        <translation>Daumen hoch</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1131,7 +1131,7 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <message>
         <location line="+22"/>
         <source>Vote down</source>
-        <translation type="unfinished">Daumen runter</translation>
+        <translation>Daumen runter</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1141,17 +1141,17 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <message>
         <location line="+49"/>
         <source>Posted by</source>
-        <translation type="unfinished"></translation>
+        <translation>Gepostet von</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Toggle Message Read Status</source>
-        <translation type="unfinished">Lesestatus der Nachricht umschalten</translation>
+        <translation>Lesestatus der Nachricht umschalten</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>New</source>
-        <translation type="unfinished">Neu</translation>
+        <translation>Neu</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -1166,7 +1166,7 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <message>
         <location line="+18"/>
         <source>Comments</source>
-        <translation type="unfinished">Kommentare</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+20"/>
@@ -1514,12 +1514,12 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <message>
         <location filename="../gui/gxschannels/GxsChannelPostsWidgetWithModel.cpp" line="+232"/>
         <source>files</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateien</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>file</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei</translation>
     </message>
 </context>
 <context>
@@ -1537,7 +1537,7 @@ into the image, so as to
     <message>
         <location filename="../gui/feeds/ChannelsCommentsItem.ui" line="+63"/>
         <source>I like this</source>
-        <translation type="unfinished">Das gefällt mir</translation>
+        <translation>Das gefällt mir</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1547,48 +1547,48 @@ into the image, so as to
     <message>
         <location line="+7"/>
         <source>I dislike this</source>
-        <translation type="unfinished">Das gefällt mir nicht</translation>
+        <translation>Das gefällt mir nicht</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Toggle Message Read Status</source>
-        <translation type="unfinished">Lesestatus der Nachricht umschalten</translation>
+        <translation>Lesestatus der Nachricht umschalten</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Avatar</source>
-        <translation type="unfinished">Avatar</translation>
+        <translation>Avatar</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>New Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Neuer Kommentar</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished">RetroShare-Link kopieren</translation>
+        <translation>RetroShare-Link kopieren</translation>
     </message>
     <message>
         <location line="+19"/>
         <location filename="../gui/feeds/ChannelsCommentsItem.cpp" line="+479"/>
         <source>Expand</source>
-        <translation type="unfinished">Erweitern</translation>
+        <translation>Erweitern</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Set as read and remove item</source>
-        <translation type="unfinished">Als gelesen markieren und Eintrag entfernen</translation>
+        <translation>Als gelesen markieren und Eintrag entfernen</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Remove Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Artikel entfernen</translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1602,7 +1602,7 @@ into the image, so as to
     <message>
         <location filename="../gui/feeds/ChannelsCommentsItem.cpp" line="-8"/>
         <source>Hide</source>
-        <translation type="unfinished">Verbergen</translation>
+        <translation>Verbergen</translation>
     </message>
 </context>
 <context>
@@ -1625,7 +1625,7 @@ into the image, so as to
     <message>
         <location line="+1"/>
         <source>Ban this person (Sets negative opinion)</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Person verbannen (setzt negative Meinung)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2452,7 +2452,7 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="+97"/>
         <source>Minimum displayed font size</source>
-        <translation type="unfinished"></translation>
+        <translation>Angezeigte Mindestschriftgröße</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -2505,30 +2505,30 @@ Double click a chat room to enter and chat.</source>
         <location line="+202"/>
         <location line="+451"/>
         <source>Author:</source>
-        <translation type="unfinished"></translation>
+        <translation>Autor:</translation>
     </message>
     <message>
         <location line="-629"/>
         <location line="+208"/>
         <location line="+451"/>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschreibung:</translation>
     </message>
     <message>
         <location line="-605"/>
         <source>Accept chat from:</source>
-        <translation type="unfinished"></translation>
+        <translation>Akzeptiere Chat von:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Contacts only</source>
-        <translation type="unfinished"></translation>
+        <translation>Nur Kontakte</translation>
     </message>
     <message>
         <location line="+43"/>
         <location line="+137"/>
         <source>Enable Emoticons</source>
-        <translation type="unfinished"></translation>
+        <translation>Emoticons aktivieren</translation>
     </message>
     <message>
         <location line="-6"/>
@@ -3230,7 +3230,7 @@ Double click on it to add his name on text writer.</source>
     <message>
         <location line="+187"/>
         <source>Current address:</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuelle Adresse:</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -3351,12 +3351,12 @@ Double click on it to add his name on text writer.</source>
     <message>
         <location line="+59"/>
         <source>Connectivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnektivität</translation>
     </message>
     <message>
         <location line="+95"/>
         <source>List of known addresses:</source>
-        <translation type="unfinished"></translation>
+        <translation>Liste bekannter Adressen:</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -3367,12 +3367,12 @@ Double click on it to add his name on text writer.</source>
     <message>
         <location line="+18"/>
         <source>short format</source>
-        <translation type="unfinished"></translation>
+        <translation>Kurzformat</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Include IP history</source>
-        <translation type="unfinished"></translation>
+        <translation>IP-Verlauf einbeziehen</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="-104"/>
@@ -5887,7 +5887,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+14"/>
         <source>No peer found in DHT</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Peer in DHT gefunden</translation>
     </message>
 </context>
 <context>
@@ -5915,7 +5915,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+156"/>
         <source>Faster</source>
-        <translation type="unfinished">Schneller</translation>
+        <translation>Schneller</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5925,7 +5925,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+2"/>
         <source>Slower</source>
-        <translation type="unfinished">Langsamer</translation>
+        <translation>Langsamer</translation>
     </message>
     <message>
         <location line="+64"/>
@@ -6875,7 +6875,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+2"/>
         <source># Files</source>
-        <translation type="unfinished"></translation>
+        <translation># Dateien</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7349,7 +7349,7 @@ at least one peer was not added to a group</source>
     <message>
         <location line="+4"/>
         <source>Filter only connected</source>
-        <translation type="unfinished"></translation>
+        <translation>Nur verbundene Filtern</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7599,7 +7599,7 @@ Also check your ports!</source>
     <message>
         <location filename="../gui/FriendsDialog.cpp" line="+23"/>
         <source>Friend Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Freundes-Server</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7632,7 +7632,7 @@ Also check your ports!</source>
     <message>
         <location line="+163"/>
         <source>SAMv3 support is not available</source>
-        <translation type="unfinished"></translation>
+        <translation>SAMv3-Unterstützung ist nicht verfügbar</translation>
     </message>
     <message>
         <location line="+100"/>
@@ -7678,7 +7678,7 @@ Also check your ports!</source>
     <message>
         <location filename="../gui/GenCertDialog.ui" line="-535"/>
         <source>PGP Key Length</source>
-        <translation type="unfinished"></translation>
+        <translation>PGP-Schlüssellänge</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -7728,7 +7728,7 @@ Also check your ports!</source>
     <message>
         <location line="+8"/>
         <source>advanced options</source>
-        <translation type="unfinished"></translation>
+        <translation>erweiterte Optionen</translation>
     </message>
     <message>
         <location line="+221"/>
@@ -7743,7 +7743,7 @@ Also check your ports!</source>
     <message>
         <location line="+20"/>
         <source>Use existing profile...</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorhandenes Profil verwenden...</translation>
     </message>
     <message>
         <location line="+73"/>
@@ -7753,7 +7753,7 @@ Also check your ports!</source>
     <message>
         <location line="+45"/>
         <source>Use I2P</source>
-        <translation type="unfinished"></translation>
+        <translation>I2P verwenden</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -7842,22 +7842,22 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location filename="../gui/GenCertDialog.cpp" line="-162"/>
         <source>Create new profile and new Retroshare node</source>
-        <translation type="unfinished"></translation>
+        <translation>Neues Profil und neuen Retroshare-Knoten erstellen</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Create new Retroshare node</source>
-        <translation type="unfinished"></translation>
+        <translation>Neuen Retroshare-Knoten erstellen</translation>
     </message>
     <message>
         <location line="-119"/>
         <source>Tor/I2P address</source>
-        <translation type="unfinished"></translation>
+        <translation>Tor/I2P-Adresse</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzername</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7867,7 +7867,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+2"/>
         <source>Password again</source>
-        <translation type="unfinished"></translation>
+        <translation>Passwort wiederholen</translation>
     </message>
     <message>
         <location line="+107"/>
@@ -7942,22 +7942,22 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+31"/>
         <source>The GXS nickname is too short. Please input at least %1 characters.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der GXS-Spitzname ist zu kurz. Bitte geben Sie mindestens %1 Zeichen ein.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>The GXS nickname is too long. Please reduce the length to %1 characters.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der GXS-Spitzname ist zu lang. Bitte reduzieren Sie die Länge auf %1 Zeichen.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Tor is not available</source>
-        <translation type="unfinished"></translation>
+        <translation>Tor ist nicht verfügbar</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>No Tor executable has been found on your system. You need to install Tor before creating a hidden identity.</source>
-        <translation type="unfinished"></translation>
+        <translation>Es wurde keine ausführbare Tor-Datei auf deinem System gefunden. Du musst Tor installieren, bevor du eine hidden Identität erstellen kannst.</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -8053,7 +8053,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+3"/>
         <source>!!!The RetroShare&apos;s desktop file is missing or wrong!!!</source>
-        <translation type="unfinished"></translation>
+        <translation>!!!Die Desktop-Datei von RetroShare fehlt oder ist falsch!!!</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -8395,12 +8395,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+10"/>
         <source>Receive time</source>
-        <translation type="unfinished"></translation>
+        <translation>Empfangszeit</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Sending time</source>
-        <translation type="unfinished"></translation>
+        <translation>Sendezeit</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -8415,7 +8415,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-25"/>
         <source>Data hash</source>
-        <translation type="unfinished"></translation>
+        <translation>Datenhash</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -12692,7 +12692,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-291"/>
         <source>Created on :</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellt am:</translation>
     </message>
     <message>
         <location line="-64"/>
@@ -12707,12 +12707,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+84"/>
         <source>Edit Identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Identität editieren</translation>
     </message>
     <message>
         <location line="+151"/>
         <source>Usage statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutzungsstatistiken</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -12807,7 +12807,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-569"/>
         <source>Create new...</source>
-        <translation type="unfinished"></translation>
+        <translation>Neu erstellen...</translation>
     </message>
     <message>
         <location line="+535"/>
@@ -12880,7 +12880,7 @@ p, li { white-space: pre-wrap; }
         <location line="-1267"/>
         <location line="+1431"/>
         <source>My own identities</source>
-        <translation>Meine eigenen Identitäten</translation>
+        <translation>Meine Identitäten</translation>
     </message>
     <message>
         <location line="-1421"/>
@@ -12956,12 +12956,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+2"/>
         <source>User (Can only request membership).</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer (kann nur die Mitgliedschaft beantragen).</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distribution: </source>
-        <translation>Verteilung:</translation>
+        <translation>Verteilung: </translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13016,7 +13016,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Subscription request pending</source>
-        <translation type="unfinished"></translation>
+        <translation>Abonnementanforderung ausstehend</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13031,7 +13031,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>Subscription pending</source>
-        <translation type="unfinished"></translation>
+        <translation>Abonnement ausstehend</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -13051,12 +13051,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+41"/>
         <source>Request subscription</source>
-        <translation type="unfinished"></translation>
+        <translation>Abonnement anfordern</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Accept circle invitation</source>
-        <translation type="unfinished"></translation>
+        <translation>Kreiseinladung annehmen</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -13066,7 +13066,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+0"/>
         <source>Cancel subscribe request</source>
-        <translation type="unfinished"></translation>
+        <translation>Abo-Anfrage abbrechen</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -13074,7 +13074,7 @@ p, li { white-space: pre-wrap; }
         <location line="+26"/>
         <location line="+2"/>
         <source>for identity </source>
-        <translation>für Identität</translation>
+        <translation>für Identität </translation>
     </message>
     <message>
         <location line="+27"/>
@@ -13084,7 +13084,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>Grant membership</source>
-        <translation type="unfinished"></translation>
+        <translation>Mitgliedschaft gewähren</translation>
     </message>
     <message>
         <location line="+231"/>
@@ -13104,7 +13104,7 @@ These identities will soon be not supported anymore.</source>
         <location line="-227"/>
         <location line="+1"/>
         <source>Unverified signature from node </source>
-        <translation type="unfinished"></translation>
+        <translation>Ungeprüfte Signatur vom Knoten </translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13140,17 +13140,17 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+120"/>
         <source>Boards</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GxsMail author </source>
-        <translation type="unfinished"></translation>
+        <translation>GxsMail Autor</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>GxsCircles</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -13231,7 +13231,7 @@ These identities will soon be not supported anymore.</source>
         <location line="-84"/>
         <location line="+21"/>
         <source>Copy identity to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Identität in die Zwischenablage kopieren</translation>
     </message>
     <message>
         <location line="-1957"/>
@@ -13241,12 +13241,12 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+1498"/>
         <source> positive </source>
-        <translation> positiv</translation>
+        <translation> positiv </translation>
     </message>
     <message>
         <location line="+1"/>
         <source> negative </source>
-        <translation> negativ</translation>
+        <translation> negativ </translation>
     </message>
     <message>
         <location line="+3"/>
@@ -18686,32 +18686,32 @@ schädlichem Verhalten von Plug-ins.</translation>
         <location line="+19"/>
         <location filename="../gui/Posted/PostedDialog.h" line="+40"/>
         <source>Boards</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Create Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Board erstellen</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>My Boards</source>
-        <translation type="unfinished"></translation>
+        <translation>Meine Boards</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Subscribed Boards</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbonnierte Boards</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Popular Boards</source>
-        <translation type="unfinished"></translation>
+        <translation>Populäre Boards</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Other Boards</source>
-        <translation type="unfinished"></translation>
+        <translation>Andere Boards</translation>
     </message>
 </context>
 <context>
@@ -18743,7 +18743,7 @@ schädlichem Verhalten von Plug-ins.</translation>
     <message>
         <location filename="../gui/Posted/PostedGroupDialog.cpp" line="+76"/>
         <source>Create New Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Neues Board erstellen</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -18758,22 +18758,22 @@ schädlichem Verhalten von Plug-ins.</translation>
     <message>
         <location line="+3"/>
         <source>Edit Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Board bearbeiten</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Update Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Board aktuallisieren</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Add Board Admins</source>
-        <translation type="unfinished"></translation>
+        <translation>Board-Admins hinzufügen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Select Board Admins</source>
-        <translation type="unfinished"></translation>
+        <translation>Board-Admins auswählen</translation>
     </message>
 </context>
 <context>
@@ -19106,12 +19106,12 @@ schädlichem Verhalten von Plug-ins.</translation>
     <message>
         <location line="-39"/>
         <source>Last activity:</source>
-        <translation type="unfinished"></translation>
+        <translation>Letzte Aktivität:</translation>
     </message>
     <message>
         <location line="+101"/>
         <source>Created</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellt</translation>
     </message>
     <message>
         <location line="+91"/>
@@ -19121,7 +19121,7 @@ schädlichem Verhalten von Plug-ins.</translation>
     <message>
         <location line="-137"/>
         <source>Popularity:</source>
-        <translation type="unfinished"></translation>
+        <translation>Popularität:</translation>
     </message>
     <message>
         <location line="-29"/>
@@ -19136,12 +19136,12 @@ schädlichem Verhalten von Plug-ins.</translation>
     <message>
         <location line="+166"/>
         <source>Posts</source>
-        <translation type="unfinished">Beiträge</translation>
+        <translation>Beiträge</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Create Post</source>
-        <translation type="unfinished"></translation>
+        <translation>Beitrag erstellen</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -19166,7 +19166,7 @@ schädlichem Verhalten von Plug-ins.</translation>
     <message>
         <location line="+12"/>
         <source>Search</source>
-        <translation type="unfinished">Suchen</translation>
+        <translation>Suchen</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -19176,7 +19176,7 @@ schädlichem Verhalten von Plug-ins.</translation>
     <message>
         <location line="+25"/>
         <source>Previous</source>
-        <translation type="unfinished">Vorherige</translation>
+        <translation>Vorherige</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -19784,12 +19784,12 @@ und den Import zum Laden verwenden</translation>
         <location line="+4"/>
         <location line="+4"/>
         <source>Drag and Drop Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Drag and Drop Bild</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove all images</source>
-        <translation type="unfinished"></translation>
+        <translation>Entfernen Sie alle Bilder</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -19799,7 +19799,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+51"/>
         <source>Add Picture</source>
-        <translation type="unfinished"></translation>
+        <translation>Bild hinzufügen</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -19843,17 +19843,17 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+357"/>
         <source>Hide Pictures</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilder ausblenden</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Add Pictures</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilder hinzufügen</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Load Picture File</source>
-        <translation type="unfinished">Bilddatei laden</translation>
+        <translation>Bilddatei laden</translation>
     </message>
 </context>
 <context>
@@ -19876,7 +19876,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location filename="../gui/TheWire/PulseMessage.ui" line="+14"/>
         <source>Form</source>
-        <translation type="unfinished">Formular</translation>
+        <translation>Formular</translation>
     </message>
     <message>
         <location line="+77"/>
@@ -19884,7 +19884,7 @@ und den Import zum Laden verwenden</translation>
         <location line="+19"/>
         <location line="+19"/>
         <source>Click to view picture</source>
-        <translation type="unfinished"></translation>
+        <translation>Zum Betrachten des Bildes anklicken</translation>
     </message>
     <message>
         <location line="-54"/>
@@ -19892,7 +19892,7 @@ und den Import zum Laden verwenden</translation>
         <location line="+19"/>
         <location line="+19"/>
         <source>Image</source>
-        <translation type="unfinished">Bild</translation>
+        <translation>Bild</translation>
     </message>
 </context>
 <context>
@@ -19910,7 +19910,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+49"/>
         <source>REPLY</source>
-        <translation type="unfinished"></translation>
+        <translation>Antworten</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -19922,7 +19922,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="-71"/>
         <source>REPUBLISH</source>
-        <translation type="unfinished"></translation>
+        <translation>REPUBLIKIEREN</translation>
     </message>
     <message>
         <location line="+54"/>
@@ -19932,12 +19932,12 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+54"/>
         <source>SHOW</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeigen</translation>
     </message>
     <message>
         <location line="+70"/>
         <source>FOLLOW</source>
-        <translation type="unfinished"></translation>
+        <translation>Folgen</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -20056,7 +20056,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+78"/>
         <source>REPLY</source>
-        <translation type="unfinished"></translation>
+        <translation>Antworten</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -20068,7 +20068,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="-71"/>
         <source>REPUBLISH</source>
-        <translation type="unfinished"></translation>
+        <translation>REPUBLIKIEREN</translation>
     </message>
     <message>
         <location line="+54"/>
@@ -20078,12 +20078,12 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+54"/>
         <source>SHOW</source>
-        <translation type="unfinished"></translation>
+        <translation>Anzeigen</translation>
     </message>
     <message>
         <location line="+69"/>
         <source>FOLLOW</source>
-        <translation type="unfinished"></translation>
+        <translation>Folgen</translation>
     </message>
 </context>
 <context>
@@ -20116,7 +20116,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="-43"/>
         <source>Edit profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil editieren</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -20158,7 +20158,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+83"/>
         <source>FOLLOW</source>
-        <translation type="unfinished"></translation>
+        <translation>Folgen</translation>
     </message>
 </context>
 <context>
@@ -21854,7 +21854,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+9"/>
         <source>Recommend in a message to...</source>
-        <translation type="unfinished"></translation>
+        <translation>Empfehlen Sie in einer Nachricht an...</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -22485,46 +22485,46 @@ Wenn du glaubst dass es eine korrekte Datei ist, entferne die entsprechende Zeil
         <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="+262"/>
         <source>Name</source>
         <comment>i.e: file name</comment>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Size</source>
         <comment>i.e: file size</comment>
-        <translation type="unfinished">Größe</translation>
+        <translation>Größe</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Completed</source>
-        <translation type="unfinished">Fertiggestellt</translation>
+        <translation>Fertiggestellt</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Speed</source>
         <comment>i.e: Download speed</comment>
-        <translation type="unfinished">Geschwindigkeit</translation>
+        <translation>Geschwindigkeit</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Progress / Availability</source>
         <comment>i.e: % downloaded</comment>
-        <translation type="unfinished">Fortschritt/Verfügbarkeit</translation>
+        <translation>Fortschritt/Verfügbarkeit</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Sources</source>
         <comment>i.e: Sources</comment>
-        <translation type="unfinished">Quellen</translation>
+        <translation>Quellen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Status</source>
-        <translation type="unfinished">Status</translation>
+        <translation>Status</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Speed / Queue position</source>
-        <translation type="unfinished">Geschwindigkeit/Warteschlangenposition</translation>
+        <translation>Geschwindigkeit/Warteschlangenposition</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -22535,12 +22535,12 @@ Wenn du glaubst dass es eine korrekte Datei ist, entferne die entsprechende Zeil
         <location line="+1"/>
         <source>Download time</source>
         <comment>i.e: Estimated Time of Arrival / Time left</comment>
-        <translation type="unfinished">Restzeit</translation>
+        <translation>Restzeit</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hash</source>
-        <translation type="unfinished">Prüfsumme</translation>
+        <translation>Prüfsumme</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -25078,7 +25078,7 @@ Du kannst die Auswahl in den Optionen zurücksetzen.</translation>
     <message>
         <location line="+3"/>
         <source>Identities</source>
-        <translation type="unfinished">Identitäten</translation>
+        <translation>Identitäten</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -25088,7 +25088,7 @@ Du kannst die Auswahl in den Optionen zurücksetzen.</translation>
     <message>
         <location line="+3"/>
         <source>Gxs Transport</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -25544,18 +25544,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../TorControl/TorControlWindow.ui" line="+20"/>
         <source>Dialog</source>
-        <translation type="unfinished">Dialog</translation>
+        <translation>Dialog</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Setting up Tor...</source>
-        <translation type="unfinished"></translation>
+        <translation>Einrichten von Tor...</translation>
     </message>
     <message>
         <location line="+39"/>
         <location line="+46"/>
         <source>Tor status:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="-36"/>
@@ -25567,78 +25567,78 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>Not started</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht gestartet</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Hidden address:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hidden adresse:</translation>
     </message>
     <message>
         <location line="+26"/>
         <location line="+23"/>
         <source>Not set</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht festgelegt</translation>
     </message>
     <message>
         <location line="-10"/>
         <source>Onion address:</source>
-        <translation type="unfinished"></translation>
+        <translation>Onion adresse:</translation>
     </message>
     <message>
         <location filename="../TorControl/TorControlWindow.cpp" line="-13"/>
         <source>Error</source>
-        <translation type="unfinished">Fehler</translation>
+        <translation>Fehler</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Not connected</source>
-        <translation type="unfinished">Nicht verbunden</translation>
+        <translation>Nicht verbunden</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Connecting</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbinde</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Socket connected</source>
-        <translation type="unfinished"></translation>
+        <translation>Socket verbunden</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Authenticating</source>
-        <translation type="unfinished"></translation>
+        <translation>Authentifizierung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Authenticated</source>
-        <translation type="unfinished"></translation>
+        <translation>Authentifiziert</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hidden service ready</source>
-        <translation type="unfinished"></translation>
+        <translation>Hidden Service bereit</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Tor offline</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Tor ready</source>
-        <translation type="unfinished"></translation>
+        <translation>Tor bereit</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Check that Tor is accessible in your executable path</source>
-        <translation type="unfinished"></translation>
+        <translation>Prüfe, ob Tor in deinem ausführbaren Pfad zugänglich ist</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>[Waiting for Tor...]</source>
-        <translation type="unfinished"></translation>
+        <translation>[Warten auf Tor...]</translation>
     </message>
 </context>
 <context>
@@ -25651,48 +25651,48 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>&lt;p&gt;This version of Retroshare uses Tor to connect to your trusted nodes.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Diese Version von Retroshare benutzt Tor, um sich mit deinen vertrauenswürdigen Knoten zu verbinden.&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+78"/>
         <source>Tor is currently offline</source>
-        <translation type="unfinished"></translation>
+        <translation>Tor ist derzeit offline</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Tor is OK</source>
-        <translation type="unfinished"></translation>
+        <translation>Tor ist OK</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+55"/>
         <source>No tor configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Tor-Konfiguration</translation>
     </message>
     <message>
         <location line="-28"/>
         <source>Tor proxy is OK</source>
-        <translation type="unfinished"></translation>
+        <translation>Tor-Proxy ist OK</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Tor proxy is not available</source>
-        <translation type="unfinished"></translation>
+        <translation>Tor-Proxy ist nicht verfügbar</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>I2P</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>i2p proxy is OK</source>
-        <translation type="unfinished"></translation>
+        <translation>i2p-Proxy ist OK</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>i2p proxy is not available</source>
-        <translation type="unfinished"></translation>
+        <translation>i2p-Proxy ist nicht verfügbar</translation>
     </message>
 </context>
 <context>
@@ -25716,17 +25716,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+16"/>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation type="unfinished">Eingehende Ordner automatisch freigeben (Empfohlen)</translation>
+        <translation>Eingehende Ordner automatisch freigeben (Empfohlen)</translation>
     </message>
     <message>
         <location line="-22"/>
         <source>Directories</source>
-        <translation type="unfinished"></translation>
+        <translation>Verzeichnisse</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Configure shared directories</source>
-        <translation type="unfinished"></translation>
+        <translation>Freigegebene Verzeichnisse konfigurieren</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -25992,22 +25992,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+33"/>
         <source>You have %1 completed transfers</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie haben %1 transfer abgeschlossen</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>You have %1 completed transfer</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie haben %1 transfer abgeschlossen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 completed transfers</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 transfers abgeschlossen</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>%1 completed transfer</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 transfer abgeschlossen</translation>
     </message>
     <message>
         <source>You have %1 completed downloads</source>
@@ -26286,7 +26286,7 @@ p, li { white-space: pre-wrap; }
         <location line="+1"/>
         <location line="+5"/>
         <source>Tunnel</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+26"/>
@@ -26334,7 +26334,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+28"/>
         <source>Warning</source>
-        <translation type="unfinished">Warnung</translation>
+        <translation>Warnung</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -26466,22 +26466,22 @@ p, li { white-space: pre-wrap; }
         <location line="+1"/>
         <location line="+3"/>
         <source>Show Peer Column</source>
-        <translation type="unfinished"></translation>
+        <translation>Peer-Spalte anzeigen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show Transferred Column</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertragene Spalte anzeigen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Progress</source>
-        <translation type="unfinished">Fortschritt</translation>
+        <translation>Fortschritt</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Progress Column</source>
-        <translation type="unfinished"></translation>
+        <translation>Fortschrittsspalte anzeigen</translation>
     </message>
     <message>
         <location line="+384"/>
@@ -26537,7 +26537,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+302"/>
         <source>%1 tunnels</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Tunnel</translation>
     </message>
     <message>
         <location line="+249"/>
@@ -26573,12 +26573,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-485"/>
         <source>Show Empty</source>
-        <translation type="unfinished"></translation>
+        <translation>Leere anzeigen</translation>
     </message>
     <message>
         <location line="+392"/>
         <source>Temporary shared files</source>
-        <translation type="unfinished"></translation>
+        <translation>Temporäre freigegebene Dateien</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -26589,7 +26589,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-74"/>
         <source>Empty</source>
-        <translation type="unfinished"></translation>
+        <translation>Leer</translation>
     </message>
     <message>
         <location line="+85"/>
@@ -26600,7 +26600,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+169"/>
         <source>Friends Directories [updating...]</source>
-        <translation type="unfinished"></translation>
+        <translation>Verzeichnisse von Freunden [Aktualisierung...]</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -26610,7 +26610,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>My Directories [updating...]</source>
-        <translation type="unfinished"></translation>
+        <translation>Meine Verzeichnisse [Aktualisierung...]</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -26620,7 +26620,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+2"/>
         <source># Files</source>
-        <translation type="unfinished"></translation>
+        <translation># Dateien</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -26713,7 +26713,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+20"/>
         <source>Request id: %1	 %3 secs ago	 from  %2	 %4 (%5 hits)</source>
-        <translation type="unfinished"></translation>
+        <translation>Anfrage-ID: vor %1 %3 Sekunden von %2 %4 (%5 Treffer)</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -26773,7 +26773,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>GXS sync tunnels</source>
-        <translation type="unfinished"></translation>
+        <translation>GXS sync Tunnel</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -26980,27 +26980,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>Web interface directory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Verzeichnis der Webschnittstelle:</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select directory for webinterface files (advanced)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Verzeichnis für Webinterface-Dateien auswählen (erweitert)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Apply settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen übernehmen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Start web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Starten Sie den Webbrowser</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Note: these settings do not affect retroshare-service, which has a command line switch to activate the web interface and select the listening port.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hinweis: Diese Einstellungen haben keinen Einfluss auf den retroshare-Service, der über einen Kommandozeilenschalter verfügt, um die Web-Schnittstelle zu aktivieren und den Listening-Port auszuwählen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Port:</source>
@@ -27018,17 +27018,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/WebuiPage.cpp" line="+76"/>
         <source>Please select the directory were to find retroshare webinterface files</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte wählen Sie das Verzeichnis aus, in dem sich die retroshare webui dateien befinden</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Missing passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Passwort fehlt</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Please set a passphrase to proect the access to the WEB interface.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte legen Sie eine Passwort fest, um den Zugriff auf die WEB-Schnittstelle zu schützen.</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -27264,7 +27264,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+5"/>
         <source>Create Group</source>
-        <translation type="unfinished">Gruppe erstellen</translation>
+        <translation>Gruppe erstellen</translation>
     </message>
     <message>
         <location line="+493"/>
@@ -27362,7 +27362,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+37"/>
         <source>History</source>
-        <translation type="unfinished">Verlauf</translation>
+        <translation>Verlauf</translation>
     </message>
     <message>
         <location filename="../gui/WikiPoos/WikiEditDialog.cpp" line="+303"/>
@@ -27476,7 +27476,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+14"/>
         <source>Post Pulse</source>
-        <translation type="unfinished"></translation>
+        <translation>Beitrag erstellen</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -27505,47 +27505,47 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+50"/>
         <source>HomePage</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+24"/>
         <source>&lt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Most Recent</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Show Posts from </source>
-        <translation type="unfinished"></translation>
+        <translation>Beiträge anzeigen von </translation>
     </message>
     <message>
         <location line="+14"/>
         <source> All Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Allzeit</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Last 24 hours</source>
-        <translation type="unfinished"></translation>
+        <translation>Letzte 24 Stunden</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Last 7 days</source>
-        <translation type="unfinished"></translation>
+        <translation>Letzte 7 Tage</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Last 30 days</source>
-        <translation type="unfinished"></translation>
+        <translation>Letzte 30 Tage</translation>
     </message>
     <message>
         <source>Last Month</source>
@@ -27648,37 +27648,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TheWire/WireGroupDialog.cpp" line="+78"/>
         <source>Create New Wire</source>
-        <translation type="unfinished"></translation>
+        <translation>Neuen Account erstellen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create</source>
-        <translation type="unfinished">Erstellen</translation>
+        <translation>Erstellen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Wire</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Edit Wire</source>
-        <translation type="unfinished"></translation>
+        <translation>Account bearbeiten</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Update Wire</source>
-        <translation type="unfinished"></translation>
+        <translation>Account aktualisieren</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Add Wire Admins</source>
-        <translation type="unfinished"></translation>
+        <translation>Admins hinzufügen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Select Wire Admins</source>
-        <translation type="unfinished"></translation>
+        <translation>Admins auswählen</translation>
     </message>
 </context>
 <context>
@@ -27686,44 +27686,44 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TheWire/WireGroupExtra.ui" line="+20"/>
         <source>Form</source>
-        <translation type="unfinished">Formular</translation>
+        <translation>Formular</translation>
     </message>
     <message>
         <location line="+86"/>
         <location filename="../gui/TheWire/WireGroupExtra.cpp" line="+76"/>
         <location line="+7"/>
         <source>MastHead background Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrundbild</translation>
     </message>
     <message>
         <location line="-32"/>
         <source>Select Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Bild auswählen</translation>
     </message>
     <message>
         <location line="-37"/>
         <source>Tagline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlagwort:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove</source>
-        <translation type="unfinished">Entfernen</translation>
+        <translation>Entfernen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Location:</source>
-        <translation type="unfinished">Ort:</translation>
+        <translation>Ort:</translation>
     </message>
     <message>
         <location filename="../gui/TheWire/WireGroupExtra.cpp" line="-34"/>
         <source>Load Masthead</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrund Bild</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Use the mouse to zoom and adjust the image for your background.</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzen Sie die Maus, um das Bild zu zoomen und für Ihren Hintergrund anzupassen.</translation>
     </message>
 </context>
 <context>
@@ -27737,7 +27737,7 @@ p, li { white-space: pre-wrap; }
         <location line="+53"/>
         <location line="+65"/>
         <source>Avatar</source>
-        <translation type="unfinished">Avatar</translation>
+        <translation>Avatar</translation>
     </message>
     <message>
         <location line="-49"/>
@@ -27767,7 +27767,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>Edit Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil editieren</translation>
     </message>
 </context>
 <context>
@@ -28009,7 +28009,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+2"/>
         <source>Denied</source>
-        <translation type="unfinished"></translation>
+        <translation>Verweigert</translation>
     </message>
     <message>
         <location line="+14"/>
