@@ -7002,7 +7002,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+3"/>
         <source>export your friendlist including groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportieren Sie Ihre Freundesliste einschließlich Gruppen</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7012,7 +7012,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+3"/>
         <source>import your friendlist including groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Importieren Sie Ihre Freundesliste einschließlich Gruppen</translation>
     </message>
     <message>
         <location line="-30"/>
@@ -12200,22 +12200,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+288"/>
         <source>Add friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Freund hinzufügen</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>Do you need help with Retroshare?</source>
-        <translation type="unfinished"></translation>
+        <translation>Benötigen Sie Hilfe bei Retroshare?</translation>
     </message>
     <message>
         <location line="-254"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Share your RetroShare ID&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Teilen Sie Ihre RetroShare-ID&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="-63"/>
         <source>This is your Retroshare ID. Copy and share with your friends!</source>
-        <translation type="unfinished"></translation>
+        <translation>Dies ist Ihre Retroshare-ID. Kopieren Sie es und teilen Sie es mit Ihren Freunden!</translation>
     </message>
     <message>
         <source>Add certificate file</source>
@@ -12230,19 +12230,20 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-3"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copy your RetroShare ID to clipboard&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Kopieren Sie Ihre RetroShare-ID in die Zwischenablage&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+105"/>
         <source>Open Source cross-platform, 
 private and secure decentralized communication platform.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Plattformübergreifendes Open Source,
+Private und sichere dezentrale Kommunikationsplattform.</translation>
     </message>
     <message>
         <location line="+87"/>
         <source>Did you receive a Retroshare ID from a friend?</source>
-        <translation type="unfinished"></translation>
+        <translation>Haben Sie eine Retroshare-ID von einem Freund erhalten?</translation>
     </message>
     <message>
         <location line="+47"/>
@@ -12252,12 +12253,12 @@ private and secure decentralized communication platform.
     <message>
         <location filename="../gui/HomePage.cpp" line="+172"/>
         <source>Copy your Cert to Clipboard</source>
-        <translation type="unfinished">Dein Zertifikat in die Zwischenablage kopieren</translation>
+        <translation>Dein Zertifikat in die Zwischenablage kopieren</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save your Cert into a File</source>
-        <translation type="unfinished">Zertifikat als Datei speichern</translation>
+        <translation>Zertifikat als Datei speichern</translation>
     </message>
     <message>
         <location line="-109"/>
@@ -12272,32 +12273,32 @@ private and secure decentralized communication platform.
     <message>
         <location line="+3"/>
         <source>Recommend friends to each others</source>
-        <translation type="unfinished"></translation>
+        <translation>Empfehlen Sie einander Freunde weiter</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy your Retroshare ID to Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopieren Sie Ihre Retroshare-ID in die Zwischenablage</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Include current local IP</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuelle lokale IP einschließen</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Include current external IP</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuelle externe IP einschließen</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Include my DNS</source>
-        <translation type="unfinished"></translation>
+        <translation>Meinen DNS einbeziehen</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Include all IPs history</source>
-        <translation type="unfinished"></translation>
+        <translation>Beziehen Sie den gesamten IP-Verlauf ein</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -12307,39 +12308,39 @@ private and secure decentralized communication platform.
     <message>
         <location line="+70"/>
         <source>Include all your known IPs</source>
-        <translation type="unfinished"></translation>
+        <translation>Geben Sie alle Ihre bekannten IP-Adressen an</translation>
     </message>
     <message>
         <location line="-109"/>
         <source>Use old certificate format</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwenden Sie das alte Zertifikatsformat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Displays the certificate format used up to version 0.6.5
 Old Retroshare nodes will not understand the
 new short format</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+99"/>
         <source>Use new (short) certificate format</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwenden Sie das neue (kurze) Zertifikatsformat</translation>
     </message>
     <message>
         <location line="+143"/>
         <source>Your Retroshare certificate is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished"></translation>
+        <translation>Ihr Retroshare-Zertifikat wurde in die Zwischenablage kopiert, fügen Sie es ein und senden Sie es per E-Mail oder auf andere Weise an Ihren Freund</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Your Retroshare ID is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished"></translation>
+        <translation>Ihre Retroshare-ID wurde in die Zwischenablage kopiert, fügen Sie es ein und senden Sie es per E-Mail oder auf andere Weise an Ihren Freund</translation>
     </message>
     <message>
         <location line="-14"/>
         <source>RetroShare Invite</source>
-        <translation type="unfinished">RetroShare-Einladung</translation>
+        <translation>RetroShare-Einladung</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -12349,7 +12350,7 @@ new short format</source>
     <message>
         <location line="+0"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="unfinished">RetroShare-Zertifikat (*.rsc );;Alle Dateien (*)</translation>
+        <translation>RetroShare-Zertifikat (*.rsc );;Alle Dateien (*)</translation>
     </message>
     <message>
         <location filename="../gui/HomePage.h" line="+46"/>
@@ -15921,12 +15922,12 @@ Möchtest du die Nachricht speichern ?</translation>
     <message>
         <location filename="../gui/common/MimeTextEdit.cpp" line="+253"/>
         <source>Save image</source>
-        <translation type="unfinished">Bild speichern</translation>
+        <translation>Bild speichern</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Copy image</source>
-        <translation type="unfinished"></translation>
+        <translation>Bild kopieren</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -16308,59 +16309,59 @@ Reported error:</source>
     <message>
         <location filename="../gui/common/NewFriendList.ui" line="+83"/>
         <source>Offline Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Offline-Freunde</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show Offline Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Offline-Freunde anzeigen</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Status</source>
-        <translation type="unfinished">Status</translation>
+        <translation>Status</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show status</source>
-        <translation type="unfinished"></translation>
+        <translation>Status anzeigen</translation>
     </message>
     <message>
         <location line="+8"/>
         <location filename="../gui/common/NewFriendList.cpp" line="+690"/>
         <source>Groups</source>
-        <translation type="unfinished">Gruppen</translation>
+        <translation>Gruppen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Gruppen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>export friendlist</source>
-        <translation type="unfinished">Freundesliste exportieren</translation>
+        <translation>Freundesliste exportieren</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>export your friendlist including groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportieren Sie Ihre Freundesliste einschließlich Gruppen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>import friendlist</source>
-        <translation type="unfinished">Freundesliste importieren</translation>
+        <translation>Freundesliste importieren</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>import your friendlist including groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Importieren Sie Ihre Freundesliste einschließlich Gruppen</translation>
     </message>
     <message>
         <location filename="../gui/common/NewFriendList.cpp" line="-496"/>
         <location line="+28"/>
         <source>Search</source>
-        <translation type="unfinished">Suchen</translation>
+        <translation>Suchen</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -16376,7 +16377,7 @@ Reported error:</source>
     <message>
         <location line="+2"/>
         <source>Online friends on top</source>
-        <translation type="unfinished"></translation>
+        <translation>Online-Freunde an der Spitze</translation>
     </message>
     <message>
         <location line="+82"/>
@@ -16386,27 +16387,27 @@ Reported error:</source>
     <message>
         <location line="+46"/>
         <source>Last contact</source>
-        <translation type="unfinished"></translation>
+        <translation>Letzter Kontakt</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>IP</source>
-        <translation type="unfinished">IP</translation>
+        <translation>IP</translation>
     </message>
     <message>
         <location line="+251"/>
         <source>Group</source>
-        <translation type="unfinished">Gruppe</translation>
+        <translation>Gruppe</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Friend</source>
-        <translation type="unfinished">Freund</translation>
+        <translation>Freund</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Node</source>
-        <translation type="unfinished">Netzknoten</translation>
+        <translation>Netzknoten</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -16416,186 +16417,189 @@ Reported error:</source>
     <message>
         <location line="+12"/>
         <source>Edit Group</source>
-        <translation type="unfinished">Gruppe ändern</translation>
+        <translation>Gruppe ändern</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove Group</source>
-        <translation type="unfinished">Gruppe entfernen</translation>
+        <translation>Gruppe entfernen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Profile details</source>
-        <translation type="unfinished">Profildetails</translation>
+        <translation>Profildetails</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Deny connections</source>
-        <translation type="unfinished">Verbindungen ablehnen</translation>
+        <translation>Verbindungen ablehnen</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Add to group</source>
-        <translation type="unfinished">Zu Gruppe hinzufügen</translation>
+        <translation>Zu Gruppe hinzufügen</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Move to group</source>
-        <translation type="unfinished">In Gruppe verschieben</translation>
+        <translation>In Gruppe verschieben</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Create new group</source>
-        <translation type="unfinished">Neue Gruppe erstellen</translation>
+        <translation>Neue Gruppe erstellen</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Remove from group </source>
-        <translation type="unfinished"></translation>
+        <translation>Aus der Gruppe entfernen </translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove from all groups</source>
-        <translation type="unfinished">Aus allen Gruppen entfernen</translation>
+        <translation>Aus allen Gruppen entfernen</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Chat</source>
-        <translation type="unfinished">Chat</translation>
+        <translation>Chat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Send message to this node</source>
-        <translation type="unfinished">Nachricht an diesen Knoten senden</translation>
+        <translation>Nachricht an diesen Knoten senden</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Node details</source>
-        <translation type="unfinished">Knotendetails</translation>
+        <translation>Knotendetails</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Recommend this node to...</source>
-        <translation type="unfinished">Diesen Knoten empfehlen an...</translation>
+        <translation>Diesen Knoten empfehlen an...</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Attempt to connect</source>
-        <translation type="unfinished">Verbindung versuchen</translation>
+        <translation>Verbindung versuchen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Copy certificate link</source>
-        <translation type="unfinished">Zertifikat-Link kopieren</translation>
+        <translation>Zertifikat-Link kopieren</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Remove Friend Node</source>
-        <translation type="unfinished">Freundknoten entfernen</translation>
+        <translation>Freundknoten entfernen</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Paste certificate link</source>
-        <translation type="unfinished">Zertifikat-Link einfügen</translation>
+        <translation>Zertifikat-Link einfügen</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Expand all</source>
-        <translation type="unfinished">Alle erweitern</translation>
+        <translation>Alle erweitern</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Collapse all</source>
-        <translation type="unfinished">Alle reduzieren</translation>
+        <translation>Alle reduzieren</translation>
     </message>
     <message>
         <location line="+236"/>
         <source>Do you want to remove this node?</source>
-        <translation type="unfinished">Möchtest du diesen Netzknoten entfernen?</translation>
+        <translation>Möchtest du diesen Netzknoten entfernen?</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Do you want to remove this Friend?</source>
-        <translation type="unfinished">Möchtest du diesen Freund entfernen?</translation>
+        <translation>Möchtest du diesen Freund entfernen?</translation>
     </message>
     <message>
         <location line="+235"/>
         <location line="+18"/>
         <source>Done!</source>
-        <translation type="unfinished">Fertig!</translation>
+        <translation>Fertig!</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Your friendlist is stored at:
 </source>
-        <translation type="unfinished">Deine Freundesliste wird gespeichert unter:
+        <translation>Deine Freundesliste wird gespeichert unter:
 </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>
 (keep in mind that the file is unencrypted!)</source>
-        <translation type="unfinished"></translation>
+        <translation>
+(Beachten Sie, dass die Datei unverschlüsselt ist!)</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+7"/>
         <source>Your friendlist was imported from:
 </source>
-        <translation type="unfinished">Deine Freundesliste wurde importiert aus:
+        <translation>Deine Freundesliste wurde importiert aus:
 </translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Done - but errors happened!</source>
-        <translation type="unfinished">Fertig - aber Fehler sind aufgetreten!</translation>
+        <translation>Fertig - aber Fehler sind aufgetreten!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>
 at least one peer was not added</source>
-        <translation type="unfinished"></translation>
+        <translation>
+Mindestens ein Peer wurde nicht hinzugefügt</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>
 at least one peer was not added to a group</source>
-        <translation type="unfinished"></translation>
+        <translation>
+Mindestens ein Peer wurde nicht zu einer Gruppe hinzugefügt</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Select file for importing your friendlist from</source>
-        <translation type="unfinished"></translation>
+        <translation>Wählen Sie die Datei aus, aus der Sie Ihre Freundesliste importieren möchten</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+7"/>
         <source>XML File (*.xml);;All Files (*)</source>
-        <translation type="unfinished">XML-Datei (*.xml);;Alle Dateien (*)</translation>
+        <translation>XML-Datei (*.xml);;Alle Dateien (*)</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Select a file for exporting your friendlist to</source>
-        <translation type="unfinished"></translation>
+        <translation>Wählen Sie eine Datei aus, in die Sie Ihre Freundesliste exportieren möchten</translation>
     </message>
     <message>
         <location line="+30"/>
         <location line="+116"/>
         <source>Error</source>
-        <translation type="unfinished">Fehler</translation>
+        <translation>Fehler</translation>
     </message>
     <message>
         <location line="-115"/>
         <source>File is not writeable!
 </source>
-        <translation type="unfinished">Datei ist nicht schreibbar!
+        <translation>Datei ist nicht schreibbar!
 </translation>
     </message>
     <message>
         <location line="+116"/>
         <source>File is not readable!
 </source>
-        <translation type="unfinished">Datei ist nicht lesbar!
+        <translation>Datei ist nicht lesbar!
 </translation>
     </message>
 </context>
@@ -16636,7 +16640,7 @@ at least one peer was not added to a group</source>
     <message>
         <location filename="../gui/NewsFeed.ui" line="+79"/>
         <source>Activity Stream</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivitätsstream</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -16674,7 +16678,7 @@ at least one peer was not added to a group</source>
     <message>
         <location filename="../gui/NewsFeed.h" line="+71"/>
         <source>Activity</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivität</translation>
     </message>
 </context>
 <context>
@@ -17064,7 +17068,7 @@ Minimalmodus: 10% vom Standarddatenaufkommen und (unfertig) pausiert alle Datei�
         <location line="+4"/>
         <location line="+5"/>
         <source>Turtle routing disabled!</source>
-        <translation type="unfinished"></translation>
+        <translation>Turtle-Routing deaktiviert!</translation>
     </message>
 </context>
 <context>
@@ -17606,17 +17610,17 @@ Warning: In your File-Transfer option, you select allow direct download to No.</
     <message>
         <location line="+45"/>
         <source>Send message</source>
-        <translation type="unfinished">Nachricht senden</translation>
+        <translation>Nachricht senden</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Send invite</source>
-        <translation type="unfinished"></translation>
+        <translation>Einladung senden</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Add to Contacts</source>
-        <translation type="unfinished">Zu Kontakte hinzufügen</translation>
+        <translation>Zu Kontakte hinzufügen</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -25711,7 +25715,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-344"/>
         <source>Shared Directories</source>
-        <translation type="unfinished"></translation>
+        <translation>Freigegebene Verzeichnisse</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -25731,7 +25735,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+28"/>
         <source>Auto-check shared directories every </source>
-        <translation type="unfinished"></translation>
+        <translation>Freigegebene Verzeichnisse automatisch überprüfen </translation>
     </message>
     <message>
         <location line="+10"/>
@@ -25860,7 +25864,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>Allow direct download:</source>
-        <translation type="unfinished"></translation>
+        <translation>Direkten Download zulassen:</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -25959,7 +25963,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+34"/>
         <source>Set Incoming Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Eingehendes Verzeichnis festlegen</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -25969,7 +25973,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+21"/>
         <source>Set Partials Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Partialverzeichnis festlegen</translation>
     </message>
     <message>
         <location line="+10"/>
