@@ -143,28 +143,28 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_TOPIC, QHeaderView::Interactive);
 
     privateSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
-    privateSubLobbyItem->setText(COLUMN_NAME, tr("Private Subscribed chat rooms"));
+    privateSubLobbyItem->setText(COLUMN_NAME, tr("Private Subscribed"));
 	privateSubLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "1");
 	//	privateLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
     privateSubLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE);
 	ui.lobbyTreeWidget->insertTopLevelItem(0, privateSubLobbyItem);
 
 	publicSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
-	publicSubLobbyItem->setText(COLUMN_NAME, tr("Public Subscribed chat rooms"));
+	publicSubLobbyItem->setText(COLUMN_NAME, tr("Public Subscribed"));
 	publicSubLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "2");
 	//	publicLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
     publicSubLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
 	ui.lobbyTreeWidget->insertTopLevelItem(1, publicSubLobbyItem);
 
 	privateLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
-	privateLobbyItem->setText(COLUMN_NAME, tr("Private chat rooms"));
+	privateLobbyItem->setText(COLUMN_NAME, tr("Private"));
 	privateLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "3");
 	//	privateLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
     privateLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE);
 	ui.lobbyTreeWidget->insertTopLevelItem(2, privateLobbyItem);
 
 	publicLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
-	publicLobbyItem->setText(COLUMN_NAME, tr("Public chat rooms"));
+	publicLobbyItem->setText(COLUMN_NAME, tr("Public"));
 	publicLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "4");
 	//	publicLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
     publicLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
@@ -721,9 +721,9 @@ void ChatLobbyWidget::updateDisplay()
         }
 	}
 	publicSubLobbyItem->setHidden(publicSubLobbyItem->childCount()==0);
-	publicSubLobbyItem->setText(COLUMN_NAME, tr("Public Subscribed chat rooms")+ QString(" (") + QString::number(publicSubLobbyItem->childCount())+QString(")"));
+	publicSubLobbyItem->setText(COLUMN_NAME, tr("Public Subscribed")+ QString(" (") + QString::number(publicSubLobbyItem->childCount())+QString(")"));
 	privateSubLobbyItem->setHidden(privateSubLobbyItem->childCount()==0);
-	publicLobbyItem->setText(COLUMN_NAME, tr("Public chat rooms")+ " (" + QString::number(publicLobbyItem->childCount())+QString(")"));
+	publicLobbyItem->setText(COLUMN_NAME, tr("Public")+ " (" + QString::number(publicLobbyItem->childCount())+QString(")"));
 }
 
 void ChatLobbyWidget::createChatLobby()
