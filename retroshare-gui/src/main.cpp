@@ -29,6 +29,7 @@ CrashStackTrace gCrashStackTrace;
 #include <QObject>
 #include <QMessageBox>
 #include <QSplashScreen>
+#include <QMessageBox>
 
 #include <rshare.h>
 #include "gui/common/FilesDefs.h"
@@ -209,18 +210,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
     Q_INIT_RESOURCE(images);
     Q_INIT_RESOURCE(icons);
 
-	// Loop through all command-line args/values to get help wanted before RsInit exit.
-	for (int i = 0; i < args.size(); ++i) {
-		QString arg;
-		/* Get the argument name and set a blank value */
-		arg = args.at(i);
-		if ((arg.toLower() == "-h") || (arg.toLower() == "--help")) {
-			QApplication dummyApp (argc, argv); // needed for QMessageBox
-			Rshare::showUsageMessageBox();
-		}
-	}
-
-	// This is needed to allocate rsNotify, so that it can be used to ask for PGP passphrase
+    // This is needed to allocate rsNotify, so that it can be used to ask for PGP passphrase
 	//
 	RsControl::earlyInitNotificationSystem() ;
 
@@ -233,28 +223,57 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
     RsConfigOptions conf;
 
 	argstream as(argc,argv);
-	as      >> option('s',"stderr"           ,conf.outStderr      ,"output to stderr instead of log file."    )
-	        >> option('u',"udp"              ,conf.udpListenerOnly,"Only listen to UDP."                      )
-	        >> parameter('c',"base-dir"      ,conf.optBaseDir     ,"directory", "Set base directory."                                         ,false)
-	        >> parameter('l',"log-file"      ,conf.logfname       ,"logfile"   ,"Set Log filename."                                           ,false)
-	        >> parameter('d',"debug-level"   ,conf.debugLevel     ,"level"     ,"Set debug level."                                            ,false)
-	        >> parameter('i',"ip-address"    ,conf.forcedInetAddress,"nnn.nnn.nnn.nnn", "Force IP address to use (if cannot be detected)."    ,false)
-	        >> parameter('p',"port"          ,conf.forcedPort     ,"port"      ,"Set listenning port to use."                                 ,false)
-            >> parameter('o',"opmode"        ,conf.opModeStr      ,"opmode"    ,"Set Operating mode (Full, NoTurtle, Gaming, Minimal)."       ,false)
-            >> parameter('t',"opmode"        ,conf.userSuppliedTorExecutable,"tor"    ,"supply full tor eecutable path."       ,false);
+    as      >> option('s',"stderr"           ,conf.outStderr      ,"output to stderr instead of log file "    )
+            >> option('u',"udp"              ,conf.udpListenerOnly,"Only listen to UDP "                      )
+            >> parameter('c',"base-dir"      ,conf.optBaseDir     ,"directory", "Set base directory "                                         ,false)
+            >> parameter('l',"log-file"      ,conf.logfname       ,"logfile"   ,"Set Log filename "                                           ,false)
+            >> parameter('d',"debug-level"   ,conf.debugLevel     ,"level"     ,"Set debug level "                                            ,false)
+            >> parameter('i',"ip-address"    ,conf.forcedInetAddress,"nnn.nnn.nnn.nnn", "Force IP address "    ,false)
+            >> parameter('p',"port"          ,conf.forcedPort     ,"port"      ,"Set listenning port "                                 ,false)
+            >> parameter('o',"opmode"        ,conf.opModeStr      ,"opmode"    ,"Set mode (Full, NoTurtle, Gaming, Minimal) "       ,false)
+            >> parameter('t',"opmode"        ,conf.userSuppliedTorExecutable,"tor"    ,"supply full tor executable path "       ,false);
 #ifdef RS_JSONAPI
 	as      >> parameter('J', "jsonApiPort", conf.jsonApiPort, "jsonApiPort", "Enable JSON API on the specified port", false )
-	        >> parameter('P', "jsonApiBindAddress", conf.jsonApiBindAddress, "jsonApiBindAddress", "JSON API Bind Address.", false);
+            >> parameter('P', "jsonApiBindAddress", conf.jsonApiBindAddress, "jsonApiBindAddress", "JSON API Bind Address ", false);
 #endif // ifdef RS_JSONAPI
 
 #ifdef LOCALNET_TESTING
-	as      >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false);
+    as      >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction "                   ,false);
 #endif // ifdef LOCALNET_TESTING
 
 #ifdef RS_AUTOLOGIN
 	as      >> option('a',"auto-login"       ,conf.autoLogin      ,"AutoLogin (Windows Only) + StartMinimised");
 #endif // ifdef RS_AUTOLOGIN
+    as 		>> help('h',"help",QObject::tr("Display this help").toStdString().c_str());
 
+    if(as.helpRequested())
+    {
+        RsInfo() << "\n" <<
+            "+================================================================+\n"
+            "|     o---o                                             o        |\n"
+            "|      \\ /               - Retroshare GUI -            / \\       |\n"
+            "|       o                                             o---o      |\n"
+            "+================================================================+"
+                 << std::endl ;
+
+        std::cerr << as.usage(true) << std::endl;
+
+        QApplication dummyApp (argc, argv); // needed for QMessageBox
+        QMessageBox box;
+        QString text = QString::fromUtf8(as.usage(true,false).c_str());
+        QFont font("Courier New",10,50,false);
+        font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
+        font.setStyle(QFont::StyleNormal);
+        font.setBold(true);
+        box.setFont(font);
+        box.setInformativeText(text);
+        box.setWindowTitle(QObject::tr("Retroshare commandline arguments"));
+
+        // now compute the size of text and set the size of the box. For the record, this doesn't work...
+        box.setBaseSize( QSize(QFontMetricsF(font).width(text),QFontMetricsF(font).height()*text.count('\n')) );
+        box.exec();
+        return 0;
+    }
     conf.main_executable_path = argv[0];
 
 	int initResult = RsInit::InitRetroShare(conf);
