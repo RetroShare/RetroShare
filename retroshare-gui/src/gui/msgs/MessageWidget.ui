@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>698</width>
+    <width>746</width>
     <height>539</height>
    </rect>
   </property>
@@ -85,6 +85,11 @@
             </property>
             <item>
              <widget class="QToolButton" name="replyButton">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Reply</string>
               </property>
@@ -105,6 +110,11 @@
             </item>
             <item>
              <widget class="QToolButton" name="replyallButton">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reply to All&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
@@ -128,6 +138,11 @@
             </item>
             <item>
              <widget class="QToolButton" name="forwardButton">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Forward selected Message&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
@@ -151,6 +166,11 @@
             </item>
             <item>
              <widget class="QToolButton" name="deleteButton">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Delete</string>
               </property>
@@ -176,6 +196,11 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+               </font>
               </property>
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;More actions&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -211,11 +236,6 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
             <property name="text">
              <string>Tags:</string>
             </property>
@@ -232,11 +252,6 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
             <property name="text">
              <string>Subject:</string>
             </property>
@@ -252,11 +267,6 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
             </property>
             <property name="text">
              <string>Cc:</string>
@@ -277,11 +287,6 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
             <property name="text">
              <string>Bcc:</string>
             </property>
@@ -298,11 +303,6 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
             <property name="text">
              <string>To:</string>
             </property>
@@ -318,13 +318,6 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -373,11 +366,6 @@
               <height>16777215</height>
              </size>
             </property>
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
             <property name="scaledContents">
              <bool>true</bool>
             </property>
@@ -415,11 +403,6 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
             </property>
             <property name="text">
              <string>From:</string>
@@ -860,8 +843,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections>
   <connection>

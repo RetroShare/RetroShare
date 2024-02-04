@@ -139,11 +139,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="font">
-               <font>
-                <pointsize>11</pointsize>
-               </font>
-              </property>
               <property name="contextMenuPolicy">
                <enum>Qt::CustomContextMenu</enum>
               </property>
@@ -252,11 +247,6 @@
                    <width>0</width>
                    <height>0</height>
                   </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>11</pointsize>
-                  </font>
                  </property>
                 </widget>
                </item>
@@ -375,11 +365,6 @@
               <enum>Qt::Vertical</enum>
              </property>
              <widget class="RSTreeView" name="messageTreeWidget">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
               <property name="contextMenuPolicy">
                <enum>Qt::CustomContextMenu</enum>
               </property>

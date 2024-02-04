@@ -274,11 +274,6 @@
        </item>
        <item>
         <widget class="QTreeView" name="threadTreeWidget">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -578,6 +573,27 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSImageBlockWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/RSImageBlockWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
    <class>ElidedLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/ElidedLabel.h</header>
@@ -589,35 +605,14 @@
    <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSImageBlockWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/common/RSImageBlockWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>RSTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/RSTextBrowser.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSComboBox</class>
-   <extends>QComboBox</extends>
-   <header>gui/common/RSComboBox.h</header>
-  </customwidget>
-  <customwidget>
    <class>SubscribeToolButton</class>
    <extends>QToolButton</extends>
    <header>gui/common/SubscribeToolButton.h</header>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

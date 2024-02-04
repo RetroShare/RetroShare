@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1092</width>
-    <height>231</height>
+    <height>255</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="GxsChannelPostItem_GL">
@@ -86,7 +86,6 @@
               </property>
               <property name="font">
                <font>
-                <pointsize>11</pointsize>
                 <weight>75</weight>
                 <italic>true</italic>
                 <bold>true</bold>
@@ -142,7 +141,6 @@
            <widget class="QLabel" name="subjectLabel">
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
               <weight>75</weight>
               <italic>false</italic>
               <bold>true</bold>

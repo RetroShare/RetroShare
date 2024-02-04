@@ -262,7 +262,6 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
             <weight>75</weight>
             <italic>true</italic>
             <bold>true</bold>
@@ -334,7 +333,6 @@
            <widget class="QLabel" name="nameLabel">
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
               <weight>75</weight>
               <italic>true</italic>
               <bold>true</bold>
@@ -744,9 +742,9 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
   <include location="Posted_images.qrc"/>
-  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

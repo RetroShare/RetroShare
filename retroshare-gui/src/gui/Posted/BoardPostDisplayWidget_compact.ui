@@ -181,6 +181,12 @@
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
             </spacer>
            </item>
           </layout>
@@ -220,7 +226,6 @@
             </property>
             <property name="font">
              <font>
-              <pointsize>12</pointsize>
               <weight>75</weight>
               <italic>true</italic>
               <bold>true</bold>
@@ -441,6 +446,12 @@
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
            </spacer>
           </item>
          </layout>
@@ -507,6 +518,12 @@
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
        </spacer>
       </item>
      </layout>
@@ -516,15 +533,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>ElidedLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/ElidedLabel.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>GxsIdLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
   <customwidget>
    <class>ZoomableLabel</class>

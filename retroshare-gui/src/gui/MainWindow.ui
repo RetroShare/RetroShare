@@ -35,7 +35,7 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
+         <pointsize>13</pointsize>
         </font>
        </property>
        <property name="frameShape">
@@ -157,7 +157,7 @@
   </action>
   <action name="actionOptions">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset>
      <normaloff>:/images/kcmsystem24.png</normaloff>:/images/kcmsystem24.png</iconset>
    </property>
    <property name="text">

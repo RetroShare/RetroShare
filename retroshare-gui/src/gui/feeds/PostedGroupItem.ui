@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>618</width>
-    <height>161</height>
+    <height>195</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="PostedGroupItem_GL">
@@ -171,7 +171,6 @@
             </property>
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
               <weight>75</weight>
               <italic>true</italic>
               <bold>true</bold>
@@ -186,7 +185,6 @@
            <widget class="QLabel" name="nameLabel">
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
               <weight>75</weight>
               <italic>true</italic>
               <bold>true</bold>
