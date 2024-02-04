@@ -1049,7 +1049,7 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <message>
         <location line="+24"/>
         <source>Comm value</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/feeds/BoardsCommentsItem.cpp" line="-116"/>
@@ -1200,7 +1200,7 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <message>
         <location line="+8"/>
         <source>Log scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Log skalieren</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1337,7 +1337,7 @@ in das Bild hinein, um es für
     <message>
         <location line="+22"/>
         <source>Comm value</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChannelsCommentsItem.cpp" line="-8"/>
@@ -2061,7 +2061,7 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="+0"/>
         <source>/me is sending a message with /me</source>
-        <translation type="unfinished"></translation>
+        <translation>/me sendet eine Nachricht mit /me</translation>
     </message>
     <message>
         <location filename="../gui/settings/ChatPage.ui" line="+237"/>
@@ -2081,17 +2081,17 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="-13"/>
         <source>When focus on text browser after showing chat room</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn Sie sich auf den Textbrowser konzentrieren, nachdem Sie den Chatraum angezeigt haben</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Shrink text edit field when not needed</source>
-        <translation type="unfinished"></translation>
+        <translation>Textbearbeitungsfeld verkleinern, wenn es nicht benötigt wird</translation>
     </message>
     <message>
         <location line="+175"/>
         <source>Fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Schriftarten</translation>
     </message>
     <message>
         <location line="+97"/>
@@ -2101,12 +2101,12 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="+37"/>
         <source>If your system is set up correctly, this next square should measure 1 cm.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn Ihr System richtig eingerichtet ist, sollte dieses nächste Quadrat 1 cm messen.</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>This next square is scaled accordingly to your system font size.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieses nächste Quadrat wird entsprechend der Schriftgröße Ihres Systems skaliert.</translation>
     </message>
     <message>
         <location line="+65"/>
@@ -2117,7 +2117,7 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="-470"/>
         <source>Checked, if the identity and the text above occurrences must be in the same case to trigger count.</source>
-        <translation type="unfinished"></translation>
+        <translation>Überprüft, ob die Identität und der Text über den Vorkommen in derselben Groß-/Kleinschreibung vorliegen müssen, um die Zählung auszulösen.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2127,22 +2127,22 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="+7"/>
         <source>Default identity for chat rooms:</source>
-        <translation type="unfinished"></translation>
+        <translation>Standardidentität für Chatrooms:</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Count all unread messages</source>
-        <translation type="unfinished">Alle ungelesenen Nachrichten zählen</translation>
+        <translation>Alle ungelesenen Nachrichten zählen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Count occurrences of my current identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Zähle Vorkommen meiner aktuellen Identität</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Count occurrences of any of the following texts (separate by newlines):</source>
-        <translation type="unfinished"></translation>
+        <translation>Zählen Sie das Vorkommen eines der folgenden Texte (getrennt durch Zeilenumbrüche):</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -2178,17 +2178,17 @@ Double click a chat room to enter and chat.</source>
         <location line="-6"/>
         <location line="+107"/>
         <source>Broadcast</source>
-        <translation type="unfinished">Rundschreiben</translation>
+        <translation>Rundschreiben</translation>
     </message>
     <message>
         <location line="-13"/>
         <source>Node-to-node chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Knoten-Chat</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Saved messages (0 = unlimited):</source>
-        <translation>Gespeicherte Nachrichten (0 = unbegrenzt)</translation>
+        <translation>Gespeicherte Nachrichten (0 = unbegrenzt):</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -2198,12 +2198,12 @@ Double click a chat room to enter and chat.</source>
     <message>
         <location line="+74"/>
         <source>Distant chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Distant-Chat</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Maximum storage period, in days (0=keep all):</source>
-        <translation>Maximale Speicherzeit in Tagen (0 = alle behalten)</translation>
+        <translation>Maximale Speicherzeit in Tagen (0 = alle behalten):</translation>
     </message>
     <message>
         <location line="-1043"/>
@@ -4061,7 +4061,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-193"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The circle name, contact author and invited member list will be visible to all invited members. If the circle is not private, it will also be visible to neighbor nodes of the nodes who host the invited members.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Der Kreisname, der Kontaktautor und die Liste der eingeladenen Mitglieder sind für alle eingeladenen Mitglieder sichtbar. Wenn der Kreis nicht privat ist, ist er auch für Nachbarknoten der Knoten sichtbar, die die eingeladenen Mitglieder hosten.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -4152,7 +4152,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+20"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Private (a.k.a. self-restricted) circles  are only visible to the invited members of these circles. In practice the circle uses its own list of invited members to limit its own distribution. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Private (auch bekannt als selbstbeschränkte) Kreise sind nur für die eingeladenen Mitglieder dieser Kreise sichtbar. In der Praxis verwendet der Kreis seine eigene Liste eingeladener Mitglieder, um seine eigene Verteilung einzuschränken. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4162,7 +4162,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+17"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Circles can be restricted to the members of another circle. Only the members of that second circle will be allowed to see the new circle and its content (list of members, etc).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Kreise können auf die Mitglieder eines anderen Kreises beschränkt werden. Nur die Mitglieder dieses zweiten Kreises dürfen den neuen Kreis und seinen Inhalt (Liste der Mitglieder usw.) sehen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/Circles/CreateCircleDialog.cpp" line="-522"/>
@@ -4240,7 +4240,7 @@ p, li { white-space: pre-wrap; }
         <location line="+145"/>
         <location line="+61"/>
         <source>[Anonymous Id]</source>
-        <translation type="unfinished"></translation>
+        <translation>[Anonymous ID]</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -4615,7 +4615,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8.25pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+93"/>
@@ -6199,7 +6199,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location filename="../gui/common/FriendList.ui" line="+84"/>
         <source>Friends</source>
-        <translation type="unfinished">Freunde</translation>
+        <translation>Freunde</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6210,7 +6210,7 @@ und den Import zum Laden verwenden</translation>
         <location line="+10"/>
         <location filename="../gui/common/FriendList.cpp" line="+151"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+11"/>
@@ -6294,7 +6294,7 @@ und den Import zum Laden verwenden</translation>
     <message>
         <location line="+1"/>
         <source>Search ID</source>
-        <translation type="unfinished">Kennung suchen</translation>
+        <translation>Kennung suchen</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6403,25 +6403,25 @@ und den Import zum Laden verwenden</translation>
         <location line="+2"/>
         <source>
 at least one peer was not added</source>
-        <translation type="unfinished">
+        <translation>
 Mindestens ein Peer wurde nicht hinzugefügt</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>
 at least one peer was not added to a group</source>
-        <translation type="unfinished">
+        <translation>
 Mindestens ein Peer wurde nicht zu einer Gruppe hinzugefügt</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Select file for importing your friendlist from</source>
-        <translation type="unfinished">Wählen Sie die Datei aus, aus der Sie Ihre Freundesliste importieren möchten</translation>
+        <translation>Wählen Sie die Datei aus, aus der Sie Ihre Freundesliste importieren möchten</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Select a file for exporting your friendlist to</source>
-        <translation type="unfinished">Wählen Sie eine Datei aus, in die Sie Ihre Freundesliste exportieren möchten</translation>
+        <translation>Wählen Sie eine Datei aus, in die Sie Ihre Freundesliste exportieren möchten</translation>
     </message>
     <message>
         <location line="-6"/>
@@ -6452,7 +6452,7 @@ Mindestens ein Peer wurde nicht zu einer Gruppe hinzugefügt</translation>
     <message>
         <location line="+285"/>
         <source>Show Items</source>
-        <translation type="unfinished"></translation>
+        <translation>Elemente anzeigen</translation>
     </message>
     <message>
         <location filename="../gui/common/FriendList.ui" line="-38"/>
@@ -7612,7 +7612,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+15"/>
         <source>Branching factor</source>
-        <translation type="unfinished"></translation>
+        <translation>Verzweigungsfaktor</translation>
     </message>
     <message>
         <location filename="../gui/statistics/GlobalRouterStatistics.cpp" line="+132"/>
@@ -9216,12 +9216,12 @@ bevor du kommentieren kannst</translation>
     <message>
         <location line="+3"/>
         <source>Subscribe</source>
-        <translation type="unfinished">Abonnieren</translation>
+        <translation>Abonnieren</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Copy RetroShare link</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare-Link kopieren</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -9242,27 +9242,27 @@ bevor du kommentieren kannst</translation>
     <message>
         <location line="+36"/>
         <source>Moderator list</source>
-        <translation type="unfinished"></translation>
+        <translation>Moderatorenliste</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>TextLabel</source>
-        <translation type="unfinished">TextLabel</translation>
+        <translation>TextLabel</translation>
     </message>
     <message>
         <location filename="../gui/feeds/GxsForumGroupItem.cpp" line="-188"/>
         <source>Loading...</source>
-        <translation type="unfinished">Lade...</translation>
+        <translation>Lade...</translation>
     </message>
     <message>
         <location line="+103"/>
         <source>Moderator list changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Moderatorenliste geändert</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Forum updated</source>
-        <translation type="unfinished"></translation>
+        <translation>Forum aktualisiert</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9372,7 +9372,7 @@ bevor du kommentieren kannst</translation>
     <message>
         <location line="-154"/>
         <source>New Thread</source>
-        <translation type="unfinished">Neues Thema</translation>
+        <translation>Neues Thema</translation>
     </message>
     <message>
         <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="+316"/>
@@ -9424,7 +9424,7 @@ bevor du kommentieren kannst</translation>
     <message>
         <location line="+23"/>
         <source>Next unread message</source>
-        <translation type="unfinished"></translation>
+        <translation>Nächste ungelesene Nachricht</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -9465,7 +9465,7 @@ bevor du kommentieren kannst</translation>
     <message>
         <location line="+128"/>
         <source>Loading...</source>
-        <translation type="unfinished">Lade...</translation>
+        <translation>Lade...</translation>
     </message>
     <message>
         <location line="+150"/>
@@ -9533,7 +9533,7 @@ bevor du kommentieren kannst</translation>
     <message>
         <location line="+5"/>
         <source>Only friends nodes in group </source>
-        <translation type="unfinished"></translation>
+        <translation>Nur Freundesknoten in der Gruppe </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -9549,7 +9549,7 @@ bevor du kommentieren kannst</translation>
     <message>
         <location line="+1"/>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation>Eigentümer</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9632,7 +9632,7 @@ bevor du kommentieren kannst</translation>
     <message>
         <location line="+331"/>
         <source>Edit</source>
-        <translation type="unfinished">Bearbeiten</translation>
+        <translation>Bearbeiten</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9693,7 +9693,7 @@ bevor du kommentieren kannst</translation>
     <message>
         <location line="+21"/>
         <source>Show column</source>
-        <translation type="unfinished"></translation>
+        <translation>Spalte anzeigen</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9708,7 +9708,7 @@ bevor du kommentieren kannst</translation>
     <message>
         <location line="+156"/>
         <source>&lt;b&gt;Loading...&lt;b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Lade...&lt;b&gt;</translation>
     </message>
     <message>
         <location line="+65"/>
@@ -9749,53 +9749,54 @@ bevor du kommentieren kannst</translation>
     <message>
         <location line="+5"/>
         <source>Last seen at friends:</source>
-        <translation type="unfinished"></translation>
+        <translation>Zuletzt bei Freunden gesehen:</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Moderators</source>
-        <translation type="unfinished"></translation>
+        <translation>Moderatoren</translation>
     </message>
     <message>
         <location line="+116"/>
         <source>Missing Message:
 This message is missing. You should receive it later.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehlende Nachricht:
+Diese Nachricht fehlt. Sie sollten es später erhalten.</translation>
     </message>
     <message>
         <location line="+636"/>
         <source>No result.</source>
-        <translation type="unfinished">Kein Ergebnis.</translation>
+        <translation>Kein Ergebnis.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Found %1 results.</source>
-        <translation type="unfinished">%1 Ergebnisse gefunden.</translation>
+        <translation>%1 Ergebnisse gefunden.</translation>
     </message>
     <message>
         <location line="+159"/>
         <source>Failed to retrieve this message. Is the database currently overloaded?</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Nachricht konnte nicht abgerufen werden. Ist die Datenbank derzeit überlastet?</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>No data for this message. Is the database corrupted?</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Daten für diese Nachricht. Ist die Datenbank beschädigt?</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>More than one entry for this message. Is the database corrupted?</source>
-        <translation type="unfinished"></translation>
+        <translation>Mehr als ein Eintrag für diese Nachricht. Ist die Datenbank beschädigt?</translation>
     </message>
     <message>
         <location line="-838"/>
         <source>(Latest) </source>
-        <translation type="unfinished"></translation>
+        <translation>(Neueste) </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>(Old) </source>
-        <translation type="unfinished"></translation>
+        <translation>(Alt) </translation>
     </message>
     <message>
         <location line="+403"/>
@@ -10278,17 +10279,17 @@ This message is missing. You should receive it later.</source>
     <message>
         <location line="-24"/>
         <source>Remove this search</source>
-        <translation type="unfinished"></translation>
+        <translation>Entfernen Sie diese Suche</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove all searches</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Suchanfragen entfernen</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Request data</source>
-        <translation type="unfinished"></translation>
+        <translation>Daten anfordern</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -10303,7 +10304,7 @@ This message is missing. You should receive it later.</source>
     <message>
         <location line="+11"/>
         <source>Synchronise posts of last...</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchronisieren Sie die Beiträge der letzten...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10350,17 +10351,17 @@ This message is missing. You should receive it later.</source>
     <message>
         <location line="-7"/>
         <source>Store posts for at most...</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichern Sie Beiträge höchstens...</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Share publish permissions...</source>
-        <translation type="unfinished"></translation>
+        <translation>Veröffentlichungsberechtigungen teilen...</translation>
     </message>
     <message>
         <location line="+761"/>
         <source>Search for</source>
-        <translation type="unfinished"></translation>
+        <translation>Suchen nach</translation>
     </message>
     <message>
         <location line="-756"/>
@@ -14360,7 +14361,7 @@ Möchtest du die Nachricht speichern ?</translation>
     <message>
         <location line="+249"/>
         <source>Stared</source>
-        <translation type="unfinished"></translation>
+        <translation>Markiert</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -14435,7 +14436,7 @@ Möchtest du die Nachricht speichern ?</translation>
     <message>
         <location line="+20"/>
         <source>Show in People</source>
-        <translation type="unfinished"></translation>
+        <translation>In Personen anzeigen</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -14445,32 +14446,32 @@ Möchtest du die Nachricht speichern ?</translation>
     <message>
         <location line="+94"/>
         <source>No message available in your %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>In Ihrem %1 ist keine Nachricht verfügbar.</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>No message using %1 tag available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Nachricht mit %1-Tag verfügbar.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>No %1 message available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine %1-Nachricht verfügbar.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>No starred message available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light gray star beside any message.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine markierte Nachricht verfügbar. Mithilfe von Sternen können Sie Nachrichten einen besonderen Status zuweisen, um sie leichter auffindbar zu machen. Um eine Nachricht zu markieren, klicken Sie auf den hellgrauen Stern neben einer Nachricht.</translation>
     </message>
     <message>
         <location line="+204"/>
         <source>Deletion is not recommended</source>
-        <translation type="unfinished"></translation>
+        <translation>Eine Löschung wird nicht empfohlen</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Messages in this box are automatically deleted when received. Manually deleting a message does not guaranty that the message will not be delivered. Messages that cannot be delivered will however stay here indefinitly. Do you want to proceed and delete?</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachrichten in diesem Feld werden beim Empfang automatisch gelöscht. Das manuelle Löschen einer Nachricht garantiert nicht, dass die Nachricht nicht zugestellt wird. Nachrichten, die nicht zugestellt werden können, bleiben jedoch auf unbestimmte Zeit hier. Möchten Sie fortfahren und löschen?</translation>
     </message>
     <message>
         <location line="+239"/>
@@ -14481,7 +14482,7 @@ Möchtest du die Nachricht speichern ?</translation>
     <message>
         <location line="+223"/>
         <source>No Box selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Box ausgewählt.</translation>
     </message>
     <message>
         <location line="-1463"/>
@@ -14500,7 +14501,7 @@ Möchtest du die Nachricht speichern ?</translation>
     <message>
         <location filename="../gui/msgs/MessagesDialog.h" line="+52"/>
         <source>Mail</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -14541,7 +14542,7 @@ Möchtest du die Nachricht speichern ?</translation>
     <message>
         <location line="+1"/>
         <source>Spoiler</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -14820,8 +14821,8 @@ Anmerkungen: Dein alter Schlüsselbund wird gesichert.
 For security, your keyring was previously backed-up to file 
 
 </source>
-        <translation>%1 Schlüssel wurden aus dem Schlüsselbund entfernt.
-Der Schlüsselbund wurde aus Sicherheitsgründen zuvor in einer Datei gesichert.
+        <translation>%1 Schlüssel wurden aus dem Schlüsselbund entfernt. 
+Der Schlüsselbund wurde aus Sicherheitsgründen zuvor in einer Datei gesichert. 
 
 </translation>
     </message>
@@ -15503,12 +15504,12 @@ Mindestens ein Peer wurde nicht zu einer Gruppe hinzugefügt</translation>
     <message>
         <location line="+2"/>
         <source>You need to sign your node&apos;s certificate.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie müssen das Zertifikat Ihres Knotens signieren.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You need to sign your forum/chatrooms identity.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie müssen Ihre Forum-/Chatroom-Identität unterschreiben.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -15518,7 +15519,7 @@ Mindestens ein Peer wurde nicht zu einer Gruppe hinzugefügt</translation>
     <message>
         <location line="+2"/>
         <source>Please enter your Retroshare passphrase</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte geben Sie Ihr Retroshare-Passwort ein</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -15556,7 +15557,7 @@ Mindestens ein Peer wurde nicht zu einer Gruppe hinzugefügt</translation>
         <location line="+176"/>
         <location line="+296"/>
         <source>Encrypted message</source>
-        <translation>Verschlüsselte Nachr.</translation>
+        <translation>Verschlüsselte Nachricht</translation>
     </message>
     <message>
         <location line="-756"/>
@@ -16003,7 +16004,7 @@ Warning: In your File-Transfer option, you select allow direct download to No.</
     <message>
         <location line="+20"/>
         <source>Time offset:</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitdifferenz:</translation>
     </message>
     <message>
         <location line="+119"/>
@@ -16172,52 +16173,52 @@ Warning: In your File-Transfer option, you select allow direct download to No.</
     <message>
         <location line="+6"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Anyone in your contact list will automatically have a positive opinion if not set. This allows to automatically raise reputations of used nodes. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Jeder in Ihrer Kontaktliste hat automatisch eine positive Meinung, wenn dies nicht festgelegt ist. Dadurch kann die Reputation verwendeter Knoten automatisch erhöht werden. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>use &quot;positive&quot; as the default opinion for contacts (instead of neutral)</source>
-        <translation type="unfinished"></translation>
+        <translation>use &quot;positive&quot; as the default opinion for contacts (instead of neutral)</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Automatically add identities owned by friend nodes to my contacts</source>
-        <translation type="unfinished"></translation>
+        <translation>Füge automatisch Identitäten von Freundesknoten zu meinen Kontakten hinzu</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Difference in votes (+/-) to rate an ID negatively:</source>
-        <translation type="unfinished"></translation>
+        <translation>Unterschied in den Stimmen (+/-), um eine ID negativ zu bewerten:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When an identity receives more negative votes than positive votes, it switches from &amp;quot;Neutral&amp;quot; to &amp;quot;Negative (according to your friends)&amp;quot;. By default, a one-vote difference is enough, but you can make this harder to happen by selecting a higher number here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wenn eine Identität mehr negative als positive Stimmen erhält, wechselt sie von „Neutral“ zu „Neutral“. zu „Negativ (laut deinen Freunden)“. Standardmäßig reicht ein Unterschied von einer Stimme aus, aber Sie können dies erschweren, indem Sie hier eine höhere Zahl auswählen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When an identity receives more positive votes than negative votes, it switches from &amp;quot;Neutral&amp;quot; to &amp;quot;Positive (according to your friends)&amp;quot;. By default, a one-vote difference is enough, but you can make this harder to happen by selecting a higher number here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wenn eine Identität mehr positive als negative Stimmen erhält, wechselt sie von „Neutral“ zu „Neutral“. zu „Positiv (laut deinen Freunden)“. Standardmäßig reicht ein Unterschied von einer Stimme aus, aber Sie können dies erschweren, indem Sie hier eine höhere Zahl auswählen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Difference in votes (+/-) to rate an ID positively:</source>
-        <translation type="unfinished"></translation>
+        <translation>Differenz in den Stimmen (+/-), um eine ID positiv zu bewerten:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Delete banned identities after (0 means indefinitely):</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesperrte Identitäten löschen nach (0 bedeutet auf unbestimmte Zeit):</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Reset reputation of banned identities after (0 means never):</source>
-        <translation type="unfinished"></translation>
+        <translation>Reputation gesperrter Identitäten zurücksetzen nach (0 bedeutet nie):</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Banned identities are not stamped and therefore lose activity. They get deleted automatically after a finit period of time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Gesperrte Identitäten werden nicht gestempelt und verlieren daher ihre Aktivität. Sie werden nach einer bestimmten Zeitspanne automatisch gelöscht.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -16228,7 +16229,7 @@ Warning: In your File-Transfer option, you select allow direct download to No.</
     <message>
         <location line="-3"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In order to prevent deleted banned IDs to come back because they are used in e.g. forums or channels, banned identities are kept in a list for some time. After that, they are &amp;quot;cleared&amp;quot; from the banning list, and will be downloaded again as unbanned if used in forus, chat rooms, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Um zu verhindern, dass gelöschte gesperrte IDs zurückkommen, weil sie z. B. in In Foren oder Kanälen werden gesperrte Identitäten für einige Zeit in einer Liste gespeichert. Danach werden sie „gelöscht“. aus der Sperrliste entfernt und bei Verwendung in Foren, Chatrooms usw. erneut als nicht gesperrt heruntergeladen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -16784,7 +16785,7 @@ p, li { white-space: pre-wrap; }
         <location line="+36"/>
         <location line="+2"/>
         <source>Dock window</source>
-        <translation type="unfinished"></translation>
+        <translation>Fenster andocken</translation>
     </message>
 </context>
 <context>
@@ -17421,7 +17422,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+29"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol&apos;; font-size:14pt; color:#24292e; background-color:#ffffff;&quot;&gt;Select sorting&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-family:&apos;-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI-Symbol&apos;; Schriftgröße: 14pt; Farbe: #24292e; Hintergrundfarbe: #ffffff;&quot;&gt;Sortierung auswählen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -18410,32 +18411,32 @@ hinzufügen und den Assistent zum Hinzufügen von Freunden zu starten.
     <message>
         <location line="+733"/>
         <source>Warning: Retroshare is about to ask your system to open this file. </source>
-        <translation type="unfinished"></translation>
+        <translation>Warnung: Retroshare fordert Ihr System auf, diese Datei zu öffnen. </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Before you do so, please make sure that this file does not contain malicious executable code.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bevor Sie dies tun, stellen Sie bitte sicher, dass diese Datei keinen schädlichen ausführbaren Code enthält.</translation>
     </message>
     <message>
         <location line="+78"/>
         <source>Identity added to People</source>
-        <translation type="unfinished"></translation>
+        <translation>Identität zu Personen hinzugefügt</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>The identity was added to people. You can now chat with it, send messages to it, etc.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Identität wurde zu Personen hinzugefügt. Sie können jetzt mit ihm chatten, Nachrichten an ihn senden usw.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Identity cannot be added to People</source>
-        <translation type="unfinished"></translation>
+        <translation>Identität kann nicht zu Personen hinzugefügt werden</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>The identity was not added to people. Some error occured. The link is probably corrupted.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Identität war nicht an Personen gebunden. Es ist ein Fehler aufgetreten. Der Link ist wahrscheinlich beschädigt.</translation>
     </message>
     <message>
         <location line="+85"/>
@@ -18550,17 +18551,17 @@ hinzufügen und den Assistent zum Hinzufügen von Freunden zu starten.
     <message>
         <location line="+17"/>
         <source>Posted not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Die gepostete Nachricht wurde nicht gefunden</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Posted message not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Die gepostete Nachricht wurde nicht gefunden</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Posted messages not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Gepostete Nachrichten wurden nicht gefunden</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -18570,22 +18571,22 @@ hinzufügen und den Assistent zum Hinzufügen von Freunden zu starten.
     <message>
         <location line="-932"/>
         <source>Click to browse/download this file collection</source>
-        <translation type="unfinished"></translation>
+        <translation>Klickenr, um diese Dateisammlung zu durchsuchen/herunterzuladen</translation>
     </message>
     <message>
         <location line="+163"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Identity link (name=%1, ID=%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Identitätslink (Name=%1, ID=%2)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1 (%2 files, %3)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2 Dateien, %3)</translation>
     </message>
     <message>
         <location line="+743"/>
@@ -18965,7 +18966,7 @@ Sicherheit: keine anonymen Kennungen</translation>
     <message>
         <location line="+766"/>
         <source>Join chat room</source>
-        <translation type="unfinished"></translation>
+        <translation>Treten Sie dem Chatroom bei</translation>
     </message>
     <message>
         <location filename="../gui/RetroShareLink.cpp" line="-201"/>
@@ -19043,52 +19044,52 @@ Sicherheit: keine anonymen Kennungen</translation>
     <message>
         <location line="+1"/>
         <source>Creating receipt</source>
-        <translation type="unfinished"></translation>
+        <translation>Quittung erstellen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Signing receipt</source>
-        <translation type="unfinished"></translation>
+        <translation>Quittung unterschreiben</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Serializing</source>
-        <translation type="unfinished"></translation>
+        <translation>Serialisierung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Creating payload</source>
-        <translation type="unfinished"></translation>
+        <translation>Payload erstellen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Encrypting payload</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschlüsselung der Nutzlast</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Publishing</source>
-        <translation type="unfinished"></translation>
+        <translation>Veröffentlichung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Waiting for receipt</source>
-        <translation type="unfinished"></translation>
+        <translation>Warte auf die Quittung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Receipt received</source>
-        <translation type="unfinished"></translation>
+        <translation>Quittung erhalten</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Receipt signature failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Signatur der Quittung ist fehlgeschlagen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Encryption failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Verschlüsselung ist fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../gui/statistics/GxsIdStatistics.cpp" line="-418"/>
@@ -19133,12 +19134,12 @@ Sicherheit: keine anonymen Kennungen</translation>
     <message>
         <location line="+1"/>
         <source>Service info</source>
-        <translation type="unfinished"></translation>
+        <translation>Serviceinformationen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Bandwidth control</source>
-        <translation type="unfinished"></translation>
+        <translation>Bandbreitenkontrolle</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -19149,22 +19150,22 @@ Sicherheit: keine anonymen Kennungen</translation>
     <message>
         <location line="+1"/>
         <source>Distant mail</source>
-        <translation type="unfinished"></translation>
+        <translation>Distant-Mail</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Service control</source>
-        <translation type="unfinished"></translation>
+        <translation>Servicekontrolle</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Distant chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Distant-Chat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>GXS Tunnel</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -19195,7 +19196,7 @@ Sicherheit: keine anonymen Kennungen</translation>
     <message>
         <location filename="../gui/statistics/GxsIdStatistics.cpp" line="+1"/>
         <source>NXS</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -19205,17 +19206,17 @@ Sicherheit: keine anonymen Kennungen</translation>
     <message>
         <location line="+1"/>
         <source>GXS Photo</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>GXS Wiki</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>GXS TheWire</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -19250,12 +19251,12 @@ Sicherheit: keine anonymen Kennungen</translation>
     <message>
         <location line="+1"/>
         <source>GXS Transport</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>JSon API</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+10"/>
@@ -19269,102 +19270,102 @@ Sicherheit: keine anonymen Kennungen</translation>
     <message>
         <location line="+1"/>
         <source>Group admin signature creation</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellung der Gruppenadministratorsignatur</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Group admin signature validation</source>
-        <translation type="unfinished"></translation>
+        <translation>Validierung der Gruppenadministratorsignatur</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Group author signature creation</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellung der Gruppenautorsignatur</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Group author signature validation</source>
-        <translation type="unfinished"></translation>
+        <translation>Validierung der Signatur des Gruppenautors</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Message author signature creation</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellung der Signatur des Nachrichtenautors</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Message author signature validation</source>
-        <translation type="unfinished"></translation>
+        <translation>Validierung der Signatur des Nachrichtenautors</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Routine group author signature check.</source>
-        <translation type="unfinished"></translation>
+        <translation>Routinemäßige Überprüfung der Gruppenautorensignatur.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Routine message author signature check</source>
-        <translation type="unfinished"></translation>
+        <translation>Routinemäßige Überprüfung der Signatur des Nachrichtenautors</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Chat room signature validation</source>
-        <translation type="unfinished"></translation>
+        <translation>Validierung der Chatroom-Signatur</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Global router message validation</source>
-        <translation type="unfinished"></translation>
+        <translation>Globale Router-Nachrichtenvalidierung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Global router message creation</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellung globaler Router-Nachrichten</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>DH Key exchange validation for GXS tunnel</source>
-        <translation type="unfinished"></translation>
+        <translation>DH-Schlüsselaustauschvalidierung für GXS-Tunnel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>DH Key exchange creation for GXS tunnel</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellung des DH-Schlüsselaustauschs für den GXS-Tunnel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>New identity from GXS sync</source>
-        <translation type="unfinished"></translation>
+        <translation>Neue Identität durch GXS-Synchronisierung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>New friend identity from discovery</source>
-        <translation type="unfinished"></translation>
+        <translation>Neue Freundesidentität durch Entdeckung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>New identity requested from friend node</source>
-        <translation type="unfinished"></translation>
+        <translation>Neue Identität vom Freundesknoten angefordert</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Generic signature validation</source>
-        <translation type="unfinished"></translation>
+        <translation>Generische Signaturvalidierung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Generic signature creation</source>
-        <translation type="unfinished"></translation>
+        <translation>Generische Signaturerstellung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Generic data decryption</source>
-        <translation type="unfinished"></translation>
+        <translation>Generische Datenentschlüsselung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Generic data encryption</source>
-        <translation type="unfinished"></translation>
+        <translation>Generische Datenverschlüsselung</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -19374,79 +19375,79 @@ Sicherheit: keine anonymen Kennungen</translation>
     <message>
         <location filename="../gui/statusbar/hashingstatus.cpp" line="+25"/>
         <source>Click to pause the hashing process</source>
-        <translation type="unfinished"></translation>
+        <translation>Klicken, um den Hashing-Vorgang anzuhalten</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>[Hashing is paused]</source>
-        <translation type="unfinished"></translation>
+        <translation>[Hashing ist pausiert]</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Click to resume the hashing process</source>
-        <translation type="unfinished"></translation>
+        <translation>Klicken, um den Hashing-Vorgang fortzusetzen</translation>
     </message>
     <message>
         <location filename="../gui/statistics/TurtleRouterDialog.cpp" line="-44"/>
         <source>Idle</source>
-        <translation type="unfinished">Untätig</translation>
+        <translation>Untätig</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Virtual peers available</source>
-        <translation type="unfinished"></translation>
+        <translation>Virtuelle Peers verfügbar</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Passive</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished">Aktiv</translation>
+        <translation>Aktiv</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Requesting peers</source>
-        <translation type="unfinished"></translation>
+        <translation>Peers angefordert</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Never</source>
-        <translation type="unfinished">Nie</translation>
+        <translation>Nie</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Tunnel OK</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Tunnel active</source>
-        <translation type="unfinished"></translation>
+        <translation>Tunnel aktiv</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Client</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChannelsCommentsItem.cpp" line="-82"/>
         <location line="+13"/>
         <source>Missing channel post</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehlender Kanalbeitrag</translation>
     </message>
     <message>
         <location filename="../gui/gxs/GxsIdTreeWidgetItem.h" line="+113"/>
         <location line="+17"/>
         <source>[System]</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -19982,12 +19983,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/common/RSTextBrowser.cpp" line="+293"/>
         <source>View &amp;Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Quelltext anzeigen</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Save image</source>
-        <translation type="unfinished">Bild speichern</translation>
+        <translation>Bild speichern</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -19997,7 +19998,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+27"/>
         <source>Document source</source>
-        <translation type="unfinished">Quelle des Dokuments</translation>
+        <translation>Quelle des Dokuments</translation>
     </message>
 </context>
 <context>
@@ -20569,12 +20570,12 @@ Die betroffenen Dateien sind rot markiert</translation>
     <message>
         <location line="-354"/>
         <source>Download files</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateien herunterladen</translation>
     </message>
     <message>
         <location line="+100"/>
         <source>Specify...</source>
-        <translation type="unfinished"></translation>
+        <translation>Spezifizieren...</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -20621,7 +20622,7 @@ Die betroffenen Dateien sind rot markiert</translation>
     <message>
         <location line="+84"/>
         <source>Do you want to remove them and all their children, too?</source>
-        <translation type="unfinished"></translation>
+        <translation>Möchten Sie alle und ihre untergeordneten Elemente ebenfalls entfernen?</translation>
     </message>
     <message>
         <location line="+357"/>
@@ -21095,7 +21096,7 @@ verhindert, dass die Nachricht an Ihre Freunde weitergeleitet wird.</translation
     <message>
         <location line="-425"/>
         <source>opmode</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -21363,7 +21364,7 @@ verhindert, dass die Nachricht an Ihre Freunde weitergeleitet wird.</translation
     <message>
         <location line="+3"/>
         <source>Mark as bad</source>
-        <translation type="unfinished"></translation>
+        <translation>Als schlecht markieren</translation>
     </message>
     <message>
         <location line="+85"/>
@@ -21642,7 +21643,7 @@ verhindert, dass die Nachricht an Ihre Freunde weitergeleitet wird.</translation
     <message>
         <location line="+68"/>
         <source>SSL request</source>
-        <translation type="unfinished"></translation>
+        <translation>SSL-Anfrage</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -21751,7 +21752,7 @@ verhindert, dass die Nachricht an Ihre Freunde weitergeleitet wird.</translation
     <message>
         <location line="-962"/>
         <source>NAT</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+14"/>
@@ -21833,7 +21834,7 @@ Es hilft auch, wenn du dich hinter einer Firewall/VPN befindest.</translation>
         <location line="-1032"/>
         <location line="+1"/>
         <source>Tor has been automatically configured by Retroshare. You shouldn&apos;t need to change anything here.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tor wurde von Retroshare automatisch konfiguriert. Hier sollten Sie keine Änderungen vornehmenen.</translation>
     </message>
     <message>
         <location line="+825"/>
@@ -21843,7 +21844,7 @@ Es hilft auch, wenn du dich hinter einer Firewall/VPN befindest.</translation>
     <message>
         <location line="+0"/>
         <source>local</source>
-        <translation type="unfinished"></translation>
+        <translation>lokal</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -21856,7 +21857,10 @@ Es hilft auch, wenn du dich hinter einer Firewall/VPN befindest.</translation>
 
 List of found external IP:
 </source>
-        <translation type="unfinished"></translation>
+        <translation>
+
+Liste der gefundenen externen IP:
+</translation>
     </message>
     <message>
         <location line="+197"/>
@@ -21909,23 +21913,23 @@ List of found external IP:
     <message>
         <location line="+8"/>
         <source>SAMv3 is running and accessible</source>
-        <translation type="unfinished"></translation>
+        <translation>SAMv3 läuft und ist zugänglich</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>SAMv3 is not accessible! Is i2p running and SAM enabled?</source>
-        <translation type="unfinished"></translation>
+        <translation>SAMv3 ist nicht zugänglich! Läuft i2p und ist SAM aktiviert?</translation>
     </message>
     <message>
         <location line="+318"/>
         <source>Your key uses the following algorithms: %1 and %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Ihr Schlüssel verwendet die folgenden Algorithmen: %1 und %2</translation>
     </message>
     <message>
         <location line="+4"/>
         <location line="+120"/>
         <source>unkown key type</source>
-        <translation type="unfinished"></translation>
+        <translation>unbekannter Schlüsseltyp</translation>
     </message>
     <message>
         <location line="-94"/>
@@ -21935,51 +21939,60 @@ List of found external IP:
 When changing options use the buttons at the bottom to restart SAMv3.
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare verwendet SAMv3, um einen %1-Tunnel bei %2:%3 einzurichten
+(ID: %4)
+
+Wenn Sie Optionen ändern, verwenden Sie die Schaltflächen unten, um SAMv3 neu zu starten.
+
+</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Offline, no SAM session is established yet.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Offline, es wurde noch keine SAM-Sitzung eingerichtet.
+</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>SAM is trying to establish a session ... this can take some time.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>SAM versucht, eine Sitzung aufzubauen ... dies kann einige Zeit dauern.
+</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>SAM session established! Now setting up a forward session ...
 </source>
-        <translation type="unfinished"></translation>
+        <translation>SAM-Sitzung eingerichtet! Richten Sie jetzt eine Weiterleitungssitzung ein ...
+</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Online, SAM is working as exptected
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Online, SAM funktioniert wie erwartet
+</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>You key uses %1 for signing and %2 for crypto</source>
-        <translation type="unfinished"></translation>
+        <translation>Ihr Schlüssel verwendet %1 zum Signieren und %2 für die Verschlüsselung</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>stop SAM tunnel first to generate a new key</source>
-        <translation type="unfinished"></translation>
+        <translation>Stoppen Sie zunächst den SAM-Tunnel, um einen neuen Schlüssel zu generieren</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>stop SAM tunnel first to load a key</source>
-        <translation type="unfinished"></translation>
+        <translation>Stoppen Sie zuerst den SAM-Tunnel, um einen Schlüssel zu laden</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>stop SAM tunnel first to disable SAM</source>
-        <translation type="unfinished"></translation>
+        <translation>Stoppen Sie zuerst den SAM-Tunnel, um SAM zu deaktivieren</translation>
     </message>
     <message>
         <location line="-136"/>
@@ -21989,22 +22002,22 @@ When changing options use the buttons at the bottom to restart SAMv3.
     <message>
         <location line="+0"/>
         <source>server</source>
-        <translation type="unfinished"></translation>
+        <translation>Server</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>unknown</source>
-        <translation type="unfinished">unbekannt</translation>
+        <translation>unbekannt</translation>
     </message>
     <message>
         <location line="+118"/>
         <source>request a new server key</source>
-        <translation type="unfinished"></translation>
+        <translation>Fordern Sie einen neuen Serverschlüssel an</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>load server key from base64</source>
-        <translation type="unfinished"></translation>
+        <translation>Serverschlüssel von Base64 laden</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -22016,7 +22029,9 @@ When changing options use the buttons at the bottom to restart SAMv3.
         <source>The proxy is not enabled or broken.
 Are all services up and running fine??
 Also check your ports!</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Proxy ist nicht aktiviert oder defekt.
+Sind alle Dienste betriebsbereit?
+Überprüfen Sie auch Ihre Ports!</translation>
     </message>
     <message>
         <location filename="../gui/settings/ServerPage.ui" line="+267"/>
@@ -22057,7 +22072,8 @@ Also check your ports!</source>
         <location line="+336"/>
         <source>WARNING:
 These values don&apos;t take into account the Relays.</source>
-        <translation type="unfinished"></translation>
+        <translation>WARNUNG:
+Diese Werte berücksichtigen nicht die Relais.</translation>
     </message>
     <message>
         <location line="+127"/>
@@ -22073,7 +22089,13 @@ Tunnel Wizard -&gt; Client Tunnel -&gt; SOCKS 4/4a/5 -&gt; enter a name -&gt; le
 Now enter the address (e.g. 127.0.0.1) and the port you&apos;ve picked before for the I2P Proxy.
 
 You can connect to Hidden Nodes, even if you are running a standard Node, so why not setup Tor and/or I2P?</source>
-        <translation type="unfinished"></translation>
+        <translation>Tor-Socks-Proxy-Standard: 127.0.0.1:9050. In der Torrc-Konfiguration einstellen und hier aktualisieren.
+
+I2P-Socks-Proxy: Informationen zum Einrichten eines Client-Tunnels finden Sie unter http://127.0.0.1:7657/i2ptunnelmgr:
+Tunnel-Assistent -&gt; Client-Tunnel -&gt; SOCKS 4/4a/5 -&gt; geben Sie einen Namen ein -&gt; lassen Sie „Outproxies“ leer -&gt; geben Sie den Port ein (merken Sie sich!) [Vielleicht möchten Sie auch die Erreichbarkeit auf 127.0.0.1 setzen] -&gt; Weiter -&gt; &apos;Auto Start&apos; ankreuzen -&gt; Fertig!
+Geben Sie nun die Adresse (z. B. 127.0.0.1) und den Port ein, den Sie zuvor für den I2P-Proxy ausgewählt haben.
+
+Sie können sich mit versteckten Knoten verbinden, auch wenn Sie einen Standardknoten betreiben. Warum also nicht Tor und/oder I2P einrichten?</translation>
     </message>
     <message>
         <location line="+253"/>
@@ -22088,12 +22110,12 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
     <message>
         <location line="+23"/>
         <source>I2P Instance address</source>
-        <translation type="unfinished"></translation>
+        <translation>I2P-Instanzadresse</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>127.0.0.1</source>
-        <translation type="unfinished">127.0.0.1</translation>
+        <translation>127.0.0.1</translation>
     </message>
     <message>
         <location line="+54"/>
@@ -22113,17 +22135,17 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
     <message>
         <location line="+53"/>
         <source>Tunnel length (in/out)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tunnellänge (ein/aus)</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Tunnel quantity (in/out)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tunnelmenge (ein/aus)</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Tunnel variance (in/out)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tunnelvarianz (ein/aus)</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -22133,22 +22155,22 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
     <message>
         <location line="+20"/>
         <source>load key</source>
-        <translation type="unfinished"></translation>
+        <translation>Ladeschlüssel</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Start</source>
-        <translation type="unfinished">Start</translation>
+        <translation>Start</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Restart</source>
-        <translation type="unfinished"></translation>
+        <translation>Neustart</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Stop</source>
-        <translation type="unfinished">Stop</translation>
+        <translation>Stop</translation>
     </message>
     <message>
         <location line="-633"/>
@@ -22184,7 +22206,18 @@ This is your external address on the Tor/I2P network.
 Finally make sure that the Ports match the configuration.
 
 If you have issues connecting over Tor check the Tor logs too.</source>
-        <translation type="unfinished"></translation>
+        <translation>Um Verbindungen zu empfangen, müssen Sie zunächst einen versteckten Tor/I2P-Service einrichten.
+
+Für Tor: Siehe torrc und Dokumentation für HOWTO-Details.
+
+Für I2P: Informationen zum Einrichten eines Servertunnels finden Sie unter http://127.0.0.1:7657/i2ptunnelmgr:
+Tunnel-Assistent -&gt; Servertunnel -&gt; Standard -&gt; Geben Sie einen Namen ein -&gt; Geben Sie die Adresse und den Port ein, den Ihr RS verwendet (siehe Lokale Adresse oben) -&gt; Aktivieren Sie „Autostart“ -&gt; Fertig!
+
+Sobald dies erledigt ist, fügen Sie die Onion/I2P (Base32)-Adresse in das Feld oben ein.
+Dies ist Ihre externe Adresse im Tor/I2P-Netzwerk.
+Stellen Sie abschließend sicher, dass die Ports mit der Konfiguration übereinstimmen.
+
+Wenn Sie Probleme beim Herstellen einer Verbindung über Tor haben, überprüfen Sie auch die Tor-Protokolle.</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -22199,22 +22232,22 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     <message>
         <location line="+32"/>
         <source>I2P Simple Anonymous Messaging</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+62"/>
         <source>SAM accessible</source>
-        <translation type="unfinished"></translation>
+        <translation>SAM zugänglich</translation>
     </message>
     <message>
         <location line="+350"/>
         <source>SAM status</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+301"/>
         <source>Relay</source>
-        <translation type="unfinished"></translation>
+        <translation>Relais</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -22224,17 +22257,17 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     <message>
         <location line="+20"/>
         <source>Use Relay Servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwenden Sie Relay-Server</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Relay options</source>
-        <translation type="unfinished"></translation>
+        <translation>Relaisoptionen</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Nummer</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -22244,7 +22277,7 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     <message>
         <location line="+14"/>
         <source>Total Bandwidth</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamtbandbreite</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -22264,17 +22297,17 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     <message>
         <location line="+51"/>
         <source>Total:</source>
-        <translation type="unfinished">Gesamt:</translation>
+        <translation>Gesamt:</translation>
     </message>
     <message>
         <location line="+270"/>
         <source>Warning: This bandwidth adds up to the max bandwidth.</source>
-        <translation type="unfinished"></translation>
+        <translation>Warnung: Diese Bandbreite summiert sich zur maximalen Bandbreite.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Relay Server Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Relay-Server-Setup</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -22284,7 +22317,7 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     <message>
         <location line="+8"/>
         <source>Server DHT Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Server-DHT-Schlüssel</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -22400,7 +22433,7 @@ If you have issues connecting over Tor check the Tor logs too.</source>
         <location line="+16"/>
         <location filename="../gui/settings/ServerPage.cpp" line="+815"/>
         <source>List of OpenDns servers used.</source>
-        <translation type="unfinished"></translation>
+        <translation>Liste der verwendeten OpenDns-Server.</translation>
     </message>
     <message>
         <location line="+58"/>
@@ -22415,7 +22448,7 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     <message>
         <location line="+12"/>
         <source>I2P Socks Proxy</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+17"/>
@@ -22431,7 +22464,7 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     <message>
         <location line="-353"/>
         <source>I2P outgoing Okay</source>
-        <translation type="unfinished"></translation>
+        <translation>I2P ausgehend Okay</translation>
     </message>
     <message>
         <location line="+105"/>
@@ -22550,7 +22583,7 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     <message>
         <location line="-938"/>
         <source>Outgoing Manual Tor/I2P</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgehend manuelles Tor/I2P</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -22560,7 +22593,7 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     <message>
         <location line="+22"/>
         <source>Tor outgoing Okay</source>
-        <translation>Tor ausgehend o. k.</translation>
+        <translation>Tor ausgehend Okay</translation>
     </message>
     <message>
         <location filename="../gui/settings/ServerPage.cpp" line="+572"/>
@@ -22869,7 +22902,7 @@ Wähle die Freunde, mit denen du den Kanal teilen willst.</translation>
     <message>
         <location line="+19"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Forces the re-check of all shared directories. While automatic file checking only cares for new/removed files for efficiency reasons, this button will force the re-scan of all files, possibly re-hashing existing files that may have changed. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Erzwingt die erneute Überprüfung aller freigegebenen Verzeichnisse. Während sich die automatische Dateiprüfung aus Effizienzgründen nur um neue/entfernte Dateien kümmert, erzwingt diese Schaltfläche die erneute Prüfung aller Dateien und führt möglicherweise ein erneutes Hashing vorhandener Dateien durch, die sich möglicherweise geändert haben. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -22955,7 +22988,7 @@ Wähle die Freunde, mit denen du den Kanal teilen willst.</translation>
     <message>
         <location line="+44"/>
         <source>More than 3000 results. Add more/longer search words to select less.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mehr als 3000 Ergebnisse. Fügen Sie mehr/längere Suchbegriffe hinzu, um weniger auszuwählen.</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -22970,7 +23003,7 @@ Wähle die Freunde, mit denen du den Kanal teilen willst.</translation>
     <message>
         <location line="+2"/>
         <source>More than %1 results. Add more/longer search words to select less.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mehr als %1 Ergebnisse. Fügen Sie mehr/längere Suchbegriffe hinzu, um weniger auszuwählen.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -23967,7 +24000,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>Maximum depth (0=unlimited):</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Tiefe (0=unbegrenzt):</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -24041,7 +24074,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+69"/>
         <source>Maximum uploads per friend (0 = no limit)</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Uploads pro Freund (0 = keine Begrenzung)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -24151,7 +24184,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+0"/>
         <source>On Windows systems, randomly writing in the middle of large empty files may hang the software for several seconds. Do you want to use this option anyway (otherwise use &quot;progressive&quot;)?</source>
-        <translation type="unfinished"></translation>
+        <translation>Auf Windows-Systemen kann das zufällige Schreiben in die Mitte großer leerer Dateien dazu führen, dass die Software mehrere Sekunden lang hängen bleibt. Möchten Sie diese Option trotzdem verwenden (andernfalls „progressiv“ verwenden)?</translation>
     </message>
     <message>
         <location line="+34"/>
