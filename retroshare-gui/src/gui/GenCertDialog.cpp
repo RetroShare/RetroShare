@@ -649,7 +649,7 @@ void GenCertDialog::genPerson()
 	{
 		/* complete the process */
 		RsInit::LoadPassword(sslPasswd);
-		if (Rshare::loadCertificate(sslId, false)) {
+		if (RsApplication::loadCertificate(sslId, false)) {
 
             // Normally we should clear the cached passphrase as soon as possible. However,some other GUI components may still need it at start.
             // (csoler) This is really bad: we have to guess that 30 secs will be enough. I have no better way to do this.

@@ -123,7 +123,7 @@ void StartDialog::loadPerson()
 	rsNotify->cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
 	rsNotify->setDisableAskPassword(true);
 
-    bool res = Rshare::loadCertificate(accountId, ui.autologin_checkbox->isChecked()) ;
+    bool res = RsApplication::loadCertificate(accountId, ui.autologin_checkbox->isChecked()) ;
 
 	rsNotify->setDisableAskPassword(false);
     rsNotify->clearPgpPassphrase();

@@ -32,6 +32,7 @@
 
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsconfig.h>
+#include <util/argstream.h>
 
 #if defined(Q_OS_DARWIN)
 #include "gui/common/MacDockIconHandler.h"
@@ -211,7 +212,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
             hiddenmode = true;
     }
 
-    setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation);
+    setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(RsApplication::retroshareVersion(true)) + " - " + nameAndLocation);
     connect(rApp, SIGNAL(newArgsReceived(QStringList)), this, SLOT(receiveNewArgs(QStringList)));
 
     /* add url handler for RetroShare links */
@@ -1253,10 +1254,87 @@ void MainWindow::doQuit()
 	rApp->quit();
 }
 
+// This method parses arguments passed by another process. All arguments
+// except -r, -f, -o and lists of rscollection files and rslinks are discarded.
+//
 void MainWindow::receiveNewArgs(QStringList args)
 {
-	Rshare::parseArguments(args, false);
-	processLastArgs();
+    QString arg, argl, value;
+    std::vector<const char *> argv;
+    for(auto l:args)
+        argv.push_back((const char *)l.data());
+
+    // This class does all the job at once: validate arguments, and parses them.
+
+    std::vector<std::string> links_and_files;
+
+    argstream as(argv.size(),const_cast<char **>(argv.data()));
+
+    QString omValues = QString(";full;noturtle;gaming;minimal;");
+    std::string opModeStr;
+    std::string retroshare_link_url;
+    std::string rscollection_file;
+
+    as  >> parameter('r',"rslink",retroshare_link_url,"Retroshare:// link","Retroshare link to open in Downloads " ,false)
+        >> parameter('f',"rsfile",rscollection_file,"file","File to open " ,false)
+        >> parameter('o',"opmode",opModeStr,"opmode","Set mode (Full, NoTurtle, Gaming, Minimal) " ,false)
+        >> values<std::string>(back_inserter(links_and_files),"links and files");
+
+    if(!as.isOk())
+    {
+        RsErr() << "Error while parsing arguments:" ;
+        RsErr() << as.errorLog() ;
+        return;
+    }
+    if(!opModeStr.empty() && omValues.contains(";"+QString::fromStdString(opModeStr).toLower()+";"))
+    {
+        QString opmode = QString::fromStdString(opModeStr).toLower();
+        //RsApplication::setOpMode(opModeStr.toLower()); // Do we need this??
+
+        if (opmode == "noturtle")
+            opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::NOTURTLE) - 1);
+        else if (opmode == "gaming")
+            opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::GAMING) - 1);
+        else if (opmode == "minimal")
+            opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::MINIMAL) - 1);
+        else if (opmode != "")
+            opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::FULL) - 1);
+
+        opModeStatus->setOpMode();
+    }
+
+    // Sort all collected arguments into rscollection files and retroshare links, accordingly
+
+    QStringList rscollection_files;
+    QList<RetroShareLink> rslinks;
+
+    auto sort = [&](const QString s) {
+
+        if(QFile(s).exists() && s.endsWith(".rscollection"))
+            rscollection_files.append(QString::fromUtf8(rscollection_file.c_str()));
+        else if(s.startsWith("retroshare://"))
+        {
+            RetroShareLink link(s);
+
+            if(link.valid())
+                rslinks.push_back(link);
+        }
+    };
+
+    sort(QString::fromUtf8(rscollection_file.c_str()));
+    sort(QString::fromUtf8(retroshare_link_url.c_str()));
+
+    for(auto s:links_and_files)
+        sort(QString::fromUtf8(s.c_str()));
+
+    // Now handle links and rscollection files.
+
+    for(auto file:rscollection_files)
+        if(file.endsWith(".rscollection"))
+            openRsCollection(file);
+
+    for(auto link:rslinks)
+        retroshareLinkActivated(link.toUrl());
 }
 
 void MainWindow::displayErrorMessage(int /*a*/,int /*b*/,const QString& error_msg)
@@ -1633,35 +1711,6 @@ void MainWindow::openRsCollection(const QString &filename)
 
 void MainWindow::processLastArgs()
 {
-	while (!Rshare::links()->isEmpty()) {
-		std::cerr << "MainWindow::processLastArgs() : " << Rshare::links()->count() << std::endl;
-		/* Now use links from the command line, because no RetroShare was running */
-		RetroShareLink link(Rshare::links()->takeFirst());
-		if (link.valid()) {
-			retroshareLinkActivated(link.toUrl());
-		}
-	}
-	while (!Rshare::files()->isEmpty()) {
-		/* Now use files from the command line, because no RetroShare was running */
-		openRsCollection(Rshare::files()->takeFirst());
-	}
-	/* Handle the -opmode options. */
-	if (opModeStatus) {
-		QString opmode = Rshare::opmode().toLower();
-		if (opmode == "noturtle") {
-			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::NOTURTLE) - 1);
-		} else if (opmode == "gaming") {
-			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::GAMING) - 1);
-		} else if (opmode == "minimal") {
-			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::MINIMAL) - 1);
-		} else if (opmode != "") {
-			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::FULL) - 1);
-		}
-		opModeStatus->setOpMode();
-	} else {
-		std::cerr << "ERR: MainWindow::processLastArgs opModeStatus is not initialized.";
-	}
-
 }
 
 void MainWindow::switchVisibilityStatus(StatusElement e,bool b)

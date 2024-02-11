@@ -45,13 +45,13 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WindowFlags flags)
     connect(ui.CopyCertButton,SIGNAL(clicked()), this, SLOT(copyCert()));
     connect(ui.profile_Button,SIGNAL(clicked()), this, SLOT(profilemanager()));
 
-    ui.onLineSince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
+    ui.onLineSince->setText(DateTime::formatLongDateTime(RsApplication::startupTime()));
 }
 
 void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
 {
     /* set retroshare version */
-    ui.version->setText(Rshare::retroshareVersion(true));
+    ui.version->setText(RsApplication::retroshareVersion(true));
 
     RsPeerDetails detail;
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(),detail))
