@@ -57,6 +57,7 @@
 
 #include "rshare.h"
 
+#ifdef TO_REMOVE
 /* Available command-line arguments. */
 #define ARG_RESET           "reset"         /**< Reset RsApplication's saved settings.   */
 #define ARG_DATADIR         "datadir"       /**< Directory to use for data files. */
@@ -87,7 +88,6 @@ static const char* const forwardableArgs[] = {
 };
 
 /* Static member variables */
-#ifdef TO_REMOVE
 QMap<QString, QString> RsApplication::_args; /**< List of command-line arguments.  */
 QString RsApplication::_style;               /**< The current GUI style.           */
 QString RsApplication::_stylesheet;          /**< The current GUI stylesheet.      */

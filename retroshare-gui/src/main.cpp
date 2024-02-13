@@ -359,7 +359,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
             >> parameter('k',"style"              ,guistylesheetfile             ,"style sheet file"                      ,"gui stylesheet file"                         ,false)
             >> parameter('L',"lang"               ,language                      ,"langage"                               ,"language string"                             ,false)
             >> parameter('r',"link"               ,rslink                        ,"retroshare link"                       ,"retroshare link to open (passed to running server)" ,false)
-            >> parameter('f',"rsfile"             ,rsfile                        ,"rsfile"                                ,"rsfile to open (passed to running server)"   ,false);
+            >> parameter('f',"rsfile"             ,rsfile                        ,"rsfile"                                ,"rscollection file to open (passed to running server)"   ,false);
 #ifdef RS_JSONAPI
     as      >> parameter('J', "jsonApiPort"       ,conf.jsonApiPort              ,"jsonApiPort"                           ,"Enable JSON API on the specified port"       ,false)
             >> parameter('P', "jsonApiBindAddress",conf.jsonApiBindAddress       ,"jsonApiBindAddress"                    ,"JSON API Bind Address "                      ,false);
@@ -372,9 +372,15 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 #ifdef RS_AUTOLOGIN
     as      >> option('a',"auto-login"       ,conf.autoLogin      ,"AutoLogin (Windows Only) + StartMinimised");
 #endif // ifdef RS_AUTOLOGIN
-    as      >> values<std::string>(std::back_inserter(links_and_files),"links and files")
+    as      >> values<std::string>(std::back_inserter(links_and_files),"links and rscollection files")
             >> help('h',"help",QObject::tr("Display this help").toStdString().c_str());
 
+    if(!as.isOk())
+    {
+        std::cerr << "Incorrect arguments." << std::endl;
+        std::cerr << as.usage() << std::endl;
+        return 0;
+    }
     conf.logFileName       = QString::fromStdString(logfilename);
     conf.logLevel          = QString::fromStdString(loglevel);		      // these will be checked when used in RsApplication
     conf.guiStyle          = QString::fromStdString(guistyle);	      	  // these will be checked when used in RsApplication

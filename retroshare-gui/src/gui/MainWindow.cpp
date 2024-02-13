@@ -1704,7 +1704,8 @@ void MainWindow::openRsCollection(const QString &filename)
 	if (qinfo.exists()) {
 		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
 			RsCollection collection;
-			collection.openColl(qinfo.absoluteFilePath());
+            collection.downloadFiles();
+            //collection.openColl(qinfo.absoluteFilePath());
 		}
 	}
 }

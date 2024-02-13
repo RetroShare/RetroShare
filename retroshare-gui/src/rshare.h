@@ -50,8 +50,10 @@
 struct RsGUIConfigOptions: public RsConfigOptions
 {
     RsGUIConfigOptions()
-        : logLevel("Off"), argc(0)
+        : optResetParams(false), logLevel("Off"), argc(0)
     {}
+
+    bool optResetParams;		// reset all GUI parameters
 
     QString dateformat;         // The format for dates in feed items etc.
     QString language;           // The current language.
