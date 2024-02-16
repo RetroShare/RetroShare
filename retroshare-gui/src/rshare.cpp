@@ -240,6 +240,17 @@ RsApplication::RsApplication(const RsGUIConfigOptions& conf)
     }
 #endif
 
+    // So we start a Local Server to listen for connections from new process
+    localServer= new QLocalServer();
+    QObject::connect(localServer, SIGNAL(newConnection()), this, SLOT(slotConnectionEstablished()));
+    updateLocalServer();
+
+    // clear out any old arguments (race condition?)
+    QSharedMemory newArgs;
+    newArgs.setKey(QString(TARGET) + "_newArgs");
+    if(newArgs.attach(QSharedMemory::ReadWrite))
+        newArgs.detach();
+
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
     qInstallMessageHandler(qt_msg_handler);
 #else
@@ -344,22 +355,27 @@ void RsApplication::slotConnectionEstablished()
 	socket->close();
 	delete socket;
 
-	QBuffer buffer;
-	QDataStream in(&buffer);
-	QStringList args;
+    if(newArgs.error())
+    {
+        RsErr() << "Something when wrong in receiving arguments from operating system: " << newArgs.errorString().toStdString() ;
+        return ;
+    }
+    QBuffer buffer;
+    QDataStream in(&buffer);
+    QStringList args;
 
-	newArgs.lock();
-	buffer.setData((char*)newArgs.constData(), newArgs.size());
-	buffer.open(QBuffer::ReadOnly);
-	in >> args;
-	newArgs.unlock();
-	newArgs.detach();
+    newArgs.lock();
+    buffer.setData((char*)newArgs.constData(), newArgs.size());
+    buffer.open(QBuffer::ReadOnly);
+    in >> args;
+    newArgs.unlock();
+    newArgs.detach();
 
-	emit newArgsReceived(args);
-	while (!args.empty())
-	{
+    emit newArgsReceived(args);
+    while (!args.empty())
+    {
         std::cerr << "RsApplication::slotConnectionEstablished args:" << QString(args.takeFirst()).toStdString() << std::endl;
-	}
+    }
 }
 
 QString RsApplication::retroshareVersion(bool) { return RS_HUMAN_READABLE_VERSION; }

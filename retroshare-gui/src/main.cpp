@@ -145,6 +145,7 @@ static bool notifyRunningInstance()
     // Connect to the Local Server of the main process to notify it
     // that a new process had been started
 
+    RsInfo() << "Trying to contact running instance through socket \"" << TARGET << "\"";
     QLocalSocket localSocket;
     localSocket.connectToServer(QString(TARGET));
 #ifdef DEBUG

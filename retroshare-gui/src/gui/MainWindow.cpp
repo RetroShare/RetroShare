@@ -1254,21 +1254,23 @@ void MainWindow::doQuit()
 	rApp->quit();
 }
 
-// This method parses arguments passed by another process. All arguments
+// This method parses arguments passed by the operating system. All arguments
 // except -r, -f, -o and lists of rscollection files and rslinks are discarded.
 //
 void MainWindow::receiveNewArgs(QStringList args)
 {
-    QString arg, argl, value;
-    std::vector<const char *> argv;
+    RsInfo() << "Received new arguments from operating system call.";
+
+    std::string argstring = RsApplication::applicationFilePath().toStdString() ;
+
     for(auto l:args)
-        argv.push_back((const char *)l.data());
+        argstring += " " + l.toStdString();
 
     // This class does all the job at once: validate arguments, and parses them.
 
     std::vector<std::string> links_and_files;
 
-    argstream as(argv.size(),const_cast<char **>(argv.data()));
+    argstream as(argstring.c_str());
 
     QString omValues = QString(";full;noturtle;gaming;minimal;");
     std::string opModeStr;
@@ -1290,6 +1292,8 @@ void MainWindow::receiveNewArgs(QStringList args)
     {
         QString opmode = QString::fromStdString(opModeStr).toLower();
         //RsApplication::setOpMode(opModeStr.toLower()); // Do we need this??
+
+        RsInfo() << "Setting new operating mode to \"" << opmode.toStdString() << "\"";
 
         if (opmode == "noturtle")
             opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::NOTURTLE) - 1);
@@ -1704,6 +1708,12 @@ void MainWindow::openRsCollection(const QString &filename)
 	if (qinfo.exists()) {
 		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
 			RsCollection collection;
+
+            if(!collection.load(filename))
+            {
+                RsErr() << "Could not open Rscollection file " << filename.toStdString();
+                return;
+            }
             collection.downloadFiles();
             //collection.openColl(qinfo.absoluteFilePath());
 		}
