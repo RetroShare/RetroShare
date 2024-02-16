@@ -120,13 +120,13 @@ static void showHelp(const argstream& as)
             "+================================================================+"
                  << std::endl ;
 
-        std::cerr << as.usage(true) << std::endl;
+        std::cerr << as.usage(false) << std::endl;
 
         char *argv[1];
         int argc=0;
         QApplication dummyApp (argc, argv); // needed for QMessageBox
         QMessageBox box;
-        QString text = QString::fromUtf8(as.usage(true,false).c_str());
+        QString text = QString::fromUtf8(as.usage(false,false).c_str());
         QFont font("Courier New",10,50,false);
         font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
         font.setStyle(QFont::StyleNormal);
@@ -211,6 +211,31 @@ static void sendArgsToRunningInstance(const QStringList& args)
         std::cerr << "RsApplication::RsApplication failed to connect to other instance." << std::endl;
     newArgs.detach();
 }
+
+static bool setLanguage(const std::string& language)
+{
+    if(!language.empty())
+    {
+        if(!LanguageSupport::translate(QString::fromStdString(language)))
+        {
+            RsErr() << "Language \"" << language << "\" is not supported." ;
+
+            QString s;
+            for(QString ss:LanguageSupport::languageCodes())
+                s += ss + ", " ;
+
+            RsErr() << "Possible choices are: " << s.toStdString();
+            return false;
+        }
+        return true;
+    }
+    else
+    {
+        LanguageSupport::translate(LanguageSupport::defaultLanguageCode());
+        return true;
+    }
+}
+
 
 static void displayWarningAboutDSAKeys()
 {
@@ -348,21 +373,21 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
     as      >> option(   's',"stderr"             ,conf.outStderr                ,"output to stderr instead of log file "                                                      )
             >> option(   'u',"udp"                ,conf.udpListenerOnly          ,"Only listen to UDP "                                                                        )
             >> option(   'R',"reset"              ,conf.optResetParams           ,"reset retroshare parameters "                                                               )
-            >> parameter('c',"base-dir"           ,conf.optBaseDir               ,"directory"                             ,"Set base directory "                         ,false)
-            >> parameter('l',"log-file"           ,logfilename                   ,"logfile"                               ,"Set Log filename "                           ,false)
-            >> parameter('d',"debug-level"        ,loglevel                      ,"level (debug,info,notice,warn,error,off)","Set debug level "                            ,false)
-            >> parameter('i',"ip-address"         ,conf.forcedInetAddress        ,"nnn.nnn.nnn.nnn"                       ,"Force IP address "                           ,false)
-            >> parameter('p',"port"               ,conf.forcedPort               ,"port"                                  ,"Set listenning port "                        ,false)
+            >> parameter('c',"base-dir"           ,conf.optBaseDir               ,"directory"                             ,"Set base directory "                                  ,false)
+            >> parameter('l',"log-file"           ,logfilename                   ,"logfile"                               ,"Set Log filename "                                    ,false)
+            >> parameter('d',"debug-level"        ,loglevel                      ,"level (debug,info,notice,warn,error,off)","Set debug level "                                   ,false)
+            >> parameter('i',"ip-address"         ,conf.forcedInetAddress        ,"nnn.nnn.nnn.nnn"                       ,"Force IP address "                                    ,false)
+            >> parameter('p',"port"               ,conf.forcedPort               ,"port"                                  ,"Set listenning port "                                 ,false)
             >> parameter('o',"opmode"             ,conf.opModeStr                ,"opmode (Full, NoTurtle, Gaming, Minimal)","Set mode" ,false)
-            >> parameter('t',"tor"                ,conf.userSuppliedTorExecutable,"tor"                                   ,"supply full tor executable path "            ,false)
-            >> parameter('g',"style"              ,guistyle                      ,"style "                                ,""            ,false)
-            >> parameter('k',"style"              ,guistylesheetfile             ,"style sheet file"                      ,"gui stylesheet file"                         ,false)
-            >> parameter('L',"lang"               ,language                      ,"langage"                               ,"language string"                             ,false)
-            >> parameter('r',"link"               ,rslink                        ,"retroshare link"                       ,"retroshare link to open (passed to running server)" ,false)
-            >> parameter('f',"rsfile"             ,rsfile                        ,"rsfile"                                ,"rscollection file to open (passed to running server)"   ,false);
+            >> parameter('t',"tor"                ,conf.userSuppliedTorExecutable,"path"                                  ,"supply full tor executable path "                     ,false)
+            >> parameter('g',"style"              ,guistyle                      ,"style (fusion,windows,gtk2,breeze)"    ,"set GUI style"                                        ,false)
+            >> parameter('k',"style"              ,guistylesheetfile             ,"file"                                  ,"gui stylesheet file"                                  ,false)
+            >> parameter('L',"lang"               ,language                      ,"langage (fr,cn,...)"                   ,"set language"                                         ,false)
+            >> parameter('r',"link"               ,rslink                        ,"retroshare link"                       ,"retroshare link to open (passed to running server)"   ,false)
+            >> parameter('f',"rsfile"             ,rsfile                        ,"rsfile"                                ,"rscollection file to open (passed to running server)" ,false);
 #ifdef RS_JSONAPI
-    as      >> parameter('J', "jsonApiPort"       ,conf.jsonApiPort              ,"jsonApiPort"                           ,"Enable JSON API on the specified port"       ,false)
-            >> parameter('P', "jsonApiBindAddress",conf.jsonApiBindAddress       ,"jsonApiBindAddress"                    ,"JSON API Bind Address "                      ,false);
+    as      >> parameter('J', "jsonApiPort"       ,conf.jsonApiPort              ,"jsonApiPort"                           ,"Enable JSON API on the specified port"                ,false)
+            >> parameter('P', "jsonApiBindAddress",conf.jsonApiBindAddress       ,"jsonApiBindAddress"                    ,"JSON API Bind Address "                               ,false);
 #endif // ifdef RS_JSONAPI
 
 #ifdef LOCALNET_TESTING
@@ -420,7 +445,9 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
     {
         QApplication dummyApp (argc, argv); // needed for QMessageBox
         /* Translate into the desired language */
-        LanguageSupport::translate(LanguageSupport::defaultLanguageCode());
+
+        if(!setLanguage(language))
+            return 1;
 
         QMessageBox msgBox;
         msgBox.setText(QObject::tr("This version of RetroShare is using OpenPGP-SDK. As a side effect, it's not using the system shared PGP keyring, but has it's own keyring shared by all RetroShare instances. <br><br>You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software."));
@@ -451,7 +478,9 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
         /* Error occured */
         QApplication dummyApp (argc, argv); // needed for QMessageBox
         /* Translate into the desired language */
-        LanguageSupport::translate(LanguageSupport::defaultLanguageCode());
+
+        if(!setLanguage(language))
+            return 1;
 
         displayWarningAboutDSAKeys();
 
@@ -479,9 +508,15 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
        in this case it can be use only for default values */
     RshareSettings::Create ();
 
+    if(LanguageSupport::isValidLanguageCode(QString::fromStdString(language)))
+        conf.language = QString::fromStdString(language);
+
     /* Setup The GUI Stuff */
     //Rshare rshare(args, argc, argv,  QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
     RsApplication rshare(conf);
+
+    if(!setLanguage(language))
+        return 1;
 
     /* Start RetroShare */
     QString sDefaultGXSIdToCreate = "";

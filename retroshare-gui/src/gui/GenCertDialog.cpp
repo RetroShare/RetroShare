@@ -251,7 +251,7 @@ void GenCertDialog::initKeyList()
 
 void GenCertDialog::mouseMoveEvent(QMouseEvent *e)
 {
-	std::cerr << "Mouse : " << e->x() << ", " << e->y() << std::endl;
+    //std::cerr << "Mouse : " << e->x() << ", " << e->y() << std::endl;
 
 	QDialog::mouseMoveEvent(e) ;
 }
