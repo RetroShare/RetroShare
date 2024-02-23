@@ -38,27 +38,20 @@
 const QString RsCollection::ExtensionString = QString("rscollection") ;
 
 RsCollection::RsCollection(QObject *parent)
-	: QObject(parent), _xml_doc("RsCollection")
+    : QObject(parent)
 {
-	_root = _xml_doc.createElement("RsCollection");
-	_xml_doc.appendChild(_root);
+//	_root = _xml_doc.createElement("RsCollection");
+//	_xml_doc.appendChild(_root);
 }
 
-RsCollection::RsCollection(const RsFileTree& fr)
-	: _xml_doc("RsCollection")
+RsCollection::RsCollection(const RsFileTree& ft)
+    : mFileTree(ft)
 {
-	_root = _xml_doc.createElement("RsCollection");
-	_xml_doc.appendChild(_root);
-
-	recursAddElements(_xml_doc,fr,0,_root) ;
 }
 
 RsCollection::RsCollection(const std::vector<DirDetails>& file_infos,FileSearchFlags flags, QObject *parent)
-	: QObject(parent), _xml_doc("RsCollection")
+    : QObject(parent)
 {
-	_root = _xml_doc.createElement("RsCollection");
-	_xml_doc.appendChild(_root);
-
 	if(! ( (flags & RS_FILE_HINTS_LOCAL) || (flags & RS_FILE_HINTS_REMOTE)))
 	{
 		std::cerr << "(EE) Wrong flags passed to RsCollection constructor. Please fix the code!" << std::endl;
@@ -66,7 +59,7 @@ RsCollection::RsCollection(const std::vector<DirDetails>& file_infos,FileSearchF
 	}
 
 	for(uint32_t i = 0;i<file_infos.size();++i)
-		recursAddElements(_xml_doc,file_infos[i],_root,flags) ;
+        recursAddElements(mFileTree.root(),file_infos[i],flags) ;
 }
 
 RsCollection::~RsCollection()
@@ -75,6 +68,7 @@ RsCollection::~RsCollection()
 
 void RsCollection::downloadFiles() const
 {
+#ifdef TODO
 	// print out the element names of all elements that are direct children
 	// of the outermost element.
 	QDomElement docElem = _xml_doc.documentElement();
@@ -84,10 +78,12 @@ void RsCollection::downloadFiles() const
 	recursCollectColFileInfos(docElem,colFileInfos,QString(),false) ;
 
 	RsCollectionDialog(_fileName, colFileInfos, false).exec() ;
+#endif
 }
 
 void RsCollection::autoDownloadFiles() const
 {
+#ifdef TODO
 	QDomElement docElem = _xml_doc.documentElement();
 
 	std::vector<ColFileInfo> colFileInfos;
@@ -100,6 +96,7 @@ void RsCollection::autoDownloadFiles() const
 	{
 		autoDownloadFiles(colFileInfo, dlDir);
 	}
+#endif
 }
 
 void RsCollection::autoDownloadFiles(ColFileInfo colFileInfo, QString dlDir) const
@@ -145,6 +142,8 @@ static QString purifyFileName(const QString& input,bool& bad)
 
 void RsCollection::merge_in(const QString& fname,uint64_t size,const RsFileHash& hash)
 {
+    mFileTree.addFile(mFileTree.root(),fname.toStdString(),hash,size);
+#ifdef TO_REMOVE
 	ColFileInfo info ;
 	info.type = DIR_TYPE_FILE ;
 	info.name = fname ;
@@ -152,12 +151,45 @@ void RsCollection::merge_in(const QString& fname,uint64_t size,const RsFileHash&
 	info.hash = QString::fromStdString(hash.toStdString()) ;
 
 	recursAddElements(_xml_doc,info,_root) ;
+#endif
 }
 void RsCollection::merge_in(const RsFileTree& tree)
 {
-	recursAddElements(_xml_doc,tree,0,_root) ;
+    RsFileTree::DirData dd;
+    tree.getDirectoryContent(tree.root(),dd);
+
+    recursMergeTree(mFileTree.root(),tree,dd) ;
 }
 
+void RsCollection::recursMergeTree(RsFileTree::DirIndex parent,const RsFileTree& tree,const RsFileTree::DirData& dd)
+{
+    for(uint32_t i=0;i<dd.subfiles.size();++i)
+    {
+        RsFileTree::FileData fd;
+        if(!tree.getFileContent(dd.subfiles[i],fd))
+        {
+            RsErr() << "Error while merging file trees. This should not happen. Report a bug!";
+            return;
+        }
+
+        mFileTree.addFile(parent,fd.name,fd.hash,fd.size);
+    }
+    for(uint32_t i=0;i<dd.subdirs.size();++i)
+    {
+        RsFileTree::DirData ld;
+        if(!tree.getDirectoryContent(dd.subdirs[i],ld))
+        {
+            RsErr() << "Error while merging file trees. This should not happen. Report a bug!";
+            return;
+        }
+
+        auto new_dir_index = mFileTree.addDirectory(parent,ld.name);
+
+        recursMergeTree(new_dir_index,tree,ld);
+    }
+}
+
+#ifdef TO_REMOVE
 void RsCollection::recursCollectColFileInfos(const QDomElement& e,std::vector<ColFileInfo>& colFileInfos,const QString& current_path, bool bad_chars_in_parent) const
 {
 	QDomNode n = e.firstChild() ;
@@ -211,43 +243,33 @@ void RsCollection::recursCollectColFileInfos(const QDomElement& e,std::vector<Co
 		n = n.nextSibling() ;
 	}
 }
+#endif
 
 
-void RsCollection::recursAddElements(QDomDocument& doc,const DirDetails& details,QDomElement& e,FileSearchFlags flags) const
+void RsCollection::recursAddElements(RsFileTree::DirIndex parent, const DirDetails& dd, FileSearchFlags flags)
 {
-	if (details.type == DIR_TYPE_FILE)
+    if (dd.type == DIR_TYPE_FILE)
+        mFileTree.addFile(parent,dd.name,dd.hash,dd.size);
+    else if (dd.type == DIR_TYPE_DIR)
 	{
-		QDomElement f = doc.createElement("File") ;
+        RsFileTree::DirIndex new_dir_index = mFileTree.addDirectory(parent,dd.name);
 
-		f.setAttribute(QString("name"),QString::fromUtf8(details.name.c_str())) ;
-        f.setAttribute(QString("sha1"),QString::fromStdString(details.hash.toStdString())) ;
-        f.setAttribute(QString("size"),QString::number(details.size)) ;
-
-		e.appendChild(f) ;
-	}
-	else if (details.type == DIR_TYPE_DIR)
-	{
-		QDomElement d = doc.createElement("Directory") ;
-
-		d.setAttribute(QString("name"),QString::fromUtf8(details.name.c_str())) ;
-
-        for(uint32_t i=0;i<details.children.size();++i)
+        for(uint32_t i=0;i<dd.children.size();++i)
 		{
-            if (!details.children[i].ref)
+            if (!dd.children[i].ref)
 				continue;
 
 			DirDetails subDirDetails;
 
-            if (!rsFiles->RequestDirDetails(details.children[i].ref, subDirDetails, flags))
+            if (!rsFiles->RequestDirDetails(dd.children[i].ref, subDirDetails, flags))
 				continue;
 
-			recursAddElements(doc,subDirDetails,d,flags) ;
+            recursAddElements(new_dir_index,subDirDetails,flags) ;
 		}
-
-		e.appendChild(d) ;
 	}
 }
 
+#ifdef TO_REMOVE
 void RsCollection::recursAddElements(QDomDocument& doc,const ColFileInfo& colFileInfo,QDomElement& e) const
 {
 	if (colFileInfo.type == DIR_TYPE_FILE)
@@ -300,6 +322,7 @@ void RsCollection::recursAddElements(
 		d.appendChild(f) ;
 	}
 }
+#endif
 
 static void showErrorBox(const QString& fileName, const QString& error)
 {
@@ -322,16 +345,11 @@ bool RsCollection::load(const QString& fileName, bool showError /* = true*/)
 		return false;
 	}
 
-	bool ok = _xml_doc.setContent(&file) ;
+    QDomDocument xml_doc;
+    bool ok = xml_doc.setContent(&file) ;
 	file.close();
 
-	if (ok) {
-		_fileName = fileName;
-	} else {
-		if (showError) {
-			showErrorBox(fileName, QApplication::translate("RsCollectionFile", "Error parsing xml file"));
-		}
-	}
+
 
 	return ok;
 }
@@ -404,6 +422,8 @@ bool RsCollection::checkFile(const QString& fileName, bool showError)
 		}
 	return false;
 }
+
+#ifdef TO_REMOVE
 bool RsCollection::load(QWidget *parent)
 {
 	QString fileName;
@@ -414,6 +434,7 @@ bool RsCollection::load(QWidget *parent)
 
 	return load(fileName, true);
 }
+#endif
 
 bool RsCollection::save(const QString& fileName) const
 {
@@ -425,16 +446,129 @@ bool RsCollection::save(const QString& fileName) const
 		return false;
 	}
 
-	QTextStream stream(&file) ;
+    QDomDocument xml_doc ;
+    QDomElement root = xml_doc.createElement("RsCollection");
+
+    RsFileTree::DirData root_data;
+    if(!mFileTree.getDirectoryContent(mFileTree.root(),root_data))
+        return false;
+
+    if(!recursExportToXml(xml_doc,root,root_data))
+        return false;
+
+    xml_doc.appendChild(root);
+
+    QTextStream stream(&file) ;
 	stream.setCodec("UTF-8") ;
 
-	stream << _xml_doc.toString() ;
-
+    stream << xml_doc.toString() ;
 	file.close();
 
 	return true;
 }
 
+bool RsCollection::recursParseXml(QDomDocument& doc,const QDomElement& e,const RsFileTree::DirIndex parent)
+{
+    QDomNode n = e.firstChild() ;
+#ifdef COLLECTION_DEBUG
+    std::cerr << "Parsing element " << e.tagName().toStdString() << std::endl;
+#endif
+
+    while(!n.isNull())
+    {
+        QDomElement ee = n.toElement(); // try to convert the node to an element.
+
+#ifdef COLLECTION_DEBUG
+        std::cerr << "  Seeing child " << ee.tagName().toStdString() << std::endl;
+#endif
+
+        if(ee.tagName() == QString("File"))
+        {
+            RsFileHash hash(ee.attribute(QString("sha1")).toStdString()) ;
+
+            bool bad_chars_detected = false;
+            std::string name = purifyFileName(ee.attribute(QString("name")), bad_chars_detected).toUtf8().constData() ;
+            uint64_t size = ee.attribute(QString("size")).toULongLong() ;
+
+            mFileTree.addFile(parent,name,hash,size);
+#ifdef TO_REMOVE
+            mFileTree.addFile(parent,)
+            ColFileInfo newChild ;
+            bool bad_chars_detected = false ;
+            newChild.filename_has_wrong_characters = bad_chars_detected || bad_chars_in_parent ;
+            newChild.size = ee.attribute(QString("size")).toULongLong() ;
+            newChild.path = current_path ;
+            newChild.type = DIR_TYPE_FILE ;
+
+            colFileInfos.push_back(newChild) ;
+#endif
+        }
+        else if(ee.tagName() == QString("Directory"))
+        {
+            bool bad_chars_detected = false ;
+            std::string cleanDirName = purifyFileName(ee.attribute(QString("name")),bad_chars_detected).toUtf8().constData() ;
+
+            RsFileTree::DirIndex new_dir_index = mFileTree.addDirectory(parent,cleanDirName);
+
+            recursParseXml(doc,ee,new_dir_index);
+#ifdef TO_REMOVE
+            newParent.name=cleanDirName;
+            newParent.filename_has_wrong_characters = bad_chars_detected || bad_chars_in_parent ;
+            newParent.size = 0;
+            newParent.path = current_path ;
+            newParent.type = DIR_TYPE_DIR ;
+
+            recursCollectColFileInfos(ee,newParent.children,current_path + "/" + cleanDirName, bad_chars_in_parent || bad_chars_detected) ;
+            uint32_t size = newParent.children.size();
+            for(uint32_t i=0;i<size;++i)
+            {
+                const ColFileInfo &colFileInfo = newParent.children[i];
+                newParent.size +=colFileInfo.size ;
+            }
+
+            colFileInfos.push_back(newParent) ;
+#endif
+        }
+
+        n = n.nextSibling() ;
+    }
+}
+bool RsCollection::recursExportToXml(QDomDocument& doc,QDomElement& e,const RsFileTree::DirData& dd) const
+{
+    for(uint32_t i=0;i<dd.subfiles.size();++i)
+    {
+        QDomElement f = doc.createElement("File") ;
+
+        RsFileTree::FileData fd;
+        if(!mFileTree.getFileContent(dd.subfiles[i],fd))
+            return false;
+
+        f.setAttribute(QString("name"),QString::fromUtf8(fd.name.c_str())) ;
+        f.setAttribute(QString("sha1"),QString::fromStdString(fd.hash.toStdString())) ;
+        f.setAttribute(QString("size"),QString::number(fd.size)) ;
+
+        e.appendChild(f) ;
+    }
+
+    for(uint32_t i=0;i<dd.subdirs.size();++i)
+    {
+        RsFileTree::DirData di;
+        if(!mFileTree.getDirectoryContent(dd.subdirs[i],di))
+            return false;
+
+        QDomElement d = doc.createElement("Directory") ;
+        d.setAttribute(QString("name"),QString::fromUtf8(di.name.c_str())) ;
+
+        if(!recursExportToXml(doc,d,di))
+            return false;
+
+        e.appendChild(d) ;
+    }
+
+    return true;
+}
+
+#ifdef TO_REMOVE
 bool RsCollection::save(QWidget *parent) const
 {
 	QString fileName;
@@ -533,9 +667,13 @@ bool RsCollection::openColl(const QString& fileName, bool readOnly /* = false */
 	}
 	return false;
 }
+#endif
 
 qulonglong RsCollection::size()
 {
+    return mFileTree.totalFileSize();
+
+#ifdef TO_REMOVE
 	QDomElement docElem = _xml_doc.documentElement();
 
 	std::vector<ColFileInfo> colFileInfos;
@@ -548,6 +686,7 @@ qulonglong RsCollection::size()
 	}
 
 	return size;
+#endif
 }
 
 bool RsCollection::isCollectionFile(const QString &fileName)
@@ -557,6 +696,7 @@ bool RsCollection::isCollectionFile(const QString &fileName)
 	return (ext == RsCollection::ExtensionString);
 }
 
+#ifdef TO_REMOVE
 void RsCollection::saveColl(std::vector<ColFileInfo> colFileInfos, const QString &fileName)
 {
 
@@ -568,3 +708,4 @@ void RsCollection::saveColl(std::vector<ColFileInfo> colFileInfos, const QString
 	_saved=save(fileName);
 
 }
+#endif
