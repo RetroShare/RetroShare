@@ -497,25 +497,23 @@ void SearchDialog::collCreate()
 	int selectedCount = selectedItems.size() ;
 	QTreeWidgetItem * item ;
 
-	for (int i = 0; i < selectedCount; ++i) {
+    RsFileTree tree;
+
+    for (int i = 0; i < selectedCount; ++i)
+    {
 		item = selectedItems.at(i) ;
 
-		if (!item->text(SR_HASH_COL).isEmpty()) {
+        if (!item->text(SR_HASH_COL).isEmpty())
+        {
 			std::string name = item->text(SR_NAME_COL).toUtf8().constData();
 			RsFileHash hash( item->text(SR_HASH_COL).toStdString() );
 			uint64_t count = item->text(SR_SIZE_COL).toULongLong();
 
-			DirDetails details;
-			details.name = name;
-			details.hash = hash;
-            details.size = count;
-			details.type = DIR_TYPE_FILE;
-
-			dirVec.push_back(details);
+            tree.addFile(tree.root(),name,hash,count);
 		}
 	}
 
-	RsCollection(dirVec,RS_FILE_HINTS_LOCAL).openNewColl(this);
+    RsCollectionDialog::openNewCollection(tree);
 }
 
 void SearchDialog::collModif()

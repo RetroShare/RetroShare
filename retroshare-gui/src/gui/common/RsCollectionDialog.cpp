@@ -1411,8 +1411,9 @@ void RsCollectionDialog::save()
 	QTreeWidgetItem* root = getRootItem();
 	if (root) {
 		saveChild(root);
-
+#ifdef TODO_COLLECTION
 		emit saveColl(_newColFileInfos, _fileName);
+#endif
 	}
 	close();
 }

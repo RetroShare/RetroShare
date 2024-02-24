@@ -1233,31 +1233,6 @@ bool RetroshareDirModel::requestDirDetails(void *ref, bool remote,DirDetails& d)
     return false ;
 }
 
-void RetroshareDirModel::createCollectionFile(QWidget *parent, const QModelIndexList &list)
-{
-/*	if(RemoteMode)
-	{
-		std::cerr << "Cannot create a collection file from remote" << std::endl;
-		return ;
-	}*/
-
-	std::vector <DirDetails> dirVec;
-	getDirDetailsFromSelect(list, dirVec);
-
-	FileSearchFlags f = RemoteMode?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL ;
-	
-	QString dir_name;
-	if(!RemoteMode)
-	{
-		if(!dirVec.empty())
-		{
-			const DirDetails& details = dirVec[0];
-			dir_name = QDir(QString::fromUtf8(details.name.c_str())).dirName();
-		}
-	}
-	RsCollection(dirVec,f).openNewColl(parent,dir_name);
-}
-
 void RetroshareDirModel::downloadSelected(const QModelIndexList &list,bool interactive)
 {
 	if (!RemoteMode)

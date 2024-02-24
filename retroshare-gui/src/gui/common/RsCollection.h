@@ -101,9 +101,6 @@ public:
 
 	static bool isCollectionFile(const QString& fileName);
 
-private slots:
-	void saveColl(std::vector<ColFileInfo> colFileInfos, const QString& fileName);
-
 private:
 
     bool recursExportToXml(QDomDocument& doc,QDomElement& e,const RsFileTree::DirData& dd) const;
