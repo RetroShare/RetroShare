@@ -652,7 +652,7 @@ void SharedFilesDialog::copyLinks(const QModelIndexList& lst, bool remote,QList<
 
             QString dir_name = QDir(QString::fromUtf8(details.name.c_str())).dirName();
 
-            RetroShareLink link = RetroShareLink::createFileTree(dir_name,ft->mTotalSize,ft->mTotalFiles,QString::fromStdString(ft->toRadix64())) ;
+            RetroShareLink link = RetroShareLink::createFileTree(dir_name,ft->totalFileSize(),ft->numFiles(),QString::fromStdString(ft->toRadix64())) ;
 
 			if(link.valid())
 				urls.push_back(link) ;
@@ -821,8 +821,12 @@ void SharedFilesDialog::collOpen()
             qinfo.setFile(QString::fromUtf8(path.c_str()));
             if (qinfo.exists()) {
                 if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-                    RsCollection collection;
-                    if (collection.load(qinfo.absoluteFilePath())) {
+
+                    RsCollection::RsCollectionErrorCode err;
+                    RsCollection collection(qinfo.absoluteFilePath(),err);
+
+                    if(err == RsCollection::RsCollectionErrorCode::NO_ERROR)
+                    {
                         collection.downloadFiles();
                         return;
                     }
@@ -831,10 +835,17 @@ void SharedFilesDialog::collOpen()
         }
     }
 
-    RsCollection collection;
-    if (collection.load(this)) {
+    QString fileName;
+    if (!misc::getOpenFileName(nullptr, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Open collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")", fileName))
+        return ;
+
+    std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
+
+    RsCollection::RsCollectionErrorCode err;
+    RsCollection collection(fileName,err);
+
+    if(err == RsCollection::RsCollectionErrorCode::NO_ERROR)
         collection.downloadFiles();
-    }
 }
 
 void LocalSharedFilesDialog::playselectedfiles()

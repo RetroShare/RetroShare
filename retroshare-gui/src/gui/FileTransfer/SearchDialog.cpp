@@ -597,32 +597,35 @@ void SearchDialog::collOpen()
 
 			if (rsFiles->FileDetails(hash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL
 			                               | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE
-                                     | RS_FILE_HINTS_SPEC_ONLY, info)) {
-
+                                     | RS_FILE_HINTS_SPEC_ONLY, info))
+            {
 				/* make path for downloaded files */
 				std::string path;
 				path = info.path;
 
 				/* open file with a suitable application */
 				QFileInfo qinfo;
+                RsCollection::RsCollectionErrorCode err;
 				qinfo.setFile(QString::fromUtf8(path.c_str()));
-				if (qinfo.exists()) {
-					if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-						RsCollection collection;
-						if (collection.load(qinfo.absoluteFilePath())) {
-							collection.downloadFiles();
-							return;
-						}
-					}
-				}
+                if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+                    RsCollection(qinfo.absoluteFilePath(),err).downloadFiles();
 			}
 		}
 	}
 
-	RsCollection collection;
-	if (collection.load(this)) {
-		collection.downloadFiles();
-	}//if (collection.load(this))
+    QString fileName;
+    if (!misc::getOpenFileName(nullptr, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Open collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")", fileName))
+        return ;
+
+    std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
+
+    RsCollection::RsCollectionErrorCode err;
+    RsCollection collection(fileName, err);
+
+    if(err == RsCollection::RsCollectionErrorCode::NO_ERROR)
+        collection.downloadFiles();
+    else
+        QMessageBox::information(nullptr,tr("Error open RsCollection file"),RsCollection::errorString(err));
 }
 
 void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString &base)

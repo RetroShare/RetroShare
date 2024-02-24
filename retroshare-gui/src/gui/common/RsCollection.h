@@ -58,12 +58,24 @@ class RsCollection : public QObject
 	Q_OBJECT
 
 public:
+    enum class RsCollectionErrorCode:uint8_t {
+        NO_ERROR                      = 0x00,
+        UNKNOWN_ERROR                 = 0x01,
+        FILE_READ_ERROR               = 0x02,
+        FILE_CONTAINS_HARMFUL_STRINGS = 0x03,
+        INVALID_ROOT_NODE             = 0x04,
+        XML_PARSING_ERROR             = 0x05,
+    };
 
 	RsCollection(QObject *parent = 0) ;
 	// create from list of files and directories
 	RsCollection(const std::vector<DirDetails>& file_entries, FileSearchFlags flags, QObject *parent = 0) ;
     RsCollection(const RsFileTree& ft);
-	virtual ~RsCollection() ;
+    RsCollection(const QString& filename,RsCollectionErrorCode& error_code);
+
+    static QString errorString(RsCollectionErrorCode code);
+
+    virtual ~RsCollection() ;
 
 	void merge_in(const QString& fname,uint64_t size,const RsFileHash& hash) ;
 	void merge_in(const RsFileTree& tree) ;
@@ -74,9 +86,6 @@ public:
 	bool load(QWidget *parent);
     bool save(QWidget *parent) const ;
 #endif
-    // Loads file from disk.
-    bool load(const QString& fileName, bool showError = true);
-
 	// Save to disk
 	bool save(const QString& fileName) const ;
 
@@ -100,7 +109,7 @@ private slots:
 private:
 
     bool recursExportToXml(QDomDocument& doc,QDomElement& e,const RsFileTree::DirData& dd) const;
-    bool recursParseXml(QDomDocument& doc,const QDomElement& e,RsFileTree::DirIndex dd) ;
+    bool recursParseXml(QDomDocument& doc, const QDomNode &e, RsFileTree::DirIndex dd) ;
 
     // This function is used to populate a RsCollection from locally or remotly shared files.
     void recursAddElements(RsFileTree::DirIndex parent, const DirDetails& dd, FileSearchFlags flags) ;
@@ -118,7 +127,8 @@ private:
 #endif
 
     // check that the file is a valid rscollection file, and not a lol bomb or some shit like this
-	static bool checkFile(const QString &fileName, bool showError);
+    static bool checkFile(const QString &fileName, RsCollectionErrorCode &error);
+
 	// Auto Download recursively.
 	void autoDownloadFiles(ColFileInfo colFileInfo, QString dlDir) const ;
 

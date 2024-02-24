@@ -330,97 +330,128 @@ static void showErrorBox(const QString& fileName, const QString& error)
 	mb.exec();
 }
 
-bool RsCollection::load(const QString& fileName, bool showError /* = true*/)
+QString RsCollection::errorString(RsCollectionErrorCode code)
 {
+    switch(code)
+    {
+    default: [[fallthrough]] ;
+    case RsCollectionErrorCode::UNKNOWN_ERROR:                 return tr("Unknown error");
+    case RsCollectionErrorCode::NO_ERROR:                      return tr("No error");
+    case RsCollectionErrorCode::FILE_READ_ERROR:               return tr("Error while openning file");
+    case RsCollectionErrorCode::FILE_CONTAINS_HARMFUL_STRINGS: return tr("Collection file contains potentially harmful code");
+    case RsCollectionErrorCode::INVALID_ROOT_NODE:             return tr("Invalid root node. RsCollection node was expected.");
+    case RsCollectionErrorCode::XML_PARSING_ERROR:             return tr("XML parsing error in collection file");
+    }
+}
 
-	if (!checkFile(fileName,showError)) return false;
-	QFile file(fileName);
+RsCollection::RsCollection(const QString& fileName, RsCollectionErrorCode& error)
+{
+    if (!checkFile(fileName,error))
+        return ;
 
-	if (!file.open(QIODevice::ReadOnly))
-	{
-		std::cerr << "Cannot open file " << fileName.toStdString() << " !!" << std::endl;
-		if (showError) {
-			showErrorBox(fileName, QApplication::translate("RsCollectionFile", "Cannot open file %1").arg(fileName));
-		}
-		return false;
-	}
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        std::cerr << "Cannot open file " << fileName.toStdString() << " !!" << std::endl;
+        error = RsCollectionErrorCode::FILE_READ_ERROR;
+        //showErrorBox(fileName, QApplication::translate("RsCollectionFile", "Cannot open file %1").arg(fileName));
+        return ;
+    }
 
     QDomDocument xml_doc;
     bool ok = xml_doc.setContent(&file) ;
-	file.close();
 
+    if(!ok)
+    {
+        error = RsCollectionErrorCode::XML_PARSING_ERROR;
+        return;
+    }
+    file.close();
 
+    QDomNode root = xml_doc.elementsByTagName("RsCollection").at(0).toElement();
 
-	return ok;
+    if(root.isNull())
+    {
+        error = RsCollectionErrorCode::INVALID_ROOT_NODE;
+        return;
+    }
+
+    recursParseXml(xml_doc,root,0);
+    error = RsCollectionErrorCode::NO_ERROR;
 }
 
-	// check that the file is a valid rscollection file, and not a lol bomb or some shit like this
-bool RsCollection::checkFile(const QString& fileName, bool showError)
+// check that the file is a valid rscollection file, and not a lol bomb or some shit like this
+
+bool RsCollection::checkFile(const QString& fileName, RsCollectionErrorCode& error)
 {
-	QFile file(fileName);
+    QFile file(fileName);
+    error = RsCollectionErrorCode::NO_ERROR;
 
-	if (!file.open(QIODevice::ReadOnly))
-	{
-		std::cerr << "Cannot open file " << fileName.toStdString() << " !!" << std::endl;
-		if (showError) {
-			showErrorBox(fileName, QApplication::translate("RsCollectionFile", "Cannot open file %1").arg(fileName));
-		}
-		return false;
-	}
-	if (file.reset()){
-	std::cerr << "Checking this file for bomb elements and various wrong stuff" << std::endl;
-	char c ;
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        std::cerr << "Cannot open file " << fileName.toStdString() << " !!" << std::endl;
+        error = RsCollectionErrorCode::FILE_READ_ERROR;
 
-	std::vector<std::string> bad_strings ;
-	bad_strings.push_back(std::string("<!entity ")) ;
-	static const int max_size = 12 ; // should be as large as the largest element in bad_strings
-	char current[max_size] = { 0,0,0,0,0,0,0,0,0,0,0,0 } ;
-	int n=0 ;
+        //showErrorBox(fileName, QApplication::translate("RsCollectionFile", "Cannot open file %1").arg(fileName));
+        return false;
+    }
+    if (file.reset()){
+        std::cerr << "Checking this file for bomb elements and various wrong stuff" << std::endl;
+        char c ;
 
-		while( !file.atEnd() || n >= 0)
-	{
-			if (!file.atEnd())
-				file.getChar(&c);
-			else
-				c=0;
+        std::vector<std::string> bad_strings ;
+        bad_strings.push_back(std::string("<!entity ")) ;
+        static const int max_size = 12 ; // should be as large as the largest element in bad_strings
+        char current[max_size] = { 0,0,0,0,0,0,0,0,0,0,0,0 } ;
+        int n=0 ;
 
-		if(c == '\t' || c == '\n' || c == '\b' || c == '\r')
-			continue ;
+        while( !file.atEnd() || n >= 0)
+        {
+            if (!file.atEnd())
+                file.getChar(&c);
+            else
+                c=0;
 
-		if (n == max_size || file.atEnd())
-			for(int i=0;i<n-1;++i)
-				current[i] = current[i+1] ;
+            if(c == '\t' || c == '\n' || c == '\b' || c == '\r')
+                continue ;
 
-		if(n == max_size)
-			--n ;
+            if (n == max_size || file.atEnd())
+                for(int i=0;i<n-1;++i)
+                    current[i] = current[i+1] ;
 
-		if(c >= 'A' && c <= 'Z') c += 'a' - 'A' ;
+            if(n == max_size)
+                --n ;
 
-			if(!file.atEnd())
-			current[n] = c ;
-		else
-			current[n] = 0 ;
+            if(c >= 'A' && c <= 'Z') c += 'a' - 'A' ;
 
-		//std::cerr << "n==" << n <<" Checking string " << std::string(current,n+1)  << " c = " << std::hex << (int)c << std::dec << std::endl;
+            if(!file.atEnd())
+                current[n] = c ;
+            else
+                current[n] = 0 ;
 
-			for(uint i=0;i<bad_strings.size();++i)
-			if(std::string(current,bad_strings[i].length()) == bad_strings[i])
-			{
-					showErrorBox(file.fileName(), QApplication::translate("RsCollectionFile", "This file contains the string \"%1\" and is therefore an invalid collection file. \n\nIf you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.").arg(bad_strings[i].c_str()));
-					file.close();
-				return false ;
-				//std::cerr << "Bad string detected" << std::endl;
-			}
+            //std::cerr << "n==" << n <<" Checking string " << std::string(current,n+1)  << " c = " << std::hex << (int)c << std::dec << std::endl;
 
-			if(file.atEnd())
-			n-- ;
-		else if(n < max_size)
-			++n ;
-	}
-	file.close();
-		return true;
-		}
-	return false;
+            for(uint i=0;i<bad_strings.size();++i)
+                if(std::string(current,bad_strings[i].length()) == bad_strings[i])
+                {
+                    //showErrorBox(file.fileName(), QApplication::translate("RsCollectionFile", "This file contains the string \"%1\" and is therefore an invalid collection file. \n\nIf you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.").arg(bad_strings[i].c_str()));
+                    error = RsCollectionErrorCode::FILE_CONTAINS_HARMFUL_STRINGS;
+                    file.close();
+                    return false ;
+                    //std::cerr << "Bad string detected" << std::endl;
+                }
+
+            if(file.atEnd())
+                n-- ;
+            else if(n < max_size)
+                ++n ;
+        }
+        file.close();
+        return true;
+    }
+    error = RsCollectionErrorCode::UNKNOWN_ERROR;
+    return false;
 }
 
 #ifdef TO_REMOVE
@@ -467,7 +498,7 @@ bool RsCollection::save(const QString& fileName) const
 	return true;
 }
 
-bool RsCollection::recursParseXml(QDomDocument& doc,const QDomElement& e,const RsFileTree::DirIndex parent)
+bool RsCollection::recursParseXml(QDomDocument& doc,const QDomNode& e,const RsFileTree::DirIndex parent)
 {
     QDomNode n = e.firstChild() ;
 #ifdef COLLECTION_DEBUG

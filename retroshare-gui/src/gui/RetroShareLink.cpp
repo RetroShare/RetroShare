@@ -1143,11 +1143,13 @@ QString RetroShareLink::toHtmlSize() const
 
 	if (type() == TYPE_FILE && RsCollection::isCollectionFile(name())) {
 		FileInfo finfo;
-		if (rsFiles->FileDetails(RsFileHash(hash().toStdString()), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, finfo)) {
-			RsCollection collection;
-			if (collection.load(QString::fromUtf8(finfo.path.c_str()), false)) {
+        if (rsFiles->FileDetails(RsFileHash(hash().toStdString()), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, finfo))
+        {
+            RsCollection::RsCollectionErrorCode code;
+            RsCollection collection(QString::fromUtf8(finfo.path.c_str()), code) ;
+
+            if(code == RsCollection::RsCollectionErrorCode::NO_ERROR)
 				size += QString(" [%1]").arg(misc::friendlyUnit(collection.size()));
-			}
 		}
 	}
 	QString link = QString("<a href=\"%1\">%2</a> <font color=\"blue\">%3</font>").arg(toString()).arg(name()).arg(size);

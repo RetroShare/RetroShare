@@ -2564,23 +2564,29 @@ void TransfersDialog::collOpen()
 				/* open file with a suitable application */
 				QFileInfo qinfo;
 				qinfo.setFile(QString::fromUtf8(path.c_str()));
-				if (qinfo.exists()) {
-					if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-						RsCollection collection;
-						if (collection.load(qinfo.absoluteFilePath())) {
-							collection.downloadFiles();
-							return;
-						}
-					}
-				}
+                if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+                {
+                        RsCollection::RsCollectionErrorCode code;
+                        RsCollection(qinfo.absoluteFilePath(),code).downloadFiles();
+                        return;
+                }
 			}
 		}
 	}
 
-	RsCollection collection;
-	if (collection.load(this)) {
+    QString fileName;
+    if (!misc::getOpenFileName(nullptr, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Open collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")", fileName))
+        return ;
+
+    std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
+
+    RsCollection::RsCollectionErrorCode code;
+    RsCollection collection(fileName,code);
+
+    if(code == RsCollection::RsCollectionErrorCode::NO_ERROR)
 		collection.downloadFiles();
-	}
+    else
+        QMessageBox::information(nullptr,tr("Error openning collection file"),RsCollection::errorString(code));
 }
 
 void TransfersDialog::collAutoOpen(const QString &fileHash)
@@ -2592,21 +2598,18 @@ void TransfersDialog::collAutoOpen(const QString &fileHash)
 		if (rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, info)) {
 
 			/* make path for downloaded files */
-			if (info.downloadStatus == FT_STATE_COMPLETE) {
+            if (info.downloadStatus == FT_STATE_COMPLETE)
+            {
 				std::string path;
 				path = info.path + "/" + info.fname;
 
 				/* open file with a suitable application */
 				QFileInfo qinfo;
 				qinfo.setFile(QString::fromUtf8(path.c_str()));
-				if (qinfo.exists()) {
-					if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-						RsCollection collection;
-						if (collection.load(qinfo.absoluteFilePath(), false)) {
-							collection.autoDownloadFiles();
-						}
-					}
-				}
+                RsCollection::RsCollectionErrorCode err;
+
+                if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+                    RsCollection(qinfo.absoluteFilePath(),err).autoDownloadFiles();
 			}
 		}
 	}
