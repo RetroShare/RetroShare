@@ -91,13 +91,13 @@ public:
 
     // returns the file tree
     const RsFileTree& fileTree() const { return mFileTree; }
+    // total size of files in the collection
+    qulonglong size();
 
 	// Download the content.
 	void downloadFiles() const ;
 	// Auto Download all the content.
 	void autoDownloadFiles() const ;
-
-	qulonglong size();
 
 	static bool isCollectionFile(const QString& fileName);
 

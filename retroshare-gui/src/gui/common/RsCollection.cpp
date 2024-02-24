@@ -68,7 +68,7 @@ RsCollection::~RsCollection()
 
 void RsCollection::downloadFiles() const
 {
-#ifdef TODO
+#ifdef TODO_COLLECTION
 	// print out the element names of all elements that are direct children
 	// of the outermost element.
 	QDomElement docElem = _xml_doc.documentElement();
@@ -83,7 +83,7 @@ void RsCollection::downloadFiles() const
 
 void RsCollection::autoDownloadFiles() const
 {
-#ifdef TODO
+#ifdef TODO_COLLECTION
 	QDomElement docElem = _xml_doc.documentElement();
 
 	std::vector<ColFileInfo> colFileInfos;
@@ -322,13 +322,13 @@ void RsCollection::recursAddElements(
 		d.appendChild(f) ;
 	}
 }
-#endif
 
 static void showErrorBox(const QString& fileName, const QString& error)
 {
 	QMessageBox mb(QMessageBox::Warning, QObject::tr("Failed to process collection file"), QObject::tr("The collection file %1 could not be opened.\nReported error is: \n\n%2").arg(fileName).arg(error), QMessageBox::Ok);
 	mb.exec();
 }
+#endif
 
 QString RsCollection::errorString(RsCollectionErrorCode code)
 {
@@ -563,6 +563,7 @@ bool RsCollection::recursParseXml(QDomDocument& doc,const QDomNode& e,const RsFi
 
         n = n.nextSibling() ;
     }
+    return true;
 }
 bool RsCollection::recursExportToXml(QDomDocument& doc,QDomElement& e,const RsFileTree::DirData& dd) const
 {
