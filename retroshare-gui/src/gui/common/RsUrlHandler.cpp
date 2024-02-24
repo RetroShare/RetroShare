@@ -28,12 +28,9 @@ bool RsUrlHandler::openUrl(const QUrl& url)
 {
 	if(url.scheme() == QString("file") && url.toLocalFile().endsWith("."+RsCollection::ExtensionString))
 	{
-		RsCollection collection ;
-		if(collection.load(url.toLocalFile()))
-		{
-			collection.downloadFiles() ;
-			return true;
-		}
+        RsCollection::RsCollectionErrorCode err;
+        RsCollection(url.toLocalFile(),err).downloadFiles() ;
+        return true;
 	}
 	return QDesktopServices::openUrl(url) ;
 }

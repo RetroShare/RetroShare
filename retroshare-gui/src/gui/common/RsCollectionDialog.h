@@ -30,14 +30,19 @@ class RsCollectionDialog: public QDialog
 	Q_OBJECT
 
 public:
-	RsCollectionDialog(const QString& filename
-	                   , const std::vector<ColFileInfo> &colFileInfos
-	                   , const bool& creation
-	                   , const bool& readOnly = false) ;
 	virtual ~RsCollectionDialog();
+
+    // Open new collection
+    static bool openNewCollection(const RsFileTree &tree, const QString &proposed_file_name = QString());
+
+    // Open existing collection
+    static bool openExistingCollection(const QString& fileName, bool readOnly = false, bool showError = true);
 
 protected:
 	bool eventFilter(QObject *obj, QEvent *ev);
+
+    RsCollectionDialog(const QString& filename, const std::vector<ColFileInfo> &colFileInfos, const bool& creation,
+                       const bool& readOnly = false) ;
 
 private slots:
 	void directoryLoaded(QString dirLoaded);
@@ -88,4 +93,6 @@ private:
 	QItemSelectionModel *_selectionProxy;
 	bool _dirLoaded;
 	QHash<QString,QString> _listOfFilesAddedInDir;
+
+    RsCollection _collection;
 };

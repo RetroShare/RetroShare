@@ -27,7 +27,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/ShareManager.h"
 #include "gui/common/PeerDefs.h"
-#include "gui/common/RsCollection.h"
+#include "gui/common/RsCollectionDialog.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/gxschannels/GxsChannelDialog.h"
 #include "gui/gxsforums/GxsForumsDialog.h"
@@ -759,12 +759,8 @@ void SharedFilesDialog::collModif()
     /* open file with a suitable application */
     QFileInfo qinfo;
     qinfo.setFile(QString::fromUtf8(path.c_str()));
-    if (qinfo.exists()) {
-        if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-            RsCollection collection;
-            collection.openColl(qinfo.absoluteFilePath());
-        }
-    }
+    if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+            RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath());
 }
 
 void SharedFilesDialog::collView()
@@ -789,12 +785,8 @@ void SharedFilesDialog::collView()
     /* open file with a suitable application */
     QFileInfo qinfo;
     qinfo.setFile(QString::fromUtf8(path.c_str()));
-    if (qinfo.exists()) {
-        if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-            RsCollection collection;
-            collection.openColl(qinfo.absoluteFilePath(), true);
-        }
-    }
+    if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+        RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath(), true);
 }
 
 void SharedFilesDialog::collOpen()

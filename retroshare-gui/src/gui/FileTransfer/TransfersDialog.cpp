@@ -24,7 +24,7 @@
 #include "gui/SoundManager.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/FilesDefs.h"
-#include "gui/common/RsCollection.h"
+#include "gui/common/RsCollectionDialog.h"
 #include "gui/common/RSTreeView.h"
 #include "gui/common/RsUrlHandler.h"
 #include "gui/FileTransfer/DetailsDialog.h"
@@ -2466,21 +2466,17 @@ void TransfersDialog::collCreate()
 	std::set<RsFileHash>::iterator it ;
 	getDLSelectedItems(&items, NULL);
 
+    RsFileTree tree;
+
 	for (it = items.begin(); it != items.end(); ++it)
 	{
 		FileInfo info;
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
 
-		DirDetails details;
-		details.name = info.fname;
-		details.hash = info.hash;
-        details.size = info.size;
-		details.type = DIR_TYPE_FILE;
-
-		dirVec.push_back(details);
+        tree.addFile(tree.root(),info.fname,info.hash,info.size);
 	}
 
-	RsCollection(dirVec,RS_FILE_HINTS_LOCAL).openNewColl(this);
+    RsCollectionDialog::openNewCollection(tree);
 }
 
 void TransfersDialog::collModif()
@@ -2504,12 +2500,8 @@ void TransfersDialog::collModif()
 		/* open collection */
 		QFileInfo qinfo;
 		qinfo.setFile(QString::fromUtf8(path.c_str()));
-		if (qinfo.exists()) {
-			if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-				RsCollection collection;
-				collection.openColl(qinfo.absoluteFilePath());
-			}
-		}
+        if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+                RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath());
 	}
 }
 
@@ -2534,12 +2526,8 @@ void TransfersDialog::collView()
 		/* open collection  */
 		QFileInfo qinfo;
 		qinfo.setFile(QString::fromUtf8(path.c_str()));
-		if (qinfo.exists()) {
-			if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-				RsCollection collection;
-				collection.openColl(qinfo.absoluteFilePath(), true);
-			}
-		}
+        if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+                RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath(), true);
 	}
 }
 

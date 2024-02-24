@@ -89,10 +89,8 @@ public:
 	// Save to disk
 	bool save(const QString& fileName) const ;
 
-	// Open new collection
-	bool openNewColl(QWidget *parent, QString fileName = "");
-	// Open existing collection
-	bool openColl(const QString& fileName, bool readOnly = false, bool showError = true);
+    // returns the file tree
+    const RsFileTree& fileTree() const { return mFileTree; }
 
 	// Download the content.
 	void downloadFiles() const ;

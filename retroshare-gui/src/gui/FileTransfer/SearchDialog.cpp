@@ -30,7 +30,7 @@
 #include "gui/RetroShareLink.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "gui/msgs/MessageComposer.h"
-#include "gui/common/RsCollection.h"
+#include "gui/common/RsCollectionDialog.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/common/RsUrlHandler.h"
 #include "gui/settings/rsharesettings.h"
@@ -542,12 +542,8 @@ void SearchDialog::collModif()
 	/* open file with a suitable application */
 	QFileInfo qinfo;
 	qinfo.setFile(QString::fromUtf8(path.c_str()));
-	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-			RsCollection collection;
-			collection.openColl(qinfo.absoluteFilePath());
-		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-	}//if (qinfo.exists())
+    if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+            RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath());
 }
 
 void SearchDialog::collView()
@@ -574,12 +570,8 @@ void SearchDialog::collView()
 	/* open file with a suitable application */
 	QFileInfo qinfo;
 	qinfo.setFile(QString::fromUtf8(path.c_str()));
-	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-			RsCollection collection;
-			collection.openColl(qinfo.absoluteFilePath(), true);
-		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-	}//if (qinfo.exists())
+    if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+        RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath(), true);
 }
 
 void SearchDialog::collOpen()

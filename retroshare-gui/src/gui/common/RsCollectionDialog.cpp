@@ -693,36 +693,35 @@ void RsCollectionDialog::changeFileName()
 	std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
 
 	QFile file(fileName) ;
+    RsCollection::RsCollectionErrorCode err;
 
-	if(file.exists())
-	{
-		RsCollection collFile;
-		if (!collFile.checkFile(fileName,true)) return;
-
+    if(file.exists() && RsCollection::checkFile(fileName,err))
+    {
 		QMessageBox mb;
 		mb.setText(tr("Save Collection File."));
 		mb.setInformativeText(tr("File already exists.")+"\n"+tr("What do you want to do?"));
 		QAbstractButton *btnOwerWrite = mb.addButton(tr("Overwrite"), QMessageBox::YesRole);
-		QAbstractButton *btnMerge = mb.addButton(tr("Merge"), QMessageBox::NoRole);
-		QAbstractButton *btnCancel = mb.addButton(tr("Cancel"), QMessageBox::ResetRole);
+        QAbstractButton *btnMerge     = mb.addButton(tr("Merge"),     QMessageBox::NoRole);
+        QAbstractButton *btnCancel    = mb.addButton(tr("Cancel"),    QMessageBox::ResetRole);
 		mb.setIcon(QMessageBox::Question);
 		mb.exec();
 
 		if (mb.clickedButton()==btnOwerWrite) {
 			//Nothing to do
-		} else if (mb.clickedButton()==btnMerge) {
+        }
+        else if(mb.clickedButton()==btnMerge)
+        {
 			//Open old file to merge it with RsCollection
-			QDomDocument qddOldFile("RsCollection");
-			if (qddOldFile.setContent(&file)) {
-				QDomElement docOldElem = qddOldFile.elementsByTagName("RsCollection").at(0).toElement();
-				collFile.recursCollectColFileInfos(docOldElem,_newColFileInfos,QString(),false);
-			}
 
-		} else if (mb.clickedButton()==btnCancel) {
+            RsCollection qddOldFileCollection(fileName,err);
+
+            if(err != RsCollection::RsCollectionErrorCode::NO_ERROR)
+                _collection.merge_in(qddOldFileCollection.fileTree());
+        }
+        else if(mb.clickedButton()==btnCancel)
 			return;
-		} else {
+        else
 			return;
-		}
 
 	} else {//if(file.exists())
 		//create a new empty file to check if name if good.
@@ -1444,3 +1443,98 @@ void RsCollectionDialog::saveChild(QTreeWidgetItem *parentItem, ColFileInfo *par
 		}
 	}
 }
+
+bool RsCollectionDialog::openExistingCollection(const QString& fileName, bool readOnly /* = false */, bool showError /* = true*/)
+{
+#ifdef TODO
+    RsCollection::RsCollectionErrorCode err;
+    RsCollection col(fileName,err);
+
+    if(err != RsCollection::RsCollectionErrorCode::NO_ERROR)
+    {
+        RsCollectionDialog rcd = new RsCollectionDialog(col, true, readOnly);
+        return rcd.exec() ;
+    }
+
+    if(showError)
+        QMessageBox::information(nullptr,tr("Error openning RsCollection"),RsCollection::errorString(err));
+
+#endif
+    return false;
+}
+
+bool RsCollectionDialog::openNewCollection(const RsFileTree& tree,const QString& proposed_file_name)
+{
+#ifdef TODO
+    QString fileName = proposed_file_name;
+
+    if(!misc::getSaveFileName(nullptr, RshareSettings::LASTDIR_EXTRAFILE
+                                                        , QApplication::translate("RsCollectionFile", "Create collection file")
+                                                        , QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")"
+                                                        , fileName,0, QFileDialog::DontConfirmOverwrite))
+        return false;
+
+    if (!fileName.endsWith("." + RsCollection::ExtensionString))
+        fileName += "." + RsCollection::ExtensionString ;
+
+    std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
+
+    QFile file(fileName) ;
+
+    if(file.exists())
+    {
+        RsCollection::RsCollectionErrorCode err;
+        if (!RsCollection::checkFile(fileName,err))
+        {
+            QMessageBox::information(nullptr,tr("Error openning collection"),RsCollection::errorString(err));
+            return false;
+        }
+
+        QMessageBox mb;
+        mb.setText(tr("Save Collection File."));
+        mb.setInformativeText(tr("File already exists.")+"\n"+tr("What do you want to do?"));
+        QAbstractButton *btnOwerWrite = mb.addButton(tr("Overwrite"), QMessageBox::YesRole);
+        QAbstractButton *btnMerge = mb.addButton(tr("Merge"), QMessageBox::NoRole);
+        QAbstractButton *btnCancel = mb.addButton(tr("Cancel"), QMessageBox::ResetRole);
+        mb.setIcon(QMessageBox::Question);
+        mb.exec();
+
+        if (mb.clickedButton()==btnOwerWrite) {
+            //Nothing to do _xml_doc already up to date
+        } else if (mb.clickedButton()==btnMerge) {
+            //Open old file to merge it with _xml_doc
+            QDomDocument qddOldFile("RsCollection");
+            if (qddOldFile.setContent(&file)) {
+                QDomElement docOldElem = qddOldFile.elementsByTagName("RsCollection").at(0).toElement();
+                std::vector<ColFileInfo> colOldFileInfos;
+                recursCollectColFileInfos(docOldElem,colOldFileInfos,QString(),false);
+
+                QDomElement root = _xml_doc.elementsByTagName("RsCollection").at(0).toElement();
+                for(uint32_t i = 0;i<colOldFileInfos.size();++i){
+                    recursAddElements(_xml_doc,colOldFileInfos[i],root) ;
+                }
+            }
+
+        } else if (mb.clickedButton()==btnCancel) {
+            return false;
+        } else {
+            return false;
+        }
+
+    }//if(file.exists())
+
+    _fileName=fileName;
+    std::vector<ColFileInfo> colFileInfos ;
+
+    recursCollectColFileInfos(_xml_doc.documentElement(),colFileInfos,QString(),false) ;
+
+    RsCollectionDialog* rcd = new RsCollectionDialog(fileName, colFileInfos,true);
+    connect(rcd,SIGNAL(saveColl(std::vector<ColFileInfo>, QString)),this,SLOT(saveColl(std::vector<ColFileInfo>, QString))) ;
+    _saved=false;
+    rcd->exec() ;
+    delete rcd;
+
+#endif
+    return true;
+}
+
