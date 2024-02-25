@@ -9,13 +9,12 @@ class RsCollectionModel: public QAbstractItemModel
     public:
         enum Roles{ FileNameRole = Qt::UserRole+1, SortRole = Qt::UserRole+2, FilterRole = Qt::UserRole+3 };
 
-        RsCollectionModel(bool mode, QObject *parent = 0);
+        RsCollectionModel(const RsCollection& col, QObject *parent = 0);
         virtual ~RsCollectionModel() ;
 
-
         /* Callback from Core */
-        void preMods();
-        void postMods();
+        void preMods();			// always call this before updating the RsCollection!
+        void postMods();		// always call this after updating the RsCollection!
 
         /* Callback from GUI */
 
@@ -48,15 +47,18 @@ class RsCollectionModel: public QAbstractItemModel
         static bool convertIndexToInternalId(const EntryIndex& e,quintptr& ref);
         static bool convertInternalIdToIndex(quintptr ref, EntryIndex& e);
 
-        // virtual QVariant displayRole(const DirDetails&,int) const = 0 ;
-        // virtual QVariant sortRole(const QModelIndex&,const DirDetails&,int) const =0;
-
-        // QVariant decorationRole(const DirDetails&,int) const ;
-        // QVariant filterRole(const DirDetails& details,int coln) const;
+        QVariant displayRole(const EntryIndex&,int col) const ;
+        QVariant sortRole(const EntryIndex&,int col) const ;
+        QVariant decorationRole(const EntryIndex&,int col) const ;
+        //QVariant filterRole(const DirDetails& details,int coln) const;
 
         bool mUpdating ;
 
         const RsCollection& mCollection;
+
+        std::map<uint64_t,RsFileTree::DirIndex> mFileParents;
+        std::map<uint64_t,RsFileTree::DirIndex> mDirParents;
+        std::map<uint64_t,uint64_t> mDirSizes;
 
         // std::set<void*> mFilteredPointers ;
 };

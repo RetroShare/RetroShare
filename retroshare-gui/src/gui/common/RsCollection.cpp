@@ -155,36 +155,21 @@ void RsCollection::merge_in(const QString& fname,uint64_t size,const RsFileHash&
 }
 void RsCollection::merge_in(const RsFileTree& tree)
 {
-    RsFileTree::DirData dd;
-    tree.getDirectoryContent(tree.root(),dd);
-
-    recursMergeTree(mFileTree.root(),tree,dd) ;
+    recursMergeTree(mFileTree.root(),tree,tree.directoryData(tree.root())) ;
 }
 
 void RsCollection::recursMergeTree(RsFileTree::DirIndex parent,const RsFileTree& tree,const RsFileTree::DirData& dd)
 {
     for(uint32_t i=0;i<dd.subfiles.size();++i)
     {
-        RsFileTree::FileData fd;
-        if(!tree.getFileContent(dd.subfiles[i],fd))
-        {
-            RsErr() << "Error while merging file trees. This should not happen. Report a bug!";
-            return;
-        }
-
+        const RsFileTree::FileData& fd(tree.fileData(dd.subfiles[i]));
         mFileTree.addFile(parent,fd.name,fd.hash,fd.size);
     }
     for(uint32_t i=0;i<dd.subdirs.size();++i)
     {
-        RsFileTree::DirData ld;
-        if(!tree.getDirectoryContent(dd.subdirs[i],ld))
-        {
-            RsErr() << "Error while merging file trees. This should not happen. Report a bug!";
-            return;
-        }
+        const RsFileTree::DirData& ld(tree.directoryData(dd.subdirs[i]));
 
         auto new_dir_index = mFileTree.addDirectory(parent,ld.name);
-
         recursMergeTree(new_dir_index,tree,ld);
     }
 }
@@ -480,9 +465,7 @@ bool RsCollection::save(const QString& fileName) const
     QDomDocument xml_doc ;
     QDomElement root = xml_doc.createElement("RsCollection");
 
-    RsFileTree::DirData root_data;
-    if(!mFileTree.getDirectoryContent(mFileTree.root(),root_data))
-        return false;
+    const RsFileTree::DirData& root_data(mFileTree.directoryData(mFileTree.root()));
 
     if(!recursExportToXml(xml_doc,root,root_data))
         return false;
@@ -571,9 +554,7 @@ bool RsCollection::recursExportToXml(QDomDocument& doc,QDomElement& e,const RsFi
     {
         QDomElement f = doc.createElement("File") ;
 
-        RsFileTree::FileData fd;
-        if(!mFileTree.getFileContent(dd.subfiles[i],fd))
-            return false;
+        const RsFileTree::FileData& fd(mFileTree.fileData(dd.subfiles[i]));
 
         f.setAttribute(QString("name"),QString::fromUtf8(fd.name.c_str())) ;
         f.setAttribute(QString("sha1"),QString::fromStdString(fd.hash.toStdString())) ;
@@ -584,9 +565,7 @@ bool RsCollection::recursExportToXml(QDomDocument& doc,QDomElement& e,const RsFi
 
     for(uint32_t i=0;i<dd.subdirs.size();++i)
     {
-        RsFileTree::DirData di;
-        if(!mFileTree.getDirectoryContent(dd.subdirs[i],di))
-            return false;
+        const RsFileTree::DirData& di(mFileTree.directoryData(dd.subdirs[i]));
 
         QDomElement d = doc.createElement("Directory") ;
         d.setAttribute(QString("name"),QString::fromUtf8(di.name.c_str())) ;

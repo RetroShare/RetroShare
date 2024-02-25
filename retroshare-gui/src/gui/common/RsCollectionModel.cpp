@@ -32,12 +32,12 @@ int RsCollectionModel::rowCount(const QModelIndex& parent) const
     if(i.is_file)
         return 0;
     else
-        return mCollection.fileTree().directoryData(i.index).subdirs.size();
+        return mCollection.fileTree().directoryData(i.index).subdirs.size() + mCollection.fileTree().directoryData(i.index).subfiles.size();
 }
 
 int RsCollectionModel::columnCount(const QModelIndex&) const
 {
-    return 5;
+    return 4;
 }
 
 QVariant RsCollectionModel::headerData(int section, Qt::Orientation,int) const
@@ -45,12 +45,146 @@ QVariant RsCollectionModel::headerData(int section, Qt::Orientation,int) const
     switch(section)
     {
     case 0: return tr("File");
-    case 1: return tr("Path");
-    case 2: return tr("Size");
-    case 3: return tr("Hash");
-    case 4: return tr("Count");
+    case 1: return tr("Size");
+    case 2: return tr("Hash");
+    case 3: return tr("Count");
     default:
         return QVariant();
     }
 }
+
+QModelIndex RsCollectionModel::index(int row, int column, const QModelIndex & parent) const
+{
+    EntryIndex i;
+    if(!convertInternalIdToIndex(parent.internalId(),i))
+        return QModelIndex();
+
+    if(i.is_file || i.index >= mCollection.fileTree().numDirs())
+        return QModelIndex();
+
+    const auto& parentData(mCollection.fileTree().directoryData(i.index));
+
+    if(row < 0)
+        return QModelIndex();
+
+    if((size_t)row < parentData.subdirs.size())
+    {
+        EntryIndex e;
+        e.is_file = false;
+        e.index = parentData.subdirs[row];
+
+        quintptr ref;
+        convertIndexToInternalId(e,ref);
+        return createIndex(row,column,ref);
+    }
+
+    if((size_t)row < parentData.subdirs.size() + parentData.subfiles.size())
+    {
+        EntryIndex e;
+        e.is_file = true;
+        e.index = parentData.subfiles[row - parentData.subdirs.size()];
+
+        quintptr ref;
+        convertIndexToInternalId(e,ref);
+        return createIndex(row,column,ref);
+    }
+
+    return QModelIndex();
+}
+
+QModelIndex RsCollectionModel::parent(const QModelIndex & index) const
+{
+    EntryIndex i;
+    if(!convertInternalIdToIndex(index.internalId(),i))
+        return QModelIndex();
+
+    EntryIndex p;
+    p.is_file = false;	// all parents are directories
+
+    if(i.is_file)
+    {
+        const auto it = mFileParents.find(i.index);
+        if(it == mFileParents.end())
+        {
+            RsErr() << "Error: parent not found for index " << index.row() << ", " << index.column();
+            return QModelIndex();
+        }
+        p.index = it->second;
+    }
+    else
+    {
+        const auto it = mDirParents.find(i.index);
+        if(it == mDirParents.end())
+        {
+            RsErr() << "Error: parent not found for index " << index.row() << ", " << index.column();
+            return QModelIndex();
+        }
+        p.index = it->second;
+    }
+
+    quintptr ref;
+    convertIndexToInternalId(p,ref);
+    return createIndex(0,index.column(),ref);
+}
+
+QVariant RsCollectionModel::data(const QModelIndex& index, int role) const
+{
+    EntryIndex i;
+    if(!convertInternalIdToIndex(index.internalId(),i))
+        return QVariant();
+
+    switch(role)
+    {
+    case Qt::DisplayRole: return displayRole(i,index.column());
+    //case Qt::SortRole: return SortRole(i,index.column());
+    case Qt::DecorationRole: return decorationRole(i,index.column());
+    default:
+        return QVariant();
+    }
+}
+
+QVariant RsCollectionModel::displayRole(const EntryIndex& i,int col) const
+{
+    switch(col)
+    {
+    case 0: return (i.is_file)?
+                    (QString::fromUtf8(mCollection.fileTree().fileData(i.index).name.c_str()))
+                  : (QString::fromUtf8(mCollection.fileTree().directoryData(i.index).name.c_str()));
+
+    case 1: if(i.is_file)
+                return QVariant((qulonglong)mCollection.fileTree().fileData(i.index).size) ;
+
+            {
+                auto it = mDirSizes.find(i.index);
+
+                if(it == mDirSizes.end())
+                    return QVariant();
+                else
+                    return QVariant((qulonglong)it->second);
+            }
+
+    case 2: return (i.is_file)?
+                    QString::fromStdString(mCollection.fileTree().fileData(i.index).hash.toStdString())
+                   :QVariant();
+
+    case 3: return (i.is_file)?((qulonglong)1):((qulonglong)(mCollection.fileTree().directoryData(i.index).subdirs.size()));
+    }
+    return QVariant();
+}
+QVariant RsCollectionModel::sortRole(const EntryIndex& i,int col) const
+{
+    return QVariant();
+}
+QVariant RsCollectionModel::decorationRole(const EntryIndex& i,int col) const
+{
+    return QVariant();
+}
+
+
+
+
+
+
+
+
 
