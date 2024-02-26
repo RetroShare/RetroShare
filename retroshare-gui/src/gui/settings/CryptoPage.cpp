@@ -34,6 +34,7 @@
 #include <gui/connect/ConfCertDialog.h>
 #include <gui/profile/ProfileManager.h>
 #include <gui/statistics/StatisticsWindow.h>
+#include <gui/common/NewFriendList.h>
 
 #include <retroshare/rspeers.h> //for rsPeers variable
 #include <retroshare/rsdisc.h> //for rsPeers variable
@@ -47,6 +48,8 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
 
 	ui._shortFormat_CB->setChecked(true);
 
+	friendslist = new NewFriendList(this);
+
 	//  connect(ui.copykeyButton, SIGNAL(clicked()), this, SLOT(copyPublicKey()));
 	connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
 	connect(ui._includeSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
@@ -58,8 +61,9 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
 	// hide profile manager as it causes bugs when generating a new profile.
 	//ui.profile_Button->hide() ;
 
-    //connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(profilemanager()));
-    connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(exportProfile()));
+	//connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(profilemanager()));
+	connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(exportProfile()));
+	connect(ui.exportfriendslist,SIGNAL(clicked()), friendslist, SLOT(exportFriendlistClicked()) );
 
     // Remove this because it duplicates functionality of the HomePage.
     ui.retroshareId_LB->hide();

@@ -25,6 +25,8 @@
 #include "ui_CryptoPage.h"
 #include "gui/common/FilesDefs.h"
 
+class NewFriendList;
+
 class CryptoPage : public ConfigPage
 {
   Q_OBJECT
@@ -40,6 +42,8 @@ class CryptoPage : public ConfigPage
         virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/profile.svg") ; }
 		virtual QString pageName() const { return tr("Node") ; }
 		virtual QString helpText() const { return ""; }
+	
+	NewFriendList *friendslist;
 
   private slots:
       void exportProfile();
