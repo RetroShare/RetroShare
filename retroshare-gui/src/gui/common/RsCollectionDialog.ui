@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
+    <width>671</width>
     <height>400</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    <string>Collection</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../images.qrc">
+   <iconset>
     <normaloff>:/images/mimetypes/rscollection-16.png</normaloff>:/images/mimetypes/rscollection-16.png</iconset>
   </property>
   <property name="sizeGripEnabled">
@@ -382,7 +382,7 @@
                  </item>
                 </layout>
                </widget>
-               <widget class="QTreeWidget" name="_fileEntriesTW">
+               <widget class="QTreeView" name="_fileEntriesTW">
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
@@ -398,11 +398,6 @@
                 <property name="allColumnsShowFocus">
                  <bool>true</bool>
                 </property>
-                <column>
-                 <property name="text">
-                  <string notr="true">1</string>
-                 </property>
-                </column>
                </widget>
               </widget>
              </item>
@@ -517,7 +512,6 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
-  <include location="../../../../plugins/FeedReader/gui/FeedReader_images.qrc"/>
  </resources>
  <connections/>
 </ui>

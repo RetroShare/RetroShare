@@ -598,6 +598,10 @@ bool RsCollection::save(QWidget *parent) const
 
 #endif
 
+qulonglong RsCollection::count() const
+{
+    return mFileTree.numFiles();
+}
 qulonglong RsCollection::size()
 {
     return mFileTree.totalFileSize();

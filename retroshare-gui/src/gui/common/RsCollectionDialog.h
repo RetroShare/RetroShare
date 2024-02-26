@@ -20,6 +20,7 @@
 
 #include "ui_RsCollectionDialog.h"
 #include "RsCollection.h"
+#include "RsCollectionModel.h"
 #include <QFileSystemModel>
 #include <QSortFilterProxyModel>
 
@@ -41,26 +42,29 @@ public:
 protected:
 	bool eventFilter(QObject *obj, QEvent *ev);
 
-    RsCollectionDialog(const QString& filename, const std::vector<ColFileInfo> &colFileInfos, const bool& creation,
-                       const bool& readOnly = false) ;
+    RsCollectionDialog(const QString& filename, const bool& creation, const bool& readOnly = false) ;
 
 private slots:
 	void directoryLoaded(QString dirLoaded);
 	void updateSizes() ;
 	void changeFileName() ;
-	void add() ;
-	void addRecursive() ;
+    void addSelection() ;
+    void addSelectionRecursive() ;
 	void remove() ;
 	void chooseDestinationDirectory();
 	void setDestinationDirectory();
 	void openDestinationDirectoryMenu();
+#ifdef TO_REMOVE
 	void processItem(QMap<QString, QString> &dirToAdd
 	                 , int &index
                    , ColFileInfo &parent
                    ) ;
+#endif
 	void makeDir() ;
 	void fileHashingFinished(QList<HashedFile> hashedFiles) ;
-	void itemChanged(QTreeWidgetItem* item,int col) ;
+#ifdef TO_REMOVE
+    void itemChanged(QTreeWidgetItem* item,int col) ;
+#endif
 	void updateRemoveDuplicate(bool checked);
 	void cancel() ;
 	void download() ;
@@ -71,22 +75,23 @@ signals:
 
 private:
 	void processSettings(bool bLoad) ;
-	QTreeWidgetItem*  getRootItem();
 	bool updateList();
-	bool addChild(QTreeWidgetItem *parent, const std::vector<ColFileInfo> &child);
+#ifdef TO_REMOVE
+    QTreeWidgetItem*  getRootItem();
+    bool addChild(QTreeWidgetItem *parent, const std::vector<ColFileInfo> &child);
 	bool removeItem(QTreeWidgetItem *item, bool &removeOnlyFile) ;
-	void addRecursive(bool recursive) ;
+    void saveChild(QTreeWidgetItem *parentItem, ColFileInfo *parentInfo = NULL);
+#endif
+    void addSelection(bool recursive) ;
 	bool addAllChild(QFileInfo &fileInfoParent
 	                 , QMap<QString, QString > &dirToAdd
 	                 , QStringList &fileToHash
 	                 , int &count);
-	void saveChild(QTreeWidgetItem *parentItem, ColFileInfo *parentInfo = NULL);
 
 	Ui::RsCollectionDialog ui;
 	QString _fileName ;
 	const bool _creationMode ;
 	const bool _readOnly;
-	std::vector<ColFileInfo> _newColFileInfos ;
 
 	QFileSystemModel *_dirModel;
 	QSortFilterProxyModel *_tree_proxyModel;
@@ -94,5 +99,6 @@ private:
 	bool _dirLoaded;
 	QHash<QString,QString> _listOfFilesAddedInDir;
 
-    RsCollection _collection;
+    RsCollectionModel *mCollectionModel;
+    RsCollection *mCollection;
 };

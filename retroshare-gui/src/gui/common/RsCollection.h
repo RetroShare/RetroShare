@@ -93,6 +93,8 @@ public:
     const RsFileTree& fileTree() const { return mFileTree; }
     // total size of files in the collection
     qulonglong size();
+    // total number of files in the collection
+    qulonglong count() const;
 
 	// Download the content.
 	void downloadFiles() const ;
