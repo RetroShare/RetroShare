@@ -38,19 +38,17 @@
 const QString RsCollection::ExtensionString = QString("rscollection") ;
 
 RsCollection::RsCollection(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), mFileTree(new RsFileTree)
 {
-//	_root = _xml_doc.createElement("RsCollection");
-//	_xml_doc.appendChild(_root);
 }
 
 RsCollection::RsCollection(const RsFileTree& ft)
-    : mFileTree(ft)
 {
+    mFileTree = std::unique_ptr<RsFileTree>(new RsFileTree(ft));
 }
 
 RsCollection::RsCollection(const std::vector<DirDetails>& file_infos,FileSearchFlags flags, QObject *parent)
-    : QObject(parent)
+    : QObject(parent), mFileTree(new RsFileTree)
 {
 	if(! ( (flags & RS_FILE_HINTS_LOCAL) || (flags & RS_FILE_HINTS_REMOTE)))
 	{
@@ -59,7 +57,7 @@ RsCollection::RsCollection(const std::vector<DirDetails>& file_infos,FileSearchF
 	}
 
 	for(uint32_t i = 0;i<file_infos.size();++i)
-        recursAddElements(mFileTree.root(),file_infos[i],flags) ;
+        recursAddElements(mFileTree->root(),file_infos[i],flags) ;
 }
 
 RsCollection::~RsCollection()
@@ -142,7 +140,7 @@ static QString purifyFileName(const QString& input,bool& bad)
 
 void RsCollection::merge_in(const QString& fname,uint64_t size,const RsFileHash& hash)
 {
-    mFileTree.addFile(mFileTree.root(),fname.toStdString(),hash,size);
+    mFileTree->addFile(mFileTree->root(),fname.toStdString(),hash,size);
 #ifdef TO_REMOVE
 	ColFileInfo info ;
 	info.type = DIR_TYPE_FILE ;
@@ -155,7 +153,7 @@ void RsCollection::merge_in(const QString& fname,uint64_t size,const RsFileHash&
 }
 void RsCollection::merge_in(const RsFileTree& tree)
 {
-    recursMergeTree(mFileTree.root(),tree,tree.directoryData(tree.root())) ;
+    recursMergeTree(mFileTree->root(),tree,tree.directoryData(tree.root())) ;
 }
 
 void RsCollection::recursMergeTree(RsFileTree::DirIndex parent,const RsFileTree& tree,const RsFileTree::DirData& dd)
@@ -163,13 +161,13 @@ void RsCollection::recursMergeTree(RsFileTree::DirIndex parent,const RsFileTree&
     for(uint32_t i=0;i<dd.subfiles.size();++i)
     {
         const RsFileTree::FileData& fd(tree.fileData(dd.subfiles[i]));
-        mFileTree.addFile(parent,fd.name,fd.hash,fd.size);
+        mFileTree->addFile(parent,fd.name,fd.hash,fd.size);
     }
     for(uint32_t i=0;i<dd.subdirs.size();++i)
     {
         const RsFileTree::DirData& ld(tree.directoryData(dd.subdirs[i]));
 
-        auto new_dir_index = mFileTree.addDirectory(parent,ld.name);
+        auto new_dir_index = mFileTree->addDirectory(parent,ld.name);
         recursMergeTree(new_dir_index,tree,ld);
     }
 }
@@ -234,10 +232,10 @@ void RsCollection::recursCollectColFileInfos(const QDomElement& e,std::vector<Co
 void RsCollection::recursAddElements(RsFileTree::DirIndex parent, const DirDetails& dd, FileSearchFlags flags)
 {
     if (dd.type == DIR_TYPE_FILE)
-        mFileTree.addFile(parent,dd.name,dd.hash,dd.size);
+        mFileTree->addFile(parent,dd.name,dd.hash,dd.size);
     else if (dd.type == DIR_TYPE_DIR)
 	{
-        RsFileTree::DirIndex new_dir_index = mFileTree.addDirectory(parent,dd.name);
+        RsFileTree::DirIndex new_dir_index = mFileTree->addDirectory(parent,dd.name);
 
         for(uint32_t i=0;i<dd.children.size();++i)
 		{
@@ -330,6 +328,7 @@ QString RsCollection::errorString(RsCollectionErrorCode code)
 }
 
 RsCollection::RsCollection(const QString& fileName, RsCollectionErrorCode& error)
+    : mFileTree(new RsFileTree)
 {
     if (!checkFile(fileName,error))
         return ;
@@ -465,7 +464,7 @@ bool RsCollection::save(const QString& fileName) const
     QDomDocument xml_doc ;
     QDomElement root = xml_doc.createElement("RsCollection");
 
-    const RsFileTree::DirData& root_data(mFileTree.directoryData(mFileTree.root()));
+    const RsFileTree::DirData& root_data(mFileTree->directoryData(mFileTree->root()));
 
     if(!recursExportToXml(xml_doc,root,root_data))
         return false;
@@ -504,7 +503,7 @@ bool RsCollection::recursParseXml(QDomDocument& doc,const QDomNode& e,const RsFi
             std::string name = purifyFileName(ee.attribute(QString("name")), bad_chars_detected).toUtf8().constData() ;
             uint64_t size = ee.attribute(QString("size")).toULongLong() ;
 
-            mFileTree.addFile(parent,name,hash,size);
+            mFileTree->addFile(parent,name,hash,size);
 #ifdef TO_REMOVE
             mFileTree.addFile(parent,)
             ColFileInfo newChild ;
@@ -522,7 +521,7 @@ bool RsCollection::recursParseXml(QDomDocument& doc,const QDomNode& e,const RsFi
             bool bad_chars_detected = false ;
             std::string cleanDirName = purifyFileName(ee.attribute(QString("name")),bad_chars_detected).toUtf8().constData() ;
 
-            RsFileTree::DirIndex new_dir_index = mFileTree.addDirectory(parent,cleanDirName);
+            RsFileTree::DirIndex new_dir_index = mFileTree->addDirectory(parent,cleanDirName);
 
             recursParseXml(doc,ee,new_dir_index);
 #ifdef TO_REMOVE
@@ -554,7 +553,7 @@ bool RsCollection::recursExportToXml(QDomDocument& doc,QDomElement& e,const RsFi
     {
         QDomElement f = doc.createElement("File") ;
 
-        const RsFileTree::FileData& fd(mFileTree.fileData(dd.subfiles[i]));
+        const RsFileTree::FileData& fd(mFileTree->fileData(dd.subfiles[i]));
 
         f.setAttribute(QString("name"),QString::fromUtf8(fd.name.c_str())) ;
         f.setAttribute(QString("sha1"),QString::fromStdString(fd.hash.toStdString())) ;
@@ -565,7 +564,7 @@ bool RsCollection::recursExportToXml(QDomDocument& doc,QDomElement& e,const RsFi
 
     for(uint32_t i=0;i<dd.subdirs.size();++i)
     {
-        const RsFileTree::DirData& di(mFileTree.directoryData(dd.subdirs[i]));
+        const RsFileTree::DirData& di(mFileTree->directoryData(dd.subdirs[i]));
 
         QDomElement d = doc.createElement("Directory") ;
         d.setAttribute(QString("name"),QString::fromUtf8(di.name.c_str())) ;
@@ -600,11 +599,11 @@ bool RsCollection::save(QWidget *parent) const
 
 qulonglong RsCollection::count() const
 {
-    return mFileTree.numFiles();
+    return mFileTree->numFiles();
 }
 qulonglong RsCollection::size()
 {
-    return mFileTree.totalFileSize();
+    return mFileTree->totalFileSize();
 
 #ifdef TO_REMOVE
 	QDomElement docElem = _xml_doc.documentElement();

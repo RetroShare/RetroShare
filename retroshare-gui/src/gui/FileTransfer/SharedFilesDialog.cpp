@@ -733,7 +733,7 @@ void SharedFilesDialog::sendLinkTo()
 
 void SharedFilesDialog::collCreate()
 {
-#ifdef TODO
+#ifdef TODO_COLLECTION
     QModelIndexList lst = getSelected();
 
     std::vector <DirDetails> dirVec;
@@ -831,6 +831,8 @@ void SharedFilesDialog::collOpen()
             if (qinfo.exists()) {
                 if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
 
+                    RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath(),true);
+#ifdef TO_REMOVE
                     RsCollection::RsCollectionErrorCode err;
                     RsCollection collection(qinfo.absoluteFilePath(),err);
 
@@ -839,6 +841,7 @@ void SharedFilesDialog::collOpen()
                         collection.downloadFiles();
                         return;
                     }
+#endif
                 }
             }
         }

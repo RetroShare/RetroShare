@@ -90,7 +90,7 @@ public:
 	bool save(const QString& fileName) const ;
 
     // returns the file tree
-    const RsFileTree& fileTree() const { return mFileTree; }
+    const RsFileTree& fileTree() const { return *mFileTree; }
     // total size of files in the collection
     qulonglong size();
     // total number of files in the collection
@@ -129,7 +129,7 @@ private:
 	// Auto Download recursively.
 	void autoDownloadFiles(ColFileInfo colFileInfo, QString dlDir) const ;
 
-    RsFileTree mFileTree;
+    std::unique_ptr<RsFileTree> mFileTree;
 #ifdef TO_REMOVE
 	QDomDocument _xml_doc ;
 	QString _fileName ;

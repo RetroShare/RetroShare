@@ -1456,7 +1456,7 @@ void RsCollectionDialog::saveChild(QTreeWidgetItem *parentItem, ColFileInfo *par
 
 bool RsCollectionDialog::openExistingCollection(const QString& fileName, bool readOnly /* = false */, bool showError /* = true*/)
 {
-    return RsCollectionDialog(fileName,readOnly,showError).exec();
+    return RsCollectionDialog(fileName,false,readOnly).exec();
 }
 
 bool RsCollectionDialog::openNewCollection(const RsFileTree& tree,const QString& proposed_file_name)
