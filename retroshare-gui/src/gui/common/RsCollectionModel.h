@@ -18,7 +18,7 @@ class RsCollectionModel: public QAbstractItemModel
 
         /* Callback from GUI */
 
-        void update() {}
+        void update() ;
         void filterItems(const std::list<std::string>& keywords, uint32_t& found) ;
 
         // Overloaded from QAbstractItemModel
@@ -40,15 +40,15 @@ class RsCollectionModel: public QAbstractItemModel
 #endif
 #endif
 
-    private:
         struct EntryIndex {
             bool is_file;		// false=dir, true=file
             uint64_t index;
         };
+    private:
         static bool convertIndexToInternalId(const EntryIndex& e,quintptr& ref);
         static bool convertInternalIdToIndex(quintptr ref, EntryIndex& e);
 
-        void recursUpdateLocalStructures(RsFileTree::DirIndex dir_index,uint64_t& total_size);
+        void recursUpdateLocalStructures(RsFileTree::DirIndex dir_index, uint64_t& total_size, int depth);
 
         QVariant displayRole(const EntryIndex&,int col) const ;
         QVariant sortRole(const EntryIndex&,int col) const ;
@@ -59,8 +59,13 @@ class RsCollectionModel: public QAbstractItemModel
 
         const RsCollection& mCollection;
 
-        std::map<uint64_t,RsFileTree::DirIndex> mFileParents;
-        std::map<uint64_t,RsFileTree::DirIndex> mDirParents;
+        struct ParentInfo {
+             RsFileTree::DirIndex parent_index;	// index of the parent
+             RsFileTree::DirIndex parent_row; // row of that child, in this parent
+        };
+
+        std::map<uint64_t,ParentInfo> mFileParents;
+        std::map<uint64_t,ParentInfo> mDirParents;
         std::map<uint64_t,uint64_t> mDirSizes;
 
         // std::set<void*> mFilteredPointers ;

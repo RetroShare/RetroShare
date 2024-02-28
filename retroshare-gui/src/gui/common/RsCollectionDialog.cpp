@@ -307,9 +307,9 @@ RsCollectionDialog::~RsCollectionDialog()
  * @param event: event occured
  * @return If we don't have to process event in parent.
  */
+#ifdef TODO_COLLECTION
 bool RsCollectionDialog::eventFilter(QObject *obj, QEvent *event)
 {
-#ifdef TODO_COLLECTION
 	if (obj == ui._fileEntriesTW) {
 		if (event->type() == QEvent::KeyPress) {
 			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
@@ -367,9 +367,8 @@ bool RsCollectionDialog::eventFilter(QObject *obj, QEvent *event)
 
 	// pass the event on to the parent class
 	return QDialog::eventFilter(obj, event);
-#endif
-    return true;
 }
+#endif
 
 /**
  * @brief RsCollectionDialog::processSettings

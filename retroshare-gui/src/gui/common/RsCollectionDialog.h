@@ -40,7 +40,7 @@ public:
     static bool openExistingCollection(const QString& fileName, bool readOnly = false, bool showError = true);
 
 protected:
-	bool eventFilter(QObject *obj, QEvent *ev);
+    //bool eventFilter(QObject *obj, QEvent *ev);
 
     RsCollectionDialog(const QString& filename, const bool& creation, const bool& readOnly = false) ;
 
