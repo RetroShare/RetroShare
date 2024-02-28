@@ -138,7 +138,7 @@ public:
   static void setOpMode(const QString& op ) { options.opModeStr = op.toStdString(); }
   static QString opmode() { return QString::fromStdString(options.opModeStr); }
 
-#ifdef TO_REMOVE
+#ifdef __APPLE__
   /** Returns links passed by arguments. */
   static QStringList* links() { return &_links; }
   /** Returns files passed by arguments. */
@@ -209,7 +209,10 @@ private:
   static bool argNeedsValue(const QString &argName);
 #endif
 
-
+#ifdef __APPLE__
+  static QStringList _links;           /**< List of links passed by arguments. */
+  static QStringList _files;           /**< List of files passed by arguments. */
+#endif
   static QDateTime mStartupTime;       // startup time
   bool mBlink;
   static QLocalServer* localServer;

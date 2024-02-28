@@ -705,7 +705,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
          * only on the first run - as the user might want to change it ;)
          */
         QString osx_style("cleanlooks");
-        Rshare::setStyle(osx_style);
+        RsApplication::setStyle(osx_style);
         Settings->setInterfaceStyle(osx_style);
 #endif
 
