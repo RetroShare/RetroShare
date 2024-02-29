@@ -777,7 +777,7 @@ void SharedFilesDialog::collModif()
     QFileInfo qinfo;
     qinfo.setFile(QString::fromUtf8(path.c_str()));
     if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
-            RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath());
+            RsCollectionDialog::editExistingCollection(qinfo.absoluteFilePath());
 }
 
 void SharedFilesDialog::collView()
@@ -1168,12 +1168,14 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
     collViewAct->setEnabled(bIsRsColl);
     collOpenAct->setEnabled(true);
 
-    QMenu collectionMenu(tr("Collection"), this);
+    QMenu collectionMenu(tr("Retroshare Collection"), this);
     collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
     collectionMenu.addAction(collCreateAct);
-    collectionMenu.addAction(collModifAct);
-    collectionMenu.addAction(collViewAct);
-    collectionMenu.addAction(collOpenAct);
+
+    if(bIsRsColl)
+        collectionMenu.addAction(collModifAct);
+    //collectionMenu.addAction(collViewAct);
+    //collectionMenu.addAction(collOpenAct);
 
     switch (type) {
         case DIR_TYPE_DIR :

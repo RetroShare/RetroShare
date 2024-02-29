@@ -123,10 +123,8 @@ protected:
  * @param creation: Open dialog as RsColl Creation or RsColl DownLoad
  * @param readOnly: Open dialog for RsColl as ReadOnly
  */
-RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
-                                       , const bool& creation /* = false */
-                                       , const bool& readOnly /* = false */)
-  : _fileName(collectionFileName), _creationMode(creation) ,_readOnly(readOnly)
+RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsCollectionDialogMode mode)
+  : _fileName(collectionFileName), _mode(mode)
 {
     RsCollection::RsCollectionErrorCode err_code;
     mCollection = new RsCollection(collectionFileName,err_code);
@@ -154,26 +152,27 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 	
     ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/collections.png"));
 
-	if(creation)
-	{
-		ui.headerFrame->setHeaderText(tr("Collection Editor"));
-		ui.downloadFolder_LE->hide();
-		ui.downloadFolder_LB->hide();
-		ui.destinationDir_TB->hide();
-	}
-	else
+    if(_mode == DOWNLOAD)
 	{
 		ui.headerFrame->setHeaderText(tr("Download files"));
 		ui.downloadFolder_LE->show();
 		ui.downloadFolder_LB->show();
-		ui.label_filename->hide();
+        ui.label_filename->hide();
 		ui._filename_TL->hide();
 
 		ui.downloadFolder_LE->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str())) ;
 
 		QObject::connect(ui.downloadFolder_LE,SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(openDestinationDirectoryMenu()));
 		QObject::connect(ui.destinationDir_TB,SIGNAL(pressed()), this, SLOT(openDestinationDirectoryMenu()));
-	}
+    }
+    else
+    {
+        ui.headerFrame->setHeaderText(tr("Collection Editor"));
+        ui.downloadFolder_LE->hide();
+        ui.downloadFolder_LB->hide();
+        ui.destinationDir_TB->hide();
+    }
+
 
 	// 1 - add all elements to the list.
 
@@ -230,12 +229,12 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 	processSettings(true);
 
 	// 5 Activate button follow creationMode
-	ui._changeFile->setVisible(_creationMode && !_readOnly);
-	ui._makeDir_PB->setVisible(_creationMode && !_readOnly);
-	ui._removeDuplicate_CB->setVisible(_creationMode && !_readOnly);
-	ui._save_PB->setVisible(_creationMode && !_readOnly);
-	ui._treeViewFrame->setVisible(_creationMode && !_readOnly);
-	ui._download_PB->setVisible(!_creationMode && !_readOnly);
+    ui._changeFile->setVisible(_mode == EDIT);
+    ui._makeDir_PB->setVisible(_mode == EDIT);
+    ui._removeDuplicate_CB->setVisible(_mode == EDIT);
+    ui._save_PB->setVisible(_mode == EDIT);
+    ui._treeViewFrame->setVisible(_mode == EDIT);
+    ui._download_PB->setVisible(_mode == DOWNLOAD);
 
 #ifdef TO_REMOVE
     ui._fileEntriesTW->installEventFilter(this);
@@ -376,12 +375,12 @@ bool RsCollectionDialog::eventFilter(QObject *obj, QEvent *event)
  */
 void RsCollectionDialog::processSettings(bool bLoad)
 {
-	Settings->beginGroup("RsCollectionDialog");
+    Settings->beginGroup("RsCollectionDialogV2");
 
 	if (bLoad) {
 		// load settings
 
-		if(_creationMode && !_readOnly){
+        if(_mode == EDIT){
 			// Load windows geometrie
 			restoreGeometry(Settings->value("WindowGeometrie_CM").toByteArray());
 			// Load splitters state
@@ -403,7 +402,7 @@ void RsCollectionDialog::processSettings(bool bLoad)
 			ui._fileEntriesTW->header()->restoreState(Settings->value("FileEntriesHeader").toByteArray());
 		}
 	} else {
-		if(_creationMode && !_readOnly){
+        if(_mode == EDIT){
 			// Save windows geometrie
 			Settings->setValue("WindowGeometrie_CM",saveGeometry());
 			// Save splitters state
@@ -1412,6 +1411,7 @@ void RsCollectionDialog::download()
 void RsCollectionDialog::save()
 {
     mCollection->save(_fileName);
+    close();
 #ifdef TO_REMOVE
 	std::cerr << "Saving!" << std::endl;
 	_newColFileInfos.clear();
@@ -1453,13 +1453,48 @@ void RsCollectionDialog::saveChild(QTreeWidgetItem *parentItem, ColFileInfo *par
 }
 #endif
 
-bool RsCollectionDialog::openExistingCollection(const QString& fileName, bool readOnly /* = false */, bool showError /* = true*/)
+bool RsCollectionDialog::editExistingCollection(const QString& fileName, bool showError /* = true*/)
 {
-    return RsCollectionDialog(fileName,false,readOnly).exec();
+    return RsCollectionDialog(fileName,EDIT).exec();
 }
 
-bool RsCollectionDialog::openNewCollection(const RsFileTree& tree,const QString& proposed_file_name)
+bool RsCollectionDialog::openExistingCollection(const QString& fileName, bool showError /* = true*/)
 {
+    return RsCollectionDialog(fileName,DOWNLOAD).exec();
+}
+
+bool RsCollectionDialog::openNewCollection(const RsFileTree& tree)
+{
+    RsCollection collection(tree);
+    QString fileName;
+
+    if(!misc::getSaveFileName(nullptr, RshareSettings::LASTDIR_EXTRAFILE
+                                                        , QApplication::translate("RsCollectionFile", "Create collection file")
+                                                        , QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")"
+                                                        , fileName,0, QFileDialog::DontConfirmOverwrite))
+        return false;
+
+    if (!fileName.endsWith("." + RsCollection::ExtensionString))
+        fileName += "." + RsCollection::ExtensionString ;
+
+    std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
+
+    QMessageBox mb;
+    mb.setText(tr("Save Collection File."));
+    mb.setInformativeText(tr("File already exists.")+"\n"+tr("What do you want to do?"));
+    QAbstractButton *btnOwerWrite = mb.addButton(tr("Overwrite"), QMessageBox::YesRole);
+    QAbstractButton *btnCancel = mb.addButton(tr("Cancel"), QMessageBox::ResetRole);
+    mb.setIcon(QMessageBox::Question);
+    mb.exec();
+
+    if (mb.clickedButton()==btnCancel)
+        return false;
+
+    if(!collection.save(fileName))
+        return false;
+
+    return RsCollectionDialog(fileName,EDIT).exec();
+
 #ifdef TODO_COLLECTION
     QString fileName = proposed_file_name;
 

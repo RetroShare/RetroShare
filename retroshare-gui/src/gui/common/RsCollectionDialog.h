@@ -34,15 +34,24 @@ public:
 	virtual ~RsCollectionDialog();
 
     // Open new collection
-    static bool openNewCollection(const RsFileTree &tree, const QString &proposed_file_name = QString());
+    static bool openNewCollection(const RsFileTree &tree = RsFileTree());
 
-    // Open existing collection
-    static bool openExistingCollection(const QString& fileName, bool readOnly = false, bool showError = true);
+    // Edit existing collection
+    static bool editExistingCollection(const QString& fileName, bool showError = true);
+
+    // Open existing collection for download
+    static bool openExistingCollection(const QString& fileName, bool showError = true);
 
 protected:
     //bool eventFilter(QObject *obj, QEvent *ev);
 
-    RsCollectionDialog(const QString& filename, const bool& creation, const bool& readOnly = false) ;
+    enum RsCollectionDialogMode {
+        UNKNOWN       = 0x00,
+        EDIT          = 0x01,
+        DOWNLOAD      = 0x02,
+    };
+
+    RsCollectionDialog(const QString& filename, RsCollectionDialogMode mode) ;
 
 private slots:
 	void directoryLoaded(QString dirLoaded);
@@ -90,8 +99,8 @@ private:
 
 	Ui::RsCollectionDialog ui;
 	QString _fileName ;
-	const bool _creationMode ;
-	const bool _readOnly;
+
+    RsCollectionDialogMode _mode;
 
 	QFileSystemModel *_dirModel;
 	QSortFilterProxyModel *_tree_proxyModel;
