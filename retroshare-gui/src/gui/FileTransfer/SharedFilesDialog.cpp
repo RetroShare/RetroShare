@@ -733,15 +733,16 @@ void SharedFilesDialog::sendLinkTo()
 
 void SharedFilesDialog::collCreate()
 {
-#ifdef TODO_COLLECTION
     QModelIndexList lst = getSelected();
 
     std::vector <DirDetails> dirVec;
     model->getDirDetailsFromSelect(lst, dirVec);
 
+    auto RemoteMode = isRemote();
     FileSearchFlags f = RemoteMode?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL ;
 
     QString dir_name;
+
     if(!RemoteMode)
     {
         if(!dirVec.empty())
@@ -750,8 +751,15 @@ void SharedFilesDialog::collCreate()
             dir_name = QDir(QString::fromUtf8(details.name.c_str())).dirName();
         }
     }
-    RsCollection(dirVec,f).openNewColl(parent,dir_name);
-#endif
+
+    RsFileTree tree;
+
+    for(uint32_t i=0;i<dirVec.size();++i)
+        tree.addFileTree(tree.root(),*RsFileTree::fromDirDetails(dirVec[i],RemoteMode,true));
+
+    RsCollectionDialog::openNewCollection(tree);
+
+            //auto ft = RsFileTree::fromDirDetails(details,remote);
 }
 
 void SharedFilesDialog::collModif()
