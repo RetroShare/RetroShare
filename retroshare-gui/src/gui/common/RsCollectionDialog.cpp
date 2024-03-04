@@ -171,6 +171,8 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsColl
         ui.downloadFolder_LE->hide();
         ui.downloadFolder_LB->hide();
         ui.destinationDir_TB->hide();
+        ui.label_filename->show();
+        ui._filename_TL->show();
     }
 
 
@@ -858,6 +860,7 @@ void RsCollectionDialog::addSelection(bool recursive)
 	// Process Files once all done
 	ui._hashBox->addAttachments(fileToHash,RS_FILE_REQ_ANONYMOUS_ROUTING /*, 0*/);
 #endif
+    mCollectionModel->postMods();
 }
 
 /**
