@@ -99,6 +99,12 @@ QStringList RsApplication::_files;           /**< List of files passed by argume
 bool RsApplication::useConfigDir;
 QString RsApplication::configDir;
 #endif
+
+#ifdef __APPLE__
+QStringList RsApplication::_links;           /**< List of links passed by arguments. */
+QStringList RsApplication::_files;           /**< List of files passed by arguments. */
+#endif
+
 Log RsApplication::log_output;                     /**< Logs debugging messages to file or stdout. */
 RsGUIConfigOptions RsApplication::options;
 QDateTime          RsApplication::mStartupTime;
