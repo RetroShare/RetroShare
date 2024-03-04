@@ -1720,10 +1720,6 @@ void MainWindow::openRsCollection(const QString &filename)
 	}
 }
 
-void MainWindow::processLastArgs()
-{
-}
-
 void MainWindow::switchVisibilityStatus(StatusElement e,bool b)
 {
     switch(e)

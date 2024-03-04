@@ -352,18 +352,6 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
     RsInit::InitRsConfig();
 
     RsGUIConfigOptions conf;
-//#define ARG_RESET           "reset"         /**< Reset Rshare's saved settings.   */
-//#define ARG_DATADIR         "datadir"       /**< Directory to use for data files. */
-//#define ARG_LOGFILE         "logfile"       /**< Location of our logfile.         */
-//#define ARG_LOGLEVEL        "loglevel"      /**< Log verbosity.                   */
-//#define ARG_GUISTYLE        "style"         /**< Argument specfying GUI style.    */
-//#define ARG_GUISTYLESHEET   "stylesheet"    /**< Argument specfying GUI style.    */
-//#define ARG_LANGUAGE        "lang"          /**< Argument specifying language.    */
-//#define ARG_OPMODE_L        "opmode"        /**< OpMode (Full, NoTurtle, Gaming, Minimal) */
-//#define ARG_RSLINK_S        "r"             /**< Open RsLink with protocol retroshare:// */
-//#define ARG_RSLINK_L        "link"          /**< Open RsLink with protocol retroshare:// */
-//#define ARG_RSFILE_S        "f"             /**< Open RsFile with or without arg.  */
-//#define ARG_RSFILE_L        "rsfile"        /**< Open RsFile with or without arg.  */
 
     std::string rslink,rsfile;
     std::list<std::string> links_and_files;
@@ -720,8 +708,6 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
     MainWindow *w = MainWindow::Create ();
     splashScreen.finish(w);
-
-    w->processLastArgs();
 
     if (!sDefaultGXSIdToCreate.isEmpty()) {
         RsIdentityParameters params;

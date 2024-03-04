@@ -214,7 +214,6 @@ public slots:
     void externalLinkActivated(const QUrl &url);
     void retroshareLinkActivated(const QUrl &url);
     void openRsCollection(const QString &filename);
-    void processLastArgs();
     //! Go to a specific part of the control panel.
     void setNewPage(int page);
     void setCompactStatusMode(bool compact);
