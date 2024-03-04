@@ -81,21 +81,6 @@ public:
   /** Return the version info */
   static QString retroshareVersion(bool=true);
 
-#ifdef TO_REMOVE
-  /** Return the map of command-line arguments and values. */
-  static QMap<QString, QString> arguments() { return _args; }
-  /** Parse the list of command-line arguments. */
-  static void parseArguments(QStringList args, bool firstRun = true);
-  /** Validates that all arguments were well-formed. */
-  bool validateArguments(QString &errmsg);
-  /** Prints usage information to the given text stream. */
-  //void printUsage(QString errmsg = QString());
-  /** Displays usage information for command-line args. */
-  static void showUsageMessageBox();
-  /** Returns true if the user wants to see usage information. */
-  static bool showUsage();
-#endif
-
   /** Sets the current language. */
   static bool setLanguage(QString languageCode = QString());
   /** Sets the current locale. */
