@@ -30,7 +30,7 @@ QString DateTime::formatLongDate(time_t dateValue)
 
 QString DateTime::formatLongDate(const QDate &dateValue)
 {
-	QString customDateFormat = Rshare::customDateFormat();
+	QString customDateFormat = RsApplication::customDateFormat();
 
 	if (customDateFormat.isEmpty()) {
 		return dateValue.toString(Qt::ISODate);

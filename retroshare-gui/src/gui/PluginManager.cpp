@@ -41,7 +41,7 @@
 PluginManager::PluginManager()
 {
     baseFolder =  //qApp->applicationDirPath()+"///plugins" ;
-Rshare::dataDirectory() + "/plugins" ;
+RsApplication::dataDirectory() + "/plugins" ;
     lastError = "No error.";
 
     viewWidget = 0;
