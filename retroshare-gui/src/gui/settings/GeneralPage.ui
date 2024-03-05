@@ -146,10 +146,10 @@
       <item row="5" column="0">
        <widget class="QCheckBox" name="useLocalServer">
         <property name="toolTip">
-         <string>When checked, this instance receives new parameters (like RsLink or RsFile) and avoid new one.</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When checked, this retroshare instance will accept calls by your operating system to open Retroshare collection files, and download links.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
-         <string>Use Local Server to get new arguments.</string>
+         <string>Accept operating systems calls</string>
         </property>
         <property name="checked">
          <bool>true</bool>

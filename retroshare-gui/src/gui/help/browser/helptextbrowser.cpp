@@ -54,7 +54,7 @@ HelpTextBrowser::loadResource(int type, const QUrl &name)
     /* Fall back to English if there is no translation of the specified help
      * page in the current language. */
     if (!name.path().contains("/")) {
-      QString language = Rshare::language();
+      QString language = RsApplication::language();
       if (!QDir(":/help/" + language).exists())
         language = "en";
       helpPath += language + "/";
