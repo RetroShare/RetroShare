@@ -117,7 +117,7 @@ HelpBrowser::~HelpBrowser()
 QString
 HelpBrowser::language()
 {
-  QString lang = Rshare::language();
+  QString lang = RsApplication::language();
   if (!QDir(":/help/" + lang).exists())
     lang = "en";
   return lang;

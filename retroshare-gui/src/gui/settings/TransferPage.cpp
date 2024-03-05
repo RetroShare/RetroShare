@@ -204,7 +204,11 @@ void TransferPage::load()
 	whileBlocking(ui.suffixesIgnoreList_LE)->setText( ignore_suffixes_string );
 
 	Settings->beginGroup(QString("File"));
+#if defined(Q_OS_DARWIN)
+    whileBlocking(ui.minimumFontSize_SB)->setValue( Settings->value("MinimumFontSize", 13 ).toInt());
+#else
 	whileBlocking(ui.minimumFontSize_SB)->setValue( Settings->value("MinimumFontSize", 11 ).toInt());
+#endif
 	Settings->endGroup();
 }
 

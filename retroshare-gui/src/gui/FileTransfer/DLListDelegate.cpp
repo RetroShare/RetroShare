@@ -102,7 +102,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 					multi *= 1024.0;
 				}
 			}
-			painter->drawText(option.rect, Qt::AlignRight, temp);
+			painter->drawText(option.rect, Qt::AlignRight | Qt::AlignVCenter, temp);
 			break;
         case COLUMN_REMAINING:
 			remaining = index.data().toLongLong();
@@ -121,7 +121,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 					multi *= 1024.0;
 				}
 			}
-			painter->drawText(option.rect, Qt::AlignRight, temp);
+			painter->drawText(option.rect, Qt::AlignRight | Qt::AlignVCenter, temp);
 			break;
         case COLUMN_COMPLETED:
 			completed = index.data().toLongLong();
@@ -140,7 +140,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 					multi *= 1024.0;
 				}
 			}
-			painter->drawText(option.rect, Qt::AlignRight, temp);
+			painter->drawText(option.rect, Qt::AlignRight | Qt::AlignVCenter, temp);
 			break;
         case COLUMN_DLSPEED:
                         dlspeed = index.data().toDouble();
@@ -151,7 +151,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                             temp.sprintf("%.2f", dlspeed/1024.);
                             temp += " KB/s";
                         }
-			painter->drawText(option.rect, Qt::AlignRight, temp);
+			painter->drawText(option.rect, Qt::AlignRight | Qt::AlignVCenter, temp);
 			break;
         case COLUMN_PROGRESS:
 			{
@@ -236,7 +236,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);
 			pixmapRect = (pixmap.isNull() ? QRect(0, 0, 0, 0): QRect(QPoint(0, 0), option.decorationSize));
 			if (pixmapRect.isValid()){
-				QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft, pixmap.size(), option.rect).topLeft();
+				QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft | Qt::AlignVCenter, pixmap.size(), option.rect).topLeft();
 				p.setX( p.x() + pixOffset);
 				painter->drawPixmap(p, pixmap);
 				temp = " " + temp;
@@ -247,13 +247,13 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);
 			pixmapRect = (pixmap.isNull() ? QRect(0, 0, 0, 0): QRect(QPoint(0, 0), option.decorationSize));
 			if (pixmapRect.isValid()){
-				QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft, pixmap.size(), option.rect).topLeft();
+				QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft | Qt::AlignVCenter, pixmap.size(), option.rect).topLeft();
 				p.setX( p.x() + pixOffset);
 				painter->drawPixmap(p, pixmap);
 				temp = " " + temp;
 				pixOffset += pixmap.size().width();
 			}
-			painter->drawText(option.rect.translated(pixOffset, 0), Qt::AlignLeft, temp);
+			painter->drawText(option.rect.translated(pixOffset, 0), Qt::AlignLeft | Qt::AlignVCenter, temp);
 		}
 		break;
     case COLUMN_LASTDL:
@@ -279,7 +279,7 @@ QSize DLListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModel
 {
     float w = QFontMetricsF(option.font).width(index.data(Qt::DisplayRole).toString());
 
-    int S = QFontMetricsF(option.font).height() ;
+    int S = QFontMetricsF(option.font).height()*1.5 ;
     return QSize(w,S);
 }
 

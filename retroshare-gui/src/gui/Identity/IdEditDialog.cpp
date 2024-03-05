@@ -703,7 +703,7 @@ void IdEditDialog::updateInterface()
 	const QPixmap *pixmap = ui->avatarLabel->pixmap();
 	if (pixmap && !pixmap->isNull()) {
 		ui->removeButton->setEnabled(true);
-	} else if (mEditGroup.mImage.mSize != NULL) {
+    } else if (mEditGroup.mImage.mSize > 0) {
 		ui->removeButton->setEnabled(true);
 	} else {
 		ui->removeButton->setEnabled(false);

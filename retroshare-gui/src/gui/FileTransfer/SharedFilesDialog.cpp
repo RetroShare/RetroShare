@@ -1688,12 +1688,16 @@ bool SharedFilesDialog::tree_FilterItem(const QModelIndex &index, const QString 
 
 void SharedFilesDialog::updateFontSize()
 {
+#if defined(Q_OS_DARWIN)
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
+#else
     int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
+#endif
     QFont newFont = ui.dirTreeView->font();
     if (newFont.pointSize() != customFontSize) {
         newFont.setPointSize(customFontSize);
         QFontMetricsF fontMetrics(newFont);
-        int iconHeight = fontMetrics.height();
+        int iconHeight = fontMetrics.height()*1.5;
         ui.dirTreeView->setFont(newFont);
         ui.dirTreeView->setIconSize(QSize(iconHeight, iconHeight));
     }

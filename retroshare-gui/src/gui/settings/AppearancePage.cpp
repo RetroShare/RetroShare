@@ -84,7 +84,7 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	}
 
 	QMap<QString, QString> styleSheets;
-	Rshare::getAvailableStyleSheets(styleSheets);
+	RsApplication::getAvailableStyleSheets(styleSheets);
 
 	foreach (QString name, styleSheets.keys()) {
 		ui.cmboStyleSheet->addItem(name, styleSheets[name]);
@@ -136,7 +136,7 @@ void AppearancePage::updateInterfaceStyle()
 #ifndef QT_NO_CURSOR
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 #endif
-	Rshare::setStyle(ui.cmboStyle->currentText());
+	RsApplication::setStyle(ui.cmboStyle->currentText());
 	Settings->setInterfaceStyle(ui.cmboStyle->currentText());
 #ifndef QT_NO_CURSOR
 	QApplication::restoreOverrideCursor();
@@ -152,7 +152,7 @@ void AppearancePage::loadStyleSheet(int index)
 #ifndef QT_NO_CURSOR
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 #endif
-	Rshare::loadStyleSheet(ui.cmboStyleSheet->itemData(index).toString());
+	RsApplication::loadStyleSheet(ui.cmboStyleSheet->itemData(index).toString());
 #ifndef QT_NO_CURSOR
 	QApplication::restoreOverrideCursor();
 #endif
@@ -251,7 +251,7 @@ void AppearancePage::updateCmboToolButtonSize()
 //     NotifyQt::getInstance()->notifySettingsChanged();
 // }
 
-void AppearancePage::updateStyle() { Rshare::setStyle(ui.cmboStyle->currentText()); }
+void AppearancePage::updateStyle() { RsApplication::setStyle(ui.cmboStyle->currentText()); }
 
 /** Loads the settings for this page */
 void AppearancePage::load()
@@ -259,7 +259,7 @@ void AppearancePage::load()
 	int index = ui.cmboLanguage->findData(Settings->getLanguageCode());
 	whileBlocking(ui.cmboLanguage)->setCurrentIndex(index);
 
-	index = ui.cmboStyle->findData(Rshare::style().toLower());
+	index = ui.cmboStyle->findData(RsApplication::style().toLower());
 	whileBlocking(ui.cmboStyle)->setCurrentIndex(index);
 
 	index = ui.cmboStyleSheet->findData(Settings->getSheetName());

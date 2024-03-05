@@ -234,8 +234,10 @@ void LineEditClear::setFilterButtonIcon(const QIcon &icon)
 		mFilterButton->setIcon(icon);
 
 	ensurePolished();
+#if !defined(Q_OS_DARWIN)
 	QFontMetrics fm(this->font());
 	QSize size(fm.width("___"), fm.height());
 	mFilterButton->setFixedSize(size);
 	mFilterButton->setIconSize(size);
+#endif
 }

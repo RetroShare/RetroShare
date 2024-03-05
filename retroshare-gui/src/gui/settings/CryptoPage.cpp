@@ -66,7 +66,7 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
     ui.retroshareId_content_LB->hide();
     ui.stackPageCertificate->hide();
 
-	ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
+	ui.onlinesince->setText(DateTime::formatLongDateTime(RsApplication::startupTime()));
 }
 
 #ifdef UNUSED_CODE
@@ -111,7 +111,7 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         ui.retroshareId_content_LB->setText(QString::fromUtf8(invite.c_str()));
 		
         /* set retroshare version */
-        ui.version->setText(Rshare::retroshareVersion(true));
+        ui.version->setText(RsApplication::retroshareVersion(true));
 
         std::list<RsPgpId> ids;
         ids.clear();

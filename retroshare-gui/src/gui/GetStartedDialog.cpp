@@ -421,7 +421,7 @@ void GetStartedDialog::emailSupport()
 	sysVersion = "Linux";
   #endif
 #endif
-	text += QString("My RetroShare Configuration is: (%1, %2, %3)").arg(Rshare::retroshareVersion(true)
+	text += QString("My RetroShare Configuration is: (%1, %2, %3)").arg(RsApplication::retroshareVersion(true)
 	                                                                    , sysVersion
 	                                                                    ).arg(static_cast<typename std::underlying_type<RsConfigUserLvl>::type>(userLevel)) + "\n";
 	text += "\n";

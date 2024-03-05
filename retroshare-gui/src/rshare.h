@@ -36,9 +36,10 @@
 #include "util/log.h"
 
 #include "retroshare/rstypes.h"
+#include "retroshare/rsinit.h"
 
 /** Pointer to this RetroShare application instance. */
-#define rApp  (static_cast<Rshare *>(qApp))
+#define rApp  (static_cast<RsApplication *>(qApp))
 
 #define rDebug(fmt)   (rApp->log(Log::Debug, (fmt)))
 #define rInfo(fmt)    (rApp->log(Log::Info, (fmt)))
@@ -46,32 +47,39 @@
 #define rWarn(fmt)    (rApp->log(Log::Warn, (fmt)))
 #define rError(fmt)   (rApp->log(Log::Error, (fmt)))
 
+struct RsGUIConfigOptions: public RsConfigOptions
+{
+    RsGUIConfigOptions()
+        : optResetParams(false), logLevel("Off"), argc(0)
+    {}
 
-class Rshare : public QApplication
+    bool optResetParams;		// reset all GUI parameters
+
+    QString dateformat;         // The format for dates in feed items etc.
+    QString language;           // The current language.
+
+    QString logFileName;		// output filename for log
+    QString logLevel;			// severity threshold for log output
+
+    QString guiStyle;           // CSS Style for the GUI
+    QString guiStyleSheetFile;  // CSS Style for the GUI
+
+    int argc ;					// stores argc parameter. Only used by the creator of QApplication
+    char *argv[1] ;				// stores argv parameter. Only used by the creator of QApplication
+};
+
+class RsApplication : public QApplication
 {
   Q_OBJECT
 
 public:
   /** Constructor. */
-  Rshare(QStringList args, int &argc, char **argv, const QString &dir);
+  RsApplication(const RsGUIConfigOptions& conf);
   /** Destructor. */
-  ~Rshare();
+  ~RsApplication();
 
   /** Return the version info */
   static QString retroshareVersion(bool=true);
-
-  /** Return the map of command-line arguments and values. */
-  static QMap<QString, QString> arguments() { return _args; }
-  /** Parse the list of command-line arguments. */
-  static void parseArguments(QStringList args, bool firstRun = true);
-  /** Validates that all arguments were well-formed. */
-  bool validateArguments(QString &errmsg);
-  /** Prints usage information to the given text stream. */
-  //void printUsage(QString errmsg = QString());
-  /** Displays usage information for command-line args. */
-  static void showUsageMessageBox();
-  /** Returns true if the user wants to see usage information. */
-  static bool showUsage();
 
   /** Sets the current language. */
   static bool setLanguage(QString languageCode = QString());
@@ -105,17 +113,22 @@ public:
   static void initPlugins();
 
   /** Returns the current GUI style. */
-  static QString style() { return _style; }
+  static QString style() { return options.guiStyle; }
   /** Returns the current GUI stylesheet. */
-  static QString stylesheet() { return _stylesheet; }
+  static QString stylesheet() { return options.guiStyleSheetFile; }
   /** Returns the current language. */
-  static QString language() { return _language; }
-	/** Returns the operating mode. */
-  static QString opmode() { return _opmode; }
+  static QString language() { return options.language; }
+
+  /** Sets/Returns the operating mode. */
+  static void setOpMode(const QString& op ) { options.opModeStr = op.toStdString(); }
+  static QString opmode() { return QString::fromStdString(options.opModeStr); }
+
+#ifdef __APPLE__
   /** Returns links passed by arguments. */
   static QStringList* links() { return &_links; }
   /** Returns files passed by arguments. */
   static QStringList* files()  {return &_files; }
+#endif
   /** Returns Rshare's application startup time. */
   static QDateTime startupTime();
 
@@ -176,24 +189,20 @@ private:
   /** customize the date format (defaultlongformat) */
   static void customizeDateFormat();
 
+#ifdef TO_REMOVE
   /** Returns true if the specified arguments wants a value. */
   static bool argNeedsValue(const QString &argName);
+#endif
 
-  static QMap<QString, QString> _args; /**< List of command-line arguments.  */
-  static Log _log;                     /**< Logs debugging messages to file or stdout. */
-  static QString _style;               /**< The current GUI style.           */
-  static QString _stylesheet;          /**< The current GUI stylesheet.      */
-  static QString _language;            /**< The current language.            */
-  static QString _dateformat;          /**< The format for dates in feed items etc. */
-  static QString _opmode;              /**< The operating mode passed by args. */
+#ifdef __APPLE__
   static QStringList _links;           /**< List of links passed by arguments. */
   static QStringList _files;           /**< List of files passed by arguments. */
+#endif
   static QDateTime mStartupTime;       // startup time
-
-  static bool    useConfigDir;
-  static QString configDir;
   bool mBlink;
   static QLocalServer* localServer;
+  static RsGUIConfigOptions options;
+  static Log log_output;
 };
 
 #endif

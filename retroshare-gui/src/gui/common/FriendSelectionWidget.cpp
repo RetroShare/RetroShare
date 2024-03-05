@@ -127,7 +127,7 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 	ui->filterLineEdit->showFilterIcon();
 
 	/* Refresh style to have the correct text color */
-	Rshare::refreshStyleSheet(this, false);
+	RsApplication::refreshStyleSheet(this, false);
 
     mEventHandlerId_identities = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) {
@@ -1225,7 +1225,7 @@ std::string FriendSelectionWidget::idFromItem(QTreeWidgetItem *item)
 	return item->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
 }
 
-void FriendSelectionWidget::sortByChecked(bool sort)
+void FriendSelectionWidget::sortByChecked(bool)
 {
     mCompareRole->clear();
     mCompareRole->setRole(COLUMN_NAME,ROLE_SORT_SELECTED);

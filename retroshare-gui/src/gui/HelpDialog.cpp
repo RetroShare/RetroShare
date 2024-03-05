@@ -80,7 +80,7 @@ HelpDialog::HelpDialog(QWidget *parent) :
 		ui->thanks->setHtml(in.readAll());
 	}
 
-	ui->version->setText(Rshare::retroshareVersion(true));
+	ui->version->setText(RsApplication::retroshareVersion(true));
 
 	/* Add version numbers of libretroshare */
 	std::list<RsLibraryInfo> libraries;
