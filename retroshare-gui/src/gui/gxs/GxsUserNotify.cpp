@@ -26,7 +26,7 @@
 
 #define TOKEN_TYPE_STATISTICS  1
 
-GxsUserNotify::GxsUserNotify(RsGxsIfaceHelper */*ifaceImpl*/, const GxsStatisticsProvider *g,QObject *parent) : UserNotify(parent), mGroupFrameDialog(g)
+GxsUserNotify::GxsUserNotify(RsGxsIfaceHelper */*ifaceImpl*/, const GxsStatisticsProvider *g,QObject *parent) : UserNotify(parent), mGxsStatisticsProvider(g)
 {
 	mNewThreadMessageCount = 0;
 	mNewChildMessageCount = 0;
@@ -42,7 +42,7 @@ void GxsUserNotify::startUpdate()
 
 
 	GxsServiceStatistic stats;
-	mGroupFrameDialog->getServiceStatistics(stats);
+    mGxsStatisticsProvider->getServiceStatistics(stats);
 
 	/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information

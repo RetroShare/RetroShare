@@ -60,6 +60,7 @@ protected:
 
 protected:
 	void mousePressEvent(QMouseEvent *event);
+
 };
 
 #endif

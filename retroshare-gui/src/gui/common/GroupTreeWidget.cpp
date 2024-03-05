@@ -51,7 +51,7 @@ Q_GUI_EXPORT int qt_defaultDpi();
 #define FILTER_DESC_INDEX  1
 
 GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
-		QWidget(parent), ui(new Ui::GroupTreeWidget)
+        QWidget(parent), ui(new Ui::GroupTreeWidget)
 {
 	ui->setupUi(this);
 
@@ -506,48 +506,6 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 	}
 }
 
-void GroupTreeWidget::setUnreadCount(QTreeWidgetItem *item, int unreadCount)
-{
-	if (item == NULL) {
-		return;
-	}
-
-	QFont itFont = item->font(GTW_COLUMN_NAME);
-
-	if (unreadCount) {
-		item->setText(GTW_COLUMN_UNREAD, QString::number(unreadCount));
-		itFont.setBold(true);
-	} else {
-		item->setText(GTW_COLUMN_UNREAD, "");
-		itFont.setBold(false);
-	}
-	item->setData(GTW_COLUMN_UNREAD, ROLE_SORT, unreadCount);
-
-	item->setFont(GTW_COLUMN_NAME, itFont);
-}
-
-QTreeWidgetItem *GroupTreeWidget::getItemFromId(const QString &id)
-{
-	if (id.isEmpty()) {
-		return NULL;
-	}
-
-	/* Search exisiting item */
-	QTreeWidgetItemIterator itemIterator(ui->treeWidget);
-	QTreeWidgetItem *item;
-	while ((item = *itemIterator) != NULL) {
-		++itemIterator;
-
-		if (item->parent() == NULL) {
-			continue;
-		}
-		if (item->data(GTW_COLUMN_DATA, ROLE_ID).toString() == id) {
-			return item;
-		}
-	}
-	return NULL ;
-}
-
 QTreeWidgetItem *GroupTreeWidget::activateId(const QString &id, bool focus)
 {
 	QTreeWidgetItem *item = getItemFromId(id);
@@ -666,4 +624,46 @@ void GroupTreeWidget::distantSearch()
 void GroupTreeWidget::sort()
 {
 	ui->treeWidget->resort();
+}
+
+void GroupTreeWidget::setUnreadCount(QTreeWidgetItem *item, int unreadCount)
+{
+    if (item == NULL) {
+        return;
+    }
+
+    QFont itFont = item->font(GTW_COLUMN_NAME);
+
+    if (unreadCount) {
+        item->setText(GTW_COLUMN_UNREAD, QString::number(unreadCount));
+        itFont.setBold(true);
+    } else {
+        item->setText(GTW_COLUMN_UNREAD, "");
+        itFont.setBold(false);
+    }
+    item->setData(GTW_COLUMN_UNREAD, ROLE_SORT, unreadCount);
+
+    item->setFont(GTW_COLUMN_NAME, itFont);
+}
+
+QTreeWidgetItem *GroupTreeWidget::getItemFromId(const QString &id)
+{
+    if (id.isEmpty()) {
+        return NULL;
+    }
+
+    /* Search exisiting item */
+    QTreeWidgetItemIterator itemIterator(ui->treeWidget);
+    QTreeWidgetItem *item;
+    while ((item = *itemIterator) != NULL) {
+        ++itemIterator;
+
+        if (item->parent() == NULL) {
+            continue;
+        }
+        if (item->data(GTW_COLUMN_DATA, ROLE_ID).toString() == id) {
+            return item;
+        }
+    }
+    return NULL ;
 }

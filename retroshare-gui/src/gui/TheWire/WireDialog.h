@@ -118,8 +118,14 @@ public:
 	void showGroupsPulses(const std::list<RsGxsGroupId>& groupIds);
 	void postGroupsPulses(std::list<RsWirePulseSPtr> pulses);
 
-    virtual UserNotify *createUserNotify(QObject *parent) override;
     void getServiceStatistics(GxsServiceStatistic& stats) const ;
+
+protected:
+
+    bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) override;
+    UserNotify *createUserNotify(QObject *parent) override;
+    virtual void updateGroupStatistics(const RsGxsGroupId &groupId) override;
+    virtual void updateGroupStatisticsReal(const RsGxsGroupId &groupId) override;
 
 private slots:
 

@@ -100,17 +100,13 @@ protected:
     virtual void checkRequestGroup(const RsGxsGroupId& /* grpId */) {}	// overload this one in order to retrieve full group data when the group is browsed
 
 	void updateMessageSummaryList(RsGxsGroupId groupId);
-	void updateGroupStatistics(const RsGxsGroupId &groupId);
 
     virtual const std::set<TurtleRequestId> getSearchRequests() const { return std::set<TurtleRequestId>(); } // overload this for subclasses that provide distant search
 
-    // These two need to be overloaded by subsclasses, possibly calling the blocking API, since they are used asynchroneously.
+    // This needs to be overloaded by subsclasses, possibly calling the blocking API, since it is used asynchroneously.
+    virtual bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) =0;
 
-	virtual bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) =0;
-	virtual bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) =0;
-
-	void updateGroupStatisticsReal(const RsGxsGroupId &groupId);
-	void updateMessageSummaryListReal(RsGxsGroupId groupId);
+    void updateMessageSummaryListReal(RsGxsGroupId groupId);
 
 private slots:
 	void todo();
@@ -192,10 +188,11 @@ private:
 	GxsCommentDialog *commentWidget(const RsGxsMessageId &msgId);
 
 protected:
+
 	void updateSearchResults(const TurtleRequestId &sid);
 	void updateSearchResults();	// update all searches
-
-	bool mCountChildMsgs; // Count unread child messages?
+    virtual void updateGroupStatistics(const RsGxsGroupId &groupId) override;
+    virtual void updateGroupStatisticsReal(const RsGxsGroupId &groupId) override;
 
 private:
 	GxsMessageFrameWidget *currentWidget() const;
@@ -220,9 +217,7 @@ private:
     std::set<RsGxsGroupId> mGroupIdsSummaryToUpdate;
 
     // GroupStatistics update
-    bool mShouldUpdateGroupStatistics;
     rstime_t mLastGroupStatisticsUpdateTs;
-    std::set<RsGxsGroupId> mGroupStatisticsToUpdate;
 
 	UIStateHelper *mStateHelper;
 

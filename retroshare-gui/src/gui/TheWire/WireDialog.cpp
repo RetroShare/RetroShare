@@ -25,6 +25,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
+#include "gui/common/NotifyWidget.h"
 #include "gui/gxs/GxsStatisticsProvider.h"
 #include "gui/gxs/GxsGroupShareKey.h"
 
@@ -116,6 +117,13 @@ void WireDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
         // The following switch statements refresh the wire feed whenever there is a new event
         switch(e->mWireEventCode)
         {
+
+        case RsWireEventCode::READ_STATUS_CHANGED:
+            updateGroupStatisticsReal(e->mWireGroupId); // update the list immediately
+            return;
+
+        case RsWireEventCode::STATISTICS_CHANGED:
+
         case RsWireEventCode::NEW_POST:
 
         case RsWireEventCode::NEW_REPLY:
@@ -126,15 +134,20 @@ void WireDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 
         case RsWireEventCode::POST_UPDATED:
 
-        case RsWireEventCode::NEW_WIRE:
-
         case RsWireEventCode::FOLLOW_STATUS_CHANGED:
 
+        case RsWireEventCode::NEW_WIRE:
+            updateGroupStatisticsReal(e->mWireGroupId);
+            break;
+
         default:
-            refreshGroups();
+#ifdef GXSWIRE_DEBUG
+                RsDbg() << " Unknown event occured: "<< e->mWireEventCode << std::endl;
+#endif
             break;
 
         }
+        refreshGroups();
     }
 }
 
@@ -243,10 +256,10 @@ UserNotify *WireDialog::createUserNotify(QObject *parent)
 //    return true;
 //}
 
-//bool WireDialog::getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat)
-//{
-//    return rsWire->getWireStatistics(groupId,stat);
-//}
+bool WireDialog::getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat)
+{
+    return rsWire->getWireStatistics(groupId,stat);
+}
 
 //GxsGroupDialog *WireDialog::createNewGroupDialog()
 //{
@@ -1241,4 +1254,43 @@ void WireDialog::getServiceStatistics(GxsServiceStatistic& stats) const
 
         Settings->endGroup();
     }
+}
+
+void WireDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
+{
+    mGroupStatisticsToUpdate.insert(groupId);
+    mShouldUpdateGroupStatistics = true;
+}
+
+void WireDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
+{
+    RsThread::async([this,groupId]()
+    {
+        GxsGroupStatistic stats;
+
+        if(! getGroupStatistics(groupId, stats))
+        {
+            std::cerr << __PRETTY_FUNCTION__ << " failed to collect group statistics for group " << groupId << std::endl;
+            return;
+        }
+
+        RsQThreadUtils::postToObject( [this,stats, groupId]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete, note that
+             * Qt::QueuedConnection is important!
+             */
+
+//            QTreeWidgetItem *item = ui.scrollAreaWidgetContents->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
+
+//            if (item)
+//                ui.scrollAreaWidgetContents->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+
+            mCachedGroupStats[groupId] = stats;
+
+            getUserNotify()->updateIcon();
+
+        }, this );
+    });
 }

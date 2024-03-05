@@ -51,13 +51,21 @@ public:
     virtual void getServiceStatistics(GxsServiceStatistic& stats) const = 0;
 
 protected:
+    virtual void updateGroupStatistics(const RsGxsGroupId &groupId) = 0;
+    virtual void updateGroupStatisticsReal(const RsGxsGroupId &groupId) = 0;
+
+    // This needs to be overloaded by subsclasses, possibly calling the blocking API, since it is used asynchroneously.
+    virtual bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) =0;
+
     QString mSettingsName;
     RsGxsIfaceHelper *mInterface;
     bool mDistSyncAllowed;
     std::map<RsGxsGroupId,GxsGroupStatistic> mCachedGroupStats;
+    bool mShouldUpdateGroupStatistics;
+    std::set<RsGxsGroupId> mGroupStatisticsToUpdate;
+    bool mCountChildMsgs; // Count unread child messages?
 
 private:
     virtual QString settingsGroupName() = 0;
-
 };
 #endif // GXSSTATISTICSPROVIDER_H

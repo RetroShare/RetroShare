@@ -150,6 +150,32 @@ void PulseReply::setReferenceString(QString ref)
 
 void PulseReply::mousePressEvent(QMouseEvent *event)
 {
+    // Check if the event is a left mouse button press
+    if (event->button() == Qt::LeftButton && (IS_MSG_UNREAD(mPulse->mMeta.mMsgStatus) || IS_MSG_NEW(mPulse->mMeta.mMsgStatus)))
+    {
+        uint32_t token;
+        // Perform some action when the left mouse button is pressed
+        RsGxsGrpMsgIdPair msgPair = std::make_pair(mPulse->mMeta.mGroupId, mPulse->mMeta.mMsgId);
+
+        rsWire->setMessageReadStatus(token, msgPair, true);
+        std::cout << "Left mouse button pressed on PulseReply!" <<std::endl;
+        // You can add your own custom code here
+    }
+    // Call the base class implementation to ensure proper event handling
+    QWidget::mousePressEvent(event);
 }
 
+
+//void WireDialog::setAllMessagesReadDo(bool read, uint32_t &token)
+//{
+//    if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(subscribeFlags())) {
+//        return;
+//    }
+
+//    foreach (RsWirePulseItem *item, mPostItems) {
+//        RsGxsGrpMsgIdPair msgPair = std::make_pair(item->groupId(), item->messageId());
+
+//        rsWire->setMessageReadStatus(token, msgPair, read);
+//    }
+//}
 

@@ -48,7 +48,7 @@ protected:
 
 private:
 
-    const GxsStatisticsProvider      *mGroupFrameDialog;
+    const GxsStatisticsProvider      *mGxsStatisticsProvider;
 
 	unsigned int mNewThreadMessageCount;
 	unsigned int mNewChildMessageCount;

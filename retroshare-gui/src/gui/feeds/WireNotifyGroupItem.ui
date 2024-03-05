@@ -10,7 +10,7 @@
     <height>191</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="PostedGroupItem_GL">
+  <layout class="QGridLayout" name="WireNotifyGroupItem_GL">
    <property name="leftMargin">
     <number>1</number>
    </property>

@@ -54,6 +54,7 @@ GxsStatisticsProvider::GxsStatisticsProvider(RsGxsIfaceHelper *ifaceImpl,const Q
 {
     mDistSyncAllowed = allow_dist_sync;
     mInterface = ifaceImpl;
+    mShouldUpdateGroupStatistics = false;
 }
 
 GxsStatisticsProvider::~GxsStatisticsProvider()
