@@ -59,6 +59,24 @@ NetworkView::NetworkView(QWidget *parent)
   connect( ui.freezeCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFreezeState(bool)));
   connect( ui.nameBox, SIGNAL(textChanged(QString)), this, SLOT(setNameSearch(QString)));
 
+  QString help_text = tr(
+  "<h2>Graph scene info</h2>"
+  "<p>You could use mouse to deal with the scene here:</p>"
+  "<ul>"
+  "<li>Left mouse button press on a node: " "selection to see with which nodes it has connections"
+    " (you can drag it for some distance)"
+  "<li>Right mouse button click on a node: " "to do some actions with it"
+  "<li>Drag scene with left mouse button: " "to scroll"
+  "</ul>"
+  "<p>and keyboard:</p>"
+  "<ul>"
+  "<li>Arrow keys: " "to scroll"
+  "<li>Space/Enter: " "to repaint a scene"
+  "<li>+/-: " "to scale"
+  "</ul>"
+  );
+  registerHelpButton(ui.helpButton, help_text, "Graph scene");
+
   _should_update = true ;
 }
 
