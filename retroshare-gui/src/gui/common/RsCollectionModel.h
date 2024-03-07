@@ -31,8 +31,9 @@ class RsCollectionModel: public QAbstractItemModel
 
         virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
         virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-#ifdef TODO
+        virtual bool setData(const QModelIndex& index,const QVariant& value,int role) override;
         virtual Qt::ItemFlags flags ( const QModelIndex & index ) const override;
+#ifdef TODO
         virtual QStringList mimeTypes () const override;
         virtual QMimeData * mimeData ( const QModelIndexList & indexes ) const override;
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
@@ -53,20 +54,34 @@ class RsCollectionModel: public QAbstractItemModel
         QVariant displayRole(const EntryIndex&,int col) const ;
         QVariant sortRole(const EntryIndex&,int col) const ;
         QVariant decorationRole(const EntryIndex&,int col) const ;
+        QVariant checkStateRole(const EntryIndex& i,int col) const;
         //QVariant filterRole(const DirDetails& details,int coln) const;
 
         bool mUpdating ;
 
         const RsCollection& mCollection;
 
-        struct ParentInfo {
-             RsFileTree::DirIndex parent_index;	// index of the parent
-             RsFileTree::DirIndex parent_row; // row of that child, in this parent
+        enum DirCheckState: uint8_t {
+            UNSELECTED            = 0x00,
+            PARTIALLY_SELECTED    = 0x01,
+            SELECTED              = 0x02,
         };
 
-        std::map<uint64_t,ParentInfo> mFileParents;
-        std::map<uint64_t,ParentInfo> mDirParents;
-        std::map<uint64_t,uint64_t> mDirSizes;
+        struct ModelDirInfo {
+             RsFileTree::DirIndex parent_index;	// index of the parent
+             RsFileTree::DirIndex parent_row; // row of that child, in this parent
+             DirCheckState check_state;
+             uint64_t total_size;
+        };
+
+        struct ModelFileInfo {
+             RsFileTree::DirIndex parent_index;	// index of the parent
+             RsFileTree::DirIndex parent_row; // row of that child, in this parent
+            bool is_checked;
+        };
+
+        std::map<uint64_t,ModelFileInfo> mFileInfos;
+        std::map<uint64_t,ModelDirInfo> mDirInfos;
 
         // std::set<void*> mFilteredPointers ;
 };

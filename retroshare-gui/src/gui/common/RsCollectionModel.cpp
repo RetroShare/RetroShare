@@ -4,6 +4,10 @@
 
 // #define DEBUG_COLLECTION_MODEL 1
 
+static const int COLLECTION_MODEL_FILENAME  = 0;
+static const int COLLECTION_MODEL_SIZE      = 1;
+static const int COLLECTION_MODEL_HASH      = 2;
+static const int COLLECTION_MODEL_COUNT     = 3;
 static const int COLLECTION_MODEL_NB_COLUMN = 4;
 
 RsCollectionModel::RsCollectionModel(const RsCollection& col, QObject *parent)
@@ -172,6 +176,14 @@ QModelIndex RsCollectionModel::index(int row, int column, const QModelIndex & pa
     return QModelIndex();
 }
 
+Qt::ItemFlags RsCollectionModel::flags ( const QModelIndex & index ) const
+{
+    if(index.isValid() && index.column() == COLLECTION_MODEL_FILENAME)
+        return QAbstractItemModel::flags(index) | Qt::ItemIsUserTristate;
+
+    return QAbstractItemModel::flags(index) & ~Qt::ItemIsUserTristate;
+}
+
 QModelIndex RsCollectionModel::parent(const QModelIndex & index) const
 {
     if(!index.isValid())
@@ -187,8 +199,8 @@ QModelIndex RsCollectionModel::parent(const QModelIndex & index) const
 
     if(i.is_file)
     {
-        const auto it = mFileParents.find(i.index);
-        if(it == mFileParents.end())
+        const auto it = mFileInfos.find(i.index);
+        if(it == mFileInfos.end())
         {
             RsErr() << "Error: parent not found for index " << index.row() << ", " << index.column();
             return QModelIndex();
@@ -198,8 +210,8 @@ QModelIndex RsCollectionModel::parent(const QModelIndex & index) const
     }
     else
     {
-        const auto it = mDirParents.find(i.index);
-        if(it == mDirParents.end())
+        const auto it = mDirInfos.find(i.index);
+        if(it == mDirInfos.end())
         {
             RsErr() << "Error: parent not found for index " << index.row() << ", " << index.column();
             return QModelIndex();
@@ -228,11 +240,61 @@ QVariant RsCollectionModel::data(const QModelIndex& index, int role) const
     case Qt::DisplayRole: return displayRole(i,index.column());
     //case Qt::SortRole: return SortRole(i,index.column());
     case Qt::DecorationRole: return decorationRole(i,index.column());
+    case Qt::CheckStateRole: return checkStateRole(i,index.column());
     default:
         return QVariant();
     }
 }
 
+bool RsCollectionModel::setData(const QModelIndex& index,const QVariant& value,int role)
+{
+    if(!index.isValid())
+        return false;
+
+    if (role==Qt::CheckStateRole)
+    {
+#ifdef DEBUG_COLLECTION_MODEL
+        std::cerr << "Setting check state of item " << index << " to " << value.toBool() << std::endl;
+#endif
+        return true;
+    }
+    else
+        return setData(index,value,role);
+}
+
+QVariant RsCollectionModel::checkStateRole(const EntryIndex& i,int col) const
+{
+    if(col == COLLECTION_MODEL_FILENAME)
+    {
+        if(i.is_file)
+        {
+            auto it = mFileInfos.find(i.index);
+            if(it == mFileInfos.end())
+                return QVariant();
+
+            if(it->second.is_checked)
+                return QVariant(Qt::Checked);
+            else
+                return QVariant(Qt::Unchecked);
+        }
+        else
+        {
+            auto it = mDirInfos.find(i.index);
+            if(it == mDirInfos.end())
+                return QVariant();
+
+            switch(it->second.check_state)
+            {
+            case SELECTED: return QVariant(Qt::Checked);
+            case PARTIALLY_SELECTED: return QVariant(Qt::PartiallyChecked);
+            default:
+            case UNSELECTED: return QVariant(Qt::Unchecked);
+            }
+        }
+    }
+    else
+        return QVariant();
+}
 QVariant RsCollectionModel::displayRole(const EntryIndex& i,int col) const
 {
     switch(col)
@@ -245,12 +307,12 @@ QVariant RsCollectionModel::displayRole(const EntryIndex& i,int col) const
                 return QVariant((qulonglong)mCollection.fileTree().fileData(i.index).size) ;
 
             {
-                auto it = mDirSizes.find(i.index);
+                auto it = mDirInfos.find(i.index);
 
-                if(it == mDirSizes.end())
+                if(it == mDirInfos.end())
                     return QVariant();
                 else
-                    return QVariant((qulonglong)it->second);
+                    return QVariant((qulonglong)it->second.total_size);
             }
 
     case 2: return (i.is_file)?
@@ -279,9 +341,8 @@ void RsCollectionModel::postMods()
 {
     // update all the local structures
 
-    mDirParents.clear();
-    mFileParents.clear();
-    mDirSizes.clear();
+    mDirInfos.clear();
+    mFileInfos.clear();
 
 #ifdef DEBUG_COLLECTION_MODEL
     std::cerr << "Updating from tree: " << std::endl;
@@ -296,8 +357,28 @@ void RsCollectionModel::postMods()
 void RsCollectionModel::recursUpdateLocalStructures(RsFileTree::DirIndex dir_index,uint64_t& total_size,int depth)
 {
     total_size = 0;
+    bool all_checked = true;
+    bool all_unchecked = false;
 
     const auto& dd(mCollection.fileTree().directoryData(dir_index));
+
+    for(uint32_t i=0;i<dd.subfiles.size();++i)
+    {
+#ifdef DEBUG_COLLECTION_MODEL
+        for(int j=0;j<depth;++j) std::cerr << "  ";
+        std::cerr << "File \"" << mCollection.fileTree().fileData(dd.subfiles[i]).name << "\"" << std::endl;
+#endif
+
+        total_size += mCollection.fileTree().fileData(dd.subfiles[i]).size;
+
+        auto& ref(mFileInfos[dd.subfiles[i]]);
+
+        ref.parent_index = dir_index;
+        ref.parent_row   = i + dd.subdirs.size();
+
+        all_checked = all_checked && ref.is_checked;
+        all_unchecked = all_unchecked && !ref.is_checked;
+    }
 
     for(uint32_t i=0;i<dd.subdirs.size();++i)
     {
@@ -310,28 +391,25 @@ void RsCollectionModel::recursUpdateLocalStructures(RsFileTree::DirIndex dir_ind
         recursUpdateLocalStructures(dd.subdirs[i],ss,depth+1);
         total_size += ss;
 
-        auto& ref(mDirParents[dd.subdirs[i]]);
+        auto& ref(mDirInfos[dd.subdirs[i]]);
 
         ref.parent_index = dir_index;
         ref.parent_row   = i;
+
+        all_checked = all_checked && (ref.check_state == SELECTED);
+        all_unchecked = all_unchecked && (ref.check_state == UNSELECTED);
     }
 
-    for(uint32_t i=0;i<dd.subfiles.size();++i)
-    {
-#ifdef DEBUG_COLLECTION_MODEL
-        for(int j=0;j<depth;++j) std::cerr << "  ";
-        std::cerr << "File \"" << mCollection.fileTree().fileData(dd.subfiles[i]).name << "\"" << std::endl;
-#endif
+    auto& r(mDirInfos[dir_index]);
 
-        total_size += mCollection.fileTree().fileData(dd.subfiles[i]).size;
+    r.total_size = total_size;
 
-        auto& ref(mFileParents[dd.subfiles[i]]);
-
-        ref.parent_index = dir_index;
-        ref.parent_row   = i + dd.subdirs.size();
-    }
-
-    mDirSizes[dir_index] = total_size;
+    if(all_checked)
+        r.check_state = SELECTED;
+    else if(all_unchecked)
+        r.check_state = UNSELECTED;
+    else
+        r.check_state = PARTIALLY_SELECTED;
 }
 
 
