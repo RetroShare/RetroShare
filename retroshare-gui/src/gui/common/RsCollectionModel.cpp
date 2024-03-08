@@ -16,7 +16,6 @@ RsCollectionModel::RsCollectionModel(const RsCollection& col, QObject *parent)
     postMods();
 }
 
-#ifdef DEBUG_COLLECTION_MODEL
 static std::ostream& operator<<(std::ostream& o,const RsCollectionModel::EntryIndex& i)
 {
     return o << ((i.is_file)?("File"):"Dir") << " with index " << (int)i.index ;
@@ -25,6 +24,7 @@ static std::ostream& operator<<(std::ostream& o,const QModelIndex& i)
 {
     return o << "QModelIndex (row " << i.row() << ", of ref " << i.internalId() << ")" ;
 }
+#ifdef DEBUG_COLLECTION_MODEL
 #endif
 
 // Indernal Id is always a quintptr_t (basically a uint with the size of a pointer). Depending on the
@@ -179,9 +179,19 @@ QModelIndex RsCollectionModel::index(int row, int column, const QModelIndex & pa
 Qt::ItemFlags RsCollectionModel::flags ( const QModelIndex & index ) const
 {
     if(index.isValid() && index.column() == COLLECTION_MODEL_FILENAME)
-        return QAbstractItemModel::flags(index) | Qt::ItemIsUserTristate;
+    {
+        EntryIndex e;
 
-    return QAbstractItemModel::flags(index) & ~Qt::ItemIsUserTristate;
+        if(!convertInternalIdToIndex(index.internalId(),e))
+            return QAbstractItemModel::flags(index) ;
+
+        if(e.is_file)
+            return QAbstractItemModel::flags(index) | Qt::ItemIsUserCheckable;
+        else
+            return QAbstractItemModel::flags(index) | Qt::ItemIsAutoTristate | Qt::ItemIsUserCheckable;
+    }
+
+    return QAbstractItemModel::flags(index) ;
 }
 
 QModelIndex RsCollectionModel::parent(const QModelIndex & index) const
@@ -199,25 +209,13 @@ QModelIndex RsCollectionModel::parent(const QModelIndex & index) const
 
     if(i.is_file)
     {
-        const auto it = mFileInfos.find(i.index);
-        if(it == mFileInfos.end())
-        {
-            RsErr() << "Error: parent not found for index " << index.row() << ", " << index.column();
-            return QModelIndex();
-        }
-        p.index = it->second.parent_index;
-        row = it->second.parent_row;
+        p.index = mFileInfos[i.index].parent_index;
+        row = mFileInfos[i.index].parent_row;
     }
     else
     {
-        const auto it = mDirInfos.find(i.index);
-        if(it == mDirInfos.end())
-        {
-            RsErr() << "Error: parent not found for index " << index.row() << ", " << index.column();
-            return QModelIndex();
-        }
-        p.index = it->second.parent_index;
-        row = it->second.parent_row;
+        p.index = mDirInfos[i.index].parent_index;
+        row = mDirInfos[i.index].parent_row;
     }
 
     quintptr ref;
@@ -237,8 +235,7 @@ QVariant RsCollectionModel::data(const QModelIndex& index, int role) const
 #endif
     switch(role)
     {
-    case Qt::DisplayRole: return displayRole(i,index.column());
-    //case Qt::SortRole: return SortRole(i,index.column());
+    case Qt::DisplayRole:    return displayRole(i,index.column());
     case Qt::DecorationRole: return decorationRole(i,index.column());
     case Qt::CheckStateRole: return checkStateRole(i,index.column());
     default:
@@ -251,15 +248,94 @@ bool RsCollectionModel::setData(const QModelIndex& index,const QVariant& value,i
     if(!index.isValid())
         return false;
 
-    if (role==Qt::CheckStateRole)
+    EntryIndex e;
+
+    if(role==Qt::CheckStateRole && convertInternalIdToIndex(index.internalId(), e))
     {
-#ifdef DEBUG_COLLECTION_MODEL
+//#ifdef DEBUG_COLLECTION_MODEL
         std::cerr << "Setting check state of item " << index << " to " << value.toBool() << std::endl;
-#endif
+//#endif
+        RsFileTree::DirIndex dir_index ;
+
+        if(e.is_file)
+        {
+            mFileInfos[e.index].is_checked = value.toBool();
+            dir_index = mFileInfos[e.index].parent_index;
+        }
+        else
+        {
+            std::function<void(RsFileTree::DirIndex i,bool s)> recursSetCheckFlag = [&](RsFileTree::DirIndex i,bool s) -> void
+            {
+                mDirInfos[i].check_state = (s)?SELECTED:UNSELECTED;
+                auto& dir_data(mCollection.fileTree().directoryData(i));
+
+                for(uint32_t i=0;i<dir_data.subdirs.size();++i)
+                    recursSetCheckFlag(dir_data.subdirs[i],s);
+
+                for(uint32_t i=0;i<dir_data.subfiles.size();++i)
+                    mFileInfos[dir_data.subfiles[i]].is_checked = s;
+            };
+            recursSetCheckFlag(e.index,value.toBool());
+            dir_index = mDirInfos[e.index].parent_index;
+        }
+
+        // now go up the directories and update the check tristate flag, depending on whether the children are all checked/unchecked or mixed.
+
+        do
+        {
+            auto& dit(mDirInfos[dir_index]);
+
+            const RsFileTree::DirData& dir_data(mCollection.fileTree().directoryData(dir_index));	// get the directory data
+
+            bool locally_all_checked = true;
+            bool locally_all_unchecked = true;
+
+            for(uint32_t i=0;i<dir_data.subdirs.size() && (locally_all_checked || locally_all_unchecked);++i)
+            {
+                const auto& dit2(mDirInfos[dir_data.subdirs[i]]);
+
+                if(dit2.check_state == UNSELECTED || dit2.check_state == PARTIALLY_SELECTED)
+                    locally_all_checked   = false;
+
+                if(dit2.check_state ==   SELECTED || dit2.check_state == PARTIALLY_SELECTED)
+                    locally_all_unchecked = false;
+            }
+            for(uint32_t i=0;i<dir_data.subfiles.size() && (locally_all_checked || locally_all_unchecked);++i)
+            {
+                const auto& fit2(mFileInfos[dir_data.subfiles[i]]);
+
+                if(fit2.is_checked)
+                    locally_all_unchecked = false;
+                else
+                    locally_all_checked = false;
+            }
+
+            if(locally_all_checked)
+                dit.check_state = SELECTED;
+            else if(locally_all_unchecked)
+                dit.check_state = UNSELECTED;
+            else
+                dit.check_state = PARTIALLY_SELECTED;
+
+            if(dir_index == mCollection.fileTree().root())
+                break;
+            else
+                dir_index = dit.parent_index;	// get the directory data
+
+        }
+        while(true);
+
+        const auto& top_dir(mCollection.fileTree().directoryData(mCollection.fileTree().root()));
+        emit dataChanged(createIndex(0,0,(void*)NULL),
+                         createIndex(top_dir.subdirs.size() + top_dir.subfiles.size() - 1,
+                                     COLLECTION_MODEL_NB_COLUMN-1,
+                                     (void*)NULL),
+                         { Qt::CheckStateRole });
+
         return true;
     }
     else
-        return setData(index,value,role);
+        return QAbstractItemModel::setData(index,value,role);
 }
 
 QVariant RsCollectionModel::checkStateRole(const EntryIndex& i,int col) const
@@ -268,27 +344,22 @@ QVariant RsCollectionModel::checkStateRole(const EntryIndex& i,int col) const
     {
         if(i.is_file)
         {
-            auto it = mFileInfos.find(i.index);
-            if(it == mFileInfos.end())
-                return QVariant();
-
-            if(it->second.is_checked)
+            std::cerr<< "entry is file, checkstate = " << (int)mFileInfos[i.index].is_checked << std::endl;
+            if(mFileInfos[i.index].is_checked)
                 return QVariant(Qt::Checked);
             else
                 return QVariant(Qt::Unchecked);
         }
         else
         {
-            auto it = mDirInfos.find(i.index);
-            if(it == mDirInfos.end())
-                return QVariant();
+            std::cerr<< "entry is dir, checkstate = " << (int)mDirInfos[i.index].check_state << std::endl;
 
-            switch(it->second.check_state)
+            switch(mDirInfos[i.index].check_state)
             {
-            case SELECTED: return QVariant(Qt::Checked);
-            case PARTIALLY_SELECTED: return QVariant(Qt::PartiallyChecked);
+            case SELECTED: return QVariant::fromValue((int)Qt::Checked);
+            case PARTIALLY_SELECTED: return QVariant::fromValue((int)Qt::PartiallyChecked);
             default:
-            case UNSELECTED: return QVariant(Qt::Unchecked);
+            case UNSELECTED: return QVariant::fromValue((int)Qt::Unchecked);
             }
         }
     }
@@ -307,12 +378,12 @@ QVariant RsCollectionModel::displayRole(const EntryIndex& i,int col) const
                 return QVariant((qulonglong)mCollection.fileTree().fileData(i.index).size) ;
 
             {
-                auto it = mDirInfos.find(i.index);
+//                auto it = mDirInfos[i.index];
 
-                if(it == mDirInfos.end())
-                    return QVariant();
-                else
-                    return QVariant((qulonglong)it->second.total_size);
+//                if(it == mDirInfos.end())
+//                    return QVariant();
+//                else
+                    return QVariant((qulonglong)mDirInfos[i.index].total_size);
             }
 
     case 2: return (i.is_file)?
@@ -343,6 +414,11 @@ void RsCollectionModel::postMods()
 
     mDirInfos.clear();
     mFileInfos.clear();
+
+    mDirInfos.resize(mCollection.fileTree().numDirs());
+    mFileInfos.resize(mCollection.fileTree().numFiles());
+
+    mDirInfos[0].parent_index = 0;
 
 #ifdef DEBUG_COLLECTION_MODEL
     std::cerr << "Updating from tree: " << std::endl;

@@ -80,8 +80,8 @@ class RsCollectionModel: public QAbstractItemModel
             bool is_checked;
         };
 
-        std::map<uint64_t,ModelFileInfo> mFileInfos;
-        std::map<uint64_t,ModelDirInfo> mDirInfos;
+        std::vector<ModelFileInfo> mFileInfos;
+        std::vector<ModelDirInfo> mDirInfos;
 
         // std::set<void*> mFilteredPointers ;
 };
