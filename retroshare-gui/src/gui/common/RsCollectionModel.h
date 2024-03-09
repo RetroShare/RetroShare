@@ -45,11 +45,17 @@ class RsCollectionModel: public QAbstractItemModel
             bool is_file;		// false=dir, true=file
             uint64_t index;
         };
+        uint64_t totalSize() const { return mDirInfos[0].total_size; }
+        uint64_t totalSelected() const { return mDirInfos[0].total_count; }
+
+    signals:
+        void sizesChanged();	// tells that the total size of the top level dir has changed (due to selection)
+
     private:
         static bool convertIndexToInternalId(const EntryIndex& e,quintptr& ref);
         static bool convertInternalIdToIndex(quintptr ref, EntryIndex& e);
 
-        void recursUpdateLocalStructures(RsFileTree::DirIndex dir_index, uint64_t& total_size, int depth);
+        void recursUpdateLocalStructures(RsFileTree::DirIndex dir_index, int depth);
 
         QVariant displayRole(const EntryIndex&,int col) const ;
         QVariant sortRole(const EntryIndex&,int col) const ;
@@ -68,13 +74,18 @@ class RsCollectionModel: public QAbstractItemModel
         };
 
         struct ModelDirInfo {
+             ModelDirInfo() :parent_index(0),parent_row(0),check_state(SELECTED),total_size(0),total_count(0){}
+
              RsFileTree::DirIndex parent_index;	// index of the parent
              RsFileTree::DirIndex parent_row; // row of that child, in this parent
              DirCheckState check_state;
              uint64_t total_size;
+             uint64_t total_count;
         };
 
         struct ModelFileInfo {
+                ModelFileInfo() :parent_index(0),parent_row(0),is_checked(true){}
+
              RsFileTree::DirIndex parent_index;	// index of the parent
              RsFileTree::DirIndex parent_row; // row of that child, in this parent
             bool is_checked;

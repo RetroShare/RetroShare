@@ -264,16 +264,31 @@ bool RsCollectionModel::setData(const QModelIndex& index,const QVariant& value,i
         }
         else
         {
-            std::function<void(RsFileTree::DirIndex i,bool s)> recursSetCheckFlag = [&](RsFileTree::DirIndex i,bool s) -> void
+            std::function<void(RsFileTree::DirIndex,bool)> recursSetCheckFlag = [&](RsFileTree::DirIndex index,bool s) -> void
             {
-                mDirInfos[i].check_state = (s)?SELECTED:UNSELECTED;
-                auto& dir_data(mCollection.fileTree().directoryData(i));
+                mDirInfos[index].check_state = (s)?SELECTED:UNSELECTED;
+                auto& dir_data(mCollection.fileTree().directoryData(index));
+
+                mDirInfos[index].total_size = 0;
+                mDirInfos[index].total_count = 0;
 
                 for(uint32_t i=0;i<dir_data.subdirs.size();++i)
+                {
                     recursSetCheckFlag(dir_data.subdirs[i],s);
+                    mDirInfos[index].total_size += mDirInfos[dir_data.subdirs[i]].total_size ;
+                    ++mDirInfos[index].total_count;
+                }
 
                 for(uint32_t i=0;i<dir_data.subfiles.size();++i)
+                {
                     mFileInfos[dir_data.subfiles[i]].is_checked = s;
+
+                    if(s)
+                    {
+                        mDirInfos[index].total_size += mCollection.fileTree().fileData(dir_data.subfiles[i]).size;
+                        ++mDirInfos[index].total_count;
+                    }
+                }
             };
             recursSetCheckFlag(e.index,value.toBool());
             dir_index = mDirInfos[e.index].parent_index;
@@ -290,9 +305,14 @@ bool RsCollectionModel::setData(const QModelIndex& index,const QVariant& value,i
             bool locally_all_checked = true;
             bool locally_all_unchecked = true;
 
-            for(uint32_t i=0;i<dir_data.subdirs.size() && (locally_all_checked || locally_all_unchecked);++i)
+            dit.total_size = 0;
+            dit.total_count = 0;
+
+            for(uint32_t i=0;i<dir_data.subdirs.size();++i)
             {
                 const auto& dit2(mDirInfos[dir_data.subdirs[i]]);
+                dit.total_size += dit2.total_size;
+                dit.total_count += dit2.total_count;
 
                 if(dit2.check_state == UNSELECTED || dit2.check_state == PARTIALLY_SELECTED)
                     locally_all_checked   = false;
@@ -300,12 +320,16 @@ bool RsCollectionModel::setData(const QModelIndex& index,const QVariant& value,i
                 if(dit2.check_state ==   SELECTED || dit2.check_state == PARTIALLY_SELECTED)
                     locally_all_unchecked = false;
             }
-            for(uint32_t i=0;i<dir_data.subfiles.size() && (locally_all_checked || locally_all_unchecked);++i)
+            for(uint32_t i=0;i<dir_data.subfiles.size();++i)
             {
                 const auto& fit2(mFileInfos[dir_data.subfiles[i]]);
 
                 if(fit2.is_checked)
+                {
+                    dit.total_size += mCollection.fileTree().fileData(dir_data.subfiles[i]).size;
+                    ++dit.total_count;
                     locally_all_unchecked = false;
+                }
                 else
                     locally_all_checked = false;
             }
@@ -331,6 +355,8 @@ bool RsCollectionModel::setData(const QModelIndex& index,const QVariant& value,i
                                      COLLECTION_MODEL_NB_COLUMN-1,
                                      (void*)NULL),
                          { Qt::CheckStateRole });
+
+        emit sizesChanged();
 
         return true;
     }
@@ -370,27 +396,23 @@ QVariant RsCollectionModel::displayRole(const EntryIndex& i,int col) const
 {
     switch(col)
     {
-    case 0: return (i.is_file)?
+    case COLLECTION_MODEL_FILENAME: return (i.is_file)?
                     (QString::fromUtf8(mCollection.fileTree().fileData(i.index).name.c_str()))
                   : (QString::fromUtf8(mCollection.fileTree().directoryData(i.index).name.c_str()));
 
-    case 1: if(i.is_file)
-                return QVariant((qulonglong)mCollection.fileTree().fileData(i.index).size) ;
+    case COLLECTION_MODEL_SIZE: if(i.is_file)
+            return QVariant((qulonglong)mCollection.fileTree().fileData(i.index).size) ;
+        else
+            return QVariant((qulonglong)mDirInfos[i.index].total_size);
 
-            {
-//                auto it = mDirInfos[i.index];
-
-//                if(it == mDirInfos.end())
-//                    return QVariant();
-//                else
-                    return QVariant((qulonglong)mDirInfos[i.index].total_size);
-            }
-
-    case 2: return (i.is_file)?
+    case COLLECTION_MODEL_HASH: return (i.is_file)?
                     QString::fromStdString(mCollection.fileTree().fileData(i.index).hash.toStdString())
-                   :QVariant();
+                  :QVariant();
 
-    case 3: return (i.is_file)?((qulonglong)1):((qulonglong)(mCollection.fileTree().directoryData(i.index).subdirs.size()));
+    case COLLECTION_MODEL_COUNT: if(i.is_file)
+            return (qulonglong)mFileInfos[i.index].is_checked;
+        else
+            return (qulonglong)(mDirInfos[i.index].total_count);
     }
     return QVariant();
 }
@@ -423,16 +445,17 @@ void RsCollectionModel::postMods()
 #ifdef DEBUG_COLLECTION_MODEL
     std::cerr << "Updating from tree: " << std::endl;
 #endif
-    uint64_t s;
-    recursUpdateLocalStructures(mCollection.fileTree().root(),s,0);
+    recursUpdateLocalStructures(mCollection.fileTree().root(),0);
 
     mUpdating = false;
     emit layoutChanged();
+    emit sizesChanged();
 }
 
-void RsCollectionModel::recursUpdateLocalStructures(RsFileTree::DirIndex dir_index,uint64_t& total_size,int depth)
+void RsCollectionModel::recursUpdateLocalStructures(RsFileTree::DirIndex dir_index,int depth)
 {
-    total_size = 0;
+    uint64_t total_size = 0;
+    uint64_t total_count = 0;
     bool all_checked = true;
     bool all_unchecked = false;
 
@@ -444,10 +467,13 @@ void RsCollectionModel::recursUpdateLocalStructures(RsFileTree::DirIndex dir_ind
         for(int j=0;j<depth;++j) std::cerr << "  ";
         std::cerr << "File \"" << mCollection.fileTree().fileData(dd.subfiles[i]).name << "\"" << std::endl;
 #endif
-
-        total_size += mCollection.fileTree().fileData(dd.subfiles[i]).size;
-
         auto& ref(mFileInfos[dd.subfiles[i]]);
+
+        if(ref.is_checked)
+        {
+            total_size += mCollection.fileTree().fileData(dd.subfiles[i]).size;
+            ++total_count;
+        }
 
         ref.parent_index = dir_index;
         ref.parent_row   = i + dd.subdirs.size();
@@ -463,22 +489,24 @@ void RsCollectionModel::recursUpdateLocalStructures(RsFileTree::DirIndex dir_ind
         std::cerr << "Dir \"" << mCollection.fileTree().directoryData(dd.subdirs[i]).name << "\"" << std::endl ;
 #endif
 
-        uint64_t ss;
-        recursUpdateLocalStructures(dd.subdirs[i],ss,depth+1);
-        total_size += ss;
+        recursUpdateLocalStructures(dd.subdirs[i],depth+1);
 
         auto& ref(mDirInfos[dd.subdirs[i]]);
+
+        total_size  += ref.total_size;
+        total_count += ref.total_count;
 
         ref.parent_index = dir_index;
         ref.parent_row   = i;
 
-        all_checked = all_checked && (ref.check_state == SELECTED);
+        all_checked   = all_checked && (ref.check_state == SELECTED);
         all_unchecked = all_unchecked && (ref.check_state == UNSELECTED);
     }
 
     auto& r(mDirInfos[dir_index]);
 
-    r.total_size = total_size;
+    r.total_size  = total_size;
+    r.total_count = total_count;
 
     if(all_checked)
         r.check_state = SELECTED;

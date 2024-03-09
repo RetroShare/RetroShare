@@ -181,16 +181,8 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsColl
     mCollectionModel = new RsCollectionModel(*mCollection);
     ui._fileEntriesTW->setModel(mCollectionModel);
 
-#ifdef TO_REMOVE
-	ui._fileEntriesTW->setColumnCount(COLUMN_COUNT) ;
-
-	QTreeWidgetItem *headerItem = ui._fileEntriesTW->headerItem();
-	headerItem->setText(COLUMN_FILE, tr("File"));
-	headerItem->setText(COLUMN_FILEPATH, tr("File Path"));
-	headerItem->setText(COLUMN_SIZE, tr("Size"));
-	headerItem->setText(COLUMN_HASH, tr("Hash"));
-	headerItem->setText(COLUMN_FILEC, tr("File Count"));
-#endif
+    connect(mCollectionModel,SIGNAL(sizesChanged()),this,SLOT(updateSizes()));
+    updateSizes(); // forced because it's only called when the collection is changed, or when the model is created.
 
 	bool wrong_chars = !updateList();
 
@@ -638,8 +630,8 @@ void RsCollectionDialog::directoryLoaded(QString dirLoaded)
  */
 void RsCollectionDialog::updateSizes()
 {
-    ui._selectedFiles_TL->setText(QString::number(mCollection->count()));
-    ui._totalSize_TL->setText(misc::friendlyUnit(mCollection->size()));
+    ui._selectedFiles_TL->setText(QString::number(mCollectionModel->totalSelected()));
+    ui._totalSize_TL->setText(misc::friendlyUnit(mCollectionModel->totalSize()));
 }
 
 /**
