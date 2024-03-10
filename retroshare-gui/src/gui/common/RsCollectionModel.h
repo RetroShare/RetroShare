@@ -63,6 +63,8 @@ class RsCollectionModel: public QAbstractItemModel
         QVariant checkStateRole(const EntryIndex& i,int col) const;
         //QVariant filterRole(const DirDetails& details,int coln) const;
 
+        void debugDump();
+
         bool mUpdating ;
 
         const RsCollection& mCollection;
