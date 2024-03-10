@@ -55,6 +55,7 @@
 #define IMAGE_NETWORK2          ":/icons/png/netgraph2.png"
 #define IMAGE_PEERS         	":/icons/png/digital-key.png"
 #define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
+#define DEFAULT_NODE_AVATAR     ":/icons/svg/network2.svg"
 
 /******
  * #define FRIENDS_DEBUG 1
@@ -88,8 +89,9 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
     connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
     connect( ui.actionSet_your_Personal_Message, SIGNAL(triggered()), this, SLOT(statusmessage()));
 
+    ui.avatar->setDefaultAvatar(DEFAULT_NODE_AVATAR);
     ui.avatar->setOwnId();
-    ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
+    ui.avatar->setFrameType(AvatarWidget::NO_FRAME);
 
     ui.tabWidget->setTabPosition(QTabWidget::North);
 #ifdef RS_EMBEDED_FRIEND_SERVER

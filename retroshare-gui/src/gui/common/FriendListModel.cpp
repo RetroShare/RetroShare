@@ -51,6 +51,8 @@
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
 
+#define NETWORK_NODE_DEFAULT_IMAGE ":/icons/svg/network2.svg"
+
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
 static const uint16_t UNDEFINED_GROUP_INDEX_VALUE   = (sizeof(uintptr_t)==4)?0x1ff:0xffff;	// max value for 9 bits
@@ -902,12 +904,12 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
     {
         if(!isProfileExpanded(entry))
 		{
-			QPixmap sslAvatar = FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE);
+            QPixmap sslAvatar = FilesDefs::getPixmapFromQtResourcePath(NETWORK_NODE_DEFAULT_IMAGE);
 
         	const HierarchicalProfileInformation *hn = getProfileInfo(entry);
 
 			for(uint32_t i=0;i<hn->child_node_indices.size();++i)
-				if(AvatarDefs::getAvatarFromSslId(RsPeerId(mLocations[hn->child_node_indices[i]].node_info.id.toStdString()), sslAvatar))
+                if(AvatarDefs::getAvatarFromSslId(RsPeerId(mLocations[hn->child_node_indices[i]].node_info.id.toStdString()), sslAvatar,NETWORK_NODE_DEFAULT_IMAGE))
 					return QVariant(QIcon(sslAvatar));
 
             return QVariant(QIcon(sslAvatar));

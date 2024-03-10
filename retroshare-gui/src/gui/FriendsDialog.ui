@@ -208,7 +208,7 @@
              </font>
             </property>
             <property name="text">
-             <string notr="true">Nickname (Location)</string>
+             <string notr="true">Profile (Location)</string>
             </property>
            </widget>
           </item>
