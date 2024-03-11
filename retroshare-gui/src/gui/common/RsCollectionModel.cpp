@@ -22,7 +22,7 @@ static std::ostream& operator<<(std::ostream& o,const RsCollectionModel::EntryIn
 }
 static std::ostream& operator<<(std::ostream& o,const QModelIndex& i)
 {
-    return o << "QModelIndex (row " << i.row() << ", of ref " << i.internalId() << ")" ;
+    return o << "QModelIndex (row " << i.row() << ", ref " << i.internalId() << ")" ;
 }
 #ifdef DEBUG_COLLECTION_MODEL
 #endif
@@ -200,7 +200,7 @@ QModelIndex RsCollectionModel::parent(const QModelIndex & index) const
         return QModelIndex();
 
     EntryIndex i;
-    if(!convertInternalIdToIndex(index.internalId(),i) || i.index==0)
+    if(index.internalId()==0 || !convertInternalIdToIndex(index.internalId(),i))
         return QModelIndex();
 
     EntryIndex p;
@@ -276,7 +276,7 @@ bool RsCollectionModel::setData(const QModelIndex& index,const QVariant& value,i
                 {
                     recursSetCheckFlag(dir_data.subdirs[i],s);
                     mDirInfos[index].total_size += mDirInfos[dir_data.subdirs[i]].total_size ;
-                    ++mDirInfos[index].total_count;
+                    mDirInfos[index].total_count+= mDirInfos[dir_data.subdirs[i]].total_count;
                 }
 
                 for(uint32_t i=0;i<dir_data.subfiles.size();++i)
@@ -548,7 +548,10 @@ void RsCollectionModel::debugDump()
 
         std::cerr << "Index: " << indx << " has_children: " << RsCollectionModel::hasChildren(indx)
                   << ", rowCount: " << RsCollectionModel::rowCount(indx)
+                  << ", internalId: " << (uint64_t)indx.internalId()
                   << ", type: " << (entry.is_file?"file":"dir") << " number " << entry.index
+                  << ", prow: " << (entry.is_file?mFileInfos[entry.index].parent_row:mDirInfos[entry.index].parent_row)
+                  << ", parent: " << RsCollectionModel::parent(indx)
                   << ", display role: \"" << displayRole(entry,0).toString().toStdString()
                   << std::endl;
 
@@ -563,10 +566,10 @@ void RsCollectionModel::debugDump()
     std::cerr << "mCollectionModel internal data: " << std::endl;
     std::cerr << "Directories: "<< std::endl;
     for(uint32_t i=0;i<mCollection.fileTree().numDirs();++i)
-        std::cerr << "  " << mCollection.fileTree().directoryData(i).name << std::endl;
+        std::cerr << "  " << i << ": "<< mCollection.fileTree().directoryData(i).name << std::endl;
     std::cerr << "Files: "<< std::endl;
     for(uint32_t i=0;i<mCollection.fileTree().numFiles();++i)
-        std::cerr << "  " << mCollection.fileTree().fileData(i).name << std::endl;
+        std::cerr << "  " << i << ": " << mCollection.fileTree().fileData(i).name << std::endl;
 }
 
 
