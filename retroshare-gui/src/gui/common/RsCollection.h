@@ -103,6 +103,7 @@ public:
 
 	static bool isCollectionFile(const QString& fileName);
 
+    void updateHashes(const std::map<RsFileHash,RsFileHash>& old_to_new_hashes);
 private:
 
     bool recursExportToXml(QDomDocument& doc,QDomElement& e,const RsFileTree::DirData& dd) const;
@@ -130,6 +131,8 @@ private:
 	void autoDownloadFiles(ColFileInfo colFileInfo, QString dlDir) const ;
 
     std::unique_ptr<RsFileTree> mFileTree;
+    std::map<RsFileHash,RsFileTree::FileIndex> mHashes;	// used to efficiently update files being hashed
+
 #ifdef TO_REMOVE
 	QDomDocument _xml_doc ;
 	QString _fileName ;

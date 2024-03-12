@@ -23,6 +23,7 @@
 
 #include "RsCollection.h"
 #include "util/misc.h"
+#include "util/rsdir.h"
 
 #include <QCheckBox>
 #include <QDateTime>
@@ -738,7 +739,7 @@ void RsCollectionDialog::addSelectionRecursive()
     addSelection(true);
 }
 
-static void recursBuildFileTree(const QString& path,RsFileTree& tree,RsFileTree::DirIndex dir_index,bool recursive)
+static void recursBuildFileTree(const QString& path,RsFileTree& tree,RsFileTree::DirIndex dir_index,bool recursive,QSet<QString>& paths_to_hash)
 {
     QFileInfo fileInfo = path;
 
@@ -746,17 +747,28 @@ static void recursBuildFileTree(const QString& path,RsFileTree& tree,RsFileTree:
     {
         auto di = tree.addDirectory(dir_index,fileInfo.fileName().toUtf8().constData());
 
-        QDir dirParent = fileInfo.absoluteFilePath();
-        dirParent.setFilter(QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot);
-        QFileInfoList childrenList = dirParent.entryInfoList();
+        if(recursive)
+        {
+            QDir dirParent = fileInfo.absoluteFilePath();
+            dirParent.setFilter(QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot);
+            QFileInfoList childrenList = dirParent.entryInfoList();
 
-        for(QFileInfo f:childrenList)
-            recursBuildFileTree(f.absoluteFilePath(),tree,di,recursive);
+            for(QFileInfo f:childrenList)
+                recursBuildFileTree(f.absoluteFilePath(),tree,di,recursive,paths_to_hash);
+        }
     }
     else
     {
-#warning TODO: compute the hash
-        tree.addFile(dir_index,fileInfo.fileName().toUtf8().constData(),RsFileHash(),fileInfo.size());
+        // Here we use a temporary hash that serves two purposes:
+        // 1 - identify the file in the RsFileTree of the collection so that we can update its hash when calculated
+        // 2 - mark the file as being processed
+        // The hash s is computed to be the hash of the path of the file. The collection must take care of multiple instances.
+
+        Sha1CheckSum s = RsDirUtil::sha1sum((uint8_t*)(fileInfo.filePath().toUtf8().constData()),fileInfo.filePath().toUtf8().size());
+
+        tree.addFile(dir_index,fileInfo.fileName().toUtf8().constData(),s,fileInfo.size());
+
+        paths_to_hash.insert(fileInfo.filePath().toUtf8().constData());
     }
 }
 /**
@@ -768,7 +780,6 @@ static void recursBuildFileTree(const QString& path,RsFileTree& tree,RsFileTree:
  */
 void RsCollectionDialog::addSelection(bool recursive)
 {
-	QStringList fileToHash;
 	QMap<QString, QString > dirToAdd;
     int count=0;//to not scan all items on list .count()
 
@@ -776,11 +787,13 @@ void RsCollectionDialog::addSelection(bool recursive)
 
     mCollectionModel->preMods();
 
+    QSet<QString> paths_to_hash;	// sha1sum of the paths to hash
+
 	foreach (QModelIndex index, milSelectionList)
         if(index.column()==0)    //Get only FileName
         {
             RsFileTree tree;
-            recursBuildFileTree(_dirModel->filePath(_tree_proxyModel->mapToSource(index)),tree,tree.root(),recursive);
+            recursBuildFileTree(_dirModel->filePath(_tree_proxyModel->mapToSource(index)),tree,tree.root(),recursive,paths_to_hash);
 
             mCollection->merge_in(tree);
 
@@ -852,9 +865,18 @@ void RsCollectionDialog::addSelection(bool recursive)
 	// Process Files once all done
 	ui._hashBox->addAttachments(fileToHash,RS_FILE_REQ_ANONYMOUS_ROUTING /*, 0*/);
 #endif
+//    std::map<Sha1CheckSum,QString> paths_and_hashes;
+//    for(auto path:paths_to_hash)
+//        paths_and_hashes.insert(std::make_pair(RsDirUtil::sha1sum((uint8_t*)path.toUtf8().constData(),path.toUtf8().size()),path));
+
+//    mCollectionModel->addFilesToHash(paths_and_hashes);
+
     mCollectionModel->postMods();
+
+    ui._hashBox->addAttachments(QStringList(paths_to_hash.begin(),paths_to_hash.end()),RS_FILE_REQ_ANONYMOUS_ROUTING /*, 0*/);
 }
 
+#ifdef TO_REMOVE
 /**
  * @brief RsCollectionDialog::addAllChild: Add children to RsCollection
  * @param fileInfoParent: Parent's QFileInfo to scan
@@ -910,6 +932,7 @@ bool RsCollectionDialog::addAllChild(QFileInfo &fileInfoParent
 	}
 	return true;
 }
+#endif
 
 /**
  * @brief RsCollectionDialog::remove: Remove selected Items in RSCollection
@@ -1186,6 +1209,7 @@ void RsCollectionDialog::makeDir()
  */
 void RsCollectionDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
 {
+#ifdef TO_REMOVE
 	std::cerr << "RsCollectionDialog::fileHashingFinished() started." << std::endl;
 
 	QString message;
@@ -1211,8 +1235,26 @@ void RsCollectionDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
 		_newColFileInfos.push_back(colFileInfo);
 #endif
 	}
+#endif
+    // build a map of old-hash to new-hash for the hashed files, so that it can be passed to the mCollection for update
 
-	std::cerr << "RsCollectionDialog::fileHashingFinished message : " << message.toStdString() << std::endl;
+    std::map<RsFileHash,RsFileHash> old_to_new_hashes;
+
+    for(auto f:hashedFiles)
+    {
+        auto it = mFilesBeingHashed.find(f.filepath);
+
+        if(it == mFilesBeingHashed.end())
+        {
+            RsErr() << "Could not find hash-ID correspondence for path " << f.filepath.toUtf8().constData() << ". This is a bug." << std::endl;
+            continue;
+        }
+        old_to_new_hashes.insert(std::make_pair(it->second,f.hash));
+        mFilesBeingHashed.erase(it);
+    }
+    mCollectionModel->preMods();
+    mCollection->updateHashes(old_to_new_hashes);
+    mCollectionModel->postMods();
 
 	updateList();
 }

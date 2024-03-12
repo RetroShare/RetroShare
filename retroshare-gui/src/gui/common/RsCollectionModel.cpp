@@ -252,9 +252,9 @@ bool RsCollectionModel::setData(const QModelIndex& index,const QVariant& value,i
 
     if(role==Qt::CheckStateRole && convertInternalIdToIndex(index.internalId(), e))
     {
-//#ifdef DEBUG_COLLECTION_MODEL
+#ifdef DEBUG_COLLECTION_MODEL
         std::cerr << "Setting check state of item " << index << " to " << value.toBool() << std::endl;
-//#endif
+#endif
         RsFileTree::DirIndex dir_index ;
 
         if(e.is_file)
@@ -370,7 +370,6 @@ QVariant RsCollectionModel::checkStateRole(const EntryIndex& i,int col) const
     {
         if(i.is_file)
         {
-            std::cerr<< "entry is file, checkstate = " << (int)mFileInfos[i.index].is_checked << std::endl;
             if(mFileInfos[i.index].is_checked)
                 return QVariant(Qt::Checked);
             else
@@ -378,8 +377,6 @@ QVariant RsCollectionModel::checkStateRole(const EntryIndex& i,int col) const
         }
         else
         {
-            std::cerr<< "entry is dir, checkstate = " << (int)mDirInfos[i.index].check_state << std::endl;
-
             switch(mDirInfos[i.index].check_state)
             {
             case SELECTED: return QVariant::fromValue((int)Qt::Checked);

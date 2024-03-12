@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <set>
 #include "ui_RsCollectionDialog.h"
 #include "RsCollection.h"
 #include "RsCollectionModel.h"
@@ -90,12 +91,12 @@ private:
     bool addChild(QTreeWidgetItem *parent, const std::vector<ColFileInfo> &child);
 	bool removeItem(QTreeWidgetItem *item, bool &removeOnlyFile) ;
     void saveChild(QTreeWidgetItem *parentItem, ColFileInfo *parentInfo = NULL);
-#endif
-    void addSelection(bool recursive) ;
 	bool addAllChild(QFileInfo &fileInfoParent
 	                 , QMap<QString, QString > &dirToAdd
 	                 , QStringList &fileToHash
 	                 , int &count);
+#endif
+    void addSelection(bool recursive) ;
 
 	Ui::RsCollectionDialog ui;
 	QString _fileName ;
@@ -110,4 +111,6 @@ private:
 
     RsCollectionModel *mCollectionModel;
     RsCollection *mCollection;
+
+    std::map<QString,RsFileHash> mFilesBeingHashed; // map of file path vs. temporary ID used for the file while hashing
 };
