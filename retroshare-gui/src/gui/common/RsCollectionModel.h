@@ -48,6 +48,8 @@ class RsCollectionModel: public QAbstractItemModel
         uint64_t totalSize() const { return mDirInfos[0].total_size; }
         uint64_t totalSelected() const { return mDirInfos[0].total_count; }
 
+        void notifyFilesBeingHashed(const std::list<RsFileHash>& files);
+        void fileHashingFinished(const RsFileHash& hash);
     signals:
         void sizesChanged();	// tells that the total size of the top level dir has changed (due to selection)
 
@@ -61,6 +63,7 @@ class RsCollectionModel: public QAbstractItemModel
         QVariant sortRole(const EntryIndex&,int col) const ;
         QVariant decorationRole(const EntryIndex&,int col) const ;
         QVariant checkStateRole(const EntryIndex& i,int col) const;
+        QVariant textColorRole(const EntryIndex& i,int col) const;
         //QVariant filterRole(const DirDetails& details,int coln) const;
 
         void debugDump();
@@ -95,6 +98,8 @@ class RsCollectionModel: public QAbstractItemModel
 
         std::vector<ModelFileInfo> mFileInfos;
         std::vector<ModelDirInfo> mDirInfos;
+
+        std::set<RsFileHash> mFilesBeingHashed;
 
         // std::set<void*> mFilteredPointers ;
 };

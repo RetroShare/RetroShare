@@ -739,7 +739,7 @@ void RsCollectionDialog::addSelectionRecursive()
     addSelection(true);
 }
 
-static void recursBuildFileTree(const QString& path,RsFileTree& tree,RsFileTree::DirIndex dir_index,bool recursive,QSet<QString>& paths_to_hash)
+static void recursBuildFileTree(const QString& path,RsFileTree& tree,RsFileTree::DirIndex dir_index,bool recursive,std::map<QString,RsFileHash>& paths_to_hash)
 {
     QFileInfo fileInfo = path;
 
@@ -768,7 +768,7 @@ static void recursBuildFileTree(const QString& path,RsFileTree& tree,RsFileTree:
 
         tree.addFile(dir_index,fileInfo.fileName().toUtf8().constData(),s,fileInfo.size());
 
-        paths_to_hash.insert(fileInfo.filePath().toUtf8().constData());
+        paths_to_hash.insert(std::make_pair(fileInfo.filePath(),s));
     }
 }
 /**
@@ -787,7 +787,7 @@ void RsCollectionDialog::addSelection(bool recursive)
 
     mCollectionModel->preMods();
 
-    QSet<QString> paths_to_hash;	// sha1sum of the paths to hash
+    std::map<QString,RsFileHash> paths_to_hash;	// sha1sum of the paths to hash.
 
 	foreach (QModelIndex index, milSelectionList)
         if(index.column()==0)    //Get only FileName
@@ -865,15 +865,24 @@ void RsCollectionDialog::addSelection(bool recursive)
 	// Process Files once all done
 	ui._hashBox->addAttachments(fileToHash,RS_FILE_REQ_ANONYMOUS_ROUTING /*, 0*/);
 #endif
-//    std::map<Sha1CheckSum,QString> paths_and_hashes;
-//    for(auto path:paths_to_hash)
-//        paths_and_hashes.insert(std::make_pair(RsDirUtil::sha1sum((uint8_t*)path.toUtf8().constData(),path.toUtf8().size()),path));
 
-//    mCollectionModel->addFilesToHash(paths_and_hashes);
+    mFilesBeingHashed.insert(paths_to_hash.begin(),paths_to_hash.end());
 
+    QStringList paths;
+    std::list<RsFileHash> hashes;
+
+    for(auto it:paths_to_hash)
+    {
+        paths.push_back(it.first);
+        hashes.push_back(it.second);
+
+        std::cerr << "Setting file has being hased: ID=" << it.second << " - " << it.first.toUtf8().constData() << std::endl;
+    }
+
+    mCollectionModel->notifyFilesBeingHashed(hashes);
     mCollectionModel->postMods();
 
-    ui._hashBox->addAttachments(QStringList(paths_to_hash.begin(),paths_to_hash.end()),RS_FILE_REQ_ANONYMOUS_ROUTING /*, 0*/);
+    ui._hashBox->addAttachments(paths,RS_FILE_REQ_ANONYMOUS_ROUTING /*, 0*/);
 }
 
 #ifdef TO_REMOVE
@@ -1238,6 +1247,7 @@ void RsCollectionDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
 #endif
     // build a map of old-hash to new-hash for the hashed files, so that it can be passed to the mCollection for update
 
+    mCollectionModel->preMods();
     std::map<RsFileHash,RsFileHash> old_to_new_hashes;
 
     for(auto f:hashedFiles)
@@ -1249,10 +1259,12 @@ void RsCollectionDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
             RsErr() << "Could not find hash-ID correspondence for path " << f.filepath.toUtf8().constData() << ". This is a bug." << std::endl;
             continue;
         }
+        std::cerr << "Will update old hash " << it->second << " to new hash " << f.hash << std::endl;
+
         old_to_new_hashes.insert(std::make_pair(it->second,f.hash));
         mFilesBeingHashed.erase(it);
+        mCollectionModel->fileHashingFinished(it->second);
     }
-    mCollectionModel->preMods();
     mCollection->updateHashes(old_to_new_hashes);
     mCollectionModel->postMods();
 

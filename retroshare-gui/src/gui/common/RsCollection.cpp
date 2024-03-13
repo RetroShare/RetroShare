@@ -146,7 +146,7 @@ static QString purifyFileName(const QString& input,bool& bad)
 
 void RsCollection::merge_in(const QString& fname,uint64_t size,const RsFileHash& hash)
 {
-    mFileTree->addFile(mFileTree->root(),fname.toStdString(),hash,size);
+    mHashes[hash]= mFileTree->addFile(mFileTree->root(),fname.toStdString(),hash,size);
 #ifdef TO_REMOVE
     ColFileInfo info ;
     info.type = DIR_TYPE_FILE ;
@@ -167,7 +167,7 @@ void RsCollection::recursMergeTree(RsFileTree::DirIndex parent,const RsFileTree&
     for(uint32_t i=0;i<dd.subfiles.size();++i)
     {
         const RsFileTree::FileData& fd(tree.fileData(dd.subfiles[i]));
-        mFileTree->addFile(parent,fd.name,fd.hash,fd.size);
+        mHashes[fd.hash] = mFileTree->addFile(parent,fd.name,fd.hash,fd.size);
     }
     for(uint32_t i=0;i<dd.subdirs.size();++i)
     {
@@ -672,3 +672,5 @@ void RsCollection::saveColl(std::vector<ColFileInfo> colFileInfos, const QString
 
 }
 #endif
+
+

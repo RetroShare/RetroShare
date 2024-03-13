@@ -1,4 +1,5 @@
 #include <string>
+#include <QBrush>
 
 #include "RsCollectionModel.h"
 
@@ -238,6 +239,7 @@ QVariant RsCollectionModel::data(const QModelIndex& index, int role) const
     case Qt::DisplayRole:    return displayRole(i,index.column());
     case Qt::DecorationRole: return decorationRole(i,index.column());
     case Qt::CheckStateRole: return checkStateRole(i,index.column());
+    case Qt::TextColorRole:  return textColorRole(i,index.column());
     default:
         return QVariant();
     }
@@ -364,6 +366,13 @@ bool RsCollectionModel::setData(const QModelIndex& index,const QVariant& value,i
         return QAbstractItemModel::setData(index,value,role);
 }
 
+QVariant RsCollectionModel::textColorRole(const EntryIndex& i,int col) const
+{
+    if(i.is_file && mFilesBeingHashed.find(mCollection.fileTree().fileData(i.index).hash) != mFilesBeingHashed.end())
+        return QVariant(QBrush(QColor::fromRgbF(0.1,0.9,0.2)));
+    else
+        return QVariant();
+}
 QVariant RsCollectionModel::checkStateRole(const EntryIndex& i,int col) const
 {
     if(col == COLLECTION_MODEL_FILENAME)
@@ -393,18 +402,25 @@ QVariant RsCollectionModel::displayRole(const EntryIndex& i,int col) const
 {
     switch(col)
     {
-    case COLLECTION_MODEL_FILENAME: return (i.is_file)?
-                    (QString::fromUtf8(mCollection.fileTree().fileData(i.index).name.c_str()))
-                  : (QString::fromUtf8(mCollection.fileTree().directoryData(i.index).name.c_str()));
+    case COLLECTION_MODEL_FILENAME: if(i.is_file)
+            return QString::fromUtf8(mCollection.fileTree().fileData(i.index).name.c_str());
+        else
+            return QString::fromUtf8(mCollection.fileTree().directoryData(i.index).name.c_str());
 
     case COLLECTION_MODEL_SIZE: if(i.is_file)
             return QVariant((qulonglong)mCollection.fileTree().fileData(i.index).size) ;
         else
             return QVariant((qulonglong)mDirInfos[i.index].total_size);
 
-    case COLLECTION_MODEL_HASH: return (i.is_file)?
-                    QString::fromStdString(mCollection.fileTree().fileData(i.index).hash.toStdString())
-                  :QVariant();
+    case COLLECTION_MODEL_HASH: if(i.is_file)
+        {
+            if(mFilesBeingHashed.find(mCollection.fileTree().fileData(i.index).hash)!=mFilesBeingHashed.end())
+                return tr("[File is being hashed]");
+            else
+                return QString::fromStdString(mCollection.fileTree().fileData(i.index).hash.toStdString());
+        }
+        else
+            return QVariant();
 
     case COLLECTION_MODEL_COUNT: if(i.is_file)
             return (qulonglong)mFileInfos[i.index].is_checked;
@@ -420,6 +436,15 @@ QVariant RsCollectionModel::sortRole(const EntryIndex& i,int col) const
 QVariant RsCollectionModel::decorationRole(const EntryIndex& i,int col) const
 {
     return QVariant();
+}
+
+void RsCollectionModel::notifyFilesBeingHashed(const std::list<RsFileHash>& files)
+{
+    mFilesBeingHashed.insert(files.begin(),files.end());
+}
+void RsCollectionModel::fileHashingFinished(const RsFileHash& hash)
+{
+    mFilesBeingHashed.erase(hash);
 }
 
 void RsCollectionModel::preMods()
