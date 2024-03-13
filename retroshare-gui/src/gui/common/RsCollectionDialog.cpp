@@ -883,6 +883,12 @@ void RsCollectionDialog::addSelection(bool recursive)
     mCollectionModel->postMods();
 
     ui._hashBox->addAttachments(paths,RS_FILE_REQ_ANONYMOUS_ROUTING /*, 0*/);
+
+    if(!mFilesBeingHashed.empty())
+    {
+        ui._save_PB->setToolTip(tr("Please wait for all files to be properly processed before saving."));
+        ui._save_PB->setEnabled(false);
+    }
 }
 
 #ifdef TO_REMOVE
@@ -1268,6 +1274,11 @@ void RsCollectionDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
     mCollection->updateHashes(old_to_new_hashes);
     mCollectionModel->postMods();
 
+    if(mFilesBeingHashed.empty())
+    {
+        ui._save_PB->setToolTip(tr(""));
+        ui._save_PB->setEnabled(true);
+    }
 	updateList();
 }
 
