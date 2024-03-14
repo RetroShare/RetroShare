@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>671</width>
-    <height>400</height>
+    <width>761</width>
+    <height>434</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -283,7 +283,7 @@
                      </property>
                      <property name="icon">
                       <iconset resource="../images.qrc">
-                       <normaloff>:/images/feedback_arrow.png</normaloff>:/images/feedback_arrow.png</iconset>
+                       <normaloff>:/images/start.png</normaloff>:/images/start.png</iconset>
                      </property>
                     </widget>
                    </item>
@@ -309,7 +309,7 @@
                      </property>
                      <property name="icon">
                       <iconset resource="../images.qrc">
-                       <normaloff>:/images/update.png</normaloff>:/images/update.png</iconset>
+                       <normaloff>:/images/startall.png</normaloff>:/images/startall.png</iconset>
                      </property>
                     </widget>
                    </item>
@@ -334,8 +334,8 @@
                       <string notr="true"/>
                      </property>
                      <property name="icon">
-                      <iconset>
-                       <normaloff>:/images/deletemail24.png</normaloff>:/images/deletemail24.png</iconset>
+                      <iconset resource="../images.qrc">
+                       <normaloff>:/images/delete.png</normaloff>:/images/delete.png</iconset>
                      </property>
                     </widget>
                    </item>

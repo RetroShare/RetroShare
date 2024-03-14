@@ -144,9 +144,9 @@ static QString purifyFileName(const QString& input,bool& bad)
     return output ;
 }
 
-void RsCollection::merge_in(const QString& fname,uint64_t size,const RsFileHash& hash)
+void RsCollection::merge_in(const QString& fname,uint64_t size,const RsFileHash& hash,RsFileTree::DirIndex parent_index)
 {
-    mHashes[hash]= mFileTree->addFile(mFileTree->root(),fname.toStdString(),hash,size);
+    mHashes[hash]= mFileTree->addFile(parent_index,fname.toStdString(),hash,size);
 #ifdef TO_REMOVE
     ColFileInfo info ;
     info.type = DIR_TYPE_FILE ;
@@ -157,9 +157,9 @@ void RsCollection::merge_in(const QString& fname,uint64_t size,const RsFileHash&
     recursAddElements(_xml_doc,info,_root) ;
 #endif
 }
-void RsCollection::merge_in(const RsFileTree& tree)
+void RsCollection::merge_in(const RsFileTree& tree, RsFileTree::DirIndex parent_index)
 {
-    recursMergeTree(mFileTree->root(),tree,tree.directoryData(tree.root())) ;
+    recursMergeTree(mFileTree->root(),tree,tree.directoryData(parent_index)) ;
 }
 
 void RsCollection::recursMergeTree(RsFileTree::DirIndex parent,const RsFileTree& tree,const RsFileTree::DirData& dd)

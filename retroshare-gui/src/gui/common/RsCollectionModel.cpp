@@ -438,6 +438,15 @@ QVariant RsCollectionModel::decorationRole(const EntryIndex& i,int col) const
     return QVariant();
 }
 
+RsCollectionModel::EntryIndex RsCollectionModel::getIndex(const QModelIndex& i) const
+{
+    EntryIndex res;
+    res.is_file = false;
+    res.index = 0;
+
+    convertInternalIdToIndex(i.internalId(),res);
+    return res;
+}
 bool RsCollectionModel::isChecked(EntryIndex i)
 {
     if(i.is_file)

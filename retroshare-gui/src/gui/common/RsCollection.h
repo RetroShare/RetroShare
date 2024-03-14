@@ -77,8 +77,8 @@ public:
 
     virtual ~RsCollection() ;
 
-	void merge_in(const QString& fname,uint64_t size,const RsFileHash& hash) ;
-	void merge_in(const RsFileTree& tree) ;
+    void merge_in(const QString& fname,uint64_t size,const RsFileHash& hash,RsFileTree::DirIndex parent_index=0) ;
+    void merge_in(const RsFileTree& tree,RsFileTree::DirIndex parent_index=0) ;
 
 	static const QString ExtensionString ;
 

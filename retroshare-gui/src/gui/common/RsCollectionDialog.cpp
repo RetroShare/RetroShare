@@ -1132,6 +1132,32 @@ void RsCollectionDialog::processItem(QMap<QString, QString> &dirToAdd
  */
 void RsCollectionDialog::makeDir()
 {
+    QModelIndexList selected_indices = ui._fileEntriesTW->selectionModel()->selectedIndexes();
+
+    if(selected_indices.size() > 1)
+    {
+        QMessageBox::information(nullptr,tr("Too many places selected"),tr("Please select at most one directory where to create the new folder"));
+        return;
+    }
+
+    QModelIndex place_index;
+
+    if(!selected_indices.empty())
+        place_index = selected_indices.first();
+
+    RsCollectionModel::EntryIndex e = mCollectionModel->getIndex(place_index);
+
+    if(e.is_file)
+    {
+        QMessageBox::information(nullptr,tr("Selected place cannot be a file"),tr("Please select at most one directory where to create the new folder"));
+        return;
+    }
+    QString childName = QInputDialog::getText(this, tr("New Directory"), tr("Enter the new directory's name"), QLineEdit::Normal);
+
+    mCollectionModel->preMods();
+    mCollection->merge_in(*RsFileTree::fromDirectory(childName.toUtf8().constData()),e.index);
+    mCollectionModel->postMods();
+
 #ifdef TODO_COLLECTION
 	QString childName="";
 	bool ok, badChar, nameOK = false;
