@@ -50,6 +50,7 @@ class RsCollectionModel: public QAbstractItemModel
 
         void notifyFilesBeingHashed(const std::list<RsFileHash>& files);
         void fileHashingFinished(const RsFileHash& hash);
+        bool isChecked(EntryIndex);
     signals:
         void sizesChanged();	// tells that the total size of the top level dir has changed (due to selection)
 

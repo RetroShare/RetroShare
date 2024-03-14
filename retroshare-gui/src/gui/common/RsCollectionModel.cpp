@@ -438,6 +438,13 @@ QVariant RsCollectionModel::decorationRole(const EntryIndex& i,int col) const
     return QVariant();
 }
 
+bool RsCollectionModel::isChecked(EntryIndex i)
+{
+    if(i.is_file)
+        return mFileInfos[i.index].is_checked;
+    else
+        return mDirInfos[i.index].check_state != DirCheckState::UNSELECTED;
+}
 void RsCollectionModel::notifyFilesBeingHashed(const std::list<RsFileHash>& files)
 {
     mFilesBeingHashed.insert(files.begin(),files.end());

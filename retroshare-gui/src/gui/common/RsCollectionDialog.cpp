@@ -1421,13 +1421,55 @@ void RsCollectionDialog::cancel()
  */
 void RsCollectionDialog::download()
 {
-#ifdef TODO_COLLECTION
 	std::cerr << "Downloading!" << std::endl;
 
 	QString dldir = ui.downloadFolder_LE->text();
 
 	std::cerr << "downloading all these files:" << std::endl;
 
+    std::function<void(RsFileTree::DirIndex,const std::string&)> recursDL = [&](RsFileTree::DirIndex index,const std::string& path)
+    {
+        const auto& dirdata(mCollection->fileTree().directoryData(index));
+        RsCollectionModel::EntryIndex e;
+
+        for(uint32_t i=0;i<dirdata.subdirs.size();++i)
+        {
+            e.index = dirdata.subdirs[i];
+            e.is_file = false;
+
+            if(!mCollectionModel->isChecked(e))
+                continue;
+
+            const auto& sdd = mCollection->fileTree().directoryData(e.index);
+            std::string subpath = RsDirUtil::makePath(path,sdd.name);
+
+            std::cerr << "Creating subdir " << sdd.name << " to directory " << path << std::endl;
+
+            if(!QDir(QApplication::applicationDirPath()).mkpath(QString::fromUtf8(subpath.c_str())))
+                QMessageBox::warning(NULL,tr("Unable to make path"),tr("Unable to make path:")+"<br>  "+QString::fromUtf8(subpath.c_str())) ;
+
+            recursDL(dirdata.subdirs[i],subpath);
+        }
+        for(uint32_t i=0;i<dirdata.subfiles.size();++i)
+        {
+            e.index = dirdata.subfiles[i];
+            e.is_file = true;
+
+            if(!mCollectionModel->isChecked(e))
+                continue;
+
+            std::string subpath = RsDirUtil::makePath(path,dirdata.name);
+            const auto& f(mCollection->fileTree().fileData(dirdata.subfiles[i]));
+
+            std::cerr << "Requesting file " << f.name << " to directory " << path << std::endl;
+
+            rsFiles->FileRequest(f.name,f.hash,f.size,path,RS_FILE_REQ_ANONYMOUS_ROUTING,std::list<RsPeerId>());
+        }
+    };
+
+    recursDL(mCollection->fileTree().root(),dldir.toUtf8().constData());
+    close();
+#ifdef TO_REMOVE
 	while ((item = *itemIterator) != NULL) {
 		++itemIterator;
 

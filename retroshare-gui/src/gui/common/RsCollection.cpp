@@ -238,7 +238,7 @@ void RsCollection::recursCollectColFileInfos(const QDomElement& e,std::vector<Co
 void RsCollection::recursAddElements(RsFileTree::DirIndex parent, const DirDetails& dd, FileSearchFlags flags)
 {
     if (dd.type == DIR_TYPE_FILE)
-        mFileTree->addFile(parent,dd.name,dd.hash,dd.size);
+        mHashes[dd.hash] = mFileTree->addFile(parent,dd.name,dd.hash,dd.size);
     else if (dd.type == DIR_TYPE_DIR)
     {
         RsFileTree::DirIndex new_dir_index = mFileTree->addDirectory(parent,dd.name);
@@ -488,6 +488,7 @@ bool RsCollection::save(const QString& fileName) const
 
 bool RsCollection::recursParseXml(QDomDocument& doc,const QDomNode& e,const RsFileTree::DirIndex parent)
 {
+    mHashes.clear();
     QDomNode n = e.firstChild() ;
 #ifdef COLLECTION_DEBUG
     std::cerr << "Parsing element " << e.tagName().toStdString() << std::endl;
@@ -509,7 +510,7 @@ bool RsCollection::recursParseXml(QDomDocument& doc,const QDomNode& e,const RsFi
             std::string name = purifyFileName(ee.attribute(QString("name")), bad_chars_detected).toUtf8().constData() ;
             uint64_t size = ee.attribute(QString("size")).toULongLong() ;
 
-            mFileTree->addFile(parent,name,hash,size);
+            mHashes[hash] = mFileTree->addFile(parent,name,hash,size);
 #ifdef TO_REMOVE
             mFileTree.addFile(parent,)
             ColFileInfo newChild ;
@@ -551,10 +552,6 @@ bool RsCollection::recursParseXml(QDomDocument& doc,const QDomNode& e,const RsFi
 
         n = n.nextSibling() ;
     }
-    mHashes.clear();
-    for(uint64_t i=0;i<mFileTree->numFiles();++i)
-        mHashes.insert(std::make_pair(mFileTree->fileData(i).hash,i ));
-
     return true;
 }
 bool RsCollection::recursExportToXml(QDomDocument& doc,QDomElement& e,const RsFileTree::DirData& dd) const
