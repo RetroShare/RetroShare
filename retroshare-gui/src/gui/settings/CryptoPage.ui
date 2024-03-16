@@ -281,7 +281,7 @@
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this button to export your profile key. You can then import it in a different computer and make a new node with the same profile. Doing so, existing friends that you also add to the new node will automatically recognise that new node as friend.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>Export</string>
+             <string>Export profile</string>
             </property>
            </widget>
           </item>
@@ -509,7 +509,7 @@
           <item row="15" column="1">
            <widget class="QPushButton" name="exportfriendslist">
             <property name="text">
-             <string>Export</string>
+             <string>Export friends list</string>
             </property>
            </widget>
           </item>
