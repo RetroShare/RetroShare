@@ -151,7 +151,9 @@ void PulseReply::setReferenceString(QString ref)
 void PulseReply::mousePressEvent(QMouseEvent *event)
 {
     // Check if the event is a left mouse button press
-    if (event->button() == Qt::LeftButton && (IS_MSG_UNREAD(mPulse->mMeta.mMsgStatus) || IS_MSG_NEW(mPulse->mMeta.mMsgStatus)))
+//    if (event->button() == Qt::LeftButton && (IS_MSG_UNREAD(mPulse->mMeta.mMsgStatus) || IS_MSG_NEW(mPulse->mMeta.mMsgStatus)))
+    if (event->button() == Qt::LeftButton && (IS_MSG_UNPROCESSED(mPulse->mMeta.mMsgStatus)))
+
     {
         uint32_t token;
         // Perform some action when the left mouse button is pressed
@@ -160,6 +162,16 @@ void PulseReply::mousePressEvent(QMouseEvent *event)
         rsWire->setMessageReadStatus(token, msgPair, true);
         std::cout << "Left mouse button pressed on PulseReply!" <<std::endl;
         // You can add your own custom code here
+    }
+    else{
+        bool one = event->button() == Qt::LeftButton;
+        std::cout << "the first condition:"<< one <<std::endl;
+        one = IS_MSG_UNREAD(mPulse->mMeta.mMsgStatus);
+        std::cout << "the second condition:"<< one <<std::endl;
+        one = IS_MSG_NEW(mPulse->mMeta.mMsgStatus);
+        std::cout << "the third condition:"<< one <<std::endl;
+        one = IS_MSG_UNPROCESSED(mPulse->mMeta.mMsgStatus);
+        std::cout << "the fourth condition:"<< one <<std::endl;
     }
     // Call the base class implementation to ensure proper event handling
     QWidget::mousePressEvent(event);

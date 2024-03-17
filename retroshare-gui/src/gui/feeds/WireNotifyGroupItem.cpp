@@ -150,7 +150,7 @@ void WireNotifyGroupItem::fill()
     ui->nameLabel->setText(link.toHtml());
 //	ui->nameLabel->setText(groupName());
 
-    ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));
+    ui->descLabel->setText(QString::fromUtf8(mGroup.mTagline.c_str()));
 
     if (mGroup.mHeadshot.mData != NULL) {
         QPixmap wireImage;

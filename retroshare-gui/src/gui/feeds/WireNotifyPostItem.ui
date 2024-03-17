@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>WireNotifyPoseItem</class>
- <widget class="QWidget" name="WireNotifyPoseItem">
+ <class>WireNotifyPostItem</class>
+ <widget class="QWidget" name="WireNotifyPostItem">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,7 +10,7 @@
     <height>263</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="WireNotifyPoseItem_GL">
+  <layout class="QGridLayout" name="WireNotifyPostItem_GL">
    <property name="leftMargin">
     <number>1</number>
    </property>
@@ -52,18 +52,9 @@
         <item>
          <layout class="QVBoxLayout" name="logo_VLayout">
           <item>
-           <widget class="QWidget" name="logoLabel" native="true">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text" stdset="0">
-             <string/>
-            </property>
-            <property name="scaledContents" stdset="0">
-             <bool>false</bool>
+           <widget class="ZoomableLabel" name="logoLabel">
+            <property name="text">
+             <string>TextLabel</string>
             </property>
            </widget>
           </item>
@@ -446,6 +437,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ZoomableLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxschannels/GxsChannelPostThumbnail.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

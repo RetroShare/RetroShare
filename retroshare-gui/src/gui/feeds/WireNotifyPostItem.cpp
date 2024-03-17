@@ -25,7 +25,11 @@
 #include "util/qtthreadsutils.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/FilesDefs.h"
+#include "gui/gxs/GxsIdDetails.h"
+#include "util/stringutil.h"
+#include "util/DateTime.h"
 
+#include <QStyle>
 #include <iostream>
 #include <cmath>
 
@@ -57,8 +61,8 @@ WireNotifyPostItem::WireNotifyPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 //    mLoadingMessage = false;
 //    mLoadingComment = false;
 
-//    mPost.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
-//    mPost.mMeta.mGroupId = mGroupMeta.mGroupId;
+//    mPulse.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
+//    mPulse.mMeta.mGroupId = mGroupMeta.mGroupId;
 
 //	QVector<RsGxsMessageId> v;
 //	//bool self = false;
@@ -75,26 +79,6 @@ WireNotifyPostItem::WireNotifyPostItem(FeedHolder *feedHolder, uint32_t feedId, 
     // no call to loadGroup() here because we have it already.
 }
 
-void WireNotifyPostItem::paintEvent(QPaintEvent *e)
-{
-    /* This method employs a trick to trigger a deferred loading. The post and group is requested only
-     * when actually displayed on the screen. */
-
-//	if(!mLoaded)
-//	{
-//		mLoaded = true ;
-
-//        std::set<RsGxsMessageId> older_versions;	// not so nice. We need to use std::set everywhere
-//        for(auto& m:messageVersions())
-//            older_versions.insert(m);
-
-//		fill();
-//		requestMessage();
-//		requestComment();
-//	}
-
-//	GxsFeedItem::paintEvent(e) ;
-}
 
 WireNotifyPostItem::~WireNotifyPostItem()
 {
@@ -112,19 +96,19 @@ void WireNotifyPostItem::setup()
     // This is particularly important here because a wire may contain many posts, so duplicating the QImages here is deadly for the
     // memory.
 
-    ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default-video.png"));
+//    ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default-video.png"));
     //ui->warn_image_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/status_unknown.png"));
     ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
-    ui->voteUpButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_up.png"));
-    ui->voteDownButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_down.png"));
-    ui->downloadButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/download.png"));
-    ui->playButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/play.png"));
+//    ui->voteUpButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_up.png"));
+//    ui->voteDownButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_down.png"));
+//    ui->downloadButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/download.png"));
+//    ui->playButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/play.png"));
     ui->commentButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
     //ui->editButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/pencil-edit-button.png"));
-    ui->copyLinkButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/copy.png"));
-    ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/down-arrow.png"));
-    ui->readAndClearButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/correct.png"));
-    ui->clearButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/exit2.png"));
+//    ui->copyLinkButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/copy.png"));
+//    ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/down-arrow.png"));
+//    ui->readAndClearButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/correct.png"));
+//    ui->clearButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/exit2.png"));
 
     setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -136,8 +120,8 @@ void WireNotifyPostItem::setup()
     ui->titleLabel->setText(tr("Loading..."));
     ui->datetimelabel->clear();
     ui->filelabel->clear();
-    ui->newCommentLabel->hide();
-    ui->commLabel->hide();
+//    ui->newCommentLabel->hide();
+//    ui->commLabel->hide();
 
     /* general ones */
     connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(toggle()));
@@ -175,7 +159,7 @@ void WireNotifyPostItem::setup()
     //ui->warning_label->hide();
 
     ui->titleLabel->setMinimumWidth(100);
-    //ui->subjectLabel->setMinimumWidth(100);
+    ui->subjectLabel->setMinimumWidth(100);
     //ui->warning_label->setMinimumWidth(100);
 
     ui->feedFrame->setProperty("new", false);
@@ -369,7 +353,7 @@ bool WireNotifyPostItem::setPost(const RsWirePulse &pulse, bool doFill)
     mPulse = pulse;
 
     if (doFill) {
-//        fill();
+        fill();
         std::cout<<"filling needs to be implemented"<<std::endl;
     }
 
@@ -490,4 +474,226 @@ void WireNotifyPostItem::doExpand(bool open)
     {
         mFeedHolder->lockLayout(this, false);
     }
+}
+
+void WireNotifyPostItem::fill()
+{
+    /* fill in */
+
+//	if (isLoading()) {
+    //	/* Wait for all requests */
+        //return;
+//	}
+
+#ifdef DEBUG_ITEM
+    std::cerr << "WireNotifyPostItem::fill()";
+    std::cerr << std::endl;
+#endif
+
+    std::cout<<"*************************************************filling************************************"<<std::endl;
+    mInFill = true;
+
+    QString title;
+    QString msgText;
+    //float f = QFontMetricsF(font()).height()/14.0 ;
+
+    ui->logoLabel->setEnableZoom(false);
+    int desired_height = QFontMetricsF(font()).height() * 8;
+    ui->logoLabel->setFixedSize(4/3.0*desired_height,desired_height);
+
+//    if (mPulse.mHeadshot.mData != NULL) {
+//        QPixmap wireImage;
+//        GxsIdDetails::loadPixmapFromData(mGroup.mHeadshot.mData, mGroup.mHeadshot.mSize, wireImage,GxsIdDetails::ORIGINAL);
+//        ui->logoLabel->setPixmap(QPixmap(wireImage));
+//    } else {
+//        ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png"));
+//    }
+    ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png"));
+
+    //if( !IS_GROUP_PUBLISHER(mGroupMeta.mSubscribeFlags) )
+    ui->editButton->hide() ;	// never show this button. Feeds are not the place to edit posts.
+
+    if (!mIsHome)
+    {
+        if (mCloseOnRead && !IS_MSG_NEW(mPulse.mMeta.mMsgStatus)) {
+            removeItem();
+        }
+
+        title = tr("Wire Feed") + ": ";
+        RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_WIRE, mPulse.mMeta.mGroupId, groupName());
+        title += link.toHtml();
+        ui->titleLabel->setText(title);
+
+        msgText = tr("Pulse") + ": ";
+        RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_WIRE, mPulse.mMeta.mGroupId, mPulse.mMeta.mMsgId, messageName());
+        msgText += msgLink.toHtml();
+        ui->subjectLabel->setText(msgText);
+
+        if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
+        {
+            ui->unsubscribeButton->setEnabled(true);
+        }
+        else
+        {
+            ui->unsubscribeButton->setEnabled(false);
+        }
+        ui->readButton->hide();
+        ui->newLabel->hide();
+        ui->copyLinkButton->hide();
+
+        if (IS_MSG_NEW(mPulse.mMeta.mMsgStatus)) {
+            mCloseOnRead = true;
+        }
+    }
+    else
+    {
+        /* subject */
+        ui->titleLabel->setText(QString::fromUtf8(mPulse.mMeta.mMsgName.c_str()));
+
+        //uint32_t autorized_lines = (int)floor((ui->logoLabel->height() - ui->titleLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
+
+        // fill first 4 lines of message. (csoler) Disabled the replacement of smileys and links, because the cost is too crazy
+        //ui->subjectLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(mPulse.mMsg.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+
+        ui->subjectLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPulse.mPulseText.c_str()), 2)) ;
+
+        //QString score = QString::number(post.mTopScore);
+        // scoreLabel->setText(score);
+
+        /* disable buttons: deletion facility not enabled with cache services yet */
+        ui->clearButton->setEnabled(false);
+        ui->unsubscribeButton->setEnabled(false);
+        ui->clearButton->hide();
+        ui->readAndClearButton->hide();
+        ui->unsubscribeButton->hide();
+        ui->copyLinkButton->show();
+
+        if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
+        {
+            ui->readButton->setVisible(true);
+
+//			setReadStatus(IS_MSG_NEW(mPulse.mMeta.mMsgStatus), IS_MSG_UNREAD(mPulse.mMeta.mMsgStatus) || IS_MSG_NEW(mPulse.mMeta.mMsgStatus));
+        }
+        else
+        {
+            ui->readButton->setVisible(false);
+            ui->newLabel->setVisible(false);
+        }
+
+        mCloseOnRead = false;
+    }
+
+    // differences between Feed or Top of Comment.
+    if (mFeedHolder)
+    {
+        if (mIsHome) {
+            ui->commentButton->show();
+        } else if (ui->commentButton->icon().isNull()){
+            //Icon is seted if a comment received.
+            ui->commentButton->hide();
+        }
+
+// THIS CODE IS doesn't compile - disabling until fixed.
+#if 0
+        if (post.mComments)
+        {
+            QString commentText = QString::number(post.mComments);
+            commentText += " ";
+            commentText += tr("Comments");
+            ui->commentButton->setText(commentText);
+        }
+        else
+        {
+            ui->commentButton->setText(tr("Comment"));
+        }
+#endif
+
+    }
+    else
+    {
+        ui->commentButton->hide();
+    }
+
+    // disable voting buttons - if they have already voted.
+    /*if (post.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
+    {
+        voteUpButton->setEnabled(false);
+        voteDownButton->setEnabled(false);
+    }*/
+
+//	{
+//		QTextDocument doc;
+//		doc.setHtml( QString::fromUtf8(mPulse.mMsg.c_str()) );
+
+//		ui->msgFrame->setVisible(doc.toPlainText().length() > 0);
+//	}
+
+//	if (wasExpanded() || ui->expandFrame->isVisible()) {
+//		fillExpandFrame();
+//	}
+
+    ui->datetimelabel->setText(DateTime::formatLongDateTime(mPulse.mMeta.mPublishTs));
+
+//    if ( (mPulse.mAttachmentCount != 0) || (mPulse.mSize != 0) ) {
+//        ui->filelabel->setVisible(true);
+//        ui->filelabel->setText(QString("(%1 %2) %3").arg(mPulse.mAttachmentCount).arg(  (mPulse.mAttachmentCount > 1)?tr("Files"):tr("File")).arg(misc::friendlyUnit(mPulse.mSize)));
+//    } else {
+//        ui->filelabel->setVisible(false);
+//    }
+
+//    if (mFileItems.empty() == false) {
+//        std::list<SubFileItem *>::iterator it;
+//        for(it = mFileItems.begin(); it != mFileItems.end(); ++it)
+//        {
+//            delete(*it);
+//        }
+//        mFileItems.clear();
+//    }
+
+//    std::list<RsGxsFile>::const_iterator it;
+//    for(it = mPulse.mFiles.begin(); it != mPulse.mFiles.end(); ++it)
+//    {
+//        /* add file */
+//        std::string path;
+//        SubFileItem *fi = new SubFileItem(it->mHash, it->mName, path, it->mSize, SFI_STATE_REMOTE | SFI_TYPE_CHANNEL, RsPeerId());
+//        mFileItems.push_back(fi);
+
+//        /* check if the file is a media file */
+//        if (!misc::isPreviewable(QFileInfo(QString::fromUtf8(it->mName.c_str())).suffix()))
+//        {
+//        fi->mediatype();
+//                /* check if the file is not a media file and change text */
+//        ui->playButton->setText(tr("Open"));
+//        ui->playButton->setToolTip(tr("Open File"));
+//        } else {
+//        ui->playButton->setText(tr("Play"));
+//        ui->playButton->setToolTip(tr("Play Media"));
+//        }
+
+//        QLayout *layout = ui->expandFrame->layout();
+//        layout->addWidget(fi);
+//    }
+
+    mInFill = false;
+}
+
+void WireNotifyPostItem::paintEvent(QPaintEvent *e)
+{
+    /* This method employs a trick to trigger a deferred loading. The post and group is requested only
+     * when actually displayed on the screen. */
+
+    if(!mLoaded)
+    {
+        mLoaded = true ;
+
+        std::set<RsGxsMessageId> older_versions;	// not so nice. We need to use std::set everywhere
+        for(auto& m:messageVersions())
+            older_versions.insert(m);
+
+        fill();
+        requestMessage();
+        requestComment();
+    }
+
+    GxsFeedItem::paintEvent(e) ;
 }

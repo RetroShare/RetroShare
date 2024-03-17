@@ -115,28 +115,39 @@ void WireDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 #endif
 
         // The following switch statements refresh the wire feed whenever there is a new event
+
+        std::cout<<"***************the wire event code is ************************* "<<std::endl;
         switch(e->mWireEventCode)
         {
 
         case RsWireEventCode::READ_STATUS_CHANGED:
             updateGroupStatisticsReal(e->mWireGroupId); // update the list immediately
+            std::cout<<"1"<<std::endl;
             return;
 
         case RsWireEventCode::STATISTICS_CHANGED:
+            std::cout<<"2"<<std::endl;
 
         case RsWireEventCode::NEW_POST:
+            std::cout<<"3"<<std::endl;
 
         case RsWireEventCode::NEW_REPLY:
+            std::cout<<"4"<<std::endl;
 
         case RsWireEventCode::NEW_LIKE:
+            std::cout<<"5"<<std::endl;
 
         case RsWireEventCode::NEW_REPUBLISH:
+            std::cout<<"6"<<std::endl;
 
         case RsWireEventCode::POST_UPDATED:
+            std::cout<<"7"<<std::endl;
 
         case RsWireEventCode::FOLLOW_STATUS_CHANGED:
+            std::cout<<"8"<<std::endl;
 
         case RsWireEventCode::NEW_WIRE:
+            std::cout<<"9"<<std::endl;
             updateGroupStatisticsReal(e->mWireGroupId);
             break;
 
@@ -258,7 +269,25 @@ UserNotify *WireDialog::createUserNotify(QObject *parent)
 
 bool WireDialog::getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat)
 {
-    return rsWire->getWireStatistics(groupId,stat);
+    // What follows is a hack to replace the GXS group statistics by the actual count of unread messages in wire,
+    // which should take into account old post versions, discard replies and likes, etc.
+
+    RsWireStatistics s;
+    bool res = rsWire->getWireStatistics(groupId,s);
+
+    if(!res)
+        return false;
+
+    stat.mGrpId = groupId;
+    stat.mNumMsgs = s.mNumberOfPulses;
+
+    stat.mTotalSizeOfMsgs = 0;	// hopefuly unused. Required the loading of the full channel data, so not very convenient.
+    stat.mNumThreadMsgsNew = s.mNumberOfNewPulses;
+    stat.mNumThreadMsgsUnread = s.mNumberOfUnreadPulses;
+    stat.mNumChildMsgsNew = 0;
+    stat.mNumChildMsgsUnread = 0;
+
+    return true;
 }
 
 //GxsGroupDialog *WireDialog::createNewGroupDialog()

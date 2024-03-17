@@ -54,6 +54,8 @@ protected:
     virtual void doExpand(bool open);
     virtual void expandFill(bool first);
 
+    virtual void paintEvent(QPaintEvent *) override;
+
     /* GxsGroupFeedItem */
     virtual QString groupName();
     virtual void loadGroup() override;
@@ -64,10 +66,11 @@ protected:
     virtual void loadMessage();
     virtual void loadComment();
     virtual QString messageName() override;
-    virtual void paintEvent(QPaintEvent *) override;
+//    virtual void paintEvent(QPaintEvent *) override;
 
 private:
     void setup();
+    void fill();
 
 private:
     bool mInFill;
