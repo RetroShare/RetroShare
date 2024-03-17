@@ -87,7 +87,8 @@ public slots:
 	void setShowGroups(bool show);
 	void setShowUnconnected(bool hidden);
 	void setShowState(bool show);
-    void headerContextMenuRequested(QPoint);
+	void headerContextMenuRequested(QPoint);
+	void exportFriendlistClicked();
 
 private slots:
 	void sortColumn(int col,Qt::SortOrder so);
@@ -164,6 +165,5 @@ private slots:
 	void editGroup();
 	void removeGroup();
 
-	void exportFriendlistClicked();
 	void importFriendlistClicked();
 };
