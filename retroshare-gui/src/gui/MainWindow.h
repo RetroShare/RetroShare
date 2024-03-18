@@ -67,6 +67,7 @@ class BandwidthGraph;
 class MainPage;
 class NewsFeed;
 class UserNotify;
+class WireDialog;
 
 #ifdef MESSENGER_WINDOW
 class MessengerWindow;
@@ -103,7 +104,8 @@ public:
         Posted             = 11, /** Posted links */
         People             = 12, /** People page. */
         Options            = 13, /** People page. */
-        Home               = 14  /** Home page. */
+        Home               = 14,  /** Home page. */
+        Wire               = 15   /** Wire page. */
     };
 
 
@@ -163,7 +165,8 @@ public:
 	 GxsChannelDialog  *gxschannelDialog ;
 	 GxsForumsDialog   *gxsforumDialog ;
 	 PostedDialog      *postedDialog;
-
+     WireDialog        *wireDialog;
+     
 //    ForumsDialog      *forumsDialog;
 //    ChannelFeed       *channelFeed;
     Idle              *idle;

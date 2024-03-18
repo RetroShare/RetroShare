@@ -1073,7 +1073,14 @@ void SetForegroundWindowInternal(HWND hWnd)
 		case Posted:
 			_instance->ui->stackPages->setCurrentPage( _instance->postedDialog );
 			return true ;
-		 default:
+
+#ifdef RS_USE_WIRE
+        case Wire:
+            _instance->ui->stackPages->setCurrentPage( _instance->wireDialog );
+            return true ;
+#endif
+
+        default:
 			 std::cerr << "Show page called on value that is not handled yet. Please code it! (value = " << page << ")" << std::endl;
 	 }
 
@@ -1157,6 +1164,12 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return _instance->postedDialog;
         case Home:
             return _instance->homePage;
+
+#ifdef RS_USE_WIRE
+        case Wire:
+            return _instance->wireDialog;
+#endif
+
     }
 
    return NULL;

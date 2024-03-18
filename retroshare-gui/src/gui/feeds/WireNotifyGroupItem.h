@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseTopLevel.h                                                 *
+ * gui/feeds/WireNotifyGroupItem.h                                                 *
  *                                                                             *
- * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ * Copyright (c) 2014, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,49 +18,54 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_TOP_LEVEL_H
-#define MRK_PULSE_TOP_LEVEL_H
+#ifndef WIRENOTIFYGROUPITEM_H
+#define WIRENOTIFYGROUPITEM_H
 
-#include "ui_PulseTopLevel.h"
-
-#include "PulseViewItem.h"
 #include <retroshare/rswire.h>
+#include "gui/gxs/GxsGroupFeedItem.h"
 
-class PulseTopLevel : public PulseDataItem, private Ui::PulseTopLevel
+namespace Ui {
+class WireNotifyGroupItem;
+}
+
+class FeedHolder;
+
+class WireNotifyGroupItem : public GxsGroupFeedItem
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-	PulseTopLevel(PulseViewHolder *holder, RsWirePulseSPtr pulse);
+    /** Default Constructor */
+    WireNotifyGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate);
+    WireNotifyGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsWireGroup &group, bool isHome, bool autoUpdate);
+    ~WireNotifyGroupItem();
 
+    bool setGroup(const RsWireGroup &group);
 
-protected:
-	void setup();
-
-// PulseDataInterface ===========
-	// Group
-	virtual void setHeadshot(const QPixmap &pixmap) override;
-	virtual void setGroupNameString(QString name) override;
-	virtual void setAuthorString(QString name) override;
-
-	// Msg
-	virtual void setRefMessage(QString msg, uint32_t image_count) override;
-	virtual void setMessage(RsWirePulseSPtr pulse) override;
-	virtual void setDateString(QString date) override;
-
-	// Refs
-	virtual void setLikesString(QString likes) override;
-	virtual void setRepublishesString(QString repub) override;
-	virtual void setRepliesString(QString reply) override;
-
-	// 
-	virtual void setReferenceString(QString ref) override;
-	virtual void setPulseStatus(PulseStatus status) override;
-// PulseDataInterface ===========
+    uint64_t uniqueIdentifier() const override { return hash_64bits("WireNotifyGroupItem " + groupId().toStdString()) ; }
 
 protected:
-	void mousePressEvent(QMouseEvent *event);
+    /* FeedItem */
+    virtual void doExpand(bool open);
 
+    /* GxsGroupFeedItem */
+    virtual QString groupName();
+    virtual void loadGroup() override;
+    virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
+
+private slots:
+    void toggle() override;
+    void subscribeWire();
+
+private:
+    void fill();
+    void setup();
+
+private:
+    RsWireGroup mGroup;
+
+    /** Qt Designer generated object */
+    Ui::WireNotifyGroupItem *ui;
 };
 
-#endif
+#endif // WIRENOTIFYGROUPITEM_H
