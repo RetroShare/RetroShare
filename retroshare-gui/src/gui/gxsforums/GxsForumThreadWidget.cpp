@@ -171,15 +171,15 @@ public:
         // get pixmap
         unsigned int read_status = qvariant_cast<uint32_t>(index.data(Qt::DecorationRole));
 
-        bool pinned = index.data(RsGxsForumModel::ThreadPinnedRole).toBool();
+        //bool pinned = index.data(RsGxsForumModel::ThreadPinnedRole).toBool();
         bool unread = IS_MSG_UNREAD(read_status);
         bool missing = index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_DATA).data(RsGxsForumModel::MissingRole).toBool();
 
         // set icon
         if (missing)
             icon = QIcon();
-        else if(pinned)
-            icon = FilesDefs::getIconFromQtResourcePath(IMAGE_PINPOST);
+        //else if(pinned)
+            //icon = FilesDefs::getIconFromQtResourcePath(IMAGE_PINPOST);
         else
         {
             if (unread)
@@ -187,6 +187,56 @@ public:
             else
                 icon = FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png");
         }
+
+        QPixmap pix = icon.pixmap(r.size());
+
+        // draw pixmap at center of item
+        const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
+        painter->drawPixmap(r.topLeft() + p, pix);
+    }
+
+    virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& /*index*/) const override
+    {
+        static auto img(FilesDefs::getPixmapFromQtResourcePath(":/images/message-state-unread.png"));
+
+        return QSize(img.width()*1.2,option.rect.height());
+    }
+};
+
+class PinnedStatusItemDelegate: public QStyledItemDelegate
+{
+public:
+    PinnedStatusItemDelegate() {}
+
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
+    {
+        if(!index.isValid())
+        {
+            std::cerr << "(EE) attempt to draw an invalid index." << std::endl;
+            return ;
+        }
+
+        QStyleOptionViewItem opt = option;
+        initStyleOption(&opt, index);
+        // disable default icon
+        opt.icon = QIcon();
+        // draw default item
+        QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
+
+        const QRect r = option.rect;
+
+        QIcon icon ;
+
+        // get pixmap
+        bool pinned = index.data(RsGxsForumModel::ThreadPinnedRole).toBool();
+
+        bool missing = index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_DATA).data(RsGxsForumModel::MissingRole).toBool();
+
+        // set icon
+        if (missing)
+            icon = QIcon();
+        else if(pinned)
+            icon = FilesDefs::getIconFromQtResourcePath(IMAGE_PINPOST);
 
         QPixmap pix = icon.pixmap(r.size());
 
@@ -271,6 +321,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_AUTHOR,new GxsIdTreeItemDelegate()) ;
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_READ,new ReadStatusItemDelegate()) ;
+    ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_PIN,new PinnedStatusItemDelegate()) ;
 
     ui->threadTreeWidget->header()->setSortIndicatorShown(true);
 
@@ -328,6 +379,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     /* Set header resize modes and initial section sizes */
 
     QHeaderView * ttheader = ui->threadTreeWidget->header () ;
+    ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_PIN,  25*f);
+    ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_READ, 25*f);
     ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_DATE,  140*f);
     ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_TITLE, 440*f);
     ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_AUTHOR, 150*f);
@@ -336,9 +389,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     //ui->threadTreeWidget->resizeColumnToContents(RsGxsForumModel::COLUMN_THREAD_READ);
 
     QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_TITLE,        QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_PIN,          QHeaderView::Fixed);
     QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DATE,         QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_AUTHOR,       QHeaderView::Interactive);
-    QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_READ,         QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_READ,         QHeaderView::Fixed);
     QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, QHeaderView::Fixed);
 
     ttheader->setCascadingSectionResizes(true);
@@ -440,6 +494,8 @@ GxsForumThreadWidget::~GxsForumThreadWidget()
 
 void GxsForumThreadWidget::processSettings(bool load)
 {
+	int forumTreeVersion = 3; // version number for the settings to solve problems when modifying the column count
+
     QHeaderView *header = ui->threadTreeWidget->header();
 
     Settings->beginGroup(QString("ForumThreadWidget"));
@@ -454,6 +510,10 @@ void GxsForumThreadWidget::processSettings(bool load)
 
         // filterColumn
         ui->filterLineEdit->setCurrentFilter(Settings->value("filterColumn", RsGxsForumModel::COLUMN_THREAD_TITLE).toInt());
+
+       // state of thread tree
+        if (Settings->value("ForumTreeVersion").toInt() == forumTreeVersion)
+            header->restoreState(Settings->value("ThreadTree").toByteArray());
 
         // index of viewBox
         switch(Settings->value("viewBox", VIEW_THREADED).toInt())
@@ -474,6 +534,7 @@ void GxsForumThreadWidget::processSettings(bool load)
 
         // state of thread tree
         Settings->setValue("ThreadTree", header->saveState());
+        Settings->setValue("ForumTreeVersion", forumTreeVersion);
 
         // state of splitter
         Settings->setValue("threadSplitter", ui->threadSplitter->saveState());
@@ -799,6 +860,12 @@ void GxsForumThreadWidget::headerContextMenuRequested(const QPoint &pos)
     title->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_TITLE));
     title->setData(RsGxsForumModel::COLUMN_THREAD_TITLE);
     connect(title, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+    QAction* pin = header_context_menu->addAction(QIcon(), tr("Pin"));
+    pin->setCheckable(true);
+    pin->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_PIN));
+    pin->setData(RsGxsForumModel::COLUMN_THREAD_PIN);
+    connect(pin, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
 
     QAction* read = header_context_menu->addAction(QIcon(), tr("Read"));
     read->setCheckable(true);

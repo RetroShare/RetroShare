@@ -338,7 +338,6 @@ QVariant RsGxsForumModel::headerData(int section, Qt::Orientation /*orientation*
 		switch(section)
 		{
 		case COLUMN_THREAD_TITLE:        return tr("Title");
-		case COLUMN_THREAD_READ:         return tr("UnRead");
 		case COLUMN_THREAD_DATE:         return tr("Date");
 		case COLUMN_THREAD_AUTHOR:       return tr("Author");
 		default:
@@ -348,6 +347,8 @@ QVariant RsGxsForumModel::headerData(int section, Qt::Orientation /*orientation*
 	if(role == Qt::DecorationRole)
 		switch(section)
 		{
+			case COLUMN_THREAD_PIN:          return FilesDefs::getIconFromQtResourcePath(":/images/pin32.png");
+			case COLUMN_THREAD_READ:         return FilesDefs::getIconFromQtResourcePath(":/images/message-state-header.png");
 			case COLUMN_THREAD_DISTRIBUTION: return FilesDefs::getIconFromQtResourcePath(":/icons/flag-green.png");
 			default:
 			return QVariant();
@@ -655,6 +656,7 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
                                 else
 									return QVariant(QString::fromUtf8(fmpe.mTitle.c_str()));
 
+        case COLUMN_THREAD_PIN:return QVariant();
         case COLUMN_THREAD_READ:return QVariant();
     	case COLUMN_THREAD_DATE:{
         							if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING)
