@@ -80,6 +80,11 @@ public:
     void merge_in(const QString& fname,uint64_t size,const RsFileHash& hash,RsFileTree::DirIndex parent_index=0) ;
     void merge_in(const RsFileTree& tree,RsFileTree::DirIndex parent_index=0) ;
 
+    bool removeFile(RsFileTree::FileIndex index_to_remove,RsFileTree::DirIndex parent_index);
+    bool removeDirectory(RsFileTree::DirIndex index_to_remove,RsFileTree::DirIndex parent_index);
+
+    void cleanup(); // cleans up the collection, which may contain unreferenced files/dirs after lazy editing.
+
 	static const QString ExtensionString ;
 
 #ifdef TO_REMOVE

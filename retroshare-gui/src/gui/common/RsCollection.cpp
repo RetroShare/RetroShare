@@ -670,4 +670,16 @@ void RsCollection::saveColl(std::vector<ColFileInfo> colFileInfos, const QString
 }
 #endif
 
+bool RsCollection::removeFile(RsFileTree::FileIndex index_to_remove,RsFileTree::DirIndex parent_index)
+{
+    mFileTree->removeFile(index_to_remove,parent_index);
+}
+bool RsCollection::removeDirectory(RsFileTree::DirIndex index_to_remove,RsFileTree::DirIndex parent_index)
+{
+    mFileTree->removeDirectory(index_to_remove,parent_index);
+}
 
+void RsCollection::cleanup()
+{
+    mFileTree = RsFileTree::fromTreeCleaned(*mFileTree);
+}

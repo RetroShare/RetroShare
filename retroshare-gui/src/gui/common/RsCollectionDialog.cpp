@@ -954,6 +954,27 @@ bool RsCollectionDialog::addAllChild(QFileInfo &fileInfoParent
  */
 void RsCollectionDialog::remove()
 {
+    QMap<QString, QString > dirToRemove;
+    int count=0;//to not scan all items on list .count()
+
+    QModelIndexList milSelectionList =	ui._fileEntriesTW->selectionModel()->selectedIndexes();
+
+    mCollectionModel->preMods();
+
+    foreach (QModelIndex index, milSelectionList)
+        if(index.column()==0)    //Get only FileName
+        {
+            auto indx = mCollectionModel->getIndex(index);
+            auto parent_indx = mCollectionModel->getIndex(index.parent());
+
+            if(indx.is_file)
+                mCollection->removeFile(indx.index,parent_indx.index);
+            else
+                mCollection->removeDirectory(indx.index,parent_indx.index);
+        }
+
+    mCollectionModel->postMods();
+
 #ifdef TODO_COLLECTION
 	bool removeOnlyFile=false;
 	QString listDir;
@@ -1538,6 +1559,8 @@ void RsCollectionDialog::download()
  */
 void RsCollectionDialog::save()
 {
+    mCollectionModel->preMods();
+    mCollection->cleanup();
     mCollection->save(_fileName);
     close();
 #ifdef TO_REMOVE
