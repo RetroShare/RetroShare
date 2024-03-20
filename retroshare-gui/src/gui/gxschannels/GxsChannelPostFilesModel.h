@@ -125,6 +125,7 @@ public:
     QVariant userRole      (const ChannelPostFileInfo& fmpe, int col) const;
     QVariant sortRole      (const ChannelPostFileInfo& fmpe, int col) const;
     QVariant filterRole    (const ChannelPostFileInfo& fmpe, int col) const;
+    QVariant decorationRole(const ChannelPostFileInfo& fmpe, int col) const;
 #ifdef TODO
     QVariant decorationRole(const ForumModelPostEntry& fmpe, int col) const;
     QVariant pinnedRole    (const ForumModelPostEntry& fmpe, int col) const;

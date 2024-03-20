@@ -286,6 +286,7 @@ QVariant RsGxsChannelPostFilesModel::data(const QModelIndex &index, int role) co
 	case Qt::DisplayRole:    return displayRole   (fmpe,index.column()) ;
 	case Qt::UserRole:	 	 return userRole      (fmpe,index.column()) ;
 	case SortRole:           return sortRole      (fmpe,index.column()) ;
+	case Qt::DecorationRole: return decorationRole (fmpe,index.column()) ;
 	default:
 		return QVariant();
 	}
@@ -531,3 +532,12 @@ void RsGxsChannelPostFilesModel::update_files(std::set<ChannelPostFileInfo>& add
     }
 }
 
+QVariant RsGxsChannelPostFilesModel::decorationRole(const ChannelPostFileInfo& fmpe,int col) const
+{
+	if(col == COLUMN_FILES_NAME)
+	{
+		return FilesDefs::getIconFromFileType(QString::fromUtf8(fmpe.mName.c_str()));
+	}
+	else
+		return QVariant();
+}
