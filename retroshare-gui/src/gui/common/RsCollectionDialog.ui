@@ -157,7 +157,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="_changeFile">
+                  <widget class="QToolButton" name="_changeFile">
                    <property name="maximumSize">
                     <size>
                      <width>21</width>
@@ -169,6 +169,10 @@
                    </property>
                    <property name="text">
                     <string>...</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../icons.qrc">
+                     <normaloff>:/icons/browsable_blue_128.png</normaloff>:/icons/browsable_blue_128.png</iconset>
                    </property>
                   </widget>
                  </item>
@@ -512,6 +516,7 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

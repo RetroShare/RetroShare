@@ -681,5 +681,9 @@ bool RsCollection::removeDirectory(RsFileTree::DirIndex index_to_remove,RsFileTr
 
 void RsCollection::cleanup()
 {
+    RsDbg() << "Cleaning up RsCollection with " << mFileTree->numDirs() << " dirs and " << mFileTree->numFiles() << " files." ;
+
     mFileTree = RsFileTree::fromTreeCleaned(*mFileTree);
+
+    RsDbg() << "Simplified to " << mFileTree->numDirs() << " dirs and " << mFileTree->numFiles() << " files.";
 }

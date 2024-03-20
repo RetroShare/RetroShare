@@ -125,7 +125,7 @@ protected:
  * @param readOnly: Open dialog for RsColl as ReadOnly
  */
 RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsCollectionDialogMode mode)
-  : _fileName(collectionFileName), _mode(mode)
+  : _mode(mode)
 {
     RsCollection::RsCollectionErrorCode err_code;
     mCollection = new RsCollection(collectionFileName,err_code);
@@ -137,6 +137,7 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsColl
     }
 
 	ui.setupUi(this) ;
+    ui._filename_TL->setText(collectionFileName);
 
 //	uint32_t size = colFileInfos.size();
 //	for(uint32_t i=0;i<size;++i)
@@ -148,7 +149,7 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsColl
 	setWindowFlags(Qt::Window); // for maximize button
 	setWindowFlags(windowFlags() & ~Qt::WindowMinimizeButtonHint);
 
-	setWindowTitle(QString("%1 - %2").arg(windowTitle()).arg(QFileInfo(_fileName).completeBaseName()));
+    setWindowTitle(QString("%1 - %2").arg(windowTitle()).arg(QFileInfo(collectionFileName).completeBaseName()));
 	
 	
     ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/collections.png"));
@@ -719,7 +720,7 @@ void RsCollectionDialog::changeFileName()
 		file.remove();
 	}
 
-	_fileName = fileName;
+    ui._filename_TL->setText(fileName);
 
 	updateList();
 }
@@ -1559,9 +1560,14 @@ void RsCollectionDialog::download()
  */
 void RsCollectionDialog::save()
 {
+    if(ui._filename_TL->text().isNull())
+        changeFileName();
+    if(ui._filename_TL->text().isNull())
+        return;
+
     mCollectionModel->preMods();
     mCollection->cleanup();
-    mCollection->save(_fileName);
+    mCollection->save(ui._filename_TL->text());
     close();
 #ifdef TO_REMOVE
 	std::cerr << "Saving!" << std::endl;
