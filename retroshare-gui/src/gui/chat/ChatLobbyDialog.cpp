@@ -41,7 +41,9 @@
 #include "gui/msgs/MessageComposer.h"
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/SoundManager.h"
 #include "util/HandleRichText.h"
+#include "util/misc.h"
 #include "util/QtVersion.h"
 
 #include "retroshare/rsnotify.h"
@@ -63,17 +65,21 @@ const static uint32_t timeToInactivity2 = 60 * 5;   // in seconds
 
 /** Default constructor */
 ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WindowFlags flags)
-        : ChatDialog(parent, flags), lobbyId(lid), mWindowedSetted(false), mPCWindow(nullptr),
-          bullet_red_128(":/icons/bullet_red_128.png"), bullet_grey_128(":/icons/bullet_grey_128.png"),
-          bullet_green_128(":/icons/bullet_green_128.png"), bullet_yellow_128(":/icons/bullet_yellow_128.png"),
-          bullet_blue_128(":/icons/bullet_blue_128.png")
+        : ChatDialog(parent, flags), lobbyId(lid), mWindowedSetted(false), mPCWindow(nullptr)
+        , bullet_red_128(":/icons/bullet_red_128.png"), bullet_grey_128(":/icons/bullet_grey_128.png")
+        , bullet_yellow_128(":/icons/bullet_yellow_128.png"), bullet_green_128(":/icons/bullet_green_128.png")
+        , bullet_blue_128(":/icons/bullet_blue_128.png")
+        , bullet_red_128_star(   misc::mergeIcon(":/icons/bullet_red_128.png"   ,":/icons/star_overlay_128.png"))
+        , bullet_grey_128_star(  misc::mergeIcon(":/icons/bullet_grey_128.png"  ,":/icons/star_overlay_128.png"))
+        , bullet_yellow_128_star(misc::mergeIcon(":/icons/bullet_yellow_128.png",":/icons/star_overlay_128.png"))
+        , bullet_green_128_star( misc::mergeIcon(":/icons/bullet_green_128.png" ,":/icons/star_overlay_128.png"))
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 
 	lastUpdateListTime = 0;
 
-        //connect(ui.actionChangeNickname, SIGNAL(triggered()), this, SLOT(changeNickname()));
+	//connect(ui.actionChangeNickname, SIGNAL(triggered()), this, SLOT(changeNickname()));
 	connect(ui.participantsList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(participantsTreeWidgetCustomPopupMenu(QPoint)));
 	connect(ui.participantsList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(participantsTreeWidgetDoubleClicked(QTreeWidgetItem*,int)));
 
@@ -91,6 +97,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	QHeaderView * header = ui.participantsList->header();
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Stretch);
 
+    notifyNewArrivalAct = new QAction(QIcon(), tr("Notify (sound) when come back"), this);
     muteAct = new QAction(QIcon(), tr("Mute participant"), this);
     voteNegativeAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-down.png"), tr("Ban this person (Sets negative opinion)"), this);
     voteNeutralAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-neutral.png"), tr("Give neutral opinion"), this);
@@ -110,7 +117,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     actionSortByActivity->setChecked(false);
     actionSortByActivity->setActionGroup(sortgrp);
 
-
+    connect(notifyNewArrivalAct, SIGNAL(triggered()), this, SLOT(changeNotifyForParticipant()));
     connect(muteAct, SIGNAL(triggered()), this, SLOT(changeParticipationState()));
     connect(distantChatAct, SIGNAL(triggered()), this, SLOT(distantChatParticipant()));
     connect(sendMessageAct, SIGNAL(triggered()), this, SLOT(sendMessage()));
@@ -138,7 +145,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	undockButton->setAutoRaise(true);
 	connect(undockButton, SIGNAL(clicked()), this , SLOT(toggleWindowed()));
 
-	getChatWidget()->addTitleBarWidget(undockButton) ;
+	ChatLobbyDialog::getChatWidget()->addTitleBarWidget(undockButton) ;
 
 	// Add a button to invite friends.
 	//
@@ -161,7 +168,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
 	connect(inviteFriendsButton, SIGNAL(clicked()), this , SLOT(inviteFriends()));
 
-    getChatWidget()->addTitleBarWidget(inviteFriendsButton) ;
+    ChatLobbyDialog::getChatWidget()->addTitleBarWidget(inviteFriendsButton) ;
 
     RsGxsId current_id;
     rsMsgs->getIdentityForChatLobby(lobbyId, current_id);
@@ -207,7 +214,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
 	connect(unsubscribeButton, SIGNAL(clicked()), this , SLOT(leaveLobby()));
 
-	getChatWidget()->addTitleBarWidget(unsubscribeButton) ;
+	ChatLobbyDialog::getChatWidget()->addTitleBarWidget(unsubscribeButton) ;
 }
 
 void ChatLobbyDialog::leaveLobby()
@@ -282,9 +289,12 @@ void ChatLobbyDialog::initParticipantsContextMenu(QMenu *contextMnu, QList<RsGxs
 	if (idList.isEmpty())
 		return;
 
+	contextMnu->setToolTipsVisible(true);
+
 	contextMnu->addAction(distantChatAct);
 	contextMnu->addAction(sendMessageAct);
 	contextMnu->addSeparator();
+	contextMnu->addAction(notifyNewArrivalAct);
 	contextMnu->addAction(muteAct);
 	contextMnu->addAction(votePositiveAct);
 	contextMnu->addAction(voteNeutralAct);
@@ -293,6 +303,10 @@ void ChatLobbyDialog::initParticipantsContextMenu(QMenu *contextMnu, QList<RsGxs
 
 	distantChatAct->setEnabled(false);
 	sendMessageAct->setEnabled(false);
+	notifyNewArrivalAct->setEnabled(false);
+	notifyNewArrivalAct->setCheckable(true);
+	notifyNewArrivalAct->setChecked(false);
+	notifyNewArrivalAct->setToolTip("");
 	muteAct->setEnabled(false);
 	muteAct->setCheckable(true);
 	muteAct->setChecked(false);
@@ -303,6 +317,7 @@ void ChatLobbyDialog::initParticipantsContextMenu(QMenu *contextMnu, QList<RsGxs
 
 	distantChatAct->setData(QVariant::fromValue(idList));
 	sendMessageAct->setData(QVariant::fromValue(idList));
+	notifyNewArrivalAct->setData(QVariant::fromValue(idList));
 	muteAct->setData(QVariant::fromValue(idList));
 	votePositiveAct->setData(QVariant::fromValue(idList));
 	voteNeutralAct->setData(QVariant::fromValue(idList));
@@ -315,6 +330,17 @@ void ChatLobbyDialog::initParticipantsContextMenu(QMenu *contextMnu, QList<RsGxs
 	{
 		distantChatAct->setEnabled(true);
 		sendMessageAct->setEnabled(true);
+		if (SoundManager::eventEnabled(SOUND_LOBBY_INCOMING))
+		{
+			notifyNewArrivalAct->setEnabled(true);
+			notifyNewArrivalAct->setToolTip(tr("Play a sound when this user come back."));
+		} else {
+			notifyNewArrivalAct->setEnabled(false);
+			notifyNewArrivalAct->setToolTip(tr("'Specific User incoming in Chat Room' is unchecked in Sound Preferences page."));
+		}
+		notifyNewArrivalAct->setChecked(isParticipantWaitingArrival(gxsid));
+		muteAct->setEnabled(true);
+		muteAct->setChecked(isParticipantMuted(gxsid));
 		votePositiveAct->setEnabled(
 		            rsReputations->overallReputationLevel(gxsid) !=
 		        RsReputationLevel::LOCALLY_POSITIVE );
@@ -326,8 +352,6 @@ void ChatLobbyDialog::initParticipantsContextMenu(QMenu *contextMnu, QList<RsGxs
 		voteNegativeAct->setEnabled(
 		            rsReputations->overallReputationLevel(gxsid) !=
 		        RsReputationLevel::LOCALLY_NEGATIVE );
-		muteAct->setEnabled(true);
-		muteAct->setChecked(isParticipantMuted(gxsid));
 	}
 }
 
@@ -411,7 +435,7 @@ void ChatLobbyDialog::init(const ChatId &/*id*/, const QString &/*title*/)
         if(rsIdentity->getIdDetails(gxs_id,details))
             break ;
         else
-            rstime::rs_usleep(1000*300) ;
+            std::this_thread::sleep_for(std::chrono::milliseconds(300)) ;
 
     ui.chatWidget->setName(QString::fromUtf8(details.mNickname.c_str()));
     //ui.chatWidget->addToolsAction(ui.actionChangeNickname);
@@ -532,6 +556,13 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
     QString message = QString::fromUtf8(msg.msg.c_str());
     RsGxsId gxs_id = msg.lobby_peer_gxs_id ;
 
+    if (isParticipantWaitingArrival(gxs_id))
+    {
+        // Who ask a notification for muted? We don't know...
+        SoundManager::play(SOUND_LOBBY_INCOMING);
+        idToNotifyWhenComeBack.erase(gxs_id);
+    }
+
     if(!isParticipantMuted(gxs_id))
     {
         // We could change addChatMsg to display the peers icon, passing a ChatId
@@ -562,7 +593,7 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
 
 	time_t now = time(NULL);
 
-   QList<QTreeWidgetItem*>  qlFoundParticipants=ui.participantsList->findItems(QString::fromStdString(gxs_id.toStdString()),Qt::MatchExactly,COLUMN_ID);
+    QList<QTreeWidgetItem*>  qlFoundParticipants=ui.participantsList->findItems(QString::fromStdString(gxs_id.toStdString()),Qt::MatchExactly,COLUMN_ID);
     if (qlFoundParticipants.count()!=0) qlFoundParticipants.at(0)->setText(COLUMN_ACTIVITY,QString::number(now));
 
 	if (now > lastUpdateListTime) {
@@ -627,36 +658,63 @@ void ChatLobbyDialog::updateParticipantsList()
             time_t tLastAct=widgetitem->text(COLUMN_ACTIVITY).toInt();
             time_t now = time(NULL);
 
-                widgetitem->setSizeHint(COLUMN_ICON, QSize(20,20));
+            widgetitem->setSizeHint(COLUMN_ICON, QSize(20,20));
 
-
-            if(isParticipantMuted(it2->first))
-                widgetitem->setIcon(COLUMN_ICON, bullet_red_128);
-            else if (tLastAct + timeToInactivity < now)
-                widgetitem->setIcon(COLUMN_ICON, bullet_grey_128);
-            else if (tLastAct + timeToInactivity2 < now)
-                widgetitem->setIcon(COLUMN_ICON, bullet_yellow_128);
-            else
-                widgetitem->setIcon(COLUMN_ICON, bullet_green_128);
 
             RsGxsId gxs_id;
             rsMsgs->getIdentityForChatLobby(lobbyId, gxs_id);
+            bool inNotif = isParticipantWaitingArrival(it2->first);
 
-            if (RsGxsId(participant.toStdString()) == gxs_id) widgetitem->setIcon(COLUMN_ICON, bullet_blue_128);
+            if (RsGxsId(participant.toStdString()) == gxs_id)
+                widgetitem->setIcon(COLUMN_ICON, bullet_blue_128);
+            else if(isParticipantMuted(it2->first))
+                widgetitem->setIcon(COLUMN_ICON, inNotif ? bullet_red_128_star : bullet_red_128);
+            else if (tLastAct + timeToInactivity < now)
+                widgetitem->setIcon(COLUMN_ICON, inNotif ? bullet_grey_128_star : bullet_grey_128);
+            else if (tLastAct + timeToInactivity2 < now)
+                widgetitem->setIcon(COLUMN_ICON, inNotif ? bullet_yellow_128_star : bullet_yellow_128);
+            else
+                widgetitem->setIcon(COLUMN_ICON, inNotif ? bullet_green_128_star : bullet_green_128);
 
-	    widgetitem->updateBannedState();
+            widgetitem->updateBannedState();
 
             QTime qtLastAct=QTime(0,0,0).addSecs(now-tLastAct);
             widgetitem->setToolTip(COLUMN_ICON,tr("Right click to mute/unmute participants<br/>Double click to address this person<br/>")
                                    +tr("This participant is not active since:")
                                    +qtLastAct.toString()
                                    +tr(" seconds")
+                                   + (inNotif ? tr("<br/>A notification (sound) is waiting for this participant come back.") :"")
                                    );
         }
     }
     ui.participantsList->setSortingEnabled(true);
     sortParcipants();
     filterIds();
+}
+
+void ChatLobbyDialog::changeNotifyForParticipant()
+{
+	QAction *act = dynamic_cast<QAction*>(sender()) ;
+	if(!act)
+	{
+		RS_ERR("No sender! Some bug in the code.");
+		return ;
+	}
+
+	QList<RsGxsId> idList = act->data().value<QList<RsGxsId>>();
+
+	for (auto& item : idList)
+	{
+		if (act->isChecked()) {
+			if(!isParticipantWaitingArrival(item))
+				idToNotifyWhenComeBack.insert(item);
+		} else {
+			if(isParticipantWaitingArrival(item))
+				idToNotifyWhenComeBack.erase(item);
+		}
+	}
+
+	updateParticipantsList();
 }
 
 /**
@@ -814,6 +872,16 @@ bool ChatLobbyDialog::isNicknameInLobby(const RsGxsId& nickname)
 }
 
 /**
+ * @brief Is Lobby waiting this participant new arrival to notify.
+ * @param participant: GxsID to check.
+ * @return True if in the list.
+ */
+bool ChatLobbyDialog::isParticipantWaitingArrival(const RsGxsId &participant)
+{
+	return idToNotifyWhenComeBack.find(participant) != idToNotifyWhenComeBack.end();
+}
+
+/**
  * Should Messages from this Nickname be muted?
  *
  * At the moment it is not possible to 100% know which peer sendet the message, and only
@@ -882,7 +950,7 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, c
 
         ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(),
                                   QDateTime::currentDateTime(),
-                                  tr("%1 changed his name to: %2").arg(RsHtml::plainText(name)).arg(RsHtml::plainText(newname)),
+                                  tr("%1 changed his name to: %2").arg(RsHtml::plainText(name), RsHtml::plainText(newname)),
                                   ChatWidget::MSGTYPE_SYSTEM);
 
         // TODO if a user was muted and changed his name, update mute list, but only, when the muted peer, dont change his name to a other peer in your chat lobby
@@ -897,15 +965,22 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, c
         std::cerr << "ChatLobbyDialog::displayLobbyEvent() Unhandled chat room event type " << event_type << std::endl;
     }
 
-    if (!qsParticipant.isNull())
-    {
-        QList<QTreeWidgetItem*>  qlFoundParticipants=ui.participantsList->findItems(QString::fromStdString(qsParticipant.toStdString()),Qt::MatchExactly,COLUMN_ID);
+	if (!qsParticipant.isNull())
+	{
+		QList<QTreeWidgetItem*>  qlFoundParticipants=ui.participantsList->findItems(QString::fromStdString(qsParticipant.toStdString()),Qt::MatchExactly,COLUMN_ID);
 
-        if (qlFoundParticipants.count()!=0)
-        qlFoundParticipants.at(0)->setText(COLUMN_ACTIVITY,QString::number(time(NULL)));
-    }
+		if (qlFoundParticipants.count()!=0)
+			qlFoundParticipants.at(0)->setText(COLUMN_ACTIVITY,QString::number(time(NULL)));
 
-    updateParticipantsList() ;
+		if( (event_type != RS_CHAT_LOBBY_EVENT_PEER_LEFT)
+		   && isParticipantWaitingArrival(gxs_id))
+		{
+			SoundManager::play(SOUND_LOBBY_INCOMING);
+			idToNotifyWhenComeBack.erase(gxs_id);
+		}
+	}
+
+	updateParticipantsList() ;
 }
 
 bool ChatLobbyDialog::canClose()
