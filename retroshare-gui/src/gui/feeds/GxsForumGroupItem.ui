@@ -171,7 +171,6 @@
             </property>
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
               <weight>75</weight>
               <italic>true</italic>
               <bold>true</bold>
@@ -186,7 +185,6 @@
            <widget class="QLabel" name="nameLabel">
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
               <weight>75</weight>
               <italic>true</italic>
               <bold>true</bold>

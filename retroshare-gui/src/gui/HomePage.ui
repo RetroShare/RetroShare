@@ -40,14 +40,7 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="font">
-         <font>
-          <family>Courier New</family>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
+
         <property name="contextMenuPolicy">
          <enum>Qt::DefaultContextMenu</enum>
         </property>
@@ -88,7 +81,6 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -107,7 +99,7 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -233,11 +225,6 @@
    </item>
    <item row="1" column="0" colspan="5">
     <widget class="QLabel" name="label_2">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
      <property name="text">
       <string>Open Source cross-platform, 
 private and secure decentralized communication platform.
@@ -317,11 +304,6 @@ private and secure decentralized communication platform.
       </item>
       <item row="0" column="0" colspan="3">
        <widget class="QLabel" name="label_3">
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
         <property name="styleSheet">
          <string notr="true"/>
         </property>
@@ -405,11 +387,6 @@ private and secure decentralized communication platform.
       </item>
       <item row="0" column="0" colspan="3">
        <widget class="QLabel" name="label_4">
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
         <property name="text">
          <string>Do you need help with Retroshare?</string>
         </property>
@@ -424,8 +401,8 @@ private and secure decentralized communication platform.
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc"/>
   <include location="icons.qrc"/>
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>

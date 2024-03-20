@@ -191,11 +191,6 @@
        </item>
        <item>
         <widget class="RSTreeWidget" name="lobbyTreeWidget">
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
          <property name="iconSize">
           <size>
            <width>16</width>
