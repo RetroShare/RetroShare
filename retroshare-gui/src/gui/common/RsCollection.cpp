@@ -367,8 +367,10 @@ RsCollection::RsCollection(const QString& fileName, RsCollectionErrorCode& error
         return;
     }
 
-    recursParseXml(xml_doc,root,0);
-    error = RsCollectionErrorCode::NO_ERROR;
+    if(!recursParseXml(xml_doc,root,0))
+        error = RsCollectionErrorCode::XML_PARSING_ERROR;
+    else
+        error = RsCollectionErrorCode::NO_ERROR;
 }
 
 // check that the file is a valid rscollection file, and not a lol bomb or some shit like this
@@ -672,11 +674,11 @@ void RsCollection::saveColl(std::vector<ColFileInfo> colFileInfos, const QString
 
 bool RsCollection::removeFile(RsFileTree::FileIndex index_to_remove,RsFileTree::DirIndex parent_index)
 {
-    mFileTree->removeFile(index_to_remove,parent_index);
+    return mFileTree->removeFile(index_to_remove,parent_index);
 }
 bool RsCollection::removeDirectory(RsFileTree::DirIndex index_to_remove,RsFileTree::DirIndex parent_index)
 {
-    mFileTree->removeDirectory(index_to_remove,parent_index);
+    return mFileTree->removeDirectory(index_to_remove,parent_index);
 }
 
 void RsCollection::cleanup()

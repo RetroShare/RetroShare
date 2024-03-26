@@ -325,7 +325,7 @@ void SearchDialog::checkText(const QString& txt)
 	ui.searchButton->setDisabled(txt.length() < 3);
 	ui.searchLineFrame->setProperty("valid", (txt.length() >= 3));
 	ui.searchLineFrame->style()->unpolish(ui.searchLineFrame);
-	Rshare::refreshStyleSheet(ui.searchLineFrame, false);
+	RsApplication::refreshStyleSheet(ui.searchLineFrame, false);
 }
 
 void SearchDialog::initialiseFileTypeMappings()
