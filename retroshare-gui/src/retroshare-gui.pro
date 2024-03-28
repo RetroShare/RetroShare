@@ -519,6 +519,7 @@ HEADERS +=  rshare.h \
             gui/common/vmessagebox.h \
             gui/common/RsUrlHandler.h \
             gui/common/RsCollectionDialog.h \
+            gui/common/RsCollectionModel.h \
             gui/common/rwindow.h \
             gui/common/rshtml.h \
             gui/common/AvatarDefs.h \
@@ -845,6 +846,7 @@ SOURCES +=  main.cpp \
             gui/common/ElidedLabel.cpp \
             gui/common/vmessagebox.cpp \
             gui/common/RsCollectionDialog.cpp \
+            gui/common/RsCollectionModel.cpp \
             gui/common/RsUrlHandler.cpp \
             gui/common/rwindow.cpp \
             gui/common/rshtml.cpp \
