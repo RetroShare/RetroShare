@@ -37,11 +37,10 @@
 
 const QString RsCollection::ExtensionString = QString("rscollection") ;
 
-RsCollection::RsCollection(QObject *parent)
-    : QObject(parent), mFileTree(new RsFileTree)
+RsCollection::RsCollection()
 {
+    mFileTree = std::unique_ptr<RsFileTree>(new RsFileTree());
 }
-
 RsCollection::RsCollection(const RsFileTree& ft)
 {
     mFileTree = std::unique_ptr<RsFileTree>(new RsFileTree(ft));
@@ -50,8 +49,8 @@ RsCollection::RsCollection(const RsFileTree& ft)
         mHashes.insert(std::make_pair(mFileTree->fileData(i).hash,i ));
 }
 
-RsCollection::RsCollection(const std::vector<DirDetails>& file_infos,FileSearchFlags flags, QObject *parent)
-    : QObject(parent), mFileTree(new RsFileTree)
+RsCollection::RsCollection(const std::vector<DirDetails>& file_infos,FileSearchFlags flags)
+    : mFileTree(new RsFileTree)
 {
     if(! ( (flags & RS_FILE_HINTS_LOCAL) || (flags & RS_FILE_HINTS_REMOTE)))
     {
@@ -68,39 +67,6 @@ RsCollection::RsCollection(const std::vector<DirDetails>& file_infos,FileSearchF
 
 RsCollection::~RsCollection()
 {
-}
-
-void RsCollection::downloadFiles() const
-{
-#ifdef TODO_COLLECTION
-    // print out the element names of all elements that are direct children
-    // of the outermost element.
-    QDomElement docElem = _xml_doc.documentElement();
-
-    std::vector<ColFileInfo> colFileInfos ;
-
-    recursCollectColFileInfos(docElem,colFileInfos,QString(),false) ;
-
-    RsCollectionDialog(_fileName, colFileInfos, false).exec() ;
-#endif
-}
-
-void RsCollection::autoDownloadFiles() const
-{
-#ifdef TODO_COLLECTION
-    QDomElement docElem = _xml_doc.documentElement();
-
-    std::vector<ColFileInfo> colFileInfos;
-
-    recursCollectColFileInfos(docElem,colFileInfos,QString(),false);
-
-    QString dlDir = QString::fromUtf8(rsFiles->getDownloadDirectory().c_str());
-
-    foreach(ColFileInfo colFileInfo, colFileInfos)
-    {
-        autoDownloadFiles(colFileInfo, dlDir);
-    }
-#endif
 }
 
 void RsCollection::autoDownloadFiles(ColFileInfo colFileInfo, QString dlDir) const
@@ -197,13 +163,18 @@ QString RsCollection::errorString(RsCollectionErrorCode code)
     switch(code)
     {
     default: [[fallthrough]] ;
-    case RsCollectionErrorCode::UNKNOWN_ERROR:                 return tr("Unknown error");
-    case RsCollectionErrorCode::NO_ERROR:                      return tr("No error");
-    case RsCollectionErrorCode::FILE_READ_ERROR:               return tr("Error while openning file");
-    case RsCollectionErrorCode::FILE_CONTAINS_HARMFUL_STRINGS: return tr("Collection file contains potentially harmful code");
-    case RsCollectionErrorCode::INVALID_ROOT_NODE:             return tr("Invalid root node. RsCollection node was expected.");
-    case RsCollectionErrorCode::XML_PARSING_ERROR:             return tr("XML parsing error in collection file");
+    case RsCollectionErrorCode::UNKNOWN_ERROR:                 return QObject::tr("Unknown error");
+    case RsCollectionErrorCode::NO_ERROR:                      return QObject::tr("No error");
+    case RsCollectionErrorCode::FILE_READ_ERROR:               return QObject::tr("Error while openning file");
+    case RsCollectionErrorCode::FILE_CONTAINS_HARMFUL_STRINGS: return QObject::tr("Collection file contains potentially harmful code");
+    case RsCollectionErrorCode::INVALID_ROOT_NODE:             return QObject::tr("Invalid root node. RsCollection node was expected.");
+    case RsCollectionErrorCode::XML_PARSING_ERROR:             return QObject::tr("XML parsing error in collection file");
     }
+}
+
+RsCollection::RsCollection(const RsCollection& col)
+    : mFileTree(new RsFileTree(*col.mFileTree)),mHashes(col.mHashes)
+{
 }
 
 RsCollection::RsCollection(const QString& fileName, RsCollectionErrorCode& error)

@@ -43,8 +43,12 @@ public:
     // Open existing collection for download
     static bool openExistingCollection(const QString& fileName, bool showError = true);
 
+    // Open existing collection for download
+    static bool downloadFiles(const RsCollection& collection);
 protected:
-    //bool eventFilter(QObject *obj, QEvent *ev);
+    static QString errorString(RsCollection::RsCollectionErrorCode code);
+
+    void init(const QString& collectionFileName);
 
     enum RsCollectionDialogMode {
         UNKNOWN       = 0x00,
@@ -53,6 +57,7 @@ protected:
     };
 
     RsCollectionDialog(const QString& filename, RsCollectionDialogMode mode) ;
+    RsCollectionDialog(const RsCollection& coll, RsCollectionDialogMode mode) ;
 
 private slots:
 	void directoryLoaded(QString dirLoaded);

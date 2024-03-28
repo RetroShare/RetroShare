@@ -855,7 +855,7 @@ void SharedFilesDialog::collOpen()
     RsCollection collection(fileName,err);
 
     if(err == RsCollection::RsCollectionErrorCode::NO_ERROR)
-        collection.downloadFiles();
+        RsCollectionDialog::downloadFiles(collection);
 }
 
 void LocalSharedFilesDialog::playselectedfiles()

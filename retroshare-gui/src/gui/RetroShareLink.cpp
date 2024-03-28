@@ -25,7 +25,7 @@
 #include "HomePage.h"
 #include "chat/ChatDialog.h"
 #include "common/PeerDefs.h"
-#include "common/RsCollection.h"
+#include "common/RsCollectionDialog.h"
 #include "common/RsUrlHandler.h"
 #include "connect/ConfCertDialog.h"
 #include "connect/ConnectFriendWizard.h"
@@ -1724,10 +1724,9 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 		case TYPE_FILE_TREE:
 		{
-			auto ft = RsFileTree::fromRadix64(
-			            link.radix().toStdString() );
-			RsCollection(*ft).downloadFiles();
-			break;
+            auto ft = RsFileTree::fromRadix64(link.radix().toStdString() );
+            RsCollectionDialog::downloadFiles(RsCollection(*ft));
+            break;
 		}
 
 			case TYPE_CHAT_ROOM:
@@ -1778,7 +1777,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 	// were single file links found?
 	if (fileLinkFound)
-		col.downloadFiles();
+        RsCollectionDialog::downloadFiles(col);
 
 	int countProcessed = 0;
 	int countError = 0;

@@ -24,7 +24,7 @@
 
 #include "gui/common/FilesDefs.h"
 #include "gui/common/GroupDefs.h"
-#include "gui/common/RsCollection.h"
+#include "gui/common/RsCollectionDialog.h"
 #include "gui/common/RsUrlHandler.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "retroshare/rsfiles.h"
@@ -1253,7 +1253,7 @@ void RetroshareDirModel::downloadSelected(const QModelIndexList &list,bool inter
    FileSearchFlags f = RemoteMode?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL ;
 
    if(interactive)
-	   RsCollection(dirVec,f).downloadFiles() ;
+       RsCollectionDialog::downloadFiles(RsCollection(dirVec,f)) ;
    else /* Fire off requests */
 	   for (int i = 0, n = dirVec.size(); i < n; ++i)
 	   {

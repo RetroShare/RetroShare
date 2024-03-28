@@ -598,7 +598,7 @@ void SearchDialog::collOpen()
                 RsCollection::RsCollectionErrorCode err;
 				qinfo.setFile(QString::fromUtf8(path.c_str()));
                 if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
-                    RsCollection(qinfo.absoluteFilePath(),err).downloadFiles();
+                    RsCollectionDialog::downloadFiles(RsCollection(qinfo.absoluteFilePath(),err));
 			}
 		}
 	}
@@ -613,7 +613,7 @@ void SearchDialog::collOpen()
     RsCollection collection(fileName, err);
 
     if(err == RsCollection::RsCollectionErrorCode::NO_ERROR)
-        collection.downloadFiles();
+        RsCollectionDialog::downloadFiles(collection);
     else
         QMessageBox::information(nullptr,tr("Error open RsCollection file"),RsCollection::errorString(err));
 }

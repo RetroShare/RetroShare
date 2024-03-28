@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include <QObject>
 #include <QString>
 #include <QDomDocument>
 #include <QFile>
@@ -53,10 +52,8 @@ public:
 };
 Q_DECLARE_METATYPE(ColFileInfo)
 
-class RsCollection : public QObject
+class RsCollection
 {
-	Q_OBJECT
-
 public:
     enum class RsCollectionErrorCode:uint8_t {
         NO_ERROR                      = 0x00,
@@ -67,9 +64,9 @@ public:
         XML_PARSING_ERROR             = 0x05,
     };
 
-	RsCollection(QObject *parent = 0) ;
-	// create from list of files and directories
-	RsCollection(const std::vector<DirDetails>& file_entries, FileSearchFlags flags, QObject *parent = 0) ;
+    RsCollection();
+    RsCollection(const RsCollection&);
+    RsCollection(const std::vector<DirDetails>& file_entries, FileSearchFlags flags) ;
     RsCollection(const RsFileTree& ft);
     RsCollection(const QString& filename,RsCollectionErrorCode& error_code);
 
@@ -87,10 +84,6 @@ public:
 
 	static const QString ExtensionString ;
 
-#ifdef TO_REMOVE
-	bool load(QWidget *parent);
-    bool save(QWidget *parent) const ;
-#endif
 	// Save to disk
 	bool save(const QString& fileName) const ;
 
@@ -100,11 +93,6 @@ public:
     qulonglong size();
     // total number of files in the collection
     qulonglong count() const;
-
-	// Download the content.
-	void downloadFiles() const ;
-	// Auto Download all the content.
-	void autoDownloadFiles() const ;
 
 	static bool isCollectionFile(const QString& fileName);
 
@@ -120,15 +108,6 @@ private:
     // This function is used to merge an existing RsFileTree into the RsCollection
     void recursMergeTree(RsFileTree::DirIndex parent, const RsFileTree& tree, const RsFileTree::DirData &dd);
 
-#ifdef TO_REMOVE
-	void recursAddElements(QDomDocument&,const ColFileInfo&,QDomElement&) const;
-	void recursAddElements(
-	        QDomDocument& doc, const RsFileTree& ft, uint32_t index,
-	        QDomElement& e ) const;
-
-	void recursCollectColFileInfos(const QDomElement&,std::vector<ColFileInfo>& colFileInfos,const QString& current_dir,bool bad_chars_in_parent) const ;
-#endif
-
     // check that the file is a valid rscollection file, and not a lol bomb or some shit like this
     static bool checkFile(const QString &fileName, RsCollectionErrorCode &error);
 
@@ -137,13 +116,6 @@ private:
 
     std::unique_ptr<RsFileTree> mFileTree;
     std::map<RsFileHash,RsFileTree::FileIndex> mHashes;	// used to efficiently update files being hashed
-
-#ifdef TO_REMOVE
-	QDomDocument _xml_doc ;
-	QString _fileName ;
-	bool _saved;
-	QDomElement _root ;
-#endif
 
 	friend class RsCollectionDialog ;
 };

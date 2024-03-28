@@ -136,6 +136,17 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsColl
         close();
     }
 
+    init(collectionFileName);
+}
+
+RsCollectionDialog::RsCollectionDialog(const RsCollection& coll, RsCollectionDialogMode mode)
+  : _mode(mode)
+{
+    mCollection = new RsCollection(coll);
+    init(QString());
+}
+void RsCollectionDialog::init(const QString& collectionFileName)
+{
 	ui.setupUi(this) ;
     ui._filename_TL->setText(collectionFileName);
 
@@ -799,6 +810,12 @@ bool RsCollectionDialog::openExistingCollection(const QString& fileName, bool sh
 {
     return RsCollectionDialog(fileName,DOWNLOAD).exec();
 }
+
+bool RsCollectionDialog::downloadFiles(const RsCollection &collection)
+{
+    return RsCollectionDialog(collection,DOWNLOAD).exec();
+}
+
 
 bool RsCollectionDialog::openNewCollection(const RsFileTree& tree)
 {

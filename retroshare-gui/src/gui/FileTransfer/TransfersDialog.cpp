@@ -1975,7 +1975,7 @@ void TransfersDialog::pasteLink()
 	for(auto &it : links)
 		col.merge_in(it.name(),it.size(),RsFileHash(it.hash().toStdString())) ;
 
-	col.downloadFiles();
+    RsCollectionDialog::downloadFiles(col);
 }
 
 void TransfersDialog::getDLSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows)
@@ -2555,7 +2555,7 @@ void TransfersDialog::collOpen()
                 if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
                 {
                         RsCollection::RsCollectionErrorCode code;
-                        RsCollection(qinfo.absoluteFilePath(),code).downloadFiles();
+                        RsCollectionDialog::downloadFiles(RsCollection(qinfo.absoluteFilePath(),code));
                         return;
                 }
 			}
@@ -2572,7 +2572,7 @@ void TransfersDialog::collOpen()
     RsCollection collection(fileName,code);
 
     if(code == RsCollection::RsCollectionErrorCode::NO_ERROR)
-		collection.downloadFiles();
+        RsCollectionDialog::downloadFiles(collection);
     else
         QMessageBox::information(nullptr,tr("Error openning collection file"),RsCollection::errorString(code));
 }
@@ -2597,7 +2597,7 @@ void TransfersDialog::collAutoOpen(const QString &fileHash)
                 RsCollection::RsCollectionErrorCode err;
 
                 if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
-                    RsCollection(qinfo.absoluteFilePath(),err).autoDownloadFiles();
+                    RsCollectionDialog::downloadFiles(RsCollection(qinfo.absoluteFilePath(),err));
 			}
 		}
 	}
