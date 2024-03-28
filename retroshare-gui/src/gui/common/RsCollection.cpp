@@ -147,15 +147,6 @@ static QString purifyFileName(const QString& input,bool& bad)
 void RsCollection::merge_in(const QString& fname,uint64_t size,const RsFileHash& hash,RsFileTree::DirIndex parent_index)
 {
     mHashes[hash]= mFileTree->addFile(parent_index,fname.toStdString(),hash,size);
-#ifdef TO_REMOVE
-    ColFileInfo info ;
-    info.type = DIR_TYPE_FILE ;
-    info.name = fname ;
-    info.size = size ;
-    info.hash = QString::fromStdString(hash.toStdString()) ;
-
-    recursAddElements(_xml_doc,info,_root) ;
-#endif
 }
 void RsCollection::merge_in(const RsFileTree& tree, RsFileTree::DirIndex parent_index)
 {
@@ -177,63 +168,6 @@ void RsCollection::recursMergeTree(RsFileTree::DirIndex parent,const RsFileTree&
         recursMergeTree(new_dir_index,tree,ld);
     }
 }
-
-#ifdef TO_REMOVE
-void RsCollection::recursCollectColFileInfos(const QDomElement& e,std::vector<ColFileInfo>& colFileInfos,const QString& current_path, bool bad_chars_in_parent) const
-{
-    QDomNode n = e.firstChild() ;
-#ifdef COLLECTION_DEBUG
-    std::cerr << "Parsing element " << e.tagName().toStdString() << std::endl;
-#endif
-
-    while(!n.isNull())
-    {
-        QDomElement ee = n.toElement(); // try to convert the node to an element.
-
-#ifdef COLLECTION_DEBUG
-        std::cerr << "  Seeing child " << ee.tagName().toStdString() << std::endl;
-#endif
-
-        if(ee.tagName() == QString("File"))
-        {
-            ColFileInfo newChild ;
-            newChild.hash = ee.attribute(QString("sha1")) ;
-            bool bad_chars_detected = false ;
-            newChild.name = purifyFileName(ee.attribute(QString("name")), bad_chars_detected) ;
-            newChild.filename_has_wrong_characters = bad_chars_detected || bad_chars_in_parent ;
-            newChild.size = ee.attribute(QString("size")).toULongLong() ;
-            newChild.path = current_path ;
-            newChild.type = DIR_TYPE_FILE ;
-
-            colFileInfos.push_back(newChild) ;
-        }
-        else if(ee.tagName() == QString("Directory"))
-        {
-            ColFileInfo newParent ;
-            bool bad_chars_detected = false ;
-            QString cleanDirName = purifyFileName(ee.attribute(QString("name")),bad_chars_detected) ;
-            newParent.name=cleanDirName;
-            newParent.filename_has_wrong_characters = bad_chars_detected || bad_chars_in_parent ;
-            newParent.size = 0;
-            newParent.path = current_path ;
-            newParent.type = DIR_TYPE_DIR ;
-
-            recursCollectColFileInfos(ee,newParent.children,current_path + "/" + cleanDirName, bad_chars_in_parent || bad_chars_detected) ;
-            uint32_t size = newParent.children.size();
-            for(uint32_t i=0;i<size;++i)
-            {
-                const ColFileInfo &colFileInfo = newParent.children[i];
-                newParent.size +=colFileInfo.size ;
-            }
-
-            colFileInfos.push_back(newParent) ;
-        }
-
-        n = n.nextSibling() ;
-    }
-}
-#endif
-
 
 void RsCollection::recursAddElements(RsFileTree::DirIndex parent, const DirDetails& dd, FileSearchFlags flags)
 {
@@ -257,67 +191,6 @@ void RsCollection::recursAddElements(RsFileTree::DirIndex parent, const DirDetai
         }
     }
 }
-
-#ifdef TO_REMOVE
-void RsCollection::recursAddElements(QDomDocument& doc,const ColFileInfo& colFileInfo,QDomElement& e) const
-{
-    if (colFileInfo.type == DIR_TYPE_FILE)
-    {
-        QDomElement f = doc.createElement("File") ;
-
-        f.setAttribute(QString("name"),colFileInfo.name) ;
-        f.setAttribute(QString("sha1"),colFileInfo.hash) ;
-        f.setAttribute(QString("size"),QString::number(colFileInfo.size)) ;
-
-        e.appendChild(f) ;
-    }
-    else if (colFileInfo.type == DIR_TYPE_DIR)
-    {
-        QDomElement d = doc.createElement("Directory") ;
-
-        d.setAttribute(QString("name"),colFileInfo.name) ;
-
-        for (std::vector<ColFileInfo>::const_iterator it = colFileInfo.children.begin(); it != colFileInfo.children.end(); ++it)
-            recursAddElements(doc,(*it),d) ;
-
-        e.appendChild(d) ;
-    }
-}
-
-void RsCollection::recursAddElements(
-        QDomDocument& doc, const RsFileTree& ft, uint32_t index,
-        QDomElement& e ) const
-{
-    std::vector<uint64_t> subdirs;
-    std::vector<RsFileTree::FileData> subfiles ;
-    std::string name;
-    if(!ft.getDirectoryContent(name, subdirs, subfiles, index)) return;
-
-    QDomElement d = doc.createElement("Directory") ;
-    d.setAttribute(QString("name"),QString::fromUtf8(name.c_str())) ;
-    e.appendChild(d) ;
-
-    for (uint32_t i=0;i<subdirs.size();++i)
-        recursAddElements(doc,ft,subdirs[i],d) ;
-
-    for(uint32_t i=0;i<subfiles.size();++i)
-    {
-        QDomElement f = doc.createElement("File") ;
-
-        f.setAttribute(QString("name"),QString::fromUtf8(subfiles[i].name.c_str())) ;
-        f.setAttribute(QString("sha1"),QString::fromStdString(subfiles[i].hash.toStdString())) ;
-        f.setAttribute(QString("size"),QString::number(subfiles[i].size)) ;
-
-        d.appendChild(f) ;
-    }
-}
-
-static void showErrorBox(const QString& fileName, const QString& error)
-{
-    QMessageBox mb(QMessageBox::Warning, QObject::tr("Failed to process collection file"), QObject::tr("The collection file %1 could not be opened.\nReported error is: \n\n%2").arg(fileName).arg(error), QMessageBox::Ok);
-    mb.exec();
-}
-#endif
 
 QString RsCollection::errorString(RsCollectionErrorCode code)
 {
@@ -446,19 +319,6 @@ bool RsCollection::checkFile(const QString& fileName, RsCollectionErrorCode& err
     return false;
 }
 
-#ifdef TO_REMOVE
-bool RsCollection::load(QWidget *parent)
-{
-    QString fileName;
-    if (!misc::getOpenFileName(parent, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Open collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")", fileName))
-        return false;
-
-    std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
-
-    return load(fileName, true);
-}
-#endif
-
 bool RsCollection::save(const QString& fileName) const
 {
     QFile file(fileName);
@@ -513,17 +373,6 @@ bool RsCollection::recursParseXml(QDomDocument& doc,const QDomNode& e,const RsFi
             uint64_t size = ee.attribute(QString("size")).toULongLong() ;
 
             mHashes[hash] = mFileTree->addFile(parent,name,hash,size);
-#ifdef TO_REMOVE
-            mFileTree.addFile(parent,)
-            ColFileInfo newChild ;
-            bool bad_chars_detected = false ;
-            newChild.filename_has_wrong_characters = bad_chars_detected || bad_chars_in_parent ;
-            newChild.size = ee.attribute(QString("size")).toULongLong() ;
-            newChild.path = current_path ;
-            newChild.type = DIR_TYPE_FILE ;
-
-            colFileInfos.push_back(newChild) ;
-#endif
         }
         else if(ee.tagName() == QString("Directory"))
         {
@@ -533,23 +382,6 @@ bool RsCollection::recursParseXml(QDomDocument& doc,const QDomNode& e,const RsFi
             RsFileTree::DirIndex new_dir_index = mFileTree->addDirectory(parent,cleanDirName);
 
             recursParseXml(doc,ee,new_dir_index);
-#ifdef TO_REMOVE
-            newParent.name=cleanDirName;
-            newParent.filename_has_wrong_characters = bad_chars_detected || bad_chars_in_parent ;
-            newParent.size = 0;
-            newParent.path = current_path ;
-            newParent.type = DIR_TYPE_DIR ;
-
-            recursCollectColFileInfos(ee,newParent.children,current_path + "/" + cleanDirName, bad_chars_in_parent || bad_chars_detected) ;
-            uint32_t size = newParent.children.size();
-            for(uint32_t i=0;i<size;++i)
-            {
-                const ColFileInfo &colFileInfo = newParent.children[i];
-                newParent.size +=colFileInfo.size ;
-            }
-
-            colFileInfos.push_back(newParent) ;
-#endif
         }
 
         n = n.nextSibling() ;
@@ -587,25 +419,6 @@ bool RsCollection::recursExportToXml(QDomDocument& doc,QDomElement& e,const RsFi
     return true;
 }
 
-#ifdef TO_REMOVE
-bool RsCollection::save(QWidget *parent) const
-{
-    QString fileName;
-    if(!misc::getSaveFileName(parent, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Create collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")", fileName))
-        return false;
-
-    if (!fileName.endsWith("." + RsCollection::ExtensionString))
-        fileName += "." + RsCollection::ExtensionString ;
-
-    std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
-
-    return save(fileName);
-}
-
-
-
-#endif
-
 qulonglong RsCollection::count() const
 {
     return mFileTree->numFiles();
@@ -613,21 +426,6 @@ qulonglong RsCollection::count() const
 qulonglong RsCollection::size()
 {
     return mFileTree->totalFileSize();
-
-#ifdef TO_REMOVE
-    QDomElement docElem = _xml_doc.documentElement();
-
-    std::vector<ColFileInfo> colFileInfos;
-    recursCollectColFileInfos(docElem, colFileInfos, QString(),false);
-
-    uint64_t size = 0;
-
-    for (uint32_t i = 0; i < colFileInfos.size(); ++i) {
-        size += colFileInfos[i].size;
-    }
-
-    return size;
-#endif
 }
 
 bool RsCollection::isCollectionFile(const QString &fileName)
@@ -658,19 +456,6 @@ void RsCollection::updateHashes(const std::map<RsFileHash,RsFileHash>& old_to_ne
         mFileTree->updateFile(fit->second,fd.name,it.second,fd.size);
     }
 }
-#ifdef TO_REMOVE
-void RsCollection::saveColl(std::vector<ColFileInfo> colFileInfos, const QString &fileName)
-{
-
-    QDomElement root = _xml_doc.elementsByTagName("RsCollection").at(0).toElement();
-    while (root.childNodes().count()>0) root.removeChild(root.firstChild());
-    for(uint32_t i = 0;i<colFileInfos.size();++i)
-        recursAddElements(_xml_doc,colFileInfos[i],root) ;
-
-    _saved=save(fileName);
-
-}
-#endif
 
 bool RsCollection::removeFile(RsFileTree::FileIndex index_to_remove,RsFileTree::DirIndex parent_index)
 {

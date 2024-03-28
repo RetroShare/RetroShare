@@ -411,26 +411,6 @@
           <item>
            <layout class="QHBoxLayout" name="buttons_HL">
             <item>
-             <widget class="QCheckBox" name="_removeDuplicate_CB">
-              <property name="text">
-               <string>Remove Duplicate</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="buttons_HSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
              <widget class="QLabel" name="downloadFolder_LB">
               <property name="text">
                <string>Destination:</string>

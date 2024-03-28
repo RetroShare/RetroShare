@@ -64,18 +64,8 @@ private slots:
 	void chooseDestinationDirectory();
 	void setDestinationDirectory();
 	void openDestinationDirectoryMenu();
-#ifdef TO_REMOVE
-	void processItem(QMap<QString, QString> &dirToAdd
-	                 , int &index
-                   , ColFileInfo &parent
-                   ) ;
-#endif
 	void makeDir() ;
 	void fileHashingFinished(QList<HashedFile> hashedFiles) ;
-#ifdef TO_REMOVE
-    void itemChanged(QTreeWidgetItem* item,int col) ;
-#endif
-	void updateRemoveDuplicate(bool checked);
 	void cancel() ;
 	void download() ;
 	void save() ;
@@ -85,21 +75,9 @@ signals:
 
 private:
 	void processSettings(bool bLoad) ;
-	bool updateList();
-#ifdef TO_REMOVE
-    QTreeWidgetItem*  getRootItem();
-    bool addChild(QTreeWidgetItem *parent, const std::vector<ColFileInfo> &child);
-	bool removeItem(QTreeWidgetItem *item, bool &removeOnlyFile) ;
-    void saveChild(QTreeWidgetItem *parentItem, ColFileInfo *parentInfo = NULL);
-	bool addAllChild(QFileInfo &fileInfoParent
-	                 , QMap<QString, QString > &dirToAdd
-	                 , QStringList &fileToHash
-	                 , int &count);
-#endif
     void addSelection(bool recursive) ;
 
 	Ui::RsCollectionDialog ui;
-	QString _fileName ;
 
     RsCollectionDialogMode _mode;
 

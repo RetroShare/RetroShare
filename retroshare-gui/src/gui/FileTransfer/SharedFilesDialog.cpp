@@ -840,16 +840,6 @@ void SharedFilesDialog::collOpen()
                 if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
 
                     RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath(),true);
-#ifdef TO_REMOVE
-                    RsCollection::RsCollectionErrorCode err;
-                    RsCollection collection(qinfo.absoluteFilePath(),err);
-
-                    if(err == RsCollection::RsCollectionErrorCode::NO_ERROR)
-                    {
-                        collection.downloadFiles();
-                        return;
-                    }
-#endif
                 }
             }
         }

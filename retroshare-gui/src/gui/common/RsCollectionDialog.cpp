@@ -186,8 +186,6 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsColl
     connect(mCollectionModel,SIGNAL(sizesChanged()),this,SLOT(updateSizes()));
     updateSizes(); // forced because it's only called when the collection is changed, or when the model is created.
 
-	bool wrong_chars = !updateList();
-
 	// 2 - connect necessary signals/slots
 
 	connect(ui._changeFile, SIGNAL(clicked()), this, SLOT(changeFileName()));
@@ -195,14 +193,10 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsColl
     connect(ui._addRecur_PB, SIGNAL(clicked()), this, SLOT(addSelectionRecursive()));
 	connect(ui._remove_PB, SIGNAL(clicked()), this, SLOT(remove()));
 	connect(ui._makeDir_PB, SIGNAL(clicked()), this, SLOT(makeDir()));
-	connect(ui._removeDuplicate_CB, SIGNAL(clicked(bool)), this, SLOT(updateRemoveDuplicate(bool)));
 	connect(ui._cancel_PB, SIGNAL(clicked()), this, SLOT(cancel()));
 	connect(ui._save_PB, SIGNAL(clicked()), this, SLOT(save()));
 	connect(ui._download_PB, SIGNAL(clicked()), this, SLOT(download()));
 	connect(ui._hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
-#ifdef TO_REMOVE
-    connect(ui._fileEntriesTW, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(itemChanged(QTreeWidgetItem*,int)));
-#endif
 
 	// 3 Initialize List
 	_dirModel = new QFileSystemModel(this);
@@ -227,14 +221,10 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsColl
 	// 5 Activate button follow creationMode
     ui._changeFile->setVisible(_mode == EDIT);
     ui._makeDir_PB->setVisible(_mode == EDIT);
-    ui._removeDuplicate_CB->setVisible(_mode == EDIT);
     ui._save_PB->setVisible(_mode == EDIT);
     ui._treeViewFrame->setVisible(_mode == EDIT);
     ui._download_PB->setVisible(_mode == DOWNLOAD);
 
-#ifdef TO_REMOVE
-    ui._fileEntriesTW->installEventFilter(this);
-#endif
 	ui._systemFileTW->installEventFilter(this);
 
 	// 6 Add HashBox
@@ -242,9 +232,6 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsColl
 	ui._hashBox->setDropWidget(this);
 	ui._hashBox->setAutoHide(true);
 	ui._hashBox->setDefaultTransferRequestFlags(RS_FILE_REQ_ANONYMOUS_ROUTING) ;
-
-	if(wrong_chars)
-		QMessageBox::warning(NULL,tr("Bad filenames have been cleaned"),tr("Some filenames or directory names contained forbidden characters.\nCharacters <b>\",|,/,\\,&lt;,&gt;,*,?</b> will be replaced by '_'.\n Concerned files are listed in red.")) ;
 }
 
 void RsCollectionDialog::openDestinationDirectoryMenu()
@@ -295,75 +282,6 @@ RsCollectionDialog::~RsCollectionDialog()
 	// save settings
 	processSettings(false);
 }
-
-/**
- * @brief RsCollectionDialog::eventFilter: Proccess event in object
- * @param obj: object where event occured
- * @param event: event occured
- * @return If we don't have to process event in parent.
- */
-#ifdef TODO_COLLECTION
-bool RsCollectionDialog::eventFilter(QObject *obj, QEvent *event)
-{
-	if (obj == ui._fileEntriesTW) {
-		if (event->type() == QEvent::KeyPress) {
-			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-			if (keyEvent && (keyEvent->key() == Qt::Key_Space)) {
-				// Space pressed
-
-				// get state of current item
-				QTreeWidgetItem *item = ui._fileEntriesTW->currentItem();
-				if (item) {
-					Qt::CheckState checkState = (item->checkState(COLUMN_FILE) == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
-
-					// set state of all selected items
-					QList<QTreeWidgetItem*> selectedItems = ui._fileEntriesTW->selectedItems();
-					QList<QTreeWidgetItem*>::iterator it;
-					for (it = selectedItems.begin(); it != selectedItems.end(); ++it) {
-						if ((*it)->checkState(COLUMN_FILE) != checkState)
-							(*it)->setCheckState(COLUMN_FILE, checkState);
-					}
-				}
-
-				return true; // eat event
-			}
-
-			if (keyEvent && (keyEvent->key() == Qt::Key_Delete)) {
-				// Delete pressed
-				remove();
-				return true; // eat event
-			}
-
-			if (keyEvent && (keyEvent->key() == Qt::Key_Plus)) {
-				// Plus pressed
-				makeDir();
-				return true; // eat event
-			}
-
-		}
-	}
-
-	if (obj == ui._systemFileTW) {
-		if (event->type() == QEvent::KeyPress) {
-			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-			if (keyEvent && ((keyEvent->key() == Qt::Key_Enter)
-			                 || keyEvent->key() == Qt::Key_Return)) {
-				// Enter pressed
-				if (keyEvent->modifiers() == Qt::ShiftModifier)
-					addRecursive();
-				else if(keyEvent->modifiers() == Qt::NoModifier) {
-					add();
-				}
-
-				return true; // eat event
-			}
-		}
-	}
-
-	// pass the event on to the parent class
-	return QDialog::eventFilter(obj, event);
-}
-#endif
 
 /**
  * @brief RsCollectionDialog::processSettings
@@ -423,162 +341,6 @@ void RsCollectionDialog::processSettings(bool bLoad)
 
 	Settings->endGroup();
 }
-
-#ifdef TO_REMOVE
-/**
- * @brief RsCollectionDialog::getRootItem: Create the root Item if not existing
- * @return: the root item
- */
-QTreeWidgetItem* RsCollectionDialog::getRootItem()
-{
-	return ui._fileEntriesTW->invisibleRootItem();
-}
-#endif
-
-/**
- * @brief RsCollectionDialog::updateList: Update list of item in RsCollection
- * @return If at least one item have a Wrong Char
- */
-bool RsCollectionDialog::updateList()
-{
-#ifdef TODO_COLLECTION
-	bool wrong_chars = false ;
-	wrong_chars = addChild(getRootItem(), _newColFileInfos);
-
-	_newColFileInfos.clear();
-
-	ui._filename_TL->setText(_fileName) ;
-	for (int column = 0; column < ui._fileEntriesTW->columnCount(); ++column) {
-		ui._fileEntriesTW->resizeColumnToContents(column);
-	}
-
-	updateSizes() ;
-
-	return !wrong_chars;
-#endif
-    return true;
-}
-
-#ifdef TO_REMOVE
-/**
- * @brief RsCollectionDialog::addChild: Add Child Item in list
- * @param parent: Parent Item
- * @param child: Child ColFileInfo item to add
- * @param total_size: Saved total size of children to save in parent
- * @param total_files: Saved total file of children to save in parent
- * @return If at least one item have a Wrong Char
- */
-bool RsCollectionDialog::addChild(QTreeWidgetItem* parent, const std::vector<ColFileInfo>& child)
-{
-	bool wrong_chars = false ;
-
-	uint32_t childCount = child.size();
-	for(uint32_t i=0; i<childCount; ++i)
-	{
-		const ColFileInfo &colFileInfo = child[i];
-
-		QList<QTreeWidgetItem*> founds;
-		QList<QTreeWidgetItem*> parentsFounds;
-		parentsFounds = ui._fileEntriesTW->findItems(colFileInfo.path , Qt::MatchExactly | Qt::MatchRecursive, COLUMN_FILEPATH);
-		if (colFileInfo.type == DIR_TYPE_DIR){
-			founds = ui._fileEntriesTW->findItems(colFileInfo.path + "/" +colFileInfo.name, Qt::MatchExactly | Qt::MatchRecursive, COLUMN_FILEPATH);
-		} else {
-			founds = ui._fileEntriesTW->findItems(colFileInfo.path + "/" +colFileInfo.name, Qt::MatchExactly | Qt::MatchRecursive, COLUMN_FILEPATH);
-			if (ui._removeDuplicate_CB->isChecked()) {
-				founds << ui._fileEntriesTW->findItems(colFileInfo.hash, Qt::MatchExactly | Qt::MatchRecursive, COLUMN_HASH);
-			}
-		}
-		if (founds.empty()) {
-			QTreeWidgetItem *item = new QTreeWidgetItem;
-
-			//item->setFlags(Qt::ItemIsUserCheckable | item->flags());
-			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsTristate);
-			item->setCheckState(COLUMN_FILE, Qt::Checked);
-			item->setText(COLUMN_FILE, colFileInfo.name);
-			item->setText(COLUMN_FILEPATH, colFileInfo.path + "/" + colFileInfo.name);
-			item->setText(COLUMN_HASH, colFileInfo.hash);
-			item->setData(COLUMN_HASH, ROLE_NAME, colFileInfo.name);
-			item->setData(COLUMN_HASH, ROLE_PATH, colFileInfo.path);
-			item->setData(COLUMN_HASH, ROLE_TYPE, colFileInfo.type);
-			QFont font = item->font(COLUMN_FILE);
-			if (colFileInfo.type==DIR_TYPE_DIR) {
-				item->setToolTip(COLUMN_FILE,tr("This is a directory. Double-click to expand it."));
-				font.setBold(true);
-				//Size calculated after for added child after init
-				item->setText(COLUMN_SIZE, misc::friendlyUnit(0));
-				item->setToolTip(COLUMN_SIZE,tr("Real Size: Waiting child..."));
-				item->setData(COLUMN_SIZE, ROLE_SIZE, 0);
-				item->setData(COLUMN_SIZE, ROLE_SELSIZE, 0);
-
-				item->setText(COLUMN_FILEC, "");
-				item->setToolTip(COLUMN_FILEC, tr("Real File Count: Waiting child..."));
-				item->setData(COLUMN_FILEC, ROLE_FILEC, 0);
-				item->setData(COLUMN_FILEC, ROLE_SELFILEC, 0);
-			} else {
-				font.setBold(false);
-				item->setText(COLUMN_SIZE, misc::friendlyUnit(colFileInfo.size));
-				item->setToolTip(COLUMN_SIZE, tr("Real Size=%1").arg(misc::friendlyUnit(colFileInfo.size)));
-				item->setData(COLUMN_SIZE, ROLE_SIZE, colFileInfo.size);
-				item->setData(COLUMN_SIZE, ROLE_SELSIZE, colFileInfo.size);
-
-				item->setText(COLUMN_FILEC, "1");
-				item->setToolTip(COLUMN_FILEC, tr("Real File Count=%1").arg(1));
-				item->setData(COLUMN_FILEC, ROLE_FILEC, 1);
-				item->setData(COLUMN_FILEC, ROLE_SELFILEC, 1);
-			}
-			item->setFont(COLUMN_FILE, font);
-			item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
-
-			if (colFileInfo.filename_has_wrong_characters)
-			{
-				//TODO (Phenom): Add qproperty for these text colors in stylesheets
-				wrong_chars = true ;
-				item->setData(COLUMN_FILE, Qt::ForegroundRole, QColor(255,80,120)) ;
-			}
-
-			if (parentsFounds.empty()) {
-				parent->addChild(item);
-			} else {
-				parentsFounds.at(0)->addChild(item);
-			}
-
-			if (colFileInfo.type == DIR_TYPE_FILE) {
-				//update parents size only for file children
-				QTreeWidgetItem *itemParent = item->parent();
-				if (itemParent) {
-					while (itemParent) {
-						qulonglong parentSize = itemParent->data(COLUMN_SIZE, ROLE_SIZE).toULongLong() + colFileInfo.size;
-						itemParent->setData(COLUMN_SIZE, ROLE_SIZE, parentSize);
-						itemParent->setToolTip(COLUMN_SIZE, tr("Real Size=%1").arg(misc::friendlyUnit(parentSize)));
-						qulonglong parentSelSize = itemParent->data(COLUMN_SIZE, ROLE_SELSIZE).toULongLong() + colFileInfo.size;
-						itemParent->setData(COLUMN_SIZE, ROLE_SELSIZE, parentSelSize);
-						itemParent->setText(COLUMN_SIZE, misc::friendlyUnit(parentSelSize));
-
-						qulonglong parentFileCount = itemParent->data(COLUMN_FILEC, ROLE_FILEC).toULongLong() + 1;
-						itemParent->setData(COLUMN_FILEC, ROLE_FILEC, parentFileCount);
-						itemParent->setToolTip(COLUMN_FILEC, tr("Real File Count=%1").arg(parentFileCount));
-						qulonglong parentSelFileCount = itemParent->data(COLUMN_FILEC, ROLE_SELFILEC).toULongLong() + 1;
-						itemParent->setData(COLUMN_FILEC, ROLE_SELFILEC, parentSelFileCount);
-						itemParent->setText(COLUMN_FILEC, QString("%1").arg(parentSelFileCount));
-
-						itemParent = itemParent->parent();
-					}
-				}
-			}
-
-			founds.push_back(item);
-		}
-
-		if (!founds.empty()) {
-
-			if (colFileInfo.type == DIR_TYPE_DIR) {
-				wrong_chars |= addChild(founds.at(0), colFileInfo.children);
-			}
-		}
-	}
-	return wrong_chars;
-}
-#endif
 
 /**
  * @brief RsCollectionDialog::directoryLoaded: called when ui._treeView have load an directory as QFileSystemModel don't load all in one time
@@ -642,21 +404,21 @@ void RsCollectionDialog::updateSizes()
  * @param bad
  * @return
  */
-static QString purifyFileName(const QString& input, bool& bad)
+static bool checkFileName(const std::string& input, std::string& corrected)
 {
-	static const QString bad_chars = "/\\\"*:?<>|" ;
-	bad = false ;
-	QString output = input ;
+    static const std::string bad_chars ( "/\\\"*:?<>|" );
+    bool ok = true ;
+    corrected = input ;
 
-	for(int i=0;i<output.length();++i)
-		for(int j=0;j<bad_chars.length();++j)
-			if(output[i] == bad_chars[j])
+    for(uint32_t i=0;i<input.length();++i)
+        for(uint32_t j=0;j<bad_chars.length();++j)
+            if(input[i] == bad_chars[j])
 			{
-				output[i] = '_' ;
-				bad = true ;
+                corrected[i] = '_' ;
+                ok = false ;
 			}
 
-	return output ;
+    return ok ;
 }
 
 /**
@@ -721,8 +483,6 @@ void RsCollectionDialog::changeFileName()
 	}
 
     ui._filename_TL->setText(fileName);
-
-	updateList();
 }
 
 /**
@@ -782,8 +542,6 @@ static void recursBuildFileTree(const QString& path,RsFileTree& tree,RsFileTree:
 void RsCollectionDialog::addSelection(bool recursive)
 {
 	QMap<QString, QString > dirToAdd;
-    int count=0;//to not scan all items on list .count()
-
 	QModelIndexList milSelectionList =	ui._systemFileTW->selectionModel()->selectedIndexes();
 
     mCollectionModel->preMods();
@@ -797,75 +555,7 @@ void RsCollectionDialog::addSelection(bool recursive)
             recursBuildFileTree(_dirModel->filePath(_tree_proxyModel->mapToSource(index)),tree,tree.root(),recursive,paths_to_hash);
 
             mCollection->merge_in(tree);
-
-#ifdef TO_REMOVE
-			QFileInfo fileInfo = filePath;
-			if (fileInfo.isDir()) {
-				dirToAdd.insert(fileInfo.absoluteFilePath(),fileInfo.absolutePath());
-				++count;
-				if (recursive) {
-					if (!addAllChild(fileInfo, dirToAdd, fileToHash, count)) return;
-				} else {
-					continue;
-				}
-			}
-			if (fileInfo.isFile()){
-				fileToHash.append(fileInfo.absoluteFilePath());
-				++count;
-				if (dirToAdd.contains(fileInfo.absolutePath()))
-					_listOfFilesAddedInDir.insert(fileInfo.absoluteFilePath(),fileInfo.absolutePath());
-				else
-					_listOfFilesAddedInDir.insert(fileInfo.absoluteFilePath(),"");
-			}
-#endif
 		}
-
-#ifdef TO_REMOVE
-	// Process Dirs
-	QTreeWidgetItem *item = NULL;
-	if (!ui._fileEntriesTW->selectedItems().empty())
-		item= ui._fileEntriesTW->selectedItems().at(0);
-	if (item) {
-		while (item->data(COLUMN_HASH, ROLE_TYPE).toUInt() != DIR_TYPE_DIR) {
-			item = item->parent();//Only Dir as Parent
-		}
-	}
-
-	int index = 0;
-	while (index < dirToAdd.count())
-	{
-		ColFileInfo root;
-		if (item && (item != getRootItem())) {
-			root.name = "";
-			root.path = item->text(COLUMN_FILEPATH);
-		} else {
-			root.name = "";
-			root.path = "";
-		}
-		//QMap is ordered, so we get parent before child
-		//Iterator is moved inside this function
-		processItem(dirToAdd, index, root);
-	}
-
-	//Update liste before attach files to be sure when file is hashed, parent directory exists.
-	updateList();
-
-	for (QHash<QString,QString>::Iterator it = _listOfFilesAddedInDir.begin(); it != _listOfFilesAddedInDir.end() ; ++it)
-	{
-		QString path = it.value();
-		//it.value() = "";//Don't reset value, could be an older attachment not terminated.
-		if (dirToAdd.contains(path)){
-			it.value() = dirToAdd.value(path);
-		} else if(item) {
-			if (item->data(COLUMN_HASH, ROLE_NAME) != "") {
-				it.value() = item->text(COLUMN_FILEPATH);
-			}
-		}
-	}
-
-	// Process Files once all done
-	ui._hashBox->addAttachments(fileToHash,RS_FILE_REQ_ANONYMOUS_ROUTING /*, 0*/);
-#endif
 
     mFilesBeingHashed.insert(paths_to_hash.begin(),paths_to_hash.end());
 
@@ -892,64 +582,6 @@ void RsCollectionDialog::addSelection(bool recursive)
     }
 }
 
-#ifdef TO_REMOVE
-/**
- * @brief RsCollectionDialog::addAllChild: Add children to RsCollection
- * @param fileInfoParent: Parent's QFileInfo to scan
- * @param dirToAdd: QMap where directories are added
- * @param fileToHash: QStringList where files are added
- * @return false if too many items is selected and aborted
- */
-bool RsCollectionDialog::addAllChild(QFileInfo &fileInfoParent
-                                     , QMap<QString, QString > &dirToAdd
-                                     , QStringList &fileToHash
-                                     , int &count)
-{
-	//Save count only first time to not scan all items on list .count()
-	if (count == 0) count = (dirToAdd.count() + fileToHash.count());
-	QDir dirParent = fileInfoParent.absoluteFilePath();
-	dirParent.setFilter(QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot);
-	QFileInfoList childrenList = dirParent.entryInfoList();
-	foreach (QFileInfo fileInfo, childrenList)
-	{
-		if (count == MAX_FILE_ADDED_BEFORE_ASK)
-		{
-			QMessageBox msgBox;
-			msgBox.setText(tr("Warning, selection contains more than %1 items.").arg(MAX_FILE_ADDED_BEFORE_ASK));
-			msgBox.setInformativeText("Do you want to continue?");
-			msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-			msgBox.setDefaultButton(QMessageBox::No);
-			int ret = msgBox.exec();
-			switch (ret) {
-				case QMessageBox::Yes:
-				break;
-				case QMessageBox::No:
-					return false;
-				break;
-				break;
-				default:
-					// should never be reached
-				break;
-			}
-		}
-		if (fileInfo.isDir()) {
-			dirToAdd.insert(fileInfo.absoluteFilePath(),fileInfo.absolutePath());
-			++count;
-			if (!addAllChild(fileInfo, dirToAdd, fileToHash, count)) return false;
-		}
-		if (fileInfo.isFile()){
-			fileToHash.append(fileInfo.absoluteFilePath());
-			++count;
-			if (dirToAdd.contains(fileInfo.absolutePath()))
-				_listOfFilesAddedInDir.insert(fileInfo.absoluteFilePath(),fileInfo.absolutePath());
-			else
-				_listOfFilesAddedInDir.insert(fileInfo.absoluteFilePath(),"");
-		}
-	}
-	return true;
-}
-#endif
-
 /**
  * @brief RsCollectionDialog::remove: Remove selected Items in RSCollection
  */
@@ -975,179 +607,7 @@ void RsCollectionDialog::remove()
         }
 
     mCollectionModel->postMods();
-
-#ifdef TODO_COLLECTION
-	bool removeOnlyFile=false;
-	QString listDir;
-	// First, check if selection contains directories
-	for (int curs = 0; curs < ui._fileEntriesTW->selectedItems().count(); ++curs)
-	{// Have to call ui._fileEntriesTW->selectedItems().count() each time as selected could change
-		QTreeWidgetItem *item = NULL;
-		item= ui._fileEntriesTW->selectedItems().at(curs);
-
-		//Uncheck child directory item if parent is checked
-		if (item != getRootItem()){
-			if (item->data(COLUMN_HASH, ROLE_TYPE).toUInt() == DIR_TYPE_DIR) {
-				QString path = item->data(COLUMN_HASH, ROLE_PATH).toString();
-				if (listDir.contains(path) && !path.isEmpty()) {
-					item->setSelected(false);
-				} else {
-					listDir += item->data(COLUMN_HASH, ROLE_NAME).toString() +"<br>";
-				}
-			}
-		}
-	}
-
-	//If directories, ask to remove them or not
-	if (!listDir.isEmpty()){
-		QMessageBox* msgBox = new QMessageBox(QMessageBox::Information, "", "");
-		msgBox->setText("Warning, selection contains directories.");
-		//msgBox->setInformativeText(); If text too long, no scroll, so I add an text edit
-		QGridLayout* layout = qobject_cast<QGridLayout*>(msgBox->layout());
-		if (layout) {
-			int newRow = 1;
-			for (int row = layout->count()-1; row >= 0; --row) {
-				for (int col = layout->columnCount()-1; col >= 0; --col) {
-					QLayoutItem *item = layout->itemAtPosition(row, col);
-					if (item) {
-						int index = layout->indexOf(item->widget());
-						int r=0, c=0, rSpan=0, cSpan=0;
-						layout->getItemPosition(index, &r, &c, &rSpan, &cSpan);
-						if (r>0) {
-							layout->removeItem(item);
-							layout->addItem(item, r+3, c, rSpan, cSpan);
-						} else if (rSpan>1) {
-							newRow = rSpan + 1;
-						}
-					}
-				}
-			}
-			QLabel *label = new QLabel(tr("Do you want to remove them and all their children, too?"));
-			layout->addWidget(label,newRow, 0, 1, layout->columnCount(), Qt::AlignHCenter );
-			QTextEdit *edit = new QTextEdit(listDir);
-			edit->setReadOnly(true);
-			edit->setWordWrapMode(QTextOption::NoWrap);
-			layout->addWidget(edit,newRow+1, 0, 1, layout->columnCount(), Qt::AlignHCenter );
-		}
-
-		msgBox->setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-		msgBox->setDefaultButton(QMessageBox::Yes);
-		int ret = msgBox->exec();
-		switch (ret) {
-			case QMessageBox::Yes:
-			break;
-			case QMessageBox::No:
-				removeOnlyFile = true;
-			break;
-			case QMessageBox::Cancel: {
-				delete msgBox;
-				return;
-			}
-			break;
-			default:
-				// should never be reached
-			break;
-		}
-		delete msgBox;
-	}
-
-	//Remove wanted items
-	int leftItem = 0;
-	// Have to call ui._fileEntriesTW->selectedItems().count() each time as selected change
-	while (ui._fileEntriesTW->selectedItems().count() > leftItem) {
-		QTreeWidgetItem *item = ui._fileEntriesTW->selectedItems().at(leftItem);
-
-		if (item != getRootItem()){
-			if (!removeItem(item, removeOnlyFile)) {
-				++leftItem;
-			}
-		} else {
-			//Get Root change index
-			++leftItem;
-		}
-	}
-
-	updateSizes() ;
-#endif
 }
-
-#ifdef TODO_COLLECTION
-bool RsCollectionDialog::removeItem(QTreeWidgetItem *item, bool &removeOnlyFile)
-{
-	if (item){
-		if ((item->data(COLUMN_HASH, ROLE_TYPE).toUInt() != DIR_TYPE_DIR) || !removeOnlyFile) {
-			int leftItem = 0;
-			while (item->childCount() > leftItem) {
-				if (!removeItem(item->child(0), removeOnlyFile)) {
-					++leftItem;
-				}
-			}
-			if (leftItem == 0) {
-				//First uncheck item to update parent informations
-				item->setCheckState(COLUMN_FILE,Qt::Unchecked);
-				QTreeWidgetItem *parent = item->parent();
-				if (parent) {
-					parent->removeChild(item);
-				} else {
-					getRootItem()->removeChild(item);
-				}
-				return true;
-			} else {
-				if (!removeOnlyFile) {
-					std::cerr << "(EE) RsCollectionDialog::removeItem This could never happen." << std::endl;
-				}
-			}
-		}
-	}
-	return false;
-}
-#endif
-
-#ifdef TO_REMOVE
-/** Process each item to make a new RsCollection item */
-void RsCollectionDialog::processItem(QMap<QString, QString> &dirToAdd
-                                     , int &index
-                                     , ColFileInfo &parent
-                                     )
-{
-	ColFileInfo newChild;
-	int count = dirToAdd.count();
-	if (index < count) {
-		QString key=dirToAdd.keys().at(index);
-		bool bad_chars_detected = false;
-		QFileInfo fileInfo=key;
-		QString cleanDirName = purifyFileName(fileInfo.fileName(),bad_chars_detected);
-		newChild.name = cleanDirName;
-		newChild.filename_has_wrong_characters = bad_chars_detected;
-		newChild.size = fileInfo.isDir()? 0: fileInfo.size();
-		newChild.type = fileInfo.isDir()? DIR_TYPE_DIR: DIR_TYPE_FILE ;
-		if (parent.name != "") {
-			newChild.path = parent.path + "/" + parent.name;
-		} else {
-			newChild.path = parent.path;
-		}
-		dirToAdd[key] = newChild.path + "/" + newChild.name;
-		//Move to next item
-		++index;
-		if (index < count){
-			QString newKey = dirToAdd.keys().at(index);
-			while ((dirToAdd.value(newKey) == key)
-			       && (index < count)) {
-				processItem(dirToAdd, index, newChild);
-				if (index < count)newKey = dirToAdd.keys().at(index);
-			}
-		}
-
-		//Save parent when child are processed
-		if (parent.name != "") {
-			parent.children.push_back(newChild);
-			parent.size += newChild.size;
-		} else {
-			_newColFileInfos.push_back(newChild);
-		}
-	}
-}
-#endif
 
 /**
  * @brief RsCollectionDialog::addDir: Add new empty dir to list
@@ -1179,90 +639,6 @@ void RsCollectionDialog::makeDir()
     mCollectionModel->preMods();
     mCollection->merge_in(*RsFileTree::fromDirectory(childName.toUtf8().constData()),e.index);
     mCollectionModel->postMods();
-
-#ifdef TODO_COLLECTION
-	QString childName="";
-	bool ok, badChar, nameOK = false;
-	// Ask for name
-	while (!nameOK)
-	{
-		childName = QInputDialog::getText(this, tr("New Directory")
-		                                  , tr("Enter the new directory's name")
-		                                  , QLineEdit::Normal, childName, &ok);
-		if (ok && !childName.isEmpty())
-		{
-			childName = purifyFileName(childName, badChar);
-			nameOK = !badChar;
-			if (badChar)
-			{
-				QMessageBox msgBox;
-				msgBox.setText("The name contains bad characters.");
-				msgBox.setInformativeText("Do you want to use the corrected one?\n" + childName);
-				msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Retry | QMessageBox::Cancel);
-				msgBox.setDefaultButton(QMessageBox::Ok);
-				int ret = msgBox.exec();
-				switch (ret) {
-					case QMessageBox::Ok:
-						nameOK = true;
-					break;
-					case QMessageBox::Retry:
-					break;
-					case QMessageBox::Cancel:
-						return;
-					break;
-					default:
-						// should never be reached
-					break;
-				}
-			}
-		} else {//if (ok && !childName.isEmpty())
-			return;
-		}
-
-	}
-
-
-	QList<QTreeWidgetItem*> selected = ui._fileEntriesTW->selectedItems();
-
-	if(selected.empty())
-	{
-		QTreeWidgetItem *item = getRootItem();
-
-		ColFileInfo newChild;
-		newChild.name = childName;
-		newChild.filename_has_wrong_characters = false;
-		newChild.size = 0;
-		newChild.type = DIR_TYPE_DIR;
-		newChild.path = item->data(COLUMN_HASH, ROLE_PATH).toString()
-		        + "/" + item->data(COLUMN_HASH, ROLE_NAME).toString();
-		if (item == getRootItem()) newChild.path = "";
-
-		_newColFileInfos.push_back(newChild);
-	}
-	else
-		for(auto it(selected.begin());it!=selected.end();++it)
-		{
-			QTreeWidgetItem *item = *it;
-
-			while(item->data(COLUMN_HASH, ROLE_TYPE).toUInt() != DIR_TYPE_DIR)
-				item = item->parent();//Only Dir as Parent
-
-			ColFileInfo newChild;
-			newChild.name = childName;
-			newChild.filename_has_wrong_characters = false;
-			newChild.size = 0;
-			newChild.type = DIR_TYPE_DIR;
-
-			if (item == getRootItem())
-				newChild.path = "";
-			else
-				newChild.path = item->data(COLUMN_HASH, ROLE_PATH).toString() + "/" + item->data(COLUMN_HASH, ROLE_NAME).toString();
-
-			_newColFileInfos.push_back(newChild);
-		}
-
-	updateList();
-#endif
 }
 
 /**
@@ -1272,33 +648,6 @@ void RsCollectionDialog::makeDir()
  */
 void RsCollectionDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
 {
-#ifdef TO_REMOVE
-	std::cerr << "RsCollectionDialog::fileHashingFinished() started." << std::endl;
-
-	QString message;
-
-	QList<HashedFile>::iterator it;
-	for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
-		HashedFile& hashedFile = *it;
-
-		ColFileInfo colFileInfo;
-		colFileInfo.name=hashedFile.filename;
-		colFileInfo.path="";
-		colFileInfo.size=hashedFile.size;
-		colFileInfo.hash=QString::fromStdString(hashedFile.hash.toStdString());
-		colFileInfo.filename_has_wrong_characters=false;
-		colFileInfo.type=DIR_TYPE_FILE;
-
-		if(_listOfFilesAddedInDir.value(hashedFile.filepath,"")!="") {
-			//File Added in directory, find its parent
-			colFileInfo.path = _listOfFilesAddedInDir.value(hashedFile.filepath,"");
-			_listOfFilesAddedInDir.remove(hashedFile.filepath);
-		}
-#ifdef TODO_COLLECTION
-		_newColFileInfos.push_back(colFileInfo);
-#endif
-	}
-#endif
     // build a map of old-hash to new-hash for the hashed files, so that it can be passed to the mCollection for update
 
     mCollectionModel->preMods();
@@ -1327,132 +676,6 @@ void RsCollectionDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
         ui._save_PB->setToolTip(tr(""));
         ui._save_PB->setEnabled(true);
     }
-	updateList();
-}
-
-#ifdef TO_REMOVE
-void RsCollectionDialog::itemChanged(QTreeWidgetItem *item, int col)
-{
-	if (col != COLUMN_FILE) return;
-
-	if (item->data(COLUMN_HASH, ROLE_TYPE).toUInt() != DIR_TYPE_FILE) return;
-
-	//In COLUMN_FILE, normaly, only checkState could change...
-	qulonglong size = item->data(COLUMN_SIZE, ROLE_SIZE).toULongLong();
-	bool unchecked = (item->checkState(COLUMN_FILE) == Qt::Unchecked);
-	item->setData(COLUMN_SIZE, ROLE_SELSIZE, unchecked?0:size);
-	item->setText(COLUMN_SIZE, misc::friendlyUnit(unchecked?0:size));
-	item->setData(COLUMN_FILEC, ROLE_SELFILEC, unchecked?0:1);
-	item->setText(COLUMN_FILEC, QString("%1").arg(unchecked?0:1));
-
-	//update parents size
-	QTreeWidgetItem *itemParent = item->parent();
-	while (itemParent) {
-		//When unchecked only remove selected size
-		qulonglong parentSize = itemParent->data(COLUMN_SIZE, ROLE_SELSIZE).toULongLong() + (unchecked?0-size:size);
-		itemParent->setData(COLUMN_SIZE, ROLE_SELSIZE, parentSize);
-		itemParent->setText(COLUMN_SIZE, misc::friendlyUnit(parentSize));
-
-		qulonglong parentFileCount = itemParent->data(COLUMN_FILEC, ROLE_SELFILEC).toULongLong() + (unchecked?0-1:1);
-		itemParent->setData(COLUMN_FILEC, ROLE_SELFILEC, parentFileCount);
-		itemParent->setText(COLUMN_FILEC, QString("%1").arg(parentFileCount));
-
-		itemParent = itemParent->parent();
-	}
-
-	updateSizes() ;
-
-}
-#endif
-
-/**
- * @brief RsCollectionDialog::updateRemoveDuplicate Remove all duplicate file when checked.
- * @param checked
- */
-void RsCollectionDialog::updateRemoveDuplicate(bool checked)
-{
-#ifdef TODO_COLLECTION
-	if (checked) {
-		bool bRemoveAll = false;
-		QTreeWidgetItemIterator it(ui._fileEntriesTW);
-		QTreeWidgetItem *item;
-		while ((item = *it) != NULL) {
-			++it;
-			if (item->data(COLUMN_HASH, ROLE_TYPE).toUInt() != DIR_TYPE_DIR) {
-				QList<QTreeWidgetItem*> founds;
-				founds << ui._fileEntriesTW->findItems(item->text(COLUMN_HASH), Qt::MatchExactly | Qt::MatchRecursive, COLUMN_HASH);
-				if (founds.count() > 1) {
-					bool bRemove = false;
-					if (!bRemoveAll) {
-						QMessageBox* msgBox = new QMessageBox(QMessageBox::Information, "", "");
-						msgBox->setText("Warning, duplicate file found.");
-						//msgBox->setInformativeText(); If text too long, no scroll, so I add an text edit
-						msgBox->setStandardButtons(QMessageBox::YesToAll | QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-						msgBox->setDefaultButton(QMessageBox::Yes);
-
-						QGridLayout* layout = qobject_cast<QGridLayout*>(msgBox->layout());
-						if (layout) {
-							int newRow = 1;
-							for (int row = layout->count()-1; row >= 0; --row) {
-								for (int col = layout->columnCount()-1; col >= 0; --col) {
-									QLayoutItem *item = layout->itemAtPosition(row, col);
-									if (item) {
-										int index = layout->indexOf(item->widget());
-										int r=0, c=0, rSpan=0, cSpan=0;
-										layout->getItemPosition(index, &r, &c, &rSpan, &cSpan);
-										if (r>0) {
-											layout->removeItem(item);
-											layout->addItem(item, r+3, c, rSpan, cSpan);
-										} else if (rSpan>1) {
-											newRow = rSpan + 1;
-										}
-									}
-								}
-							}
-							QLabel *label = new QLabel(tr("Do you want to remove this file from the list?"));
-							layout->addWidget(label,newRow, 0, 1, layout->columnCount(), Qt::AlignHCenter );
-							QTextEdit *edit = new QTextEdit(item->text(COLUMN_FILEPATH));
-							edit->setReadOnly(true);
-							edit->setWordWrapMode(QTextOption::NoWrap);
-							layout->addWidget(edit,newRow+1, 0, 1, layout->columnCount(), Qt::AlignHCenter );
-						}
-
-						int ret = msgBox->exec();
-						switch (ret) {
-							case QMessageBox::YesToAll: {
-								bRemoveAll = true;
-							}
-							break;
-							case QMessageBox::Yes: {
-								bRemove = true;
-							}
-							break;
-							case QMessageBox::No:
-							break;
-							case QMessageBox::Cancel: {
-								delete msgBox;
-								ui._removeDuplicate_CB->setChecked(false);
-								return;
-							}
-							break;
-							default:
-								// should never be reached
-							break;
-						}
-						delete msgBox;
-					}
-
-					if (bRemove || bRemoveAll) {
-							//First uncheck item to update parent informations
-							item->setCheckState(COLUMN_FILE,Qt::Unchecked);
-							item->parent()->removeChild(item);
-					}
-
-				}
-			}
-		}
-	}
-#endif
 }
 
 /**
@@ -1470,6 +693,8 @@ void RsCollectionDialog::cancel()
 void RsCollectionDialog::download()
 {
 	std::cerr << "Downloading!" << std::endl;
+    bool auto_correct = false;
+    bool auto_skip = false;
 
 	QString dldir = ui.downloadFolder_LE->text();
 
@@ -1509,50 +734,44 @@ void RsCollectionDialog::download()
             std::string subpath = RsDirUtil::makePath(path,dirdata.name);
             const auto& f(mCollection->fileTree().fileData(dirdata.subfiles[i]));
 
-            std::cerr << "Requesting file " << f.name << " to directory " << path << std::endl;
+            std::string corrected_name;
 
-            rsFiles->FileRequest(f.name,f.hash,f.size,path,RS_FILE_REQ_ANONYMOUS_ROUTING,std::list<RsPeerId>());
+            if(!checkFileName(f.name,corrected_name) && !auto_correct)
+            {
+                if(auto_skip)
+                    continue;
+
+                QMessageBox mb;
+                mb.setText(tr("Incompatible filename."));
+                mb.setInformativeText(tr("This filename is not usable on your system.")+"\n"+tr("Retroshare can replace every problematic chars by '_'.")
+                                      +"\n"+tr("What do you want to do?"));
+                QAbstractButton *btnCorrect = mb.addButton(tr("Correct filename"), QMessageBox::ResetRole);
+                QAbstractButton *btnCorrectAll = mb.addButton(tr("Correct all"), QMessageBox::YesRole);
+                QAbstractButton *btnSkip = mb.addButton(tr("Skip this file"), QMessageBox::ApplyRole);
+                QAbstractButton *btnSkipAll = mb.addButton(tr("Skip all"), QMessageBox::AcceptRole);
+                mb.setIcon(QMessageBox::Question);
+                mb.exec();
+
+                if(mb.clickedButton() == btnSkipAll)
+                {
+                    auto_skip = true;
+                    continue;
+                }
+                if(mb.clickedButton() == btnSkip)
+                    continue;
+
+                if(mb.clickedButton() == btnCorrectAll)
+                    auto_correct = true;
+            }
+
+            std::cerr << "Requesting file " << corrected_name << " to directory " << path << std::endl;
+
+            rsFiles->FileRequest(corrected_name,f.hash,f.size,path,RS_FILE_REQ_ANONYMOUS_ROUTING,std::list<RsPeerId>());
         }
     };
 
     recursDL(mCollection->fileTree().root(),dldir.toUtf8().constData());
     close();
-#ifdef TO_REMOVE
-	while ((item = *itemIterator) != NULL) {
-		++itemIterator;
-
-		if (item->checkState(COLUMN_FILE) == Qt::Checked) {
-			std::cerr << item->data(COLUMN_HASH,ROLE_NAME).toString().toStdString()
-			          << " " << item->text(COLUMN_HASH).toStdString()
-			          << " " << item->text(COLUMN_SIZE).toStdString()
-			          << " " << item->data(COLUMN_HASH,ROLE_PATH).toString().toStdString() << std::endl;
-			ColFileInfo colFileInfo;
-			colFileInfo.hash = item->text(COLUMN_HASH);
-			colFileInfo.name = item->data(COLUMN_HASH,ROLE_NAME).toString();
-			colFileInfo.path = item->data(COLUMN_HASH,ROLE_PATH).toString();
-			colFileInfo.type = item->data(COLUMN_HASH,ROLE_TYPE).toUInt();
-			colFileInfo.size = item->data(COLUMN_SIZE,ROLE_SELSIZE).toULongLong();
-
-			QString cleanPath = dldir + colFileInfo.path ;
-			std::cerr << "making directory " << cleanPath.toStdString() << std::endl;
-
-			if(!QDir(QApplication::applicationDirPath()).mkpath(cleanPath))
-				QMessageBox::warning(NULL,QObject::tr("Unable to make path"),QObject::tr("Unable to make path:")+"<br>  "+cleanPath) ;
-
-			if (colFileInfo.type==DIR_TYPE_FILE)
-				rsFiles->FileRequest(colFileInfo.name.toUtf8().constData(),
-				                     RsFileHash(colFileInfo.hash.toStdString()),
-				                     colFileInfo.size,
-				                     cleanPath.toUtf8().constData(),
-				                     RS_FILE_REQ_ANONYMOUS_ROUTING,
-				                     std::list<RsPeerId>());
-		} else {//if (item->checkState(COLUMN_FILE) == Qt::Checked)
-			std::cerr<<"Skipping file : " << item->data(COLUMN_HASH,ROLE_NAME).toString().toStdString() << std::endl;
-		}
-	}
-
-	close();
-#endif
 }
 
 /**
@@ -1569,46 +788,7 @@ void RsCollectionDialog::save()
     mCollection->cleanup();
     mCollection->save(ui._filename_TL->text());
     close();
-#ifdef TO_REMOVE
-	std::cerr << "Saving!" << std::endl;
-	_newColFileInfos.clear();
-	QTreeWidgetItem* root = getRootItem();
-	if (root) {
-		saveChild(root);
-		emit saveColl(_newColFileInfos, _fileName);
-	}
-	close();
-#endif
 }
-
-#ifdef TO_REMOVE
-/**
- * @brief RsCollectionDialog::saveChild: Save each child in _newColFileInfos
- * @param parent
- */
-void RsCollectionDialog::saveChild(QTreeWidgetItem *parentItem, ColFileInfo *parentInfo)
-{
-	ColFileInfo parent;
-	if (!parentInfo) parentInfo = &parent;
-
-	parentInfo->checked = (parentItem->checkState(COLUMN_FILE)==Qt::Checked);
-	parentInfo->hash = parentItem->text(COLUMN_HASH);
-	parentInfo->name = parentItem->data(COLUMN_HASH,ROLE_NAME).toString();
-	parentInfo->path = parentItem->data(COLUMN_HASH,ROLE_PATH).toString();
-	parentInfo->type = parentItem->data(COLUMN_HASH,ROLE_TYPE).toUInt();
-	parentInfo->size = parentItem->data(COLUMN_SIZE,ROLE_SELSIZE).toULongLong();
-
-	for (int i=0; i<parentItem->childCount(); ++i) {
-		ColFileInfo child;
-		saveChild(parentItem->child(i), &child);
-		if (parentInfo->name != "") {
-			parentInfo->children.push_back(child);
-		} else {
-			_newColFileInfos.push_back(child);
-		}
-	}
-}
-#endif
 
 bool RsCollectionDialog::editExistingCollection(const QString& fileName, bool showError /* = true*/)
 {
@@ -1651,77 +831,5 @@ bool RsCollectionDialog::openNewCollection(const RsFileTree& tree)
         return false;
 
     return RsCollectionDialog(fileName,EDIT).exec();
-
-#ifdef TODO_COLLECTION
-    QString fileName = proposed_file_name;
-
-    if(!misc::getSaveFileName(nullptr, RshareSettings::LASTDIR_EXTRAFILE
-                                                        , QApplication::translate("RsCollectionFile", "Create collection file")
-                                                        , QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")"
-                                                        , fileName,0, QFileDialog::DontConfirmOverwrite))
-        return false;
-
-    if (!fileName.endsWith("." + RsCollection::ExtensionString))
-        fileName += "." + RsCollection::ExtensionString ;
-
-    std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
-
-    QFile file(fileName) ;
-
-    if(file.exists())
-    {
-        RsCollection::RsCollectionErrorCode err;
-        if (!RsCollection::checkFile(fileName,err))
-        {
-            QMessageBox::information(nullptr,tr("Error openning collection"),RsCollection::errorString(err));
-            return false;
-        }
-
-        QMessageBox mb;
-        mb.setText(tr("Save Collection File."));
-        mb.setInformativeText(tr("File already exists.")+"\n"+tr("What do you want to do?"));
-        QAbstractButton *btnOwerWrite = mb.addButton(tr("Overwrite"), QMessageBox::YesRole);
-        QAbstractButton *btnMerge = mb.addButton(tr("Merge"), QMessageBox::NoRole);
-        QAbstractButton *btnCancel = mb.addButton(tr("Cancel"), QMessageBox::ResetRole);
-        mb.setIcon(QMessageBox::Question);
-        mb.exec();
-
-        if (mb.clickedButton()==btnOwerWrite) {
-            //Nothing to do _xml_doc already up to date
-        } else if (mb.clickedButton()==btnMerge) {
-            //Open old file to merge it with _xml_doc
-            QDomDocument qddOldFile("RsCollection");
-            if (qddOldFile.setContent(&file)) {
-                QDomElement docOldElem = qddOldFile.elementsByTagName("RsCollection").at(0).toElement();
-                std::vector<ColFileInfo> colOldFileInfos;
-                recursCollectColFileInfos(docOldElem,colOldFileInfos,QString(),false);
-
-                QDomElement root = _xml_doc.elementsByTagName("RsCollection").at(0).toElement();
-                for(uint32_t i = 0;i<colOldFileInfos.size();++i){
-                    recursAddElements(_xml_doc,colOldFileInfos[i],root) ;
-                }
-            }
-
-        } else if (mb.clickedButton()==btnCancel) {
-            return false;
-        } else {
-            return false;
-        }
-
-    }//if(file.exists())
-
-    _fileName=fileName;
-    std::vector<ColFileInfo> colFileInfos ;
-
-    recursCollectColFileInfos(_xml_doc.documentElement(),colFileInfos,QString(),false) ;
-
-    RsCollectionDialog* rcd = new RsCollectionDialog(fileName, colFileInfos,true);
-    connect(rcd,SIGNAL(saveColl(std::vector<ColFileInfo>, QString)),this,SLOT(saveColl(std::vector<ColFileInfo>, QString))) ;
-    _saved=false;
-    rcd->exec() ;
-    delete rcd;
-
-#endif
-    return true;
 }
 
