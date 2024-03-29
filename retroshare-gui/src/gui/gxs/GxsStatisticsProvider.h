@@ -49,13 +49,16 @@ public:
     virtual ~GxsStatisticsProvider();
 
     virtual void getServiceStatistics(GxsServiceStatistic& stats) const = 0;
+    virtual bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId) = 0;
 
 protected:
     virtual void updateGroupStatistics(const RsGxsGroupId &groupId) = 0;
     virtual void updateGroupStatisticsReal(const RsGxsGroupId &groupId) = 0;
 
     // This needs to be overloaded by subsclasses, possibly calling the blocking API, since it is used asynchroneously.
-    virtual bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) =0;
+    virtual bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) = 0;
+
+    virtual GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId) = 0;
 
     QString mSettingsName;
     RsGxsIfaceHelper *mInterface;
@@ -64,6 +67,10 @@ protected:
     bool mShouldUpdateGroupStatistics;
     std::set<RsGxsGroupId> mGroupStatisticsToUpdate;
     bool mCountChildMsgs; // Count unread child messages?
+
+    RsGxsGroupId mNavigatePendingGroupId;
+    RsGxsMessageId mNavigatePendingMsgId;
+    UIStateHelper *mStateHelper;
 
 private:
     virtual QString settingsGroupName() = 0;

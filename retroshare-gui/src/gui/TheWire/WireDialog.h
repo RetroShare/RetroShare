@@ -120,6 +120,8 @@ public:
 
     void getServiceStatistics(GxsServiceStatistic& stats) const ;
 
+    virtual bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId) override;
+
 protected:
 
     bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) override;
@@ -165,6 +167,7 @@ private:
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req) override;
 
     virtual QString settingsGroupName()  override{ return "PostedDialog"; }
+    virtual GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId) override;
 
 	int mGroupSet;
 

@@ -33,6 +33,7 @@
 #include "FileTransfer/SearchDialog.h"
 #include "gxschannels/GxsChannelDialog.h"
 #include "gxsforums/GxsForumsDialog.h"
+#include "TheWire/WireDialog.h"
 #include "msgs/MessageComposer.h"
 #include "Posted/PostedDialog.h"
 #include "util/misc.h"
@@ -76,7 +77,8 @@
 #define HOST_IDENTITY    "identity"
 #define HOST_FILE_TREE   "collection"
 #define HOST_CHAT_ROOM   "chat_room"
-#define HOST_REGEXP      "file|person|forum|channel|search|message|certificate|extra|private_chat|public_msg|posted|identity|collection|chat_room"
+#define HOST_REGEXP      "file|person|forum|channel|wire|search|message|certificate|extra|private_chat|public_msg|posted|identity|collection|chat_room"
+#define HOST_WIRE        "wire"
 
 #define FILE_NAME       "name"
 #define FILE_SIZE       "size"
@@ -93,6 +95,10 @@
 #define CHANNEL_NAME    "name"
 #define CHANNEL_ID      "id"
 #define CHANNEL_MSGID   "msgid"
+
+#define WIRE_NAME    "name"
+#define WIRE_ID      "id"
+#define WIRE_MSGID   "msgid"
 
 #define SEARCH_KEYWORDS "keywords"
 
@@ -291,6 +297,19 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		return;
 	}
 
+    if (url.host() == HOST_WIRE) {
+        _type = TYPE_WIRE;
+        _name = decodedQueryItemValue(urlQuery, WIRE_NAME);
+        _hash = urlQuery.queryItemValue(WIRE_ID);
+        _msgId = urlQuery.queryItemValue(WIRE_MSGID);
+
+#ifdef DEBUG_RSLINK
+        std::cerr << "Got a wire link!!" << std::endl;
+#endif
+        check();
+        return;
+    }
+
 	if (url.host() == HOST_SEARCH) {
 		_type = TYPE_SEARCH;
 		_name = decodedQueryItemValue(urlQuery, SEARCH_KEYWORDS);
@@ -470,7 +489,7 @@ RetroShareLink RetroShareLink::createPerson(const RsPgpId& id)
 	return link;
 }
 
-//For Forum, Channel & Posted
+//For Forum, Channel, Posted and Wire
 RetroShareLink RetroShareLink::createGxsGroupLink(const RetroShareLink::enumType &linkType, const RsGxsGroupId &groupId, const QString &groupName)
 {
 	RetroShareLink link;
@@ -795,6 +814,17 @@ void RetroShareLink::check()
 				_valid = false;
 		break;
 
+        case TYPE_WIRE:
+            if(_size != 0)
+                _valid = false;
+
+            if(_name.isEmpty())
+                _valid = false;
+
+            if(_hash.isEmpty())
+                _valid = false;
+        break;
+
 		case TYPE_SEARCH:
 			if(_size != 0)
 				_valid = false;
@@ -888,7 +918,9 @@ QString RetroShareLink::title() const
 			return QString("Forum id: %1").arg(hash());
 		case TYPE_CHANNEL:
 			return QString("Channel id: %1").arg(hash());
-		case TYPE_SEARCH:
+        case TYPE_WIRE:
+            return QString("Wire id: %1").arg(hash());
+        case TYPE_SEARCH:
 			return QString("Search files");
 
 		case TYPE_MESSAGE:
@@ -1074,6 +1106,17 @@ QString RetroShareLink::toString() const
 			urlQuery.addQueryItem(CHAT_ROOM_ID, _hash);
 
 		break;
+
+        case TYPE_WIRE:
+            url.setScheme(RSLINK_SCHEME);
+            url.setHost(HOST_WIRE);
+            urlQuery.addQueryItem(WIRE_NAME, encodeItem(_name));
+            urlQuery.addQueryItem(WIRE_ID, _hash);
+            if (!_msgId.isEmpty()) {
+                urlQuery.addQueryItem(WIRE_MSGID, _msgId);
+            }
+
+        break;
 
 	}
 
@@ -1307,6 +1350,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				case TYPE_FILE:
 				case TYPE_FORUM:
 				case TYPE_CHANNEL:
+                case TYPE_WIRE:
 				case TYPE_SEARCH:
 				case TYPE_MESSAGE:
 				case TYPE_CERTIFICATE:
@@ -1355,6 +1399,12 @@ static void processList(const QStringList &list, const QString &textSingular, co
 	QStringList channelUnknown;
 	QStringList channelMsgUnknown;
 
+    // wire
+    QStringList wireFound;
+    QStringList wireMsgFound;
+    QStringList wireUnknown;
+    QStringList wireMsgUnknown;
+
 	// search
 	QStringList searchStarted;
 
@@ -1381,9 +1431,9 @@ static void processList(const QStringList &list, const QString &textSingular, co
 	QList<QStringList*> processedList;
 	QList<QStringList*> errorList;
 
-	processedList << &fileAdded << &personAdded << &forumFound << &channelFound << &searchStarted << &messageStarted << &postedFound << &chatroomFound;
-	errorList << &fileExist << &personExist << &personFailed << &personNotFound << &forumUnknown << &forumMsgUnknown << &channelUnknown << &channelMsgUnknown << &messageReceipientNotAccepted << &messageReceipientUnknown << &postedUnknown << &postedMsgUnknown << &chatroomUnknown;
-	// not needed: forumFound, channelFound, messageStarted
+    processedList << &fileAdded << &personAdded << &forumFound << &channelFound << &wireFound << &searchStarted << &messageStarted << &postedFound << &chatroomFound;
+    errorList << &fileExist << &personExist << &personFailed << &personNotFound << &forumUnknown << &forumMsgUnknown << &channelUnknown << &channelMsgUnknown << &wireUnknown << &wireMsgUnknown << &messageReceipientNotAccepted << &messageReceipientUnknown << &postedUnknown << &postedMsgUnknown << &chatroomUnknown;
+    // not needed: forumFound, channelFound, wireFound, messageStarted
 
 	// we want to merge all single file links into one collection
 	// if a collection tree link is found it is processed independen for the other file links
@@ -1474,6 +1524,34 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				}
 			}
 			break;
+
+            case TYPE_WIRE:
+            {
+    #ifdef DEBUG_RSLINK
+                std::cerr << " RetroShareLink::process WireRequest : name : " << link.name().toStdString() << ". id : " << link.hash().toStdString() << ". msgId : " << link.msgId().toStdString() << std::endl;
+    #endif
+
+                MainWindow::showWindow(MainWindow::Wire);
+                WireDialog *wireDialog = dynamic_cast<WireDialog*>(MainWindow::getPage(MainWindow::Wire));
+                if (!wireDialog) {
+                    return false;
+                }
+
+                if (wireDialog->navigate(RsGxsGroupId(link.id().toStdString()), RsGxsMessageId(link.msgId().toStdString()))) {
+                    if (link.msgId().isEmpty()) {
+                        wireFound.append(link.name());
+                    } else {
+                        wireMsgFound.append(link.name());
+                    }
+                } else {
+                    if (link.msgId().isEmpty()) {
+                        wireUnknown.append(link.name());
+                    } else {
+                        wireMsgUnknown.append(link.name());
+                    }
+                }
+            }
+            break;
 
 			case TYPE_SEARCH:
 			{
@@ -1853,6 +1931,16 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			processList(channelMsgUnknown, QObject::tr("Channel message not found"), QObject::tr("Channel messages not found"), result);
 		}
 	}
+
+    // wire
+    if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+        if (!wireUnknown.isEmpty()) {
+            processList(wireUnknown, QObject::tr("Wire not found"), QObject::tr("Wires not found"), result);
+        }
+        if (!wireMsgUnknown.isEmpty()) {
+            processList(wireMsgUnknown, QObject::tr("Wire message not found"), QObject::tr("Wire messages not found"), result);
+        }
+    }
 
 	// message
 	if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {

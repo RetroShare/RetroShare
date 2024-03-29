@@ -60,11 +60,11 @@
 
 
 #define WIRE_TOKEN_TYPE_SUBSCRIBE_CHANGE 1
-
+#define TOKEN_TYPE_GROUP_SUMMARY    1
 
 /** Constructor */
 WireDialog::WireDialog(QWidget *parent)
-    : GxsStatisticsProvider(rsWire, settingsGroupName(),parent), mGroupSet(GROUP_SET_ALL)
+    : GxsStatisticsProvider(rsWire, settingsGroupName(),parent, true), mGroupSet(GROUP_SET_ALL)
     , mAddDialog(nullptr), mGroupSelected(nullptr), mWireQueue(nullptr)
     , mHistoryIndex(-1), mEventHandlerId(0)
 {
@@ -87,6 +87,9 @@ WireDialog::WireDialog(QWidget *parent)
 
 	/* setup TokenQueue */
 	mWireQueue = new TokenQueue(rsWire->getTokenService(), this);
+    mCountChildMsgs = false;
+    mShouldUpdateGroupStatistics = false;
+    mDistSyncAllowed = true;
 
 	requestGroupData();
 
@@ -1141,6 +1144,8 @@ void WireDialog::showGroupFocus(const RsGxsGroupId groupId)
 
 void WireDialog::postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr> pulses)
 {
+    clearTwitterView();
+
 	std::cerr << "WireDialog::postGroupFocus()";
 	std::cerr << std::endl;
 
@@ -1214,6 +1219,7 @@ void WireDialog::showGroupsPulses(const std::list<RsGxsGroupId>& groupIds)
 
 void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
 {
+    clearTwitterView();
 	std::cerr << "WireDialog::postGroupsPulses()";
 	std::cerr << std::endl;
 
@@ -1240,6 +1246,7 @@ void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
 
 void WireDialog::getServiceStatistics(GxsServiceStatistic& stats) const
 {
+    std::cout<<"inside the getServiceStatics *********"<<std::endl;
     if(!mCachedGroupStats.empty())
     {
         stats = GxsServiceStatistic(); // clears everything
@@ -1255,6 +1262,13 @@ void WireDialog::getServiceStatistics(GxsServiceStatistic& stats) const
             stats.mNumThreadMsgsUnread += s.mNumThreadMsgsUnread;
             stats.mNumChildMsgsNew     += s.mNumChildMsgsNew ;
             stats.mNumChildMsgsUnread  += s.mNumChildMsgsUnread ;
+            std::cout<<stats.mNumMsgs  <<std::endl;
+            std::cout<<stats.mNumGrps  <<std::endl;
+            std::cout<<stats.mSizeOfMsgs  <<std::endl;
+            std::cout<<stats.mNumThreadMsgsNew  <<std::endl;
+            std::cout<<stats.mNumThreadMsgsUnread  <<std::endl;
+            std::cout<<stats.mNumChildMsgsNew  <<std::endl;
+            std::cout<<stats.mNumChildMsgsUnread   <<std::endl;
         }
 
         // Also save the service statistics in conf file, so that we can display it right away at start.
@@ -1323,3 +1337,93 @@ void WireDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
         }, this );
     });
 }
+
+bool WireDialog::navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId)
+{
+    if (groupId.isNull()) {
+        return false;
+    }
+
+//    if (mStateHelper->isLoading(TOKEN_TYPE_GROUP_SUMMARY)) {
+//        mNavigatePendingGroupId = groupId;
+//        mNavigatePendingMsgId = msgId;
+
+//        /* No information if group is available */
+//        return true;
+//    }
+
+//    QString groupIdString = QString::fromStdString(groupId.toStdString());
+//    if (ui.groupTreeWidget->activateId(groupIdString, msgId.isNull()) == NULL) {
+//        return false;
+//    }
+
+//    changedCurrentGroup(groupIdString);
+
+    /* search exisiting tab */
+//    GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId);
+//    if (!msgWidget) {
+//        return false;
+//    }
+
+//    if (msgId.isNull()) {
+//        return true;
+//    }
+
+//    return msgWidget->navigate(msgId);
+    return true;
+}
+
+GxsMessageFrameWidget *WireDialog::messageWidget(const RsGxsGroupId &groupId)
+{
+//    int tabCount = ui.tabWidget->count();
+
+//    for (int index = 0; index < tabCount; ++index)
+//    {
+//        GxsMessageFrameWidget *childWidget = dynamic_cast<GxsMessageFrameWidget*>(ui.tabWidget->widget(index));
+
+//        if (childWidget && childWidget->groupId() == groupId)
+//            return childWidget;
+//    }
+
+    return NULL;
+}
+
+//void GxsGroupFrameDialog::changedCurrentGroup(const QString& groupId)
+//{
+//	if (mInFill) {
+//		return;
+//	}
+
+//	if (groupId.isEmpty())
+//    {
+//        auto w = currentWidget();
+
+//        if(w)
+//			w->setGroupId(RsGxsGroupId());
+
+//		return;
+//	}
+
+//	mGroupId = RsGxsGroupId(groupId.toStdString());
+
+//	if (mGroupId.isNull())
+//		return;
+
+//	/* search exisiting tab */
+//	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId);
+
+//    // check that we have at least one tab
+
+//	if(msgWidget)
+//		ui.messageTabWidget->setCurrentWidget(msgWidget);
+//    else
+//    {
+//        if(useTabs() || ui.messageTabWidget->count()==0)
+//        {
+//			msgWidget = createMessageWidget(RsGxsGroupId(groupId.toStdString()));
+//			ui.messageTabWidget->setCurrentWidget(msgWidget);
+//		}
+//        else
+//			currentWidget()->setGroupId(mGroupId);
+//	}
+//}

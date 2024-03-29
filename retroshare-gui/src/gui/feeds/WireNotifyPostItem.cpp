@@ -497,7 +497,7 @@ void WireNotifyPostItem::fill()
     QString msgText;
     //float f = QFontMetricsF(font()).height()/14.0 ;
 
-    ui->logoLabel->setEnableZoom(false);
+//    ui->logoLabel->setEnableZoom(false);
     int desired_height = QFontMetricsF(font()).height() * 8;
     ui->logoLabel->setFixedSize(4/3.0*desired_height,desired_height);
 
@@ -632,7 +632,7 @@ void WireNotifyPostItem::fill()
 //		fillExpandFrame();
 //	}
 
-    ui->datetimelabel->setText(DateTime::formatLongDateTime(mPulse.mMeta.mPublishTs));
+    ui->datetimelabel->setText(DateTime::formatLongDateTime(mPulse.mRefPublishTs));
 
 //    if ( (mPulse.mAttachmentCount != 0) || (mPulse.mSize != 0) ) {
 //        ui->filelabel->setVisible(true);

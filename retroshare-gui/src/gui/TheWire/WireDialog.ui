@@ -224,7 +224,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="RSTabWidget" name="tabWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>3</horstretch>
@@ -432,10 +432,16 @@
    <extends>QComboBox</extends>
    <header>gui/common/RSComboBox.h</header>
   </customwidget>
+  <customwidget>
+   <class>RSTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>gui/common/RSTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="TheWire_images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="TheWire_images.qrc"/>
  </resources>
  <connections/>
 </ui>

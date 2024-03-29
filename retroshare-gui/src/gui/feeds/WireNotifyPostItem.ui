@@ -52,7 +52,7 @@
         <item>
          <layout class="QVBoxLayout" name="logo_VLayout">
           <item>
-           <widget class="ZoomableLabel" name="logoLabel">
+           <widget class="QLabel" name="logoLabel">
             <property name="text">
              <string>TextLabel</string>
             </property>
@@ -437,13 +437,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ZoomableLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/gxschannels/GxsChannelPostThumbnail.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

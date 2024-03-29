@@ -75,7 +75,7 @@ public:
     GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, const QString& settings_name,QWidget *parent = 0,bool allow_dist_sync=false);
 	virtual ~GxsGroupFrameDialog();
 
-	bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId);
+    virtual bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId) override;
 
 	virtual QString getHelpString() const =0;
 
@@ -182,7 +182,7 @@ private:
 
 	// subscribe/unsubscribe ack.
 
-	GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId);
+    virtual GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId) override;
 	GxsMessageFrameWidget *createMessageWidget(const RsGxsGroupId &groupId);
 
 	GxsCommentDialog *commentWidget(const RsGxsMessageId &msgId);
@@ -208,9 +208,6 @@ private:
 	QTreeWidgetItem *mPopularGroups;
 	QTreeWidgetItem *mOtherGroups;
 
-	RsGxsGroupId mNavigatePendingGroupId;
-	RsGxsMessageId mNavigatePendingMsgId;
-
     // Message summary list update
 
 	bool mShouldUpdateMessageSummaryList ; // whether we should update the counting for groups. This takes some CPU so we only do it when needed.
@@ -218,8 +215,6 @@ private:
 
     // GroupStatistics update
     rstime_t mLastGroupStatisticsUpdateTs;
-
-	UIStateHelper *mStateHelper;
 
 	/** Qt Designer generated object */
 	Ui::GxsGroupFrameDialog *ui;
