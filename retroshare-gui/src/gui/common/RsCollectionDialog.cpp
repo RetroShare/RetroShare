@@ -756,10 +756,10 @@ void RsCollectionDialog::download()
                 mb.setText(tr("Incompatible filename."));
                 mb.setInformativeText(tr("This filename is not usable on your system.")+"\n"+tr("Retroshare can replace every problematic chars by '_'.")
                                       +"\n"+tr("What do you want to do?"));
-                QAbstractButton *btnCorrect = mb.addButton(tr("Correct filename"), QMessageBox::ResetRole);
-                QAbstractButton *btnCorrectAll = mb.addButton(tr("Correct all"), QMessageBox::YesRole);
-                QAbstractButton *btnSkip = mb.addButton(tr("Skip this file"), QMessageBox::ApplyRole);
-                QAbstractButton *btnSkipAll = mb.addButton(tr("Skip all"), QMessageBox::AcceptRole);
+                QAbstractButton *btnCorrect = mb.addButton(tr("Correct filename"), QMessageBox::YesRole);
+                QAbstractButton *btnCorrectAll = mb.addButton(tr("Correct all"), QMessageBox::AcceptRole);
+                QAbstractButton *btnSkip = mb.addButton(tr("Skip this file"), QMessageBox::NoRole);
+                QAbstractButton *btnSkipAll = mb.addButton(tr("Skip all"), QMessageBox::RejectRole);
                 mb.setIcon(QMessageBox::Question);
                 mb.exec();
 
@@ -833,16 +833,19 @@ bool RsCollectionDialog::openNewCollection(const RsFileTree& tree)
 
     std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
 
-    QMessageBox mb;
-    mb.setText(tr("Save Collection File."));
-    mb.setInformativeText(tr("File already exists.")+"\n"+tr("What do you want to do?"));
-    QAbstractButton *btnOwerWrite = mb.addButton(tr("Overwrite"), QMessageBox::YesRole);
-    QAbstractButton *btnCancel = mb.addButton(tr("Cancel"), QMessageBox::ResetRole);
-    mb.setIcon(QMessageBox::Question);
-    mb.exec();
+    if(QFile(fileName).exists())
+    {
+        QMessageBox mb;
+        mb.setText(tr("Save Collection File."));
+        mb.setInformativeText(tr("File already exists.")+"\n"+tr("What do you want to do?"));
+        QAbstractButton *btnOwerWrite = mb.addButton(tr("Overwrite"), QMessageBox::YesRole);
+        QAbstractButton *btnCancel = mb.addButton(tr("Cancel"), QMessageBox::ResetRole);
+        mb.setIcon(QMessageBox::Question);
+        mb.exec();
 
-    if (mb.clickedButton()==btnCancel)
-        return false;
+        if (mb.clickedButton()==btnCancel)
+            return false;
+    }
 
     if(!collection.save(fileName))
         return false;
