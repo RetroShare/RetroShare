@@ -489,7 +489,7 @@ void RsCollectionModel::postMods()
     emit layoutChanged();
     emit sizesChanged();
 
-    debugDump();
+//    debugDump();
 }
 
 void RsCollectionModel::recursUpdateLocalStructures(RsFileTree::DirIndex dir_index,int depth)
