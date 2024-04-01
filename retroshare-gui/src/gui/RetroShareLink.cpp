@@ -25,7 +25,7 @@
 #include "HomePage.h"
 #include "chat/ChatDialog.h"
 #include "common/PeerDefs.h"
-#include "common/RsCollection.h"
+#include "common/RsCollectionDialog.h"
 #include "common/RsUrlHandler.h"
 #include "connect/ConfCertDialog.h"
 #include "connect/ConnectFriendWizard.h"
@@ -1143,11 +1143,13 @@ QString RetroShareLink::toHtmlSize() const
 
 	if (type() == TYPE_FILE && RsCollection::isCollectionFile(name())) {
 		FileInfo finfo;
-		if (rsFiles->FileDetails(RsFileHash(hash().toStdString()), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, finfo)) {
-			RsCollection collection;
-			if (collection.load(QString::fromUtf8(finfo.path.c_str()), false)) {
+        if (rsFiles->FileDetails(RsFileHash(hash().toStdString()), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, finfo))
+        {
+            RsCollection::RsCollectionErrorCode code;
+            RsCollection collection(QString::fromUtf8(finfo.path.c_str()), code) ;
+
+            if(code == RsCollection::RsCollectionErrorCode::NO_ERROR)
 				size += QString(" [%1]").arg(misc::friendlyUnit(collection.size()));
-			}
 		}
 	}
 	QString link = QString("<a href=\"%1\">%2</a> <font color=\"blue\">%3</font>").arg(toString()).arg(name()).arg(size);
@@ -1722,10 +1724,9 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 		case TYPE_FILE_TREE:
 		{
-			auto ft = RsFileTree::fromRadix64(
-			            link.radix().toStdString() );
-			RsCollection(*ft).downloadFiles();
-			break;
+            auto ft = RsFileTree::fromRadix64(link.radix().toStdString() );
+            RsCollectionDialog::downloadFiles(RsCollection(*ft));
+            break;
 		}
 
 			case TYPE_CHAT_ROOM:
@@ -1776,7 +1777,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 	// were single file links found?
 	if (fileLinkFound)
-		col.downloadFiles();
+        RsCollectionDialog::downloadFiles(col);
 
 	int countProcessed = 0;
 	int countError = 0;
