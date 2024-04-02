@@ -164,7 +164,7 @@ QString RsCollection::errorString(RsCollectionErrorCode code)
     {
     default: [[fallthrough]] ;
     case RsCollectionErrorCode::UNKNOWN_ERROR:                 return QObject::tr("Unknown error");
-    case RsCollectionErrorCode::NO_ERROR:                      return QObject::tr("No error");
+    case RsCollectionErrorCode::COLLECTION_NO_ERROR:           return QObject::tr("No error");
     case RsCollectionErrorCode::FILE_READ_ERROR:               return QObject::tr("Error while openning file");
     case RsCollectionErrorCode::FILE_CONTAINS_HARMFUL_STRINGS: return QObject::tr("Collection file contains potentially harmful code");
     case RsCollectionErrorCode::INVALID_ROOT_NODE:             return QObject::tr("Invalid root node. RsCollection node was expected.");
@@ -214,7 +214,7 @@ RsCollection::RsCollection(const QString& fileName, RsCollectionErrorCode& error
     if(!recursParseXml(xml_doc,root,0))
         error = RsCollectionErrorCode::XML_PARSING_ERROR;
     else
-        error = RsCollectionErrorCode::NO_ERROR;
+        error = RsCollectionErrorCode::COLLECTION_NO_ERROR;
 }
 
 // check that the file is a valid rscollection file, and not a lol bomb or some shit like this
@@ -222,7 +222,7 @@ RsCollection::RsCollection(const QString& fileName, RsCollectionErrorCode& error
 bool RsCollection::checkFile(const QString& fileName, RsCollectionErrorCode& error)
 {
     QFile file(fileName);
-    error = RsCollectionErrorCode::NO_ERROR;
+    error = RsCollectionErrorCode::COLLECTION_NO_ERROR;
 
     if (!file.open(QIODevice::ReadOnly))
     {

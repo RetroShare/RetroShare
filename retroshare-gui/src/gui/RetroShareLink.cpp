@@ -1148,7 +1148,7 @@ QString RetroShareLink::toHtmlSize() const
             RsCollection::RsCollectionErrorCode code;
             RsCollection collection(QString::fromUtf8(finfo.path.c_str()), code) ;
 
-            if(code == RsCollection::RsCollectionErrorCode::NO_ERROR)
+            if(code == RsCollection::RsCollectionErrorCode::COLLECTION_NO_ERROR)
 				size += QString(" [%1]").arg(misc::friendlyUnit(collection.size()));
 		}
 	}

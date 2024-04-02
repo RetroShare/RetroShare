@@ -56,12 +56,12 @@ class RsCollection
 {
 public:
     enum class RsCollectionErrorCode:uint8_t {
-        NO_ERROR                      = 0x00,
+        COLLECTION_NO_ERROR           = 0x00,
         UNKNOWN_ERROR                 = 0x01,
         FILE_READ_ERROR               = 0x02,
         FILE_CONTAINS_HARMFUL_STRINGS = 0x03,
         INVALID_ROOT_NODE             = 0x04,
-        XML_PARSING_ERROR             = 0x05,
+        XML_PARSING_ERROR             = 0x05
     };
 
     RsCollection();
