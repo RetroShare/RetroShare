@@ -130,7 +130,7 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsColl
     RsCollection::RsCollectionErrorCode err_code;
     mCollection = new RsCollection(collectionFileName,err_code);
 
-    if(err_code != RsCollection::RsCollectionErrorCode::NO_ERROR)
+    if(err_code != RsCollection::RsCollectionErrorCode::COLLECTION_NO_ERROR)
     {
         QMessageBox::information(nullptr,tr("Could not load collection file"),tr("Could not load collection file"));
         close();
@@ -472,7 +472,7 @@ void RsCollectionDialog::changeFileName()
 
             RsCollection qddOldFileCollection(fileName,err);
 
-            if(err != RsCollection::RsCollectionErrorCode::NO_ERROR)
+            if(err != RsCollection::RsCollectionErrorCode::COLLECTION_NO_ERROR)
             {
                 mCollectionModel->preMods();
                 mCollection->merge_in(qddOldFileCollection.fileTree());

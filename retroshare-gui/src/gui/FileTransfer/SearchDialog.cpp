@@ -612,7 +612,7 @@ void SearchDialog::collOpen()
     RsCollection::RsCollectionErrorCode err;
     RsCollection collection(fileName, err);
 
-    if(err == RsCollection::RsCollectionErrorCode::NO_ERROR)
+    if(err == RsCollection::RsCollectionErrorCode::COLLECTION_NO_ERROR)
         RsCollectionDialog::downloadFiles(collection);
     else
         QMessageBox::information(nullptr,tr("Error open RsCollection file"),RsCollection::errorString(err));

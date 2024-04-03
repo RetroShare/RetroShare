@@ -2571,7 +2571,7 @@ void TransfersDialog::collOpen()
     RsCollection::RsCollectionErrorCode code;
     RsCollection collection(fileName,code);
 
-    if(code == RsCollection::RsCollectionErrorCode::NO_ERROR)
+    if(code == RsCollection::RsCollectionErrorCode::COLLECTION_NO_ERROR)
         RsCollectionDialog::downloadFiles(collection);
     else
         QMessageBox::information(nullptr,tr("Error openning collection file"),RsCollection::errorString(code));
