@@ -585,13 +585,10 @@ QVariant RsFriendListModel::onlineRole(const EntryIndex& e, int /*col*/) const
 		{
 			const HierarchicalNodeInformation *node = getNodeInfo(e);
 
-			if(node)
-			{
-				StatusInfo status;
-				rsStatus->getStatus(node->node_info.id, status);
-
-				return QVariant(status.status);
-			}
+            if(node && bool(node->node_info.state & RS_PEER_STATE_CONNECTED))
+                return QVariant(RS_STATUS_ONLINE);
+            else
+                return QVariant(RS_STATUS_OFFLINE);
 		}
 	}
 	return QVariant(RS_STATUS_OFFLINE);
