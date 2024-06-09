@@ -413,17 +413,28 @@ QVariant RsFriendListModel::textColorRole(const EntryIndex& fmpe,int column) con
 {
 	switch(fmpe.type)
 	{
-		case ENTRY_TYPE_GROUP: return QVariant(QBrush(mTextColorGroup));
-		case ENTRY_TYPE_PROFILE:
-		case ENTRY_TYPE_NODE:  return QVariant(QBrush(mTextColorStatus[onlineRole(fmpe,column).toInt()]));
+        case ENTRY_TYPE_GROUP: 		return QVariant(QBrush(mTextColorGroup));
+        case ENTRY_TYPE_PROFILE:	return QVariant(QBrush(mTextColorStatus[onlineRole(fmpe,column).toInt()]));
+        case ENTRY_TYPE_NODE:  		return QVariant(QBrush(mTextColorStatus[statusRole(fmpe,column).toInt()]));
 		default:
 		return QVariant();
 	}
 }
 
-QVariant RsFriendListModel::statusRole(const EntryIndex& /*fmpe*/,int /*column*/) const
+// statusRole returns the status (e.g. RS_STATUS_BUSY). It is used only to change the font color
+
+QVariant RsFriendListModel::statusRole(const EntryIndex& fmpe,int /*column*/) const
 {
-    return QVariant();//fmpe.mMsgStatus);
+    const HierarchicalNodeInformation *node = getNodeInfo(fmpe);
+
+    if(node)
+    {
+        StatusInfo status;
+        rsStatus->getStatus(node->node_info.id, status);
+
+        return QVariant(status.status);
+    }
+    return QVariant();
 }
 
 bool RsFriendListModel::passesFilter(const EntryIndex& e,int /*column*/) const
@@ -548,6 +559,9 @@ QVariant RsFriendListModel::sortRole(const EntryIndex& entry,int column) const
     }
 }
 
+// Only returns two values: RS_STATUS_ONLINE, or RS_STATUS_OFFLINE. This is used to decide on text font (bold)
+// and whether profiles have children or not when offline nodes are shown.
+
 QVariant RsFriendListModel::onlineRole(const EntryIndex& e, int /*col*/) const
 {
 	switch(e.type)
@@ -622,12 +636,6 @@ QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const
 		return QVariant();
 	}
 }
-
-class AutoEndel
-{
-public:
-    ~AutoEndel() { std::cerr << std::endl;}
-};
 
 QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 {
