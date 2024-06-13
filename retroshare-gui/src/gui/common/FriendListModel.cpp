@@ -755,7 +755,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 						else
 						{
 							return QVariant(QString::fromUtf8(node->node_info.location.c_str())+"\n"
-						                + "(" + StatusDefs::name(onlineRole(e,col).toInt()) + ")");
+                                        + "(" + StatusDefs::name(statusRole(e,col).toInt()) + ")");
 						}
 					else
 						return QVariant(QString::fromUtf8(node->node_info.location.c_str()));
