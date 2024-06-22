@@ -141,6 +141,24 @@ template<> bool RsFriendListModel::convertInternalIdToIndex<8>(quintptr ref,Entr
 	return true;
 }
 
+static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay)
+{
+	int avatarWidth = avatar.width();
+	int avatarHeight = avatar.height();
+
+	QPixmap pixmap(avatar);
+
+	int overlaySize = (avatarWidth > avatarHeight) ? (avatarWidth/2.5) :  (avatarHeight/2.5);
+	int overlayX = avatarWidth - overlaySize;
+	int overlayY = avatarHeight - overlaySize;
+
+	QPainter painter(&pixmap);
+	painter.drawPixmap(overlayX, overlayY, overlaySize, overlaySize, overlay);
+
+	QIcon icon;
+	icon.addPixmap(pixmap);
+	return icon;
+}
 
 void RsFriendListModel::setDisplayStatusString(bool b)
 {
@@ -908,14 +926,17 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
         if(!isProfileExpanded(entry))
 		{
 			QPixmap sslAvatar = FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE);
+			QPixmap sslOverlayIcon;
+			sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(onlineRole(entry,col).toInt()));
+
 
         	const HierarchicalProfileInformation *hn = getProfileInfo(entry);
 
 			for(uint32_t i=0;i<hn->child_node_indices.size();++i)
 				if(AvatarDefs::getAvatarFromSslId(RsPeerId(mLocations[hn->child_node_indices[i]].node_info.id.toStdString()), sslAvatar))
-					return QVariant(QIcon(sslAvatar));
+					return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
 
-            return QVariant(QIcon(sslAvatar));
+            return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
 		}
 
         return QVariant();
@@ -929,9 +950,12 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
             return QVariant();
 
 		QPixmap sslAvatar;
+		QPixmap sslOverlayIcon;
+		sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(statusRole(entry,col).toInt()));
+
 		AvatarDefs::getAvatarFromSslId(RsPeerId(hn->node_info.id.toStdString()), sslAvatar);
 
-        return QVariant(QIcon(sslAvatar));
+        return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
     }
     default: return QVariant();
     }
