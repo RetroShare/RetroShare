@@ -124,6 +124,14 @@
     <string>import your friendlist including groups</string>
    </property>
   </action>
+  <action name="actionShowStateIcon">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show status icon</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

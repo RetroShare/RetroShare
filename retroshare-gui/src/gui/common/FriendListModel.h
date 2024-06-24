@@ -129,6 +129,10 @@ public:
 
 	void setDisplayStatusString(bool b);
     bool getDisplayStatusString() const { return mDisplayStatusString; }
+	void setDisplayStatusIcon(bool b);
+	bool getDisplayStatusIcon() const { return mDisplayStatusIcon; }
+
+
 
     EntryType getType(const QModelIndex&) const;
 
@@ -224,6 +228,7 @@ private:
 
     bool mDisplayGroups ;
     bool mDisplayStatusString ;
+    bool mDisplayStatusIcon ;
     rstime_t mLastInternalDataUpdate;
     rstime_t mLastNodeUpdate;;
 
