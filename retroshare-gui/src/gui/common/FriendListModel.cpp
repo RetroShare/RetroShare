@@ -931,24 +931,26 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
     {
         if(!isProfileExpanded(entry))
 		{
-			QPixmap sslAvatar = FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE);
-			QPixmap sslOverlayIcon;
-			sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(onlineRole(entry,col).toInt()));
-
+			QPixmap sslAvatar;
 
         	const HierarchicalProfileInformation *hn = getProfileInfo(entry);
 
-			for(uint32_t i=0;i<hn->child_node_indices.size();++i)
-				if(AvatarDefs::getAvatarFromSslId(RsPeerId(mLocations[hn->child_node_indices[i]].node_info.id.toStdString()), sslAvatar))
-							if (mDisplayStatusIcon)
-								return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
-							else
-								return QVariant(QIcon(sslAvatar));
+			for(uint32_t i=0;i<hn->child_node_indices.size();++i) {
+				if(AvatarDefs::getAvatarFromSslId(RsPeerId(mLocations[hn->child_node_indices[i]].node_info.id.toStdString()), sslAvatar, "")) {
+					break;
+				}
+			}
 
-			if (mDisplayStatusIcon)
+			if (sslAvatar.isNull()) {
+				sslAvatar = FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE);
+			}
+
+			if (mDisplayStatusIcon) {
+				QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(onlineRole(entry, col).toInt()));
 				return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
-			else
-				return QVariant(QIcon(sslAvatar));
+			}
+
+            return QVariant(QIcon(sslAvatar));
 		}
 
         return QVariant();
@@ -962,14 +964,13 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
             return QVariant();
 
 		QPixmap sslAvatar;
-		QPixmap sslOverlayIcon;
-		sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(statusRole(entry,col).toInt()));
-
 		AvatarDefs::getAvatarFromSslId(RsPeerId(hn->node_info.id.toStdString()), sslAvatar);
-		if (mDisplayStatusIcon)
+		if (mDisplayStatusIcon) {
+			QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(statusRole(entry, col).toInt()));
 			return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
-		else
-			return QVariant(QIcon(sslAvatar));
+		}
+
+        return QVariant(QIcon(sslAvatar));
     }
     default: return QVariant();
     }
