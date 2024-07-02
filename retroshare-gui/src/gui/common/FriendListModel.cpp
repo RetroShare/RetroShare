@@ -898,6 +898,61 @@ bool RsFriendListModel::getPeerOnlineStatus(const EntryIndex& e) const
     return (noded && (noded->node_info.state & RS_PEER_STATE_CONNECTED));
 }
 
+bool RsFriendListModel::getProfileStatus(const HierarchicalProfileInformation *profileInfo, uint32_t &status) const
+{
+	status = RS_STATUS_OFFLINE;
+
+	if (!profileInfo) {
+		return false;
+	}
+
+	int bestStatusIndex = 0;
+
+	/* Find the best status */
+	for (uint32_t i = 0; i < profileInfo->child_node_indices.size(); ++i) {
+		StatusInfo statusInfo;
+		rsStatus->getStatus(mLocations[profileInfo->child_node_indices[i]].node_info.id, statusInfo);
+
+		int statusIndex = 0;
+		switch (statusInfo.status) {
+		case RS_STATUS_OFFLINE:
+			statusIndex = 1;
+			break;
+
+		case RS_STATUS_INACTIVE:
+			statusIndex = 2;
+			break;
+
+		case RS_STATUS_AWAY:
+			statusIndex = 3;
+			break;
+
+		case RS_STATUS_BUSY:
+			statusIndex = 4;
+			break;
+
+		case RS_STATUS_ONLINE:
+			statusIndex = 5;
+			break;
+
+		default:
+			std::cerr << "FriendListModel: Unknown status " << statusInfo.status << std::endl;
+		}
+
+		if (bestStatusIndex == 0 || statusIndex > bestStatusIndex) {
+			/* first status or better status */
+			bestStatusIndex = statusIndex;
+			status = statusInfo.status;
+		}
+	}
+
+	if (bestStatusIndex == 0) {
+		return false;
+	}
+
+	return true;
+}
+
 QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) const
 {
     if(col > 0)
@@ -931,24 +986,29 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
     {
         if(!isProfileExpanded(entry))
 		{
-			QPixmap sslAvatar = FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE);
-			QPixmap sslOverlayIcon;
-			sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(onlineRole(entry,col).toInt()));
-
+			QPixmap sslAvatar;
 
         	const HierarchicalProfileInformation *hn = getProfileInfo(entry);
 
-			for(uint32_t i=0;i<hn->child_node_indices.size();++i)
-				if(AvatarDefs::getAvatarFromSslId(RsPeerId(mLocations[hn->child_node_indices[i]].node_info.id.toStdString()), sslAvatar))
-							if (mDisplayStatusIcon)
-								return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
-							else
-								return QVariant(QIcon(sslAvatar));
+			for(uint32_t i=0;i<hn->child_node_indices.size();++i) {
+				if(AvatarDefs::getAvatarFromSslId(RsPeerId(mLocations[hn->child_node_indices[i]].node_info.id.toStdString()), sslAvatar, "")) {
+					break;
+				}
+			}
 
-			if (mDisplayStatusIcon)
-				return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
-			else
-				return QVariant(QIcon(sslAvatar));
+			if (sslAvatar.isNull()) {
+				sslAvatar = FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE);
+			}
+
+			if (mDisplayStatusIcon) {
+				uint32_t status;
+				if (getProfileStatus(hn, status)) {
+					QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(status));
+					return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
+				}
+			}
+
+            return QVariant(QIcon(sslAvatar));
 		}
 
         return QVariant();
@@ -962,14 +1022,13 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
             return QVariant();
 
 		QPixmap sslAvatar;
-		QPixmap sslOverlayIcon;
-		sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(statusRole(entry,col).toInt()));
-
 		AvatarDefs::getAvatarFromSslId(RsPeerId(hn->node_info.id.toStdString()), sslAvatar);
-		if (mDisplayStatusIcon)
+		if (mDisplayStatusIcon) {
+			QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(statusRole(entry, col).toInt()));
 			return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
-		else
-			return QVariant(QIcon(sslAvatar));
+		}
+
+        return QVariant(QIcon(sslAvatar));
     }
     default: return QVariant();
     }
