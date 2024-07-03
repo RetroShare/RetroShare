@@ -898,20 +898,24 @@ bool RsFriendListModel::getPeerOnlineStatus(const EntryIndex& e) const
     return (noded && (noded->node_info.state & RS_PEER_STATE_CONNECTED));
 }
 
-bool RsFriendListModel::getProfileStatus(const HierarchicalProfileInformation *profileInfo, uint32_t &status) const
+const RsFriendListModel::HierarchicalNodeInformation *RsFriendListModel::getBestNodeInformation(const HierarchicalProfileInformation *profileInfo, uint32_t *status) const
 {
-	status = RS_STATUS_OFFLINE;
-
-	if (!profileInfo) {
-		return false;
+	if (status) {
+		*status = RS_STATUS_OFFLINE;
 	}
 
+	if (!profileInfo) {
+		return NULL;
+	}
+
+	const RsFriendListModel::HierarchicalNodeInformation *bestNodeInformation = NULL;
 	int bestStatusIndex = 0;
 
 	/* Find the best status */
 	for (uint32_t i = 0; i < profileInfo->child_node_indices.size(); ++i) {
+		const RsFriendListModel::HierarchicalNodeInformation &nodeInformation = mLocations[profileInfo->child_node_indices[i]];
 		StatusInfo statusInfo;
-		rsStatus->getStatus(mLocations[profileInfo->child_node_indices[i]].node_info.id, statusInfo);
+		rsStatus->getStatus(nodeInformation.node_info.id, statusInfo);
 
 		int statusIndex = 0;
 		switch (statusInfo.status) {
@@ -942,15 +946,19 @@ bool RsFriendListModel::getProfileStatus(const HierarchicalProfileInformation *p
 		if (bestStatusIndex == 0 || statusIndex > bestStatusIndex) {
 			/* first status or better status */
 			bestStatusIndex = statusIndex;
-			status = statusInfo.status;
+			bestNodeInformation = &nodeInformation;
+
+			if (status) {
+				*status = statusInfo.status;
+			}
 		}
 	}
 
 	if (bestStatusIndex == 0) {
-		return false;
+		return NULL;
 	}
 
-	return true;
+	return bestNodeInformation;
 }
 
 QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) const
@@ -987,22 +995,37 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
         if(!isProfileExpanded(entry))
 		{
 			QPixmap sslAvatar;
-
+			bool foundAvatar = false;
         	const HierarchicalProfileInformation *hn = getProfileInfo(entry);
+			uint32_t status = RS_STATUS_OFFLINE;
+			const HierarchicalNodeInformation *bestNodeInformation = NULL;
 
-			for(uint32_t i=0;i<hn->child_node_indices.size();++i) {
-				if(AvatarDefs::getAvatarFromSslId(RsPeerId(mLocations[hn->child_node_indices[i]].node_info.id.toStdString()), sslAvatar, "")) {
-					break;
+			if (mDisplayStatusIcon) {
+				bestNodeInformation = getBestNodeInformation(hn, &status);
+				if (bestNodeInformation) {
+					if (AvatarDefs::getAvatarFromSslId(RsPeerId(bestNodeInformation->node_info.id.toStdString()), sslAvatar, "")) {
+						/* Use avatar from best node */
+						foundAvatar = true;
+					}
 				}
 			}
 
-			if (sslAvatar.isNull()) {
+			if (!foundAvatar) {
+				/* Use first available avatar */
+				for(uint32_t i=0;i<hn->child_node_indices.size();++i) {
+					if(AvatarDefs::getAvatarFromSslId(RsPeerId(mLocations[hn->child_node_indices[i]].node_info.id.toStdString()), sslAvatar, "")) {
+						foundAvatar = true;
+						break;
+					}
+				}
+			}
+
+			if (!foundAvatar || sslAvatar.isNull()) {
 				sslAvatar = FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE);
 			}
 
 			if (mDisplayStatusIcon) {
-				uint32_t status;
-				if (getProfileStatus(hn, status)) {
+				if (bestNodeInformation) {
 					QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(status));
 					return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
 				}
