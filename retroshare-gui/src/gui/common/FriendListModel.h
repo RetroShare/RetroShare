@@ -223,7 +223,7 @@ private:
 
 	uint32_t updateFilterStatus(ForumModelIndex i,int column,const QStringList& strings);
 
-	bool getProfileStatus(const HierarchicalProfileInformation *profileInfo, uint32_t &status) const;
+	const HierarchicalNodeInformation *getBestNodeInformation(const HierarchicalProfileInformation *profileInfo, uint32_t *status = NULL) const;
 
     QStringList mFilterStrings;
     FilterType  mFilterType;
