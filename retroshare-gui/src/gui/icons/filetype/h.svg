@@ -4,9 +4,9 @@
 <svg
    version="1.1"
    id="svg9"
-   width="512"
-   height="512"
-   viewBox="0 0 512 512"
+   width="128"
+   height="128"
+   viewBox="0 0 128 128"
    sodipodi:docname="h.svg"
    inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -24,9 +24,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      showgrid="true"
-     inkscape:zoom="0.97070312"
-     inkscape:cx="234.3662"
-     inkscape:cy="254.96982"
+     inkscape:zoom="2.745563"
+     inkscape:cx="50.809251"
+     inkscape:cy="80.311396"
      inkscape:window-width="1366"
      inkscape:window-height="705"
      inkscape:window-x="-8"
@@ -46,10 +46,10 @@
        id="path117"
        d="" />
     <path
-       d="m 94.05987,75.174125 h 70.89821 V 228.01688 h 177.2455 V 75.174125 h 70.89821 V 435.06556 H 342.20358 V 284 H 164 V 435.06556 H 93.10179 V 75.174125 Z"
+       d="M 15.268927,9.3895829 H 36.32998 V 54.793134 H 88.982611 V 9.3895829 H 110.04367 V 116.2991 H 88.982611 V 71.423488 H 36.045373 V 116.2991 H 14.98432 V 9.3895829 Z"
        fill="#215997"
        stroke="#215997"
-       stroke-width="16.1472"
+       stroke-width="4.79665"
        stroke-miterlimit="10"
        id="path6" />
   </g>

@@ -4,9 +4,9 @@
 <svg
    version="1.1"
    id="svg9"
-   width="512"
-   height="512"
-   viewBox="0 0 512 512"
+   width="128"
+   height="128"
+   viewBox="0 0 128 128"
    sodipodi:docname="dll.svg"
    inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -24,9 +24,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      showgrid="true"
-     inkscape:zoom="0.97070312"
-     inkscape:cx="234.3662"
-     inkscape:cy="254.96982"
+     inkscape:zoom="2.745563"
+     inkscape:cx="92.695013"
+     inkscape:cy="49.352354"
      inkscape:window-width="1366"
      inkscape:window-height="705"
      inkscape:window-x="-8"
@@ -47,13 +47,13 @@
        d="" />
     <g
        id="g825"
-       transform="matrix(5.8449375,0,0,5.8449375,-36.819688,-38.509501)"
+       transform="matrix(1.5425228,0,0,1.5425228,-12.114438,-15.388881)"
        style="fill:#999999;fill-opacity:1">
       <path
          class="st1"
          d="m 85,17.80577 -32.342122,4.348521 v 25.68345 H 85 Z M 46.67866,22.833745 14.336539,27.182267 V 47.837741 H 46.67866 Z M 14.472429,53.681065 V 74.336538 L 46.814554,78.68506 V 53.816956 Z m 38.185449,0 v 25.68345 L 85,83.713036 V 53.681065 Z"
          id="path8"
-         style="stroke-width:1.3589;fill:#999999;fill-opacity:1" />
+         style="fill:#999999;fill-opacity:1;stroke-width:1.3589" />
     </g>
   </g>
 </svg>
