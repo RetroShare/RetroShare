@@ -354,7 +354,7 @@ NewFriendList
 	qproperty-textColorStatusAway: gray;
 	qproperty-textColorStatusBusy: darkred;
 	qproperty-textColorStatusOnline: darkGreen;
-	qproperty-textColorStatusInactive: #A0A040;
+	qproperty-textColorStatusInactive: orange;
 	qproperty-textColorGroup: rgb(123, 123, 123);
 }
 

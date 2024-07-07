@@ -87,6 +87,7 @@ public slots:
 	void setShowGroups(bool show);
 	void setShowUnconnected(bool hidden);
 	void setShowState(bool show);
+	void setShowStateIcon(bool show);
 	void headerContextMenuRequested(QPoint);
 	void exportFriendlistClicked();
 
