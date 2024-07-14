@@ -36,6 +36,7 @@ PostedPage::PostedPage(QWidget * parent, Qt::WindowFlags flags)
 
 PostedPage::~PostedPage()
 {
+	delete ui;
 }
 
 /** Loads the settings for this page */

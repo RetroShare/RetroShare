@@ -146,6 +146,7 @@ NewsFeed::~NewsFeed()
 
 	if (instance == this) {
 		instance = NULL;
+		delete ui;
 	}
 }
 

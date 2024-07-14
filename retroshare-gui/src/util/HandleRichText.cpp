@@ -1210,7 +1210,7 @@ QString RsHtml::toHtml(QString text, bool realHtml)
 /** Loads image and converts image to embedded image HTML fragment **/
 bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels, const int maxBytes)
 {
-	QImage image;
+	QImage image {};
 
 	if (image.load (fileName) == false) {
 		fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", fileName.toLatin1().constData());
