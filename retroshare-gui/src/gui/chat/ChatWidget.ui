@@ -87,7 +87,6 @@
              <widget class="QLabel" name="titleLabel">
               <property name="font">
                <font>
-                <pointsize>11</pointsize>
                 <weight>75</weight>
                 <italic>true</italic>
                 <bold>true</bold>
@@ -105,7 +104,6 @@
              <widget class="QLabel" name="statusLabel">
               <property name="font">
                <font>
-                <pointsize>12</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>

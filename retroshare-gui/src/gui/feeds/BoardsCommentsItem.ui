@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>755</width>
-    <height>157</height>
+    <width>840</width>
+    <height>160</height>
    </rect>
   </property>
   <property name="font">
@@ -139,7 +139,6 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -156,7 +155,6 @@
          <widget class="QLabel" name="subjectLabel">
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
@@ -413,7 +411,6 @@
           <widget class="QLabel" name="datetimeLabel">
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
@@ -436,7 +433,6 @@
            </property>
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
              <weight>75</weight>
              <italic>true</italic>
              <bold>true</bold>
@@ -461,7 +457,6 @@
            <property name="font">
             <font>
              <family>MS Sans Serif</family>
-             <pointsize>10</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
