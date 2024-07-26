@@ -182,6 +182,8 @@ rs_deep_files_index_taglib:CONFIG -= no_rs_deep_files_index_taglib
 CONFIG *= no_rs_use_native_dialogs
 rs_use_native_dialogs:CONFIG -= no_rs_use_native_dialogs
 
+CONFIG *= use_rnp
+
 # To disable broadcast discovery append the following assignation to qmake
 # command line "CONFIG+=no_rs_broadcast_discovery"
 CONFIG *= rs_broadcast_discovery
