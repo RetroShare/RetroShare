@@ -25,6 +25,7 @@
 #include "gui/settings/rsharesettings.h"
 
 #include <QFileDialog>
+#include <QIcon>
 #include <QLayout>
 #include <QObject>
 #include <QPair>
@@ -185,11 +186,28 @@ class misc : public QObject
 										, const QString &caption = QString()
 										, const QString &dir = QString());
 
-	//Clear QLayout
+	/*!
+	 * Clear a Layout content
+	 * \param layout: Layout to Clear
+	 */
 	static void clearLayout(QLayout *layout);
 
+	/**
+	 * @brief Get Size depending of application Font Metrics
+	 * @param group: Group name for factor from setting file
+	 * @param defaultFactor: Default factor to use if none is defined
+	 * @return Size factorized font size
+	 */
 	static QSizeF getFontSizeFactor(const QString &group, const qreal defaultFactor = 1.0);
 	static QSizeF getFontSizeFactor() {return getFontSizeFactor("Main");}
+
+	/**
+	 * @brief Merge two icons in one
+	 * @param iconB: Background icon file
+	 * @param iconF: Foreground icon file
+	 * @return Merged icon
+	 */
+	static QIcon mergeIcon(QString iconB, QString iconF);
 
 };
 
