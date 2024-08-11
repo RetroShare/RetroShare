@@ -8,7 +8,11 @@
 
 #include "pgp/pgpkeyutil.h"
 #include "pgp/rscertificate.h"
+#ifdef USE_RNP_LIB
+#include "pgp/rnppgphandler.h"
+#else
 #include "pgp/openpgpsdkhandler.h"
+#endif
 
 #include "friendserver.h"
 #include "friend_server/fsitem.h"
@@ -393,7 +397,11 @@ FriendServer::FriendServer(const std::string& base_dir,const std::string& listen
     std::string pgp_private_keyring_path = RsDirUtil::makePath(base_dir,"pgp_private_keyring") ;	// not used.
     std::string pgp_trustdb_path         = RsDirUtil::makePath(base_dir,"pgp_trustdb") ;	        // not used.
 
+#ifdef USE_RNP_LIB
+    mPgpHandler = new RNPPGPHandler(pgp_public_keyring_path,pgp_private_keyring_path,pgp_trustdb_path,pgp_lock_path);
+#else
     mPgpHandler = new OpenPGPSDKHandler(pgp_public_keyring_path,pgp_private_keyring_path,pgp_trustdb_path,pgp_lock_path);
+#endif
 
     // Random bias. Should be cryptographically safe.
 
