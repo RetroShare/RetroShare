@@ -182,7 +182,10 @@ rs_deep_files_index_taglib:CONFIG -= no_rs_deep_files_index_taglib
 CONFIG *= no_rs_use_native_dialogs
 rs_use_native_dialogs:CONFIG -= no_rs_use_native_dialogs
 
-CONFIG *= use_rnp
+# By default, use RNP lib for RFC4880 PGP management. If not, compilation will
+# default to openpgp-sdk, which is old and unmaintained, so probably not very secure.
+CONFIG *= rs_rnplib
+rs_no_rnplib:CONFIG -= use_rnp_lib
 
 # To disable broadcast discovery append the following assignation to qmake
 # command line "CONFIG+=no_rs_broadcast_discovery"
@@ -850,6 +853,17 @@ isEmpty(RS_UPNP_LIB) {
         message("Autodetected RS_UPNP_LIB=$$RS_UPNP_LIB")
     }
 }
+
+rs_rnplib {
+        DEFINES += USE_RNP_LIB
+        message("Using RNP lib for PGP")
+} else {
+        SUBDIRS += openpgpsdk
+        openpgpsdk.file = openpgpsdk/src/openpgpsdk.pro
+        libretroshare.depends += openpgpsdk
+        message("Using OpenPGP-SDK for PGP")
+}
+
 
 equals(RS_UPNP_LIB, none):RS_UPNP_LIB=
 equals(RS_UPNP_LIB, miniupnpc):DEFINES*=RS_USE_LIBMINIUPNPC
