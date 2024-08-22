@@ -355,6 +355,7 @@ void NewFriendList::headerContextMenuRequested(QPoint /*p*/)
     ui->actionShowState->setChecked(mModel->getDisplayStatusString());
     ui->actionShowStateIcon->setChecked(mModel->getDisplayStatusIcon());
     ui->actionShowGroups->setChecked(mModel->getDisplayGroups());
+    ui->actionShowCircleAvatars->setChecked(mModel->getDisplayCircleAvatars());
 
     QHeaderView *header = ui->peerTreeWidget->header();
 
