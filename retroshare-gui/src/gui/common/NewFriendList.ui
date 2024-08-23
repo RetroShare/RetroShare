@@ -135,6 +135,14 @@
     <string>Show status icons</string>
    </property>
   </action>
+  <action name="actionShowCircleAvatars">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Circle Avatars</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
