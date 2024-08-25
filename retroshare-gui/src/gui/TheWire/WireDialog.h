@@ -34,7 +34,7 @@
 #include "gui/TheWire/PulseViewItem.h"
 #include "gui/TheWire/PulseTopLevel.h"
 #include "gui/TheWire/PulseReply.h"
-
+#include "gui/gxs/GxsStatisticsProvider.h"
 
 #include "util/TokenQueue.h"
 
@@ -68,7 +68,7 @@ public:
 };
 //---------------------------------------------------------
 
-class WireDialog : public MainPage, public TokenResponse, public WireGroupHolder, public PulseViewHolder
+class WireDialog : public GxsStatisticsProvider, public TokenResponse, public WireGroupHolder, public PulseViewHolder
 {
   Q_OBJECT
 
@@ -118,6 +118,17 @@ public:
 	void showGroupsPulses(const std::list<RsGxsGroupId>& groupIds);
 	void postGroupsPulses(std::list<RsWirePulseSPtr> pulses);
 
+    void getServiceStatistics(GxsServiceStatistic& stats) const ;
+
+    virtual bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId) override;
+
+protected:
+
+    bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) override;
+    UserNotify *createUserNotify(QObject *parent) override;
+    virtual void updateGroupStatistics(const RsGxsGroupId &groupId) override;
+    virtual void updateGroupStatisticsReal(const RsGxsGroupId &groupId) override;
+
 private slots:
 
 	void createGroup();
@@ -154,6 +165,9 @@ private:
 	void acknowledgeGroup(const uint32_t &token, const uint32_t &userType);
 
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req) override;
+
+    virtual QString settingsGroupName()  override{ return "PostedDialog"; }
+    virtual GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId) override;
 
 	int mGroupSet;
 
