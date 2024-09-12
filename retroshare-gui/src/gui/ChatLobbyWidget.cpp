@@ -917,6 +917,13 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id, bool subscribed /*= false*/)
 			ui.lobbysec_lineEdit->setText( (( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)?tr("No anonymous IDs"):tr("Anonymous IDs accepted")) );
 			ui.lobbypeers_lineEdit->setText( QString::number((*it).total_number_of_peers) );
 
+			QString formatDescription = QString::fromUtf8(it->lobby_topic.c_str());
+			unsigned int formatFlag = RSHTML_FORMATTEXT_EMBED_LINKS;
+
+			formatDescription = RsHtml().formatText(NULL, formatDescription, formatFlag);
+
+			ui.lobbydesc_textBrowser->setText(formatDescription);
+
 			QString text = tr("You're subscribed to this chat room; Double click to show window and chat.") ;
 			if (!subscribed)
 			{
@@ -940,6 +947,7 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id, bool subscribed /*= false*/)
 	ui.lobbytype_lineEdit->clear();
 	ui.lobbypeers_lineEdit->clear();
 	ui.lobbysec_lineEdit->clear();
+	ui.lobbydesc_textBrowser->clear();
 
 	QString text = tr("No chat room selected. \nSelect chat rooms at left to show details.\nDouble click a chat room to enter and chat.") ;
 	ui.info_Label_Lobby->setText(text) ;
