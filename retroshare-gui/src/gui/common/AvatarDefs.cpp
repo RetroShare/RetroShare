@@ -54,7 +54,9 @@ bool AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, cons
     /* get avatar */
     rsMsgs->getAvatarData(RsPeerId(sslId), data, size);
     if (size == 0) {
-        avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
+        if (!defaultImage.isEmpty()) {
+            avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
+        }
         return false;
     }
 

@@ -121,7 +121,7 @@ void AvatarWidget::setFrameType(FrameType type)
 
     //refreshAvatarImage();
     refreshStatus();
-    Rshare::refreshStyleSheet(this, false);
+    RsApplication::refreshStyleSheet(this, false);
 }
 void AvatarWidget::setId(const ChatId &id)
 {
@@ -174,7 +174,7 @@ void AvatarWidget::refreshStatus()
     case NO_FRAME:
     case NORMAL_FRAME:
     {
-        Rshare::refreshStyleSheet(this, false);
+        RsApplication::refreshStyleSheet(this, false);
         break;
     }
     case STATUS_FRAME:
@@ -252,7 +252,7 @@ void AvatarWidget::updateStatus(int status)
     mPeerState = status;
 
     setEnabled(((uint32_t) status == RS_STATUS_OFFLINE) ? false : true);
-    Rshare::refreshStyleSheet(this, false);
+    RsApplication::refreshStyleSheet(this, false);
 }
 
 void AvatarWidget::updateAvatar(const QString &peerId)

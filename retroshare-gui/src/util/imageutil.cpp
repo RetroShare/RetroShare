@@ -274,7 +274,9 @@ bool ImageUtil::optimizeSizeHtml(QString &html, const QImage& original, QImage &
     if(optimizeSizeBytes(bytearray, original, optimized,has_transparency?"PNG":"JPG",maxPixels, maxBytes))
 	{
 		QByteArray encodedByteArray = bytearray.toBase64();
-		html = "<img src=\"data:image/png;base64,";
+		html = "<img src=\"data:image/";
+		html.append(has_transparency ? "png" : "jpeg");
+		html.append(";base64,");
 		html.append(encodedByteArray);
 		html.append("\">");
 		return true;

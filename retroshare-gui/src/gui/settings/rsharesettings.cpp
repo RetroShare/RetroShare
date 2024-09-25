@@ -910,7 +910,7 @@ void RshareSettings::setUseLocalServer(bool value)
 {
 	if (value != getUseLocalServer()) {
 		setValue("UseLocalServer", value);
-		Rshare::updateLocalServer();
+		RsApplication::updateLocalServer();
 	}
 }
 

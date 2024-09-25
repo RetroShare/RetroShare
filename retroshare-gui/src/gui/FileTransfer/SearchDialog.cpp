@@ -30,7 +30,7 @@
 #include "gui/RetroShareLink.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "gui/msgs/MessageComposer.h"
-#include "gui/common/RsCollection.h"
+#include "gui/common/RsCollectionDialog.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/common/RsUrlHandler.h"
 #include "gui/settings/rsharesettings.h"
@@ -325,7 +325,7 @@ void SearchDialog::checkText(const QString& txt)
 	ui.searchButton->setDisabled(txt.length() < 3);
 	ui.searchLineFrame->setProperty("valid", (txt.length() >= 3));
 	ui.searchLineFrame->style()->unpolish(ui.searchLineFrame);
-	Rshare::refreshStyleSheet(ui.searchLineFrame, false);
+	RsApplication::refreshStyleSheet(ui.searchLineFrame, false);
 }
 
 void SearchDialog::initialiseFileTypeMappings()
@@ -497,25 +497,23 @@ void SearchDialog::collCreate()
 	int selectedCount = selectedItems.size() ;
 	QTreeWidgetItem * item ;
 
-	for (int i = 0; i < selectedCount; ++i) {
+    RsFileTree tree;
+
+    for (int i = 0; i < selectedCount; ++i)
+    {
 		item = selectedItems.at(i) ;
 
-		if (!item->text(SR_HASH_COL).isEmpty()) {
+        if (!item->text(SR_HASH_COL).isEmpty())
+        {
 			std::string name = item->text(SR_NAME_COL).toUtf8().constData();
 			RsFileHash hash( item->text(SR_HASH_COL).toStdString() );
 			uint64_t count = item->text(SR_SIZE_COL).toULongLong();
 
-			DirDetails details;
-			details.name = name;
-			details.hash = hash;
-            details.size = count;
-			details.type = DIR_TYPE_FILE;
-
-			dirVec.push_back(details);
+            tree.addFile(tree.root(),name,hash,count);
 		}
 	}
 
-	RsCollection(dirVec,RS_FILE_HINTS_LOCAL).openNewColl(this);
+    RsCollectionDialog::openNewCollection(tree);
 }
 
 void SearchDialog::collModif()
@@ -542,12 +540,8 @@ void SearchDialog::collModif()
 	/* open file with a suitable application */
 	QFileInfo qinfo;
 	qinfo.setFile(QString::fromUtf8(path.c_str()));
-	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-			RsCollection collection;
-			collection.openColl(qinfo.absoluteFilePath());
-		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-	}//if (qinfo.exists())
+    if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+            RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath());
 }
 
 void SearchDialog::collView()
@@ -574,12 +568,8 @@ void SearchDialog::collView()
 	/* open file with a suitable application */
 	QFileInfo qinfo;
 	qinfo.setFile(QString::fromUtf8(path.c_str()));
-	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-			RsCollection collection;
-			collection.openColl(qinfo.absoluteFilePath(), true);
-		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-	}//if (qinfo.exists())
+    if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+        RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath(), true);
 }
 
 void SearchDialog::collOpen()
@@ -597,32 +587,35 @@ void SearchDialog::collOpen()
 
 			if (rsFiles->FileDetails(hash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL
 			                               | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE
-                                     | RS_FILE_HINTS_SPEC_ONLY, info)) {
-
+                                     | RS_FILE_HINTS_SPEC_ONLY, info))
+            {
 				/* make path for downloaded files */
 				std::string path;
 				path = info.path;
 
 				/* open file with a suitable application */
 				QFileInfo qinfo;
+                RsCollection::RsCollectionErrorCode err;
 				qinfo.setFile(QString::fromUtf8(path.c_str()));
-				if (qinfo.exists()) {
-					if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-						RsCollection collection;
-						if (collection.load(qinfo.absoluteFilePath())) {
-							collection.downloadFiles();
-							return;
-						}
-					}
-				}
+                if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+                    RsCollectionDialog::downloadFiles(RsCollection(qinfo.absoluteFilePath(),err));
 			}
 		}
 	}
 
-	RsCollection collection;
-	if (collection.load(this)) {
-		collection.downloadFiles();
-	}//if (collection.load(this))
+    QString fileName;
+    if (!misc::getOpenFileName(nullptr, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Open collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")", fileName))
+        return ;
+
+    std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
+
+    RsCollection::RsCollectionErrorCode err;
+    RsCollection collection(fileName, err);
+
+    if(err == RsCollection::RsCollectionErrorCode::COLLECTION_NO_ERROR)
+        RsCollectionDialog::downloadFiles(collection);
+    else
+        QMessageBox::information(nullptr,tr("Error open RsCollection file"),RsCollection::errorString(err));
 }
 
 void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString &base)
