@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>618</width>
-    <height>108</height>
+    <height>128</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="GxsCircleItem_GL">
@@ -181,7 +181,6 @@
            <widget class="GxsIdLabel" name="gxsIdLabel">
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
               <weight>75</weight>
               <italic>true</italic>
               <bold>true</bold>
@@ -205,7 +204,6 @@
             </property>
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
               <weight>75</weight>
               <italic>true</italic>
               <bold>true</bold>
@@ -237,7 +235,6 @@
            <widget class="QLabel" name="circlename_Label">
             <property name="font">
              <font>
-              <pointsize>10</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
@@ -251,7 +248,6 @@
            <widget class="QLabel" name="nameLabel">
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
               <weight>75</weight>
               <italic>true</italic>
               <bold>true</bold>
@@ -317,7 +313,7 @@
              <string>Revoke</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
+             <iconset>
               <normaloff>:/images/cancel.png</normaloff>:/images/cancel.png</iconset>
             </property>
            </widget>
@@ -395,8 +391,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>476</width>
-    <height>283</height>
+    <height>328</height>
    </rect>
   </property>
   <property name="autoFillBackground">
@@ -255,7 +255,6 @@
              </property>
              <property name="font">
               <font>
-               <pointsize>11</pointsize>
                <weight>75</weight>
                <italic>true</italic>
                <bold>true</bold>
@@ -526,15 +525,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AvatarWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/common/AvatarWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ElidedLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/ElidedLabel.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
