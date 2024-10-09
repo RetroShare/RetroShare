@@ -305,11 +305,17 @@ isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
 #    Why:  Avoids sending probe packets
 #    BackwardCompat: old RS before Mai 2019 will not be able to distant chat.
 #
-#  V07_NON_BACKWARD_COMPATIBLE_CHANGE_005:
+###########################################################################################################################################################
+
+###########################################################################################################################################################
+#
+#  V06_EXPERIMENTAL_CHANGE_001:
 #
 #    What: removes issuer fingerprint from signature subpackets
 #    Why:  This type of subpacket is not part of RFC4880 and not recognised by OpenPGP-SDK
 #    BackwardCompat: old RS before Sept.2024 will not be able to exchange keys
+#    Note: Since signature subpacket 33 is part of the hashed section of the signature, this also invalidates the signature.
+#           Depending on the implementation, certificates with self-signature that miss this subpacket may not be accepted.
 #
 ###########################################################################################################################################################
 
