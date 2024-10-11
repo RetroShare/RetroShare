@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>569</width>
-    <height>512</height>
+    <height>526</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="NotifyPageVLayout">
@@ -83,6 +83,13 @@
              <widget class="QCheckBox" name="notify_Blogs">
               <property name="text">
                <string>Blogs</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="notify_Wire">
+              <property name="text">
+               <string>Wire</string>
               </property>
              </widget>
             </item>
@@ -471,6 +478,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>notify_Peers</tabstop>
   <tabstop>notify_Channels</tabstop>
@@ -495,13 +509,6 @@
   <tabstop>systray_ChatLobby</tabstop>
   <tabstop>pushButtonDisableAll</tabstop>
  </tabstops>
- <customwidgets>
-  <customwidget>
-   <class>RSComboBox</class>
-   <extends>QComboBox</extends>
-   <header>gui/common/RSComboBox.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -152,6 +152,7 @@ void UserNotify::updateIcon()
 
 void UserNotify::startUpdate()
 {
+    std::cout<<"inside the usernotify start update function"<<std::endl;
 	update();
 }
 
