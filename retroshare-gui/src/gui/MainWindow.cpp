@@ -120,7 +120,7 @@
 #include "gui/statistics/StatisticsWindow.h"
 
 #include "gui/connect/ConnectFriendWizard.h"
-#include "gui/common/RsCollection.h"
+#include "gui/common/RsCollectionDialog.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
 #include "common/StatusDefs.h"
@@ -1734,19 +1734,9 @@ void MainWindow::retroshareLinkActivated(const QUrl &url)
 void MainWindow::openRsCollection(const QString &filename)
 {
 	QFileInfo qinfo(filename);
-	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-			RsCollection collection;
 
-            if(!collection.load(filename))
-            {
-                RsErr() << "Could not open Rscollection file " << filename.toStdString();
-                return;
-            }
-            collection.downloadFiles();
-            //collection.openColl(qinfo.absoluteFilePath());
-		}
-	}
+    if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+            RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath());
 }
 
 void MainWindow::switchVisibilityStatus(StatusElement e,bool b)
