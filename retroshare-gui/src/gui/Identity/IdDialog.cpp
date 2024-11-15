@@ -479,9 +479,9 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 
 void IdDialog::clearPerson()
 {
-	QFontMetricsF f(ui->avLabel_Person->font()) ;
+	//QFontMetricsF f(ui->avLabel_Person->font()) ;
 
-	ui->avLabel_Person->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/people.png").scaled(f.height()*4,f.height()*4,Qt::KeepAspectRatio,Qt::SmoothTransformation));
+	//ui->avLabel_Person->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/people.png").scaled(f.height()*4,f.height()*4,Qt::KeepAspectRatio,Qt::SmoothTransformation));
 	ui->headerTextLabel_Person->setText(tr("People"));
 
 	ui->info_Frame_Invite->hide();
@@ -1701,8 +1701,8 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
 
 	//ui->avLabel_Person->setPixmap(pixmap);
 	//ui->avatarLabel->setPixmap(pixmap);
-	QFontMetricsF f(ui->avLabel_Person->font()) ;
-	ui->avLabel_Person->setPixmap(pixmap.scaled(f.height()*4,f.height()*4,Qt::KeepAspectRatio,Qt::SmoothTransformation));
+	//QFontMetricsF f(ui->avLabel_Person->font()) ;
+	//ui->avLabel_Person->setPixmap(pixmap.scaled(f.height()*4,f.height()*4,Qt::KeepAspectRatio,Qt::SmoothTransformation));
 
 	ui->avatarLabel->setPixmap(pixmap.scaled(ui->inviteButton->width(),ui->inviteButton->width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
 	ui->avatarLabel->setScaledContents(true);
