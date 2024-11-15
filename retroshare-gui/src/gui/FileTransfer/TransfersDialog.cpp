@@ -24,7 +24,7 @@
 #include "gui/SoundManager.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/FilesDefs.h"
-#include "gui/common/RsCollection.h"
+#include "gui/common/RsCollectionDialog.h"
 #include "gui/common/RSTreeView.h"
 #include "gui/common/RsUrlHandler.h"
 #include "gui/FileTransfer/DetailsDialog.h"
@@ -1975,7 +1975,7 @@ void TransfersDialog::pasteLink()
 	for(auto &it : links)
 		col.merge_in(it.name(),it.size(),RsFileHash(it.hash().toStdString())) ;
 
-	col.downloadFiles();
+    RsCollectionDialog::downloadFiles(col);
 }
 
 void TransfersDialog::getDLSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows)
@@ -2466,21 +2466,17 @@ void TransfersDialog::collCreate()
 	std::set<RsFileHash>::iterator it ;
 	getDLSelectedItems(&items, NULL);
 
+    RsFileTree tree;
+
 	for (it = items.begin(); it != items.end(); ++it)
 	{
 		FileInfo info;
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
 
-		DirDetails details;
-		details.name = info.fname;
-		details.hash = info.hash;
-        details.size = info.size;
-		details.type = DIR_TYPE_FILE;
-
-		dirVec.push_back(details);
+        tree.addFile(tree.root(),info.fname,info.hash,info.size);
 	}
 
-	RsCollection(dirVec,RS_FILE_HINTS_LOCAL).openNewColl(this);
+    RsCollectionDialog::openNewCollection(tree);
 }
 
 void TransfersDialog::collModif()
@@ -2504,12 +2500,8 @@ void TransfersDialog::collModif()
 		/* open collection */
 		QFileInfo qinfo;
 		qinfo.setFile(QString::fromUtf8(path.c_str()));
-		if (qinfo.exists()) {
-			if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-				RsCollection collection;
-				collection.openColl(qinfo.absoluteFilePath());
-			}
-		}
+        if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+                RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath());
 	}
 }
 
@@ -2534,12 +2526,8 @@ void TransfersDialog::collView()
 		/* open collection  */
 		QFileInfo qinfo;
 		qinfo.setFile(QString::fromUtf8(path.c_str()));
-		if (qinfo.exists()) {
-			if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-				RsCollection collection;
-				collection.openColl(qinfo.absoluteFilePath(), true);
-			}
-		}
+        if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+                RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath(), true);
 	}
 }
 
@@ -2564,23 +2552,29 @@ void TransfersDialog::collOpen()
 				/* open file with a suitable application */
 				QFileInfo qinfo;
 				qinfo.setFile(QString::fromUtf8(path.c_str()));
-				if (qinfo.exists()) {
-					if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-						RsCollection collection;
-						if (collection.load(qinfo.absoluteFilePath())) {
-							collection.downloadFiles();
-							return;
-						}
-					}
-				}
+                if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+                {
+                        RsCollection::RsCollectionErrorCode code;
+                        RsCollectionDialog::downloadFiles(RsCollection(qinfo.absoluteFilePath(),code));
+                        return;
+                }
 			}
 		}
 	}
 
-	RsCollection collection;
-	if (collection.load(this)) {
-		collection.downloadFiles();
-	}
+    QString fileName;
+    if (!misc::getOpenFileName(nullptr, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Open collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")", fileName))
+        return ;
+
+    std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
+
+    RsCollection::RsCollectionErrorCode code;
+    RsCollection collection(fileName,code);
+
+    if(code == RsCollection::RsCollectionErrorCode::COLLECTION_NO_ERROR)
+        RsCollectionDialog::downloadFiles(collection);
+    else
+        QMessageBox::information(nullptr,tr("Error openning collection file"),RsCollection::errorString(code));
 }
 
 void TransfersDialog::collAutoOpen(const QString &fileHash)
@@ -2592,21 +2586,18 @@ void TransfersDialog::collAutoOpen(const QString &fileHash)
 		if (rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, info)) {
 
 			/* make path for downloaded files */
-			if (info.downloadStatus == FT_STATE_COMPLETE) {
+            if (info.downloadStatus == FT_STATE_COMPLETE)
+            {
 				std::string path;
 				path = info.path + "/" + info.fname;
 
 				/* open file with a suitable application */
 				QFileInfo qinfo;
 				qinfo.setFile(QString::fromUtf8(path.c_str()));
-				if (qinfo.exists()) {
-					if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-						RsCollection collection;
-						if (collection.load(qinfo.absoluteFilePath(), false)) {
-							collection.autoDownloadFiles();
-						}
-					}
-				}
+                RsCollection::RsCollectionErrorCode err;
+
+                if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+                    RsCollectionDialog::downloadFiles(RsCollection(qinfo.absoluteFilePath(),err));
 			}
 		}
 	}

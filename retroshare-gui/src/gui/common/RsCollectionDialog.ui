@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>761</width>
+    <height>434</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -17,7 +17,7 @@
    <string>Collection</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../images.qrc">
+   <iconset>
     <normaloff>:/images/mimetypes/rscollection-16.png</normaloff>:/images/mimetypes/rscollection-16.png</iconset>
   </property>
   <property name="sizeGripEnabled">
@@ -157,7 +157,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="_changeFile">
+                  <widget class="QToolButton" name="_changeFile">
                    <property name="maximumSize">
                     <size>
                      <width>21</width>
@@ -169,6 +169,10 @@
                    </property>
                    <property name="text">
                     <string>...</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../icons.qrc">
+                     <normaloff>:/icons/browsable_blue_128.png</normaloff>:/icons/browsable_blue_128.png</iconset>
                    </property>
                   </widget>
                  </item>
@@ -283,7 +287,7 @@
                      </property>
                      <property name="icon">
                       <iconset resource="../images.qrc">
-                       <normaloff>:/images/feedback_arrow.png</normaloff>:/images/feedback_arrow.png</iconset>
+                       <normaloff>:/images/start.png</normaloff>:/images/start.png</iconset>
                      </property>
                     </widget>
                    </item>
@@ -309,7 +313,7 @@
                      </property>
                      <property name="icon">
                       <iconset resource="../images.qrc">
-                       <normaloff>:/images/update.png</normaloff>:/images/update.png</iconset>
+                       <normaloff>:/images/startall.png</normaloff>:/images/startall.png</iconset>
                      </property>
                     </widget>
                    </item>
@@ -334,8 +338,8 @@
                       <string notr="true"/>
                      </property>
                      <property name="icon">
-                      <iconset>
-                       <normaloff>:/images/deletemail24.png</normaloff>:/images/deletemail24.png</iconset>
+                      <iconset resource="../images.qrc">
+                       <normaloff>:/images/delete.png</normaloff>:/images/delete.png</iconset>
                      </property>
                     </widget>
                    </item>
@@ -382,7 +386,7 @@
                  </item>
                 </layout>
                </widget>
-               <widget class="QTreeWidget" name="_fileEntriesTW">
+               <widget class="QTreeView" name="_fileEntriesTW">
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
@@ -398,11 +402,6 @@
                 <property name="allColumnsShowFocus">
                  <bool>true</bool>
                 </property>
-                <column>
-                 <property name="text">
-                  <string notr="true">1</string>
-                 </property>
-                </column>
                </widget>
               </widget>
              </item>
@@ -411,26 +410,6 @@
           </item>
           <item>
            <layout class="QHBoxLayout" name="buttons_HL">
-            <item>
-             <widget class="QCheckBox" name="_removeDuplicate_CB">
-              <property name="text">
-               <string>Remove Duplicate</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="buttons_HSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
             <item>
              <widget class="QLabel" name="downloadFolder_LB">
               <property name="text">
@@ -451,6 +430,12 @@
             </item>
             <item>
              <widget class="QLineEdit" name="downloadFolder_LE">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="contextMenuPolicy">
                <enum>Qt::CustomContextMenu</enum>
               </property>
@@ -461,6 +446,19 @@
                <bool>true</bool>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
             <item>
              <widget class="QPushButton" name="_cancel_PB">
@@ -517,7 +515,7 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
-  <include location="../../../../plugins/FeedReader/gui/FeedReader_images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

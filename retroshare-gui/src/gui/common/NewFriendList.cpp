@@ -54,6 +54,7 @@
 #include "gui/chat/ChatUserNotify.h"
 #include "gui/connect/ConnectProgressDialog.h"
 #include "gui/common/ElidedLabel.h"
+#include "gui/notifyqt.h"
 
 #include "NewFriendList.h"
 #include "ui_NewFriendList.h"
@@ -202,6 +203,9 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_peer, RsEventType::PEER_CONNECTION );
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_gssp, RsEventType::GOSSIP_DISCOVERY );
 
+    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(QString)), this, SLOT(forceUpdateDisplay()));
+    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(forceUpdateDisplay()));
+
     mModel = new RsFriendListModel(ui->peerTreeWidget);
 	mProxyModel = new FriendListSortFilterProxyModel(ui->peerTreeWidget->header(),this);
 
@@ -261,6 +265,7 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 
     connect(ui->actionShowOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setShowUnconnected(bool)));
     connect(ui->actionShowState,          SIGNAL(triggered(bool)), this, SLOT(setShowState(bool))      );
+    connect(ui->actionShowStateIcon,      SIGNAL(triggered(bool)), this, SLOT(setShowStateIcon(bool))      );
     connect(ui->actionShowGroups,         SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool))     );
     connect(ui->actionExportFriendlist,   SIGNAL(triggered())    , this, SLOT(exportFriendlistClicked()));
     connect(ui->actionImportFriendlist,   SIGNAL(triggered())    , this, SLOT(importFriendlistClicked()));
@@ -341,10 +346,12 @@ void NewFriendList::headerContextMenuRequested(QPoint /*p*/)
 
     displayMenu.addAction(ui->actionShowOfflineFriends);
     displayMenu.addAction(ui->actionShowState);
+    displayMenu.addAction(ui->actionShowStateIcon);
     displayMenu.addAction(ui->actionShowGroups);
 
     ui->actionShowOfflineFriends->setChecked(mProxyModel->showOfflineNodes());
     ui->actionShowState->setChecked(mModel->getDisplayStatusString());
+    ui->actionShowStateIcon->setChecked(mModel->getDisplayStatusIcon());
     ui->actionShowGroups->setChecked(mModel->getDisplayGroups());
 
     QHeaderView *header = ui->peerTreeWidget->header();
@@ -505,6 +512,8 @@ void NewFriendList::processSettings(bool load)
 
         mModel->setDisplayStatusString(Settings->value("showState", mModel->getDisplayStatusString()).toBool());
         mModel->setDisplayGroups(Settings->value("showGroups", mModel->getDisplayGroups()).toBool());
+        mModel->setDisplayStatusIcon(Settings->value("showStateIcon", mModel->getDisplayStatusIcon()).toBool());
+
 
         setColumnVisible(RsFriendListModel::COLUMN_THREAD_IP,Settings->value("showIP", isColumnVisible(RsFriendListModel::COLUMN_THREAD_IP)).toBool());
         setColumnVisible(RsFriendListModel::COLUMN_THREAD_ID,Settings->value("showID", isColumnVisible(RsFriendListModel::COLUMN_THREAD_ID)).toBool());
@@ -528,6 +537,8 @@ void NewFriendList::processSettings(bool load)
         Settings->setValue("hideUnconnected", !mProxyModel->showOfflineNodes());
         Settings->setValue("showState", mModel->getDisplayStatusString());
         Settings->setValue("showGroups", mModel->getDisplayGroups());
+        Settings->setValue("showStateIcon", mModel->getDisplayStatusIcon());
+
 
         Settings->setValue("showIP",isColumnVisible(RsFriendListModel::COLUMN_THREAD_IP));
         Settings->setValue("showID",isColumnVisible(RsFriendListModel::COLUMN_THREAD_ID));
@@ -1640,6 +1651,12 @@ void NewFriendList::toggleColumnVisible()
 void NewFriendList::setShowState(bool show)
 {
     applyWhileKeepingTree([show,this]() { mModel->setDisplayStatusString(show) ; });
+    processSettings(false);
+}
+
+void NewFriendList::setShowStateIcon(bool show)
+{
+    applyWhileKeepingTree([show,this]() { mModel->setDisplayStatusIcon(show) ; });
     processSettings(false);
 }
 

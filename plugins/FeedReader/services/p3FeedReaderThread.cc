@@ -848,6 +848,22 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 
 	RsFeedReaderErrorState result = RS_FEED_ERRORSTATE_OK;
 
+	time_t minimumPubDate = 0;
+	if (feed.lastUpdate == 0) {
+		// Get all items on first scan
+	} else {
+		// Get storage time
+		uint32_t storageTime = 0;
+		if (feed.flag & RS_FEED_FLAG_STANDARD_STORAGE_TIME) {
+			storageTime = mFeedReader->getStandardStorageTime();
+		} else {
+			storageTime = feed.storageTime;
+		}
+		if (storageTime > 0) {
+			minimumPubDate = time(NULL) - storageTime;
+		}
+	}
+
 	XMLWrapper xml;
 	if (xml.readXML(feed.content.c_str())) {
 		xmlNodePtr root = xml.getRootElement();
@@ -1006,6 +1022,13 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 							}
 						}
 
+						if (minimumPubDate) {
+							if (item->pubDate < minimumPubDate) {
+								// pubDate is less than storage time, don't add as new item
+								continue;
+							}
+						}
+
 						entries.push_back(item);
 					}
 				} else {
@@ -1097,7 +1120,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 	std::string url;
 	if (feed.flag & RS_FEED_FLAG_SAVE_COMPLETE_PAGE) {
 #ifdef FEEDREADER_DEBUG
-		std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") download page " << msg->link << std::endl;
+		std::cerr << "p3FeedReaderThread::processMsg - feed " << feed.feedId << " (" << feed.name << ") download page " << msg->link << std::endl;
 #endif
 		std::string content;
 		CURLWrapper CURL(proxy);
@@ -1134,7 +1157,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 
 		if (result != RS_FEED_ERRORSTATE_OK) {
 #ifdef FEEDREADER_DEBUG
-			std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot download page, CURLCode = " << code << ", error = " << errorString << std::endl;
+			std::cerr << "p3FeedReaderThread::processMsg - feed " << feed.feedId << " (" << feed.name << ") cannot download page, CURLCode = " << code << ", error = " << errorString << std::endl;
 #endif
 			return result;
 		}
@@ -1280,7 +1303,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 										if (!src.empty()) {
 											/* download image */
 #ifdef FEEDREADER_DEBUG
-											std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") download image " << src << std::endl;
+											std::cerr << "p3FeedReaderThread::processMsg - feed " << feed.feedId << " (" << feed.name << ") download image " << src << std::endl;
 #endif
 											std::vector<unsigned char> data;
 											CURLWrapper CURL(proxy);
@@ -1348,7 +1371,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 								if (!html.saveHTML(msg->postedDescriptionWithoutFirstImage)) {
 									errorString = html.lastError();
 #ifdef FEEDREADER_DEBUG
-									std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot dump html" << std::endl;
+									std::cerr << "p3FeedReaderThread::processMsg - feed " << feed.feedId << " (" << feed.name << ") cannot dump html" << std::endl;
 									std::cerr << "  Error: " << errorString << std::endl;
 #endif
 									result = RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
@@ -1357,7 +1380,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 						} else {
 							errorString = html.lastError();
 #ifdef FEEDREADER_DEBUG
-							std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot dump html" << std::endl;
+							std::cerr << "p3FeedReaderThread::processMsg - feed " << feed.feedId << " (" << feed.name << ") cannot dump html" << std::endl;
 							std::cerr << "  Error: " << errorString << std::endl;
 #endif
 							result = RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
@@ -1366,14 +1389,14 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 				}
 			} else {
 #ifdef FEEDREADER_DEBUG
-				std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") no root element" << std::endl;
+				std::cerr << "p3FeedReaderThread::processMsg - feed " << feed.feedId << " (" << feed.name << ") no root element" << std::endl;
 #endif
 				result = RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR;
 			}
 		} else {
 			errorString = html.lastError();
 #ifdef FEEDREADER_DEBUG
-			std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot read html" << std::endl;
+			std::cerr << "p3FeedReaderThread::processMsg - feed " << feed.feedId << " (" << feed.name << ") cannot read html" << std::endl;
 			std::cerr << "  Error: " << errorString << std::endl;
 #endif
 			result = RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR;
