@@ -23,6 +23,48 @@
   </message> 
 </context> 
 <context> 
+  <name>Section_WebUI</name> 
+  <message> 
+    <source>WebUI</source> 
+    <translation type="unfinished"></translation> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_WebUI_Desc</name> 
+  <message> 
+    <source>Installs WebUI.</source> 
+    <translation type="unfinished"></translation> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_Service</name> 
+  <message> 
+    <source>Service</source> 
+    <translation type="unfinished"></translation> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_Service_Desc</name> 
+  <message> 
+    <source>Installs Service.</source> 
+    <translation type="unfinished"></translation> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_FriendServer</name> 
+  <message> 
+    <source>Friend Server</source> 
+    <translation type="unfinished"></translation> 
+  </message> 
+</context> 
+<context> 
+  <name>Section_FriendServer_Desc</name> 
+  <message> 
+    <source>Installs Friend Server.</source> 
+    <translation type="unfinished"></translation> 
+  </message> 
+</context> 
+<context> 
   <name>Section_Data</name> 
   <message> 
     <source>Skins</source> 

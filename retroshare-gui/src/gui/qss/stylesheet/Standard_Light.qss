@@ -2661,7 +2661,7 @@ WireGroupItem QFrame#wire_frame:hover {
 	background-color: #7ecbfb;
 }
 WireGroupItem QFrame#wire_frame > QLabel {
-	color: black;
+	background: transparent;
 }
 
 PulseTopLevel QFrame#plainFrame,
@@ -2685,6 +2685,17 @@ PulseMessage #line{
 
 PulseReply QLabel#label_groupName{
 	color: #5b7083;
+}
+
+PulseReplySeperator QFrame#frame {
+	border: 2px solid #CCCCCC;
+	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #EEEEEE, stop: 1 #CCCCCC);
+	border-radius: 10px}
+}
+
+QLabel#label_masthead{
+	border: 2px solid #CCCCCC;
+	border-radius: 4px;
 }
 
 /**** PhotoShare ****/

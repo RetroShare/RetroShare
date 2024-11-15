@@ -55,6 +55,11 @@ linux-* {
 	PKGCONFIG += speex speexdsp
 } else {
 	LIBS += -lspeex -lspeexdsp -lavcodec -lavutil
+
+	win32:isEmpty(QMAKE_SH) {
+		# MinGW
+		LIBS += -lbcrypt
+	}
 }
 
 #################################### Windows #####################################

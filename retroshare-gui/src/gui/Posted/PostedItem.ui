@@ -176,6 +176,12 @@
            <property name="sizeType">
             <enum>QSizePolicy::Expanding</enum>
            </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
           </spacer>
          </item>
         </layout>
@@ -190,7 +196,7 @@
          <number>6</number>
         </property>
         <item>
-         <widget class="ClickableLabel" name="thumbnailLabel">
+         <widget class="ZoomableLabel" name="thumbnailLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -247,7 +253,7 @@
          <number>6</number>
         </property>
         <item>
-         <widget class="QLabel" name="titleLabel">
+         <widget class="ElidedLabel" name="titleLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -732,15 +738,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ClickableLabel</class>
+   <class>ZoomableLabel</class>
    <extends>QLabel</extends>
-   <header>util/ClickableLabel.h</header>
+   <header>gui/gxschannels/GxsChannelPostThumbnail.h</header>
   </customwidget>
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
-  <include location="../icons.qrc"/>
   <include location="Posted_images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

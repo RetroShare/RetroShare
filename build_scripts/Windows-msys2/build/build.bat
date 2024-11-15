@@ -32,6 +32,16 @@ if not "%ParamNoupdate%"=="1" (
 	if "%ParamIndexing%"=="1" %EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-xapian-core mingw-w64-%RsMSYS2Architecture%-libvorbis mingw-w64-%RsMSYS2Architecture%-flac mingw-w64-%RsMSYS2Architecture%-taglib"
 )
 
+:: Fix webui compilation (TODO: remove when whole RS switched to cmake)
+if "%ParamWebui%"=="1" (
+	pushd "%SourcePath%"
+	copy "%SourcePath%\libretroshare\src\jsonapi\jsonapi-generator-doxygen.conf" "%SourcePath%\jsonapi-generator\src\jsonapi-generator-doxygen.conf" %Quite%
+	copy "%SourcePath%\libretroshare\src\jsonapi\async-method-wrapper-template.cpp.tmpl" "%SourcePath%\jsonapi-generator\src\async-method-wrapper-template.cpp.tmpl" %Quite%
+	copy "%SourcePath%\libretroshare\src\jsonapi\method-wrapper-template.cpp.tmpl" "%SourcePath%\jsonapi-generator\src\method-wrapper-template.cpp.tmpl" %Quite%
+	git update-index --assume-unchanged "jsonapi-generator\src\jsonapi-generator-doxygen.conf" "jsonapi-generator\src\async-method-wrapper-template.cpp.tmpl" "jsonapi-generator\src\method-wrapper-template.cpp.tmpl"
+	popd
+)
+
 :: Initialize environment
 call "%~dp0env.bat" %*
 if errorlevel 2 exit /B 2
@@ -66,6 +76,7 @@ echo %RS_QMAKE_CONFIG% > buildinfo.txt
 echo %RsBuildConfig% >> buildinfo.txt
 echo %RsArchitecture% >> buildinfo.txt
 echo Qt %QtVersion% >> buildinfo.txt
+echo %RsToolchain% >> buildinfo.txt
 echo %RsCompiler% >> buildinfo.txt
 
 call "%ToolsPath%\msys2-path.bat" "%SourcePath%" MSYS2SourcePath
@@ -85,11 +96,6 @@ title Build - %SourceName%-%RsBuildConfig% [make]
 
 %EnvMSYS2Cmd% "make -j %CoreCount%"
 if errorlevel 1 goto error
-
-:: Webui
-if "%ParamWebui%"=="1" (
-	call "%~dp0..\tools\webui.bat"
-)
 
 :error
 popd

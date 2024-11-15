@@ -21,6 +21,7 @@
 #include "ServerPage.h"
 
 #include <gui/notifyqt.h>
+#include "gui/MainWindow.h"
 #include "rshare.h"
 #include "rsharesettings.h"
 #include "util/i2pcommon.h"
@@ -47,7 +48,9 @@
 #include <QTcpSocket>
 #include <QTimer>
 
+#ifdef RS_USE_I2P_SAM3
 #include <libsam3.h>
+#endif
 
 #define ICON_STATUS_UNKNOWN ":/images/ledoff1.png"
 #define ICON_STATUS_WORKING ":/images/yellowled.png"
@@ -100,11 +103,22 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	  {
 		  // Here we use absolute numbers instead of consts defined above, because the consts correspond to the tab number *after* this tab removal.
 
-		  ui.hiddenpage_proxyAddress_i2p->hide() ;
-		  ui.hiddenpage_proxyLabel_i2p->hide() ;
-		  ui.hiddenpage_proxyPort_i2p->hide() ;
-		  ui.label_i2p_outgoing->hide() ;
-		  ui.iconlabel_i2p_outgoing->hide() ;
+          ui.hiddenpage_proxyAddress_tor->setEnabled(false) ;
+          ui.hiddenpage_proxyPort_tor->setEnabled(false) ;
+          ui.hiddenpage_localAddress->setEnabled(false) ;
+          ui.hiddenpage_localPort->setEnabled(false) ;
+          ui.hiddenpage_serviceAddress->setEnabled(false) ;
+          ui.hiddenpage_servicePort->setEnabled(false) ;
+          ui.testIncoming_PB->hide() ;
+          ui.l_incomingTestResult->hide() ;
+          ui.iconlabel_service_incoming->hide() ;
+
+          // ui.hiddenpage_proxyAddress_i2p->hide() ;
+          // ui.hiddenpage_proxyLabel_i2p->hide() ;
+          // ui.hiddenpage_proxyPort_i2p->hide() ;
+          // ui.label_i2p_outgoing->hide() ;
+          // ui.iconlabel_i2p_outgoing->hide() ;
+
 		  ui.info_SocksProxy->hide() ;
 		  ui.hiddenpage_configuration->hide() ;
 		  ui.l_hiddenpage_configuration->hide() ;
@@ -205,9 +219,9 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
     connect(ui.discComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
     connect(ui.netModeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
-    connect(ui.localAddress,   SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
-    connect(ui.extAddress,     SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
-    connect(ui.dynDNS,         SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
+    connect(ui.localAddress,   SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
+    connect(ui.extAddress,     SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
+    connect(ui.dynDNS,         SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
 
     connect(ui.tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
     connect(ui.hiddenpage_proxyAddress_tor, SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
@@ -1355,6 +1369,7 @@ void ServerPage::saveAddressesHiddenNode()
 
 void ServerPage::updateOutProxyIndicator()
 {
+    MainWindow::getInstance()->torstatusReset();
     QTcpSocket socket ;
 
     // Tor
@@ -1371,22 +1386,39 @@ void ServerPage::updateOutProxyIndicator()
         ui.iconlabel_tor_outgoing->setToolTip(tr("Tor proxy is not enabled")) ;
     }
 
-	// I2P - SAM
-	// Note: there is only "the SAM port", there is no additional proxy port!
-	samStatus ss;
-	rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::status, &ss);
-	if(ss.state == samStatus::samState::online)
+	if (mHiddenType == RS_HIDDEN_TYPE_I2P && mSamSettings.enable)
 	{
-		socket.disconnectFromHost();
-		ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK)) ;
-		ui.iconlabel_i2p_outgoing->setToolTip(tr("Proxy seems to work.")) ;
+		// I2P - SAM
+		// Note: there is only "the SAM port", there is no additional proxy port!
+		samStatus ss;
+		rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::status, &ss);
+		if(ss.state == samStatus::samState::online)
+		{
+			socket.disconnectFromHost();
+			ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK)) ;
+			ui.iconlabel_i2p_outgoing->setToolTip(tr("Proxy seems to work.")) ;
+		}
+		else
+		{
+			ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
+			ui.iconlabel_i2p_outgoing->setToolTip(tr("I2P proxy is not enabled")) ;
+		}
 	}
 	else
 	{
-		ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
-		ui.iconlabel_i2p_outgoing->setToolTip(tr("I2P proxy is not enabled")) ;
+		socket.connectToHost(ui.hiddenpage_proxyAddress_i2p->text(),ui.hiddenpage_proxyPort_i2p->text().toInt());
+		if(socket.waitForConnected(500))
+		{
+			socket.disconnectFromHost();
+			ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_OK)) ;
+			ui.iconlabel_i2p_outgoing->setToolTip(tr("Proxy seems to work.")) ;
+		}
+		else
+		{
+			ui.iconlabel_i2p_outgoing->setPixmap(FilesDefs::getPixmapFromQtResourcePath(ICON_STATUS_UNKNOWN)) ;
+			ui.iconlabel_i2p_outgoing->setToolTip(tr("I2P proxy is not enabled")) ;
+		}
 	}
-
 	socket.connectToHost(ui.hiddenpage_proxyAddress_i2p_2->text(), 7656);
 	if(true == (mSamAccessible = socket.waitForConnected(1000)))
     {
@@ -1562,6 +1594,7 @@ void ServerPage::syncI2PProxyAddrSam(QString t)
 
 void ServerPage::taskFinished(taskTicket *&ticket)
 {
+#ifdef RS_USE_I2P_SAM3
 	switch (ticket->task) {
 	case autoProxyTask::receiveKey:
 	{
@@ -1629,6 +1662,7 @@ void ServerPage::taskFinished(taskTicket *&ticket)
 
     delete ticket;
 	ticket = nullptr;
+ #endif //RS_USE_I2P_SAM3
 }
 
 void ServerPage::connectionWithoutCert()

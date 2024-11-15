@@ -82,11 +82,15 @@ private:
     void fillParentMessage();
     void fillExpandFrame();
 	void setReadStatus(bool isNew, bool isUnread);
-	void setAsRead();
+	void setAsRead(bool doUpdate);
 
 private:
 	bool mInFill;
 	bool mCloseOnRead;
+    bool mLoadingMessage;
+    bool mLoadingParentMessage;
+    bool mLoadingGroup;
+    bool mLoadingSetAsRead;
 
 	RsGxsForumGroup mGroup;
 	RsGxsForumMsg mMessage;

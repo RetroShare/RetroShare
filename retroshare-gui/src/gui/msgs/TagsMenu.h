@@ -34,7 +34,7 @@ public:
 	TagsMenu(const QString &title, QWidget *parent);
 	virtual ~TagsMenu();
 
-	void activateActions(std::list<uint32_t>& tagIds);
+    void activateActions(std::set<uint32_t> &tagIds);
 
 signals:
 	void tagSet(int tagId, bool set);

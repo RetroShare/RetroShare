@@ -23,7 +23,6 @@
 
 #include <QDialog>
 
-#include "util/TokenQueue.h"
 #include <retroshare/rsidentity.h>
 
 namespace Ui {

@@ -24,6 +24,8 @@
 #include "PulseReply.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
+#include "util/misc.h"
+#include "util/qtthreadsutils.h"
 
 #include "PulseAddDialog.h"
 
@@ -41,9 +43,26 @@ PulseAddDialog::PulseAddDialog(QWidget *parent)
 	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelPulse( void ) ) );
 	connect(ui.textEdit_Pulse, SIGNAL( textChanged( void ) ), this, SLOT( pulseTextChanged( void ) ) );
 	connect(ui.pushButton_picture, SIGNAL(clicked()), this, SLOT( toggle()));
+	connect(ui.pushButton_remove, SIGNAL(clicked()), this, SLOT( removePictures()));
+
+
+    // this connection is from browse push button to the slot function onBrowseButtonClicked()
+    connect(ui.pushButton_Browse, SIGNAL(clicked()), this, SLOT( onBrowseButtonClicked()));
 
 	ui.pushButton_picture->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/photo.png")));
+	ui.pushButton_Browse->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/add-image.png")));
+	ui.pushButton_remove->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/mail/delete.png")));
+
 	ui.frame_picture->hide();
+	ui.pushButton_picture->hide();
+
+    // initially hiding the browse button as the attach image button is not pressed
+	//ui.frame_PictureBrowse->hide();
+
+	ui.label_image1->hide();
+	ui.label_image2->hide();
+	ui.label_image3->hide();
+	ui.label_image4->hide();
 
 	setAcceptDrops(true);
 }
@@ -80,11 +99,31 @@ void PulseAddDialog::setGroup(RsWireGroup &group)
 // set ReplyWith Group.
 void PulseAddDialog::setGroup(const RsGxsGroupId &grpId)
 {
-	/* fetch in the background */
-	RsWireGroupSPtr pGroup;
-	rsWire->getWireGroup(grpId, pGroup);
+    if(grpId.isNull()){
+        return;
+    }
 
-	setGroup(*pGroup);
+    RsThread::async([this,grpId](){
+
+        RsWireGroupSPtr pGroup;
+        if(!rsWire->getWireGroup(grpId,pGroup))
+        {
+            std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve wire group info for wire id:  " << grpId << std::endl;
+            return;
+        }
+
+        RsQThreadUtils::postToObject( [pGroup,this]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete, note that
+             * Qt::QueuedConnection is important!
+             */
+
+            setGroup(*pGroup);
+        }, this );
+
+    });
 }
 
 void PulseAddDialog::cleanup()
@@ -153,8 +192,11 @@ void PulseAddDialog::cleanup()
 	ui.label_image4->clear();
 	ui.label_image4->setText(tr("Drag and Drop Image"));
 
-	// Hide Drag & Drop Frame
-	ui.frame_picture->hide();
+    // Hide Drag & Drop Frame and the browse frame
+    ui.frame_picture->hide();
+    //ui.frame_PictureBrowse->hide();
+	ui.pushButton_picture->hide();
+
 	ui.pushButton_picture->setChecked(false);
 }
 
@@ -173,7 +215,7 @@ void PulseAddDialog::setReplyTo(const RsWirePulse &pulse, RsWirePulseSPtr pPulse
 	mReplyToPulse = pulse;
 	mReplyType = replyType;
 	ui.frame_reply->setVisible(true);
-	ui.pushButton_picture->show();
+	ui.pushButton_picture->hide();
 	ui.topheadshot->hide();
 
 	{
@@ -202,10 +244,12 @@ void PulseAddDialog::setReplyTo(const RsWirePulse &pulse, RsWirePulseSPtr pPulse
 		if (mReplyType & WIRE_PULSE_TYPE_REPUBLISH) {
 			ui.postButton->setText(tr("Republish Pulse"));
 			ui.pushButton_picture->hide();
+			ui.pushButton_Browse->hide();
 		}
 		else if (mReplyType & WIRE_PULSE_TYPE_LIKE) {
 			ui.postButton->setText(tr("Like Pulse"));
 			ui.pushButton_picture->hide();
+			ui.pushButton_Browse->hide();
 		}
 	}
 
@@ -213,30 +257,46 @@ void PulseAddDialog::setReplyTo(const RsWirePulse &pulse, RsWirePulseSPtr pPulse
 
 void PulseAddDialog::setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, uint32_t replyType)
 {
+    if(grpId.isNull()){
+        return;
+    }
 	/* fetch in the background */
-	RsWireGroupSPtr pGroup;
-	if (!rsWire->getWireGroup(grpId, pGroup))
-	{
-		std::cerr << "PulseAddDialog::setRplyTo() failed to fetch group";
-		std::cerr << std::endl;
-		return;
-	}
 
-	RsWirePulseSPtr pPulse;
-	if (!rsWire->getWirePulse(grpId, msgId, pPulse))
-	{
-		std::cerr << "PulseAddDialog::setRplyTo() failed to fetch pulse";
-		std::cerr << std::endl;
-		return;
-	}
+    RsThread::async([this,grpId,msgId,replyType](){
 
-	// update GroupPtr
-	// TODO - this should be handled in libretroshare if possible.
-	if (pPulse->mGroupPtr == NULL) {
-		pPulse->mGroupPtr = pGroup;
-	}
+        RsWireGroupSPtr pGroup;
+        RsWirePulseSPtr pPulse;
+        if(!rsWire->getWireGroup(grpId,pGroup))
+        {
+            std::cerr << __PRETTY_FUNCTION__ << "PulseAddDialog::setRplyTo() failed to fetch group id: "  << grpId << std::endl;
+            return;
+        }
 
-	setReplyTo(*pPulse, pPulse, pGroup->mMeta.mGroupName, replyType);
+        if (!rsWire->getWirePulse(grpId, msgId, pPulse))
+        {
+            std::cerr << "PulseAddDialog::setRplyTo() failed to fetch pulse of group id: " << grpId << std::endl;
+            return;
+        }
+
+        // update GroupPtr
+        // TODO - this should be handled in libretroshare if possible.
+        if (pPulse->mGroupPtr == NULL) {
+            pPulse->mGroupPtr = pGroup;
+        }
+
+        RsQThreadUtils::postToObject( [pGroup,this,pPulse,replyType]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete, note that
+             * Qt::QueuedConnection is important!
+             */
+
+            setReplyTo(*pPulse, pPulse, pGroup->mMeta.mGroupName, replyType);
+        }, this );
+
+    });
+
 }
 
 void PulseAddDialog::addURL()
@@ -286,26 +346,39 @@ void PulseAddDialog::postOriginalPulse()
 	std::cerr << "PulseAddDialog::postOriginalPulse()";
 	std::cerr << std::endl;
 
-	RsWirePulseSPtr pPulse(new RsWirePulse());
+    RsWirePulseSPtr pPulse(new RsWirePulse());
 
-	pPulse->mSentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
-	pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
-	// set images here too.
-	pPulse->mImage1 = mImage1;
-	pPulse->mImage2 = mImage2;
-	pPulse->mImage3 = mImage3;
-	pPulse->mImage4 = mImage4;
+    pPulse->mSentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
+    pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
+    // set images here too.
+    pPulse->mImage1 = mImage1;
+    pPulse->mImage2 = mImage2;
+    pPulse->mImage3 = mImage3;
+    pPulse->mImage4 = mImage4;
 
-	// this should be in async thread, so doesn't block UI thread.
-	if (!rsWire->createOriginalPulse(mGroup.mMeta.mGroupId, pPulse))
-	{
-		std::cerr << "PulseAddDialog::postOriginalPulse() FAILED";
-		std::cerr << std::endl;
-		return;
-	}
+    RsThread::async([this,pPulse](){
 
-	clearDialog();
-	hide();
+        if (!rsWire->createOriginalPulse(mGroup.mMeta.mGroupId, pPulse))
+        {
+            std::cerr << "PulseAddDialog::postOriginalPulse() FAILED";
+            std::cerr << std::endl;
+            return;
+        }
+
+        RsQThreadUtils::postToObject( [this]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete, note that
+             * Qt::QueuedConnection is important!
+             */
+
+            clearDialog();
+            hide();
+        }, this );
+
+    });
+
 }
 
 uint32_t PulseAddDialog::toPulseSentiment(int index)
@@ -335,15 +408,15 @@ void PulseAddDialog::postReplyPulse()
 	std::cerr << "PulseAddDialog::postReplyPulse()";
 	std::cerr << std::endl;
 
-	RsWirePulseSPtr pPulse(new RsWirePulse());
+    RsWirePulseSPtr pPulse(new RsWirePulse());
 
-	pPulse->mSentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
-	pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
-	// set images here too.
-	pPulse->mImage1 = mImage1;
-	pPulse->mImage2 = mImage2;
-	pPulse->mImage3 = mImage3;
-	pPulse->mImage4 = mImage4;
+    pPulse->mSentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
+    pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
+    // set images here too.
+    pPulse->mImage1 = mImage1;
+    pPulse->mImage2 = mImage2;
+    pPulse->mImage3 = mImage3;
+    pPulse->mImage4 = mImage4;
 
 	if (mReplyType & WIRE_PULSE_TYPE_REPUBLISH) {
 		// Copy details from parent, and override
@@ -357,20 +430,33 @@ void PulseAddDialog::postReplyPulse()
 		pPulse->mImage4 = mReplyToPulse.mImage4;
 	}
 
-	// this should be in async thread, so doesn't block UI thread.
-	if (!rsWire->createReplyPulse(mReplyToPulse.mMeta.mGroupId,
-			mReplyToPulse.mMeta.mOrigMsgId,
-			mGroup.mMeta.mGroupId,
-			mReplyType,
-			pPulse))
-	{
-		std::cerr << "PulseAddDialog::postReplyPulse() FAILED";
-		std::cerr << std::endl;
-		return;
-	}
+    RsThread::async([this, pPulse](){
 
-	clearDialog();
-	hide();
+        if (!rsWire->createReplyPulse(mReplyToPulse.mMeta.mGroupId,
+                mReplyToPulse.mMeta.mOrigMsgId,
+                mGroup.mMeta.mGroupId,
+                mReplyType,
+                pPulse))
+        {
+            std::cerr << "PulseAddDialog::postReplyPulse() FAILED";
+            std::cerr << std::endl;
+            return;
+        }
+
+        RsQThreadUtils::postToObject( [this]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete, note that
+             * Qt::QueuedConnection is important!
+             */
+
+            clearDialog();
+            hide();
+        }, this );
+
+    });
+
 }
 
 void PulseAddDialog::clearDialog()
@@ -478,24 +564,29 @@ void PulseAddDialog::addImage(const QString &path)
 		std::cerr << "PulseAddDialog::addImage() Installing in Image1";
 		std::cerr << std::endl;
 		ui.label_image1->setPixmap(icon);
+		ui.label_image1->show();
+		ui.frame_picture->show();
 		mImage1.copy((uint8_t *) ba.data(), ba.size());
 		std::cerr << "PulseAddDialog::addImage() Installing in Image1 Size: " << mImage1.mSize;
 		std::cerr << std::endl;
 	}
 	else if (mImage2.empty()) {
 		ui.label_image2->setPixmap(icon);
+		ui.label_image2->show();
 		mImage2.copy((uint8_t *) ba.data(), ba.size());
 		std::cerr << "PulseAddDialog::addImage() Installing in Image2 Size: " << mImage2.mSize;
 		std::cerr << std::endl;
 	}
 	else if (mImage3.empty()) {
 		ui.label_image3->setPixmap(icon);
+		ui.label_image3->show();
 		mImage3.copy((uint8_t *) ba.data(), ba.size());
 		std::cerr << "PulseAddDialog::addImage() Installing in Image3 Size: " << mImage3.mSize;
 		std::cerr << std::endl;
 	}
 	else if (mImage4.empty()) {
 		ui.label_image4->setPixmap(icon);
+		ui.label_image4->show();
 		mImage4.copy((uint8_t *) ba.data(), ba.size());
 		std::cerr << "PulseAddDialog::addImage() Installing in Image4 Size: " << mImage4.mSize;
 		std::cerr << std::endl;
@@ -510,12 +601,47 @@ void PulseAddDialog::toggle()
 {
 	if (ui.pushButton_picture->isChecked())
 	{
+        // Show the input methods (drag and drop field and the browse button)
 		ui.frame_picture->show();
+
 		ui.pushButton_picture->setToolTip(tr("Hide Pictures"));
 	}
 	else
 	{
+        // Hide the input methods (drag and drop field and the browse button)
 		ui.frame_picture->hide();
+
 		ui.pushButton_picture->setToolTip(tr("Add Pictures"));
 	}
+}
+
+// Function to get the file dialog for the browse button
+void PulseAddDialog::onBrowseButtonClicked()
+{
+    QString filePath;
+    misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", filePath);
+    if (!filePath.isEmpty()) {
+        //ui.lineEdit_FilePath->setText(filePath);
+        addImage(filePath);
+    }
+}
+
+void PulseAddDialog::removePictures()
+{
+
+	mImage1.clear();
+	ui.label_image1->clear();
+	mImage2.clear();
+	ui.label_image2->clear();
+	mImage3.clear();
+	ui.label_image3->clear();
+	mImage4.clear();
+	ui.label_image4->clear();
+
+	ui.label_image1->hide();
+	ui.label_image2->hide();
+	ui.label_image3->hide();
+	ui.label_image4->hide();
+
+	ui.frame_picture->hide();
 }

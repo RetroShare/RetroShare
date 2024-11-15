@@ -34,6 +34,7 @@
 #endif
 
 #include "gui/common/FilesDefs.h"
+#include "gui/RetroShareLink.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/misc.h"
 #include "ConnectFriendWizard.h"
@@ -80,6 +81,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 {
 	ui->setupUi(this);
 
+    error = 0;
 	mTitleFontSize = 0; // Standard
 	mTitleFontWeight = 0; // Standard
 	
@@ -448,8 +450,9 @@ void ConnectFriendWizard::initializePage(int id)
 			}
 
         sockaddr_storage addr ;
-
+#ifdef DEBUG_FRIENDWIZARD
 		std::cerr << "Cert IP = " << peerDetails.extAddr << std::endl;
+#endif
 
         if(sockaddr_storage_ipv4_aton(addr,peerDetails.extAddr.c_str()) && sockaddr_storage_isValidNet(addr))
         {
@@ -599,7 +602,7 @@ void ConnectFriendWizard::initializePage(int id)
 			if(mIsShortInvite)
 			{
 				if(ui->nameEdit->text().isEmpty())
-					ui->nameEdit->setText(tr("[Unknown]"));
+					ui->nameEdit->setText(QString::fromUtf8(peerDetails.name.c_str()));
 				ui->addKeyToKeyring_CB->setChecked(false);
 				ui->addKeyToKeyring_CB->setEnabled(false);
 				ui->signersEdit->hide();
@@ -869,7 +872,18 @@ void ConnectFriendWizard::cleanFriendCert()
 	bool certValid = false;
 	QString errorMsg ;
 	QString certDetail;
-	std::string cert = ui->friendCertEdit->toPlainText().toUtf8().constData();
+
+    std::string cert ;
+    RetroShareLink rslink(ui->friendCertEdit->toPlainText());
+
+    if(rslink.valid() && rslink.type() == RetroShareLink::TYPE_CERTIFICATE)
+        cert = rslink.radix().toStdString();
+    else
+        cert = ui->friendCertEdit->toPlainText().toUtf8().constData();
+
+#ifdef DEBUG_FRIENDWIZARD
+    std::cerr << "Friend cert:\"" << cert << "\"" << std::endl;
+#endif
 
 	if (cert.empty()) {
 		ui->friendCertCleanLabel->setToolTip("");
@@ -891,7 +905,9 @@ void ConnectFriendWizard::cleanFriendCert()
 				whileBlocking(ui->friendCertEdit)->setPlainText(QString::fromUtf8(cleanCert.c_str()));
 				whileBlocking(ui->friendCertEdit)->setTextCursor(textCursor);
 
-				certDetail = ConfCertDialog::getCertificateDescription(details,false,mIsShortInvite,!details.ipAddressList.empty());
+                // use dummy flags so that the content of the description is driven by what's in the "details" variable.
+                RetroshareInviteFlags dummy_flags = RetroshareInviteFlags::ALL;
+                certDetail = ConfCertDialog::getCertificateDescription(details,false,mIsShortInvite,dummy_flags);
 			}
 			
 			if (mIsShortInvite)
@@ -933,7 +949,7 @@ void ConnectFriendWizard::cleanFriendCert()
 void ConnectFriendWizard::pasteCert()
 {
 	QClipboard *clipboard = QApplication::clipboard();
-	ui->friendCertEdit->setPlainText(clipboard->text());
+    ui->friendCertEdit->setPlainText(clipboard->text());
 }
 
 void ConnectFriendWizard::openCert()

@@ -32,15 +32,6 @@
 #include <stdint.h>
 #include <vector>
 
-#define COLUMN_NAME          0
-#define COLUMN_FILENB        1
-#define COLUMN_SIZE          2
-#define COLUMN_AGE           3
-#define COLUMN_FRIEND_ACCESS 4
-#define COLUMN_WN_VISU_DIR   5
-#define COLUMN_COUNT         6
-#define RETROSHARE_DIR_MODEL_FILTER_STRING "filtered"
-
 struct DirDetails;
 
 class DirDetailsVector : public DirDetails
@@ -77,8 +68,6 @@ class RetroshareDirModel : public QAbstractItemModel
 
 		/* Callback from GUI */
 		void downloadSelected(const QModelIndexList &list, bool interactive);
-		void createCollectionFile(QWidget *parent, const QModelIndexList &list);
-
 		void getDirDetailsFromSelect (const QModelIndexList &list, std::vector <DirDetails>& dirVec);
 
 		int getType ( const QModelIndex & index ) const ;

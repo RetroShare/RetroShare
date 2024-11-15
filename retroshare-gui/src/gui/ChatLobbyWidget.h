@@ -56,18 +56,18 @@ class ChatLobbyWidget : public RsAutoUpdatePage
 
 public:
 	/** Default constructor */
-	ChatLobbyWidget(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+	ChatLobbyWidget(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 
 	/** Default destructor */
 	~ChatLobbyWidget();
 
-	virtual QIcon iconPixmap() const { return QIcon(IMAGE_CHATLOBBY) ; } //MainPage
-	virtual QString pageName() const { return tr("Chats") ; } //MainPage
-	virtual QString helpText() const { return ""; } //MainPage
+	virtual QIcon iconPixmap() const override { return QIcon(IMAGE_CHATLOBBY) ; } //MainPage
+	virtual QString pageName() const override { return tr("Chats") ; } //MainPage
+	virtual QString helpText() const override { return ""; } //MainPage
 
 	virtual UserNotify *createUserNotify(QObject *parent) override; //MainPage
 
-	virtual void updateDisplay();
+	virtual void updateDisplay() override; //RsAutoUpdatePage
 
 	void setCurrentChatPage(ChatLobbyDialog *) ;	// used by ChatLobbyDialog to raise.
 	void addChatPage(ChatLobbyDialog *) ;

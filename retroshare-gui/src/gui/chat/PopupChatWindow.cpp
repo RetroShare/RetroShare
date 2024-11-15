@@ -34,6 +34,7 @@
 #include "util/misc.h"
 #include "rshare.h"
 
+#include <retroshare/rsidentity.h>
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsnotify.h>
 
@@ -100,6 +101,17 @@ PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WindowFlags f
 
 	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 
+	voteNegative = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-down.png"),
+		tr("Ban this person (Sets negative opinion)"), this);
+	voteNeutral  = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-neutral.png"),
+		tr("Give neutral opinion"), this);
+	votePositive = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-up.png"),
+		tr("Give positive opinion"), this);
+
+	connect(votePositive, SIGNAL(triggered()), this, SLOT(voteParticipant()));
+	connect(voteNeutral,  SIGNAL(triggered()), this, SLOT(voteParticipant()));
+	connect(voteNegative, SIGNAL(triggered()), this, SLOT(voteParticipant()));
+
 	connect(ui.tabWidget, SIGNAL(tabChanged(ChatDialog*)), this, SLOT(tabChanged(ChatDialog*)));
 	connect(ui.tabWidget, SIGNAL(tabClosed(ChatDialog*)), this, SLOT(tabClosed(ChatDialog*)));
 
@@ -115,6 +127,37 @@ void PopupChatWindow::showContextMenu(QPoint)
 {
 	QMenu contextMnu(this);
     contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/highlight.png"),tr("Choose window color..."),this,SLOT(setStyle()));
+
+	ChatId ch_id = getCurrentDialog()->getChatId();
+	if (ch_id.isDistantChatId()) {
+		DistantChatPeerId dc_id = ch_id.toDistantChatId();
+		DistantChatPeerInfo dc_info;
+		if(rsMsgs->getDistantChatStatus(dc_id, dc_info)) {
+			RsGxsId gxs_id = dc_info.to_id;
+			if(!gxs_id.isNull() && !rsIdentity->isOwnId(gxs_id)) {
+			    contextMnu.addAction(votePositive);
+				contextMnu.addAction(voteNeutral);
+				contextMnu.addAction(voteNegative);
+
+				votePositive->setEnabled(false);
+				voteNeutral ->setEnabled(false);
+				voteNegative->setEnabled(false);
+
+				RsOpinion rs_rep;
+				rsReputations->getOwnOpinion(gxs_id, rs_rep);
+				if (rsReputations->getOwnOpinion(gxs_id, rs_rep)) {
+					votePositive->setEnabled(rs_rep != RsOpinion::POSITIVE);
+					voteNeutral->setEnabled( ( rs_rep == RsOpinion::POSITIVE )
+						|| ( rs_rep == RsOpinion::NEGATIVE ) );
+					voteNegative->setEnabled(rs_rep != RsOpinion::NEGATIVE);
+
+					votePositive->setData(QVariant::fromValue(gxs_id));
+					voteNeutral ->setData(QVariant::fromValue(gxs_id));
+					voteNegative->setData(QVariant::fromValue(gxs_id));
+				}
+			}
+		}
+	}
 
 	if (Settings->getChatFlags() & RS_CHAT_TABBED_WINDOW)
     {
@@ -456,4 +499,18 @@ void PopupChatWindow::blink(bool on)
 		}
 		setWindowIcon(on ? mBlinkIcon : *mEmptyIcon);
 	}
+}
+
+void PopupChatWindow::voteParticipant()
+{
+	QAction *act = dynamic_cast<QAction*>(sender()) ;
+	if (!act) {
+		return ;
+	}
+
+	RsOpinion opinion = RsOpinion::NEUTRAL;
+	if (act == voteNeutral)  opinion = RsOpinion::NEUTRAL;
+	if (act == votePositive) opinion = RsOpinion::POSITIVE;
+	if (act == voteNegative) opinion = RsOpinion::NEGATIVE;
+	rsReputations->setOwnOpinion(act->data().value<RsGxsId>(), opinion);
 }

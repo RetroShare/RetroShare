@@ -30,7 +30,7 @@ class QWidget;
 class FeedReaderStringDefs
 {
 public:
-	static bool showError(QWidget *parent, RsFeedAddResult result, const QString &title, const QString &text);
+	static bool showError(QWidget *parent, RsFeedResult result, const QString &title, const QString &text);
 	static QString workState(FeedInfo::WorkState state);
 	static QString errorString(const FeedInfo &feedInfo);
 	static QString errorString(RsFeedReaderErrorState errorState, const std::string &errorString);

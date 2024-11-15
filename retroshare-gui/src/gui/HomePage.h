@@ -46,28 +46,33 @@ public:
 	virtual QString pageName() const { return tr("Home") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
+    // Returns the certificate along with its description using current options.
+
+    void getOwnCert(QString& invite,QString& description) const;
+    RetroshareInviteFlags currentInviteFlags() const ;
+
 private slots:
-	void certContextMenu(QPoint);
+#ifdef DEAD_CODE
+    void certContextMenu(QPoint);
+#endif
 	void updateOwnCert();
-    void updateCertificate();
 	void runEmailClient();
 	void copyCert();
 	void copyId();
 	void saveCert();
 	void addFriend();
 	void webMail();
-	//void loadCert();
 	void openWebHelp() ;
-    void toggleUseOldFormat() ;
     void recommendFriends();
-	void toggleIncludeAllIPs();
-	void toggleUseShortFormat();
 
 private:
 	Ui::HomePage *ui;
 
-	bool mIncludeAllIPs;
-	bool mUseShortFormat;
+    QAction *mIncludeDNSact;
+    QAction *mIncludeIPHistoryact;
+    QAction *mIncludeExtIPact;
+    QAction *mIncludeLocIPact;
+    QAction *mUseOldFormatact;
 
     RsEventsHandlerId_t mEventHandlerId;
 

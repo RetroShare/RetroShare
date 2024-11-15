@@ -24,6 +24,7 @@
 #include <QWidget>
 #include <QDialog>
 
+#include "retroshare/rsevents.h"
 #include <gui/gxs/RsGxsUpdateBroadcastPage.h>
 
 namespace Ui {
@@ -131,7 +132,8 @@ signals:
 
 public slots:
 	void sortByState(bool sort);
-	void filterConnected(bool filter);
+    void sortByChecked(bool sort);
+    void filterConnected(bool filter);
 
 private slots:
 	void groupsChanged(int type);
@@ -151,6 +153,8 @@ private:
     void setSelectedIds_internal(IdType idType, const std::set<std::string> &ids, bool add);
 
 private:
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+
 	bool mStarted;
 	RSTreeWidgetItemCompareRole *mCompareRole;
 	Modus mListModus;
@@ -173,6 +177,9 @@ private:
 	QList<QAction*> mContextMenuActions;
 
     std::set<std::string> mPreSelectedIds; // because loading of GxsIds is asynchroneous we keep selected Ids from the client in a list here and use it to initialize after loading them.
+
+    RsEventsHandlerId_t mEventHandlerId_identities;
+    RsEventsHandlerId_t mEventHandlerId_peers;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(FriendSelectionWidget::ShowTypes)

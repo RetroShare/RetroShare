@@ -23,6 +23,7 @@
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
 #include "util/qtthreadsutils.h"
+#include "gui/settings/rsharesettings.h"
 
 #include "gui/msgs/MessageInterface.h"
 
@@ -91,8 +92,19 @@ void MessageUserNotify::handleEvent_main_thread(std::shared_ptr<const RsEvent> e
 		return;
 	}
 
-	switch (fe->mMailStatusEventCode) {
+	std::set<RsMailMessageId>::const_iterator it;
+
+    switch (fe->mMailStatusEventCode)
+    {
 	case RsMailStatusEventCode::NEW_MESSAGE:
+		for (it = fe->mChangedMsgIds.begin(); it != fe->mChangedMsgIds.end(); ++it) {
+			MessageInfo msgInfo;
+			if (rsMail->getMessage(*it, msgInfo)) {
+					NotifyQt::getInstance()->addToaster(RS_POPUP_MSG, msgInfo.msgId.c_str(), msgInfo.title.c_str(), msgInfo.msg.c_str() );
+			}
+		}
+        updateIcon();
+        break;
 	case RsMailStatusEventCode::MESSAGE_CHANGED:
 	case RsMailStatusEventCode::MESSAGE_REMOVED:
 		updateIcon();

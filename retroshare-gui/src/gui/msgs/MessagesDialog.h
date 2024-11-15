@@ -79,6 +79,7 @@ private slots:
 
   void changeBox(int newrow);
   void changeQuickView(int newrow);
+  void resetQuickView(const QModelIndex& i);
   void updateCurrentMessage();
   void clicked(const QModelIndex&);
   void doubleClicked(const QModelIndex&);
@@ -138,9 +139,10 @@ private:
   bool inChange;
   int lockUpdate; // use with LockUpdate
 
-  enum { LIST_NOTHING, LIST_BOX, LIST_QUICKVIEW } listMode;
+  // enum { LIST_NOTHING, LIST_BOX, LIST_QUICKVIEW } listMode;
 
   std::string mCurrMsgId;
+  int mLastCurrentQuickViewRow;
 
   // timer and index for showing message
   QTimer *timer;

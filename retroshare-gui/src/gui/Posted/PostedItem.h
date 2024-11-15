@@ -112,11 +112,11 @@ protected:
 	void setCommentsSize(int comNb) override;
 
 private slots:
-	void doExpand(bool open);
-	void toggle();
-	void makeUpVote();
-	void makeDownVote();
-	void toggleNotes() ;
+    void doExpand(bool open) override;
+    void toggle() override;
+    void makeUpVote() override;
+    void makeDownVote() override;
+    void toggleNotes()  override;
 
 private:
 	/** Qt Designer generated object */

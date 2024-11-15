@@ -23,6 +23,8 @@
 #include "WireGroupDialog.h"
 #include "WireGroupItem.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 
 #include "PulseViewGroup.h"
 #include "PulseReplySeperator.h"
@@ -59,13 +61,12 @@
 WireDialog::WireDialog(QWidget *parent)
     : MainPage(parent), mGroupSet(GROUP_SET_ALL)
     , mAddDialog(nullptr), mGroupSelected(nullptr), mWireQueue(nullptr)
-    , mHistoryIndex(-1)
+    , mHistoryIndex(-1), mEventHandlerId(0)
 {
 	ui.setupUi(this);
 
 	connect( ui.toolButton_createAccount, SIGNAL(clicked()), this, SLOT(createGroup()));
 	connect( ui.toolButton_createPulse, SIGNAL(clicked()), this, SLOT(createPulse()));
-	connect( ui.toolButton_refresh, SIGNAL(clicked()), this, SLOT(refreshGroups()));
 
 	connect(ui.comboBox_groupSet, SIGNAL(currentIndexChanged(int)), this, SLOT(selectGroupSet(int)));
 	connect(ui.comboBox_filterTime, SIGNAL(currentIndexChanged(int)), this, SLOT(selectFilterTime(int)));
@@ -89,6 +90,48 @@ WireDialog::WireDialog(QWidget *parent)
 
 	// load settings
 	processSettings(true);
+
+    // Needs to be asynced because this function is called by another thread!
+    rsEvents->registerEventsHandler(
+                [this](std::shared_ptr<const RsEvent> event)
+    { RsQThreadUtils::postToObject([=]() { handleEvent_main_thread(event); }, this ); },
+                mEventHandlerId, RsEventType::WIRE );
+}
+
+void WireDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    const RsWireEvent *e = dynamic_cast<const RsWireEvent*>(event.get());
+
+    if(e)
+    {
+
+#ifdef GXSWIRE_DEBUG
+                RsDbg() << " Refreshing the feed if there is a matching event. "<< std::endl;
+#endif
+
+        // The following switch statements refresh the wire feed whenever there is a new event
+        switch(e->mWireEventCode)
+        {
+        case RsWireEventCode::NEW_POST:
+
+        case RsWireEventCode::NEW_REPLY:
+
+        case RsWireEventCode::NEW_LIKE:
+
+        case RsWireEventCode::NEW_REPUBLISH:
+
+        case RsWireEventCode::POST_UPDATED:
+
+        case RsWireEventCode::NEW_WIRE:
+
+        case RsWireEventCode::FOLLOW_STATUS_CHANGED:
+
+        default:
+            refreshGroups();
+            break;
+
+        }
+    }
 }
 
 WireDialog::~WireDialog()
@@ -97,7 +140,10 @@ WireDialog::~WireDialog()
 	processSettings(false);
 	
 	clearTwitterView();
-	delete(mWireQueue);
+    std::cerr << "WireDialog::~WireDialog()" << std::endl;
+    delete(mWireQueue);
+
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 void WireDialog::processSettings(bool load)
@@ -109,8 +155,15 @@ void WireDialog::processSettings(bool load)
 
 		// state of splitter
 		ui.splitter->restoreState(Settings->value("SplitterWire").toByteArray());
+
+		// state of filter combobox
+		int index = Settings->value("ShowGroup", 0).toInt();
+		ui.comboBox_groupSet->setCurrentIndex(index);
 	} else {
 		// save settings
+
+		// state of filter combobox
+		Settings->setValue("ShowGroup", ui.comboBox_groupSet->currentIndex());
 
 		// state of splitter
 		Settings->setValue("SplitterWire", ui.splitter->saveState());
@@ -307,8 +360,20 @@ void WireDialog::updateGroups(std::vector<RsWireGroup>& groups)
 		{
 			// grab own groups.
 			// setup Chooser too.
-			mOwnGroups.push_back(it);
-			ui.groupChooser->addItem(QString::fromStdString(it.mMeta.mGroupName));
+			mOwnGroups.push_back(it); 
+			QPixmap pixmap;
+			if (it.mHeadshot.mData)
+			{
+				if (GxsIdDetails::loadPixmapFromData( it.mHeadshot.mData,it.mHeadshot.mSize,pixmap,GxsIdDetails::ORIGINAL))
+					pixmap = pixmap.scaled(32,32);
+			} 
+			else 
+			{
+				// default.
+				pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(32,32);
+			}
+
+			ui.groupChooser->addItem(QPixmap(pixmap),QString::fromStdString(it.mMeta.mGroupName));
 		}
 	}
 }
@@ -410,13 +475,13 @@ bool WireDialog::loadGroupData(const uint32_t &token)
 	std::cerr << "WireDialog::loadGroupData()";
 	std::cerr << std::endl;
 
-	std::vector<RsWireGroup> groups;
-	rsWire->getGroupData(token, groups);
+    std::vector<RsWireGroup> groups;
+    rsWire->getGroupData(token, groups);
 
-	// save list of groups.
-	updateGroups(groups);
-	showGroups();
-	return true;
+    // save list of groups.
+    updateGroups(groups);
+    showGroups();
+    return true;
 }
 
 rstime_t WireDialog::getFilterTimestamp()
@@ -624,6 +689,7 @@ void WireDialog::PVHrate(const RsGxsId &authorId)
 void WireDialog::postTestTwitterView()
 {
 	clearTwitterView();
+    std::cerr << "WireDialog::postTestTwitterView()" << std::endl;
 
 	addTwitterView(new PulseTopLevel(NULL,RsWirePulseSPtr())); 
 	addTwitterView(new PulseReply(NULL,RsWirePulseSPtr()));
@@ -780,6 +846,7 @@ void WireDialog::requestPulseFocus(const RsGxsGroupId groupId, const RsGxsMessag
 void WireDialog::showPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId msgId)
 {
 	clearTwitterView();
+    std::cerr << "WireDialog::showPulseFocus()" << std::endl;
 
 	// background thread for loading.
 	RsThread::async([this, groupId, msgId]()
@@ -809,6 +876,8 @@ void WireDialog::showPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId
 void WireDialog::postPulseFocus(RsWirePulseSPtr pPulse)
 {
 	clearTwitterView();
+    std::cerr << "WireDialog::postPulseFocus()" << std::endl;
+
 	if (!pPulse)
 	{
 		std::cerr << "WireDialog::postPulseFocus() Invalid pulse";
@@ -881,7 +950,7 @@ void WireDialog::requestGroupFocus(const RsGxsGroupId groupId)
 void WireDialog::showGroupFocus(const RsGxsGroupId groupId)
 {
 	clearTwitterView();
-
+    std::cerr << "WireDialog::showGroupFocus()" << std::endl;
 	// background thread for loading.
 	RsThread::async([this, groupId]()
 	{
@@ -958,6 +1027,7 @@ void WireDialog::requestGroupsPulses(const std::list<RsGxsGroupId>& groupIds)
 void WireDialog::showGroupsPulses(const std::list<RsGxsGroupId>& groupIds)
 {
 	clearTwitterView();
+    std::cerr << "WireDialog::showGroupPulses()" << std::endl;
 
 	// background thread for loading.
 	RsThread::async([this, groupIds]()
@@ -1007,4 +1077,3 @@ void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
 
 	}
 }
-

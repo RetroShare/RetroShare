@@ -23,8 +23,6 @@
 
 #include "ui_GxsGroupDialog.h"
 
-#include "util/TokenQueue.h"
-
 /********
  * Notes:
  *
@@ -284,9 +282,6 @@ private:
 
 	std::list<std::string> mShareList;
 	QPixmap mPicture;
-	RsTokenService *mTokenService;
-	TokenQueue *mExternalTokenQueue;
-	TokenQueue *mInternalTokenQueue;
 	RsGroupMetaData mGrpMeta;
 
 	Mode mMode;

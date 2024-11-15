@@ -21,7 +21,7 @@
 
 #include "AboutDialog.h"
 #include "HelpDialog.h"
-#include "qmake_info.h"
+#include "include/qmake_info.h"
 #include "rshare.h"
 
 #ifdef RS_JSONAPI
@@ -142,7 +142,7 @@ void AboutWidget::updateTitle()
 {
     if (tWidget == NULL)
     {
-        setWindowTitle(QString("%1 %2").arg(tr("About RetroShare"), Rshare::retroshareVersion(true)));
+        setWindowTitle(QString("%1 %2").arg(tr("About RetroShare"), RsApplication::retroshareVersion(true)));
     }
     else
     {
@@ -228,7 +228,7 @@ void AWidget::initImages()
 #ifdef RS_ONLYHIDDENNODE
     p.drawText(QPointF(10, 50), QString("%1 : %2 (With embedded Tor)").arg(tr("Retroshare version"), Rshare::retroshareVersion(true)));
 #else
-    p.drawText(QPointF(10, 50), QString("%1 : %2").arg(tr("Retroshare version"), Rshare::retroshareVersion(true)));
+    p.drawText(QPointF(10, 50), QString("%1 : %2").arg(tr("Retroshare version"), RsApplication::retroshareVersion(true)));
 #endif
 
     /* Draw Qt's version number */
@@ -936,7 +936,7 @@ void AboutWidget::on_copy_button_clicked()
 {
 	QString verInfo;
 	QString rsVerString = "RetroShare Version: ";
-	rsVerString+=Rshare::retroshareVersion(true);
+    rsVerString+=RsApplication::retroshareVersion(true);
 	verInfo+=rsVerString;
 #ifdef RS_ONLYHIDDENNODE
 	verInfo+=" " + tr("Only Hidden Node");

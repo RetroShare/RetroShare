@@ -34,10 +34,12 @@ public:
 	/* RsFeedReaderNotify */
 	virtual void notifyFeedChanged(uint32_t feedId, int type);
 	virtual void notifyMsgChanged(uint32_t feedId, const std::string &msgId, int type);
+	virtual void notifyOptimizeImage();
 
 signals:
 	void feedChanged(uint32_t feedId, int type);
 	void msgChanged(uint32_t feedId, const QString &msgId, int type);
+	void optimizeImage();
 };
 
 #endif

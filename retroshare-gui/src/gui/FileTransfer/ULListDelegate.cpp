@@ -25,14 +25,14 @@
 
 Q_DECLARE_METATYPE(FileProgressInfo)
 
+#define MAX_CHAR_TMP 128
+
 ULListDelegate::ULListDelegate(QObject *parent) : QAbstractItemDelegate(parent)
 {
-	;
 }
 
 ULListDelegate::~ULListDelegate(void)
 {
-	;
 }
 
 void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
@@ -65,7 +65,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 
 	// draw the background color
 	bool bDrawBackground = true;
-	if(index.column() == COLUMN_UPROGRESS) {
+    if(index.column() == COLUMN_UPROGRESS) {
 		FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
 		bDrawBackground = (pinfo.type == FileProgressInfo::UNINIT);
 	}
@@ -101,7 +101,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 					multi *= 1024.0;
 				}
 			}
-			painter->drawText(option.rect, Qt::AlignRight, temp);
+			painter->drawText(option.rect, Qt::AlignRight | Qt::AlignVCenter, temp);
 			break;
         case COLUMN_UTRANSFERRED:
 			transferred = index.data().toLongLong();
@@ -120,7 +120,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 					multi *= 1024.0;
 				}
 			}
-			painter->drawText(option.rect, Qt::AlignRight, temp);
+			painter->drawText(option.rect, Qt::AlignRight | Qt::AlignVCenter, temp);
 			break;
         case COLUMN_ULSPEED:
                         ulspeed = index.data().toDouble();
@@ -131,9 +131,9 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                             temp.sprintf("%.2f", ulspeed/1024.);
                             temp += " KB/s";
                         }
-			painter->drawText(option.rect, Qt::AlignRight, temp);
+			painter->drawText(option.rect, Qt::AlignRight | Qt::AlignVCenter, temp);
 			break;
-		case COLUMN_UPROGRESS:
+        case COLUMN_UPROGRESS:
 			{
 				FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
 				if (pinfo.type == FileProgressInfo::UNINIT)
@@ -143,7 +143,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				painter->save() ;
 				xProgressBar progressBar(pinfo,option.rect,painter,0);// the 3rd param is the  color schema (0 is the default value)
 
-				QString ext = QFileInfo(QString::fromStdString(index.sibling(index.row(), COLUMN_UNAME).data().toString().toStdString())).suffix();;
+                QString ext = QFileInfo(QString::fromStdString(index.sibling(index.row(), COLUMN_UNAME).data().toString().toStdString())).suffix();;
 				if (ext == "rsfc" || ext == "rsrl" || ext == "dist" || ext == "rsfb")
 					progressBar.setColorSchema( 9);
 				else
@@ -157,17 +157,17 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;
-		case COLUMN_UNAME:
-		case COLUMN_UPEER:
+        case COLUMN_UNAME:
+        case COLUMN_UPEER:
 			// decoration
 			value = index.data(Qt::DecorationRole);
 			pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);
 			pixmapRect = (pixmap.isNull() ? QRect(0, 0, 0, 0): QRect(QPoint(0, 0), option.decorationSize));
 			if (pixmapRect.isValid()){
-				QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft, pixmap.size(), option.rect).topLeft();
+				QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft | Qt::AlignVCenter, pixmap.size(), option.rect).topLeft();
 				painter->drawPixmap(p, pixmap);
 			}
-			painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignLeft, index.data().toString());
+			painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignLeft | Qt::AlignVCenter, index.data().toString());
 			break;
 		default:
 			painter->drawText(option.rect, Qt::AlignCenter, index.data().toString());
@@ -181,7 +181,7 @@ QSize ULListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModel
 {
     float w = QFontMetricsF(option.font).width(index.data(Qt::DisplayRole).toString());
 
-    int S = QFontMetricsF(option.font).height() ;
+    int S = QFontMetricsF(option.font).height()*1.5 ;
     return QSize(w,S);
 }
 

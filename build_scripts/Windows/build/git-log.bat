@@ -8,7 +8,7 @@ if errorlevel 1 goto error_env
 call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
 
-call "%~dp0env.bat" %*
+call "%~dp0env.bat" git-log %*
 if errorlevel 2 exit /B 2
 if errorlevel 1 goto error_env
 
@@ -87,6 +87,10 @@ title %COMSPEC%
 echo %RsRef%>"%RsLastRefFile%"
 
 exit /B %ERRORLEVEL%
+
+:error
+%cecho% error "\n%~n0 failed\n"
+exit /B 1
 
 :error_env
 echo Failed to initialize environment.

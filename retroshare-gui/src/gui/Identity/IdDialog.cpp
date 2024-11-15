@@ -385,20 +385,22 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
     mStateHelper->setActive(IDDIALOG_REPLIST, false);
 
+	int H = misc::getFontSizeFactor("HelpButton").height();
 	QString hlp_str = tr(
-			" <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>    \
-			<p>In this tab you can create/edit <b>pseudo-anonymous identities</b>, and <b>circles</b>.</p>                \
-			<p><b>Identities</b> are used to securely identify your data: sign messages in chat lobbies, forum and channel posts,\
-				receive feedback using the Retroshare built-in email system, post comments \
-				after channel posts, chat using secured tunnels, etc.</p> \
-			<p>Identities can optionally be <b>signed</b> by your Retroshare node's certificate.   \
-			Signed identities are easier to trust but are easily linked to your node's IP address.</p>  \
-			<p><b>Anonymous identities</b> allow you to anonymously interact with other users. They cannot be   \
-			spoofed, but noone can prove who really owns a given identity.</p> \
-                    <p><b>Circles</b> are groups of identities (anonymous or signed), that are shared at a distance over the network. They can be \
-                		used to restrict the visibility to forums, channels, etc. </p> \
-                    <p>An <b>circle</b> can be restricted to another circle, thereby limiting its visibility to members of that circle \
-                        or even self-restricted, meaning that it is only visible to invited members.</p>") ;
+	    "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>"
+	    "<p>In this tab you can create/edit <b>pseudo-anonymous identities</b>, and <b>circles</b>.</p>"
+	    "<p><b>Identities</b> are used to securely identify your data: sign messages in chat lobbies, forum and channel posts,"
+	    "   receive feedback using the Retroshare built-in email system, post comments"
+	    "   after channel posts, chat using secured tunnels, etc.</p>"
+	    "<p>Identities can optionally be <b>signed</b> by your Retroshare node's certificate."
+	    "   Signed identities are easier to trust but are easily linked to your node's IP address.</p>"
+	    "<p><b>Anonymous identities</b> allow you to anonymously interact with other users. They cannot be"
+	    "   spoofed, but noone can prove who really owns a given identity.</p>"
+	    "<p><b>Circles</b> are groups of identities (anonymous or signed), that are shared at a distance over the network. They can be"
+	    "   used to restrict the visibility to forums, channels, etc. </p>"
+	    "<p>An <b>circle</b> can be restricted to another circle, thereby limiting its visibility to members of that circle"
+	    "   or even self-restricted, meaning that it is only visible to invited members.</p>"
+	                    ).arg(QString::number(2*H));
 
 	registerHelpButton(ui->helpButton, hlp_str,"PeopleDialog") ;
 
@@ -477,9 +479,9 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 
 void IdDialog::clearPerson()
 {
-	QFontMetricsF f(ui->avLabel_Person->font()) ;
+	//QFontMetricsF f(ui->avLabel_Person->font()) ;
 
-	ui->avLabel_Person->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/people.png").scaled(f.height()*4,f.height()*4,Qt::KeepAspectRatio,Qt::SmoothTransformation));
+	//ui->avLabel_Person->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/people.png").scaled(f.height()*4,f.height()*4,Qt::KeepAspectRatio,Qt::SmoothTransformation));
 	ui->headerTextLabel_Person->setText(tr("People"));
 
 	ui->info_Frame_Invite->hide();
@@ -1109,7 +1111,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
     static const int CANCEL = 3 ; // Admin list: no          Subscription request:  yes
 
     const QString menu_titles[4] = { tr("Request subscription"), tr("Accept circle invitation"), tr("Quit this circle"),tr("Cancel subscribe request")} ;
-    const QString image_names[4] = { ":/images/edit_add24.png",":/images/accepted16.png",":/icons/png/enter.png",":/images/cancel.png" } ;
+    const QString image_names[4] = { ":/images/edit_add24.png",":/images/accepted16.png",":/icons/png/enter.png",":/icons/cancel.svg" } ;
 
     std::vector< std::vector<RsGxsId> > ids(4) ;
 
@@ -1699,8 +1701,8 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
 
 	//ui->avLabel_Person->setPixmap(pixmap);
 	//ui->avatarLabel->setPixmap(pixmap);
-	QFontMetricsF f(ui->avLabel_Person->font()) ;
-	ui->avLabel_Person->setPixmap(pixmap.scaled(f.height()*4,f.height()*4,Qt::KeepAspectRatio,Qt::SmoothTransformation));
+	//QFontMetricsF f(ui->avLabel_Person->font()) ;
+	//ui->avLabel_Person->setPixmap(pixmap.scaled(f.height()*4,f.height()*4,Qt::KeepAspectRatio,Qt::SmoothTransformation));
 
 	ui->avatarLabel->setPixmap(pixmap.scaled(ui->inviteButton->width(),ui->inviteButton->width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
 	ui->avatarLabel->setScaledContents(true);
@@ -2258,7 +2260,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 				contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 
 			if(n_is_not_a_contact == 0)
-                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
+                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
 
 			contextMenu->addSeparator();
 
@@ -2277,8 +2279,8 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			contextMenu->addSeparator();
 
 			contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
-			contextMenu->addAction(ui->editIdentity);
-			contextMenu->addAction(ui->removeIdentity);
+			contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT),tr("Edit identity"),this,SLOT(editIdentity())) ;
+			contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"),tr("Delete identity"),this,SLOT(removeIdentity())) ;
 		}
 
 	}

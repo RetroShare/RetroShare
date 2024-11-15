@@ -33,10 +33,10 @@ class GxsCommentDialog: public QWidget
 
 public:
     GxsCommentDialog(QWidget *parent=nullptr,const RsGxsId& default_author=RsGxsId());
-    GxsCommentDialog(QWidget *parent,const RsGxsId& default_author, RsTokenService *token_service, RsGxsCommentService *comment_service);
+    GxsCommentDialog(QWidget *parent, const RsGxsId& default_author, RsGxsCommentService *comment_service);
 	virtual ~GxsCommentDialog();
 
-    void setTokenService(RsTokenService *token_service, RsGxsCommentService *comment_service);
+    void setGxsService(RsGxsCommentService *comment_service);
 	void setCommentHeader(QWidget *header);
     void commentLoad(const RsGxsGroupId &grpId, const std::set<RsGxsMessageId> &msg_versions, const RsGxsMessageId &most_recent_msgId, bool use_cache=false);
     void commentClear();

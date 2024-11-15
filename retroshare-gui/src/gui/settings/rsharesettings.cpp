@@ -109,7 +109,7 @@ void RshareSettings::initSettings()
 	setDefault(SETTING_STYLE, "GTK+");
 #else
 #if defined(Q_OS_MAC)
-	setDefault(SETTING_STYLE, "macintosh (aqua)");
+	setDefault(SETTING_STYLE, "Fusion");
 #else
 	static QStringList styles = QStyleFactory::keys();
 #if defined(Q_OS_WIN)
@@ -537,6 +537,16 @@ void RshareSettings::setChatSendAsPlainTextByDef(bool bValue)
 	setValueToGroup("Chat", "SendAsPlainTextByDef", bValue);
 }
 
+bool RshareSettings::getShrinkChatTextEdit()
+{
+	return valueFromGroup("Chat", "ShrinkChatTextEdit", false).toBool();
+}
+
+void RshareSettings::setShrinkChatTextEdit(bool bValue)
+{
+	setValueToGroup("Chat", "ShrinkChatTextEdit", bValue);
+}
+
 bool RshareSettings::getChatSearchShowBarByDefault()
 {
 	return valueFromGroup("Chat", "SearchShowBarByDefault", false).toBool();
@@ -900,7 +910,7 @@ void RshareSettings::setUseLocalServer(bool value)
 {
 	if (value != getUseLocalServer()) {
 		setValue("UseLocalServer", value);
-		Rshare::updateLocalServer();
+		RsApplication::updateLocalServer();
 	}
 }
 

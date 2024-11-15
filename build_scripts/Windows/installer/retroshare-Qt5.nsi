@@ -60,12 +60,29 @@
 !define /date DATE "%Y%m%d"
 !endif
 
+# Service
+${!defineifexist} SERVICE_EXISTS "${RELEASEDIR}\retroshare-service\src\release\retroshare-service.exe"
+
 # Tor
 !ifdef TORDIR
 ${!defineifexist} TOR_EXISTS "${TORDIR}\tor.exe"
 !ifndef TOR_EXISTS
 !error "tor.exe not found"
 !endif
+!endif
+
+# WebUI
+!ifdef WEBUIDIR
+${!defineifexist} WEBUI_EXISTS "${WEBUIDIR}\index.html"
+!ifndef WEBUI_EXISTS
+!error "WebUI files not found"
+!endif
+!endif
+
+# Friend Server
+!ifdef TOR_EXISTS
+# Add Friend Server with Tor only
+#${!defineifexist} FRIENDSERVER_EXISTS "${RELEASEDIR}\retroshare-friendserver\src\release\retroshare-friendserver.exe"
 !endif
 
 # Application name and version
@@ -193,7 +210,6 @@ Section $(Section_Main) Section_Main
   ; Main binaries
   SetOutPath "$INSTDIR"
   File "${RELEASEDIR}\retroshare-gui\src\release\retroshare.exe"
-  File "${RELEASEDIR}\retroshare-service\src\release\retroshare-service.exe"
   File /nonfatal "${RELEASEDIR}\libretroshare\src\lib\retroshare.dll"
 
   ; Qt binaries
@@ -282,11 +298,35 @@ Section $(Section_Main) Section_Main
   File /r "${SOURCEDIR}\retroshare-gui\src\license\*.*"
 SectionEnd
 
+# Service
+!ifdef SERVICE_EXISTS
+  Section /o $(Section_Service) Section_Service
+    SetOutPath "$INSTDIR"
+  File "${RELEASEDIR}\retroshare-service\src\release\retroshare-service.exe"
+  SectionEnd
+!endif
+
+# Friend Server
+!ifdef FRIENDSERVER_EXISTS
+  Section /o $(Section_FriendServer) Section_FriendServer
+    SetOutPath "$INSTDIR"
+    File "${RELEASEDIR}\retroshare-friendserver\src\release\retroshare-friendserver.exe"
+  SectionEnd
+!endif
+
 # Tor
 !ifdef TOR_EXISTS
   Section /o $(Section_Tor) Section_Tor
     SetOutPath "$INSTDIR\tor"
-    File /r "${TORDIR}\*"
+    File "${TORDIR}\*"
+  SectionEnd
+!endif
+
+# WebUI
+!ifdef WEBUI_EXISTS
+  Section /o $(Section_WebUI) Section_WebUI
+    SetOutPath "$INSTDIR\webui"
+    File /r "${WEBUIDIR}\*"
   SectionEnd
 !endif
 
@@ -355,6 +395,22 @@ Section $(Section_StartMenu) Section_StartMenu
   CreateDirectory "$SMPROGRAMS\${APPNAME}"
   CreateShortCut "$SMPROGRAMS\${APPNAME}\$(Link_Uninstall).lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\retroshare.exe" "" "$INSTDIR\retroshare.exe" 0
+
+!ifdef SERVICE_EXISTS
+  SectionGetFlags ${Section_Service} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  ${If} $0 == ${SF_SELECTED}
+    CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME} Service.lnk" "$INSTDIR\retroshare-service.exe" "" "$INSTDIR\retroshare-service.exe" 0
+  ${EndIf}
+!endif
+
+!ifdef FRIENDSERVER_EXISTS
+  SectionGetFlags ${Section_FriendServer} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  ${If} $0 == ${SF_SELECTED}
+    CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME} Friend Server.lnk" "$INSTDIR\retroshare-friendserver.exe" "" "$INSTDIR\retroshare-friendserver.exe" 0
+  ${EndIf}
+!endif
 SectionEnd
 
 Section $(Section_Desktop) Section_Desktop
@@ -407,6 +463,9 @@ SectionEnd
 ;  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Link} $(Section_Link_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_AutoStart} $(Section_AutoStart_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Tor} $(Section_Tor_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_WebUI} $(Section_WebUI_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Service} $(Section_Service_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_FriendServer} $(Section_FriendServer_Desc)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 # Uninstall
@@ -460,6 +519,26 @@ Function .onInit
   Pop $R1
   !insertmacro MUI_LANGDLL_DISPLAY
 FunctionEnd
+
+!ifdef FRIENDSERVER_EXISTS
+Function .onSelChange
+  SectionGetFlags ${Section_FriendServer} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  ${If} $0 == ${SF_SELECTED}
+    # Activate Tor and set readonly
+    SectionGetFlags ${Section_Tor} $1
+    IntOp $1 $1 | ${SF_SELECTED}
+    IntOp $1 $1 | ${SF_RO}
+    SectionSetFlags ${Section_Tor} $1
+  ${Else}
+    # Remove readonly from Tor
+    SectionGetFlags ${Section_Tor} $1
+    IntOp $2 ${SF_RO} ~
+    IntOp $1 $1 & $2
+    SectionSetFlags ${Section_Tor} $1
+  ${EndIf}
+FunctionEnd
+!endif
 
 # Installation mode
 

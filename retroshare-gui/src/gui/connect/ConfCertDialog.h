@@ -59,7 +59,7 @@ public:
         /* window will destroy itself! */
     }
     static void loadAll();
-	static QString getCertificateDescription(const RsPeerDetails& det, bool signatures_included, bool use_short_format, bool extra_locators_included);
+    static QString getCertificateDescription(const RsPeerDetails& det, bool signatures_included, bool use_short_format,RetroshareInviteFlags invite_flags);
 
 signals:
     void configChanged();

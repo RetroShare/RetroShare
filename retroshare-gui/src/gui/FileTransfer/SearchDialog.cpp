@@ -30,13 +30,14 @@
 #include "gui/RetroShareLink.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "gui/msgs/MessageComposer.h"
-#include "gui/common/RsCollection.h"
+#include "gui/common/RsCollectionDialog.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/common/RsUrlHandler.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/advsearch/advancedsearchdialog.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "util/QtVersion.h"
+#include "util/qtthreadsutils.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsturtle.h>
@@ -84,6 +85,18 @@ const int SearchDialog::FILETYPE_IDX_VIDEO = 7;
 const int SearchDialog::FILETYPE_IDX_DIRECTORY = 8;
 QMap<int, QString> * SearchDialog::FileTypeExtensionMap = new QMap<int, QString>();
 bool SearchDialog::initialised = false;
+
+struct SearchDialog::FileDetail
+{
+public:
+    RsPeerId id;
+    std::string name;
+    RsFileHash hash;
+    std::string path;
+    uint64_t size;
+    uint32_t mtime;
+    uint32_t rank;
+};
 
 /** Constructor */
 SearchDialog::SearchDialog(QWidget *parent)
@@ -188,6 +201,10 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
 
+    QFontMetricsF fontMetrics(ui.searchResultWidget->font());
+    int iconHeight = fontMetrics.height() * 1.4;
+    ui.searchResultWidget->setIconSize(QSize(iconHeight, iconHeight));
+
     /* Set initial size the splitter */
     QList<int> sizes;
     sizes << 250 << width(); // Qt calculates the right sizes
@@ -213,6 +230,15 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     checkText(ui.lineEdit->text());
 
+    // add an event handler to get search results (previously available through notifyQt)
+
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
+    }, mEventHandlerId, RsEventType::FILE_TRANSFER );
+
 }
 
 SearchDialog::~SearchDialog()
@@ -231,6 +257,31 @@ SearchDialog::~SearchDialog()
 
     ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL, nullptr);
     ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL, nullptr);
+
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
+
+void SearchDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    if(event->mType != RsEventType::FILE_TRANSFER)
+        return;
+
+    auto fe = dynamic_cast<const RsFileTransferEvent*>(event.get());
+
+    if(!fe || fe->mFileTransferEventCode!=RsFileTransferEventCode::NEW_DISTANT_SEARCH_RESULTS)
+        return;
+
+    for(uint32_t i=0;i<fe->mResults.size();++i)
+    {
+        FileDetail f;
+        f.hash = fe->mResults[i].fHash;
+        f.name = fe->mResults[i].fName;
+        f.size = fe->mResults[i].fSize;
+        f.mtime  = 0;	// zero what's not available, otherwise we'll get some random values displayed.
+        f.rank = 0;
+
+        updateFiles(fe->mRequestId,f);
+    }
 }
 
 void SearchDialog::processSettings(bool bLoad)
@@ -274,7 +325,7 @@ void SearchDialog::checkText(const QString& txt)
 	ui.searchButton->setDisabled(txt.length() < 3);
 	ui.searchLineFrame->setProperty("valid", (txt.length() >= 3));
 	ui.searchLineFrame->style()->unpolish(ui.searchLineFrame);
-	Rshare::refreshStyleSheet(ui.searchLineFrame, false);
+	RsApplication::refreshStyleSheet(ui.searchLineFrame, false);
 }
 
 void SearchDialog::initialiseFileTypeMappings()
@@ -282,7 +333,7 @@ void SearchDialog::initialiseFileTypeMappings()
 	/* edit these strings to change the range of extensions recognised by the search */
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_ANY, "");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_AUDIO,
-		"aac aif flac iff m3u m4a mid midi mp3 mpa ogg ra ram wav wma");
+		"aac aif flac iff m3u m4a mid midi mp3 mpa ogg ra ram wav wma weba");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_ARCHIVE,
 		"7z bz2 gz pkg rar sea sit sitx tar zip tgz");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_CDIMAGE,
@@ -291,11 +342,11 @@ void SearchDialog::initialiseFileTypeMappings()
 		"doc odt ott rtf pdf ps txt log msg wpd wps ods xls epub" );
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_PICTURE,
 		"3dm 3dmf ai bmp drw dxf eps gif ico indd jpe jpeg jpg mng pcx pcc pct pgm "
-		"pix png psd psp qxd qxprgb sgi svg tga tif tiff xbm xcf");
+		"pix png psd psp qxd qxprgb sgi svg tga tif tiff xbm xcf webp");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_PROGRAM,
 		"app bat cgi com bin exe js pif py pl sh vb ws bash");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_VIDEO,
-		"3gp asf asx avi mov mp4 mkv flv mpeg mpg qt rm swf vob wmv");
+		"3gp asf asx avi mov mp4 mkv flv mpeg mpg qt rm swf vob wmv webm");
 	SearchDialog::initialised = true;
 }
 
@@ -446,25 +497,23 @@ void SearchDialog::collCreate()
 	int selectedCount = selectedItems.size() ;
 	QTreeWidgetItem * item ;
 
-	for (int i = 0; i < selectedCount; ++i) {
+    RsFileTree tree;
+
+    for (int i = 0; i < selectedCount; ++i)
+    {
 		item = selectedItems.at(i) ;
 
-		if (!item->text(SR_HASH_COL).isEmpty()) {
+        if (!item->text(SR_HASH_COL).isEmpty())
+        {
 			std::string name = item->text(SR_NAME_COL).toUtf8().constData();
 			RsFileHash hash( item->text(SR_HASH_COL).toStdString() );
 			uint64_t count = item->text(SR_SIZE_COL).toULongLong();
 
-			DirDetails details;
-			details.name = name;
-			details.hash = hash;
-            details.size = count;
-			details.type = DIR_TYPE_FILE;
-
-			dirVec.push_back(details);
+            tree.addFile(tree.root(),name,hash,count);
 		}
 	}
 
-	RsCollection(dirVec,RS_FILE_HINTS_LOCAL).openNewColl(this);
+    RsCollectionDialog::openNewCollection(tree);
 }
 
 void SearchDialog::collModif()
@@ -491,12 +540,8 @@ void SearchDialog::collModif()
 	/* open file with a suitable application */
 	QFileInfo qinfo;
 	qinfo.setFile(QString::fromUtf8(path.c_str()));
-	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-			RsCollection collection;
-			collection.openColl(qinfo.absoluteFilePath());
-		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-	}//if (qinfo.exists())
+    if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+            RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath());
 }
 
 void SearchDialog::collView()
@@ -523,12 +568,8 @@ void SearchDialog::collView()
 	/* open file with a suitable application */
 	QFileInfo qinfo;
 	qinfo.setFile(QString::fromUtf8(path.c_str()));
-	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-			RsCollection collection;
-			collection.openColl(qinfo.absoluteFilePath(), true);
-		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-	}//if (qinfo.exists())
+    if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+        RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath(), true);
 }
 
 void SearchDialog::collOpen()
@@ -546,32 +587,35 @@ void SearchDialog::collOpen()
 
 			if (rsFiles->FileDetails(hash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL
 			                               | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE
-                                     | RS_FILE_HINTS_SPEC_ONLY, info)) {
-
+                                     | RS_FILE_HINTS_SPEC_ONLY, info))
+            {
 				/* make path for downloaded files */
 				std::string path;
 				path = info.path;
 
 				/* open file with a suitable application */
 				QFileInfo qinfo;
+                RsCollection::RsCollectionErrorCode err;
 				qinfo.setFile(QString::fromUtf8(path.c_str()));
-				if (qinfo.exists()) {
-					if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-						RsCollection collection;
-						if (collection.load(qinfo.absoluteFilePath())) {
-							collection.downloadFiles();
-							return;
-						}
-					}
-				}
+                if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+                    RsCollectionDialog::downloadFiles(RsCollection(qinfo.absoluteFilePath(),err));
 			}
 		}
 	}
 
-	RsCollection collection;
-	if (collection.load(this)) {
-		collection.downloadFiles();
-	}//if (collection.load(this))
+    QString fileName;
+    if (!misc::getOpenFileName(nullptr, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Open collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")", fileName))
+        return ;
+
+    std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
+
+    RsCollection::RsCollectionErrorCode err;
+    RsCollection collection(fileName, err);
+
+    if(err == RsCollection::RsCollectionErrorCode::COLLECTION_NO_ERROR)
+        RsCollectionDialog::downloadFiles(collection);
+    else
+        QMessageBox::information(nullptr,tr("Error open RsCollection file"),RsCollection::errorString(err));
 }
 
 void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString &base)
@@ -801,28 +845,29 @@ void SearchDialog::advancedSearch(RsRegularExpression::Expression* expression)
 {
 	advSearchDialog->hide();
 
-	/* call to core */
-	std::list<DirDetails> results;
-
 	// send a turtle search request
     RsRegularExpression::LinearizedExpression e ;
 	expression->linearize(e) ;
 
-	TurtleRequestId req_id = rsFiles->turtleSearch(e) ;
+    TurtleRequestId req_id ;
 
-	// This will act before turtle results come to the interface, thanks to the signals scheduling policy.
-	initSearchResult(QString::fromStdString(e.GetStrings()),req_id, ui.FileTypeComboBox->currentIndex(), true) ;
+    if(ui._anonF2Fsearch_CB->isChecked())
+        req_id = rsFiles->turtleSearch(e) ;
+    else
+        req_id = RSRandom::random_u32() ; // generate a random 32 bits request id
 
-	rsFiles -> SearchBoolExp(expression, results, RS_FILE_HINTS_REMOTE);// | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
+    initSearchResult(QString::fromStdString(e.GetStrings()),req_id, ui.FileTypeComboBox->currentIndex(), true) ;
+
+    std::list<DirDetails> results;
+
+    FileSearchFlags flags(0);
+    if(ui._ownFiles_CB->isChecked())         flags |= RS_FILE_HINTS_LOCAL;
+    if(ui._friendListsearch_SB->isChecked()) flags |= RS_FILE_HINTS_REMOTE;
+
+    rsFiles -> SearchBoolExp(expression, results, flags);
 
 	/* abstraction to allow reusee of tree rendering code */
-	resultsToTree(advSearchDialog->getSearchAsString(),req_id, results);
-
-//	// debug stuff
-//	Expression *expression2 = LinearizedExpression::toExpr(e) ;
-//	results.clear() ;
-//	rsFiles -> SearchBoolExp(expression2, results, DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
-//	resultsToTree((advSearchDialog->getSearchAsString()).toStdString(),req_id+1, results);
+    resultsToTree(advSearchDialog->getSearchAsString(),req_id, results);
 }
 
 void SearchDialog::searchKeywords()
@@ -928,7 +973,7 @@ void SearchDialog::searchKeywords(const QString& keywords)
 	}
 }
 
-void SearchDialog::updateFiles(qulonglong search_id,FileDetail file)
+void SearchDialog::updateFiles(qulonglong search_id,const FileDetail& file)
 {
 	searchResultsQueue.push_back(std::pair<qulonglong,FileDetail>(search_id,file)) ;
 
@@ -956,7 +1001,7 @@ void SearchDialog::processResultQueue()
 	while(!searchResultsQueue.empty() && nb_treated_elements++ < 250)
 	{
 		qulonglong search_id = searchResultsQueue.back().first ;
-		FileDetail& file = searchResultsQueue.back().second ;
+        const FileDetail& file = searchResultsQueue.back().second ;
 
 #ifdef DEBUG
 		std::cout << "Updating file detail:" << std::endl ;
@@ -1282,8 +1327,8 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 
 		item->setText(SR_SIZE_COL, QString::number(file.size));
 		item->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) file.size);
-		item->setText(SR_AGE_COL, QString::number(file.age));
-		item->setData(SR_AGE_COL, ROLE_SORT, file.age);
+        item->setText(SR_AGE_COL, QString::number(file.mtime));
+        item->setData(SR_AGE_COL, ROLE_SORT, file.mtime);
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		int friendSource = 0;
 		int anonymousSource = 0;
@@ -1358,21 +1403,21 @@ void SearchDialog::resultsToTree(const QString& txt,qulonglong searchId, const s
 
 	std::list<DirDetails>::const_iterator it;
 	for(it = results.begin(); it != results.end(); ++it)
-		if (it->type == DIR_TYPE_FILE) {
+        if (it->type == DIR_TYPE_FILE)
+        {
 			FileDetail fd;
 			fd.id	= it->id;
 			fd.name = it->name;
 			fd.hash = it->hash;
 			fd.path = it->path;
             fd.size = it->size;
-			fd.age 	= it->mtime;
+            fd.mtime= it->mtime;
 			fd.rank = 0;
 
 			insertFile(searchId,fd, FRIEND_SEARCH);
-		} else if (it->type == DIR_TYPE_DIR) {
-//			insertDirectory(txt, searchId, *it, NULL);
+        }
+        else if (it->type == DIR_TYPE_DIR)
 			insertDirectory(txt, searchId, *it);
-		}
 
 	ui.searchResultWidget->setSortingEnabled(true);
 }
@@ -1451,33 +1496,38 @@ void SearchDialog::copyResultLink()
 {
     /* should also be able to handle multi-selection */
     QList<QTreeWidgetItem*> itemsForCopy = ui.searchResultWidget->selectedItems();
-    int numdls = itemsForCopy.size();
-    QTreeWidgetItem * item;
 
-	QList<RetroShareLink> urls ;
+    std::set<RsFileHash> already_seen_hashes;
+    QList<RetroShareLink> urls ;
 
-    for (int i = 0; i < numdls; ++i) 
-	 {
-		 item = itemsForCopy.at(i);
-		 // call copy
+    for (auto item:itemsForCopy)
+    {
+        // call copy
 
-		 if (!item->childCount()) 
-		 {
-			 std::cerr << "SearchDialog::copyResultLink() Calling set retroshare link";
-			 std::cerr << std::endl;
+        QString fhash = item->text(SR_HASH_COL);
+        RsFileHash hash(fhash.toStdString());
 
-			 QString fhash = item->text(SR_HASH_COL);
-			 qulonglong fsize = item->text(SR_SIZE_COL).toULongLong();
-			 QString fname = item->text(SR_NAME_COL);
+        if(!hash.isNull() && (already_seen_hashes.end() == already_seen_hashes.find(hash)))
+        {
+            std::cerr << "SearchDialog::copyResultLink() Calling set retroshare link";
+            std::cerr << std::endl;
 
-			RetroShareLink link = RetroShareLink::createFile(fname, fsize, fhash);
-			if (link.valid()) {
-				std::cerr << "new link added to clipboard: " << link.toString().toStdString() << std::endl ;
-				urls.push_back(link) ;
-			}
-		 } 
-	 }
-	 RSLinkClipboard::copyLinks(urls) ;
+            qulonglong fsize = item->text(SR_SIZE_COL).toULongLong();
+            QString fname = item->text(SR_NAME_COL);
+
+            RetroShareLink link = RetroShareLink::createFile(fname, fsize, fhash);
+
+            if (link.valid())
+            {
+                std::cerr << "new link added to clipboard: " << link.toString().toStdString() << std::endl ;
+                urls.push_back(link);
+                already_seen_hashes.insert(hash);
+            }
+        }
+    }
+
+    if(!urls.empty())
+        RSLinkClipboard::copyLinks(urls) ;
 }
 
 void SearchDialog::sendLinkTo( )

@@ -24,9 +24,10 @@
 #include "CreateGxsForumMsg.h"
 #include "GxsForumUserNotify.h"
 #include "gui/notifyqt.h"
-#include "gui/gxs/GxsGroupShareKey.h"
-#include "util/qtthreadsutils.h"
 #include "gui/common/GroupTreeWidget.h"
+#include "gui/gxs/GxsGroupShareKey.h"
+#include "util/misc.h"
+#include "util/qtthreadsutils.h"
 
 class GxsForumGroupInfoData : public RsUserdata
 {
@@ -39,7 +40,7 @@ public:
 
 /** Constructor */
 GxsForumsDialog::GxsForumsDialog(QWidget *parent) :
-    GxsGroupFrameDialog(rsGxsForums, parent), mEventHandlerId(0)
+    GxsGroupFrameDialog(rsGxsForums, settingsGroupName(),parent), mEventHandlerId(0)
 {
 	mCountChildMsgs = true;
 
@@ -103,20 +104,36 @@ bool GxsForumsDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
 
 bool GxsForumsDialog::getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat)
 {
-    return rsGxsForums->getForumStatistics(groupId,stat);
+    RsGxsForumStatistics s;
+
+    if(!rsGxsForums->getForumStatistics(groupId,s))
+        return false;
+
+    stat.mGrpId = groupId;
+    stat.mNumMsgs = s.mNumberOfMessages;
+
+    stat.mTotalSizeOfMsgs = 0;	// hopefuly unused. Required the loading of the full channel data, so not very convenient.
+    stat.mNumThreadMsgsNew = s.mNumberOfNewMessages;
+    stat.mNumThreadMsgsUnread = s.mNumberOfUnreadMessages;
+    stat.mNumChildMsgsNew = 0;
+    stat.mNumChildMsgsUnread = 0;
+
+    return true;
 }
-
-
 
 QString GxsForumsDialog::getHelpString() const
 {
+	int H = misc::getFontSizeFactor("HelpButton").height();
+
 	QString hlp_str = tr(
-			"<h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Forums</h1>               \
-			<p>Retroshare Forums look like internet forums, but they work in a decentralized way</p>    \
-			<p>You see forums your friends are subscribed to, and you forward subscribed forums to      \
-			your friends. This automatically promotes interesting forums in the network.</p>            \
-            <p>Forum messages are kept for %1 days and sync-ed over the last %2 days, unless you configure it otherwise.</p>\
-                ").arg(QString::number(rsGxsForums->getDefaultStoragePeriod()/86400)).arg(QString::number(rsGxsForums->getDefaultSyncPeriod()/86400));
+	    "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Forums</h1>"
+	    "<p>Retroshare Forums look like internet forums, but they work in a decentralized way</p>"
+	    "<p>You see forums your friends are subscribed to, and you forward subscribed forums to"
+	    "   your friends. This automatically promotes interesting forums in the network.</p>"
+	    "<p>Forum messages are kept for %2 days and sync-ed over the last %3 days, unless you configure it otherwise.</p>"
+	                    ).arg(  QString::number(2*H)
+	                          , QString::number(rsGxsForums->getDefaultStoragePeriod()/86400)
+	                          , QString::number(rsGxsForums->getDefaultSyncPeriod()/86400));
 
 	return hlp_str ;	
 }
@@ -233,9 +250,11 @@ void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *grou
 	groupItemInfo.description = QString::fromUtf8(forumGroupData->mDescription.c_str());
 
 	if (!groupData->mMeta.mCircleId.isNull() )
+	{
 		if (details.mRestrictedCircleId == details.mCircleId)
 			groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/forums-red.png");
 		else
 			groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/forums-signed.png");
+	}
 }
 

@@ -27,6 +27,14 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+#ifdef WINDOWS_SYS
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
+#include <netinet/tcp.h>
+#endif
+
 #include "util/rsnet.h"
 #include "util/rsprint.h"
 #include "util/rsdebug.h"
@@ -44,6 +52,9 @@ FsNetworkInterface::FsNetworkInterface(const std::string& listening_address,uint
 
     mClintListn = 0;
     mClintListn = socket(AF_INET, SOCK_STREAM, 0); // creating socket
+
+    int flags=1;
+    setsockopt(mClintListn,SOL_SOCKET,TCP_NODELAY,(char*)&flags,sizeof(flags));
 
     unix_fcntl_nonblock(mClintListn);
 
@@ -102,15 +113,19 @@ void FsNetworkInterface::threadTick()
 
     std::list<RsPeerId> to_close;
 
-    RS_STACK_MUTEX(mFsNiMtx);
-    for(auto& it:mConnections)
-        if(it.second.bio->isactive())
+    {
+        RS_STACK_MUTEX(mFsNiMtx);
+        for(auto& it:mConnections)
+        {
             it.second.pqi_thread->tick();
-    else
-            to_close.push_back(it.first);
 
-    for(const auto& pid:to_close)
-        locked_closeConnection(pid);
+            if(!it.second.bio->isactive() && !it.second.bio->moretoread(0))
+                to_close.push_back(it.first);
+        }
+
+        for(const auto& pid:to_close)
+            locked_closeConnection(pid);
+    }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
 }
@@ -134,7 +149,9 @@ bool FsNetworkInterface::checkForNewConnections()
 
     if(clintConnt < 0)
     {
-        if(errno == EWOULDBLOCK)
+        int err = rs_socket_error();
+
+        if(err == EWOULDBLOCK || err == EAGAIN)
             ;//RsErr()<< "Incoming connection with nothing to read!" << std::endl;
         else
             RsErr()<< "Error when accepting connection." << std::endl;
@@ -145,15 +162,23 @@ bool FsNetworkInterface::checkForNewConnections()
 
     // Make the socket non blocking so that we can read from it and return if nothing comes
 
+    int flags=1;
+    setsockopt(clintConnt,SOL_SOCKET,TCP_NODELAY,(char*)&flags,sizeof(flags));
+
     unix_fcntl_nonblock(clintConnt);
 
     // Create connection info
 
+    RsDbg() << "  Creating connection data." ;
+
     ConnectionData c;
     c.socket = clintConnt;
     c.client_address = addr;
-
     RsPeerId pid = makePeerId(clintConnt);
+
+    RsDbg() << "  socket: " << clintConnt;
+    RsDbg() << "  client address: " <<  sockaddr_storage_tostring(*(sockaddr_storage*)&addr);
+    RsDbg() << "  peer id: " << pid ;
 
     // Setup a pqistreamer to deserialize whatever comes from this connection
 
@@ -167,17 +192,22 @@ bool FsNetworkInterface::checkForNewConnections()
     c.pqi_thread = pqi;
     c.bio = bio;
 
-    pqi->start();
+    {
+        RS_STACK_MUTEX(mFsNiMtx);
+        mConnections[pid] = c;
 
-    RS_STACK_MUTEX(mFsNiMtx);
-    mConnections[pid] = c;
+        pqi->start();
+    }
 
+    RsDbg() << "  streamer has properly started." ;
     return true;
 }
 
 bool FsNetworkInterface::RecvItem(RsItem *item)
 {
     RS_STACK_MUTEX(mFsNiMtx);
+
+    RsDbg() << "FsNetworkInterface: received item " << (void*)item;
 
     auto it = mConnections.find(item->PeerId());
 
@@ -203,6 +233,7 @@ RsItem *FsNetworkInterface::GetItem()
             RsItem *item = it.second.incoming_items.front();
             it.second.incoming_items.pop_front();
 
+            RsDbg() << "FsNetworkInterface: returning item " << (void*)item << " to caller.";
             return item;
         }
     }

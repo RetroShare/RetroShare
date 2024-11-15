@@ -61,6 +61,7 @@ public:
 
 signals:
 	void messageRemoved();
+    void messageRemovalRequested(std::string);
 
 private slots:
 	void reply();
@@ -72,7 +73,7 @@ private slots:
 	void saveAs();
 	void refill();
 	void sendInvite();
-
+	void expandTo();
 
 	void msgfilelistWidgetCostumPopupMenu(QPoint);
 	void messagesTagsChanged();

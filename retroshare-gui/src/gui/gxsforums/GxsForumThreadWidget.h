@@ -102,13 +102,12 @@ protected:
 	virtual void updateDisplay(bool complete);
 
 	/* GxsMessageFrameWidget */
-	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
+    virtual void setAllMessagesReadDo(bool read);
     
 	void setMessageLoadingError(const QString& error);
 private slots:
 	/** Create the context popup menu and it's submenus */
 	void threadListCustomPopupMenu(QPoint point);
-	void contextMenuTextBrowser(QPoint point);
 	void headerContextMenuRequested(const QPoint& pos);
     void showForumInfo();
 
@@ -122,15 +121,17 @@ private slots:
 	void replytoforummessage();
 	void editforummessage();
 
-	void replyMessageData(const RsGxsForumMsg &msg);
+    void toggleThreadedView(bool);
+    void toggleFlatView(bool);
+    void toggleLstPostInThreadView(bool);
+
+    void replyMessageData(const RsGxsForumMsg &msg);
 	void editForumMessageData(const RsGxsForumMsg &msg);
 	void replyForumMessageData(const RsGxsForumMsg &msg);
 	void showAuthorInPeople(const RsGxsForumMsg& msg);
 
     // This method is used to perform an asynchroneous action on the message data. Any of the methods above can be used as parameter.
 	void async_msg_action(const MsgMethod& method);
-
-	void saveImage();
 
 	void markMsgAsRead();
 	void markMsgAsReadChildren();
@@ -153,7 +154,7 @@ private slots:
 	void nextUnreadMessage();
 	void downloadAllFiles();
 
-	void changedViewBox();
+    void changedViewBox(int);
 	void flagperson();
 
 	void filterColumnChanged(int column);

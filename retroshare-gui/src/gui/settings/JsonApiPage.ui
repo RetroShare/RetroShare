@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="WebuiPageVLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QGroupBox" name="jsonApiGroupBox">
      <property name="minimumSize">
@@ -25,13 +25,65 @@
      <property name="title">
       <string>JSON API Server</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QCheckBox" name="enableCheckBox">
-        <property name="text">
-         <string>Enable RetroShare JSON API Server</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QCheckBox" name="enableCheckBox">
+          <property name="text">
+           <string>Enable RetroShare JSON API Server</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Status:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="statusLabelLED">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Listen Address:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="listenAddressLineEdit">
+          <property name="text">
+           <string>127.0.0.1</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -52,24 +104,6 @@
           </property>
           <property name="value">
            <number>9092</number>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Listen Address:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="listenAddressLineEdit">
-          <property name="text">
-           <string>127.0.0.1</string>
           </property>
          </widget>
         </item>
@@ -110,12 +144,22 @@
       <item>
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Authenticated Tokens</string>
+         <string>Authenticated Tokens:</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QListView" name="tokensListView"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Registered services:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QListView" name="providersListView"/>
       </item>
      </layout>
     </widget>
@@ -142,6 +186,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -371,22 +371,32 @@
         </property>
         <layout class="QHBoxLayout" name="moderatorList_GB_HL">
          <property name="spacing">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="leftMargin">
-          <number>0</number>
+          <number>9</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>9</number>
          </property>
          <property name="rightMargin">
-          <number>0</number>
+          <number>9</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>9</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="moderatorList_TE"/>
+          <widget class="QLabel" name="moderatorList_TE">
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

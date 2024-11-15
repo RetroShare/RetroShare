@@ -150,7 +150,7 @@ private:
 
 	// Loading Data.
 	void requestGroupData();
-	bool loadGroupData(const uint32_t &token);
+    bool loadGroupData(const uint32_t &token);
 	void acknowledgeGroup(const uint32_t &token, const uint32_t &userType);
 
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req) override;
@@ -163,6 +163,10 @@ private:
 
 	std::map<RsGxsGroupId, RsWireGroup> mAllGroups;
 	std::vector<RsWireGroup> mOwnGroups;
+
+    // This function and variable below it handle the events for the wire
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+    RsEventsHandlerId_t mEventHandlerId;
 
 	int32_t mHistoryIndex;
 	std::vector<WireViewHistory> mHistory;

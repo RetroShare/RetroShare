@@ -196,7 +196,6 @@ private slots:
 
 	void quote();
 	void dropPlacemark();
-	void saveImage();
 	void saveSticker();
 
 private:
@@ -214,6 +213,8 @@ private:
 
 	void completeNickname(bool reverse);
     QAbstractItemModel *modelFromPeers();
+
+    void shrinkChatTextEdit(bool shrink_me);
 
     ChatId chatId;
 	QString title;
@@ -263,6 +264,9 @@ private:
 
 	QCompleter *completer;
 	ImHistoryBrowser* imBrowser;
+
+	QList<int> _chatvsplitter_saved_size;
+	bool was_shrinked = false;
 
 	QList<ChatWidgetHolder*> mChatWidgetHolder;
 	ChatLobbyUserNotify* notify;

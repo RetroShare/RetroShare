@@ -25,20 +25,6 @@
 #include <retroshare/rspeers.h>
 #include <QColor>
 
-#define IMAGE_AUTHED         ":/images/accepted16.png"
-#define IMAGE_DENIED         ":/images/denied16.png"
-#define IMAGE_TRUSTED        ":/images/rs-2.png"
-
-
-#define COLUMN_CHECK 0
-#define COLUMN_PEERNAME    1
-#define COLUMN_I_AUTH_PEER 2
-#define COLUMN_PEER_AUTH_ME 3
-#define COLUMN_PEERID      4
-#define COLUMN_LAST_USED   5
-#define COLUMN_COUNT 6
-
-
 class pgpid_item_model : public QAbstractTableModel
 {
     Q_OBJECT
@@ -62,6 +48,13 @@ public:
     void setBackgroundColorDenied(QColor color) { mBackgroundColorDenied = color; }
     void setTextColor(QColor color) { mTextColor = color; }
 
+    static constexpr int PGP_ITEM_MODEL_COLUMN_CHECK        = 0;
+    static constexpr int PGP_ITEM_MODEL_COLUMN_PEERNAME     = 1;
+    static constexpr int PGP_ITEM_MODEL_COLUMN_I_AUTH_PEER  = 2;
+    static constexpr int PGP_ITEM_MODEL_COLUMN_PEER_AUTH_ME = 3;
+    static constexpr int PGP_ITEM_MODEL_COLUMN_PEERID       = 4;
+    static constexpr int PGP_ITEM_MODEL_COLUMN_LAST_USED    = 5;
+    static constexpr int PGP_ITEM_MODEL_COLUMN_COUNT        = 6;
 
 public slots:
     void data_updated(std::list<RsPgpId> &new_neighs);

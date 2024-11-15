@@ -180,6 +180,7 @@ void PGPKeyDialog::load()
     {
         ui.make_friend_button->hide();
         ui.signKeyButton->hide();
+        ui.label_signKey->hide();
         ui.denyFriendButton->hide();
 
         ui.label_trustlevel->hide();

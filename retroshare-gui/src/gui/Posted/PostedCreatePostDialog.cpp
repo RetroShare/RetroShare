@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QBuffer>
+#include <QClipboard>
 #include <QMessageBox>
 #include <QByteArray>
 #include <QStringList>
@@ -28,6 +29,7 @@
 #include "ui_PostedCreatePostDialog.h"
 
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 #include "util/RichTextEdit.h"
 #include "gui/feeds/SubFileItem.h"
 #include "util/rsdir.h"
@@ -48,6 +50,8 @@
 #define IMG_ATTACH  0
 #define IMG_PICTURE 1
 
+const int MAXMESSAGESIZE = 199000;
+
 PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGroupId& grpId, const RsGxsId& default_author, QWidget *parent):
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
 	mPosted(posted), mGrpId(grpId),
@@ -58,6 +62,7 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 
 	connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createPost()));
 	connect(ui->addPicButton, SIGNAL(clicked() ), this , SLOT(addPicture()));
+	connect(ui->pasteButton, SIGNAL(clicked() ), this , SLOT(pastePicture()));
 	connect(ui->RichTextEditWidget, SIGNAL(textSizeOk(bool)),ui->postButton, SLOT(setEnabled(bool)));
 
 	ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/postedlinks.png"));
@@ -178,10 +183,20 @@ void PostedCreatePostDialog::createPost()
 		return;
 	}
 
-	uint32_t token;
-	mPosted->createPost(token, post);
+    RsThread::async([this,post]()
+    {
+        RsGxsMessageId post_id;
 
-	accept();
+        bool res = rsPosted->createPost(post,post_id);
+
+        RsQThreadUtils::postToObject( [res,this]()
+        {
+            if(!res)
+                QMessageBox::information(nullptr,tr("Error while creating post"),tr("An error occurred while creating the post."));
+
+            accept();
+        }, this );
+    });
 }
 
 void PostedCreatePostDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
@@ -213,7 +228,7 @@ void PostedCreatePostDialog::addPicture()
 		}
 
 		QImage opt;
-		if(ImageUtil::optimizeSizeBytes(imagebytes, image, opt, 640*480, MAXMESSAGESIZE - 2000)) { //Leave space for other stuff
+        if (optimizeImage(image, imagebytes, opt)) {
 			ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
 			ui->stackedWidgetPicture->setCurrentIndex(IMG_PICTURE);
 			ui->removeButton->show();
@@ -243,6 +258,41 @@ void PostedCreatePostDialog::addPicture()
 	}
 	
 
+}
+
+void PostedCreatePostDialog::pastePicture()
+{
+	imagefilename = "";
+	imagebytes.clear();
+	QPixmap empty;
+	ui->imageLabel->setPixmap(empty);
+
+	// paste picture from clipboard
+	const QClipboard *clipboard = QApplication::clipboard();
+	const QMimeData *mimeData = clipboard->mimeData();
+
+	QImage image;
+	if (mimeData->hasImage()) {
+		image = (qvariant_cast<QImage>(mimeData->imageData()));
+
+		QImage opt;
+		if (optimizeImage(image, imagebytes, opt)) {
+			ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
+			ui->stackedWidgetPicture->setCurrentIndex(IMG_PICTURE);
+			ui->removeButton->show();
+		} 
+	} else {
+		QMessageBox::information(nullptr,tr("No clipboard image found."),tr("There is no image data in the clipboard to paste"));
+		imagefilename = "";
+		imagebytes.clear();
+		return;
+	}
+}
+
+bool PostedCreatePostDialog::optimizeImage(const QImage &image, QByteArray &imagebytes, QImage &imageOpt)
+{
+	// Leave space for other stuff
+	return ImageUtil::optimizeSizeBytes(imagebytes, image, imageOpt, "JPG", 640*480, MAXMESSAGESIZE - 2000);
 }
 
 int PostedCreatePostDialog::viewMode()
@@ -287,4 +337,19 @@ void PostedCreatePostDialog::reject()
         return;
 
     QDialog::reject();
+}
+
+void PostedCreatePostDialog::setTitle(const QString& title)
+{
+	ui->titleEdit->setText(title);
+}
+
+void PostedCreatePostDialog::setNotes(const QString& notes)
+{
+	ui->RichTextEditWidget->setText(notes);
+}
+
+void PostedCreatePostDialog::setLink(const QString& link)
+{
+	ui->linkEdit->setText(link);
 }

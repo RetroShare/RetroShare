@@ -23,11 +23,14 @@
 #include "rsharesettings.h"
 #include "jsonapi/jsonapi.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 
 #include <QTimer>
 #include <QStringListModel>
 #include <QProgressDialog>
 
+#define IMAGE_LEDOFF  ":/images/ledoff1.png"
+#define IMAGE_LEDON   ":/images/ledon1.png"
 
 JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 {
@@ -57,9 +60,41 @@ JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
     QRegExpValidator *ipValidator = new QRegExpValidator(ipRegex, this);
 
     ui.listenAddressLineEdit->setValidator(ipValidator);
+    ui.providersListView->setSelectionMode(QAbstractItemView::NoSelection);	// prevents edition.
 
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        if(e->mType != RsEventType::JSON_API)
+            return;
+
+        auto je = dynamic_cast<const RsJsonApiEvent*>(e.get());
+
+        if(!je)
+            return;
+#ifdef DEBUG
+        std::cerr << "Caught JSONAPI event! code=" << static_cast<int>(je->mJsonApiEventCode) << std::endl;
+#endif
+
+        RsQThreadUtils::postToObject([=]() { load(); }, this );
+    },
+    mEventHandlerId, RsEventType::JSON_API );
 }
 
+JsonApiPage::~JsonApiPage()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
+QString JsonApiPage::helpText() const
+{
+    return tr("<h1><img width=\"24\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Webinterface</h1>  \
+     <p>Retroshare provides a JSON API allowing other softwares to communicate with its core using token-controlled HTTP requests to http://localhost:[port]. \
+        Please refer to the Retroshare documentation for how to use this feature. </p>\
+        <p>Unless you know what you're doing, you shouldn't need to change anything in this page. \
+       The web interface for instance will automatically register its own token to the JSON API which will be visible \
+        in the list of authenticated tokens after you enable it.</p>");
+}
 void JsonApiPage::enableJsonApi(bool checked)
 {
 	ui.addTokenPushButton->setEnabled(checked);
@@ -93,9 +128,9 @@ bool JsonApiPage::updateParams()
 
 void JsonApiPage::load()
 {
-	whileBlocking(ui.portSpinBox)->setValue(Settings->getJsonApiPort());
-	whileBlocking(ui.listenAddressLineEdit)->setText(Settings->getJsonApiListenAddress());
-	whileBlocking(ui.enableCheckBox)->setChecked(Settings->getJsonApiEnabled());
+    whileBlocking(ui.portSpinBox)->setValue(rsJsonApi->listeningPort());
+    whileBlocking(ui.listenAddressLineEdit)->setText(QString::fromStdString(rsJsonApi->getBindingAddress()));
+    whileBlocking(ui.enableCheckBox)->setChecked(rsJsonApi->isRunning());
 
     QStringList newTk;
 
@@ -104,10 +139,20 @@ void JsonApiPage::load()
 		            QString::fromStdString(it.first) + ":" +
 		            QString::fromStdString(it.second) );
 
-	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
-}
+    whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
 
-QString JsonApiPage::helpText() const { return ""; }
+    QStringList newTk2;
+
+    for(const auto& it : rsJsonApi->getResourceProviders())
+        newTk2.push_back( QString::fromStdString(it.get().getName())) ;
+
+    whileBlocking(ui.providersListView)->setModel(new QStringListModel(newTk2));
+
+    if(rsJsonApi->isRunning())
+        ui.statusLabelLED->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_LEDON)) ;
+    else
+        ui.statusLabelLED->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_LEDOFF)) ;
+}
 
 bool JsonApiPage::checkStartJsonApi()
 {

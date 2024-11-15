@@ -1,18 +1,18 @@
-ZLIB_VERSION=1.2.3
-BZIP2_VERSION=1.0.6
-MINIUPNPC_VERSION=2.0
-OPENSSL_VERSION=1.1.1h
+ZLIB_VERSION=1.2.11
+BZIP2_VERSION=1.0.8
+MINIUPNPC_VERSION=2.2.3
+OPENSSL_VERSION=1.1.1w
 SPEEX_VERSION=1.2.0
-SPEEXDSP_VERSION=1.2rc3
-LIBXML2_VERSION=2.9.7
-LIBXSLT_VERSION=1.1.32
-CURL_VERSION=7.58.0
+SPEEXDSP_VERSION=1.2.0
+LIBXML2_VERSION=2.9.12
+LIBXSLT_VERSION=1.1.34
+CURL_VERSION=7.81.0
 TCL_VERSION=8.6.10
-SQLCIPHER_VERSION=4.4.0
-LIBMICROHTTPD_VERSION=0.9.59
-FFMPEG_VERSION=3.4
+SQLCIPHER_VERSION=4.5.0
+LIBMICROHTTPD_VERSION=0.9.75
+FFMPEG_VERSION=4.4
 RAPIDJSON_VERSION=1.1.0
-XAPIAN_VERSION=1.4.7
+XAPIAN_VERSION=1.4.19
 
 DOWNLOAD_PATH?=download
 BUILD_PATH=build
@@ -56,8 +56,7 @@ $(BUILD_PATH)/zlib-$(ZLIB_VERSION): $(DOWNLOAD_PATH)/zlib-$(ZLIB_VERSION).tar.gz
 	rm -r -f $(BUILD_PATH)/zlib-*
 	tar xvf $(DOWNLOAD_PATH)/zlib-$(ZLIB_VERSION).tar.gz
 	# build
-	cd zlib-$(ZLIB_VERSION) && ./configure
-	#cd zlib-$(ZLIB_VERSION) && make install prefix="`pwd`/../$(BUILD_PATH)"
+	cd zlib-$(ZLIB_VERSION) && make -f win32/Makefile.gcc libz.a
 	cd zlib-$(ZLIB_VERSION) && make
 	# copy files
 	mkdir -p $(BUILD_PATH)/zlib-$(ZLIB_VERSION).tmp/include
@@ -72,7 +71,7 @@ $(BUILD_PATH)/zlib-$(ZLIB_VERSION): $(DOWNLOAD_PATH)/zlib-$(ZLIB_VERSION).tar.gz
 bzip2: $(BUILD_PATH)/bzip2-$(BZIP2_VERSION)
 
 $(DOWNLOAD_PATH)/bzip2-$(BZIP2_VERSION).tar.gz:
-	wget https://sourceforge.net/projects/bzip2/files/bzip2-$(BZIP2_VERSION).tar.gz/download -O $(DOWNLOAD_PATH)/bzip2-$(BZIP2_VERSION).tar.gz
+	wget https://www.sourceware.org/pub/bzip2/bzip2-$(BZIP2_VERSION).tar.gz -O $(DOWNLOAD_PATH)/bzip2-$(BZIP2_VERSION).tar.gz
 
 $(BUILD_PATH)/bzip2-$(BZIP2_VERSION): $(DOWNLOAD_PATH)/bzip2-$(BZIP2_VERSION).tar.gz
 	# prepare
@@ -100,10 +99,10 @@ $(BUILD_PATH)/miniupnpc-$(MINIUPNPC_VERSION): $(DOWNLOAD_PATH)/miniupnpc-$(MINIU
 	rm -r -f $(BUILD_PATH)/miniupnpc-*
 	tar xvf $(DOWNLOAD_PATH)/miniupnpc-$(MINIUPNPC_VERSION).tar.gz
 	# build
-	cd miniupnpc-$(MINIUPNPC_VERSION) && export CC=gcc && export PATH=.:$$PATH && make -f Makefile.mingw init libminiupnpc.a miniupnpc.dll
+	cd miniupnpc-$(MINIUPNPC_VERSION) && export CC=gcc && export PATH=.:$$PATH && make -f Makefile.mingw libminiupnpc.a miniupnpc.dll
 	# copy files
 	mkdir -p $(BUILD_PATH)/miniupnpc-$(MINIUPNPC_VERSION).tmp/include/miniupnpc
-	cp miniupnpc-$(MINIUPNPC_VERSION)/*.h $(BUILD_PATH)/miniupnpc-$(MINIUPNPC_VERSION).tmp/include/miniupnpc/
+	cp miniupnpc-$(MINIUPNPC_VERSION)/include/*.h $(BUILD_PATH)/miniupnpc-$(MINIUPNPC_VERSION).tmp/include/miniupnpc/
 	mkdir -p $(BUILD_PATH)/miniupnpc-$(MINIUPNPC_VERSION).tmp/lib
 	cp miniupnpc-$(MINIUPNPC_VERSION)/miniupnpc.lib $(BUILD_PATH)/miniupnpc-$(MINIUPNPC_VERSION).tmp/lib/
 	mkdir -p $(BUILD_PATH)/miniupnpc-$(MINIUPNPC_VERSION).tmp/bin
@@ -314,7 +313,7 @@ $(BUILD_PATH)/ffmpeg-$(FFMPEG_VERSION): $(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION
 	rm -r -f $(BUILD_PATH)/ffmpeg-*
 	tar xvf $(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.gz
 	# build
-	cd ffmpeg-$(FFMPEG_VERSION) && ./configure --disable-shared --enable-static --disable-programs --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-ffserver --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-yasm --disable-everything --enable-encoder=mpeg4 --enable-decoder=mpeg4 --prefix="`pwd`/../$(BUILD_PATH)/ffmpeg-$(FFMPEG_VERSION).tmp"
+	cd ffmpeg-$(FFMPEG_VERSION) && ./configure --disable-shared --enable-static --disable-programs --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-yasm --disable-everything --enable-encoder=mpeg4 --enable-decoder=mpeg4 --prefix="`pwd`/../$(BUILD_PATH)/ffmpeg-$(FFMPEG_VERSION).tmp"
 	cd ffmpeg-$(FFMPEG_VERSION) && make install
 	# cleanup
 	rm -r -f ffmpeg-$(FFMPEG_VERSION)

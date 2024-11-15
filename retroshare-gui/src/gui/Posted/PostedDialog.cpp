@@ -26,6 +26,7 @@
 #include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/common/GroupTreeWidget.h"
+#include "util/misc.h"
 #include "util/qtthreadsutils.h"
 
 #include <retroshare/rsposted.h>
@@ -42,7 +43,7 @@ public:
 
 /** Constructor */
 PostedDialog::PostedDialog(QWidget *parent):
-    GxsGroupFrameDialog(rsPosted, parent), mEventHandlerId(0)
+    GxsGroupFrameDialog(rsPosted, settingsGroupName(),parent), mEventHandlerId(0)
 {
 	// Needs to be asynced because this function is likely to be called by another thread!
 	rsEvents->registerEventsHandler(
@@ -95,14 +96,19 @@ UserNotify *PostedDialog::createUserNotify(QObject *parent)
 
 QString PostedDialog::getHelpString() const
 {
-	QString hlp_str = tr("<h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Boards</h1>    \
-    <p>The Boards service allows you to share images, blog posts & internet links, that spread among Retroshare nodes like forums and \
-	 channels</p> \
-	 <p>Posts can be commented by subscribed users. A promotion system also gives the opportunity to  \
-	 enlight important links.</p> \
-     <p>There is no restriction on which links are shared. Be careful when clicking on them.</p>\
-    <p>Boards are kept for %1 days, and sync-ed over the last %2 days, unless you change this.</p>\
-                ").arg(QString::number(rsPosted->getDefaultStoragePeriod()/86400)).arg(QString::number(rsPosted->getDefaultSyncPeriod()/86400));
+	int H = misc::getFontSizeFactor("HelpButton").height();
+
+	QString hlp_str = tr(
+	    "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Boards</h1>"
+	    "<p>The Boards service allows you to share images, blog posts & internet links, that spread among Retroshare nodes like forums and"
+	    "   channels</p>"
+	    "<p>Posts can be commented by subscribed users. A promotion system also gives the opportunity to"
+	    "   enlight important links.</p>"
+	    "<p>There is no restriction on which links are shared. Be careful when clicking on them.</p>"
+	    "<p>Boards are kept for %2 days, and sync-ed over the last %3 days, unless you change this.</p>"
+	                    ).arg(  QString::number(2*H)
+	                          , QString::number(rsPosted->getDefaultStoragePeriod()/86400)
+	                          , QString::number(rsPosted->getDefaultSyncPeriod()/86400));
 
 	return hlp_str ;
 }
@@ -210,34 +216,6 @@ QWidget *PostedDialog::createCommentHeaderWidget(const RsGxsGroupId &grpId, cons
 {
 	return new PostedItem(NULL, 0, grpId, msgId, true, false);
 }
-
-#ifdef TO_REMOVE
-void PostedDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
-{
-	std::vector<RsPostedGroup> groups;
-	rsPosted->getGroupData(token, groups);
-
-	/* Save groups to fill description */
-	PostedGroupInfoData *postedData = new PostedGroupInfoData;
-	userdata = postedData;
-
-	std::vector<RsPostedGroup>::iterator groupIt;
-	for (groupIt = groups.begin(); groupIt != groups.end(); ++groupIt) {
-		RsPostedGroup &group = *groupIt;
-		groupInfo.push_back(group.mMeta);
-		
-		if (group.mGroupImage.mData != NULL) {
-			QPixmap image;
-			GxsIdDetails::loadPixmapFromData(group.mGroupImage.mData, group.mGroupImage.mSize, image,GxsIdDetails::ORIGINAL);
-			postedData->mIcon[group.mMeta.mGroupId] = image;
-		}
-
-		if (!group.mDescription.empty()) {
-			postedData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
-		}
-	}
-}
-#endif
 
 void PostedDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo)
 {

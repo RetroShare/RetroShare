@@ -172,6 +172,7 @@ private slots:
 
 private:
     static QString buildReplyHeader(const MessageInfo &msgInfo);
+    bool buildMessage(MessageInfo& mi);
 
     void processSettings(bool bLoad);
 
@@ -250,11 +251,11 @@ private:
     std::string m_msgParentId; // parent message id
     std::string m_sDraftMsgId; // existing message id
     enumMessageType m_msgType;
-    std::list<uint32_t> m_tagIds;
+    std::set<uint32_t> m_tagIds;
     QList<QLabel*> tagLabels;
 
     // needed to send system flags with reply
-    unsigned msgFlags;
+    unsigned int msgFlags;
 
     RSTreeWidgetItemCompareRole *m_compareRole;
     QCompleter *m_completer;
@@ -264,6 +265,7 @@ private:
 	QLabel *lineLabel;
 
 	bool has_gxs;
+    bool mAlreadySent; // prevents a Qt bug that calls the same action twice.
 
     /** Qt Designer generated object */
     Ui::MessageComposer ui;

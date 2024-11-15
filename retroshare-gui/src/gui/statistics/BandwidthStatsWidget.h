@@ -18,6 +18,8 @@
  *                                                                             *
  *******************************************************************************/
 
+#pragma once
+
 #include "ui_BandwidthStatsWidget.h"
 #include "BWGraph.h"
 

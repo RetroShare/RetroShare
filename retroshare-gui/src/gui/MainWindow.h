@@ -100,9 +100,10 @@ public:
         Channels           = 6,  /** Channels page. */
         Forums             = 7,  /** Forums page. */
         Search             = 8,  /** Search page. */
-        Posted             = 11,  /** Posted links */
-        People             = 12,   /** People page. */
-        Options            = 13   /** People page. */
+        Posted             = 11, /** Posted links */
+        People             = 12, /** People page. */
+        Options            = 13, /** People page. */
+        Home               = 14  /** Home page. */
     };
 
 
@@ -186,6 +187,7 @@ public:
     RSComboBox *statusComboBoxInstance();
     PeerStatus *peerstatusInstance();
     NATStatus *natstatusInstance();
+    void torstatusReset();
     DHTStatus *dhtstatusInstance();
     HashingStatus *hashingstatusInstance();
     DiscStatus *discstatusInstance();
@@ -212,7 +214,6 @@ public slots:
     void externalLinkActivated(const QUrl &url);
     void retroshareLinkActivated(const QUrl &url);
     void openRsCollection(const QString &filename);
-    void processLastArgs();
     //! Go to a specific part of the control panel.
     void setNewPage(int page);
     void setCompactStatusMode(bool compact);
@@ -263,6 +264,11 @@ private slots:
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
 
+#if defined(Q_OS_DARWIN)
+    void minimizeWindow();
+    void closeWindow();
+#endif
+
     /** Toolbar fns. */
     void addFriend();
     //void newRsCollection();
@@ -306,6 +312,10 @@ private:
     void initStackedPage();
     void addPage(MainPage *page, QActionGroup *grp, 	QList<QPair<MainPage *, QPair<QAction *, QListWidgetItem *> > > *notify);
     void createTrayIcon();
+#if defined(Q_OS_DARWIN)
+    /** Creates a default menubar on Mac */
+    void createMenuBar();
+#endif
     void createNotifyIcons();
     static MainWindow *_instance;
 
@@ -321,6 +331,14 @@ private:
     QMap<QString, FunctionType> _functionList;
 
     QString nameAndLocation;
+
+#if defined(Q_OS_DARWIN)
+    /** The menubar (Mac OS X only). */
+    QMenuBar *menuBar;
+    QMenu *dockMenu;
+    QAction* actionMinimize;
+    QAction* actionCloseWindow;
+#endif
 
     QSystemTrayIcon *trayIcon;
     QMenu *notifyMenu;

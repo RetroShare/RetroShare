@@ -74,12 +74,17 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	foreach (QString code, LanguageSupport::languageCodes()) {
 		ui.cmboLanguage->addItem(FilesDefs::getIconFromQtResourcePath(":/images/flags/" + code + ".png"), LanguageSupport::languageName(code), code);
 	}
-	foreach (QString style, QStyleFactory::keys()) {
-		ui.cmboStyle->addItem(style, style.toLower());
+
+    // Note: apparently, on some linux systems (e.g. Debian 11), the gtk2 style makes Qt libs crash when the environment variable is not set.
+    //       So we first check that it's here before start.
+
+    foreach (QString style, QStyleFactory::keys()) {
+        if(style.toLower() != "gtk2" || (getenv("QT_QPA_PLATFORMTHEME")!=nullptr && !strcmp(getenv("QT_QPA_PLATFORMTHEME"),"gtk2")))
+            ui.cmboStyle->addItem(style, style.toLower());
 	}
 
 	QMap<QString, QString> styleSheets;
-	Rshare::getAvailableStyleSheets(styleSheets);
+	RsApplication::getAvailableStyleSheets(styleSheets);
 
 	foreach (QString name, styleSheets.keys()) {
 		ui.cmboStyleSheet->addItem(name, styleSheets[name]);
@@ -131,7 +136,7 @@ void AppearancePage::updateInterfaceStyle()
 #ifndef QT_NO_CURSOR
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 #endif
-	Rshare::setStyle(ui.cmboStyle->currentText());
+	RsApplication::setStyle(ui.cmboStyle->currentText());
 	Settings->setInterfaceStyle(ui.cmboStyle->currentText());
 #ifndef QT_NO_CURSOR
 	QApplication::restoreOverrideCursor();
@@ -147,7 +152,7 @@ void AppearancePage::loadStyleSheet(int index)
 #ifndef QT_NO_CURSOR
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 #endif
-	Rshare::loadStyleSheet(ui.cmboStyleSheet->itemData(index).toString());
+	RsApplication::loadStyleSheet(ui.cmboStyleSheet->itemData(index).toString());
 #ifndef QT_NO_CURSOR
 	QApplication::restoreOverrideCursor();
 #endif
@@ -246,7 +251,7 @@ void AppearancePage::updateCmboToolButtonSize()
 //     NotifyQt::getInstance()->notifySettingsChanged();
 // }
 
-void AppearancePage::updateStyle() { Rshare::setStyle(ui.cmboStyle->currentText()); }
+void AppearancePage::updateStyle() { RsApplication::setStyle(ui.cmboStyle->currentText()); }
 
 /** Loads the settings for this page */
 void AppearancePage::load()
@@ -254,7 +259,7 @@ void AppearancePage::load()
 	int index = ui.cmboLanguage->findData(Settings->getLanguageCode());
 	whileBlocking(ui.cmboLanguage)->setCurrentIndex(index);
 
-	index = ui.cmboStyle->findData(Rshare::style().toLower());
+	index = ui.cmboStyle->findData(RsApplication::style().toLower());
 	whileBlocking(ui.cmboStyle)->setCurrentIndex(index);
 
 	index = ui.cmboStyleSheet->findData(Settings->getSheetName());
@@ -266,9 +271,9 @@ void AppearancePage::load()
 	
 	index = ui.mainPageButtonType_CB->findData(Settings->getPageButtonLoc());
 	if (index != 0) {
-		ui.cmboTollButtonsStyle->hide();
-	}else {
-		ui.cmboTollButtonsStyle->show();
+        ui.cmboTollButtonsStyle->show();
+    }else {
+        ui.cmboTollButtonsStyle->hide();
 	}
 
 	whileBlocking(ui.mainPageButtonType_CB)->setCurrentIndex(!Settings->getPageButtonLoc());

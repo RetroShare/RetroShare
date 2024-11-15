@@ -33,11 +33,11 @@
 
 #include "GxsChannelPostFilesModel.h"
 
-//#define DEBUG_CHANNEL_MODEL
+//#define DEBUG_CHANNEL_FILES_MODEL
 
 Q_DECLARE_METATYPE(ChannelPostFileInfo)
 
-#ifdef DEBUG_CHANNEL_MODEL
+#ifdef DEBUG_CHANNEL_FILES_MODEL
 static std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 #endif
 
@@ -161,8 +161,8 @@ QModelIndex RsGxsChannelPostFilesModel::index(int row, int column, const QModelI
 
     quintptr ref = getChildRef(parent.internalId(),row);
 
-#ifdef DEBUG_CHANNEL_MODEL
-	std::cerr << "index-3(" << row << "," << column << " parent=" << parent << ") : " << createIndex(row,column,ref) << std::endl;
+#ifdef DEBUG_CHANNEL_FILES_MODEL
+    RsDbg() << "index-3(" << row << "," << column << " parent=" << parent << ") : " << createIndex(row,column,ref) ;
 #endif
 	return createIndex(row,column,ref) ;
 }
@@ -242,7 +242,7 @@ QVariant RsGxsChannelPostFilesModel::headerData(int section, Qt::Orientation /*o
 
 QVariant RsGxsChannelPostFilesModel::data(const QModelIndex &index, int role) const
 {
-#ifdef DEBUG_CHANNEL_MODEL
+#ifdef DEBUG_CHANNEL_FILES_MODEL
     std::cerr << "calling data(" << index << ") role=" << role << std::endl;
 #endif
 
@@ -259,13 +259,13 @@ QVariant RsGxsChannelPostFilesModel::data(const QModelIndex &index, int role) co
 	quintptr ref = (index.isValid())?index.internalId():0 ;
 	uint32_t entry = 0;
 
-#ifdef DEBUG_CHANNEL_MODEL
+#ifdef DEBUG_CHANNEL_FILES_MODEL
 	std::cerr << "data(" << index << ")" ;
 #endif
 
 	if(!ref)
 	{
-#ifdef DEBUG_CHANNEL_MODEL
+#ifdef DEBUG_CHANNEL_FILES_MODEL
 		std::cerr << " [empty]" << std::endl;
 #endif
 		return QVariant() ;
@@ -273,7 +273,7 @@ QVariant RsGxsChannelPostFilesModel::data(const QModelIndex &index, int role) co
 
 	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mFilteredFiles.size())
 	{
-#ifdef DEBUG_CHANNEL_MODEL
+#ifdef DEBUG_CHANNEL_FILES_MODEL
 		std::cerr << "Bad pointer: " << (void*)ref << std::endl;
 #endif
 		return QVariant() ;
@@ -295,7 +295,7 @@ void RsGxsChannelPostFilesModel::setFilter(const QStringList& strings, uint32_t&
 {
 	preMods();
 
-	initEmptyHierarchy();
+    mFilteredFiles.clear();
 
 	if(strings.empty())
 	{
@@ -316,8 +316,6 @@ void RsGxsChannelPostFilesModel::setFilter(const QStringList& strings, uint32_t&
 		}
 	}
 	count = mFilteredFiles.size();
-
-	std::cerr << "After filtering: " << count << " posts remain." << std::endl;
 
 	if (rowCount()>0)
 	{
@@ -344,10 +342,20 @@ public:
 		case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE:
 		{
 			FileInfo fi1,fi2;
-			rsFiles->FileDetails(f1.mHash,RS_FILE_HINTS_DOWNLOAD,fi1);
-			rsFiles->FileDetails(f2.mHash,RS_FILE_HINTS_DOWNLOAD,fi2);
+            bool r1 = rsFiles->FileDetails(f1.mHash,RS_FILE_HINTS_DOWNLOAD,fi1);
+            bool r2 = rsFiles->FileDetails(f2.mHash,RS_FILE_HINTS_DOWNLOAD,fi2);
 
-			return (ord==Qt::AscendingOrder)?(fi1.transfered<fi2.transfered):(fi1.transfered>fi2.transfered);
+            if(r1 && r2)
+                return (ord==Qt::AscendingOrder)?(fi1.transfered<fi2.transfered):(fi1.transfered>fi2.transfered);
+            else
+            {
+                FileInfo fitmp;
+
+                if(!r1 && rsFiles->alreadyHaveFile(f1.mHash,fitmp)) fi1.downloadStatus = FT_STATE_COMPLETE;
+                if(!r2 && rsFiles->alreadyHaveFile(f2.mHash,fitmp)) fi2.downloadStatus = FT_STATE_COMPLETE;
+
+                return (ord==Qt::AscendingOrder)?(fi1.downloadStatus<fi2.downloadStatus):(fi1.downloadStatus>fi2.downloadStatus);
+            }
 		}
 		}
 
@@ -428,7 +436,6 @@ QVariant RsGxsChannelPostFilesModel::userRole(const ChannelPostFileInfo& fmpe,in
 
 void RsGxsChannelPostFilesModel::clear()
 {
-
 	initEmptyHierarchy();
 
 	emit channelLoaded();
@@ -446,7 +453,7 @@ void RsGxsChannelPostFilesModel::setFiles(const std::list<ChannelPostFileInfo> &
 	for(uint32_t i=0;i<mFiles.size();++i)
 		mFilteredFiles.push_back(i);
 
-#ifdef DEBUG_CHANNEL_MODEL
+#ifdef DEBUG_CHANNEL_FILES_MODEL
 	// debug_dump();
 #endif
 
@@ -465,3 +472,62 @@ void RsGxsChannelPostFilesModel::setFiles(const std::list<ChannelPostFileInfo> &
 
 	postMods();
 }
+
+void RsGxsChannelPostFilesModel::update_files(std::set<ChannelPostFileInfo>& added_files,std::set<ChannelPostFileInfo>& removed_files)
+{
+    // 1 - remove common files from both lists
+
+#ifdef DEBUG_CHANNEL_FILES_MODEL
+    RsDbg() << "RsGxsChannelPostsFilesModel:: updating files." ;
+#endif
+
+    for(auto afit=added_files.begin();afit!=added_files.end();)
+    {
+        auto rfit = removed_files.find(*afit);
+
+        if(rfit != removed_files.end())
+        {
+#ifdef DEBUG_CHANNEL_FILES_MODEL
+            RsDbg() << "  Eliminating common file " << rfit->mName ;
+#endif
+            removed_files.erase(rfit);
+            auto tmp = afit;
+            ++tmp;
+            added_files.erase(afit);
+            afit = tmp;
+        }
+        else
+            ++afit;
+    }
+#ifdef DEBUG_CHANNEL_FILES_MODEL
+    RsDbg() << "  Remains: " << added_files.size() << " added files and " << removed_files.size() << " removed files" ;
+#endif
+
+    // 2 - add whatever file remains,
+
+    for(const auto& f:removed_files)
+    {
+#ifdef DEBUG_CHANNEL_FILES_MODEL
+        RsDbg() << "  Removing deleted file " << f.mName ;
+#endif
+
+        for(uint32_t i=0;i<mFiles.size();++i)
+            if(mFiles[i].mHash == f.mHash)
+            {
+                mFiles[i] = mFiles.back();
+                mFiles.pop_back();
+                break;
+            }
+    }
+    // 3 - add other files. We do not check that they are duplicates, because the list of files includes duplicates.
+
+    for(const auto& f:added_files )
+    {
+#ifdef DEBUG_CHANNEL_FILES_MODEL
+        RsDbg() << "  Adding new file " << f.mName ;
+#endif
+        mFilteredFiles.push_back(mFiles.size());
+        mFiles.push_back(f);
+    }
+}
+

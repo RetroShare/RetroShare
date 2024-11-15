@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>618</width>
-    <height>161</height>
+    <height>176</height>
    </rect>
   </property>
   <property name="font">
@@ -221,6 +221,20 @@
             </property>
            </spacer>
           </item>
+          <item>
+           <widget class="QLabel" name="infoLastPostLabel">
+            <property name="text">
+             <string>Last activity</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="infoLastPost">
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item row="1" column="1">
@@ -237,7 +251,7 @@
              <enum>Qt::NoFocus</enum>
             </property>
             <property name="toolTip">
-             <string>Subscribe to Channel</string>
+             <string>Subscribe this Channel</string>
             </property>
             <property name="text">
              <string>Subscribe</string>

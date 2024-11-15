@@ -53,7 +53,10 @@ private slots:
 	void useStandardUpdateIntervalToggled();
 	void useStandardProxyToggled();
 	void typeForumToggled();
-	void denyForumToggled();
+	void postedFirstImageToggled();
+	void typePostedToggled();
+	void typeLocalToggled();
+	void denyForumAndPostedToggled();
 	void validate();
 	void createFeed();
 	void preview();
@@ -63,9 +66,12 @@ private:
 	void processSettings(bool load);
 	void getFeedInfo(FeedInfo &feedInfo);
 	void setActiveForumId(const std::string &forumId);
+	void setActivePostedId(const std::string &postedId);
 
 	void requestForumGroups();
 	void loadForumGroups(const uint32_t &token);
+	void requestPostedGroups();
+	void loadPostedGroups(const uint32_t &token);
 
 private:
 	RsFeedReader *mFeedReader;
@@ -73,13 +79,15 @@ private:
 	uint32_t mFeedId;
 	uint32_t mParentId;
 	std::string mFillForumId;
+	std::string mFillPostedId;
 
 	RsFeedTransformationType mTransformationType;
 	std::list<std::string> mXPathsToUse;
 	std::list<std::string> mXPathsToRemove;
 	std::string mXslt;
 
-	TokenQueue *mTokenQueue;
+	TokenQueue *mForumTokenQueue;
+	TokenQueue *mPostedTokenQueue;
 	UIStateHelper *mStateHelper;
 
 	Ui::AddFeedDialog *ui;

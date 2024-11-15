@@ -68,7 +68,7 @@
 #define IMAGE_FRIENDINFO         ":/images/info16.png"
 #define IMAGE_CHAT               ":/icons/png/chats.png"
 #define IMAGE_MSG                ":/icons/mail/write-mail.png"
-#define IMAGE_CONNECT            ":/images/connect_friend.png"
+#define IMAGE_CONNECT            ":/icons/connection.svg"
 #define IMAGE_COPYLINK           ":/images/copyrslink.png"
 #define IMAGE_GROUP16            ":/images/user/group16.png"
 #define IMAGE_EDIT               ":/icons/png/pencil-edit-button.png"

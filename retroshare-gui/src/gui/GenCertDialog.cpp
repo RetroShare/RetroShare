@@ -48,7 +48,7 @@
 #include <iostream>
 
 #define IMAGE_GOOD ":/images/accepted16.png"
-#define IMAGE_BAD  ":/images/cancel.png"
+#define IMAGE_BAD  ":/icons/cancel.svg"
 
 class EntropyCollectorWidget: public QTextBrowser
 {
@@ -251,7 +251,7 @@ void GenCertDialog::initKeyList()
 
 void GenCertDialog::mouseMoveEvent(QMouseEvent *e)
 {
-	std::cerr << "Mouse : " << e->x() << ", " << e->y() << std::endl;
+    //std::cerr << "Mouse : " << e->x() << ", " << e->y() << std::endl;
 
 	QDialog::mouseMoveEvent(e) ;
 }
@@ -609,7 +609,9 @@ void GenCertDialog::genPerson()
 
 		QCoreApplication::processEvents();
 		QAbstractEventDispatcher* ed = QAbstractEventDispatcher::instance();
-		std::cout << "Waiting ed->processEvents()" << std::endl;
+#ifdef DEBUG_GENCERTDIALOG
+        std::cout << "Waiting ed->processEvents()" << std::endl;
+#endif
 		time_t waitEnd = time(NULL) + 10;//Wait no more than 10 sec to processEvents
 		if (ed->hasPendingEvents())
 			while(ed->processEvents(QEventLoop::AllEvents) && (time(NULL) < waitEnd));
@@ -647,7 +649,7 @@ void GenCertDialog::genPerson()
 	{
 		/* complete the process */
 		RsInit::LoadPassword(sslPasswd);
-		if (Rshare::loadCertificate(sslId, false)) {
+		if (RsApplication::loadCertificate(sslId, false)) {
 
             // Normally we should clear the cached passphrase as soon as possible. However,some other GUI components may still need it at start.
             // (csoler) This is really bad: we have to guess that 30 secs will be enough. I have no better way to do this.

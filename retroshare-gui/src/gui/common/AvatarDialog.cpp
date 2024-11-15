@@ -40,6 +40,7 @@
 #include "util/misc.h"
 #include "gui/common/FilesDefs.h"
 #include "util/HandleRichText.h"
+#include "util/imageutil.h"
 #include "retroshare/rsinit.h"
 
 #define ICONNAME "groupicon.png"
@@ -138,10 +139,11 @@ void AvatarDialog::getAvatar(QByteArray &avatar)
 		return;
 	}
 
-	QBuffer buffer(&avatar);
+    bool has_transparency = ImageUtil::hasAlphaContent(pixmap.toImage());
+    QBuffer buffer(&avatar);
 
 	buffer.open(QIODevice::WriteOnly);
-	pixmap.save(&buffer, "PNG"); // writes image into ba in PNG format
+    pixmap.save(&buffer, has_transparency?"PNG":"JPG"); // writes image into ba in PNG format
 }
 
 void AvatarDialog::load()

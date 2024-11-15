@@ -41,34 +41,34 @@ class QTimer;
 struct ChannelPostFileInfo: public RsGxsFile
 {
     ChannelPostFileInfo(const RsGxsFile& gxs_file,rstime_t t)
-    	: RsGxsFile(gxs_file),mPublishTime(t)
+        : RsGxsFile(gxs_file),mPublishTime(t)
     {}
 
     ChannelPostFileInfo() : mPublishTime(0) {}
 
-    rstime_t mPublishTime;
+    rstime_t mPublishTime;	// related post publish time
 };
 
 // This class is the item model used by Qt to display the information
 
 class RsGxsChannelPostFilesModel : public QAbstractItemModel
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit RsGxsChannelPostFilesModel(QObject *parent = NULL);
-	~RsGxsChannelPostFilesModel(){}
+    explicit RsGxsChannelPostFilesModel(QObject *parent = NULL);
+    ~RsGxsChannelPostFilesModel(){}
 
-	enum Columns {
-		COLUMN_FILES_NAME        = 0x00,
-		COLUMN_FILES_SIZE        = 0x01,
-		COLUMN_FILES_FILE        = 0x02,
-		COLUMN_FILES_DATE        = 0x03,
-		COLUMN_FILES_NB_COLUMNS  = 0x04
-	};
+    enum Columns {
+        COLUMN_FILES_NAME        = 0x00,
+        COLUMN_FILES_SIZE        = 0x01,
+        COLUMN_FILES_FILE        = 0x02,
+        COLUMN_FILES_DATE        = 0x03,
+        COLUMN_FILES_NB_COLUMNS  = 0x04
+    };
 
-	enum Roles{ SortRole           = Qt::UserRole+1,
-              	FilterRole         = Qt::UserRole+2,
+    enum Roles{ SortRole           = Qt::UserRole+1,
+                FilterRole         = Qt::UserRole+2,
               };
 
 #ifdef TODO
@@ -77,22 +77,25 @@ public:
     };
 #endif
 
-	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
+    QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
 
     // This method will asynchroneously update the data
-	void setFiles(const std::list<ChannelPostFileInfo>& files);
+    void setFiles(const std::list<ChannelPostFileInfo>& files);
     void setFilter(const QStringList &strings, uint32_t &count) ;
 
+    // This method adds/removes the given lists of files. Useful when a single post is updated
+    void update_files(std::set<ChannelPostFileInfo> &added_files, std::set<ChannelPostFileInfo> &removed_files);
+
 #ifdef TODO
-	QModelIndex getIndexOfFile(const RsFileHash& hash) const;
+    QModelIndex getIndexOfFile(const RsFileHash& hash) const;
     void setSortMode(SortMode mode) ;
 
-	void setTextColorRead          (QColor color) { mTextColorRead           = color;}
-	void setTextColorUnread        (QColor color) { mTextColorUnread         = color;}
-	void setTextColorUnreadChildren(QColor color) { mTextColorUnreadChildren = color;}
-	void setTextColorNotSubscribed (QColor color) { mTextColorNotSubscribed  = color;}
-	void setTextColorMissing       (QColor color) { mTextColorMissing        = color;}
-	void setAuthorOpinion(const QModelIndex& indx,RsOpinion op);
+    void setTextColorRead          (QColor color) { mTextColorRead           = color;}
+    void setTextColorUnread        (QColor color) { mTextColorUnread         = color;}
+    void setTextColorUnreadChildren(QColor color) { mTextColorUnreadChildren = color;}
+    void setTextColorNotSubscribed (QColor color) { mTextColorNotSubscribed  = color;}
+    void setTextColorMissing       (QColor color) { mTextColorMissing        = color;}
+    void setAuthorOpinion(const QModelIndex& indx,RsOpinion op);
 #endif
 
     // Helper functions
@@ -112,25 +115,25 @@ public:
     Qt::ItemFlags flags(const QModelIndex& index) const  override;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-	QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
     // Custom item roles
 
     QVariant sizeHintRole  (int col) const;
-	QVariant displayRole   (const ChannelPostFileInfo& fmpe, int col) const;
-	QVariant toolTipRole   (const ChannelPostFileInfo& fmpe, int col) const;
-	QVariant userRole      (const ChannelPostFileInfo& fmpe, int col) const;
-	QVariant sortRole      (const ChannelPostFileInfo& fmpe, int col) const;
-	QVariant filterRole    (const ChannelPostFileInfo& fmpe, int col) const;
+    QVariant displayRole   (const ChannelPostFileInfo& fmpe, int col) const;
+    QVariant toolTipRole   (const ChannelPostFileInfo& fmpe, int col) const;
+    QVariant userRole      (const ChannelPostFileInfo& fmpe, int col) const;
+    QVariant sortRole      (const ChannelPostFileInfo& fmpe, int col) const;
+    QVariant filterRole    (const ChannelPostFileInfo& fmpe, int col) const;
 #ifdef TODO
-	QVariant decorationRole(const ForumModelPostEntry& fmpe, int col) const;
-	QVariant pinnedRole    (const ForumModelPostEntry& fmpe, int col) const;
-	QVariant missingRole   (const ForumModelPostEntry& fmpe, int col) const;
-	QVariant statusRole    (const ForumModelPostEntry& fmpe, int col) const;
-	QVariant authorRole    (const ForumModelPostEntry& fmpe, int col) const;
-	QVariant fontRole      (const ForumModelPostEntry& fmpe, int col) const;
-	QVariant textColorRole (const ForumModelPostEntry& fmpe, int col) const;
-	QVariant backgroundRole(const ForumModelPostEntry& fmpe, int col) const;
+    QVariant decorationRole(const ForumModelPostEntry& fmpe, int col) const;
+    QVariant pinnedRole    (const ForumModelPostEntry& fmpe, int col) const;
+    QVariant missingRole   (const ForumModelPostEntry& fmpe, int col) const;
+    QVariant statusRole    (const ForumModelPostEntry& fmpe, int col) const;
+    QVariant authorRole    (const ForumModelPostEntry& fmpe, int col) const;
+    QVariant fontRole      (const ForumModelPostEntry& fmpe, int col) const;
+    QVariant textColorRole (const ForumModelPostEntry& fmpe, int col) const;
+    QVariant backgroundRole(const ForumModelPostEntry& fmpe, int col) const;
 #endif
 
     /*!
@@ -151,20 +154,20 @@ private:
     bool mFilteringEnabled;
     SortMode mSortMode;
 #endif
-	void preMods() ;
-	void postMods() ;
+    void preMods() ;
+    void postMods() ;
 
     quintptr getParentRow(quintptr ref,int& row) const;
     quintptr getChildRef(quintptr ref, int index) const;
     int   getChildrenCount(quintptr ref) const;
 
     static bool convertTabEntryToRefPointer(uint32_t entry, quintptr& ref);
-	static bool convertRefPointerToTabEntry(quintptr ref,uint32_t& entry);
+    static bool convertRefPointerToTabEntry(quintptr ref,uint32_t& entry);
 
 #ifdef TODO
-	static void generateMissingItem(const RsGxsMessageId &msgId,ChannelPostsModelPostEntry& entry);
+    static void generateMissingItem(const RsGxsMessageId &msgId,ChannelPostsModelPostEntry& entry);
 #endif
-	void initEmptyHierarchy();
+    void initEmptyHierarchy();
 
     std::vector<int> mFilteredFiles ;  // store the list of files for the post
     std::vector<ChannelPostFileInfo> mFiles ;  // store the list of files for the post

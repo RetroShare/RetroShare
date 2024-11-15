@@ -31,9 +31,10 @@
 #include "util/misc.h"
 #include "gui/notifyqt.h"
 
-#include <retroshare/rsidentity.h>
-#include <retroshare/rspeers.h>
+#include "retroshare/rsidentity.h"
+#include "retroshare/rspeers.h"
 #include "gui/common/FilesDefs.h"
+#include "util/imageutil.h"
 
 #include <iostream>
 
@@ -88,6 +89,7 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	connect(ui->toolButton_Tag4, SIGNAL(clicked(bool)), this, SLOT(rmTag4()));
 	connect(ui->toolButton_Tag5, SIGNAL(clicked(bool)), this, SLOT(rmTag5()));
 	connect(ui->avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
+	connect(ui->removeButton, SIGNAL(clicked(bool)), this, SLOT(removeAvatar()));
 
     connect(ui->avatarLabel,SIGNAL(cleared()),this,SLOT(avatarCleared()));
 
@@ -102,6 +104,8 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	ui->plainTextEdit_Tag->hide();
 	ui->label_TagCheck->hide();
 	ui->frame_Tags->setHidden(true);
+
+	updateInterface();
 }
 
 IdEditDialog::~IdEditDialog() {}
@@ -136,6 +140,8 @@ void IdEditDialog::changeAvatar()
 
     // shows the tooltip for a while
     QToolTip::showText( ui->avatarLabel->mapToGlobal( QPoint( 0, 0 ) ), ui->avatarLabel->toolTip() );
+
+	updateInterface();
 }
 
 void IdEditDialog::setupNewId(bool pseudo,bool enable_anon)
@@ -353,6 +359,7 @@ void IdEditDialog::loadExistingId(const RsGxsIdGroup& id_group)
 	ui->frame_Tags->setHidden(true);
 
 	loadRecognTags();
+	updateInterface();
 }
 
 #define MAX_RECOGN_TAGS 	5
@@ -570,8 +577,10 @@ void IdEditDialog::createId()
         QByteArray ba;
         QBuffer buffer(&ba);
 
+        bool has_transparency = ImageUtil::hasAlphaContent(mAvatar.toImage());
+
         buffer.open(QIODevice::WriteOnly);
-        mAvatar.save(&buffer, "PNG"); // writes image into ba in PNG format
+        mAvatar.save(&buffer, has_transparency?"PNG":"JPG"); // writes image into ba in PNG format
 
         params.mImage.copy((uint8_t *) ba.data(), ba.size());
     }
@@ -642,8 +651,10 @@ void IdEditDialog::updateId()
 		QByteArray ba;
 		QBuffer buffer(&ba);
 
-		buffer.open(QIODevice::WriteOnly);
-		mAvatar.save(&buffer, "PNG"); // writes image into ba in PNG format
+        bool has_transparency = ImageUtil::hasAlphaContent(mAvatar.toImage());
+
+        buffer.open(QIODevice::WriteOnly);
+        mAvatar.save(&buffer, has_transparency?"PNG":"JPG"); // writes image into ba in PNG format
 
 		mEditGroup.mImage.copy((uint8_t *) ba.data(), ba.size());
 	}
@@ -679,3 +690,22 @@ void IdEditDialog::updateId()
 	accept();
 }
 
+void IdEditDialog::removeAvatar()
+{
+	ui->avatarLabel->setPicture(QPixmap());
+	mEditGroup.mImage.clear();
+
+	updateInterface();
+}
+
+void IdEditDialog::updateInterface()
+{
+	const QPixmap *pixmap = ui->avatarLabel->pixmap();
+	if (pixmap && !pixmap->isNull()) {
+		ui->removeButton->setEnabled(true);
+    } else if (mEditGroup.mImage.mSize > 0) {
+		ui->removeButton->setEnabled(true);
+	} else {
+		ui->removeButton->setEnabled(false);
+	}
+}

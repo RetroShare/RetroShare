@@ -165,7 +165,6 @@ ChatWidget::ChatWidget(QWidget *parent)
 	connect(ui->actionResetFont, SIGNAL(triggered()), this, SLOT(resetFont()));
 	connect(ui->actionQuote, SIGNAL(triggered()), this, SLOT(quote()));
 	connect(ui->actionDropPlacemark, SIGNAL(triggered()), this, SLOT(dropPlacemark()));
-	connect(ui->actionSave_image, SIGNAL(triggered()), this, SLOT(saveImage()));
 	connect(ui->actionImport_sticker, SIGNAL(triggered()), this, SLOT(saveSticker()));
 	connect(ui->actionShow_Hidden_Images, SIGNAL(triggered()), ui->textBrowser, SLOT(showImages()));
 	ui->actionShow_Hidden_Images->setIcon(ui->textBrowser->getBlockedImage());
@@ -474,6 +473,7 @@ void ChatWidget::processSettings(bool load)
 		// state of splitter
 		ui->chatVSplitter->restoreState(Settings->value("ChatSplitter").toByteArray());
 	} else {
+		shrinkChatTextEdit(false);
 		// save settings
 
 		// state of splitter
@@ -627,7 +627,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 			QString toolTipText = ui->textBrowser->anchorForPosition(helpEvent->pos());
 			if (toolTipText.isEmpty() && !ui->textBrowser->getShowImages()){
 				QString imageStr;
-				if (ui->textBrowser->checkImage(helpEvent->pos(), imageStr)) {
+				if (ImageUtil::checkImage(ui->textBrowser, helpEvent->pos(), imageStr)) {
 					toolTipText = imageStr;
 				}
 			} else if (toolTipText.startsWith(PERSONID)){
@@ -643,6 +643,16 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 		}
 
 	} else if (obj == ui->chatTextEdit) {
+		if (chatType() == CHATTYPE_LOBBY) {
+		    #define EVENT_IS(q_event) (event->type() == QEvent::q_event)
+			if (EVENT_IS(FocusIn)) {
+				if (was_shrinked) {
+					shrinkChatTextEdit(false);
+				}
+			}
+			#undef EVENT_IS
+		}
+
 		if (event->type() == QEvent::KeyPress) {
 
 			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
@@ -905,11 +915,19 @@ void ChatWidget::showEvent(QShowEvent */*event*/)
 	QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
 	bool is_scrollbar_at_end = scrollbar->value() == scrollbar->maximum();
 	bool is_chat_text_edit_empty = ui->chatTextEdit->toPlainText().isEmpty();
+	// show event will not be called on every change of focus
 	if (is_scrollbar_at_end || !is_chat_text_edit_empty) {
+		if (!firstShow) {
+			shrinkChatTextEdit(false);
+		}
 		focusDialog();
 	} else {
-		// otherwise focus will be get even not chat itself
+		// otherwise, focus will not even be gotten by chat itself
 		ui->textBrowser->setFocus();
+
+		if (!firstShow && !was_shrinked) {
+			shrinkChatTextEdit(true);
+		}
 	}
 	ChatUserNotify::clearWaitingChat(chatId);
 
@@ -923,6 +941,11 @@ void ChatWidget::showEvent(QShowEvent */*event*/)
 
 void ChatWidget::resizeEvent(QResizeEvent */*event*/)
 {
+	// it's about resize all chat window, not about chattextedit
+	// just unshrink it and do not bother
+	if (was_shrinked) {
+		shrinkChatTextEdit(false);
+	}
 	// Workaround: now the scroll position is correct calculated
 	QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
 	scrollbar->setValue(scrollbar->maximum());
@@ -959,11 +982,12 @@ void ChatWidget::on_notifyButton_clicked()
 	if(!notify) return;
 	if (chatType() != CHATTYPE_LOBBY) return;
 
-	QMenu* menu = new QMenu(MainWindow::getInstance());
+	QMenu* menu = notify->createMenu();
 	QIcon icoLobby=(ui->notifyButton->icon());
 
 	notify->makeSubMenu(menu, icoLobby, title, chatId.toLobbyId());
 	menu->exec(ui->notifyButton->mapToGlobal(QPoint(0,ui->notifyButton->geometry().height())));
+	delete(menu);
 
 }
 
@@ -1070,7 +1094,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 			QImage image(icon.pixmap(height,height).toImage());
 			QByteArray byteArray;
 			QBuffer buffer(&byteArray);
-			image.save(&buffer, "PNG"); // writes the image in PNG format inside the buffer
+            image.save(&buffer, "PNG"); // writes the image in PNG format inside the buffer
 			QString iconBase64 = QString::fromLatin1(byteArray.toBase64().data());
 			strPreName = QString("<img src=\"data:image/png;base64,%1\" alt=\"[unsigned]\" />").arg(iconBase64);
 		}
@@ -1127,10 +1151,7 @@ void ChatWidget::pasteText(const QString& S)
 
 void ChatWidget::contextMenuTextBrowser(QPoint point)
 {
-	QMatrix matrix;
-	matrix.translate(ui->textBrowser->horizontalScrollBar()->value(), ui->textBrowser->verticalScrollBar()->value());
-
-	QMenu *contextMnu = ui->textBrowser->createStandardContextMenu(matrix.map(point));
+	QMenu *contextMnu = ui->textBrowser->createStandardContextMenuFromPoint(point);
 
 	contextMnu->addSeparator();
 	contextMnu->addAction(ui->actionClearChatHistory);
@@ -1138,14 +1159,12 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 		contextMnu->addAction(ui->actionQuote);
 	contextMnu->addAction(ui->actionDropPlacemark);
 
-	if(ui->textBrowser->checkImage(point))
+	if(ImageUtil::checkImage(ui->textBrowser, point))
 	{
 		if (! ui->textBrowser->getShowImages())
 			contextMnu->addAction(ui->actionShow_Hidden_Images);
 
-		ui->actionSave_image->setData(point);
 		ui->actionImport_sticker->setData(point);
-		contextMnu->addAction(ui->actionSave_image);
 		contextMnu->addAction(ui->actionImport_sticker);
 	}
 
@@ -1511,23 +1530,43 @@ void ChatWidget::chooseFont()
 	//Use NULL as parent as with this QFontDialog don't take care of title nether options.
 	QFont font = misc::getFont(&ok, currentFont, nullptr, tr("Choose your font."));
 
-	QTextCursor cursor = ui->chatTextEdit->textCursor();
 	if (ok) {
+		QTextCursor cursor = ui->chatTextEdit->textCursor();
+
 		if (cursor.selection().isEmpty()){
 			currentFont = font;
 			setFont();
 		} else {
-			//Merge Format doesn't works for only selection so add a new block.
-			QString text = "<p style=\"";
-			text += " color: " + currentColor.name() + ";";
-			text += " font-family:" + font.family() + ";";
-			text += font.bold() ? " font-weight: bold;" : "";
-			text += font.italic() ? " font-style: italic;" : "";
-			text += " font-size:" + QString::number(font.pointSize()) + "pt;";
-			text += font.strikeOut() ? " text-decoration: line-through;" : "";
-			text += font.underline() ? " text-decoration: underline;" : "";
-			text += "\">" + cursor.selectedText().toHtmlEscaped() + "</p>";
- 			cursor.insertHtml(text);
+			// Merge Format doesn't works for only selection.
+			// and charFormat() get format for last char.
+			QTextCursor selCurs = cursor;
+			QTextCursor lastCurs = cursor;
+			int pos = cursor.selectionStart();
+			lastCurs.setPosition(pos);
+			do
+			{
+				// Get format block in selection iterating char one by one
+				selCurs.setPosition(++pos);
+				if (selCurs.charFormat() != lastCurs.charFormat())
+				{
+					// New char format, format last block.
+					QTextCharFormat charFormat = lastCurs.charFormat();
+					charFormat.setFont(font);
+					lastCurs.setCharFormat(charFormat);
+					// Last block formated, start it to current char.
+					lastCurs.setPosition(pos-1);
+				}
+				// Add current char.
+				lastCurs.setPosition(pos, QTextCursor::KeepAnchor);
+			} while (pos < cursor.selectionEnd());
+
+			// Now format last block
+			if (lastCurs.selectionStart() != lastCurs.selectionEnd())
+			{
+				QTextCharFormat charFormat = lastCurs.charFormat();
+				charFormat.setFont(font);
+				lastCurs.setCharFormat(charFormat);
+			}
 		}
 	}
 }
@@ -1653,7 +1692,7 @@ void ChatWidget::addExtraPicture()
 	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", file)) {
 		QString encodedImage;
 		uint32_t maxMessageSize = this->maxMessageSize();
-		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480, maxMessageSize - 200)) {		//-200 for the html stuff
+        if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480, maxMessageSize - 200)) {		//-200 for the html stuff
 			QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
 			ui->chatTextEdit->textCursor().insertFragment(fragment);
 		}
@@ -1953,13 +1992,6 @@ void ChatWidget::dropPlacemark()
                                                          // or not.
 }
 
-void ChatWidget::saveImage()
-{
-	QPoint point = ui->actionSave_image->data().toPoint();
-	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
-	ImageUtil::extractImage(window(), cursor);
-}
-
 void ChatWidget::saveSticker()
 {
 	QPoint point = ui->actionImport_sticker->data().toPoint();
@@ -1968,4 +2000,51 @@ void ChatWidget::saveSticker()
 	if(filename.isEmpty()) return;
 	filename = Emoticons::importedStickerPath() + "/" + filename + ".png";
 	ImageUtil::extractImage(window(), cursor, filename);
+}
+
+void ChatWidget::shrinkChatTextEdit(bool shrink_me)
+{
+	// here and at eventfiltert check
+	if (chatType() != CHATTYPE_LOBBY)
+		return;
+	if (!Settings->getShrinkChatTextEdit()) {
+		if (was_shrinked) {
+			ui->chatVSplitter->setSizes(_chatvsplitter_saved_size);
+		}
+		_chatvsplitter_saved_size.clear();
+		was_shrinked = false;
+	}
+
+	if (Settings->getShrinkChatTextEdit()) {
+		if (shrink_me) {
+			if (!was_shrinked) {
+				_chatvsplitter_saved_size = ui->chatVSplitter->sizes();
+
+				QList<int> shrinked_v_splitter_size = _chatvsplitter_saved_size;
+				// #define TEXT_BROWSER ui->chatVSplitter->indexOf(ui->textBrowser)
+				#define TEXT_BROWSER 0
+				// when you will update the layout one more time change this appropriately
+				// #define BELOW_TEXT_BROWSER ui->chatVSplitter->indexOf(ui->chatVSplitter->widget(1))
+				#define BELOW_TEXT_BROWSER 1
+				int height_diff = shrinked_v_splitter_size[BELOW_TEXT_BROWSER] - ui->chatTextEdit->minimumHeight(); 
+				shrinked_v_splitter_size[BELOW_TEXT_BROWSER] = ui->chatTextEdit->minimumHeight();
+				shrinked_v_splitter_size[TEXT_BROWSER] += height_diff;
+				ui->chatVSplitter->setSizes( shrinked_v_splitter_size );
+				#undef TEXT_BROWSER
+				#undef BELOW_TEXT_BROWSER
+				was_shrinked = true;
+			}
+		} else { // (!shrink_me)
+			if (was_shrinked) {
+				// to not shrink/unshrink at every entry into chat
+				// when unshrinked state is enough to a browser be scrollable, but shrinked - not
+				QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
+				bool is_scrollbar_at_end = scrollbar->value() == scrollbar->maximum();
+				ui->chatVSplitter->setSizes(_chatvsplitter_saved_size);
+				if (is_scrollbar_at_end)
+					scrollbar->setValue(scrollbar->maximum());
+				was_shrinked = false;
+			}
+		}
+	}
 }

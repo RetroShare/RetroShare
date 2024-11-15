@@ -21,16 +21,20 @@
 #include "GxsCommentTreeWidget.h"
 
 #include "gui/common/FilesDefs.h"
+#include "gui/Identity/IdDialog.h"
+#include "gui/MainWindow.h"
 #include "gui/common/RSElidedItemDelegate.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/gxs/GxsCreateCommentDialog.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
+#include "util/qtthreadsutils.h"
 
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
 #include <QTextEdit>
 #include <QHeaderView>
 #include <QClipboard>
+#include <QMessageBox>
 #include <QDateTime>
 #include <QMenu>
 #include <QMimeData>
@@ -39,6 +43,8 @@
 #include <QTextDocument>
 
 #include <iostream>
+
+//#define DEBUG_COMMENT_TREE_WIDGET
 
 #define PCITEM_COLUMN_COMMENT		0
 #define PCITEM_COLUMN_AUTHOR		1
@@ -71,6 +77,7 @@ std::map<RsGxsMessageId, std::vector<RsGxsComment> > GxsCommentTreeWidget::mComm
 QMutex GxsCommentTreeWidget::mCacheMutex;
 
 //#define USE_NEW_DELEGATE 1
+//#define DEBUG_GXSCOMMENT_TREEWIDGET 1
 
 // This class allows to draw the item using an appropriate size
 
@@ -247,7 +254,7 @@ void GxsCommentTreeWidget::mouseMoveEvent(QMouseEvent *e)
 }
 
 GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
-    :QTreeWidget(parent), mTokenQueue(NULL), mRsTokenService(NULL), mCommentService(NULL)
+    :QTreeWidget(parent), mCommentService(NULL)
 {
     setVerticalScrollMode(ScrollPerPixel);
 	setContextMenuPolicy(Qt::CustomContextMenu);
@@ -297,9 +304,6 @@ void GxsCommentTreeWidget::updateContent()
 }
 GxsCommentTreeWidget::~GxsCommentTreeWidget()
 {
-	if (mTokenQueue) {
-		delete(mTokenQueue);
-	}
 }
 
 void GxsCommentTreeWidget::setCurrentCommentMsgId(QTreeWidgetItem *current, QTreeWidgetItem *previous)
@@ -344,6 +348,10 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& point)
 	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_VOTEDOWN), tr("Vote Down"), this, SLOT(voteDown()));
 	action->setDisabled(!item || mCurrentCommentMsgId.isNull() || mVoterId.isNull());
 
+	contextMnu.addSeparator();
+
+	action = contextMnu.addAction(tr("Show Author"), this, SLOT(showAuthor()));
+	action->setDisabled(!item || mCurrentCommentMsgId.isNull() || mVoterId.isNull());
 
 	if (!mCurrentCommentMsgId.isNull())
 	{
@@ -401,35 +409,23 @@ void GxsCommentTreeWidget::setVoteId(const RsGxsId &voterId)
 void GxsCommentTreeWidget::vote(const RsGxsGroupId &groupId, const RsGxsMessageId &threadId, 
 					const RsGxsMessageId &parentId, const RsGxsId &authorId, bool up)
 {
-        RsGxsVote vote;
+    RsThread::async([this,groupId,threadId,parentId,authorId,up]()
+    {
+        std::string error_string;
+        RsGxsMessageId vote_id;
+        RsGxsVoteType tvote = up?(RsGxsVoteType::UP):(RsGxsVoteType::DOWN);
 
-        vote.mMeta.mGroupId = groupId;
-        vote.mMeta.mThreadId = threadId;
-        vote.mMeta.mParentId = parentId;
-        vote.mMeta.mAuthorId = authorId;
+        bool res = mCommentService->voteForComment(groupId, threadId, parentId, authorId,tvote,vote_id, error_string);
 
-	if (up)
-	{
-		vote.mVoteType = GXS_VOTE_UP;
-	}
-	else
-	{
-		vote.mVoteType = GXS_VOTE_DOWN;
-	}
+        RsQThreadUtils::postToObject( [this,res,error_string]()
+        {
 
-#ifdef DEBUG_GXSCOMMENT_TREEWIDGET
-        std::cerr << "GxsCommentTreeWidget::vote()";
-        std::cerr << std::endl;
-
-        std::cerr << "GroupId : " << vote.mMeta.mGroupId << std::endl;
-        std::cerr << "ThreadId : " << vote.mMeta.mThreadId << std::endl;
-        std::cerr << "ParentId : " << vote.mMeta.mParentId << std::endl;
-        std::cerr << "AuthorId : " << vote.mMeta.mAuthorId << std::endl;
-#endif
-
-	uint32_t token;
-        mCommentService->createNewVote(token, vote);
-        mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, COMMENT_VOTE_ACK);
+            if(res)
+                service_requestComments(mGroupId,mMsgVersions);
+            else
+                QMessageBox::critical(nullptr,tr("Cannot vote"),tr("Error while voting: ")+QString::fromStdString(error_string));
+        });
+    });
 }
 
 
@@ -474,22 +470,29 @@ void GxsCommentTreeWidget::replyToComment()
 	pcc.exec();
 }
 
+
+void GxsCommentTreeWidget::showAuthor()
+{
+	/* window will destroy itself! */
+	IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
+
+	if (!idDialog)
+		return ;
+
+	MainWindow::showWindow(MainWindow::People);
+	idDialog->navigate(RsGxsId(mCurrentCommentAuthorId));
+}
+
 void GxsCommentTreeWidget::copyComment()
 {
     QString txt = dynamic_cast<QAction*>(sender())->data().toString();
-
-	QMimeData *mimeData = new QMimeData();
-    mimeData->setHtml("<html>"+txt+"</html>");
-	QClipboard *clipboard = QApplication::clipboard();
-	clipboard->setMimeData(mimeData, QClipboard::Clipboard);
+    QApplication::clipboard()->setText(txt) ;
 }
 
-void GxsCommentTreeWidget::setup(RsTokenService *token_service, RsGxsCommentService *comment_service)
+void GxsCommentTreeWidget::setup(RsGxsCommentService *comment_service)
 {
-	mRsTokenService = token_service;
 	mCommentService = comment_service;
-	mTokenQueue = new TokenQueue(token_service, this);
-	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customPopUpMenu(QPoint)));
+    connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customPopUpMenu(QPoint)));
 	connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(setCurrentCommentMsgId(QTreeWidgetItem*, QTreeWidgetItem*)));
 
 	return;
@@ -527,26 +530,83 @@ void GxsCommentTreeWidget::service_requestComments(const RsGxsGroupId& group_id,
 	/* request comments */
 #ifdef DEBUG_GXSCOMMENT_TREEWIDGET
     std::cerr << "GxsCommentTreeWidget::service_requestComments for group " << group_id << std::endl;
+    for(const auto& mid:msgIds)
+        std::cerr << "  including message " << mid << std::endl;
 #endif
 
-    std::vector<RsGxsGrpMsgIdPair> ids_to_ask;
-
-    for(std::set<RsGxsMessageId>::const_iterator it(msgIds.begin());it!=msgIds.end();++it)
+   RsThread::async([this,group_id,msgIds]()
     {
-#ifdef DEBUG_GXSCOMMENT_TREEWIDGET
-        std::cerr << "   asking for msg " << *it << std::endl;
-#endif
+        std::vector<RsGxsComment> comments;
 
-        ids_to_ask.push_back(std::make_pair(group_id,*it));
-    }
+        if(!mCommentService->getRelatedComments(group_id,msgIds,comments))
+        {
+            std::cerr << __PRETTY_FUNCTION__ << " failed to get comments" << std::endl;
+            return;
+        }
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
-	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
+        RsQThreadUtils::postToObject( [this,comments]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete, note that
+             * Qt::QueuedConnection is important!
+             */
 
-	uint32_t token;
-	mTokenQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids_to_ask, GXSCOMMENTS_LOADTHREAD);
+            clearItems();
+
+            service_loadThread(comments);
+
+            completeItems();
+
+            emit commentsLoaded(treeCount(this));
+
+        }, this );
+    });
 }
+
+#ifdef TODO
+void GxsCommentTreeWidget::async_msg_action(const CmtMethod &action)
+{
+    RsThread::async([this,action]()
+    {
+        // 1 - get message data from p3GxsForums
+
+        std::set<RsGxsMessageId> msgs_to_request ;
+        std::vector<RsGxsForumMsg> msgs;
+
+        msgs_to_request.insert(mThreadId);
+
+        if(!rsGxsForums->getForumContent(groupId(),msgs_to_request,msgs))
+        {
+            std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum message info for forum " << groupId() << " and thread " << mThreadId << std::endl;
+            return;
+        }
+
+        if(msgs.size() != 1)
+        {
+            std::cerr << __PRETTY_FUNCTION__ << " more than 1 or no msgs selected in forum " << groupId() << std::endl;
+            return;
+        }
+
+        // 2 - sort the messages into a proper hierarchy
+
+        RsGxsForumMsg msg = msgs[0];
+
+        // 3 - update the model in the UI thread.
+
+        RsQThreadUtils::postToObject( [msg,action,this]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete */
+
+            (this->*action)(msg);
+
+        }, this );
+
+    });
+}
+#endif
 
 
 /* Generic Handling */
@@ -673,7 +733,7 @@ void GxsCommentTreeWidget::addItem(RsGxsMessageId itemId, RsGxsMessageId parentI
 	}
 }
 
-int treeCount(QTreeWidget *tree, QTreeWidgetItem *parent = 0)
+int GxsCommentTreeWidget::treeCount(QTreeWidget *tree, QTreeWidgetItem *parent)
 {
     int count = 0;
     if (parent == 0)
@@ -694,45 +754,11 @@ int treeCount(QTreeWidget *tree, QTreeWidgetItem *parent = 0)
     }
     return count;
 }
-void GxsCommentTreeWidget::loadThread(const uint32_t &token)
+
+void GxsCommentTreeWidget::service_loadThread(const std::vector<RsGxsComment>& comments)
 {
-	clearItems();
-
-	service_loadThread(token);
-
-	completeItems();
-
-    emit commentsLoaded(treeCount(this));
-}
-
-void GxsCommentTreeWidget::acknowledgeComment(const uint32_t &token)
-{
-	RsGxsGrpMsgIdPair msgId;
-	mCommentService->acknowledgeComment(token, msgId);
-
-	// simply reload data
-	service_requestComments(mGroupId,mMsgVersions);
-}
-
-
-void GxsCommentTreeWidget::acknowledgeVote(const uint32_t &token)
-{
-	RsGxsGrpMsgIdPair msgId;
-	if (mCommentService->acknowledgeVote(token, msgId))
-	{
-		// reload data if vote was added.
-		service_requestComments(mGroupId,mMsgVersions);
-	}
-}
-
-
-void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
-{
-	std::cerr << "GxsCommentTreeWidget::service_loadThread() ERROR must be overloaded!";
-	std::cerr << std::endl;
-
-	std::vector<RsGxsComment> comments;
-	mCommentService->getRelatedComments(token, comments);
+    std::cerr << "GxsCommentTreeWidget::service_loadThread() ERROR must be overloaded!";
+    std::cerr << std::endl;
 
     // This is inconsistent since we cannot know here that all comments are for the same thread. However they are only
     // requested in requestComments() where a single MsgId is used.
@@ -763,8 +789,10 @@ void GxsCommentTreeWidget::insertComments(const std::vector<RsGxsComment>& comme
             new_comments.push_back(comment.mMeta.mMsgId);
 
 		/* convert to a QTreeWidgetItem */
+#ifdef DEBUG_COMMENT_TREE_WIDGET
 		std::cerr << "GxsCommentTreeWidget::service_loadThread() Got Comment: " << comment.mMeta.mMsgId;
 		std::cerr << std::endl;
+#endif
 
 		GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(NULL,GxsIdDetails::ICON_TYPE_AVATAR) ;
 		QString text;
@@ -821,10 +849,7 @@ void GxsCommentTreeWidget::insertComments(const std::vector<RsGxsComment>& comme
     // now set all loaded comments as not new, since they have been loaded.
 
     for(auto cid:new_comments)
-    {
-        uint32_t token=0;
-        mCommentService->setCommentAsRead(token,mGroupId,cid);
-    }
+        mCommentService->setCommentReadStatus(RsGxsGrpMsgIdPair(mGroupId,cid),true);
 }
 
 QTreeWidgetItem *GxsCommentTreeWidget::service_createMissingItem(const RsGxsMessageId& parent)
@@ -852,50 +877,3 @@ QTreeWidgetItem *GxsCommentTreeWidget::service_createMissingItem(const RsGxsMess
 	return item;
 }	
 
-
-
-void GxsCommentTreeWidget::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-#ifdef DEBUG_GXSCOMMENT_TREEWIDGET
-	std::cerr << "GxsCommentTreeWidget::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
-#endif
-		
-	if (queue != mTokenQueue)
-	{
-		std::cerr << "GxsCommentTreeWidget::loadRequest() Queue ERROR";
-		std::cerr << std::endl;
-		return;
-	}
-		
-	/* now switch on req */
-		switch(req.mType)
-	{
-		
-			case TOKENREQ_MSGINFO:
-			{
-				switch(req.mAnsType)
-				{
-					case RS_TOKREQ_ANSTYPE_ACK:
-						if (req.mUserType == COMMENT_VOTE_ACK)
-						{
-							acknowledgeVote(req.mToken);
-						}
-						else
-						{
-							acknowledgeComment(req.mToken);
-						}
-						break;
-					case RS_TOKREQ_ANSTYPE_DATA:
-						loadThread(req.mToken);
-						break;
-				}
-			}
-			break;
-			default:
-					std::cerr << "GxsCommentTreeWidget::loadRequest() UNKNOWN UserType ";
-					std::cerr << std::endl;
-					break;
-
-	}
-}

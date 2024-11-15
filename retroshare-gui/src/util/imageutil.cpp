@@ -23,8 +23,12 @@
 #include "util/rstime.h"
 
 #include <QApplication>
+#include <QWidget>
+#include <QTextEdit>
 #include <QByteArray>
 #include <QImage>
+#include <QClipboard>
+#include <QMimeData>
 #include <QMessageBox>
 #include <QString>
 #include <QTextCursor>
@@ -36,6 +40,64 @@
 #include <iostream>
 
 ImageUtil::ImageUtil() {}
+
+bool ImageUtil::checkImage(const QTextEdit *edit, const QPoint &pos, QRect *cursorRectStartOut, QRect *cursorRectLeftOut, QRect *cursorRectRightOut, QRect *cursorRectEndOut)
+{
+	QString imageStr;
+	return checkImage(edit, pos, imageStr, cursorRectStartOut, cursorRectLeftOut, cursorRectRightOut, cursorRectEndOut);
+}
+
+bool ImageUtil::checkImage(const QTextEdit *edit, const QPoint &pos, QString &imageStr, QRect *cursorRectStartOut, QRect *cursorRectLeftOut, QRect *cursorRectRightOut, QRect *cursorRectEndOut)
+{
+	//Get text cursor under pos. But if pos is under text browser end line this return last cursor.
+	QTextCursor cursor = edit->cursorForPosition(pos);
+	//First get rect of cursor (could be at left or right of image)
+	QRect cursorRectStart = edit->cursorRect(cursor);
+	//Second get text
+	cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 1);//To get character just before
+	QRect cursorRectLeft = edit->cursorRect(cursor);
+	cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 2);
+	QRect cursorRectRight = edit->cursorRect(cursor);
+	imageStr = cursor.selection().toHtml();
+
+	if (cursorRectStartOut) {
+		*cursorRectStartOut = cursorRectStart;
+	}
+	if (cursorRectLeftOut) {
+		*cursorRectLeftOut = cursorRectLeft;
+	}
+	if (cursorRectRightOut) {
+		*cursorRectRightOut = cursorRectRight;
+	}
+
+	QRect cursorRectEnd = cursorRectStart;
+	//Finally set left with right of precedent character.
+	if (cursorRectEnd.top() < cursorRectLeft.bottom())
+	{
+		cursorRectEnd.setLeft(cursorRectLeft.right());
+	} else {
+		//Image on new line
+		cursorRectEnd.setLeft(0);
+	}
+	//And set Right with left of next character.
+	if (cursorRectEnd.bottom() > cursorRectRight.top())
+	{
+		cursorRectEnd.setRight(cursorRectRight.left());
+	} else {
+		//New line after Image.
+	}
+
+	if (cursorRectEndOut) {
+		*cursorRectEndOut = cursorRectEnd;
+	}
+
+	//If pos is on text rect
+	if (cursorRectEnd.contains(pos))
+	{
+		return imageStr.indexOf("base64,") != -1;
+	}
+	return false;
+}
 
 void ImageUtil::extractImage(QWidget *window, QTextCursor cursor, QString file)
 {
@@ -53,13 +115,7 @@ void ImageUtil::extractImage(QWidget *window, QTextCursor cursor, QString file)
 		if(!image.isNull())
 		{
 			success = true;
-			if(!file.isEmpty() || misc::getSaveFileName(window, RshareSettings::LASTDIR_IMAGES, "Save Picture File", "Pictures (*.png *.xpm *.jpg)", file))
-			{
-				if(!image.save(file, nullptr, 100))
-					if(!image.save(file + ".png", nullptr, 100))
-						QMessageBox::warning(window, QApplication::translate("ImageUtil", "Save image"), QApplication::translate("ImageUtil", "Cannot save the image, invalid filename")
-											 + "\n" + file);
-			}
+			saveImage(window, image, file);
 		}
 	}
 	if(!success)
@@ -68,12 +124,60 @@ void ImageUtil::extractImage(QWidget *window, QTextCursor cursor, QString file)
 	}
 }
 
-bool ImageUtil::optimizeSizeBytes(QByteArray &bytearray, const QImage &original, QImage &optimized, int maxPixels, int maxBytes)
+bool ImageUtil::saveImage(QWidget *window, const QImage &image, QString file)
+{
+	bool result = false;
+
+	if (!file.isEmpty() || misc::getSaveFileName(window, RshareSettings::LASTDIR_IMAGES, QApplication::translate("ImageUtil", "Save Picture File"), QApplication::translate("ImageUtil", "Pictures (*.png *.xpm *.jpg)"), file)) {
+		if (image.save(file, nullptr, 100)) {
+			result = true;
+		} else {
+			if (image.save(file + ".png", nullptr, 100)) {
+				result = true;
+			} else {
+				QMessageBox::warning(window, QApplication::translate("ImageUtil", "Save image"), QApplication::translate("ImageUtil", "Cannot save the image, invalid filename")
+									 + "\n" + file);
+			}
+		}
+	}
+
+	return result;
+}
+
+void ImageUtil::copyImage(QWidget *window, QTextCursor cursor)
+{
+	cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 1);
+	cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 2);
+	QString imagestr = cursor.selection().toHtml();
+	bool success = false;
+	int start = imagestr.indexOf("base64,") + 7;
+	int stop = imagestr.indexOf("\"", start);
+	int length = stop - start;
+	if((start >= 0) && (length > 0))
+	{
+		QByteArray ba = QByteArray::fromBase64(imagestr.mid(start, length).toLatin1());
+		QImage image = QImage::fromData(ba);
+		if(!image.isNull())
+		{
+			success = true;
+			QClipboard *clipboard = QApplication::clipboard();
+			QMimeData *data = new QMimeData;
+			data->setImageData(image);
+			clipboard->setMimeData(data, QClipboard::Clipboard);
+		}
+	}
+	if(!success)
+	{
+		QMessageBox::warning(window, QApplication::translate("ImageUtil", "Copy image"), QApplication::translate("ImageUtil", "Not an image"));
+	}
+}
+
+bool ImageUtil::optimizeSizeBytes(QByteArray &bytearray, const QImage &original, QImage &optimized, const char *format, int maxPixels, int maxBytes)
 {
 	//nothing to do if it fits into the limits
 	optimized = original;
 	if ((maxPixels <= 0) || (optimized.width()*optimized.height() <= maxPixels)) {
-		int s = checkSize(bytearray, optimized);
+        int s = checkSize(bytearray, optimized,format);
 		if((maxBytes <= 0) || (s <= maxBytes)) {
 			return true;
 		}
@@ -92,7 +196,7 @@ bool ImageUtil::optimizeSizeBytes(QByteArray &bytearray, const QImage &original,
 
 	//if maxBytes not defined, do not reduce color space, just downscale
 	if(maxBytes <= 0) {
-		checkSize(bytearray, optimized = original.scaledToWidth(maxwidth, Qt::SmoothTransformation));
+        checkSize(bytearray, optimized = original.scaledToWidth(maxwidth, Qt::SmoothTransformation),format);
 		return true;
 	}
 
@@ -100,9 +204,9 @@ bool ImageUtil::optimizeSizeBytes(QByteArray &bytearray, const QImage &original,
 	quantization(original, ct);
 
 	//Use binary search to find a suitable image size + linear regression to guess the file size
-	double maxsize = (double)checkSize(bytearray, optimized = original.scaledToWidth(maxwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither));
+    double maxsize = (double)checkSize(bytearray, optimized = original.scaledToWidth(maxwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither),format);
 	if(maxsize <= maxBytes) return true;	//success
-	double minsize = (double)checkSize(bytearray, optimized = original.scaledToWidth(minwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither));
+    double minsize = (double)checkSize(bytearray, optimized = original.scaledToWidth(minwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither),format);
 	if(minsize > maxBytes) return false; //impossible
 
 //	std::cout << "maxS: " << maxsize << " minS: " << minsize << std::endl;
@@ -115,7 +219,7 @@ bool ImageUtil::optimizeSizeBytes(QByteArray &bytearray, const QImage &original,
 		double b = maxsize - m * ((double)maxwidth * (double)maxwidth / whratio);
 		double a = ((double)(maxBytes - region/2) - b) / m; //maxBytes - region/2 target the center of the accepted region
 		int nextwidth = (int)sqrt(a * whratio);
-		int nextsize = checkSize(bytearray, optimized = original.scaledToWidth(nextwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither));
+        int nextsize = checkSize(bytearray, optimized = original.scaledToWidth(nextwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither),format);
 		if(nextsize <= maxBytes) {
 			minsize = nextsize;
 			minwidth = nextwidth;
@@ -137,6 +241,25 @@ bool ImageUtil::optimizeSizeBytes(QByteArray &bytearray, const QImage &original,
 	//std::cout << html.toStdString() << std::endl;
 }
 
+bool ImageUtil::hasAlphaContent(const QImage& image)
+{
+    if(!image.hasAlphaChannel())
+    {
+        std::cerr << "Image of size " << image.width() << " x " << image.height() << ": No transparency content detected." << std::endl;
+        return false;
+    }
+
+    for(int i=0;i<image.width();++i)
+        for(int j=0;j<image.height();++j)
+            if(qAlpha(image.pixel(i,j)) < 255)
+            {
+                std::cerr << "Image of size " << image.width() << " x " << image.height() << ": Transparency content detected." << std::endl;
+                return true;
+            }
+
+    std::cerr << "Image of size " << image.width() << " x " << image.height() << ": No transparency content detected." << std::endl;
+    return false;
+}
 bool ImageUtil::optimizeSizeHtml(QString &html, const QImage& original, QImage &optimized, int maxPixels, int maxBytes)
 {
 	QByteArray bytearray;
@@ -145,10 +268,15 @@ bool ImageUtil::optimizeSizeHtml(QString &html, const QImage& original, QImage &
 		if(maxBytes < 1) maxBytes = 1;
 	}
 
-	if(optimizeSizeBytes(bytearray, original, optimized, maxPixels, maxBytes))
+    // check for transparency
+    bool has_transparency = hasAlphaContent(original);
+
+    if(optimizeSizeBytes(bytearray, original, optimized,has_transparency?"PNG":"JPG",maxPixels, maxBytes))
 	{
 		QByteArray encodedByteArray = bytearray.toBase64();
-		html = "<img src=\"data:image/png;base64,";
+		html = "<img src=\"data:image/";
+		html.append(has_transparency ? "png" : "jpeg");
+		html.append(";base64,");
 		html.append(encodedByteArray);
 		html.append("\">");
 		return true;
@@ -156,7 +284,7 @@ bool ImageUtil::optimizeSizeHtml(QString &html, const QImage& original, QImage &
 	return false;
 }
 
-int ImageUtil::checkSize(QByteArray &bytearray, const QImage &img)
+int ImageUtil::checkSize(QByteArray &bytearray, const QImage &img,const char *format)
 {
 	rstime::RsScopeTimer st("Check size");
 
@@ -166,7 +294,7 @@ int ImageUtil::checkSize(QByteArray &bytearray, const QImage &img)
 
 	//std::cout << QString("Trying image: format PNG, size %1x%2, colors %3\n").arg(img.width()).arg(img.height()).arg(img.colorCount()).toStdString();
 	if (buffer.open(QIODevice::WriteOnly)) {
-		if (img.save(&buffer, "PNG", 0)) {
+        if (img.save(&buffer, format, 85)) {
 			size = bytearray.length();
 		} else {
 			std::cerr << "ImageUtil: image can't be saved to buffer" << std::endl;

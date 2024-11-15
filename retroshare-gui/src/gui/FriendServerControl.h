@@ -22,9 +22,12 @@
 
 #include <QGraphicsScene>
 
+#include "retroshare/rsevents.h"
+
+#include "retroshare-gui/mainpage.h"
 #include "ui_FriendServerControl.h"
 
-class FriendServerControl : public QWidget, public Ui::FriendServerControl
+class FriendServerControl : public MainPage, public Ui::FriendServerControl
 {
     Q_OBJECT
 
@@ -34,15 +37,29 @@ public:
 
 protected slots:
     void onOnOffClick(bool b);
-    void onOnionAddressEdit(const QString&);
+    void onOnionAddressEdit(const QString &);
     void onOnionPortEdit(int);
     void onNbFriendsToRequestsChanged(int n);
-    void updateTorProxyInfo();
     void checkServerAddress();
+    void onAutoAddFriends(bool b);
+    void launchStatusContextMenu(QPoint p);
+    void makeFriend();
 
 private:
+    RsPeerId getCurrentPeer();
+    void updateContactsStatus();
     void updateFriendServerStatusIcon(bool ok);
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
     QTimer *mConnectionCheckTimer;
     QMovie *mCheckingServerMovie;
+    bool 	mCurrentlyCheckingServerAddress;
+
+    RsEventsHandlerId_t mEventHandlerId_fs;
+    RsEventsHandlerId_t mEventHandlerId_peer;
+
+    QAction *makeFriend_ACT;
+    QAction *unmakeFriend_ACT;
+    QAction *removePeer_ACT;
+    QAction *removePeerPermanently_ACT;
 };

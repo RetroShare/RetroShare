@@ -24,6 +24,7 @@
 #include "retroshare/rsinit.h"
 
 #include "util/qtthreadsutils.h"
+#include "util/misc.h"
 
 #include "gui/notifyqt.h"
 #include "gui/msgs/MessageComposer.h"
@@ -49,13 +50,9 @@
 
 HomePage::HomePage(QWidget *parent) :
     MainPage(parent),
-    ui(new Ui::HomePage),
-    mIncludeAllIPs(false),
-    mUseShortFormat(true)
+    ui(new Ui::HomePage)
 {
     ui->setupUi(this);
-
-    updateCertificate();
 
     connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addFriend()));
     connect(ui->copyIDButton, SIGNAL(clicked()), this, SLOT(copyId()));
@@ -72,52 +69,72 @@ HomePage::HomePage(QWidget *parent) :
     QAction *CopyIdAction = new QAction(QIcon(),tr("Copy your Retroshare ID to Clipboard"), this);
     connect(CopyIdAction, SIGNAL(triggered()), this, SLOT(copyId()));
 
-        QMenu *menu = new QMenu();
+    QMenu *menu = new QMenu();
     menu->addAction(CopyIdAction);
-
-    if(!RsAccounts::isHiddenNode())
-    {
-        QAction *includeIPsAct = new QAction(QIcon(), tr("Include all your known IPs"),this);
-        connect(includeIPsAct, SIGNAL(triggered()), this, SLOT(toggleIncludeAllIPs()));
-        includeIPsAct->setCheckable(true);
-        includeIPsAct->setChecked(mIncludeAllIPs);
-
-        menu->addAction(includeIPsAct);
-    }
-    QAction *useOldFormatAct = new QAction(QIcon(), tr("Use old certificate format"),this);
-    useOldFormatAct->setToolTip(tr("Displays the certificate format used up to version 0.6.5\nOld Retroshare nodes will not understand the\nnew short format"));
-    connect(useOldFormatAct, SIGNAL(triggered()), this, SLOT(toggleUseOldFormat()));
-    useOldFormatAct->setCheckable(true);
-    useOldFormatAct->setChecked(!mUseShortFormat);
-    menu->addAction(useOldFormatAct);
 
     menu->addSeparator();
     menu->addAction(SendAction);
     menu->addAction(WebMailAction);
     menu->addAction(RecAction);
+    menu->addSeparator();
+
+    mUseOldFormatact = new QAction(QIcon(), tr("Use old certificate format"),this);
+    mUseOldFormatact->setToolTip(tr("Displays the certificate format used up to version 0.6.5\nOld Retroshare nodes will not understand the\nnew short format"));
+    connect(mUseOldFormatact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
+    mUseOldFormatact->setCheckable(true);
+    mUseOldFormatact->setChecked(false);
+    menu->addAction(mUseOldFormatact);
+
+    if(!RsAccounts::isHiddenNode())
+    {
+        mIncludeLocIPact = new QAction(QIcon(), tr("Include current local IP"),this);
+        connect(mIncludeLocIPact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
+        mIncludeLocIPact->setCheckable(true);
+        mIncludeLocIPact->setChecked(true);
+        menu->addAction(mIncludeLocIPact);
+
+        mIncludeExtIPact = new QAction(QIcon(), tr("Include current external IP"),this);
+        connect(mIncludeExtIPact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
+        mIncludeExtIPact->setCheckable(true);
+        mIncludeExtIPact->setChecked(true);
+        menu->addAction(mIncludeExtIPact);
+
+        mIncludeDNSact = new QAction(QIcon(), tr("Include my DNS"),this);
+        connect(mIncludeDNSact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
+        mIncludeDNSact->setCheckable(true);
+        mIncludeDNSact->setChecked(true);
+        menu->addAction(mIncludeDNSact);
+
+        mIncludeIPHistoryact = new QAction(QIcon(), tr("Include all IPs history"),this);
+        connect(mIncludeIPHistoryact, SIGNAL(triggered()), this, SLOT(updateOwnCert()));
+        mIncludeIPHistoryact->setCheckable(true);
+        mIncludeIPHistoryact->setChecked(false);
+        menu->addAction(mIncludeIPHistoryact);
+    }
 
     ui->shareButton->setMenu(menu);
 
     connect(ui->openwebhelp,SIGNAL(clicked()), this,SLOT(openWebHelp())) ;
 
-    int S = QFontMetricsF(font()).height();
-    QString help_str = tr(
-                            " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Welcome to Retroshare!</h1>\
-                            <p>You need to <b>make friends</b>! After you create a network of friends or join an existing network,\
-                            you'll be able to exchange files, chat, talk in forums, etc. </p>\
-                            <div align=center>\
-                    <IMG align=\"center\" width=\"%2\" src=\":/images/network_map.png\"/> \
-                    </div>\
-                    <p>To do so, copy your Retroshare ID on this page and send it to friends, and add your friends' Retroshare ID.</p> \
-                            <p>Another option is to search the internet for \"Retroshare chat servers\" (independently administrated). These servers allow you to exchange \
-                            Retroshare ID with a dedicated Retroshare node, through which\
-                            you will be able to anonymously meet other people.</p> ").arg(QString::number(2*S)).arg(width()*0.5);
-                            registerHelpButton(ui->helpButton,help_str,"HomePage") ;
+	int H = misc::getFontSizeFactor("HelpButton").height();
+	QString help_str = tr(
+	    "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Welcome to Retroshare!</h1>"
+	    "<p>You need to <b>make friends</b>! After you create a network of friends or join an existing network,"
+	    "   you'll be able to exchange files, chat, talk in forums, etc. </p>"
+	    "<div align=\"center\"><IMG width=\"%2\" height=\"%3\" src=\":/images/network_map.png\" style=\"display: block; margin-left: auto; margin-right: auto; \"/></div>"
+	    "<p>To do so, copy your Retroshare ID on this page and send it to friends, and add your friends' Retroshare ID.</p>"
+	    "<p>Another option is to search the internet for \"Retroshare chat servers\" (independently administrated). These servers allow you to exchange"
+	    "   Retroshare ID with a dedicated Retroshare node, through which"
+	    "   you will be able to anonymously meet other people.</p>"
+	                     ).arg(QString::number(2*H), QString::number(width()*0.5), QString::number(width()*0.5*(337.0/800.0)));//<img> needs height and width defined.
+	registerHelpButton(ui->helpButton,help_str,"HomePage") ;
 
-                    // register a event handler to catch IP updates
+	// register a event handler to catch IP updates
 
     mEventHandlerId = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId, RsEventType::NETWORK );
+
+    updateOwnCert();
 }
 
 void HomePage::handleEvent(std::shared_ptr<const RsEvent> e)
@@ -136,15 +153,18 @@ void HomePage::handleEvent(std::shared_ptr<const RsEvent> e)
     {
     case RsNetworkEventCode::LOCAL_IP_UPDATED:  // [fallthrough]
     case RsNetworkEventCode::EXTERNAL_IP_UPDATED:  // [fallthrough]
+    case RsNetworkEventCode::DNS_UPDATED:  // [fallthrough]
                 RsQThreadUtils::postToObject( [=]()
                 {
-                    updateCertificate();
+                    updateOwnCert();
                 },this);
         break;
     default:
         break;
     }
 }
+
+#ifdef DEAD_CODE
 void HomePage::certContextMenu(QPoint /*point*/)
 {
     QMenu menu(this) ;
@@ -177,17 +197,7 @@ void HomePage::certContextMenu(QPoint /*point*/)
 
     menu.exec(QCursor::pos());
 }
-
-void HomePage::toggleUseShortFormat()
-{
-    mUseShortFormat = !mUseShortFormat;
-    updateCertificate();
-}
-void HomePage::toggleIncludeAllIPs()
-{
-    mIncludeAllIPs = !mIncludeAllIPs;
-    updateCertificate();
-}
+#endif
 
 HomePage::~HomePage()
 {
@@ -195,15 +205,29 @@ HomePage::~HomePage()
     delete ui;
 }
 
-void HomePage::updateCertificate()
+RetroshareInviteFlags HomePage::currentInviteFlags() const
 {
-    updateOwnCert();
+    RetroshareInviteFlags invite_flags = RetroshareInviteFlags::NOTHING;
+
+    if(!RsAccounts::isHiddenNode())
+    {
+        if(mIncludeLocIPact->isChecked())
+            invite_flags |= RetroshareInviteFlags::CURRENT_LOCAL_IP;
+
+        if(mIncludeExtIPact->isChecked())
+            invite_flags |= RetroshareInviteFlags::CURRENT_EXTERNAL_IP;
+
+        if(mIncludeDNSact->isChecked())
+            invite_flags |= RetroshareInviteFlags::DNS;
+
+        if(mIncludeIPHistoryact->isChecked())
+            invite_flags |= RetroshareInviteFlags::FULL_IP_HISTORY;
+    }
+
+    return invite_flags;
 }
-
-void HomePage::updateOwnCert()
+void HomePage::getOwnCert(QString& invite,QString& description) const
 {
-    bool include_extra_locators = mIncludeAllIPs;
-
     RsPeerDetails detail;
 
     if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
@@ -211,24 +235,36 @@ void HomePage::updateOwnCert()
         std::cerr << "(EE) Cannot retrieve information about own certificate. That is a real problem!!" << std::endl;
         return ;
     }
+    auto invite_flags = currentInviteFlags();
 
-    QString invite ;
-    RetroshareInviteFlags invite_flags = RetroshareInviteFlags::CURRENT_IP;
+    invite_flags |= RetroshareInviteFlags::SLICE_TO_80_CHARS;
 
-    if(mIncludeAllIPs)
-        invite_flags |= RetroshareInviteFlags::FULL_IP_HISTORY;
-
-    if(mUseShortFormat)
+    if(!mUseOldFormatact->isChecked())
     {
         std::string short_invite;
         rsPeers->getShortInvite(short_invite,rsPeers->getOwnId(),invite_flags | RetroshareInviteFlags::RADIX_FORMAT);
+        invite = QString::fromStdString(short_invite);
+    }
+    else
+        invite = QString::fromStdString(rsPeers->GetRetroshareInvite(detail.id,invite_flags));
 
+    description = ConfCertDialog::getCertificateDescription(detail,false,!mUseOldFormatact->isChecked(),invite_flags);
+}
+
+void HomePage::updateOwnCert()
+{
+    QString certificate, description;
+
+    getOwnCert(certificate,description);
+
+    if(!mUseOldFormatact->isChecked())	// in this case we have to split the cert for a better display
+    {
         QString S;
         QString txt;
 
-        for(uint32_t i=0;i<short_invite.size();)
+        for(int i=0;i<certificate.size();)
             if(S.length() < 100)
-                S += short_invite[i++];
+                S += certificate[i++];
             else
             {
                 txt += S + "\n";
@@ -236,26 +272,15 @@ void HomePage::updateOwnCert()
             }
 
         txt += S;
-
-        invite = txt;	// the "\n" is here to make some space
+        certificate = txt;	// the "\n" is here to make some space
     }
-    else
-        invite = QString::fromStdString(rsPeers->GetRetroshareInvite(detail.id,invite_flags));
 
-    ui->retroshareid->setText("\n"+invite+"\n");
-
-    QString description = ConfCertDialog::getCertificateDescription(detail,false,mUseShortFormat,include_extra_locators);
-
+    ui->retroshareid->setText("\n"+certificate+"\n");
     ui->retroshareid->setToolTip(description);
 }
 
-static void sendMail(QString sAddress, QString sSubject, QString sBody)
+static void sendMail(const QString &sAddress, const QString &sSubject, const QString &sBody)
 {
-#ifdef Q_OS_WIN
-    /* search and replace the end of lines with: "%0D%0A" */
-    sBody.replace("\n", "%0D%0A");
-#endif
-
     QUrl url = QUrl("mailto:" + sAddress);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
@@ -265,7 +290,12 @@ static void sendMail(QString sAddress, QString sSubject, QString sBody)
 #endif
 
     urlQuery.addQueryItem("subject", sSubject);
+#ifdef Q_OS_WIN
+    /* search and replace the end of lines with: "%0D%0A" */
+    urlQuery.addQueryItem("body", QString(sBody).replace("\n", "%0D%0A"));
+#else
     urlQuery.addQueryItem("body", sBody);
+#endif
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     url.setQuery(urlQuery);
@@ -346,10 +376,4 @@ void HomePage::webMail()
 void HomePage::openWebHelp()
 {
     QDesktopServices::openUrl(QUrl(QString("https://retrosharedocs.readthedocs.io/en/latest/")));
-}
-
-void HomePage::toggleUseOldFormat()
-{
-    mUseShortFormat = !mUseShortFormat;
-    updateCertificate();
 }

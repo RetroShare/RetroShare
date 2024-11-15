@@ -23,7 +23,6 @@
 
 #include <inttypes.h>
 
-#include "util/TokenQueue.h"
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsgxsifacetypes.h>
 #include <QDialog>
@@ -54,6 +53,8 @@ private slots:
     void avatarCleared();
 
 	void changeAvatar();
+	void removeAvatar();
+	void updateInterface();
 
 	void addRecognTag();
 	void checkNewTag();
@@ -69,7 +70,6 @@ private:
 	void updateIdType(bool pseudo);
 	void loadExistingId(const RsGxsIdGroup& id_group);
 	void setAvatar(const QPixmap &avatar);
-	void idCreated(uint32_t token);
 
 	void loadRecognTags();
 	// extract details.

@@ -105,6 +105,9 @@ copy "%RsBuildPath%\retroshare-nogui\src\%RsBuildConfig%\retroshare*-nogui.exe" 
 copy "%RsBuildPath%\retroshare-service\src\%RsBuildConfig%\retroshare*-service.exe" "%RsDeployPath%" %Quite%
 copy "%RsBuildPath%\supportlibs\cmark\build\src\libcmark.dll" "%RsDeployPath%" %Quite%
 if exist "%RsBuildPath%\libretroshare\src\lib\retroshare.dll" copy "%RsBuildPath%\libretroshare\src\lib\retroshare.dll" "%RsDeployPath%" %Quite%
+if exist "%RsBuildPath%\retroshare-friendserver\src\%RsBuildConfig%\retroshare-friendserver.exe" (
+	copy "%RsBuildPath%\retroshare-friendserver\src\%RsBuildConfig%\retroshare-friendserver.exe" "%RsDeployPath%" %Quite%
+)
 
 echo copy extensions
 for /D %%D in ("%RsBuildPath%\plugins\*") do (
@@ -184,12 +187,12 @@ echo copy buildinfo.txt
 copy "%RsBuildPath%\buildinfo.txt" "%RsDeployPath%" %Quite%
 
 if "%ParamWebui%"=="1" (
-	if exist "%RsWebuiPath%\webui" (
+	if exist "%RsWebuiBuildPath%" (
 		echo copy webui
 		mkdir "%RsDeployPath%\webui"
-		xcopy /S "%RsWebuiPath%\webui" "%RsDeployPath%\webui" %Quite%
+		xcopy /S "%RsWebuiBuildPath%" "%RsDeployPath%\webui" %Quite%
 	) else (
-		%cecho% error "Webui is enabled, but no webui data found at %RsWebuiPath%\webui"
+		%cecho% error "Webui is enabled, but no webui data found at %RsWebuiBuildPath%"
 		goto error
 	)
 )

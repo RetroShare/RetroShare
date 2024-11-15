@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: (C) 2004-2019 Retroshare Team <contact@retroshare.cc>
+# SPDX-FileCopyrightText: (C) 2004-2022 Retroshare Team <contact@retroshare.cc>
 # SPDX-License-Identifier: CC0-1.0
 
 *.o
@@ -16,4 +16,22 @@ Thumbs.db
 .kdev4
 *.kdev4
 
+.qmake.stash
+
 !supportlibs/libsam3/Makefile
+
+# QtCreator cruft
+*CMakeLists.txt.user*
+
+# Build artifacts
+/jsonapi-generator/src/jsonapi-generator
+/jsonapi-generator/src/jsonapi-generator-doxygen-final.conf
+/jsonapi-generator/src/jsonapi-includes.inl
+/jsonapi-generator/src/jsonapi-wrappers.inl
+/jsonapi-generator/src/xml/
+/retroshare-friendserver/src/retroshare-friendserver
+/retroshare-gui/src/include/
+/retroshare-gui/src/retroshare
+/retroshare-gui/src/temp/
+/retroshare-service/src/retroshare-service
+/*.tar.?z

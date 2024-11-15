@@ -28,17 +28,33 @@
 class AspectRatioPixmapLabel : public QLabel
 {
     Q_OBJECT
+
 public:
 	explicit AspectRatioPixmapLabel(QWidget *parent = nullptr);
 	virtual int heightForWidth( int width ) const override;
 	virtual QSize sizeHint() const override;
     QPixmap scaledPixmap() const;
+
+	// Add QAction to context menu (action won't be deleted)
+	void addContextMenuAction(QAction *action);
+
+Q_SIGNALS:
+	void calculateContextMenuActions();
+
 public slots:
     void setPixmap ( const QPixmap & );
+
 protected:
 	void resizeEvent(QResizeEvent *event) override;
+	virtual void contextMenuEvent(QContextMenuEvent *event);
+
+private slots:
+	void copyImage();
+	void saveImage();
+
 private:
     QPixmap pix;
+	QList<QAction*> mContextMenuActions;
 };
 
 #endif // ASPECTRATIOPIXMAPLABEL_H

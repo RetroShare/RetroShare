@@ -52,9 +52,9 @@ CONFIG *= retroshare_service
 no_retroshare_service:CONFIG -= retroshare_service
 
 # To disable RetroShare FriendServer append the following assignation to
-# qmake command line "CONFIG+=no_rs_friendserver"
+# qmake command line "CONFIG+=no_retroshare_friendserver"
 CONFIG *= retroshare_friendserver
-no_rs_friendserver:CONFIG -= retroshare_friendserver
+no_retroshare_friendserver:CONFIG -= retroshare_friendserver
 
 # To disable SQLCipher support append the following assignation to qmake
 # command line "CONFIG+=no_sqlcipher"
@@ -140,6 +140,7 @@ rs_macos10.12:CONFIG -= rs_macos10.11
 rs_macos10.13:CONFIG -= rs_macos10.11
 rs_macos10.14:CONFIG -= rs_macos10.11
 rs_macos10.15:CONFIG -= rs_macos10.11
+rs_macos11.1:CONFIG -= rs_macos10.11
 
 # To enable JSON API append the following assignation to qmake command line
 # "CONFIG+=rs_jsonapi"
@@ -455,13 +456,26 @@ defined in command line")
         RS_MINOR_VERSION = $$member(RS_GIT_DESCRIBE_SPLIT, 1)
 
         RS_GIT_DESCRIBE_SPLIT = $$member(RS_GIT_DESCRIBE_SPLIT, 2)
-        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE_SPLIT, -)
+        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE_SPLIT, )
 
-        RS_MINI_VERSION = $$member(RS_GIT_DESCRIBE_SPLIT, 0)
-
-        RS_GIT_DESCRIBE_SPLIT = $$member(RS_GIT_DESCRIBE_SPLIT, 1, -1)
-
-        RS_EXTRA_VERSION = $$join(RS_GIT_DESCRIBE_SPLIT,-,-)
+        # Split string into mini version (leading numbers) and extra version (string after the numbers)
+        RS_MINI_VERSION =
+        RS_EXTRA_VERSION =
+        for(CHAR, RS_GIT_DESCRIBE_SPLIT) {
+            isEqual(CHAR, 0) | greaterThan(CHAR, 0):lessThan(CHAR, 9) | isEqual(CHAR, 9) {
+                # Number
+                isEmpty(RS_EXTRA_VERSION) {
+                    # Add leading numbers to mini version
+                    RS_MINI_VERSION = $${RS_MINI_VERSION}$${CHAR}
+                } else {
+                    # Add to extra version
+                    RS_EXTRA_VERSION = $${RS_EXTRA_VERSION}$${CHAR}
+                }
+            } else {
+                # Add to extra version
+                RS_EXTRA_VERSION = $${RS_EXTRA_VERSION}$${CHAR}
+            }
+        }
 
         message("RetroShare version\
 $${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\
@@ -790,6 +804,13 @@ macx-* {
 		QMAKE_CXXFLAGS += -Wno-nullability-completeness
 		QMAKE_CFLAGS += -Wno-nullability-completeness
 	}
+	rs_macos11.1 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 11.1 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=11.1
+		QMAKE_MAC_SDK = macosx11.1
+		QMAKE_CXXFLAGS += -Wno-nullability-completeness
+		QMAKE_CFLAGS += -Wno-nullability-completeness
+	}
 
 
 
@@ -798,6 +819,10 @@ macx-* {
 	INCLUDEPATH += "/usr/local/include"
 	RS_UPNP_LIB = miniupnpc
 	QT += macextras
+	INCLUDEPATH += "/usr/local/opt/openssl/include"
+	QMAKE_LIBDIR += "/usr/local/opt/openssl/lib"
+	QMAKE_LIBDIR += "/usr/local/opt/sqlcipher/lib"
+	QMAKE_LIBDIR += "/usr/local/opt/miniupnpc/lib"
 }
 
 # If not yet defined attempt UPnP library autodetection should works at least

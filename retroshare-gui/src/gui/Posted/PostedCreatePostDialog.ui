@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>575</width>
-    <height>518</height>
+    <height>468</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -152,8 +152,8 @@
                    <property name="topMargin">
                     <number>9</number>
                    </property>
-                   <item row="1" column="0">
-                    <spacer name="addPicLeft_HSpacer">
+                   <item row="1" column="2">
+                    <spacer name="addPicRight_HSpacer">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
@@ -182,15 +182,8 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="0" colspan="3">
-                    <widget class="QLabel" name="sizeWarningLabel">
-                     <property name="text">
-                      <string>Post size is limited to 32 KB, pictures will be downscaled.</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="2">
-                    <spacer name="addPicRight_HSpacer">
+                   <item row="1" column="0">
+                    <spacer name="addPicLeft_HSpacer">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
@@ -203,6 +196,13 @@
                     </spacer>
                    </item>
                    <item row="3" column="0" colspan="3">
+                    <widget class="QLabel" name="sizeWarningLabel">
+                     <property name="text">
+                      <string>Post size is limited to 32 KB, pictures will be downscaled.</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="0" colspan="3">
                     <spacer name="addPic_VSpacer">
                      <property name="orientation">
                       <enum>Qt::Vertical</enum>
@@ -215,6 +215,26 @@
                      </property>
                     </spacer>
                    </item>
+                   <item row="2" column="1">
+                    <widget class="QPushButton" name="pasteButton">
+                     <property name="toolTip">
+                      <string>Paste image from clipboard</string>
+                     </property>
+                     <property name="text">
+                      <string>Paste Picture</string>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="../icons.qrc">
+                       <normaloff>:/icons/svg/paste_image.svg</normaloff>:/icons/svg/paste_image.svg</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>32</width>
+                       <height>32</height>
+                      </size>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </item>
                  <item row="1" column="0">
@@ -225,7 +245,7 @@
                    <property name="sizeHint" stdset="0">
                     <size>
                      <width>267</width>
-                     <height>138</height>
+                     <height>20</height>
                     </size>
                    </property>
                   </spacer>

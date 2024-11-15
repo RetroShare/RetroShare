@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>848</width>
     <height>600</height>
    </rect>
   </property>
@@ -196,22 +196,63 @@
            </widget>
           </item>
           <item>
-           <widget class="RSComboBox" name="viewBox">
-            <item>
-             <property name="text">
-              <string>Lastest post in thread</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Threaded View</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Flat View</string>
-             </property>
-            </item>
+           <widget class="QToolButton" name="threadedView_TB">
+            <property name="toolTip">
+             <string>Threaded</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/svg/threaded-view.svg</normaloff>:/icons/svg/threaded-view.svg</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="flatView_TB">
+            <property name="toolTip">
+             <string>Flat</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/svg/flat-view.svg</normaloff>:/icons/svg/flat-view.svg</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="latestPostInThreadView_TB">
+            <property name="toolTip">
+             <string>Latest post in thread</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/svg/lastpost-view.svg</normaloff>:/icons/svg/lastpost-view.svg</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
@@ -233,6 +274,11 @@
        </item>
        <item>
         <widget class="QTreeView" name="threadTreeWidget">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -522,9 +568,6 @@
            <family>MS Sans Serif</family>
           </font>
          </property>
-         <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
-         </property>
         </widget>
        </item>
       </layout>
@@ -532,15 +575,6 @@
     </widget>
    </item>
   </layout>
-  <action name="actionSave_image">
-   <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/document_save.png</normaloff>:/images/document_save.png</iconset>
-   </property>
-   <property name="text">
-    <string>Save image</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>

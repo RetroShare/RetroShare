@@ -70,6 +70,10 @@ macx {
 	#QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
 	LIBS += -lz 
         #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
+	RC_FILE = $$files($$PWD/logo.icns)
+        mac_icon.files = $$files($$PWD/logo.icns)
+        mac_icon.path = Contents/Resources
+        QMAKE_BUNDLE_DATA += mac_icon
 
 	for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
 
@@ -87,12 +91,7 @@ macx {
 ################################# Windows ##########################################
 
 win32-g++|win32-clang-g++ {
-	CONFIG(debug, debug|release) {
-		# show console output
-		CONFIG += console
-	} else {
-		CONFIG -= console
-	}
+	CONFIG += console
 
 	CONFIG(debug, debug|release) {
 	} else {

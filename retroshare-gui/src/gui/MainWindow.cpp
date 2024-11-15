@@ -28,9 +28,15 @@
 #include <QString>
 #include <QUrl>
 #include <QtDebug>
+#include <QMenuBar>
 
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsconfig.h>
+#include <util/argstream.h>
+
+#if defined(Q_OS_DARWIN)
+#include "gui/common/MacDockIconHandler.h"
+#endif
 
 #ifdef MESSENGER_WINDOW
 #include "MessengerWindow.h"
@@ -114,7 +120,7 @@
 #include "gui/statistics/StatisticsWindow.h"
 
 #include "gui/connect/ConnectFriendWizard.h"
-#include "gui/common/RsCollection.h"
+#include "gui/common/RsCollectionDialog.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
 #include "common/StatusDefs.h"
@@ -141,12 +147,10 @@
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
 #define IMAGE_BWGRAPH           ":/icons/png/bandwidth.png"
-#define IMAGE_MESSENGER         ":/images/rsmessenger48.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_NEWRSCOLLECTION   ":/images/library.png"
 #define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
 #define IMAGE_OPTIONS           ":/images/settings.png"
-#define IMAGE_UNFINISHED        ":/images/underconstruction.png"
 #define IMAGE_MINIMIZE          ":/icons/fullscreen.png"
 #define IMAGE_MAXIMIZE          ":/icons/fullscreen-exit.png"
 
@@ -208,7 +212,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
             hiddenmode = true;
     }
 
-    setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation);
+    setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(RsApplication::retroshareVersion(true)) + " - " + nameAndLocation);
     connect(rApp, SIGNAL(newArgsReceived(QStringList)), this, SLOT(receiveNewArgs(QStringList)));
 
     /* add url handler for RetroShare links */
@@ -379,6 +383,11 @@ MainWindow::~MainWindow()
     delete sysTrayStatus;
     delete trayIcon;
     delete trayMenu;
+#if defined(Q_OS_DARWIN)
+    delete menuBar;
+    delete dockMenu;
+    MacDockIconHandler::cleanup();
+#endif
 //  delete notifyMenu; // already deleted by the deletion of trayMenu
     StatisticsWindow::releaseInstance();
 
@@ -468,9 +477,7 @@ void MainWindow::initStackedPage()
  }
 
 #ifndef RS_RELEASE_VERSION
-#ifdef PLUGINMGR
   addPage(pluginsPage = new gui::PluginsPage(ui->stackPages), grp, NULL);
-#endif
 #endif
 
 #undef GETSTARTED_GUI
@@ -489,11 +496,11 @@ void MainWindow::initStackedPage()
   addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
 
   //List All notify before Setting was created
-  QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;
-  for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
-      UserNotify *userNotify = notifyIt->first->getUserNotify();
+  for (auto notifyIt:notify)
+  {
+      UserNotify *userNotify = notifyIt.first->getUserNotify();
       if (userNotify) {
-          userNotify->initialize(ui->toolBarPage, notifyIt->second.first, notifyIt->second.second);
+          userNotify->initialize(ui->toolBarPage, notifyIt.second.first, notifyIt.second.second);
           connect(userNotify, SIGNAL(countChanged()), this, SLOT(updateTrayCombine()));
           userNotifyList.push_back(userNotify);
       }
@@ -507,7 +514,7 @@ void MainWindow::initStackedPage()
 
 
 #ifdef UNFINISHED
-  addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui->toolBar), &MainWindow::showApplWindow, SLOT(showApplWindow()));
+  addAction(new QAction(QIcon(), tr("Unfinished"), ui->toolBar), &MainWindow::showApplWindow, SLOT(showApplWindow()));
   ui->toolBarAction->addSeparator();
   notify += applicationWindow->getNotify();
 #endif
@@ -625,7 +632,7 @@ void MainWindow::createTrayIcon()
 
     trayMenu->addSeparator();
 #ifdef MESSENGER_WINDOW
-    trayMenu->addAction(QIcon(IMAGE_MESSENGER), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
+    trayMenu->addAction(QIcon(), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
 #endif
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
 #ifdef RS_JSONAPI
@@ -638,7 +645,7 @@ void MainWindow::createTrayIcon()
 
 
 #ifdef UNFINISHED
-    trayMenu->addAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this, SLOT(showApplWindow()));
+    trayMenu->addAction(QIcon(), tr("Applications"), this, SLOT(showApplWindow()));
 #endif
     trayMenu->addAction(QIcon(IMAGE_PREFERENCES), tr("Options"), this, SLOT(showSettings()));
     trayMenu->addAction(QIcon(IMG_HELP), tr("Help"), this, SLOT(showHelpDialog()));
@@ -655,9 +662,74 @@ void MainWindow::createTrayIcon()
     trayIcon->setContextMenu(trayMenu);
     trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
 
+#if defined(Q_OS_DARWIN)
+    // Note: On macOS, the Dock icon is used to provide the tray's functionality.
+    MacDockIconHandler* dockIconHandler = MacDockIconHandler::instance();
+    connect(dockIconHandler, &MacDockIconHandler::dockIconClicked, [this] {
+        show();
+        activateWindow();
+    });
+#endif
+
+#if defined(Q_OS_DARWIN)
+    createMenuBar();
+#endif
+
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
     trayIcon->show();
 }
+
+#if defined(Q_OS_DARWIN)
+/** Creates a new menubar for macOS */
+void MainWindow::createMenuBar()
+{
+    /* Mac users sure like their shortcuts. */
+    actionMinimize = new QAction(tr("Minimize"),this);
+    actionMinimize->setShortcutContext(Qt::ApplicationShortcut);
+    actionMinimize->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_M));
+    actionMinimize->setShortcutVisibleInContextMenu(true);
+    connect(actionMinimize,SIGNAL(triggered()),this,SLOT(minimizeWindow())) ; 
+
+    actionCloseWindow = new QAction(tr("Close window"),this);
+    actionCloseWindow->setShortcutContext(Qt::ApplicationShortcut);
+    actionCloseWindow->setShortcut(QKeySequence::Close);
+    actionCloseWindow->setShortcutVisibleInContextMenu(true);
+    connect(actionCloseWindow,SIGNAL(triggered()),this,SLOT(closeWindow())) ;
+
+    menuBar = new QMenuBar(this);
+    QMenu *fileMenu = menuBar->addMenu("");
+    fileMenu->addAction(actionMinimize);
+    fileMenu->addAction(actionCloseWindow);
+
+    dockMenu = new QMenu(this);
+    dockMenu->setAsDockMenu();
+    dockMenu->addAction(tr("Open Messages"), this, SLOT(showMess()));
+    dockMenu->addAction(tr("Bandwidth Graph"), this, SLOT(showBandwidthGraph()));
+    dockMenu->addAction(tr("Statistics"), this, SLOT(showStatisticsWindow()));
+    dockMenu->addAction(tr("Options"), this, SLOT(showSettings()));
+    dockMenu->addAction(tr("Help"), this, SLOT(showHelpDialog()));
+
+    dockMenu->addSeparator();
+    QMenu *statusMenu = dockMenu->addMenu(tr("Status"));
+    initializeStatusObject(statusMenu, true);
+
+}
+#endif
+
+#if defined(Q_OS_DARWIN)
+void MainWindow::minimizeWindow()
+{
+    setWindowState(windowState() | Qt::WindowMinimized);
+}
+#endif
+
+#if defined(Q_OS_DARWIN)
+void MainWindow::closeWindow()
+{
+    // On macOS window close is basically equivalent to window hide.
+    close();
+}
+#endif
 
 void MainWindow::showBandwidthGraph()
 {
@@ -1083,7 +1155,9 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return _instance->gxsforumDialog;
 		case Posted:
 			return _instance->postedDialog;
-	}
+        case Home:
+            return _instance->homePage;
+    }
 
    return NULL;
 }
@@ -1180,10 +1254,91 @@ void MainWindow::doQuit()
 	rApp->quit();
 }
 
+// This method parses arguments passed by the operating system. All arguments
+// except -r, -f, -o and lists of rscollection files and rslinks are discarded.
+//
 void MainWindow::receiveNewArgs(QStringList args)
 {
-	Rshare::parseArguments(args, false);
-	processLastArgs();
+    RsInfo() << "Received new arguments from operating system call.";
+
+    std::string argstring = RsApplication::applicationFilePath().toStdString() ;
+
+    for(auto l:args)
+        argstring += " " + l.toStdString();
+
+    // This class does all the job at once: validate arguments, and parses them.
+
+    std::vector<std::string> links_and_files;
+
+    argstream as(argstring.c_str());
+
+    QString omValues = QString(";full;noturtle;gaming;minimal;");
+    std::string opModeStr;
+    std::string retroshare_link_url;
+    std::string rscollection_file;
+
+    as  >> parameter('r',"rslink",retroshare_link_url,"Retroshare:// link","Retroshare link to open in Downloads " ,false)
+        >> parameter('f',"rsfile",rscollection_file,"file","File to open " ,false)
+        >> parameter('o',"opmode",opModeStr,"opmode","Set mode (Full, NoTurtle, Gaming, Minimal) " ,false)
+        >> values<std::string>(back_inserter(links_and_files),"links and files");
+
+    if(!as.isOk())
+    {
+        RsErr() << "Error while parsing arguments:" ;
+        RsErr() << as.errorLog() ;
+        return;
+    }
+    if(!opModeStr.empty() && omValues.contains(";"+QString::fromStdString(opModeStr).toLower()+";"))
+    {
+        QString opmode = QString::fromStdString(opModeStr).toLower();
+        //RsApplication::setOpMode(opModeStr.toLower()); // Do we need this??
+
+        RsInfo() << "Setting new operating mode to \"" << opmode.toStdString() << "\"";
+
+        if (opmode == "noturtle")
+            opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::NOTURTLE) - 1);
+        else if (opmode == "gaming")
+            opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::GAMING) - 1);
+        else if (opmode == "minimal")
+            opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::MINIMAL) - 1);
+        else if (opmode != "")
+            opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::FULL) - 1);
+
+        opModeStatus->setOpMode();
+    }
+
+    // Sort all collected arguments into rscollection files and retroshare links, accordingly
+
+    QStringList rscollection_files;
+    QList<RetroShareLink> rslinks;
+
+    auto sort = [&](const QString s) {
+
+        if(QFile(s).exists() && s.endsWith(".rscollection"))
+            rscollection_files.append(QString::fromUtf8(rscollection_file.c_str()));
+        else if(s.startsWith("retroshare://"))
+        {
+            RetroShareLink link(s);
+
+            if(link.valid())
+                rslinks.push_back(link);
+        }
+    };
+
+    sort(QString::fromUtf8(rscollection_file.c_str()));
+    sort(QString::fromUtf8(retroshare_link_url.c_str()));
+
+    for(auto s:links_and_files)
+        sort(QString::fromUtf8(s.c_str()));
+
+    // Now handle links and rscollection files.
+
+    for(auto file:rscollection_files)
+        if(file.endsWith(".rscollection"))
+            openRsCollection(file);
+
+    for(auto link:rslinks)
+        retroshareLinkActivated(link.toUrl());
 }
 
 void MainWindow::displayErrorMessage(int /*a*/,int /*b*/,const QString& error_msg)
@@ -1222,7 +1377,11 @@ void MainWindow::updateMenu()
 
 void MainWindow::toggleVisibility(QSystemTrayIcon::ActivationReason e)
 {
+#if defined(Q_OS_DARWIN)
+    if (e == QSystemTrayIcon::DoubleClick) {
+#else
     if (e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick) {
+#endif
         if (isHidden() || isMinimized()) {
             show();
             if (isMinimized()) {
@@ -1546,45 +1705,9 @@ void MainWindow::retroshareLinkActivated(const QUrl &url)
 void MainWindow::openRsCollection(const QString &filename)
 {
 	QFileInfo qinfo(filename);
-	if (qinfo.exists()) {
-		if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-			RsCollection collection;
-			collection.openColl(qinfo.absoluteFilePath());
-		}
-	}
-}
 
-void MainWindow::processLastArgs()
-{
-	while (!Rshare::links()->isEmpty()) {
-		std::cerr << "MainWindow::processLastArgs() : " << Rshare::links()->count() << std::endl;
-		/* Now use links from the command line, because no RetroShare was running */
-		RetroShareLink link(Rshare::links()->takeFirst());
-		if (link.valid()) {
-			retroshareLinkActivated(link.toUrl());
-		}
-	}
-	while (!Rshare::files()->isEmpty()) {
-		/* Now use files from the command line, because no RetroShare was running */
-		openRsCollection(Rshare::files()->takeFirst());
-	}
-	/* Handle the -opmode options. */
-	if (opModeStatus) {
-		QString opmode = Rshare::opmode().toLower();
-		if (opmode == "noturtle") {
-			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::NOTURTLE) - 1);
-		} else if (opmode == "gaming") {
-			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::GAMING) - 1);
-		} else if (opmode == "minimal") {
-			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::MINIMAL) - 1);
-		} else if (opmode != "") {
-			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::FULL) - 1);
-		}
-		opModeStatus->setOpMode();
-	} else {
-		std::cerr << "ERR: MainWindow::processLastArgs opModeStatus is not initialized.";
-	}
-
+    if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+            RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath());
 }
 
 void MainWindow::switchVisibilityStatus(StatusElement e,bool b)
@@ -1630,6 +1753,11 @@ NATStatus *MainWindow::natstatusInstance()
 	return natstatus;
 }
 
+void MainWindow::torstatusReset()
+{
+	if(torstatus != nullptr)
+		torstatus->reset();
+}
 DHTStatus *MainWindow::dhtstatusInstance()
 {
 	return dhtstatus;

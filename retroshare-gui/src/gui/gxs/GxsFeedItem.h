@@ -52,11 +52,6 @@ protected:
 	//virtual bool isLoading();
 	//virtual void fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool complete);
 
-#ifdef TO_REMOVE
-	/* TokenResponse */
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-#endif
-
 protected slots:
 	void comments(const QString &title);
 	void copyMessageLink();

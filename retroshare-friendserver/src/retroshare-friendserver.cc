@@ -27,6 +27,7 @@
 
 #include "retroshare/rstor.h"
 #include "retroshare/rsinit.h"
+#include "pqi/authgpg.h"
 
 #include "friendserver.h"
 
@@ -47,19 +48,31 @@ int main(int argc, char* argv[])
 	//RsControl::earlyInitNotificationSystem();
 
     std::string base_directory = "FSData";
+    std::string tor_executable_path ;
+    bool verbose = false;
 
 	argstream as(argc,argv);
 
     as >> parameter( 'c',"base-dir", base_directory, "set base directory to store data files (keys, etc)", false )
-	   >> help( 'h', "help", "Display this Help" );
+       >> parameter( 't',"tor-executable", tor_executable_path, "set absolute path for tor executable", false )
+       >> option( 'v',"verbose", verbose, "display additional debug information")
+       >> help( 'h', "help", "Display this Help" );
 
 	as.defaultErrorHandling(true, true);
 
     RsConfigOptions conf;
+    conf.optBaseDir = base_directory;
     conf.main_executable_path = argv[0];
+
+    if(!tor_executable_path.empty())
+        RsTor::setTorExecutablePath(tor_executable_path);
+
+    RsTor::setVerbose(verbose);
 
     RsInit::InitRsConfig();
     RsInit::InitRetroShare(conf);
+
+    AuthPGP::exit();	// This allows to release the keyring created by libretroshare, since it's not useful, as TorManager has its own.
 
     // Create the base directory if needed
 
@@ -68,6 +81,19 @@ int main(int argc, char* argv[])
         RsErr() << "Cannot create base directory \"" << base_directory << "\". Check permissions, paths, etc." ;
         return 1;
     }
+
+    // Check the existance of the Tor executable path
+
+    auto tor_path = RsTor::torExecutablePath();
+
+    if (!RsDirUtil::fileExists(tor_path))
+    {
+        RsErr() << "Tor executable \"" << tor_path << "\" not found. Try supplying the correct full path for a tor executable with the -t option.";
+        return 1;
+    }
+    else
+        RsDbg() << "Using Tor executable: \"" << tor_path << "\"";
+
     // Create/start TorManager
 
     RsTor::setTorDataDirectory(RsDirUtil::makePath(base_directory,"tor"));
@@ -89,22 +115,22 @@ int main(int argc, char* argv[])
 
     RsTor::getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,target_port) ;
 
-    RsDbg() << "Tor properly started: " ;
-    RsDbg() << "  Hidden service address: " << onion_address << ":" << service_port;
-    RsDbg() << "  Target address        : " << service_target_address << ":" << target_port;
+    RsInfo() << "Tor properly started: " ;
+    RsInfo() << "  Hidden service address: " << onion_address << ":" << service_port;
+    RsInfo() << "  Target address        : " << service_target_address << ":" << target_port;
 
     // Now start the real thing.
 
     FriendServer fs(base_directory,service_target_address,target_port);
     fs.start();
 
-    RsDbg() << "";
-    RsDbg() << "================== Retroshare Friend Server has properly started =====================" ;
-    RsDbg() << "=                                                                                    =";
-    RsDbg() << "= Address:Port " << onion_address << ":" << service_port << ((service_port<10000)?" ":"") << "  =";
-    RsDbg() << "=                                                                                    =";
-    RsDbg() << "======================================================================================" ;
-    RsDbg() << "";
+    RsInfo() << "";
+    RsInfo() << "================== Retroshare Friend Server has properly started =====================" ;
+    RsInfo() << "=                                                                                    =";
+    RsInfo() << "= Address:Port " << onion_address << ":" << service_port << ((service_port<10000)?" ":"") << "  =";
+    RsInfo() << "=                                                                                    =";
+    RsInfo() << "======================================================================================" ;
+    RsInfo() << "";
 
     while(fs.isRunning())
         std::this_thread::sleep_for(std::chrono::seconds(2));

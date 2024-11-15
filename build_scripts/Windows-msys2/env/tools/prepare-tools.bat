@@ -34,7 +34,7 @@ if not exist "%EnvToolsPath%\cecho.exe" (
 	if not exist "%EnvDownloadPath%\%cCEhoInstall%" echo Cannot download cecho installation& goto error
 
 	echo Unpack cecho
-	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%CEchoInstall%"
+	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%CEchoInstall%" -y -bso0
 	copy "%EnvTempPath%\cecho.exe" "%EnvToolsPath%"
 
 	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"

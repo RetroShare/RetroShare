@@ -27,7 +27,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/ShareManager.h"
 #include "gui/common/PeerDefs.h"
-#include "gui/common/RsCollection.h"
+#include "gui/common/RsCollectionDialog.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/gxschannels/GxsChannelDialog.h"
 #include "gui/gxsforums/GxsForumsDialog.h"
@@ -55,6 +55,16 @@
 
 #include <set>
 
+#define SHARED_FILES_DIALOG_COLUMN_NAME          0
+#define SHARED_FILES_DIALOG_COLUMN_FILENB        1
+#define SHARED_FILES_DIALOG_COLUMN_SIZE          2
+#define SHARED_FILES_DIALOG_COLUMN_AGE           3
+#define SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS 4
+#define SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR   5
+#define SHARED_FILES_DIALOG_COLUMN_COUNT         6
+
+#define SHARED_FILES_DIALOG_FILTER_STRING "filtered"
+
 /* Images for context menu icons */
 #define IMAGE_DOWNLOAD       ":/icons/png/download.png"
 #define IMAGE_PLAY           ":/images/start.png"
@@ -75,7 +85,7 @@
 #define IMAGE_COLLOPEN       ":/icons/collections.png"
 #define IMAGE_EDITSHARE      ":/icons/png/pencil-edit-button.png"
 #define IMAGE_MYFILES        ":/icons/svg/folders1.svg"
-#define IMAGE_UNSHAREEXTRA   ":/images/button_cancel.png"
+#define IMAGE_UNSHAREEXTRA   ":/icons/cancel.svg"
 
 /*define viewType_CB value */
 #define VIEW_TYPE_TREE       0
@@ -91,7 +101,7 @@
 
 //#define DEBUG_SHARED_FILES_DIALOG 1
 
-const QString Image_AddNewAssotiationForFile = ":/images/kcmsystem24.png";
+const QString Image_AddNewAssotiationForFile = ":/icons/svg/options.svg";
 
 class SFDSortFilterProxyModel : public QSortFilterProxyModel
 {
@@ -187,17 +197,17 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     tree_proxyModel->setSourceModel(tree_model);
     tree_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
     tree_proxyModel->setSortRole(RetroshareDirModel::SortRole);
-    tree_proxyModel->sort(COLUMN_NAME);
+    tree_proxyModel->sort(SHARED_FILES_DIALOG_COLUMN_NAME);
     tree_proxyModel->setFilterRole(RetroshareDirModel::FilterRole);
-    tree_proxyModel->setFilterRegExp(QRegExp(QString(RETROSHARE_DIR_MODEL_FILTER_STRING))) ;
+    tree_proxyModel->setFilterRegExp(QRegExp(QString(SHARED_FILES_DIALOG_FILTER_STRING))) ;
 
     flat_proxyModel = new SFDSortFilterProxyModel(flat_model, this);
     flat_proxyModel->setSourceModel(flat_model);
     flat_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
     flat_proxyModel->setSortRole(RetroshareDirModel::SortRole);
-    flat_proxyModel->sort(COLUMN_NAME);
+    flat_proxyModel->sort(SHARED_FILES_DIALOG_COLUMN_NAME);
     flat_proxyModel->setFilterRole(RetroshareDirModel::FilterRole);
-    flat_proxyModel->setFilterRegExp(QRegExp(QString(RETROSHARE_DIR_MODEL_FILTER_STRING))) ;
+    flat_proxyModel->setFilterRegExp(QRegExp(QString(SHARED_FILES_DIALOG_FILTER_STRING))) ;
 
     connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
     connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));
@@ -219,12 +229,12 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     int charWidth = ui.dirTreeView->fontMetrics().horizontalAdvance("_");
 #endif
 
-    header->resizeSection ( COLUMN_NAME         , charWidth*100 );
-    header->resizeSection ( COLUMN_FILENB       , charWidth*15 );
-    header->resizeSection ( COLUMN_SIZE         , charWidth*10 );
-    header->resizeSection ( COLUMN_AGE          , charWidth*6 );
-    header->resizeSection ( COLUMN_FRIEND_ACCESS, charWidth*10 );
-    header->resizeSection ( COLUMN_WN_VISU_DIR  , charWidth*20 );
+    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_NAME         , charWidth*100 );
+    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_FILENB       , charWidth*15 );
+    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_SIZE         , charWidth*10 );
+    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_AGE          , charWidth*6 );
+    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, charWidth*10 );
+    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR  , charWidth*20 );
 
     header->setStretchLastSection(true);
 
@@ -256,7 +266,7 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
     : SharedFilesDialog(false,parent)
 {
     // Hide columns after loading the settings
-    ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, false) ;
+    ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, false) ;
     ui.downloadButton->hide() ;
 
     // load settings
@@ -275,14 +285,14 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
 
     ui.titleBarPixmap->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_MYFILES)) ;
 
-    ui.dirTreeView->setItemDelegateForColumn(COLUMN_FRIEND_ACCESS,new ShareFlagsItemDelegate()) ;
+    ui.dirTreeView->setItemDelegateForColumn(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS,new ShareFlagsItemDelegate()) ;
 }
 
 RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
     : SharedFilesDialog(true,parent)
 {
-    ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, false) ;
-    ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, true) ;
+    ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, false) ;
+    ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, true) ;
     ui.checkButton->hide() ;
 
     connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadRemoteSelected()));
@@ -309,7 +319,7 @@ void SharedFilesDialog::hideEvent(QHideEvent *)
         model->setVisible(false) ;
 }
 
-void SharedFilesDialog::showEvent(QShowEvent *)
+void SharedFilesDialog::showEvent(QShowEvent *event)
 {
     if(model!=NULL)
     {
@@ -321,6 +331,10 @@ void SharedFilesDialog::showEvent(QShowEvent *)
           model->update() ;
 
         restoreExpandedPathsAndSelection(expanded_indexes,hidden_indexes,selected_indexes);
+    }
+
+    if (!event->spontaneous()) {
+        updateFontSize();
     }
 }
 RemoteSharedFilesDialog::~RemoteSharedFilesDialog()
@@ -436,9 +450,9 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
     restoreExpandedPathsAndSelection(expanded_indexes,hidden_indexes,selected_indexes);
 
     QHeaderView * header = ui.dirTreeView->header () ;
-    QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(header, SHARED_FILES_DIALOG_COLUMN_NAME, QHeaderView::Interactive);
 
-    ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal, COLUMN_NAME, COLUMN_WN_VISU_DIR) ;
+    ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal, SHARED_FILES_DIALOG_COLUMN_NAME, SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR) ;
 
 //    recursRestoreExpandedItems(ui.dirTreeView->rootIndex(),expanded_indexes);
     FilterItems();
@@ -448,9 +462,9 @@ void LocalSharedFilesDialog::showProperColumns()
 {
     if(model == tree_model)
     {
-        ui.dirTreeView->setColumnHidden(COLUMN_FILENB, false) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, false) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, false) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FILENB, false) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, false) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, false) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
         ui.filterLabel->hide();
         ui.filterPatternLineEdit->hide();
@@ -460,9 +474,9 @@ void LocalSharedFilesDialog::showProperColumns()
     }
     else
     {
-        ui.dirTreeView->setColumnHidden(COLUMN_FILENB, true) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, true) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, false) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FILENB, true) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, true) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, false) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
         ui.filterLabel->show();
         ui.filterPatternLineEdit->show();
@@ -473,9 +487,9 @@ void RemoteSharedFilesDialog::showProperColumns()
 {
     if(model == tree_model)
     {
-        ui.dirTreeView->setColumnHidden(COLUMN_FILENB, false) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, true) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, true) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FILENB, false) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, true) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, true) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
         ui.filterLabel->hide();
         ui.filterPatternLineEdit->hide();
@@ -485,9 +499,9 @@ void RemoteSharedFilesDialog::showProperColumns()
     }
     else
     {
-        ui.dirTreeView->setColumnHidden(COLUMN_FILENB, true) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, false) ;
-        ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, false) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FILENB, true) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, false) ;
+        ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, false) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
         ui.filterLabel->show();
         ui.filterPatternLineEdit->show();
@@ -515,7 +529,6 @@ void LocalSharedFilesDialog::checkUpdate()
 void LocalSharedFilesDialog::forceCheck()
 {
     rsFiles->ForceDirectoryCheck();
-    return;
 }
 
 void RemoteSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
@@ -639,7 +652,7 @@ void SharedFilesDialog::copyLinks(const QModelIndexList& lst, bool remote,QList<
 
             QString dir_name = QDir(QString::fromUtf8(details.name.c_str())).dirName();
 
-            RetroShareLink link = RetroShareLink::createFileTree(dir_name,ft->mTotalSize,ft->mTotalFiles,QString::fromStdString(ft->toRadix64())) ;
+            RetroShareLink link = RetroShareLink::createFileTree(dir_name,ft->totalFileSize(),ft->numFiles(),QString::fromStdString(ft->toRadix64())) ;
 
 			if(link.valid())
 				urls.push_back(link) ;
@@ -721,7 +734,32 @@ void SharedFilesDialog::sendLinkTo()
 void SharedFilesDialog::collCreate()
 {
     QModelIndexList lst = getSelected();
-    model->createCollectionFile(this, lst);
+
+    std::vector <DirDetails> dirVec;
+    model->getDirDetailsFromSelect(lst, dirVec);
+
+    auto RemoteMode = isRemote();
+    FileSearchFlags f = RemoteMode?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL ;
+
+    QString dir_name;
+
+    if(!RemoteMode)
+    {
+        if(!dirVec.empty())
+        {
+            const DirDetails& details = dirVec[0];
+            dir_name = QDir(QString::fromUtf8(details.name.c_str())).dirName();
+        }
+    }
+
+    RsFileTree tree;
+
+    for(uint32_t i=0;i<dirVec.size();++i)
+        tree.addFileTree(tree.root(),*RsFileTree::fromDirDetails(dirVec[i],RemoteMode,true));
+
+    RsCollectionDialog::openNewCollection(tree);
+
+            //auto ft = RsFileTree::fromDirDetails(details,remote);
 }
 
 void SharedFilesDialog::collModif()
@@ -746,12 +784,8 @@ void SharedFilesDialog::collModif()
     /* open file with a suitable application */
     QFileInfo qinfo;
     qinfo.setFile(QString::fromUtf8(path.c_str()));
-    if (qinfo.exists()) {
-        if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-            RsCollection collection;
-            collection.openColl(qinfo.absoluteFilePath());
-        }
-    }
+    if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+            RsCollectionDialog::editExistingCollection(qinfo.absoluteFilePath());
 }
 
 void SharedFilesDialog::collView()
@@ -776,12 +810,8 @@ void SharedFilesDialog::collView()
     /* open file with a suitable application */
     QFileInfo qinfo;
     qinfo.setFile(QString::fromUtf8(path.c_str()));
-    if (qinfo.exists()) {
-        if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-            RsCollection collection;
-            collection.openColl(qinfo.absoluteFilePath(), true);
-        }
-    }
+    if (qinfo.exists() && qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString))
+        RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath(), true);
 }
 
 void SharedFilesDialog::collOpen()
@@ -808,20 +838,24 @@ void SharedFilesDialog::collOpen()
             qinfo.setFile(QString::fromUtf8(path.c_str()));
             if (qinfo.exists()) {
                 if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
-                    RsCollection collection;
-                    if (collection.load(qinfo.absoluteFilePath())) {
-                        collection.downloadFiles();
-                        return;
-                    }
+
+                    RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath(),true);
                 }
             }
         }
     }
 
-    RsCollection collection;
-    if (collection.load(this)) {
-        collection.downloadFiles();
-    }
+    QString fileName;
+    if (!misc::getOpenFileName(nullptr, RshareSettings::LASTDIR_EXTRAFILE, QApplication::translate("RsCollectionFile", "Open collection file"), QApplication::translate("RsCollectionFile", "Collection files") + " (*." + RsCollection::ExtensionString + ")", fileName))
+        return ;
+
+    std::cerr << "Got file name: " << fileName.toStdString() << std::endl;
+
+    RsCollection::RsCollectionErrorCode err;
+    RsCollection collection(fileName,err);
+
+    if(err == RsCollection::RsCollectionErrorCode::COLLECTION_NO_ERROR)
+        RsCollectionDialog::downloadFiles(collection);
 }
 
 void LocalSharedFilesDialog::playselectedfiles()
@@ -1132,12 +1166,14 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
     collViewAct->setEnabled(bIsRsColl);
     collOpenAct->setEnabled(true);
 
-    QMenu collectionMenu(tr("Collection"), this);
+    QMenu collectionMenu(tr("Retroshare Collection"), this);
     collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
     collectionMenu.addAction(collCreateAct);
-    collectionMenu.addAction(collModifAct);
-    collectionMenu.addAction(collViewAct);
-    collectionMenu.addAction(collOpenAct);
+
+    if(bIsRsColl)
+        collectionMenu.addAction(collModifAct);
+    //collectionMenu.addAction(collViewAct);
+    //collectionMenu.addAction(collOpenAct);
 
     switch (type) {
         case DIR_TYPE_DIR :
@@ -1333,9 +1369,9 @@ void SharedFilesDialog::indicatorChanged(int index)
     ui.dirTreeView->update(ui.dirTreeView->rootIndex());
 
     if (correct_indicator[index] != IND_ALWAYS)
-        ui.dirTreeView->sortByColumn(COLUMN_AGE, Qt::AscendingOrder);
+        ui.dirTreeView->sortByColumn(SHARED_FILES_DIALOG_COLUMN_AGE, Qt::AscendingOrder);
     else
-        ui.dirTreeView->sortByColumn(COLUMN_NAME, Qt::AscendingOrder);
+        ui.dirTreeView->sortByColumn(SHARED_FILES_DIALOG_COLUMN_NAME, Qt::AscendingOrder);
 
     updateDisplay() ;
 }
@@ -1672,3 +1708,20 @@ bool SharedFilesDialog::tree_FilterItem(const QModelIndex &index, const QString 
     return (visible || visibleChildCount);
 }
 #endif
+
+void SharedFilesDialog::updateFontSize()
+{
+#if defined(Q_OS_DARWIN)
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
+#else
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
+#endif
+    QFont newFont = ui.dirTreeView->font();
+    if (newFont.pointSize() != customFontSize) {
+        newFont.setPointSize(customFontSize);
+        QFontMetricsF fontMetrics(newFont);
+        int iconHeight = fontMetrics.height()*1.5;
+        ui.dirTreeView->setFont(newFont);
+        ui.dirTreeView->setIconSize(QSize(iconHeight, iconHeight));
+    }
+}

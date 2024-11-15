@@ -89,7 +89,7 @@ void p3FeedReaderThread::threadTick()
 						/* first, filter the messages */
 						mFeedReader->onProcessSuccess_filterMsg(feed.feedId, msgs);
 						if (isRunning()) {
-							/* second, process the descriptions */
+							/* second, process the descriptions and attachment */
 							for (it = msgs.begin(); it != msgs.end(); ) {
 								if (!isRunning()) {
 									break;
@@ -107,7 +107,7 @@ void p3FeedReaderThread::threadTick()
 
 									std::list<RsFeedReaderMsg*> msgSingle;
 									msgSingle.push_back(mi);
-									mFeedReader->onProcessSuccess_addMsgs(feed.feedId, msgSingle, true);
+									mFeedReader->onProcessSuccess_addMsgs(feed.feedId, msgSingle);
 
 									/* delete not accepted message */
 									std::list<RsFeedReaderMsg*>::iterator it1;
@@ -122,12 +122,15 @@ void p3FeedReaderThread::threadTick()
 									++it;
 								}
 							}
-							if (isRunning()) {
-								if (result == RS_FEED_ERRORSTATE_OK) {
-									/* third, add messages */
-									mFeedReader->onProcessSuccess_addMsgs(feed.feedId, msgs, false);
-								} else {
-									mFeedReader->onProcessError(feed.feedId, result, errorString);
+
+							if (!feed.preview) {
+								if (isRunning()) {
+									if (result == RS_FEED_ERRORSTATE_OK) {
+										/* third, add messages */
+										mFeedReader->onProcessSuccess_addMsgs(feed.feedId, msgs);
+									} else {
+										mFeedReader->onProcessError(feed.feedId, result, errorString);
+									}
 								}
 							}
 						}
@@ -150,12 +153,12 @@ void p3FeedReaderThread::threadTick()
 /****************************** Download ***********************************/
 /***************************************************************************/
 
-static bool isContentType(const std::string &contentType, const char *type)
+bool p3FeedReaderThread::isContentType(const std::string &contentType, const char *type)
 {
 	return (strncasecmp(contentType.c_str(), type, strlen(type)) == 0);
 }
 
-static bool toBase64(const std::vector<unsigned char> &data, std::string &base64)
+bool p3FeedReaderThread::toBase64(const std::vector<unsigned char> &data, std::string &base64)
 {
 	bool result = false;
 
@@ -184,6 +187,28 @@ static bool toBase64(const std::vector<unsigned char> &data, std::string &base64
 	return result;
 }
 
+bool p3FeedReaderThread::fromBase64(const std::string &base64, std::vector<unsigned char> &data)
+{
+	bool result = false;
+
+	BIO *b64 = BIO_new(BIO_f_base64());
+	if (b64) {
+		BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+		BIO *source = BIO_new_mem_buf(base64.c_str(), -1); // read-only source
+		if (source) {
+			BIO_push(b64, source);
+			const int maxlen = base64.length() / 4 * 3 + 1;
+			data.resize(maxlen);
+			const int len = BIO_read(b64, data.data(), maxlen);
+			data.resize(len);
+			result = true;
+		}
+		BIO_free_all(b64);
+	}
+
+	return result;
+}
+
 static std::string getBaseLink(std::string link)
 {
 	size_t found = link.rfind('/');
@@ -196,7 +221,7 @@ static std::string getBaseLink(std::string link)
 
 static std::string calculateLink(const std::string &baseLink, const std::string &link)
 {
-	if (link.substr(0, 7) == "http://") {
+	if (link.substr(0, 7) == "http://" || link.substr(0, 8) == "https://") {
 		/* absolute link */
 		return link;
 	}
@@ -204,8 +229,14 @@ static std::string calculateLink(const std::string &baseLink, const std::string 
 	/* calculate link of base link */
 	std::string resultLink = baseLink;
 
-	/* link should begin with "http://" */
-	if (resultLink.substr(0, 7) != "http://") {
+	int hostStart = 0;
+	/* link should begin with "http://" or "https://" */
+	if (resultLink.substr(0, 7) == "http://") {
+		hostStart = 7;
+	} else if (resultLink.substr(0, 8) == "https://") {
+		hostStart = 8;
+	} else {
+		hostStart = 7;
 		resultLink.insert(0, "http://");
 	}
 
@@ -216,7 +247,7 @@ static std::string calculateLink(const std::string &baseLink, const std::string 
 
 	if (*link.begin() == '/') {
 		/* link begins with "/" */
-		size_t found = resultLink.find('/', 7);
+		size_t found = resultLink.find('/', hostStart);
 		if (found != std::string::npos) {
 			resultLink.erase(found);
 		}
@@ -245,12 +276,12 @@ static bool getFavicon(CURLWrapper &CURL, const std::string &url, std::string &i
 	if (code == CURLE_OK) {
 		if (CURL.responseCode() == 200) {
 			std::string contentType = CURL.contentType();
-			if (isContentType(contentType, "image/x-icon") ||
-				isContentType(contentType, "application/octet-stream") ||
-				isContentType(contentType, "text/plain")) {
+			if (p3FeedReaderThread::isContentType(contentType, "image/") ||
+				p3FeedReaderThread::isContentType(contentType, "application/octet-stream") ||
+				p3FeedReaderThread::isContentType(contentType, "text/plain")) {
 				if (!vicon.empty()) {
 #warning p3FeedReaderThread.cc TODO thunder2: check it
-					result = toBase64(vicon, icon);
+					result = p3FeedReaderThread::toBase64(vicon, icon);
 				}
 			}
 		}
@@ -295,6 +326,9 @@ RsFeedReaderErrorState p3FeedReaderThread::download(const RsFeedReaderFeed &feed
 					errorString = contentType;
 				}
 			}
+			break;
+		case 403:
+			result = RS_FEED_ERRORSTATE_DOWNLOAD_BLOCKED;
 			break;
 		case 404:
 			result = RS_FEED_ERRORSTATE_DOWNLOAD_NOT_FOUND;
@@ -814,6 +848,22 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 
 	RsFeedReaderErrorState result = RS_FEED_ERRORSTATE_OK;
 
+	time_t minimumPubDate = 0;
+	if (feed.lastUpdate == 0) {
+		// Get all items on first scan
+	} else {
+		// Get storage time
+		uint32_t storageTime = 0;
+		if (feed.flag & RS_FEED_FLAG_STANDARD_STORAGE_TIME) {
+			storageTime = mFeedReader->getStandardStorageTime();
+		} else {
+			storageTime = feed.storageTime;
+		}
+		if (storageTime > 0) {
+			minimumPubDate = time(NULL) - storageTime;
+		}
+	}
+
 	XMLWrapper xml;
 	if (xml.readXML(feed.content.c_str())) {
 		xmlNodePtr root = xml.getRootElement();
@@ -959,6 +1009,26 @@ RsFeedReaderErrorState p3FeedReaderThread::process(const RsFeedReaderFeed &feed,
 							item->pubDate = time(NULL);
 						}
 
+						if (feedFormat == FORMAT_RSS) {
+							/* <enclosure url="" type=""></enclosure> */
+							xmlNodePtr enclosure = xml.findNode(node->children, "enclosure", false);
+							if (enclosure) {
+								std::string enclosureMimeType = xml.getAttr(enclosure, "type");
+								std::string enclosureUrl = xml.getAttr(enclosure, "url");
+								if (!enclosureUrl.empty()) {
+									item->attachmentLink = enclosureUrl;
+									item->attachmentMimeType = enclosureMimeType;
+								}
+							}
+						}
+
+						if (minimumPubDate) {
+							if (item->pubDate < minimumPubDate) {
+								// pubDate is less than storage time, don't add as new item
+								continue;
+							}
+						}
+
 						entries.push_back(item);
 					}
 				} else {
@@ -1013,10 +1083,44 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 	RsFeedReaderErrorState result = RS_FEED_ERRORSTATE_OK;
 	std::string proxy = getProxyForFeed(feed);
 
+	/* attachment */
+	if (!msg->attachmentLink.empty()) {
+		if (isContentType(msg->attachmentMimeType, "image/")) {
+			CURLWrapper CURL(proxy);
+			CURLcode code = CURL.downloadBinary(msg->attachmentLink, msg->attachmentBinary);
+			if (code == CURLE_OK && CURL.responseCode() == 200) {
+				std::string contentType = CURL.contentType();
+				if (isContentType(contentType, "image/")) {
+					msg->attachmentBinaryMimeType = contentType;
+
+					bool forum = (feed.flag & RS_FEED_FLAG_FORUM) && !feed.preview;
+					bool posted = (feed.flag & RS_FEED_FLAG_POSTED) && !feed.preview;
+
+					if (!forum && ! posted) {
+						/* no need to optimize image */
+						std::vector<unsigned char> optimizedBinary;
+						std::string optimizedMimeType;
+						if (mFeedReader->optimizeImage(FeedReaderOptimizeImageTask::SIZE, msg->attachmentBinary, msg->attachmentBinaryMimeType, optimizedBinary, optimizedMimeType)) {
+							if (toBase64(optimizedBinary, msg->attachment)) {
+								msg->attachmentMimeType = optimizedMimeType;
+							} else {
+								msg->attachment.clear();
+							}
+						}
+					}
+				} else {
+					msg->attachmentBinary.clear();
+				}
+			} else {
+				msg->attachmentBinary.clear();
+			}
+		}
+	}
+
 	std::string url;
 	if (feed.flag & RS_FEED_FLAG_SAVE_COMPLETE_PAGE) {
 #ifdef FEEDREADER_DEBUG
-		std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") download page " << msg->link << std::endl;
+		std::cerr << "p3FeedReaderThread::processMsg - feed " << feed.feedId << " (" << feed.name << ") download page " << msg->link << std::endl;
 #endif
 		std::string content;
 		CURLWrapper CURL(proxy);
@@ -1053,7 +1157,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 
 		if (result != RS_FEED_ERRORSTATE_OK) {
 #ifdef FEEDREADER_DEBUG
-			std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot download page, CURLCode = " << code << ", error = " << errorString << std::endl;
+			std::cerr << "p3FeedReaderThread::processMsg - feed " << feed.feedId << " (" << feed.name << ") cannot download page, CURLCode = " << code << ", error = " << errorString << std::endl;
 #endif
 			return result;
 		}
@@ -1070,12 +1174,19 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 
 	if (isRunning()) {
 		/* process description */
+		bool processPostedFirstImage = (feed.flag & RS_FEED_FLAG_POSTED_FIRST_IMAGE) ? true : false;
+		if (!msg->attachmentBinary.empty()) {
+			/* use attachment as image */
+			processPostedFirstImage = false;
+		}
+
 		//long todo; // encoding
 		HTMLWrapper html;
 		if (html.readHTML(msg->description.c_str(), url.c_str())) {
 			xmlNodePtr root = html.getRootElement();
 			if (root) {
 				std::list<xmlNodePtr> nodesToDelete;
+				xmlNodePtr postedFirstImageNode = NULL;
 
 				/* process all children */
 				std::list<xmlNodePtr> nodes;
@@ -1192,7 +1303,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 										if (!src.empty()) {
 											/* download image */
 #ifdef FEEDREADER_DEBUG
-											std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") download image " << src << std::endl;
+											std::cerr << "p3FeedReaderThread::processMsg - feed " << feed.feedId << " (" << feed.name << ") download image " << src << std::endl;
 #endif
 											std::vector<unsigned char> data;
 											CURLWrapper CURL(proxy);
@@ -1200,13 +1311,23 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 											if (code == CURLE_OK && CURL.responseCode() == 200) {
 												std::string contentType = CURL.contentType();
 												if (isContentType(contentType, "image/")) {
-													std::string base64;
-													if (toBase64(data, base64)) {
-														std::string imageBase64;
-														rs_sprintf(imageBase64, "data:%s;base64,%s", contentType.c_str(), base64.c_str());
-														if (html.setAttr(node, "src", imageBase64.c_str())) {
-															removeImage = false;
+													std::vector<unsigned char> optimizedData;
+													std::string optimizedMimeType;
+													if (mFeedReader->optimizeImage(FeedReaderOptimizeImageTask::SIZE, data, contentType, optimizedData, optimizedMimeType)) {
+														std::string base64;
+														if (toBase64(optimizedData, base64)) {
+															std::string imageBase64;
+															rs_sprintf(imageBase64, "data:%s;base64,%s", optimizedMimeType.c_str(), base64.c_str());
+															if (html.setAttr(node, "src", imageBase64.c_str())) {
+																removeImage = false;
+															}
 														}
+													}
+													if (processPostedFirstImage && postedFirstImageNode == NULL) {
+														/* set first image */
+														msg->postedFirstImage = data;
+														msg->postedFirstImageMimeType = contentType;
+														postedFirstImageNode = node;
 													}
 												}
 											}
@@ -1241,10 +1362,25 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 
 				if (result == RS_FEED_ERRORSTATE_OK) {
 					if (isRunning()) {
-						if (!html.saveHTML(msg->description)) {
+						if (html.saveHTML(msg->description)) {
+							if (postedFirstImageNode) {
+								/* Remove first image and create description without the image */
+								xmlUnlinkNode(postedFirstImageNode);
+								xmlFreeNode(postedFirstImageNode);
+
+								if (!html.saveHTML(msg->postedDescriptionWithoutFirstImage)) {
+									errorString = html.lastError();
+#ifdef FEEDREADER_DEBUG
+									std::cerr << "p3FeedReaderThread::processMsg - feed " << feed.feedId << " (" << feed.name << ") cannot dump html" << std::endl;
+									std::cerr << "  Error: " << errorString << std::endl;
+#endif
+									result = RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
+								}
+							}
+						} else {
 							errorString = html.lastError();
 #ifdef FEEDREADER_DEBUG
-							std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot dump html" << std::endl;
+							std::cerr << "p3FeedReaderThread::processMsg - feed " << feed.feedId << " (" << feed.name << ") cannot dump html" << std::endl;
 							std::cerr << "  Error: " << errorString << std::endl;
 #endif
 							result = RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
@@ -1253,14 +1389,14 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 				}
 			} else {
 #ifdef FEEDREADER_DEBUG
-				std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") no root element" << std::endl;
+				std::cerr << "p3FeedReaderThread::processMsg - feed " << feed.feedId << " (" << feed.name << ") no root element" << std::endl;
 #endif
 				result = RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR;
 			}
 		} else {
 			errorString = html.lastError();
 #ifdef FEEDREADER_DEBUG
-			std::cerr << "p3FeedReaderThread::processHTML - feed " << feed.feedId << " (" << feed.name << ") cannot read html" << std::endl;
+			std::cerr << "p3FeedReaderThread::processMsg - feed " << feed.feedId << " (" << feed.name << ") cannot read html" << std::endl;
 			std::cerr << "  Error: " << errorString << std::endl;
 #endif
 			result = RS_FEED_ERRORSTATE_PROCESS_HTML_ERROR;

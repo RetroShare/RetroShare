@@ -146,11 +146,11 @@ unix {
 	target.path = "$${BIN_DIR}"
 	INSTALLS += target
 
-	data_files.path="$${DATA_DIR}/"
+        data_files.path="$${RS_DATA_DIR}/"
 	data_files.files=sounds qss
 	INSTALLS += data_files
 
-	style_files.path="$${DATA_DIR}/stylesheets"
+        style_files.path="$${RS_DATA_DIR}/stylesheets"
 	style_files.files=gui/qss/chat/Bubble gui/qss/chat/Bubble_Compact
 	INSTALLS += style_files
 
@@ -304,6 +304,9 @@ macx {
 
 	#DEFINES *= MAC_IDLE # for idle feature
 	CONFIG -= uitools
+
+        OBJECTIVE_SOURCES += gui/common/MacDockIconHandler.mm
+        OBJECTIVE_HEADERS +=  gui/common/MacDockIconHandler.h
 }
 
 ##################################### FreeBSD ######################################
@@ -516,6 +519,7 @@ HEADERS +=  rshare.h \
             gui/common/vmessagebox.h \
             gui/common/RsUrlHandler.h \
             gui/common/RsCollectionDialog.h \
+            gui/common/RsCollectionModel.h \
             gui/common/rwindow.h \
             gui/common/rshtml.h \
             gui/common/AvatarDefs.h \
@@ -842,6 +846,7 @@ SOURCES +=  main.cpp \
             gui/common/ElidedLabel.cpp \
             gui/common/vmessagebox.cpp \
             gui/common/RsCollectionDialog.cpp \
+            gui/common/RsCollectionModel.cpp \
             gui/common/RsUrlHandler.cpp \
             gui/common/rwindow.cpp \
             gui/common/rshtml.cpp \
@@ -1220,6 +1225,7 @@ gxsthewire {
 		gui/TheWire/PulseReply.h \
 		gui/TheWire/PulseReplySeperator.h \
 		gui/TheWire/PulseMessage.h \
+                gui/TheWire/CustomFrame.h \
 
 	FORMS += gui/TheWire/WireDialog.ui \
 		gui/TheWire/WireGroupItem.ui \
@@ -1242,6 +1248,7 @@ gxsthewire {
 		gui/TheWire/PulseReply.cpp \
 		gui/TheWire/PulseReplySeperator.cpp \
 		gui/TheWire/PulseMessage.cpp \
+                gui/TheWire/CustomFrame.cpp \
 
 	RESOURCES += gui/TheWire/TheWire_images.qrc
 }

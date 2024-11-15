@@ -22,9 +22,10 @@
 
 #include "ChatLobbyWidget.h"
 #include "MainWindow.h"
+#include "HomePage.h"
 #include "chat/ChatDialog.h"
 #include "common/PeerDefs.h"
-#include "common/RsCollection.h"
+#include "common/RsCollectionDialog.h"
 #include "common/RsUrlHandler.h"
 #include "connect/ConfCertDialog.h"
 #include "connect/ConnectFriendWizard.h"
@@ -551,32 +552,45 @@ RetroShareLink RetroShareLink::createMessage(const RsGxsId& peerId, const QStrin
 
 RetroShareLink RetroShareLink::createCertificate(const RsPeerId& ssl_id)
 {
-	RetroShareLink link;
-	link.clear();
+    RetroShareLink link;
+    link.clear();
 
 #ifndef RS_NO_WARN_CPP
 #pragma message("csoler 2012-08-14: This is baaaaaad code")
 #endif
 
-	// 	- we should not need to parse and re-read a cert in old format.
-	//
-	RsPeerDetails detail;
-	if (rsPeers->getPeerDetails(ssl_id, detail) == false) {
-		std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << ssl_id << std::endl;
-	} else {
+    // 	- we should not need to parse and re-read a cert in old format.
+    //
+    RsPeerDetails detail;
+    if (rsPeers->getPeerDetails(ssl_id, detail) == false)
+        std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << ssl_id << std::endl;
+    else
+    {
+        link._type = TYPE_CERTIFICATE;
 
-		link._type = TYPE_CERTIFICATE;
-        link._radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id).c_str());
-		link._name = QString::fromUtf8(detail.name.c_str());
-		link._location = QString::fromUtf8(detail.location.c_str());
-		link._radix.replace("\n","");
+        if(rsPeers->getOwnId() == ssl_id)	// in this case, use application-wide parameters set in HomePage
+        {
+            QString description;
+            auto invite_flags = static_cast<HomePage*>(MainWindow::getPage(MainWindow::Home))->currentInviteFlags();
 
-		std::cerr << "Found radix                = " << link._radix.toStdString() << std::endl;
-	}
+            invite_flags &= ~RetroshareInviteFlags::SLICE_TO_80_CHARS;
+            invite_flags |=  RetroshareInviteFlags::RADIX_FORMAT;
 
-	link.check();
+            link._radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id,invite_flags).c_str());
+        }
+        else
+            link._radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id).c_str());
 
-	return link;
+        link._name = QString::fromUtf8(detail.name.c_str());
+        link._location = QString::fromUtf8(detail.location.c_str());
+        link._radix.replace("\n","");
+
+        std::cerr << "Found radix                = " << link._radix.toStdString() << std::endl;
+    }
+
+    link.check();
+
+    return link;
 }
 RetroShareLink RetroShareLink::createUnknownSslCertificate(const RsPeerId& sslId, const RsPgpId& gpgId)
 {
@@ -1129,11 +1143,13 @@ QString RetroShareLink::toHtmlSize() const
 
 	if (type() == TYPE_FILE && RsCollection::isCollectionFile(name())) {
 		FileInfo finfo;
-		if (rsFiles->FileDetails(RsFileHash(hash().toStdString()), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, finfo)) {
-			RsCollection collection;
-			if (collection.load(QString::fromUtf8(finfo.path.c_str()), false)) {
+        if (rsFiles->FileDetails(RsFileHash(hash().toStdString()), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, finfo))
+        {
+            RsCollection::RsCollectionErrorCode code;
+            RsCollection collection(QString::fromUtf8(finfo.path.c_str()), code) ;
+
+            if(code == RsCollection::RsCollectionErrorCode::COLLECTION_NO_ERROR)
 				size += QString(" [%1]").arg(misc::friendlyUnit(collection.size()));
-			}
 		}
 	}
 	QString link = QString("<a href=\"%1\">%2</a> <font color=\"blue\">%3</font>").arg(toString()).arg(name()).arg(size);
@@ -1708,10 +1724,9 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 		case TYPE_FILE_TREE:
 		{
-			auto ft = RsFileTree::fromRadix64(
-			            link.radix().toStdString() );
-			RsCollection(*ft).downloadFiles();
-			break;
+            auto ft = RsFileTree::fromRadix64(link.radix().toStdString() );
+            RsCollectionDialog::downloadFiles(RsCollection(*ft));
+            break;
 		}
 
 			case TYPE_CHAT_ROOM:
@@ -1762,7 +1777,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 	// were single file links found?
 	if (fileLinkFound)
-		col.downloadFiles();
+        RsCollectionDialog::downloadFiles(col);
 
 	int countProcessed = 0;
 	int countError = 0;

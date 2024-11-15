@@ -30,32 +30,22 @@ In GitHub Desktop -> Clone Repository -> URL
 
        Add Repository URL: https://github.com/RetroShare/RetroShare.git and Clone
 
-## ***Choose if you use MacPort or HomeBrew***
+## ***Get XCode & MacOSX SDK***
 
-### MacPort Installation
+Install XCode following this guide: [XCode](http://guide.macports.org/#installing.xcode)
 
-Install MacPort and XCode following this guide: [MacPort and XCode](http://guide.macports.org/#installing.xcode)
+To identify the correct version of Xcode to install, you need to know which OS you are running. Go to the [x] menu -> "About This Mac" and read the macOS version number.
 
-Start XCode to get it updated and to able C compiler to create executables.
+If you are running the macOS Catalina >= 10.15, you can install Xcode directly from App Store using the instructions below. 
 
-#### Install libraries  
+You can find older versions of Xcode at [Apple Developer Downloads](https://developer.apple.com/downloads/). Find the appropriate .xip file for your macOS version
 
-       $ sudo port -v selfupdate
-       $ sudo port install openssl
-       $ sudo port install miniupnpc
-       $ sudo port install libmicrohttpd
-       
-For VOIP Plugin: 
+To install from App Store:
 
-       $ sudo port install speex-devel
-       $ sudo port install opencv
-       $ sudo port install ffmpeg
+Select [x] menu - > "App Store…".
+Search for Xcode. Download and install.
 
-Get Your OSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
-
-### HOMEBREW Installation
-
-Install HomeBrew following this guide: [HomeBrew](http://brew.sh/)
+Once Xcode has installed, you must drag the XCode icon into your Applications folder. After you have done this, open Xcode from the Applications folder by double-clicking on the icon and then follow the remaining instructions below. 
 
 Install XCode command line developer tools:
 
@@ -63,13 +53,41 @@ Install XCode command line developer tools:
 
 Start XCode to get it updated and to able C compiler to create executables.
 
+Get Your MacOSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
+
+## ***Choose if you use MacPort or HomeBrew***
+
+### MacPort Installation
+
+Install MacPort following this guide: [MacPort](http://guide.macports.org/#installing.xcode)
+
+#### Install libraries  
+
+       $ sudo port -v selfupdate
+       $ sudo port install openssl
+       $ sudo port install miniupnpc
+       
+For VOIP Plugin: 
+
+       $ sudo port install speex-devel
+       $ sudo port install opencv
+       $ sudo port install ffmpeg
+
+
+### HOMEBREW Installation
+
+Install HomeBrew following this guide: [HomeBrew](http://brew.sh/)
+
 #### Install libraries  
 
        $ brew install openssl
        $ brew install miniupnpc
-       $ brew install libmicrohttpd
        $ brew install rapidjson
        $ brew install sqlcipher
+
+#### Install CMake 
+
+       $ brew install cmake
        
 If you have error in linking, run this:
 
@@ -85,8 +103,7 @@ For VOIP Plugin:
 For FeedReader Plugin:
 
        $ brew install libxslt
-
-Get Your OSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
+       $ brew install libxml2
 
 ## Last Settings
 
@@ -104,11 +121,8 @@ In QtCreator Projects -> Build -> Build Settings -> Build Steps -> Add Additiona
 
 ## Set your Mac OS SDK version
 
-Edit RetroShare.pro  
 
-    CONFIG += c++14 rs_macos11.1
-
-and then retroshare.pri
+Edit retroshare.pri and set your installed sdk version example for 11.1 -> rs_macos11.1 (line 135:)
 
     macx:CONFIG *= rs_macos11.1
     rs_macos10.8:CONFIG -= rs_macos11.1
@@ -122,7 +136,7 @@ and then retroshare.pri
 
 ## Link Include & Libraries
 
-Edit your retroshare.pri and add to macx-*  section
+When required edit your retroshare.pri macx-* section, check if the Include and Lib path are correct (macx-* section)
 
     INCLUDEPATH += "/usr/local/opt/openssl/include"
     QMAKE_LIBDIR += "/usr/local/opt/openssl/lib"
@@ -131,13 +145,21 @@ Edit your retroshare.pri and add to macx-*  section
 
 alternative via Terminal
 
-    $ qmake INCLUDEPATH+="/usr/local/opt/openssl/include" QMAKE_LIBDIR+="/usr/local/opt/openssl/lib" QMAKE_LIBDIR+="/usr/local/opt/sqlcipher/lib" QMAKE_LIBDIR+="/usr/local/opt/miniupnpc/lib"
+    $ qmake 
+    INCLUDEPATH+="/usr/local/opt/openssl/include" \
+    QMAKE_LIBDIR+="/usr/local/opt/openssl/lib" \
+    QMAKE_LIBDIR+="/usr/local/opt/sqlcipher/lib" \
+    QMAKE_LIBDIR+="/usr/local/opt/miniupnpc/lib" \
+    CONFIG+=rs_autologin \
+    CONFIG+=rs_use_native_dialogs \
+    CONFIG+=release \
+    ..
 
 For FeedReader Plugin:
 
     INCLUDEPATH += "/usr/local/opt/libxml2/include/libxml2"
 
-For building RetroShare with plugins:
+With plugins:
 
     $ qmake \
     INCLUDEPATH+="/usr/local/opt/openssl/include" QMAKE_LIBDIR+="/usr/local/opt/openssl/lib" \
@@ -159,12 +181,29 @@ For building RetroShare with plugins:
 
 You can now compile RetroShare into Qt Creator or with Terminal
 
-       cd retroshare
-       qmake; make
+       $ cd /path/to/retroshare
+       $ qmake ..
+       $ make
 
 You can change Target and SDK in *./retroshare.pri:82* changing value of QMAKE_MACOSX_DEPLOYMENT_TARGET and QMAKE_MAC_SDK
 
 You can find the compiled application at *./retroshare/retroshare-gui/src/retroshare.app*
+
+## Issues
+
+If you have issues with openssl (Undefined symbols for architecture x86_64) try to add to *~/.profile* file this or via Terminal
+
+       export PATH="/usr/local/opt/openssl/bin:$PATH"
+       export LDFLAGS="-L/usr/local/opt/openssl/lib"
+       export CPPFLAGS="-I/usr/local/opt/openssl/include"
+       export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
+
+For Qt Creator -> QtCreator Projects -> Build -> Build Settings -> Build Steps -> Add Additional arguments:
+
+       LDFLAGS="-L/usr/local/opt/openssl/lib"
+       CPPFLAGS="-I/usr/local/opt/openssl/include"
+
+
 
 ## Copy Plugins
 
@@ -173,3 +212,13 @@ You can find the compiled application at *./retroshare/retroshare-gui/src/retros
     ./plugins/VOIP/lib/libVOIP.dylib \
     ./plugins/RetroChess/lib/libRetroChess.dylib \
     ./retroshare-gui/src/RetroShare.app/Contents/Resources/
+
+### Compile Retroshare-Service & Webui with CMake
+before you can compile overwrite the file "asio/include/asio/detail/config.hpp" here is a fix for macos [
+asio fix](https://github.com/chriskohlhoff/asio/commit/68df16d560c68944809bb2947360fe8035e9ae0a)   
+
+       $ cd retroshare-service
+       $ mkdir build-dir
+       $ cd build-dir
+       $ cmake -DRS_WEBUI=ON -DCMAKE_BUILD_TYPE=Release ..
+       $ make

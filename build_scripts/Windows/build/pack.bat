@@ -11,7 +11,7 @@ call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
 
 :: Initialize environment
-call "%~dp0env.bat" %*
+call "%~dp0env.bat" pack %*
 if errorlevel 2 exit /B 2
 if errorlevel 1 goto error_env
 
@@ -95,8 +95,22 @@ copy nul "%RsDeployPath%\portable" %Quite%
 
 echo copy binaries
 copy "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\retroshare*.exe" "%RsDeployPath%" %Quite%
-copy "%RsBuildPath%\retroshare-service\src\%RsBuildConfig%\retroshare*-service.exe" "%RsDeployPath%" %Quite%
 if exist "%RsBuildPath%\libretroshare\src\lib\retroshare.dll" copy "%RsBuildPath%\libretroshare\src\lib\retroshare.dll" "%RsDeployPath%" %Quite%
+
+if "%ParamService%"=="1" (
+	copy "%RsBuildPath%\retroshare-service\src\%RsBuildConfig%\retroshare*-service.exe" "%RsDeployPath%" %Quite%
+	if errorlevel 1 %cecho% error "Service not found"& goto error
+)
+
+if "%ParamFriendServer%"=="1" (
+	if "%ParamTor%"=="1" (
+		copy "%RsBuildPath%\retroshare-friendserver\src\%RsBuildConfig%\retroshare-friendserver.exe" "%RsDeployPath%" %Quite%
+		if errorlevel 1 %cecho% error "Friend Server not found"& goto error
+	) else (
+		%cecho% error "Friend Server needs Tor"
+		goto error
+	)
+)
 
 echo copy extensions
 if "%ParamPlugins%"=="1" (
@@ -167,10 +181,11 @@ copy "%SourcePath%\libbitdht\src\bitdht\bdboot.txt" "%RsDeployPath%" %Quite%
 echo copy changelog.txt
 copy "%RsBuildPath%\changelog.txt" "%RsDeployPath%" %Quite%
 
-if exist "%SourcePath%\libresapi\src\webui" (
+if defined ParamWebui (
 	echo copy webui
 	mkdir "%RsDeployPath%\webui"
-	xcopy /S "%SourcePath%\libresapi\src\webui" "%RsDeployPath%\webui" %Quite%
+	xcopy /S "%RsWebuiBuildPath%" "%RsDeployPath%\webui" %Quite%
+	if errorlevel 1 %cecho% error "WebUi not found"& goto error
 )
 
 if "%ParamTor%"=="1" (

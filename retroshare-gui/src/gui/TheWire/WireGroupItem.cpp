@@ -65,8 +65,7 @@ WireGroupItem::WireGroupItem(WireGroupHolder *holder, const RsWireGroup &grp)
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 	setup();
 
-	// disabled, still not yet functional Edit/Update
-	editButton->setEnabled(false);
+    editButton->setEnabled(true);
 }
 
 RsGxsGroupId &WireGroupItem::groupId()
@@ -93,14 +92,14 @@ void WireGroupItem::setup()
 				QImage circleImage = getCirclePhoto(orginalImage,orginalImage.size().width());
 				pixmap.convertFromImage(circleImage);
 
-				pixmap = pixmap.scaled(40,40);
+				pixmap = pixmap.scaled(40,40, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 				label_headshot->setPixmap(pixmap);
 		}
 	}
 	else
 	{
 		// default.
-        QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(32,32);
+        QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(32,32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 		label_headshot->setPixmap(pixmap);
 	}
 	
@@ -124,21 +123,21 @@ void WireGroupItem::setup()
 void WireGroupItem::setGroupSet()
 {
 	if (mGroup.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
-		toolButton_type->setText("Own");
-		toolButton_subscribe->setText("N/A");
+		toolButton_type->setText(tr("Own"));
+		toolButton_subscribe->setText(tr("N/A"));
 		toolButton_subscribe->setEnabled(false);
 		editButton->show();
 	}
 	else if (mGroup.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
 	{
-		toolButton_type->setText("Following");
-		toolButton_subscribe->setText("Unfollow");
+		toolButton_type->setText(tr("Following"));
+		toolButton_subscribe->setText(tr("Unfollow"));
 		editButton->hide();
 	}
 	else
 	{
-		toolButton_type->setText("Other");
-		toolButton_subscribe->setText("Follow");
+		toolButton_type->setText(tr("Other"));
+		toolButton_subscribe->setText(tr("Follow"));
 		editButton->hide();
 	}
 }

@@ -117,6 +117,8 @@ protected:
 
   QModelIndexList getSelected();
 
+  void updateFontSize();
+
   /** Defines the actions for the context menu for QTreeWidget */
   QAction* copylinkAct;
   QAction* sendlinkAct;

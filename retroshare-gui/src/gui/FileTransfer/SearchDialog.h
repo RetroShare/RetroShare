@@ -21,9 +21,10 @@
 #ifndef _SEARCHDIALOG_H
 #define _SEARCHDIALOG_H
 
-#include <retroshare/rstypes.h>
+#include "retroshare/rstypes.h"
+#include "retroshare/rsevents.h"
 #include "ui_SearchDialog.h"
-#include <retroshare-gui/mainpage.h>
+#include "retroshare-gui/mainpage.h"
 
 class AdvancedSearchDialog;
 class RSTreeWidgetItemCompareRole;
@@ -42,6 +43,7 @@ class SearchDialog : public MainPage
     Q_PROPERTY(QColor textColorLowSources READ textColorLowSources WRITE setTextColorLowSources)
     Q_PROPERTY(QColor textColorHighSources READ textColorHighSources WRITE setTextColorHighSources)
 
+    struct FileDetail;	// useful structure to store search results.
 public:
 /** Default Constructor */
     SearchDialog(QWidget *parent = 0);
@@ -62,8 +64,7 @@ public:
     void setTextColorLowSources(QColor color) { mTextColorLowSources = color; }
     void setTextColorHighSources(QColor color) { mTextColorHighSources = color; }
 
-public slots:
-		void updateFiles(qulonglong request_id,FileDetail file) ;
+    void updateFiles(qulonglong request_id, const FileDetail& file) ;
 
 private slots:
 
@@ -125,6 +126,7 @@ private:
     void setIconAndType(QTreeWidgetItem *item, const QString& filename);
     void downloadDirectory(const QTreeWidgetItem *item, const QString &base);
     void getSourceFriendsForHash(const RsFileHash &hash,std::list<RsPeerId> &srcIds);
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 /** the advanced search dialog instance */
     AdvancedSearchDialog * advSearchDialog;
@@ -176,6 +178,8 @@ private:
 
 	 bool _queueIsAlreadyTakenCareOf ;
 	 std::vector<std::pair<qulonglong,FileDetail> > searchResultsQueue ;
+
+     RsEventsHandlerId_t mEventHandlerId ;
 };
 
 #endif

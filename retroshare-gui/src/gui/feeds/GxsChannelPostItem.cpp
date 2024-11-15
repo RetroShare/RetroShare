@@ -49,6 +49,10 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
     GxsFeedItem(feedHolder, feedId, group_meta.mGroupId, messageId, isHome, rsGxsChannels, autoUpdate),
     mGroupMeta(group_meta)
 {
+    mLoadingGroup = false;
+    mLoadingMessage = false;
+    mLoadingComment = false;
+
     mPost.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
     mPost.mMeta.mGroupId = mGroupMeta.mGroupId;
 
@@ -136,6 +140,19 @@ void GxsChannelPostItem::paintEvent(QPaintEvent *e)
 
 GxsChannelPostItem::~GxsChannelPostItem()
 {
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(300);
+
+    while( (mLoadingGroup || mLoadingMessage || mLoadingComment)
+           && std::chrono::steady_clock::now() < timeout)
+    {
+        RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for "
+                << (mLoadingGroup ? "Group " : "")
+                << (mLoadingMessage ? "Message " : "")
+                << (mLoadingComment ? "Comment " : "")
+                << "loading." << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
 	delete(ui);
 }
 
@@ -277,6 +294,7 @@ void GxsChannelPostItem::loadGroup()
 	std::cerr << "GxsChannelGroupItem::loadGroup()";
 	std::cerr << std::endl;
 #endif
+    mLoadingGroup = true;
 
 	RsThread::async([this]()
 	{
@@ -306,6 +324,7 @@ void GxsChannelPostItem::loadGroup()
 			 * after a blocking call to RetroShare API complete */
 
 			mGroupMeta = group.mMeta;
+            mLoadingGroup = false;
 
 		}, this );
 	});
@@ -316,6 +335,8 @@ void GxsChannelPostItem::loadMessage()
 	std::cerr << "GxsChannelPostItem::loadMessage()";
 	std::cerr << std::endl;
 #endif
+    mLoadingMessage = true;
+
 	RsThread::async([this]()
 	{
 		// 1 - get group data
@@ -337,7 +358,11 @@ void GxsChannelPostItem::loadMessage()
 #endif
             const RsGxsChannelPost& post(posts[0]);
 
-			RsQThreadUtils::postToObject( [post,this]() { setPost(post);  }, this );
+            RsQThreadUtils::postToObject( [post,this]()
+            {
+                setPost(post);
+                mLoadingMessage = false;
+            }, this );
 		}
 		else if(comments.size() == 1)
 		{
@@ -356,7 +381,8 @@ void GxsChannelPostItem::loadMessage()
 				setMessageId(cmt.mMeta.mThreadId);
 				requestMessage();
 
-			}, this );
+                mLoadingMessage = false;
+            }, this );
 
 		}
 		else
@@ -366,7 +392,11 @@ void GxsChannelPostItem::loadMessage()
 			std::cerr << std::endl;
 #endif
 
-			RsQThreadUtils::postToObject( [this]() {  removeItem(); }, this );
+            RsQThreadUtils::postToObject( [this]()
+            {
+                removeItem();
+                mLoadingMessage = false;
+            }, this );
 		}
 	});
 }
@@ -377,6 +407,7 @@ void GxsChannelPostItem::loadComment()
 	std::cerr << "GxsChannelPostItem::loadComment()";
 	std::cerr << std::endl;
 #endif
+    mLoadingComment = true;
 
 	RsThread::async([this]()
 	{
@@ -407,6 +438,7 @@ void GxsChannelPostItem::loadComment()
 				sComButText = tr("Comments ").append("(%1)").arg(comNb);
 
 			ui->commentButton->setText(sComButText);
+            mLoadingComment = false;
 
 		}, this );
 	});
@@ -850,7 +882,7 @@ void GxsChannelPostItem::readToggled(bool /*checked*/)
 
 	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
 
-	rsGxsChannels->markRead(msgPair, isUnread());
+    rsGxsChannels->setMessageReadStatus(msgPair, isUnread());
 
 	//setReadStatus(false, checked); // Updated by events
 }

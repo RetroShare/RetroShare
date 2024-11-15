@@ -32,6 +32,7 @@
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsposted.h>
 
+#include "util/misc.h"
 #include "util/qtthreadsutils.h"
 #include "feeds/BoardsCommentsItem.h"
 #include "feeds/ChatMsgItem.h"
@@ -111,22 +112,23 @@ NewsFeed::NewsFeed(QWidget *parent) : MainPage(parent), ui(new Ui::NewsFeed),
 	connect(ui->feedOptionsButton, SIGNAL(clicked()), this, SLOT(feedoptions()));
     ui->feedOptionsButton->hide();	// (csoler) Hidden until we repare the system to display a specific settings page.
 
-QString hlp_str = tr(
- " <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Activity Feed</h1>                                                          \
-   <p>The Activity Feed displays the last events on your network, sorted by the time you received them.                \
-   This gives you a summary of the activity of your friends.                                                       \
-   You can configure which events to show by pressing on <b>Options</b>. </p>                                      \
-   <p>The various events shown are:                                                                                \
-   <ul>                                                                                                         \
-   <li>Connection attempts (useful to make friends with new people and control who's trying to reach you)</li> \
-   <li>Channel, Forum and Board posts</li>                                                                            \
-   <li>Circle membership requests and invites</li>                                                                            \
-   <li>New Channels, Forums and Boards you can subscribe to</li>                                                       \
-   <li>Channel and Board comments</li>                                                                 \
-   <li>New Mail messages</li>                                                                 \
-   <li>Private messages from your friends</li>                                                                 \
-   </ul> </p>                                                                                                      \
- ") ;
+	int H = misc::getFontSizeFactor("HelpButton").height();
+	QString hlp_str = tr(
+	    "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Activity Feed</h1>"
+	    "<p>The Activity Feed displays the last events on your network, sorted by the time you received them."
+	    "   This gives you a summary of the activity of your friends."
+	    "   You can configure which events to show by pressing on <b>Options</b>. </p>"
+	    "<p>The various events shown are:"
+	    "   <ul>"
+	    "    <li>Connection attempts (useful to make friends with new people and control who's trying to reach you)</li>"
+	    "    <li>Channel, Forum and Board posts</li>"
+	    "    <li>Circle membership requests and invites</li>"
+	    "    <li>New Channels, Forums and Boards you can subscribe to</li>"
+	    "    <li>Channel and Board comments</li>"
+	    "    <li>New Mail messages</li>"
+	    "    <li>Private messages from your friends</li>"
+	    "   </ul> </p>"
+	                    ).arg(QString::number(2*H));
 
 	registerHelpButton(ui->helpButton,hlp_str,"NewFeed") ;
 
@@ -297,7 +299,7 @@ void NewsFeed::handleChannelEvent(std::shared_ptr<const RsEvent> event)
 		addFeedItem(new GxsChannelPostItem(this, NEWSFEED_CHANNELNEWLIST, pe->mChannelGroupId, pe->mChannelMsgId, false, true));
 		break;
 	case RsChannelEventCode::NEW_COMMENT:
-		addFeedItem(new ChannelsCommentsItem(this, NEWSFEED_CHANNELNEWLIST, pe->mChannelGroupId, pe->mChannelMsgId, false, true));
+        addFeedItem(new ChannelsCommentsItem(this, NEWSFEED_CHANNELNEWLIST, pe->mChannelGroupId, pe->mChannelMsgId,pe->mChannelThreadId, false, true));
 		break;
 	case RsChannelEventCode::RECEIVED_PUBLISH_KEY:
 		addFeedItem(new GxsChannelGroupItem(this, NEWSFEED_CHANNELPUBKEYLIST, pe->mChannelGroupId, false, true));
@@ -439,6 +441,7 @@ void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
 	{
 	case RsConnectionEventCode::PEER_CONNECTED:
 		addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_CONNECT, false), true);
+		NotifyQt::getInstance()->addToaster(RS_POPUP_CONNECT, e.mSslId.toStdString().c_str(), "", "");
 		break;
 	case RsConnectionEventCode::PEER_DISCONNECTED: // not handled yet
 		break;
@@ -474,6 +477,7 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 		addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_HELLO, false), true );
 		return;
 	}
+	
 
     uint32_t FeedItemType=0;
 
@@ -502,6 +506,8 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 
 	if (Settings->getMessageFlags() & RS_MESSAGE_CONNECT_ATTEMPT)
 		MessageComposer::addConnectAttemptMsg(e.mPgpId, e.mSslId, QString::fromStdString(det.name + "(" + det.location + ")"));
+	
+	NotifyQt::getInstance()->addToaster(RS_POPUP_CONNECT_ATTEMPT, e.mPgpId.toStdString().c_str(), det.location, e.mSslId.toStdString().c_str());
 }
 
 void NewsFeed::testFeeds(uint /*notifyFlags*/)

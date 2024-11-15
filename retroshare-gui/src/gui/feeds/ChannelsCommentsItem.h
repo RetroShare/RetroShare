@@ -42,12 +42,17 @@ public:
 	// It can be used for all apparences of channel posts. But in rder to merge comments from the previous versions of the post, the list of
 	// previous posts should be supplied. It's optional. If not supplied only the comments of the new version will be displayed.
 
-	ChannelsCommentsItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
+    ChannelsCommentsItem(FeedHolder *feedHolder,
+                         uint32_t feedId,
+                         const RsGxsGroupId& groupId,
+                         const RsGxsMessageId& commentId,
+                         const RsGxsMessageId& threadId,
+                         bool isHome,
+                         bool autoUpdate);
 
 	// This one is used in channel thread widget. We don't want the group data to reload at every post, so we load it in the hosting
     // GxsChannelsPostsWidget and pass it to created items.
-
-	ChannelsCommentsItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData& group, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
+    // ChannelsCommentsItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData& group, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
 
 	virtual ~ChannelsCommentsItem();
 
@@ -55,6 +60,7 @@ public:
 
 	bool setGroup(const RsGxsChannelGroup& group, bool doFill = true);
 	bool setPost(const RsGxsChannelPost& post, bool doFill = true);
+    bool setMissingPost();
 
 	QString getTitleLabel();
 	QString getMsgLabel();
@@ -85,8 +91,8 @@ protected:
 
 	/* GxsFeedItem */
 	virtual QString messageName();
-	virtual void loadMessage();
-	virtual void loadComment();
+    virtual void loadMessage() override {}
+    virtual void loadComment() override {}
 
 private slots:
 	/* default stuff */
@@ -104,17 +110,20 @@ signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);	
 
 private:
-	void setup();
-	void fill();
-	void fillExpandFrame();
+    void load();
+    void setup();
+    void fill(bool missing_post=false);
 
 private:
 	bool mInFill;
 	bool mCloseOnRead;
 	bool mLoaded;
 
+    bool mLoading;
+
 	RsGroupMetaData mGroupMeta;
 	RsGxsChannelPost mPost;
+    RsGxsMessageId mThreadId;
 
 	/** Qt Designer generated object */
 	Ui::ChannelsCommentsItem *ui;

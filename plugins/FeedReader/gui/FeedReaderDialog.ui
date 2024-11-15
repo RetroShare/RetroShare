@@ -150,7 +150,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="RSTreeWidget" name="feedTreeWidget">
+        <widget class="FeedTreeWidget" name="feedTreeWidget">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -186,9 +186,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>RSTreeWidget</class>
+   <class>FeedTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
+   <header>gui/FeedTreeWidget.h</header>
   </customwidget>
   <customwidget>
    <class>RSTabWidget</class>

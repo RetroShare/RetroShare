@@ -101,13 +101,6 @@
        </spacer>
       </item>
       <item>
-       <widget class="QToolButton" name="toolButton_refresh">
-        <property name="text">
-         <string>Refresh</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="RSComboBox" name="groupChooser"/>
       </item>
       <item>
@@ -189,7 +182,6 @@
          <property name="font">
           <font>
            <pointsize>10</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -208,8 +200,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>220</width>
-            <height>444</height>
+            <width>224</width>
+            <height>465</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="groupsWidget_VL">
@@ -387,8 +379,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>521</width>
-             <height>437</height>
+             <width>523</width>
+             <height>462</height>
             </rect>
            </property>
            <property name="styleSheet">
@@ -442,8 +434,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="TheWire_images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="TheWire_images.qrc"/>
  </resources>
  <connections/>
 </ui>

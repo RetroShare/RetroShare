@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>421</width>
-    <height>29</height>
+    <width>473</width>
+    <height>36</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -120,8 +120,8 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/cancel.png</normaloff>:/images/cancel.png</iconset>
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/cancel.svg</normaloff>:/icons/cancel.svg</iconset>
         </property>
        </widget>
       </item>
@@ -139,7 +139,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="openFolderToolButton">
+       <widget class="QToolButton" name="openFolderPushButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
