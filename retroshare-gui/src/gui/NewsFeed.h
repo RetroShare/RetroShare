@@ -48,6 +48,7 @@ const uint32_t NEWSFEED_POSTEDNEWLIST =    0x000b;
 const uint32_t NEWSFEED_POSTEDMSGLIST =    0x000c;
 const uint32_t NEWSFEED_CIRCLELIST    =    0x000d;
 const uint32_t NEWSFEED_CHANNELPUBKEYLIST= 0x000e;
+const uint32_t NEWSFEED_WIRELIST         = 0X000f;
 
 namespace Ui {
 class NewsFeed;
@@ -106,6 +107,7 @@ private:
 	void handleMailEvent(std::shared_ptr<const RsEvent> event);
 	void handlePostedEvent(std::shared_ptr<const RsEvent> event);
 	void handleChannelEvent(std::shared_ptr<const RsEvent> event);
+    void handleWireEvent(std::shared_ptr<const RsEvent> event);
 
 	void addFeedItem(FeedItem *item);
 	void addFeedItemIfUnique(FeedItem *item, bool replace);
