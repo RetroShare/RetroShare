@@ -1296,7 +1296,7 @@ void MessagesDialog::updateMessageSummaryList()
     /* calculating the new messages */
 
     std::list<MsgInfoSummary> msgList;
-    rsMail->getMessageSummaries(mMessageModel->currentBox(),msgList);
+    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_ALL,msgList);
 
     QMap<int, int> tagCount;
 
