@@ -998,7 +998,10 @@ void ChatWidget::scrollToAnchor(QString anchor)
 
 void ChatWidget::setWelcomeMessage(QString &text)
 {
-	ui->textBrowser->setText(text);
+	unsigned int formatTextFlag = RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_OPTIMIZE;
+	QString formattedWelcomeMessage = RsHtml().formatText(ui->textBrowser->document(), text, formatTextFlag);
+
+	ui->textBrowser->setText(formattedWelcomeMessage);
 }
 
 void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType)
