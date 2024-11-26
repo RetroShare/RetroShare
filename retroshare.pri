@@ -184,8 +184,9 @@ rs_use_native_dialogs:CONFIG -= no_rs_use_native_dialogs
 
 # By default, use RNP lib for RFC4880 PGP management. If not, compilation will
 # default to openpgp-sdk, which is old and unmaintained, so probably not very secure.
-CONFIG *=
-rs_no_openpgpsdk:CONFIG -= use_openpgpsdk
+CONFIG *= rs_rnplib
+rs_no_rnplib:CONFIG -= rs_rnplib
+rs_no_rnplib:CONFIG += rs_openpgpsdk
 
 # To disable broadcast discovery append the following assignation to qmake
 # command line "CONFIG+=no_rs_broadcast_discovery"
@@ -872,7 +873,9 @@ rs_openpgpsdk {
         openpgpsdk.file = openpgpsdk/src/openpgpsdk.pro
         libretroshare.depends += openpgpsdk
         message("Using OpenPGP-SDK for PGP")
-} else {
+}
+
+rs_rnplib {
         DEFINES += USE_RNP_LIB
         message("Using RNP lib for PGP")
 }
