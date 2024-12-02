@@ -47,19 +47,20 @@ NetworkView::NetworkView(QWidget *parent)
   ui.graphicsView->setScene(mScene);
   ui.graphicsView->setEdgeLength(ui.edgeLengthSB->value()) ;
 
-  setMaxFriendLevel(ui.maxFriendLevelSB->value()) ;
+  setMaxFriendLevel(1) ;
 
   /* add button */
   connect( ui.refreshButton, SIGNAL( clicked( void ) ), this, SLOT( redraw( void ) ) );
   connect( mScene, SIGNAL( changed ( const QList<QRectF> & ) ), this, SLOT ( changedScene( void ) ) );
 
   /* Hide Settings frame */
-  connect( ui.maxFriendLevelSB, SIGNAL(valueChanged(int)), this, SLOT(setMaxFriendLevel(int)));
+  connect(ui.viewCB,SIGNAL(currentIndexChanged(int)),this,SLOT(setMaxFriendLevel(int)));
   connect( ui.edgeLengthSB, SIGNAL(valueChanged(int)), this, SLOT(setEdgeLength(int)));
   connect( ui.freezeCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFreezeState(bool)));
   connect( ui.nameBox, SIGNAL(textChanged(QString)), this, SLOT(setNameSearch(QString)));
-
+ 
   _should_update = true ;
+  hideoffline = false;
 }
 
 NetworkView::~NetworkView()
@@ -80,12 +81,22 @@ void NetworkView::setMaxFriendLevel(int m)
 {
 	ui.graphicsView->snapshotNodesPositions() ;
 	clear() ;
-	_max_friend_level = m ;
+	switch(m)
+	{
+        case 0: // online
+			hideoffline = true;
+			_max_friend_level = 1 ;
+			break;
+        case 1: // all
+			hideoffline = false;
+			_max_friend_level = 1 ;
+			break;
+        case 2: // FoF
+			hideoffline = false;
+			_max_friend_level = 2 ;
+			break;
+	}
 	updateDisplay() ;
-}
-void NetworkView::changedFoFCheckBox( )
-{
-	updateDisplay();
 }
 void NetworkView::redraw()
 {
@@ -169,7 +180,21 @@ void  NetworkView::updateDisplay()
 		RsPeerDetails detail ;
         if(!rsPeers->getGPGDetails(info.gpg_id, detail))
 			continue ;
-
+		
+		bool gpg_connected = false;
+		std::list<RsPeerId> sslContacts;
+		rsPeers->getAssociatedSSLIds(detail.gpg_id, sslContacts);
+		for (std::list<RsPeerId>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); ++sslIt)
+		{
+			RsPeerDetails sslDetail;
+			if (!rsPeers->getPeerDetails(*sslIt, sslDetail))
+				continue;
+			if (sslDetail.state & RS_PEER_STATE_CONNECTED)
+			{	gpg_connected = true;
+				break;
+			}
+		}
+		
 		switch(detail.trustLvl)
 		{
 			case RS_TRUST_LVL_MARGINAL: auth = GraphWidget::ELASTIC_NODE_AUTH_MARGINAL ; break;
@@ -183,6 +208,9 @@ void  NetworkView::updateDisplay()
 
 		if(info.friend_level <= _max_friend_level && _node_ids.find(info.gpg_id) == _node_ids.end())
 		{
+			if(hideoffline && !gpg_connected && detail.gpg_id != ownGPGId)
+			{ }
+			else
             _node_ids[info.gpg_id] = ui.graphicsView->addNode("       "+detail.name, detail.name+"@"+detail.gpg_id.toStdString(),type,auth,RsPeerId(),info.gpg_id);
 #ifdef DEBUG_NETWORKVIEW
 			std::cerr << "  inserted node " << info.gpg_id << ", type=" << type << ", auth=" << auth << std::endl ;

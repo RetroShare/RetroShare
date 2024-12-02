@@ -48,7 +48,6 @@ class NetworkView : public RsAutoUpdatePage
 		void setEdgeLength(int) ;
 		void setNameSearch(QString) ;
 
-		void changedFoFCheckBox( );
 		void redraw();
 
 		void setFreezeState(bool);
@@ -65,6 +64,7 @@ class NetworkView : public RsAutoUpdatePage
         std::map<RsPgpId,GraphWidget::NodeId> _node_ids ;
 
 		bool _should_update ;
+		bool hideoffline;
 };
 
 #endif
