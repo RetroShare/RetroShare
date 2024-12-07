@@ -196,12 +196,7 @@ void PGPKeyDialog::load()
         ui.trustlevel_CB->show();
         ui.is_signing_me->show();
         ui.signersLabel->setText(tr("This key is signed by :")+" ");
-#ifdef USE_OPENPGPSDK
         ui.signKeyButton->setEnabled(!detail.ownsign);
-#else
-        ui.signKeyButton->setEnabled(false);
-        ui.signKeyButton->setToolTip("Disabled because key signing is not yet implemented in RNP lib");
-#endif
 
         if (detail.accept_connection)
         {
