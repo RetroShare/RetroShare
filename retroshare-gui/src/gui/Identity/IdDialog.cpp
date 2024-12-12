@@ -198,7 +198,7 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDLIST, ui->idTreeWidget, false);
 	mStateHelper->addClear(IDDIALOG_IDLIST, ui->idTreeWidget);
 
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
+	//mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_PublishTS);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
@@ -214,7 +214,7 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->label_positive);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->label_negative);
 
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
+	//mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_PublishTS);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
@@ -225,7 +225,7 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->overallOpinion_TF);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->usageStatistics_TB);
 
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
+	//mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_PublishTS);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
@@ -481,11 +481,11 @@ void IdDialog::clearPerson()
 {
 	//QFontMetricsF f(ui->avLabel_Person->font()) ;
 
-	//ui->avLabel_Person->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/people.png").scaled(f.height()*4,f.height()*4,Qt::KeepAspectRatio,Qt::SmoothTransformation));
 	ui->headerTextLabel_Person->setText(tr("People"));
 
 	ui->info_Frame_Invite->hide();
 	ui->avatarLabel->clear();
+	ui->avatarLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/people.png"));
 
 	whileBlocking(ui->ownOpinion_CB)->setCurrentIndex(1);
 	whileBlocking(ui->autoBanIdentities_CB)->setChecked(false);
@@ -1675,7 +1675,7 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
     ui->lineEdit_PublishTS->setText(QDateTime::fromMSecsSinceEpoch(qint64(1000)*data.mMeta.mPublishTs).toString(Qt::SystemLocaleShortDate));
-    ui->lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
+    //ui->lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
 	ui->lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 	//ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
     if(data.mPgpKnown)
