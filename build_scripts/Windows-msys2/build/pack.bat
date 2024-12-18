@@ -105,6 +105,7 @@ copy "%RsBuildPath%\retroshare-nogui\src\%RsBuildConfig%\retroshare*-nogui.exe" 
 copy "%RsBuildPath%\retroshare-service\src\%RsBuildConfig%\retroshare*-service.exe" "%RsDeployPath%" %Quite%
 copy "%RsBuildPath%\supportlibs\cmark\build\src\libcmark.dll" "%RsDeployPath%" %Quite%
 if exist "%RsBuildPath%\libretroshare\src\lib\retroshare.dll" copy "%RsBuildPath%\libretroshare\src\lib\retroshare.dll" "%RsDeployPath%" %Quite%
+if exist "%RsBuildPath%\supportlibs\librnp\Build\src\lib\librnp.dll" copy "%RsBuildPath%\supportlibs\librnp\Build\src\lib\librnp.dll" "%RsDeployPath%" %Quite%
 if exist "%RsBuildPath%\retroshare-friendserver\src\%RsBuildConfig%\retroshare-friendserver.exe" (
 	copy "%RsBuildPath%\retroshare-friendserver\src\%RsBuildConfig%\retroshare-friendserver.exe" "%RsDeployPath%" %Quite%
 )
