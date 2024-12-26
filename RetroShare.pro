@@ -25,9 +25,6 @@ CONFIG += c++14
 
 TEMPLATE = subdirs
 
-SUBDIRS += openpgpsdk
-openpgpsdk.file = openpgpsdk/src/openpgpsdk.pro
-
 rs_jsonapi:isEmpty(JSONAPI_GENERATOR_EXE) {
     SUBDIRS += jsonapi-generator
     jsonapi-generator.file = jsonapi-generator/src/jsonapi-generator.pro
@@ -36,7 +33,7 @@ rs_jsonapi:isEmpty(JSONAPI_GENERATOR_EXE) {
 
 SUBDIRS += libbitdht
 libbitdht.file = libbitdht/src/libbitdht.pro
-libretroshare.depends += openpgpsdk libbitdht
+libretroshare.depends += libbitdht
 
 SUBDIRS += libretroshare
 libretroshare.file = libretroshare/src/libretroshare.pro
