@@ -373,9 +373,9 @@ jsonc: $(BUILD_PATH)/json-c-$(JSON_C_VERSION)
 
 $(BUILD_PATH)/json-c-$(JSON_C_VERSION):
 	# prepare
-	rm -r -f $(BUILD_PATH)/rnp-*
+	rm -r -f $(BUILD_PATH)/json-c-*
 	[ -d "json-c-$(JSON_C_VERSION)" ] || git clone https://github.com/json-c/json-c.git --depth=1 --branch json-c-$(JSON_C_VERSION) "json-c-$(JSON_C_VERSION)"
-	# build json-c
+	# build
 	mkdir -p json-c-$(JSON_C_VERSION)/build
 	cd json-c-$(JSON_C_VERSION)/build && cmake .. -G"MSYS Makefiles" -Wno-dev -DCMAKE_BUILD_TYPE="release" -DBUILD_SHARED_LIBS=off -DBUILD_STATIC_LIBS=on -DBUILD_TESTING=off -DCMAKE_CXX_FLAGS="-D__MINGW_USE_VC2005_COMPAT" -DCMAKE_INSTALL_PREFIX="`pwd`/install" -DCMAKE_INSTALL_PREFIX="`pwd`/../../$(BUILD_PATH)/json-c-$(JSON_C_VERSION).tmp"
 	cd json-c-$(JSON_C_VERSION)/build && make install
@@ -388,9 +388,9 @@ botan: $(BUILD_PATH)/botan-$(BOTAN_VERSION)
 $(BUILD_PATH)/botan-$(BOTAN_VERSION):
 	# prepare
 	pacman --needed --noconfirm -S python3
-	rm -r -f $(BUILD_PATH)/rnp-*
+	rm -r -f $(BUILD_PATH)/botan-*
 	[ -d "botan-$(BOTAN_VERSION)" ] || git clone https://github.com/randombit/botan.git --depth=1 --branch $(BOTAN_VERSION) "botan-$(BOTAN_VERSION)"
-	# build botan
+	# build
 	if [ $(MSYSTEM) = "MINGW32" ] ; then cd botan-$(BOTAN_VERSION) && ./configure.py --os=mingw --cpu=x86_32 --disable-shared-library --enable-static-library --extra-cxxflags="-D__MINGW_USE_VC2005_COMPAT" --prefix="`pwd`/../$(BUILD_PATH)/botan-$(BOTAN_VERSION).tmp" ; fi
 	if [ $(MSYSTEM) = "MINGW64" ] ; then cd botan-$(BOTAN_VERSION) && ./configure.py --os=mingw --cpu=x86_64 --disable-shared-library --enable-static-library --prefix="`pwd`/../$(BUILD_PATH)/botan-$(BOTAN_VERSION).tmp" ; fi
 	cd botan-$(BOTAN_VERSION) && make install
@@ -402,6 +402,7 @@ rnp: $(BUILD_PATH)/rnp-$(RNP_VERSION)
 
 $(BUILD_PATH)/rnp-$(RNP_VERSION):
 	# prepare
+	rm -r -f $(BUILD_PATH)/rnp-*
 	[ -d "rnp-$(RNP_VERSION)" ] || git clone https://github.com/rnpgp/rnp.git --depth=1 --branch v$(RNP_VERSION) --recurse-submodules --shallow-submodules "rnp-$(RNP_VERSION)"
 	# build
 	mkdir -p rnp-$(RNP_VERSION)/build
