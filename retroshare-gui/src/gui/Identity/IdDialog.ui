@@ -154,10 +154,10 @@
        <item>
         <widget class="QFrame" name="toolBarFrame">
          <property name="frameShape">
-          <enum>QFrame::Box</enum>
+          <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
+          <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="toolBarFrameHLayout">
           <property name="leftMargin">
@@ -334,10 +334,10 @@
                    </size>
                   </property>
                   <property name="frameShape">
-                   <enum>QFrame::Box</enum>
+                   <enum>QFrame::StyledPanel</enum>
                   </property>
                   <property name="frameShadow">
-                   <enum>QFrame::Sunken</enum>
+                   <enum>QFrame::Raised</enum>
                   </property>
                   <property name="text">
                    <string extracomment="Click here to change your avatar">Your Avatar</string>
