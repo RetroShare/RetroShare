@@ -23,10 +23,10 @@
       </sizepolicy>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+      <enum>QFrame::Raised</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="leftMargin">
@@ -399,8 +399,8 @@ border-image: url(:/images/closepressed.png)
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>
