@@ -52,7 +52,7 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
     QObject::connect(ui._queueSize_SB,SIGNAL(valueChanged(int)),this,SLOT(updateQueueSize(int))) ;
     QObject::connect(ui._max_up_SB,SIGNAL(valueChanged(int)),this,SLOT(updateMaxUploadSlots(int))) ;
     QObject::connect(ui._defaultStrategy_CB,SIGNAL(activated(int)),this,SLOT(updateDefaultStrategy(int))) ;
-    QObject::connect(ui._e2e_encryption_CB,SIGNAL(activated(int)),this,SLOT(updateEncryptionPolicy(int))) ;
+    //QObject::connect(ui._e2e_encryption_CB,SIGNAL(activated(int)),this,SLOT(updateEncryptionPolicy(int))) ;
     QObject::connect(ui._diskSpaceLimit_SB,SIGNAL(valueChanged(int)),this,SLOT(updateDiskSizeLimit(int))) ;
     QObject::connect(ui._max_tr_up_per_sec_SB, SIGNAL( valueChanged( int ) ), this, SLOT( updateMaxTRUpRate(int) ) );
 	QObject::connect(ui._filePermDirectDL_CB,SIGNAL(activated(int)),this,SLOT(updateFilePermDirectDL(int)));
@@ -112,6 +112,7 @@ void TransferPage::updateMaxUploadSlots(int b)
     rsFiles->setMaxUploadSlotsPerFriend(b) ;
 }
 
+#ifdef TO_REMOVE
 void TransferPage::updateEncryptionPolicy(int b)
 {
     switch(b)
@@ -123,6 +124,7 @@ void TransferPage::updateEncryptionPolicy(int b)
         break ;
     }
 }
+#endif
 
 void TransferPage::updateFilePermDirectDL(int i)
 {
@@ -160,11 +162,13 @@ void TransferPage::load()
     case FileChunksInfo::CHUNK_STRATEGY_RANDOM: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(2) ; break ;
     }
 
+#ifdef TO_REMOVE
     switch(rsFiles->defaultEncryptionPolicy())
     {
     case RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE: whileBlocking(ui._e2e_encryption_CB)->setCurrentIndex(0) ; break ;
     case RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT    : whileBlocking(ui._e2e_encryption_CB)->setCurrentIndex(1) ; break ;
     }
+#endif
 
     whileBlocking(ui._diskSpaceLimit_SB)->setValue(rsFiles->freeDiskSpaceLimit()) ;
     whileBlocking(ui._max_tr_up_per_sec_SB)->setValue(rsTurtle->getMaxTRForwardRate()) ;
