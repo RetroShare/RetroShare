@@ -48,10 +48,10 @@
           </size>
          </property>
          <property name="frameShape">
-          <enum>QFrame::Box</enum>
+          <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
+          <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="toolBarFrameHLayout">
           <property name="leftMargin">
@@ -578,10 +578,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ElidedLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/ElidedLabel.h</header>
-   <container>1</container>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>GxsIdLabel</class>
@@ -589,9 +588,15 @@
    <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <class>ElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/ElidedLabel.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SubscribeToolButton</class>
+   <extends>QToolButton</extends>
+   <header>gui/common/SubscribeToolButton.h</header>
   </customwidget>
   <customwidget>
    <class>RSImageBlockWidget</class>
@@ -608,11 +613,6 @@
    <class>RSComboBox</class>
    <extends>QComboBox</extends>
    <header>gui/common/RSComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>SubscribeToolButton</class>
-   <extends>QToolButton</extends>
-   <header>gui/common/SubscribeToolButton.h</header>
   </customwidget>
  </customwidgets>
  <resources>
