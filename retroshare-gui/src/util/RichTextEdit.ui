@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>703</width>
+    <width>784</width>
     <height>312</height>
    </rect>
   </property>
@@ -566,7 +566,6 @@
      <property name="font">
       <font>
        <family>MS Sans Serif</family>
-       <pointsize>9</pointsize>
       </font>
      </property>
      <property name="autoFormatting">
@@ -591,14 +590,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MimeTextEdit</class>
-   <extends>QTextEdit</extends>
-   <header>gui/common/MimeTextEdit.h</header>
-  </customwidget>
-  <customwidget>
    <class>RSComboBox</class>
    <extends>QComboBox</extends>
    <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MimeTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header location="global">gui/common/MimeTextEdit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -608,7 +607,6 @@
   <tabstop>f_menu</tabstop>
  </tabstops>
  <resources>
-  <include location="../gui/images.qrc"/>
   <include location="../gui/icons.qrc"/>
  </resources>
  <connections/>

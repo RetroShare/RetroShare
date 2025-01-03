@@ -58,11 +58,6 @@
    </item>
    <item>
     <widget class="QTreeView" name="peerTreeWidget">
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
      <property name="contextMenuPolicy">
       <enum>Qt::CustomContextMenu</enum>
      </property>

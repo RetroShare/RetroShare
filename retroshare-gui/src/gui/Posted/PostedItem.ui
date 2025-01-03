@@ -262,7 +262,6 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
             <weight>75</weight>
             <italic>true</italic>
             <bold>true</bold>
@@ -727,15 +726,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GxsIdLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/gxs/GxsIdLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>ElidedLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/ElidedLabel.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
   <customwidget>
    <class>ZoomableLabel</class>
@@ -744,9 +743,9 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="Posted_images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="Posted_images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>
