@@ -228,6 +228,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     connect(ui.hiddenpage_proxyPort_tor,    SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
     connect(ui.hiddenpage_proxyAddress_i2p, SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
     connect(ui.hiddenpage_proxyPort_i2p,    SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
+    connect(ui.hiddenpage_localPort,        SIGNAL(editingFinished()),this,SLOT(saveAddresses()));
 
     connect(ui.totalDownloadRate,SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
     connect(ui.totalUploadRate,  SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
@@ -1139,18 +1140,18 @@ void ServerPage::loadHiddenNode()
 	ui.iconlabel_ext->hide();
 	ui.textlabel_ext->hide();
 	ui.extPortLabel->hide();
-	
+
 	ui.ipAddressLabel->hide();
 	ui.cleanKnownIPs_PB->hide();
-	
+
 	ui.ipAddressList->hide();
 	ui.allowIpDeterminationCB->hide();
 	ui.IPServersLV->hide();
-	
+
     ui.textlabel_hiddenMode->show();
     ui.iconlabel_hiddenMode->show() ;
     ui.iconlabel_hiddenMode->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/ledon1.png"));
-    
+
     // CHANGE OPTIONS ON
     whileBlocking(ui.discComboBox)->removeItem(3);
     whileBlocking(ui.discComboBox)->removeItem(2);
@@ -1731,8 +1732,9 @@ void ServerPage::saveSam()
     new_proxyaddr = ui.hiddenpage_proxyAddress_i2p -> text().toStdString();
     new_proxyport = ui.hiddenpage_proxyPort_i2p -> value();
 
-	// SAMv3 has no proxy port, everything goes through the SAM port.
-	if ((new_proxyaddr != orig_proxyaddr) /* || (new_proxyport != orig_proxyport) */) {
+    // SAMv3 has no proxy port, everything goes through the SAM port.
+    // Still need to check the proxyport for manual i2p
+    if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport)) {
         rsPeers->setProxyServer(RS_HIDDEN_TYPE_I2P, new_proxyaddr, new_proxyport);
     }
 }

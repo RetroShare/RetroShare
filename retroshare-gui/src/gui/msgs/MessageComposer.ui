@@ -349,10 +349,10 @@
                </size>
               </property>
               <property name="frameShape">
-               <enum>QFrame::Box</enum>
+               <enum>QFrame::StyledPanel</enum>
               </property>
               <property name="frameShadow">
-               <enum>QFrame::Sunken</enum>
+               <enum>QFrame::Raised</enum>
               </property>
               <layout class="QHBoxLayout" name="toolBarFrameHLayout">
                <property name="leftMargin">
@@ -1401,6 +1401,11 @@ border-image: url(:/images/closepressed.png)
  </widget>
  <customwidgets>
   <customwidget>
+   <class>RSComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>FriendSelectionWidget</class>
    <extends>QWidget</extends>
    <header>gui/common/FriendSelectionWidget.h</header>
@@ -1412,20 +1417,15 @@ border-image: url(:/images/closepressed.png)
    <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
   <customwidget>
-   <class>HashBox</class>
-   <extends>QScrollArea</extends>
-   <header location="global">gui/common/HashBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>MimeTextEdit</class>
    <extends>QTextEdit</extends>
    <header location="global">gui/common/MimeTextEdit.h</header>
   </customwidget>
   <customwidget>
-   <class>RSComboBox</class>
-   <extends>QComboBox</extends>
-   <header>gui/common/RSComboBox.h</header>
+   <class>HashBox</class>
+   <extends>QScrollArea</extends>
+   <header location="global">gui/common/HashBox.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

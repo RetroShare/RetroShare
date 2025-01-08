@@ -2,7 +2,7 @@
 
 APP="RetroShare"
 RSVERSION="0.6.7a"
-QTVERSION="Qt-5.14.1"
+QTVERSION="Qt-5.15.11"
 
 # Install the 7z to create dmg archives.
 #brew list p7zip || brew install p7zip
@@ -21,6 +21,7 @@ rm -rf qrc
 /usr/libexec/PlistBuddy -c "Delete :CFBundleGetInfoString" retroshare.app/Contents/Info.plist
 /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string $RSVERSION" retroshare.app/Contents/Info.plist
 /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string $RSVERSION" retroshare.app/Contents/Info.plist
+/usr/libexec/PlistBuddy -c "Delete :NSRequiresAquaSystemAppearance" retroshare.app/Contents/Info.plist
 
 # This automatically creates retroshare.dmg
 

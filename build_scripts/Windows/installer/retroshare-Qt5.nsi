@@ -247,6 +247,7 @@ Section $(Section_Main) Section_Main
 
   ; External binaries
   File "${EXTERNAL_LIB_DIR}\bin\miniupnpc.dll"
+  File "${RELEASEDIR}\supportlibs\librnp\Build\src\lib\librnp.dll"
   !if ${ARCHITECTURE} == "x86"
     File "${EXTERNAL_LIB_DIR}\bin\libcrypto-1_1.dll"
     File "${EXTERNAL_LIB_DIR}\bin\libssl-1_1.dll"
