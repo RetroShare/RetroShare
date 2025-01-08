@@ -50,7 +50,7 @@
 #include "util/rsdebug.h"
 
 #include "retroshare/rsgxsflags.h"
-#include "retroshare/rsmsgs.h" 
+#include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsservicecontrol.h"
 
@@ -167,7 +167,7 @@ IdDialog::IdDialog(QWidget *parent)
 	// This is used to grab the broadcast of changes from p3GxsCircles, which is discarded by the current dialog, since it expects data for p3Identity only.
 	//mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
 	//connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
-    
+
 	ownItem = new QTreeWidgetItem();
 	ownItem->setText(RSID_COL_NICKNAME, tr("My own identities"));
 	ownItem->setFont(RSID_COL_NICKNAME, ui->idTreeWidget->font());
@@ -198,7 +198,7 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDLIST, ui->idTreeWidget, false);
 	mStateHelper->addClear(IDDIALOG_IDLIST, ui->idTreeWidget);
 
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
+	//mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_PublishTS);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
@@ -214,7 +214,7 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->label_positive);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->label_negative);
 
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
+	//mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_PublishTS);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
@@ -225,7 +225,7 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->overallOpinion_TF);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->usageStatistics_TB);
 
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
+	//mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_PublishTS);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
@@ -253,7 +253,7 @@ IdDialog::IdDialog(QWidget *parent)
 
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 	connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
-	
+
 	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 	connect(ui->editButton, SIGNAL(clicked()), this, SLOT(editIdentity()));
 
@@ -269,7 +269,7 @@ IdDialog::IdDialog(QWidget *parent)
 	/* Initialize splitter */
 	ui->mainSplitter->setStretchFactor(0, 0);
 	ui->mainSplitter->setStretchFactor(1, 1);
-	
+
 	clearPerson();
 
 	/* Add filter types */
@@ -327,18 +327,18 @@ IdDialog::IdDialog(QWidget *parent)
 	idTWHAction->setData(RSID_FILTER_BANNED);
 	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
 	idTWHMenu->addAction(idTWHAction);
-	
+
     QAction *CreateIDAction = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/person.png"),tr("Create new Identity"), this);
 	connect(CreateIDAction, SIGNAL(triggered()), this, SLOT(addIdentity()));
-	
+
     QAction *CreateCircleAction = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/circles.png"),tr("Create new circle"), this);
 	connect(CreateCircleAction, SIGNAL(triggered()), this, SLOT(createExternalCircle()));
-	
+
 	QMenu *menu = new QMenu();
 	menu->addAction(CreateIDAction);
 	menu->addAction(CreateCircleAction);
 	ui->toolButton_New->setMenu(menu);
-	
+
 	/* Add filter actions */
 	QTreeWidgetItem *headerItem = ui->idTreeWidget->headerItem();
 	QString headerText = headerItem->text(RSID_COL_NICKNAME);
@@ -361,14 +361,14 @@ IdDialog::IdDialog(QWidget *parent)
 
 	ui->idTreeWidget->setColumnHidden(RSID_COL_IDTYPE, true);
 	ui->idTreeWidget->setColumnHidden(RSID_COL_KEYID, true);
-	
+
 	/* Set initial column width */
 	int fontWidth = QFontMetricsF(ui->idTreeWidget->font()).width("W");
 	ui->idTreeWidget->setColumnWidth(RSID_COL_NICKNAME, 14 * fontWidth);
 	ui->idTreeWidget->setColumnWidth(RSID_COL_KEYID, 20 * fontWidth);
 	ui->idTreeWidget->setColumnWidth(RSID_COL_IDTYPE, 18 * fontWidth);
 	ui->idTreeWidget->setColumnWidth(RSID_COL_VOTES, 2 * fontWidth);
-	
+
 	ui->idTreeWidget->setItemDelegate(new RSElidedItemDelegate());
 	ui->idTreeWidget->setItemDelegateForColumn(
 	            RSID_COL_NICKNAME,
@@ -408,7 +408,7 @@ IdDialog::IdDialog(QWidget *parent)
 	processSettings(true);
 
     // circles stuff
-    
+
     //connect(ui->treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
     connect(ui->treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CircleListCustomPopupMenu(QPoint)));
     connect(ui->autoBanIdentities_CB, SIGNAL(toggled(bool)), this, SLOT(toggleAutoBanIdentities(bool)));
@@ -429,14 +429,23 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		switch(e->mIdentityEventCode)
 		{
 		case RsGxsIdentityEventCode::DELETED_IDENTITY:
-		case RsGxsIdentityEventCode::NEW_IDENTITY:
+            if(mId == e->mIdentityId)
+            {
+                mId.clear();
+                updateIdentity();
+            }
+            updateIdList();
+            break;
+
+        case RsGxsIdentityEventCode::NEW_IDENTITY:
 		case RsGxsIdentityEventCode::UPDATED_IDENTITY:
 			if (isVisible())
 			{
                 if(rsIdentity->isOwnId(RsGxsId(e->mIdentityId)))
                     updateIdList();
                 else
-                    updateIdTimer.start(3000);		// use a timer for events not generated by local changes
+                    updateIdTimer.start(3000);		// use a timer for events not generated by local changes which generally
+                                                    // come in large herds. Allows to group multiple changes into a single UI update.
 			}
 			else
 				needUpdateIdsOnNextShow = true;
@@ -481,11 +490,11 @@ void IdDialog::clearPerson()
 {
 	//QFontMetricsF f(ui->avLabel_Person->font()) ;
 
-	//ui->avLabel_Person->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/people.png").scaled(f.height()*4,f.height()*4,Qt::KeepAspectRatio,Qt::SmoothTransformation));
 	ui->headerTextLabel_Person->setText(tr("People"));
 
 	ui->info_Frame_Invite->hide();
 	ui->avatarLabel->clear();
+	ui->avatarLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/people.png"));
 
 	whileBlocking(ui->ownOpinion_CB)->setCurrentIndex(1);
 	whileBlocking(ui->autoBanIdentities_CB)->setChecked(false);
@@ -507,10 +516,10 @@ void IdDialog::updateCirclesDisplay()
 {
     if(RsAutoUpdatePage::eventsLocked())
         return ;
-    
+
     if(!isVisible())
         return ;
-    
+
 #ifdef ID_DEBUG
     std::cerr << "!!Updating circles display!" << std::endl;
 #endif
@@ -920,16 +929,16 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 
 bool IdDialog::getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id)
 {
-#ifdef CIRCLE_MEMBERSHIP_CATEGORIES    
+#ifdef CIRCLE_MEMBERSHIP_CATEGORIES
     if ((!item) || (!item->parent()))
 	    return false;
-    
+
 	QString coltext = (item->parent()->parent())? (item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString()) : (item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString());
     id = RsGxsCircleId( coltext.toStdString()) ;
 #else
     if(!item)
 	    return false;
-    
+
     QString coltext = (item->parent())? (item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString()) : (item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString());
     id = RsGxsCircleId( coltext.toStdString()) ;
 #endif
@@ -958,19 +967,19 @@ void IdDialog::createExternalCircle()
 void IdDialog::showEditExistingCircle()
 {
     RsGxsCircleId id ;
-    
+
     if(!getItemCircleId(ui->treeWidget_membership->currentItem(),id))
        return ;
-    
+
     uint32_t subscribe_flags = ui->treeWidget_membership->currentItem()->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
-	
+
     CreateCircleDialog dlg;
-    
+
     dlg.editExistingId(RsGxsGroupId(id),true,!(subscribe_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)) ;
     dlg.exec();
 }
 
-void IdDialog::grantCircleMembership() 
+void IdDialog::grantCircleMembership()
 {
 	RsGxsCircleId circle_id ;
 
@@ -987,7 +996,7 @@ void IdDialog::grantCircleMembership()
     });
 }
 
-void IdDialog::revokeCircleMembership() 
+void IdDialog::revokeCircleMembership()
 {
 	RsGxsCircleId circle_id ;
 
@@ -1016,22 +1025,22 @@ void IdDialog::revokeCircleMembership()
 		});
 }
 
-void IdDialog::acceptCircleSubscription() 
+void IdDialog::acceptCircleSubscription()
 {
     RsGxsCircleId circle_id ;
-    
+
     if(!getItemCircleId(ui->treeWidget_membership->currentItem(),circle_id))
         return;
 
     RsGxsId own_id(qobject_cast<QAction*>(sender())->data().toString().toStdString());
-    
+
     rsGxsCircles->requestCircleMembership(own_id,circle_id) ;
 }
 
-void IdDialog::cancelCircleSubscription() 
-{	
+void IdDialog::cancelCircleSubscription()
+{
     RsGxsCircleId circle_id ;
-    
+
     if(!getItemCircleId(ui->treeWidget_membership->currentItem(),circle_id))
         return;
 
@@ -1039,14 +1048,14 @@ void IdDialog::cancelCircleSubscription()
 
     rsGxsCircles->cancelCircleMembership(own_id,circle_id) ;
 }
-    
+
 void IdDialog::CircleListCustomPopupMenu( QPoint )
 {
     QMenu contextMnu( this );
 
     RsGxsCircleId circle_id ;
     QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
-            
+
     if(!getItemCircleId(item,circle_id))
         return ;
 
@@ -1054,7 +1063,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
     RsGxsId item_id(item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString());
     bool is_circle ;
     bool am_I_circle_admin = false ;
-    
+
     if(item_id == RsGxsId(circle_id))	// is it a circle?
     {
 	    uint32_t group_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
@@ -1073,7 +1082,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 #ifdef CIRCLE_MEMBERSHIP_CATEGORIES
 	}
 #endif
-        
+
 #ifdef ID_DEBUG
 	    std::cerr << "  Item is a circle item. Adding Edit/Details menu entry." << std::endl;
 #endif
@@ -1081,7 +1090,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 
 	    contextMnu.addSeparator() ;
     }
-    else 
+    else
     {
 	    current_gxs_id = RsGxsId(item_id);
 	    is_circle =false ;
@@ -1096,9 +1105,9 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 	    std::cerr << "  Item is a GxsId item. Requesting flags/group id from parent: " << circle_id << std::endl;
 #endif
     }
- 
+
     RsGxsCircleDetails details ;
-    
+
     if(!rsGxsCircles->getCircleDetails(circle_id,details))// grab real circle ID from parent. Make sure circle id is used correctly afterwards!
     {
         std::cerr << "  (EE) cannot get circle info for ID " << circle_id << ". Not in cache?" << std::endl;
@@ -1135,7 +1144,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 				    ids[REMOVE].push_back(*it) ;
 			    else
 				    ids[CANCEL].push_back(*it) ;
-		    else 
+		    else
 			    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
 				    ids[ACCEPT].push_back(*it) ;
 			    else
@@ -1196,17 +1205,17 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 		    contextMnu.addMenu(menu) ;
 	    }
     }
-    
+
     if(!is_circle && am_I_circle_admin)	// I am circle admin. I can therefore revoke/accept membership
     {
 	std::map<RsGxsId,uint32_t>::const_iterator it = details.mSubscriptionFlags.find(current_gxs_id) ;
-    
+
         if(!current_gxs_id.isNull() && it != details.mSubscriptionFlags.end())
         {
 	    contextMnu.addSeparator() ;
 
 	    if(it->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
-	    { 
+	    {
 		    QAction *action = new QAction(tr("Revoke this member"),this) ;
 		    action->setData(QString::fromStdString(current_gxs_id.toStdString()));
 		    QObject::connect(action,SIGNAL(triggered()), this, SLOT(revokeCircleMembership()));
@@ -1251,7 +1260,7 @@ static QString getHumanReadableDuration(uint32_t seconds)
         return QString(QObject::tr("%1 hours ago")).arg(seconds/3600) ;
     else if(seconds < 2*24*3600)
         return QString(QObject::tr("%1 day ago")).arg(seconds/86400) ;
-    else 
+    else
         return QString(QObject::tr("%1 days ago")).arg(seconds/86400) ;
 }
 
@@ -1283,7 +1292,7 @@ void IdDialog::processSettings(bool load)
 
 		// state of splitter
 		Settings->setValue("splitter", ui->mainSplitter->saveState());
-		
+
 		//save expanding
 		Settings->setValue("ExpandAll", allItem->isExpanded());
 		Settings->setValue("ExpandContacts", contactsItem->isExpanded());
@@ -1330,6 +1339,7 @@ void IdDialog::updateSelection()
 void IdDialog::updateIdList()
 {
 	//int accept = filter;
+    std::cerr << "Updating ID list" << std::endl;
 
  	RsThread::async([this]()
 	{
@@ -1476,13 +1486,13 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 			rsPeers->getGPGDetails(data.mPgpId, details);
 			item->setText(RSID_COL_IDTYPE, QString::fromUtf8(details.name.c_str()));
 			item->setToolTip(RSID_COL_IDTYPE,"Verified signature from node "+QString::fromStdString(data.mPgpId.toStdString())) ;
-			
-			
+
+
 			QString tooltip = tr("Node name:")+" " + QString::fromUtf8(details.name.c_str()) + "\n";
 			tooltip        += tr("Node Id  :")+" " + QString::fromStdString(data.mPgpId.toStdString()) ;
 			item->setToolTip(RSID_COL_KEYID,tooltip) ;
 		}
-		else 
+		else
 		{
 			QString txt =  tr("[Unknown node]");
 			item->setText(RSID_COL_IDTYPE, txt);
@@ -1512,7 +1522,9 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 {
 	auto ids_set(ids_set_const);
 
-	//First: Get current item to restore after
+    std::cerr << "Loading ID list" << std::endl;
+
+    //First: Get current item to restore after
 	RsGxsGroupId oldCurrentId = mIdToNavigate;
 	{
 		QTreeWidgetItem *oldCurrent = ui->idTreeWidget->currentItem();
@@ -1535,13 +1547,13 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
-	// Update existing and remove not existing items 
+	// Update existing and remove not existing items
 	// Also remove items that do not have the correct parent
 
 	QTreeWidgetItemIterator itemIterator(ui->idTreeWidget);
 	QTreeWidgetItem *item = NULL;
 
-	while ((item = *itemIterator) != NULL) 
+	while ((item = *itemIterator) != NULL)
 	{
 		++itemIterator;
 		auto it = ids_set.find(RsGxsGroupId(item->text(RSID_COL_KEYID).toStdString())) ;
@@ -1589,18 +1601,18 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 
 		}
 	}
-	
+
 	/* count items */
 	int itemCount = contactsItem->childCount() + allItem->childCount() + ownItem->childCount();
 	ui->label_count->setText( "(" + QString::number( itemCount ) + ")" );
-	
+
 	int contactsCount = contactsItem->childCount() ;
 	int allCount = allItem->childCount() ;
 	int ownCount = ownItem->childCount();
 
-	contactsItem->setText(0, tr("My contacts") + " (" + QString::number( contactsCount ) + ")" );
-	allItem->setText(0, tr("All") + " (" + QString::number( allCount ) + ")" );
-	ownItem->setText(0, tr("My own identities") + " (" +  QString::number( ownCount ) + ")" );
+    contactsItem->setText(0, tr("My contacts") + ((contactsCount>0)?" (" + QString::number( contactsCount ) + ")":"") );
+    allItem->setText(0, tr("All") + ((allCount>0)?" (" + QString::number( allCount ) + ")":"") );
+    ownItem->setText(0, tr("My own identities") + ((ownCount>0)?" (" +  QString::number( ownCount ) + ")":"") );
 
 
 	//Restore expanding
@@ -1675,7 +1687,7 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
     ui->lineEdit_PublishTS->setText(QDateTime::fromMSecsSinceEpoch(qint64(1000)*data.mMeta.mPublishTs).toString(Qt::SystemLocaleShortDate));
-    ui->lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
+    //ui->lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
 	ui->lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 	//ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
     if(data.mPgpKnown)
@@ -1731,7 +1743,7 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
 		ui->lineEdit_GpgId->show() ;
 		ui->label_GpgId->show() ;
 	}
-    
+
     if(data.mPgpKnown)
     {
 		ui->lineEdit_GpgName->show() ;
@@ -1771,7 +1783,6 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
 
 	if (isOwnId)
 	{
-        mStateHelper->setWidgetEnabled(ui->ownOpinion_CB, false);
         mStateHelper->setWidgetEnabled(ui->autoBanIdentities_CB, false);
         // ui->editIdentity->setEnabled(true);
         // ui->removeIdentity->setEnabled(true);
@@ -1781,8 +1792,6 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
 	}
 	else
 	{
-		// No Reputation yet!
-        mStateHelper->setWidgetEnabled(ui->ownOpinion_CB, true);
         mStateHelper->setWidgetEnabled(ui->autoBanIdentities_CB, true);
         // ui->editIdentity->setEnabled(false);
         // ui->removeIdentity->setEnabled(false);
@@ -1826,7 +1835,7 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
         frep_string = tr("No votes from friends") ;
 
     ui->neighborNodesOpinion_TF->setText(frep_string) ;
-    
+
     ui->label_positive->setText(QString::number(info.mFriendsPositiveVotes));
     ui->label_negative->setText(QString::number(info.mFriendsNegativeVotes));
 
@@ -2028,7 +2037,7 @@ void IdDialog::modifyReputation()
 
 	return;
 }
-	
+
 void IdDialog::navigate(const RsGxsId& gxs_id)
 {
 #ifdef ID_DEBUG
@@ -2086,14 +2095,12 @@ void IdDialog::removeIdentity()
 		return;
 	}
 
-	if ((QMessageBox::question(this, tr("Really delete?"), tr("Do you really want to delete this identity?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::No))== QMessageBox::Yes)
+    if ((QMessageBox::question(this, tr("Really delete?"), tr("Do you really want to delete this identity?\nThis cannot be undone."), QMessageBox::Yes|QMessageBox::No, QMessageBox::No))== QMessageBox::Yes)
 	{
-		std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+        std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+        RsGxsId kid(keyId);
 
-		uint32_t dummyToken = 0;
-		RsGxsIdGroup group;
-		group.mMeta.mGroupId=RsGxsGroupId(keyId);
-		rsIdentity->deleteIdentity(dummyToken, group);
+        rsIdentity->deleteIdentity(kid);
 	}
 }
 
@@ -2256,29 +2263,29 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			if(n_is_a_contact == 0)
 				contextMenu->addAction(QIcon(), tr("Add to Contacts"), this, SLOT(addtoContacts()));
 
-			if (n_selected_items==1)
-				contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
-
 			if(n_is_not_a_contact == 0)
                 contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
 
-			contextMenu->addSeparator();
+    }
 
-			if(n_positive_reputations == 0)	// only unban when all items are banned
-                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
+		if (n_selected_items==1)
+			contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 
-			if(n_neutral_reputations == 0)	// only unban when all items are banned
-                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
+    contextMenu->addSeparator();
 
-			if(n_negative_reputations == 0)
-                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
-		}
+		if(n_positive_reputations == 0)	// only unban when all items are banned
+      contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
+
+		if(n_neutral_reputations == 0)	// only unban when all items are banned
+      contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
+
+		if(n_negative_reputations == 0)
+      contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
 
 		if(one_item_owned_by_you && n_selected_items==1)
 		{
 			contextMenu->addSeparator();
 
-			contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 			contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT),tr("Edit identity"),this,SLOT(editIdentity())) ;
 			contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"),tr("Delete identity"),this,SLOT(removeIdentity())) ;
 		}
@@ -2453,7 +2460,7 @@ void IdDialog::sendInvite()
 	}
 
     RsGxsId id(ui->lineEdit_KeyId->text().toStdString());
-    
+
     //if ((QMessageBox::question(this, tr("Send invite?"),tr("Do you really want send a invite with your Certificate?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
 	{
         MessageComposer::sendInvite(id,false);
@@ -2461,7 +2468,7 @@ void IdDialog::sendInvite()
         ui->info_Frame_Invite->show();
         ui->inviteButton->setEnabled(false);
 	}
-    
+
 
 }
 
@@ -2592,4 +2599,3 @@ void IdDialog::restoreExpandedCircleItems(const std::vector<bool>& expanded_root
     restoreTopLevel(mExternalOtherCircleItem,1);
     restoreTopLevel(mMyCircleItem,2);
 }
-

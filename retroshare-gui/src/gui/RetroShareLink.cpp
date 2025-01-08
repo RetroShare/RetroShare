@@ -1920,7 +1920,9 @@ static void processList(const QStringList &list, const QString &textSingular, co
 void RSLinkClipboard::copyLinks(const QList<RetroShareLink>& links)
 {
 	QString res ;
-	for (int i = 0; i < links.size(); ++i)
+	if(links.size() == 1)
+		res += links[0].toString();
+	else for(int i = 0; i < links.size(); ++i)
 		res += links[i].toString() + "\n" ;
 
 	QApplication::clipboard()->setText(res) ;
@@ -2036,4 +2038,3 @@ void RSLinkClipboard::parseText(QString text, QList<RetroShareLink> &links,Retro
 		pos += rx.matchedLength();
 	}
 }
-

@@ -18,6 +18,8 @@ if errorlevel 1 goto error_env
 if not "%ParamNoupdate%"=="1" (
 	:: Install needed things
 	%EnvMSYS2Cmd% "pacman --noconfirm --needed -S make git mingw-w64-%RsMSYS2Architecture%-toolchain mingw-w64-%RsMSYS2Architecture%-qt5 mingw-w64-%RsMSYS2Architecture%-miniupnpc mingw-w64-%RsMSYS2Architecture%-sqlcipher mingw-w64-%RsMSYS2Architecture%-cmake mingw-w64-%RsMSYS2Architecture%-rapidjson"
+	:: rnp
+	%EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-json-c mingw-w64-%RsMSYS2Architecture%-libbotan"
 
 	:: Webui
 	if "%ParamWebui%"=="1" %EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-doxygen"
