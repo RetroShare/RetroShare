@@ -16,13 +16,13 @@ if "%~1"=="clean" (
 	goto exit
 )
 
-set MSYS2Version=20231026
+set MSYS2Version=20241208
 
 set MSYS2Install=msys2-base-x86_64-%MSYS2Version%.sfx.exe
 set MSYS2Url=https://github.com/msys2/msys2-installer/releases/download/%MSYS2Version:~0,4%-%MSYS2Version:~4,2%-%MSYS2Version:~6,2%/%MSYS2Install%
 set MSYS2UnpackPath=%EnvMSYS2Path%\msys64
-set CMakeInstall=cmake-3.19.0-win32-x86.zip
-set CMakeUrl=https://github.com/Kitware/CMake/releases/download/v3.19.0/%CMakeInstall%
+set CMakeInstall=cmake-3.31.3-windows-i386.zip
+set CMakeUrl=https://github.com/Kitware/CMake/releases/download/v3.31.3/%CMakeInstall%
 
 if exist "%MSYS2UnpackPath%\usr\bin\pacman.exe" (
 	if "%~1"=="reinstall" (

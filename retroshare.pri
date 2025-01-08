@@ -182,6 +182,12 @@ rs_deep_files_index_taglib:CONFIG -= no_rs_deep_files_index_taglib
 CONFIG *= no_rs_use_native_dialogs
 rs_use_native_dialogs:CONFIG -= no_rs_use_native_dialogs
 
+# By default, use RNP lib for RFC4880 PGP management. If not, compilation will
+# default to openpgp-sdk, which is old and unmaintained, so probably not very secure.
+CONFIG *= rs_rnplib
+rs_no_rnplib:CONFIG -= rs_rnplib
+rs_no_rnplib:CONFIG += rs_openpgpsdk
+
 # To disable broadcast discovery append the following assignation to qmake
 # command line "CONFIG+=no_rs_broadcast_discovery"
 CONFIG *= rs_broadcast_discovery
@@ -302,6 +308,18 @@ isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
 #
 ###########################################################################################################################################################
 
+###########################################################################################################################################################
+#
+#  V06_EXPERIMENTAL_CHANGE_001:
+#
+#    What: removes issuer fingerprint from signature subpackets
+#    Why:  This type of subpacket is not part of RFC4880 and not recognised by OpenPGP-SDK
+#    BackwardCompat: old RS before Sept.2024 will not be able to exchange keys
+#    Note: Since signature subpacket 33 is part of the hashed section of the signature, this also invalidates the signature.
+#           Depending on the implementation, certificates with self-signature that miss this subpacket may not be accepted.
+#
+###########################################################################################################################################################
+
 
 DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_001
 DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
@@ -313,6 +331,7 @@ rs_v07_changes {
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_004
+    DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_005
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_UNNAMED
 }
 
@@ -848,6 +867,19 @@ isEmpty(RS_UPNP_LIB) {
         message("Autodetected RS_UPNP_LIB=$$RS_UPNP_LIB")
     }
 }
+
+rs_openpgpsdk {
+        SUBDIRS += openpgpsdk
+        openpgpsdk.file = openpgpsdk/src/openpgpsdk.pro
+        libretroshare.depends += openpgpsdk
+        message("Using OpenPGP-SDK for PGP")
+}
+
+rs_rnplib {
+        DEFINES += USE_RNP_LIB
+        message("Using RNP lib for PGP")
+}
+
 
 equals(RS_UPNP_LIB, none):RS_UPNP_LIB=
 equals(RS_UPNP_LIB, miniupnpc):DEFINES*=RS_USE_LIBMINIUPNPC
