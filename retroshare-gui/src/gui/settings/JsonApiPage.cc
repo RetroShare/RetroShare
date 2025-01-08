@@ -234,21 +234,21 @@ void JsonApiPage::addTokenClicked()
 
 void JsonApiPage::removeTokenClicked()
 {
-	QString token(ui.tokenLineEdit->text());
-	rsJsonApi->revokeAuthToken(token.toStdString());
+    QString token(ui.tokenLineEdit->text());
+    std::string tokenStr = token.toStdString();
+    rsJsonApi->revokeAuthToken(tokenStr.substr(0, tokenStr.find_first_of(":")));
 
     QStringList newTk;
 
-	for(const auto& it : rsJsonApi->getAuthorizedTokens())
-		newTk.push_back(
-		            QString::fromStdString(it.first) + ":" +
-		            QString::fromStdString(it.second) );
+    for(const auto& it : rsJsonApi->getAuthorizedTokens())
+        newTk.push_back(
+                    QString::fromStdString(it.first) + ":" +
+                    QString::fromStdString(it.second) );
 
-	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(Settings->getJsonApiAuthTokens()) );
+    whileBlocking(ui.tokensListView)->setModel(new QStringListModel(Settings->getJsonApiAuthTokens()) );
 }
 
 void JsonApiPage::tokenClicked(const QModelIndex& index)
 {
 	ui.tokenLineEdit->setText(ui.tokensListView->model()->data(index).toString());
 }
-
