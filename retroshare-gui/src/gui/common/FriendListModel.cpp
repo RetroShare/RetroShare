@@ -34,6 +34,7 @@
 #include "gui/common/FriendListModel.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
+#include "gui/chat/ChatUserNotify.h"
 #include "retroshare/rsexpr.h"
 #include "retroshare/rsmsgs.h"
 
@@ -998,6 +999,12 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
 		{
 			QPixmap sslAvatar;
 			bool foundAvatar = false;
+			bool hasPrivateChat = false;
+			
+			// get peers with waiting incoming chats
+			std::vector<RsPeerId> privateChatIds;
+			ChatUserNotify::getPeersWithWaitingChat(privateChatIds);
+
         	const HierarchicalProfileInformation *hn = getProfileInfo(entry);
 			uint32_t status = RS_STATUS_OFFLINE;
 			const HierarchicalNodeInformation *bestNodeInformation = NULL;
@@ -1025,11 +1032,26 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
 			if (!foundAvatar || sslAvatar.isNull()) {
 				sslAvatar = FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE);
 			}
+			
+			if (mDisplayStatusIcon) {
+				for(uint32_t i=0;i<hn->child_node_indices.size();++i) {
+					if (std::find(privateChatIds.begin(), privateChatIds.end(), RsPeerId(mLocations[hn->child_node_indices[i]].node_info.id.toStdString())) != privateChatIds.end()) {
+						// private chat is available
+						hasPrivateChat = true;
+						break;
+						}
+				}
+			}
 
 			if (mDisplayStatusIcon) {
 				if (bestNodeInformation) {
-					QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(status));
-					return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
+					if (hasPrivateChat) {
+						QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(":/images/orange-bubble-64.png");
+						return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
+					} else {
+						QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(status));
+						return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
+					}
 				}
 			}
 
@@ -1047,10 +1069,31 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
             return QVariant();
 
 		QPixmap sslAvatar;
+		bool hasPrivateChat = false;
 		AvatarDefs::getAvatarFromSslId(RsPeerId(hn->node_info.id.toStdString()), sslAvatar);
+
+		// get peers with waiting incoming chats
+		std::vector<RsPeerId> privateChatIds;
+		ChatUserNotify::getPeersWithWaitingChat(privateChatIds);
+
 		if (mDisplayStatusIcon) {
-			QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(statusRole(entry, col).toInt()));
-			return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
+			for(uint32_t i=0;i<mLocations.size();++i){
+				if (std::find(privateChatIds.begin(), privateChatIds.end(), RsPeerId(hn->node_info.id.toStdString())) != privateChatIds.end()) {
+					// private chat is available
+					hasPrivateChat = true;
+					break;
+				}
+			}
+		}
+
+		if (mDisplayStatusIcon) {
+			if (hasPrivateChat) {
+				QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(":/images/orange-bubble-64.png");
+				return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
+			} else {
+				QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(statusRole(entry, col).toInt()));
+				return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
+			}
 		}
 
         return QVariant(QIcon(sslAvatar));
