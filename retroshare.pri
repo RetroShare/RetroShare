@@ -286,7 +286,7 @@ isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
 #
 #  V07_NON_BACKWARD_COMPATIBLE_CHANGE_002:
 #
-#     What: Use RSA+SHA256 instead of RSA+SHA1 for PGP certificate signatures
+#     What: Use RSA+SHA256 instead of RSA+SHA1 for SSL certificates 
 #
 #     Why:  Sha1 is likely to be prone to primary collisions anytime soon, so it is urgent to turn to a more secure solution.
 #
@@ -296,15 +296,25 @@ isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
 #
 #    What: Do not hash PGP certificate twice when signing
 #
-#  	 Why: hasing twice is not per se a security issue, but it makes it harder to change the settings for hashing.
+#    Why: hasing twice is not per se a security issue, but it makes it harder to change the settings for hashing.
 #
-#  	 Backward compat: patched peers cannot connect to non patched peers older than Nov 2017.
+#    Backward compat: patched peers cannot connect to non patched peers older than Nov 2017.
 #
 #  V07_NON_BACKWARD_COMPATIBLE_CHANGE_004:
 #
 #    What: Do not probe that GXS tunnels accept fast items. Just assume they do.
+#
 #    Why:  Avoids sending probe packets
+#
 #    BackwardCompat: old RS before Mai 2019 will not be able to distant chat.
+#
+#  V07_NON_BACKWARD_COMPATIBLE_CHANGE_005:
+#
+#    What: Stop accepting certificates signed with sha1 algorithm
+#
+#    Why:  Sha1 has been declared insecure and shouldn't be used anymore. 
+#
+#    BackwardCompat: Retroshare profiles generated before Nov.2024 with openpgp-sdk may still use sha1
 #
 ###########################################################################################################################################################
 
