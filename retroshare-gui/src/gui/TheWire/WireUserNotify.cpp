@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseTopLevel.h                                                 *
+ * retroshare-gui/src/gui/TheWire/WireUserNotify.cpp                           *
  *                                                                             *
- * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ * Copyright (C) 2014 by Retroshare Team     <retroshare.project@gmail.com>    *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,49 +18,45 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_TOP_LEVEL_H
-#define MRK_PULSE_TOP_LEVEL_H
+#include "retroshare/rswire.h"
+#include "WireUserNotify.h"
+#include "gui/MainWindow.h"
+#include "gui/common/FilesDefs.h"
 
-#include "ui_PulseTopLevel.h"
-
-#include "PulseViewItem.h"
-#include <retroshare/rswire.h>
-
-class PulseTopLevel : public PulseDataItem, private Ui::PulseTopLevel
+WireUserNotify::WireUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsStatisticsProvider *g, QObject *parent) :
+    GxsUserNotify(ifaceImpl, g, parent)
 {
-  Q_OBJECT
+}
 
-public:
-	PulseTopLevel(PulseViewHolder *holder, RsWirePulseSPtr pulse);
+bool WireUserNotify::hasSetting(QString *name, QString *group)
+{
+    if (name) *name = tr("Wire Post");
+    if (group) *group = "Wire";
 
+    return true;
+}
 
-protected:
-	void setup();
+QIcon WireUserNotify::getIcon()
+{
+    return FilesDefs::getIconFromQtResourcePath(":/icons/png/wire-circle.png");
+}
 
-// PulseDataInterface ===========
-	// Group
-	virtual void setHeadshot(const QPixmap &pixmap) override;
-	virtual void setGroupNameString(QString name) override;
-	virtual void setAuthorString(QString name) override;
+QIcon WireUserNotify::getMainIcon(bool hasNew)
+{
+    return hasNew ? FilesDefs::getIconFromQtResourcePath(":/icons/png/wire-notify.png") : FilesDefs::getIconFromQtResourcePath(":/icons/png/wire-circle.png");
+}
 
-	// Msg
-	virtual void setRefMessage(QString msg, uint32_t image_count) override;
-	virtual void setMessage(RsWirePulseSPtr pulse) override;
-	virtual void setDateString(QString date) override;
+//QString PostedUserNotify::getTrayMessage(bool plural)
+//{
+//    return plural ? tr("You have %1 new board posts") : tr("You have %1 new board post");
+//}
 
-	// Refs
-	virtual void setLikesString(QString likes) override;
-	virtual void setRepublishesString(QString repub) override;
-	virtual void setRepliesString(QString reply) override;
+//QString PostedUserNotify::getNotifyMessage(bool plural)
+//{
+//    return plural ? tr("%1 new board post") : tr("%1 new board post");
+//}
 
-	// 
-	virtual void setReferenceString(QString ref) override;
-	virtual void setPulseStatus(PulseStatus status) override;
-// PulseDataInterface ===========
-
-protected:
-	void mousePressEvent(QMouseEvent *event);
-
-};
-
-#endif
+void WireUserNotify::iconClicked()
+{
+    MainWindow::showWindow(MainWindow::Wire);
+}

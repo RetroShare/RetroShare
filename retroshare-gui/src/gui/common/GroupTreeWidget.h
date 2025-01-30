@@ -25,6 +25,7 @@
 
 #include <QTreeWidgetItem>
 #include <QDateTime>
+//#include "NotifyWidget.h"
 
 class QToolButton;
 class RshareSettings;
@@ -53,27 +54,27 @@ namespace Ui {
 class GroupItemInfo
 {
 public:
-	GroupItemInfo()
-	  : popularity(0), publishKey(false), adminKey(false)
-	  , subscribeFlags(0), max_visible_posts(0)
-	{}
+    GroupItemInfo()
+      : popularity(0), publishKey(false), adminKey(false)
+      , subscribeFlags(0), max_visible_posts(0)
+    {}
 
 public:
-	QString               id;
-	QString               name;
-	QString               description;
-	int                   popularity;
-	QDateTime             lastpost;
-	QIcon                 icon;
-	bool                  publishKey;
-	bool                  adminKey;
+    QString               id;
+    QString               name;
+    QString               description;
+    int                   popularity;
+    QDateTime             lastpost;
+    QIcon                 icon;
+    bool                  publishKey;
+    bool                  adminKey;
     quint32               subscribeFlags;
     quint32               max_visible_posts ;
     std::set<std::string> context_strings;
 };
 
 //cppcheck-suppress noConstructor
-class GroupTreeWidget : public QWidget
+class GroupTreeWidget : public QWidget //public NotifyWidget
 {
 	Q_OBJECT
 
@@ -110,14 +111,11 @@ public:
 	QString itemIdAt(QPoint &point);
 	// Fill items of a group
 	void fillGroupItems(QTreeWidgetItem *categoryItem, const QList<GroupItemInfo> &itemList);
-	// Set the unread count of an item
-	void setUnreadCount(QTreeWidgetItem *item, int unreadCount);
 
 	bool isSearchRequestItem(QPoint &point,uint32_t& search_req_id);
 	bool isSearchRequestResult(QPoint &point, QString &group_id, uint32_t& search_req_id);
 	bool isSearchRequestResultItem(QTreeWidgetItem *item,QString& group_id,uint32_t& search_req_id);
 
-	QTreeWidgetItem *getItemFromId(const QString &id);
 	QTreeWidgetItem *activateId(const QString &id, bool focus);
 
 	bool setWaiting(const QString &id, bool wait);
@@ -133,6 +131,9 @@ public:
 	bool getGroupName(const QString& id, QString& name);
 
 	int subscribeFlags(const QString &id);
+
+    void setUnreadCount(QTreeWidgetItem *item, int unreadCount);
+    QTreeWidgetItem *getItemFromId(const QString &id);
 
 signals:
 	void treeCustomContextMenuRequested(const QPoint &pos);
@@ -165,6 +166,7 @@ private:
 	RSTreeWidgetItemCompareRole *compareRole;
 
 	Ui::GroupTreeWidget *ui;
+
 };
 
 #endif // GROUPTREEWIDGET_H

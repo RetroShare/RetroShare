@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseTopLevel.h                                                 *
+ * retroshare-gui/src/gui/TheWire/WireUserNotify.h                             *
  *                                                                             *
- * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ * Copyright (C) 2014 by Retroshare Team     <retroshare.project@gmail.com>    *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,49 +18,25 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_TOP_LEVEL_H
-#define MRK_PULSE_TOP_LEVEL_H
+#ifndef WIREUSERNOTIFY_H
+#define WIREUSERNOTIFY_H
 
-#include "ui_PulseTopLevel.h"
+#include "gui/gxs/GxsUserNotify.h"
 
-#include "PulseViewItem.h"
-#include <retroshare/rswire.h>
-
-class PulseTopLevel : public PulseDataItem, private Ui::PulseTopLevel
+class WireUserNotify : public GxsUserNotify
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-	PulseTopLevel(PulseViewHolder *holder, RsWirePulseSPtr pulse);
+    explicit WireUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsStatisticsProvider *g, QObject *parent = 0);
 
+    virtual bool hasSetting(QString *name, QString *group) override;
 
-protected:
-	void setup();
+private:
+    virtual QIcon getIcon() override;
+    virtual QIcon getMainIcon(bool hasNew) override;
 
-// PulseDataInterface ===========
-	// Group
-	virtual void setHeadshot(const QPixmap &pixmap) override;
-	virtual void setGroupNameString(QString name) override;
-	virtual void setAuthorString(QString name) override;
-
-	// Msg
-	virtual void setRefMessage(QString msg, uint32_t image_count) override;
-	virtual void setMessage(RsWirePulseSPtr pulse) override;
-	virtual void setDateString(QString date) override;
-
-	// Refs
-	virtual void setLikesString(QString likes) override;
-	virtual void setRepublishesString(QString repub) override;
-	virtual void setRepliesString(QString reply) override;
-
-	// 
-	virtual void setReferenceString(QString ref) override;
-	virtual void setPulseStatus(PulseStatus status) override;
-// PulseDataInterface ===========
-
-protected:
-	void mousePressEvent(QMouseEvent *event);
-
+    virtual void iconClicked() override;
 };
 
-#endif
+#endif // WIREUSERNOTIFY_H
