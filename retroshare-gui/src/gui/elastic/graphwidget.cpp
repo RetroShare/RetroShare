@@ -40,6 +40,7 @@ GraphWidget::GraphWidget(QWidget *)
     setRenderHint(QPainter::Antialiasing);
     setTransformationAnchor(AnchorUnderMouse);
     setResizeAnchor(AnchorViewCenter);
+    setDragMode(QGraphicsView::ScrollHandDrag);
 	 _friction_factor = 1.0f ;
 
     scale(qreal(0.8), qreal(0.8));
@@ -296,7 +297,7 @@ void GraphWidget::setNameSearch(QString s)
     
 	if (s.length() == 0){
 		for(uint32_t i=0;i<_nodes.size();++i)
-			_nodes[i]->setNodeDrawSize(12 * f);
+			_nodes[i]->setNodeDrawSize(12 * f, false);
 		forceRedraw();
 		return;
 	}
@@ -308,10 +309,10 @@ void GraphWidget::setNameSearch(QString s)
 
 		if (ns.find(qs) != std::string::npos) {
 			//std::cout << "found!" << '\n';
-			ni->setNodeDrawSize(22 * f);
+			ni->setNodeDrawSize(22 * f, true);
 			//std::cout << ni->getNodeDrawSize() << '\n';
 		} else {
-			ni->setNodeDrawSize(12 * f);
+			ni->setNodeDrawSize(12 * f, false);
 
 		}
 	}
