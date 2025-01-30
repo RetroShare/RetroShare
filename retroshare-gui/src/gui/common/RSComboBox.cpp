@@ -33,6 +33,11 @@ RSComboBox::RSComboBox(QWidget *parent /*= nullptr*/)
 	view()->installEventFilter(this);
 }
 
+RSComboBox::~RSComboBox()
+{
+	delete this->itemDelegate();
+}
+
 bool RSComboBox::eventFilter(QObject *obj, QEvent *event)
 {
 	if(QAbstractItemView* view = dynamic_cast<QAbstractItemView*>(obj))

@@ -28,6 +28,7 @@ class RSComboBox : public QComboBox
 	Q_OBJECT
 public:
 	explicit RSComboBox(QWidget *parent = nullptr);
+	~RSComboBox();
 
 protected:
 	bool eventFilter(QObject *obj, QEvent *event);
