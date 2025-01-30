@@ -47,8 +47,9 @@ public:
 	virtual ChatWidget *getChatWidget();
 	virtual bool hasPeerStatus() { return false; }
 	virtual bool notifyBlink();
-    void setIdentity(const RsGxsId& gxs_id);
-    bool isParticipantMuted(const RsGxsId &participant);
+	void setIdentity(const RsGxsId& gxs_id);
+	bool isParticipantWaitingArrival(const RsGxsId &participant);
+	bool isParticipantMuted(const RsGxsId &participant);
 	ChatLobbyId id() const { return lobbyId ;}
 	void sortParcipants();
 
@@ -73,7 +74,7 @@ signals:
 
 protected:
 	/** Default constructor */
-	ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+	ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 
 	/** Default destructor */
 	virtual ~ChatLobbyDialog();
@@ -85,6 +86,7 @@ protected:
 
 protected slots:
     void changeNickname();
+	void changeNotifyForParticipant();
 	void changeParticipationState();
     void distantChatParticipant();
     void participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item, int column);
@@ -119,22 +121,30 @@ private:
 	Ui::ChatLobbyDialog ui;
 
 	/** Ignored Users in Chatlobby by nickname until we had implemented Peer Ids in ver 0.6 */
-    std::set<RsGxsId> mutedParticipants;
+	std::set<RsGxsId> mutedParticipants;
 
-    QAction *muteAct;
-    QAction *votePositiveAct;
-    QAction *voteNeutralAct;
-    QAction *voteNegativeAct;
-    QAction *distantChatAct;
-    QAction *actionSortByName;
-    QAction *actionSortByActivity;
-    QWidgetAction *checkableAction;
-    QAction *sendMessageAct;
-    QAction *showInPeopleAct;
+	/**
+	 * @brief List of GxsId to notify when they arrive.
+	 *  This don't use ChatLobbyUserNotify because no need to save it as GxsId can go away before read notification.
+	 */
+	std::set<RsGxsId> idToNotifyWhenComeBack;
 
-    GxsIdChooser *ownIdChooser ;
-    //icons cache
-    QIcon bullet_red_128, bullet_grey_128, bullet_green_128, bullet_yellow_128, bullet_blue_128;
+	QAction *notifyNewArrivalAct;
+	QAction *muteAct;
+	QAction *votePositiveAct;
+	QAction *voteNeutralAct;
+	QAction *voteNegativeAct;
+	QAction *distantChatAct;
+	QAction *actionSortByName;
+	QAction *actionSortByActivity;
+	QWidgetAction *checkableAction;
+	QAction *sendMessageAct;
+	QAction *showInPeopleAct;
+
+	GxsIdChooser *ownIdChooser ;
+	//icons cache
+	QIcon bullet_red_128, bullet_grey_128, bullet_yellow_128, bullet_green_128, bullet_blue_128;
+	QIcon bullet_red_128_star, bullet_grey_128_star, bullet_yellow_128_star, bullet_green_128_star;
 };
 
 #endif

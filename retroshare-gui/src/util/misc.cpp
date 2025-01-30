@@ -30,6 +30,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QFontDialog>
+#include <QPainter>
 #include <QString>
 
 #include <time.h>
@@ -411,10 +412,6 @@ QString misc::getExistingDirectory(QWidget *parent, const QString &caption, cons
 #endif
 }
 
-/*!
- * Clear a Layout content
- * \param layout: Layout to Clear
- */
 void misc::clearLayout(QLayout * layout) {
 	if (! layout)
 		return;
@@ -444,3 +441,15 @@ QSizeF misc::getFontSizeFactor(const QString &group, const qreal defaultFactor /
 	return QSizeF(appFontWidth*factor,appFontHeight*factor);
 }
 
+QIcon misc::mergeIcon(QString iconB, QString iconF)
+{
+	QIcon icon;
+	QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(iconB);
+	QPixmap oli = FilesDefs::getPixmapFromQtResourcePath(iconF);
+
+	QPainter painter(&pix);
+	painter.drawPixmap(0, 0, oli);
+
+	icon.addPixmap(pix);
+	return icon;
+}

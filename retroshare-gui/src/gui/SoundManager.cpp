@@ -81,10 +81,11 @@ void SoundManager::soundEvents(SoundEvents &events)
 
 	/* add standard events */
 	events.addEvent(tr("Friend"), tr("Go Online"), SOUND_USER_ONLINE, QFileInfo(baseDir, "online1.wav").absoluteFilePath());
-	events.addEvent(tr("Chatmessage"), tr("New Msg"), SOUND_NEW_CHAT_MESSAGE, QFileInfo(baseDir, "incomingchat.wav").absoluteFilePath());
+	events.addEvent(tr("Chat Message"), tr("New Msg"), SOUND_NEW_CHAT_MESSAGE, QFileInfo(baseDir, "incomingchat.wav").absoluteFilePath());
 	events.addEvent(tr("Message"), tr("Message arrived"), SOUND_MESSAGE_ARRIVED, QFileInfo(baseDir, "receive.wav").absoluteFilePath());
 	events.addEvent(tr("Download"), tr("Download complete"), SOUND_DOWNLOAD_COMPLETE, QFileInfo(baseDir, "ft_complete.wav").absoluteFilePath());
-    events.addEvent(tr("Lobby"), tr("Message arrived"), SOUND_NEW_LOBBY_MESSAGE, QFileInfo(baseDir, "incomingchat.wav").absoluteFilePath());
+	events.addEvent(tr("Chat Room"), tr("Message arrived"), SOUND_NEW_LOBBY_MESSAGE, QFileInfo(baseDir, "incomingchat.wav").absoluteFilePath());
+	events.addEvent(tr("Chat Room"), tr("Specific User incoming in Chat Room"), SOUND_LOBBY_INCOMING, QFileInfo(baseDir, "incomingchat.wav").absoluteFilePath());
 
 	/* add plugin events */
 	int pluginCount = rsPlugins->nbPlugins();
@@ -116,7 +117,7 @@ QString SoundManager::defaultFilename(const QString &event, bool check)
 		return convertFilename(filename);
 	}
 
-	if (QFileInfo(filename).exists()) {
+	if (QFileInfo::exists(filename)) {
 		return convertFilename(filename);
 	}
 
@@ -132,7 +133,7 @@ void SoundManager::initDefault()
 	foreach (event, events.mEventInfos.keys()) {
 		SoundEvents::SoundEventInfo &eventInfo = events.mEventInfos[event];
 
-		if (QFileInfo(eventInfo.mDefaultFilename).exists()) {
+		if (QFileInfo::exists(eventInfo.mDefaultFilename)) {
 			setEventFilename(event, convertFilename(eventInfo.mDefaultFilename));
 			setEventEnabled(event, true);
 		}
