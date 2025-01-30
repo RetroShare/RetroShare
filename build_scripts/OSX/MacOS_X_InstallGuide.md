@@ -85,6 +85,13 @@ Install HomeBrew following this guide: [HomeBrew](http://brew.sh/)
        $ brew install rapidjson
        $ brew install sqlcipher
 
+For RNP lib:
+
+	   $ brew install bzip2
+	   $ brew install zlib
+	   $ brew install json-c
+	   $ brew install botan@2
+
 #### Install CMake 
 
        $ brew install cmake

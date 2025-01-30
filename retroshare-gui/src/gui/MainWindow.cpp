@@ -564,6 +564,11 @@ void MainWindow::addPage(MainPage *page, QActionGroup *grp, QList<QPair<MainPage
 	QListWidgetItem *item = new QListWidgetItem(QIcon(page->iconPixmap()),page->pageName()) ;
 	ui->listWidget->addItem(item) ;
 
+#if defined(Q_OS_DARWIN)
+    QFont f = ui->toolBarPage->font();
+    action->setFont(f);
+#endif
+
 	if (notify)
 	{
 		QPair<QAction*, QListWidgetItem*> pair = QPair<QAction*, QListWidgetItem*>( action, item);
