@@ -956,6 +956,10 @@ void IdDialog::showEvent(QShowEvent *s)
 	needUpdateCirclesOnNextShow = false;
 
 	MainPage::showEvent(s);
+
+    if (!s->spontaneous()) {
+        updateFontSize();
+    }
 }
 
 void IdDialog::createExternalCircle()
@@ -2598,4 +2602,20 @@ void IdDialog::restoreExpandedCircleItems(const std::vector<bool>& expanded_root
     restoreTopLevel(mExternalBelongingCircleItem,0);
     restoreTopLevel(mExternalOtherCircleItem,1);
     restoreTopLevel(mMyCircleItem,2);
+}
+
+void IdDialog::updateFontSize()
+{
+#if defined(Q_OS_DARWIN)
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
+#else
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
+#endif
+    QFont newFont = ui->idTreeWidget->font();
+    if (newFont.pointSize() != customFontSize) {
+        newFont.setPointSize(customFontSize);
+        QFontMetricsF fontMetrics(newFont);
+        ui->idTreeWidget->setFont(newFont);
+        ui->treeWidget_membership->setFont(newFont);
+    }
 }

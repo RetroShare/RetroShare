@@ -110,7 +110,8 @@ protected:
 
 	void updateGroupStatisticsReal(const RsGxsGroupId &groupId);
 	void updateMessageSummaryListReal(RsGxsGroupId groupId);
-
+	void updateFontSize();
+	
 private slots:
 	void todo();
 

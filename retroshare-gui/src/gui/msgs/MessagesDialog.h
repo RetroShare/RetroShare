@@ -54,6 +54,7 @@ public:
 
 // replaced by shortcut
 //  virtual void keyPressEvent(QKeyEvent *) ;
+	virtual void showEvent(QShowEvent *) ;
 
   QColor textColorInbox() const { return mTextColorInbox; }
 
@@ -109,6 +110,8 @@ private slots:
 
   void tabChanged(int tab);
   void tabCloseRequested(int tab);
+
+  void updateFontSize();
 
 private:
     void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
