@@ -2617,5 +2617,8 @@ void IdDialog::updateFontSize()
         QFontMetricsF fontMetrics(newFont);
         ui->idTreeWidget->setFont(newFont);
         ui->treeWidget_membership->setFont(newFont);
+        contactsItem->setFont(RSID_COL_NICKNAME, newFont);
+        allItem->setFont(RSID_COL_NICKNAME, newFont);
+        ownItem->setFont(RSID_COL_NICKNAME, newFont);
     }
 }
