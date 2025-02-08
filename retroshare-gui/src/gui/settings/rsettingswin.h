@@ -53,6 +53,7 @@ protected:
 	~SettingsPage();
 
 	void addPage(ConfigPage*) ;
+	virtual void showEvent(QShowEvent *) override;
 
 public slots:
 	//! Go to a specific part of the control panel.
@@ -67,6 +68,7 @@ private slots:
 
 private:
 	void initStackedWidget();
+	void updateFontSize();
 
 private:
 	FloatingHelpBrowser *mHelpBrowser;
