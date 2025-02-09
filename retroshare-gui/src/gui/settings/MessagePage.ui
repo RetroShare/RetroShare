@@ -16,8 +16,8 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_4">
+   <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
       <string>Distant messages:</string>
@@ -52,7 +52,7 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Reading</string>
@@ -65,17 +65,37 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="minimumFontSizeHLayout">
         <item>
-         <widget class="QLabel" name="openLabel">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="minimumFontSizeLabel">
           <property name="text">
-           <string>Open messages in</string>
+           <string>Minimum font size </string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="RSComboBox" name="openComboBox"/>
+         <widget class="QSpinBox" name="minimumFontSize_SB">
+          <property name="minimum">
+           <number>10</number>
+          </property>
+          <property name="maximum">
+           <number>64</number>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -93,10 +113,24 @@
         </property>
        </widget>
       </item>
+      <item row="3" column="0" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="openLabel">
+          <property name="text">
+           <string>Open messages in</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="RSComboBox" name="openComboBox"/>
+        </item>
+       </layout>
+      </item>
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="2" column="0">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
       <string>Tags</string>

@@ -2933,3 +2933,26 @@ void MessageComposer::checkLength()
 		ui.actionSend->setEnabled(true);
 	}
 }
+
+void MessageComposer::showEvent(QShowEvent *event)
+{
+    if (!event->spontaneous()) {
+        updateFontSize();
+    }
+}
+
+void MessageComposer::updateFontSize()
+{
+#if defined(Q_OS_DARWIN)
+    int customFontSize = Settings->valueFromGroup("Messages", "MinimumFontSize", 13).toInt();
+#else
+    int customFontSize = Settings->valueFromGroup("Messages", "MinimumFontSize", 12).toInt();
+#endif
+    QFont newFont = ui.msgText->font();
+    if (newFont.pointSize() != customFontSize) {
+        newFont.setPointSize(customFontSize);
+        QFontMetricsF fontMetrics(newFont);
+        ui.msgText->setFont(newFont);
+        ui.comboSize->setCurrentIndex(ui.comboSize->findText(QString::number(newFont.pointSize())));
+    }
+}

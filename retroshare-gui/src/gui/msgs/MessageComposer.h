@@ -95,6 +95,7 @@ public slots:
 protected:
     void closeEvent (QCloseEvent * event);
     bool eventFilter(QObject *obj, QEvent *ev);
+	virtual void showEvent(QShowEvent *) ;
 
 private slots:
     /* toggle Contacts DockWidget */
@@ -169,6 +170,7 @@ private slots:
     static QString inviteMessage();
 
 	void checkLength();
+	void updateFontSize();
 
 private:
     static QString buildReplyHeader(const MessageInfo &msgInfo);
