@@ -31,6 +31,8 @@
 #include "IdDialog.h"
 #include "ui_IdDialog.h"
 #include "IdEditDialog.h"
+#include "IdentityListModel.h"
+
 #include "gui/RetroShareLink.h"
 #include "gui/chat/ChatDialog.h"
 #include "gui/Circles/CreateCircleDialog.h"
@@ -91,11 +93,6 @@
 
 /****************************************************************
  */
-
-#define RSID_COL_NICKNAME   0
-#define RSID_COL_KEYID      1
-#define RSID_COL_IDTYPE     2
-#define RSID_COL_VOTES      3
 
 #define RSIDREP_COL_NAME       0
 #define RSIDREP_COL_OPINION    1
@@ -168,37 +165,16 @@ IdDialog::IdDialog(QWidget *parent)
 	//mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
 	//connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
 
-	ownItem = new QTreeWidgetItem();
-	ownItem->setText(RSID_COL_NICKNAME, tr("My own identities"));
-	ownItem->setFont(RSID_COL_NICKNAME, ui->idTreeWidget->font());
-	ownItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);	// this is in order to prevent displaying a reputaiton icon next to these items.
+    mIdListModel = new RsIdentityListModel(this);
 
-	allItem = new QTreeWidgetItem();
-	allItem->setText(RSID_COL_NICKNAME, tr("All"));
-	allItem->setFont(RSID_COL_NICKNAME, ui->idTreeWidget->font());
-	allItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);
-
-	contactsItem = new QTreeWidgetItem();
-	contactsItem->setText(RSID_COL_NICKNAME, tr("My contacts"));
-	contactsItem->setFont(RSID_COL_NICKNAME, ui->idTreeWidget->font());
-	contactsItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);
-
-
-	ui->idTreeWidget->insertTopLevelItem(0, ownItem);
-	ui->idTreeWidget->insertTopLevelItem(0, allItem);
-	ui->idTreeWidget->insertTopLevelItem(0, contactsItem );
+    ui->idTreeWidget->setModel(mIdListModel);
 
 	ui->treeWidget_membership->clear();
 	ui->treeWidget_membership->setItemDelegateForColumn(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,new GxsIdTreeItemDelegate());
 
-
 	/* Setup UI helper */
     mStateHelper = new UIStateHelper(this);
-//	mStateHelper->addWidget(IDDIALOG_IDLIST, ui->idTreeWidget);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDLIST, ui->idTreeWidget, false);
-	mStateHelper->addClear(IDDIALOG_IDLIST, ui->idTreeWidget);
 
-	//mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_PublishTS);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
@@ -257,8 +233,7 @@ IdDialog::IdDialog(QWidget *parent)
 	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 	connect(ui->editButton, SIGNAL(clicked()), this, SLOT(editIdentity()));
 
-	connect( ui->idTreeWidget, &RSTreeWidget::itemDoubleClicked,
-	         this, &IdDialog::chatIdentityItem );
+    connect( ui->idTreeWidget, &RSTreeWidget::itemDoubleClicked, this, &IdDialog::chatIdentityItem );
 
 	ui->editButton->hide();
 
@@ -340,46 +315,27 @@ IdDialog::IdDialog(QWidget *parent)
 	ui->toolButton_New->setMenu(menu);
 
 	/* Add filter actions */
-	QTreeWidgetItem *headerItem = ui->idTreeWidget->headerItem();
-	QString headerText = headerItem->text(RSID_COL_NICKNAME);
-	ui->filterLineEdit->addFilter(QIcon(), headerText, RSID_COL_NICKNAME, QString("%1 %2").arg(tr("Search"), headerText));
-
-    headerItem->setData(RSID_COL_VOTES,Qt::UserRole,tr("Reputation"));
+    ui->filterLineEdit->addFilter(QIcon(), tr("Name"), RsIdentityListModel::COLUMN_THREAD_NAME, QString("%1 %2").arg(tr("Search"), tr("Search name")));
+    ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RsIdentityListModel::COLUMN_THREAD_ID, tr("Search ID"));
 
 	/* Set initial section sizes */
-  QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
-  circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QFontMetricsF(ui->idTreeWidget->font()).width("Circle name")*1.5) ;
-  ui->treeWidget_membership->setColumnWidth(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 270);
-
-	ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RSID_COL_KEYID, tr("Search ID"));
+    QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
+    circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QFontMetricsF(ui->idTreeWidget->font()).width("Circle name")*1.5) ;
+    ui->treeWidget_membership->setColumnWidth(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 270);
 
 	/* Setup tree */
-	ui->idTreeWidget->sortByColumn(RSID_COL_NICKNAME, Qt::AscendingOrder);
+    ui->idTreeWidget->sortByColumn(RsIdentityListModel::COLUMN_THREAD_NAME, Qt::AscendingOrder);
 
-	ui->idTreeWidget->enableColumnCustomize(true);
-	ui->idTreeWidget->setColumnCustomizable(RSID_COL_NICKNAME, false);
-
-	ui->idTreeWidget->setColumnHidden(RSID_COL_IDTYPE, true);
-	ui->idTreeWidget->setColumnHidden(RSID_COL_KEYID, true);
-
-	/* Set initial column width */
-	int fontWidth = QFontMetricsF(ui->idTreeWidget->font()).width("W");
-	ui->idTreeWidget->setColumnWidth(RSID_COL_NICKNAME, 14 * fontWidth);
-	ui->idTreeWidget->setColumnWidth(RSID_COL_KEYID, 20 * fontWidth);
-	ui->idTreeWidget->setColumnWidth(RSID_COL_IDTYPE, 18 * fontWidth);
-	ui->idTreeWidget->setColumnWidth(RSID_COL_VOTES, 2 * fontWidth);
+    ui->idTreeWidget->setColumnHidden(RsIdentityListModel::COLUMN_THREAD_OWNER, true);
+    ui->idTreeWidget->setColumnHidden(RsIdentityListModel::COLUMN_THREAD_ID, true);
 
 	ui->idTreeWidget->setItemDelegate(new RSElidedItemDelegate());
-	ui->idTreeWidget->setItemDelegateForColumn(
-	            RSID_COL_NICKNAME,
-	            new GxsIdTreeItemDelegate());
-	ui->idTreeWidget->setItemDelegateForColumn(
-	            RSID_COL_VOTES,
-	            new ReputationItemDelegate(RsReputationLevel(0xff)));
+    ui->idTreeWidget->setItemDelegateForColumn( RsIdentityListModel::COLUMN_THREAD_NAME, new GxsIdTreeItemDelegate());
+    ui->idTreeWidget->setItemDelegateForColumn( RsIdentityListModel::COLUMN_THREAD_REPUTATION, new ReputationItemDelegate(RsReputationLevel(0xff)));
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * idheader = ui->idTreeWidget->header();
-	QHeaderView_setSectionResizeModeColumn(idheader, RSID_COL_VOTES, QHeaderView::ResizeToContents);
+    QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_REPUTATION, QHeaderView::ResizeToContents);
 	idheader->setStretchLastSection(true);
 
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
@@ -1266,40 +1222,41 @@ static QString getHumanReadableDuration(uint32_t seconds)
 
 void IdDialog::processSettings(bool load)
 {
-	Settings->beginGroup("IdDialog");
-
-	// state of peer tree
-	ui->idTreeWidget->processSettings(load);
-
-	if (load) {
-		// load settings
-
-		// filterColumn
-		ui->filterLineEdit->setCurrentFilter(Settings->value("filterColumn", RSID_COL_NICKNAME).toInt());
-
-		// state of splitter
-		ui->mainSplitter->restoreState(Settings->value("splitter").toByteArray());
-
-		//Restore expanding
-		allItem->setExpanded(Settings->value("ExpandAll", QVariant(true)).toBool());
-		ownItem->setExpanded(Settings->value("ExpandOwn", QVariant(true)).toBool());
-		contactsItem->setExpanded(Settings->value("ExpandContacts", QVariant(true)).toBool());
-	} else {
-		// save settings
-
-		// filterColumn
-		Settings->setValue("filterColumn", ui->filterLineEdit->currentFilter());
-
-		// state of splitter
-		Settings->setValue("splitter", ui->mainSplitter->saveState());
-
-		//save expanding
-		Settings->setValue("ExpandAll", allItem->isExpanded());
-		Settings->setValue("ExpandContacts", contactsItem->isExpanded());
-		Settings->setValue("ExpandOwn", ownItem->isExpanded());
-	}
-
-	Settings->endGroup();
+#warning TODO
+//	Settings->beginGroup("IdDialog");
+//
+//	// state of peer tree
+//	ui->idTreeWidget->processSettings(load);
+//
+//	if (load) {
+//		// load settings
+//
+//		// filterColumn
+//		ui->filterLineEdit->setCurrentFilter(Settings->value("filterColumn", RSID_COL_NICKNAME).toInt());
+//
+//		// state of splitter
+//		ui->mainSplitter->restoreState(Settings->value("splitter").toByteArray());
+//
+//		//Restore expanding
+//		allItem->setExpanded(Settings->value("ExpandAll", QVariant(true)).toBool());
+//		ownItem->setExpanded(Settings->value("ExpandOwn", QVariant(true)).toBool());
+//		contactsItem->setExpanded(Settings->value("ExpandContacts", QVariant(true)).toBool());
+//	} else {
+//		// save settings
+//
+//		// filterColumn
+//		Settings->setValue("filterColumn", ui->filterLineEdit->currentFilter());
+//
+//		// state of splitter
+//		Settings->setValue("splitter", ui->mainSplitter->saveState());
+//
+//		//save expanding
+//		Settings->setValue("ExpandAll", allItem->isExpanded());
+//		Settings->setValue("ExpandContacts", contactsItem->isExpanded());
+//		Settings->setValue("ExpandOwn", ownItem->isExpanded());
+//	}
+//
+//	Settings->endGroup();
 }
 
 void IdDialog::filterChanged(const QString& /*text*/)
@@ -2076,6 +2033,28 @@ void IdDialog::updateDisplay(bool complete)
 	}
 }
 
+std::list<RsGxsId> IdDialog::getSelectedIdentities() const
+{
+    QModelIndexList selectedIndexes = ui->idTreeWidget->selectionModel()->selectedIndexes();
+    std::list<RsGxsId> res;
+
+    for(auto indx:selectedIndexes)
+        if(indx.column() == RsIdentityListModel::COLUMN_THREAD_NAME)	// this removes duplicates
+            res.push_back(mIdListModel->getIdentity(indx));
+
+    return res;
+}
+
+RsGxsId IdDialog::getSelectedIdentity() const
+{
+    auto lst = getSelectedIdentities();
+
+    if(lst.size() != 1)
+        return RsGxsId();
+    else
+        return lst.front();
+}
+
 void IdDialog::addIdentity()
 {
 	IdEditDialog dlg(this);
@@ -2085,45 +2064,25 @@ void IdDialog::addIdentity()
 
 void IdDialog::removeIdentity()
 {
-	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
-	if (!item)
-	{
-#ifdef ID_DEBUG
-		std::cerr << "IdDialog::editIdentity() Invalid item";
-		std::cerr << std::endl;
-#endif
-		return;
-	}
+    RsGxsId id = getSelectedIdentity();
+
+    if(id.isNull())
+        return;
 
     if ((QMessageBox::question(this, tr("Really delete?"), tr("Do you really want to delete this identity?\nThis cannot be undone."), QMessageBox::Yes|QMessageBox::No, QMessageBox::No))== QMessageBox::Yes)
-	{
-        std::string keyId = item->text(RSID_COL_KEYID).toStdString();
-        RsGxsId kid(keyId);
-
-        rsIdentity->deleteIdentity(kid);
-	}
+        rsIdentity->deleteIdentity(id);
 }
 
 void IdDialog::editIdentity()
 {
-	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
-	if (!item)
-	{
-#ifdef ID_DEBUG
-		std::cerr << "IdDialog::editIdentity() Invalid item";
-		std::cerr << std::endl;
-#endif
-		return;
-	}
+    RsGxsId id = getSelectedIdentity();
 
-	RsGxsGroupId keyId = RsGxsGroupId(item->text(RSID_COL_KEYID).toStdString());
-	if (keyId.isNull()) {
-		return;
-	}
+    if(id.isNull())
+        return;
 
-	IdEditDialog dlg(this);
-	dlg.setupExistingId(keyId);
-	dlg.exec();
+    IdEditDialog dlg(this);
+    dlg.setupExistingId(RsGxsGroupId(id));
+    dlg.exec();
 }
 
 void IdDialog::filterIds()
@@ -2131,7 +2090,18 @@ void IdDialog::filterIds()
 	int filterColumn = ui->filterLineEdit->currentFilter();
 	QString text = ui->filterLineEdit->text();
 
-	ui->idTreeWidget->filterItems(filterColumn, text);
+    RsIdentityListModel::FilterType ft;
+
+    switch(filterColumn)
+    {
+    case RsIdentityListModel::COLUMN_THREAD_ID: ft = RsIdentityListModel::FILTER_TYPE_ID;
+        break;
+    default:
+    case RsIdentityListModel::COLUMN_THREAD_NAME: ft = RsIdentityListModel::FILTER_TYPE_NAME;
+        break;
+
+    }
+    mIdListModel->setFilter(ft,{ text });
 }
 
 void IdDialog::IdListCustomPopupMenu( QPoint )

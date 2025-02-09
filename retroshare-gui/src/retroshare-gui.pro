@@ -1257,6 +1257,7 @@ identities {
 	
 	HEADERS +=  \
 		gui/Identity/IdDialog.h \
+		gui/Identity/IdentityListModel.h \
 		gui/Identity/IdEditDialog.h \
 		gui/Identity/IdDetailsDialog.h \
 	
@@ -1266,6 +1267,7 @@ identities {
 
 	SOURCES +=  \
 		gui/Identity/IdDialog.cpp \
+		gui/Identity/IdentityListModel.cpp \
 		gui/Identity/IdEditDialog.cpp \
 		gui/Identity/IdDetailsDialog.cpp \
 	

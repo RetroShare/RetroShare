@@ -35,6 +35,7 @@ class IdDialog;
 
 class UIStateHelper;
 class QTreeWidgetItem;
+class RsIdentityListModel;
 
 class IdDialog : public MainPage
 {
@@ -134,9 +135,6 @@ private:
 private:
 	UIStateHelper *mStateHelper;
 
-	QTreeWidgetItem *contactsItem;
-	QTreeWidgetItem *allItem;
-	QTreeWidgetItem *ownItem;
 	QTreeWidgetItem *mExternalBelongingCircleItem;
 	QTreeWidgetItem *mExternalOtherCircleItem;
 	QTreeWidgetItem *mMyCircleItem;
@@ -145,9 +143,14 @@ private:
 	void saveExpandedCircleItems(std::vector<bool> &expanded_root_items, std::set<RsGxsCircleId>& expanded_circle_items) const;
 	void restoreExpandedCircleItems(const std::vector<bool>& expanded_root_items,const std::set<RsGxsCircleId>& expanded_circle_items);
 
-	RsGxsGroupId mId;
+    RsGxsId getSelectedIdentity() const;
+    std::list<RsGxsId> getSelectedIdentities() const;
+
+    RsGxsGroupId mId;
 	RsGxsGroupId mIdToNavigate;
 	int filter;
+
+    RsIdentityListModel *mIdListModel;
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 	RsEventsHandlerId_t mEventHandlerId_identity;
