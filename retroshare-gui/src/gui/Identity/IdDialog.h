@@ -87,8 +87,9 @@ private slots:
 	void removeIdentity();
 	void editIdentity();
 	void chatIdentity();
-	void chatIdentityItem(QTreeWidgetItem* item);
-	void sendMsg();
+    void chatIdentityItem(const QModelIndex &indx);
+    void chatIdentity(const RsGxsId& toGxsId);
+    void sendMsg();
 	void copyRetroshareLink();
 	void on_closeInfoFrameButton_Invite_clicked();
 

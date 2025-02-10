@@ -457,12 +457,29 @@ QVariant RsIdentityListModel::sortRole(const EntryIndex& entry,int column) const
     }
 }
 
+QModelIndex RsIdentityListModel::getIndexOfIdentity(const RsGxsId& id) const
+{
+    for(uint i=0;i<mCategories.size();++i)
+        for(uint j=0;j<mCategories[i].child_identity_indices.size();++j)
+            if(mIdentities[mCategories[i].child_identity_indices[j]].id == id)
+            {
+                EntryIndex e;
+                e.category_index = i;
+                e.identity_index = j;
+                quintptr idx;
+                convertIndexToInternalId(e,idx);
+
+                return createIndex(j,0,idx);
+            }
+    return QModelIndex();
+}
 QVariant RsIdentityListModel::fontRole(const EntryIndex& e, int col) const
 {
 #ifdef DEBUG_MODEL_INDEX
 	std::cerr << "  font role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": " << std::endl;
 #endif
 
+#ifdef TODO
 	int status = onlineRole(e,col).toInt();
 
 	switch (status)
@@ -481,6 +498,8 @@ QVariant RsIdentityListModel::fontRole(const EntryIndex& e, int col) const
 		default:
 		return QVariant();
 	}
+#endif
+        return QVariant();
 }
 
 QVariant RsIdentityListModel::displayRole(const EntryIndex& e, int col) const
@@ -556,7 +575,7 @@ void RsIdentityListModel::checkInternalData(bool force)
 	rstime_t now = time(NULL);
 
     if( (mLastInternalDataUpdate + MAX_INTERNAL_DATA_UPDATE_DELAY < now) || force)
-		updateInternalData();
+        updateIdentityList();
 }
 
 const RsIdentityListModel::HierarchicalCategoryInformation *RsIdentityListModel::getCategoryInfo(const EntryIndex& e) const
@@ -730,7 +749,7 @@ void RsIdentityListModel::setIdentities(const std::list<RsGroupMetaData>& identi
 
 }
 
-void RsIdentityListModel::updateInternalData()
+void RsIdentityListModel::updateIdentityList()
 {
     RsThread::async([this]()
     {

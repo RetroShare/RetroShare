@@ -99,7 +99,9 @@ public:
     };
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
-	QModelIndex getIndexOfGroup(const RsNodeGroupId& mid) const;
+    QModelIndex getIndexOfIdentity(const RsGxsId& id) const;
+
+    void updateIdentityList();
 
     static const QString FilterString ;
 
@@ -140,16 +142,6 @@ private:
     bool isCategoryExpanded(const EntryIndex& e) const;
     void checkIdentity(HierarchicalIdentityInformation& node);
 
-	std::map<RsPgpId,uint32_t>::const_iterator checkProfileIndex(const RsPgpId& pgp_id,
-                                                                 std::map<RsPgpId,uint32_t>& pgp_indices,
-                                                                 std::vector<HierarchicalProfileInformation>& mProfiles,
-                                                                 bool create);
-
-	std::map<RsPgpId,uint32_t>::const_iterator createInvalidatedProfile(const RsPgpId& pgp_id,
-                                                                        const RsPgpFingerprint& fpr,
-	                                                                    std::map<RsPgpId,uint32_t>& pgp_indices,
-	                                                                    std::vector<HierarchicalProfileInformation>& mProfiles);
-
     QVariant sizeHintRole  (const EntryIndex& e, int col) const;
 	QVariant displayRole   (const EntryIndex& e, int col) const;
 	QVariant decorationRole(const EntryIndex& e, int col) const;
@@ -158,7 +150,6 @@ private:
 	QVariant sortRole      (const EntryIndex& e, int col) const;
 	QVariant fontRole      (const EntryIndex& e, int col) const;
 	QVariant textColorRole (const EntryIndex& e, int col) const;
-	QVariant onlineRole    (const EntryIndex& e, int col) const;
 	QVariant filterRole    (const EntryIndex& e, int col) const;
 
     /*!
@@ -176,7 +167,6 @@ signals:
     void dataAboutToLoad();
 
 private:
-	void updateInternalData();
     void setIdentities(const std::list<RsGroupMetaData>& identities_meta);
     bool passesFilter(const EntryIndex &e, int column) const;
 
