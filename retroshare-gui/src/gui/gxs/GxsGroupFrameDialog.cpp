@@ -193,9 +193,6 @@ void GxsGroupFrameDialog::showEvent(QShowEvent* /*event*/)
     bool empty = mCachedGroupMetas.empty() || children==0;
 
     updateDisplay( empty );
-
-	updateFontSize();
-
 }
 
 void GxsGroupFrameDialog::paintEvent(QPaintEvent *pe)
@@ -1276,20 +1273,4 @@ void GxsGroupFrameDialog::distantRequestGroupData()
 	std::cerr << "Explicit request for group " << group_id << std::endl;
     checkRequestGroup(group_id) ;
 }
-
-void GxsGroupFrameDialog::updateFontSize()
-{
-#if defined(Q_OS_DARWIN)
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
-#else
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
-#endif
-    QFont newFont = ui->groupTreeWidget->font();
-    if (newFont.pointSize() != customFontSize) {
-        newFont.setPointSize(customFontSize);
-        QFontMetricsF fontMetrics(newFont);
-        ui->groupTreeWidget->setFont(newFont);
-    }
-}
-
 

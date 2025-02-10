@@ -34,6 +34,7 @@
 #include <QDesktopWidget>
 #include <QMenu>
 #include <QToolButton>
+#include <QShowEvent>
 
 #include <stdint.h>
 
@@ -66,6 +67,8 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 		// need signal itemClicked too
 		connect(ui->treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(itemActivated(QTreeWidgetItem*,int)));
 	}
+
+	updateFontSize();
 
 	int H = QFontMetricsF(ui->treeWidget->font()).height() ;
 #if QT_VERSION < QT_VERSION_CHECK(5,11,0)
@@ -667,3 +670,26 @@ void GroupTreeWidget::sort()
 {
 	ui->treeWidget->resort();
 }
+
+void GroupTreeWidget::showEvent(QShowEvent *event)
+{
+    if (!event->spontaneous()) {
+        updateFontSize();
+    }
+}
+
+void GroupTreeWidget::updateFontSize()
+{
+#if defined(Q_OS_DARWIN)
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
+#else
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
+#endif
+    QFont newFont = ui->treeWidget->font();
+    if (newFont.pointSize() != customFontSize) {
+        newFont.setPointSize(customFontSize);
+        QFontMetricsF fontMetrics(newFont);
+        ui->treeWidget->setFont(newFont);
+    }
+}
+
