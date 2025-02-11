@@ -1642,6 +1642,8 @@ void MainWindow::settingsChanged()
 	ui->toolBarAction->setIconSize(QSize(toolSize,toolSize));
 	int itemSize = Settings->getListItemIconSize();
 	ui->listWidget->setIconSize(QSize(itemSize,itemSize));
+
+	updateFontSize();
 }
 
 void MainWindow::externalLinkActivated(const QUrl &url)
@@ -1821,13 +1823,6 @@ void MainWindow::setCompactStatusMode(bool compact)
 	//opModeStatus: TODO Show only ???
 }
 
-void MainWindow::showEvent(QShowEvent *event)
-{
-    if (!event->spontaneous()) {
-        updateFontSize();
-    }
-}
-
 void MainWindow::updateFontSize()
 {
 #if defined(Q_OS_DARWIN)
@@ -1841,7 +1836,6 @@ void MainWindow::updateFontSize()
         QFontMetricsF fontMetrics(newFont);
         int iconHeight = fontMetrics.height()*1.5;
         ui->listWidget->setFont(newFont);
-        ui->toolBarPage->setFont(newFont);
         ui->listWidget->setIconSize(QSize(iconHeight, iconHeight));
     }
 }

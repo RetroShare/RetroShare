@@ -376,4 +376,6 @@ void AppearancePage::updateFontSize()
 	Settings->beginGroup(QString("File"));
 	Settings->setValue("MinimumFontSize", ui.minimumFontSize_SB->value());
 	Settings->endGroup();
+	
+	NotifyQt::getInstance()->notifySettingsChanged();
 }

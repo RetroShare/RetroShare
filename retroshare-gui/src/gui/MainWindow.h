@@ -204,8 +204,6 @@ public:
 
     static bool hiddenmode;
 
-	virtual void showEvent(QShowEvent *) ;
-
 public slots:
     void receiveNewArgs(QStringList args);
     void displayErrorMessage(int,int,const QString&) ;
