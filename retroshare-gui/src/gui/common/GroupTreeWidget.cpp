@@ -30,6 +30,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "util/QtVersion.h"
 #include "util/DateTime.h"
+#include "gui/notifyqt.h"
 
 #include <QDesktopWidget>
 #include <QMenu>
@@ -690,6 +691,8 @@ void GroupTreeWidget::updateFontSize()
         newFont.setPointSize(customFontSize);
         QFontMetricsF fontMetrics(newFont);
         ui->treeWidget->setFont(newFont);
+        int H = QFontMetricsF(ui->treeWidget->font()).height() ;
+        ui->treeWidget->setIconSize(QSize(H*1.8,H*1.8));
     }
 }
 
