@@ -42,10 +42,6 @@
 
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
-static const uint16_t UNDEFINED_GROUP_INDEX_VALUE   = (sizeof(uintptr_t)==4)?0x1ff:0xffff;	// max value for 9 bits
-static const uint16_t UNDEFINED_NODE_INDEX_VALUE    = (sizeof(uintptr_t)==4)?0x1ff:0xffff;  // max value for 9 bits
-static const uint16_t UNDEFINED_PROFILE_INDEX_VALUE = (sizeof(uintptr_t)==4)?0xfff:0xffff;  // max value for 12 bits
-
 const QString RsIdentityListModel::FilterString("filtered");
 
 const uint32_t MAX_INTERNAL_DATA_UPDATE_DELAY = 300 ; 	// re-update the internal data every 5 mins. Should properly cover sleep/wake-up changes.
@@ -61,7 +57,7 @@ RsIdentityListModel::RsIdentityListModel(QObject *parent)
 }
 
 RsIdentityListModel::EntryIndex::EntryIndex()
-   : type(ENTRY_TYPE_UNKNOWN),category_index(UNDEFINED_GROUP_INDEX_VALUE),identity_index(UNDEFINED_NODE_INDEX_VALUE)
+   : type(ENTRY_TYPE_INVALID),category_index(0),identity_index(0)
 {
 }
 
@@ -69,31 +65,43 @@ RsIdentityListModel::EntryIndex::EntryIndex()
 //
 // On 32 bits and 64 bits architectures the format is the following:
 //
-//     0x [2 bits] [30 bits]
-//            |        |
-//            |        |
-//            |        |
-//            |        +----------------------- identity index
-//            +-------------------------------- category
+//     0x [2 bits] 00000 [24 bits] [2 bits]
+//            |              |        |
+//            |              |        +-------------- type (0=top level, 1=category, 2=identity)
+//            |              +----------------------- identity index
+//            +-------------------------------------- category index
 //
-// Only valid indexes a 0x00->UNDEFINED_INDEX_VALUE-1.
 
 bool RsIdentityListModel::convertIndexToInternalId(const EntryIndex& e,quintptr& id)
 {
-	// the internal id is set to the place in the table of items. We simply shift to allow 0 to mean something special.
+    // the internal id is set to the place in the table of items. We simply shift to allow 0 to mean something special.
 
-    id = (((uint32_t)e.type) << 30) + ((uint32_t)e.identity_index);
-	return true;
+    if(e.type == ENTRY_TYPE_INVALID)
+    {
+        RsErr() << "ERROR: asked for the internal id of an invalid EntryIndex" ;
+        id = 0;
+        return true;
+    }
+    if(bool(e.identity_index >> 24))
+    {
+        RsErr() << "Cannot encode more than 2^24 identities. Somthing's wrong. e.identity_index = " << std::hex << e.identity_index << std::dec ;
+        id = 0;
+        return false;
+    }
+
+    id = (((uint32_t)e.category_index) << 30) + ((uint32_t)e.identity_index << 2) + ((uint32_t)e.type);
+
+    return true;
 }
 bool RsIdentityListModel::convertInternalIdToIndex(quintptr ref,EntryIndex& e)
 {
-    if(ref == 0)
-        return false ;
+    // Compatible with ref=0 since it will cause type=TOP_LEVEL
 
-    e.category_index  = (ref >> 30) & 0x3;// 2 bits
-    e.identity_index  = (ref >>  0) & 0x3fffffff;// 30 bits
+    e.type            = static_cast<RsIdentityListModel::EntryType>((ref >>  0) & 0x3) ;// 2 bits
+    e.identity_index  = (ref >>  2) & 0xffffff;// 24 bits
+    e.category_index  = (ref >> 30) & 0x3 ;// 2 bits
 
-	return true;
+    return true;
 }
 
 static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay)
@@ -130,17 +138,18 @@ int RsIdentityListModel::rowCount(const QModelIndex& parent) const
 	if(parent.column() >= COLUMN_THREAD_NB_COLUMNS)
 		return 0;
 
-	if(parent.internalId() == 0)
-		return mTopLevel.size();
+    EntryIndex index;
 
-	EntryIndex index;
-    if(!convertInternalIdToIndex(parent.internalId(),index))
-		return 0;
+    if(!parent.isValid() || !convertInternalIdToIndex(parent.internalId(),index))
+        return mCategories.size();
 
-    if(index.type == ENTRY_TYPE_CATEGORY)
-        return mCategories[index.category_index].child_identity_indices.size();
-    else
-		return 0;
+    switch(index.type)
+    {
+    case ENTRY_TYPE_CATEGORY: return mCategories[index.category_index].child_identity_indices.size();
+    case ENTRY_TYPE_TOP_LEVEL: return mCategories.size();
+    default:
+        return 0;
+    }
 }
 
 int RsIdentityListModel::columnCount(const QModelIndex &/*parent*/) const
@@ -155,6 +164,9 @@ bool RsIdentityListModel::hasChildren(const QModelIndex &parent) const
 
     EntryIndex parent_index ;
     convertInternalIdToIndex(parent.internalId(),parent_index);
+
+    if(parent_index.type == ENTRY_TYPE_TOP_LEVEL)
+        return true;
 
     if(parent_index.type == ENTRY_TYPE_IDENTITY)
         return false;
@@ -171,12 +183,15 @@ RsIdentityListModel::EntryIndex RsIdentityListModel::EntryIndex::parent() const
 
 	switch(type)
 	{
-        case ENTRY_TYPE_CATEGORY: return EntryIndex();
+        case ENTRY_TYPE_CATEGORY: i.type = ENTRY_TYPE_TOP_LEVEL;
+                                  i.category_index = 0;
+                                  i.identity_index = 0;
+        break;
 
-        case ENTRY_TYPE_IDENTITY: i.type = ENTRY_TYPE_CATEGORY;
-            i.identity_index = UNDEFINED_NODE_INDEX_VALUE;
+        case ENTRY_TYPE_IDENTITY: 	i.type = ENTRY_TYPE_CATEGORY;
+                                    i.identity_index = 0;
 		break;
-		case ENTRY_TYPE_UNKNOWN:
+        case ENTRY_TYPE_TOP_LEVEL:
 			//Can be when request root index.
 		break;
 	}
@@ -184,17 +199,21 @@ RsIdentityListModel::EntryIndex RsIdentityListModel::EntryIndex::parent() const
 	return i;
 }
 
-RsIdentityListModel::EntryIndex RsIdentityListModel::EntryIndex::child(int row,const std::vector<EntryIndex>& top_level) const
+RsIdentityListModel::EntryIndex RsIdentityListModel::EntryIndex::child(int row) const
 {
-    EntryIndex i(*this);
+    EntryIndex i;
 
 	switch(type)
     {
-    case ENTRY_TYPE_UNKNOWN:
-						   i = top_level[row];
+    case ENTRY_TYPE_TOP_LEVEL:
+                            i.type = ENTRY_TYPE_CATEGORY;
+                           i.category_index = row;
+                           i.identity_index = 0;
+
 						   break;
 
     case ENTRY_TYPE_CATEGORY: i.type = ENTRY_TYPE_IDENTITY;
+                           i.category_index = category_index;
                            i.identity_index = row;
 						   break;
 
@@ -205,12 +224,12 @@ RsIdentityListModel::EntryIndex RsIdentityListModel::EntryIndex::child(int row,c
     return i;
 
 }
-uint32_t   RsIdentityListModel::EntryIndex::parentRow(int /* nb_groups */) const
+uint32_t   RsIdentityListModel::EntryIndex::parentRow() const
 {
     switch(type)
     {
     default:
-    	case ENTRY_TYPE_UNKNOWN  : return 0;
+        case ENTRY_TYPE_TOP_LEVEL: return 0;
         case ENTRY_TYPE_CATEGORY : return category_index;
         case ENTRY_TYPE_IDENTITY : return identity_index;
     }
@@ -221,14 +240,6 @@ QModelIndex RsIdentityListModel::index(int row, int column, const QModelIndex& p
     if(row < 0 || column < 0 || column >= columnCount(parent) || row >= rowCount(parent))
 		return QModelIndex();
 
-    if(parent.internalId() == 0)
-    {
-		quintptr ref ;
-
-        convertIndexToInternalId(mTopLevel[row],ref);
-		return createIndex(row,column,ref) ;
-    }
-
     EntryIndex parent_index ;
     convertInternalIdToIndex(parent.internalId(),parent_index);
 #ifdef DEBUG_MODEL_INDEX
@@ -236,7 +247,7 @@ QModelIndex RsIdentityListModel::index(int row, int column, const QModelIndex& p
 #endif
 
     quintptr ref;
-    EntryIndex new_index = parent_index.child(row,mTopLevel);
+    EntryIndex new_index = parent_index.child(row);
     convertIndexToInternalId(new_index,ref);
 
 #ifdef DEBUG_MODEL_INDEX
@@ -256,13 +267,13 @@ QModelIndex RsIdentityListModel::parent(const QModelIndex& index) const
 
 	EntryIndex p = I.parent();
 
-	if(p.type == ENTRY_TYPE_UNKNOWN)
+    if(p.type == ENTRY_TYPE_TOP_LEVEL)
 		return QModelIndex();
 
 	quintptr i;
     convertIndexToInternalId(p,i);
 
-    return createIndex(I.parentRow(mCategories.size()),0,i);
+    return createIndex(I.parentRow(),0,i);
 }
 
 Qt::ItemFlags RsIdentityListModel::flags(const QModelIndex& index) const
@@ -466,6 +477,7 @@ QModelIndex RsIdentityListModel::getIndexOfIdentity(const RsGxsId& id) const
                 EntryIndex e;
                 e.category_index = i;
                 e.identity_index = j;
+                e.type = ENTRY_TYPE_IDENTITY;
                 quintptr idx;
                 convertIndexToInternalId(e,idx);
 
@@ -634,9 +646,8 @@ void RsIdentityListModel::clear()
     preMods();
 
     mIdentities.clear();
-    mTopLevel.clear();
-
     mCategories.clear();
+
     mCategories.resize(3);
     mCategories[0].category_name = tr("My own identities");
     mCategories[1].category_name = tr("My contacts");
@@ -649,40 +660,36 @@ void RsIdentityListModel::clear()
 
 void RsIdentityListModel::debug_dump() const
 {
-//    std::cerr << "==== FriendListModel Debug dump ====" << std::endl;
-//
-//	for(uint32_t j=0;j<mTopLevel.size();++j)
-//    {
-//        if(mTopLevel[j].type == ENTRY_TYPE_GROUP)
-//		{
-//			const HierarchicalGroupInformation& hg(mGroups[mTopLevel[j].group_index]);
-//
-//			std::cerr << "Group: " << hg.group_info.name << ", ";
-//			std::cerr << "  children indices: " ; for(uint32_t i=0;i<hg.child_profile_indices.size();++i) std::cerr << hg.child_profile_indices[i] << " " ; std::cerr << std::endl;
-//
-//			for(uint32_t i=0;i<hg.child_profile_indices.size();++i)
-//			{
-//				uint32_t profile_index = hg.child_profile_indices[i];
-//
-//				std::cerr << "    Profile " << mProfiles[profile_index].profile_info.gpg_id << std::endl;
-//
-//				const HierarchicalProfileInformation& hprof(mProfiles[profile_index]);
-//
-//				for(uint32_t k=0;k<hprof.child_node_indices.size();++k)
-//					std::cerr << "      Node " << mLocations[hprof.child_node_indices[k]].node_info.id << std::endl;
-//			}
-//		}
-//        else if(mTopLevel[j].type == ENTRY_TYPE_PROFILE)
-//        {
-//			const HierarchicalProfileInformation& hprof(mProfiles[mTopLevel[j].profile_index]);
-//
-//			std::cerr << "Profile " << hprof.profile_info.gpg_id << std::endl;
-//
-//			for(uint32_t k=0;k<hprof.child_node_indices.size();++k)
-//				std::cerr << "  Node " << mLocations[hprof.child_node_indices[k]].node_info.id << std::endl;
-//        }
-//    }
-//    std::cerr << "====================================" << std::endl;
+    std::cerr << "==== IdentityListModel Debug dump ====" << std::endl;
+
+    std::cerr << "Invalid index  : " << QModelIndex() << std::endl;
+
+    EntryIndex top_level;
+    top_level.type = ENTRY_TYPE_TOP_LEVEL;
+    QModelIndex created_top_level;
+    quintptr id;
+    convertIndexToInternalId(top_level,id);
+
+    std::cerr << "Top level index: " << createIndex(0,0,id) << std::endl;
+
+    for(uint32_t j=0;j<mCategories.size();++j)
+    {
+        std::cerr << mCategories[j].category_name.toStdString() << " (" << mCategories[j].child_identity_indices.size() << ")" << std::endl;
+        const auto& hg(mCategories[j].child_identity_indices);
+
+        for(uint32_t i=0;i<hg.size();++i)
+        {
+            auto idx = getIndexOfIdentity(mIdentities[hg[i]].id);
+            auto parent = idx.parent();
+            EntryIndex index;
+            EntryIndex index_parent;
+            convertInternalIdToIndex(idx.internalId(),index);
+            convertInternalIdToIndex(parent.internalId(),index_parent);
+            std::cerr << "       " << mIdentities[hg[i]].id << " index = " << idx << " parent = " << idx.parent() << " EntryIndex: " << index << " Parent index: " << index_parent << std::endl;
+        }
+    }
+
+    std::cerr << "====================================" << std::endl;
 }
 
 
@@ -706,11 +713,11 @@ RsGxsId RsIdentityListModel::getIdentity(const QModelIndex& i) const
 RsIdentityListModel::EntryType RsIdentityListModel::getType(const QModelIndex& i) const
 {
 	if(!i.isValid())
-		return ENTRY_TYPE_UNKNOWN;
+        return ENTRY_TYPE_TOP_LEVEL;
 
 	EntryIndex e;
     if(!convertInternalIdToIndex(i.internalId(),e))
-        return ENTRY_TYPE_UNKNOWN;
+        return ENTRY_TYPE_TOP_LEVEL;
 
     return e.type;
 }
@@ -751,6 +758,8 @@ void RsIdentityListModel::setIdentities(const std::list<RsGroupMetaData>& identi
 
 void RsIdentityListModel::updateIdentityList()
 {
+    std::cerr << "Updating identity list" << std::endl;
+
     RsThread::async([this]()
     {
         // 1 - get message data from p3GxsForums
@@ -774,9 +783,9 @@ void RsIdentityListModel::updateIdentityList()
              */
 
             setIdentities(*ids) ;
-
             delete ids;
 
+            debug_dump();
 
         }, this );
 
@@ -797,7 +806,7 @@ void RsIdentityListModel::collapseItem(const QModelIndex& index)
     mExpandedCategories[entry.category_index] = false;
 
     // apparently we cannot be subtle here.
-    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,columnCount()-1,(void*)NULL));
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mCategories.size()-1,columnCount()-1,(void*)NULL));
 }
 
 void RsIdentityListModel::expandItem(const QModelIndex& index)
@@ -813,7 +822,7 @@ void RsIdentityListModel::expandItem(const QModelIndex& index)
     mExpandedCategories[entry.category_index] = true;
 
     // apparently we cannot be subtle here.
-    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,columnCount()-1,(void*)NULL));
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mCategories.size()-1,columnCount()-1,(void*)NULL));
 }
 
 bool RsIdentityListModel::isCategoryExpanded(const EntryIndex& e) const

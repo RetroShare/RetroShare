@@ -59,9 +59,10 @@ public:
                      FILTER_TYPE_NAME = 0x02
                    };
 
-    enum EntryType{ ENTRY_TYPE_UNKNOWN   = 0x00,
+    enum EntryType{ ENTRY_TYPE_TOP_LEVEL = 0x00,
                     ENTRY_TYPE_CATEGORY  = 0x01,
-                    ENTRY_TYPE_IDENTITY  = 0x02
+                    ENTRY_TYPE_IDENTITY  = 0x02,
+                    ENTRY_TYPE_INVALID   = 0x03
                   };
 
     static const int CATEGORY_OWN = 0x00;
@@ -87,6 +88,8 @@ public:
 
         EntryType type;		        // type of the entry (group,profile,location)
 
+        friend std::ostream& operator<<(std::ostream& o, const EntryIndex& e) { return o << "(" << e.type << "," << e.category_index << "," << e.identity_index << ")";}
+
         // Indices w.r.t. parent. The set of indices entirely determines the position of the entry in the hierarchy.
         // An index of 0xff means "undefined"
 
@@ -94,8 +97,8 @@ public:
         uint16_t identity_index;	// index of the identity in its own category
 
         EntryIndex parent() const;
-		EntryIndex child(int row,const std::vector<EntryIndex>& top_level) const;
-        uint32_t   parentRow(int) const;
+        EntryIndex child(int row) const;
+        uint32_t   parentRow() const;
     };
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
