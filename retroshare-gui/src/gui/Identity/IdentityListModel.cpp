@@ -567,7 +567,6 @@ QVariant RsIdentityListModel::displayRole(const EntryIndex& e, int col) const
                 case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(det.mNickname.c_str()));
                 case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(det.mId.toStdString()) );
                 case COLUMN_THREAD_OWNER:          return QVariant(QString::fromStdString(det.mPgpId.toStdString()) );
-                case COLUMN_THREAD_REPUTATION:     return QVariant(QString::number((uint8_t)det.mReputation.mOverallReputationLevel));
                 default:
                         return QVariant();
                 }
@@ -579,7 +578,7 @@ QVariant RsIdentityListModel::displayRole(const EntryIndex& e, int col) const
 	}
 }
 
-// This function makes sure that the internal data gets updated. They are situations where the otification system cannot
+// This function makes sure that the internal data gets updated. They are situations where the notification system cannot
 // send the information about changes, such as when the computer is put on sleep.
 
 void RsIdentityListModel::checkInternalData(bool force)
@@ -616,12 +615,8 @@ const RsIdentityListModel::HierarchicalIdentityInformation *RsIdentityListModel:
 
 QVariant RsIdentityListModel::decorationRole(const EntryIndex& entry,int col) const
 {
-    if(col > 0)
-        return QVariant();
-
     switch(entry.type)
     {
-
     case ENTRY_TYPE_CATEGORY:
         return QVariant();
 
@@ -632,12 +627,20 @@ QVariant RsIdentityListModel::decorationRole(const EntryIndex& entry,int col) co
         if(!hn)
             return QVariant();
 
-		QPixmap sslAvatar;
-        AvatarDefs::getAvatarFromGxsId(hn->id, sslAvatar);
+        if(col == COLUMN_THREAD_REPUTATION)
+            return QVariant( static_cast<uint8_t>(rsReputations->overallReputationLevel(hn->id)) );
+        else if(col == COLUMN_THREAD_NAME)
+        {
+            QPixmap sslAvatar;
+            AvatarDefs::getAvatarFromGxsId(hn->id, sslAvatar);
 
-        return QVariant(QIcon(sslAvatar));
+            return QVariant(QIcon(sslAvatar));
+        }
     }
-    default: return QVariant();
+        break;
+
+    default:
+        return QVariant();
     }
 }
 

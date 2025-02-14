@@ -226,8 +226,8 @@ IdDialog::IdDialog(QWidget *parent)
 	connect(ui->editIdentity, SIGNAL(triggered()), this, SLOT(editIdentity()));
 	connect(ui->chatIdentity, SIGNAL(triggered()), this, SLOT(chatIdentity()));
 
-	connect(ui->idTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateSelection()));
-	connect(ui->idTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(IdListCustomPopupMenu(QPoint)));
+    connect(ui->idTreeWidget->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(updateSelection()));
+    connect(ui->idTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(IdListCustomPopupMenu(QPoint)));
 
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 	connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
@@ -1283,6 +1283,7 @@ void IdDialog::updateSelection()
 {
     auto id = RsGxsGroupId(getSelectedIdentity());
 
+    std::cerr << "updating selection to id " << id << std::endl;
     if(id != mId)
     {
 		mId = id;
@@ -2042,8 +2043,13 @@ std::list<RsGxsId> IdDialog::getSelectedIdentities() const
     std::list<RsGxsId> res;
 
     for(auto indx:selectedIndexes)
+    {
+        RsGxsId id;
+
         if(indx.column() == RsIdentityListModel::COLUMN_THREAD_NAME)	// this removes duplicates
-            res.push_back(mIdListModel->getIdentity(indx));
+            if( !(id = mIdListModel->getIdentity(indx)).isNull() )
+                res.push_back(id);
+    }
 
     return res;
 }
@@ -2232,29 +2238,27 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 
         if(n_is_not_a_contact == 0)
             contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
+    }
+    if (n_selected_items==1)
+        contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 
-        if (n_selected_items==1)
-            contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
+    contextMenu->addSeparator();
 
+    if(n_positive_reputations == 0)	// only unban when all items are banned
+        contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
+
+    if(n_neutral_reputations == 0)	// only unban when all items are banned
+        contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
+
+    if(n_negative_reputations == 0)
+        contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
+
+    if(one_item_owned_by_you && n_selected_items==1)
+    {
         contextMenu->addSeparator();
 
-        if(n_positive_reputations == 0)	// only unban when all items are banned
-            contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
-
-        if(n_neutral_reputations == 0)	// only unban when all items are banned
-            contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
-
-        if(n_negative_reputations == 0)
-            contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
-
-        if(one_item_owned_by_you && n_selected_items==1)
-        {
-            contextMenu->addSeparator();
-
-            contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT),tr("Edit identity"),this,SLOT(editIdentity())) ;
-            contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"),tr("Delete identity"),this,SLOT(removeIdentity())) ;
-        }
-
+        contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT),tr("Edit identity"),this,SLOT(editIdentity())) ;
+        contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"),tr("Delete identity"),this,SLOT(removeIdentity())) ;
     }
 
     //contextMenu = ui->idTreeWidget->createStandardContextMenu(contextMenu);
