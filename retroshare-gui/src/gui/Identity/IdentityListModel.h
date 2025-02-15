@@ -152,7 +152,8 @@ private:
 	QVariant statusRole    (const EntryIndex& e, int col) const;
 	QVariant sortRole      (const EntryIndex& e, int col) const;
 	QVariant fontRole      (const EntryIndex& e, int col) const;
-	QVariant textColorRole (const EntryIndex& e, int col) const;
+    QVariant foregroundRole(const EntryIndex& e, int col) const;
+    QVariant textColorRole (const EntryIndex& e, int col) const;
 	QVariant filterRole    (const EntryIndex& e, int col) const;
 
     /*!

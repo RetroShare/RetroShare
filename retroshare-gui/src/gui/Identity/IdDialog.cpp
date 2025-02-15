@@ -328,13 +328,13 @@ IdDialog::IdDialog(QWidget *parent)
     ui->treeWidget_membership->setColumnWidth(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 270);
 
 	/* Setup tree */
-    ui->idTreeWidget->sortByColumn(RsIdentityListModel::COLUMN_THREAD_NAME, Qt::AscendingOrder);
+    //ui->idTreeWidget->sortByColumn(RsIdentityListModel::COLUMN_THREAD_NAME, Qt::AscendingOrder);
 
     ui->idTreeWidget->setColumnHidden(RsIdentityListModel::COLUMN_THREAD_OWNER, true);
     ui->idTreeWidget->setColumnHidden(RsIdentityListModel::COLUMN_THREAD_ID, true);
 
 	ui->idTreeWidget->setItemDelegate(new RSElidedItemDelegate());
-    ui->idTreeWidget->setItemDelegateForColumn( RsIdentityListModel::COLUMN_THREAD_NAME, new GxsIdTreeItemDelegate());
+    //ui->idTreeWidget->setItemDelegateForColumn( RsIdentityListModel::COLUMN_THREAD_NAME, new GxsIdTreeItemDelegate());
     ui->idTreeWidget->setItemDelegateForColumn( RsIdentityListModel::COLUMN_THREAD_REPUTATION, new ReputationItemDelegate(RsReputationLevel(0xff)));
 
 	/* Set header resize modes and initial section sizes */
@@ -2123,6 +2123,9 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
     // make some stats about what's selected. If the same value is used for all selected items, it can be switched.
 
     auto lst = getSelectedIdentities();
+
+    if(lst.empty())
+        return ;
 
     //bool root_node_present = false ;
     bool one_item_owned_by_you = false ;

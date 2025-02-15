@@ -192,6 +192,7 @@ RsIdentityListModel::EntryIndex RsIdentityListModel::EntryIndex::parent() const
                                     i.identity_index = 0;
 		break;
         case ENTRY_TYPE_TOP_LEVEL:
+    default:
 			//Can be when request root index.
 		break;
 	}
@@ -218,6 +219,7 @@ RsIdentityListModel::EntryIndex RsIdentityListModel::EntryIndex::child(int row) 
 						   break;
 
     case ENTRY_TYPE_IDENTITY:  i = EntryIndex();
+    default:
 						   break;
     }
 
@@ -338,7 +340,8 @@ QVariant RsIdentityListModel::data(const QModelIndex &index, int role) const
 	case Qt::SizeHintRole:   return sizeHintRole(entry,index.column()) ;
 	case Qt::DisplayRole:    return displayRole(entry,index.column()) ;
 	case Qt::FontRole:       return fontRole(entry,index.column()) ;
- 	case Qt::DecorationRole: return decorationRole(entry,index.column()) ;
+    case Qt::ForegroundRole: return foregroundRole(entry,index.column()) ;
+    case Qt::DecorationRole: return decorationRole(entry,index.column()) ;
 
  	case FilterRole:         return filterRole(entry,index.column()) ;
  	case SortRole:           return sortRole(entry,index.column()) ;
@@ -407,9 +410,37 @@ void RsIdentityListModel::setFilter(FilterType filter_type, const QStringList& s
 	postMods();
 }
 
-QVariant RsIdentityListModel::toolTipRole(const EntryIndex& /*fmpe*/,int /*column*/) const
+QVariant RsIdentityListModel::toolTipRole(const EntryIndex& fmpe,int /*column*/) const
 {
-    return QVariant();
+    switch(fmpe.type)
+    {
+    case ENTRY_TYPE_IDENTITY:
+    {
+        RsGxsId id(mIdentities[mCategories[fmpe.category_index].child_identity_indices[fmpe.identity_index]].id);
+
+        if(rsIdentity->isOwnId(id))
+            return QVariant(tr("This identity is owned by you"));
+
+        RsIdentityDetails det;
+        if(!rsIdentity->getIdDetails(id,det))
+            return QVariant();
+
+        if(det.mPgpId.isNull())
+            return QVariant("Anonymous identity");
+        else
+        {
+            RsPeerDetails dd;
+            rsPeers->getGPGDetails(det.mPgpId,dd);
+
+            return QVariant("Identity owned by profile \""+ QString::fromUtf8(dd.name.c_str()) +"\" ("+QString::fromStdString(det.mPgpId.toStdString()));
+        }
+    }
+
+        break;
+    case ENTRY_TYPE_CATEGORY: ; // fallthrough
+    default:
+        return QVariant();
+    }
 }
 
 QVariant RsIdentityListModel::sizeHintRole(const EntryIndex& e,int col) const
@@ -418,7 +449,7 @@ QVariant RsIdentityListModel::sizeHintRole(const EntryIndex& e,int col) const
 	float y_factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
 
     if(e.type == ENTRY_TYPE_IDENTITY)
-		y_factor *= 3.0;
+        y_factor *= 1.0;
 
     if(e.type == ENTRY_TYPE_CATEGORY)
 		y_factor *= 1.5;
@@ -485,8 +516,39 @@ QModelIndex RsIdentityListModel::getIndexOfIdentity(const RsGxsId& id) const
             }
     return QModelIndex();
 }
-QVariant RsIdentityListModel::fontRole(const EntryIndex& e, int col) const
+QVariant RsIdentityListModel::foregroundRole(const EntryIndex& e, int /*col*/) const
 {
+    auto it = getIdentityInfo(e);
+    if(!it)
+        return QVariant();
+    RsGxsId id(it->id);
+    RsIdentityDetails det;
+
+    if(!rsIdentity->getIdDetails(id,det))
+        return QVariant();
+
+    if(det.mFlags & RS_IDENTITY_FLAGS_IS_DEPRECATED)
+        return QVariant(QColor(Qt::red));
+
+    return QVariant();
+}
+QVariant RsIdentityListModel::fontRole(const EntryIndex& e, int /*col*/) const
+{
+        auto it = getIdentityInfo(e);
+    if(!it)
+        return QVariant();
+    RsGxsId id(it->id);
+
+    if(rsIdentity->isOwnId(id))
+    {
+        QFont f;
+        f.setBold(true);
+        return QVariant(f);
+    }
+    else
+        return QVariant();
+}
+
 #ifdef DEBUG_MODEL_INDEX
 	std::cerr << "  font role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": " << std::endl;
 #endif
@@ -511,8 +573,6 @@ QVariant RsIdentityListModel::fontRole(const EntryIndex& e, int col) const
 		return QVariant();
 	}
 #endif
-        return QVariant();
-}
 
 QVariant RsIdentityListModel::displayRole(const EntryIndex& e, int col) const
 {
