@@ -229,6 +229,9 @@ IdDialog::IdDialog(QWidget *parent)
     connect(ui->idTreeWidget->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(updateSelection()));
     connect(ui->idTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(IdListCustomPopupMenu(QPoint)));
 
+    ui->idTreeWidget->header()->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->idTreeWidget->header(), SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
+
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 	connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
 
@@ -2113,9 +2116,48 @@ void IdDialog::filterIds()
     mIdListModel->setFilter(ft,{ text });
 }
 
+void IdDialog::headerContextMenuRequested(QPoint)
+{
+    QMenu displayMenu(this);
+
+    // create menu header
+    //QHBoxLayout *hbox = new QHBoxLayout(widget);
+    //hbox->setMargin(0);
+    //hbox->setSpacing(6);
+
+    auto addEntry = [&](const QString& name,RsIdentityListModel::Columns col)
+    {
+        QAction *action = displayMenu.addAction(QIcon(), name, this, SLOT(toggleColumnVisible()));
+        action->setCheckable(true);
+        action->setData(static_cast<int>(col));
+        action->setChecked(!ui->idTreeWidget->header()->isSectionHidden(col));
+    };
+
+    addEntry(tr("Id"),RsIdentityListModel::COLUMN_THREAD_ID);
+    addEntry(tr("Owner"),RsIdentityListModel::COLUMN_THREAD_OWNER);
+    addEntry(tr("Reputation"),RsIdentityListModel::COLUMN_THREAD_REPUTATION);
+
+    //addEntry(tr("Name"),RsIdentityListModel::COLUMN_THREAD_NAME);
+
+    displayMenu.exec(QCursor::pos());
+}
+
+void IdDialog::toggleColumnVisible()
+{
+    QAction *action = dynamic_cast<QAction*>(sender());
+
+    std::cerr << "Aciton = " << (void*)action << std::endl;
+    if (!action)
+        return;
+
+    int column = action->data().toInt();
+    bool visible = action->isChecked();
+
+    ui->idTreeWidget->setColumnHidden(column, !visible);
+}
 void IdDialog::IdListCustomPopupMenu( QPoint )
 {
-    QMenu *contextMenu = new QMenu(this);
+    QMenu contextMenu(this);
 
     std::list<RsGxsId> own_identities;
     rsIdentity->getOwnIds(own_identities);
@@ -2172,7 +2214,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 
     if(!one_item_owned_by_you)
     {
-        QFrame *widget = new QFrame(contextMenu);
+        QFrame *widget = new QFrame(&contextMenu);
         widget->setObjectName("gradFrame"); //Use qss
         //widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
 
@@ -2199,13 +2241,13 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 
         QWidgetAction *widgetAction = new QWidgetAction(this);
         widgetAction->setDefaultWidget(widget);
-        contextMenu->addAction(widgetAction);
+        contextMenu.addAction(widgetAction);
 
         if(n_selected_items == 1)		// if only one item is selected, allow to chat with this item
         {
             if(own_identities.size() <= 1)
             {
-                QAction *action = contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/chats.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
+                QAction *action = contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/chats.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
 
                 if(own_identities.empty())
                     action->setEnabled(false) ;
@@ -2214,7 +2256,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
             }
             else
             {
-                QMenu *mnu = contextMenu->addMenu(FilesDefs::getIconFromQtResourcePath(":/icons/png/chats.png"),tr("Chat with this person as...")) ;
+                QMenu *mnu = contextMenu.addMenu(FilesDefs::getIconFromQtResourcePath(":/icons/png/chats.png"),tr("Chat with this person as...")) ;
 
                 for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
                 {
@@ -2232,42 +2274,41 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
             }
         }
         // always allow to send messages
-        contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/mail/write-mail.png"), tr("Send message"), this, SLOT(sendMsg()));
+        contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/mail/write-mail.png"), tr("Send message"), this, SLOT(sendMsg()));
 
-        contextMenu->addSeparator();
+        contextMenu.addSeparator();
 
         if(n_is_a_contact == 0)
-            contextMenu->addAction(QIcon(), tr("Add to Contacts"), this, SLOT(addtoContacts()));
+            contextMenu.addAction(QIcon(), tr("Add to Contacts"), this, SLOT(addtoContacts()));
 
         if(n_is_not_a_contact == 0)
-            contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
+            contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
     }
     if (n_selected_items==1)
-        contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
+        contextMenu.addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 
-    contextMenu->addSeparator();
+    contextMenu.addSeparator();
 
     if(n_positive_reputations == 0)	// only unban when all items are banned
-        contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
+        contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
 
     if(n_neutral_reputations == 0)	// only unban when all items are banned
-        contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
+        contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
 
     if(n_negative_reputations == 0)
-        contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
+        contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
 
     if(one_item_owned_by_you && n_selected_items==1)
     {
-        contextMenu->addSeparator();
+        contextMenu.addSeparator();
 
-        contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT),tr("Edit identity"),this,SLOT(editIdentity())) ;
-        contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"),tr("Delete identity"),this,SLOT(removeIdentity())) ;
+        contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT),tr("Edit identity"),this,SLOT(editIdentity())) ;
+        contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"),tr("Delete identity"),this,SLOT(removeIdentity())) ;
     }
 
     //contextMenu = ui->idTreeWidget->createStandardContextMenu(contextMenu);
 
-    contextMenu->exec(QCursor::pos());
-    delete contextMenu;
+    contextMenu.exec(QCursor::pos());
 }
 
 void IdDialog::copyRetroshareLink()

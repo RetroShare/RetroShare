@@ -99,6 +99,8 @@ private slots:
 
 	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
+    void headerContextMenuRequested(QPoint);
+    void toggleColumnVisible();
 
 	void CircleListCustomPopupMenu(QPoint point) ;
 #ifdef SUSPENDED
@@ -119,7 +121,7 @@ private:
 	void processSettings(bool load);
 	QString createUsageString(const RsIdentityUsage& u) const;
 
-	void requestIdData(std::list<RsGxsGroupId> &ids);
+    void requestIdData(std::list<RsGxsGroupId> &ids);
 	bool fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept);
 	void insertIdList(uint32_t token);
 	void filterIds();
