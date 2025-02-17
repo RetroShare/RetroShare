@@ -23,7 +23,8 @@
 
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 
-#include <retroshare/rsidentity.h>
+#include "retroshare/rsidentity.h"
+#include "IdentityListModel.h"
 
 #include <QTimer>
 
@@ -120,6 +121,9 @@ private slots:
 private:
 	void processSettings(bool load);
 	QString createUsageString(const RsIdentityUsage& u) const;
+
+    void restoreExpandedPathsAndSelection_idTreeView(const std::set<QString>& expanded_indexes,  const std::set<std::pair<RsIdentityListModel::EntryType,QString> >& selected_indices);
+    void saveExpandedPathsAndSelection_idTreeView(std::set<QString>& expanded_indexes,  std::set<std::pair<RsIdentityListModel::EntryType,QString> >& selected_indices);
 
     void requestIdData(std::list<RsGxsGroupId> &ids);
 	bool fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept);

@@ -111,8 +111,8 @@ public:
     // This method will asynchroneously update the data
 
     EntryType getType(const QModelIndex&) const;
-
     RsGxsId getIdentity(const QModelIndex&) const;
+    int getCategory(const QModelIndex&) const;
 
     void setFilter(FilterType filter_type, const QStringList& strings) ;
 

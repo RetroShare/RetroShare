@@ -785,6 +785,17 @@ RsIdentityListModel::EntryType RsIdentityListModel::getType(const QModelIndex& i
     return e.type;
 }
 
+int RsIdentityListModel::getCategory(const QModelIndex& i) const
+{
+    if(!i.isValid())
+        return CATEGORY_ALL;
+
+    EntryIndex e;
+    if(!convertInternalIdToIndex(i.internalId(),e))
+        return CATEGORY_ALL;
+
+    return e.category_index;
+}
 void RsIdentityListModel::setIdentities(const std::list<RsGroupMetaData>& identities_meta)
 {
     preMods();
@@ -848,7 +859,7 @@ void RsIdentityListModel::updateIdentityList()
             setIdentities(*ids) ;
             delete ids;
 
-            debug_dump();
+            //debug_dump();
 
         }, this );
 

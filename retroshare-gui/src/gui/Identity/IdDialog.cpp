@@ -1296,60 +1296,16 @@ void IdDialog::updateSelection()
 
 void IdDialog::updateIdList()
 {
+    std::set<QString> expanded_indices;
+    std::set<std::pair<RsIdentityListModel::EntryType,QString> > selected_indices;
+
+    saveExpandedPathsAndSelection_idTreeView(expanded_indices, selected_indices);
+
     mIdListModel->updateIdentityList();
+
+    restoreExpandedPathsAndSelection_idTreeView(expanded_indices, selected_indices);
 }
 #ifdef TO_REMOVE
-void IdDialog::updateIdList()
-{
-	//int accept = filter;
-    std::cerr << "Updating ID list" << std::endl;
-
- 	RsThread::async([this]()
-	{
-        // 1 - get message data from p3GxsForums
-
-#ifdef DEBUG_FORUMS
-        std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
-#endif
-
-        std::list<RsGroupMetaData> identity_metas ;
-
-		if (!rsIdentity->getIdentitiesSummaries(identity_metas))
-		{
-			std::cerr << "IdDialog::insertIdList() Error getting GroupData" << std::endl;
-			return;
-		}
-
-        std::set<RsGxsId> ids;
-        for(auto it(identity_metas.begin());it!=identity_metas.end();++it)
-            ids.insert(RsGxsId((*it).mGroupId));
-
-        std::vector<RsGxsIdGroup> groups;
-
-        if(!rsIdentity->getIdentitiesInfo(ids,groups))
-		{
-			std::cerr << "IdDialog::insertIdList() Error getting identities info" << std::endl;
-			return;
-		}
-
-        auto ids_set = new std::map<RsGxsGroupId,RsGxsIdGroup>();
-
-		for(auto it(groups.begin()); it!=groups.end(); ++it)
-			(*ids_set)[(*it).mMeta.mGroupId] = *it;
-
-        RsQThreadUtils::postToObject( [ids_set, this] ()
-		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
-			loadIdentities(*ids_set);
-            delete ids_set;
-
-		}, this );
-
-    });
-}
-
 bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept)
 {
 	bool isLinkedToOwnNode = (data.mPgpKnown && (data.mPgpId == ownPgpId)) ;
@@ -1633,9 +1589,16 @@ void IdDialog::updateIdentity()
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
+            std::set<QString> expanded_indexes;
+            std::set<std::pair<RsIdentityListModel::EntryType,QString> > selected_indices;
+
+            saveExpandedPathsAndSelection_idTreeView(expanded_indexes, selected_indices);
+
             loadIdentity(group);
 
-		}, this );
+            restoreExpandedPathsAndSelection_idTreeView(expanded_indexes, selected_indices);
+
+        }, this );
 	});
 }
 
@@ -2570,3 +2533,67 @@ void IdDialog::restoreExpandedCircleItems(const std::vector<bool>& expanded_root
     restoreTopLevel(mExternalOtherCircleItem,1);
     restoreTopLevel(mMyCircleItem,2);
 }
+
+void IdDialog::saveExpandedPathsAndSelection_idTreeView(std::set<QString>& expanded_indexes,
+                                                        std::set<std::pair<RsIdentityListModel::EntryType,QString> >& selected_indices)
+{
+    std::cerr << "Saving expended paths and selection..." << std::endl;
+
+    QModelIndexList selectedIndexes = ui->idTreeWidget->selectionModel()->selectedIndexes();
+
+    // convert all selected indices into something that is not QModelIndex-related, so that we can find it again after refreshing the list
+
+    for(auto m:selectedIndexes)
+    {
+        auto t = mIdListModel->getType(m);
+        QString s ;
+
+        if(t==RsIdentityListModel::ENTRY_TYPE_CATEGORY)
+            s = QString::number(mIdListModel->getCategory(m));
+        else
+            s = QString::fromStdString(mIdListModel->getIdentity(m).toStdString());
+
+        selected_indices.insert(std::make_pair(t,s));
+
+        std::cerr << "added " << s.toStdString() << " to selection save" << std::endl;
+    }
+
+    for(int row = 0; row < mIdListModel->rowCount(); ++row)
+    {
+        auto m = mIdListModel->index(row,0);
+
+        if(ui->idTreeWidget->isExpanded( m ));
+        expanded_indexes.insert( QString::number(mIdListModel->getCategory(m)));
+
+        std::cerr << "added " << QString::number(mIdListModel->getCategory(m)).toStdString() << " to expanded save" << std::endl;
+    }
+
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "  selected index: \"" << sel.toStdString() << "\"" << std::endl;
+#endif
+}
+
+void IdDialog::restoreExpandedPathsAndSelection_idTreeView(const std::set<QString>& expanded_indexes,
+                                                           const std::set<std::pair<RsIdentityListModel::EntryType,QString> >& selected_indices)
+{
+    std::cerr << "Restoring expended paths and selection..." << std::endl;
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "  index to select: \"" << index_to_select.toStdString() << "\"" << std::endl;
+#endif
+    ui->idTreeWidget->blockSignals(true) ;
+
+    for(int row = 0; row < mIdListModel->rowCount(); ++row)
+    {
+        auto m = mIdListModel->index(row,0);
+
+        if(expanded_indexes.find(QString::number(mIdListModel->getCategory(m))) != expanded_indexes.end())
+        {
+            ui->idTreeWidget->setExpanded(m,true);
+        }
+    }
+
+        //ui->idTreeWidget->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+
+    ui->idTreeWidget->blockSignals(false) ;
+}
+
