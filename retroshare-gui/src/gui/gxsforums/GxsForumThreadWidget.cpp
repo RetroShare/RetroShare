@@ -308,10 +308,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     connect(ui->latestPostInThreadView_TB, SIGNAL(toggled(bool)), this, SLOT(toggleLstPostInThreadView(bool)));
 
     /* Set own item delegate */
-    RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
-    itemDelegate->setSpacing(QSize(0, 2));
-    itemDelegate->setOnlyPlainText(true);
-    ui->threadTreeWidget->setItemDelegate(itemDelegate);
+    //RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
+    //itemDelegate->setSpacing(QSize(0, 2));
+    //itemDelegate->setOnlyPlainText(true);
+    //ui->threadTreeWidget->setItemDelegate(itemDelegate);
 
     /* add filter actions */
     ui->filterLineEdit->addFilter(QIcon(), tr("Title"), RsGxsForumModel::COLUMN_THREAD_TITLE, tr("Search Title"));
