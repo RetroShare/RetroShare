@@ -67,6 +67,7 @@
 #include "notifyqt.h"
 #include "common/UserNotify.h"
 #include "gui/ServicePermissionDialog.h"
+#include "gui/settings/rsharesettings.h"
 
 #ifdef UNFINISHED
 #include "unfinished/ApplicationWindow.h"
@@ -1022,6 +1023,7 @@ void SetForegroundWindowInternal(HWND hWnd)
 
     /* Show the dialog. */
     raiseWindow();
+
     /* Set the focus to the specified page. */
     _instance->ui->stackPages->setCurrentPage(page);
 }
@@ -1640,6 +1642,8 @@ void MainWindow::settingsChanged()
 	ui->toolBarAction->setIconSize(QSize(toolSize,toolSize));
 	int itemSize = Settings->getListItemIconSize();
 	ui->listWidget->setIconSize(QSize(itemSize,itemSize));
+
+	updateFontSize();
 }
 
 void MainWindow::externalLinkActivated(const QUrl &url)
@@ -1817,6 +1821,23 @@ void MainWindow::setCompactStatusMode(bool compact)
 	hashingstatus->setCompactMode(compact);
 	ratesstatus->setCompactMode(compact);
 	//opModeStatus: TODO Show only ???
+}
+
+void MainWindow::updateFontSize()
+{
+#if defined(Q_OS_DARWIN)
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
+#else
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
+#endif
+    QFont newFont = ui->listWidget->font();
+    if (newFont.pointSize() != customFontSize) {
+        newFont.setPointSize(customFontSize);
+        QFontMetricsF fontMetrics(newFont);
+        int iconHeight = fontMetrics.height()*1.5;
+        ui->listWidget->setFont(newFont);
+        ui->listWidget->setIconSize(QSize(iconHeight, iconHeight));
+    }
 }
 
 Gui_InputDialogReturn MainWindow::guiInputDialog(const QString& windowTitle, const QString& labelText, QLineEdit::EchoMode textEchoMode, bool modal)

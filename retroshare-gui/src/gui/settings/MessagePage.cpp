@@ -55,6 +55,7 @@ MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.loadEmbeddedImages,    SIGNAL(toggled(bool)),          this,SLOT(updateLoadEmbededImages()  ));
 	connect(ui.openComboBox,          SIGNAL(currentIndexChanged(int)),this,SLOT(updateMsgOpen()            ));
 	connect(ui.emoticonscheckBox,     SIGNAL(toggled(bool)),          this,SLOT(updateLoadEmoticons()  ));
+	connect(ui.minimumFontSize_SB,    SIGNAL(valueChanged(int)),      this, SLOT(updateFontSize())) ;
 
     mTagEventHandlerId = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }); }, mTagEventHandlerId, RsEventType::MAIL_TAG );
@@ -121,6 +122,11 @@ MessagePage::load()
     whileBlocking(ui.loadEmbeddedImages)->setChecked(Settings->getMsgLoadEmbeddedImages());
     whileBlocking(ui.openComboBox)->setCurrentIndex(ui.openComboBox->findData(Settings->getMsgOpen()));
     whileBlocking(ui.emoticonscheckBox)->setChecked(Settings->value("Emoticons", true).toBool());
+#if defined(Q_OS_DARWIN)
+    whileBlocking(ui.minimumFontSize_SB)->setValue( Settings->value("MinimumFontSize", 13 ).toInt());
+#else
+	whileBlocking(ui.minimumFontSize_SB)->setValue( Settings->value("MinimumFontSize", 12 ).toInt());
+#endif
     Settings->endGroup();
 
 	  // state of filter combobox
@@ -296,5 +302,12 @@ void MessagePage::currentRowChangedTag(int row)
 
     ui.editpushButton->setEnabled(bEditEnable);
     ui.deletepushButton->setEnabled(bDeleteEnable);
+}
+
+void MessagePage::updateFontSize()
+{
+	Settings->beginGroup(QString("Messages"));
+	Settings->setValue("MinimumFontSize", ui.minimumFontSize_SB->value());
+	Settings->endGroup();
 }
 

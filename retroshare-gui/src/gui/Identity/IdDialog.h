@@ -113,6 +113,8 @@ private slots:
 	static QString inviteMessage();
 	void sendInvite();
 
+	void updateFontSize();
+
 private:
 	void processSettings(bool load);
 	QString createUsageString(const RsIdentityUsage& u) const;

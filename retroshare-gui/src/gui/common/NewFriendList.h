@@ -54,6 +54,8 @@ public:
 	explicit NewFriendList(QWidget *parent = 0);
 	~NewFriendList();
 
+	virtual void showEvent(QShowEvent *) ;
+
 	// Add a tool button to the tool area
 	void addToolButton(QToolButton *toolButton);
 	void processSettings(bool load);
@@ -95,6 +97,7 @@ private slots:
 	void sortColumn(int col,Qt::SortOrder so);
     void itemExpanded(const QModelIndex&);
     void itemCollapsed(const QModelIndex&);
+	void updateFontSize();
 
 protected:
 	void changeEvent(QEvent *e);

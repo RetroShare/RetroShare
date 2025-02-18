@@ -60,6 +60,7 @@ private slots:
 	void updateDistantMsgs()             ;
 	void updateMsgTags()    ;
 	void updateLoadEmoticons();
+	void updateFontSize();
 
 private:
     void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);

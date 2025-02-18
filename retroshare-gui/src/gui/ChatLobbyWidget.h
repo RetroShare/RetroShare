@@ -76,6 +76,8 @@ public:
 
 	uint unreadCount();
 
+	virtual void showEvent(QShowEvent *) ;
+
 signals:
 	void unreadCountChanged(uint unreadCount);
 
@@ -112,6 +114,7 @@ private slots:
 
 	void updateNotify(ChatLobbyId id, unsigned int count) ;
 	void idChooserCurrentIndexChanged(int index);
+	void updateFontSize();
 
 private:
 	void autoSubscribeLobby(QTreeWidgetItem *item);

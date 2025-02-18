@@ -1660,3 +1660,28 @@ void MessagesDialog::updateInterface()
         ui.tabWidget->setTabIcon(0, FilesDefs::getIconFromQtResourcePath(":/icons/warning_yellow_128.png"));
 	}
 }
+
+void MessagesDialog::showEvent(QShowEvent *event)
+{
+    if (!event->spontaneous()) {
+        updateFontSize();
+    }
+}
+
+void MessagesDialog::updateFontSize()
+{
+#if defined(Q_OS_DARWIN)
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
+#else
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
+#endif
+    QFont newFont = ui.listWidget->font();
+    if (newFont.pointSize() != customFontSize) {
+        newFont.setPointSize(customFontSize);
+        QFontMetricsF fontMetrics(newFont);
+        ui.listWidget->setFont(newFont);
+        ui.quickViewWidget->setFont(newFont);
+        ui.messageTreeWidget->setFont(newFont);
+    }
+}
+

@@ -230,6 +230,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	
 	int ltwH = misc::getFontSizeFactor("LobbyTreeWidget", 1.5).height();
 	ui.lobbyTreeWidget->setIconSize(QSize(ltwH,ltwH));
+	updateFontSize();
 }
 
 ChatLobbyWidget::~ChatLobbyWidget()
@@ -1367,4 +1368,26 @@ int ChatLobbyWidget::getNumColVisible()
 		}
 	}
     return iNumColVis;
+}
+
+void ChatLobbyWidget::showEvent(QShowEvent *event)
+{
+    if (!event->spontaneous()) {
+        updateFontSize();
+    }
+}
+
+void ChatLobbyWidget::updateFontSize()
+{
+#if defined(Q_OS_DARWIN)
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
+#else
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
+#endif
+    QFont newFont = ui.lobbyTreeWidget->font();
+    if (newFont.pointSize() != customFontSize) {
+        newFont.setPointSize(customFontSize);
+        QFontMetricsF fontMetrics(newFont);
+        ui.lobbyTreeWidget->setFont(newFont);
+    }
 }

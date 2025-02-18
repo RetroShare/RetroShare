@@ -209,6 +209,8 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
     std::cerr << "calling data(" << index << ") role=" << role << std::endl;
 #endif
 
+	int coln = index.column();
+
 	if(!index.isValid())
 		return QVariant();
 
@@ -251,6 +253,14 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
 
         return QVariant(font);
     }
+	
+	if (role == Qt::TextAlignmentRole)
+	{
+		if((coln == COLUMN_THREAD_ATTACHMENT))
+			return int( Qt::AlignHCenter | Qt::AlignVCenter);
+		else
+			return QVariant();
+	}
 
 #ifdef DEBUG_MESSAGE_MODEL
 	std::cerr << " [ok]" << std::endl;

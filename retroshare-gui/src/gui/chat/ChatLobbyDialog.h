@@ -54,6 +54,8 @@ public:
 
 	inline bool isWindowed() const { return dynamic_cast<PopupChatWindow*>(this->window()) != nullptr; }
 
+	virtual void showEvent(QShowEvent *) ;
+
 public slots:
 	void leaveLobby() ;
 private slots:
@@ -64,6 +66,7 @@ private slots:
 	void showInPeopleTab();
 	void toggleWindowed(){setWindowed(!isWindowed());}
 	void setWindowed(bool windowed);
+	void updateFontSize();
 
 signals:
 	void typingEventReceived(ChatLobbyId) ;

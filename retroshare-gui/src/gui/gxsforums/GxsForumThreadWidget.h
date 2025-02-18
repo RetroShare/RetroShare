@@ -97,6 +97,7 @@ public:
 protected:
 	//bool eventFilter(QObject *obj, QEvent *ev);
 	//void changeEvent(QEvent *e);
+	virtual void showEvent(QShowEvent *) override;
 
 	/* RsGxsUpdateBroadcastWidget */
 	virtual void updateDisplay(bool complete);
@@ -159,6 +160,8 @@ private slots:
 
 	void filterColumnChanged(int column);
 	void filterItems(const QString &text);
+
+	void updateFontSize();
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
 	void expandSubtree();

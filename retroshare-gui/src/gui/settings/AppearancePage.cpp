@@ -101,6 +101,9 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 
 	connect(ui.mainPageButtonType_CB,  SIGNAL(currentIndexChanged(int)),           this, SLOT(updateRbtPageOnToolBar()    ));
 //	connect(ui.menuItemsButtonType_CB, SIGNAL(currentIndexChanged(int)),           this, SLOT(updateActionButtonLoc()    ));
+
+	connect(ui.minimumFontSize_SB, SIGNAL(valueChanged(int)), this, SLOT(updateFontSize())) ;
+
 }
 
 void AppearancePage::switch_status_grpStatus(bool b)        { switch_status(MainWindow::StatusGrpStatus  ,"ShowStatusBar",         b) ; }
@@ -359,4 +362,20 @@ void AppearancePage::load()
 	whileBlocking(ui.checkBoxShowToasterDisable)->setChecked(Settings->valueFromGroup("StatusBar", "ShowToaster", QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowSystrayOnStatus)->setChecked(Settings->valueFromGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(false)).toBool());
 
+	Settings->beginGroup(QString("File"));
+#if defined(Q_OS_DARWIN)
+	whileBlocking(ui.minimumFontSize_SB)->setValue( Settings->value("MinimumFontSize", 13 ).toInt());
+#else
+	whileBlocking(ui.minimumFontSize_SB)->setValue( Settings->value("MinimumFontSize", 11 ).toInt());
+#endif
+	Settings->endGroup();
+}
+
+void AppearancePage::updateFontSize()
+{
+	Settings->beginGroup(QString("File"));
+	Settings->setValue("MinimumFontSize", ui.minimumFontSize_SB->value());
+	Settings->endGroup();
+	
+	NotifyQt::getInstance()->notifySettingsChanged();
 }

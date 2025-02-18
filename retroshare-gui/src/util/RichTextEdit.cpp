@@ -614,3 +614,26 @@ void RichTextEdit::checkLength(){
 void RichTextEdit::setPlaceHolderTextPosted() {
 	f_textedit->setPlaceholderText(tr("Text (optional)"));
 }
+
+void RichTextEdit::showEvent(QShowEvent *event)
+{
+    if (!event->spontaneous()) {
+        updateFontSize();
+    }
+}
+
+void RichTextEdit::updateFontSize()
+{
+#if defined(Q_OS_DARWIN)
+    int customFontSize = Settings->valueFromGroup("Messages", "MinimumFontSize", 13).toInt();
+#else
+    int customFontSize = Settings->valueFromGroup("Messages", "MinimumFontSize", 12).toInt();
+#endif
+    QFont newFont = f_textedit->font();
+    if (newFont.pointSize() != customFontSize) {
+        newFont.setPointSize(customFontSize);
+        QFontMetricsF fontMetrics(newFont);
+        f_textedit->setFont(newFont);
+        f_fontsize->setCurrentIndex(f_fontsize->findText(QString::number(newFont.pointSize())));
+    }
+}

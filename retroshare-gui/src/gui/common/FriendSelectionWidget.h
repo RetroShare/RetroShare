@@ -144,6 +144,7 @@ private slots:
 	void itemChanged(QTreeWidgetItem *item, int column);
 	void selectAll() ;
 	void deselectAll() ;
+	void updateFontSize();
 
 private:
 	void fillList();

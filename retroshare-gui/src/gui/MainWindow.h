@@ -307,6 +307,7 @@ private slots:
     void doQuit();
     
     void updateTrayCombine();
+	void updateFontSize();
 
 private:
     void initStackedPage();
