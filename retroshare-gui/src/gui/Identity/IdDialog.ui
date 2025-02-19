@@ -91,7 +91,7 @@
        <widget class="QLabel" name="titleBarLabel">
         <property name="font">
          <font>
-		<pointsize>12</pointsize>
+          <pointsize>12</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -211,7 +211,7 @@
         </widget>
        </item>
        <item>
-        <widget class="RSTreeWidget" name="idTreeWidget">
+        <widget class="QTreeView" name="idTreeWidget">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -236,39 +236,6 @@
          <property name="sortingEnabled">
           <bool>true</bool>
          </property>
-         <attribute name="headerStretchLastSection">
-          <bool>false</bool>
-         </attribute>
-         <column>
-          <property name="text">
-           <string>Persons</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Identity ID</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Owned by</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="toolTip">
-           <string>Votes</string>
-          </property>
-          <property name="textAlignment">
-           <set>AlignLeading|AlignVCenter</set>
-          </property>
-          <property name="icon">
-           <iconset resource="../icons.qrc">
-            <normaloff>:/icons/flag-green.png</normaloff>:/icons/flag-green.png</iconset>
-          </property>
-         </column>
         </widget>
        </item>
       </layout>
@@ -296,8 +263,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>513</width>
-             <height>764</height>
+             <width>535</width>
+             <height>784</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
@@ -1079,11 +1046,6 @@ border-image: url(:/images/closepressed.png)
    <class>RSComboBox</class>
    <extends>QComboBox</extends>
    <header>gui/common/RSComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
   <customwidget>
    <class>ElidedLabel</class>

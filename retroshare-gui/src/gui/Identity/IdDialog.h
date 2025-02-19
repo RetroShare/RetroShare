@@ -23,7 +23,8 @@
 
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 
-#include <retroshare/rsidentity.h>
+#include "retroshare/rsidentity.h"
+#include "IdentityListModel.h"
 
 #include <QTimer>
 
@@ -35,6 +36,7 @@ class IdDialog;
 
 class UIStateHelper;
 class QTreeWidgetItem;
+class RsIdentityListModel;
 
 class IdDialog : public MainPage
 {
@@ -86,8 +88,9 @@ private slots:
 	void removeIdentity();
 	void editIdentity();
 	void chatIdentity();
-	void chatIdentityItem(QTreeWidgetItem* item);
-	void sendMsg();
+    void chatIdentityItem(const QModelIndex &indx);
+    void chatIdentity(const RsGxsId& toGxsId);
+    void sendMsg();
 	void copyRetroshareLink();
 	void on_closeInfoFrameButton_Invite_clicked();
 
@@ -97,6 +100,8 @@ private slots:
 
 	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
+    void headerContextMenuRequested(QPoint);
+    void toggleColumnVisible();
 
 	void CircleListCustomPopupMenu(QPoint point) ;
 #ifdef SUSPENDED
@@ -117,7 +122,10 @@ private:
 	void processSettings(bool load);
 	QString createUsageString(const RsIdentityUsage& u) const;
 
-	void requestIdData(std::list<RsGxsGroupId> &ids);
+    void restoreExpandedPathsAndSelection_idTreeView(const std::set<QString>& expanded_indexes,  const std::set<std::pair<RsIdentityListModel::EntryType,QString> >& selected_indices);
+    void saveExpandedPathsAndSelection_idTreeView(std::set<QString>& expanded_indexes,  std::set<std::pair<RsIdentityListModel::EntryType,QString> >& selected_indices);
+
+    void requestIdData(std::list<RsGxsGroupId> &ids);
 	bool fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept);
 	void insertIdList(uint32_t token);
 	void filterIds();
@@ -134,9 +142,6 @@ private:
 private:
 	UIStateHelper *mStateHelper;
 
-	QTreeWidgetItem *contactsItem;
-	QTreeWidgetItem *allItem;
-	QTreeWidgetItem *ownItem;
 	QTreeWidgetItem *mExternalBelongingCircleItem;
 	QTreeWidgetItem *mExternalOtherCircleItem;
 	QTreeWidgetItem *mMyCircleItem;
@@ -145,9 +150,14 @@ private:
 	void saveExpandedCircleItems(std::vector<bool> &expanded_root_items, std::set<RsGxsCircleId>& expanded_circle_items) const;
 	void restoreExpandedCircleItems(const std::vector<bool>& expanded_root_items,const std::set<RsGxsCircleId>& expanded_circle_items);
 
-	RsGxsGroupId mId;
+    RsGxsId getSelectedIdentity() const;
+    std::list<RsGxsId> getSelectedIdentities() const;
+
+    RsGxsGroupId mId;
 	RsGxsGroupId mIdToNavigate;
 	int filter;
+
+    RsIdentityListModel *mIdListModel;
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 	RsEventsHandlerId_t mEventHandlerId_identity;

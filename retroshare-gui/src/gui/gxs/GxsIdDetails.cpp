@@ -95,7 +95,12 @@ void ReputationItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 	const QRect r = option.rect;
 
 	// get pixmap
-	unsigned int icon_index = qvariant_cast<unsigned int>(index.data(Qt::DecorationRole));
+    auto v = index.data(Qt::DecorationRole);
+
+    if(!v.canConvert(QVariant::Int))
+        return;
+
+    unsigned int icon_index = qvariant_cast<unsigned int>(v);
 
 	if(icon_index > mMaxLevelToDisplay)
 		return ;
