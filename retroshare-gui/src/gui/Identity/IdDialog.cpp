@@ -1296,6 +1296,9 @@ void IdDialog::updateSelection()
 
 void IdDialog::updateIdList()
 {
+    std::cerr << "Updating identity list in widget: stack is:" << std::endl;
+    //print_stacktrace();
+
     std::set<QString> expanded_indices;
     std::set<std::pair<RsIdentityListModel::EntryType,QString> > selected_indices;
 
@@ -1592,11 +1595,11 @@ void IdDialog::updateIdentity()
             std::set<QString> expanded_indexes;
             std::set<std::pair<RsIdentityListModel::EntryType,QString> > selected_indices;
 
-            saveExpandedPathsAndSelection_idTreeView(expanded_indexes, selected_indices);
+            //saveExpandedPathsAndSelection_idTreeView(expanded_indexes, selected_indices);
 
             loadIdentity(group);
 
-            restoreExpandedPathsAndSelection_idTreeView(expanded_indexes, selected_indices);
+            //restoreExpandedPathsAndSelection_idTreeView(expanded_indexes, selected_indices);
 
         }, this );
 	});
@@ -1785,9 +1788,9 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
 
 	switch(info.mOwnOpinion)
 	{
-	case RsOpinion::NEGATIVE: ui->ownOpinion_CB->setCurrentIndex(0); break;
-	case RsOpinion::NEUTRAL : ui->ownOpinion_CB->setCurrentIndex(1); break;
-	case RsOpinion::POSITIVE: ui->ownOpinion_CB->setCurrentIndex(2); break;
+    case RsOpinion::NEGATIVE: whileBlocking(ui->ownOpinion_CB)->setCurrentIndex(0); break;
+    case RsOpinion::NEUTRAL : whileBlocking(ui->ownOpinion_CB)->setCurrentIndex(1); break;
+    case RsOpinion::POSITIVE: whileBlocking(ui->ownOpinion_CB)->setCurrentIndex(2); break;
 	default:
 		std::cerr << "Unexpected value in own opinion: "
 		          << static_cast<uint32_t>(info.mOwnOpinion) << std::endl;
@@ -2537,35 +2540,37 @@ void IdDialog::restoreExpandedCircleItems(const std::vector<bool>& expanded_root
 void IdDialog::saveExpandedPathsAndSelection_idTreeView(std::set<QString>& expanded_indexes,
                                                         std::set<std::pair<RsIdentityListModel::EntryType,QString> >& selected_indices)
 {
-    std::cerr << "Saving expended paths and selection..." << std::endl;
+    std::cerr << "Saving expended paths and selection... thread " << (void*)pthread_self() << std::endl;
 
     QModelIndexList selectedIndexes = ui->idTreeWidget->selectionModel()->selectedIndexes();
 
     // convert all selected indices into something that is not QModelIndex-related, so that we can find it again after refreshing the list
 
     for(auto m:selectedIndexes)
-    {
-        auto t = mIdListModel->getType(m);
-        QString s ;
+        if(m.column()==RsIdentityListModel::COLUMN_THREAD_ID)
+        {
+            auto t = mIdListModel->getType(m);
+            QString s ;
 
-        if(t==RsIdentityListModel::ENTRY_TYPE_CATEGORY)
-            s = QString::number(mIdListModel->getCategory(m));
-        else
-            s = QString::fromStdString(mIdListModel->getIdentity(m).toStdString());
+            if(t==RsIdentityListModel::ENTRY_TYPE_CATEGORY)
+                s = QString::number(mIdListModel->getCategory(m));
+            else
+                s = QString::fromStdString(mIdListModel->getIdentity(m).toStdString());
 
-        selected_indices.insert(std::make_pair(t,s));
+            selected_indices.insert(std::make_pair(t,s));
 
-        std::cerr << "added " << s.toStdString() << " to selection save" << std::endl;
-    }
+            std::cerr << "added " << s.toStdString() << " to selection save" << std::endl;
+        }
 
     for(int row = 0; row < mIdListModel->rowCount(); ++row)
     {
-        auto m = mIdListModel->index(row,0);
+        auto m = mIdListModel->index(row,0,QModelIndex());
 
-        if(ui->idTreeWidget->isExpanded( m ));
-        expanded_indexes.insert( QString::number(mIdListModel->getCategory(m)));
-
-        std::cerr << "added " << QString::number(mIdListModel->getCategory(m)).toStdString() << " to expanded save" << std::endl;
+        if(ui->idTreeWidget->isExpanded( m ))
+        {
+            expanded_indexes.insert( QString::number(mIdListModel->getCategory(m)));
+            std::cerr << "added " << QString::number(mIdListModel->getCategory(m)).toStdString() << " to expanded save" << std::endl;
+        }
     }
 
 #ifdef DEBUG_NEW_FRIEND_LIST
@@ -2577,23 +2582,47 @@ void IdDialog::restoreExpandedPathsAndSelection_idTreeView(const std::set<QStrin
                                                            const std::set<std::pair<RsIdentityListModel::EntryType,QString> >& selected_indices)
 {
     std::cerr << "Restoring expended paths and selection..." << std::endl;
-#ifdef DEBUG_NEW_FRIEND_LIST
+    ui->idTreeWidget->blockSignals(true) ;
+    ui->idTreeWidget->selectionModel()->blockSignals(true);
+
+    ui->idTreeWidget->selectionModel()->clear();
+
+    for(auto it:selected_indices)
+    {
+        if(it.first==RsIdentityListModel::ENTRY_TYPE_CATEGORY)
+            ui->idTreeWidget->selectionModel()->select(mIdListModel->index(it.first,0,QModelIndex()),QItemSelectionModel::Select | QItemSelectionModel::Rows);
+        else if(it.first==RsIdentityListModel::ENTRY_TYPE_IDENTITY)
+        {
+            auto indx = mIdListModel->getIndexOfIdentity(RsGxsId(it.second.toStdString()));
+
+            if(indx.isValid())
+            {
+                std::cerr << "trying to resotre selection of id " << it.second.toStdString() << std::endl;
+                ui->idTreeWidget->selectionModel()->select(indx,QItemSelectionModel::Select | QItemSelectionModel::Rows);
+            }
+            else
+                std::cerr << "Index is invalid!" << std::endl;
+        }
+    }
+    //ui->idTreeWidget->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+
+    ui->idTreeWidget->blockSignals(false) ;
+    ui->idTreeWidget->selectionModel()->blockSignals(false);
+
+    #ifdef DEBUG_NEW_FRIEND_LIST
     std::cerr << "  index to select: \"" << index_to_select.toStdString() << "\"" << std::endl;
 #endif
-    ui->idTreeWidget->blockSignals(true) ;
-
     for(int row = 0; row < mIdListModel->rowCount(); ++row)
     {
-        auto m = mIdListModel->index(row,0);
+        auto m = mIdListModel->index(row,0,QModelIndex());
 
         if(expanded_indexes.find(QString::number(mIdListModel->getCategory(m))) != expanded_indexes.end())
         {
+            std::cerr << "Restoring expanded index " << QString::number(mIdListModel->getCategory(m)).toStdString() << std::endl;
             ui->idTreeWidget->setExpanded(m,true);
         }
+        else
+            ui->idTreeWidget->setExpanded(m,false);
     }
-
-        //ui->idTreeWidget->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
-
-    ui->idTreeWidget->blockSignals(false) ;
 }
 

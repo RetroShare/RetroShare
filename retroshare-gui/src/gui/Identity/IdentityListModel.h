@@ -32,6 +32,8 @@ typedef uint32_t ForumModelIndex;
 
 // This class is the item model used by Qt to display the information
 
+class QTimer;
+
 class RsIdentityListModel : public QAbstractItemModel
 {
 	Q_OBJECT
@@ -164,6 +166,7 @@ private:
 public slots:
 	void checkInternalData(bool force);
     void debug_dump() const;
+    void timerUpdate();
 
 signals:
     void dataLoaded();	// emitted after the messages have been set. Can be used to updated the UI.
@@ -180,6 +183,8 @@ private:
     void *getParentRef(void *ref,int& row) const;
     void *getChildRef(void *ref,int row) const;
     int  getChildrenCount(void *ref) const;
+
+    bool requestIdentityDetails(const RsGxsId& id,RsIdentityDetails& det) const;
 
     static bool convertIndexToInternalId(const EntryIndex& e,quintptr& ref);
     static bool convertInternalIdToIndex(quintptr ref, EntryIndex& e);
@@ -209,5 +214,8 @@ private:
     // keeps track of expanded/collapsed items, so as to only show icon for collapsed profiles
 
     std::vector<bool> mExpandedCategories;
+
+    // List of identities for which getIdDetails() failed, to be requested again.
+    mutable QTimer *mIdentityUpdateTimer;
 };
 

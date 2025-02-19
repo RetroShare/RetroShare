@@ -54,8 +54,15 @@ RsIdentityListModel::RsIdentityListModel(QObject *parent)
     , mLastInternalDataUpdate(0), mLastNodeUpdate(0)
 {
 	mFilterStrings.clear();
+    mIdentityUpdateTimer = new QTimer();
+    connect(mIdentityUpdateTimer,SIGNAL(timeout()),this,SLOT(timerUpdate()));
 }
 
+void RsIdentityListModel::timerUpdate()
+{
+    std::cerr << "updating indices" << std::endl;
+    emit dataChanged(index(0,0,QModelIndex()),index(2,0,QModelIndex()));
+}
 RsIdentityListModel::EntryIndex::EntryIndex()
    : type(ENTRY_TYPE_INVALID),category_index(0),identity_index(0)
 {
@@ -410,6 +417,18 @@ void RsIdentityListModel::setFilter(FilterType filter_type, const QStringList& s
 	postMods();
 }
 
+bool RsIdentityListModel::requestIdentityDetails(const RsGxsId& id,RsIdentityDetails& det) const
+{
+    if(!rsIdentity->getIdDetails(id,det))
+    {
+        mIdentityUpdateTimer->stop();
+        mIdentityUpdateTimer->setSingleShot(true);
+        mIdentityUpdateTimer->start(500);
+        return false;
+    }
+
+    return true;
+}
 QVariant RsIdentityListModel::toolTipRole(const EntryIndex& fmpe,int /*column*/) const
 {
     switch(fmpe.type)
@@ -422,7 +441,7 @@ QVariant RsIdentityListModel::toolTipRole(const EntryIndex& fmpe,int /*column*/)
             return QVariant(tr("This identity is owned by you"));
 
         RsIdentityDetails det;
-        if(!rsIdentity->getIdDetails(id,det))
+        if(!requestIdentityDetails(id,det))
             return QVariant();
 
         if(det.mPgpId.isNull())
@@ -524,7 +543,7 @@ QVariant RsIdentityListModel::foregroundRole(const EntryIndex& e, int /*col*/) c
     RsGxsId id(it->id);
     RsIdentityDetails det;
 
-    if(!rsIdentity->getIdDetails(id,det))
+    if(!requestIdentityDetails(id,det))
         return QVariant();
 
     if(det.mFlags & RS_IDENTITY_FLAGS_IS_DEPRECATED)
@@ -616,7 +635,7 @@ QVariant RsIdentityListModel::displayRole(const EntryIndex& e, int col) const
 
                 RsIdentityDetails det;
 
-                if(!rsIdentity->getIdDetails(idinfo->id,det))
+                if(!requestIdentityDetails(idinfo->id,det))
                     return QVariant();
 
 #ifdef DEBUG_MODEL_INDEX
@@ -696,6 +715,8 @@ QVariant RsIdentityListModel::decorationRole(const EntryIndex& entry,int col) co
 
             return QVariant(QIcon(sslAvatar));
         }
+        else
+            return QVariant();
     }
         break;
 
