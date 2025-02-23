@@ -440,7 +440,7 @@ IdDialog::IdDialog(QWidget *parent)
     connect(ui->treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CircleListCustomPopupMenu(QPoint)));
     connect(ui->autoBanIdentities_CB, SIGNAL(toggled(bool)), this, SLOT(toggleAutoBanIdentities(bool)));
 
-	updateIdTimer.setSingleShot(true);
+    updateIdTimer.setSingleShot(true);
 	connect(&updateIdTimer, SIGNAL(timeout()), this, SLOT(updateIdList()));
 }
 
@@ -1274,14 +1274,7 @@ IdDialog::~IdDialog()
     delete mProxyModel;
 	delete(ui);
 }
-void IdDialog::idListItemExpanded(const QModelIndex& index)
-{
-    mIdListModel->expandItem(mProxyModel->mapToSource(index));
-}
-void IdDialog::idListItemCollapsed(const QModelIndex& index)
-{
-    mIdListModel->collapseItem(mProxyModel->mapToSource(index));
-}
+
 static QString getHumanReadableDuration(uint32_t seconds)
 {
     if(seconds < 60)
@@ -1372,7 +1365,13 @@ void IdDialog::updateIdList()
     std::cerr << "Updating identity list in widget: stack is:" << std::endl;
     //print_stacktrace();
 
-    applyWhileKeepingTree( [this]() { mIdListModel->updateIdentityList();  });
+    applyWhileKeepingTree( [this]() {
+
+        mIdListModel->updateIdentityList();
+
+    }
+
+    );
 }
 #ifdef TO_REMOVE
 bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept)
@@ -1506,114 +1505,6 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	return true;
 }
 
-void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set_const)
-{
-	auto ids_set(ids_set_const);
-
-    std::cerr << "Loading ID list" << std::endl;
-
-    //First: Get current item to restore after
-	RsGxsGroupId oldCurrentId = mIdToNavigate;
-	{
-		QTreeWidgetItem *oldCurrent = ui->idTreeWidget->currentItem();
-		if (oldCurrent) {
-			oldCurrentId = RsGxsGroupId(oldCurrent->text(RSID_COL_KEYID).toStdString());
-		}
-	}
-
-	//Save expanding
-	Settings->beginGroup("IdDialog");
-	Settings->setValue("ExpandAll", allItem->isExpanded());
-	Settings->setValue("ExpandContacts", contactsItem->isExpanded());
-	Settings->setValue("ExpandOwn", ownItem->isExpanded());
-	Settings->endGroup();
-
-
-	int accept = filter;
-
-	mStateHelper->setActive(IDDIALOG_IDLIST, true);
-
-	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
-
-	// Update existing and remove not existing items
-	// Also remove items that do not have the correct parent
-
-	QTreeWidgetItemIterator itemIterator(ui->idTreeWidget);
-	QTreeWidgetItem *item = NULL;
-
-	while ((item = *itemIterator) != NULL)
-	{
-		++itemIterator;
-		auto it = ids_set.find(RsGxsGroupId(item->text(RSID_COL_KEYID).toStdString())) ;
-
-		if(it == ids_set.end())
-		{
-			if(item != allItem && item != contactsItem && item != ownItem)
-				delete(item);
-
-			continue ;
-		}
-
-		QTreeWidgetItem *parent_item = item->parent() ;
-
-//        if(it->second.mMeta.mPublishTs > time(NULL) - 20 || it->second.mMeta.mGroupId == RsGxsGroupId("3de2172503675206b3a23c997e5ee688"))
-//            std::cerr << "Captured ID " <<it->second.mMeta.mGroupId << std::endl;
-
-		if(    (parent_item == allItem && it->second.mIsAContact) || (parent_item == contactsItem && !it->second.mIsAContact))
-		{
-			delete item ;	// do not remove from the list, so that it is added again in the correct place.
-			continue ;
-		}
-
-		if (!fillIdListItem(it->second, item, ownPgpId, accept))
-			delete(item);
-
-		ids_set.erase(it);	// erase, so it is not considered to be a new item
-	}
-
-	/* Insert new items */
-	for (std::map<RsGxsGroupId,RsGxsIdGroup>::const_iterator vit = ids_set.begin(); vit != ids_set.end(); ++vit)
-	{
-		RsGxsIdGroup data = vit->second ;
-
-		item = NULL;
-
-		if (fillIdListItem(data, item, ownPgpId, accept))
-		{
-			if(data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
-				ownItem->addChild(item);
-			else if(data.mIsAContact)
-				contactsItem->addChild(item);
-			else
-				allItem->addChild(item);
-
-		}
-	}
-
-	/* count items */
-	int itemCount = contactsItem->childCount() + allItem->childCount() + ownItem->childCount();
-	ui->label_count->setText( "(" + QString::number( itemCount ) + ")" );
-
-	int contactsCount = contactsItem->childCount() ;
-	int allCount = allItem->childCount() ;
-	int ownCount = ownItem->childCount();
-
-    contactsItem->setText(0, tr("My contacts") + ((contactsCount>0)?" (" + QString::number( contactsCount ) + ")":"") );
-    allItem->setText(0, tr("All") + ((allCount>0)?" (" + QString::number( allCount ) + ")":"") );
-    ownItem->setText(0, tr("My own identities") + ((ownCount>0)?" (" +  QString::number( ownCount ) + ")":"") );
-
-
-	//Restore expanding
-	Settings->beginGroup("IdDialog");
-	allItem->setExpanded(Settings->value("ExpandAll", QVariant(true)).toBool());
-	ownItem->setExpanded(Settings->value("ExpandOwn", QVariant(true)).toBool());
-	contactsItem->setExpanded(Settings->value("ExpandContacts", QVariant(true)).toBool());
-	Settings->endGroup();
-
-	navigate(RsGxsId(oldCurrentId));
-	filterIds();
-	updateSelection();
-}
 #endif
 
 void IdDialog::updateIdentity()
@@ -2696,7 +2587,6 @@ void IdDialog::applyWhileKeepingTree(std::function<void()> predicate)
     std::set<QStringList> expanded,selected;
 
     saveExpandedPathsAndSelection_idTreeView(expanded, selected);
-
 #ifdef DEBUG_NEW_FRIEND_LIST
     std::cerr << "After collecting selection, selected paths is: \"" << selected.toStdString() << "\", " ;
     std::cerr << "expanded paths are: " << std::endl;
@@ -2704,7 +2594,6 @@ void IdDialog::applyWhileKeepingTree(std::function<void()> predicate)
         std::cerr << "        \"" << path.toStdString() << "\"" << std::endl;
     std::cerr << "Current sort column is: " << mLastSortColumn << " and order is " << mLastSortOrder << std::endl;
 #endif
-    whileBlocking(ui->idTreeWidget)->clearSelection();
 
     // This is a hack to avoid crashes on windows while calling endInsertRows(). I'm not sure wether these crashes are
     // due to a Qt bug, or a misuse of the proxy model on my side. Anyway, this solves them for good.
@@ -2720,16 +2609,17 @@ void IdDialog::applyWhileKeepingTree(std::function<void()> predicate)
         col_sizes[i] = ui->idTreeWidget->columnWidth(i);
     }
 
+#ifdef SUSPENDED
 #ifdef DEBUG_NEW_FRIEND_LIST
     std::cerr << "Applying predicate..." << std::endl;
 #endif
     mProxyModel->setSourceModel(nullptr);
-
+#endif
     predicate();
 
-    mProxyModel->setSourceModel(mIdListModel);
     restoreExpandedPathsAndSelection_idTreeView(expanded,selected);
 
+//    mProxyModel->setSourceModel(mIdListModel);
     // restore hidden columns
     for(uint32_t i=0;i<RsIdentityListModel::COLUMN_THREAD_NB_COLUMNS;++i)
     {
@@ -2737,25 +2627,24 @@ void IdDialog::applyWhileKeepingTree(std::function<void()> predicate)
         ui->idTreeWidget->setColumnWidth(i,col_sizes[i]);
     }
 
+#ifdef SUSPENDED
     // restore sorting
     // sortColumn(mLastSortColumn,mLastSortOrder);
 #ifdef DEBUG_NEW_FRIEND_LIST
     std::cerr << "Sorting again with sort column: " << mLastSortColumn << " and order " << mLastSortOrder << std::endl;
 #endif
-    mProxyModel->setSortingEnabled(true);
+//    mProxyModel->setSortingEnabled(true);
 //    mProxyModel->sort(mLastSortColumn,mLastSortOrder);
-    mProxyModel->setSortingEnabled(false);
+//    mProxyModel->setSortingEnabled(false);
 
 //    if(selected_index.isValid())
 //        ui->idTreeWidget->scrollTo(selected_index);
+#endif
 }
 #define DEBUG_ID_DIALOG
 
 void IdDialog::saveExpandedPathsAndSelection_idTreeView(std::set<QStringList>& expanded, std::set<QStringList>& selected)
 {
-//    QModelIndexList selectedIndexes = ui->idTreeWidget->selectionModel()->selectedIndexes();
-//    QModelIndex current_index = selectedIndexes.empty()?QModelIndex():(*selectedIndexes.begin());
-
 #ifdef DEBUG_ID_DIALOG
     std::cerr << "Saving expended paths and selection..." << std::endl;
 #endif
@@ -2766,6 +2655,8 @@ void IdDialog::saveExpandedPathsAndSelection_idTreeView(std::set<QStringList>& e
 
 void IdDialog::restoreExpandedPathsAndSelection_idTreeView(const std::set<QStringList>& expanded, const std::set<QStringList>& selected)
 {
+    whileBlocking(ui->idTreeWidget)->clearSelection();
+
     ui->idTreeWidget->blockSignals(true) ;
 
     for(int row = 0; row < mProxyModel->rowCount(); ++row)
@@ -2828,13 +2719,4 @@ void IdDialog::recursRestoreExpandedItems_idTreeView(const QModelIndex& index,co
 #endif
         ui->idTreeWidget->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
-}
-void IdDialog::trace_collapsed(const QModelIndex& i)
-{
-std::cerr << "Collapsed " << i << std::endl;
-}
-
-void IdDialog::trace_expanded(const QModelIndex& i)
-{
-std::cerr << "Expanded " << i << std::endl;
 }

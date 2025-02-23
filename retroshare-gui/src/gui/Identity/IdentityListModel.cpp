@@ -863,38 +863,18 @@ void RsIdentityListModel::updateIdentityList()
 {
     std::cerr << "Updating identity list" << std::endl;
 
-    RsThread::async([this]()
+    std::list<RsGroupMetaData> ids ;
+
+    if(!rsIdentity->getIdentitiesSummaries(ids))
     {
-        // 1 - get message data from p3GxsForums
+        std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identity metadata." << std::endl;
+        return;
+    }
 
-        std::list<RsGroupMetaData> *ids = new std::list<RsGroupMetaData>();
-
-        if(!rsIdentity->getIdentitiesSummaries(*ids))
-        {
-            std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identity metadata." << std::endl;
-            return;
-        }
-
-        // 3 - update the model in the UI thread.
-
-        RsQThreadUtils::postToObject( [ids,this]()
-        {
-            /* Here it goes any code you want to be executed on the Qt Gui
-             * thread, for example to update the data model with new information
-             * after a blocking call to RetroShare API complete, note that
-             * Qt::QueuedConnection is important!
-             */
-
-            setIdentities(*ids) ;
-            delete ids;
-
-            //debug_dump();
-
-        }, this );
-
-    });
-
+    setIdentities(ids) ;
 }
+
+
 
 void RsIdentityListModel::collapseItem(const QModelIndex& index)
 {

@@ -69,10 +69,8 @@ protected:
 
 
 private slots:
-	void updateIdList();
+    void updateIdList();
 	void updateCircles();
-void trace_expanded(const QModelIndex&);
-void trace_collapsed(const QModelIndex& i);
     void createExternalCircle();
 	void showEditExistingCircle();
 	void updateCirclesDisplay();
@@ -158,9 +156,6 @@ private:
 
     RsGxsId getSelectedIdentity() const;
     std::list<RsGxsId> getSelectedIdentities() const;
-
-    void idListItemExpanded(const QModelIndex& index);
-    void idListItemCollapsed(const QModelIndex& index);
 
     RsGxsGroupId mId;
 	RsGxsGroupId mIdToNavigate;
