@@ -96,7 +96,7 @@ bool RsIdentityListModel::convertIndexToInternalId(const EntryIndex& e,quintptr&
         return false;
     }
 
-    id = (((uint32_t)e.category_index) << 30) + ((uint32_t)e.identity_index << 2) + ((uint32_t)e.type);
+    id = ((0x3 & (uint32_t)e.category_index) << 30) + ((uint32_t)e.identity_index << 2) + (0x3 & (uint32_t)e.type);
 
     return true;
 }
