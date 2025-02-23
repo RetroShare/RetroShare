@@ -238,6 +238,9 @@ IdDialog::IdDialog(QWidget *parent)
 	/* Setup UI helper */
     mStateHelper = new UIStateHelper(this);
 
+    connect(ui->idTreeWidget,SIGNAL(expanded(const QModelIndex&)),this,SLOT(trace_expanded(const QModelIndex&)),Qt::DirectConnection);
+    connect(ui->idTreeWidget,SIGNAL(collapsed(const QModelIndex&)),this,SLOT(trace_collapsed(const QModelIndex&)),Qt::DirectConnection);
+
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_PublishTS);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
@@ -2596,6 +2599,7 @@ void IdDialog::restoreExpandedCircleItems(const std::vector<bool>& expanded_root
     restoreTopLevel(mMyCircleItem,2);
 }
 
+#ifdef TO_REMOVE
 void IdDialog::saveExpandedPathsAndSelection_idTreeView(std::set<QString>& expanded_indexes,
                                                         std::set<std::pair<RsIdentityListModel::EntryType,QString> >& selected_indices)
 {
@@ -2685,13 +2689,13 @@ void IdDialog::restoreExpandedPathsAndSelection_idTreeView(const std::set<QStrin
     ui->idTreeWidget->blockSignals(false) ;
     ui->idTreeWidget->selectionModel()->blockSignals(false);
 }
+#endif
 
 void IdDialog::applyWhileKeepingTree(std::function<void()> predicate)
 {
-    std::set<QString> expanded_indexes;
-    std::set<std::pair<RsIdentityListModel::EntryType,QString> > selected;
+    std::set<QStringList> expanded,selected;
 
-    saveExpandedPathsAndSelection_idTreeView(expanded_indexes, selected);
+    saveExpandedPathsAndSelection_idTreeView(expanded, selected);
 
 #ifdef DEBUG_NEW_FRIEND_LIST
     std::cerr << "After collecting selection, selected paths is: \"" << selected.toStdString() << "\", " ;
@@ -2724,7 +2728,7 @@ void IdDialog::applyWhileKeepingTree(std::function<void()> predicate)
     predicate();
 
     mProxyModel->setSourceModel(mIdListModel);
-    restoreExpandedPathsAndSelection_idTreeView(expanded_indexes,selected);
+    restoreExpandedPathsAndSelection_idTreeView(expanded,selected);
 
     // restore hidden columns
     for(uint32_t i=0;i<RsIdentityListModel::COLUMN_THREAD_NB_COLUMNS;++i)
@@ -2744,4 +2748,93 @@ void IdDialog::applyWhileKeepingTree(std::function<void()> predicate)
 
 //    if(selected_index.isValid())
 //        ui->idTreeWidget->scrollTo(selected_index);
+}
+#define DEBUG_ID_DIALOG
+
+void IdDialog::saveExpandedPathsAndSelection_idTreeView(std::set<QStringList>& expanded, std::set<QStringList>& selected)
+{
+//    QModelIndexList selectedIndexes = ui->idTreeWidget->selectionModel()->selectedIndexes();
+//    QModelIndex current_index = selectedIndexes.empty()?QModelIndex():(*selectedIndexes.begin());
+
+#ifdef DEBUG_ID_DIALOG
+    std::cerr << "Saving expended paths and selection..." << std::endl;
+#endif
+
+    for(int row = 0; row < mProxyModel->rowCount(); ++row)
+        recursSaveExpandedItems_idTreeView(mProxyModel->index(row,0),QStringList(),expanded,selected);
+}
+
+void IdDialog::restoreExpandedPathsAndSelection_idTreeView(const std::set<QStringList>& expanded, const std::set<QStringList>& selected)
+{
+    ui->idTreeWidget->blockSignals(true) ;
+
+    for(int row = 0; row < mProxyModel->rowCount(); ++row)
+        recursRestoreExpandedItems_idTreeView(mProxyModel->index(row,0),QStringList(),expanded,selected);
+
+    ui->idTreeWidget->blockSignals(false) ;
+}
+
+void IdDialog::recursSaveExpandedItems_idTreeView(const QModelIndex& index,const QStringList& parent_path,std::set<QStringList>& expanded,std::set<QStringList>& selected)
+{
+    QStringList local_path = parent_path;
+    local_path.push_back(index.sibling(index.row(),RsIdentityListModel::COLUMN_THREAD_NAME).data(RsIdentityListModel::TreePathRole).toString()) ;
+
+    if(ui->idTreeWidget->isExpanded(index))
+    {
+#ifdef DEBUG_ID_DIALOG
+        std::cerr << "Adding expanded path ";
+        for(auto L:local_path) std::cerr << "\"" << L.toStdString() << "\" " ; std::cerr << std::endl;
+#endif
+        if(index.isValid())
+            expanded.insert(local_path) ;
+
+        for(int row=0;row<mProxyModel->rowCount(index);++row)
+            recursSaveExpandedItems_idTreeView(index.child(row,0),local_path,expanded,selected) ;
+    }
+
+    if(ui->idTreeWidget->selectionModel()->isSelected(index))
+    {
+#ifdef DEBUG_ID_DIALOG
+        std::cerr << "Adding selected path ";
+        for(auto L:local_path) std::cerr << "\"" << L.toStdString() << "\" " ; std::cerr << std::endl;
+#endif
+        selected.insert(local_path);
+    }
+}
+
+void IdDialog::recursRestoreExpandedItems_idTreeView(const QModelIndex& index,const QStringList& parent_path,const std::set<QStringList>& expanded,const std::set<QStringList>& selected)
+{
+    QStringList local_path = parent_path;
+    local_path.push_back(index.sibling(index.row(),RsIdentityListModel::COLUMN_THREAD_NAME).data(RsIdentityListModel::TreePathRole).toString()) ;
+
+    if(expanded.find(local_path) != expanded.end())
+    {
+#ifdef DEBUG_ID_DIALOG
+        std::cerr << "  re expanding " ;
+        for(auto L:local_path) std::cerr << "\"" << L.toStdString() << "\" " ; std::cerr << std::endl;
+#endif
+
+        ui->idTreeWidget->setExpanded(index,true) ;
+
+        for(int row=0;row<mProxyModel->rowCount(index);++row)
+            recursRestoreExpandedItems_idTreeView(index.child(row,0),local_path,expanded,selected) ;
+    }
+
+    if(selected.find(local_path) != selected.end())
+    {
+#ifdef DEBUG_ID_DIALOG
+        std::cerr << "Restoring selected path ";
+        for(auto L:local_path) std::cerr << "\"" << L.toStdString() << "\" " ; std::cerr << std::endl;
+#endif
+        ui->idTreeWidget->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+    }
+}
+void IdDialog::trace_collapsed(const QModelIndex& i)
+{
+std::cerr << "Collapsed " << i << std::endl;
+}
+
+void IdDialog::trace_expanded(const QModelIndex& i)
+{
+std::cerr << "Expanded " << i << std::endl;
 }

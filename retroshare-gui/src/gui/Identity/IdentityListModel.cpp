@@ -352,6 +352,7 @@ QVariant RsIdentityListModel::data(const QModelIndex &index, int role) const
 
  	case FilterRole:         return filterRole(entry,index.column()) ;
  	case SortRole:           return sortRole(entry,index.column()) ;
+    case TreePathRole:       return treePathRole(entry,index.column()) ;
 
 	default:
 		return QVariant();
@@ -483,6 +484,13 @@ QVariant RsIdentityListModel::sizeHintRole(const EntryIndex& e,int col) const
     }
 }
 
+QVariant RsIdentityListModel::treePathRole(const EntryIndex& entry,int column) const
+{
+    if(entry.type == ENTRY_TYPE_CATEGORY)
+        return QString::number((int)entry.category_index);
+    else
+        return QString::fromStdString(mIdentities[entry.identity_index].id.toStdString());
+}
 QVariant RsIdentityListModel::sortRole(const EntryIndex& entry,int column) const
 {
     switch(column)

@@ -54,6 +54,7 @@ public:
               	StatusRole         = Qt::UserRole+2,
               	UnreadRole         = Qt::UserRole+3,
               	FilterRole         = Qt::UserRole+4,
+                TreePathRole       = Qt::UserRole+5,
               };
 
     enum FilterType{ FILTER_TYPE_NONE = 0x00,
@@ -157,6 +158,7 @@ private:
     QVariant foregroundRole(const EntryIndex& e, int col) const;
     QVariant textColorRole (const EntryIndex& e, int col) const;
 	QVariant filterRole    (const EntryIndex& e, int col) const;
+    QVariant treePathRole  (const EntryIndex& entry,int column) const;
 
     /*!
      * \brief debug_dump

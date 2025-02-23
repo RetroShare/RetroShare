@@ -71,8 +71,9 @@ protected:
 private slots:
 	void updateIdList();
 	void updateCircles();
-
-	void createExternalCircle();
+void trace_expanded(const QModelIndex&);
+void trace_collapsed(const QModelIndex& i);
+    void createExternalCircle();
 	void showEditExistingCircle();
 	void updateCirclesDisplay();
 	void toggleAutoBanIdentities(bool b);
@@ -123,8 +124,10 @@ private:
 	void processSettings(bool load);
 	QString createUsageString(const RsIdentityUsage& u) const;
 
-    void restoreExpandedPathsAndSelection_idTreeView(const std::set<QString>& expanded_indexes,  const std::set<std::pair<RsIdentityListModel::EntryType,QString> >& selected_indices);
-    void saveExpandedPathsAndSelection_idTreeView(std::set<QString>& expanded_indexes,  std::set<std::pair<RsIdentityListModel::EntryType,QString> >& selected_indices);
+    void saveExpandedPathsAndSelection_idTreeView(std::set<QStringList> &expanded, std::set<QStringList> &selected);
+    void restoreExpandedPathsAndSelection_idTreeView(const std::set<QStringList>& expanded, const std::set<QStringList>& selelected);
+    void recursSaveExpandedItems_idTreeView(const QModelIndex& index, const QStringList& parent_path, std::set<QStringList>& expanded, std::set<QStringList>& selected);
+    void recursRestoreExpandedItems_idTreeView(const QModelIndex& index,const QStringList& parent_path,const std::set<QStringList>& expanded,const std::set<QStringList>& selected);
 
     void requestIdData(std::list<RsGxsGroupId> &ids);
 	bool fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept);
