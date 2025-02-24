@@ -302,7 +302,8 @@ IdDialog::IdDialog(QWidget *parent)
 	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 	connect(ui->editButton, SIGNAL(clicked()), this, SLOT(editIdentity()));
 
-    connect( ui->idTreeWidget, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(chatIdentityItem(QModelIndex&)) );
+    connect(ui->idTreeWidget, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(chatIdentityItem(QModelIndex&)) );
+    connect(ui->idTreeWidget->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumn(int,Qt::SortOrder)));
 
 	ui->editButton->hide();
 
@@ -2627,21 +2628,20 @@ void IdDialog::applyWhileKeepingTree(std::function<void()> predicate)
         ui->idTreeWidget->setColumnWidth(i,col_sizes[i]);
     }
 
+    mProxyModel->setSortingEnabled(true);
+    mProxyModel->sort(mLastSortColumn,mLastSortOrder);
+    mProxyModel->setSortingEnabled(false);
 #ifdef SUSPENDED
     // restore sorting
     // sortColumn(mLastSortColumn,mLastSortOrder);
 #ifdef DEBUG_NEW_FRIEND_LIST
     std::cerr << "Sorting again with sort column: " << mLastSortColumn << " and order " << mLastSortOrder << std::endl;
 #endif
-//    mProxyModel->setSortingEnabled(true);
-//    mProxyModel->sort(mLastSortColumn,mLastSortOrder);
-//    mProxyModel->setSortingEnabled(false);
 
 //    if(selected_index.isValid())
 //        ui->idTreeWidget->scrollTo(selected_index);
 #endif
 }
-#define DEBUG_ID_DIALOG
 
 void IdDialog::saveExpandedPathsAndSelection_idTreeView(std::set<QStringList>& expanded, std::set<QStringList>& selected)
 {
@@ -2719,4 +2719,26 @@ void IdDialog::recursRestoreExpandedItems_idTreeView(const QModelIndex& index,co
 #endif
         ui->idTreeWidget->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
+}
+void IdDialog::sortColumn(int col,Qt::SortOrder so)
+{
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "Sorting with column=" << col << " and order=" << so << std::endl;
+#endif
+    std::set<QStringList> expanded_indexes,selected_indexes;
+
+    saveExpandedPathsAndSelection_idTreeView(expanded_indexes, selected_indexes);
+    whileBlocking(ui->idTreeWidget)->clearSelection();
+
+    mProxyModel->setSortingEnabled(true);
+    mProxyModel->sort(col,so);
+    mProxyModel->setSortingEnabled(false);
+
+    restoreExpandedPathsAndSelection_idTreeView(expanded_indexes,selected_indexes);
+
+    //if(selected_index.isValid())
+    //    ui->peerTreeWidget->scrollTo(selected_index);
+
+    mLastSortColumn = col;
+    mLastSortOrder = so;
 }

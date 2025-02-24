@@ -495,34 +495,13 @@ QVariant RsIdentityListModel::sortRole(const EntryIndex& entry,int column) const
 {
     switch(column)
     {
-#warning TODO
-//    case COLUMN_THREAD_LAST_CONTACT:
-//    {
-//        switch(entry.type)
-//		{
-//		case ENTRY_TYPE_PROFILE:
-//		{
-//			const HierarchicalProfileInformation *prof = getProfileInfo(entry);
-//
-//			if(!prof)
-//				return QVariant();
-//
-//            uint32_t last_contact = 0;
-//
-//			for(uint32_t i=0;i<prof->child_node_indices.size();++i)
-//                last_contact = std::max(last_contact, mLocations[prof->child_node_indices[i]].node_info.lastConnect);
-//
-//            return QVariant(last_contact);
-//		}
-//            break;
-//        default:
-//            return QVariant();
-//		}
-//    }
-//        break;
+    case COLUMN_THREAD_REPUTATION:  return decorationRole(entry,column);
 
+    case COLUMN_THREAD_ID:
+    case COLUMN_THREAD_OWNER:
+    case COLUMN_THREAD_NAME: [[__fallthrough__]];
     default:
-		return displayRole(entry,column);
+        return displayRole(entry,column);
     }
 }
 
@@ -653,7 +632,10 @@ QVariant RsIdentityListModel::displayRole(const EntryIndex& e, int col) const
                 {
                 case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(det.mNickname.c_str()));
                 case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(det.mId.toStdString()) );
-                case COLUMN_THREAD_OWNER:          return QVariant(QString::fromStdString(det.mPgpId.toStdString()) );
+                case COLUMN_THREAD_OWNER:          if(det.mPgpId.isNull())
+                                                        return QVariant();
+                                                    else
+                                                        return QVariant(QString::fromStdString(det.mPgpId.toStdString()) );
                 default:
                         return QVariant();
                 }

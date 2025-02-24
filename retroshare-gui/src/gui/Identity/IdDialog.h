@@ -75,6 +75,7 @@ private slots:
 	void showEditExistingCircle();
 	void updateCirclesDisplay();
 	void toggleAutoBanIdentities(bool b);
+    void sortColumn(int col,Qt::SortOrder so);
 
 	void acceptCircleSubscription() ;
 	void cancelCircleSubscription() ;
@@ -149,7 +150,10 @@ private:
 	QTreeWidgetItem *mMyCircleItem;
 	RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
 
-	void saveExpandedCircleItems(std::vector<bool> &expanded_root_items, std::set<RsGxsCircleId>& expanded_circle_items) const;
+    int mLastSortColumn;
+    Qt::SortOrder mLastSortOrder;
+
+    void saveExpandedCircleItems(std::vector<bool> &expanded_root_items, std::set<RsGxsCircleId>& expanded_circle_items) const;
 	void restoreExpandedCircleItems(const std::vector<bool>& expanded_root_items,const std::set<RsGxsCircleId>& expanded_circle_items);
 
     void applyWhileKeepingTree(std::function<void()> predicate);
