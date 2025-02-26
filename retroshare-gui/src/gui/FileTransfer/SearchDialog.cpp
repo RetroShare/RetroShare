@@ -38,6 +38,7 @@
 #include "gui/common/RSTreeWidgetItem.h"
 #include "util/QtVersion.h"
 #include "util/qtthreadsutils.h"
+#include "util/misc.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsturtle.h>
@@ -167,8 +168,8 @@ SearchDialog::SearchDialog(QWidget *parent)
     //  To allow a proper sorting, be careful to pad at right with spaces. This
     //  is achieved by using QString("%1").arg(number,15,10).
     //
-    ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL, mSizeColumnDelegate=new RSHumanReadableSizeDelegate()) ;
-    ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL, mAgeColumnDelegate=new RSHumanReadableAgeDelegate()) ;
+    //ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL, mSizeColumnDelegate=new RSHumanReadableSizeDelegate()) ;
+    //ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL, mAgeColumnDelegate=new RSHumanReadableAgeDelegate()) ;
 
     /* make it extended selection */
     ui.searchResultWidget -> setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -255,8 +256,8 @@ SearchDialog::~SearchDialog()
     delete mSizeColumnDelegate;
     delete mAgeColumnDelegate;
 
-    ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL, nullptr);
-    ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL, nullptr);
+    //ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL, nullptr);
+    //ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL, nullptr);
 
     rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
@@ -1325,11 +1326,13 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		 * to facilitate downloads we need to save the file size too
 		 */
 
-		item->setText(SR_SIZE_COL, QString::number(file.size));
+		item->setText(SR_SIZE_COL, misc::friendlyUnit(file.size));
 		item->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) file.size);
-        item->setText(SR_AGE_COL, QString::number(file.mtime));
+        item->setText(SR_AGE_COL, misc::timeRelativeToNow(file.mtime));
         item->setData(SR_AGE_COL, ROLE_SORT, file.mtime);
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
+		item->setTextAlignment( SR_AGE_COL, Qt::AlignCenter );
+
 		int friendSource = 0;
 		int anonymousSource = 0;
 		if(searchType == FRIEND_SEARCH)
@@ -1625,5 +1628,28 @@ void SearchDialog::openFolderSearch()
                 }
             }
         }
+    }
+}
+
+void SearchDialog::showEvent(QShowEvent *event)
+{
+    if (!event->spontaneous()) {
+        updateFontSize();
+    }
+}
+
+void SearchDialog::updateFontSize()
+{
+#if defined(Q_OS_DARWIN)
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
+#else
+    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 12).toInt();
+#endif
+    QFont newFont = ui.searchSummaryWidget->font();
+    if (newFont.pointSize() != customFontSize) {
+        newFont.setPointSize(customFontSize);
+        QFontMetricsF fontMetrics(newFont);
+        ui.searchSummaryWidget->setFont(newFont);
+        ui.searchResultWidget->setFont(newFont);
     }
 }

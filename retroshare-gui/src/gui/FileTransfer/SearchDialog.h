@@ -66,6 +66,9 @@ public:
 
     void updateFiles(qulonglong request_id, const FileDetail& file) ;
 
+protected:
+	virtual void showEvent(QShowEvent *) override;
+
 private slots:
 
 /** Create the context popup menu and it's submenus */
@@ -115,6 +118,8 @@ private slots:
     void selectFileType(int index);
 
 	void filterItems();
+
+	void updateFontSize();
 
 private:
 /** render the results to the tree widget display */
