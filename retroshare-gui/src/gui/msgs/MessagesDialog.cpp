@@ -163,9 +163,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
 	changeBox(0);	// set to inbox
 
-    RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
-    itemDelegate->setSpacing(QSize(0, 2));
-    ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_SUBJECT,itemDelegate);
+    //RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
+    //itemDelegate->setSpacing(QSize(0, 2));
+    //ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_SUBJECT,itemDelegate);
 
     ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_AUTHOR,new GxsIdTreeItemDelegate()) ;
     ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_TO,new GxsIdTreeItemDelegate()) ;
@@ -1679,9 +1679,13 @@ void MessagesDialog::updateFontSize()
     if (newFont.pointSize() != customFontSize) {
         newFont.setPointSize(customFontSize);
         QFontMetricsF fontMetrics(newFont);
+        int iconHeight = fontMetrics.height()*1.5;
         ui.listWidget->setFont(newFont);
         ui.quickViewWidget->setFont(newFont);
         ui.messageTreeWidget->setFont(newFont);
+        ui.listWidget->setIconSize(QSize(iconHeight, iconHeight));
+        ui.quickViewWidget->setIconSize(QSize(iconHeight, iconHeight));
+        ui.messageTreeWidget->setIconSize(QSize(iconHeight, iconHeight));
     }
 }
 
