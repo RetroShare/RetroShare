@@ -1312,9 +1312,16 @@ void IdDialog::processSettings(bool load)
         ui->mainSplitter->restoreState(Settings->value("splitter").toByteArray());
 
         //Restore expanding
-        ui->idTreeWidget->setExpanded(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_ALL),Settings->value("ExpandAll", QVariant(true)).toBool());
-        ui->idTreeWidget->setExpanded(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_OWN),Settings->value("ExpandOwn", QVariant(true)).toBool());
-        ui->idTreeWidget->setExpanded(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_CTS),Settings->value("ExpandContacts", QVariant(true)).toBool());
+        ui->idTreeWidget->setExpanded(mProxyModel->mapFromSource(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_ALL)),Settings->value("ExpandAll", QVariant(true)).toBool());
+        ui->idTreeWidget->setExpanded(mProxyModel->mapFromSource(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_OWN)),Settings->value("ExpandOwn", QVariant(true)).toBool());
+        ui->idTreeWidget->setExpanded(mProxyModel->mapFromSource(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_CTS)),Settings->value("ExpandContacts", QVariant(true)).toBool());
+
+        // visible columns
+
+        int v = Settings->value("columnVisibility",(1 << RsIdentityListModel::COLUMN_THREAD_NAME)+(1 << RsIdentityListModel::COLUMN_THREAD_REPUTATION)).toInt();
+
+        for(int i=0;i<mIdListModel->columnCount();++i)
+            ui->idTreeWidget->setColumnHidden(i,!(v & (1<<i)));
     }
     else
     {
@@ -1327,9 +1334,16 @@ void IdDialog::processSettings(bool load)
         Settings->setValue("splitter", ui->mainSplitter->saveState());
 
         //save expanding
-        Settings->setValue("ExpandAll",        ui->idTreeWidget->isExpanded(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_ALL)));
-        Settings->setValue("ExpandContacts",   ui->idTreeWidget->isExpanded(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_OWN)));
-        Settings->setValue("ExpandOwn",        ui->idTreeWidget->isExpanded(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_CTS)));
+        Settings->setValue("ExpandAll",        ui->idTreeWidget->isExpanded(mProxyModel->mapFromSource(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_ALL))));
+        Settings->setValue("ExpandContacts",   ui->idTreeWidget->isExpanded(mProxyModel->mapFromSource(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_CTS))));
+        Settings->setValue("ExpandOwn",        ui->idTreeWidget->isExpanded(mProxyModel->mapFromSource(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_OWN))));
+
+        int v = 0;
+        for(int i=0;i<mIdListModel->columnCount();++i)
+            if(!ui->idTreeWidget->isColumnHidden(i))
+                v += (1 << i);
+
+        Settings->setValue("columnVisibility",v);
     }
 
     Settings->endGroup();
@@ -1930,9 +1944,10 @@ void IdDialog::navigate(const RsGxsId& gxs_id)
 	std::cerr << "IdDialog::navigate to " << gxs_id.toStdString() << std::endl;
 #endif
 
-    QModelIndex indx = mIdListModel->getIndexOfIdentity(gxs_id);
+    QModelIndex indx = mProxyModel->mapFromSource(mIdListModel->getIndexOfIdentity(gxs_id));
 
 	// in order to do this, we just select the correct ID in the ID list
+
 	if (!gxs_id.isNull())
 	{
         if(!indx.isValid())
