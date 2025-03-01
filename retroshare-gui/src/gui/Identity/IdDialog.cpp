@@ -1297,41 +1297,42 @@ static QString getHumanReadableDuration(uint32_t seconds)
 
 void IdDialog::processSettings(bool load)
 {
-#warning TODO
-//	Settings->beginGroup("IdDialog");
-//
-//	// state of peer tree
-//	ui->idTreeWidget->processSettings(load);
-//
-//	if (load) {
-//		// load settings
-//
-//		// filterColumn
-//		ui->filterLineEdit->setCurrentFilter(Settings->value("filterColumn", RSID_COL_NICKNAME).toInt());
-//
-//		// state of splitter
-//		ui->mainSplitter->restoreState(Settings->value("splitter").toByteArray());
-//
-//		//Restore expanding
-//		allItem->setExpanded(Settings->value("ExpandAll", QVariant(true)).toBool());
-//		ownItem->setExpanded(Settings->value("ExpandOwn", QVariant(true)).toBool());
-//		contactsItem->setExpanded(Settings->value("ExpandContacts", QVariant(true)).toBool());
-//	} else {
-//		// save settings
-//
-//		// filterColumn
-//		Settings->setValue("filterColumn", ui->filterLineEdit->currentFilter());
-//
-//		// state of splitter
-//		Settings->setValue("splitter", ui->mainSplitter->saveState());
-//
-//		//save expanding
-//		Settings->setValue("ExpandAll", allItem->isExpanded());
-//		Settings->setValue("ExpandContacts", contactsItem->isExpanded());
-//		Settings->setValue("ExpandOwn", ownItem->isExpanded());
-//	}
-//
-//	Settings->endGroup();
+    Settings->beginGroup("IdDialog");
+
+    // state of peer tree
+    // ui->idTreeWidget->processSettings(load);
+
+    if (load) {
+        // load settings
+
+        // filterColumn
+        ui->filterLineEdit->setCurrentFilter(Settings->value("filterColumn", RsIdentityListModel::COLUMN_THREAD_NAME).toInt());
+
+        // state of splitter
+        ui->mainSplitter->restoreState(Settings->value("splitter").toByteArray());
+
+        //Restore expanding
+        ui->idTreeWidget->setExpanded(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_ALL),Settings->value("ExpandAll", QVariant(true)).toBool());
+        ui->idTreeWidget->setExpanded(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_OWN),Settings->value("ExpandOwn", QVariant(true)).toBool());
+        ui->idTreeWidget->setExpanded(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_CTS),Settings->value("ExpandContacts", QVariant(true)).toBool());
+    }
+    else
+    {
+        // save settings
+
+        // filterColumn
+        Settings->setValue("filterColumn", ui->filterLineEdit->currentFilter());
+
+        // state of splitter
+        Settings->setValue("splitter", ui->mainSplitter->saveState());
+
+        //save expanding
+        Settings->setValue("ExpandAll",        ui->idTreeWidget->isExpanded(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_ALL)));
+        Settings->setValue("ExpandContacts",   ui->idTreeWidget->isExpanded(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_OWN)));
+        Settings->setValue("ExpandOwn",        ui->idTreeWidget->isExpanded(mIdListModel->getIndexOfCategory(RsIdentityListModel::CATEGORY_CTS)));
+    }
+
+    Settings->endGroup();
 }
 
 void IdDialog::filterChanged(const QString& /*text*/)

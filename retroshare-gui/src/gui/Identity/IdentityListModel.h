@@ -69,9 +69,10 @@ public:
                     ENTRY_TYPE_INVALID   = 0x03
                   };
 
-    static const int CATEGORY_OWN = 0x00;
-    static const int CATEGORY_CTS = 0x01;
-    static const int CATEGORY_ALL = 0x02;
+    enum Category{ 	CATEGORY_OWN = 0x00,
+                    CATEGORY_CTS = 0x01,
+                    CATEGORY_ALL = 0x02
+                 };
 
     struct HierarchicalCategoryInformation
     {
@@ -107,6 +108,7 @@ public:
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
     QModelIndex getIndexOfIdentity(const RsGxsId& id) const;
+    QModelIndex getIndexOfCategory(Category id) const;
 
     void updateIdentityList();
 
@@ -146,7 +148,6 @@ private:
     const HierarchicalCategoryInformation    *getCategoryInfo  (const EntryIndex&) const;
     const HierarchicalIdentityInformation    *getIdentityInfo(const EntryIndex&) const;
 
-    bool isCategoryExpanded(const EntryIndex& e) const;
     void checkIdentity(HierarchicalIdentityInformation& node);
 
     QVariant sizeHintRole  (const EntryIndex& e, int col) const;

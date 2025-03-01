@@ -527,6 +527,18 @@ QModelIndex RsIdentityListModel::getIndexOfIdentity(const RsGxsId& id) const
             }
     return QModelIndex();
 }
+
+QModelIndex RsIdentityListModel::getIndexOfCategory(Category id) const
+{
+    EntryIndex e;
+    e.category_index = id;
+    e.type = ENTRY_TYPE_CATEGORY;
+
+    quintptr idx;
+    convertIndexToInternalId(e,idx);
+
+    return createIndex((int)id,0,idx);
+}
 QVariant RsIdentityListModel::foregroundRole(const EntryIndex& e, int /*col*/) const
 {
     auto it = getIdentityInfo(e);
@@ -900,18 +912,5 @@ void RsIdentityListModel::expandItem(const QModelIndex& index)
     emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mCategories.size()-1,columnCount()-1,(void*)NULL));
 }
 
-bool RsIdentityListModel::isCategoryExpanded(const EntryIndex& e) const
-{
-    return true;
-#warning TODO
-//     if(e.type != ENTRY_TYPE_CATEGORY)
-//         return false;
-//
-//     EntryIndex entry;
-//
-//     if(!convertInternalIdToIndex<sizeof(uintptr_t)>(e.internalId(),entry))
-//         return false;
-//
-//     return mExpandedCategories[entry.category_index];
-}
+
 
