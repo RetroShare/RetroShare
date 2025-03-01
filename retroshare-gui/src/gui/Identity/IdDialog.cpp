@@ -398,7 +398,8 @@ IdDialog::IdDialog(QWidget *parent)
 	/* Setup tree */
     //ui->idTreeWidget->sortByColumn(RsIdentityListModel::COLUMN_THREAD_NAME, Qt::AscendingOrder);
 
-    ui->idTreeWidget->setColumnHidden(RsIdentityListModel::COLUMN_THREAD_OWNER, true);
+    ui->idTreeWidget->setColumnHidden(RsIdentityListModel::COLUMN_THREAD_OWNER_ID, true);
+    ui->idTreeWidget->setColumnHidden(RsIdentityListModel::COLUMN_THREAD_OWNER_NAME, true);
     ui->idTreeWidget->setColumnHidden(RsIdentityListModel::COLUMN_THREAD_ID, true);
 
 	ui->idTreeWidget->setItemDelegate(new RSElidedItemDelegate());
@@ -2054,7 +2055,8 @@ void IdDialog::headerContextMenuRequested(QPoint)
     };
 
     addEntry(tr("Id"),RsIdentityListModel::COLUMN_THREAD_ID);
-    addEntry(tr("Owner"),RsIdentityListModel::COLUMN_THREAD_OWNER);
+    addEntry(tr("Owner Id"),RsIdentityListModel::COLUMN_THREAD_OWNER_ID);
+    addEntry(tr("Owner Name"),RsIdentityListModel::COLUMN_THREAD_OWNER_NAME);
     addEntry(tr("Reputation"),RsIdentityListModel::COLUMN_THREAD_REPUTATION);
 
     //addEntry(tr("Name"),RsIdentityListModel::COLUMN_THREAD_NAME);
@@ -2357,7 +2359,7 @@ void IdDialog::sendMsg()
     for(const auto& id : lst)
         nMsgDialog->addRecipient(MessageComposer::TO,  id);
 
-	nMsgDialog->show();
+    nMsgDialog->show();
 	nMsgDialog->activateWindow();
 
 	/* window will destroy itself! */
@@ -2393,8 +2395,8 @@ void IdDialog::negativePerson()
     for(const auto& id : lst)
         rsReputations->setOwnOpinion(id, RsOpinion::NEGATIVE);
 
-	updateIdentity();
-	updateIdList();
+    updateIdentity();
+    updateIdList();
 }
 
 void IdDialog::neutralPerson()
@@ -2404,8 +2406,8 @@ void IdDialog::neutralPerson()
     for(const auto& id : lst)
         rsReputations->setOwnOpinion(id, RsOpinion::NEUTRAL);
 
-	updateIdentity();
-	updateIdList();
+    updateIdentity();
+    updateIdList();
 }
 void IdDialog::positivePerson()
 {
@@ -2414,8 +2416,8 @@ void IdDialog::positivePerson()
     for(const auto& id : lst)
         rsReputations->setOwnOpinion(id, RsOpinion::POSITIVE);
 
-	updateIdentity();
-	updateIdList();
+    updateIdentity();
+    updateIdList();
 }
 
 void IdDialog::addtoContacts()
@@ -2425,7 +2427,7 @@ void IdDialog::addtoContacts()
     for(const auto& id : lst)
         rsIdentity->setAsRegularContact(id,true);
 
-	updateIdList();
+    updateIdList();
 }
 
 void IdDialog::removefromContacts()
@@ -2435,7 +2437,7 @@ void IdDialog::removefromContacts()
     for(const auto& id : lst)
         rsIdentity->setAsRegularContact(id,false);
 
-	updateIdList();
+    updateIdList();
 }
 
 void IdDialog::on_closeInfoFrameButton_Invite_clicked()

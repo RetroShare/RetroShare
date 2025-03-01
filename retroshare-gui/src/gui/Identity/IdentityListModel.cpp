@@ -300,13 +300,16 @@ QVariant RsIdentityListModel::headerData(int section, Qt::Orientation /*orientat
 		{
 		case COLUMN_THREAD_NAME:         return tr("Name");
 		case COLUMN_THREAD_ID:           return tr("Id");
-        case COLUMN_THREAD_REPUTATION:   return tr("Reputation");
-        case COLUMN_THREAD_OWNER:        return tr("Owner");
-		default:
+        case COLUMN_THREAD_REPUTATION:   return QVariant();
+        case COLUMN_THREAD_OWNER_ID:     return tr("Owner Id");
+        case COLUMN_THREAD_OWNER_NAME:   return tr("Owner");
+        default:
 			return QVariant();
 		}
+    if(role == Qt::DecorationRole && section == COLUMN_THREAD_REPUTATION)
+        return QIcon(":/icons/flag-green.png");
 
-	return QVariant();
+    return QVariant();
 }
 
 QVariant RsIdentityListModel::data(const QModelIndex &index, int role) const
@@ -480,11 +483,12 @@ QVariant RsIdentityListModel::sizeHintRole(const EntryIndex& e,int col) const
     case COLUMN_THREAD_NAME:       return QVariant( QSize(x_factor * 70 , y_factor*14*1.1f ));
     case COLUMN_THREAD_ID:         return QVariant( QSize(x_factor * 175, y_factor*14*1.1f ));
     case COLUMN_THREAD_REPUTATION: return QVariant( QSize(x_factor * 20 , y_factor*14*1.1f ));
-    case COLUMN_THREAD_OWNER:      return QVariant( QSize(x_factor * 70 , y_factor*14*1.1f ));
+    case COLUMN_THREAD_OWNER_NAME: return QVariant( QSize(x_factor * 70 , y_factor*14*1.1f ));
+    case COLUMN_THREAD_OWNER_ID:   return QVariant( QSize(x_factor * 70 , y_factor*14*1.1f ));
     }
 }
 
-QVariant RsIdentityListModel::treePathRole(const EntryIndex& entry,int column) const
+QVariant RsIdentityListModel::treePathRole(const EntryIndex& entry,int /*column*/) const
 {
     if(entry.type == ENTRY_TYPE_CATEGORY)
         return QString::number((int)entry.category_index);
@@ -498,7 +502,8 @@ QVariant RsIdentityListModel::sortRole(const EntryIndex& entry,int column) const
     case COLUMN_THREAD_REPUTATION:  return decorationRole(entry,column);
 
     case COLUMN_THREAD_ID:
-    case COLUMN_THREAD_OWNER:
+    case COLUMN_THREAD_OWNER_ID:
+    case COLUMN_THREAD_OWNER_NAME:
     case COLUMN_THREAD_NAME: [[__fallthrough__]];
     default:
         return displayRole(entry,column);
@@ -632,7 +637,12 @@ QVariant RsIdentityListModel::displayRole(const EntryIndex& e, int col) const
                 {
                 case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(det.mNickname.c_str()));
                 case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(det.mId.toStdString()) );
-                case COLUMN_THREAD_OWNER:          if(det.mPgpId.isNull())
+                case COLUMN_THREAD_OWNER_NAME:     if(det.mPgpId.isNull())
+                                                        return QVariant();
+                                                    else
+                                                        return QVariant(QString::fromStdString(rsPeers->getGPGName(det.mPgpId)) );
+
+                case COLUMN_THREAD_OWNER_ID:       if(det.mPgpId.isNull())
                                                         return QVariant();
                                                     else
                                                         return QVariant(QString::fromStdString(det.mPgpId.toStdString()) );

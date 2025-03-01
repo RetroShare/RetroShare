@@ -45,9 +45,10 @@ public:
     enum Columns {
 		COLUMN_THREAD_NAME         = 0x00,
         COLUMN_THREAD_ID           = 0x01,
-        COLUMN_THREAD_OWNER        = 0x02,
-        COLUMN_THREAD_REPUTATION   = 0x03,
-        COLUMN_THREAD_NB_COLUMNS   = 0x04
+        COLUMN_THREAD_OWNER_NAME   = 0x02,
+        COLUMN_THREAD_OWNER_ID     = 0x03,
+        COLUMN_THREAD_REPUTATION   = 0x04,
+        COLUMN_THREAD_NB_COLUMNS   = 0x05
 	};
 
 	enum Roles{ SortRole           = Qt::UserRole+1,
