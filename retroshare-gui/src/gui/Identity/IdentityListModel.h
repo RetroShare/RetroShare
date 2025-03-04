@@ -144,6 +144,8 @@ public:
 	QColor mTextColorGroup;
 	QColor mTextColorStatus[RS_STATUS_COUNT];
 
+    void setIdentities(const std::list<RsGroupMetaData>& identities_meta);
+
 private:
     const HierarchicalCategoryInformation    *getCategoryInfo  (const EntryIndex&) const;
     const HierarchicalIdentityInformation    *getIdentityInfo(const EntryIndex&) const;
@@ -178,7 +180,6 @@ signals:
     void dataAboutToLoad();
 
 private:
-    void setIdentities(const std::list<RsGroupMetaData>& identities_meta);
     bool passesFilter(const EntryIndex &e, int column) const;
 
 	void preMods() ;

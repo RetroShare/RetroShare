@@ -61,6 +61,7 @@ protected:
 	void loadIdentity(RsGxsIdGroup id_data);
 
 	void loadCircles(const std::list<RsGroupMetaData>& circle_metas);
+    void updateIdListRequest();
 
 	//void requestCircleGroupData(const RsGxsCircleId& circle_id);
 	bool getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id) ;
@@ -70,7 +71,7 @@ protected:
 
 private slots:
     void updateIdList();
-	void updateCircles();
+    void updateCircles();
     void createExternalCircle();
 	void showEditExistingCircle();
 	void updateCirclesDisplay();
