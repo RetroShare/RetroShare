@@ -1963,26 +1963,36 @@ void IdDialog::modifyReputation()
 
 void IdDialog::navigate(const RsGxsId& gxs_id)
 {
-#ifdef ID_DEBUG
+#ifndef ID_DEBUG
 	std::cerr << "IdDialog::navigate to " << gxs_id.toStdString() << std::endl;
 #endif
 
-    QModelIndex indx = mProxyModel->mapFromSource(mIdListModel->getIndexOfIdentity(gxs_id));
+    if(gxs_id.isNull())
+        return;
+
+    auto indx = mIdListModel->getIndexOfIdentity(gxs_id);
+
+    if(!indx.isValid())
+    {
+        RsErr() << "Invalid index found for identity " << gxs_id << std::endl;
+        return;
+    }
+    std::cerr << "Obtained index " << indx << ": id of that index is " << mIdListModel->getIdentity(indx) << std::endl;
+
+    QModelIndex proxy_indx = mProxyModel->mapFromSource(indx);
+
+    std::cerr << "Obtained proxy index " << proxy_indx << std::endl;
 
 	// in order to do this, we just select the correct ID in the ID list
 
-	if (!gxs_id.isNull())
-	{
-        if(!indx.isValid())
-		{
-			mIdToNavigate = RsGxsGroupId(gxs_id);
-			std::cerr << "Cannot find item with ID " << gxs_id << " in ID list." << std::endl;
-			return;
-		}
-        ui->idTreeWidget->selectionModel()->select(indx,QItemSelectionModel::ClearAndSelect);
-	}
-
-	mIdToNavigate = RsGxsGroupId();
+    if(!proxy_indx.isValid())
+    {
+        std::cerr << "Cannot find item with ID " << gxs_id << " in ID list." << std::endl;
+        return;
+    }
+    ui->idTreeWidget->selectionModel()->setCurrentIndex(proxy_indx,QItemSelectionModel::ClearAndSelect);
+    ui->idTreeWidget->scrollTo(proxy_indx);//May change if model reloaded
+    ui->idTreeWidget->setFocus();
 }
 
 void IdDialog::updateDisplay(bool complete)
@@ -2532,98 +2542,6 @@ void IdDialog::restoreExpandedCircleItems(const std::vector<bool>& expanded_root
     restoreTopLevel(mMyCircleItem,2);
 }
 
-#ifdef TO_REMOVE
-void IdDialog::saveExpandedPathsAndSelection_idTreeView(std::set<QString>& expanded_indexes,
-                                                        std::set<std::pair<RsIdentityListModel::EntryType,QString> >& selected_indices)
-{
-    std::cerr << "Saving expended paths and selection... thread " << (void*)pthread_self() << std::endl;
-
-    QModelIndexList selectedIndexes = ui->idTreeWidget->selectionModel()->selectedIndexes();
-
-    // convert all selected indices into something that is not QModelIndex-related, so that we can find it again after refreshing the list
-
-    for(auto m:selectedIndexes)
-        if(m.column()==RsIdentityListModel::COLUMN_THREAD_ID)
-        {
-            auto t = mIdListModel->getType(m);
-            QString s ;
-
-            if(t==RsIdentityListModel::ENTRY_TYPE_CATEGORY)
-                s = QString::number(mIdListModel->getCategory(mProxyModel->mapToSource(m)));
-            else
-                s = QString::fromStdString(mIdListModel->getIdentity(mProxyModel->mapToSource(m)).toStdString());
-
-            selected_indices.insert(std::make_pair(t,s));
-
-            std::cerr << "added " << s.toStdString() << " to selection save" << std::endl;
-        }
-
-    for(int row = 0; row < mProxyModel->rowCount(); ++row)
-    {
-        auto m = mProxyModel->index(row,0);
-
-        if(ui->idTreeWidget->isExpanded( m ))
-        {
-            auto str = QString::number(mIdListModel->getCategory(mProxyModel->mapToSource(m)));
-            expanded_indexes.insert( str );
-            std::cerr << "added " << m << " cat " << str.toStdString() << " to expanded save" << std::endl;
-        }
-    }
-
-#ifdef DEBUG_NEW_FRIEND_LIST
-    std::cerr << "  selected index: \"" << sel.toStdString() << "\"" << std::endl;
-#endif
-}
-
-void IdDialog::restoreExpandedPathsAndSelection_idTreeView(const std::set<QString>& expanded_indexes,
-                                                           const std::set<std::pair<RsIdentityListModel::EntryType,QString> >& selected_indices)
-{
-    std::cerr << "Restoring expended paths and selection..." << std::endl;
-    ui->idTreeWidget->blockSignals(true) ;
-    ui->idTreeWidget->selectionModel()->blockSignals(true);
-
-    for(auto it:selected_indices)
-    {
-        if(it.first==RsIdentityListModel::ENTRY_TYPE_CATEGORY)
-            ui->idTreeWidget->selectionModel()->select(mProxyModel->mapFromSource(mIdListModel->index(it.first,0,QModelIndex())),QItemSelectionModel::Select | QItemSelectionModel::Rows);
-        else if(it.first==RsIdentityListModel::ENTRY_TYPE_IDENTITY)
-        {
-            auto indx = mProxyModel->mapFromSource(mIdListModel->getIndexOfIdentity(RsGxsId(it.second.toStdString())));
-
-            if(indx.isValid())
-            {
-                std::cerr << "trying to restore selection of id " << it.second.toStdString() << std::endl;
-                ui->idTreeWidget->selectionModel()->select(indx,QItemSelectionModel::Select | QItemSelectionModel::Rows);
-            }
-            else
-                std::cerr << "Index is invalid!" << std::endl;
-        }
-    }
-    //ui->idTreeWidget->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
-
-    #ifdef DEBUG_NEW_FRIEND_LIST
-    std::cerr << "  index to select: \"" << index_to_select.toStdString() << "\"" << std::endl;
-#endif
-    for(int row = 0; row < mIdListModel->rowCount(); ++row)
-    {
-        auto m = ui->idTreeWidget->model()->index(row,0);
-
-        std::cerr << "  index category = " << mIdListModel->getCategory(m) << std::endl;
-
-        if(expanded_indexes.find(QString::number(mIdListModel->getCategory(m))) != expanded_indexes.end())
-        {
-            std::cerr << "Restoring expanded index " << QString::number(mIdListModel->getCategory(m)).toStdString() << std::endl;
-        std::cerr << "Calling setExpanded " << m << std::endl;
-            ui->idTreeWidget->setExpanded(m,true);
-        }
-        else
-            ui->idTreeWidget->setExpanded(m,false);
-    }
-    ui->idTreeWidget->blockSignals(false) ;
-    ui->idTreeWidget->selectionModel()->blockSignals(false);
-}
-#endif
-
 void IdDialog::applyWhileKeepingTree(std::function<void()> predicate)
 {
     std::set<QStringList> expanded,selected;
@@ -2696,37 +2614,40 @@ void IdDialog::saveExpandedPathsAndSelection_idTreeView(std::set<QStringList>& e
 
 void IdDialog::restoreExpandedPathsAndSelection_idTreeView(const std::set<QStringList>& expanded, const std::set<QStringList>& selected)
 {
-    whileBlocking(ui->idTreeWidget)->clearSelection();
-
     ui->idTreeWidget->blockSignals(true) ;
+    ui->idTreeWidget->selectionModel()->blockSignals(true) ;
+
+    ui->idTreeWidget->clearSelection();
 
     for(int row = 0; row < mProxyModel->rowCount(); ++row)
         recursRestoreExpandedItems_idTreeView(mProxyModel->index(row,0),QStringList(),expanded,selected);
 
+    ui->idTreeWidget->selectionModel()->blockSignals(false) ;
     ui->idTreeWidget->blockSignals(false) ;
 }
 
-void IdDialog::recursSaveExpandedItems_idTreeView(const QModelIndex& index,const QStringList& parent_path,std::set<QStringList>& expanded,std::set<QStringList>& selected)
+void IdDialog::recursSaveExpandedItems_idTreeView(const QModelIndex& proxy_index,const QStringList& parent_path,std::set<QStringList>& expanded,std::set<QStringList>& selected)
 {
     QStringList local_path = parent_path;
-    local_path.push_back(index.sibling(index.row(),RsIdentityListModel::COLUMN_THREAD_NAME).data(RsIdentityListModel::TreePathRole).toString()) ;
 
-    if(ui->idTreeWidget->isExpanded(index))
+    local_path.push_back(mIdListModel->indexIdentifier(mProxyModel->mapToSource(proxy_index)));
+
+    if(ui->idTreeWidget->isExpanded(proxy_index))
     {
 #ifdef DEBUG_ID_DIALOG
         std::cerr << "Adding expanded path ";
         for(auto L:local_path) std::cerr << "\"" << L.toStdString() << "\" " ; std::cerr << std::endl;
 #endif
-        if(index.isValid())
+        if(proxy_index.isValid())
             expanded.insert(local_path) ;
 
-        for(int row=0;row<mProxyModel->rowCount(index);++row)
-            recursSaveExpandedItems_idTreeView(index.child(row,0),local_path,expanded,selected) ;
+        for(int row=0;row<mProxyModel->rowCount(proxy_index);++row)
+            recursSaveExpandedItems_idTreeView(proxy_index.child(row,0),local_path,expanded,selected) ;
     }
 
-    if(ui->idTreeWidget->selectionModel()->isSelected(index))
+    if(ui->idTreeWidget->selectionModel()->isSelected(proxy_index))
     {
-#ifdef DEBUG_ID_DIALOG
+#ifndef DEBUG_ID_DIALOG
         std::cerr << "Adding selected path ";
         for(auto L:local_path) std::cerr << "\"" << L.toStdString() << "\" " ; std::cerr << std::endl;
 #endif
@@ -2734,10 +2655,10 @@ void IdDialog::recursSaveExpandedItems_idTreeView(const QModelIndex& index,const
     }
 }
 
-void IdDialog::recursRestoreExpandedItems_idTreeView(const QModelIndex& index,const QStringList& parent_path,const std::set<QStringList>& expanded,const std::set<QStringList>& selected)
+void IdDialog::recursRestoreExpandedItems_idTreeView(const QModelIndex& proxy_index,const QStringList& parent_path,const std::set<QStringList>& expanded,const std::set<QStringList>& selected)
 {
     QStringList local_path = parent_path;
-    local_path.push_back(index.sibling(index.row(),RsIdentityListModel::COLUMN_THREAD_NAME).data(RsIdentityListModel::TreePathRole).toString()) ;
+    local_path.push_back(mIdListModel->indexIdentifier(mProxyModel->mapToSource(proxy_index)));
 
     if(expanded.find(local_path) != expanded.end())
     {
@@ -2746,21 +2667,22 @@ void IdDialog::recursRestoreExpandedItems_idTreeView(const QModelIndex& index,co
         for(auto L:local_path) std::cerr << "\"" << L.toStdString() << "\" " ; std::cerr << std::endl;
 #endif
 
-        ui->idTreeWidget->setExpanded(index,true) ;
+        ui->idTreeWidget->setExpanded(proxy_index,true) ;
 
-        for(int row=0;row<mProxyModel->rowCount(index);++row)
-            recursRestoreExpandedItems_idTreeView(index.child(row,0),local_path,expanded,selected) ;
+        for(int row=0;row<mProxyModel->rowCount(proxy_index);++row)
+            recursRestoreExpandedItems_idTreeView(proxy_index.child(row,0),local_path,expanded,selected) ;
     }
 
     if(selected.find(local_path) != selected.end())
     {
-#ifdef DEBUG_ID_DIALOG
+#ifndef DEBUG_ID_DIALOG
         std::cerr << "Restoring selected path ";
         for(auto L:local_path) std::cerr << "\"" << L.toStdString() << "\" " ; std::cerr << std::endl;
 #endif
-        ui->idTreeWidget->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+        ui->idTreeWidget->selectionModel()->select(proxy_index, QItemSelectionModel::Select);// | QItemSelectionModel::Rows);
     }
 }
+
 void IdDialog::sortColumn(int col,Qt::SortOrder so)
 {
 #ifdef DEBUG_NEW_FRIEND_LIST

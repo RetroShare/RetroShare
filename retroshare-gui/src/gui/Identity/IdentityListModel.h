@@ -139,6 +139,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
 	void clear() ;
+    QString indexIdentifier(QModelIndex i);
 
 	/* Color definitions (for standard see default.qss) */
 	QColor mTextColorGroup;

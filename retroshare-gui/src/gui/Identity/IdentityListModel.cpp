@@ -60,7 +60,6 @@ RsIdentityListModel::RsIdentityListModel(QObject *parent)
 
 void RsIdentityListModel::timerUpdate()
 {
-    std::cerr << "updating indices" << std::endl;
     emit dataChanged(index(0,0,QModelIndex()),index(2,0,QModelIndex()));
 }
 RsIdentityListModel::EntryIndex::EntryIndex()
@@ -439,7 +438,7 @@ QVariant RsIdentityListModel::toolTipRole(const EntryIndex& fmpe,int /*column*/)
     {
     case ENTRY_TYPE_IDENTITY:
     {
-        RsGxsId id(mIdentities[mCategories[fmpe.category_index].child_identity_indices[fmpe.identity_index]].id);
+        const RsGxsId& id(mIdentities[mCategories[fmpe.category_index].child_identity_indices[fmpe.identity_index]].id);
 
         if(rsIdentity->isOwnId(id))
             return QVariant(tr("This identity is owned by you"));
@@ -488,12 +487,34 @@ QVariant RsIdentityListModel::sizeHintRole(const EntryIndex& e,int col) const
     }
 }
 
+QString RsIdentityListModel::indexIdentifier(QModelIndex index)
+{
+    quintptr ref = (index.isValid())?index.internalId():0 ;
+
+#ifdef DEBUG_MESSAGE_MODEL
+    std::cerr << "data(" << index << ")" ;
+#endif
+
+    if(!ref)
+    {
+#ifdef DEBUG_MESSAGE_MODEL
+        std::cerr << " [empty]" << std::endl;
+#endif
+        return QString();
+    }
+
+    EntryIndex entry;
+    if(!convertInternalIdToIndex(ref,entry))
+        return QString();
+
+    return treePathRole(entry,0).toString();
+}
 QVariant RsIdentityListModel::treePathRole(const EntryIndex& entry,int /*column*/) const
 {
     if(entry.type == ENTRY_TYPE_CATEGORY)
         return QString::number((int)entry.category_index);
     else
-        return QString::fromStdString(mIdentities[entry.identity_index].id.toStdString());
+        return QString::fromStdString(mIdentities[mCategories[entry.category_index].child_identity_indices[entry.identity_index]].id.toStdString());
 }
 QVariant RsIdentityListModel::sortRole(const EntryIndex& entry,int column) const
 {
@@ -701,7 +722,10 @@ const RsIdentityListModel::HierarchicalIdentityInformation *RsIdentityListModel:
     if(e.identity_index < mCategories[e.category_index].child_identity_indices.size())
         return &mIdentities[mCategories[e.category_index].child_identity_indices[e.identity_index]];
     else
-        return &mIdentities[e.identity_index];
+    {
+        RsErr() << "Inconsistent identity index!" ;
+        return nullptr;
+    }
 }
 
 QVariant RsIdentityListModel::decorationRole(const EntryIndex& entry,int col) const
