@@ -1990,7 +1990,7 @@ void IdDialog::navigate(const RsGxsId& gxs_id)
         std::cerr << "Cannot find item with ID " << gxs_id << " in ID list." << std::endl;
         return;
     }
-    ui->idTreeWidget->selectionModel()->setCurrentIndex(proxy_indx,QItemSelectionModel::ClearAndSelect);
+    ui->idTreeWidget->selectionModel()->setCurrentIndex(proxy_indx,QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
     ui->idTreeWidget->scrollTo(proxy_indx);//May change if model reloaded
     ui->idTreeWidget->setFocus();
 }
@@ -2679,7 +2679,7 @@ void IdDialog::recursRestoreExpandedItems_idTreeView(const QModelIndex& proxy_in
         std::cerr << "Restoring selected path ";
         for(auto L:local_path) std::cerr << "\"" << L.toStdString() << "\" " ; std::cerr << std::endl;
 #endif
-        ui->idTreeWidget->selectionModel()->select(proxy_index, QItemSelectionModel::Select);// | QItemSelectionModel::Rows);
+        ui->idTreeWidget->selectionModel()->select(proxy_index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
 }
 

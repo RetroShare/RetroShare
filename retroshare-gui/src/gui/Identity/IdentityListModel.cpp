@@ -47,7 +47,7 @@ const QString RsIdentityListModel::FilterString("filtered");
 const uint32_t MAX_INTERNAL_DATA_UPDATE_DELAY = 300 ; 	// re-update the internal data every 5 mins. Should properly cover sleep/wake-up changes.
 const uint32_t MAX_NODE_UPDATE_DELAY = 10 ; 			// re-update the internal data every 5 mins. Should properly cover sleep/wake-up changes.
 
-static const uint32_t NODE_DETAILS_UPDATE_DELAY = 5;	// update each node every 5 secs.
+static const uint32_t ID_DETAILS_UPDATE_DELAY = 5;	// update each node every 5 secs.
 
 RsIdentityListModel::RsIdentityListModel(QObject *parent)
     : QAbstractItemModel(parent)
@@ -420,41 +420,28 @@ void RsIdentityListModel::setFilter(FilterType filter_type, const QStringList& s
 	postMods();
 }
 
-bool RsIdentityListModel::requestIdentityDetails(const RsGxsId& id,RsIdentityDetails& det) const
-{
-    if(!rsIdentity->getIdDetails(id,det))
-    {
-        mIdentityUpdateTimer->stop();
-        mIdentityUpdateTimer->setSingleShot(true);
-        mIdentityUpdateTimer->start(500);
-        return false;
-    }
-
-    return true;
-}
 QVariant RsIdentityListModel::toolTipRole(const EntryIndex& fmpe,int /*column*/) const
 {
     switch(fmpe.type)
     {
     case ENTRY_TYPE_IDENTITY:
     {
-        const RsGxsId& id(mIdentities[mCategories[fmpe.category_index].child_identity_indices[fmpe.identity_index]].id);
+        auto id_info = getIdentityInfo(fmpe);
 
-        if(rsIdentity->isOwnId(id))
-            return QVariant(tr("This identity is owned by you"));
-
-        RsIdentityDetails det;
-        if(!requestIdentityDetails(id,det))
+        if(!id_info)
             return QVariant();
 
-        if(det.mPgpId.isNull())
+        if(rsIdentity->isOwnId(id_info->id))
+            return QVariant(tr("This identity is owned by you"));
+
+        if(id_info->owner.isNull())
             return QVariant("Anonymous identity");
         else
         {
             RsPeerDetails dd;
-            rsPeers->getGPGDetails(det.mPgpId,dd);
+            rsPeers->getGPGDetails(id_info->owner,dd);
 
-            return QVariant("Identity owned by profile \""+ QString::fromUtf8(dd.name.c_str()) +"\" ("+QString::fromStdString(det.mPgpId.toStdString()));
+            return QVariant("Identity owned by profile \""+ QString::fromUtf8(dd.name.c_str()) +"\" ("+QString::fromStdString(id_info->owner.toStdString()));
         }
     }
 
@@ -565,13 +552,8 @@ QVariant RsIdentityListModel::foregroundRole(const EntryIndex& e, int /*col*/) c
     auto it = getIdentityInfo(e);
     if(!it)
         return QVariant();
-    RsGxsId id(it->id);
-    RsIdentityDetails det;
 
-    if(!requestIdentityDetails(id,det))
-        return QVariant();
-
-    if(det.mFlags & RS_IDENTITY_FLAGS_IS_DEPRECATED)
+    if(it->flags & RS_IDENTITY_FLAGS_IS_DEPRECATED)
         return QVariant(QColor(Qt::red));
 
     return QVariant();
@@ -658,27 +640,22 @@ QVariant RsIdentityListModel::displayRole(const EntryIndex& e, int col) const
                 if(!idinfo)
                         return QVariant();
 
-                RsIdentityDetails det;
-
-                if(!requestIdentityDetails(idinfo->id,det))
-                    return QVariant();
-
 #ifdef DEBUG_MODEL_INDEX
                 std::cerr << profile->profile_info.name.c_str() ;
 #endif
                 switch(col)
                 {
-                case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(det.mNickname.c_str()));
-                case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(det.mId.toStdString()) );
-                case COLUMN_THREAD_OWNER_NAME:     if(det.mPgpId.isNull())
+                case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(idinfo->nickname.c_str()));
+                case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(idinfo->id.toStdString()) );
+                case COLUMN_THREAD_OWNER_NAME:     if(idinfo->owner.isNull())
                                                         return QVariant();
                                                     else
-                                                        return QVariant(QString::fromStdString(rsPeers->getGPGName(det.mPgpId)) );
+                                                        return QVariant(QString::fromStdString(rsPeers->getGPGName(idinfo->owner)) );
 
-                case COLUMN_THREAD_OWNER_ID:       if(det.mPgpId.isNull())
+                case COLUMN_THREAD_OWNER_ID:       if(idinfo->owner.isNull())
                                                         return QVariant();
                                                     else
-                                                        return QVariant(QString::fromStdString(det.mPgpId.toStdString()) );
+                                                        return QVariant(QString::fromStdString(idinfo->owner.toStdString()) );
                 default:
                         return QVariant();
                 }
@@ -720,7 +697,23 @@ const RsIdentityListModel::HierarchicalIdentityInformation *RsIdentityListModel:
         return NULL ;
 
     if(e.identity_index < mCategories[e.category_index].child_identity_indices.size())
-        return &mIdentities[mCategories[e.category_index].child_identity_indices[e.identity_index]];
+    {
+        auto& it(mIdentities[mCategories[e.category_index].child_identity_indices[e.identity_index]]);
+        rstime_t now = time(nullptr);
+
+        if(now > it.last_update_TS + ID_DETAILS_UPDATE_DELAY)
+        {
+            RsIdentityDetails det;
+            if(rsIdentity->getIdDetails(it.id,det))
+            {
+                it.last_update_TS = now;
+                it.nickname = det.mNickname;
+                it.owner = det.mPgpId;
+                it.flags = det.mFlags;
+            }
+        }
+        return &it;
+    }
     else
     {
         RsErr() << "Inconsistent identity index!" ;
@@ -747,9 +740,16 @@ QVariant RsIdentityListModel::decorationRole(const EntryIndex& entry,int col) co
         else if(col == COLUMN_THREAD_NAME)
         {
             QPixmap sslAvatar;
-            AvatarDefs::getAvatarFromGxsId(hn->id, sslAvatar);
 
-            return QVariant(QIcon(sslAvatar));
+            if(! AvatarDefs::getAvatarFromGxsId(hn->id, sslAvatar))
+            {
+                mIdentityUpdateTimer->stop();
+                mIdentityUpdateTimer->setSingleShot(true);
+                mIdentityUpdateTimer->start(500);
+                return QVariant();
+            }
+            else
+                return QVariant(QIcon(sslAvatar));
         }
         else
             return QVariant();
@@ -863,6 +863,7 @@ void RsIdentityListModel::setIdentities(const std::list<RsGroupMetaData>& identi
     {
         HierarchicalIdentityInformation idinfo;
         idinfo.id = RsGxsId(id.mGroupId);
+        idinfo.last_update_TS = 0;// forces update
 
         if(rsIdentity->isOwnId(idinfo.id))
             mCategories[CATEGORY_OWN].child_identity_indices.push_back(mIdentities.size());

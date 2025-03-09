@@ -79,9 +79,16 @@ public:
         QString category_name;
         std::vector<uint32_t> child_identity_indices;	// index in the array of hierarchical profiles
     };
+
+    // This stores all the info that is useful avoiding a call to the more expensive getIdDetails()
+    //
     struct HierarchicalIdentityInformation
     {
+        rstime_t last_update_TS;
         RsGxsId id;
+        RsPgpId owner;
+        uint32_t flags;
+        std::string nickname;
     };
 
     // This structure encodes the position of a node in the hierarchy. The type tells which of the index fields are valid.
@@ -189,8 +196,6 @@ private:
     void *getParentRef(void *ref,int& row) const;
     void *getChildRef(void *ref,int row) const;
     int  getChildrenCount(void *ref) const;
-
-    bool requestIdentityDetails(const RsGxsId& id,RsIdentityDetails& det) const;
 
     static bool convertIndexToInternalId(const EntryIndex& e,quintptr& ref);
     static bool convertInternalIdToIndex(quintptr ref, EntryIndex& e);
