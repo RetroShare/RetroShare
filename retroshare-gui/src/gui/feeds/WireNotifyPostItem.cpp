@@ -18,6 +18,8 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <QStyle>
+
 #include "WireNotifyPostItem.h"
 #include "ui_WireNotifyPostItem.h"
 
@@ -30,29 +32,8 @@
 #include "util/DateTime.h"
 #include "util/misc.h"
 
-#include <QStyle>
 #include <iostream>
 #include <cmath>
-
-WireNotifyPostItem::WireNotifyPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId> &older_versions) :
-    GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsWire, autoUpdate) // this one should be in GxsFeedItem
-{
-    mPulse.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
-
-    QVector<RsGxsMessageId> v;
-    //bool self = false;
-
-    for(std::set<RsGxsMessageId>::const_iterator it(older_versions.begin());it!=older_versions.end();++it)
-        v.push_back(*it) ;
-
-    if(older_versions.find(messageId) == older_versions.end())
-        v.push_back(messageId);
-
-    setMessageVersions(v) ;
-    setup();
-
-    loadGroup();
-}
 
 WireNotifyPostItem::WireNotifyPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData& group_meta, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
     GxsFeedItem(feedHolder, feedId, group_meta.mGroupId, messageId, isHome, rsWire, autoUpdate),
@@ -75,12 +56,67 @@ WireNotifyPostItem::WireNotifyPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 		v.push_back(messageId);
 
 	setMessageVersions(v) ;
-    setup();
+	setup();
+
     // no call to loadGroup() here because we have it already.
+}
+
+WireNotifyPostItem::WireNotifyPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId> &older_versions) :
+    GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsWire, autoUpdate) // this one should be in GxsFeedItem
+{
+    mPulse.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
+
+    QVector<RsGxsMessageId> v;
+    //bool self = false;
+
+    for(std::set<RsGxsMessageId>::const_iterator it(older_versions.begin());it!=older_versions.end();++it)
+        v.push_back(*it) ;
+
+    if(older_versions.find(messageId) == older_versions.end())
+        v.push_back(messageId);
+
+    setMessageVersions(v) ;
+    setup();
+
+    loadGroup();
+}
+
+void WireNotifyPostItem::paintEvent(QPaintEvent *e)
+{
+    /* This method employs a trick to trigger a deferred loading. The post and group is requested only
+     * when actually displayed on the screen. */
+
+    if(!mLoaded)
+    {
+        mLoaded = true ;
+
+        std::set<RsGxsMessageId> older_versions;	// not so nice. We need to use std::set everywhere
+        for(auto& m:messageVersions())
+            older_versions.insert(m);
+
+        fill();
+        requestMessage();
+        requestComment();
+    }
+
+    GxsFeedItem::paintEvent(e) ;
 }
 
 WireNotifyPostItem::~WireNotifyPostItem()
 {
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(300);
+
+    while( (mLoadingGroup || mLoadingMessage || mLoadingComment)
+           && std::chrono::steady_clock::now() < timeout)
+    {
+        RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for "
+                << (mLoadingGroup ? "Group " : "")
+                << (mLoadingMessage ? "Message " : "")
+                << (mLoadingComment ? "Comment " : "")
+                << "loading." << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
     delete ui;
 }
 
@@ -122,6 +158,8 @@ void WireNotifyPostItem::setup()
 
     /* clear ui */
     ui->titleLabel->setText(tr("Loading..."));
+	ui->titleLabel->setOpenExternalLinks(false); //To get linkActivated working
+	connect(ui->titleLabel, SIGNAL(linkActivated(QString)), this, SLOT(on_linkActivated(QString)));
     ui->datetimelabel->clear();
     ui->filelabel->clear();
 //    ui->newCommentLabel->hide();
@@ -173,6 +211,26 @@ void WireNotifyPostItem::setup()
     ui->expandFrame->hide();
 }
 
+bool WireNotifyPostItem::setPost(const RsWirePulse &pulse, bool doFill)
+{
+    if (groupId() != pulse.mMeta.mGroupId || messageId() != pulse.mMeta.mMsgId) {
+        std::cerr << "WireNotifyPostItem::setPost() - Wrong id, cannot set post";
+        std::cerr << std::endl;
+        return false;
+    }
+
+    mPulse = pulse;
+
+    if (doFill) {
+        fill();
+        std::cout<<"filling needs to be implemented"<<std::endl;
+    }
+
+//    updateItem();
+
+    return true;
+}
+
 void WireNotifyPostItem::expandFill(bool first)
 {
     GxsFeedItem::expandFill(first);
@@ -213,7 +271,7 @@ void WireNotifyPostItem::loadMessage()
         if (pulses.size() == 1)
         {
 #ifdef DEBUG_ITEM
-            std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
+            std::cerr << (void*)this << ": Obtained post, with msgId = " << pulses[0].mMeta.mMsgId << std::endl;
 #endif
             const RsWirePulse& pulse(*pulses.front());
 
@@ -347,28 +405,6 @@ void WireNotifyPostItem::loadGroup()
     });
 }
 
-bool WireNotifyPostItem::setPost(const RsWirePulse &pulse, bool doFill)
-{
-    if (groupId() != pulse.mMeta.mGroupId || messageId() != pulse.mMeta.mMsgId) {
-        std::cerr << "WireNotifyPostItem::setPost() - Wrong id, cannot set post";
-        std::cerr << std::endl;
-        return false;
-    }
-
-    mPulse = pulse;
-
-    if (doFill) {
-        fill();
-        std::cout<<"filling needs to be implemented"<<std::endl;
-    }
-
-//    updateItem();
-
-    return true;
-}
-
-
-
 //void WireNotifyPostItem::updateItem()
 //{
 //    /* fill in */
@@ -501,18 +537,16 @@ void WireNotifyPostItem::fill()
     QString title;
     QString msgText;
 
-    //if( !IS_GROUP_PUBLISHER(mGroupMeta.mSubscribeFlags) )
-
     if (!mIsHome)
     {
         if (mCloseOnRead && !IS_MSG_NEW(mPulse.mMeta.mMsgStatus)) {
             removeItem();
         }
 
-        title = tr("Wire Feed") + ": ";
-        RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_WIRE, mPulse.mMeta.mGroupId, groupName());
-        title += link.toHtml();
-        ui->titleLabel->setText(title);
+//        title = tr("Wire Feed") + ": ";
+//        RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_WIRE, mPulse.mMeta.mGroupId, groupName());
+//        title += link.toHtml();
+//        ui->titleLabel->setText(title);
 
         msgText = tr("Pulse") + ": ";
         RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_WIRE, mPulse.mMeta.mGroupId, mPulse.mMeta.mMsgId, messageName());
@@ -657,52 +691,6 @@ void WireNotifyPostItem::fill()
     mInFill = false;
 }
 
-void WireNotifyPostItem::paintEvent(QPaintEvent *e)
-{
-    /* This method employs a trick to trigger a deferred loading. The post and group is requested only
-     * when actually displayed on the screen. */
-
-    if(!mLoaded)
-    {
-        mLoaded = true ;
-
-        std::set<RsGxsMessageId> older_versions;	// not so nice. We need to use std::set everywhere
-        for(auto& m:messageVersions())
-            older_versions.insert(m);
-
-        fill();
-        requestMessage();
-        requestComment();
-    }
-
-    GxsFeedItem::paintEvent(e) ;
-}
-
-void WireNotifyPostItem::setGroup(const RsWireGroup &group)
-{
-	ui->groupName->setText(QString::fromStdString(group.mMeta.mGroupName));
-	ui->groupName->setToolTip(QString::fromStdString(group.mMeta.mGroupName) + "@" + QString::fromStdString(group.mMeta.mAuthorId.toStdString()));
-	
-	if (group.mHeadshot.mData )
-	{
-		QPixmap pixmap;
-		if (GxsIdDetails::loadPixmapFromData(
-				group.mHeadshot.mData,
-				group.mHeadshot.mSize,
-				pixmap,GxsIdDetails::ORIGINAL))
-		{
-				ui->logoLabel->setPixmap(pixmap);
-		}
-	}
-	else
-	{
-		// default.
-		QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png");
-		ui->logoLabel->setPixmap(pixmap);
-	}
-
-}
-
 void WireNotifyPostItem::setReadStatus(bool isNew, bool isUnread)
 {
 	if (isNew)
@@ -730,6 +718,38 @@ void WireNotifyPostItem::setReadStatus(bool isNew, bool isUnread)
 	//ui->feedFrame->style()->polish(  ui->feedFrame);
 }
 
+void WireNotifyPostItem::setGroup(const RsWireGroup &group)
+{
+	ui->groupName->setText(QString::fromStdString(group.mMeta.mGroupName));
+	ui->groupName->setToolTip(QString::fromStdString(group.mMeta.mGroupName) + "@" + QString::fromStdString(group.mMeta.mAuthorId.toStdString()));
+
+	QString title;
+
+	title = tr("Wire Feed") + ": ";
+	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_WIRE, group.mMeta.mGroupId, groupName());
+	title += link.toHtml();
+	ui->titleLabel->setText(title);
+
+	if (group.mHeadshot.mData )
+	{
+		QPixmap pixmap;
+		if (GxsIdDetails::loadPixmapFromData(
+				group.mHeadshot.mData,
+				group.mHeadshot.mSize,
+				pixmap,GxsIdDetails::ORIGINAL))
+		{
+				ui->logoLabel->setPixmap(pixmap);
+		}
+	}
+	else
+	{
+		// default.
+		QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png");
+		ui->logoLabel->setPixmap(pixmap);
+	}
+
+}
+
 /*********** SPECIFIC FUNCTIONS ***********************/
 
 void WireNotifyPostItem::readAndClearItem()
@@ -755,4 +775,17 @@ void WireNotifyPostItem::readToggled(bool /*checked*/)
 	//rsWire->setMessageReadStatus(msgPair, isUnread());
 
 	//setReadStatus(false, checked); // Updated by events
+}
+
+void WireNotifyPostItem::on_linkActivated(QString link)
+{
+	RetroShareLink rsLink(link);
+
+	if (rsLink.valid() ) {
+		QList<RetroShareLink> rsLinks;
+		rsLinks.append(rsLink);
+		RetroShareLink::process(rsLinks);
+		removeItem();
+		return;
+	}
 }

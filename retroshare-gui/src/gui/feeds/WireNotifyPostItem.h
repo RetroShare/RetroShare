@@ -46,12 +46,14 @@ public:
     WireNotifyPostItem(FeedHolder *parent, uint32_t feedId, const RsGroupMetaData& group_meta, const RsGxsMessageId& messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
     //WireNotifyPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsWireGroup &group, bool isHome, bool autoUpdate);
 
-    ~WireNotifyPostItem();
+	virtual ~WireNotifyPostItem();
 
-    uint64_t uniqueIdentifier() const override { return hash_64bits("WireNotifyPostItem " + messageId().toStdString()); }
-    bool setPost(const RsWirePulse& pulse, bool doFill = true);
-    void setGroup(const RsWireGroup &group);
+	uint64_t uniqueIdentifier() const override { return hash_64bits("WireNotifyPostItem " + messageId().toStdString()); }
 
+	bool setPost(const RsWirePulse& pulse, bool doFill = true);
+	void setGroup(const RsWireGroup &group);
+
+	bool isLoaded() const {return mLoaded;};
 	bool isUnread() const ;
 	void setReadStatus(bool isNew, bool isUnread);
 
@@ -80,6 +82,7 @@ private slots:
 	void readAndClearItem();
 	void readToggled(bool checked);
 
+	void on_linkActivated(QString link);
 private:
     void setup();
     void fill();
