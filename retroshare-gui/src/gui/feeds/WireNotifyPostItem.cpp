@@ -203,6 +203,7 @@ void WireNotifyPostItem::setup()
     ui->titleLabel->setMinimumWidth(100);
     ui->subjectLabel->setMinimumWidth(100);
     //ui->warning_label->setMinimumWidth(100);
+    ui->titleLabel->setEnabled(false);
 
     ui->feedFrame->setProperty("new", false);
     ui->feedFrame->style()->unpolish(ui->feedFrame);
@@ -543,15 +544,13 @@ void WireNotifyPostItem::fill()
             removeItem();
         }
 
-//        title = tr("Wire Feed") + ": ";
-//        RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_WIRE, mPulse.mMeta.mGroupId, groupName());
-//        title += link.toHtml();
-//        ui->titleLabel->setText(title);
-
         msgText = tr("Pulse") + ": ";
         RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_WIRE, mPulse.mMeta.mGroupId, mPulse.mMeta.mMsgId, messageName());
         msgText += msgLink.toHtml();
         ui->subjectLabel->setText(msgText);
+
+        ui->pulseMessage->setText(QString::fromUtf8(mPulse.mPulseText.c_str()));
+        ui->datetimelabel->setText(DateTime::formatLongDateTime(mPulse.mRefPublishTs));
 
         if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
         {
@@ -571,8 +570,6 @@ void WireNotifyPostItem::fill()
     }
     else
     {
-        /* subject */
-        ui->titleLabel->setText(QString::fromUtf8(mPulse.mMeta.mMsgName.c_str()));
 
         /* disable buttons: deletion facility not enabled with cache services yet */
         ui->clearButton->setEnabled(false);
@@ -645,8 +642,6 @@ void WireNotifyPostItem::fill()
 //	if (wasExpanded() || ui->expandFrame->isVisible()) {
 //		fillExpandFrame();
 //	}
-		ui->pulseMessage->setText(QString::fromUtf8(mPulse.mPulseText.c_str()));
-		ui->datetimelabel->setText(DateTime::formatLongDateTime(mPulse.mRefPublishTs));
 
 //    if ( (mPulse.mAttachmentCount != 0) || (mPulse.mSize != 0) ) {
 //        ui->filelabel->setVisible(true);

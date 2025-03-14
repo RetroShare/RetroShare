@@ -51,7 +51,7 @@ protected:
     /* GxsGroupFeedItem */
     virtual QString groupName();
     virtual void loadGroup() override;
-    virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
+    virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_WIRE; }
 
 private slots:
     void toggle() override;
@@ -60,12 +60,14 @@ private slots:
 private:
     void fill();
     void setup();
+    void addEventHandler();
 
 private:
     RsWireGroup mGroup;
 
     /** Qt Designer generated object */
     Ui::WireNotifyGroupItem *ui;
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif // WIRENOTIFYGROUPITEM_H

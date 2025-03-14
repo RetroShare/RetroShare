@@ -36,20 +36,45 @@ WireNotifyGroupItem::WireNotifyGroupItem(FeedHolder *feedHolder, uint32_t feedId
     GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsWire, autoUpdate)
 {
     setup();
-
     requestGroup();
+    addEventHandler();
 }
 
 WireNotifyGroupItem::WireNotifyGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsWireGroup &group, bool isHome, bool autoUpdate) :
     GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsWire, autoUpdate)
 {
     setup();
-
     setGroup(group);
+    addEventHandler();
+}
+
+void WireNotifyGroupItem::addEventHandler()
+{
+    mEventHandlerId = 0;
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            const auto *e = dynamic_cast<const RsWireEvent*>(event.get());
+
+            if(!e || e->mWireGroupId != this->groupId())
+                return;
+
+            switch(e->mWireEventCode)
+            {
+                case RsWireEventCode::FOLLOW_STATUS_CHANGED:
+                case RsWireEventCode::WIRE_UPDATED:
+                    break;
+                default:
+                    break;
+            }
+        }, this );
+    }, mEventHandlerId, RsEventType::WIRE );
 }
 
 WireNotifyGroupItem::~WireNotifyGroupItem()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
     delete(ui);
 }
 
@@ -75,7 +100,7 @@ void WireNotifyGroupItem::setup()
     connect(ui->copyLinkButton, SIGNAL(clicked()), this, SLOT(copyGroupLink()));
 
     //ui->copyLinkButton->hide(); // No link type at this moment
-
+    ui->nameLabel->setEnabled(false);
     ui->expandFrame->hide();
 }
 
