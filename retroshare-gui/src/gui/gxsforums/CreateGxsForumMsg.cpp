@@ -52,9 +52,9 @@
 //#define ENABLE_GENERATE
 
 /** Constructor */
-CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId, const RsGxsMessageId& mOId, const RsGxsId& posterId, bool isModerating)
+CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId, const RsGxsMessageId& mOId, const RsGxsId& posterId, const std::set<RsGxsId>& moderatorSet)
     : QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
-      mForumId(fId), mParentId(pId), mOrigMsgId(mOId),mPosterId(posterId),mIsModerating(isModerating),
+      mForumId(fId), mParentId(pId), mOrigMsgId(mOId), mPosterId(posterId), mModeratorSet(moderatorSet),
       ui(new Ui::CreateGxsForumMsg)
 {
 	/* Invoke the Qt Designer generated object setup routine */
@@ -85,7 +85,7 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 
 	QString text = mOId.isNull()?(pId.isNull() ? tr("Start New Thread") : tr("Post Forum Message")):tr("Edit Message");
 	setWindowTitle(text);
-	
+
 	if (!mOId.isNull())
 	ui->postButton->setText(tr ("Update"));
 
@@ -118,7 +118,7 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	mForumCircleLoaded = false;
 
 	newMsg();
-	
+
 	ui->hashGroupBox->hide();
 
 #ifndef ENABLE_GENERATE
@@ -167,19 +167,22 @@ void  CreateGxsForumMsg::newMsg()
 	mForumMetaLoaded = false;
 
 	/* fill in the available OwnIds for signing */
-    
-    	//std::cerr << "Initing ID chooser. Sign flags = " << std::hex << mForumMeta.mSignFlags << std::dec << std::endl;
-        
-    if(!mPosterId.isNull())
-    {
-        std::set<RsGxsId> id_set ;
-        id_set.insert(mPosterId) ;
 
-		ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED | IDCHOOSER_NO_CREATE, mPosterId);
-		ui->idChooser->setIdConstraintSet(id_set);
+    	//std::cerr << "Initing ID chooser. Sign flags = " << std::hex << mForumMeta.mSignFlags << std::dec << std::endl;
+    uint32_t idChooserFlags = IDCHOOSER_ID_REQUIRED;
+    if(!mOrigMsgId.isNull()) {
+        // we are editing an existing message
+        std::set<RsGxsId> id_set = mModeratorSet;
+        if(!mPosterId.isNull())
+          id_set.insert(mPosterId);
+
+        // TODO: Report error if idChooser has no IDs to choose from.
+        // NOTE: mPosterId may not be our own; then GxsIdChooser will not include it.
+
+        idChooserFlags |= IDCHOOSER_NO_CREATE;
+        ui->idChooser->setIdConstraintSet(id_set);
     }
-    else
-		ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, mPosterId);
+    ui->idChooser->loadIds(idChooserFlags, mPosterId);
 
         if (mForumId.isNull()) {
 		mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
@@ -403,7 +406,7 @@ void  CreateGxsForumMsg::createMsg()
 	msg.mMeta.mGroupId = mForumId;
 	msg.mMeta.mParentId = mParentId;
 	msg.mMeta.mOrigMsgId = mOrigMsgId;
-	msg.mMeta.mMsgFlags = mIsModerating?RS_GXS_FORUM_MSG_FLAGS_MODERATED : 0;
+  msg.mMeta.mMsgFlags = 0;
 	msg.mMeta.mMsgId.clear() ;
 
 	if (mParentMsgLoaded) {
@@ -425,6 +428,8 @@ void  CreateGxsForumMsg::createMsg()
 		case GxsIdChooser::KnowId:
 		case GxsIdChooser::UnKnowId:
 			msg.mMeta.mAuthorId = authorId;
+      if(!mOrigMsgId.isNull() && authorId != mPosterId)
+        msg.mMeta.mMsgFlags |= RS_GXS_FORUM_MSG_FLAGS_MODERATED;
 			//std::cerr << "CreateGxsForumMsg::createMsg() AuthorId: " << authorId;
 			//std::cerr << std::endl;
 
@@ -577,7 +582,7 @@ void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
 void CreateGxsForumMsg::loadCircleInfo(const RsGxsGroupId& circle_id)
 {
     //std::cerr << "Loading forum circle info" << std::endl;
-    
+
     RsThread::async( [circle_id,this]()
     {
         std::vector<RsGxsCircleGroup> circle_grp_v ;
