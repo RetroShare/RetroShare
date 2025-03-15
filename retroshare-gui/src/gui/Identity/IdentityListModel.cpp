@@ -468,7 +468,7 @@ QVariant RsIdentityListModel::sizeHintRole(const EntryIndex& e,int col) const
 	default:
     case COLUMN_THREAD_NAME:       return QVariant( QSize(x_factor * 70 , y_factor*14*1.1f ));
     case COLUMN_THREAD_ID:         return QVariant( QSize(x_factor * 175, y_factor*14*1.1f ));
-    case COLUMN_THREAD_REPUTATION: return QVariant( QSize(x_factor * 20 , y_factor*14*1.1f ));
+    case COLUMN_THREAD_REPUTATION: return QVariant( QSize(x_factor * 14 , y_factor*14*1.1f ));
     case COLUMN_THREAD_OWNER_NAME: return QVariant( QSize(x_factor * 70 , y_factor*14*1.1f ));
     case COLUMN_THREAD_OWNER_ID:   return QVariant( QSize(x_factor * 70 , y_factor*14*1.1f ));
     }
@@ -743,14 +743,17 @@ QVariant RsIdentityListModel::decorationRole(const EntryIndex& entry,int col) co
         else if(col == COLUMN_THREAD_NAME)
         {
             QPixmap sslAvatar;
+            RsIdentityDetails details ;
 
-            if(! AvatarDefs::getAvatarFromGxsId(hn->id, sslAvatar))
+            if(!rsIdentity->getIdDetails(hn->id, details))
             {
                 mIdentityUpdateTimer->stop();
                 mIdentityUpdateTimer->setSingleShot(true);
                 mIdentityUpdateTimer->start(500);
                 return QVariant();
             }
+            else if(details.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(details.mAvatar.mData, details.mAvatar.mSize, sslAvatar,GxsIdDetails::LARGE))
+                return QVariant(QIcon(GxsIdDetails::makeDefaultIcon(hn->id,GxsIdDetails::SMALL)));
             else
                 return QVariant(QIcon(sslAvatar));
         }

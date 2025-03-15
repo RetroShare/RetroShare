@@ -85,14 +85,14 @@ void ReputationItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 {
 	Q_ASSERT(index.isValid());
 
-	QStyleOptionViewItemV4 opt = option;
+    QStyleOptionViewItem opt(option);
 	initStyleOption(&opt, index);
 	// disable default icon
 	opt.icon = QIcon();
 	// draw default item
 	QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
 
-	const QRect r = option.rect;
+    const QRect r = option.rect;
 
 	// get pixmap
     auto v = index.data(Qt::DecorationRole);
@@ -105,8 +105,7 @@ void ReputationItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 	if(icon_index > mMaxLevelToDisplay)
 		return ;
 
-	QIcon icon = GxsIdDetails::getReputationIcon(
-	            RsReputationLevel(icon_index), 0xff );
+    QIcon icon = GxsIdDetails::getReputationIcon( RsReputationLevel(icon_index), 0xff );
 
 	QPixmap pix = icon.pixmap(r.size());
 
@@ -115,6 +114,12 @@ void ReputationItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 	painter->drawPixmap(r.topLeft() + p, pix);
 }
 
+QSize ReputationItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex & /*index*/) const
+{
+    int s = 1.5*QFontMetricsF(option.font).height();
+
+    return QSize(s,s);
+}
 /* The global object */
 GxsIdDetails *GxsIdDetails::mInstance = NULL ;
 
