@@ -636,17 +636,20 @@ QVariant RsIdentityListModel::displayRole(const EntryIndex& e, int col) const
         case ENTRY_TYPE_IDENTITY:
         {
                 const HierarchicalIdentityInformation *idinfo = getIdentityInfo(e);
-
-                if(!idinfo)
-                        return QVariant();
+                const QString loading_string = "["+tr("Loading...")+"]";
 
 #ifdef DEBUG_MODEL_INDEX
                 std::cerr << profile->profile_info.name.c_str() ;
 #endif
+                if(col == COLUMN_THREAD_ID) return QVariant(QString::fromStdString(idinfo->id.toStdString()) );
+                if(col == COLUMN_THREAD_REPUTATION) return QVariant();
+
+                if(idinfo->nickname.empty())
+                    return loading_string;
+
                 switch(col)
                 {
                 case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(idinfo->nickname.c_str()));
-                case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(idinfo->id.toStdString()) );
                 case COLUMN_THREAD_OWNER_NAME:     if(idinfo->owner.isNull())
                                                         return QVariant();
                                                     else
@@ -691,10 +694,10 @@ const RsIdentityListModel::HierarchicalIdentityInformation *RsIdentityListModel:
     // First look into the relevant group, then for the correct profile in this group.
 
     if(e.type != ENTRY_TYPE_IDENTITY)
-        return NULL ;
+        return nullptr ;
 
     if(e.category_index >= mCategories.size())
-        return NULL ;
+        return nullptr ;
 
     if(e.identity_index < mCategories[e.category_index].child_identity_indices.size())
     {
@@ -706,10 +709,10 @@ const RsIdentityListModel::HierarchicalIdentityInformation *RsIdentityListModel:
             RsIdentityDetails det;
             if(rsIdentity->getIdDetails(it.id,det))
             {
-                it.last_update_TS = now;
                 it.nickname = det.mNickname;
                 it.owner = det.mPgpId;
                 it.flags = det.mFlags;
+                it.last_update_TS = now;
             }
         }
         return &it;
