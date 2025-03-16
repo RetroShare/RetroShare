@@ -57,6 +57,8 @@ void PulseReply::setup()
 	connect(toolButton_republish, SIGNAL(clicked()), this, SLOT(actionRepublish()));
 	connect(toolButton_like, SIGNAL(clicked()), this, SLOT(actionLike()));
 	connect(toolButton_view, SIGNAL(clicked()), this, SLOT(actionViewPulse()));
+	// hided it takes to much space
+	label_authorName->hide();
 }
 
 void PulseReply::showReplyLine(bool enable)
