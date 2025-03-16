@@ -1844,6 +1844,9 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 	    switch (status) {
 	    case RS_STATUS_OFFLINE:
 		    ui->info_Frame->setVisible(true);
+		    if(chatId.isDistantChatId())
+		    ui->infoLabel->setText(peerName + " " + tr("appears to be Offline.") +"\n" + tr("Cannot receive messages"));
+		    else
 		    ui->infoLabel->setText(peerName + " " + tr("appears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online."));
 		    break;
 
