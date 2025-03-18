@@ -1115,6 +1115,11 @@ void SetForegroundWindowInternal(HWND hWnd)
    if (page == _instance->messagesDialog) {
        return Messages;
    }
+#ifdef RS_USE_WIRE
+   if (page == _instance->wireDialog) {
+       return Wire;
+   }
+#endif
 #if 0
    if (page == _instance->channelFeed) {
        return Channels;
@@ -1162,8 +1167,10 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return _instance->postedDialog;
         case Home:
             return _instance->homePage;
+#ifdef RS_USE_WIRE
         case Wire:
             return _instance->wireDialog;
+#endif
     }
 
    return NULL;
