@@ -23,9 +23,9 @@
 
 #include "FeedHolder.h"
 #include "util/qtthreadsutils.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
-#include "gui/common/FilesDefs.h"
 #include "util/DateTime.h"
 
 /****
@@ -123,7 +123,7 @@ void WireNotifyGroupItem::loadGroup()
     {
         // 1 - get group data
 
-#ifdef DEBUG_FORUMS
+#ifdef DEBUG_ITEM
         std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 #endif
 
@@ -173,7 +173,6 @@ void WireNotifyGroupItem::fill()
     // No link type at this moment
     RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_WIRE, mGroup.mMeta.mGroupId, groupName());
     ui->nameLabel->setText(link.toHtml());
-//	ui->nameLabel->setText(groupName());
 
     ui->descLabel->setText(QString::fromUtf8(mGroup.mTagline.c_str()));
 
@@ -184,11 +183,6 @@ void WireNotifyGroupItem::fill()
     } else {
         ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png"));
     }
-
-    if(mGroup.mMeta.mLastPost==0)
-        ui->infoLastPost->setText(tr("Never"));
-    else
-        ui->infoLastPost->setText(DateTime::formatLongDateTime(mGroup.mMeta.mLastPost));
 
     //TODO - nice icon for subscribed group
 //	if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
@@ -202,6 +196,11 @@ void WireNotifyGroupItem::fill()
     } else {
         ui->subscribeButton->setEnabled(true);
     }
+
+    if(mGroup.mMeta.mLastPost==0)
+        ui->infoLastPost->setText(tr("Never"));
+    else
+        ui->infoLastPost->setText(DateTime::formatLongDateTime(mGroup.mMeta.mLastPost));
 
 //	if (mIsNew)
 //	{
@@ -259,5 +258,8 @@ void WireNotifyGroupItem::subscribeWire()
     std::cerr << std::endl;
 #endif
 
-    subscribe();
+    //subscribe(); does not work for wire, bug? -> GxsGroupFeedItem::subscribe()
+
+	uint32_t token;
+	rsWire->subscribeToGroup(token, mGroup.mMeta.mGroupId, true);
 }
