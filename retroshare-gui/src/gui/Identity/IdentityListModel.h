@@ -100,7 +100,20 @@ public:
 
         EntryType type;		        // type of the entry (group,profile,location)
 
-        friend std::ostream& operator<<(std::ostream& o, const EntryIndex& e) { return o << "(" << e.type << "," << e.category_index << "," << e.identity_index << ")";}
+        friend std::ostream& operator<<(std::ostream& o, const EntryIndex& e)
+        {
+            o << "[" ;
+            switch(e.type)
+            {
+            case RsIdentityListModel::ENTRY_TYPE_INVALID: o << "Invalid," ; break;
+            case RsIdentityListModel::ENTRY_TYPE_CATEGORY: o << "Category," ; break;
+            case RsIdentityListModel::ENTRY_TYPE_IDENTITY: o << "Identity," ; break;
+            case RsIdentityListModel::ENTRY_TYPE_TOP_LEVEL: o << "Toplevel," ; break;
+            }
+            o << " CI: " << e.category_index << ", ";
+            o << " II: " << e.identity_index << "]";
+            return o;
+        }
 
         // Indices w.r.t. parent. The set of indices entirely determines the position of the entry in the hierarchy.
         // An index of 0xff means "undefined"

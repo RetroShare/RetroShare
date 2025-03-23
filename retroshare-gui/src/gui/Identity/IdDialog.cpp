@@ -231,6 +231,7 @@ IdDialog::IdDialog(QWidget *parent)
     mProxyModel->setFilterRegExp(QRegExp(RsIdentityListModel::FilterString));
 
     ui->idTreeWidget->setModel(mProxyModel);
+    //ui->idTreeWidget->setSelectionModel(new QItemSelectionModel(mProxyModel));// useless in Qt5.
 
 	ui->treeWidget_membership->clear();
 	ui->treeWidget_membership->setItemDelegateForColumn(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,new GxsIdTreeItemDelegate());
@@ -290,7 +291,7 @@ IdDialog::IdDialog(QWidget *parent)
 	connect(ui->editIdentity, SIGNAL(triggered()), this, SLOT(editIdentity()));
 	connect(ui->chatIdentity, SIGNAL(triggered()), this, SLOT(chatIdentity()));
 
-    connect(ui->idTreeWidget->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(updateSelection()));
+    connect(ui->idTreeWidget->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(updateSelection(const QItemSelection&,const QItemSelection&)));
     connect(ui->idTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(IdListCustomPopupMenu(QPoint)));
 
     ui->idTreeWidget->header()->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -1358,8 +1359,13 @@ void IdDialog::filterToggled(const bool &value)
 	}
 }
 
-void IdDialog::updateSelection()
+void IdDialog::updateSelection(const QItemSelection& new_sel,const QItemSelection& old_sel)
 {
+    std::cerr << "Got selectionChanged signal. Old selection is: " << std::endl;
+    for(auto i:old_sel.indexes()) std::cerr << "    " << i << std::endl;
+    std::cerr << "Got selectionChanged signal. New selection is: " << std::endl;
+    for(auto i:new_sel.indexes()) std::cerr << "    " << i << std::endl;
+
     auto id = RsGxsGroupId(getSelectedIdentity());
 
     std::cerr << "updating selection to id " << id << std::endl;
@@ -1963,6 +1969,7 @@ void IdDialog::modifyReputation()
 
 void IdDialog::navigate(const RsGxsId& gxs_id)
 {
+    mIdListModel->debug_dump();
 #ifndef ID_DEBUG
 	std::cerr << "IdDialog::navigate to " << gxs_id.toStdString() << std::endl;
 #endif
@@ -1984,15 +1991,32 @@ void IdDialog::navigate(const RsGxsId& gxs_id)
     std::cerr << "Obtained proxy index " << proxy_indx << std::endl;
 
 	// in order to do this, we just select the correct ID in the ID list
+    Q_ASSERT(ui->idTreeWidget->model() == mProxyModel);
 
     if(!proxy_indx.isValid())
     {
         std::cerr << "Cannot find item with ID " << gxs_id << " in ID list." << std::endl;
         return;
     }
-    ui->idTreeWidget->selectionModel()->setCurrentIndex(proxy_indx,QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+    std::cerr << "Row hidden? " << ui->idTreeWidget->isRowHidden(proxy_indx.row(),proxy_indx.parent()) << std::endl;
+
+    {
+        auto ii = mProxyModel->mapToSource(proxy_indx);
+        std::cerr << "Remapping index to source: " << ii << std::endl;
+    }
+    ui->idTreeWidget->selectionModel()->select(proxy_indx,QItemSelectionModel::Current|QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+    {
+        auto lst = ui->idTreeWidget->selectionModel()->selectedIndexes();
+        std::cerr << "Just after calling select(), the selected index list has size " << lst.size() << std::endl;
+    }
     ui->idTreeWidget->scrollTo(proxy_indx);//May change if model reloaded
     ui->idTreeWidget->setFocus();
+
+    // This has to be done manually because for some reason the proxy model doesn't work with the selection model
+    // No signal is emitted when calling setCurrentIndex() above.
+
+    //mId = RsGxsGroupId(gxs_id);
+    //updateIdentity();
 }
 
 void IdDialog::updateDisplay(bool complete)
@@ -2012,16 +2036,24 @@ void IdDialog::updateDisplay(bool complete)
 
 std::list<RsGxsId> IdDialog::getSelectedIdentities() const
 {
-    QModelIndexList selectedIndexes = ui->idTreeWidget->selectionModel()->selectedIndexes();
+    QModelIndexList selectedIndexes_proxy = ui->idTreeWidget->selectionModel()->selectedIndexes();
     std::list<RsGxsId> res;
 
-    for(auto indx:selectedIndexes)
+    std::cerr << "Parsing selected index list: " << std::endl;
+    for(auto indx_proxy:selectedIndexes_proxy)
     {
         RsGxsId id;
 
-        if(indx.column() == RsIdentityListModel::COLUMN_THREAD_NAME)	// this removes duplicates
-            if( !(id = mIdListModel->getIdentity(mProxyModel->mapToSource(indx))).isNull() )
+        if(indx_proxy.column() == RsIdentityListModel::COLUMN_THREAD_ID)	// this removes duplicates
+        {
+            auto indx = mProxyModel->mapToSource(indx_proxy);
+            auto id = mIdListModel->getIdentity(indx);
+
+            std::cerr << "     indx: " << indx_proxy << "   original indx: " << indx << " identity: " << id << std::endl;
+
+            if( !id.isNull() )
                 res.push_back(id);
+        }
     }
 
     return res;
@@ -2030,6 +2062,8 @@ std::list<RsGxsId> IdDialog::getSelectedIdentities() const
 RsGxsId IdDialog::getSelectedIdentity() const
 {
     auto lst = getSelectedIdentities();
+
+    std::cerr << "Selected identities has size " << lst.size() << std::endl;
 
     if(lst.size() != 1)
         return RsGxsId();
@@ -2573,13 +2607,14 @@ void IdDialog::applyWhileKeepingTree(std::function<void()> predicate)
 #ifdef DEBUG_NEW_FRIEND_LIST
     std::cerr << "Applying predicate..." << std::endl;
 #endif
-    mProxyModel->setSourceModel(nullptr);
 #endif
+    mProxyModel->setSourceModel(nullptr);
+
     predicate();
 
     restoreExpandedPathsAndSelection_idTreeView(expanded,selected);
 
-//    mProxyModel->setSourceModel(mIdListModel);
+    mProxyModel->setSourceModel(mIdListModel);
     // restore hidden columns
     for(uint32_t i=0;i<RsIdentityListModel::COLUMN_THREAD_NB_COLUMNS;++i)
     {

@@ -166,7 +166,7 @@ int RsIdentityListModel::columnCount(const QModelIndex &/*parent*/) const
 bool RsIdentityListModel::hasChildren(const QModelIndex &parent) const
 {
     if(!parent.isValid())
-        return true;
+        return false;
 
     EntryIndex parent_index ;
     convertInternalIdToIndex(parent.internalId(),parent_index);
@@ -198,6 +198,8 @@ RsIdentityListModel::EntryIndex RsIdentityListModel::EntryIndex::parent() const
                                     i.identity_index = 0;
 		break;
         case ENTRY_TYPE_TOP_LEVEL:
+                std::cerr << "ERROR: calling parent() on entryindex with no parent!" << std::endl;
+
     default:
 			//Can be when request root index.
 		break;
@@ -225,6 +227,7 @@ RsIdentityListModel::EntryIndex RsIdentityListModel::EntryIndex::child(int row) 
 						   break;
 
     case ENTRY_TYPE_IDENTITY:  i = EntryIndex();
+                std::cerr << "ERROR: calling child() on entryindex with no children!" << std::endl;
     default:
 						   break;
     }
@@ -784,6 +787,7 @@ void RsIdentityListModel::clear()
 	emit friendListChanged();
 }
 
+
 void RsIdentityListModel::debug_dump() const
 {
     std::cerr << "==== IdentityListModel Debug dump ====" << std::endl;
@@ -792,11 +796,13 @@ void RsIdentityListModel::debug_dump() const
 
     EntryIndex top_level;
     top_level.type = ENTRY_TYPE_TOP_LEVEL;
-    QModelIndex created_top_level;
     quintptr id;
     convertIndexToInternalId(top_level,id);
 
     std::cerr << "Top level index: " << createIndex(0,0,id) << std::endl;
+    EntryIndex tei;
+    convertInternalIdToIndex(0,tei);
+    std::cerr << "Top level entry index: " << tei << std::endl;
 
     for(uint32_t j=0;j<mCategories.size();++j)
     {
@@ -907,6 +913,8 @@ void RsIdentityListModel::updateIdentityList()
     }
 
     setIdentities(ids) ;
+
+    debug_dump();
 }
 
 

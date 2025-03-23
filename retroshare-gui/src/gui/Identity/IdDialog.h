@@ -38,6 +38,7 @@ class UIStateHelper;
 class QTreeWidgetItem;
 class RsIdentityListModel;
 class IdListSortFilterProxyModel;
+class QItemSelection;
 
 class IdDialog : public MainPage
 {
@@ -96,7 +97,7 @@ private slots:
 	void copyRetroshareLink();
 	void on_closeInfoFrameButton_Invite_clicked();
 
-	void updateSelection();
+    void updateSelection(const QItemSelection &new_sel, const QItemSelection &old_sel);
 
 	void modifyReputation();
 
