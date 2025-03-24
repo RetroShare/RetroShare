@@ -203,12 +203,21 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="minimumFontSize_SB">
-          <property name="minimum">
-           <number>10</number>
+         <widget class="RSComboBox" name="minimumFontSize">
+          <property name="font">
+           <font>
+            <family>MS Sans Serif</family>
+            <pointsize>10</pointsize>
+           </font>
           </property>
-          <property name="maximum">
-           <number>64</number>
+          <property name="focusPolicy">
+           <enum>Qt::ClickFocus</enum>
+          </property>
+          <property name="toolTip">
+           <string>Font size</string>
+          </property>
+          <property name="editable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
