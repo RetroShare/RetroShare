@@ -30,12 +30,10 @@
 #include "gui/settings/rsharesettings.h"
 #include "util/QtVersion.h"
 #include "util/DateTime.h"
-#include "gui/notifyqt.h"
 
 #include <QDesktopWidget>
 #include <QMenu>
 #include <QToolButton>
-#include <QShowEvent>
 
 #include <stdint.h>
 
@@ -68,8 +66,6 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 		// need signal itemClicked too
 		connect(ui->treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(itemActivated(QTreeWidgetItem*,int)));
 	}
-
-	updateFontSize();
 
 	int H = QFontMetricsF(ui->treeWidget->font()).height() ;
 #if QT_VERSION < QT_VERSION_CHECK(5,11,0)
@@ -152,7 +148,19 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 
 	connect(ui->distantSearchLineEdit,SIGNAL(returnPressed()),this,SLOT(distantSearch())) ;
 
-	ui->treeWidget->setIconSize(QSize(H*1.8,H*1.8));
+	mFontSizeHandler.registerFontSize(ui->treeWidget, 1.8f, [this] (QAbstractItemView*, int fontSize) {
+		// Set new font size on all items
+		QTreeWidgetItemIterator it(ui->treeWidget);
+		while (*it) {
+			QTreeWidgetItem *item = *it;
+
+			QFont font = item->font(GTW_COLUMN_NAME);
+			font.setPointSize(fontSize);
+			item->setFont(GTW_COLUMN_NAME, font);
+
+			++it;
+		}
+	});
 }
 
 GroupTreeWidget::~GroupTreeWidget()
@@ -258,8 +266,8 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 	RSTreeWidgetItem *item = new RSTreeWidgetItem();
 	ui->treeWidget->addTopLevelItem(item);
 	// To get StyleSheet for Items
-	ui->treeWidget->style()->unpolish(ui->treeWidget);
-	ui->treeWidget->style()->polish(ui->treeWidget);
+//	ui->treeWidget->style()->unpolish(ui->treeWidget);
+//	ui->treeWidget->style()->polish(ui->treeWidget);
 
 	item->setText(GTW_COLUMN_NAME, name);
 	item->setData(GTW_COLUMN_DATA, ROLE_NAME, name);
@@ -394,7 +402,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		if (item == NULL) {
 			item = new RSTreeWidgetItem(compareRole);
 			item->setData(GTW_COLUMN_DATA, ROLE_ID, itemInfo.id);
-			item->setFont(GTW_COLUMN_DATA, ui->treeWidget->font());
+			item->setFont(GTW_COLUMN_NAME, ui->treeWidget->font());
 			//static_cast<RSTreeWidgetItem*>(item)->setNoDataAsLast(true); //Uncomment this to sort data with QVariant() always at end.
 			categoryItem->addChild(item);
 		}
@@ -671,28 +679,3 @@ void GroupTreeWidget::sort()
 {
 	ui->treeWidget->resort();
 }
-
-void GroupTreeWidget::showEvent(QShowEvent *event)
-{
-    if (!event->spontaneous()) {
-        updateFontSize();
-    }
-}
-
-void GroupTreeWidget::updateFontSize()
-{
-#if defined(Q_OS_DARWIN)
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
-#else
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
-#endif
-    QFont newFont = ui->treeWidget->font();
-    if (newFont.pointSize() != customFontSize) {
-        newFont.setPointSize(customFontSize);
-        QFontMetricsF fontMetrics(newFont);
-        ui->treeWidget->setFont(newFont);
-        int H = QFontMetricsF(ui->treeWidget->font()).height() ;
-        ui->treeWidget->setIconSize(QSize(H*1.8,H*1.8));
-    }
-}
-

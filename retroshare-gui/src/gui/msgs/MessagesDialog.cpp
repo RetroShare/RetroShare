@@ -163,9 +163,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
 	changeBox(0);	// set to inbox
 
-    //RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
-    //itemDelegate->setSpacing(QSize(0, 2));
-    //ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_SUBJECT,itemDelegate);
+    RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
+    itemDelegate->setSpacing(QSize(0, 2));
+    ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_SUBJECT,itemDelegate);
 
     ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_AUTHOR,new GxsIdTreeItemDelegate()) ;
     ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_TO,new GxsIdTreeItemDelegate()) ;
@@ -306,6 +306,23 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     mTagEventHandlerId = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleTagEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_TAG );
+
+    mFontSizeHandler.registerFontSize(ui.listWidget, 1.5f, [this] (QAbstractItemView*, int fontSize) {
+        // Set new font size on all items
+        QList<int> rows;
+        rows << ROW_INBOX << ROW_OUTBOX << ROW_DRAFTBOX;
+
+        foreach (int row, rows) {
+            QListWidgetItem *item = ui.listWidget->item(row);
+            QFont font = item->font();
+            font.setPointSize(fontSize);
+            item->setFont(font);
+        }
+    });
+    mFontSizeHandler.registerFontSize(ui.quickViewWidget, 1.5f);
+    mFontSizeHandler.registerFontSize(ui.messageTreeWidget, 1.5f, [this] (QAbstractItemView *view, int) {
+        mMessageModel->setFont(view->font());
+    });
 }
 
 void MessagesDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -1660,32 +1677,3 @@ void MessagesDialog::updateInterface()
         ui.tabWidget->setTabIcon(0, FilesDefs::getIconFromQtResourcePath(":/icons/warning_yellow_128.png"));
 	}
 }
-
-void MessagesDialog::showEvent(QShowEvent *event)
-{
-    if (!event->spontaneous()) {
-        updateFontSize();
-    }
-}
-
-void MessagesDialog::updateFontSize()
-{
-#if defined(Q_OS_DARWIN)
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
-#else
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
-#endif
-    QFont newFont = ui.listWidget->font();
-    if (newFont.pointSize() != customFontSize) {
-        newFont.setPointSize(customFontSize);
-        QFontMetricsF fontMetrics(newFont);
-        int iconHeight = fontMetrics.height()*1.5;
-        ui.listWidget->setFont(newFont);
-        ui.quickViewWidget->setFont(newFont);
-        ui.messageTreeWidget->setFont(newFont);
-        ui.listWidget->setIconSize(QSize(iconHeight, iconHeight));
-        ui.quickViewWidget->setIconSize(QSize(iconHeight, iconHeight));
-        ui.messageTreeWidget->setIconSize(QSize(iconHeight, iconHeight));
-    }
-}
-

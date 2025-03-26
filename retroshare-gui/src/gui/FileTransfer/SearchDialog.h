@@ -25,6 +25,7 @@
 #include "retroshare/rsevents.h"
 #include "ui_SearchDialog.h"
 #include "retroshare-gui/mainpage.h"
+#include "util/FontSizeHandler.h"
 
 class AdvancedSearchDialog;
 class RSTreeWidgetItemCompareRole;
@@ -65,9 +66,6 @@ public:
     void setTextColorHighSources(QColor color) { mTextColorHighSources = color; }
 
     void updateFiles(qulonglong request_id, const FileDetail& file) ;
-
-protected:
-	virtual void showEvent(QShowEvent *) override;
 
 private slots:
 
@@ -118,8 +116,6 @@ private slots:
     void selectFileType(int index);
 
 	void filterItems();
-
-	void updateFontSize();
 
 private:
 /** render the results to the tree widget display */
@@ -177,6 +173,8 @@ private:
 	QAction *collModifAct;
 	QAction *collViewAct;
 	QAction *collOpenAct;
+
+	FontSizeHandler mFontSizeHandler;
 
 /** Qt Designer generated object */
     Ui::SearchDialog ui;

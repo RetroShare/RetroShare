@@ -25,6 +25,7 @@
 
 #include "chat/ChatLobbyUserNotify.h"
 #include "gui/gxs/GxsIdChooser.h"
+#include "util/FontSizeHandler.h"
 
 
 #include <retroshare/rsmsgs.h>
@@ -76,8 +77,6 @@ public:
 
 	uint unreadCount();
 
-	virtual void showEvent(QShowEvent *) ;
-
 signals:
 	void unreadCountChanged(uint unreadCount);
 
@@ -114,7 +113,6 @@ private slots:
 
 	void updateNotify(ChatLobbyId id, unsigned int count) ;
 	void idChooserCurrentIndexChanged(int index);
-	void updateFontSize();
 
 private:
 	void autoSubscribeLobby(QTreeWidgetItem *item);
@@ -148,6 +146,8 @@ private:
 
 	QAbstractButton* myInviteYesButton;
 	GxsIdChooser* myInviteIdChooser;
+
+	FontSizeHandler mFontSizeHandler;
 
 	/* UI - from Designer */
 	Ui::ChatLobbyWidget ui;

@@ -250,7 +250,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->setupUi(this);
 
     //setUpdateWhenInvisible(true);
-    updateFontSize();
 
     //mUpdating = false;
     mUnreadCount = 0;
@@ -308,10 +307,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     connect(ui->latestPostInThreadView_TB, SIGNAL(toggled(bool)), this, SLOT(toggleLstPostInThreadView(bool)));
 
     /* Set own item delegate */
-    //RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
-    //itemDelegate->setSpacing(QSize(0, 2));
-    //itemDelegate->setOnlyPlainText(true);
-    //ui->threadTreeWidget->setItemDelegate(itemDelegate);
+    RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
+    itemDelegate->setSpacing(QSize(0, 2));
+    itemDelegate->setOnlyPlainText(true);
+    ui->threadTreeWidget->setItemDelegate(itemDelegate);
 
     /* add filter actions */
     ui->filterLineEdit->addFilter(QIcon(), tr("Title"), RsGxsForumModel::COLUMN_THREAD_TITLE, tr("Search Title"));
@@ -321,10 +320,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     mLastViewType = -1;
 
     float f = QFontMetricsF(font()).height()/14.0f ;
-
-    QFontMetricsF fontMetrics(ui->threadTreeWidget->font());
-    int iconHeight = fontMetrics.height() * 1.4;
-    ui->threadTreeWidget->setIconSize(QSize(iconHeight, iconHeight));
 
     /* Set header resize modes and initial section sizes */
 
@@ -368,8 +363,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
     blankPost();
 
-
-
     ui->subscribeToolButton->setToolTip(tr( "<p>Subscribing to the forum will gather \
                                             available posts from your subscribed friends, and make the \
                                             forum visible to all other friends.</p><p>Afterwards you can unsubscribe from the context menu of the forum list at left.</p>"));
@@ -383,6 +376,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
                 [this](std::shared_ptr<const RsEvent> event)
     { RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this ); },
                 mEventHandlerId, RsEventType::GXS_FORUMS );
+
+    mFontSizeHandler.registerFontSize(ui->threadTreeWidget, 1.4f, [this](QAbstractItemView *view, int) {
+        mThreadModel->setFont(view->font());
+    });
 }
 
 void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -2101,28 +2098,4 @@ void GxsForumThreadWidget::showAuthorInPeople(const RsGxsForumMsg& msg)
 
     MainWindow::showWindow(MainWindow::People);
     idDialog->navigate(RsGxsId(msg.mMeta.mAuthorId));
-}
-
-void GxsForumThreadWidget::showEvent(QShowEvent *event)
-{
-    if (!event->spontaneous()) {
-        updateFontSize();
-    }
-}
-
-void GxsForumThreadWidget::updateFontSize()
-{
-#if defined(Q_OS_DARWIN)
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
-#else
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 12).toInt();
-#endif
-    QFont newFont = ui->threadTreeWidget->font();
-    if (newFont.pointSize() != customFontSize) {
-        newFont.setPointSize(customFontSize);
-        QFontMetricsF fontMetrics(newFont);
-        ui->threadTreeWidget->setFont(newFont);
-        int iconHeight = fontMetrics.height() * 1.4;
-        ui->threadTreeWidget->setIconSize(QSize(iconHeight, iconHeight));
-    }
 }

@@ -170,17 +170,14 @@ IdDialog::IdDialog(QWidget *parent)
 
 	ownItem = new QTreeWidgetItem();
 	ownItem->setText(RSID_COL_NICKNAME, tr("My own identities"));
-	ownItem->setFont(RSID_COL_NICKNAME, ui->idTreeWidget->font());
 	ownItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);	// this is in order to prevent displaying a reputaiton icon next to these items.
 
 	allItem = new QTreeWidgetItem();
 	allItem->setText(RSID_COL_NICKNAME, tr("All"));
-	allItem->setFont(RSID_COL_NICKNAME, ui->idTreeWidget->font());
 	allItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);
 
 	contactsItem = new QTreeWidgetItem();
 	contactsItem->setText(RSID_COL_NICKNAME, tr("My contacts"));
-	contactsItem->setFont(RSID_COL_NICKNAME, ui->idTreeWidget->font());
 	contactsItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);
 
 
@@ -415,6 +412,45 @@ IdDialog::IdDialog(QWidget *parent)
 
 	updateIdTimer.setSingleShot(true);
 	connect(&updateIdTimer, SIGNAL(timeout()), this, SLOT(updateIdList()));
+
+	mFontSizeHandler.registerFontSize(ui->idTreeWidget, 0, [this] (QAbstractItemView*, int fontSize) {
+		// Set new font size on all items
+		QTreeWidgetItemIterator it(ui->idTreeWidget);
+		while (*it) {
+			QTreeWidgetItem *item = *it;
+			if (item->parent()) {
+				QFont font = item->font(CIRCLEGROUP_CIRCLE_COL_GROUPNAME);
+				font.setPointSize(fontSize);
+
+				item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, font);
+				item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPID, font);
+				item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, font);
+			}
+			++it;
+		}
+	});
+	mFontSizeHandler.registerFontSize(ui->treeWidget_membership, 0, [this] (QAbstractItemView*, int fontSize) {
+		// Set new font size on all items
+		QTreeWidgetItemIterator it(ui->treeWidget_membership);
+		while (*it) {
+			QTreeWidgetItem *item = *it;
+#ifdef CIRCLE_MEMBERSHIP_CATEGORIES
+			if (item->parent())
+			{
+#endif
+				QFont font = item->font(CIRCLEGROUP_CIRCLE_COL_GROUPNAME);
+				font.setPointSize(fontSize);
+
+				item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, font);
+				item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPID, font);
+				item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, font);
+
+#ifdef CIRCLE_MEMBERSHIP_CATEGORIES
+			}
+#endif
+			++it;
+		}
+	});
 }
 
 void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -664,7 +700,6 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 	{
 		mExternalOtherCircleItem = new QTreeWidgetItem();
 		mExternalOtherCircleItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Other circles"));
-		mExternalOtherCircleItem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, ui->treeWidget_membership->font());
 		ui->treeWidget_membership->addTopLevelItem(mExternalOtherCircleItem);
 	}
 
@@ -672,7 +707,6 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 	{
 		mExternalBelongingCircleItem = new QTreeWidgetItem();
 		mExternalBelongingCircleItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Circles I belong to"));
-		mExternalBelongingCircleItem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, ui->treeWidget_membership->font());
 		ui->treeWidget_membership->addTopLevelItem(mExternalBelongingCircleItem);
 	}
 #endif
@@ -956,10 +990,6 @@ void IdDialog::showEvent(QShowEvent *s)
 	needUpdateCirclesOnNextShow = false;
 
 	MainPage::showEvent(s);
-
-    if (!s->spontaneous()) {
-        updateFontSize();
-    }
 }
 
 void IdDialog::createExternalCircle()
@@ -2602,23 +2632,4 @@ void IdDialog::restoreExpandedCircleItems(const std::vector<bool>& expanded_root
     restoreTopLevel(mExternalBelongingCircleItem,0);
     restoreTopLevel(mExternalOtherCircleItem,1);
     restoreTopLevel(mMyCircleItem,2);
-}
-
-void IdDialog::updateFontSize()
-{
-#if defined(Q_OS_DARWIN)
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
-#else
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
-#endif
-    QFont newFont = ui->idTreeWidget->font();
-    if (newFont.pointSize() != customFontSize) {
-        newFont.setPointSize(customFontSize);
-        QFontMetricsF fontMetrics(newFont);
-        ui->idTreeWidget->setFont(newFont);
-        ui->treeWidget_membership->setFont(newFont);
-        contactsItem->setFont(RSID_COL_NICKNAME, newFont);
-        allItem->setFont(RSID_COL_NICKNAME, newFont);
-        ownItem->setFont(RSID_COL_NICKNAME, newFont);
-    }
 }

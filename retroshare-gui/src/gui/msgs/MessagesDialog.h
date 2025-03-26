@@ -25,6 +25,7 @@
 
 #include <retroshare/rsevents.h>
 #include <retroshare-gui/mainpage.h>
+#include "util/FontSizeHandler.h"
 
 #include "ui_MessagesDialog.h"
 
@@ -54,7 +55,6 @@ public:
 
 // replaced by shortcut
 //  virtual void keyPressEvent(QKeyEvent *) ;
-	virtual void showEvent(QShowEvent *) ;
 
   QColor textColorInbox() const { return mTextColorInbox; }
 
@@ -110,8 +110,6 @@ private slots:
 
   void tabChanged(int tab);
   void tabCloseRequested(int tab);
-
-  void updateFontSize();
 
 private:
     void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
@@ -169,6 +167,8 @@ private:
 
   RsEventsHandlerId_t mEventHandlerId;
   RsEventsHandlerId_t mTagEventHandlerId;
+
+  FontSizeHandler mFontSizeHandler;
 };
 
 #endif

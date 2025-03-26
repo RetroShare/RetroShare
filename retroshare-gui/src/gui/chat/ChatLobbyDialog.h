@@ -26,6 +26,7 @@
 #include "gui/common/RSTreeWidgetItem.h"
 #include "ChatDialog.h"
 #include "PopupChatWindow.h"
+#include "util/FontSizeHandler.h"
 
 // Q_DECLARE_METATYPE(RsGxsId)
 // Q_DECLARE_METATYPE(QList<RsGxsId>)
@@ -54,8 +55,6 @@ public:
 
 	inline bool isWindowed() const { return dynamic_cast<PopupChatWindow*>(this->window()) != nullptr; }
 
-	virtual void showEvent(QShowEvent *) ;
-
 public slots:
 	void leaveLobby() ;
 private slots:
@@ -66,7 +65,6 @@ private slots:
 	void showInPeopleTab();
 	void toggleWindowed(){setWindowed(!isWindowed());}
 	void setWindowed(bool windowed);
-	void updateFontSize();
 
 signals:
 	void typingEventReceived(ChatLobbyId) ;
@@ -117,6 +115,8 @@ private:
 
 	bool mWindowedSetted;
 	PopupChatWindow* mPCWindow;
+
+	FontSizeHandler mFontSizeHandler;
 
 	/** Qt Designer generated object */
 	Ui::ChatLobbyDialog ui;

@@ -27,6 +27,7 @@
 #include <retroshare-gui/mainpage.h>
 
 #include "ui_settingsw.h"
+#include "util/FontSizeHandler.h"
 
 class FloatingHelpBrowser;
 
@@ -53,7 +54,6 @@ protected:
 	~SettingsPage();
 
 	void addPage(ConfigPage*) ;
-	virtual void showEvent(QShowEvent *) override;
 
 public slots:
 	//! Go to a specific part of the control panel.
@@ -68,11 +68,12 @@ private slots:
 
 private:
 	void initStackedWidget();
-	void updateFontSize();
 
 private:
 	FloatingHelpBrowser *mHelpBrowser;
 	static int lastPage;
+
+	FontSizeHandler mFontSizeHandler;
 
 	/* UI - from Designer */
 	Ui::Settings ui;
