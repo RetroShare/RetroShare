@@ -178,13 +178,13 @@ void PopupDistantChatDialog::updateDistantChatEvent()
 	case RS_DISTANT_CHAT_STATUS_UNKNOWN:
 		break ;
 	case RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED:
-		getChatWidget()->addChatMsg(true, tr("Tunnel status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+		getChatWidget()->addChatMsg(true, tr("Chat status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
 			, tr("Your partner closed the conversation."), ChatWidget::MSGTYPE_SYSTEM);
 		break ;
 	case RS_DISTANT_CHAT_STATUS_TUNNEL_DN:
 		break;
 	case RS_DISTANT_CHAT_STATUS_CAN_TALK:
-		getChatWidget()->addChatMsg(true, tr("Tunnel status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+		getChatWidget()->addChatMsg(true, tr("Chat status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
 			, tr("Tunnel is secured. You can talk!"), ChatWidget::MSGTYPE_SYSTEM);
 		getChatWidget()->unblockSending();
 		break;
