@@ -166,7 +166,7 @@ int RsIdentityListModel::columnCount(const QModelIndex &/*parent*/) const
 bool RsIdentityListModel::hasChildren(const QModelIndex &parent) const
 {
     if(!parent.isValid())
-        return false;
+        return true;
 
     EntryIndex parent_index ;
     convertInternalIdToIndex(parent.internalId(),parent_index);
