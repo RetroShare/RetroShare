@@ -168,8 +168,8 @@ SearchDialog::SearchDialog(QWidget *parent)
     //  To allow a proper sorting, be careful to pad at right with spaces. This
     //  is achieved by using QString("%1").arg(number,15,10).
     //
-    //ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL, mSizeColumnDelegate=new RSHumanReadableSizeDelegate()) ;
-    //ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL, mAgeColumnDelegate=new RSHumanReadableAgeDelegate()) ;
+    ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL, mSizeColumnDelegate=new RSHumanReadableSizeDelegate()) ;
+    ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL, mAgeColumnDelegate=new RSHumanReadableAgeDelegate()) ;
 
     /* make it extended selection */
     ui.searchResultWidget -> setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -201,10 +201,6 @@ SearchDialog::SearchDialog(QWidget *parent)
     _smheader->resizeSection ( SR_HASH_COL, 240*f );
 
     ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
-
-    QFontMetricsF fontMetrics(ui.searchResultWidget->font());
-    int iconHeight = fontMetrics.height() * 1.4;
-    ui.searchResultWidget->setIconSize(QSize(iconHeight, iconHeight));
 
     /* Set initial size the splitter */
     QList<int> sizes;
@@ -240,6 +236,8 @@ SearchDialog::SearchDialog(QWidget *parent)
         RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
     }, mEventHandlerId, RsEventType::FILE_TRANSFER );
 
+    mFontSizeHandler.registerFontSize(ui.searchSummaryWidget);
+    mFontSizeHandler.registerFontSize(ui.searchResultWidget, 1.4f);
 }
 
 SearchDialog::~SearchDialog()
@@ -256,8 +254,8 @@ SearchDialog::~SearchDialog()
     delete mSizeColumnDelegate;
     delete mAgeColumnDelegate;
 
-    //ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL, nullptr);
-    //ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL, nullptr);
+    ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL, nullptr);
+    ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL, nullptr);
 
     rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
@@ -1042,7 +1040,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 
 		child->setText(SR_SOURCES_COL, QString::number(1));
 		child->setData(SR_SOURCES_COL, ROLE_SORT, 1);
-		child->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight );
+		child->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight | Qt::AlignVCenter );
 
 		child->setText(SR_SEARCH_ID_COL, sid_hexa);
 		setIconAndType(child, QString::fromUtf8(dir.name.c_str()));
@@ -1067,7 +1065,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		child->setText(SR_SOURCES_COL, QString::number(1));
 		child->setData(SR_SOURCES_COL, ROLE_SORT, 1);
-		child->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight );
+		child->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight | Qt::AlignVCenter );
 		child->setText(SR_SEARCH_ID_COL, sid_hexa);
 		child->setText(SR_TYPE_COL, tr("Folder"));
 
@@ -1136,7 +1134,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
     child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
     child->setText(SR_SOURCES_COL, QString::number(1));
     child->setData(SR_SOURCES_COL, ROLE_SORT, 1);
-    child->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight );
+    child->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight | Qt::AlignVCenter );
     child->setText(SR_SEARCH_ID_COL, sid_hexa);
     child->setText(SR_TYPE_COL, tr("Folder"));
 
@@ -1351,7 +1349,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		item->setText(SR_SOURCES_COL,modifiedResult);
 		item->setToolTip(SR_SOURCES_COL, tr("Obtained via ")+QString::fromStdString(rsPeers->getPeerName(file.id)) );
 		item->setData(SR_SOURCES_COL, ROLE_SORT, fltRes);
-		item->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight );
+		item->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight | Qt::AlignVCenter );
 		item->setText(SR_SEARCH_ID_COL, sid_hexa);
 
 		QColor foreground;
@@ -1628,28 +1626,5 @@ void SearchDialog::openFolderSearch()
                 }
             }
         }
-    }
-}
-
-void SearchDialog::showEvent(QShowEvent *event)
-{
-    if (!event->spontaneous()) {
-        updateFontSize();
-    }
-}
-
-void SearchDialog::updateFontSize()
-{
-#if defined(Q_OS_DARWIN)
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
-#else
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 12).toInt();
-#endif
-    QFont newFont = ui.searchSummaryWidget->font();
-    if (newFont.pointSize() != customFontSize) {
-        newFont.setPointSize(customFontSize);
-        QFontMetricsF fontMetrics(newFont);
-        ui.searchSummaryWidget->setFont(newFont);
-        ui.searchResultWidget->setFont(newFont);
     }
 }

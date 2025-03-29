@@ -362,20 +362,12 @@ void AppearancePage::load()
 	whileBlocking(ui.checkBoxShowToasterDisable)->setChecked(Settings->valueFromGroup("StatusBar", "ShowToaster", QVariant(true)).toBool());
 	whileBlocking(ui.checkBoxShowSystrayOnStatus)->setChecked(Settings->valueFromGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(false)).toBool());
 
-	Settings->beginGroup(QString("File"));
-#if defined(Q_OS_DARWIN)
-	whileBlocking(ui.minimumFontSize_SB)->setValue( Settings->value("MinimumFontSize", 13 ).toInt());
-#else
-	whileBlocking(ui.minimumFontSize_SB)->setValue( Settings->value("MinimumFontSize", 11 ).toInt());
-#endif
-	Settings->endGroup();
+	whileBlocking(ui.minimumFontSize_SB)->setValue(Settings->getFontSize());
 }
 
 void AppearancePage::updateFontSize()
 {
-	Settings->beginGroup(QString("File"));
-	Settings->setValue("MinimumFontSize", ui.minimumFontSize_SB->value());
-	Settings->endGroup();
-	
+	Settings->setFontSize(ui.minimumFontSize_SB->value());
+
 	NotifyQt::getInstance()->notifySettingsChanged();
 }

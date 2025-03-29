@@ -25,12 +25,12 @@
 
 #include <QTreeWidgetItem>
 #include <QDateTime>
+#include "util/FontSizeHandler.h"
 
 class QToolButton;
 class RshareSettings;
 class RSTreeWidgetItemCompareRole;
 class RSTreeWidget;
-class QShowEvent;
 
 #define GROUPTREEWIDGET_COLOR_STANDARD   -1
 #define GROUPTREEWIDGET_COLOR_CATEGORY   0
@@ -143,7 +143,6 @@ signals:
 
 protected:
 	void changeEvent(QEvent *e);
-	virtual void showEvent(QShowEvent *) override;
 
 private slots:
 	void customContextMenuRequested(const QPoint &pos);
@@ -153,7 +152,6 @@ private slots:
 	void distantSearch();
 
 	void sort();
-	void updateFontSize();
 
 private:
 	void calculateScore(QTreeWidgetItem *item, const QString &filterText);
@@ -166,6 +164,7 @@ private:
 
 	// Compare role used for each column
 	RSTreeWidgetItemCompareRole *compareRole;
+	FontSizeHandler mFontSizeHandler;
 
 	Ui::GroupTreeWidget *ui;
 };

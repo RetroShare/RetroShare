@@ -22,6 +22,7 @@
 #define IDENTITYDIALOG_H
 
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
+#include "util/FontSizeHandler.h"
 
 #include <retroshare/rsidentity.h>
 
@@ -113,8 +114,6 @@ private slots:
 	static QString inviteMessage();
 	void sendInvite();
 
-	void updateFontSize();
-
 private:
 	void processSettings(bool load);
 	QString createUsageString(const RsIdentityUsage& u) const;
@@ -158,6 +157,8 @@ private:
 	QTimer updateIdTimer;
 	bool needUpdateIdsOnNextShow;
 	bool needUpdateCirclesOnNextShow;
+
+	FontSizeHandler mFontSizeHandler;
 
 	/* UI -  Designer */
 	Ui::IdDialog *ui;

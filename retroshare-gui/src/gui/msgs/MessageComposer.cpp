@@ -299,7 +299,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 
     QFontDatabase db;
     foreach(int size, db.standardSizes())
-        ui.comboSize->addItem(QString::number(size));
+        ui.comboSize->addItem(QString::number(size), size);
 
     QStyleOptionComboBox opt; QSize sh;
     opt.initFrom(ui.comboSize);
@@ -407,6 +407,10 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     setAcceptDrops(true);
     ui.hashBox->setDropWidget(this);
     ui.hashBox->setAutoHide(true);
+
+    mMessageFontSizeHandler.registerFontSize(ui.msgText, [this, db] (QWidget*, int fontSize) {
+        ui.comboSize->setCurrentIndex(ui.comboSize->findData(fontSize));
+    });
 
 #if QT_VERSION < 0x040700
     // embedded images are not supported before QT 4.7.0
@@ -2932,27 +2936,4 @@ void MessageComposer::checkLength()
 		infoLabel->setText("");
 		ui.actionSend->setEnabled(true);
 	}
-}
-
-void MessageComposer::showEvent(QShowEvent *event)
-{
-    if (!event->spontaneous()) {
-        updateFontSize();
-    }
-}
-
-void MessageComposer::updateFontSize()
-{
-#if defined(Q_OS_DARWIN)
-    int customFontSize = Settings->valueFromGroup("Messages", "MinimumFontSize", 13).toInt();
-#else
-    int customFontSize = Settings->valueFromGroup("Messages", "MinimumFontSize", 12).toInt();
-#endif
-    QFont newFont = ui.msgText->font();
-    if (newFont.pointSize() != customFontSize) {
-        newFont.setPointSize(customFontSize);
-        QFontMetricsF fontMetrics(newFont);
-        ui.msgText->setFont(newFont);
-        ui.comboSize->setCurrentIndex(ui.comboSize->findText(QString::number(newFont.pointSize())));
-    }
 }

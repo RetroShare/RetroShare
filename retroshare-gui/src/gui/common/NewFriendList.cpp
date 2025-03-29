@@ -55,7 +55,6 @@
 #include "gui/connect/ConnectProgressDialog.h"
 #include "gui/common/ElidedLabel.h"
 #include "gui/notifyqt.h"
-#include "gui/settings/rsharesettings.h"
 
 #include "NewFriendList.h"
 #include "ui_NewFriendList.h"
@@ -273,6 +272,8 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 
     connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)),Qt::QueuedConnection);
 	connect(h, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
+
+    mFontSizeHandler.registerFontSize(ui->peerTreeWidget,1.5f);
 
 // #ifdef RS_DIRECT_CHAT
 // 	connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(chatNode()));
@@ -1693,28 +1694,4 @@ void NewFriendList::expandGroup(const RsNodeGroupId& gid)
 {
     QModelIndex index = mProxyModel->mapFromSource(mModel->getIndexOfGroup(gid));
 	ui->peerTreeWidget->setExpanded(index,true) ;
-}
-
-void NewFriendList::showEvent(QShowEvent *event)
-{
-    if (!event->spontaneous()) {
-        updateFontSize();
-    }
-}
-
-void NewFriendList::updateFontSize()
-{
-#if defined(Q_OS_DARWIN)
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
-#else
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
-#endif
-    QFont newFont = ui->peerTreeWidget->font();
-    if (newFont.pointSize() != customFontSize) {
-        newFont.setPointSize(customFontSize);
-        QFontMetricsF fontMetrics(newFont);
-        int iconHeight = fontMetrics.height()*1.5;
-        ui->peerTreeWidget->setFont(newFont);
-        ui->peerTreeWidget->setIconSize(QSize(iconHeight, iconHeight));
-    }
 }

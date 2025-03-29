@@ -57,6 +57,7 @@ RsMessageModel::RsMessageModel(QObject *parent)
     mQuickViewFilter = QUICK_VIEW_ALL;
     mFilterType = FILTER_TYPE_NONE;
     mFilterStrings.clear();
+    mFont = QApplication::font();
 }
 
 void RsMessageModel::preMods()
@@ -248,7 +249,7 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
 
     if(role == Qt::FontRole)
     {
-        QFont font ;
+        QFont font = mFont;
 		font.setBold(fmpe.msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER));
 
         return QVariant(font);
@@ -404,6 +405,15 @@ void RsMessageModel::setFilter(FilterType filter_type, const QStringList& string
             emit dataChanged(createIndex(0,0),createIndex(rowCount()-1,RsMessageModel::columnCount()-1));
 }
 
+void RsMessageModel::setFont(const QFont &font)
+{
+	mFont = font;
+
+	if (rowCount() > 0) {
+		emit dataChanged(createIndex(0,0), createIndex(rowCount() - 1, RsMessageModel::columnCount() - 1));
+	}
+}
+
 QVariant RsMessageModel::toolTipRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
 {
     if(column == COLUMN_THREAD_AUTHOR || column == COLUMN_THREAD_TO)
@@ -440,7 +450,7 @@ QVariant RsMessageModel::backgroundRole(const Rs::Msgs::MsgInfoSummary &/*fmpe*/
 
 QVariant RsMessageModel::sizeHintRole(int col) const
 {
-	float factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
+	float factor = QFontMetricsF(mFont).height()/14.0f ;
 
 	switch(col)
 	{

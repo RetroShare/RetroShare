@@ -208,6 +208,8 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	connect(unsubscribeButton, SIGNAL(clicked()), this , SLOT(leaveLobby()));
 
 	getChatWidget()->addTitleBarWidget(unsubscribeButton) ;
+
+	mFontSizeHandler.registerFontSize(ui.participantsList);
 }
 
 void ChatLobbyDialog::leaveLobby()
@@ -1016,26 +1018,4 @@ void ChatLobbyDialog::setWindowed(bool windowed)
 	show();
 	if (chatLobbyPage)// If not defined, we are on autosubscribe loop of lobby widget constructor. So don't recall it.
 		showDialog(RS_CHAT_FOCUS);
-}
-
-void ChatLobbyDialog::showEvent(QShowEvent *event)
-{
-    if (!event->spontaneous()) {
-        updateFontSize();
-    }
-}
-
-void ChatLobbyDialog::updateFontSize()
-{
-#if defined(Q_OS_DARWIN)
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
-#else
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
-#endif
-    QFont newFont = ui.participantsList->font();
-    if (newFont.pointSize() != customFontSize) {
-        newFont.setPointSize(customFontSize);
-        QFontMetricsF fontMetrics(newFont);
-        ui.participantsList->setFont(newFont);
-    }
 }

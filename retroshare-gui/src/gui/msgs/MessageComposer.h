@@ -28,6 +28,7 @@
 #include "ui_MessageComposer.h"
 
 #include "gui/msgs/MessageInterface.h"
+#include "util/FontSizeHandler.h"
 
 class QAction;
 struct RsIdentityDetails;
@@ -95,7 +96,6 @@ public slots:
 protected:
     void closeEvent (QCloseEvent * event);
     bool eventFilter(QObject *obj, QEvent *ev);
-	virtual void showEvent(QShowEvent *) ;
 
 private slots:
     /* toggle Contacts DockWidget */
@@ -170,7 +170,6 @@ private slots:
     static QString inviteMessage();
 
 	void checkLength();
-	void updateFontSize();
 
 private:
     static QString buildReplyHeader(const MessageInfo &msgInfo);
@@ -268,6 +267,8 @@ private:
 
 	bool has_gxs;
     bool mAlreadySent; // prevents a Qt bug that calls the same action twice.
+
+    MessageFontSizeHandler mMessageFontSizeHandler;
 
     /** Qt Designer generated object */
     Ui::MessageComposer ui;

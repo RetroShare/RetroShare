@@ -28,7 +28,6 @@
 #include "gui/notifyqt.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/common/StatusDefs.h"
-#include "gui/settings/rsharesettings.h"
 #include "util/qtthreadsutils.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/GroupDefs.h"
@@ -136,6 +135,8 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
     mEventHandlerId_peers = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) {
         RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }) ;}, mEventHandlerId_peers, RsEventType::PEER_CONNECTION );
+
+    mFontSizeHandler.registerFontSize(ui->friendList);
 }
 
 void FriendSelectionWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -224,8 +225,6 @@ void FriendSelectionWidget::showEvent(QShowEvent */*e*/)
 {
     if(gxsIds.empty())
         loadIdentities();
-
-	updateFontSize();
 }
 void FriendSelectionWidget::start()
 {
@@ -1273,19 +1272,4 @@ void FriendSelectionWidget::filterConnected(bool filter)
 bool FriendSelectionWidget::isFilterConnected()
 {
 	return mActionFilterConnected->isChecked();
-}
-
-void FriendSelectionWidget::updateFontSize()
-{
-#if defined(Q_OS_DARWIN)
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
-#else
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
-#endif
-    QFont newFont = ui->friendList->font();
-    if (newFont.pointSize() != customFontSize) {
-        newFont.setPointSize(customFontSize);
-        QFontMetricsF fontMetrics(newFont);
-        ui->friendList->setFont(newFont);
-    }
 }

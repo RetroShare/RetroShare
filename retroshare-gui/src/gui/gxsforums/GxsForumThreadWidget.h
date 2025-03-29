@@ -26,6 +26,7 @@
 #include "gui/gxs/GxsMessageFrameWidget.h"
 #include <retroshare/rsgxsforums.h>
 #include "gui/gxs/GxsIdDetails.h"
+#include "util/FontSizeHandler.h"
 
 class QSortFilterProxyModel;
 class QTreeWidgetItem;
@@ -97,7 +98,6 @@ public:
 protected:
 	//bool eventFilter(QObject *obj, QEvent *ev);
 	//void changeEvent(QEvent *e);
-	virtual void showEvent(QShowEvent *) override;
 
 	/* RsGxsUpdateBroadcastWidget */
 	virtual void updateDisplay(bool complete);
@@ -160,8 +160,6 @@ private slots:
 
 	void filterColumnChanged(int column);
 	void filterItems(const QString &text);
-
-	void updateFontSize();
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
 	void expandSubtree();
@@ -236,6 +234,8 @@ private:
     RsGxsForumModel *mThreadModel;
     QSortFilterProxyModel *mThreadProxyModel;
     QList<RsGxsMessageId> mSavedExpandedMessages;
+
+    FontSizeHandler mFontSizeHandler;
 
     Ui::GxsForumThreadWidget *ui;
     RsEventsHandlerId_t mEventHandlerId;

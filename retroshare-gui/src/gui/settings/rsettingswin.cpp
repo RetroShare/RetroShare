@@ -93,6 +93,8 @@ SettingsPage::SettingsPage(QWidget *parent)
 
     connect(ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
     connect(this, SIGNAL(finished(int)), this, SLOT(dialogFinished(int)));
+
+    mFontSizeHandler.registerFontSize(ui.listWidget);
 }
 
 SettingsPage::~SettingsPage()
@@ -238,26 +240,4 @@ void SettingsPage::notifySettingsChanged()
 
 	if (NotifyQt::getInstance())
 		NotifyQt::getInstance()->notifySettingsChanged();
-}
-
-void SettingsPage::showEvent(QShowEvent *event)
-{
-    if (!event->spontaneous()) {
-        updateFontSize();
-    }
-}
-
-void SettingsPage::updateFontSize()
-{
-#if defined(Q_OS_DARWIN)
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 13).toInt();
-#else
-    int customFontSize = Settings->valueFromGroup("File", "MinimumFontSize", 11).toInt();
-#endif
-    QFont newFont = ui.listWidget->font();
-    if (newFont.pointSize() != customFontSize) {
-        newFont.setPointSize(customFontSize);
-        QFontMetricsF fontMetrics(newFont);
-        ui.listWidget->setFont(newFont);
-    }
 }

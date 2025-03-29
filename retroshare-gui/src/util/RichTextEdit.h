@@ -23,6 +23,7 @@
 
 #include <QPointer>
 #include "ui_RichTextEdit.h"
+#include "util/FontSizeHandler.h"
 
 /**
  * @Brief A simple rich-text editor
@@ -69,7 +70,6 @@ signals:
     void insertImage();
     void textSource();
     void checkLength();
-    void updateFontSize();
 
   protected:
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
@@ -79,7 +79,6 @@ signals:
     void list(bool checked, QTextListFormat::Style style);
     void indent(int delta);
     void focusInEvent(QFocusEvent *event);
-    virtual void showEvent(QShowEvent *);
 
     QStringList m_paragraphItems;
     int m_fontsize_h1;
@@ -95,6 +94,9 @@ signals:
                           ParagraphMonospace };
 
     QPointer<QTextList> m_lastBlockList;
+
+private:
+    MessageFontSizeHandler mMessageFontSizeHandler;
 };
 
 #endif
