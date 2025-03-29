@@ -26,7 +26,9 @@
 
 #include <unistd.h>
 
+#include "gui/notifyqt.h"
 #include "gui/common/FilesDefs.h"
+
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
@@ -59,6 +61,8 @@ PopupDistantChatDialog::PopupDistantChatDialog(const DistantChatPeerId& tunnel_i
 
 	_update_timer->setInterval(1000) ;
 	QObject::connect(_update_timer,SIGNAL(timeout()),this,SLOT(updateDisplay())) ;
+
+	connect(NotifyQt::getInstance(), SIGNAL(distantchatStatusChanged(ChatId)), this, SLOT(updateDistantChatEvent()));
 
 	_update_timer->start() ;
 
@@ -144,6 +148,7 @@ void PopupDistantChatDialog::updateDisplay()
 
 		_status_label->setToolTip(msg);
 		getChatWidget()->updateStatusString("%1", msg, true);
+		getChatWidget()->updatePixmapLabel(FilesDefs::getPixmapFromQtResourcePath(":images/quick_restart24.png"));
 		getChatWidget()->blockSending(msg);
 		setPeerStatus(RS_STATUS_OFFLINE);
 		break;
@@ -156,6 +161,33 @@ void PopupDistantChatDialog::updateDisplay()
 		setPeerStatus(RS_STATUS_ONLINE);
 		break;
 	}
+}
+
+void PopupDistantChatDialog::updateDistantChatEvent()
+{
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
+
+	DistantChatPeerInfo tinfo;
+	rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
+
+	switch(tinfo.status)
+	{
+	case RS_DISTANT_CHAT_STATUS_UNKNOWN:
+		break ;
+	case RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED:
+		getChatWidget()->addChatMsg(true, tr("Tunnel status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+			, tr("Your partner closed the conversation."), ChatWidget::MSGTYPE_SYSTEM);
+		break ;
+	case RS_DISTANT_CHAT_STATUS_TUNNEL_DN:
+		break;
+	case RS_DISTANT_CHAT_STATUS_CAN_TALK:
+		getChatWidget()->addChatMsg(true, tr("Tunnel status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+			, tr("Tunnel is secured. You can talk!"), ChatWidget::MSGTYPE_SYSTEM);
+		getChatWidget()->unblockSending();
+		break;
+	}
+	
 }
 
 void PopupDistantChatDialog::closeEvent(QCloseEvent *e)

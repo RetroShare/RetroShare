@@ -65,6 +65,7 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyErrorMsg(int list, int sev, std::string msg);
 		virtual void notifyChatMessage(const ChatMessage&        /* msg */);
 		virtual void notifyChatStatus(const ChatId &chat_id,const std::string& status_string);
+		virtual void notifyDistantChatStatus(const ChatId &chat_id);
 		virtual void notifyChatCleared(const ChatId &chat_id);
 		virtual void notifyCustomState(const std::string& peer_id, const std::string& status_string);
 #ifdef TO_REMOVE
@@ -115,6 +116,7 @@ class NotifyQt: public QObject, public NotifyClient
 		void configChanged() const ;
 		void logInfoChanged(const QString&) const ;
 		void chatStatusChanged(const ChatId&,const QString&) const ;
+		void distantchatStatusChanged(const ChatId&) const ;
 		void chatCleared(const ChatId&) const ;
 		void peerHasNewCustomStateString(const QString& /* peer_id */, const QString& /* status_string */) const ;
 		void peerHasNewAvatar(const QString& peer_id) const ;

@@ -1943,6 +1943,11 @@ void ChatWidget::updateStatusString(const QString &statusMask, const QString &st
         QTimer::singleShot(5000, this, SLOT(resetStatusBar())) ;
 }
 
+void ChatWidget::updatePixmapLabel(const QPixmap &pixmap)
+{
+	ui->typingPixmapLabel->setPixmap(pixmap);
+}
+
 void ChatWidget::setName(const QString &name)
 {
 	this->name = name;
