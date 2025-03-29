@@ -122,6 +122,7 @@ void PopupDistantChatDialog::updateDisplay()
 		msg = tr("Remote status unknown.");
 		_status_label->setToolTip(msg);
 		getChatWidget()->updateStatusString("%1", msg, true);
+		getChatWidget()->updatePixmapLabel(FilesDefs::getPixmapFromQtResourcePath(":images/status_unknown.png"));
 		getChatWidget()->blockSending(tr( "Can't send message immediately, "
 		                                  "because there is no tunnel "
 		                                  "available." ));
@@ -133,6 +134,7 @@ void PopupDistantChatDialog::updateDisplay()
 		_status_label->setToolTip( QObject::tr("Distant peer has closed the chat") );
 
 		getChatWidget()->updateStatusString("%1", tr( "Your partner closed the conversation." ), true );
+		getChatWidget()->updatePixmapLabel(FilesDefs::getPixmapFromQtResourcePath(":images/status_unknown.png"));
 		getChatWidget()->blockSending(tr( "Your partner closed the conversation."));
 
 		setPeerStatus(RS_STATUS_OFFLINE) ;
