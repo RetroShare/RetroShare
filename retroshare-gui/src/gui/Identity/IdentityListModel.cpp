@@ -240,9 +240,9 @@ uint32_t   RsIdentityListModel::EntryIndex::parentRow() const
     switch(type)
     {
     default:
-        case ENTRY_TYPE_TOP_LEVEL: return 0;
-        case ENTRY_TYPE_CATEGORY : return category_index;
-        case ENTRY_TYPE_IDENTITY : return identity_index;
+        case ENTRY_TYPE_TOP_LEVEL: return -1;
+        case ENTRY_TYPE_CATEGORY : return -1;
+        case ENTRY_TYPE_IDENTITY : return category_index;
     }
 }
 
