@@ -1195,7 +1195,7 @@ int RshareSettings::getFontSize()
 #if defined(Q_OS_DARWIN)
 	int defaultFontSize = 13;
 #else
-	int defaultFontSize = 9;
+	int defaultFontSize = 11;
 #endif
 
 	return value("FontSize", defaultFontSize).toInt();
@@ -1211,7 +1211,7 @@ int RshareSettings::getMessageFontSize()
 #if defined(Q_OS_DARWIN)
 	int defaultFontSize = 12;
 #else
-	int defaultFontSize = 9;
+	int defaultFontSize = 11;
 #endif
 
 	return valueFromGroup("Message", "FontSize", defaultFontSize).toInt();
