@@ -1419,6 +1419,7 @@ void IdDialog::updateIdList()
                 mIdListModel->setIdentities(*ids) ;
                 delete ids;
 
+                ui->label_count->setText("("+QString::number(mIdListModel->count())+")");
             });
         });
     });

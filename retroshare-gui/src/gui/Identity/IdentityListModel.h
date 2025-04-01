@@ -132,6 +132,8 @@ public:
 
     void updateIdentityList();
 
+    int count() const { return mIdentities.size() ; }	// total number of identities
+
     static const QString FilterString ;
 
     // This method will asynchroneously update the data
