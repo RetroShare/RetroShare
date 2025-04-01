@@ -1933,7 +1933,7 @@ void ChatWidget::updateStatusString(const QString &statusMask, const QString &st
 	ui->typingLabel->setText(QString(statusMask).arg(trUtf8(statusString.toUtf8()))); // displays info for 5 secs.
 
 	if (statusString.contains("Connexion refused")){
-		ui->typingPixmapLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":images/denied16.png") );
+		ui->typingPixmapLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":images/denied-32.png") );
 	} else {
 		ui->typingPixmapLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":icons/png/typing.png") );
 	}
