@@ -367,29 +367,25 @@ QVariant RsIdentityListModel::data(const QModelIndex &index, int role) const
 bool RsIdentityListModel::passesFilter(const EntryIndex& e,int /*column*/) const
 {
 	QString s ;
-	bool passes_strings = true ;
 
-    if(e.type == ENTRY_TYPE_IDENTITY && !mFilterStrings.empty())
-	{
-		switch(mFilterType)
-		{
-		case FILTER_TYPE_ID: 	s = displayRole(e,COLUMN_THREAD_ID).toString();
-			break;
+    if(mFilterStrings.empty() || e.type != ENTRY_TYPE_IDENTITY)
+        return true;
 
-		case FILTER_TYPE_NAME:  s = displayRole(e,COLUMN_THREAD_NAME).toString();
-			if(s.isNull())
-				passes_strings = false;
-			break;
-		case FILTER_TYPE_NONE:
-			RS_ERR("None Type for Filter.");
-		};
-	}
+    auto passes_strings = [&](const QString& s) -> bool {
+        bool res = true;
 
-	if(!s.isNull())
-		for(auto iter(mFilterStrings.begin()); iter != mFilterStrings.end(); ++iter)
-			passes_strings = passes_strings && s.contains(*iter,Qt::CaseInsensitive);
+        for(auto iter(mFilterStrings.begin()); iter != mFilterStrings.end(); ++iter)
+            res = res && s.contains(*iter,Qt::CaseInsensitive);
 
-	return passes_strings;
+        return res;
+    };
+
+    if((mFilterType & FilterType::FILTER_TYPE_ID)         && passes_strings(displayRole(e,COLUMN_THREAD_ID        ).toString())) return true;
+    if((mFilterType & FilterType::FILTER_TYPE_NAME)       && passes_strings(displayRole(e,COLUMN_THREAD_NAME      ).toString())) return true;
+    if((mFilterType & FilterType::FILTER_TYPE_OWNER_ID)   && passes_strings(displayRole(e,COLUMN_THREAD_OWNER_ID  ).toString())) return true;
+    if((mFilterType & FilterType::FILTER_TYPE_OWNER_NAME) && passes_strings(displayRole(e,COLUMN_THREAD_OWNER_NAME).toString())) return true;
+
+    return false;
 }
 
 QVariant RsIdentityListModel::filterRole(const EntryIndex& e,int column) const
@@ -406,7 +402,7 @@ uint32_t RsIdentityListModel::updateFilterStatus(ForumModelIndex /*i*/,int /*col
 }
 
 
-void RsIdentityListModel::setFilter(FilterType filter_type, const QStringList& strings)
+void RsIdentityListModel::setFilter(uint8_t filter_type, const QStringList& strings)
 {
 #ifdef DEBUG_MODEL
     std::cerr << "Setting filter to filter_type=" << int(filter_type) << " and strings to " ;

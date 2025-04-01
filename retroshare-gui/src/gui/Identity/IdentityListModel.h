@@ -58,9 +58,11 @@ public:
                 TreePathRole       = Qt::UserRole+5,
               };
 
-    enum FilterType{ FILTER_TYPE_NONE = 0x00,
-        			 FILTER_TYPE_ID   = 0x01,
-                     FILTER_TYPE_NAME = 0x02
+    enum FilterType{ FILTER_TYPE_NONE       = 0x00,
+                     FILTER_TYPE_ID         = 0x01,
+                     FILTER_TYPE_NAME       = 0x02,
+                     FILTER_TYPE_OWNER_NAME = 0x04,
+                     FILTER_TYPE_OWNER_ID   = 0x08
                    };
 
     enum EntryType{ ENTRY_TYPE_TOP_LEVEL = 0x00,
@@ -142,7 +144,7 @@ public:
     RsGxsId getIdentity(const QModelIndex&) const;
     int getCategory(const QModelIndex&) const;
 
-    void setFilter(FilterType filter_type, const QStringList& strings) ;
+    void setFilter(uint8_t filter_type, const QStringList& strings) ;
 
     void expandItem(const QModelIndex&) ;
     void collapseItem(const QModelIndex&) ;
@@ -218,7 +220,7 @@ private:
 	uint32_t updateFilterStatus(ForumModelIndex i,int column,const QStringList& strings);
 
     QStringList mFilterStrings;
-    FilterType  mFilterType;
+    uint8_t  mFilterType;
 
     rstime_t mLastInternalDataUpdate;
     rstime_t mLastNodeUpdate;;
@@ -244,4 +246,5 @@ private:
     // List of identities for which getIdDetails() failed, to be requested again.
     mutable QTimer *mIdentityUpdateTimer;
 };
+
 

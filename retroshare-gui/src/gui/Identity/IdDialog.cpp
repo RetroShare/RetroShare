@@ -298,7 +298,7 @@ IdDialog::IdDialog(QWidget *parent)
     connect(ui->idTreeWidget->header(), SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
 
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
-	connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
+    //connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
 
 	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 	connect(ui->editButton, SIGNAL(clicked()), this, SLOT(editIdentity()));
@@ -388,8 +388,8 @@ IdDialog::IdDialog(QWidget *parent)
 	ui->toolButton_New->setMenu(menu);
 
 	/* Add filter actions */
-    ui->filterLineEdit->addFilter(QIcon(), tr("Name"), RsIdentityListModel::COLUMN_THREAD_NAME, QString("%1 %2").arg(tr("Search"), tr("Search name")));
-    ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RsIdentityListModel::COLUMN_THREAD_ID, tr("Search ID"));
+    //ui->filterLineEdit->addFilter(QIcon(), tr("Name"), RsIdentityListModel::COLUMN_THREAD_NAME, QString("%1 %2").arg(tr("Search"), tr("Search name")));
+    //ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RsIdentityListModel::COLUMN_THREAD_ID, tr("Search ID"));
 
 	/* Set initial section sizes */
     QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
@@ -1300,7 +1300,7 @@ void IdDialog::processSettings(bool load)
         // load settings
 
         // filterColumn
-        ui->filterLineEdit->setCurrentFilter(Settings->value("filterColumn", RsIdentityListModel::COLUMN_THREAD_NAME).toInt());
+        //ui->filterLineEdit->setCurrentFilter(Settings->value("filterColumn", RsIdentityListModel::COLUMN_THREAD_NAME).toInt());
 
         // state of splitter
         ui->mainSplitter->restoreState(Settings->value("splitter").toByteArray());
@@ -1322,7 +1322,7 @@ void IdDialog::processSettings(bool load)
         // save settings
 
         // filterColumn
-        Settings->setValue("filterColumn", ui->filterLineEdit->currentFilter());
+        //Settings->setValue("filterColumn", ui->filterLineEdit->currentFilter());
 
         // state of splitter
         Settings->setValue("splitter", ui->mainSplitter->saveState());
@@ -2112,20 +2112,15 @@ void IdDialog::editIdentity()
 
 void IdDialog::filterIds()
 {
-	int filterColumn = ui->filterLineEdit->currentFilter();
 	QString text = ui->filterLineEdit->text();
 
-    RsIdentityListModel::FilterType ft;
+    int8_t ft=0;
 
-    switch(filterColumn)
-    {
-    case RsIdentityListModel::COLUMN_THREAD_ID: ft = RsIdentityListModel::FILTER_TYPE_ID;
-        break;
-    default:
-    case RsIdentityListModel::COLUMN_THREAD_NAME: ft = RsIdentityListModel::FILTER_TYPE_NAME;
-        break;
+    if(!ui->idTreeWidget->isColumnHidden(RsIdentityListModel::COLUMN_THREAD_ID))    ft |= RsIdentityListModel::FILTER_TYPE_ID;
+    if(!ui->idTreeWidget->isColumnHidden(RsIdentityListModel::COLUMN_THREAD_NAME))  ft |= RsIdentityListModel::FILTER_TYPE_NAME;
+    if(!ui->idTreeWidget->isColumnHidden(RsIdentityListModel::COLUMN_THREAD_OWNER_NAME))  ft |= RsIdentityListModel::FILTER_TYPE_OWNER_NAME;
+    if(!ui->idTreeWidget->isColumnHidden(RsIdentityListModel::COLUMN_THREAD_OWNER_ID))  ft |= RsIdentityListModel::FILTER_TYPE_OWNER_ID;
 
-    }
     mIdListModel->setFilter(ft,{ text });
 }
 

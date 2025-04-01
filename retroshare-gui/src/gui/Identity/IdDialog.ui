@@ -127,7 +127,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../icons.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -173,7 +173,11 @@
            <number>1</number>
           </property>
           <item>
-           <widget class="LineEditClear" name="filterLineEdit"/>
+           <widget class="QLineEdit" name="filterLineEdit">
+            <property name="placeholderText">
+             <string>Search...</string>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QToolButton" name="toolButton_New">
@@ -1038,11 +1042,6 @@ border-image: url(:/images/closepressed.png)
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
    <class>RSComboBox</class>
    <extends>QComboBox</extends>
    <header>gui/common/RSComboBox.h</header>
@@ -1063,8 +1062,8 @@ border-image: url(:/images/closepressed.png)
   <tabstop>idTreeWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>
