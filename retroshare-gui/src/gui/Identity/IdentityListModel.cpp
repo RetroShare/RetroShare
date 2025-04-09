@@ -465,11 +465,12 @@ QVariant RsIdentityListModel::sizeHintRole(const EntryIndex& e,int col) const
 	switch(col)
 	{
 	default:
-    case COLUMN_THREAD_NAME:       return QVariant( QSize(x_factor * 70 , y_factor*14*1.1f ));
-    case COLUMN_THREAD_ID:         return QVariant( QSize(x_factor * 175, y_factor*14*1.1f ));
     case COLUMN_THREAD_REPUTATION: return QVariant( QSize(x_factor * 14 , y_factor*14*1.1f ));
-    case COLUMN_THREAD_OWNER_NAME: return QVariant( QSize(x_factor * 70 , y_factor*14*1.1f ));
-    case COLUMN_THREAD_OWNER_ID:   return QVariant( QSize(x_factor * 70 , y_factor*14*1.1f ));
+
+    case COLUMN_THREAD_NAME:
+    case COLUMN_THREAD_ID:
+    case COLUMN_THREAD_OWNER_NAME:
+    case COLUMN_THREAD_OWNER_ID:   return QFontMetricsF(QApplication::font()).boundingRect(displayRole(e,col).toString()).size();
     }
 }
 

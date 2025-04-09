@@ -205,6 +205,8 @@ IdDialog::IdDialog(QWidget *parent)
     , mExternalBelongingCircleItem(NULL)
     , mExternalOtherCircleItem(NULL )
     , mMyCircleItem(NULL)
+    , mLastSortColumn(RsIdentityListModel::COLUMN_THREAD_NAME)
+    , mLastSortOrder(Qt::SortOrder::AscendingOrder)
     , needUpdateIdsOnNextShow(true), needUpdateCirclesOnNextShow(true) // Update Ids and Circles on first show
     , ui(new Ui::IdDialog)
 {
@@ -387,10 +389,6 @@ IdDialog::IdDialog(QWidget *parent)
 	menu->addAction(CreateCircleAction);
 	ui->toolButton_New->setMenu(menu);
 
-	/* Add filter actions */
-    //ui->filterLineEdit->addFilter(QIcon(), tr("Name"), RsIdentityListModel::COLUMN_THREAD_NAME, QString("%1 %2").arg(tr("Search"), tr("Search name")));
-    //ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RsIdentityListModel::COLUMN_THREAD_ID, tr("Search ID"));
-
 	/* Set initial section sizes */
     QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
     circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QFontMetricsF(ui->idTreeWidget->font()).width("Circle name")*1.5) ;
@@ -404,19 +402,22 @@ IdDialog::IdDialog(QWidget *parent)
     ui->idTreeWidget->setColumnHidden(RsIdentityListModel::COLUMN_THREAD_ID, true);
 
 	ui->idTreeWidget->setItemDelegate(new RSElidedItemDelegate());
-    //ui->idTreeWidget->setItemDelegateForColumn( RsIdentityListModel::COLUMN_THREAD_NAME, new GxsIdTreeItemDelegate());
     ui->idTreeWidget->setItemDelegateForColumn( RsIdentityListModel::COLUMN_THREAD_REPUTATION, new ReputationItemDelegate(RsReputationLevel(0xff)));
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * idheader = ui->idTreeWidget->header();
+    QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_NAME, QHeaderView::ResizeToContents);
+    QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_ID, QHeaderView::ResizeToContents);
+    QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_OWNER_ID, QHeaderView::ResizeToContents);
+    QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_OWNER_NAME, QHeaderView::ResizeToContents);
     QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_REPUTATION, QHeaderView::ResizeToContents);
-	idheader->setStretchLastSection(true);
+    idheader->setStretchLastSection(true);
 
-	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
+    mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
     mStateHelper->setActive(IDDIALOG_REPLIST, false);
 
 	int H = misc::getFontSizeFactor("HelpButton").height();
-	QString hlp_str = tr(
+    QString hlp_str = tr(
 	    "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>"
 	    "<p>In this tab you can create/edit <b>pseudo-anonymous identities</b>, and <b>circles</b>.</p>"
 	    "<p><b>Identities</b> are used to securely identify your data: sign messages in chat lobbies, forum and channel posts,"
@@ -1420,6 +1421,12 @@ void IdDialog::updateIdList()
                 delete ids;
 
                 ui->label_count->setText("("+QString::number(mIdListModel->count())+")");
+
+                ui->idTreeWidget->resizeColumnToContents(RsIdentityListModel::COLUMN_THREAD_REPUTATION);
+                ui->idTreeWidget->resizeColumnToContents(RsIdentityListModel::COLUMN_THREAD_ID);
+                ui->idTreeWidget->resizeColumnToContents(RsIdentityListModel::COLUMN_THREAD_NAME);
+                ui->idTreeWidget->resizeColumnToContents(RsIdentityListModel::COLUMN_THREAD_OWNER_ID);
+                ui->idTreeWidget->resizeColumnToContents(RsIdentityListModel::COLUMN_THREAD_OWNER_NAME);
             });
         });
     });
