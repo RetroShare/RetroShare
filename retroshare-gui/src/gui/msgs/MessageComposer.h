@@ -28,6 +28,7 @@
 #include "ui_MessageComposer.h"
 
 #include "gui/msgs/MessageInterface.h"
+#include "util/FontSizeHandler.h"
 
 class QAction;
 struct RsIdentityDetails;
@@ -266,6 +267,8 @@ private:
 
 	bool has_gxs;
     bool mAlreadySent; // prevents a Qt bug that calls the same action twice.
+
+    MessageFontSizeHandler mMessageFontSizeHandler;
 
     /** Qt Designer generated object */
     Ui::MessageComposer ui;

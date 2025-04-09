@@ -29,6 +29,7 @@
 
 #include "FriendListModel.h"
 #include "retroshare/rsstatus.h"
+#include "util/FontSizeHandler.h"
 
 namespace Ui {
     class NewFriendList;
@@ -104,6 +105,7 @@ private:
 	Ui::NewFriendList *ui;
 	RsFriendListModel *mModel;
 	QAction *mActionSortByState;
+	FontSizeHandler mFontSizeHandler;
 
     void applyWhileKeepingTree(std::function<void()> predicate);
 

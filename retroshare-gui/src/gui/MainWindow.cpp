@@ -360,6 +360,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
     settingsChanged();
+
+    mFontSizeHandler.registerFontSize(ui->listWidget, 1.5f);
 }
 
 /** Destructor. */
@@ -1027,6 +1029,7 @@ void SetForegroundWindowInternal(HWND hWnd)
 
     /* Show the dialog. */
     raiseWindow();
+
     /* Set the focus to the specified page. */
     _instance->ui->stackPages->setCurrentPage(page);
 }

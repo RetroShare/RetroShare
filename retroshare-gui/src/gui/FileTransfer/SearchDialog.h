@@ -25,6 +25,7 @@
 #include "retroshare/rsevents.h"
 #include "ui_SearchDialog.h"
 #include "retroshare-gui/mainpage.h"
+#include "util/FontSizeHandler.h"
 
 class AdvancedSearchDialog;
 class RSTreeWidgetItemCompareRole;
@@ -172,6 +173,8 @@ private:
 	QAction *collModifAct;
 	QAction *collViewAct;
 	QAction *collOpenAct;
+
+	FontSizeHandler mFontSizeHandler;
 
 /** Qt Designer generated object */
     Ui::SearchDialog ui;
