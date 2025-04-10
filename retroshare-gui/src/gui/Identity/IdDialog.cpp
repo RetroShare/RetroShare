@@ -389,9 +389,11 @@ IdDialog::IdDialog(QWidget *parent)
 	menu->addAction(CreateCircleAction);
 	ui->toolButton_New->setMenu(menu);
 
+    QFontMetricsF fm(ui->idTreeWidget->font()) ;
+
 	/* Set initial section sizes */
     QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
-    circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QFontMetricsF(ui->idTreeWidget->font()).width("Circle name")*1.5) ;
+    circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, fm.width("Circle name")*1.5) ;
     ui->treeWidget_membership->setColumnWidth(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 270);
 
 	/* Setup tree */
@@ -406,12 +408,13 @@ IdDialog::IdDialog(QWidget *parent)
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * idheader = ui->idTreeWidget->header();
-    QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_NAME, QHeaderView::ResizeToContents);
-    QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_ID, QHeaderView::ResizeToContents);
-    QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_OWNER_ID, QHeaderView::ResizeToContents);
-    QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_OWNER_NAME, QHeaderView::ResizeToContents);
-    QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_REPUTATION, QHeaderView::ResizeToContents);
-    idheader->setStretchLastSection(true);
+    QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_NAME, QHeaderView::Stretch);
+    QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_ID, QHeaderView::Stretch);
+    QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_OWNER_ID, QHeaderView::Stretch);
+    QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_OWNER_NAME, QHeaderView::Stretch);
+    QHeaderView_setSectionResizeModeColumn(idheader, RsIdentityListModel::COLUMN_THREAD_REPUTATION, QHeaderView::Fixed);
+    ui->idTreeWidget->setColumnWidth(RsIdentityListModel::COLUMN_THREAD_REPUTATION,fm.height());
+    idheader->setStretchLastSection(false);
 
     mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
     mStateHelper->setActive(IDDIALOG_REPLIST, false);
@@ -1294,11 +1297,11 @@ void IdDialog::processSettings(bool load)
 {
     Settings->beginGroup("IdDialog");
 
-    // state of peer tree
-    // ui->idTreeWidget->processSettings(load);
-
     if (load) {
         // load settings
+
+        ui->idTreeWidget->header()->restoreState(Settings->value(objectName()).toByteArray());
+        ui->idTreeWidget->header()->setHidden(Settings->value(objectName()+"HiddenHeader", false).toBool());
 
         // filterColumn
         //ui->filterLineEdit->setCurrentFilter(Settings->value("filterColumn", RsIdentityListModel::COLUMN_THREAD_NAME).toInt());
@@ -1321,6 +1324,9 @@ void IdDialog::processSettings(bool load)
     else
     {
         // save settings
+
+        Settings->setValue(objectName(), ui->idTreeWidget->header()->saveState());
+        Settings->setValue(objectName()+"HiddenHeader", ui->idTreeWidget->header()->isHidden());
 
         // filterColumn
         //Settings->setValue("filterColumn", ui->filterLineEdit->currentFilter());
@@ -1414,19 +1420,14 @@ void IdDialog::updateIdList()
         {
 
             std::cerr << "Updating identity list in widget." << std::endl;
-            applyWhileKeepingTree( [ids,this]() {
 
+            applyWhileKeepingTree( [ids,this]()
+            {
                 std::cerr << "setting new identity in model." << std::endl;
                 mIdListModel->setIdentities(*ids) ;
                 delete ids;
 
                 ui->label_count->setText("("+QString::number(mIdListModel->count())+")");
-
-                ui->idTreeWidget->resizeColumnToContents(RsIdentityListModel::COLUMN_THREAD_REPUTATION);
-                ui->idTreeWidget->resizeColumnToContents(RsIdentityListModel::COLUMN_THREAD_ID);
-                ui->idTreeWidget->resizeColumnToContents(RsIdentityListModel::COLUMN_THREAD_NAME);
-                ui->idTreeWidget->resizeColumnToContents(RsIdentityListModel::COLUMN_THREAD_OWNER_ID);
-                ui->idTreeWidget->resizeColumnToContents(RsIdentityListModel::COLUMN_THREAD_OWNER_NAME);
             });
         });
     });

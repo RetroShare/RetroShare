@@ -462,6 +462,7 @@ QVariant RsIdentityListModel::sizeHintRole(const EntryIndex& e,int col) const
     if(e.type == ENTRY_TYPE_CATEGORY)
 		y_factor *= 1.5;
 
+    std::cerr << "sizeHintRole()" << std::endl;
 	switch(col)
 	{
 	default:

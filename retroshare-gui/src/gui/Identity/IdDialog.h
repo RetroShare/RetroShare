@@ -35,6 +35,7 @@ class IdDialog;
 }
 
 class UIStateHelper;
+class QStyledItemDelegate;
 class QTreeWidgetItem;
 class RsIdentityListModel;
 class IdListSortFilterProxyModel;
@@ -166,6 +167,10 @@ private:
     RsGxsGroupId mId;
 	RsGxsGroupId mIdToNavigate;
 	int filter;
+    bool mColumnSizeAlreadySet; // remembers if we already did some size set. If not, automatically stretch to content.
+
+    QStyledItemDelegate *mElidedLabelDelegate;
+    QStyledItemDelegate *mReputationDelegate;
 
     RsIdentityListModel *mIdListModel;
     IdListSortFilterProxyModel *mProxyModel;
