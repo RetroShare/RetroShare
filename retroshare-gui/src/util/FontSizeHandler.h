@@ -21,6 +21,8 @@
 #ifndef _FONTSIZEHANDLER_H
 #define _FONTSIZEHANDLER_H
 
+#include <functional>
+
 class QWidget;
 class QAbstractItemView;
 class FontSizeHandlerObject;
