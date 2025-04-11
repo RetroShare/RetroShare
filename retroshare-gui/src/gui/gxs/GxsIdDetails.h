@@ -105,7 +105,7 @@ public:
 
 	static QIcon getLoadingIcon(const RsGxsId &id);
 	static QIcon getReputationIcon(
-	        RsReputationLevel icon_index, uint32_t min_reputation );
+	        RsReputationLevel icon_index, uint32_t min_reputation, bool has_downvotes );
 
 	static void GenerateCombinedPixmap(QPixmap &pixmap, const QList<QIcon> &icons, int iconSize);
 
