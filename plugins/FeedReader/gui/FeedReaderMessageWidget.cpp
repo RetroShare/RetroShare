@@ -154,6 +154,8 @@ FeedReaderMessageWidget::FeedReaderMessageWidget(uint32_t feedId, RsFeedReader *
 	ui->msgTreeWidget->installEventFilter(this);
 
 	setFeedId(feedId);
+
+	mFontSizeHandler.registerFontSize(ui->msgTreeWidget);
 }
 
 FeedReaderMessageWidget::~FeedReaderMessageWidget()
