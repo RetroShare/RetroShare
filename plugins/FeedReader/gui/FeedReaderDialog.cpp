@@ -129,6 +129,8 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *n
 	settingsChanged();
 
 	feedTreeItemActivated(NULL);
+
+	mFontSizeHandler.registerFontSize(ui->feedTreeWidget);
 }
 
 FeedReaderDialog::~FeedReaderDialog()
