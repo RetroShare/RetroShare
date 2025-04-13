@@ -1324,10 +1324,10 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		 * to facilitate downloads we need to save the file size too
 		 */
 
-		item->setText(SR_SIZE_COL, misc::friendlyUnit(file.size));
+		item->setText(SR_SIZE_COL, QString::number(file.size));
 		item->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) file.size);
-        item->setText(SR_AGE_COL, misc::timeRelativeToNow(file.mtime));
-        item->setData(SR_AGE_COL, ROLE_SORT, file.mtime);
+		item->setText(SR_AGE_COL, QString::number(file.mtime));
+		item->setData(SR_AGE_COL, ROLE_SORT, file.mtime);
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		item->setTextAlignment( SR_AGE_COL, Qt::AlignCenter );
 
