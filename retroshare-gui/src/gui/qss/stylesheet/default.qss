@@ -141,6 +141,41 @@ QLabel#newLabel:enabled {
 }
 
 
+/* StartDialog
+   To get the same style for all user and not use last connected one. */
+
+StartDialog QFrame#loginframe{
+	border-image: url(:/images/logo/background_lessblue.png) 0 0 0 0 stretch stretch;
+	border-width: 0px;
+}
+StartDialog QFrame#loginframe QCheckBox,
+StartDialog QFrame#loginframe QLabel {
+	background: transparent;
+}
+StartDialog QGroupBox#profilGBox {
+	background: rgba(0,0,0,10%);
+	border-radius: 3px;
+	border-width: 0px;
+}
+
+StartDialog QGroupBox#profilGBox * {
+	background-color: white;
+	color: black;
+}
+
+StartDialog QPushButton#loadButton {
+	background: transparent;
+	border-image: url(:/images/btn_blue.png) 4;
+	border-width: 4;
+	color: white;
+}
+StartDialog QPushButton#loadButton:hover {
+	background: transparent;
+	border-image: url(:/images/btn_blue_hover.png) 4;
+}
+
+
+
 /* GenCertDialog
    Change colors here because GUI is not started yet so no user StyleSheet loads */
 
