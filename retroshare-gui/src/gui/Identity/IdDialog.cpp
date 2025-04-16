@@ -300,7 +300,7 @@ IdDialog::IdDialog(QWidget *parent)
     connect(ui->idTreeWidget->header(), SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
 
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
-    //connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
+    connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
 
 	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 	connect(ui->editButton, SIGNAL(clicked()), this, SLOT(editIdentity()));
@@ -1972,8 +1972,8 @@ void IdDialog::modifyReputation()
 
 	// trigger refresh when finished.
 	// basic / anstype are not needed.
-    updateIdentity();
-    updateIdList();
+    //updateIdentity();
+    //updateIdList();
 
 	return;
 }
