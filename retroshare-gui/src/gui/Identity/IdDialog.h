@@ -22,6 +22,7 @@
 #define IDENTITYDIALOG_H
 
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
+#include "util/FontSizeHandler.h"
 
 #include "retroshare/rsidentity.h"
 #include "IdentityListModel.h"
@@ -182,6 +183,8 @@ private:
 	QTimer updateIdTimer;
 	bool needUpdateIdsOnNextShow;
 	bool needUpdateCirclesOnNextShow;
+
+	FontSizeHandler mFontSizeHandler;
 
 	/* UI -  Designer */
 	Ui::IdDialog *ui;

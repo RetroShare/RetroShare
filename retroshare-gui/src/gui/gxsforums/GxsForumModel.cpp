@@ -46,6 +46,7 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
     : QAbstractItemModel(parent), mUseChildTS(false),mFilteringEnabled(false),mTreeMode(TREE_MODE_TREE)
 {
     initEmptyHierarchy(mPosts);
+    mFont = QApplication::font();
 }
 
 void RsGxsForumModel::preMods()
@@ -399,7 +400,7 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 
     if(role == Qt::FontRole)
     {
-        QFont font ;
+        QFont font = mFont;
         font.setBold( (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN) || IS_MSG_UNREAD(fmpe.mMsgStatus));
         return QVariant(font);
     }
@@ -533,6 +534,15 @@ void RsGxsForumModel::setFilter(int column,const QStringList& strings,uint32_t& 
 	postMods();
 }
 
+void RsGxsForumModel::setFont(const QFont &font)
+{
+    preMods();
+
+    mFont = font;
+
+    postMods();
+}
+
 QVariant RsGxsForumModel::missingRole(const ForumModelPostEntry& fmpe,int /*column*/) const
 {
     if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING)
@@ -562,7 +572,7 @@ QVariant RsGxsForumModel::toolTipRole(const ForumModelPostEntry& fmpe,int column
 		if(!GxsIdDetails::MakeIdDesc(fmpe.mAuthorId, true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
 			return QVariant();
 
-		int S = QFontMetricsF(QApplication::font()).height();
+		int S = QFontMetricsF(mFont).height();
 		QImage pix( (*icons.begin()).pixmap(QSize(5*S,5*S)).toImage());
 
 		QString embeddedImage;
@@ -599,7 +609,7 @@ QVariant RsGxsForumModel::backgroundRole(const ForumModelPostEntry& fmpe,int /*c
 
 QVariant RsGxsForumModel::sizeHintRole(int col) const
 {
-	float factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
+	float factor = QFontMetricsF(mFont).height()/14.0f ;
 
 	switch(col)
 	{
@@ -650,7 +660,7 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
 		case COLUMN_THREAD_TITLE:  if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_REDACTED)
 									return QVariant(tr("[ ... Redacted message ... ]"));
 //                                else if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
-//                                    return QVariant( QString("<img src=\":/icons/pinned_64.png\" height=%1/>").arg(QFontMetricsF(QFont()).height())
+//                                    return QVariant( QString("<img src=\":/icons/pinned_64.png\" height=%1/>").arg(QFontMetricsF(mFont).height())
 //                                                     + QString::fromUtf8(fmpe.mTitle.c_str()));
                                 else
 									return QVariant(QString::fromUtf8(fmpe.mTitle.c_str()));
