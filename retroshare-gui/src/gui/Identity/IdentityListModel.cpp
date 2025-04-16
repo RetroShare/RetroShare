@@ -430,6 +430,9 @@ QVariant RsIdentityListModel::toolTipRole(const EntryIndex& fmpe,int /*column*/)
         if(!id_info)
             return QVariant();
 
+        if(id_info->flags & RS_IDENTITY_FLAGS_IS_DEPRECATED)
+            return QVariant( tr("\nThis identity has a insecure fingerprint (It's probably quite old).\nYou should get rid of it now and use a new one.\nThese identities are not supported anymore.") ) ;
+
         if(rsIdentity->isOwnId(id_info->id))
             return QVariant(tr("This identity is owned by you"));
 
@@ -438,9 +441,10 @@ QVariant RsIdentityListModel::toolTipRole(const EntryIndex& fmpe,int /*column*/)
         else
         {
             RsPeerDetails dd;
-            rsPeers->getGPGDetails(id_info->owner,dd);
-
-            return QVariant("Identity owned by profile \""+ QString::fromUtf8(dd.name.c_str()) +"\" ("+QString::fromStdString(id_info->owner.toStdString()));
+            if(rsPeers->getGPGDetails(id_info->owner,dd))
+                return QVariant(tr("Identity owned by profile")+" \""+ QString::fromUtf8(dd.name.c_str()) +"\" ("+QString::fromStdString(id_info->owner.toStdString()));
+            else
+                return QVariant(tr("Identity possibly owned by unknown profile")+" \""+ QString::fromUtf8(dd.name.c_str()) +"\" ("+QString::fromStdString(id_info->owner.toStdString()));
         }
     }
 
