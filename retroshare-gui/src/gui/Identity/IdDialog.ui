@@ -91,7 +91,7 @@
        <widget class="QLabel" name="titleBarLabel">
         <property name="font">
          <font>
-		<pointsize>12</pointsize>
+          <pointsize>12</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -127,7 +127,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../icons.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -173,7 +173,11 @@
            <number>1</number>
           </property>
           <item>
-           <widget class="LineEditClear" name="filterLineEdit"/>
+           <widget class="LineEditClear" name="filterLineEdit">
+            <property name="placeholderText">
+             <string>Search...</string>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QToolButton" name="toolButton_New">
@@ -211,7 +215,7 @@
         </widget>
        </item>
        <item>
-        <widget class="RSTreeWidget" name="idTreeWidget">
+        <widget class="QTreeView" name="idTreeWidget">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -236,39 +240,9 @@
          <property name="sortingEnabled">
           <bool>true</bool>
          </property>
-         <attribute name="headerStretchLastSection">
-          <bool>false</bool>
+         <attribute name="headerCascadingSectionResizes">
+          <bool>true</bool>
          </attribute>
-         <column>
-          <property name="text">
-           <string>Persons</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Identity ID</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Owned by</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="toolTip">
-           <string>Votes</string>
-          </property>
-          <property name="textAlignment">
-           <set>AlignLeading|AlignVCenter</set>
-          </property>
-          <property name="icon">
-           <iconset resource="../icons.qrc">
-            <normaloff>:/icons/flag-green.png</normaloff>:/icons/flag-green.png</iconset>
-          </property>
-         </column>
         </widget>
        </item>
       </layout>
@@ -296,8 +270,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>513</width>
-             <height>764</height>
+             <width>535</width>
+             <height>784</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
@@ -1081,11 +1055,6 @@ border-image: url(:/images/closepressed.png)
    <header>gui/common/RSComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>RSTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>ElidedLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/ElidedLabel.h</header>
@@ -1101,8 +1070,8 @@ border-image: url(:/images/closepressed.png)
   <tabstop>idTreeWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -24,7 +24,8 @@
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 #include "util/FontSizeHandler.h"
 
-#include <retroshare/rsidentity.h>
+#include "retroshare/rsidentity.h"
+#include "IdentityListModel.h"
 
 #include <QTimer>
 
@@ -35,7 +36,11 @@ class IdDialog;
 }
 
 class UIStateHelper;
+class QStyledItemDelegate;
 class QTreeWidgetItem;
+class RsIdentityListModel;
+class IdListSortFilterProxyModel;
+class QItemSelection;
 
 class IdDialog : public MainPage
 {
@@ -59,6 +64,7 @@ protected:
 	void loadIdentity(RsGxsIdGroup id_data);
 
 	void loadCircles(const std::list<RsGroupMetaData>& circle_metas);
+    void updateIdListRequest();
 
 	//void requestCircleGroupData(const RsGxsCircleId& circle_id);
 	bool getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id) ;
@@ -67,13 +73,13 @@ protected:
 
 
 private slots:
-	void updateIdList();
-	void updateCircles();
-
-	void createExternalCircle();
+    void updateIdList();
+    void updateCircles();
+    void createExternalCircle();
 	void showEditExistingCircle();
 	void updateCirclesDisplay();
 	void toggleAutoBanIdentities(bool b);
+    void sortColumn(int col,Qt::SortOrder so);
 
 	void acceptCircleSubscription() ;
 	void cancelCircleSubscription() ;
@@ -87,17 +93,20 @@ private slots:
 	void removeIdentity();
 	void editIdentity();
 	void chatIdentity();
-	void chatIdentityItem(QTreeWidgetItem* item);
-	void sendMsg();
+    void chatIdentityItem(const QModelIndex &indx);
+    void chatIdentity(const RsGxsId& toGxsId);
+    void sendMsg();
 	void copyRetroshareLink();
 	void on_closeInfoFrameButton_Invite_clicked();
 
-	void updateSelection();
+    void updateSelection(const QItemSelection &new_sel, const QItemSelection &old_sel);
 
 	void modifyReputation();
 
 	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
+    void headerContextMenuRequested(QPoint);
+    void toggleColumnVisible();
 
 	void CircleListCustomPopupMenu(QPoint point) ;
 #ifdef SUSPENDED
@@ -118,7 +127,12 @@ private:
 	void processSettings(bool load);
 	QString createUsageString(const RsIdentityUsage& u) const;
 
-	void requestIdData(std::list<RsGxsGroupId> &ids);
+    void saveExpandedPathsAndSelection_idTreeView(std::set<QStringList> &expanded, std::set<QStringList> &selected);
+    void restoreExpandedPathsAndSelection_idTreeView(const std::set<QStringList>& expanded, const std::set<QStringList>& selelected);
+    void recursSaveExpandedItems_idTreeView(const QModelIndex& index, const QStringList& parent_path, std::set<QStringList>& expanded, std::set<QStringList>& selected);
+    void recursRestoreExpandedItems_idTreeView(const QModelIndex& index,const QStringList& parent_path,const std::set<QStringList>& expanded,const std::set<QStringList>& selected);
+
+    void requestIdData(std::list<RsGxsGroupId> &ids);
 	bool fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept);
 	void insertIdList(uint32_t token);
 	void filterIds();
@@ -135,20 +149,32 @@ private:
 private:
 	UIStateHelper *mStateHelper;
 
-	QTreeWidgetItem *contactsItem;
-	QTreeWidgetItem *allItem;
-	QTreeWidgetItem *ownItem;
 	QTreeWidgetItem *mExternalBelongingCircleItem;
 	QTreeWidgetItem *mExternalOtherCircleItem;
 	QTreeWidgetItem *mMyCircleItem;
 	RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
 
-	void saveExpandedCircleItems(std::vector<bool> &expanded_root_items, std::set<RsGxsCircleId>& expanded_circle_items) const;
+    int mLastSortColumn;
+    Qt::SortOrder mLastSortOrder;
+
+    void saveExpandedCircleItems(std::vector<bool> &expanded_root_items, std::set<RsGxsCircleId>& expanded_circle_items) const;
 	void restoreExpandedCircleItems(const std::vector<bool>& expanded_root_items,const std::set<RsGxsCircleId>& expanded_circle_items);
 
-	RsGxsGroupId mId;
+    void applyWhileKeepingTree(std::function<void()> predicate);
+
+    RsGxsId getSelectedIdentity() const;
+    std::list<RsGxsId> getSelectedIdentities() const;
+
+    RsGxsGroupId mId;
 	RsGxsGroupId mIdToNavigate;
 	int filter;
+    bool mColumnSizeAlreadySet; // remembers if we already did some size set. If not, automatically stretch to content.
+
+    QStyledItemDelegate *mElidedLabelDelegate;
+    QStyledItemDelegate *mReputationDelegate;
+
+    RsIdentityListModel *mIdListModel;
+    IdListSortFilterProxyModel *mProxyModel;
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 	RsEventsHandlerId_t mEventHandlerId_identity;

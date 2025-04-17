@@ -52,7 +52,8 @@ public:
 	ReputationItemDelegate(RsReputationLevel max_level_to_display) :
 	    mMaxLevelToDisplay(static_cast<uint32_t>(max_level_to_display)) {}
 
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex & /*index*/) const override;
 
 private:
     uint32_t mMaxLevelToDisplay ;
