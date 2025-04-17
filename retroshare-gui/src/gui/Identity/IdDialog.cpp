@@ -450,22 +450,6 @@ IdDialog::IdDialog(QWidget *parent)
     updateIdTimer.setSingleShot(true);
 	connect(&updateIdTimer, SIGNAL(timeout()), this, SLOT(updateIdList()));
 
-	mFontSizeHandler.registerFontSize(ui->idTreeWidget, 0, [this] (QAbstractItemView*, int fontSize) {
-		// Set new font size on all items
-		QTreeWidgetItemIterator it(ui->idTreeWidget);
-		while (*it) {
-			QTreeWidgetItem *item = *it;
-			if (item->parent()) {
-				QFont font = item->font(CIRCLEGROUP_CIRCLE_COL_GROUPNAME);
-				font.setPointSize(fontSize);
-
-				item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, font);
-				item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPID, font);
-				item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, font);
-			}
-			++it;
-		}
-	});
 	mFontSizeHandler.registerFontSize(ui->treeWidget_membership, 0, [this] (QAbstractItemView*, int fontSize) {
 		// Set new font size on all items
 		QTreeWidgetItemIterator it(ui->treeWidget_membership);
