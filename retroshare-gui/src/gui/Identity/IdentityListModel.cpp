@@ -53,6 +53,8 @@ RsIdentityListModel::RsIdentityListModel(QObject *parent)
     : QAbstractItemModel(parent)
     , mLastInternalDataUpdate(0), mLastNodeUpdate(0)
 {
+    mFontSize = QApplication::font().pointSize();
+
 	mFilterStrings.clear();
     mIdentityUpdateTimer = new QTimer();
     connect(mIdentityUpdateTimer,SIGNAL(timeout()),this,SLOT(timerUpdate()));
@@ -565,19 +567,28 @@ QVariant RsIdentityListModel::foregroundRole(const EntryIndex& e, int /*col*/) c
 }
 QVariant RsIdentityListModel::fontRole(const EntryIndex& e, int /*col*/) const
 {
-        auto it = getIdentityInfo(e);
-    if(!it)
-        return QVariant();
-    RsGxsId id(it->id);
+    QFont f;
+    f.setPointSize(mFontSize);
 
-    if(rsIdentity->isOwnId(id))
+    auto it = getIdentityInfo(e);
+
+    if(it)
     {
-        QFont f;
-        f.setBold(true);
-        return QVariant(f);
+        RsGxsId id(it->id);
+
+        if(rsIdentity->isOwnId(id))
+            f.setBold(true);
     }
-    else
-        return QVariant();
+
+    return QVariant(f);
+}
+void RsIdentityListModel::setFontSize(int s)
+{
+    if(s != mFontSize)
+    {
+        mFontSize = s;
+        emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mCategories.size()-1,columnCount()-1,(void*)NULL));
+    }
 }
 
 #ifdef DEBUG_MODEL_INDEX

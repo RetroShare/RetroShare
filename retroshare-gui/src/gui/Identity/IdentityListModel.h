@@ -143,6 +143,7 @@ public:
     EntryType getType(const QModelIndex&) const;
     RsGxsId getIdentity(const QModelIndex&) const;
     int getCategory(const QModelIndex&) const;
+    void setFontSize(int s);
 
     void setFilter(uint8_t filter_type, const QStringList& strings) ;
 
@@ -221,6 +222,7 @@ private:
 
     QStringList mFilterStrings;
     uint8_t  mFilterType;
+    int mFontSize;
 
     rstime_t mLastInternalDataUpdate;
     rstime_t mLastNodeUpdate;;

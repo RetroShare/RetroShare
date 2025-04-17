@@ -450,7 +450,13 @@ IdDialog::IdDialog(QWidget *parent)
     updateIdTimer.setSingleShot(true);
 	connect(&updateIdTimer, SIGNAL(timeout()), this, SLOT(updateIdList()));
 
-	mFontSizeHandler.registerFontSize(ui->treeWidget_membership, 0, [this] (QAbstractItemView*, int fontSize) {
+    mFontSizeHandler.registerFontSize(ui->idTreeWidget, 0, [this] (QAbstractItemView*, int fontSize) {
+        // Set new font size on all items
+
+        mIdListModel->setFontSize(fontSize);
+    });
+
+    mFontSizeHandler.registerFontSize(ui->treeWidget_membership, 0, [this] (QAbstractItemView*, int fontSize) {
 		// Set new font size on all items
 		QTreeWidgetItemIterator it(ui->treeWidget_membership);
 		while (*it) {
