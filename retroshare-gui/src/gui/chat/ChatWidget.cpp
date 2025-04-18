@@ -1725,7 +1725,7 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 			{
 				QString encodedImage;
 				uint32_t maxMessageSize = this->maxMessageSize();
-				if (RsHtml::makeEmbeddedImage(hashedFile.filepath, encodedImage, 640*480, maxMessageSize - 200 - link.toHtmlSize().length()))
+				if (RsHtml::makeEmbeddedImage(hashedFile.filepath, encodedImage, 800*600, maxMessageSize - 200 - link.toHtmlSize().length()))
 				{	QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
 					ui->chatTextEdit->textCursor().insertFragment(fragment);
 					preview=true;
