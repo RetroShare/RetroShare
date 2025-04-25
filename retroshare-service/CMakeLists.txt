@@ -61,6 +61,21 @@ cmake_dependent_option(
 set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)
 
+# Find required dependencies
+# find_package for Botan and json-c failed to populate variables, remove them.
+# find_package(Botan 3 REQUIRED)
+# message(STATUS "Botan_FOUND=${Botan_FOUND}")
+# message(STATUS "BOTAN_LIBRARIES=${BOTAN_LIBRARIES}")
+# message(STATUS "BOTAN_INCLUDE_DIRS=${BOTAN_INCLUDE_DIRS}")
+# 
+# find_package(json-c REQUIRED)
+# message(STATUS "json-c_FOUND=${json-c_FOUND}")
+# message(STATUS "JSON-C_LIBRARIES=${JSON-C_LIBRARIES}")
+# message(STATUS "JSON-C_INCLUDE_DIRS=${JSON-C_INCLUDE_DIRS}")
+
+find_package(ZLIB REQUIRED)
+find_package(BZip2 REQUIRED)
+
 find_package(Git REQUIRED)
 
 ################################################################################
@@ -109,6 +124,36 @@ else()
 	FetchContent_MakeAvailable(libretroshare)
 endif()
 
+target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
+
+################################################################################
+
+# Add RNP build directories to linker search path
+target_link_directories(${PROJECT_NAME} PRIVATE
+    ${PROJECT_SOURCE_DIR}/../../supportlibs/librnp/Build/src/lib
+    ${PROJECT_SOURCE_DIR}/../../supportlibs/librnp/Build/src/libsexpp
+)
+
+# Link libraries by name, including RNP libs and dependencies first
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    rnp             # Link by name
+    sexpp
+    botan-3
+    json-c
+    bz2
+    z
+    retroshare
+)
+
+################################################################################
+
+# Add include directories from found packages
+# target_include_directories(${PROJECT_NAME} PRIVATE
+#     ${Botan_INCLUDE_DIRS}
+#     ${JSONC_INCLUDE_DIRS}
+# )
+
+# Link only libretroshare, it should handle its own dependencies now
 target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
 
 ################################################################################
