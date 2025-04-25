@@ -229,3 +229,7 @@ asio fix](https://github.com/chriskohlhoff/asio/commit/68df16d560c68944809bb2947
        $ cd build-dir
        $ cmake -DRS_WEBUI=ON -DCMAKE_BUILD_TYPE=Release ..
        $ make
+
+After build finished run retroshare-service in Terminal:
+
+       $ ./retroshare-service.app/Contents/MacOS/retroshare-service -U list W
