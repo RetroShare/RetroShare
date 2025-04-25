@@ -132,15 +132,15 @@ use_dht_stunner_ext_ip:CONFIG -= no_use_dht_stunner_ext_ip
 
 # To select your MacOsX version append the following assignation to qmake
 # command line "CONFIG+=rs_macos10.11" where 10.11 depends your version
-macx:CONFIG *= rs_macos11.1
-rs_macos10.8:CONFIG -= rs_macos10.11
-rs_macos10.9:CONFIG -= rs_macos10.11
-rs_macos10.10:CONFIG -= rs_macos10.11
-rs_macos10.12:CONFIG -= rs_macos10.11
-rs_macos10.13:CONFIG -= rs_macos10.11
-rs_macos10.14:CONFIG -= rs_macos10.11
-rs_macos10.15:CONFIG -= rs_macos10.11
-rs_macos11.1:CONFIG -= rs_macos10.11
+# macx:CONFIG *= rs_macos11.1
+# rs_macos10.8:CONFIG -= rs_macos10.11
+# rs_macos10.9:CONFIG -= rs_macos10.11
+# rs_macos10.10:CONFIG -= rs_macos10.11
+# rs_macos10.12:CONFIG -= rs_macos10.11
+# rs_macos10.13:CONFIG -= rs_macos10.11
+# rs_macos10.14:CONFIG -= rs_macos10.11
+# rs_macos10.15:CONFIG -= rs_macos10.11
+# rs_macos11.1:CONFIG -= rs_macos10.11
 
 # To enable JSON API append the following assignation to qmake command line
 # "CONFIG+=rs_jsonapi"
@@ -150,37 +150,37 @@ rs_jsonapi:CONFIG -= no_rs_jsonapi
 # To enable forums indexing append the following assignation to qmake command
 # line "CONFIG+=rs_deep_forums_index"
 CONFIG *= no_rs_deep_forums_index
-rs_deep_forums_index:CONFIG -= no_rs_deep_forums_index
+rs_deep_forums_index:DEFINES *= RS_DEEP_FORUMS_INDEX
 
 # To enable channel indexing append the following assignation to qmake command
 # line "CONFIG+=rs_deep_channels_index"
 CONFIG *= no_rs_deep_channels_index
-rs_deep_channels_index:CONFIG -= no_rs_deep_channels_index
+rs_deep_channels_index:DEFINES *= RS_DEEP_CHANNEL_INDEX
 
 # To enable deep files indexing append the following assignation to qmake
 # command line "CONFIG+=rs_deep_files_index"
 CONFIG *= no_rs_deep_files_index
-rs_deep_files_index:CONFIG -= no_rs_deep_files_index
+rs_deep_files_index:DEFINES *= RS_DEEP_FILES_INDEX
 
 # To enable Ogg files deep indexing append the following assignation to qmake
 # command line "CONFIG+=rs_deep_files_index_ogg"
 CONFIG *= no_rs_deep_files_index_ogg
-rs_deep_files_index_ogg:CONFIG -= no_rs_deep_files_index_ogg
+rs_deep_files_index_ogg:DEFINES *= RS_DEEP_FILES_INDEX_OGG
 
 # To enable FLAC files deep indexing append the following assignation to qmake
 # command line "CONFIG+=rs_deep_files_index_flac"
 CONFIG *= no_rs_deep_files_index_flac
-rs_deep_files_index_flac:CONFIG -= no_rs_deep_files_index_flac
+rs_deep_files_index_flac:DEFINES *= RS_DEEP_FILES_INDEX_FLAC
 
 # To enable taglib files deep indexing append the following assignation to qmake
 # command line "CONFIG+=rs_deep_files_index_taglib"
 CONFIG *= no_rs_deep_files_index_taglib
-rs_deep_files_index_taglib:CONFIG -= no_rs_deep_files_index_taglib
+rs_deep_files_index_taglib:DEFINES *= RS_DEEP_FILES_INDEX_TAGLIB
 
 # To enable native dialogs append the following assignation to qmake command
 # line "CONFIG+=rs_use_native_dialogs"
 CONFIG *= no_rs_use_native_dialogs
-rs_use_native_dialogs:CONFIG -= no_rs_use_native_dialogs
+rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
 
 # By default, use RNP lib for RFC4880 PGP management. If not, compilation will
 # default to openpgp-sdk, which is old and unmaintained, so probably not very secure.
@@ -191,23 +191,23 @@ rs_no_rnplib:CONFIG += rs_openpgpsdk
 # To disable broadcast discovery append the following assignation to qmake
 # command line "CONFIG+=no_rs_broadcast_discovery"
 CONFIG *= rs_broadcast_discovery
-no_rs_broadcast_discovery:CONFIG -= rs_broadcast_discovery
+no_rs_broadcast_discovery:DEFINES *= RS_BROADCAST_DISCOVERY
 
 # To enable webui append the following assignation to qmake
 # command line "CONFIG+=rs_webui"
 CONFIG *= no_rs_webui
-rs_webui:CONFIG -= no_rs_webui
+rs_webui:DEFINES *= RS_WEBUI
 
 # To disable retroshare-service option to set webui password from the terminal
 # append the following assignation to qmake command line
 # "CONFIG+=no_rs_service_webui_terminal_password"
 CONFIG *= rs_service_webui_terminal_password
-no_rs_service_webui_terminal_password:CONFIG -= rs_service_webui_terminal_password
+no_rs_service_webui_terminal_password:DEFINES *= RS_SERVICE_TERMINAL_WEBUI_PASSWORD
 
 # To disable retroshare-service terminal login append the following assignation
 # to qmake command line "CONFIG+=no_rs_service_terminal_login"
 CONFIG *= rs_service_terminal_login
-no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
+no_rs_service_terminal_login:DEFINES *= RS_SERVICE_TERMINAL_LOGIN
 
 # To disable Diffie Hellman group check at init append the following assignation
 # to qmake command line "CONFIG+=no_rs_dh_init_check"
@@ -215,17 +215,17 @@ no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
 # On Android it takes at least one minute at startup which is untolerable for
 # most phone users
 CONFIG+=rs_dh_init_check
-no_rs_dh_init_check:CONFIG -= rs_dh_init_check
+no_rs_dh_init_check:DEFINES *= RS_DISABLE_DIFFIE_HELLMAN_INIT_CHECK
 
 # To disable I2P sam3 support append the following assignation to qmake command
 # line "CONFIG+=no_rs_sam3"
 CONFIG *= rs_sam3
-no_rs_sam3:CONFIG -= rs_sam3
+no_rs_sam3:DEFINES *= RS_USE_I2P_SAM3
 
 # To disable I2P sam3 library submodule build append the following assignation
 # to qmake command line "CONFIG+=no_rs_sam3_libsam3"
 CONFIG *= rs_sam3_libsam3
-no_rs_sam3_libsam3:CONFIG -= rs_sam3_libsam3
+no_rs_sam3_libsam3:DEFINES *= RS_USE_I2P_SAM3_LIBSAM3
 
 
 # Specify host precompiled jsonapi-generator path, appending the following
@@ -847,7 +847,9 @@ macx-* {
 	BIN_DIR += "/Applications/Xcode.app/Contents/Developer/usr/bin"
 	INCLUDEPATH += "/usr/local/include"
 	RS_UPNP_LIB = miniupnpc
-	QT += macextras
+	equals(TARGET, retroshare) {
+	    QT += macextras
+	}
 	INCLUDEPATH += "/usr/local/opt/openssl/include"
 	QMAKE_LIBDIR += "/usr/local/opt/openssl/lib"
 	QMAKE_LIBDIR += "/usr/local/opt/sqlcipher/lib"
@@ -855,6 +857,7 @@ macx-* {
 	INCLUDEPATH += "/usr/local/opt/libxml2/include/libxml2"
 	INCLUDEPATH += "/usr/local/opt/libxslt/include"
 	QMAKE_LIBDIR += "/usr/local/opt/libxslt/lib"
+    #QMAKE_LIBDIR += "/opt/homebrew/opt/botan@2/lib" # Removed - linking against botan-3 now
 }
 
 # If not yet defined attempt UPnP library autodetection should works at least
