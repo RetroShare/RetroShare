@@ -82,12 +82,6 @@ macx {
 	LIBS += -framework Security
 	LIBS += -framework Carbon
 
-	# Explicitly add RNP libs here for the service target
-	LIBRNP_BUILD_PATH = $$clean_path($${OUT_PWD}/../../supportlibs/librnp/Build)
-	LIBS += -L$$clean_path($${LIBRNP_BUILD_PATH}/src/lib) -lrnp
-	LIBS += -L$$clean_path($${LIBRNP_BUILD_PATH}/src/libsexpp) -lsexpp
-	LIBS += -lbz2 -lz -ljson-c -lbotan-3
-
 	for(lib, LIB_DIR):LIBS += -L"$$lib"
 	for(bin, BIN_DIR):LIBS += -L"$$bin"
 
