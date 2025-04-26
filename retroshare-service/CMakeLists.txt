@@ -130,19 +130,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     retroshare
 )
 
-################################################################################
-
-# Add include directories from found packages
-# target_include_directories(${PROJECT_NAME} PRIVATE
-#     ${Botan_INCLUDE_DIRS}
-#     ${JSONC_INCLUDE_DIRS}
-# )
-
-# Link only libretroshare, it should handle its own dependencies now
-target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
-
-################################################################################
-
 if(RS_SERVICE_DESKTOP)
 	if(UNIX AND NOT APPLE)
 		install(
