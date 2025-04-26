@@ -855,7 +855,6 @@ macx-* {
 	INCLUDEPATH += "/usr/local/opt/libxml2/include/libxml2"
 	INCLUDEPATH += "/usr/local/opt/libxslt/include"
 	QMAKE_LIBDIR += "/usr/local/opt/libxslt/lib"
-    #QMAKE_LIBDIR += "/opt/homebrew/opt/botan@2/lib" # Removed - linking against botan-3 now
 }
 
 # If not yet defined attempt UPnP library autodetection should works at least
