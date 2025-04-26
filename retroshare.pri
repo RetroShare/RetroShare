@@ -132,15 +132,15 @@ use_dht_stunner_ext_ip:CONFIG -= no_use_dht_stunner_ext_ip
 
 # To select your MacOsX version append the following assignation to qmake
 # command line "CONFIG+=rs_macos10.11" where 10.11 depends your version
-# macx:CONFIG *= rs_macos11.1
-# rs_macos10.8:CONFIG -= rs_macos10.11
-# rs_macos10.9:CONFIG -= rs_macos10.11
-# rs_macos10.10:CONFIG -= rs_macos10.11
-# rs_macos10.12:CONFIG -= rs_macos10.11
-# rs_macos10.13:CONFIG -= rs_macos10.11
-# rs_macos10.14:CONFIG -= rs_macos10.11
-# rs_macos10.15:CONFIG -= rs_macos10.11
-# rs_macos11.1:CONFIG -= rs_macos10.11
+macx:CONFIG *= rs_macos11.1
+rs_macos10.8:CONFIG -= rs_macos10.11
+rs_macos10.9:CONFIG -= rs_macos10.11
+rs_macos10.10:CONFIG -= rs_macos10.11
+rs_macos10.12:CONFIG -= rs_macos10.11
+rs_macos10.13:CONFIG -= rs_macos10.11
+rs_macos10.14:CONFIG -= rs_macos10.11
+rs_macos10.15:CONFIG -= rs_macos10.11
+rs_macos11.1:CONFIG -= rs_macos10.11
 
 # To enable JSON API append the following assignation to qmake command line
 # "CONFIG+=rs_jsonapi"
