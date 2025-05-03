@@ -170,7 +170,10 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
     publicLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
 	ui.lobbyTreeWidget->insertTopLevelItem(3, publicLobbyItem);
 
-	ui.lobbyTreeWidget->expandAll();
+	ui.lobbyTreeWidget->expandItem(privateSubLobbyItem);
+	ui.lobbyTreeWidget->expandItem(publicSubLobbyItem);
+	ui.lobbyTreeWidget->expandItem(privateLobbyItem);
+	// ui.lobbyTreeWidget->expandItem(publicLobbyItem);
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_NAME,false) ;
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_USER_COUNT,true) ;
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_TOPIC,true) ;

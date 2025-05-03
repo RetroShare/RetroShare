@@ -201,6 +201,7 @@ private:
 	void setForumDescriptionLoading();
 	void clearForumDescription();
     void blankPost();
+    void recursExpandUnread(const QModelIndex &index);
 
 	RsGxsGroupId mLastForumID;
 	RsGxsMessageId mThreadId;

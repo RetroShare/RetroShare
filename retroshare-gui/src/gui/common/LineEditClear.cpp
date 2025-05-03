@@ -68,6 +68,14 @@ LineEditClear::LineEditClear(QWidget *parent)
 		qMax(msz.height(), mClearButton->sizeHint().height() + frameWidth * 2));
 }
 
+LineEditClear::~LineEditClear()
+{
+	delete (mFilterButton ? mFilterButton->menu() : nullptr);
+	delete mClearButton;
+	delete mFilterButton;
+	delete mActionGroup;
+}
+
 void LineEditClear::resizeEvent(QResizeEvent *)
 {
 	QSize sz = mClearButton->sizeHint();

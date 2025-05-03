@@ -391,6 +391,7 @@ MainWindow::~MainWindow()
     MacDockIconHandler::cleanup();
 #endif
 //  delete notifyMenu; // already deleted by the deletion of trayMenu
+    delete idle;
     StatisticsWindow::releaseInstance();
 
 #ifdef MESSENGER_WINDOW
@@ -1646,8 +1647,28 @@ void MainWindow::settingsChanged()
 	ui->toolBarPage->setIconSize(QSize(toolSize,toolSize));
 	ui->toolBarAction->setToolButtonStyle(Settings->getToolButtonStyle());
 	ui->toolBarAction->setIconSize(QSize(toolSize,toolSize));
-	int itemSize = Settings->getListItemIconSize();
-	ui->listWidget->setIconSize(QSize(itemSize,itemSize));
+	switch (Settings->RshareSettings::getToolButtonStyle())
+	{
+	case Qt::ToolButtonTextOnly:
+		for (int i = 0; i < ui->listWidget->count(); ++i)
+		{
+			// annihilate icons
+			ui->listWidget->item(i)->setIcon(QIcon());
+		}
+		break;
+	default:
+		QList<MainPage*> pages = ui->stackPages->pages();
+		int count = 0;
+		for (QList<MainPage*>::iterator i = pages.begin(); i != pages.end(); ++i) {
+			ui->listWidget->item(count++)->setIcon((*i)->iconPixmap());
+		}
+		// because 'exit' isn't a 'page', but only 'action'
+		ui->listWidget->item(count)->setIcon(QIcon(IMAGE_QUIT)) ;
+
+		int itemSize = Settings->getListItemIconSize();
+		ui->listWidget->setIconSize(QSize(itemSize,itemSize));
+		break;
+	}
 }
 
 void MainWindow::externalLinkActivated(const QUrl &url)

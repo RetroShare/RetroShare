@@ -202,6 +202,7 @@ void HomePage::certContextMenu(QPoint /*point*/)
 HomePage::~HomePage()
 {
     rsEvents->unregisterEventsHandler(mEventHandlerId);
+    delete ui->shareButton->menu();
     delete ui;
 }
 

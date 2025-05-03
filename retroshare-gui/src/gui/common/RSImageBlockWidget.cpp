@@ -47,6 +47,7 @@ RSImageBlockWidget::~RSImageBlockWidget()
 	delete mAnimation;
 	mTimer->stop();
 	delete mTimer;
+	delete ui->loadImagesButton->menu();
 	delete ui;
 }
 

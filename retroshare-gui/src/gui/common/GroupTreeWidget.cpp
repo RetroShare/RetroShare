@@ -165,6 +165,8 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 
 GroupTreeWidget::~GroupTreeWidget()
 {
+	delete compareRole;
+	delete ui->treeWidget->itemDelegate();
 	delete ui;
 }
 

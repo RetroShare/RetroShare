@@ -1028,6 +1028,15 @@ void NewFriendList::removeProfile()
 	if ((QMessageBox::question(this, "RetroShare", tr("Do you want to remove this Friend?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
 		rsPeers->removeFriend(det.gpg_id);
 
+	QModelIndex index_to_remove = ui->peerTreeWidget->selectionModel()->selectedIndexes().first();
+	// could be only one selected item
+	ui->peerTreeWidget->selectionModel()->select(index_to_remove, QItemSelectionModel::Clear);
+	// otherwise already at top
+	QModelIndex index_to_select = ui->peerTreeWidget->indexAbove(index_to_remove);
+	if (index_to_select.isValid()) {
+		ui->peerTreeWidget->selectionModel()->select(index_to_select, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+	}
+
 	checkInternalData(true);
 }
 

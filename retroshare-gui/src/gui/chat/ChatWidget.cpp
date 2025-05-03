@@ -259,6 +259,8 @@ ChatWidget::~ChatWidget()
 	foreach (ChatWidgetHolder *chatWidgetHolder, mChatWidgetHolder) {
 		delete(chatWidgetHolder);
 	}
+	delete ui->fontcolorButton->menu();
+	delete ui->pushtoolsButton->menu();
 
 	delete ui;
 }

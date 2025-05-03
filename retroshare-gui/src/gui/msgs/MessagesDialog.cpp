@@ -432,6 +432,7 @@ MessagesDialog::~MessagesDialog()
 
     rsEvents->unregisterEventsHandler(mEventHandlerId);
     rsEvents->unregisterEventsHandler(mTagEventHandlerId);
+    delete ui.messageTreeWidget->itemDelegateForColumn(RsMessageModel::COLUMN_THREAD_AUTHOR) ;
 }
 
 UserNotify *MessagesDialog::createUserNotify(QObject *parent)

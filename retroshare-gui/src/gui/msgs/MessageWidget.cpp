@@ -223,6 +223,7 @@ MessageWidget::~MessageWidget()
 	}
 
 	rsEvents->unregisterEventsHandler(mEventHandlerId);
+	delete ui.moreButton->menu();
 }
 
 void MessageWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)

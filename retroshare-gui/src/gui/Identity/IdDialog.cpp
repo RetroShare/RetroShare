@@ -1293,6 +1293,11 @@ IdDialog::~IdDialog()
 {
 	rsEvents->unregisterEventsHandler(mEventHandlerId_identity);
 	rsEvents->unregisterEventsHandler(mEventHandlerId_circles);
+	delete ui->idTreeWidget->itemDelegateForColumn(RSID_COL_NICKNAME);
+	delete ui->idTreeWidget->itemDelegateForColumn(RSID_COL_VOTES);
+	delete ui->idTreeWidget->itemDelegate();
+	delete ui->treeWidget_membership->itemDelegateForColumn(CIRCLEGROUP_CIRCLE_COL_GROUPNAME);
+	delete ui->toolButton_New->menu();
 
 	// save settings
 	processSettings(false);
