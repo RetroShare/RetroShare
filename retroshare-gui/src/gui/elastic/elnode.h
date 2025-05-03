@@ -65,7 +65,7 @@ public:
     QRectF boundingRect() const;
     QPainterPath shape() const;
 
-	void setNodeDrawSize(int nds){mNodeDrawSize = nds;}
+	void setNodeDrawSize(int nds, bool repaint_edges) {mNodeDrawSize = nds; sought_for=repaint_edges;}
 	int getNodeDrawSize(){return mNodeDrawSize;}
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -95,6 +95,7 @@ private:
 	 bool mDeterminedBB ;
 	 int mBBWidth ;
 	 int mNodeDrawSize;
+	 bool sought_for = false;
 
 	 static Node *_selected_node ;
 
