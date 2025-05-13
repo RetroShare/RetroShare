@@ -1889,8 +1889,18 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
         	return tr("Message signature creation in group %1 of service %2").arg(QString::fromStdString(u.mGrpId.toStdString()), service_name);
     case RsIdentityUsage::GROUP_AUTHOR_KEEP_ALIVE:               // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
     case RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION:
-        	return tr("Group author for group %1 in service %2").arg(QString::fromStdString(u.mGrpId.toStdString()),service_name);
-        break ;
+	{
+		RetroShareLink link;
+
+		if(service_type == RetroShareLink::TYPE_CHANNEL )
+			link = RetroShareLink::createGxsGroupLink(service_type,u.mGrpId,tr("Channel"));
+		else if(service_type == RetroShareLink::TYPE_POSTED )
+			link = RetroShareLink::createGxsGroupLink(service_type,u.mGrpId,tr("Board"));
+		else
+			link = RetroShareLink::createGxsGroupLink(service_type,u.mGrpId,tr("Forum"));
+
+		return tr("Group author for group %1 in service %2").arg(link.toHtml(), service_name);
+	}
     case RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION:
     case RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE:             // Identities are stamped regularly by crawling the set of messages for all groups. That helps keepign the useful identities in hand.
 	{
