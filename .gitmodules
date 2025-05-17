@@ -1,12 +1,15 @@
 [submodule "supportlibs/restbed"]
 	path = supportlibs/restbed
 	url = https://github.com/Corvusoft/restbed.git
+	branch = master
 [submodule "cmark"]
 	path = supportlibs/cmark
 	url = https://github.com/commonmark/cmark.git
+	branch = master
 [submodule "build_scripts/OBS"]
 	path = build_scripts/OBS
 	url = https://github.com/RetroShare/OBS.git
+	branch = master
 [submodule "supportlibs/udp-discovery-cpp"]
 	path = supportlibs/udp-discovery-cpp
 	url = https://github.com/truvorskameikin/udp-discovery-cpp.git
@@ -15,12 +18,15 @@
 [submodule "supportlibs/rapidjson"]
 	path = supportlibs/rapidjson
 	url = https://github.com/Tencent/rapidjson.git
+	branch = master
 [submodule "supportlibs/libsam3"]
 	path = supportlibs/libsam3
 	url = https://github.com/i2p/libsam3.git
+	branch = master
 [submodule "supportlibs/jni.hpp"]
 	path = supportlibs/jni.hpp
 	url = https://github.com/RetroShare/jni.hpp.git
+	branch = master
 [submodule "openpgpsdk"]
 	path = openpgpsdk
 	url = ../OpenPGP-SDK
@@ -36,6 +42,8 @@
 [submodule "retroshare-webui"]
 	path = retroshare-webui
 	url = https://github.com/RetroShare/RSNewWebUI.git
+	branch = master
 [submodule "supportlibs/librnp"]
 	path = supportlibs/librnp
 	url = https://github.com/rnpgp/rnp.git
+	branch = main
