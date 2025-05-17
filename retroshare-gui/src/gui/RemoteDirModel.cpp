@@ -54,7 +54,8 @@
 #define REMOTEDIRMODEL_COLUMN_AGE           3
 #define REMOTEDIRMODEL_COLUMN_FRIEND_ACCESS 4
 #define REMOTEDIRMODEL_COLUMN_WN_VISU_DIR   5
-#define REMOTEDIRMODEL_COLUMN_COUNT         6
+#define REMOTEDIRMODEL_COLUMN_UPLOADED      6
+#define REMOTEDIRMODEL_COLUMN_COUNT         7
 #define RETROSHARE_DIR_MODEL_FILTER_STRING "filtered"
 
 static const uint32_t FLAT_VIEW_MAX_REFS_PER_SECOND       = 2000 ;
@@ -547,7 +548,17 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 					return QString();
 				else
 					return misc::timeRelativeToNow(details.max_mtime);
-
+		case REMOTEDIRMODEL_COLUMN_UPLOADED:
+		{
+			if(!RemoteMode && details.id == rsPeers->getOwnId()) // Totals in "My files" row
+			{
+				uint64_t n = rsFiles->getCumulativeUploadNum();
+				if(n)
+					return QString(misc::friendlyUnit(rsFiles->getCumulativeUploadAll()) + QString(" - %1 files").arg(n));
+				else
+					return QString("-");
+			}
+		}
 		default:
 				return QString() ;
 		}
@@ -580,6 +591,14 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 				return QVariant();
 			case REMOTEDIRMODEL_COLUMN_WN_VISU_DIR:
 				return getGroupsString(details.flags,details.parent_groups) ;
+			case REMOTEDIRMODEL_COLUMN_UPLOADED:
+			{
+				uint64_t x = rsFiles->getCumulativeUpload(details.hash);
+				if(x)
+					return misc::friendlyUnit(x);
+				else
+					return QString();
+			}
 
 			default:
 				return tr("FILE");
@@ -606,6 +625,8 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 				return QVariant();
 			case REMOTEDIRMODEL_COLUMN_WN_VISU_DIR:
 				return getGroupsString(details.flags,details.parent_groups) ;
+			case REMOTEDIRMODEL_COLUMN_UPLOADED:
+				return "";
 
 			default:
 				return tr("DIR");
@@ -665,6 +686,14 @@ QVariant FlatStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			case REMOTEDIRMODEL_COLUMN_AGE: return misc::timeRelativeToNow(details.max_mtime);
 			case REMOTEDIRMODEL_COLUMN_FRIEND_ACCESS: return QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
 			case REMOTEDIRMODEL_COLUMN_WN_VISU_DIR: return computeDirectoryPath(details);
+			case REMOTEDIRMODEL_COLUMN_UPLOADED:
+			{
+				uint64_t x = rsFiles->getCumulativeUpload(details.hash);
+				if(x)
+					return misc::friendlyUnit(x);
+				else
+					return QString();
+			}
 			default:
 				return QVariant() ;
 		}
@@ -733,6 +762,8 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 						ind = getAgeIndicatorString(details);
 					return ind;
 				}
+			case REMOTEDIRMODEL_COLUMN_UPLOADED:
+				return (qulonglong) rsFiles->getCumulativeUpload(details.hash);
 			default:
 				return tr("FILE");
 		}
@@ -779,6 +810,7 @@ QVariant FlatStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 
 				return computeDirectoryPath(details);
 			}
+			case REMOTEDIRMODEL_COLUMN_UPLOADED: return (qulonglong) rsFiles->getCumulativeUpload(details.hash);
 		}
 	}
 	return QVariant();
@@ -945,6 +977,8 @@ QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 					return tr("What's new");
 				else
 					return tr("Visibility");
+			case REMOTEDIRMODEL_COLUMN_UPLOADED:
+				return tr("Uploaded");
 		}
 		return tr("Column %1").arg(section);
 	}
@@ -991,6 +1025,8 @@ QVariant FlatStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 					return tr("Share Flags");
 			case REMOTEDIRMODEL_COLUMN_WN_VISU_DIR:
 				return tr("Directory");
+			case REMOTEDIRMODEL_COLUMN_UPLOADED:
+				return tr("Uploaded");
 		}
 		return tr("Column %1").arg(section);
 	}
