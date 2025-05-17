@@ -47,6 +47,9 @@ class PopupDistantChatDialog: public PopupChatDialog
 	protected slots:
 		void updateDisplay() ; // overloads RsAutoUpdatePage
 
+	private slots:
+		void updateDistantChatEvent() ; 
+
 	private:
 		QTimer *_update_timer ;
 		DistantChatPeerId _tunnel_id ;
