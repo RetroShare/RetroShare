@@ -24,6 +24,7 @@
 #include <QWidget>
 
 #include "interface/rsFeedReader.h"
+#include "util/FontSizeHandler.h"
 
 namespace Ui {
 class FeedReaderMessageWidget;
@@ -106,6 +107,8 @@ private:
 	// gui interface
 	RsFeedReader *mFeedReader;
 	FeedReaderNotify *mNotify;
+
+	FontSizeHandler mFontSizeHandler;
 
 	Ui::FeedReaderMessageWidget *ui;
 };

@@ -22,6 +22,7 @@
 #include "retroshare/rsgxsifacetypes.h"
 #include <QModelIndex>
 #include <QColor>
+#include <QFont>
 
 struct ForumModelPostEntry: public ForumPostEntry
 {
@@ -76,6 +77,7 @@ public:
 	QModelIndex getIndexOfMessage(const RsGxsMessageId& mid) const;
 
     static const QString FilterString ;
+    void setFont(const QFont &font);
 
 	std::vector<std::pair<rstime_t,RsGxsMessageId> > getPostVersions(const RsGxsMessageId& mid) const;
 
@@ -185,6 +187,7 @@ private:
 
 	QColor mBackgroundColorPinned;
 	QColor mBackgroundColorFiltered;
+	QFont mFont;
 
     friend class const_iterator;
 };

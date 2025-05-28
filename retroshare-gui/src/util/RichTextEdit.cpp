@@ -167,7 +167,7 @@ RichTextEdit::RichTextEdit(QWidget *parent) : QWidget(parent) {
 
     QFontDatabase db;
     foreach(int size, db.standardSizes())
-        f_fontsize->addItem(QString::number(size));
+        f_fontsize->addItem(QString::number(size), size);
 
     connect(f_fontsize, SIGNAL(activated(QString)),
             this, SLOT(textSize(QString)));
@@ -195,6 +195,9 @@ RichTextEdit::RichTextEdit(QWidget *parent) : QWidget(parent) {
 	// check message length
 	connect(f_textedit, SIGNAL(textChanged()), this, SLOT(checkLength()));
 
+    mMessageFontSizeHandler.registerFontSize(f_textedit, [this] (QWidget*, int fontSize) {
+        f_fontsize->setCurrentIndex(f_fontsize->findData(fontSize));
+    });
 }
 
 

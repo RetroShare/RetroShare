@@ -306,6 +306,23 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     mTagEventHandlerId = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleTagEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_TAG );
+
+    mFontSizeHandler.registerFontSize(ui.listWidget, 1.5f, [this] (QAbstractItemView*, int fontSize) {
+        // Set new font size on all items
+        QList<int> rows;
+        rows << ROW_INBOX << ROW_OUTBOX << ROW_DRAFTBOX;
+
+        foreach (int row, rows) {
+            QListWidgetItem *item = ui.listWidget->item(row);
+            QFont font = item->font();
+            font.setPointSize(fontSize);
+            item->setFont(font);
+        }
+    });
+    mFontSizeHandler.registerFontSize(ui.quickViewWidget, 1.5f);
+    mFontSizeHandler.registerFontSize(ui.messageTreeWidget, 1.5f, [this] (QAbstractItemView *view, int) {
+        mMessageModel->setFont(view->font());
+    });
 }
 
 void MessagesDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
