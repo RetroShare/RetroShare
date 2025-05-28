@@ -14331,7 +14331,7 @@ Wil je het bericht bewaren?</translation>
     </message>
     <message>
         <location line="+249"/>
-        <source>Stared</source>
+        <source>Starred</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
