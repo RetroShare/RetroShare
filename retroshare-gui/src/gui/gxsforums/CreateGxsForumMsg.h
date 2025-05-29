@@ -75,7 +75,7 @@ private:
 	bool mOrigMsgLoaded;
 	bool mForumMetaLoaded;
 	bool mForumCircleLoaded ;
-		std::set<RsGxsId> mModeratorSet; // these IDs are allowed to edit the post in addition to mPosterId
+	std::set<RsGxsId> mModeratorSet; // these IDs are allowed to edit the post in addition to mPosterId
 
 	RsGxsForumMsg mParentMsg;
 	RsGxsForumMsg mOrigMsg;

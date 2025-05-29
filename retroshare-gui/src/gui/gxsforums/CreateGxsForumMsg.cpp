@@ -168,23 +168,23 @@ void  CreateGxsForumMsg::newMsg()
 
 	/* fill in the available OwnIds for signing */
 
-    	//std::cerr << "Initing ID chooser. Sign flags = " << std::hex << mForumMeta.mSignFlags << std::dec << std::endl;
-    uint32_t idChooserFlags = IDCHOOSER_ID_REQUIRED;
-    if(!mOrigMsgId.isNull()) {
-        // we are editing an existing message
-        std::set<RsGxsId> id_set = mModeratorSet;
-        if(!mPosterId.isNull())
-          id_set.insert(mPosterId);
+	//std::cerr << "Initing ID chooser. Sign flags = " << std::hex << mForumMeta.mSignFlags << std::dec << std::endl;
+	uint32_t idChooserFlags = IDCHOOSER_ID_REQUIRED;
+	if(!mOrigMsgId.isNull()) {
+		// we are editing an existing message
+		std::set<RsGxsId> id_set = mModeratorSet;
+		if(!mPosterId.isNull())
+			id_set.insert(mPosterId);
 
-        // TODO: Report error if idChooser has no IDs to choose from.
-        // NOTE: mPosterId may not be our own; then GxsIdChooser will not include it.
+		// TODO: Report error if idChooser has no IDs to choose from.
+		// NOTE: mPosterId may not be our own; then GxsIdChooser will not include it.
 
-        idChooserFlags |= IDCHOOSER_NO_CREATE;
-        ui->idChooser->setIdConstraintSet(id_set);
-    }
-    ui->idChooser->loadIds(idChooserFlags, mPosterId);
+		idChooserFlags |= IDCHOOSER_NO_CREATE;
+		ui->idChooser->setIdConstraintSet(id_set);
+	}
+	ui->idChooser->loadIds(idChooserFlags, mPosterId);
 
-        if (mForumId.isNull()) {
+	if (mForumId.isNull()) {
 		mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
 		mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, false);
 		mStateHelper->setActive(CREATEGXSFORUMMSG_ORIGMSG, false);
@@ -406,7 +406,7 @@ void  CreateGxsForumMsg::createMsg()
 	msg.mMeta.mGroupId = mForumId;
 	msg.mMeta.mParentId = mParentId;
 	msg.mMeta.mOrigMsgId = mOrigMsgId;
-  msg.mMeta.mMsgFlags = 0;
+	msg.mMeta.mMsgFlags = 0;
 	msg.mMeta.mMsgId.clear() ;
 
 	if (mParentMsgLoaded) {
@@ -428,8 +428,8 @@ void  CreateGxsForumMsg::createMsg()
 		case GxsIdChooser::KnowId:
 		case GxsIdChooser::UnKnowId:
 			msg.mMeta.mAuthorId = authorId;
-      if(!mOrigMsgId.isNull() && authorId != mPosterId)
-        msg.mMeta.mMsgFlags |= RS_GXS_FORUM_MSG_FLAGS_MODERATED;
+			if(!mOrigMsgId.isNull() && authorId != mPosterId)
+				msg.mMeta.mMsgFlags |= RS_GXS_FORUM_MSG_FLAGS_MODERATED;
 			//std::cerr << "CreateGxsForumMsg::createMsg() AuthorId: " << authorId;
 			//std::cerr << std::endl;
 
