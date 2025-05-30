@@ -15,12 +15,14 @@ jobs:
     - uses: actions/checkout@v4
     - name: git init
       run: git submodule update --init --remote libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/ && git --no-pager log --max-count 1
-    #- name: qmake
-    #  run: qmake CONFIG+=debug
+    - name: apt install
+      run: sudo apt-get install g++ cmake qt5-default qtmultimedia5-dev libqt5x11extras5-dev libbz2-dev libssl-dev libsqlcipher-dev libupnp-dev libxss-dev rapidjson-dev
     - name: print working directory
       run: pwd && ls -la
-    - name: cmake
-      run: cmake -DRS_FORUM_DEEP_INDEX=ON -DRS_JSON_API=ON -DRS_WEBUI=ON -DRS_WARN_DEPRECATED=OFF -DRS_WARN_LESS=ON
+    - name: qmake
+      run: qmake CONFIG+=debug
+    #- name: cmake
+    #  run: cmake -DRS_FORUM_DEEP_INDEX=ON -DRS_JSON_API=ON -DRS_WEBUI=ON -DRS_WARN_DEPRECATED=OFF -DRS_WARN_LESS=ON
     
     - name: make
       run: make
