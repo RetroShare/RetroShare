@@ -1,0 +1,23 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "gitbuild" ]
+  pull_request:
+    branches: [ "gitbuild" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: qmake
+      run: qmake CONFIG+=debug
+    - name: make
+      run: make
+    - name: make check
+      run: make check
+    - name: make distcheck
+      run: make distcheck
