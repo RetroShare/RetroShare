@@ -13,8 +13,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: qmake
-      run: qmake CONFIG+=debug
+    - name: git init
+      run: git submodule update --init libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/ && git --no-pager log --max-count 1
+    #- name: qmake
+    #  run: qmake CONFIG+=debug
+    - name: cmake
+      run: cmake DRS_FORUM_DEEP_INDEX=ON -DRS_JSON_API=ON -DRS_WEBUI=ON -DRS_WARN_DEPRECATED=OFF -DRS_WARN_LESS=ON
+    
     - name: make
       run: make
     - name: make check
