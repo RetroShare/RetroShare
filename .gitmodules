@@ -15,6 +15,7 @@
 [submodule "supportlibs/rapidjson"]
 	path = supportlibs/rapidjson
 	url = https://github.com/Tencent/rapidjson.git
+	branch = master
 [submodule "supportlibs/libsam3"]
 	path = supportlibs/libsam3
 	url = https://github.com/i2p/libsam3.git
