@@ -528,7 +528,7 @@ void MessagesDialog::fillQuickView()
 	ui.quickViewWidget->clear();
 
 	// add static items
-    item = new QListWidgetItem(tr("Stared"), ui.quickViewWidget);
+    item = new QListWidgetItem(tr("Starred"), ui.quickViewWidget);
     item->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_STAR_ON));
 	item->setData(ROLE_QUICKVIEW_TYPE, QUICKVIEW_TYPE_STATIC);
 	item->setData(ROLE_QUICKVIEW_ID, QUICKVIEW_STATIC_ID_STARRED);

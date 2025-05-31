@@ -14360,7 +14360,7 @@ Möchtest du die Nachricht speichern ?</translation>
     </message>
     <message>
         <location line="+249"/>
-        <source>Stared</source>
+        <source>Starred</source>
         <translation>Markiert</translation>
     </message>
     <message>
