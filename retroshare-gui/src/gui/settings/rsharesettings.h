@@ -343,6 +343,12 @@ public:
     bool getPageAlreadyDisplayed(const QString& page_code) ;
     void setPageAlreadyDisplayed(const QString& page_code,bool b) ;
 
+    int getFontSize();
+    void setFontSize(int value);
+
+    int getMessageFontSize();
+    void setMessageFontSize(int value);
+
 #ifdef RS_JSONAPI
 	bool getJsonApiEnabled();
 	void setJsonApiEnabled(bool enabled);

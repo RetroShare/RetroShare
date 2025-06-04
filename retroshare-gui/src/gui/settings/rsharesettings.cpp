@@ -1200,6 +1200,38 @@ void RshareSettings::setPageAlreadyDisplayed(const QString& page_name,bool b)
 	return setValueToGroup("PageAlreadyDisplayed",page_name,b);
 }
 
+int RshareSettings::getFontSize()
+{
+#if defined(Q_OS_DARWIN)
+	int defaultFontSize = 13;
+#else
+	int defaultFontSize = 11;
+#endif
+
+	return value("FontSize", defaultFontSize).toInt();
+}
+
+void RshareSettings::setFontSize(int value)
+{
+	setValue("FontSize", value);
+}
+
+int RshareSettings::getMessageFontSize()
+{
+#if defined(Q_OS_DARWIN)
+	int defaultFontSize = 12;
+#else
+	int defaultFontSize = 11;
+#endif
+
+	return valueFromGroup("Message", "FontSize", defaultFontSize).toInt();
+}
+
+void RshareSettings::setMessageFontSize(int value)
+{
+	setValueToGroup("Message", "FontSize", value);
+}
+
 #ifdef RS_JSONAPI
 bool RshareSettings::getJsonApiEnabled()
 {

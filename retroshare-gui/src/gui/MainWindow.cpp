@@ -360,6 +360,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
     settingsChanged();
+
+    mFontSizeHandler.registerFontSize(ui->listWidget, 1.5f);
 }
 
 /** Destructor. */
@@ -563,6 +565,11 @@ void MainWindow::addPage(MainPage *page, QActionGroup *grp, QList<QPair<MainPage
 
 	QListWidgetItem *item = new QListWidgetItem(QIcon(page->iconPixmap()),page->pageName()) ;
 	ui->listWidget->addItem(item) ;
+
+#if defined(Q_OS_DARWIN)
+    QFont f = ui->toolBarPage->font();
+    action->setFont(f);
+#endif
 
 	if (notify)
 	{
@@ -1022,6 +1029,7 @@ void SetForegroundWindowInternal(HWND hWnd)
 
     /* Show the dialog. */
     raiseWindow();
+
     /* Set the focus to the specified page. */
     _instance->ui->stackPages->setCurrentPage(page);
 }

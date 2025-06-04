@@ -25,6 +25,7 @@
 
 #include "chat/ChatLobbyUserNotify.h"
 #include "gui/gxs/GxsIdChooser.h"
+#include "util/FontSizeHandler.h"
 
 
 #include <retroshare/rsmsgs.h>
@@ -145,6 +146,8 @@ private:
 
 	QAbstractButton* myInviteYesButton;
 	GxsIdChooser* myInviteIdChooser;
+
+	FontSizeHandler mFontSizeHandler;
 
 	/* UI - from Designer */
 	Ui::ChatLobbyWidget ui;

@@ -230,6 +230,8 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	
 	int ltwH = misc::getFontSizeFactor("LobbyTreeWidget", 1.5).height();
 	ui.lobbyTreeWidget->setIconSize(QSize(ltwH,ltwH));
+
+	mFontSizeHandler.registerFontSize(ui.lobbyTreeWidget);
 }
 
 ChatLobbyWidget::~ChatLobbyWidget()
