@@ -7,6 +7,9 @@ RetroShare is a decentralized, private, secure, cross-platform, communication
 toolkit.
 RetroShare provides file sharing, chat, messages, forums, channels and more.
 
+|===============================================================================
+| Developer Documentation | image:https://deepwiki.com/badge.svg[link="https://deepwiki.com/RetroShare/RetroShare",title="Ask DeepWiki"]
+|===============================================================================
 .Build Status
 |===============================================================================
 |GNU/Linux (via Gitlab CI) | image:https://gitlab.com/RetroShare/RetroShare/badges/master/pipeline.svg[link="https://gitlab.com/RetroShare/RetroShare/-/commits/master",title="pipeline status"]
