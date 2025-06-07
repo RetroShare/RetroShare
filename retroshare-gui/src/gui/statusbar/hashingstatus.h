@@ -39,7 +39,6 @@ public:
 	void mousePressEvent(QMouseEvent *);
 
 private:
-	void updateHashingInfo(const QString& s);
     void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
     ElidedLabel *statusHashing;

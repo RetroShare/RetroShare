@@ -62,15 +62,15 @@ class NotifyQt: public QObject, public NotifyClient
 
 		virtual void notifyListPreChange(int list, int type);
 		virtual void notifyListChange(int list, int type);
-		virtual void notifyErrorMsg(int list, int sev, std::string msg);
+//		virtual void notifyErrorMsg(int list, int sev, std::string msg);
 		virtual void notifyChatMessage(const ChatMessage&        /* msg */);
 		virtual void notifyChatStatus(const ChatId &chat_id,const std::string& status_string);
 		virtual void notifyChatCleared(const ChatId &chat_id);
 		virtual void notifyCustomState(const std::string& peer_id, const std::string& status_string);
-#ifdef TO_REMOVE
-		virtual void notifyTurtleSearchResult(const RsPeerId &pid, uint32_t search_id, const std::list<TurtleFileInfo>& found_files);
-#endif
-		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleGxsInfo>& found_groups);
+//#ifdef TO_REMOVE
+//		virtual void notifyTurtleSearchResult(const RsPeerId &pid, uint32_t search_id, const std::list<TurtleFileInfo>& found_files);
+//#endif
+//		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleGxsInfo>& found_groups);
 		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
 		virtual void notifyOwnAvatarChanged() ;
         virtual void notifyChatLobbyEvent(uint64_t /* lobby id */, uint32_t /* event type */, const RsGxsId & /*nickname*/, const std::string& /* any string */) ;
@@ -107,7 +107,7 @@ class NotifyQt: public QObject, public NotifyClient
 		void hashingInfoChanged(const QString&) const ;
 		void filesPreModChanged(bool) const ;
 		void filesPostModChanged(bool) const ;
-		void transfersChanged() const ;
+//		void transfersChanged() const ;
 		void friendsChanged() const ;
 		void lobbyListChanged() const ;
         void chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&) ;
@@ -130,7 +130,7 @@ class NotifyQt: public QObject, public NotifyClient
 		void discInfoChanged() const ;
 		void historyChanged(uint msgId, int type);
 		void chatLobbyInviteReceived() ;
-		void deferredSignatureHandlingRequested() ;
+//		void deferredSignatureHandlingRequested() ;
 		void chatLobbyTimeShift(int time_shift) ;
 		void connectionWithoutCert();
 

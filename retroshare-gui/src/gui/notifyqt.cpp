@@ -109,15 +109,15 @@ NotifyQt::NotifyQt() : cDialog(NULL)
     qRegisterMetaType<RsGxsId>("RsGxsId");
 }
 
-void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-	emit errorOccurred(list,type,QString::fromUtf8(msg.c_str())) ;
-}
+//void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
+//{
+//	{
+//		QMutexLocker m(&_mutex) ;
+//		if(!_enabled)
+//			return ;
+//	}
+//	emit errorOccurred(list,type,QString::fromUtf8(msg.c_str())) ;
+//}
 
 void NotifyQt::notifyChatMessage(const ChatMessage &msg)
 {
@@ -477,10 +477,10 @@ void NotifyQt::notifyChatCleared(const ChatId& chat_id)
 	emit chatCleared(chat_id);
 }
 
-void NotifyQt::notifyTurtleSearchResult(uint32_t /*search_id*/,const std::list<TurtleGxsInfo>& /*found_groups*/)
-{
-    std::cerr << "(EE) missing code to handle GXS turtle search result." << std::endl;
-}
+//void NotifyQt::notifyTurtleSearchResult(uint32_t /*search_id*/,const std::list<TurtleGxsInfo>& /*found_groups*/)
+//{
+//    std::cerr << "(EE) missing code to handle GXS turtle search result." << std::endl;
+//}
 
 #ifdef TO_REMOVE
 // Mai 2023: distant turtle search now uses RsEvents.
@@ -564,16 +564,6 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit filesPostModChanged(false) ;  /* Local */
 			break;
-		case NOTIFY_LIST_SEARCHLIST:
-			break;
-		case NOTIFY_LIST_CHANNELLIST:
-			break;
-		case NOTIFY_LIST_TRANSFERLIST:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received transfer changed" << std::endl ;
-#endif
-			emit transfersChanged() ;
-			break;
 		case NOTIFY_LIST_CONFIG:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received config changed" << std::endl ;
@@ -582,6 +572,17 @@ void NotifyQt::notifyListChange(int list, int type)
 			break ;
 
 #ifdef REMOVE
+        case NOTIFY_LIST_SEARCHLIST:
+            break;
+        case NOTIFY_LIST_CHANNELLIST:
+            break;
+        case NOTIFY_LIST_TRANSFERLIST:
+#ifdef NOTIFY_DEBUG
+            std::cerr << "received transfer changed" << std::endl ;
+#endif
+            emit transfersChanged() ;
+            break;
+
 		case NOTIFY_LIST_FORUMLIST_LOCKED:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received forum msg changed" << std::endl ;
