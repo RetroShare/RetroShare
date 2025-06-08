@@ -63,7 +63,8 @@ private slots:
 	void addFriend();
 	void webMail();
 	void openWebHelp() ;
-    void recommendFriends();
+	void recommendFriends();
+	void updateHomeLogo();
 
 private:
 	Ui::HomePage *ui;

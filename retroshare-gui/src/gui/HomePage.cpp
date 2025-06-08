@@ -27,11 +27,13 @@
 #include "util/misc.h"
 
 #include "gui/notifyqt.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/connect/ConfCertDialog.h"
 #include <gui/QuickStartWizard.h>
 #include "gui/connect/FriendRecommendDialog.h"
+#include "settings/rsharesettings.h"
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 #include <QUrlQuery>
@@ -135,6 +137,8 @@ HomePage::HomePage(QWidget *parent) :
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId, RsEventType::NETWORK );
 
     updateOwnCert();
+
+    updateHomeLogo();
 }
 
 void HomePage::handleEvent(std::shared_ptr<const RsEvent> e)
@@ -376,4 +380,12 @@ void HomePage::webMail()
 void HomePage::openWebHelp()
 {
     QDesktopServices::openUrl(QUrl(QString("https://retrosharedocs.readthedocs.io/en/latest/")));
+}
+
+void HomePage::updateHomeLogo()
+{
+	if (Settings->getSheetName() == ":Standard_Dark")
+		ui->label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":images/logo/logo_web_nobackground_black.png"));
+	else
+		ui->label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":images/logo/logo_web_nobackground.png"));
 }
