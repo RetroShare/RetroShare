@@ -199,8 +199,8 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
     mEventHandlerId_gssp=0; // forces initialization
     mEventHandlerId_pssc=0; // forces initialization
 
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_pssc, RsEventType::PEER_STATE_CHANGED );
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_peer, RsEventType::PEER_CONNECTION );
+//    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_pssc, RsEventType::PEER_STATE_CHANGED );
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_peer, RsEventType::FRIEND_LIST );
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_gssp, RsEventType::GOSSIP_DISCOVERY );
 
     connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(QString)), this, SLOT(forceUpdateDisplay()));

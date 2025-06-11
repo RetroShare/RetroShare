@@ -66,6 +66,7 @@ private:
     RsPeerId mPeerId;
 	uint32_t mType;
 	bool mIsHome;
+    RsEventsHandlerId_t mEventHandlerId ;
 };
 
 #endif

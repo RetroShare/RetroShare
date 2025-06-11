@@ -540,12 +540,14 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit neighboursChanged();
 			break;
+#ifdef TO_REMOVE
 		case NOTIFY_LIST_FRIENDS:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received friends changed" << std::endl ;
 #endif
 			emit friendsChanged() ;
 			break;
+#endif
 		case NOTIFY_LIST_DIRLIST_LOCAL:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received files changed" << std::endl ;
@@ -644,9 +646,11 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 	{
 		case NOTIFY_LIST_NEIGHBOURS:
 			break;
+#ifdef TO_REMOVE
 		case NOTIFY_LIST_FRIENDS:
 			emit friendsChanged() ;
 			break;
+#endif
 		case NOTIFY_LIST_DIRLIST_FRIENDS:
 			emit filesPreModChanged(false) ;	/* remote */
 			break ;

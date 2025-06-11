@@ -67,6 +67,8 @@ private:
 	std::string mIP;
 	uint32_t mType;
 	bool mIsHome;
+
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif

@@ -1045,12 +1045,9 @@ unfinishedtranslations {
 }
 
 messenger {
-     SOURCES +=       gui/MessengerWindow.cpp \
-	 				  gui/common/FriendList.cpp
-     HEADERS +=       gui/MessengerWindow.h \
-	 				  gui/common/FriendList.h 
-     FORMS   +=       gui/MessengerWindow.ui \
-	 				  gui/common/FriendList.ui
+     SOURCES +=       gui/MessengerWindow.cpp 
+     HEADERS +=       gui/MessengerWindow.h 
+     FORMS   +=       gui/MessengerWindow.ui 
 
 	 DEFiNES += MESSENGER_WINDOW
 }

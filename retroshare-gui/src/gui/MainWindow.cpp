@@ -30,9 +30,10 @@
 #include <QtDebug>
 #include <QMenuBar>
 
-#include <retroshare/rsplugin.h>
-#include <retroshare/rsconfig.h>
-#include <util/argstream.h>
+#include "retroshare/rsplugin.h"
+#include "retroshare/rsconfig.h"
+#include "util/argstream.h"
+#include "util/qtthreadsutils.h"
 
 #if defined(Q_OS_DARWIN)
 #include "gui/common/MacDockIconHandler.h"
@@ -340,10 +341,27 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     createNotifyIcons();
 
-    /* calculate friend count */
+    /* intialize friend count */
     updateFriends();
-    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateFriends()));
-    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateFriends()));
+
+//    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateFriends()));
+//    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateFriends()));
+
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+
+            if(!fe)
+                return;
+
+            updateFriends();
+        }
+        , this );
+    }, mEventHandlerId, RsEventType::FRIEND_LIST );
 
     loadOwnStatus();
 

@@ -134,7 +134,7 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
         RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }) ;}, mEventHandlerId_identities, RsEventType::GXS_IDENTITY );
     mEventHandlerId_peers = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) {
-        RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }) ;}, mEventHandlerId_peers, RsEventType::PEER_CONNECTION );
+        RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }) ;}, mEventHandlerId_peers, RsEventType::FRIEND_LIST );
 
     mFontSizeHandler.registerFontSize(ui->friendList);
 }
@@ -149,13 +149,13 @@ void FriendSelectionWidget::handleEvent_main_thread(std::shared_ptr<const RsEven
         update(); // Qt flush
         return;
     }
-    const RsConnectionEvent *fp = dynamic_cast<const RsConnectionEvent*>(event.get());
+    const RsFriendListEvent *fp = dynamic_cast<const RsFriendListEvent*>(event.get());
 
     if(fp)
-        switch(fp->mConnectionInfoCode)
+        switch(fp->mEventCode)
         {
-        case RsConnectionEventCode::PEER_REMOVED:
-        case RsConnectionEventCode::PEER_ADDED:
+        case RsFriendListEventCode::NODE_REMOVED:
+        case RsFriendListEventCode::NODE_ADDED:
             updateDisplay(true);
             update(); // Qt flush
             break;

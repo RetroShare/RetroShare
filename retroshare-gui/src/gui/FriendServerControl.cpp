@@ -118,7 +118,7 @@ FriendServerControl::FriendServerControl(QWidget *parent)
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
     {
         RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
-    }, mEventHandlerId_peer, RsEventType::PEER_CONNECTION );
+    }, mEventHandlerId_peer, RsEventType::PEER_STATE );
 }
 
 void FriendServerControl::onAutoAddFriends(bool b)

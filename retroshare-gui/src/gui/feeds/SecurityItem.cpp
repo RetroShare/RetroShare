@@ -33,6 +33,7 @@
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/common/AvatarDefs.h"
 #include "util/DateTime.h"
+#include "util/qtthreadsutils.h"
 
 #include "gui/notifyqt.h"
 
@@ -72,7 +73,23 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 	connect( peerDetailsButton, SIGNAL(clicked()), this, SLOT(peerDetails()));
 	connect( friendRequesttoolButton, SIGNAL(clicked()), this, SLOT(friendRequest()));
 
-	connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
+    //connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
+
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+
+            if(!fe)
+                return;
+
+            updateItem();
+        }
+        , this );
+    }, mEventHandlerId, RsEventType::FRIEND_LIST );
 
     avatar->setId(ChatId(mSslId));
 

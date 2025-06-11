@@ -108,7 +108,7 @@ class NotifyQt: public QObject, public NotifyClient
 		void filesPreModChanged(bool) const ;
 		void filesPostModChanged(bool) const ;
 //		void transfersChanged() const ;
-		void friendsChanged() const ;
+//		void friendsChanged() const ;
 		void lobbyListChanged() const ;
         void chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&) ;
 		void neighboursChanged() const ;

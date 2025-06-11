@@ -25,6 +25,8 @@
 #include <QSystemTrayIcon>
 #include <set>
 
+#include "retroshare/rsevents.h"
+
 #include "gui/common/rwindow.h"
 #include "gui/common/RSComboBox.h"
 #include "util/FontSizeHandler.h"
@@ -375,6 +377,8 @@ private:
     FontSizeHandler mFontSizeHandler;
 
 	 Ui::MainWindow *ui ;
+
+     RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif
