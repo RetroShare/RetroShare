@@ -53,7 +53,7 @@ class ServerPage: public ConfigPage, public autoProxyCallback
 
 public:
     ServerPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
-    ~ServerPage() {}
+    ~ServerPage() ;
 
     /** Loads the settings for this page */
     virtual void load();

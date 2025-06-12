@@ -99,6 +99,10 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 	updateItem();
 }
 
+SecurityItem::~SecurityItem()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
 uint64_t SecurityItem::uniqueIdentifier() const
 {
     return hash_64bits("SecurityItem " + QString::number(mType).toStdString() + " " + mSslId.toStdString());

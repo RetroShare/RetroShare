@@ -85,7 +85,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     , manager(NULL), mOngoingConnectivityCheck(-1)
     , mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
     , mSamAccessible(false)
-    , mEventHandlerId(0)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -262,10 +261,15 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	if (ui.tabWidget->currentIndex() == TAB_HIDDEN_SERVICE)
 		updateOutProxyIndicator();
 
+    mEventHandlerId = 0;
 	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId, RsEventType::NETWORK );
 
 }
 
+ServerPage::~ServerPage()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
 void ServerPage::handleEvent(std::shared_ptr<const RsEvent> e)
 {
 	if(e->mType != RsEventType::NETWORK)

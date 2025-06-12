@@ -618,13 +618,14 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit lobbyListChanged();
 			break;
-
+#ifdef TO_REMOVE
 		case NOTIFY_LIST_GROUPLIST:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received groups changed" << std::endl ;
 #endif
 			emit groupsChanged(type);
 			break;
+#endif
 		default:
 			break;
 	}

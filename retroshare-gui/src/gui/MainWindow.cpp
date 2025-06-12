@@ -390,6 +390,8 @@ MainWindow::~MainWindow()
     Settings->setValueToGroup("MainWindow", "SplitterState", ui->splitter->saveState());
     Settings->setValueToGroup("MainWindow", "State", saveState());
 
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+
     delete statusComboBox;
     delete peerstatus;
     delete natstatus;

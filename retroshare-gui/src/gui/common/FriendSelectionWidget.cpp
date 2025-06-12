@@ -101,8 +101,8 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 	connect(ui->friendList, SIGNAL(itemSelectionChanged()), this, SIGNAL(itemSelectionChanged()));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
 
-	connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged(int)));
-	connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&,int)), this, SLOT(peerStatusChanged(const QString&,int)));
+    //connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged(int)));
+    //connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&,int)), this, SLOT(peerStatusChanged(const QString&,int)));
 
 	mCompareRole = new RSTreeWidgetItemCompareRole;
 	mActionSortByState = new QAction(tr("Sort by state"), this);
@@ -159,7 +159,21 @@ void FriendSelectionWidget::handleEvent_main_thread(std::shared_ptr<const RsEven
             updateDisplay(true);
             update(); // Qt flush
             break;
-        default: break ;
+        case RsFriendListEventCode::GROUP_ADDED:
+        case RsFriendListEventCode::GROUP_REMOVED:
+        case RsFriendListEventCode::GROUP_CHANGED:
+            groupsChanged();
+            break;
+
+        case RsFriendListEventCode::NODE_STATUS_CHANGED:
+        {
+            StatusInfo i;
+            rsStatus->getStatus(fp->mSslId,i);
+
+            peerStatusChanged(fp->mSslId,i.status);
+        }
+        default:
+            break ;
         }
 }
 
@@ -770,21 +784,18 @@ template<> inline void FriendSelectionWidget::setSelectedIds<RsGxsId,FriendSelec
     loadIdentities();
 }
 
-void FriendSelectionWidget::groupsChanged(int /*type*/)
+void FriendSelectionWidget::groupsChanged()
 {
 	if (mShowTypes & SHOW_GROUP) {
 		fillList();
 	}
 }
 
-void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
+void FriendSelectionWidget::peerStatusChanged(const RsPeerId& peerid, int status)
 {
 	if(!isVisible())
 		return ;
-	if(RsAutoUpdatePage::eventsLocked())
-		return ;
 
-    RsPeerId peerid(peerId.toStdString()) ;
 	QString gpgId;
 	int gpgStatus = RS_STATUS_OFFLINE;
 
@@ -850,7 +861,8 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 			break;
 		case IDTYPE_SSL:
 			{
-				if (item->data(COLUMN_DATA, ROLE_ID).toString() == peerId) {
+                if (RsPeerId(item->data(COLUMN_DATA, ROLE_ID).toString().toStdString()) == peerid)
+                {
 					if (status != (int) RS_STATUS_OFFLINE) {
 						item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 					} else {

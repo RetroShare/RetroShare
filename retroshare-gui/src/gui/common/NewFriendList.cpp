@@ -195,9 +195,9 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
     ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();
 
+//    mEventHandlerId_pssc=0; // forces initialization
     mEventHandlerId_peer=0; // forces initialization
     mEventHandlerId_gssp=0; // forces initialization
-    mEventHandlerId_pssc=0; // forces initialization
 
 //    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_pssc, RsEventType::PEER_STATE_CHANGED );
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_peer, RsEventType::FRIEND_LIST );
@@ -293,7 +293,7 @@ NewFriendList::~NewFriendList()
 {
     rsEvents->unregisterEventsHandler(mEventHandlerId_peer);
     rsEvents->unregisterEventsHandler(mEventHandlerId_gssp);
-    rsEvents->unregisterEventsHandler(mEventHandlerId_pssc);
+//    rsEvents->unregisterEventsHandler(mEventHandlerId_pssc);
 
     delete mModel;
     delete mProxyModel;

@@ -38,6 +38,7 @@
 #include "gui/notifyqt.h"
 #include "util/QtVersion.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 #include "gui/common/FilesDefs.h"
 
 /* Images for context menu icons */
@@ -73,7 +74,23 @@ ShareManager::ShareManager()
     connect(ui.shareddirList, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(doubleClickedCell(int,int)));
     connect(ui.shareddirList, SIGNAL(cellChanged(int,int)), this, SLOT(handleCellChange(int,int)));
 
-    connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(reload()));
+    // connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(reload()));
+
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+
+            if(!fe)
+                return;
+
+            reload();
+        }
+        , this );
+    }, mEventHandlerId, RsEventType::FRIEND_LIST );
 
     QHeaderView* header = ui.shareddirList->horizontalHeader();
     QHeaderView_setSectionResizeModeColumn(header, COLUMN_PATH, QHeaderView::Stretch);
@@ -152,6 +169,7 @@ ShareManager::~ShareManager()
 {
     _instance = NULL;
 
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
     Settings->saveWidgetInformation(this);
 }
 

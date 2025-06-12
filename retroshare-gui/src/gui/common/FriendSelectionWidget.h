@@ -137,8 +137,7 @@ public slots:
     void filterConnected(bool filter);
 
 private slots:
-	void groupsChanged(int type);
-	void peerStatusChanged(const QString& peerId, int status);
+    void peerStatusChanged(const RsPeerId &peerid, int status);
 	void filterItems(const QString &text);
 	void contextMenuRequested(const QPoint &pos);
 	void itemDoubleClicked(QTreeWidgetItem *item, int column);
@@ -147,7 +146,8 @@ private slots:
 	void deselectAll() ;
 
 private:
-	void fillList();
+    void groupsChanged();
+    void fillList();
 	void secured_fillList();
 
     void selectedIds_internal(IdType idType, std::set<std::string> &ids, bool onlyDirectSelected);

@@ -85,6 +85,10 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
     updateItem();
 }
 
+PeerItem::~PeerItem()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
 uint64_t PeerItem::uniqueIdentifier() const
 {
     return hash_64bits("PeerItem " + mPeerId.toStdString() + " " + QString::number(mType).toStdString()) ;

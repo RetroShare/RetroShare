@@ -126,7 +126,7 @@ class NotifyQt: public QObject, public NotifyClient
 		void peerStatusChangedSummary() const;
         void gxsChange(const RsGxsChanges& /* changes  */);
         void chatMessageReceived(ChatMessage msg);
-		void groupsChanged(int type) const ;
+//		void groupsChanged(int type) const ;
 		void discInfoChanged() const ;
 		void historyChanged(uint msgId, int type);
 		void chatLobbyInviteReceived() ;
