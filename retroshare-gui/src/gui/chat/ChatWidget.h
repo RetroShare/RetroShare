@@ -31,6 +31,7 @@
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsfiles.h>
+#include <retroshare/rsstatus.h>
 
 #include <QCompleter>
 #include <QTextCharFormat>
@@ -62,7 +63,7 @@ public:
 
 	// status comes from notifyPeerStatusChanged
 	// see rststaus.h for possible values
-	virtual void updateStatus(int /*status*/) {}
+    virtual void updateStatus(RsStatusValue /*status*/) {}
 
 protected:
 	ChatWidget *mChatWidget;
@@ -105,7 +106,7 @@ public:
 	void addToolsAction(QAction *action);
 
 	QString getTitle() { return title; }
-	int getPeerStatus() { return peerStatus; }
+    RsStatusValue getPeerStatus() { return peerStatus; }
 	void setName(const QString &name);
 
 	bool setStyle();
@@ -130,7 +131,7 @@ public:
 	const QList<ChatWidgetHolder*> &chatWidgetHolderList() { return mChatWidgetHolder; }
 
 public slots:
-	void updateStatus(const QString &peer_id, int status);
+    void updateStatus(const QString &peer_id, RsStatusValue status);
 	void setUseCMark(const bool bUseCMark);
 	void updateCMPreview();
 
@@ -144,7 +145,7 @@ private slots:
 signals:
 	void infoChanged(ChatWidget*);
 	void newMessage(ChatWidget*);
-	void statusChanged(int);
+    void statusChanged(RsStatusValue);
 	void textBrowserAskContextMenu(QMenu* contextMnu, QString anchorForPosition, const QPoint point);
 
 protected:
@@ -229,7 +230,7 @@ private:
 
 	bool newMessages;
 	bool typing;
-	int peerStatus;
+    RsStatusValue peerStatus;
 
 	bool sendingBlocked;
 	bool useCMark;
@@ -272,6 +273,8 @@ private:
 	ChatLobbyUserNotify* notify;
 
 	Ui::ChatWidget *ui;
+
+    RsEventsHandlerId_t mEventHandlerId ;
 };
 
 #endif // CHATWIDGET_H

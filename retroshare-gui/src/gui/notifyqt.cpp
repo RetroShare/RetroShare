@@ -333,6 +333,7 @@ void NotifyQt::notifyDiskFull(uint32_t loc,uint32_t size_in_mb)
 	emit diskFull(loc,size_in_mb) ;
 }
 
+#ifdef TO_REMOVE
 /* peer has changed the state */
 void NotifyQt::notifyPeerStatusChanged(const std::string& peer_id, uint32_t state)
 {
@@ -364,6 +365,7 @@ void NotifyQt::notifyPeerStatusChangedSummary()
 
 	emit peerStatusChangedSummary();
 }
+#endif
 
 void NotifyQt::notifyOwnStatusMessageChanged()
 {

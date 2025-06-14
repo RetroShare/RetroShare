@@ -23,6 +23,8 @@
 #ifndef CHATDIALOG_H
 #define CHATDIALOG_H
 
+#include "retroshare/rsstatus.h"
+
 #include <QWidget>
 #include <retroshare/rsmsgs.h>
 
@@ -58,8 +60,8 @@ public:
 	bool setStyle();
 	const RSStyle *getStyle();
 
-	int getPeerStatus();
-	void setPeerStatus(uint32_t state);
+    RsStatusValue getPeerStatus();
+    void setPeerStatus(RsStatusValue state);
 
 	void focusDialog();
 

@@ -25,6 +25,7 @@
 #include <QDialog>
 
 #include "retroshare/rsevents.h"
+#include "retroshare/rsstatus.h"
 #include <gui/gxs/RsGxsUpdateBroadcastPage.h>
 #include "util/FontSizeHandler.h"
 
@@ -137,7 +138,7 @@ public slots:
     void filterConnected(bool filter);
 
 private slots:
-    void peerStatusChanged(const RsPeerId &peerid, int status);
+    void peerStatusChanged(const RsPeerId &peerid, RsStatusValue status);
 	void filterItems(const QString &text);
 	void contextMenuRequested(const QPoint &pos);
 	void itemDoubleClicked(QTreeWidgetItem *item, int column);

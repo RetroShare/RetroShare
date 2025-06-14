@@ -26,6 +26,7 @@
 #include <set>
 
 #include "retroshare/rsevents.h"
+#include "retroshare/rsstatus.h"
 
 #include "gui/common/rwindow.h"
 #include "gui/common/RSComboBox.h"
@@ -185,7 +186,7 @@ public:
     /* initialize widget with status informations, status constant stored in data or in Qt::UserRole */
     void initializeStatusObject(QObject *pObject, bool bConnect);
     void removeStatusObject(QObject *pObject);
-    void setStatus(QObject *pObject, int nStatus);
+    void setStatus(QObject *pObject, RsStatusValue nStatus);
 
     RSComboBox *statusComboBoxInstance();
     PeerStatus *peerstatusInstance();

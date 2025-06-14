@@ -65,6 +65,7 @@
 #include "util/misc.h"
 #include "util/DateTime.h"
 #include "util/HandleRichText.h"
+#include "util/qtthreadsutils.h"
 #include "util/QtVersion.h"
 #include "textformat.h"
 #include "TagsMenu.h"
@@ -214,7 +215,21 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     connect(ui.addBccButton, SIGNAL(clicked()), this, SLOT(addBcc()));
     connect(ui.addRecommendButton, SIGNAL(clicked()), this, SLOT(addRecommend()));
 
-    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(peerStatusChanged(QString,int)));
+    //connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(peerStatusChanged(QString,int)));
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=](){
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+
+            if(!fe || fe->mEventCode != RsFriendListEventCode::NODE_STATUS_CHANGED)
+                return;
+
+            peerStatusChanged(QString::fromStdString(fe->mSslId.toStdString()),fe->mStatus);
+
+        }, this );
+    },mEventHandlerId,RsEventType::FRIEND_LIST);
+
     connect(ui.friendSelectionWidget, SIGNAL(contentChanged()), this, SLOT(buildCompleter()));
     connect(ui.friendSelectionWidget, SIGNAL(doubleClicked(int,QString)), this, SLOT(addTo()));
     connect(ui.friendSelectionWidget, SIGNAL(itemSelectionChanged()), this, SLOT(friendSelectionChanged()));
@@ -420,6 +435,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 
 MessageComposer::~MessageComposer()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
     delete(m_compareRole);
 }
 
@@ -811,7 +827,7 @@ void MessageComposer::buildCompleter()
     setNewCompleter(ui.recipientWidget, m_completer);
 }
 
-void MessageComposer::peerStatusChanged(const QString& peer_id, int status)
+void MessageComposer::peerStatusChanged(const QString& peer_id, RsStatusValue status)
 {
     int rowCount = ui.recipientWidget->rowCount();
     int row;

@@ -24,118 +24,124 @@
 
 #include "StatusDefs.h"
 
-QString StatusDefs::name(unsigned int status)
+QString StatusDefs::name(RsStatusValue status)
 {
 	switch (status) {
-	case RS_STATUS_OFFLINE:
+    default:
+    case RsStatusValue::RS_STATUS_OFFLINE:
 		return qApp->translate("StatusDefs", "Offline");
-	case RS_STATUS_AWAY:
+    case RsStatusValue::RS_STATUS_AWAY:
 		return qApp->translate("StatusDefs", "Away");
-	case RS_STATUS_BUSY:
+    case RsStatusValue::RS_STATUS_BUSY:
 		return qApp->translate("StatusDefs", "Busy");
-	case RS_STATUS_ONLINE:
+    case RsStatusValue::RS_STATUS_ONLINE:
 		return qApp->translate("StatusDefs", "Online");
-	case RS_STATUS_INACTIVE:
+    case RsStatusValue::RS_STATUS_INACTIVE:
 		return qApp->translate("StatusDefs", "Idle");
 	}
 
-	std::cerr << "StatusDefs::name: Unknown status requested " << status;
+    RsErr() << "StatusDefs::name: Unknown status requested " << (int)status;
 	return "";
 }
 
-const char *StatusDefs::imageIM(unsigned int status)
+const char *StatusDefs::imageIM(RsStatusValue status)
 {
 	switch (status) {
-	case RS_STATUS_OFFLINE:
+    default:
+    case RsStatusValue::RS_STATUS_OFFLINE:
 		return ":/images/im-user-offline.png";
-	case RS_STATUS_AWAY:
+    case RsStatusValue::RS_STATUS_AWAY:
 		return ":/images/im-user-away.png";
-	case RS_STATUS_BUSY:
+    case RsStatusValue::RS_STATUS_BUSY:
 		return ":/images/im-user-busy.png";
-	case RS_STATUS_ONLINE:
+    case RsStatusValue::RS_STATUS_ONLINE:
 		return ":/images/im-user.png";
-	case RS_STATUS_INACTIVE:
+    case RsStatusValue::RS_STATUS_INACTIVE:
 		return ":/images/im-user-inactive.png";
 	}
 
-	std::cerr << "StatusDefs::imageIM: Unknown status requested " << status;
+    RsErr() << "StatusDefs::imageIM: Unknown status requested " << (int)status;
 	return "";
 }
 
-const char *StatusDefs::imageUser(unsigned int status)
+const char *StatusDefs::imageUser(RsStatusValue status)
 {
 	switch (status) {
-	case RS_STATUS_OFFLINE:
+    default:
+    case RsStatusValue::RS_STATUS_OFFLINE:
 		return ":/images/user/identityoffline24.png";
-	case RS_STATUS_AWAY:
+    case RsStatusValue::RS_STATUS_AWAY:
 		return ":/images/user/identity24away.png";
-	case RS_STATUS_BUSY:
+    case RsStatusValue::RS_STATUS_BUSY:
 		return ":/images/user/identity24busy.png";
-	case RS_STATUS_ONLINE:
+    case RsStatusValue::RS_STATUS_ONLINE:
 		return ":/images/user/identity24.png";
-	case RS_STATUS_INACTIVE:
+    case RsStatusValue::RS_STATUS_INACTIVE:
 		return ":/images/user/identity24idle.png";
 	}
 
-	std::cerr << "StatusDefs::imageUser: Unknown status requested " << status;
+    RsErr() << "StatusDefs::imageUser: Unknown status requested " << (int)status;
 	return "";
 }
 
-const char *StatusDefs::imageStatus(unsigned int status)
+const char *StatusDefs::imageStatus(RsStatusValue status)
 {
 	switch (status) {
-	case RS_STATUS_OFFLINE:
+    default:
+    case RsStatusValue::RS_STATUS_OFFLINE:
 		return ":/icons/user-offline_64.png";
-	case RS_STATUS_AWAY:
+    case RsStatusValue::RS_STATUS_AWAY:
 		return ":/icons/user-away_64.png";
-	case RS_STATUS_BUSY:
+    case RsStatusValue::RS_STATUS_BUSY:
 		return ":/icons/user-busy_64.png";
-	case RS_STATUS_ONLINE:
+    case RsStatusValue::RS_STATUS_ONLINE:
 		return ":/icons/user-online_64.png";
-	case RS_STATUS_INACTIVE:
+    case RsStatusValue::RS_STATUS_INACTIVE:
 		return ":/icons/user-away-extended_64.png";
 	}
 
-	std::cerr << "StatusDefs::imageUser: Unknown status requested " << status;
+    RsErr() << "StatusDefs::imageUser: Unknown status requested " << (int)status;
 	return "";
 }
 
-QString StatusDefs::tooltip(unsigned int status)
+QString StatusDefs::tooltip(RsStatusValue status)
 {
 	switch (status) {
-	case RS_STATUS_OFFLINE:
+    default:
+    case RsStatusValue::RS_STATUS_OFFLINE:
 		return qApp->translate("StatusDefs", "Friend is offline");
-	case RS_STATUS_AWAY:
+    case RsStatusValue::RS_STATUS_AWAY:
 		return qApp->translate("StatusDefs", "Friend is away");
-	case RS_STATUS_BUSY:
+    case RsStatusValue::RS_STATUS_BUSY:
 		return qApp->translate("StatusDefs", "Friend is busy");
-	case RS_STATUS_ONLINE:
+    case RsStatusValue::RS_STATUS_ONLINE:
 		return qApp->translate("StatusDefs", "Friend is online");
-	case RS_STATUS_INACTIVE:
+    case RsStatusValue::RS_STATUS_INACTIVE:
 		return qApp->translate("StatusDefs", "Friend is idle");
 	}
 
-	std::cerr << "StatusDefs::tooltip: Unknown status requested " << status;
+    RsErr() << "StatusDefs::tooltip: Unknown status requested " << (int)status;
 	return "";
 }
 
-QFont StatusDefs::font(unsigned int status)
+QFont StatusDefs::font(RsStatusValue status)
 {
 	QFont font;
 
 	switch (status) {
-	case RS_STATUS_AWAY:
-	case RS_STATUS_BUSY:
-	case RS_STATUS_ONLINE:
-	case RS_STATUS_INACTIVE:
+    default:
+    case RsStatusValue::RS_STATUS_AWAY:
+    case RsStatusValue::RS_STATUS_BUSY:
+    case RsStatusValue::RS_STATUS_ONLINE:
+    case RsStatusValue::RS_STATUS_INACTIVE:
 		font.setBold(true);
 		return font;
-	case RS_STATUS_OFFLINE:
+    case RsStatusValue::RS_STATUS_OFFLINE:
 		font.setBold(false);
 		return font;
 	}
 
-	std::cerr << "StatusDefs::font: Unknown status requested " << status;
+    RsErr() << "StatusDefs::font: Unknown status requested " << (int)status;
 	return font;
 }
 

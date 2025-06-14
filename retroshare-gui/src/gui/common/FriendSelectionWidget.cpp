@@ -255,7 +255,7 @@ static void initSslItem(QTreeWidgetItem *item, const RsPeerDetails &detail, cons
 	QString name = PeerDefs::nameWithLocation(detail);
 	item->setText(COLUMN_NAME, name);
 
-	int state = RS_STATUS_OFFLINE;
+    RsStatusValue state = RsStatusValue::RS_STATUS_OFFLINE;
 	if (detail.state & RS_PEER_STATE_CONNECTED) {
 		std::list<StatusInfo>::const_iterator it;
 		for (it = statusInfo.begin(); it != statusInfo.end() ; ++it) {
@@ -266,7 +266,7 @@ static void initSslItem(QTreeWidgetItem *item, const RsPeerDetails &detail, cons
 		}
 	}
 
-	if (state != (int) RS_STATUS_OFFLINE) {
+    if (state != RsStatusValue::RS_STATUS_OFFLINE) {
 		item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline);
 	}
 
@@ -276,7 +276,7 @@ static void initSslItem(QTreeWidgetItem *item, const RsPeerDetails &detail, cons
 	item->setData(COLUMN_NAME, ROLE_SORT_GROUP, 1);
 	item->setData(COLUMN_NAME, ROLE_SORT_STANDARD_GROUP, 0);
 	item->setData(COLUMN_NAME, ROLE_SORT_NAME, name);
-	item->setData(COLUMN_NAME, ROLE_SORT_STATE, state);
+    item->setData(COLUMN_NAME, ROLE_SORT_STATE, (int)state);
 }
 
 void FriendSelectionWidget::fillList()
@@ -515,17 +515,17 @@ void FriendSelectionWidget::secured_fillList()
 				sslIds.clear();
 				rsPeers->getAssociatedSSLIds(*gpgIt, sslIds);
 
-				int state = RS_STATUS_OFFLINE;
+                RsStatusValue state = RsStatusValue::RS_STATUS_OFFLINE;
 				for (statusIt = statusInfo.begin(); statusIt != statusInfo.end() ; ++statusIt) {
 					if (std::find(sslIds.begin(), sslIds.end(), statusIt->id) != sslIds.end()) {
-						if (statusIt->status != RS_STATUS_OFFLINE) {
-							state = RS_STATUS_ONLINE;
+                        if (statusIt->status != RsStatusValue::RS_STATUS_OFFLINE) {
+                            state = RsStatusValue::RS_STATUS_ONLINE;
 							break;
 						}
 					}
 				}
 
-				if (state != (int) RS_STATUS_OFFLINE) {
+                if (state != RsStatusValue::RS_STATUS_OFFLINE) {
 					gpgItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 				}
 
@@ -536,7 +536,7 @@ void FriendSelectionWidget::secured_fillList()
 				gpgItem->setData(COLUMN_NAME, ROLE_SORT_GROUP, 1);
 				gpgItem->setData(COLUMN_NAME, ROLE_SORT_STANDARD_GROUP, 0);
 				gpgItem->setData(COLUMN_NAME, ROLE_SORT_NAME, name);
-				gpgItem->setData(COLUMN_NAME, ROLE_SORT_STATE, state);
+                gpgItem->setData(COLUMN_NAME, ROLE_SORT_STATE, (int)state);
 
 				if (mListModus == MODUS_CHECK) {
 					gpgItem->setCheckState(0, Qt::Unchecked);
@@ -791,13 +791,13 @@ void FriendSelectionWidget::groupsChanged()
 	}
 }
 
-void FriendSelectionWidget::peerStatusChanged(const RsPeerId& peerid, int status)
+void FriendSelectionWidget::peerStatusChanged(const RsPeerId& peerid, RsStatusValue status)
 {
 	if(!isVisible())
 		return ;
 
 	QString gpgId;
-	int gpgStatus = RS_STATUS_OFFLINE;
+    RsStatusValue gpgStatus = RsStatusValue::RS_STATUS_OFFLINE;
 
 	if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG)) {
 		/* need gpg id and online state */
@@ -806,7 +806,7 @@ void FriendSelectionWidget::peerStatusChanged(const RsPeerId& peerid, int status
         {
             gpgId = QString::fromStdString(detail.gpg_id.toStdString());
 
-			if (status == (int) RS_STATUS_OFFLINE) {
+            if (status == RsStatusValue::RS_STATUS_OFFLINE) {
 				/* try other nodes */
                 std::list<RsPeerId> sslIds;
 				rsPeers->getAssociatedSSLIds(detail.gpg_id, sslIds);
@@ -817,15 +817,15 @@ void FriendSelectionWidget::peerStatusChanged(const RsPeerId& peerid, int status
 
 				for (statusIt = statusInfo.begin(); statusIt != statusInfo.end() ; ++statusIt) {
 					if (std::find(sslIds.begin(), sslIds.end(), statusIt->id) != sslIds.end()) {
-						if (statusIt->status != RS_STATUS_OFFLINE) {
-							gpgStatus = RS_STATUS_ONLINE;
+                        if (statusIt->status != RsStatusValue::RS_STATUS_OFFLINE) {
+                            gpgStatus = RsStatusValue::RS_STATUS_ONLINE;
 							break;
 						}
 					}
 				}
 			} else {
 				/* one node is online */
-				gpgStatus = RS_STATUS_ONLINE;
+                gpgStatus = RsStatusValue::RS_STATUS_ONLINE;
 			}
 		}
 	}
@@ -845,7 +845,7 @@ void FriendSelectionWidget::peerStatusChanged(const RsPeerId& peerid, int status
 		case IDTYPE_GPG:
 			{
 				if (item->data(COLUMN_DATA, ROLE_ID).toString() == gpgId) {
-					if (status != (int) RS_STATUS_OFFLINE) {
+                    if (status != RsStatusValue::RS_STATUS_OFFLINE) {
 						item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 					} else {
 						item->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
@@ -853,7 +853,7 @@ void FriendSelectionWidget::peerStatusChanged(const RsPeerId& peerid, int status
 
                     item->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(gpgStatus)));
 
-					item->setData(COLUMN_NAME, ROLE_SORT_STATE, gpgStatus);
+                    item->setData(COLUMN_NAME, ROLE_SORT_STATE, (int)gpgStatus);
 
 					bFoundGPG = true;
 				}
@@ -863,7 +863,7 @@ void FriendSelectionWidget::peerStatusChanged(const RsPeerId& peerid, int status
 			{
                 if (RsPeerId(item->data(COLUMN_DATA, ROLE_ID).toString().toStdString()) == peerid)
                 {
-					if (status != (int) RS_STATUS_OFFLINE) {
+                    if (status != RsStatusValue::RS_STATUS_OFFLINE) {
 						item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 					} else {
 						item->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
@@ -871,7 +871,7 @@ void FriendSelectionWidget::peerStatusChanged(const RsPeerId& peerid, int status
 
                     item->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(status)));
 
-					item->setData(COLUMN_NAME, ROLE_SORT_STATE, status);
+                    item->setData(COLUMN_NAME, ROLE_SORT_STATE, (int)status);
 
 					bFoundSSL = true;
 				}
@@ -1274,7 +1274,7 @@ bool FriendSelectionWidget::isSortByState()
 
 void FriendSelectionWidget::filterConnected(bool filter)
 {
-	ui->friendList->filterMinValItems(COLUMN_NAME, filter ? RS_STATUS_AWAY : RS_STATUS_OFFLINE, ROLE_SORT_STATE);
+    ui->friendList->filterMinValItems(COLUMN_NAME, filter ? double(RsStatusValue::RS_STATUS_AWAY) : double(RsStatusValue::RS_STATUS_OFFLINE), ROLE_SORT_STATE);
 
 	mActionFilterConnected->setChecked(filter);
 
