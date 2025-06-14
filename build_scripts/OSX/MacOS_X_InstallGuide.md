@@ -55,6 +55,10 @@ Start XCode to get it updated and to able C compiler to create executables.
 
 Older MacOSX SDK is available from here: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
 
+### MacPort Installation
+
+Install MacPort following this guide: [MacPort](http://guide.macports.org/#installing.xcode)
+
 ### HOMEBREW Installation
 
 Install HomeBrew following this guide: [HomeBrew](http://brew.sh/)
