@@ -60,7 +60,7 @@ class NotifyQt: public QObject, public NotifyClient
 
 		void setNetworkDialog(NetworkDialog *c) { cDialog = c; }
 
-		virtual void notifyListPreChange(int list, int type);
+//		virtual void notifyListPreChange(int list, int type);
 		virtual void notifyListChange(int list, int type);
 //		virtual void notifyErrorMsg(int list, int sev, std::string msg);
 		virtual void notifyChatMessage(const ChatMessage&        /* msg */);
@@ -104,14 +104,14 @@ class NotifyQt: public QObject, public NotifyClient
 		// It's beneficial to send info to the GUI using signals, because signals are thread-safe
 		// as they get queued by Qt.
 		//
-		void hashingInfoChanged(const QString&) const ;
+//		void hashingInfoChanged(const QString&) const ;
 //		void filesPreModChanged(bool) const ;
-		void filesPostModChanged(bool) const ;
+//		void filesPostModChanged(bool) const ;
 //		void transfersChanged() const ;
 //		void friendsChanged() const ;
 		void lobbyListChanged() const ;
         void chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&) ;
-		void neighboursChanged() const ;
+//		void neighboursChanged() const ;
 		void configChanged() const ;
 		void logInfoChanged(const QString&) const ;
 		void chatStatusChanged(const ChatId&,const QString&) const ;

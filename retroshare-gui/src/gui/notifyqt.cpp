@@ -536,13 +536,13 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 	switch(list)
 	{
-		case NOTIFY_LIST_NEIGHBOURS:
+#ifdef TO_REMOVE
+        case NOTIFY_LIST_NEIGHBOURS:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received neighbours changed" << std::endl ;
 #endif
 			emit neighboursChanged();
 			break;
-#ifdef TO_REMOVE
 		case NOTIFY_LIST_FRIENDS:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received friends changed" << std::endl ;
@@ -634,6 +634,7 @@ void NotifyQt::notifyListChange(int list, int type)
 	return;
 }
 
+#ifdef TO_REMOVE
 void NotifyQt::notifyListPreChange(int list, int /*type*/)
 {
 	{
@@ -649,7 +650,6 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 	{
 		case NOTIFY_LIST_NEIGHBOURS:
 			break;
-#ifdef TO_REMOVE
 		case NOTIFY_LIST_FRIENDS:
 			emit friendsChanged() ;
 			break;
@@ -659,7 +659,6 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 		case NOTIFY_LIST_DIRLIST_LOCAL:
 			emit filesPreModChanged(true) ;	/* local */
 			break;
-#endif
         case NOTIFY_LIST_SEARCHLIST:
 			break;
 		case NOTIFY_LIST_CHANNELLIST:
@@ -671,6 +670,7 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 	}
 	return;
 }
+#endif
 
 void NotifyQt::enable()
 {
@@ -694,7 +694,7 @@ void NotifyQt::UpdateGUI()
 														// the gui is running, then they get updated by callbacks.
 	if(!already_updated)
 	{
-		emit neighboursChanged();
+//		emit neighboursChanged();
 		emit configChanged();
 
 		already_updated = true ;
