@@ -549,18 +549,11 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit friendsChanged() ;
 			break;
-#endif
 		case NOTIFY_LIST_DIRLIST_LOCAL:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received files changed" << std::endl ;
 #endif
 			emit filesPostModChanged(true) ;  /* Local */
-			break;
-		case NOTIFY_LIST_CHAT_LOBBY_INVITATION:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received files changed" << std::endl ;
-#endif
-			emit chatLobbyInviteReceived() ;  /* Local */
 			break;
 		case NOTIFY_LIST_DIRLIST_FRIENDS:
 #ifdef NOTIFY_DEBUG
@@ -568,7 +561,14 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit filesPostModChanged(false) ;  /* Local */
 			break;
-		case NOTIFY_LIST_CONFIG:
+#endif
+        case NOTIFY_LIST_CHAT_LOBBY_INVITATION:
+#ifdef NOTIFY_DEBUG
+            std::cerr << "received files changed" << std::endl ;
+#endif
+            emit chatLobbyInviteReceived() ;  /* Local */
+            break;
+        case NOTIFY_LIST_CONFIG:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received config changed" << std::endl ;
 #endif
@@ -653,14 +653,14 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 		case NOTIFY_LIST_FRIENDS:
 			emit friendsChanged() ;
 			break;
-#endif
 		case NOTIFY_LIST_DIRLIST_FRIENDS:
 			emit filesPreModChanged(false) ;	/* remote */
 			break ;
 		case NOTIFY_LIST_DIRLIST_LOCAL:
 			emit filesPreModChanged(true) ;	/* local */
 			break;
-		case NOTIFY_LIST_SEARCHLIST:
+#endif
+        case NOTIFY_LIST_SEARCHLIST:
 			break;
 		case NOTIFY_LIST_CHANNELLIST:
 			break;

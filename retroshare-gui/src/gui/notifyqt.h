@@ -105,7 +105,7 @@ class NotifyQt: public QObject, public NotifyClient
 		// as they get queued by Qt.
 		//
 		void hashingInfoChanged(const QString&) const ;
-		void filesPreModChanged(bool) const ;
+//		void filesPreModChanged(bool) const ;
 		void filesPostModChanged(bool) const ;
 //		void transfersChanged() const ;
 //		void friendsChanged() const ;
