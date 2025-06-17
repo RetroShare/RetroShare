@@ -36,6 +36,7 @@
 #include "msgs/MessageComposer.h"
 #include "Posted/PostedDialog.h"
 #include "util/misc.h"
+#include "settings/rsharesettings.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsgxsforums.h>
@@ -1127,14 +1128,20 @@ QString RetroShareLink::toHtml() const
 	if (!linkTitle.isEmpty()) {
 		html += " title=\"" + linkTitle + "\"";
 	}
-	html += ">" + niceName() + "</a>" ;
+	if (Settings->getSheetName() == ":Standard_Dark")
+		html +=  "style=\"color:#0099cc;\">" + niceName() + "</a>" ;
+	else
+		html += ">" + niceName() + "</a>" ;
 
 	return html;
 }
 
 QString RetroShareLink::toHtmlFull() const
 {
-	return QString("<a href=\"") + toString() + "\">" + toString() + "</a>" ;
+	if (Settings->getSheetName() == ":Standard_Dark")
+		return QString("<a href=\"") + toString() + "style=\"color:0099cc;\">" + toString() + "</a>" ;
+	else
+		return QString("<a href=\"") + toString() + "\">" + toString() + "</a>" ;
 }
 
 QString RetroShareLink::toHtmlSize() const
@@ -1153,6 +1160,7 @@ QString RetroShareLink::toHtmlSize() const
 		}
 	}
 	QString link = QString("<a href=\"%1\">%2</a> <font color=\"blue\">%3</font>").arg(toString()).arg(name()).arg(size);
+
 	return link;
 }
 
