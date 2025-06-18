@@ -184,10 +184,10 @@ void GxsCommentDialog::setCommentHeader(QWidget *header)
 	ui->dateLabel->setText(timestamp);
 	ui->fromLabel->setText(QString::fromUtf8(mCurrentPost.mMeta.mAuthorId.c_str()));
 	ui->titleLabel->setText("<a href=" + QString::fromStdString(mCurrentPost.mLink) +
-					   "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+					   "><span style=\" text-decoration: underline; color:#03b1f3;\">" +
 					   QString::fromStdString(mCurrentPost.mMeta.mMsgName) + "</span></a>");
 	ui->siteLabel->setText("<a href=" + QString::fromStdString(mCurrentPost.mLink) +
-					   "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+					   "><span style=\" text-decoration: underline; color:#03b1f3;\">" +
 					   QString::fromStdString(mCurrentPost.mLink) + "</span></a>");
 
 	ui->scoreLabel->setText(QString("0"));

@@ -1127,14 +1127,14 @@ QString RetroShareLink::toHtml() const
 	if (!linkTitle.isEmpty()) {
 		html += " title=\"" + linkTitle + "\"";
 	}
-	html += ">" + niceName() + "</a>" ;
+	html += "style=\"color:#03b1f3;\">" + niceName() + "</a>" ;
 
 	return html;
 }
 
 QString RetroShareLink::toHtmlFull() const
 {
-	return QString("<a href=\"") + toString() + "\">" + toString() + "</a>" ;
+	return QString("<a href=\"") + toString() + "style=\"color:03b1f3;\">" + toString() + "</a>" ;
 }
 
 QString RetroShareLink::toHtmlSize() const
@@ -1152,7 +1152,8 @@ QString RetroShareLink::toHtmlSize() const
 				size += QString(" [%1]").arg(misc::friendlyUnit(collection.size()));
 		}
 	}
-	QString link = QString("<a href=\"%1\">%2</a> <font color=\"blue\">%3</font>").arg(toString()).arg(name()).arg(size);
+	QString link = QString("<a href=\"%1\">%2</a> <font color=\"#03b1f3\">%3</font>").arg(toString()).arg(name()).arg(size);
+
 	return link;
 }
 
