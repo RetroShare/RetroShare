@@ -936,6 +936,10 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     RsDbg() << "Showing details about selected index : "<< index.row() << "," << index.column() ;
 #endif
 
+    QColor linkColor = QColor(3, 177, 243);
+    QString sheet = QString::fromLatin1("a { text-decoration: underline; color: %1 }").arg(linkColor.name());
+    ui->postDetails_TE->document()->setDefaultStyleSheet(sheet);
+
     ui->postDetails_TE->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
 
     QPixmap postImage;
@@ -1319,6 +1323,10 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
     }
 
     formatDescription = RsHtml().formatText(NULL, formatDescription, formatFlag);
+
+    QColor linkColor = QColor(3, 177, 243);
+    QString sheet = QString::fromLatin1("a { text-decoration: underline; color: %1 }").arg(linkColor.name());
+    ui->infoDescription->document()->setDefaultStyleSheet(sheet);
 
     ui->infoDescription->setText(formatDescription);
 

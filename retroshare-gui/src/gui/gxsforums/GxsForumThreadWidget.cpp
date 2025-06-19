@@ -1339,6 +1339,10 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
         );
     ui->postText->setHtml(extraTxt);
 
+    QColor linkColor = QColor(3, 177, 243);
+    QString sheet = QString::fromLatin1("a { text-decoration: underline; color: %1 }").arg(linkColor.name());
+    ui->postText->document()->setDefaultStyleSheet(sheet);
+
     QStringList urls;
     RsHtml::findAnchors(ui->postText->toHtml(), urls);
     ui->downloadButton->setEnabled(urls.count() > 0);

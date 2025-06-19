@@ -2311,7 +2311,7 @@ QFrame[objectName^="gradFrame"] QComboBox QAbstractItemView {
 }
 
 QLabel#avatarLabel{
-	border: 2px solid #CCCCCC;
+	border: 2px solid #03b1f3;
 	border-radius: 4px;
 }
 
