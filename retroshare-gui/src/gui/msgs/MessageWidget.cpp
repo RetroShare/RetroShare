@@ -717,7 +717,12 @@ void MessageWidget::fill(const std::string &msgId)
 	if (Settings->valueFromGroup(QString("Messages"), QString::fromUtf8("Emoticons"), true).toBool()) {
 		formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
 	}
-    QString text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), formatTextFlag);
+
+	QColor linkColor = QColor(3, 177, 243);
+	QString sheet = QString::fromLatin1("a { text-decoration: underline; color: %1 }").arg(linkColor.name());
+	ui.msgText->document()->setDefaultStyleSheet(sheet);
+
+	QString text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), formatTextFlag);
 	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
 	ui.msgText->setHtml(text);
 
