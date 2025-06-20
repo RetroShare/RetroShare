@@ -718,7 +718,7 @@ void MessageWidget::fill(const std::string &msgId)
 		formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
 	}
 
-	QColor linkColor = QColor(3, 177, 243);
+	QColor linkColor = QColor(3, 155, 198);
 	QString sheet = QString::fromLatin1("a { text-decoration: underline; color: %1 }").arg(linkColor.name());
 	ui.msgText->document()->setDefaultStyleSheet(sheet);
 

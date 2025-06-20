@@ -231,12 +231,12 @@ void PostedCardView::fill()
 		{
 			QString urlstr =  QString("<a href=\"");
 			urlstr += QString(url.toEncoded());
-			urlstr += QString("\" ><span style=\" text-decoration: underline; color:#03b1f3;\"> ");
+			urlstr += QString("\" ><span style=\" text-decoration: underline; color:#039bc6;\"> ");
 			urlstr += messageName();
 			urlstr += QString(" </span></a>");
 
 			QString siteurl = url.toEncoded();
-			sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#03b1f3;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
+			sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#039bc6;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
 			
 			ui->titleLabel->setText(urlstr);
 		}else

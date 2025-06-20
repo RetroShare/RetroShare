@@ -904,7 +904,7 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 
 	formatDescription = RsHtml().formatText(NULL, formatDescription, formatFlag);
 
-	QColor linkColor = QColor(3, 177, 243);
+	QColor linkColor = QColor(3, 155, 198);
 	QString sheet = QString::fromLatin1("a { text-decoration: underline; color: %1 }").arg(linkColor.name());
 	ui->trans_Description->document()->setDefaultStyleSheet(sheet);
 
