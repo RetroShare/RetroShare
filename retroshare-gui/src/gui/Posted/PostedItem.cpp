@@ -548,12 +548,12 @@ void PostedItem::fill()
 		{
 			urlstr =  QString("<a href=\"");
 			urlstr += QString(url.toEncoded());
-			urlstr += QString("\" ><span style=\" text-decoration: underline; color:#2255AA;\"> ");
+			urlstr += QString("\" ><span style=\" text-decoration: underline; color:#039bc6;\"> ");
 			urlstr += messageName();
 			urlstr += QString(" </span></a>");
 
 			QString siteurl = url.toEncoded();
-			sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#0079d3;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
+			sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#039bc6;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
 
 			ui->titleLabel->setText(urlstr);
 		}else
