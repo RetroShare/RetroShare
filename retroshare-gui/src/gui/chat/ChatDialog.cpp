@@ -330,7 +330,7 @@ QString ChatDialog::getOwnName() const
         return "ChatDialog::getOwnName(): invalid id type passed (RsPeerId is required). This is a bug.";
 }
 
-void ChatDialog::setPeerStatus(uint32_t status)
+void ChatDialog::setPeerStatus(RsStatusValue status)
 {
 	ChatWidget *cw = getChatWidget();
     if (cw)
@@ -346,14 +346,14 @@ void ChatDialog::setPeerStatus(uint32_t status)
         cw->updateStatus(QString::fromStdString(vpid.toStdString()), status);
     }
 }
-int ChatDialog::getPeerStatus()
+RsStatusValue ChatDialog::getPeerStatus()
 {
 	ChatWidget *cw = getChatWidget();
 	if (cw) {
 		return cw->getPeerStatus();
 	}
 
-	return 0;
+    return RsStatusValue::RS_STATUS_UNKNOWN;
 }
 
 QString ChatDialog::getTitle()
