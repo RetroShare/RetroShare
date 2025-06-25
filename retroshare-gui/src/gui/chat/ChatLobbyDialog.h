@@ -42,7 +42,7 @@ class ChatLobbyDialog: public ChatDialog
 	friend class ChatDialog;
 
 public:
-    void displayLobbyEvent(int event_type, const RsGxsId &gxs_id, const QString& str);
+    void handleLobbyEvent(RsChatStatusEventCode event_type, const RsGxsId& gxs_id, const QString& str);
 
 	virtual void showDialog(uint chatflags);
 	virtual ChatWidget *getChatWidget();

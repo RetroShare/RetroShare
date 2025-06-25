@@ -32,6 +32,7 @@
 
 #include "retroshare/rsplugin.h"
 #include "retroshare/rsconfig.h"
+#include "retroshare/rsevents.h"
 #include "util/argstream.h"
 #include "util/qtthreadsutils.h"
 
@@ -380,6 +381,29 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     settingsChanged();
 
     mFontSizeHandler.registerFontSize(ui->listWidget, 1.5f);
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){
+            auto ev = dynamic_cast<const RsSystemErrorEvent *>(event.get());
+
+            switch(ev->mEventCode)
+            {
+            case RsSystemErrorEventCode::TIME_SHIFT_PROBLEM:
+                std::cerr << "Time shift problem notification. Ignored." << std::endl;
+                break;
+
+            case RsSystemErrorEventCode::DISK_SPACE_ERROR:
+                displayDiskSpaceWarning(ev->mDiskErrorLocation,ev->mDiskErrorSizeLimit);
+
+                break;
+
+            default:
+                break;
+            }
+        }, this );
+    }, mEventHandlerId, RsEventType::SYSTEM_ERROR );
+
 }
 
 /** Destructor. */

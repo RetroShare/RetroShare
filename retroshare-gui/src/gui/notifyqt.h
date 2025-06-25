@@ -73,11 +73,11 @@ class NotifyQt: public QObject, public NotifyClient
 //		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleGxsInfo>& found_groups);
 		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
 		virtual void notifyOwnAvatarChanged() ;
-        virtual void notifyChatLobbyEvent(uint64_t /* lobby id */, uint32_t /* event type */, const RsGxsId & /*nickname*/, const std::string& /* any string */) ;
-		virtual void notifyChatLobbyTimeShift(int time_shift) ;
+//        virtual void notifyChatLobbyEvent(uint64_t /* lobby id */, uint32_t /* event type */, const RsGxsId & /*nickname*/, const std::string& /* any string */) ;
+//		virtual void notifyChatLobbyTimeShift(int time_shift) ;
 
 		virtual void notifyOwnStatusMessageChanged() ;
-		virtual void notifyDiskFull(uint32_t loc,uint32_t size_in_mb) ;
+//		virtual void notifyDiskFull(uint32_t loc,uint32_t size_in_mb) ;
 		/* peer has changed the state */
 //		virtual void notifyPeerStatusChanged(const std::string& peer_id, uint32_t state);
 		/* one or more peers has changed the states */
@@ -110,7 +110,7 @@ class NotifyQt: public QObject, public NotifyClient
 //		void transfersChanged() const ;
 //		void friendsChanged() const ;
 		void lobbyListChanged() const ;
-        void chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&) ;
+//        void chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&) ;
 //		void neighboursChanged() const ;
 		void configChanged() const ;
 		void logInfoChanged(const QString&) const ;
@@ -129,9 +129,9 @@ class NotifyQt: public QObject, public NotifyClient
 //		void groupsChanged(int type) const ;
 		void discInfoChanged() const ;
 		void historyChanged(uint msgId, int type);
-		void chatLobbyInviteReceived() ;
+//		void chatLobbyInviteReceived() ;
 //		void deferredSignatureHandlingRequested() ;
-		void chatLobbyTimeShift(int time_shift) ;
+//		void chatLobbyTimeShift(int time_shift) ;
 		void connectionWithoutCert();
 
 		/* Notify from GUI */
@@ -147,7 +147,7 @@ class NotifyQt: public QObject, public NotifyClient
 	private slots:
 		void runningTick();
 		void handleSignatureEvent() ;
-		void handleChatLobbyTimeShift(int) ;
+//		void handleChatLobbyTimeShift(int) ;
 
 	private:
 		NotifyQt();

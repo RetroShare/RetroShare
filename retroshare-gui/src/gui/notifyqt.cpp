@@ -320,6 +320,7 @@ void NotifyQt::notifyDiscInfoChanged()
 	emit discInfoChanged() ;
 }
 
+#ifdef TO_REMOVE
 void NotifyQt::notifyDiskFull(uint32_t loc,uint32_t size_in_mb)
 {
 	{
@@ -333,7 +334,6 @@ void NotifyQt::notifyDiskFull(uint32_t loc,uint32_t size_in_mb)
 	emit diskFull(loc,size_in_mb) ;
 }
 
-#ifdef TO_REMOVE
 /* peer has changed the state */
 void NotifyQt::notifyPeerStatusChanged(const std::string& peer_id, uint32_t state)
 {
@@ -408,6 +408,7 @@ void NotifyQt::notifyCustomState(const std::string& peer_id, const std::string& 
 	emit peerHasNewCustomStateString(QString::fromStdString(peer_id), QString::fromUtf8(status_string.c_str())) ;
 }
 
+#ifdef TO_REMOVE
 void NotifyQt::notifyChatLobbyTimeShift(int shift)
 {
 	{
@@ -450,6 +451,7 @@ void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const 
 #endif
     emit chatLobbyEvent(lobby_id,event_type,nickname,QString::fromUtf8(str.c_str())) ;
 }
+#endif
 
 void NotifyQt::notifyChatStatus(const ChatId& chat_id,const std::string& status_string)
 {
@@ -561,7 +563,6 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit filesPostModChanged(false) ;  /* Local */
 			break;
-#endif
         case NOTIFY_LIST_CHAT_LOBBY_INVITATION:
 #ifdef NOTIFY_DEBUG
             std::cerr << "received files changed" << std::endl ;
@@ -575,7 +576,6 @@ void NotifyQt::notifyListChange(int list, int type)
 			emit configChanged() ;
 			break ;
 
-#ifdef REMOVE
         case NOTIFY_LIST_SEARCHLIST:
             break;
         case NOTIFY_LIST_CHANNELLIST:
