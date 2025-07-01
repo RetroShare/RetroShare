@@ -122,6 +122,8 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	
 	ui->hashGroupBox->hide();
 
+	mForumFontSizeHandler.registerFontSize(ui->forumMessage);
+
 #ifndef ENABLE_GENERATE
 	ui->generateCheckBox->hide();
 	ui->generateSpinBox->hide();

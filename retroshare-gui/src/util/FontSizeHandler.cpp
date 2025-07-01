@@ -136,6 +136,9 @@ int FontSizeHandlerBase::getFontSize()
 
 	case MESSAGE_FONT_SIZE:
 		return Settings->getMessageFontSize();
+
+	case FORUM_FONT_SIZE:
+		return Settings->getForumFontSize();
 	}
 
 	return 0;

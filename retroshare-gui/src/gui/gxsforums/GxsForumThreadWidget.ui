@@ -302,6 +302,56 @@
        </item>
        <item>
         <layout class="QGridLayout" name="postLayout">
+         <item row="0" column="9">
+          <widget class="Line" name="lineRight">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="15">
+          <widget class="QPushButton" name="expandButton">
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="14">
+          <widget class="QToolButton" name="zoomInButton">
+           <property name="toolTip">
+            <string>Zoom in</string>
+           </property>
+           <property name="text">
+            <string>+</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="11">
+          <widget class="GxsIdLabel" name="by_label">
+           <property name="text">
+            <string notr="true"/>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="1">
           <widget class="QToolButton" name="newmessageButton">
            <property name="maximumSize">
@@ -328,6 +378,13 @@
            </property>
            <property name="autoRaise">
             <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="7">
+          <widget class="QLabel" name="time_label">
+           <property name="text">
+            <string notr="true"/>
            </property>
           </widget>
          </item>
@@ -368,6 +425,42 @@
             <bool>true</bool>
            </property>
           </widget>
+         </item>
+         <item row="0" column="5">
+          <widget class="QToolButton" name="downloadButton">
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Download all files</string>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="icon">
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/png/download.png</normaloff>:/icons/png/download.png</iconset>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="6">
+          <widget class="Line" name="lineLeft">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="8">
+          <widget class="RSComboBox" name="versions_CB"/>
          </item>
          <item row="0" column="3">
           <widget class="QToolButton" name="nextButton">
@@ -433,70 +526,6 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="5">
-          <widget class="QToolButton" name="downloadButton">
-           <property name="maximumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="toolTip">
-            <string>Download all files</string>
-           </property>
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="icon">
-            <iconset resource="../icons.qrc">
-             <normaloff>:/icons/png/download.png</normaloff>:/icons/png/download.png</iconset>
-           </property>
-           <property name="autoRaise">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="6">
-          <widget class="Line" name="lineLeft">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="7">
-          <widget class="QLabel" name="time_label">
-           <property name="text">
-            <string notr="true"/>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="8">
-          <widget class="RSComboBox" name="versions_CB"/>
-         </item>
-         <item row="0" column="9">
-          <widget class="Line" name="lineRight">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="10">
-          <widget class="QLabel" name="by_text_label">
-           <property name="text">
-            <string>By </string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="11">
-          <widget class="GxsIdLabel" name="by_label">
-           <property name="text">
-            <string notr="true"/>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="12">
           <spacer name="postHSpacer">
            <property name="orientation">
@@ -510,29 +539,20 @@
            </property>
           </spacer>
          </item>
-         <item row="0" column="13">
-          <widget class="QPushButton" name="expandButton">
-           <property name="maximumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
+         <item row="0" column="10">
+          <widget class="QLabel" name="by_text_label">
+           <property name="text">
+            <string>By </string>
            </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
+          </widget>
+         </item>
+         <item row="0" column="13">
+          <widget class="QToolButton" name="zoomOutButton">
+           <property name="toolTip">
+            <string>Zoom out</string>
            </property>
            <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
+            <string>-</string>
            </property>
           </widget>
          </item>
