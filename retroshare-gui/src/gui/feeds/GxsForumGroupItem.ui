@@ -126,10 +126,10 @@
       <bool>true</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+      <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="feedFrame_VL">
       <item>
