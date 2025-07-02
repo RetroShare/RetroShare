@@ -343,6 +343,13 @@
            <property name="text">
             <string>+</string>
            </property>
+           <property name="icon">
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/zoom-in.png</normaloff>:/icons/zoom-in.png</iconset>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item row="0" column="11">
@@ -553,6 +560,13 @@
            </property>
            <property name="text">
             <string>-</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/zoom-out.png</normaloff>:/icons/zoom-out.png</iconset>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
