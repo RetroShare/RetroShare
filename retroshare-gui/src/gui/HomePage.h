@@ -51,6 +51,8 @@ public:
     void getOwnCert(QString& invite,QString& description) const;
     RetroshareInviteFlags currentInviteFlags() const ;
 
+    virtual void showEvent(QShowEvent *) ;
+
 private slots:
 #ifdef DEAD_CODE
     void certContextMenu(QPoint);
