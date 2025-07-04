@@ -141,88 +141,6 @@ QLabel#newLabel:enabled {
 }
 
 
-/* StartDialog
-   To get the same style for all user and not use last connected one. */
-
-StartDialog QFrame#loginframe{
-	border-image: url(:/images/logo/background_lessblue.png) 0 0 0 0 stretch stretch;
-	border-width: 0px;
-}
-StartDialog QFrame#loginframe QCheckBox,
-StartDialog QFrame#loginframe QLabel {
-	background: transparent;
-}
-StartDialog QGroupBox#profilGBox {
-	background: rgba(0,0,0,10%);
-	border-radius: 3px;
-	border-width: 0px;
-}
-
-StartDialog QGroupBox#profilGBox * {
-	background-color: white;
-	color: black;
-}
-
-StartDialog QPushButton#loadButton {
-	background: transparent;
-	border-image: url(:/images/btn_blue.png) 4;
-	border-width: 4;
-	color: white;
-}
-StartDialog QPushButton#loadButton:hover {
-	background: transparent;
-	border-image: url(:/images/btn_blue_hover.png) 4;
-}
-
-
-
-/* GenCertDialog
-   Change colors here because GUI is not started yet so no user StyleSheet loads */
-
-GenCertDialog QFrame#profileframe{
-	border-image: url(:/images/logo/background.png) 0 0 0 0 stretch stretch;
-	border-width: 0px;
-}
-GenCertDialog QFrame#profileframe QCheckBox,
-GenCertDialog QFrame#profileframe QLabel {
-	background: transparent;
-}
-
-GenCertDialog QLabel#info_Label:enabled {
-	color: black;
-	border: 1px solid #DCDC41;
-	border-radius: 6px;
-	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
-}
-
-GenCertDialog QGroupBox#groupBox,
-GenCertDialog QGroupBox#profile_groupBox {
-	background: rgba(0,0,0,10%);
-}
-GenCertDialog QGroupBox#profile_groupBox QComboBox,
-GenCertDialog QGroupBox#profile_groupBox QSpinBox,
-GenCertDialog QGroupBox#profile_groupBox QLineEdit,
-GenCertDialog QComboBox#genPGPuser {
-	border: 2px solid #0099cc;
-	border-radius: 6px;
-	background: white;
-	color: black;
-}
-
-GenCertDialog QPushButton#genButton {
-	border-image: url(:/images/btn_blue.png) 4;
-	border-width: 4;
-	color: white;
-}
-GenCertDialog QPushButton#genButton:hover {
-	border-image: url(:/images/btn_blue_hover.png) 4;
-}
-GenCertDialog QPushButton#genButton:disabled {
-	border-image: url(:/images/btn_27.png) 4;
-	color: black;
-}
-
-
 /* AvatarWidget */
 
 AvatarWidget{border-width: 10px;}
@@ -417,4 +335,28 @@ OpModeStatus[opMode="Minimal"] {
 
 [WrongValue="true"] {
 	background-color: #FF8080;
+}
+
+GenCertDialog QPushButton#genButton {
+	border-image: url(:/images/btn_blue.png) 4;
+	border-width: 4;
+	color: white;
+}
+GenCertDialog QPushButton#genButton:hover {
+	border-image: url(:/images/btn_blue_hover.png) 4;
+}
+GenCertDialog QPushButton#genButton:disabled {
+	border-image: url(:/images/btn_27.png) 4;
+	color: black;
+}
+
+StartDialog QPushButton#loadButton {
+	background: transparent;
+	border-image: url(:/images/btn_blue.png) 4;
+	border-width: 4;
+	color: white;
+}
+StartDialog QPushButton#loadButton:hover {
+	background: transparent;
+	border-image: url(:/images/btn_blue_hover.png) 4;
 }
