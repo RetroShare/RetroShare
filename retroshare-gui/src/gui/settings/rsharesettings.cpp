@@ -1222,6 +1222,22 @@ void RshareSettings::setMessageFontSize(int value)
 	setValueToGroup("Message", "FontSize", value);
 }
 
+int RshareSettings::getForumFontSize()
+{
+#if defined(Q_OS_DARWIN)
+	int defaultFontSize = 12;
+#else
+	int defaultFontSize = 11;
+#endif
+
+	return valueFromGroup("Forum", "FontSize", defaultFontSize).toInt();
+}
+
+void RshareSettings::setForumFontSize(int value)
+{
+	setValueToGroup("Forum", "FontSize", value);
+}
+
 #ifdef RS_JSONAPI
 bool RshareSettings::getJsonApiEnabled()
 {
