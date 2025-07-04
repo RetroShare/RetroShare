@@ -1243,6 +1243,7 @@ QComboBox {
   /* changed to 4px to fix #239 */
   /* Fixes #103, #111 */
   min-height: 1.5em;
+  min-width: 35px;
   /* padding-top: 2px;     removed to fix #132 */
   /* padding-bottom: 2px;  removed to fix #132 */
   /* min-width: 75px;      removed to fix #109 */
