@@ -464,7 +464,7 @@ void BoardsCommentsItem::fill()
 	//ui->titleLabel->setText(link.toHtml());
 
 	RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_POSTED, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
-	ui->subjectLabel->setText(msgLink.toHtml());
+	ui->subjectLabel->setText(msgLink.toHtmlColored());
 
 	mInFill = true;
 

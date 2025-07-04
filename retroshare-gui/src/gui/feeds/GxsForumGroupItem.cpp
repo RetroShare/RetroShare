@@ -181,7 +181,7 @@ void GxsForumGroupItem::fill()
 #endif
 
 	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_FORUM, mGroup.mMeta.mGroupId, groupName());
-	ui->nameLabel->setText(link.toHtml());
+	ui->nameLabel->setText(link.toHtmlColored());
 
 	ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));
 

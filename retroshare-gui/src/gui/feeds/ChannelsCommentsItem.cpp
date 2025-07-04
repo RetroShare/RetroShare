@@ -388,7 +388,7 @@ void ChannelsCommentsItem::fill(bool missing_post)
         if(missing_post)
             ui->subjectLabel->setText("[" + QObject::tr("Missing channel post")+"]");
         else
-            ui->subjectLabel->setText(msgLink.toHtml());
+            ui->subjectLabel->setText(msgLink.toHtmlColored());
 
 		ui->readButton->hide();
 

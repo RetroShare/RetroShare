@@ -107,6 +107,8 @@ signals:
 protected:
 	RsPostedPost mPost;
     uint8_t      mDisplayFlags;
+private:
+	QColor linkColor;
 };
 
 class BoardPostDisplayWidget_compact : public BoardPostDisplayWidgetBase
@@ -146,6 +148,8 @@ protected:
     void setup() override;    // to be overloaded by the different views
 
 private:
+	QColor linkColor;
+
     /** Qt Designer generated object */
     Ui::BoardPostDisplayWidget_compact *ui;
 };
