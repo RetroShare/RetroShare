@@ -21,6 +21,7 @@
 // This code is inspired from http://doc.qt.io/qt-5/qtwidgets-graphicsview-elasticnodes-edge-cpp.html
 
 #include <QPainter>
+#include "gui/settings/rsharesettings.h"
 
 #include "edge.h"
 #include "elnode.h"
@@ -103,7 +104,11 @@ void Edge::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 
     // Draw the line itself
     QLineF line(sourcePoint, destPoint);
-    painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+	if (Settings->getSheetName() == ":Standard_Dark"){
+		painter->setPen(QPen(Qt::white, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+	} else {
+		painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+	}
     painter->drawLine(line);
 
 	 return ;
@@ -146,7 +151,11 @@ void Edge::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
     QPointF destArrowP1 = destPoint + QPointF(  sin_theta_mins_pi_over_3 * arrowSize,   cos_theta_mins_pi_over_3 * arrowSize);
     QPointF destArrowP2 = destPoint + QPointF(sin_theta_mins_2_pi_over_3 * arrowSize, cos_theta_mins_2_pi_over_3 * arrowSize);
 
-    painter->setBrush(Qt::black);
+	if (Settings->getSheetName() == ":Standard_Dark"){
+		painter->setBrush(Qt::white);
+	}else {
+		painter->setBrush(Qt::black);
+	}
     painter->drawConvexPolygon(QPolygonF() << line.p1() << sourceArrowP1 << sourceArrowP2);
     painter->drawConvexPolygon(QPolygonF() << line.p2() << destArrowP1 << destArrowP2);        
 }

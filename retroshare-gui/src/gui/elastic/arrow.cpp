@@ -21,6 +21,7 @@
 // This code is inspired from http://doc.qt.io/qt-5/qtwidgets-graphicsview-diagramscene-arrow-cpp.html
 
 #include <QPainter>
+#include "gui/settings/rsharesettings.h"
 
 #include "arrow.h"
 #include "elnode.h"
@@ -121,8 +122,11 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
                                               cos(angle - Pi / 3) * arrowSize);
     QPointF destArrowP2 = destPoint + QPointF(sin(angle - Pi + Pi / 3) * arrowSize,
                                               cos(angle - Pi + Pi / 3) * arrowSize);
-
-    painter->setBrush(Qt::black);
+	if (Settings->getSheetName() == ":Standard_Dark"){
+		painter->setBrush(Qt::white);
+	} else {
+		painter->setBrush(Qt::black);
+	}
     painter->drawPolygon(QPolygonF() << line.p1() << sourceArrowP1 << sourceArrowP2);
     painter->drawPolygon(QPolygonF() << line.p2() << destArrowP1 << destArrowP2);        
 }
