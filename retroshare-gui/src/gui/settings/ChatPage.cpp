@@ -115,7 +115,8 @@ void ChatPage::updateFontsAndEmotes()
     Settings->setValue("Emoteicons_GroupChat", ui.checkBox_emotegroupchat->isChecked());
     Settings->setValue("EnableCustomFonts", ui.checkBox_enableCustomFonts->isChecked());
     Settings->setValue("EnableCustomFontSize", ui.checkBox_enableCustomFontSize->isChecked());
-	Settings->setValue("MinimumFontSize", ui.minimumFontSize->value());
+    Settings->setValue("EnableCustomFontColor", ui.checkBox_enableCustomFontColor->isChecked());
+    Settings->setValue("MinimumFontSize", ui.minimumFontSize->value());
     Settings->setValue("EnableBold", ui.checkBox_enableBold->isChecked());
     Settings->setValue("EnableItalics", ui.checkBox_enableItalics->isChecked());
     Settings->setValue("MinimumContrast", ui.minimumContrast->value());
@@ -236,6 +237,8 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.checkBox_emoteprivchat,     SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
 	connect(ui.checkBox_emotegroupchat,    SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
 	connect(ui.checkBox_enableCustomFonts, SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
+	connect(ui.checkBox_enableCustomFontSize, SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
+	connect(ui.checkBox_enableCustomFontColor, SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
 	connect(ui.minimumFontSize,            SIGNAL(valueChanged(int)),        this, SLOT(updateFontsAndEmotes()));
 	connect(ui.checkBox_enableBold,        SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
 	connect(ui.checkBox_enableItalics,     SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
@@ -386,7 +389,8 @@ ChatPage::load()
     whileBlocking(ui.checkBox_emotegroupchat)->setChecked(Settings->value("Emoteicons_GroupChat", true).toBool());
     whileBlocking(ui.checkBox_enableCustomFonts)->setChecked(Settings->value("EnableCustomFonts", true).toBool());
     whileBlocking(ui.checkBox_enableCustomFontSize)->setChecked(Settings->value("EnableCustomFontSize", true).toBool());
-	whileBlocking(ui.minimumFontSize)->setValue(Settings->value("MinimumFontSize", 10).toInt());
+    whileBlocking(ui.checkBox_enableCustomFontColor)->setChecked(Settings->value("EnableCustomFontColor", true).toBool());
+    whileBlocking(ui.minimumFontSize)->setValue(Settings->value("MinimumFontSize", 10).toInt());
     whileBlocking(ui.checkBox_enableBold)->setChecked(Settings->value("EnableBold", true).toBool());
     whileBlocking(ui.checkBox_enableItalics)->setChecked(Settings->value("EnableItalics", true).toBool());
     whileBlocking(ui.minimumContrast)->setValue(Settings->value("MinimumContrast", 4.5).toDouble());
@@ -541,13 +545,13 @@ void ChatPage::setPreviewMessages(QString &stylePath, QString styleVariant, QTex
     QDateTime timestmp = QDateTime::fromTime_t(time(NULL));
     QColor backgroundColor = textBrowser->palette().base().color();
 
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HINCOMING, nameIncoming, timestmp, tr("Incoming message in history"), 0, backgroundColor));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HOUTGOING, nameOutgoing, timestmp, tr("Outgoing message in history"), 0, backgroundColor));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_INCOMING,  nameIncoming, timestmp, tr("Incoming message"), 0, backgroundColor));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  nameOutgoing, timestmp, tr("Outgoing message"), 0, backgroundColor));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OOUTGOING,  nameOutgoing, timestmp, tr("Outgoing offline message"), 0, backgroundColor));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_SYSTEM,  tr("System"), timestmp, tr("System message"), 0, backgroundColor));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  tr("UserName"), timestmp, tr("/me is sending a message with /me"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HINCOMING, nameIncoming, nameIncoming, timestmp, tr("Incoming message in history"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HOUTGOING, nameOutgoing, nameOutgoing, timestmp, tr("Outgoing message in history"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_INCOMING,  nameIncoming, nameIncoming, timestmp, tr("Incoming message"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  nameOutgoing, nameOutgoing, timestmp, tr("Outgoing message"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OOUTGOING,  nameOutgoing, nameOutgoing, timestmp, tr("Outgoing offline message"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_SYSTEM,  tr("System"), tr("System"), timestmp, tr("System message"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  tr("UserName"), tr("UserName"), timestmp, tr("/me is sending a message with /me"), 0, backgroundColor));
 }
 
 void ChatPage::fillPreview(QComboBox *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser)
