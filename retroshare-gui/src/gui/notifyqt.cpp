@@ -461,6 +461,22 @@ void NotifyQt::notifyChatStatus(const ChatId& chat_id,const std::string& status_
 	std::cerr << "notifyQt: Received chat status string: " << status_string << std::endl ;
 #endif
     emit chatStatusChanged(chat_id, QString::fromUtf8(status_string.c_str()));
+
+}
+
+void NotifyQt::notifyDistantChatStatus(const ChatId& chat_id)
+{
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
+#ifdef NOTIFY_DEBUG
+	std::cerr << "notifyQt: Received distant chat status : " << status_string << std::endl ;
+#endif
+    emit distantchatStatusChanged(chat_id);
+
 }
 
 void NotifyQt::notifyChatCleared(const ChatId& chat_id)
