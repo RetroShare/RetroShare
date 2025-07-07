@@ -96,6 +96,12 @@ QRectF Edge::boundingRect() const
         .adjusted(-extra, -extra, extra, extra);
 }
 
+void Edge::setEdgeColor(QColor color)
+{
+	edgeColor = color;
+	update(boundingRect());
+}
+
 void Edge::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     if (!source || !dest)
@@ -103,7 +109,7 @@ void Edge::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 
     // Draw the line itself
     QLineF line(sourcePoint, destPoint);
-    painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->setPen(QPen(edgeColor, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     painter->drawLine(line);
 
 	 return ;

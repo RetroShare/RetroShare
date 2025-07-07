@@ -251,23 +251,48 @@ static QColor lightdark(const QColor& col,int l,int d)
 void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
 	static QColor type_color[4] = { QColor(Qt::yellow), QColor(Qt::green), QColor(Qt::cyan), QColor(Qt::black) } ;
+	// QColor default_edge = Qt::black;
+	// QColor searched_node_edge = Qt::magenta;
+	// QColor selected_node_edge = Qt::green;
 
 	QColor col0 ;
 
+	// selected_node = clicked on with left mouse button
 	if(_selected_node == NULL)
+	{
 		col0 = type_color[_type] ;
+
+		/* if (sought_for) // this node
+		{
+			// repaint edge
+			for (QList<Edge*>::const_iterator it(edgeList.begin()); it != edgeList.end(); ++it)
+				(*it)->setEdgeColor(searched_node_edge);
+		}
+		else
+		{
+			for (QList<Edge*>::const_iterator it(edgeList.begin()); it != edgeList.end(); ++it)
+				(*it)->setEdgeColor(default_edge);
+		} */
+	}
 	else if(_selected_node == this)
+	{
+		// for (QList<Edge*>::const_iterator it(edgeList.begin()); it != edgeList.end(); ++it)
+		// 	(*it)->setEdgeColor(selected_node_edge);
 		col0 = type_color[0] ;
+	}
+	// selected_node = some_other_node
 	else 
 	{
 		bool found = false ;
-		for(QList<Edge*>::const_iterator it(edgeList.begin());it!=edgeList.end();++it)
+		for (QList<Edge*>::const_iterator it(edgeList.begin()); it != edgeList.end(); ++it)
+		{
 			if( (*it)->sourceNode() == _selected_node || (*it)->destNode() == _selected_node)
 			{
 				col0 = type_color[1] ;
 				found = true ;
 				break ;
 			}
+		}
 
 		if(!found)
 			col0= type_color[2] ;

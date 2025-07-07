@@ -40,6 +40,7 @@ public:
     void setDestNode(Node *node);
 
     void adjust();
+    void setEdgeColor(QColor color);
 
     enum { Type = UserType + 2 };
     int type() const { return Type; }
@@ -54,6 +55,7 @@ private:
     QPointF sourcePoint;
     QPointF destPoint;
     qreal arrowSize;
+    QColor edgeColor = Qt::black;
 };
 
 #endif

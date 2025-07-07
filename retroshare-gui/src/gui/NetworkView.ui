@@ -54,6 +54,20 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="8">
+      <widget class="QToolButton" name="helpButton">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="icon">
+        <iconset resource="icons.qrc">
+         <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="6">
       <spacer>
        <property name="orientation">
@@ -114,6 +128,9 @@
          <width>100</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>Enter name to search</string>
        </property>
       </widget>
      </item>
