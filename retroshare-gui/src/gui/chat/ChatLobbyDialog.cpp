@@ -208,6 +208,8 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	connect(unsubscribeButton, SIGNAL(clicked()), this , SLOT(leaveLobby()));
 
 	getChatWidget()->addTitleBarWidget(unsubscribeButton) ;
+
+	mFontSizeHandler.registerFontSize(ui.participantsList);
 }
 
 void ChatLobbyDialog::leaveLobby()

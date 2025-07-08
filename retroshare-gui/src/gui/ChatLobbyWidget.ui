@@ -73,7 +73,7 @@
        <widget class="QLabel" name="titleBarLabel">
         <property name="font">
          <font>
-          <pointsize>12</pointsize>
+	   <pointsize>12</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
@@ -191,11 +191,6 @@
        </item>
        <item>
         <widget class="RSTreeWidget" name="lobbyTreeWidget">
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
          <property name="iconSize">
           <size>
            <width>16</width>
@@ -489,7 +484,7 @@
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
+   <header>gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>RSTreeWidget</class>

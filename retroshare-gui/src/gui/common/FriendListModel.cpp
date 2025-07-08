@@ -162,12 +162,14 @@ static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay)
 
 void RsFriendListModel::setDisplayStatusString(bool b)
 {
+	preMods();
     mDisplayStatusString = b;
 	postMods();
 }
 
 void RsFriendListModel::setDisplayStatusIcon(bool b)
 {
+	preMods();
 	mDisplayStatusIcon = b;
 	postMods();
 }
@@ -302,10 +304,10 @@ uint32_t   RsFriendListModel::EntryIndex::parentRow(uint32_t nb_groups) const
     switch(type)
     {
     default:
-    	case ENTRY_TYPE_UNKNOWN  : return 0;
-    	case ENTRY_TYPE_GROUP    : return group_index;
-		case ENTRY_TYPE_PROFILE  : return (group_index==UNDEFINED_GROUP_INDEX_VALUE)?(profile_index+nb_groups):profile_index;
-    	case ENTRY_TYPE_NODE     : return node_index;
+        case ENTRY_TYPE_UNKNOWN  : return -1;
+        case ENTRY_TYPE_GROUP    : return -1;
+        case ENTRY_TYPE_PROFILE  : return (group_index==UNDEFINED_GROUP_INDEX_VALUE)?(-1):group_index;
+        case ENTRY_TYPE_NODE     : return (group_index==UNDEFINED_GROUP_INDEX_VALUE)?(profile_index+nb_groups):profile_index;
     }
 }
 

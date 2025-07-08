@@ -230,6 +230,8 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	
 	int ltwH = misc::getFontSizeFactor("LobbyTreeWidget", 1.5).height();
 	ui.lobbyTreeWidget->setIconSize(QSize(ltwH,ltwH));
+
+	mFontSizeHandler.registerFontSize(ui.lobbyTreeWidget);
 }
 
 ChatLobbyWidget::~ChatLobbyWidget()
@@ -420,7 +422,7 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
     if(lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
 	{
         tooltipstr += QObject::tr("\nSecurity: no anonymous IDs") ;
-		QColor foreground = QColor(0, 128, 0); // green
+		QColor foreground = QColor(16, 157, 0); // green
 		for (int column = 0; column < COLUMN_COUNT; ++column)
 			item->setData(column, Qt::ForegroundRole, foreground);
 	}
