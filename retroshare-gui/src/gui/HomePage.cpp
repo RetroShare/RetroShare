@@ -386,6 +386,13 @@ void HomePage::openWebHelp()
     QDesktopServices::openUrl(QUrl(QString("https://retrosharedocs.readthedocs.io/en/latest/")));
 }
 
+void HomePage::showEvent(QShowEvent *event)
+{
+	if (!event->spontaneous()) {
+		updateHomeLogo();
+	}
+}
+
 void HomePage::updateHomeLogo()
 {
 	if (Settings->getSheetName() == ":Standard_Dark")
