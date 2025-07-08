@@ -34,7 +34,14 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="HeaderFrame" name="headerFrame"/>
+    <widget class="HeaderFrame" name="headerFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QFrame" name="gradFrame">
@@ -150,10 +157,10 @@ p, li { white-space: pre-wrap; }
                </size>
               </property>
               <property name="frameShape">
-               <enum>QFrame::Box</enum>
+               <enum>QFrame::StyledPanel</enum>
               </property>
               <property name="frameShadow">
-               <enum>QFrame::Sunken</enum>
+               <enum>QFrame::Raised</enum>
               </property>
               <layout class="QHBoxLayout" name="toolBarFrame_HL">
                <property name="spacing">
