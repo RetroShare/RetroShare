@@ -132,7 +132,7 @@ use_dht_stunner_ext_ip:CONFIG -= no_use_dht_stunner_ext_ip
 
 # To select your MacOsX version append the following assignation to qmake
 # command line "CONFIG+=rs_macos10.11" where 10.11 depends your version
-macx:CONFIG *= rs_macos10.11
+macx:CONFIG *= rs_macos11.1
 rs_macos10.8:CONFIG -= rs_macos10.11
 rs_macos10.9:CONFIG -= rs_macos10.11
 rs_macos10.10:CONFIG -= rs_macos10.11
@@ -181,6 +181,12 @@ rs_deep_files_index_taglib:CONFIG -= no_rs_deep_files_index_taglib
 # line "CONFIG+=rs_use_native_dialogs"
 CONFIG *= no_rs_use_native_dialogs
 rs_use_native_dialogs:CONFIG -= no_rs_use_native_dialogs
+
+# By default, use RNP lib for RFC4880 PGP management. If not, compilation will
+# default to openpgp-sdk, which is old and unmaintained, so probably not very secure.
+CONFIG *= rs_rnplib
+rs_no_rnplib:CONFIG -= rs_rnplib
+rs_no_rnplib:CONFIG += rs_openpgpsdk
 
 # To disable broadcast discovery append the following assignation to qmake
 # command line "CONFIG+=no_rs_broadcast_discovery"
@@ -280,7 +286,7 @@ isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
 #
 #  V07_NON_BACKWARD_COMPATIBLE_CHANGE_002:
 #
-#     What: Use RSA+SHA256 instead of RSA+SHA1 for PGP certificate signatures
+#     What: Use RSA+SHA256 instead of RSA+SHA1 for SSL certificates 
 #
 #     Why:  Sha1 is likely to be prone to primary collisions anytime soon, so it is urgent to turn to a more secure solution.
 #
@@ -290,15 +296,37 @@ isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
 #
 #    What: Do not hash PGP certificate twice when signing
 #
-#  	 Why: hasing twice is not per se a security issue, but it makes it harder to change the settings for hashing.
+#    Why: hasing twice is not per se a security issue, but it makes it harder to change the settings for hashing.
 #
-#  	 Backward compat: patched peers cannot connect to non patched peers older than Nov 2017.
+#    Backward compat: patched peers cannot connect to non patched peers older than Nov 2017.
 #
 #  V07_NON_BACKWARD_COMPATIBLE_CHANGE_004:
 #
 #    What: Do not probe that GXS tunnels accept fast items. Just assume they do.
+#
 #    Why:  Avoids sending probe packets
+#
 #    BackwardCompat: old RS before Mai 2019 will not be able to distant chat.
+#
+#  V07_NON_BACKWARD_COMPATIBLE_CHANGE_005:
+#
+#    What: Stop accepting certificates signed with sha1 algorithm
+#
+#    Why:  Sha1 has been declared insecure and shouldn't be used anymore. 
+#
+#    BackwardCompat: Retroshare profiles generated before Nov.2024 with openpgp-sdk may still use sha1
+#
+###########################################################################################################################################################
+
+###########################################################################################################################################################
+#
+#  V06_EXPERIMENTAL_CHANGE_001:
+#
+#    What: removes issuer fingerprint from signature subpackets
+#    Why:  This type of subpacket is not part of RFC4880 and not recognised by OpenPGP-SDK
+#    BackwardCompat: old RS before Sept.2024 will not be able to exchange keys
+#    Note: Since signature subpacket 33 is part of the hashed section of the signature, this also invalidates the signature.
+#           Depending on the implementation, certificates with self-signature that miss this subpacket may not be accepted.
 #
 ###########################################################################################################################################################
 
@@ -313,6 +341,7 @@ rs_v07_changes {
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_004
+    DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_005
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_UNNAMED
 }
 
@@ -823,6 +852,9 @@ macx-* {
 	QMAKE_LIBDIR += "/usr/local/opt/openssl/lib"
 	QMAKE_LIBDIR += "/usr/local/opt/sqlcipher/lib"
 	QMAKE_LIBDIR += "/usr/local/opt/miniupnpc/lib"
+	INCLUDEPATH += "/usr/local/opt/libxml2/include/libxml2"
+	INCLUDEPATH += "/usr/local/opt/libxslt/include"
+	QMAKE_LIBDIR += "/usr/local/opt/libxslt/lib"
 }
 
 # If not yet defined attempt UPnP library autodetection should works at least
@@ -848,6 +880,19 @@ isEmpty(RS_UPNP_LIB) {
         message("Autodetected RS_UPNP_LIB=$$RS_UPNP_LIB")
     }
 }
+
+rs_openpgpsdk {
+        SUBDIRS += openpgpsdk
+        openpgpsdk.file = openpgpsdk/src/openpgpsdk.pro
+        libretroshare.depends += openpgpsdk
+        message("Using OpenPGP-SDK for PGP")
+}
+
+rs_rnplib {
+        DEFINES += USE_RNP_LIB
+        message("Using RNP lib for PGP")
+}
+
 
 equals(RS_UPNP_LIB, none):RS_UPNP_LIB=
 equals(RS_UPNP_LIB, miniupnpc):DEFINES*=RS_USE_LIBMINIUPNPC
