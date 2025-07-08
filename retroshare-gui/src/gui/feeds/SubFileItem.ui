@@ -29,10 +29,10 @@
    <item row="0" column="0">
     <widget class="QFrame" name="gradFrame">
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+      <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gradFrame_GL">
       <item row="1" column="0">
