@@ -93,6 +93,8 @@ SettingsPage::SettingsPage(QWidget *parent)
 
     connect(ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
     connect(this, SIGNAL(finished(int)), this, SLOT(dialogFinished(int)));
+
+    mFontSizeHandler.registerFontSize(ui.listWidget);
 }
 
 SettingsPage::~SettingsPage()

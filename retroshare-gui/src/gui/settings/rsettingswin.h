@@ -27,6 +27,7 @@
 #include <retroshare-gui/mainpage.h>
 
 #include "ui_settingsw.h"
+#include "util/FontSizeHandler.h"
 
 class FloatingHelpBrowser;
 
@@ -71,6 +72,8 @@ private:
 private:
 	FloatingHelpBrowser *mHelpBrowser;
 	static int lastPage;
+
+	FontSizeHandler mFontSizeHandler;
 
 	/* UI - from Designer */
 	Ui::Settings ui;

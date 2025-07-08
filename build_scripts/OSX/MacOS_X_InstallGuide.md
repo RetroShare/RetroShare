@@ -2,13 +2,15 @@
 
 ## Qt Installation
 
-Install Qt via: [Qt Download](http://www.qt.io/download/)
+Qt 5.15 is not available as install package.
 
-Use default options. And add Qt Script support.
+Download Qt 5.15.x from here: [Qt 5.15.17](https://download.qt.io/archive/qt/5.15/5.15.17/single/qt-everywhere-opensource-src-5.15.17.tar.xz)
 
+Instruction howto Build Qt 5.15.x on macOS: [macOS Building](https://doc.qt.io/archives/qt-5.15/macos-building.html)
+## Set the Environment Variables
 Add to the PATH environment variable by editing your *~/.profile* file.
 
-       export PATH="/users/$USER/Qt/5.14.1/clang_64/bin:$PATH"
+       export PATH="/users/$USER/Qt/5.15.17/clang_64/bin:$PATH"
 
 Depends on which version of Qt you use.
 
@@ -32,11 +34,9 @@ In GitHub Desktop -> Clone Repository -> URL
 
 ## ***Get XCode & MacOSX SDK***
 
-Install XCode following this guide: [XCode](http://guide.macports.org/#installing.xcode)
-
 To identify the correct version of Xcode to install, you need to know which OS you are running. Go to the [x] menu -> "About This Mac" and read the macOS version number.
 
-If you are running the macOS Catalina >= 10.15, you can install Xcode directly from App Store using the instructions below. 
+If you are running macOS Ventura 13.5 or later, you can install Xcode directly from App Store using the instructions below. 
 
 You can find older versions of Xcode at [Apple Developer Downloads](https://developer.apple.com/downloads/). Find the appropriate .xip file for your macOS version
 
@@ -53,26 +53,11 @@ Install XCode command line developer tools:
 
 Start XCode to get it updated and to able C compiler to create executables.
 
-Get Your MacOSX SDK if missing: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
-
-## ***Choose if you use MacPort or HomeBrew***
+Older MacOSX SDK is available from here: [MacOSX-SDKs](https://github.com/phracker/MacOSX-SDKs)
 
 ### MacPort Installation
 
 Install MacPort following this guide: [MacPort](http://guide.macports.org/#installing.xcode)
-
-#### Install libraries  
-
-       $ sudo port -v selfupdate
-       $ sudo port install openssl
-       $ sudo port install miniupnpc
-       
-For VOIP Plugin: 
-
-       $ sudo port install speex-devel
-       $ sudo port install opencv
-       $ sudo port install ffmpeg
-
 
 ### HOMEBREW Installation
 
@@ -84,6 +69,13 @@ Install HomeBrew following this guide: [HomeBrew](http://brew.sh/)
        $ brew install miniupnpc
        $ brew install rapidjson
        $ brew install sqlcipher
+
+For RNP lib:
+
+	   $ brew install bzip2
+	   $ brew install zlib
+	   $ brew install json-c
+	   $ brew install botan@2
 
 #### Install CMake 
 
