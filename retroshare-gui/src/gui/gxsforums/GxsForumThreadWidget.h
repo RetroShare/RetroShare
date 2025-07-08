@@ -26,6 +26,7 @@
 #include "gui/gxs/GxsMessageFrameWidget.h"
 #include <retroshare/rsgxsforums.h>
 #include "gui/gxs/GxsIdDetails.h"
+#include "util/FontSizeHandler.h"
 
 class QSortFilterProxyModel;
 class QTreeWidgetItem;
@@ -233,6 +234,8 @@ private:
     RsGxsForumModel *mThreadModel;
     QSortFilterProxyModel *mThreadProxyModel;
     QList<RsGxsMessageId> mSavedExpandedMessages;
+
+    FontSizeHandler mFontSizeHandler;
 
     Ui::GxsForumThreadWidget *ui;
     RsEventsHandlerId_t mEventHandlerId;

@@ -26,6 +26,7 @@
 #include "gui/common/RSTreeWidgetItem.h"
 #include "ChatDialog.h"
 #include "PopupChatWindow.h"
+#include "util/FontSizeHandler.h"
 
 // Q_DECLARE_METATYPE(RsGxsId)
 // Q_DECLARE_METATYPE(QList<RsGxsId>)
@@ -114,6 +115,8 @@ private:
 
 	bool mWindowedSetted;
 	PopupChatWindow* mPCWindow;
+
+	FontSizeHandler mFontSizeHandler;
 
 	/** Qt Designer generated object */
 	Ui::ChatLobbyDialog ui;

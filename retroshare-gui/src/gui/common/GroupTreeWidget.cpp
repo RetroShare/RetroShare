@@ -148,7 +148,19 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 
 	connect(ui->distantSearchLineEdit,SIGNAL(returnPressed()),this,SLOT(distantSearch())) ;
 
-	ui->treeWidget->setIconSize(QSize(H*1.8,H*1.8));
+	mFontSizeHandler.registerFontSize(ui->treeWidget, 1.8f, [this] (QAbstractItemView*, int fontSize) {
+		// Set new font size on all items
+		QTreeWidgetItemIterator it(ui->treeWidget);
+		while (*it) {
+			QTreeWidgetItem *item = *it;
+
+			QFont font = item->font(GTW_COLUMN_NAME);
+			font.setPointSize(fontSize);
+			item->setFont(GTW_COLUMN_NAME, font);
+
+			++it;
+		}
+	});
 }
 
 GroupTreeWidget::~GroupTreeWidget()
@@ -254,8 +266,8 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 	RSTreeWidgetItem *item = new RSTreeWidgetItem();
 	ui->treeWidget->addTopLevelItem(item);
 	// To get StyleSheet for Items
-	ui->treeWidget->style()->unpolish(ui->treeWidget);
-	ui->treeWidget->style()->polish(ui->treeWidget);
+//	ui->treeWidget->style()->unpolish(ui->treeWidget);
+//	ui->treeWidget->style()->polish(ui->treeWidget);
 
 	item->setText(GTW_COLUMN_NAME, name);
 	item->setData(GTW_COLUMN_DATA, ROLE_NAME, name);
@@ -390,7 +402,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		if (item == NULL) {
 			item = new RSTreeWidgetItem(compareRole);
 			item->setData(GTW_COLUMN_DATA, ROLE_ID, itemInfo.id);
-			item->setFont(GTW_COLUMN_DATA, ui->treeWidget->font());
+			item->setFont(GTW_COLUMN_NAME, ui->treeWidget->font());
 			//static_cast<RSTreeWidgetItem*>(item)->setNoDataAsLast(true); //Uncomment this to sort data with QVariant() always at end.
 			categoryItem->addChild(item);
 		}

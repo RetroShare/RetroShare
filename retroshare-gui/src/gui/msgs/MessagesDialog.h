@@ -25,6 +25,7 @@
 
 #include <retroshare/rsevents.h>
 #include <retroshare-gui/mainpage.h>
+#include "util/FontSizeHandler.h"
 
 #include "ui_MessagesDialog.h"
 
@@ -166,6 +167,8 @@ private:
 
   RsEventsHandlerId_t mEventHandlerId;
   RsEventsHandlerId_t mTagEventHandlerId;
+
+  FontSizeHandler mFontSizeHandler;
 };
 
 #endif

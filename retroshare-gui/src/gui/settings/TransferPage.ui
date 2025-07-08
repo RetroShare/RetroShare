@@ -14,7 +14,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -401,13 +401,6 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="_e2e_encryption_Label">
-                <property name="text">
-                 <string>End-to-end encryption:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
                <widget class="QLabel" name="_filePermDirectDL_Label">
                 <property name="text">
                  <string>Allow direct download:</string>
@@ -501,23 +494,6 @@ p, li { white-space: pre-wrap; }
                 <property name="value">
                  <number>20</number>
                 </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="RSComboBox" name="_e2e_encryption_CB">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Anonymous tunnels can be end-o-end encrypted. In order to maintain backward compatibility, this can be made optional (choosing &amp;quot;Accepted&amp;quot;), but in the end, all Retroshare nodes will be switched to &amp;quot;Enforced&amp;quot;, meaning that all anonymous transfers will be end-to-end encrypted. With &amp;quot;Accepted&amp;quot;, it is likely that you will transfer using twice as many tunnels, since there is no way to know that an encrypted and a clear tunnel actually transfer from the same source.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>Accepted</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Enforced</string>
-                 </property>
-                </item>
                </widget>
               </item>
               <item>

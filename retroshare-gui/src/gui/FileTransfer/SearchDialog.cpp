@@ -38,6 +38,7 @@
 #include "gui/common/RSTreeWidgetItem.h"
 #include "util/QtVersion.h"
 #include "util/qtthreadsutils.h"
+#include "util/misc.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsturtle.h>
@@ -201,10 +202,6 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
 
-    QFontMetricsF fontMetrics(ui.searchResultWidget->font());
-    int iconHeight = fontMetrics.height() * 1.4;
-    ui.searchResultWidget->setIconSize(QSize(iconHeight, iconHeight));
-
     /* Set initial size the splitter */
     QList<int> sizes;
     sizes << 250 << width(); // Qt calculates the right sizes
@@ -239,6 +236,8 @@ SearchDialog::SearchDialog(QWidget *parent)
         RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
     }, mEventHandlerId, RsEventType::FILE_TRANSFER );
 
+    mFontSizeHandler.registerFontSize(ui.searchSummaryWidget);
+    mFontSizeHandler.registerFontSize(ui.searchResultWidget, 1.4f);
 }
 
 SearchDialog::~SearchDialog()
@@ -1041,7 +1040,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 
 		child->setText(SR_SOURCES_COL, QString::number(1));
 		child->setData(SR_SOURCES_COL, ROLE_SORT, 1);
-		child->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight );
+		child->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight | Qt::AlignVCenter );
 
 		child->setText(SR_SEARCH_ID_COL, sid_hexa);
 		setIconAndType(child, QString::fromUtf8(dir.name.c_str()));
@@ -1066,7 +1065,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		child->setText(SR_SOURCES_COL, QString::number(1));
 		child->setData(SR_SOURCES_COL, ROLE_SORT, 1);
-		child->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight );
+		child->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight | Qt::AlignVCenter );
 		child->setText(SR_SEARCH_ID_COL, sid_hexa);
 		child->setText(SR_TYPE_COL, tr("Folder"));
 
@@ -1135,7 +1134,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
     child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
     child->setText(SR_SOURCES_COL, QString::number(1));
     child->setData(SR_SOURCES_COL, ROLE_SORT, 1);
-    child->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight );
+    child->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight | Qt::AlignVCenter );
     child->setText(SR_SEARCH_ID_COL, sid_hexa);
     child->setText(SR_TYPE_COL, tr("Folder"));
 
@@ -1327,9 +1326,11 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 
 		item->setText(SR_SIZE_COL, QString::number(file.size));
 		item->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) file.size);
-        item->setText(SR_AGE_COL, QString::number(file.mtime));
-        item->setData(SR_AGE_COL, ROLE_SORT, file.mtime);
+		item->setText(SR_AGE_COL, QString::number(file.mtime));
+		item->setData(SR_AGE_COL, ROLE_SORT, file.mtime);
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
+		item->setTextAlignment( SR_AGE_COL, Qt::AlignCenter );
+
 		int friendSource = 0;
 		int anonymousSource = 0;
 		if(searchType == FRIEND_SEARCH)
@@ -1348,7 +1349,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		item->setText(SR_SOURCES_COL,modifiedResult);
 		item->setToolTip(SR_SOURCES_COL, tr("Obtained via ")+QString::fromStdString(rsPeers->getPeerName(file.id)) );
 		item->setData(SR_SOURCES_COL, ROLE_SORT, fltRes);
-		item->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight );
+		item->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight | Qt::AlignVCenter );
 		item->setText(SR_SEARCH_ID_COL, sid_hexa);
 
 		QColor foreground;

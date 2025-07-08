@@ -7,5 +7,5 @@ Exec=/usr/bin/retroshare %U
 Icon=/usr/share/pixmaps/retroshare.xpm
 Terminal=false
 Type=Application
-Categories=Application;Network;Email;InstantMessaging;Chat;Feed;FileTransfer;P2P
+Categories=Network;Email;InstantMessaging;Chat;Feed;FileTransfer;P2P
 MimeType=x-scheme-handler/retroshare;
