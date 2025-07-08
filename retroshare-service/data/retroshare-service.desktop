@@ -7,4 +7,4 @@ Exec=retroshare-service %U
 Icon=retroshare-service
 Terminal=false
 Type=Application
-Categories=Application;Network;
+Categories=Network;

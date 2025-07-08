@@ -18,6 +18,8 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <QFontDatabase>
+
 #include "rshare.h"
 #include "rsharesettings.h"
 #include "retroshare/rsmsgs.h"
@@ -28,6 +30,7 @@
 #include <algorithm>
 #include "NewTag.h"
 #include "util/qtthreadsutils.h"
+#include "gui/notifyqt.h"
 
 MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
@@ -48,13 +51,20 @@ MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
 
     ui.openComboBox->addItem(tr("A new tab"), RshareSettings::MSG_OPEN_TAB);
     ui.openComboBox->addItem(tr("A new window"), RshareSettings::MSG_OPEN_WINDOW);
-    
+
+    // Font size
+    QFontDatabase db;
+    foreach(int size, db.standardSizes()) {
+        ui.minimumFontSize->addItem(QString::number(size), size);
+    }
+
     connect(ui.comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(distantMsgsComboBoxChanged(int)));
 
 	connect(ui.setMsgToReadOnActivate,SIGNAL(toggled(bool)),          this,SLOT(updateMsgToReadOnActivate()));
 	connect(ui.loadEmbeddedImages,    SIGNAL(toggled(bool)),          this,SLOT(updateLoadEmbededImages()  ));
 	connect(ui.openComboBox,          SIGNAL(currentIndexChanged(int)),this,SLOT(updateMsgOpen()            ));
 	connect(ui.emoticonscheckBox,     SIGNAL(toggled(bool)),          this,SLOT(updateLoadEmoticons()  ));
+	connect(ui.minimumFontSize,       SIGNAL(activated(QString)),     this, SLOT(updateFontSize())) ;
 
     mTagEventHandlerId = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }); }, mTagEventHandlerId, RsEventType::MAIL_TAG );
@@ -116,12 +126,11 @@ void MessagePage::updateMsgTags()
 void
 MessagePage::load()
 {
-    Settings->beginGroup(QString("Messages"));
     whileBlocking(ui.setMsgToReadOnActivate)->setChecked(Settings->getMsgSetToReadOnActivate());
     whileBlocking(ui.loadEmbeddedImages)->setChecked(Settings->getMsgLoadEmbeddedImages());
     whileBlocking(ui.openComboBox)->setCurrentIndex(ui.openComboBox->findData(Settings->getMsgOpen()));
     whileBlocking(ui.emoticonscheckBox)->setChecked(Settings->value("Emoticons", true).toBool());
-    Settings->endGroup();
+	whileBlocking(ui.minimumFontSize)->setCurrentIndex(ui.minimumFontSize->findData(Settings->getMessageFontSize()));
 
 	  // state of filter combobox
     
@@ -298,3 +307,9 @@ void MessagePage::currentRowChangedTag(int row)
     ui.deletepushButton->setEnabled(bDeleteEnable);
 }
 
+void MessagePage::updateFontSize()
+{
+	Settings->setMessageFontSize(ui.minimumFontSize->currentData().toInt());
+
+	NotifyQt::getInstance()->notifySettingsChanged();
+}

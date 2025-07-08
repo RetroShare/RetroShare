@@ -44,10 +44,10 @@
       <bool>false</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+      <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="feedFrame_GL">
       <property name="leftMargin">
@@ -262,7 +262,6 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
             <weight>75</weight>
             <italic>true</italic>
             <bold>true</bold>

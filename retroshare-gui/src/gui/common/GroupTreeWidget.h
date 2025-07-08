@@ -25,6 +25,7 @@
 
 #include <QTreeWidgetItem>
 #include <QDateTime>
+#include "util/FontSizeHandler.h"
 
 class QToolButton;
 class RshareSettings;
@@ -163,6 +164,7 @@ private:
 
 	// Compare role used for each column
 	RSTreeWidgetItemCompareRole *compareRole;
+	FontSizeHandler mFontSizeHandler;
 
 	Ui::GroupTreeWidget *ui;
 };

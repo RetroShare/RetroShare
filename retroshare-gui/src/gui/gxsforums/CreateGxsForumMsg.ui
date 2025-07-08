@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>465</height>
+    <height>551</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,14 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="HeaderFrame" name="headerFrame"/>
+    <widget class="HeaderFrame" name="headerFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QFrame" name="gradFrame">
@@ -132,17 +139,12 @@
             </item>
             <item row="3" column="0">
              <widget class="MimeTextEdit" name="forumMessage">
-              <property name="font">
-               <font>
-                <family>MS Sans Serif</family>
-               </font>
-              </property>
               <property name="html">
                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8.25pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:''; font-size:; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
              </widget>
             </item>
@@ -155,10 +157,10 @@ p, li { white-space: pre-wrap; }
                </size>
               </property>
               <property name="frameShape">
-               <enum>QFrame::Box</enum>
+               <enum>QFrame::StyledPanel</enum>
               </property>
               <property name="frameShadow">
-               <enum>QFrame::Sunken</enum>
+               <enum>QFrame::Raised</enum>
               </property>
               <layout class="QHBoxLayout" name="toolBarFrame_HL">
                <property name="spacing">
@@ -383,6 +385,11 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
+   <class>MimeTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header location="global">gui/common/MimeTextEdit.h</header>
+  </customwidget>
+  <customwidget>
    <class>GxsIdChooser</class>
    <extends>QComboBox</extends>
    <header>gui/gxs/GxsIdChooser.h</header>
@@ -399,15 +406,10 @@ p, li { white-space: pre-wrap; }
    <header location="global">gui/common/HashBox.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>MimeTextEdit</class>
-   <extends>QTextEdit</extends>
-   <header location="global">gui/common/MimeTextEdit.h</header>
-  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

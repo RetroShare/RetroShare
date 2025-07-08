@@ -135,6 +135,8 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
     mEventHandlerId_peers = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) {
         RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }) ;}, mEventHandlerId_peers, RsEventType::PEER_CONNECTION );
+
+    mFontSizeHandler.registerFontSize(ui->friendList);
 }
 
 void FriendSelectionWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)

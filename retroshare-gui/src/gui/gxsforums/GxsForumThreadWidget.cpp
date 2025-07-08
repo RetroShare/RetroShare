@@ -321,10 +321,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
     float f = QFontMetricsF(font()).height()/14.0f ;
 
-    QFontMetricsF fontMetrics(ui->threadTreeWidget->font());
-    int iconHeight = fontMetrics.height() * 1.4;
-    ui->threadTreeWidget->setIconSize(QSize(iconHeight, iconHeight));
-
     /* Set header resize modes and initial section sizes */
 
     QHeaderView * ttheader = ui->threadTreeWidget->header () ;
@@ -380,6 +376,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
                 [this](std::shared_ptr<const RsEvent> event)
     { RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this ); },
                 mEventHandlerId, RsEventType::GXS_FORUMS );
+
+    mFontSizeHandler.registerFontSize(ui->threadTreeWidget, 1.4f, [this](QAbstractItemView *view, int) {
+        mThreadModel->setFont(view->font());
+    });
 }
 
 void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
