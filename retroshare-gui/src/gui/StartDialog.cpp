@@ -23,6 +23,7 @@
 #include "LogoBar.h"
 #include "rshare.h"
 #include "settings/rsharesettings.h"
+#include "gui/common/FilesDefs.h"
 
 #include "retroshare/rsinit.h"
 #include "retroshare/rsnotify.h"
@@ -90,6 +91,9 @@ StartDialog::StartDialog(QWidget *parent)
 	}
 
 	ui.password_input->setFocus();
+
+	if (Settings->getSheetName() == ":Standard_Dark")
+		ui.rsTopLogo->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":images/logo/logo_web_nobackground_black.png"));
 }
 
 void StartDialog::updateSelectedProfile(int)
