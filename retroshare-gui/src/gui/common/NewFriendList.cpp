@@ -273,6 +273,8 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
     connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)),Qt::QueuedConnection);
 	connect(h, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
 
+    mFontSizeHandler.registerFontSize(ui->peerTreeWidget,1.5f);
+
 // #ifdef RS_DIRECT_CHAT
 // 	connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(chatNode()));
 // #endif

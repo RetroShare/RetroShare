@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>618</width>
-    <height>108</height>
+    <height>128</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="GxsCircleItem_GL">
@@ -126,10 +126,10 @@
       <bool>true</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+      <enum>QFrame::Raised</enum>
      </property>
      <layout class="QHBoxLayout" name="feedFrame_HL">
       <item>
@@ -317,7 +317,7 @@
              <string>Revoke</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
+             <iconset>
               <normaloff>:/images/cancel.png</normaloff>:/images/cancel.png</iconset>
             </property>
            </widget>
