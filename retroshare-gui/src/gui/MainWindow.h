@@ -27,6 +27,7 @@
 
 #include "gui/common/rwindow.h"
 #include "gui/common/RSComboBox.h"
+#include "util/FontSizeHandler.h"
 
 namespace Ui {
 class MainWindow;
@@ -370,6 +371,8 @@ private:
     // idle function
     void setIdle(bool Idle);
     bool isIdle;
+
+    FontSizeHandler mFontSizeHandler;
 
 	 Ui::MainWindow *ui ;
 };

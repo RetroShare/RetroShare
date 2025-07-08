@@ -71,6 +71,8 @@ private slots:
 //	void updateCmboListItemSize();
 
 	void updateStyle() ;
+	void updateFontSize();
+
 private:
 	void switch_status(MainWindow::StatusElement s,const QString& key,bool b);
 

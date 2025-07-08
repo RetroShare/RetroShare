@@ -22,6 +22,7 @@
 
 #include <QModelIndex>
 #include <QColor>
+#include <QFont>
 
 #include "retroshare/rsmsgs.h"
 
@@ -104,6 +105,7 @@ public:
     void setQuickViewFilter(QuickViewFilter fn) ;
 
     void setFilter(FilterType filter_type, const QStringList& strings) ;
+    void setFont(const QFont &font);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -184,6 +186,7 @@ private:
     QuickViewFilter mQuickViewFilter ;
     QStringList mFilterStrings;
     FilterType  mFilterType;
+    QFont mFont;
 
     std::vector<Rs::Msgs::MsgInfoSummary> mMessages;
     std::map<std::string,uint32_t> mMessagesMap;

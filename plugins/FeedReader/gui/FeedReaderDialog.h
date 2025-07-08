@@ -23,6 +23,7 @@
 
 #include <retroshare-gui/mainpage.h>
 #include "interface/rsFeedReader.h"
+#include "util/FontSizeHandler.h"
 
 namespace Ui {
 class FeedReaderDialog;
@@ -97,6 +98,8 @@ private:
 	// gui interface
 	RsFeedReader *mFeedReader;
 	FeedReaderNotify *mNotify;
+
+	FontSizeHandler mFontSizeHandler;
 
 	/** Qt Designer generated object */
 	Ui::FeedReaderDialog *ui;

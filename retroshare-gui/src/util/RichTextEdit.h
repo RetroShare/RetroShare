@@ -23,6 +23,7 @@
 
 #include <QPointer>
 #include "ui_RichTextEdit.h"
+#include "util/FontSizeHandler.h"
 
 /**
  * @Brief A simple rich-text editor
@@ -93,6 +94,9 @@ signals:
                           ParagraphMonospace };
 
     QPointer<QTextList> m_lastBlockList;
+
+private:
+    MessageFontSizeHandler mMessageFontSizeHandler;
 };
 
 #endif

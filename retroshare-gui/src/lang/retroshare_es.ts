@@ -11022,32 +11022,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+123"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copy your RetroShare ID to clipboard&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copia tu ID de RetroShare al portapapeles&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+165"/>
         <source>Add friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Agregar amigo</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Did you receive a Retroshare ID from a friend?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Recibiste una identificación de Retroshare de una amiga?</translation>
     </message>
     <message>
         <location line="+85"/>
         <source>Do you need help with Retroshare?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Necesitas ayuda con Retroshare?</translation>
     </message>
     <message>
         <location line="-254"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Share your RetroShare ID&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Comparte tu ID de RetroShare&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="-63"/>
         <source>This is your Retroshare ID. Copy and share with your friends!</source>
-        <translation type="unfinished"></translation>
+        <translation>Este es tu ID de Retroshare. ¡Cópialo y compártelo con tus amigos!</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -11096,7 +11096,7 @@ de código abierto, multi-sistema, privada y segura.</translation>
     <message>
         <location line="+6"/>
         <source>Copy your Retroshare ID to Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia tu ID de Retroshare al portapapeles</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -11173,7 +11173,7 @@ new short format</source>
     <message>
         <location filename="../gui/HomePage.h" line="+46"/>
         <source>Home</source>
-        <translation>Página principal</translation>
+        <translation>Casa</translation>
     </message>
 </context>
 <context>
@@ -11516,12 +11516,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-291"/>
         <source>Created on :</source>
-        <translation type="unfinished"></translation>
+        <translation>Creado el :</translation>
     </message>
     <message>
         <location line="-64"/>
         <source>Auto-Ban profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Perfil de prohibición automática</translation>
     </message>
     <message>
         <location line="+150"/>
@@ -11531,7 +11531,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+84"/>
         <source>Edit Identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar identidad</translation>
     </message>
     <message>
         <location line="+151"/>
@@ -11591,12 +11591,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-407"/>
         <source>Owner node ID :</source>
-        <translation>Identificación del nodo propietario :</translation>
+        <translation>Identificación del nodo:</translation>
     </message>
     <message>
         <location line="-58"/>
         <source>Identity name :</source>
-        <translation>Nombre de la identidad :</translation>
+        <translation>Nombre de identidad:</translation>
     </message>
     <message>
         <location line="-587"/>
@@ -14369,7 +14369,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <location line="+249"/>
-        <source>Stared</source>
+        <source>Starred</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

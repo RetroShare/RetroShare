@@ -1527,12 +1527,12 @@ into the image, so as to
     <message>
         <location line="+75"/>
         <source>Redock to Main window</source>
-        <translation type="unfinished"></translation>
+        <translation>Перезакрепить в главном окне</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Undock to a new window</source>
-        <translation type="unfinished"></translation>
+        <translation>Открепить в новом окне</translation>
     </message>
 </context>
 <context>
@@ -10717,17 +10717,17 @@ This message is missing. You should receive it later.</source>
     <message>
         <location filename="../gui/statusbar/hashingstatus.cpp" line="+78"/>
         <source>Examining shared files...</source>
-        <translation type="unfinished">Проверка файлов, открытых к доступу...</translation>
+        <translation>Проверка файлов, открытых к доступу...</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hashing file</source>
-        <translation type="unfinished">Хеширование файла</translation>
+        <translation>Хеширование файла</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Saving file index...</source>
-        <translation type="unfinished">Сохранение списка файлов...</translation>
+        <translation>Сохранение списка файлов...</translation>
     </message>
 </context>
 <context>
@@ -11025,32 +11025,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+123"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copy your RetroShare ID to clipboard&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Скопируйте свой идентификатор RetroShare в буфер обмена&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+165"/>
         <source>Add friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить узел</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Did you receive a Retroshare ID from a friend?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы получили идентификатор Retroshare от друга?</translation>
     </message>
     <message>
         <location line="+85"/>
         <source>Do you need help with Retroshare?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вам нужна помощь с Retroshare?</translation>
     </message>
     <message>
         <location line="-254"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Share your RetroShare ID&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Поделитесь своим идентификатором RetroShare&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="-63"/>
         <source>This is your Retroshare ID. Copy and share with your friends!</source>
-        <translation type="unfinished"></translation>
+        <translation>Это ваш Retroshare ID. Скопируйте и поделитесь с друзьями!</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -11120,7 +11120,7 @@ private and secure decentralized communication platform.
     <message>
         <location line="+6"/>
         <source>Include all IPs history</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить историю всех IP-адресов</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -11130,12 +11130,12 @@ private and secure decentralized communication platform.
     <message>
         <location line="+70"/>
         <source>Include all your known IPs</source>
-        <translation type="unfinished"></translation>
+        <translation>Включите все ваши известные IP-адреса</translation>
     </message>
     <message>
         <location line="-109"/>
         <source>Use old certificate format</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать старый формат сертификата</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11147,7 +11147,7 @@ new short format</source>
     <message>
         <location line="+99"/>
         <source>Use new (short) certificate format</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать (короткий) формат сертификата</translation>
     </message>
     <message>
         <location line="+143"/>
@@ -11499,7 +11499,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-41"/>
         <source>Friend votes:</source>
-        <translation>Рейтинг согласно мнению участников из окружения:</translation>
+        <translation>Голоса друзей:</translation>
     </message>
     <message>
         <location line="+358"/>
@@ -11520,12 +11520,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-291"/>
         <source>Created on :</source>
-        <translation type="unfinished"></translation>
+        <translation>Создано:</translation>
     </message>
     <message>
         <location line="-64"/>
         <source>Auto-Ban profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Профиль автобана</translation>
     </message>
     <message>
         <location line="+150"/>
@@ -11535,7 +11535,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+84"/>
         <source>Edit Identity</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить личность</translation>
     </message>
     <message>
         <location line="+151"/>
@@ -11595,7 +11595,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-407"/>
         <source>Owner node ID :</source>
-        <translation>Идентификатор владельца узла:</translation>
+        <translation>Идентификатор узла:</translation>
     </message>
     <message>
         <location line="-58"/>
@@ -11630,7 +11630,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+58"/>
         <source>Owner node name :</source>
-        <translation>Имя владельца узла:</translation>
+        <translation>Имя узла:</translation>
     </message>
     <message>
         <location line="-569"/>
@@ -11660,19 +11660,19 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+116"/>
         <source>Negative</source>
-        <translation>Отрицательное мнение</translation>
+        <translation>Отрицательно</translation>
     </message>
     <message>
         <location line="+9"/>
         <location filename="../gui/Identity/IdDialog.cpp" line="-405"/>
         <source>Neutral</source>
-        <translation>Нейтральное мнение</translation>
+        <translation>Нейтральный</translation>
     </message>
     <message>
         <location line="+9"/>
         <location filename="../gui/Identity/IdDialog.cpp" line="-11"/>
         <source>Positive</source>
-        <translation>Положительное мнение</translation>
+        <translation>Положительный</translation>
     </message>
     <message>
         <location line="-144"/>
@@ -11799,7 +11799,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+4"/>
         <source>unsubscribed (Only receive invite list). Last seen: %1 days ago.</source>
-        <translation type="unfinished"></translation>
+        <translation>отписался (Только получать список приглашений). Последний раз был в сети: %1 дней назад.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11829,7 +11829,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>Status: </source>
-        <translation>Статус:</translation>
+        <translation>Статус: </translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12011,7 +12011,7 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+2"/>
         <source>Message</source>
-        <translation type="unfinished">Сообщение</translation>
+        <translation>Сообщение</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12281,7 +12281,7 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location filename="../gui/Identity/IdDialog.ui" line="-231"/>
         <source>Last used:</source>
-        <translation>Последний раз появлялся: </translation>
+        <translation>Последний раз появлялся:</translation>
     </message>
     <message>
         <location filename="../gui/Identity/IdDialog.cpp" line="-608"/>
@@ -12321,7 +12321,7 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+607"/>
         <source>Really delete?</source>
-        <translation>Действительно удалить? </translation>
+        <translation>Действительно удалить?</translation>
     </message>
 </context>
 <context>
@@ -14373,7 +14373,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <location line="+249"/>
-        <source>Stared</source>
+        <source>Starred</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -14916,105 +14916,105 @@ Reported error:</source>
     <message>
         <location filename="../gui/common/NewFriendList.ui" line="+83"/>
         <source>Offline Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Друзья офлайн</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show Offline Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать друзей офлайн</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Status</source>
-        <translation type="unfinished">Статус</translation>
+        <translation>Статус</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show status</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать статус</translation>
     </message>
     <message>
         <location line="+8"/>
         <location filename="../gui/common/NewFriendList.cpp" line="+690"/>
         <source>Groups</source>
-        <translation type="unfinished">Группы</translation>
+        <translation>Группы</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать группы</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>export friendlist</source>
-        <translation type="unfinished">Экспорт списка контактов</translation>
+        <translation>Экспорт списка контактов</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>export your friendlist including groups</source>
-        <translation type="unfinished">Экспорт списка контактов, включая информацию о группах</translation>
+        <translation>Экспорт списка контактов, включая информацию о группах</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>import friendlist</source>
-        <translation type="unfinished">Импорт списка контактов</translation>
+        <translation>Импорт списка контактов</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>import your friendlist including groups</source>
-        <translation type="unfinished">Импорт списка контактов, включая информацию о группах</translation>
+        <translation>Импорт списка контактов, включая информацию о группах</translation>
     </message>
     <message>
         <location filename="../gui/common/NewFriendList.cpp" line="-496"/>
         <location line="+28"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+144"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="-144"/>
         <source>Search ID</source>
-        <translation type="unfinished">Поиск идентификатора</translation>
+        <translation>Поиск идентификатора</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Online friends on top</source>
-        <translation type="unfinished"></translation>
+        <translation>Онлайн-друзья наверху</translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Show Items</source>
-        <translation type="unfinished">Показать...</translation>
+        <translation>Показать...</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Last contact</source>
-        <translation type="unfinished"></translation>
+        <translation>Последний контакт</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>IP</source>
-        <translation type="unfinished">IP</translation>
+        <translation>IP</translation>
     </message>
     <message>
         <location line="+251"/>
         <source>Group</source>
-        <translation type="unfinished">Группа</translation>
+        <translation>Группа</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Друг</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Node</source>
-        <translation type="unfinished"></translation>
+        <translation>Узел</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -15024,126 +15024,126 @@ Reported error:</source>
     <message>
         <location line="+12"/>
         <source>Edit Group</source>
-        <translation type="unfinished">Редактировать группу</translation>
+        <translation>Редактировать группу</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove Group</source>
-        <translation type="unfinished">Удалить группу</translation>
+        <translation>Удалить группу</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Profile details</source>
-        <translation type="unfinished">Сведения об узле</translation>
+        <translation>Сведения об узле</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Deny connections</source>
-        <translation type="unfinished"></translation>
+        <translation>Запретить соединения</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Add to group</source>
-        <translation type="unfinished">добавить в группу</translation>
+        <translation>добавить в группу</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Move to group</source>
-        <translation type="unfinished">Переместить в группу</translation>
+        <translation>Переместить в группу</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Create new group</source>
-        <translation type="unfinished">Создать новую группу</translation>
+        <translation>Создать новую группу</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Remove from group </source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить из группы </translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove from all groups</source>
-        <translation type="unfinished">Удалить из всех групп</translation>
+        <translation>Удалить из всех групп</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Чат</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Send message to this node</source>
-        <translation type="unfinished">Послать сообщение этому узлу</translation>
+        <translation>Послать сообщение этому узлу</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Node details</source>
-        <translation type="unfinished">Сведения об узле</translation>
+        <translation>Сведения об узле</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Recommend this node to...</source>
-        <translation type="unfinished">Рекомендовать этого участника...</translation>
+        <translation>Рекомендовать этого участника...</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Attempt to connect</source>
-        <translation type="unfinished">Соединиться</translation>
+        <translation>Соединиться</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Copy certificate link</source>
-        <translation type="unfinished">Скопировать ссылку сертификата</translation>
+        <translation>Скопировать ссылку сертификата</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Remove Friend Node</source>
-        <translation type="unfinished">Удалить этого участника</translation>
+        <translation>Удалить этого участника</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Paste certificate link</source>
-        <translation type="unfinished">Вставить ссылку на сертификат</translation>
+        <translation>Вставить ссылку на сертификат</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Expand all</source>
-        <translation type="unfinished">Раскрыть всё</translation>
+        <translation>Раскрыть всё</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Collapse all</source>
-        <translation type="unfinished">Свернуть всё</translation>
+        <translation>Свернуть всё</translation>
     </message>
     <message>
         <location line="+236"/>
         <source>Do you want to remove this node?</source>
-        <translation type="unfinished">Вы хотите удалить этот узел?</translation>
+        <translation>Вы хотите удалить этот узел?</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Do you want to remove this Friend?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы хотите удалить этот контакт?</translation>
     </message>
     <message>
         <location line="+235"/>
         <location line="+18"/>
         <source>Done!</source>
-        <translation type="unfinished">Готово!</translation>
+        <translation>Готово!</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Your friendlist is stored at:
 </source>
-        <translation type="unfinished">Ваш список список контактов сохранён в:
+        <translation>Ваш список список контактов сохранён в:
 </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>
 (keep in mind that the file is unencrypted!)</source>
-        <translation type="unfinished">
+        <translation>
 (помните, что файл не зашифрован!)</translation>
     </message>
     <message>
@@ -15151,32 +15151,32 @@ Reported error:</source>
         <location line="+7"/>
         <source>Your friendlist was imported from:
 </source>
-        <translation type="unfinished">Ваш список контактов импортирован из:
+        <translation>Ваш список контактов импортирован из:
 </translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Done - but errors happened!</source>
-        <translation type="unfinished">Выполнено, но с ошибками!</translation>
+        <translation>Выполнено, но с ошибками!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>
 at least one peer was not added</source>
-        <translation type="unfinished">
+        <translation>
 как минимум один участник не добавлен</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>
 at least one peer was not added to a group</source>
-        <translation type="unfinished">
+        <translation>
 как минимум один участник не добавлен в группу</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Select file for importing your friendlist from</source>
-        <translation type="unfinished">Выберите файл, в котором хранится список ваших контактов</translation>
+        <translation>Выберите файл, в котором хранится список ваших контактов</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -15193,7 +15193,7 @@ at least one peer was not added to a group</source>
         <location line="+30"/>
         <location line="+116"/>
         <source>Error</source>
-        <translation type="unfinished">Ошибка</translation>
+        <translation>Ошибка</translation>
     </message>
     <message>
         <location line="-115"/>

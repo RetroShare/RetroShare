@@ -88,11 +88,16 @@ class RSHumanReadableAgeDelegate: public RSHumanReadableDelegate
 	public:
 		virtual void paint(QPainter *painter,const QStyleOptionViewItem & option, const QModelIndex & index) const
 		{
+			painter->save();
 			QStyleOptionViewItem opt(option) ;
 			setPainterOptions(painter,opt,index) ;
 
-            if(index.data().toLongLong() > 0)	// no date is present.
-                painter->drawText(opt.rect, Qt::AlignCenter, misc::timeRelativeToNow(index.data().toLongLong())) ;
+            if(index.data().toLongLong() > 0) {	// no date is present.
+                painter->setFont(opt.font);
+                painter->drawText(opt.rect, opt.displayAlignment, misc::timeRelativeToNow(index.data().toLongLong())) ;
+            }
+
+            painter->restore();
 		}
 };
 
@@ -101,10 +106,14 @@ class RSHumanReadableSizeDelegate: public RSHumanReadableDelegate
 	public:
 		virtual void paint(QPainter *painter,const QStyleOptionViewItem & option, const QModelIndex & index) const
 		{
+			painter->save();
 			QStyleOptionViewItem opt(option) ;
 			setPainterOptions(painter,opt,index) ;
 
-			painter->drawText(opt.rect, Qt::AlignRight, misc::friendlyUnit(index.data().toULongLong()));
+			painter->setFont(opt.font);
+			painter->drawText(opt.rect, opt.displayAlignment, misc::friendlyUnit(index.data().toULongLong()));
+
+			painter->restore();
 		}
 };
 

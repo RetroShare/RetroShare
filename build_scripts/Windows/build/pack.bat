@@ -96,6 +96,7 @@ copy nul "%RsDeployPath%\portable" %Quite%
 echo copy binaries
 copy "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\retroshare*.exe" "%RsDeployPath%" %Quite%
 if exist "%RsBuildPath%\libretroshare\src\lib\retroshare.dll" copy "%RsBuildPath%\libretroshare\src\lib\retroshare.dll" "%RsDeployPath%" %Quite%
+if exist "%RsBuildPath%\supportlibs\librnp\Build\src\lib\librnp.dll" copy "%RsBuildPath%\supportlibs\librnp\Build\src\lib\librnp.dll" "%RsDeployPath%" %Quite%
 
 if "%ParamService%"=="1" (
 	copy "%RsBuildPath%\retroshare-service\src\%RsBuildConfig%\retroshare*-service.exe" "%RsDeployPath%" %Quite%

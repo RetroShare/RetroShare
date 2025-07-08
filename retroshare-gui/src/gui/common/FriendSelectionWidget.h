@@ -26,6 +26,7 @@
 
 #include "retroshare/rsevents.h"
 #include <gui/gxs/RsGxsUpdateBroadcastPage.h>
+#include "util/FontSizeHandler.h"
 
 namespace Ui {
 class FriendSelectionWidget;
@@ -177,6 +178,8 @@ private:
 	QList<QAction*> mContextMenuActions;
 
     std::set<std::string> mPreSelectedIds; // because loading of GxsIds is asynchroneous we keep selected Ids from the client in a list here and use it to initialize after loading them.
+
+    FontSizeHandler mFontSizeHandler;
 
     RsEventsHandlerId_t mEventHandlerId_identities;
     RsEventsHandlerId_t mEventHandlerId_peers;

@@ -13,12 +13,18 @@ LIBMICROHTTPD_VERSION=0.9.75
 FFMPEG_VERSION=4.4
 RAPIDJSON_VERSION=1.1.0
 XAPIAN_VERSION=1.4.19
+#RNP_VERSION=0.17.1
+
+# libaries for rnp
+JSON_C_VERSION=0.18
+BOTAN_VERSION=2.19.5
 
 DOWNLOAD_PATH?=download
 BUILD_PATH=build
 LIBS_PATH?=libs
 
-all: dirs zlib bzip2 miniupnpc openssl speex speexdsp libxml2 libxslt curl sqlcipher libmicrohttpd ffmpeg rapidjson xapian copylibs
+all: dirs zlib bzip2 miniupnpc openssl speex speexdsp libxml2 libxslt curl sqlcipher libmicrohttpd ffmpeg rapidjson xapian jsonc botan copylibs
+#rnp
 
 download: \
 	$(DOWNLOAD_PATH)/zlib-$(ZLIB_VERSION).tar.gz \
@@ -362,6 +368,57 @@ $(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION): $(DOWNLOAD_PATH)/xapian-core-$(XAPI
 	# cleanup
 	rm -r -f xapian-core-$(XAPIAN_VERSION)
 	mv $(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION).tmp $(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION)
+
+jsonc: $(BUILD_PATH)/json-c-$(JSON_C_VERSION)
+
+$(BUILD_PATH)/json-c-$(JSON_C_VERSION):
+	# prepare
+	rm -r -f $(BUILD_PATH)/json-c-*
+	[ -d "json-c-$(JSON_C_VERSION)" ] || git clone https://github.com/json-c/json-c.git --depth=1 --branch json-c-$(JSON_C_VERSION) "json-c-$(JSON_C_VERSION)"
+	# build
+	mkdir -p json-c-$(JSON_C_VERSION)/build
+	cd json-c-$(JSON_C_VERSION)/build && cmake .. -G"MSYS Makefiles" -Wno-dev -DCMAKE_BUILD_TYPE="release" -DBUILD_SHARED_LIBS=off -DBUILD_STATIC_LIBS=on -DBUILD_TESTING=off -DCMAKE_CXX_FLAGS="-D__MINGW_USE_VC2005_COMPAT" -DCMAKE_INSTALL_PREFIX="`pwd`/install" -DCMAKE_INSTALL_PREFIX="`pwd`/../../$(BUILD_PATH)/json-c-$(JSON_C_VERSION).tmp"
+	cd json-c-$(JSON_C_VERSION)/build && make install
+	# cleanup
+	rm -r -f json-c-$(JSON_C_VERSION)
+	mv $(BUILD_PATH)/json-c-$(JSON_C_VERSION).tmp $(BUILD_PATH)/json-c-$(JSON_C_VERSION)
+
+botan: $(BUILD_PATH)/botan-$(BOTAN_VERSION)
+
+$(BUILD_PATH)/botan-$(BOTAN_VERSION):
+	# prepare
+	pacman --needed --noconfirm -S python3
+	rm -r -f $(BUILD_PATH)/botan-*
+	[ -d "botan-$(BOTAN_VERSION)" ] || git clone https://github.com/randombit/botan.git --depth=1 --branch $(BOTAN_VERSION) "botan-$(BOTAN_VERSION)"
+	# build
+	if [ $(MSYSTEM) = "MINGW32" ] ; then cd botan-$(BOTAN_VERSION) && ./configure.py --os=mingw --cpu=x86_32 --disable-shared-library --enable-static-library --extra-cxxflags="-D__MINGW_USE_VC2005_COMPAT" --prefix="`pwd`/../$(BUILD_PATH)/botan-$(BOTAN_VERSION).tmp" ; fi
+	if [ $(MSYSTEM) = "MINGW64" ] ; then cd botan-$(BOTAN_VERSION) && ./configure.py --os=mingw --cpu=x86_64 --disable-shared-library --enable-static-library --prefix="`pwd`/../$(BUILD_PATH)/botan-$(BOTAN_VERSION).tmp" ; fi
+	cd botan-$(BOTAN_VERSION) && make install
+	# cleanup
+	rm -r -f botan-$(BOTAN_VERSION)
+	mv $(BUILD_PATH)/botan-$(BOTAN_VERSION).tmp $(BUILD_PATH)/botan-$(BOTAN_VERSION)
+
+rnp: $(BUILD_PATH)/rnp-$(RNP_VERSION)
+
+$(BUILD_PATH)/rnp-$(RNP_VERSION):
+	# prepare
+	rm -r -f $(BUILD_PATH)/rnp-*
+	[ -d "rnp-$(RNP_VERSION)" ] || git clone https://github.com/rnpgp/rnp.git --depth=1 --branch v$(RNP_VERSION) --recurse-submodules --shallow-submodules "rnp-$(RNP_VERSION)"
+	# build
+	mkdir -p rnp-$(RNP_VERSION)/build
+	cd rnp-$(RNP_VERSION)/build && cmake .. -G"MSYS Makefiles" -Wno-dev -DCMAKE_INSTALL_PREFIX="`pwd`/install" -DBUILD_SHARED_LIBS=yes -DBUILD_TESTING=off -DCMAKE_CXX_FLAGS="-D__MINGW_USE_VC2005_COMPAT -D__STDC_FORMAT_MACROS" -DBZIP2_INCLUDE_DIR="`pwd`/../../$(BUILD_PATH)/bzip2-$(BZIP2_VERSION)/include" -DBZIP2_LIBRARY_RELEASE="`pwd`/../../$(BUILD_PATH)/bzip2-$(BZIP2_VERSION)/lib/libbz2.a" -DBZIP2_LIBRARIES="`pwd`/../../$(BUILD_PATH)/bzip2-$(BZIP2_VERSION)/lib/libbz2.a" -DZLIB_INCLUDE_DIR="`pwd`/../../$(BUILD_PATH)/zlib-$(ZLIB_VERSION)/include" -DZLIB_LIBRARY="`pwd`/../../$(BUILD_PATH)/zlib-$(ZLIB_VERSION)/lib/libz.a" -DJSON-C_INCLUDE_DIR="`pwd`/../../$(BUILD_PATH)/json-c-$(JSON_C_VERSION)/include/json-c" -DJSON-C_LIBRARY="`pwd`/../../$(BUILD_PATH)/json-c-$(JSON_C_VERSION)/lib/libjson-c.a" -DBOTAN_INCLUDE_DIR="`pwd`/../../$(BUILD_PATH)/botan-$(BOTAN_VERSION)/include/botan-`echo $(BOTAN_VERSION) | cut -c1-1`" -DBOTAN_LIBRARY="`pwd`/../../$(BUILD_PATH)/botan-$(BOTAN_VERSION)/lib/libbotan-`echo $(BOTAN_VERSION) | cut -c1-1`.a"
+	cmake --build rnp-$(RNP_VERSION)/build
+	# copy files
+	mkdir -p $(BUILD_PATH)/rnp-$(RNP_VERSION).tmp/include/rnp
+	cp -r rnp-$(RNP_VERSION)/include/rnp/* $(BUILD_PATH)/rnp-$(RNP_VERSION).tmp/include/rnp/
+	cp -r rnp-$(RNP_VERSION)/build/src/lib/rnp/* $(BUILD_PATH)/rnp-$(RNP_VERSION).tmp/include/rnp/
+	mkdir -p $(BUILD_PATH)/rnp-$(RNP_VERSION).tmp/lib
+	cp -r rnp-$(RNP_VERSION)/build/src/lib/librnp.dll.a $(BUILD_PATH)/rnp-$(RNP_VERSION).tmp/lib/
+	mkdir -p $(BUILD_PATH)/rnp-$(RNP_VERSION).tmp/bin
+	cp -r rnp-$(RNP_VERSION)/build/src/lib/librnp.dll $(BUILD_PATH)/rnp-$(RNP_VERSION).tmp/bin/
+	# cleanup
+	rm -r -f rnp-$(RNP_VERSION)
+	mv $(BUILD_PATH)/rnp-$(RNP_VERSION).tmp $(BUILD_PATH)/rnp-$(RNP_VERSION)
 
 copylibs:
 	rm -r -f $(LIBS_PATH) ; \

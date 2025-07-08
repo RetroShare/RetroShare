@@ -299,7 +299,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 
     QFontDatabase db;
     foreach(int size, db.standardSizes())
-        ui.comboSize->addItem(QString::number(size));
+        ui.comboSize->addItem(QString::number(size), size);
 
     QStyleOptionComboBox opt; QSize sh;
     opt.initFrom(ui.comboSize);
@@ -407,6 +407,10 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     setAcceptDrops(true);
     ui.hashBox->setDropWidget(this);
     ui.hashBox->setAutoHide(true);
+
+    mMessageFontSizeHandler.registerFontSize(ui.msgText, [this, db] (QWidget*, int fontSize) {
+        ui.comboSize->setCurrentIndex(ui.comboSize->findData(fontSize));
+    });
 
 #if QT_VERSION < 0x040700
     // embedded images are not supported before QT 4.7.0

@@ -51,6 +51,8 @@ public:
     void getOwnCert(QString& invite,QString& description) const;
     RetroshareInviteFlags currentInviteFlags() const ;
 
+    virtual void showEvent(QShowEvent *) override;
+
 private slots:
 #ifdef DEAD_CODE
     void certContextMenu(QPoint);
@@ -63,7 +65,8 @@ private slots:
 	void addFriend();
 	void webMail();
 	void openWebHelp() ;
-    void recommendFriends();
+	void recommendFriends();
+	void updateHomeLogo();
 
 private:
 	Ui::HomePage *ui;
