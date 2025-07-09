@@ -71,7 +71,7 @@ static const uint32_t DELAY_BETWEEN_GROUP_STATISTICS_UPDATE = 120; // do not upd
 
 /** Constructor */
 GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl,const QString& settings_name, QWidget *parent,bool allow_dist_sync)
-: MainPage(parent),mSettingsName(settings_name)
+: GxsStatisticsProvider(ifaceImpl,settings_name,parent)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui = new Ui::GxsGroupFrameDialog();
@@ -466,9 +466,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 			uint32_t current_store_time = checkDelay(mInterface->getStoragePeriod(mGroupId))/86400 ;
 			uint32_t current_sync_time  = checkDelay(mInterface->getSyncPeriod(mGroupId))/86400 ;
 
-#ifdef DEBUG_GROUPFRAMEDIALOG
 			std::cerr << "Got sync=" << current_sync_time << ". store=" << current_store_time << std::endl;
-#endif
 			QAction *actnn = NULL;
 
 			QMenu *ctxMenu2 = contextMnu.addMenu(tr("Synchronise posts of last...")) ;
@@ -1151,45 +1149,6 @@ void GxsGroupFrameDialog::updateGroupSummary()
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
-void GxsGroupFrameDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
-{
-    mGroupStatisticsToUpdate.insert(groupId);
-    mShouldUpdateGroupStatistics = true;
-}
-
-void GxsGroupFrameDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
-{
-    RsThread::async([this,groupId]()
-	{
-		GxsGroupStatistic stats;
-
-        if(! getGroupStatistics(groupId, stats))
-		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group statistics for group " << groupId << std::endl;
-			return;
-		}
-
-		RsQThreadUtils::postToObject( [this,stats, groupId]()
-		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete, note that
-			 * Qt::QueuedConnection is important!
-			 */
-
-            QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
-
-            if (item)
-                ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
-
-            mCachedGroupStats[groupId] = stats;
-
-			getUserNotify()->updateIcon();
-
-        }, this );
-	});
-}
-
 void GxsGroupFrameDialog::getServiceStatistics(GxsServiceStatistic& stats) const
 {
     if(!mCachedGroupStats.empty())
@@ -1274,3 +1233,41 @@ void GxsGroupFrameDialog::distantRequestGroupData()
     checkRequestGroup(group_id) ;
 }
 
+void GxsGroupFrameDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
+{
+    mGroupStatisticsToUpdate.insert(groupId);
+    mShouldUpdateGroupStatistics = true;
+}
+
+void GxsGroupFrameDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
+{
+    RsThread::async([this,groupId]()
+    {
+        GxsGroupStatistic stats;
+
+        if(! getGroupStatistics(groupId, stats))
+        {
+            std::cerr << __PRETTY_FUNCTION__ << " failed to collect group statistics for group " << groupId << std::endl;
+            return;
+        }
+
+        RsQThreadUtils::postToObject( [this,stats, groupId]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete, note that
+             * Qt::QueuedConnection is important!
+             */
+
+            QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
+
+            if (item)
+                ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+
+            mCachedGroupStats[groupId] = stats;
+
+            getUserNotify()->updateIcon();
+
+        }, this );
+    });
+}
