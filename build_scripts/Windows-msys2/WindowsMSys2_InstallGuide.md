@@ -44,7 +44,7 @@ Install the default programs needed to build:
 
 Install the 64-bit toolchain:
 
-	mingw-w64-ucrt-x86_64-toolchain
+	pacman -S mingw-w64-ucrt-x86_64-toolchain
 
 Install all needed dependencies:
 
