@@ -133,6 +133,7 @@ void NotifyQt::notifyChatMessage(const ChatMessage &msg)
     emit chatMessageReceived(msg);
 }
 
+#ifdef TO_REMOVE
 void NotifyQt::notifyOwnAvatarChanged()
 {
 	{
@@ -146,6 +147,7 @@ void NotifyQt::notifyOwnAvatarChanged()
 #endif
 	emit ownAvatarChanged() ;
 }
+#endif
 
 class SignatureEventData
 {
@@ -365,7 +367,6 @@ void NotifyQt::notifyPeerStatusChangedSummary()
 
 	emit peerStatusChangedSummary();
 }
-#endif
 
 void NotifyQt::notifyOwnStatusMessageChanged()
 {
@@ -393,6 +394,7 @@ void NotifyQt::notifyPeerHasNewAvatar(std::string peer_id)
 #endif
 	emit peerHasNewAvatar(QString::fromStdString(peer_id)) ;
 }
+#endif
 
 void NotifyQt::notifyCustomState(const std::string& peer_id, const std::string& status_string)
 {

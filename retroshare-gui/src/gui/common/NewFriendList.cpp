@@ -203,7 +203,7 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_peer, RsEventType::FRIEND_LIST );
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_gssp, RsEventType::GOSSIP_DISCOVERY );
 
-    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(QString)), this, SLOT(forceUpdateDisplay()));
+//    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(QString)), this, SLOT(forceUpdateDisplay()));
 //    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(forceUpdateDisplay()));
 
     mModel = new RsFriendListModel(ui->peerTreeWidget);

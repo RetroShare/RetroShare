@@ -71,12 +71,12 @@ class NotifyQt: public QObject, public NotifyClient
 //		virtual void notifyTurtleSearchResult(const RsPeerId &pid, uint32_t search_id, const std::list<TurtleFileInfo>& found_files);
 //#endif
 //		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleGxsInfo>& found_groups);
-		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
-		virtual void notifyOwnAvatarChanged() ;
-//        virtual void notifyChatLobbyEvent(uint64_t /* lobby id */, uint32_t /* event type */, const RsGxsId & /*nickname*/, const std::string& /* any string */) ;
+//		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
+//		virtual void notifyOwnAvatarChanged() ;
+//      virtual void notifyChatLobbyEvent(uint64_t /* lobby id */, uint32_t /* event type */, const RsGxsId & /*nickname*/, const std::string& /* any string */) ;
 //		virtual void notifyChatLobbyTimeShift(int time_shift) ;
 
-		virtual void notifyOwnStatusMessageChanged() ;
+//		virtual void notifyOwnStatusMessageChanged() ;
 //		virtual void notifyDiskFull(uint32_t loc,uint32_t size_in_mb) ;
 		/* peer has changed the state */
 //		virtual void notifyPeerStatusChanged(const std::string& peer_id, uint32_t state);
@@ -117,9 +117,9 @@ class NotifyQt: public QObject, public NotifyClient
 		void chatStatusChanged(const ChatId&,const QString&) const ;
 		void chatCleared(const ChatId&) const ;
 		void peerHasNewCustomStateString(const QString& /* peer_id */, const QString& /* status_string */) const ;
-		void peerHasNewAvatar(const QString& peer_id) const ;
-		void ownAvatarChanged() const ;
-		void ownStatusMessageChanged() const ;
+//		void peerHasNewAvatar(const QString& peer_id) const ;
+//		void ownAvatarChanged() const ;
+//		void ownStatusMessageChanged() const ;
 		void errorOccurred(int,int,const QString&) const ;
 		void diskFull(int,int) const ;
 //		void peerStatusChanged(const QString& /* peer_id */, int /* status */);

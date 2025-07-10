@@ -95,8 +95,8 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
     ui.avatar->setOwnId();
 
     connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
-    connect(NotifyQt::getInstance(), SIGNAL(ownStatusMessageChanged()), this, SLOT(loadmystatusmessage()));
 
+    //connect(NotifyQt::getInstance(), SIGNAL(ownStatusMessageChanged()), this, SLOT(loadmystatusmessage()));
     //connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateOwnStatus(QString,int)));
 
     mEventHandlerId = 0;
@@ -105,10 +105,17 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
         RsQThreadUtils::postToObject([=](){
             auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
 
-            if(!fe || fe->mEventCode != RsFriendListEventCode::NODE_STATUS_CHANGED)
-                return;
+            if(!fe) return;
 
-            updateOwnStatus(QString::fromStdString(fe->mSslId.toStdString()),fe->mStatus);
+            switch(fe->mEventCode)
+            {
+            case RsFriendListEventCode::NODE_STATUS_CHANGED: updateOwnStatus(QString::fromStdString(fe->mSslId.toStdString()),fe->mStatus);
+                break;
+            case RsFriendListEventCode::OWN_STATUS_CHANGED: loadmystatusmessage();
+                break;
+            default:
+                break;
+            }
 
         }, this );
     },mEventHandlerId,RsEventType::FRIEND_LIST);

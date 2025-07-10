@@ -49,8 +49,8 @@ AvatarWidget::AvatarWidget(QWidget *parent) : QLabel(parent), ui(new Ui::AvatarW
     setFrameType(NO_FRAME);
 
     /* connect signals */
-    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
-    connect(NotifyQt::getInstance(), SIGNAL(ownAvatarChanged()), this, SLOT(updateOwnAvatar()));
+    //connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
+    //connect(NotifyQt::getInstance(), SIGNAL(ownAvatarChanged()), this, SLOT(updateOwnAvatar()));
 
     mEventHandlerId = 0;
 
@@ -61,7 +61,19 @@ AvatarWidget::AvatarWidget(QWidget *parent) : QLabel(parent), ui(new Ui::AvatarW
             const RsFriendListEvent *e = dynamic_cast<const RsFriendListEvent*>(event.get());
             if(!e)
                 return;
-            updateStatus(QString::fromStdString(e->mSslId.toStdString()),e->mStatus);
+
+            switch(e->mEventCode)
+            {
+            case RsFriendListEventCode::OWN_AVATAR_CHANGED:
+            case RsFriendListEventCode::NODE_AVATAR_CHANGED: updateAvatar(QString::fromStdString(e->mSslId.toStdString()));
+                    break;
+            case RsFriendListEventCode::OWN_STATUS_CHANGED:
+            case RsFriendListEventCode::NODE_STATUS_CHANGED:  updateStatus(QString::fromStdString(e->mSslId.toStdString()),e->mStatus);
+            default:
+                break;
+            }
+
+
         }, this );
     }, mEventHandlerId, RsEventType::FRIEND_LIST );
 
