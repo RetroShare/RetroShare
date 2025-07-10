@@ -18,8 +18,8 @@ At the end, you'll get at ..\\*-msys2\deploy\ the Portable 7zip file.
 
 ### MSYS2 INSTALLATION (for editing or debugging)
 
-Download MSYS2 from [MSYS2](http://www.msys2.org/). Get the i686 version
-if you run a 32-bit Windows or the x86_64 if you run a 64-bit Windows.
+Download MSYS2 from [MSYS2](http://www.msys2.org/). Installing 
+MSYS2 requires 64 bit Windows 10 or newer.
 
 Run the installer and install MSYS2.
 
@@ -40,26 +40,28 @@ Run MSYS2 MSYS again and finish updating with:
 
 Install the default programs needed to build:
 
-	pacman -S base-devel git wget p7zip gcc perl ruby python2 doxygen cmake
+	pacman -S base-devel git wget p7zip gcc perl ruby doxygen cmake
 
-Install the 32-bit toolchain:
+Install the 64-bit toolchain:
 
-	pacman -S mingw-w64-i686-toolchain
+	pacman -S mingw-w64-x86_64-toolchain
 
 Install all needed dependencies:
 
-	pacman -S mingw-w64-i686-miniupnpc
-	pacman -S mingw-w64-i686-libmicrohttpd
-	pacman -S mingw-w64-i686-libxslt
-	pacman -S mingw-w64-i686-xapian-core
-	pacman -S mingw-w64-i686-sqlcipher
-	pacman -S mingw-w64-i686-qt5
-	pacman -S mingw32/mingw-w64-i686-cmake
-	pacman -S mingw-w64-i686-rapidjson
+	pacman -S mingw-w64-x86_64-miniupnpc
+	pacman -S mingw-w64-x86_64-libxslt
+	pacman -S mingw-w64-x86_64-xapian-core
+	pacman -S mingw-w64-x86_64-sqlcipher
+	pacman -S mingw-w64-x86_64-qt5-base
+	pacman -S mingw-w64-x86_64-qt5-multimedia
+	pacman -S mingw-w64-x86_64-ccmake
+	pacman -S mingw-w64-x86_64-rapidjson
+	pacman -S mingw-w64-x86_64-json-c
+	pacman -S mingw-w64-x86_64-libbotan
 
 If you want to use QtCreator as IDE, prefer using this one publish by MSYS2 as all build Kit are already setted.
 
-	pacman -S mingw-w64-i686-qt-creator
+	pacman -S mingw-w64-x86_64-qt-creator
 *You can start it from MSYS2 terminal.*
 
 
@@ -67,7 +69,7 @@ We're done installing MSYS2, close the shell terminal.
 
 ### BUILDING RETROSHARE
 
-Now run the MSYS2 MinGW 32-bit shell terminal (it's in the start menu).
+Now run the MSYS2 MinGW 64-bit shell terminal (it's in the start menu).
 We will use it to checkout Retroshare and build it:
 
 	git clone https://github.com/RetroShare/RetroShare.git
