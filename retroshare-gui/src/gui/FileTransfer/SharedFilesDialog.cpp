@@ -22,7 +22,6 @@
 
 #include "rshare.h"
 #include "gui/MainWindow.h"
-#include "gui/notifyqt.h"
 #include "gui/RemoteDirModel.h"
 #include "gui/RetroShareLink.h"
 #include "gui/ShareManager.h"
@@ -35,6 +34,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "util/QtVersion.h"
 #include "util/RsAction.h"
+#include "util/qtthreadsutils.h"
 #include "util/misc.h"
 #include "util/rstime.h"
 #include "util/rsdir.h"
@@ -166,6 +166,7 @@ public:
 
 SharedFilesDialog::~SharedFilesDialog()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
     delete tree_model;
     delete flat_model;
     delete tree_proxyModel;
@@ -177,9 +178,36 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
-    NotifyQt *notify = NotifyQt::getInstance();
-    connect(notify, SIGNAL(filesPreModChanged(bool)), this, SLOT(preModDirectories(bool)));
-    connect(notify, SIGNAL(filesPostModChanged(bool)), this, SLOT(postModDirectories(bool)));
+    //connect(notify, SIGNAL(filesPreModChanged(bool)), this, SLOT(preModDirectories(bool)));
+    //connect(notify, SIGNAL(filesPostModChanged(bool)), this, SLOT(postModDirectories(bool)));
+
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler([this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){
+
+            auto e = dynamic_cast<const RsSharedDirectoriesEvent*>(event.get());
+
+            switch(e->mEventCode)
+            {
+            case RsSharedDirectoriesEventCode::OWN_DIR_LIST_PROCESSING:
+                preModDirectories(true);
+                break;
+
+            case RsSharedDirectoriesEventCode::OWN_DIR_LIST_UPDATED:
+                postModDirectories(true);
+                break;
+
+            case RsSharedDirectoriesEventCode::FRIEND_DIR_LIST_UPDATED:
+                preModDirectories(false);
+                postModDirectories(false);
+                break;
+
+            default:
+                break;
+        };}, this);
+    }, mEventHandlerId,RsEventType::SHARED_DIRECTORIES);
 
     connect(ui.viewType_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changeCurrentViewModel(int)));
     connect(ui.dirTreeView, SIGNAL(customContextMenuRequested(QPoint)), this,  SLOT( spawnCustomPopupMenu( QPoint ) ) );

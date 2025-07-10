@@ -76,7 +76,7 @@ static NewsFeed* instance = nullptr;
 NewsFeed::NewsFeed(QWidget *parent) : MainPage(parent), ui(new Ui::NewsFeed),
     mEventTypes({
         RsEventType::AUTHSSL_CONNECTION_AUTENTICATION,
-        RsEventType::PEER_CONNECTION                 ,
+        RsEventType::FRIEND_LIST                     ,
         RsEventType::GXS_CIRCLES                     ,
         RsEventType::GXS_CHANNELS                    ,
         RsEventType::GXS_FORUMS                      ,
@@ -197,7 +197,7 @@ void NewsFeed::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
     if(event->mType == RsEventType::AUTHSSL_CONNECTION_AUTENTICATION && (flags & RS_FEED_TYPE_SECURITY))
 		handleSecurityEvent(event);
 
-    if(event->mType == RsEventType::PEER_CONNECTION && (flags & RS_FEED_TYPE_PEER))
+    if(event->mType == RsEventType::FRIEND_LIST && (flags & RS_FEED_TYPE_PEER))
 		handleConnectionEvent(event);
 
     if(event->mType == RsEventType::GXS_CIRCLES && (flags & RS_FEED_TYPE_CIRCLE))
@@ -428,7 +428,7 @@ void NewsFeed::handleCircleEvent(std::shared_ptr<const RsEvent> event)
 
 void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
 {
-	const RsConnectionEvent *pe = dynamic_cast<const RsConnectionEvent*>(event.get());
+    const RsFriendListEvent *pe = dynamic_cast<const RsFriendListEvent*>(event.get());
 	if(!pe) return;
 
 	auto& e(*pe);
@@ -437,18 +437,18 @@ void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
 	std::cerr << "NotifyQt: handling connection event from peer " << e.mSslId << std::endl;
 #endif
 
-	switch(e.mConnectionInfoCode)
+    switch(e.mEventCode)
 	{
-	case RsConnectionEventCode::PEER_CONNECTED:
+    case RsFriendListEventCode::NODE_CONNECTED:
 		addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_CONNECT, false), true);
 		NotifyQt::getInstance()->addToaster(RS_POPUP_CONNECT, e.mSslId.toStdString().c_str(), "", "");
 		break;
-	case RsConnectionEventCode::PEER_DISCONNECTED: // not handled yet
+    case RsFriendListEventCode::NODE_DISCONNECTED: // not handled yet
 		break;
-	case RsConnectionEventCode::PEER_TIME_SHIFT:
+    case RsFriendListEventCode::NODE_TIME_SHIFT:
 		addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_OFFSET, false),false);
 		break;
-	case RsConnectionEventCode::PEER_REPORTS_WRONG_IP:
+    case RsFriendListEventCode::NODE_REPORTS_WRONG_IP:
 		addFeedItemIfUnique(new SecurityIpItem(
 		                        this, e.mSslId, e.mOwnLocator.toString(),
 		                        e.mReportedLocator.toString(),
