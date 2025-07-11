@@ -490,12 +490,12 @@ void GxsChannelPostItem::fill()
 
 		title = tr("Channel Feed") + ": ";
 		RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, groupName());
-		title += link.toHtml();
+		title += link.toHtmlColored();
 		ui->titleLabel->setText(title);
 
 		msgText = tr("Post") + ": ";
 		RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
-		msgText += msgLink.toHtml();
+		msgText += msgLink.toHtmlColored();
 		ui->subjectLabel->setText(msgText);
 
 		if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))

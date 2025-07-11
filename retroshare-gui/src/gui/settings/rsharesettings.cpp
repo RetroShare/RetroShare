@@ -1222,6 +1222,15 @@ void RshareSettings::setMessageFontSize(int value)
 	setValueToGroup("Message", "FontSize", value);
 }
 
+void RshareSettings::setLinkColor(QRgb rgbValue)
+{
+	setValueToGroup("Chat", "LinkColor", QString::number(rgbValue));
+}
+QRgb RshareSettings::getLinkColor()
+{
+	return valueFromGroup("Chat", "LinkColor", QString::number(QColor(3, 155, 198).rgba())).toUInt();
+}
+
 #ifdef RS_JSONAPI
 bool RshareSettings::getJsonApiEnabled()
 {
