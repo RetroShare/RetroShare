@@ -58,6 +58,7 @@ Install all needed dependencies:
 	pacman -S mingw-w64-x86_64-rapidjson
 	pacman -S mingw-w64-x86_64-json-c
 	pacman -S mingw-w64-x86_64-libbotan
+	pacman -S mingw-w64-x86_64-asio
 
 If you want to use QtCreator as IDE, prefer using this one publish by MSYS2 as all build Kit are already setted.
 
