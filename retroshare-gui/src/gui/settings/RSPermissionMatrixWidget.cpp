@@ -246,7 +246,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
   _painter->setRenderHint(QPainter::TextAntialiasing);
 
   /* Fill in the background */
-  _painter->fillRect(_rec, QBrush(BACK_COLOR));
+  //_painter->fillRect(_rec, QBrush(BACK_COLOR));
   _painter->drawRect(_rec);
 
   // draw one line per friend.

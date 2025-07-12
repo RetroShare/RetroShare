@@ -34,7 +34,7 @@
 #define SCALE_WIDTH   75  /** Width of the scale */
 
 #define BACK_COLOR       Qt::white
-#define FOREGROUND_COLOR Qt::black
+#define FOREGROUND_COLOR Qt::gray
 #define SCALE_COLOR      Qt::black
 #define GRID_COLOR       Qt::lightGray
 #define RSDHT_COLOR      Qt::magenta
