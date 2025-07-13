@@ -35,7 +35,7 @@
    <item>
     <widget class="QLabel" name="portLabel">
      <property name="text">
-      <string>:</string>
+      <string notr="true">:</string>
      </property>
     </widget>
    </item>
