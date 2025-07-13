@@ -180,8 +180,7 @@ void AddFeedDialog::useStandardUpdateIntervalToggled()
 void AddFeedDialog::useStandardProxyToggled()
 {
 	bool checked = ui->useStandardProxyCheckBox->isChecked();
-	ui->proxyAddressLineEdit->setEnabled(!checked);
-	ui->proxyPortSpinBox->setEnabled(!checked);
+	ui->proxyWidget->setEnabled(!checked);
 }
 
 void AddFeedDialog::typeForumToggled()
@@ -335,8 +334,8 @@ bool AddFeedDialog::fillFeed(uint32_t feedId)
 		ui->passwordLineEdit->setText(QString::fromUtf8(feedInfo.password.c_str()));
 
 		ui->useStandardProxyCheckBox->setChecked(feedInfo.flag.standardProxy);
-		ui->proxyAddressLineEdit->setText(QString::fromUtf8(feedInfo.proxyAddress.c_str()));
-		ui->proxyPortSpinBox->setValue(feedInfo.proxyPort);
+		ui->proxyWidget->setAddress(QString::fromUtf8(feedInfo.proxyAddress.c_str()));
+		ui->proxyWidget->setPort(feedInfo.proxyPort);
 
 		ui->useStandardUpdateInterval->setChecked(feedInfo.flag.standardUpdateInterval);
 		ui->updateIntervalSpinBox->setValue(feedInfo.updateInterval / 60);
@@ -425,8 +424,8 @@ void AddFeedDialog::getFeedInfo(FeedInfo &feedInfo)
 	feedInfo.password = ui->passwordLineEdit->text().toUtf8().constData();
 
 	feedInfo.flag.standardProxy = ui->useStandardProxyCheckBox->isChecked();
-	feedInfo.proxyAddress = ui->proxyAddressLineEdit->text().toUtf8().constData();
-	feedInfo.proxyPort = ui->proxyPortSpinBox->value();
+	feedInfo.proxyAddress = ui->proxyWidget->address().toUtf8().constData();
+	feedInfo.proxyPort = ui->proxyWidget->port();
 
 	feedInfo.flag.standardUpdateInterval = ui->useStandardUpdateInterval->isChecked();
 	feedInfo.updateInterval = ui->updateIntervalSpinBox->value() * 60;
