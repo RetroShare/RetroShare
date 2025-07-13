@@ -24,8 +24,17 @@ public:
 Q_SIGNALS:
 	void changed();
 
+private Q_SLOTS:
+	void addressChanged(const QString &value);
+
+private:
+	void connectUi(bool doConnect);
+	void splitAddress(const QString &value, int &schemeIndex, QString &host);
+
 private:
 	Ui::ProxyWidget *ui;
+	QMetaObject::Connection mAddressConnection;
+	QMetaObject::Connection mSchemeConnection;
 };
 
 #endif // PROXYWIDGET_H
