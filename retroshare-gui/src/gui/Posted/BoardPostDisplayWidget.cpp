@@ -236,7 +236,7 @@ void BoardPostDisplayWidgetBase::baseSetup()
         {
             QString siteurl = url.toEncoded();
 
-            label->setStyleSheet("text-decoration: underline; color:#2255AA;");
+            label->setStyleSheet("text-decoration: underline; color:#039bc6;");
             label->setCursor(QCursor(Qt::PointingHandCursor));
             label->setToolTip(siteurl);
 

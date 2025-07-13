@@ -50,6 +50,10 @@ RSTextBrowser::RSTextBrowser(QWidget *parent) :
 
 	highlighter = new RsSyntaxHighlighter(this);
 
+	QColor linkColor = QColor(3, 155, 198);
+	QString sheet = QString::fromLatin1("a { text-decoration: underline; color: %1 }").arg(linkColor.name());
+	document()->setDefaultStyleSheet(sheet);
+
 	connect(this, SIGNAL(anchorClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
 }
 
