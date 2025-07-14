@@ -15,7 +15,7 @@ if "%QtVersion%"=="" %cecho% error "Cannot get Qt version." & exit /B 1
 set RsMinGWPath=%EnvMSYS2BasePath%\%RsToolchain%
 
 set RsBuildPath=%BuildPath%\Qt-%QtVersion%-%RsToolchain%-%RsBuildConfig%
-set RsDeployPath=%DeployPath%\Qt-%QtVersion%%RsType%-%RsToolchain%-%RsBuildConfig%
+set RsDeployPath=%DeployPath%\Qt-%QtVersion%-%RsToolchain%%RsType%-%RsBuildConfig%
 set RsPackPath=%DeployPath%
 set RsArchiveAdd=
 set RsWebuiBuildPath=%RsBuildPath%\retroshare-webui\webui

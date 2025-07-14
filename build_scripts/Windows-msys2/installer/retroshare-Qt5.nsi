@@ -9,6 +9,7 @@
 ;!define REVISION ""
 ;!define DEPLOYDIR ""
 ;!define ARCHITECTURE ""
+;!define TOOLCHAIN ""
 
 # Optional defines
 ;!define OUTDIR ""
@@ -20,6 +21,9 @@
 !endif
 !ifndef ARCHITECTURE
 !error "ARCHITECTURE is not defined"
+!endif
+!ifndef TOOLCHAIN
+!error "TOOLCHAIN is not defined"
 !endif
 
 # Check optional defines
@@ -72,7 +76,7 @@ ${!defineifexist} TOR_EXISTS "${DEPLOYDIR}\tor.exe"
 # Main Install settings
 Name "${APPNAMEANDVERSION}"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "${OUTDIR_}RetroShare-${VERSION}-${Date}-${REVISION}-${ARCHITECTURE}${RSTYPE}${INSTALLERADD}-setup.exe"
+OutFile "${OUTDIR_}RetroShare-${VERSION}-${Date}-${REVISION}-${TOOLCHAIN}-msys2${RSTYPE}${INSTALLERADD}-setup.exe"
 BrandingText "${APPNAMEANDVERSION}"
 RequestExecutionlevel highest
 # Use compression
