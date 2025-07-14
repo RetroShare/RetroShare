@@ -101,6 +101,7 @@ public:
 	void addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType);
 	void addChatMsg(bool incoming, const QString &name, const RsGxsId gxsId, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType);
     void updateStatusString(const QString &statusMask, const QString &statusString, bool permanent = false);
+	void updatePixmapLabel(const QPixmap &pixmap);
 
 	void addToolsAction(QAction *action);
 

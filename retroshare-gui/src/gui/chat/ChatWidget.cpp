@@ -1931,7 +1931,12 @@ void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QStr
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString, bool permanent)
 {
 	ui->typingLabel->setText(QString(statusMask).arg(trUtf8(statusString.toUtf8()))); // displays info for 5 secs.
-    ui->typingPixmapLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":icons/png/typing.png") );
+
+	if (statusString.contains("Connexion refused")){
+		ui->typingPixmapLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":images/denied-32.png") );
+	} else {
+		ui->typingPixmapLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":icons/png/typing.png") );
+	}
 
 	if (statusString == "is typing...") {
 		typing = true;
@@ -1941,6 +1946,11 @@ void ChatWidget::updateStatusString(const QString &statusMask, const QString &st
 
     if(!permanent)
         QTimer::singleShot(5000, this, SLOT(resetStatusBar())) ;
+}
+
+void ChatWidget::updatePixmapLabel(const QPixmap &pixmap)
+{
+	ui->typingPixmapLabel->setPixmap(pixmap);
 }
 
 void ChatWidget::setName(const QString &name)
