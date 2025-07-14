@@ -55,7 +55,6 @@ Run the scripts in this order:
   * "CONFIG+=..."       enable other extra compile time features, you can find the almost complete list in file *&lt;sourcefolder&gt;\retroshare.pri*
 * For fixing compile problems (optional)
   * singlethread:       use only 1 thread for building, slow but useful if you don't find the error message in the console
-  * clang:              use clang compiler instead of GCC
   * noupdate:           skip the msys2 update step, sometimes some msys2 packages are broken, you can manually switch back to the older package, and this option will prevent updating to the broken version again
 
 Example:
