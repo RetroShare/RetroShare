@@ -9,7 +9,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+398"/>
+        <location line="+377"/>
         <source>Board</source>
         <translation type="unfinished"></translation>
     </message>
@@ -34,7 +34,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-391"/>
+        <location line="-370"/>
         <source>Authentication (not yet supported)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -59,7 +59,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+29"/>
         <source>Update interval</source>
         <translation type="unfinished"></translation>
     </message>
@@ -89,7 +89,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-216"/>
+        <location line="-195"/>
         <source>Storage time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -114,17 +114,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+200"/>
+        <location line="+196"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
@@ -199,7 +189,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+211"/>
+        <location line="+208"/>
         <location line="+152"/>
         <location line="+15"/>
         <source>Edit feed</source>
@@ -264,17 +254,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
+        <location line="+13"/>
         <source>Misc</source>
         <translation type="unfinished"></translation>
     </message>
@@ -317,12 +297,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="+101"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="+105"/>
         <source>Message Folders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+197"/>
+        <location line="+199"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
@@ -372,7 +352,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+241"/>
+        <location line="+259"/>
         <source>Add new folder</source>
         <translation type="unfinished"></translation>
     </message>
@@ -535,7 +515,7 @@
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+117"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+126"/>
         <source>Title</source>
         <translation type="unfinished"></translation>
     </message>
@@ -549,6 +529,11 @@
         <location line="+5"/>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="+1"/>
         <source>Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+121"/>
+        <source>Copy Link Location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -567,7 +552,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+16"/>
         <source>Open link in browser</source>
         <translation type="unfinished"></translation>
     </message>
@@ -577,7 +562,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+127"/>
+        <location line="+131"/>
         <source>The messages will be added to the forum</source>
         <translation type="unfinished"></translation>
     </message>
@@ -637,7 +622,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+374"/>
+        <location line="+412"/>
         <source>Hide</source>
         <translation type="unfinished"></translation>
     </message>
@@ -954,6 +939,39 @@
         <location line="+111"/>
         <location line="+21"/>
         <source>Error parsing document</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ProxyWidget</name>
+    <message>
+        <location filename="../gui/ProxyWidget.cpp" line="+17"/>
+        <source>HTTP Proxy.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>HTTPS Proxy.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>SOCKS4 Proxy.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>SOCKS4a Proxy. Proxy resolves URL hostname.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>SOCKS5 Proxy.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>SOCKS5 Proxy. Proxy resolves URL hostname.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

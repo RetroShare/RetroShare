@@ -13,6 +13,7 @@ LIBMICROHTTPD_VERSION=0.9.75
 FFMPEG_VERSION=4.4
 RAPIDJSON_VERSION=1.1.0
 XAPIAN_VERSION=1.4.19
+ASIO_VERSION=1-34-2
 #RNP_VERSION=0.17.1
 
 # libaries for rnp
@@ -23,7 +24,7 @@ DOWNLOAD_PATH?=download
 BUILD_PATH=build
 LIBS_PATH?=libs
 
-all: dirs zlib bzip2 miniupnpc openssl speex speexdsp libxml2 libxslt curl sqlcipher libmicrohttpd ffmpeg rapidjson xapian jsonc botan copylibs
+all: dirs zlib bzip2 miniupnpc openssl speex speexdsp libxml2 libxslt curl sqlcipher libmicrohttpd ffmpeg rapidjson xapian jsonc botan asio copylibs
 #rnp
 
 download: \
@@ -397,6 +398,20 @@ $(BUILD_PATH)/botan-$(BOTAN_VERSION):
 	# cleanup
 	rm -r -f botan-$(BOTAN_VERSION)
 	mv $(BUILD_PATH)/botan-$(BOTAN_VERSION).tmp $(BUILD_PATH)/botan-$(BOTAN_VERSION)
+
+asio: $(BUILD_PATH)/asio-$(ASIO_VERSION)
+
+$(BUILD_PATH)/asio-$(ASIO_VERSION):
+	# prepare
+	rm -r -f $(BUILD_PATH)/asio-*
+	[ -d "asio-$(ASIO_VERSION)" ] || git clone https://github.com/chriskohlhoff/asio.git --depth=1 --branch asio-$(ASIO_VERSION) "asio-$(ASIO_VERSION)"
+	# copy files
+	mkdir -p $(BUILD_PATH)/asio-$(ASIO_VERSION).tmp/include/asio
+	cp asio-$(ASIO_VERSION)/asio/include/*.hpp $(BUILD_PATH)/asio-$(ASIO_VERSION).tmp/include/
+	cp -r asio-$(ASIO_VERSION)/asio/include/asio/* $(BUILD_PATH)/asio-$(ASIO_VERSION).tmp/include/asio/
+	# cleanup
+	rm -r -f asio-$(ASIO_VERSION)
+	mv $(BUILD_PATH)/asio-$(ASIO_VERSION).tmp $(BUILD_PATH)/asio-$(ASIO_VERSION)
 
 rnp: $(BUILD_PATH)/rnp-$(RNP_VERSION)
 

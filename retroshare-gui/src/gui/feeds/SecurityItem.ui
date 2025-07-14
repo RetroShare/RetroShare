@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1015</width>
-    <height>246</height>
+    <height>326</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="SecurityItem_GL">
@@ -35,10 +35,10 @@
       <bool>true</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+      <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="feedFrame_GL">
       <property name="verticalSpacing">

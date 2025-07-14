@@ -14374,7 +14374,7 @@ Haluatko tallentaa viestin?</translation>
     </message>
     <message>
         <location line="+249"/>
-        <source>Stared</source>
+        <source>Starred</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

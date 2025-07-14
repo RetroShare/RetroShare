@@ -231,7 +231,7 @@ https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-qgroupbox
 --------------------------------------------------------------------------- */
 QGroupBox {
   font-weight: bold;
-  border: 1px solid #C9CDD0;
+  border: 1px solid #C0C4C8;
   border-radius: 4px;
   padding: 2px;
   margin-top: 6px;
@@ -1234,7 +1234,7 @@ https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-qcombobox
 
 --------------------------------------------------------------------------- */
 QComboBox {
-  border: 1px solid #C9CDD0;
+  border: 1px solid #C0C4C8;
   border-radius: 4px;
   selection-background-color: #9FCBFF;
   padding-left: 4px;
@@ -1250,7 +1250,7 @@ QComboBox {
 }
 
 QComboBox QAbstractItemView {
-  border: 1px solid #C9CDD0;
+  border: 1px solid #C0C4C8;
   border-radius: 0;
   background-color: #FAFAFA;
   selection-background-color: #9FCBFF;
@@ -1263,7 +1263,7 @@ QComboBox QAbstractItemView:hover {
 
 QComboBox QAbstractItemView:selected {
   background: #9FCBFF;
-  color: #C9CDD0;
+  color: #C0C4C8;
 }
 
 QComboBox QAbstractItemView:alternate {
@@ -1299,6 +1299,18 @@ QComboBox::indicator {
 
 QComboBox::indicator:alternate {
   background: #FAFAFA;
+}
+
+QComboBox::item {
+  /* Remove to fix #282, #285 and MR #288*/
+  /*&:checked {
+            font-weight: bold;
+        }
+
+        &:selected {
+            border: 0px solid transparent;
+        }
+        */
 }
 
 QComboBox::item:alternate {
@@ -1433,14 +1445,14 @@ QLineEdit {
   padding-left: 4px;
   padding-right: 4px;
   border-style: solid;
-  border: 1px solid #C9CDD0;
+  border: 1px solid #C0C4C8;
   border-radius: 4px;
   color: #19232D;
 }
 
 QLineEdit:disabled {
   background-color: #FAFAFA;
-  color: #788D9C;
+  color: #9DA9B5;
 }
 
 QLineEdit:hover {
@@ -2151,12 +2163,12 @@ QSplitter::handle:hover {
 }
 
 QSplitter::handle:horizontal {
-  width: 5px;
+  width: 2px;
   image: url(":/standard_light/rc/line_vertical.png");
 }
 
 QSplitter::handle:vertical {
-  height: 5px;
+  height: 2px;
   image: url(":/standard_light/rc/line_horizontal.png");
 }
 
@@ -2350,51 +2362,6 @@ QFrame#titleBarFrame QTextEdit {
 	background: white;
 }
 
-/**** Special Page tweak ****/
-
-
-/* ConnectFriendWizard */
-
-ConnectFriendWizard QPlainTextEdit#friendCertEdit {
-	border: none;
-	background: white;
-	color: black;
-}
-
-ConnectFriendWizard QFrame#friendFrame {
-	border: 2px solid #0099cc;
-	border-radius: 6px;
-	background: white;
-}
-
-ConnectFriendWizard QWizardPage#ConclusionPage > QGroupBox#peerDetailsFrame {
-	border: 2px solid #039bd5;
-	border-radius:6px;
-	background: white;
-	color: black;
-	padding: 12 12px;
-}
-
-ConnectFriendWizard QGroupBox::title#peerDetailsFrame
-{
-	padding: 4 12px;
-	background: transparent;
-	padding: 4 12px;
-	background: #039bd5;
-	color: white;
-}
-
-
-/* GetStartedDialog */
-
-GetStartedDialog QTextEdit {
-	border: 1px solid #B8B6B1;
-	border-radius: 6px;
-	background: white;
-	color: black;
-}
-
-
 /* HomePage */
 
 HomePage QLabel#userCertLabel {
@@ -2509,7 +2476,7 @@ GxsGroupDialog QLabel#groupLogo{
 
 /* Settings */
 
-PluginItem > QFrame#pluginFrame {
+PluginItem QFrame#pluginFrame {
 	border: 2px solid #A8B8D1;
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FCFDFE, stop: 1 #E2E8EF);
 	border-radius: 0px
@@ -2521,7 +2488,7 @@ PluginItem QLabel#infoLabel {
 
 /* Feeds */
 
-AttachFileItem > QFrame#frame {
+AttachFileItem QFrame#frame {
 	border: 2px solid black;
 	background: white;
 }
@@ -2627,88 +2594,78 @@ BoardPostDisplayWidget_card QLabel#siteBoldLabel {
 	color: #787c7e;
 }
 
+/* GenCertDialog
+   Change colors here because GUI is not started yet so no user StyleSheet loads */
 
-/* MessengerWindow */
-
-MessengerWindow QFrame#messengerframetop{
-  background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
-	border: 0px;
+GenCertDialog QFrame#profileframe{
+	border-image: url(:/images/logo/background.png) 0 0 0 0 stretch stretch;
+	border-width: 0px;
 }
 
-
-/*************** Optional ***************/
-
-/**** WikiPoos ****/
-WikiEditDialog QPushButton#pushButton_History {
-	color: white;
-	background: #5bb62b;
-	border-radius: 4px;
-	max-height: 20px;
-	min-width: 4em;
-	padding: 2px;
-	padding-left: 6px;
-	padding-right: 6px;
-}
-
-WikiEditDialog QPushButton#pushButton_History:hover {
-	background: #57af29;
-}
-
-
-/**** The Wire ****/
-
-WireGroupItem QFrame#wire_frame:hover {
-	background-color: #7ecbfb;
-}
-WireGroupItem QFrame#wire_frame > QLabel {
+GenCertDialog QFrame#profileframe QCheckBox,
+GenCertDialog QFrame#profileframe QLabel {
 	background: transparent;
 }
 
-PulseTopLevel QFrame#plainFrame,
-PulseViewGroup QFrame#plainFrame,
-PulseReply QFrame#plainFrame {
-	border: 2px solid #c4cfd6;
-	background: white;
+GenCertDialog QLabel#info_Label:enabled {
+	color: black;
+	border: 1px solid #DCDC41;
+	border-radius: 6px;
+	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
 }
 
-PulseAddDialog QTextEdit#textEdit_Pulse {
-	border: 2px solid #c4cfd6;
+GenCertDialog QGroupBox#groupBox,
+GenCertDialog QGroupBox#profile_groupBox {
+	background: rgba(0,0,0,10%);
+}
+GenCertDialog QGroupBox#profile_groupBox QComboBox,
+GenCertDialog QGroupBox#profile_groupBox QSpinBox,
+GenCertDialog QGroupBox#profile_groupBox QLineEdit,
+GenCertDialog QComboBox#genPGPuser {
+	border: 2px solid #0099cc;
 	border-radius: 6px;
 	background: white;
 	color: black;
 }
 
-PulseReply #line_replyLine,
-PulseMessage #line{
-	color: #c4cfd6;
+GenCertDialog QPushButton#genButton {
+	border-image: url(:/images/btn_blue.png) 4;
+	border-width: 4;
+	color: white;
+}
+GenCertDialog QPushButton#genButton:hover {
+	border-image: url(:/images/btn_blue_hover.png) 4;
+}
+GenCertDialog QPushButton#genButton:disabled {
+	border-image: url(:/images/btn_27.png) 4;
+	color: black;
 }
 
-PulseReply QLabel#label_groupName{
-	color: #5b7083;
+/* StartDialog
+   To get the same style for all user and not use last connected one. */
+   
+StartDialog QFrame#loginframe{
+	border-image: url(:/images/logo/background_lessblue.png) 0 0 0 0 stretch stretch;
+	border-width: 0px;
 }
 
-PulseReplySeperator QFrame#frame {
-	border: 2px solid #CCCCCC;
-	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #EEEEEE, stop: 1 #CCCCCC);
-	border-radius: 10px}
+StartDialog QFrame#loginframe QCheckBox,
+StartDialog QFrame#loginframe QLabel {
+	background: transparent;
+}
+StartDialog QGroupBox#profilGBox {
+	background: rgba(0,0,0,10%);
+	border-radius: 3px;
+	border-width: 0px;
 }
 
-QLabel#label_masthead{
-	border: 2px solid #CCCCCC;
-	border-radius: 4px;
+StartDialog QPushButton#loadButton {
+	background: transparent;
+	border-image: url(:/images/btn_blue.png) 4;
+	border-width: 4;
+	color: white;
 }
-
-/**** PhotoShare ****/
-AlbumItem QFrame#albumFrame {
-	border: 2px solid #CCCCCC;
-	border-radius: 10px
-}
-
-PhotoItem QFrame#photoFrame {
-	border: 2px solid #CCCCCC;
-	border-radius: 10px
-}
-
-PhotoItem QWidget:hover {
-	background-color: #7ecbfb;
+StartDialog QPushButton#loadButton:hover {
+	background: transparent;
+	border-image: url(:/images/btn_blue_hover.png) 4;
 }

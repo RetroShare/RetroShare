@@ -36,6 +36,8 @@
 [submodule "retroshare-webui"]
 	path = retroshare-webui
 	url = https://github.com/RetroShare/RSNewWebUI.git
+	branch = master
 [submodule "supportlibs/librnp"]
 	path = supportlibs/librnp
 	url = https://github.com/rnpgp/rnp.git
+	branch = main
