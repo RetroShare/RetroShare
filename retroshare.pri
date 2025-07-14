@@ -734,7 +734,10 @@ android-* {
 # To export all symbols for the plugins on Windows build we need to build
 # libretroshare as shared library. Fix linking error (ld.exe: Error: export
 # ordinal too large) due to too many exported symbols.
-retroshare_plugins:win32:CONFIG *= libretroshare_shared
+#retroshare_plugins:win32:CONFIG *= libretroshare_shared
+
+# Always build libretroshare on Windows as shared library to be compatible when building with and without plugins
+win32:CONFIG *= libretroshare_shared
 
 win32-g++|win32-clang-g++ {
     !isEmpty(EXTERNAL_LIB_DIR) {
