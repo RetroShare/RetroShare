@@ -24,6 +24,7 @@
 #include <QWidget>
 #include <QPainter>
 #include <QBitmap>
+#include <QColor>
 
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include <retroshare/rstypes.h>
@@ -58,6 +59,7 @@ private:
     QPixmap downloadingPixmap;
     QPixmap notDownloadPixmap;
     QPixmap checkingPixmap;
+    QColor penColor;
 
      RsFileHash _file_hash ;
 };
