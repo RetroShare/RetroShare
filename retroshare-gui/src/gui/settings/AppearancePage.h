@@ -73,8 +73,14 @@ private slots:
 	void updateStyle() ;
 	void updateFontSize();
 
+	void on_linkColorButton_clicked();
+	void on_resetButton_clicked();
+
 private:
 	void switch_status(MainWindow::StatusElement s,const QString& key,bool b);
+
+	QRgb rgbLinkColor;
+	QRgb defaultColor;
 
 	/** Qt Designer generated object */
 	Ui::AppearancePage ui;

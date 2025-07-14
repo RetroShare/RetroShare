@@ -34,6 +34,7 @@
 #include "util/HandleRichText.h"
 #include "gui/MainWindow.h"
 #include "gui/Identity/IdDialog.h"
+#include "gui/settings/rsharesettings.h"
 #include "PhotoView.h"
 #include "gui/Posted/PostedDialog.h"
 #include "ui_PostedItem.h"
@@ -527,7 +528,6 @@ void PostedItem::fill()
 		// The only combination that seems to work: load as EncodedUrl, extract toEncoded().
 		QByteArray urlarray(mPost.mLink.c_str());
 		QUrl url = QUrl::fromEncoded(urlarray.trimmed());
-		QString urlstr = "Invalid Link";
 		QString sitestr = "Invalid Link";
 
 		bool urlOkay = url.isValid();
@@ -546,9 +546,14 @@ void PostedItem::fill()
 
 		if (urlOkay)
 		{
-			urlstr =  QString("<a href=\"");
+			linkColor = Settings->getLinkColor();
+			QString colorstring = QString("%1;").arg(linkColor.name());
+
+			QString urlstr =  QString("<a href=\"");
 			urlstr += QString(url.toEncoded());
-			urlstr += QString("\" ><span style=\" text-decoration: underline; color:#2255AA;\"> ");
+			urlstr += QString("\" ><span style=\" text-decoration: underline; color:");
+			urlstr += colorstring;
+			urlstr += QString("\"> ");
 			urlstr += messageName();
 			urlstr += QString(" </span></a>");
 
