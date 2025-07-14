@@ -132,8 +132,8 @@ public:
 		if(is_group_1 ^ is_group_2)	// if the two are different, put the group first.
 			return is_group_1 ;
 
-		bool online1 = (left .data(RsFriendListModel::OnlineRole).toInt() != RS_STATUS_OFFLINE);
-		bool online2 = (right.data(RsFriendListModel::OnlineRole).toInt() != RS_STATUS_OFFLINE);
+        bool online1 = (left .data(RsFriendListModel::OnlineRole).toInt() != (int)RsStatusValue::RS_STATUS_OFFLINE);
+        bool online2 = (right.data(RsFriendListModel::OnlineRole).toInt() != (int)RsStatusValue::RS_STATUS_OFFLINE);
 
         if((online1 != online2) && m_sortByState)
 			return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?online1:online2 ;    // always put online nodes first
@@ -155,7 +155,7 @@ public:
 
 		// Filter offline friends
 
-		if(!m_showOfflineNodes && (index.data(RsFriendListModel::OnlineRole).toInt() == RS_STATUS_OFFLINE))
+        if(!m_showOfflineNodes && (RsStatusValue(index.data(RsFriendListModel::OnlineRole).toInt()) == RsStatusValue::RS_STATUS_OFFLINE))
 			return false;
 
 		return index.data(RsFriendListModel::FilterRole).toString() == RsFriendListModel::FilterString ;
@@ -195,16 +195,16 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
     ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();
 
+//    mEventHandlerId_pssc=0; // forces initialization
     mEventHandlerId_peer=0; // forces initialization
     mEventHandlerId_gssp=0; // forces initialization
-    mEventHandlerId_pssc=0; // forces initialization
 
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_pssc, RsEventType::PEER_STATE_CHANGED );
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_peer, RsEventType::PEER_CONNECTION );
+//    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_pssc, RsEventType::PEER_STATE_CHANGED );
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_peer, RsEventType::FRIEND_LIST );
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId_gssp, RsEventType::GOSSIP_DISCOVERY );
 
-    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(QString)), this, SLOT(forceUpdateDisplay()));
-    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(forceUpdateDisplay()));
+//    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(QString)), this, SLOT(forceUpdateDisplay()));
+//    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(forceUpdateDisplay()));
 
     mModel = new RsFriendListModel(ui->peerTreeWidget);
 	mProxyModel = new FriendListSortFilterProxyModel(ui->peerTreeWidget->header(),this);
@@ -293,7 +293,7 @@ NewFriendList::~NewFriendList()
 {
     rsEvents->unregisterEventsHandler(mEventHandlerId_peer);
     rsEvents->unregisterEventsHandler(mEventHandlerId_gssp);
-    rsEvents->unregisterEventsHandler(mEventHandlerId_pssc);
+//    rsEvents->unregisterEventsHandler(mEventHandlerId_pssc);
 
     delete mModel;
     delete mProxyModel;

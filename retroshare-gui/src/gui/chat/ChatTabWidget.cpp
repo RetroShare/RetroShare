@@ -113,7 +113,7 @@ void ChatTabWidget::tabInfoChanged(ChatDialog *dialog)
 			}
 		} else if (dialog->hasPeerStatus()) {
 			setBlinking(tab, false);
-			setTabIcon(tab, QIcon(StatusDefs::imageIM(dialog->getPeerStatus())));
+            setTabIcon(tab, QIcon(StatusDefs::imageIM((RsStatusValue)dialog->getPeerStatus())));
 		} else {
 			setBlinking(tab, false);
 			setTabIcon(tab, QIcon());
@@ -155,7 +155,7 @@ void ChatTabWidget::getInfo(bool &isTyping, bool &hasNewMessage, QIcon *icon)
 		} else {
 			cd = dynamic_cast<ChatDialog*>(currentWidget());
 			if (cd && cd->hasPeerStatus()) {
-				*icon = QIcon(StatusDefs::imageIM(cd->getPeerStatus()));
+                *icon = QIcon(StatusDefs::imageIM((RsStatusValue)cd->getPeerStatus()));
 			} else {
 				*icon = QIcon();
 			}
