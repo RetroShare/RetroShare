@@ -520,6 +520,18 @@ trough qmake command line arguments!")
     }
 }
 
+# Some supportlibs compilation won't start if the intstalled CMAKE verison is >=3.5.
+# Force compilation in that case
+CMAKE_FORCE_MINVERSION=""
+CMAKE_VERSION_SPLIT = $$system(cmake --version)
+CMAKE_VERSION_SPLIT = $$split(CMAKE_VERSION_SPLIT, \\s+)
+CMAKE_VERSION = $$member(CMAKE_VERSION_SPLIT, 2)
+message("Cmake version detected: $${CMAKE_VERSION}")
+versionAtLeast(CMAKE_VERSION, 3.5) {
+    warning("Forcing compilation with CMAKE_POLICY_VERSION_MINIMUM=3.5")
+    CMAKE_FORCE_MINVERSION="-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+}
+
 gxsdistsync:DEFINES *= RS_USE_GXS_DISTANT_SYNC
 wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
