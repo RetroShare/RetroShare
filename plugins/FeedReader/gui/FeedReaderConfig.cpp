@@ -31,8 +31,7 @@ FeedReaderConfig::FeedReaderConfig(QWidget *parent, Qt::WindowFlags flags)
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
 
-	ui->proxyAddressLineEdit->setEnabled(false);
-	ui->proxyPortSpinBox->setEnabled(false);
+	ui->proxyWidget->setEnabled(false);
 
 	/* Connect signals */
 	connect(ui->updateIntervalSpinBox, (void(QSpinBox::*)(int))&QSpinBox::valueChanged, this, [this]() {
@@ -51,8 +50,7 @@ FeedReaderConfig::FeedReaderConfig(QWidget *parent, Qt::WindowFlags flags)
 		Settings->setValueToGroup("FeedReaderDialog", "OpenAllInNewTab", ui->openAllInNewTabCheckBox->isChecked());
 	});
 	connect(ui->useProxyCheckBox, &QCheckBox::toggled, this, &FeedReaderConfig::updateProxy);
-	connect(ui->proxyAddressLineEdit, &QLineEdit::textChanged, this, &FeedReaderConfig::updateProxy);
-	connect(ui->proxyPortSpinBox, (void(QSpinBox::*)(int))&QSpinBox::valueChanged, this, &FeedReaderConfig::updateProxy);
+	connect(ui->proxyWidget, &ProxyWidget::changed, this, &FeedReaderConfig::updateProxy);
 
 	connect(ui->useProxyCheckBox, SIGNAL(toggled(bool)), this, SLOT(useProxyToggled()));
 }
@@ -75,8 +73,8 @@ void FeedReaderConfig::load()
 	std::string proxyAddress;
 	uint16_t proxyPort;
 	whileBlocking(ui->useProxyCheckBox)->setChecked(rsFeedReader->getStandardProxy(proxyAddress, proxyPort));
-	whileBlocking(ui->proxyAddressLineEdit)->setText(QString::fromUtf8(proxyAddress.c_str()));
-	whileBlocking(ui->proxyPortSpinBox)->setValue(proxyPort);
+	whileBlocking(ui->proxyWidget)->setAddress(QString::fromUtf8(proxyAddress.c_str()));
+	whileBlocking(ui->proxyWidget)->setPort(proxyPort);
 
 	loaded = true;
 
@@ -87,11 +85,10 @@ void FeedReaderConfig::useProxyToggled()
 {
 	bool enabled = ui->useProxyCheckBox->isChecked();
 
-	ui->proxyAddressLineEdit->setEnabled(enabled);
-	ui->proxyPortSpinBox->setEnabled(enabled);
+	ui->proxyWidget->setEnabled(enabled);
 }
 
 void FeedReaderConfig::updateProxy()
 {
-	rsFeedReader->setStandardProxy(ui->useProxyCheckBox->isChecked(), ui->proxyAddressLineEdit->text().toUtf8().constData(), ui->proxyPortSpinBox->value());
+	rsFeedReader->setStandardProxy(ui->useProxyCheckBox->isChecked(), ui->proxyWidget->address().toUtf8().constData(), ui->proxyWidget->port());
 }

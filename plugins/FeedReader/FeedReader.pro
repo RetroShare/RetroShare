@@ -45,6 +45,7 @@ SOURCES =	FeedReaderPlugin.cpp \
 			gui/FeedReaderUserNotify.cpp \
 			gui/FeedReaderFeedItem.cpp \
 			gui/FeedTreeWidget.cpp \
+			gui/ProxyWidget.cpp \
 			util/CURLWrapper.cpp \
 			util/XMLWrapper.cpp \
 			util/HTMLWrapper.cpp \
@@ -66,6 +67,7 @@ HEADERS =	FeedReaderPlugin.h \
 			gui/FeedReaderUserNotify.h \
 			gui/FeedReaderFeedItem.h \
 			gui/FeedTreeWidget.h \
+			gui/ProxyWidget.h \
 			util/CURLWrapper.h \
 			util/XMLWrapper.h \
 			util/HTMLWrapper.h \
@@ -76,7 +78,8 @@ FORMS =		gui/FeedReaderDialog.ui \
 			gui/AddFeedDialog.ui \
 			gui/PreviewFeedDialog.ui \
 			gui/FeedReaderConfig.ui \
-			gui/FeedReaderFeedItem.ui
+			gui/FeedReaderFeedItem.ui \
+			gui/ProxyWidget.ui
 
 TARGET = FeedReader
 
