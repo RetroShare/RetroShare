@@ -43,6 +43,7 @@ set NSIS_PARAM=%NSIS_PARAM% /DDEPLOYDIR="%RsDeployPath%"
 set NSIS_PARAM=%NSIS_PARAM% /DOUTDIR="%RsPackPath%"
 set NSIS_PARAM=%NSIS_PARAM% /DINSTALLERADD="%RsArchiveAdd%"
 set NSIS_PARAM=%NSIS_PARAM% /DARCHITECTURE="%RsArchitecture%"
+set NSIS_PARAM=%NSIS_PARAM% /DTOOLCHAIN="%RsToolchain%"
 set NSIS_PARAM=%NSIS_PARAM% /DREVISION=%RsVersion.Extra%
 
 set QtMainVersion=%QtVersion:~0,1%
