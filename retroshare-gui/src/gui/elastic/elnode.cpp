@@ -21,6 +21,7 @@
 // This code is inspired from http://doc.qt.io/qt-5/qtwidgets-graphicsview-elasticnodes-node-cpp.html
 
 #include "gui/common/FilesDefs.h"
+#include "gui/settings/rsharesettings.h"
 #include <math.h>
 
 #include <QApplication>
@@ -302,7 +303,11 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 #endif
 	}
 	painter->setBrush(gradient);
-	painter->setPen(QPen(Qt::black, 0));
+	if (Settings->getSheetName() == ":Standard_Dark"){
+		painter->setPen(QPen(Qt::white, 0));
+	} else {
+		painter->setPen(QPen(Qt::black, 0));
+	}
 	painter->drawEllipse(-mNodeDrawSize2, -mNodeDrawSize2, mNodeDrawSize, mNodeDrawSize);
     
     	QString txt = QString::fromUtf8(_desc_string.c_str());
