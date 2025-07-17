@@ -404,8 +404,11 @@ uint32_t GxsGroupFrameDialog::checkDelay(uint32_t time_in_secs)
         return 90 * 86400;
     if(time_in_secs <= 250 * 86400)
         return 180 * 86400;
-
-   return 365 * 86400;
+	if(time_in_secs <= 400 * 86400)
+		return 365 * 86400;
+	if(time_in_secs <= 1200 * 86400)
+		return 1095 * 86400;
+   return 1825 * 86400;
 }
 
 void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
