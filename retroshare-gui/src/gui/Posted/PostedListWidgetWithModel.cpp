@@ -877,13 +877,15 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
     QString sync_string;
     switch(current_sync_time)
     {
-    case 5: sync_string = tr("5 days");  break;
-    case 15: sync_string = tr("2 weeks");  break;
-    case 30: sync_string = tr("1 month");  break;
-    case 90: sync_string = tr("3 months");  break;
-    case 180: sync_string = tr("6 months");  break;
-    case 365: sync_string = tr("1 year");  break;
-    case   0: sync_string = tr("indefinitly");  break;
+	case    5: sync_string = tr("5 days");   break;
+	case   15: sync_string = tr("2 weeks");  break;
+	case   30: sync_string = tr("1 month");  break;
+	case   90: sync_string = tr("3 months"); break;
+	case  180: sync_string = tr("6 months"); break;
+	case  365: sync_string = tr("1 year");   break;
+	case 1095: sync_string = tr("3 years");  break;
+	case 1825: sync_string = tr("5 years");  break;
+	case   0: sync_string = tr("indefinitly"); break;
     default:
         sync_string = tr("Unknown");
     }
