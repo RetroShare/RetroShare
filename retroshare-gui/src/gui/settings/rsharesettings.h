@@ -349,6 +349,9 @@ public:
     int getMessageFontSize();
     void setMessageFontSize(int value);
 
+    int getForumFontSize();
+    void setForumFontSize(int value);
+
 #ifdef RS_JSONAPI
 	bool getJsonApiEnabled();
 	void setJsonApiEnabled(bool enabled);
