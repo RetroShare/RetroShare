@@ -451,12 +451,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+40"/>
         <source>Fonts</source>
-        <translation type="unfinished">Schriftarten</translation>
+        <translation>Schriftarten</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Minimum font size </source>
-        <translation type="unfinished"></translation>
+        <translation>Minimale Schriftgröße</translation>
     </message>
     <message>
         <location line="+48"/>
@@ -6413,7 +6413,7 @@ und den Import zum Laden verwenden</translation>
         <location line="+1"/>
         <source>
 (keep in mind that the file is unencrypted!)</source>
-        <translation type="unfinished">
+        <translation>
 (Beachten Sie, dass die Datei unverschlüsselt ist!)</translation>
     </message>
     <message>
@@ -8788,12 +8788,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>3 years</source>
-        <translation type="unfinished"></translation>
+        <translation>3 Jahre</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>5 years</source>
-        <translation type="unfinished"></translation>
+        <translation>5 Jahre</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10408,55 +10408,55 @@ Diese Nachricht fehlt. Sie sollten es später erhalten.</translation>
         <location line="-29"/>
         <location line="+12"/>
         <source>5 days</source>
-        <translation type="unfinished">5 Tage</translation>
+        <translation>5 Tage</translation>
     </message>
     <message>
         <location line="-11"/>
         <location line="+12"/>
         <source>2 weeks</source>
-        <translation type="unfinished">2 Wochen</translation>
+        <translation>2 Wochen</translation>
     </message>
     <message>
         <location line="-11"/>
         <location line="+12"/>
         <source>1 month</source>
-        <translation type="unfinished">1 Monat</translation>
+        <translation>1 Monat</translation>
     </message>
     <message>
         <location line="-11"/>
         <location line="+12"/>
         <source>3 months</source>
-        <translation type="unfinished">3 Monate</translation>
+        <translation>3 Monate</translation>
     </message>
     <message>
         <location line="-11"/>
         <location line="+12"/>
         <source>6 months</source>
-        <translation type="unfinished">6 Monate</translation>
+        <translation>6 Monate</translation>
     </message>
     <message>
         <location line="-11"/>
         <location line="+12"/>
         <source>1 year</source>
-        <translation type="unfinished">1 Jahr</translation>
+        <translation>1 Jahr</translation>
     </message>
     <message>
         <location line="-11"/>
         <location line="+12"/>
         <source>3 years</source>
-        <translation type="unfinished"></translation>
+        <translation>3 Jahre</translation>
     </message>
     <message>
         <location line="-11"/>
         <location line="+12"/>
         <source>5 years</source>
-        <translation type="unfinished"></translation>
+        <translation>5 Jahre</translation>
     </message>
     <message>
         <location line="-11"/>
         <location line="+12"/>
         <source>Indefinitly</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Unbestimmt</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -17724,12 +17724,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>3 years</source>
-        <translation type="unfinished"></translation>
+        <translation>3 Jahre</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>5 years</source>
-        <translation type="unfinished"></translation>
+        <translation>5 Jahre</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -19178,12 +19178,12 @@ Sicherheit: keine anonymen Kennungen</translation>
     <message>
         <location line="+1"/>
         <source>3 years</source>
-        <translation type="unfinished"></translation>
+        <translation>3 Jahre</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>5 years</source>
-        <translation type="unfinished"></translation>
+        <translation>5 Jahre</translation>
     </message>
     <message>
         <location line="+2"/>
