@@ -4,19 +4,22 @@
 <context>
     <name>AudioInput</name>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="+17"/>
+        <location filename="../gui/VOIPConfigPanel.ui" line="+280"/>
         <source>Audio Wizard</source>
         <translation>Hang varázsló</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Transmission</source>
-        <translation>Átvitel</translation>
+        <translation type="vanished">Átvitel</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>&amp;Transmit</source>
-        <translation>&amp;Küldés</translation>
+        <translation type="vanished">&amp;Küldés</translation>
+    </message>
+    <message>
+        <location line="-28"/>
+        <source>&amp;Transmit:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
@@ -29,7 +32,7 @@
         <translation>&lt;b&gt;Itt állíthatod be a küldés módját.&lt;/b&gt;&lt;br /&gt;&lt;i&gt;Continuous&lt;/i&gt; - Egyfolytában&lt;br /&gt;&lt;i&gt;Hang észlelésekor&lt;/i&gt; - Amikor tisztán érthetően beszélsz.&lt;br /&gt;&lt;i&gt;Gombnyomáskor&lt;/i&gt; - Amikor lenyomva tartod a gyorsbillentyűt &lt;i&gt;Gyorsbillentyűk&lt;/i&gt;.</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+37"/>
         <source>DoublePush Time</source>
         <translation>Dupla gombnyomás gyorsasága</translation>
     </message>
@@ -90,32 +93,46 @@
         <translation>üres</translation>
     </message>
     <message>
-        <location line="+17"/>
         <source>Audio Processing</source>
-        <translation>Hangfeldolgozás</translation>
+        <translation type="vanished">Hangfeldolgozás</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-293"/>
         <source>Noise Suppression</source>
         <translation>Zajszűrés</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-22"/>
         <source>Noise suppression</source>
         <translation>Zajszűrés</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-132"/>
+        <source>Video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Input device:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+66"/>
+        <source>Audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
         <source>&lt;b&gt;This sets the amount of noise suppression to apply.&lt;/b&gt;&lt;br /&gt;The higher this value, the more aggressively stationary noise will be suppressed.</source>
         <translation>&lt;b&gt;Alkalmazandó zajszűrés mértékének beállítása.&lt;/b&gt;&lt;br /&gt;A magasabb értékkel agresszívabban lesznek szűrve az állandó zajok.</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+64"/>
         <source>Amplification</source>
         <translation>Erősítés</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-22"/>
         <source>Maximum amplification of input sound</source>
         <translation>Bemeneti hangok maximális erősítése</translation>
     </message>
@@ -125,17 +142,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+37"/>
         <source>Echo Cancellation Processing</source>
         <translation>Visszhang megszűntetése</translation>
     </message>
     <message>
-        <location line="+15"/>
-        <source>Video Processing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+43"/>
+        <location line="-157"/>
         <source>Available bandwidth:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -150,7 +162,7 @@
         <translation>KB/s</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+25"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Display encoded (and then decoded) frame, to check the codec&apos;s quality. If not selected, the image above only shows the frame that is grabbed from your camera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -163,39 +175,32 @@
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="+185"/>
         <source>Continuous</source>
-        <translation>Folyamatos</translation>
+        <translation type="vanished">Folyamatos</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Voice Activity</source>
-        <translation>Beszéd észlelése</translation>
+        <translation type="vanished">Beszéd észlelése</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Push To Talk</source>
-        <translation>Nyomd meg a beszédhez</translation>
+        <translation type="vanished">Nyomd meg a beszédhez</translation>
     </message>
     <message>
-        <location line="+91"/>
         <source>%1 s</source>
-        <translation>%1 m</translation>
+        <translation type="vanished">%1 m</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Off</source>
-        <translation>Ki</translation>
+        <translation type="vanished">Ki</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>-%1 dB</source>
-        <translation>-%1 dB</translation>
+        <translation type="vanished">-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="+85"/>
         <source>VOIP</source>
-        <translation>VOIP</translation>
+        <translation type="vanished">VOIP</translation>
     </message>
 </context>
 <context>
@@ -457,7 +462,7 @@
         <translation>Hangérzékelés</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+22"/>
         <source>Next you need to adjust the following slider. The first few utterances you say should end up in the green area (definitive speech). While talking, you should stay inside the yellow (might be speech) and when you&apos;re not talking, everything should be in the red (definitively not speech).</source>
         <translation>Most a következő csúszkát kell állítanod.  Az első pár szónak, amit kimondasz a fenti zöld területen kell végződnie (érzékelt beszéd). Amíg beszélsz, addig a sárga mezőben kell maradnod (valószínűleg beszéd). Amikor nem beszélsz, mindennek a piros mezőben kell lennie (egyértelműen nem beszéd).</translation>
     </message>
@@ -485,7 +490,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="+128"/>
+        <location filename="../VOIPPlugin.cpp" line="+127"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;RetroShare VOIP beépülő&lt;/h3&gt;&lt;br/&gt;   * Fejlesztők: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
@@ -536,7 +541,7 @@
         <translation>A beépülő hangbeszélgetést tesz lehetővé a barátaiddal.</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+38"/>
         <location line="+4"/>
         <location line="+4"/>
         <location line="+4"/>
@@ -777,9 +782,53 @@
     </message>
 </context>
 <context>
+    <name>VOIPConfigPanel</name>
+    <message>
+        <location filename="../gui/VOIPConfigPanel.cpp" line="+100"/>
+        <source>Continuous</source>
+        <translation type="unfinished">Folyamatos</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Voice Activity</source>
+        <translation type="unfinished">Beszéd észlelése</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Push To Talk</source>
+        <translation type="unfinished">Nyomd meg a beszédhez</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+334"/>
+        <source>[No video]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-143"/>
+        <source>%1 s</source>
+        <translation type="unfinished">%1 m</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Off</source>
+        <translation type="unfinished">Ki</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>-%1 dB</source>
+        <translation type="unfinished">-%1 dB</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPConfigPanel.h" line="+84"/>
+        <source>VOIP</source>
+        <translation type="unfinished">VOIP</translation>
+    </message>
+</context>
+<context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="-48"/>
+        <location filename="../VOIPPlugin.cpp" line="-46"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -797,7 +846,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPToasterItem.ui" line="+232"/>
+        <location filename="../gui/VOIPToasterItem.ui" line="+239"/>
         <source>Decline</source>
         <translation type="unfinished"></translation>
     </message>
@@ -914,7 +963,7 @@
 <context>
     <name>voipGraphSource</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="-246"/>
+        <location filename="../gui/VOIPConfigPanel.cpp" line="-270"/>
         <source>Required bandwidth</source>
         <translation type="unfinished"></translation>
     </message>

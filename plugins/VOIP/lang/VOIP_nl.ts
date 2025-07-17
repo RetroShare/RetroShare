@@ -4,19 +4,22 @@
 <context>
     <name>AudioInput</name>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="+17"/>
+        <location filename="../gui/VOIPConfigPanel.ui" line="+280"/>
         <source>Audio Wizard</source>
         <translation>Audio Wizard</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Transmission</source>
-        <translation>Overdracht</translation>
+        <translation type="vanished">Overdracht</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>&amp;Transmit</source>
-        <translation>&amp;Overbrengen</translation>
+        <translation type="vanished">&amp;Overbrengen</translation>
+    </message>
+    <message>
+        <location line="-28"/>
+        <source>&amp;Transmit:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
@@ -29,7 +32,7 @@
         <translation>&lt;b&gt;Dit bepaalt waaneer de spraak moet worden overgebracht.&lt;/b&gt;&lt;br /&gt;&lt;i&gt;Continuous&lt;/i&gt; - Alltijd&lt;br /&gt;&lt;i&gt;Stem Activiteit&lt;/i&gt; - Als u heel duidelijk spreekt.&lt;br /&gt;&lt;i&gt;Push To Talk&lt;/i&gt; - Als u de hotkey ingedrukt houd, ingesteld onder &lt;i&gt;Snelkoppelingen&lt;/i&gt;</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+37"/>
         <source>DoublePush Time</source>
         <translation>DoublePush Tijd</translation>
     </message>
@@ -90,32 +93,46 @@
         <translation>leeg</translation>
     </message>
     <message>
-        <location line="+17"/>
         <source>Audio Processing</source>
-        <translation>Audio Verwerking</translation>
+        <translation type="vanished">Audio Verwerking</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-293"/>
         <source>Noise Suppression</source>
         <translation>Lawaai Onderdrukking</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-22"/>
         <source>Noise suppression</source>
         <translation>Lawaai onderdrukking</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-132"/>
+        <source>Video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Input device:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+66"/>
+        <source>Audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
         <source>&lt;b&gt;This sets the amount of noise suppression to apply.&lt;/b&gt;&lt;br /&gt;The higher this value, the more aggressively stationary noise will be suppressed.</source>
         <translation>&lt;br&gt;Dit bepaald de waarde van ruis onderdrukking.&lt;br&gt;&lt;br&gt;Hoe hoger deze waarde, hoe agressiever statische ruis wordt onderdrukt.</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+64"/>
         <source>Amplification</source>
         <translation>Versterking</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-22"/>
         <source>Maximum amplification of input sound</source>
         <translation>Maximale versterking van geluidsingang</translation>
     </message>
@@ -125,17 +142,16 @@
         <translation>&lt;b&gt;Maximale versterking van de ingang.&lt;/b&gt;&lt;br /&gt;RetroShare normaliseert het ingangs volume voor het comprimeren, en bepaalt hoe veel er versterkt mag worden.&lt;br /&gt;Het actuele level wordt continu bijgewerkt aan dehand van uw spraakgedrag, maar zal het hier ingevulde level niet overschrijden.&lt;br /&gt;Als de &lt;i&gt;Microfoon loudness&lt;/i&gt; level van de audio statistieken ligt rond de 100%, wilt u dit misschien op 2.0 zetten, maar, zoals velen, zul je dit waarschijnlijk niet halen dus moet je het veel hoger zetten.&lt;br /&gt;De ideale waarde is &lt;i&gt;Microfoon Loudness * Versterkings Factor &gt;= 100&lt;/i&gt;, zelfs als je zacht spreekt.&lt;br /&gt;&lt;br /&gt;Merk op dat het geen kwaad kan om deze instellingen maximaal te zetten, RetroShare zal andere zal andere conversaties oppikken als je het op auto-tune to that level laat staan</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+37"/>
         <source>Echo Cancellation Processing</source>
         <translation>Echo onderdrukken verwerking</translation>
     </message>
     <message>
-        <location line="+15"/>
         <source>Video Processing</source>
-        <translation>Video-verwerking</translation>
+        <translation type="vanished">Video-verwerking</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="-157"/>
         <source>Available bandwidth:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -150,7 +166,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+25"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Display encoded (and then decoded) frame, to check the codec&apos;s quality. If not selected, the image above only shows the frame that is grabbed from your camera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -163,39 +179,32 @@
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="+185"/>
         <source>Continuous</source>
-        <translation>Doorlopend</translation>
+        <translation type="vanished">Doorlopend</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Voice Activity</source>
-        <translation>Spraak Activiteit</translation>
+        <translation type="vanished">Spraak Activiteit</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Push To Talk</source>
-        <translation>Druk Om Te Praten</translation>
+        <translation type="vanished">Druk Om Te Praten</translation>
     </message>
     <message>
-        <location line="+91"/>
         <source>%1 s</source>
-        <translation>%1 s</translation>
+        <translation type="vanished">%1 s</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Off</source>
-        <translation>Uit</translation>
+        <translation type="vanished">Uit</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>-%1 dB</source>
-        <translation>-%1 dB</translation>
+        <translation type="vanished">-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="+85"/>
         <source>VOIP</source>
-        <translation>VOIP</translation>
+        <translation type="vanished">VOIP</translation>
     </message>
 </context>
 <context>
@@ -463,7 +472,7 @@
         <translation>Spraak Detectie</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+22"/>
         <source>Next you need to adjust the following slider. The first few utterances you say should end up in the green area (definitive speech). While talking, you should stay inside the yellow (might be speech) and when you&apos;re not talking, everything should be in the red (definitively not speech).</source>
         <translation>Vervolgens moet u de volgende schuif afstellen. De eerste paar uitingen moet je eindigen in het groene gebied (uiteindelijke spraak). Wanneer je verder spreekt moet u in het geel blijven (kan spraak zijn) en als u niet spreekt moet alles in het rood zijn (definitief geen spraak).</translation>
     </message>
@@ -491,7 +500,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="+128"/>
+        <location filename="../VOIPPlugin.cpp" line="+127"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt; * Medewerkers: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
@@ -542,7 +551,7 @@
         <translation>Deze plugin levert u spraak communicatie tussen vrienden in RetroShare.</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+38"/>
         <location line="+4"/>
         <location line="+4"/>
         <location line="+4"/>
@@ -783,9 +792,53 @@
     </message>
 </context>
 <context>
+    <name>VOIPConfigPanel</name>
+    <message>
+        <location filename="../gui/VOIPConfigPanel.cpp" line="+100"/>
+        <source>Continuous</source>
+        <translation type="unfinished">Doorlopend</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Voice Activity</source>
+        <translation type="unfinished">Spraak Activiteit</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Push To Talk</source>
+        <translation type="unfinished">Druk Om Te Praten</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+334"/>
+        <source>[No video]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-143"/>
+        <source>%1 s</source>
+        <translation type="unfinished">%1 s</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Off</source>
+        <translation type="unfinished">Uit</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>-%1 dB</source>
+        <translation type="unfinished">-%1 dB</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPConfigPanel.h" line="+84"/>
+        <source>VOIP</source>
+        <translation type="unfinished">VOIP</translation>
+    </message>
+</context>
+<context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="-48"/>
+        <location filename="../VOIPPlugin.cpp" line="-46"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -803,7 +856,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPToasterItem.ui" line="+232"/>
+        <location filename="../gui/VOIPToasterItem.ui" line="+239"/>
         <source>Decline</source>
         <translation type="unfinished"></translation>
     </message>
@@ -920,7 +973,7 @@
 <context>
     <name>voipGraphSource</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="-246"/>
+        <location filename="../gui/VOIPConfigPanel.cpp" line="-270"/>
         <source>Required bandwidth</source>
         <translation type="unfinished"></translation>
     </message>

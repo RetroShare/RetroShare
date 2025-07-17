@@ -4,19 +4,22 @@
 <context>
     <name>AudioInput</name>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="+17"/>
+        <location filename="../gui/VOIPConfigPanel.ui" line="+280"/>
         <source>Audio Wizard</source>
         <translation>Autoconfiguratore audio</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Transmission</source>
-        <translation>Trasmissione</translation>
+        <translation type="vanished">Trasmissione</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>&amp;Transmit</source>
-        <translation>&amp;Trasmetti</translation>
+        <translation type="vanished">&amp;Trasmetti</translation>
+    </message>
+    <message>
+        <location line="-28"/>
+        <source>&amp;Transmit:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
@@ -29,7 +32,7 @@
         <translation>&lt;b&gt;Imposta quando la voce dovrebbe essere trasmessa.&lt;/b&gt;&lt;br /&gt;&lt;i&gt;Continuamente&lt;/i&gt; - Tutto il tempo&lt;br /&gt;&lt;i&gt;Attivazione vocale&lt;/i&gt; - Quando stai parlando.&lt;br /&gt;&lt;i&gt;Premi-Per-Parlare&lt;/i&gt; - Quando premi il pulsante PPP (Premi Per Parlare) impostato sotto &lt;i&gt;Scorciatoie&lt;/i&gt; nelle impostazioni di Mumble.</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+37"/>
         <source>DoublePush Time</source>
         <translation>Tempo di DoppiaPressione</translation>
     </message>
@@ -90,32 +93,46 @@
         <translation>vuoto</translation>
     </message>
     <message>
-        <location line="+17"/>
         <source>Audio Processing</source>
-        <translation>Elaborazione Audio</translation>
+        <translation type="vanished">Elaborazione Audio</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-293"/>
         <source>Noise Suppression</source>
         <translation>Riduzione Rumore</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-22"/>
         <source>Noise suppression</source>
         <translation>Riduzione rumore</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-132"/>
+        <source>Video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Input device:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+66"/>
+        <source>Audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
         <source>&lt;b&gt;This sets the amount of noise suppression to apply.&lt;/b&gt;&lt;br /&gt;The higher this value, the more aggressively stationary noise will be suppressed.</source>
         <translation>&lt;b&gt;Questo imposta la quantità di rumore da eliminare.&lt;b&gt;&lt;br /&gt;Più alto sarà questo valore e più rumore fisso sarà eliminato.</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+64"/>
         <source>Amplification</source>
         <translation>Amplificazione</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-22"/>
         <source>Maximum amplification of input sound</source>
         <translation>Massima amplificazione del segnale di ingresso</translation>
     </message>
@@ -125,17 +142,16 @@
         <translation>&lt;br&gt;Amplificazione massima di ingresso.&lt;/ b&gt;&lt;br /&gt; RetroShare normalizza il volume di ingresso prima della compressione, e questo regola quanto è permesso amplificare. &lt;br /&gt;Il livello attuale viene continuamente aggiornato in base al tuo modello vocale corrente, ma non potrà mai andare al di sopra del livello qui specificato.&lt;br /&gt; Se il &lt;i&gt;Volume del microfono&lt;/ i&gt; delle statistiche audio si aggira intorno al 100%, probabilmente vorrai impostare questo valore a 2.0 o giù di lì, ma se, come la maggior parte delle persone, non riesci a raggiungere il 100%, impostalo a un livello un po&apos; più alto. &lt;br /&gt; Idealmente, imposta così &lt;i&gt;Volume microfono * Fattore di Amplificazione &gt; = 100 &lt;/ i&gt;, anche quando parli sottovoce. &lt;br /&gt;&lt;br /&gt; Nota  che non vi è nulla di male ad impostare questo al massimo, ma RetroShare  inizia a preferirre altre conversazioni, se si lascia per l&apos;auto-regolazione a quel livello.</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+37"/>
         <source>Echo Cancellation Processing</source>
         <translation>Elaborazione cancellazione dell&apos;eco</translation>
     </message>
     <message>
-        <location line="+15"/>
         <source>Video Processing</source>
-        <translation>Elaborazione Video</translation>
+        <translation type="vanished">Elaborazione Video</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="-157"/>
         <source>Available bandwidth:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -150,7 +166,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+25"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Display encoded (and then decoded) frame, to check the codec&apos;s quality. If not selected, the image above only shows the frame that is grabbed from your camera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -163,39 +179,32 @@
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="+185"/>
         <source>Continuous</source>
-        <translation>Continuo</translation>
+        <translation type="vanished">Continuo</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Voice Activity</source>
-        <translation>Attività Voce</translation>
+        <translation type="vanished">Attività Voce</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Push To Talk</source>
-        <translation>Premi Per Parlare</translation>
+        <translation type="vanished">Premi Per Parlare</translation>
     </message>
     <message>
-        <location line="+91"/>
         <source>%1 s</source>
-        <translation>%1 s</translation>
+        <translation type="vanished">%1 s</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Off</source>
-        <translation>Spento</translation>
+        <translation type="vanished">Spento</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>-%1 dB</source>
-        <translation>-%1 dB</translation>
+        <translation type="vanished">-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="+85"/>
         <source>VOIP</source>
-        <translation>VOIP</translation>
+        <translation type="vanished">VOIP</translation>
     </message>
 </context>
 <context>
@@ -464,7 +473,7 @@
         <translation>Rilevamento voce</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+22"/>
         <source>Next you need to adjust the following slider. The first few utterances you say should end up in the green area (definitive speech). While talking, you should stay inside the yellow (might be speech) and when you&apos;re not talking, everything should be in the red (definitively not speech).</source>
         <translation>Ora devi aggiustare i seguenti 2 cursori. Le prime parole pronunciate dovrebbero finire nella zona verde (inizio del discorso). Mentre stai parlando dovresti stare dentro il giallo (discorso) e quando non stai parlando, tutto dovrebbe stare nella zona rossa (sottofondo).</translation>
     </message>
@@ -492,7 +501,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="+128"/>
+        <location filename="../VOIPPlugin.cpp" line="+127"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt; * Contributori: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
@@ -543,7 +552,7 @@
         <translation>Questo plugin offre la comunicazione vocale tra amici in RetroShare.</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+38"/>
         <location line="+4"/>
         <location line="+4"/>
         <location line="+4"/>
@@ -784,9 +793,53 @@
     </message>
 </context>
 <context>
+    <name>VOIPConfigPanel</name>
+    <message>
+        <location filename="../gui/VOIPConfigPanel.cpp" line="+100"/>
+        <source>Continuous</source>
+        <translation type="unfinished">Continuo</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Voice Activity</source>
+        <translation type="unfinished">Attività Voce</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Push To Talk</source>
+        <translation type="unfinished">Premi Per Parlare</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+334"/>
+        <source>[No video]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-143"/>
+        <source>%1 s</source>
+        <translation type="unfinished">%1 s</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Off</source>
+        <translation type="unfinished">Spento</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>-%1 dB</source>
+        <translation type="unfinished">-%1 dB</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPConfigPanel.h" line="+84"/>
+        <source>VOIP</source>
+        <translation type="unfinished">VOIP</translation>
+    </message>
+</context>
+<context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="-48"/>
+        <location filename="../VOIPPlugin.cpp" line="-46"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -804,7 +857,7 @@
         <translation>Rispondi con video</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPToasterItem.ui" line="+232"/>
+        <location filename="../gui/VOIPToasterItem.ui" line="+239"/>
         <source>Decline</source>
         <translation type="unfinished"></translation>
     </message>
@@ -925,7 +978,7 @@
 <context>
     <name>voipGraphSource</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="-246"/>
+        <location filename="../gui/VOIPConfigPanel.cpp" line="-270"/>
         <source>Required bandwidth</source>
         <translation>Banda richiesta</translation>
     </message>

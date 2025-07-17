@@ -359,7 +359,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AppearancePage</name>
     <message>
-        <location filename="../gui/settings/AppearancePage.ui" line="+44"/>
+        <location filename="../gui/settings/AppearancePage.ui" line="+29"/>
         <source>Language</source>
         <translation>语言</translation>
     </message>
@@ -374,7 +374,7 @@ p, li { white-space: pre-wrap; }
         <translation>(需要重启)</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+371"/>
         <source>Style</source>
         <translation>样式</translation>
     </message>
@@ -394,7 +394,7 @@ p, li { white-space: pre-wrap; }
         <translation>外观</translation>
     </message>
     <message>
-        <location filename="../gui/settings/AppearancePage.ui" line="+54"/>
+        <location filename="../gui/settings/AppearancePage.ui" line="-393"/>
         <source>Tool Bar</source>
         <translation>工具栏</translation>
     </message>
@@ -424,7 +424,7 @@ p, li { white-space: pre-wrap; }
         <translation>选择工具栏按钮风格</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+8"/>
         <source>Icon Size = 8x8</source>
         <translation>图标大小 = 8x8</translation>
     </message>
@@ -449,7 +449,17 @@ p, li { white-space: pre-wrap; }
         <translation>图标大小 = 128x128</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+40"/>
+        <source>Fonts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Minimum font size </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+48"/>
         <source>Status Bar</source>
         <translation>状态烂</translation>
     </message>
@@ -524,7 +534,7 @@ p, li { white-space: pre-wrap; }
         <translation>系统托盘图标不提示信息</translation>
     </message>
     <message>
-        <location line="-225"/>
+        <location line="-281"/>
         <source>Main page items:</source>
         <translation>主页项目：</translation>
     </message>
@@ -539,7 +549,7 @@ p, li { white-space: pre-wrap; }
         <translation>项目列表</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+91"/>
         <source>Icon Size = 32x32</source>
         <translation>图标大小 = 32x32</translation>
     </message>
@@ -1386,7 +1396,7 @@ into the image, so as to
         <translation>邀请好友加入此聊天室</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+77"/>
         <source>Invite friends</source>
         <translation>邀请好友</translation>
     </message>
@@ -1421,7 +1431,7 @@ into the image, so as to
         <translation> 秒</translation>
     </message>
     <message>
-        <location line="-555"/>
+        <location line="-557"/>
         <source>Start private chat</source>
         <translation>私聊</translation>
     </message>
@@ -1451,7 +1461,7 @@ into the image, so as to
         <translation>退出这个聊天室(未订阅)</translation>
     </message>
     <message>
-        <location line="+197"/>
+        <location line="+199"/>
         <source>Welcome to chat room %1</source>
         <translation>欢迎来到聊天室%1</translation>
     </message>
@@ -1601,7 +1611,7 @@ into the image, so as to
         <translation>主题</translation>
     </message>
     <message>
-        <location line="+163"/>
+        <location line="+165"/>
         <source>Create chat room</source>
         <translation>创建聊天室</translation>
     </message>
@@ -1691,25 +1701,25 @@ Double click a chat room to enter and chat.</source>
         <translation>[主题未设置]</translation>
     </message>
     <message>
-        <location line="-226"/>
-        <location line="+756"/>
+        <location line="-228"/>
+        <location line="+758"/>
         <source>Private</source>
         <translation>私人</translation>
     </message>
     <message>
-        <location line="-749"/>
-        <location line="+559"/>
+        <location line="-751"/>
+        <location line="+561"/>
         <location line="+190"/>
         <source>Public</source>
         <translation>公开</translation>
     </message>
     <message>
-        <location line="-705"/>
+        <location line="-707"/>
         <source>&lt;h1&gt;&lt;img width=&quot;%1&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Rooms&lt;/h1&gt;&lt;p&gt;Chat rooms work pretty much like IRC.   They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;&lt;p&gt;A chat room can be public (your friends see it) or private (your friends can&apos;t see it, unless you   invite them with &lt;img src=&quot;:/icons/png/add.png&quot; width=%2/&gt;).   Once you have been invited to a private room, you will be able to see it when your friends   are using it.&lt;/p&gt;&lt;p&gt;The list at left shows   chat lobbies your friends are participating in. You can either   &lt;ul&gt;     &lt;li&gt;Right click to create a new chat room&lt;/li&gt;     &lt;li&gt;Double click a chat room to enter, chat, and show it to your friends&lt;/li&gt;   &lt;/ul&gt;   Note: For the chat rooms to work properly, your computer needs be on time.  So check your system clock!&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+706"/>
+        <location line="+708"/>
         <source>Anonymous IDs accepted</source>
         <translation>匿名 ID已接受</translation>
     </message>
@@ -1729,12 +1739,12 @@ Double click a chat room to enter and chat.</source>
         <translation>搜索聊天室</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="-151"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="-153"/>
         <source>Search Name</source>
         <translation>搜索名称</translation>
     </message>
     <message>
-        <location line="+162"/>
+        <location line="+164"/>
         <source>Columns</source>
         <translation>列</translation>
     </message>
@@ -1749,7 +1759,7 @@ Double click a chat room to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+85"/>
+        <location line="+80"/>
         <source>Chat Room info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1804,7 +1814,7 @@ Double click a chat room to enter and chat.</source>
         <translation>没有匿名 ID</translation>
     </message>
     <message>
-        <location line="-731"/>
+        <location line="-733"/>
         <location line="+3"/>
         <source>Show</source>
         <translation>显示</translation>
@@ -1816,18 +1826,18 @@ Double click a chat room to enter and chat.</source>
     </message>
     <message>
         <location line="+7"/>
-        <location line="+571"/>
+        <location line="+573"/>
         <source>Public Subscribed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-538"/>
+        <location line="-540"/>
         <location line="+3"/>
         <source>column</source>
         <translation>列</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.h" line="+65"/>
+        <location filename="../gui/ChatLobbyWidget.h" line="+66"/>
         <source>Chats</source>
         <translation>聊天室</translation>
     </message>
@@ -4347,7 +4357,18 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+58"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;&apos;; font-size:;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;&apos;; font-size:;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+31"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose aspect ratio policy. In &apos;Auto&apos; mode, the most suitable aspect ratio is chosen for you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4382,7 +4403,6 @@ p, li { white-space: pre-wrap; }
         <translation>撰文给：</translation>
     </message>
     <message>
-        <location line="-121"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -4390,7 +4410,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -4399,7 +4419,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; 从你的分享复制/粘贴 RetroShare 链接&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="-103"/>
         <source>Add Channel Thumbnail</source>
         <translation>添加频道缩略图</translation>
     </message>
@@ -4587,12 +4607,21 @@ p, li { white-space: pre-wrap; }
         <translation>论坛发帖</translation>
     </message>
     <message>
-        <location line="+96"/>
+        <location line="+103"/>
         <source>Forum</source>
         <translation>论坛</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+26"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;&apos;; font-size:; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
         <source>Attach File</source>
         <translation>附加文件</translation>
     </message>
@@ -4602,21 +4631,12 @@ p, li { white-space: pre-wrap; }
         <translation>为消息签名</translation>
     </message>
     <message>
-        <location line="-150"/>
+        <location line="-145"/>
         <source>Forum Post</source>
         <translation>论坛贴文</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8.25pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+93"/>
+        <location line="+109"/>
         <source>Attach a Picture</source>
         <translation type="unfinished">附加图片</translation>
     </message>
@@ -4745,7 +4765,7 @@ Do you want to discard this message?</source>
         <translation>你真的想生成 ％1 消息吗？</translation>
     </message>
     <message>
-        <location filename="../gui/gxsforums/CreateGxsForumMsg.ui" line="-236"/>
+        <location filename="../gui/gxsforums/CreateGxsForumMsg.ui" line="-231"/>
         <source>Post as</source>
         <translation>发表</translation>
     </message>
@@ -4847,77 +4867,72 @@ Do you want to discard this message?</source>
 <context>
     <name>CryptoPage</name>
     <message>
-        <location filename="../gui/settings/CryptoPage.ui" line="+217"/>
+        <location filename="../gui/settings/CryptoPage.ui" line="+496"/>
         <source>Public Information</source>
         <translation>公开信息</translation>
     </message>
     <message>
-        <location line="+208"/>
+        <location line="-29"/>
         <source>Name:</source>
         <translation>名称:</translation>
     </message>
     <message>
-        <location line="-237"/>
+        <location line="-393"/>
         <source>Location:</source>
         <translation>位置:</translation>
     </message>
     <message>
-        <location line="-112"/>
+        <location line="-19"/>
         <source>Location ID:</source>
         <translation>地点 ID：</translation>
     </message>
     <message>
-        <location line="+191"/>
+        <location line="+345"/>
         <source>Software Version:</source>
         <translation>软件版本:</translation>
     </message>
     <message>
-        <location line="-98"/>
+        <location line="-71"/>
         <source>Online since:</source>
         <translation>在线始于:</translation>
     </message>
     <message>
-        <location line="-145"/>
+        <location line="-248"/>
         <source>Retroshare ID:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+210"/>
         <source>Statistics:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+87"/>
+        <location line="-96"/>
         <source>Export Profile:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+130"/>
-        <source>Export</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+26"/>
+        <location line="-7"/>
         <source>Show statistics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="-9"/>
         <source>Other Information</source>
         <translation>其它信息</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+157"/>
         <source>Profile path:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="-220"/>
         <source>Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+166"/>
+        <location line="+468"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option includes all signatures of your profile key. Signatures are not mandatory, but only a way to express your trust in some particular profile.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4927,7 +4942,7 @@ Do you want to discard this message?</source>
         <translation>包含签名</translation>
     </message>
     <message>
-        <location filename="../gui/settings/CryptoPage.cpp" line="+83"/>
+        <location filename="../gui/settings/CryptoPage.cpp" line="+85"/>
         <source>Export Identity</source>
         <translation type="unfinished">导出身份</translation>
     </message>
@@ -5000,34 +5015,49 @@ and use the import button to load it</source>
         <translation>RetroShare 证书 (*.rsc );;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../gui/settings/CryptoPage.ui" line="-442"/>
-        <location line="+348"/>
+        <location filename="../gui/settings/CryptoPage.ui" line="-225"/>
+        <location line="+51"/>
         <location line="+35"/>
         <source>TextLabel</source>
         <translation>文本标签</translation>
     </message>
     <message>
-        <location line="-457"/>
+        <location line="-304"/>
         <source>PGP fingerprint:</source>
         <translation>PGP 指纹: </translation>
     </message>
     <message>
-        <location line="+409"/>
+        <location line="+130"/>
         <source>PGP Id :</source>
         <translation>PGP Id :</translation>
     </message>
     <message>
-        <location line="-116"/>
+        <location line="-38"/>
         <source>Friend nodes:</source>
         <translation>好友节点:</translation>
     </message>
     <message>
-        <location line="-105"/>
+        <location line="+45"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this button to export your profile key. You can then import it in a different computer and make a new node with the same profile. Doing so, existing friends that you also add to the new node will automatically recognise that new node as friend.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+335"/>
+        <location line="+3"/>
+        <source>Export profile</source>
+        <translation type="unfinished">导出用户档案</translation>
+    </message>
+    <message>
+        <location line="+221"/>
+        <source>Export Friendslist:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Export friends list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+82"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The short format only contains the profile fingerprint, and authentication is based on the node ID (ID of the SSL key). If you choose the old (long) format, the certificate includes the full profile public key. There is no fundamental difference between making friends with either method, because the public profile keys will be exchanged and checked w.r.t. the fingerprint after connection.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6579,7 +6609,7 @@ at least one peer was not added to a group</source>
         <translation>搜索好友</translation>
     </message>
     <message>
-        <location line="+776"/>
+        <location line="+778"/>
         <source>Mark all</source>
         <translation>标记全部</translation>
     </message>
@@ -7248,13 +7278,21 @@ and use the import button to load it</source>
     </message>
     <message>
         <location line="+12"/>
-        <source>When checked, this instance receives new parameters (like RsLink or RsFile) and avoid new one.</source>
-        <translation>检查时，此实例接收新参数(如Rs链接或Rs文件)，并屏蔽新的参数。</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When checked, this retroshare instance will accept calls by your operating system to open Retroshare collection files, and download links.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
+        <source>Accept operating systems calls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When checked, this instance receives new parameters (like RsLink or RsFile) and avoid new one.</source>
+        <translation type="vanished">检查时，此实例接收新参数(如Rs链接或Rs文件)，并屏蔽新的参数。</translation>
+    </message>
+    <message>
         <source>Use Local Server to get new arguments.</source>
-        <translation>使用本地服务器获取新的参数。</translation>
+        <translation type="vanished">使用本地服务器获取新的参数。</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -7849,12 +7887,12 @@ p, li { white-space: pre-wrap; }
         <location line="-37"/>
         <location line="+7"/>
         <location line="+31"/>
-        <location line="+319"/>
+        <location line="+331"/>
         <source>Description</source>
         <translation>描述</translation>
     </message>
     <message>
-        <location line="-355"/>
+        <location line="-367"/>
         <source>Number of Unread message</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7879,7 +7917,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+295"/>
+        <location line="+307"/>
         <source>You are admin (modify names and description using Edit menu)</source>
         <translation>你是管理员(修改名字和描述请用编辑菜单)</translation>
     </message>
@@ -7894,14 +7932,14 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">ID</translation>
     </message>
     <message>
-        <location line="-354"/>
-        <location line="+339"/>
+        <location line="-366"/>
+        <location line="+351"/>
         <location line="+2"/>
         <source>Last Post</source>
         <translation>最新贴文</translation>
     </message>
     <message>
-        <location line="-352"/>
+        <location line="-364"/>
         <location line="+7"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
@@ -7912,13 +7950,13 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">活跃度</translation>
     </message>
     <message>
-        <location line="+307"/>
+        <location line="+319"/>
         <location line="+33"/>
         <source>Never</source>
         <translation>从不</translation>
     </message>
     <message>
-        <location filename="../gui/common/GroupTreeWidget.ui" line="+103"/>
+        <location filename="../gui/common/GroupTreeWidget.ui" line="+98"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Searches a single keyword into the reachable network.&lt;/p&gt;&lt;p&gt;Objects already provided by friend nodes are not reported.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8744,6 +8782,16 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+1"/>
+        <source>3 years</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>5 years</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>indefinitly</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9450,12 +9498,12 @@ before you can comment</source>
         <translation>回复</translation>
     </message>
     <message>
-        <location line="-257"/>
+        <location line="-261"/>
         <source>&lt;p&gt;Subscribing to the forum will gather                                             available posts from your subscribed friends, and make the                                             forum visible to all other friends.&lt;/p&gt;&lt;p&gt;Afterwards you can unsubscribe from the context menu of the forum list at left.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+128"/>
+        <location line="+132"/>
         <source>Loading...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9503,7 +9551,7 @@ before you can comment</source>
         <translation>隐藏</translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+191"/>
         <source>[unknown]</source>
         <translation>[未知]</translation>
     </message>
@@ -9533,8 +9581,8 @@ before you can comment</source>
         <translation>只有你能看见 </translation>
     </message>
     <message>
-        <location line="-287"/>
-        <location line="+293"/>
+        <location line="-289"/>
+        <location line="+295"/>
         <source>Distribution</source>
         <translation>传播范围</translation>
     </message>
@@ -9617,7 +9665,7 @@ before you can comment</source>
         <translation>原始贴文</translation>
     </message>
     <message>
-        <location line="-1332"/>
+        <location line="-1334"/>
         <source>New thread</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9698,7 +9746,7 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+156"/>
+        <location line="+158"/>
         <source>&lt;b&gt;Loading...&lt;b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10253,7 +10301,7 @@ This message is missing. You should receive it later.</source>
         <translation>打印预览</translation>
     </message>
     <message>
-        <location filename="../gui/gxs/GxsGroupFrameDialog.cpp" line="+449"/>
+        <location filename="../gui/gxs/GxsGroupFrameDialog.cpp" line="+452"/>
         <source>Unsubscribe</source>
         <translation>退订</translation>
     </message>
@@ -10298,54 +10346,40 @@ This message is missing. You should receive it later.</source>
         <translation>同步最后的贴文...</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <location line="+10"/>
         <source> 5 days</source>
-        <translation>5 天</translation>
+        <translation type="vanished">5 天</translation>
     </message>
     <message>
-        <location line="-9"/>
-        <location line="+10"/>
         <source> 2 weeks</source>
-        <translation>2 周</translation>
+        <translation type="vanished">2 周</translation>
     </message>
     <message>
-        <location line="-9"/>
-        <location line="+10"/>
         <source> 1 month</source>
-        <translation>1  个月</translation>
+        <translation type="vanished">1  个月</translation>
     </message>
     <message>
-        <location line="-9"/>
-        <location line="+10"/>
         <source> 3 months</source>
-        <translation>3 个月</translation>
+        <translation type="vanished">3 个月</translation>
     </message>
     <message>
-        <location line="-9"/>
-        <location line="+10"/>
         <source> 6 months</source>
-        <translation>6 个月</translation>
+        <translation type="vanished">6 个月</translation>
     </message>
     <message>
-        <location line="-9"/>
-        <location line="+10"/>
         <source> 1 year  </source>
-        <translation>1 年</translation>
+        <translation type="vanished">1 年</translation>
     </message>
     <message>
-        <location line="-9"/>
-        <location line="+10"/>
         <source> Indefinitly</source>
-        <translation>无限期</translation>
+        <translation type="vanished">无限期</translation>
     </message>
     <message>
-        <location line="-7"/>
+        <location line="+12"/>
         <source>Store posts for at most...</source>
         <translation>最多保存贴文...</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+13"/>
         <source>Share publish permissions...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10360,7 +10394,61 @@ This message is missing. You should receive it later.</source>
         <translation>复制 RetroShare 链接</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-29"/>
+        <location line="+12"/>
+        <source>5 days</source>
+        <translation type="unfinished">5 天</translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <location line="+12"/>
+        <source>2 weeks</source>
+        <translation type="unfinished">2 周</translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <location line="+12"/>
+        <source>1 month</source>
+        <translation type="unfinished">1 个月</translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <location line="+12"/>
+        <source>3 months</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <location line="+12"/>
+        <source>6 months</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <location line="+12"/>
+        <source>1 year</source>
+        <translation type="unfinished">1 年</translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <location line="+12"/>
+        <source>3 years</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <location line="+12"/>
+        <source>5 years</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <location line="+12"/>
+        <source>Indefinitly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>Mark all as read</source>
         <translation>全部标为已读</translation>
     </message>
@@ -10391,7 +10479,7 @@ This message is missing. You should receive it later.</source>
 <context>
     <name>GxsIdDetails</name>
     <message>
-        <location filename="../gui/gxs/GxsIdDetails.cpp" line="+1001"/>
+        <location filename="../gui/gxs/GxsIdDetails.cpp" line="+1011"/>
         <source>Not found</source>
         <translation>未找到</translation>
     </message>
@@ -11010,27 +11098,27 @@ p, li { white-space: pre-wrap; }
         <translation>表单</translation>
     </message>
     <message>
-        <location line="+123"/>
+        <location line="+121"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copy your RetroShare ID to clipboard&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+165"/>
+        <location line="+160"/>
         <source>Add friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+22"/>
         <source>Did you receive a Retroshare ID from a friend?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+85"/>
+        <location line="+80"/>
         <source>Do you need help with Retroshare?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-254"/>
+        <location line="-239"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Share your RetroShare ID&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11046,7 +11134,7 @@ p, li { white-space: pre-wrap; }
         <translation>...</translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+97"/>
         <source>Open Source cross-platform, 
 private and secure decentralized communication platform.
 </source>
@@ -11055,12 +11143,12 @@ private and secure decentralized communication platform.
 </translation>
     </message>
     <message>
-        <location line="+134"/>
+        <location line="+129"/>
         <source>Open Web Help</source>
         <translation>打开网络帮助</translation>
     </message>
     <message>
-        <location filename="../gui/HomePage.cpp" line="+172"/>
+        <location filename="../gui/HomePage.cpp" line="+180"/>
         <source>Copy your Cert to Clipboard</source>
         <translation>复制您的证书到剪贴板</translation>
     </message>
@@ -11070,12 +11158,12 @@ private and secure decentralized communication platform.
         <translation>保存您的证书至文件</translation>
     </message>
     <message>
-        <location line="-109"/>
+        <location line="-112"/>
         <source>Send via Email</source>
         <translation>通过邮件发送</translation>
     </message>
     <message>
-        <location line="-6"/>
+        <location line="-9"/>
         <source>Invite via WebMail</source>
         <translation>通过网络邮件邀请</translation>
     </message>
@@ -11085,12 +11173,17 @@ private and secure decentralized communication platform.
         <translation>批量推荐好友</translation>
     </message>
     <message>
+        <location line="+3"/>
+        <source>Save to File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+6"/>
         <source>Copy your Retroshare ID to Clipboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+22"/>
         <source>Include current local IP</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11115,12 +11208,12 @@ private and secure decentralized communication platform.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+72"/>
         <source>Include all your known IPs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-109"/>
+        <location line="-111"/>
         <source>Use old certificate format</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11132,7 +11225,7 @@ new short format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+101"/>
         <source>Use new (short) certificate format</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11422,29 +11515,26 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>IdDialog</name>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="+177"/>
-        <location line="+103"/>
-        <location line="+1322"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="+329"/>
         <source>All</source>
         <translation>全部</translation>
     </message>
     <message>
-        <location line="-1255"/>
+        <location line="+1853"/>
         <source>Reputation</source>
         <translation>信誉</translation>
     </message>
     <message>
-        <location line="-2"/>
         <source>Search</source>
-        <translation>搜索 </translation>
+        <translation type="vanished">搜索 </translation>
     </message>
     <message>
-        <location line="+1376"/>
+        <location line="-482"/>
         <source>Anonymous Id</source>
         <translation>匿名 ID</translation>
     </message>
     <message>
-        <location line="-1390"/>
+        <location line="-1319"/>
         <source>Create new Identity</source>
         <translation>新建身份</translation>
     </message>
@@ -11454,42 +11544,40 @@ p, li { white-space: pre-wrap; }
         <translation>新建圈子</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.ui" line="+249"/>
         <source>Persons</source>
-        <translation>个人</translation>
+        <translation type="vanished">个人</translation>
     </message>
     <message>
-        <location line="+18"/>
         <source>Votes</source>
-        <translation>赞</translation>
+        <translation type="vanished">赞</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location filename="../gui/Identity/IdDialog.ui" line="+260"/>
         <source>Person</source>
         <translation>人物</translation>
     </message>
     <message>
-        <location line="+212"/>
+        <location line="+611"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location line="+263"/>
+        <location line="-362"/>
         <source>Ban-option:</source>
         <translation>屏蔽选项</translation>
     </message>
     <message>
-        <location line="-146"/>
+        <location line="-20"/>
         <source>Auto-Ban all identities signed by the same node</source>
         <translation>自动屏蔽掉这个节点签名过的身份</translation>
     </message>
     <message>
-        <location line="-41"/>
+        <location line="+76"/>
         <source>Friend votes:</source>
         <translation>好友点赞</translation>
     </message>
     <message>
-        <location line="+358"/>
+        <location line="-180"/>
         <source>Positive votes</source>
         <translation>正面的投票</translation>
     </message>
@@ -11505,39 +11593,44 @@ p, li { white-space: pre-wrap; }
         <translation>负面的投票</translation>
     </message>
     <message>
-        <location line="-291"/>
+        <location line="+132"/>
         <source>Created on :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-64"/>
+        <location line="-66"/>
         <source>Auto-Ban profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+150"/>
+        <location line="+130"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:9pt;&quot;&gt;Your own opinion about an identity rules the visibility of that identity for yourself and your friend nodes. Your own opinion is shared among friends and used to compute a reputation score: If your opinion about an identity is neutral, the reputation score is the difference between friend&apos;s positive and negative opinions. If not, your own opinion gives the score.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:9pt;&quot;&gt;The overall score is used in chat lobbies, forums and channels to decide on the actions to take for each specific identity. When the overall score is lower than -1, the identity is banned, which prevents all messages and forums/channels authored by this identity to be forwarded, both ways. Some forums also have special anti-spam flags that require a non negative reputation level, making them more sensitive to bad opinions. Banned identities gradually lose their activity and eventually disappear (after 5 days).&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:9pt;&quot;&gt;You can change the thresholds and the time of inactivity to delete identities in preferences -&amp;gt; people. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="-291"/>
         <source>Edit Identity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+151"/>
+        <location line="-153"/>
+        <source>Search...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+721"/>
         <source>Usage statistics</source>
         <translation>使用统计 </translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+34"/>
         <location line="+48"/>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-67"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-69"/>
         <source>Circles</source>
         <translation>圈子</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+17"/>
         <source>Circle name</source>
         <translation>圈子名称</translation>
     </message>
@@ -11559,7 +11652,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+13"/>
         <location line="+3"/>
-        <location filename="../gui/Identity/IdDialog.cpp" line="+2015"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="+2034"/>
         <source>Edit identity</source>
         <translation>编辑身份</translation>
     </message>
@@ -11580,78 +11673,75 @@ p, li { white-space: pre-wrap; }
         <translation>跟这个节点开启一个远程聊天</translation>
     </message>
     <message>
-        <location line="-407"/>
+        <location line="-491"/>
         <source>Owner node ID :</source>
         <translation>所有者节点名称：</translation>
     </message>
     <message>
-        <location line="-58"/>
         <source>Identity name :</source>
-        <translation>身份名称</translation>
+        <translation type="vanished">身份名称</translation>
     </message>
     <message>
-        <location line="-587"/>
+        <location line="-444"/>
         <source>()</source>
         <translation>() </translation>
     </message>
     <message>
-        <location line="+147"/>
         <source>Identity ID</source>
-        <translation>身份ID</translation>
+        <translation type="vanished">身份ID</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-31"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-29"/>
         <source>Send message</source>
         <translation>发送消息</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.ui" line="+319"/>
         <source>Identity info</source>
-        <translation>身份信息</translation>
+        <translation type="vanished">身份信息</translation>
     </message>
     <message>
-        <location line="+128"/>
+        <location filename="../gui/Identity/IdDialog.ui" line="+423"/>
         <source>Identity ID :</source>
         <translation>身份 ID：</translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location line="+142"/>
         <source>Owner node name :</source>
         <translation>所有者节点名称：</translation>
     </message>
     <message>
-        <location line="-569"/>
+        <location line="-478"/>
         <source>Create new...</source>
         <translation>创建新的...</translation>
     </message>
     <message>
-        <location line="+535"/>
+        <location line="+381"/>
         <source>Type:</source>
         <translation>类型:</translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="-231"/>
         <source>Send Invite</source>
         <translation>发送邀请</translation>
     </message>
     <message>
-        <location line="-156"/>
+        <location line="+155"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Average opinion of neighbor nodes about this identity. Negative is bad,&lt;/p&gt;&lt;p&gt;positive is good. Zero is neutral.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;关于这个身份，相邻节点的综合评价。 负的是差的，&lt;/p&gt;&lt;p&gt; 正的是好的，零是中立的&lt;/p&gt;&lt;/body&gt;&lt;/html&gt; </translation>
     </message>
     <message>
-        <location line="-41"/>
+        <location line="+93"/>
         <source>Your opinion:</source>
         <translation>你的评价</translation>
     </message>
     <message>
-        <location line="+116"/>
+        <location line="+40"/>
         <source>Negative</source>
         <translation>负面的</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-405"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-498"/>
         <source>Neutral</source>
         <translation>中立的</translation>
     </message>
@@ -11662,49 +11752,43 @@ p, li { white-space: pre-wrap; }
         <translation>正面的</translation>
     </message>
     <message>
-        <location line="-144"/>
+        <location line="+12"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Overall reputation score, accounting for yours and your friends&apos;.&lt;/p&gt;&lt;p&gt;Negative is bad, positive is good. Zero is neutral. If the score is too low,&lt;/p&gt;&lt;p&gt;the identity is flagged as bad, and will be filtered out in forums, chat lobbies,&lt;/p&gt;&lt;p&gt;channels, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;总体信誉得分，源于你和你的好友&lt;/p&gt;&lt;p&gt; 负的是差的，正的是好的，零是中立的，如果分数太低&lt;/p&gt;&lt;p&gt;这个身份就被标记为差的 , 会被论坛，聊天室频道等&lt;/p&gt;&lt;p&gt;过滤。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+40"/>
         <source>Overall:</source>
         <translation>总体: </translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-1519"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-1446"/>
         <source>Anonymous</source>
         <translation>匿名</translation>
     </message>
     <message>
-        <location line="+37"/>
         <source>ID</source>
-        <translation>ID</translation>
+        <translation type="vanished">ID</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Search ID</source>
-        <translation>搜索 ID</translation>
+        <translation type="vanished">搜索 ID</translation>
     </message>
     <message>
-        <location line="+1085"/>
+        <location line="+1157"/>
         <source>This identity is owned by you</source>
         <translation>这个身份被你是拥有者</translation>
     </message>
     <message>
-        <location line="-1267"/>
-        <location line="+1431"/>
         <source>My own identities</source>
-        <translation>我所拥有的身份</translation>
+        <translation type="vanished">我所拥有的身份</translation>
     </message>
     <message>
-        <location line="-1421"/>
-        <location line="+1419"/>
         <source>My contacts</source>
-        <translation>我的通讯录</translation>
+        <translation type="vanished">我的通讯录</translation>
     </message>
     <message>
-        <location line="-1325"/>
+        <location line="-1198"/>
         <source>Show Items</source>
         <translation>显示项目</translation>
     </message>
@@ -11719,22 +11803,22 @@ p, li { white-space: pre-wrap; }
         <translation>链接到我的节点</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+78"/>
         <source>&lt;h1&gt;&lt;img width=&quot;%1&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Identities&lt;/h1&gt;&lt;p&gt;In this tab you can create/edit &lt;b&gt;pseudo-anonymous identities&lt;/b&gt;, and &lt;b&gt;circles&lt;/b&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Identities&lt;/b&gt; are used to securely identify your data: sign messages in chat lobbies, forum and channel posts,   receive feedback using the Retroshare built-in email system, post comments   after channel posts, chat using secured tunnels, etc.&lt;/p&gt;&lt;p&gt;Identities can optionally be &lt;b&gt;signed&lt;/b&gt; by your Retroshare node&apos;s certificate.   Signed identities are easier to trust but are easily linked to your node&apos;s IP address.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Anonymous identities&lt;/b&gt; allow you to anonymously interact with other users. They cannot be   spoofed, but noone can prove who really owns a given identity.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Circles&lt;/b&gt; are groups of identities (anonymous or signed), that are shared at a distance over the network. They can be   used to restrict the visibility to forums, channels, etc. &lt;/p&gt;&lt;p&gt;An &lt;b&gt;circle&lt;/b&gt; can be restricted to another circle, thereby limiting its visibility to members of that circle   or even self-restricted, meaning that it is only visible to invited members.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+268"/>
+        <location line="+299"/>
         <source>Other circles</source>
         <translation>其他圈子</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+7"/>
         <source>Circles I belong to</source>
         <translation>我加入的圈子</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+39"/>
         <source>Circle ID: </source>
         <translation>圈子ID</translation>
     </message>
@@ -11902,7 +11986,7 @@ p, li { white-space: pre-wrap; }
         <translation>授予会员资格 </translation>
     </message>
     <message>
-        <location line="+231"/>
+        <location line="+252"/>
         <source>
 This identity has a unsecure fingerprint (It&apos;s probably quite old).
 You should get rid of it now and use a new one.
@@ -11914,12 +11998,12 @@ These identities will soon be not supported anymore.</source>
     </message>
     <message>
         <location line="+39"/>
-        <location line="+232"/>
+        <location line="+127"/>
         <source>[Unknown node]</source>
         <translation>[未知节点]</translation>
     </message>
     <message>
-        <location line="-227"/>
+        <location line="-122"/>
         <location line="+1"/>
         <source>Unverified signature from node </source>
         <translation>来自节点的未验证签名</translation>
@@ -11931,7 +12015,7 @@ These identities will soon be not supported anymore.</source>
         <translation>未检查的签名</translation>
     </message>
     <message>
-        <location line="+186"/>
+        <location line="+81"/>
         <source> [unverified]</source>
         <translation>[未验证]</translation>
     </message>
@@ -11956,7 +12040,7 @@ These identities will soon be not supported anymore.</source>
         <translation>匿名身份</translation>
     </message>
     <message>
-        <location line="+120"/>
+        <location line="+117"/>
         <source>Boards</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12036,7 +12120,28 @@ These identities will soon be not supported anymore.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+357"/>
+        <location line="+169"/>
+        <source>Do you really want to delete this identity?
+This cannot be undone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+47"/>
+        <source>Id</source>
+        <translation type="unfinished">ID</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Owner Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Owner Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+219"/>
         <source>information</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12046,18 +12151,17 @@ These identities will soon be not supported anymore.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-84"/>
-        <location line="+21"/>
+        <location line="-68"/>
         <source>Copy identity to clipboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1957"/>
+        <location line="-1959"/>
         <source>Banned</source>
         <translation>已屏蔽</translation>
     </message>
     <message>
-        <location line="+1498"/>
+        <location line="+1425"/>
         <source> positive </source>
         <translation>正面的</translation>
     </message>
@@ -12162,17 +12266,17 @@ These identities will soon be not supported anymore.</source>
         <translation>通用解密。</translation>
     </message>
     <message>
-        <location line="+277"/>
+        <location line="+370"/>
         <source>Add to Contacts</source>
         <translation>添加到通讯录</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+3"/>
         <source>Remove from Contacts</source>
         <translation>从通讯录移除</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+8"/>
         <source>Set positive opinion</source>
         <translation>设置正面的评价</translation>
     </message>
@@ -12187,7 +12291,7 @@ These identities will soon be not supported anymore.</source>
         <translation>设置负面的评价</translation>
     </message>
     <message>
-        <location line="+133"/>
+        <location line="+117"/>
         <source>Distant chat cannot work</source>
         <translation>远程聊天无法工作</translation>
     </message>
@@ -12207,26 +12311,26 @@ These identities will soon be not supported anymore.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+18"/>
         <source>Hi,&lt;br&gt;I want to be friends with you on RetroShare.&lt;br&gt;</source>
         <translation>你好，&lt;br&gt;我想与你成为 RetroShare 上的好友。&lt;br&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.ui" line="-580"/>
-        <location line="+237"/>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-1959"/>
-        <location filename="../gui/Identity/IdDialog.h" line="+48"/>
+        <location filename="../gui/Identity/IdDialog.ui" line="-602"/>
+        <location line="+358"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-1943"/>
+        <location filename="../gui/Identity/IdDialog.h" line="+54"/>
         <source>People</source>
         <translation>人物</translation>
     </message>
     <message>
-        <location line="+507"/>
+        <location line="-146"/>
         <source>Your Avatar</source>
         <extracomment>Click here to change your avatar</extracomment>
         <translation>你的头像</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-182"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-197"/>
         <source>Linked to neighbor nodes</source>
         <translation>链接到相邻节点</translation>
     </message>
@@ -12236,7 +12340,7 @@ These identities will soon be not supported anymore.</source>
         <translation>链接到远程节点</translation>
     </message>
     <message>
-        <location line="+1451"/>
+        <location line="+1381"/>
         <source>Linked to a friend Retroshare node</source>
         <translation>链接到好友的RetroShare节点</translation>
     </message>
@@ -12251,7 +12355,7 @@ These identities will soon be not supported anymore.</source>
         <translation>链接到未知RetroShare节点</translation>
     </message>
     <message>
-        <location line="+460"/>
+        <location line="+550"/>
         <source>Chat with this person</source>
         <translation>与此人聊天</translation>
     </message>
@@ -12261,17 +12365,17 @@ These identities will soon be not supported anymore.</source>
         <translation>跟这个人聊天以</translation>
     </message>
     <message>
-        <location line="+175"/>
+        <location line="+159"/>
         <source>Distant chat refused with this person.</source>
         <translation>远程聊天拒绝此人</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.ui" line="-231"/>
+        <location filename="../gui/Identity/IdDialog.ui" line="+225"/>
         <source>Last used:</source>
         <translation>上次使用</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-608"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-685"/>
         <source>+50 Known PGP</source>
         <translation>+50 已知 PGP</translation>
     </message>
@@ -12286,17 +12390,15 @@ These identities will soon be not supported anymore.</source>
         <translation>+5 Anon Id </translation>
     </message>
     <message>
-        <location line="+280"/>
         <source>Do you really want to delete this identity?</source>
-        <translation>你真的要删除这个身份吗？</translation>
+        <translation type="vanished">你真的要删除这个身份吗？</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.ui" line="-354"/>
         <source>Owned by</source>
-        <translation>拥有者</translation>
+        <translation type="vanished">拥有者</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-608"/>
+        <location line="-220"/>
         <source>Node name:</source>
         <translation>节点名称：</translation>
     </message>
@@ -12306,7 +12408,7 @@ These identities will soon be not supported anymore.</source>
         <translation>节点Id：</translation>
     </message>
     <message>
-        <location line="+607"/>
+        <location line="+566"/>
         <source>Really delete?</source>
         <translation>真的要删除？</translation>
     </message>
@@ -12773,12 +12875,12 @@ These identities will soon be not supported anymore.</source>
     <name>LocalSharedFilesDialog</name>
     <message>
         <location filename="../gui/FileTransfer/SharedFilesDialog.cpp" line="+281"/>
-        <location line="+1010"/>
+        <location line="+1033"/>
         <source>Open File</source>
         <translation>打开文件</translation>
     </message>
     <message>
-        <location line="-1008"/>
+        <location line="-1031"/>
         <source>Open Folder</source>
         <translation>打开文件夹</translation>
     </message>
@@ -12793,7 +12895,12 @@ These identities will soon be not supported anymore.</source>
         <translation>校验文件</translation>
     </message>
     <message>
-        <location line="+650"/>
+        <location line="+648"/>
+        <source>Retroshare Collection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
         <source>Recommend in a message to...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12813,15 +12920,14 @@ These identities will soon be not supported anymore.</source>
         <translation>设置此文件的文件打开命令</translation>
     </message>
     <message>
-        <location line="-152"/>
         <source>Collection</source>
-        <translation>资源集合</translation>
+        <translation type="vanished">资源集合</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.ui" line="+143"/>
+        <location filename="../gui/MainWindow.ui" line="+138"/>
         <source>Add Friend</source>
         <translation>添加好友</translation>
     </message>
@@ -12837,7 +12943,7 @@ These identities will soon be not supported anymore.</source>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MainWindow.cpp" line="+649"/>
+        <location filename="../gui/MainWindow.cpp" line="+657"/>
         <location line="+59"/>
         <source>Options</source>
         <translation>选项</translation>
@@ -12859,7 +12965,7 @@ These identities will soon be not supported anymore.</source>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MainWindow.cpp" line="-178"/>
+        <location filename="../gui/MainWindow.cpp" line="-183"/>
         <source>Quit</source>
         <translation>退出</translation>
     </message>
@@ -12870,17 +12976,17 @@ These identities will soon be not supported anymore.</source>
         <translation>快速入门向导</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-316"/>
+        <location filename="../gui/MainWindow.cpp" line="-318"/>
         <source>RetroShare %1 a secure decentralized communication platform</source>
         <translation>RetroShare %1 ― 一个分布式安全通信平台</translation>
     </message>
     <message>
-        <location line="+302"/>
+        <location line="+304"/>
         <source>Unfinished</source>
         <translation>未完成</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+98"/>
         <source>Low disk space warning</source>
         <translation>低磁盘空间预警</translation>
     </message>
@@ -12998,12 +13104,12 @@ RetroShare 将暂停对此目录的访问。
         <translation>%1 个好友已连接</translation>
     </message>
     <message>
-        <location line="+367"/>
+        <location line="+368"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>您确定要退出 RetroShare 吗?</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+102"/>
         <source>Internal Error</source>
         <translation>内部错误</translation>
     </message>
@@ -13063,7 +13169,7 @@ RetroShare 将暂停对此目录的访问。
         <translation>服务权限列表</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-970"/>
+        <location filename="../gui/MainWindow.cpp" line="-1052"/>
         <location line="+64"/>
         <source>Statistics</source>
         <translation>统计</translation>
@@ -13084,7 +13190,7 @@ RetroShare 将暂停对此目录的访问。
         <translation>目录运行很慢(现在的限制是</translation>
     </message>
     <message>
-        <location line="+635"/>
+        <location line="+636"/>
         <source>Really quit ?</source>
         <translation>真的要退出吗？</translation>
     </message>
@@ -13093,7 +13199,7 @@ RetroShare 将暂停对此目录的访问。
     <name>MessageComposer</name>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="+14"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+900"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+904"/>
         <source>Compose</source>
         <translation>写信</translation>
     </message>
@@ -13195,7 +13301,7 @@ RetroShare 将暂停对此目录的访问。
     </message>
     <message>
         <location line="-82"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-500"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-504"/>
         <source>Tags</source>
         <translation>标签</translation>
     </message>
@@ -13325,7 +13431,7 @@ RetroShare 将暂停对此目录的访问。
         <translation>我的通讯录</translation>
     </message>
     <message>
-        <location line="+309"/>
+        <location line="+313"/>
         <source>Hello,&lt;br&gt;I recommend a good friend of mine; you can trust them too when you trust me. &lt;br&gt;</source>
         <translation>你好,&lt;br&gt;我向你推荐我的一个好友；如果你信任我，也可以信任他们。&lt;br&gt;</translation>
     </message>
@@ -13674,7 +13780,7 @@ Do you want to save message ?</source>
         <translation>发件人:</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-2608"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-2612"/>
         <source>Friend Nodes</source>
         <translation>好友节点</translation>
     </message>
@@ -13719,7 +13825,7 @@ Do you want to save message ?</source>
         <translation>排序(拉丁字母倒序)</translation>
     </message>
     <message>
-        <location line="+351"/>
+        <location line="+355"/>
         <location line="+2271"/>
         <source>Thanks, &lt;br&gt;</source>
         <translation>感谢, &lt;br&gt;</translation>
@@ -13748,7 +13854,7 @@ Do you want to save message ?</source>
 <context>
     <name>MessagePage</name>
     <message>
-        <location filename="../gui/settings/MessagePage.ui" line="+30"/>
+        <location filename="../gui/settings/MessagePage.ui" line="+156"/>
         <source>Everyone</source>
         <translation>所有人</translation>
     </message>
@@ -13768,7 +13874,7 @@ Do you want to save message ?</source>
         <translation>接受加密的远程聊天从</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-145"/>
         <source>Reading</source>
         <translation>邮件阅读</translation>
     </message>
@@ -13778,17 +13884,17 @@ Do you want to save message ?</source>
         <translation>选中时自动设置消息为已读</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+23"/>
         <source>Open messages in</source>
         <translation>打开消息于</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="-9"/>
         <source>Load Emoticons</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+24"/>
         <source>Tags</source>
         <translation>标签</translation>
     </message>
@@ -13818,7 +13924,22 @@ Do you want to save message ?</source>
         <translation>默认</translation>
     </message>
     <message>
-        <location filename="../gui/settings/MessagePage.cpp" line="+49"/>
+        <location line="+51"/>
+        <source>Fonts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Minimum font size </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Font size</source>
+        <translation type="unfinished">字体大小</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/MessagePage.cpp" line="+52"/>
         <source>A new tab</source>
         <translation>新标签</translation>
     </message>
@@ -13828,17 +13949,17 @@ Do you want to save message ?</source>
         <translation>新窗口</translation>
     </message>
     <message>
-        <location line="+161"/>
+        <location line="+167"/>
         <source>Edit Tag</source>
         <translation>标记标签</translation>
     </message>
     <message>
-        <location filename="../gui/settings/MessagePage.ui" line="-145"/>
+        <location filename="../gui/settings/MessagePage.ui" line="-68"/>
         <source>Distant messages:</source>
         <translation>远程信息: </translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="-107"/>
         <source>Load embedded images</source>
         <translation>载入内置图像</translation>
     </message>
@@ -13887,7 +14008,7 @@ Do you want to save message ?</source>
 <context>
     <name>MessageWidget</name>
     <message>
-        <location filename="../gui/msgs/MessageWidget.ui" line="+695"/>
+        <location filename="../gui/msgs/MessageWidget.ui" line="+654"/>
         <source>Recommended Files</source>
         <translation>推荐的文件</translation>
     </message>
@@ -13897,37 +14018,37 @@ Do you want to save message ?</source>
         <translation>下载所有推荐文件</translation>
     </message>
     <message>
-        <location line="-534"/>
+        <location line="-508"/>
         <source>Subject:</source>
         <translation>主题:</translation>
     </message>
     <message>
-        <location line="+184"/>
+        <location line="+158"/>
         <source>From:</source>
         <translation>发件人:</translation>
     </message>
     <message>
-        <location line="-118"/>
+        <location line="-107"/>
         <source>To:</source>
         <translation>收件人:</translation>
     </message>
     <message>
-        <location line="-45"/>
+        <location line="-35"/>
         <source>Cc:</source>
         <translation>抄送:</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+19"/>
         <source>Bcc:</source>
         <translation>密送:</translation>
     </message>
     <message>
-        <location line="-66"/>
+        <location line="-51"/>
         <source>Tags:</source>
         <translation>标签:</translation>
     </message>
     <message>
-        <location line="-131"/>
+        <location line="-126"/>
         <source>Reply</source>
         <translation type="unfinished">回复</translation>
     </message>
@@ -13967,7 +14088,7 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+446"/>
+        <location line="+410"/>
         <source>Send Invite</source>
         <translation>发送邀请</translation>
     </message>
@@ -14205,7 +14326,7 @@ Do you want to save message ?</source>
     <name>MessagesDialog</name>
     <message>
         <location filename="../gui/msgs/MessagesDialog.ui" line="+104"/>
-        <location filename="../gui/msgs/MessagesDialog.cpp" line="+774"/>
+        <location filename="../gui/msgs/MessagesDialog.cpp" line="+791"/>
         <source>New Message</source>
         <translation>新信息</translation>
     </message>
@@ -14215,16 +14336,16 @@ Do you want to save message ?</source>
         <translation>写信</translation>
     </message>
     <message>
-        <location line="+194"/>
+        <location line="+184"/>
         <location line="+3"/>
-        <location filename="../gui/msgs/MessagesDialog.cpp" line="-575"/>
+        <location filename="../gui/msgs/MessagesDialog.cpp" line="-592"/>
         <location line="+47"/>
         <source>Tags</source>
         <translation>标签</translation>
     </message>
     <message>
-        <location line="-152"/>
-        <location filename="../gui/msgs/MessagesDialog.cpp" line="+1139"/>
+        <location line="-147"/>
+        <location filename="../gui/msgs/MessagesDialog.cpp" line="+1156"/>
         <location line="+10"/>
         <source>Inbox</source>
         <translation>收件箱</translation>
@@ -14254,17 +14375,17 @@ Do you want to save message ?</source>
         <translation>回收站</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+83"/>
         <source>Total Inbox:</source>
         <translation>收件箱总数:</translation>
     </message>
     <message>
-        <location line="-41"/>
+        <location line="-36"/>
         <source>Quick View</source>
         <translation>快捷视图</translation>
     </message>
     <message>
-        <location line="+186"/>
+        <location line="+176"/>
         <location line="+3"/>
         <source>Print...</source>
         <translation>打印...</translation>
@@ -14295,7 +14416,7 @@ Do you want to save message ?</source>
         <translation>转发信件</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessagesDialog.cpp" line="-1258"/>
+        <location filename="../gui/msgs/MessagesDialog.cpp" line="-1275"/>
         <source>Subject</source>
         <translation>主题</translation>
     </message>
@@ -14360,7 +14481,7 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+249"/>
+        <location line="+266"/>
         <source>Starred</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14486,12 +14607,12 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1463"/>
+        <location line="-1480"/>
         <source>To</source>
         <translation>收件人</translation>
     </message>
     <message>
-        <location line="+1160"/>
+        <location line="+1177"/>
         <location line="+4"/>
         <location line="+4"/>
         <location line="+4"/>
@@ -14500,7 +14621,7 @@ Do you want to save message ?</source>
         <translation>总计:</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessagesDialog.h" line="+52"/>
+        <location filename="../gui/msgs/MessagesDialog.h" line="+53"/>
         <source>Mail</source>
         <translation>邮件</translation>
     </message>
@@ -14901,7 +15022,7 @@ Reported error:</source>
 <context>
     <name>NewFriendList</name>
     <message>
-        <location filename="../gui/common/NewFriendList.ui" line="+83"/>
+        <location filename="../gui/common/NewFriendList.ui" line="+78"/>
         <source>Offline Friends</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14922,7 +15043,7 @@ Reported error:</source>
     </message>
     <message>
         <location line="+8"/>
-        <location filename="../gui/common/NewFriendList.cpp" line="+690"/>
+        <location filename="../gui/common/NewFriendList.cpp" line="+703"/>
         <source>Groups</source>
         <translation type="unfinished">分组</translation>
     </message>
@@ -14952,19 +15073,29 @@ Reported error:</source>
         <translation type="unfinished">导出你的好友列表包括分组</translation>
     </message>
     <message>
-        <location filename="../gui/common/NewFriendList.cpp" line="-496"/>
-        <location line="+28"/>
+        <location line="+8"/>
+        <source>Status icons</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Show status icons</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/common/NewFriendList.cpp" line="-508"/>
+        <location line="+31"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+144"/>
+        <location line="+149"/>
         <source>ID</source>
         <translation type="unfinished">ID</translation>
     </message>
     <message>
-        <location line="-144"/>
+        <location line="-149"/>
         <source>Search ID</source>
         <translation type="unfinished">搜索 ID</translation>
     </message>
@@ -14974,12 +15105,12 @@ Reported error:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+85"/>
         <source>Show Items</source>
         <translation type="unfinished">显示项目</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+48"/>
         <source>Last contact</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14989,7 +15120,7 @@ Reported error:</source>
         <translation type="unfinished">IP</translation>
     </message>
     <message>
-        <location line="+251"/>
+        <location line="+255"/>
         <source>Group</source>
         <translation type="unfinished">分组</translation>
     </message>
@@ -16496,19 +16627,19 @@ requesting to edit it!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+18"/>
-        <location line="+112"/>
-        <location line="+13"/>
+        <location line="+17"/>
+        <location line="+110"/>
+        <location line="+12"/>
         <source>TextLabel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-45"/>
+        <location line="-43"/>
         <source>Posted by</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location line="+55"/>
         <source>ago</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17213,7 +17344,7 @@ p, li { white-space：pre-wrap；}
         <translation>0</translation>
     </message>
     <message>
-        <location line="+371"/>
+        <location line="+370"/>
         <location filename="../gui/Posted/PostedItem.cpp" line="+630"/>
         <source>Comments</source>
         <translation>注释</translation>
@@ -17255,7 +17386,7 @@ p, li { white-space：pre-wrap；}
         <translation type="unfinished">隐藏</translation>
     </message>
     <message>
-        <location filename="../gui/Posted/PostedItem.ui" line="-396"/>
+        <location filename="../gui/Posted/PostedItem.ui" line="-395"/>
         <source>Vote up</source>
         <translation>赞</translation>
     </message>
@@ -17265,7 +17396,7 @@ p, li { white-space：pre-wrap；}
         <translation>踩</translation>
     </message>
     <message>
-        <location line="+431"/>
+        <location line="+430"/>
         <source>Set as read and remove item</source>
         <translation>设置为已读并删除条目</translation>
     </message>
@@ -17589,6 +17720,16 @@ p, li { white-space：pre-wrap；}
         <location line="+1"/>
         <source>1 year</source>
         <translation type="unfinished">1 年</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>3 years</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>5 years</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -18391,8 +18532,8 @@ and use the import button to load it</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+325"/>
-        <location filename="../gui/RetroShareLink.cpp" line="+1642"/>
+        <location filename="../gui/MainWindow.cpp" line="+406"/>
+        <location filename="../gui/RetroShareLink.cpp" line="+1644"/>
         <source>Confirmation</source>
         <translation>确认</translation>
     </message>
@@ -18402,14 +18543,14 @@ and use the import button to load it</source>
         <translation>您要系统来处理此链接的打开吗?</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="-737"/>
+        <location filename="../gui/RetroShareLink.cpp" line="-739"/>
         <source>Click to add this RetroShare cert to your PGP keyring
 and open the Make Friend Wizard.
 </source>
         <translation>点击添加此RetroShare证书至您的PGP密钥环中，同时打开建立好友向导。</translation>
     </message>
     <message>
-        <location line="+733"/>
+        <location line="+735"/>
         <source>Warning: Retroshare is about to ask your system to open this file. </source>
         <translation>警告：RetroShare即将要求您的系统打开此文件</translation>
     </message>
@@ -18439,7 +18580,7 @@ and open the Make Friend Wizard.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+85"/>
+        <location line="+84"/>
         <source>%1 of %2 RetroShare link processed.</source>
         <translation>已处理 %1 共 %2 个 RetroShare 链接。</translation>
     </message>
@@ -18569,7 +18710,7 @@ and open the Make Friend Wizard.
         <translation>收件人不接受 </translation>
     </message>
     <message>
-        <location line="-932"/>
+        <location line="-933"/>
         <source>Click to browse/download this file collection</source>
         <translation type="unfinished"></translation>
     </message>
@@ -18589,7 +18730,7 @@ and open the Make Friend Wizard.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+743"/>
+        <location line="+744"/>
         <source>Recipients not accepted</source>
         <translation>收件人不接受 </translation>
     </message>
@@ -18631,19 +18772,16 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation>结果</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="+1388"/>
         <source>Unable to make path</source>
-        <translation>无法创建路径</translation>
+        <translation type="vanished">无法创建路径</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Unable to make path:</source>
-        <translation>无法创建路径:</translation>
+        <translation type="vanished">无法创建路径:</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollection.cpp" line="+306"/>
         <source>Failed to process collection file</source>
-        <translation>资源集合文件处理失败</translation>
+        <translation type="vanished">资源集合文件处理失败</translation>
     </message>
     <message>
         <location filename="../gui/elastic/elnode.cpp" line="+370"/>
@@ -18666,7 +18804,17 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation>文件请求已取消</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="+269"/>
+        <location filename="../main.cpp" line="+136"/>
+        <source>Retroshare commandline arguments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+254"/>
+        <source>Display this help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+52"/>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
         <translation>此版本的 RetroShare 正在使用 OpenPGP-SDK。因此没有使用系统中的共享PGP钥匙环，而是自有钥匙环，在所有RetroShare实例间共享。&lt;br&gt;&lt;br&gt;
 您似乎没有这种钥匙环，尽管现有 RetroShare 账户中引用了PGP密钥，也许您刚刚才升级至此新版本。</translation>
@@ -18680,13 +18828,13 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
 &lt;b&gt;取消&lt;/b&gt; 退出自行处理密钥串(需要一些 PGP 动手能力)&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location line="+31"/>
-        <location line="+79"/>
+        <location line="+33"/>
+        <location line="+90"/>
         <source>RetroShare</source>
         <translation>RetroShare </translation>
     </message>
     <message>
-        <location line="-72"/>
+        <location line="-83"/>
         <source>Initialization failed. Wrong or missing installation of PGP.</source>
         <translation>初始化失败。PGP未安装或安装错误。</translation>
     </message>
@@ -18696,7 +18844,7 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation>发生意外错误。请报告 &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+78"/>
         <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
         <translation>发生意外错误。请报告错误&apos;RsInit::InitRetroShare unexpected return code %1&apos;。</translation>
     </message>
@@ -18735,7 +18883,7 @@ The error reported is:&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../rshare.cpp" line="+962"/>
+        <location filename="../rshare.cpp" line="+633"/>
         <location line="+7"/>
         <source>Multiple instances</source>
         <translation>多实例运行</translation>
@@ -18799,18 +18947,17 @@ The error reported is:&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollection.cpp" line="+0"/>
         <source>The collection file %1 could not be opened.
 Reported error is: 
 
 %2</source>
-        <translation>无法打开集合文件 %1 。
+        <translation type="vanished">无法打开集合文件 %1 。
 收到错误：
 
 %2</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="-978"/>
+        <location filename="../gui/RetroShareLink.cpp" line="-979"/>
         <source>Click to send a private message to %1 (%2).</source>
         <translation>点击发私信给%1 (%2)</translation>
     </message>
@@ -18860,7 +19007,7 @@ Reported error is:
         <translation>数据转发</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="-320"/>
+        <location filename="../main.cpp" line="-374"/>
         <source>You appear to have nodes associated to DSA keys:</source>
         <translation>您似乎有与DSA密钥关联的节点： </translation>
     </message>
@@ -18870,7 +19017,7 @@ Reported error is:
         <translation>当前 RetroShare 的版本不支持 DSA 密钥。所有这些地点都将无法使用。我们很抱歉会这样。</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="+228"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="+230"/>
         <source>enabled</source>
         <translation>启用</translation>
     </message>
@@ -18880,7 +19027,7 @@ Reported error is:
         <translation>禁用</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ServerPage.cpp" line="+739"/>
+        <location filename="../gui/settings/ServerPage.cpp" line="+740"/>
         <source>Move IP %1 to whitelist</source>
         <translation>添加%1至白名单</translation>
     </message>
@@ -18896,7 +19043,7 @@ Reported error is:
     </message>
     <message>
         <location filename="../gui/Identity/IdDetailsDialog.cpp" line="-287"/>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-846"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-824"/>
         <source>%1 seconds ago</source>
         <translation>%1 秒前</translation>
     </message>
@@ -18993,7 +19140,7 @@ Security: no anonymous IDs</source>
         <translation>无法解析XML文件！</translation>
     </message>
     <message>
-        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="-83"/>
+        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="-85"/>
         <source>Indefinitely</source>
         <translation>无限期 </translation>
     </message>
@@ -19026,6 +19173,16 @@ Security: no anonymous IDs</source>
         <location line="+1"/>
         <source>1 year</source>
         <translation>1 年</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>3 years</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>5 years</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
@@ -19448,6 +19605,36 @@ Security: no anonymous IDs</source>
         <location filename="../gui/gxs/GxsIdTreeWidgetItem.h" line="+113"/>
         <location line="+17"/>
         <source>[System]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/common/RsCollection.cpp" line="+166"/>
+        <source>Unknown error</source>
+        <translation type="unfinished">未知错误</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>No error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Error while openning file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Collection file contains potentially harmful code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Invalid root node. RsCollection node was expected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>XML parsing error in collection file</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -20061,7 +20248,7 @@ p, li { white-space：pre-wrap；}
 <context>
     <name>RemoteSharedFilesDialog</name>
     <message>
-        <location filename="../gui/FileTransfer/SharedFilesDialog.cpp" line="-589"/>
+        <location filename="../gui/FileTransfer/SharedFilesDialog.cpp" line="-764"/>
         <source>Download...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -20249,7 +20436,7 @@ p, li { white-space：pre-wrap；}
         <translation type="unfinished">附加图片</translation>
     </message>
     <message>
-        <location line="+87"/>
+        <location line="+86"/>
         <source>Text</source>
         <translation type="unfinished"></translation>
     </message>
@@ -20304,7 +20491,7 @@ p, li { white-space：pre-wrap；}
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="+72"/>
         <source>Document source</source>
         <translation type="unfinished"></translation>
     </message>
@@ -20337,6 +20524,19 @@ p, li { white-space：pre-wrap；}
         <location line="+8"/>
         <source>Text (optional)</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RsApplication</name>
+    <message>
+        <location filename="../rshare.cpp" line="-178"/>
+        <source>built-in</source>
+        <translation type="unfinished">内建</translation>
+    </message>
+    <message>
+        <location line="+82"/>
+        <source>Could not create data directory: %1</source>
+        <translation type="unfinished">无法创建目录:%1</translation>
     </message>
 </context>
 <context>
@@ -20404,34 +20604,24 @@ p, li { white-space：pre-wrap；}
 <context>
     <name>RsCollection</name>
     <message>
-        <location filename="../gui/common/RsCollection.cpp" line="+167"/>
         <source>Save Collection File.</source>
-        <translation type="unfinished">保存集合文件 </translation>
+        <translation type="obsolete">保存集合文件 </translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>File already exists.</source>
-        <translation type="unfinished">文件已存在。</translation>
+        <translation type="obsolete">文件已存在。</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>What do you want to do?</source>
-        <translation type="unfinished">你想要做什么？</translation>
+        <translation type="obsolete">你想要做什么？</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Overwrite</source>
-        <translation type="unfinished">覆盖</translation>
+        <translation type="obsolete">覆盖</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Merge</source>
-        <translation type="unfinished">合并 </translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">合并 </translation>
     </message>
 </context>
 <context>
@@ -20452,18 +20642,19 @@ p, li { white-space：pre-wrap；}
         <translation>总计大小:</translation>
     </message>
     <message>
-        <location line="+310"/>
+        <location line="+289"/>
         <source>Destination:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+27"/>
         <source>Right click to change download directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="-681"/>
+        <location line="+23"/>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="+462"/>
+        <location line="+380"/>
         <source>Cancel</source>
         <translation>取消 </translation>
     </message>
@@ -20473,47 +20664,42 @@ p, li { white-space：pre-wrap；}
         <translation>下载! </translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="-531"/>
         <source>File</source>
-        <translation>文件</translation>
+        <translation type="vanished">文件</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Size</source>
-        <translation>大小</translation>
+        <translation type="vanished">大小</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Hash</source>
-        <translation>散列值</translation>
+        <translation type="vanished">散列值</translation>
     </message>
     <message>
-        <location line="+57"/>
         <source>Bad filenames have been cleaned</source>
-        <translation>无效文件名已修改。</translation>
+        <translation type="vanished">无效文件名已修改。</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Some filenames or directory names contained forbidden characters.
 Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replaced by &apos;_&apos;.
  Concerned files are listed in red.</source>
-        <translation>一些文件名或目录名包含无效字符。
+        <translation type="vanished">一些文件名或目录名包含无效字符。
 &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; 等字符将被“_”替换。
 受影响的文件以红色列出。</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.ui" line="-345"/>
+        <location line="-343"/>
         <source>Selected files :</source>
         <translation>已选择的文件：</translation>
     </message>
     <message>
         <location line="+34"/>
-        <location line="+273"/>
+        <location line="+252"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location line="-165"/>
+        <location line="-140"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add selected item to collection one by one.&lt;/p&gt;&lt;p&gt;Select parent dir to add this too.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;将选择的文件一个一个添加到合集&lt;/p&gt;&lt;p&gt;选择的目录一样&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Enter&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -20528,52 +20714,46 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; 在合集里面创建一个新文件夹。&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;+&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+60"/>
         <source>Remove Duplicate</source>
-        <translation>删除重复条目</translation>
+        <translation type="vanished">删除重复条目</translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location line="+112"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="-84"/>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="-659"/>
         <source>Collection Editor</source>
         <translation>合集编辑者</translation>
     </message>
     <message>
-        <location line="+25"/>
         <source>File Path</source>
-        <translation>文件路径</translation>
+        <translation type="vanished">文件路径</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>File Count</source>
-        <translation>文件数量</translation>
+        <translation type="vanished">文件数量</translation>
     </message>
     <message>
-        <location line="+337"/>
         <source>Real Size: Waiting child...</source>
-        <translation>真实大小:等待子集...</translation>
+        <translation type="vanished">真实大小:等待子集...</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Real File Count: Waiting child...</source>
-        <translation>文件数量:等待子集...</translation>
+        <translation type="vanished">文件数量:等待子集...</translation>
     </message>
     <message>
-        <location line="-9"/>
         <source>This is a directory. Double-click to expand it.</source>
-        <translation>这是一个目录，双击展开</translation>
+        <translation type="vanished">这是一个目录，双击展开</translation>
     </message>
     <message>
-        <location line="-354"/>
+        <location line="-13"/>
         <source>Download files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+100"/>
+        <location line="+98"/>
         <source>Specify...</source>
         <translation type="unfinished">指定...</translation>
     </message>
@@ -20583,74 +20763,143 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation type="unfinished">选择目录</translation>
     </message>
     <message>
-        <location line="+256"/>
-        <location line="+32"/>
         <source>Real Size=%1</source>
-        <translation>实际大小=%1</translation>
+        <translation type="vanished">实际大小=%1</translation>
     </message>
     <message>
-        <location line="-27"/>
-        <location line="+34"/>
         <source>Real File Count=%1</source>
-        <translation>实际文件数=%1</translation>
+        <translation type="vanished">实际文件数=%1</translation>
     </message>
     <message>
-        <location line="+136"/>
+        <location line="-146"/>
+        <source>Could not load collection file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+323"/>
+        <location line="+381"/>
         <source>Save Collection File.</source>
         <translation>保存集合文件 </translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-380"/>
+        <location line="+299"/>
+        <location line="+82"/>
         <source>What do you want to do?</source>
         <translation>你想要做什么？</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-380"/>
+        <location line="+381"/>
         <source>Overwrite</source>
         <translation>覆盖</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-380"/>
         <source>Merge</source>
         <translation>合并 </translation>
     </message>
     <message>
-        <location line="+155"/>
+        <location line="+130"/>
+        <source>Please wait for all files to be properly processed before saving.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Too many places selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <location line="+13"/>
+        <source>Please select at most one directory where to create the new folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Selected place cannot be a file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+88"/>
+        <source>Unable to make path</source>
+        <translation type="unfinished">无法创建路径</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Unable to make path:</source>
+        <translation type="unfinished">无法创建路径:</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Incompatible filename.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>This filename is not usable on your system.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Retroshare can replace every problematic chars by &apos;_&apos;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Correct filename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Correct all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Skip this file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Skip all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Warning, selection contains more than %1 items.</source>
-        <translation>警告，选择包含超过%1项。</translation>
+        <translation type="vanished">警告，选择包含超过%1项。</translation>
     </message>
     <message>
-        <location line="+84"/>
         <source>Do you want to remove them and all their children, too?</source>
-        <translation>你想删除他们和他们的子文件夹吗？</translation>
+        <translation type="vanished">你想删除他们和他们的子文件夹吗？</translation>
     </message>
     <message>
-        <location line="+357"/>
         <source>Do you want to remove this file from the list?</source>
-        <translation>你想从列表里移除这个文件吗？</translation>
+        <translation type="vanished">你想从列表里移除这个文件吗？</translation>
     </message>
     <message>
-        <location line="-224"/>
+        <location line="-114"/>
         <source>New Directory</source>
         <translation>新目录</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Enter the new directory&apos;s name</source>
         <translation>输入新目录的名字</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.ui" line="-307"/>
+        <location filename="../gui/common/RsCollectionDialog.ui" line="-305"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change the file where collection will be saved.&lt;/p&gt;&lt;p&gt;If you select an existing file, you could merge it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;更改资源集合将要被保存到的文件。&lt;/p&gt;&lt;p&gt;如果选择一个已有文件，它将被合并。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="-375"/>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="-189"/>
+        <location line="+381"/>
         <source>File already exists.</source>
         <translation>文件已存在。</translation>
     </message>
     <message>
-        <location filename="../gui/common/RsCollectionDialog.ui" line="+163"/>
+        <location filename="../gui/common/RsCollectionDialog.ui" line="+167"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove selected item from collection.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Del&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;从资源集合中删除所选项。&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; vertical-align:sub;&quot;&gt;&amp;lt;Del&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -20658,50 +20907,76 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
 <context>
     <name>RsCollectionFile</name>
     <message>
-        <location filename="../gui/common/RsCollection.cpp" line="-157"/>
-        <location line="+28"/>
         <source>Cannot open file %1</source>
-        <translation>无法打开文件 %1</translation>
+        <translation type="vanished">无法打开文件 %1</translation>
     </message>
     <message>
-        <location line="-16"/>
         <source>Error parsing xml file</source>
-        <translation>xml 文件解析错误</translation>
+        <translation type="vanished">xml 文件解析错误</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location filename="../gui/FileTransfer/SearchDialog.cpp" line="+606"/>
+        <location filename="../gui/FileTransfer/SharedFilesDialog.cpp" line="+271"/>
+        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="+2566"/>
         <source>Open collection file</source>
         <translation>打开集合文件</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+31"/>
-        <location line="+16"/>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="-18"/>
+        <location filename="../gui/FileTransfer/SharedFilesDialog.cpp" line="+0"/>
+        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="+0"/>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="-397"/>
+        <location line="+384"/>
         <source>Collection files</source>
         <translation>资源集合文件</translation>
     </message>
     <message>
-        <location line="-16"/>
-        <location line="+15"/>
-        <location filename="../gui/common/RsCollectionDialog.cpp" line="-1"/>
+        <location filename="../gui/common/RsCollectionDialog.cpp" line="-385"/>
+        <location line="+384"/>
         <source>Create collection file</source>
         <translation>创建集合文件</translation>
     </message>
     <message>
-        <location line="-65"/>
         <source>This file contains the string &quot;%1&quot; and is therefore an invalid collection file. 
 
 If you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.</source>
-        <translation>文件包含字串 &quot;%1&quot; 因此不是有效的集合文件。
+        <translation type="vanished">文件包含字串 &quot;%1&quot; 因此不是有效的集合文件。
 
 如果您认为它是有效文件请从文件中删除这一行，然后用 RetroShare 重新打开。</translation>
     </message>
 </context>
 <context>
+    <name>RsCollectionModel</name>
+    <message>
+        <location filename="../gui/common/RsCollectionModel.cpp" line="+118"/>
+        <source>File</source>
+        <translation type="unfinished">文件</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Size</source>
+        <translation type="unfinished">大小</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Count</source>
+        <translation type="unfinished">数量</translation>
+    </message>
+    <message>
+        <location line="+297"/>
+        <source>[File is being hashed]</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>RsDownloadListModel</name>
     <message>
-        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="+262"/>
+        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="-2304"/>
         <source>Name</source>
         <comment>i.e: file name</comment>
         <translation type="unfinished"></translation>
@@ -20822,7 +21097,7 @@ If you believe it is correct, remove the corresponding line from the file and re
 <context>
     <name>RsFriendListModel</name>
     <message>
-        <location filename="../gui/common/FriendListModel.cpp" line="+350"/>
+        <location filename="../gui/common/FriendListModel.cpp" line="+376"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -20842,7 +21117,7 @@ If you believe it is correct, remove the corresponding line from the file and re
         <translation type="unfinished">IP</translation>
     </message>
     <message>
-        <location line="+739"/>
+        <location line="+840"/>
         <source>Profile ID </source>
         <translation type="unfinished"></translation>
     </message>
@@ -20855,7 +21130,7 @@ If you believe it is correct, remove the corresponding line from the file and re
 <context>
     <name>RsGxsForumModel</name>
     <message>
-        <location filename="../gui/gxsforums/GxsForumModel.cpp" line="+340"/>
+        <location filename="../gui/gxsforums/GxsForumModel.cpp" line="+341"/>
         <source>Title</source>
         <translation type="unfinished">标题</translation>
     </message>
@@ -20875,7 +21150,7 @@ If you believe it is correct, remove the corresponding line from the file and re
         <translation type="unfinished">作者</translation>
     </message>
     <message>
-        <location line="+206"/>
+        <location line="+215"/>
         <source>Information for this identity is currently missing.</source>
         <translation type="unfinished">这个身份的信息现在丢失了</translation>
     </message>
@@ -20916,9 +21191,75 @@ prevents the message to be forwarded to your friends.</source>
     </message>
 </context>
 <context>
+    <name>RsIdentityListModel</name>
+    <message>
+        <location filename="../gui/Identity/IdentityListModel.cpp" line="+305"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Id</source>
+        <translation type="unfinished">ID</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Owner Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Owner</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+127"/>
+        <source>
+This identity has a insecure fingerprint (It&apos;s probably quite old).
+You should get rid of it now and use a new one.
+These identities are not supported anymore.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>This identity is owned by you</source>
+        <translation type="unfinished">这个身份被你是拥有者</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Identity owned by profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Identity possibly owned by unknown profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+206"/>
+        <source>Loading...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+139"/>
+        <source>My own identities</source>
+        <translation type="unfinished">我所拥有的身份</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>My contacts</source>
+        <translation type="unfinished">我的通讯录</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>All</source>
+        <translation type="unfinished">全部</translation>
+    </message>
+</context>
+<context>
     <name>RsMessageModel</name>
     <message>
-        <location filename="../gui/msgs/MessageModel.cpp" line="+168"/>
+        <location filename="../gui/msgs/MessageModel.cpp" line="+169"/>
         <source>Date</source>
         <translation type="unfinished">日期</translation>
     </message>
@@ -20988,7 +21329,7 @@ prevents the message to be forwarded to your friends.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+333"/>
+        <location line="+352"/>
         <location line="+14"/>
         <location line="+17"/>
         <source>[Notification]</source>
@@ -21011,131 +21352,56 @@ prevents the message to be forwarded to your friends.</source>
 <context>
     <name>Rshare</name>
     <message>
-        <location filename="../rshare.cpp" line="-541"/>
         <source>Resets ALL stored RetroShare settings.</source>
-        <translation>重设所有保存的RetroShare设置。</translation>
+        <translation type="vanished">重设所有保存的RetroShare设置。</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Sets the directory RetroShare uses for data files.</source>
-        <translation>设置用于数据文件的目录RetroShare。</translation>
+        <translation type="vanished">设置用于数据文件的目录RetroShare。</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <location line="+18"/>
-        <source>filename</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-17"/>
         <source>Sets the name and location of RetroShare&apos;s logfile.</source>
-        <translation>设置 RetroShare 日志文件保存的名称和位置。</translation>
+        <translation type="vanished">设置 RetroShare 日志文件保存的名称和位置。</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>level</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
         <source>Sets the verbosity of RetroShare&apos;s logging.</source>
-        <translation>设置 RetroShare 日志详细等级。</translation>
+        <translation type="vanished">设置 RetroShare 日志详细等级。</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>style</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
         <source>Sets RetroShare&apos;s interface style.</source>
-        <translation>设置RetroShare的界面样式。</translation>
+        <translation type="vanished">设置RetroShare的界面样式。</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>stylesheet</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
         <source>Sets RetroShare&apos;s interface stylesheets.</source>
-        <translation>设置RetroShare的界面样式表。</translation>
+        <translation type="vanished">设置RetroShare的界面样式表。</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>language</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
         <source>Sets RetroShare&apos;s language.</source>
-        <translation>设置RetroShare语言</translation>
+        <translation type="vanished">设置RetroShare语言</translation>
     </message>
     <message>
-        <location line="+95"/>
         <source>Unable to open log file &apos;%1&apos;: %2</source>
-        <translation>无法打开日志文件 &quot;%1&apos;:%2</translation>
+        <translation type="vanished">无法打开日志文件 &quot;%1&apos;:%2</translation>
     </message>
     <message>
-        <location line="+27"/>
-        <location line="+6"/>
-        <source>Invalid operating mode specified:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+212"/>
         <source>built-in</source>
-        <translation>内建</translation>
+        <translation type="vanished">内建</translation>
     </message>
     <message>
-        <location line="+87"/>
         <source>Could not create data directory: %1</source>
-        <translation>无法创建目录:%1</translation>
+        <translation type="vanished">无法创建目录:%1</translation>
     </message>
     <message>
-        <location line="-425"/>
-        <source>opmode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Sets RetroShare&apos;s operating mode.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>RsLinkURL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Open RsLink with protocol retroshare://</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Open RsFile with or without arg.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>RetroShare GUI Usage Information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+104"/>
         <source>Invalid language code specified:</source>
-        <translation>指定的语言代码无效: </translation>
+        <translation type="vanished">指定的语言代码无效: </translation>
     </message>
     <message>
-        <location line="-6"/>
         <source>Invalid GUI style specified:</source>
-        <translation>无效界面样式指定:</translation>
+        <translation type="vanished">无效界面样式指定:</translation>
     </message>
     <message>
-        <location line="-7"/>
         <source>Invalid log level specified:</source>
-        <translation>指定日志级别无效：</translation>
+        <translation type="vanished">指定日志级别无效：</translation>
     </message>
 </context>
 <context>
@@ -21340,23 +21606,23 @@ prevents the message to be forwarded to your friends.</source>
         <translation>下载所选项目</translation>
     </message>
     <message>
-        <location filename="../gui/FileTransfer/SearchDialog.cpp" line="+214"/>
+        <location filename="../gui/FileTransfer/SearchDialog.cpp" line="-395"/>
         <source>File Name</source>
         <translation>文件名称</translation>
     </message>
     <message>
-        <location line="+148"/>
+        <location line="+150"/>
         <source>Download</source>
         <translation>下载</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+345"/>
+        <location line="+338"/>
         <source>Copy RetroShare Link</source>
         <translation>复制 RetroShare 链接</translation>
     </message>
     <message>
-        <location line="-344"/>
+        <location line="-337"/>
         <source>Send RetroShare Link</source>
         <translation>发送 RetroShare 链接</translation>
     </message>
@@ -21376,7 +21642,12 @@ prevents the message to be forwarded to your friends.</source>
         <translation>跳过本地文件</translation>
     </message>
     <message>
-        <location line="+229"/>
+        <location line="+164"/>
+        <source>Error open RsCollection file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+58"/>
         <location line="+6"/>
         <source>Sorry</source>
         <translation>抱歉</translation>
@@ -21409,7 +21680,7 @@ prevents the message to be forwarded to your friends.</source>
         <translation>文件夹</translation>
     </message>
     <message>
-        <location line="+209"/>
+        <location line="+211"/>
         <source>Obtained via </source>
         <translation type="unfinished"></translation>
     </message>
@@ -21419,12 +21690,12 @@ prevents the message to be forwarded to your friends.</source>
         <translation>新建 RetroShare 链接</translation>
     </message>
     <message>
-        <location line="-1165"/>
+        <location line="-1160"/>
         <source>Open Folder</source>
         <translation>打开文件夹</translation>
     </message>
     <message>
-        <location line="-270"/>
+        <location line="-268"/>
         <source>Create Collection...</source>
         <translation>创建资源集合</translation>
     </message>
@@ -21444,7 +21715,7 @@ prevents the message to be forwarded to your friends.</source>
         <translation>从集合文件中下载...</translation>
     </message>
     <message>
-        <location line="+251"/>
+        <location line="+249"/>
         <source>Collection</source>
         <translation>资源集合</translation>
     </message>
@@ -21830,13 +22101,13 @@ behind a firewall or a VPN.</source>
         <translation>节点探索开启(推荐)</translation>
     </message>
     <message>
-        <location line="-1032"/>
+        <location line="-1033"/>
         <location line="+1"/>
         <source>Tor has been automatically configured by Retroshare. You shouldn&apos;t need to change anything here.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+825"/>
+        <location line="+826"/>
         <source>sec</source>
         <translation type="unfinished"></translation>
     </message>
@@ -21917,7 +22188,7 @@ List of found external IP:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+318"/>
+        <location line="+319"/>
         <source>Your key uses the following algorithms: %1 and %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -22329,7 +22600,7 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     <message>
         <location line="-109"/>
         <location line="+114"/>
-        <location filename="../gui/settings/ServerPage.cpp" line="-1796"/>
+        <location filename="../gui/settings/ServerPage.cpp" line="-1798"/>
         <source>Status</source>
         <translation>状态</translation>
     </message>
@@ -22400,7 +22671,7 @@ If you have issues connecting over Tor check the Tor logs too.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location filename="../gui/settings/ServerPage.cpp" line="+815"/>
+        <location filename="../gui/settings/ServerPage.cpp" line="+816"/>
         <source>List of OpenDns servers used.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -22472,12 +22743,12 @@ If you have issues connecting over Tor check the Tor logs too.</source>
         <translation>请填写服务地址</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ServerPage.cpp" line="-1123"/>
+        <location filename="../gui/settings/ServerPage.cpp" line="-1124"/>
         <source>IP Range</source>
         <translation>IP 范围</translation>
     </message>
     <message>
-        <location line="+546"/>
+        <location line="+547"/>
         <source>Reported by DHT for IP masquerading</source>
         <translation>DHT报告IP伪装 </translation>
     </message>
@@ -22637,7 +22908,7 @@ If you have issues connecting over Tor check the Tor logs too.</source>
 <context>
     <name>SettingsPage</name>
     <message>
-        <location filename="../gui/settings/rsettingswin.h" line="+50"/>
+        <location filename="../gui/settings/rsettingswin.h" line="+51"/>
         <source>Preferences</source>
         <translation>选项</translation>
     </message>
@@ -22888,7 +23159,7 @@ Select the Friends with which you want to Share your Channel.</source>
         <translation>下载</translation>
     </message>
     <message>
-        <location filename="../gui/FileTransfer/SharedFilesDialog.cpp" line="-333"/>
+        <location filename="../gui/FileTransfer/SharedFilesDialog.cpp" line="-604"/>
         <source>Copy retroshare Links to Clipboard</source>
         <translation>复制 RetroShare 链接至剪切板</translation>
     </message>
@@ -22913,13 +23184,13 @@ Select the Friends with which you want to Share your Channel.</source>
         <translation>RetroShare 链接</translation>
     </message>
     <message>
-        <location line="+159"/>
+        <location line="+180"/>
         <location line="+1"/>
         <source>Recommendation(s)</source>
         <translation>推荐内容</translation>
     </message>
     <message>
-        <location line="-631"/>
+        <location line="-652"/>
         <source>Create Collection...</source>
         <translation>创建资源集合</translation>
     </message>
@@ -22949,7 +23220,7 @@ Select the Friends with which you want to Share your Channel.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+682"/>
+        <location line="+705"/>
         <source>Search string should be at least 3 characters long.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -23087,7 +23358,7 @@ Select the Friends with which you want to Share your Channel.</source>
 <context>
     <name>SplashScreen</name>
     <message>
-        <location filename="../main.cpp" line="+313"/>
+        <location filename="../main.cpp" line="+367"/>
         <source>Load configuration</source>
         <translation>载入设置</translation>
     </message>
@@ -23134,8 +23405,8 @@ The current identities/locations will not be affected.</source>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;New Profile/Node&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:14pt; text-decoration: underline; color:#366fe0;&quot;&gt;New Profile/Node&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -23162,12 +23433,20 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+0"/>
+        <source>The password to your SSL certificate (your node) will be stored encrypted in your desktop&apos;s keyring. 
+
+ Your PGP passwd will not be stored.
+
+This choice can be reverted in settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>The password to your SSL certificate (your node) will be stored encrypted in your Gnome Keyring. 
 
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>你的SSL证书(你的节点)密码将会保存在你的Gnome钥匙链上。
+        <translation type="vanished">你的SSL证书(你的节点)密码将会保存在你的Gnome钥匙链上。
 
 
 你的PGP密码不会被保存。
@@ -24055,12 +24334,11 @@ p, li { white-space: pre-wrap; }
         <translation>硬盘空间限制:</translation>
     </message>
     <message>
-        <location line="+14"/>
         <source>End-to-end encryption:</source>
-        <translation>端对端加密：</translation>
+        <translation type="vanished">端对端加密：</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+14"/>
         <source>Allow direct download:</source>
         <translation>允许直接下载:</translation>
     </message>
@@ -24090,22 +24368,19 @@ p, li { white-space: pre-wrap; }
         <translation> MB</translation>
     </message>
     <message>
-        <location line="+38"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Anonymous tunnels can be end-o-end encrypted. In order to maintain backward compatibility, this can be made optional (choosing &amp;quot;Accepted&amp;quot;), but in the end, all Retroshare nodes will be switched to &amp;quot;Enforced&amp;quot;, meaning that all anonymous transfers will be end-to-end encrypted. With &amp;quot;Accepted&amp;quot;, it is likely that you will transfer using twice as many tunnels, since there is no way to know that an encrypted and a clear tunnel actually transfer from the same source.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;匿名隧道可以进行端到端加密。 为保持向后兼容性，这可以是可选的(选择“接受”)，但最终所有 RetroShare 节点将被切换到“强制”，这意味着所有匿名传输将被端到端加密。 使用“接受”，你可能会使用两倍的隧道传输，因为无法知道一个加密的和一个明确的隧道实际上是从同一个源传输的。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;匿名隧道可以进行端到端加密。 为保持向后兼容性，这可以是可选的(选择“接受”)，但最终所有 RetroShare 节点将被切换到“强制”，这意味着所有匿名传输将被端到端加密。 使用“接受”，你可能会使用两倍的隧道传输，因为无法知道一个加密的和一个明确的隧道实际上是从同一个源传输的。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Accepted</source>
-        <translation>接受</translation>
+        <translation type="vanished">接受</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Enforced</source>
-        <translation>强制 </translation>
+        <translation type="vanished">强制 </translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+38"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How RS manage direct download setting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -24130,12 +24405,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-153"/>
+        <location line="-129"/>
         <source>Max. tunnel req. forwarded per second:</source>
         <translation>每秒最多转发隧道请求数量</translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="+62"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Retroshare will suspend all transfers and config file saving if the disk space goes below this limit. That prevents loss of information on some systems. A popup window will warn you when that happens.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;如果磁盘空间低于此限制，RetroShare将暂停所有传输并且保存配置文件。 这可以防止某些系统丢失信息。 当这种情况发生时，弹出窗口会提醒你。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -24145,7 +24420,7 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;这个值控制您的节点每秒可以转发多少个隧道请求。&lt;/p&gt;&lt;p&gt;如果你网络带宽充裕，可以将其提高到 30-40，以允许更长的隧道通过。 要慎重，因为这会产生许多小数据包，可能会显著减慢你自己的文件传输速度。&lt;/p&gt;&lt;p&gt;默认值为20。如果你不确定，保持默认值。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/settings/TransferPage.cpp" line="+220"/>
+        <location filename="../gui/settings/TransferPage.cpp" line="+228"/>
         <source>Warning</source>
         <translation type="unfinished">警告</translation>
     </message>
@@ -24534,7 +24809,12 @@ p, li { white-space: pre-wrap; }
         <translation>输入新的有效文件名</translation>
     </message>
     <message>
-        <location line="-1344"/>
+        <location line="+237"/>
+        <source>Error openning collection file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-1581"/>
         <location line="+4"/>
         <source>Expand all</source>
         <translation>全部展开</translation>

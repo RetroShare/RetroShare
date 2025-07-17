@@ -4,19 +4,22 @@
 <context>
     <name>AudioInput</name>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="+17"/>
+        <location filename="../gui/VOIPConfigPanel.ui" line="+280"/>
         <source>Audio Wizard</source>
         <translation>オーディオ設定ウィザード</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Transmission</source>
-        <translation>伝送方式</translation>
+        <translation type="vanished">伝送方式</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>&amp;Transmit</source>
-        <translation>送信(&amp;T)</translation>
+        <translation type="vanished">送信(&amp;T)</translation>
+    </message>
+    <message>
+        <location line="-28"/>
+        <source>&amp;Transmit:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
@@ -29,7 +32,7 @@
         <translation>&lt;b&gt;発言を送信するタイミングを設定します。&lt;/b&gt;&lt;br /&gt;&lt;i&gt;常に有効&lt;/i&gt; - 常時音声入力を受け付けます&lt;br /&gt;&lt;i&gt;声で有効化&lt;/i&gt; - はっきりとしゃべっている時に受け付けます。&lt;br /&gt;&lt;i&gt;プッシュ・トゥ・トーク&lt;/i&gt; - &lt;i&gt;ショートカットキー&lt;/i&gt;で設定したキーを押している間音声入力を受け付けます。</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+37"/>
         <source>DoublePush Time</source>
         <translation>二重押しの時間</translation>
     </message>
@@ -90,32 +93,46 @@
         <translation>空</translation>
     </message>
     <message>
-        <location line="+17"/>
         <source>Audio Processing</source>
-        <translation>音声処理</translation>
+        <translation type="vanished">音声処理</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-293"/>
         <source>Noise Suppression</source>
         <translation>ノイズ抑制</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-22"/>
         <source>Noise suppression</source>
         <translation>ノイズ抑制</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-132"/>
+        <source>Video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Input device:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+66"/>
+        <source>Audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
         <source>&lt;b&gt;This sets the amount of noise suppression to apply.&lt;/b&gt;&lt;br /&gt;The higher this value, the more aggressively stationary noise will be suppressed.</source>
         <translation>&lt;b&gt;この設定は多くのノイズを抑制します。&lt;/b&gt;&lt;br /&gt;より大きい値を設定すると、より多くのノイズが抑制されます。</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+64"/>
         <source>Amplification</source>
         <translation>増幅</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-22"/>
         <source>Maximum amplification of input sound</source>
         <translation>音声入力の最大増幅量</translation>
     </message>
@@ -125,17 +142,12 @@
         <translation>&lt;b&gt;音声入力の最大増幅量です。&lt;/b&gt;&lt;br /&gt;RetroShareは圧縮を行う前に入力量を正常化します。この設定は、どれくらい音量を増幅させるかを決定します。&lt;br /&gt;実際の音量はその時の発言パターンによって変化しますが、ここで指定された音量を上回ることはありません。&lt;br /&gt;音声統計で&lt;i&gt;マイクの音量&lt;/i&gt;レベルが常に100%近くに達しているなら、この値を2.0くらいにしたくなるかも知れません。しかし、(大部分の人がそうだと思いますが)100%に届かないなら、この値をより高くしてください。&lt;br /&gt;あなたが非常に穏やかに話している時に&lt;i&gt;マイク音量 * 増幅値 &gt;= 100&lt;/i&gt; となるのが理想的です。&lt;br /&gt;&lt;br /&gt;この値を最大にすることに実害はありませんが、だからといって適当に最大値に合わせてしまうと他の会話まで拾ってしまうので気をつけてください。</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+37"/>
         <source>Echo Cancellation Processing</source>
         <translation>エコーキャンセル処理</translation>
     </message>
     <message>
-        <location line="+15"/>
-        <source>Video Processing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+43"/>
+        <location line="-157"/>
         <source>Available bandwidth:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -150,7 +162,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+25"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Display encoded (and then decoded) frame, to check the codec&apos;s quality. If not selected, the image above only shows the frame that is grabbed from your camera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -163,39 +175,32 @@
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="+185"/>
         <source>Continuous</source>
-        <translation>続行</translation>
+        <translation type="vanished">続行</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Voice Activity</source>
-        <translation>発声</translation>
+        <translation type="vanished">発声</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Push To Talk</source>
-        <translation>プッシュ・トゥ・トーク</translation>
+        <translation type="vanished">プッシュ・トゥ・トーク</translation>
     </message>
     <message>
-        <location line="+91"/>
         <source>%1 s</source>
-        <translation>%1 s</translation>
+        <translation type="vanished">%1 s</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Off</source>
-        <translation>オフ</translation>
+        <translation type="vanished">オフ</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>-%1 dB</source>
-        <translation>-%1 dB</translation>
+        <translation type="vanished">-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="+85"/>
         <source>VOIP</source>
-        <translation>VOIP</translation>
+        <translation type="vanished">VOIP</translation>
     </message>
 </context>
 <context>
@@ -463,7 +468,7 @@
         <translation>音声の検出</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+22"/>
         <source>Next you need to adjust the following slider. The first few utterances you say should end up in the green area (definitive speech). While talking, you should stay inside the yellow (might be speech) and when you&apos;re not talking, everything should be in the red (definitively not speech).</source>
         <translation>次に、以下の2つのスライダーを調節しましょう。最初の発声は緑(確実に発言と判定)になると良いでしょう。話している最中は黄色(発言だろうと判定)の中に収まり、話していない時はすべて赤(発言ではないと判定)に入っているようにしてください。</translation>
     </message>
@@ -491,7 +496,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="+128"/>
+        <location filename="../VOIPPlugin.cpp" line="+127"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -534,7 +539,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+38"/>
         <location line="+4"/>
         <location line="+4"/>
         <location line="+4"/>
@@ -775,9 +780,53 @@
     </message>
 </context>
 <context>
+    <name>VOIPConfigPanel</name>
+    <message>
+        <location filename="../gui/VOIPConfigPanel.cpp" line="+100"/>
+        <source>Continuous</source>
+        <translation type="unfinished">続行</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Voice Activity</source>
+        <translation type="unfinished">発声</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Push To Talk</source>
+        <translation type="unfinished">プッシュ・トゥ・トーク</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+334"/>
+        <source>[No video]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-143"/>
+        <source>%1 s</source>
+        <translation type="unfinished">%1 s</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Off</source>
+        <translation type="unfinished">オフ</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>-%1 dB</source>
+        <translation type="unfinished">-%1 dB</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPConfigPanel.h" line="+84"/>
+        <source>VOIP</source>
+        <translation type="unfinished">VOIP</translation>
+    </message>
+</context>
+<context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="-48"/>
+        <location filename="../VOIPPlugin.cpp" line="-46"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
@@ -795,7 +844,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/VOIPToasterItem.ui" line="+232"/>
+        <location filename="../gui/VOIPToasterItem.ui" line="+239"/>
         <source>Decline</source>
         <translation type="unfinished"></translation>
     </message>
@@ -912,7 +961,7 @@
 <context>
     <name>voipGraphSource</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="-246"/>
+        <location filename="../gui/VOIPConfigPanel.cpp" line="-270"/>
         <source>Required bandwidth</source>
         <translation type="unfinished"></translation>
     </message>
