@@ -392,17 +392,17 @@ void GxsGroupFrameDialog::removeAllSearches()
 
 uint32_t GxsGroupFrameDialog::checkDelay(uint32_t time_in_secs)
 {
-    if(time_in_secs <    1 * 86400)
+	if(time_in_secs <    1 * 86400)
         return 0        ;
-    if(time_in_secs <=  10 * 86400)
+	if(time_in_secs <=  10 * 86400)
         return 5 * 86400;
-    if(time_in_secs <=  20 * 86400)
+	if(time_in_secs <=  20 * 86400)
         return 15 * 86400;
-    if(time_in_secs <=  60 * 86400)
+	if(time_in_secs <=  60 * 86400)
         return 30 * 86400;
-    if(time_in_secs <= 120 * 86400)
+	if(time_in_secs <= 120 * 86400)
         return 90 * 86400;
-    if(time_in_secs <= 250 * 86400)
+	if(time_in_secs <= 250 * 86400)
         return 180 * 86400;
 	if(time_in_secs <= 400 * 86400)
 		return 365 * 86400;
