@@ -128,7 +128,7 @@ win32 {
 
 	isEmpty(QMAKE_SH) {
 		# MinGW
-		LIBS += -lcrypt32
+		LIBS += -lcrypt32 -lbcrypt
 	}
 
 	# Check for msys2

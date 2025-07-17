@@ -2,17 +2,19 @@ ZLIB_VERSION=1.2.11
 BZIP2_VERSION=1.0.8
 MINIUPNPC_VERSION=2.2.3
 OPENSSL_VERSION=1.1.1w
-SPEEX_VERSION=1.2.0
-SPEEXDSP_VERSION=1.2.0
-LIBXML2_VERSION=2.9.12
-LIBXSLT_VERSION=1.1.34
-CURL_VERSION=7.81.0
+SPEEX_VERSION=1.2.1
+SPEEXDSP_VERSION=1.2.1
+LIBXML2_MAIN_VERSION=2.14
+LIBXML2_VERSION=$(LIBXML2_MAIN_VERSION).5
+LIBXSLT_MAIN_VERSION=1.1
+LIBXSLT_VERSION=$(LIBXSLT_MAIN_VERSION).43
+CURL_VERSION=8.9.1
 TCL_VERSION=8.6.10
 SQLCIPHER_VERSION=4.5.0
 LIBMICROHTTPD_VERSION=0.9.75
-FFMPEG_VERSION=4.4
+FFMPEG_VERSION=4.4.6
 RAPIDJSON_VERSION=1.1.0
-XAPIAN_VERSION=1.4.19
+XAPIAN_VERSION=1.4.29
 ASIO_VERSION=1-34-2
 #RNP_VERSION=0.17.1
 
@@ -24,7 +26,7 @@ DOWNLOAD_PATH?=download
 BUILD_PATH=build
 LIBS_PATH?=libs
 
-all: dirs zlib bzip2 miniupnpc openssl speex speexdsp libxml2 libxslt curl sqlcipher libmicrohttpd ffmpeg rapidjson xapian jsonc botan asio copylibs
+all: dirs zlib bzip2 miniupnpc openssl speex speexdsp libxml curl sqlcipher libmicrohttpd ffmpeg rapidjson xapian jsonc botan asio copylibs
 #rnp
 
 download: \
@@ -34,13 +36,13 @@ download: \
 	$(DOWNLOAD_PATH)/openssl-$(OPENSSL_VERSION).tar.gz \
 	$(DOWNLOAD_PATH)/speex-$(SPEEX_VERSION).tar.gz \
 	$(DOWNLOAD_PATH)/speexdsp-$(SPEEXDSP_VERSION).tar.gz \
-	$(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar.gz \
-	$(DOWNLOAD_PATH)/libxslt-$(LIBXSLT_VERSION).tar.gz \
+	$(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar.xz \
+	$(DOWNLOAD_PATH)/libxslt-$(LIBXSLT_VERSION).tar.xz \
 	$(DOWNLOAD_PATH)/curl-$(CURL_VERSION).tar.gz \
 	$(DOWNLOAD_PATH)/tcl$(TCL_VERSION)-src.tar.gz \
 	$(DOWNLOAD_PATH)/sqlcipher-$(SQLCIPHER_VERSION).tar.gz \
 	$(DOWNLOAD_PATH)/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz \
-	$(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.gz \
+	$(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.xz \
 	$(DOWNLOAD_PATH)/rapidjson-$(RAPIDJSON_VERSION).tar.gz \
 	$(DOWNLOAD_PATH)/xapian-core-$(XAPIAN_VERSION).tar.xz
 
@@ -191,50 +193,52 @@ $(BUILD_PATH)/speexdsp-$(SPEEXDSP_VERSION): $(DOWNLOAD_PATH)/speexdsp-$(SPEEXDSP
 	rm -r -f speexdsp-$(SPEEXDSP_VERSION)
 	mv $(BUILD_PATH)/speexdsp-$(SPEEXDSP_VERSION).tmp $(BUILD_PATH)/speexdsp-$(SPEEXDSP_VERSION)
 
-libxml2: $(BUILD_PATH)/libxml2-$(LIBXML2_VERSION)
+libxml: \
+	$(BUILD_PATH)/libxml2-$(LIBXML2_VERSION) \
+	$(BUILD_PATH)/libxslt-$(LIBXSLT_VERSION)
 
-$(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar.gz:
-	wget ftp://xmlsoft.org/libxml2/libxml2-$(LIBXML2_VERSION).tar.gz -O $(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar.gz
+$(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar.xz:
+	wget --no-check-certificate https://download.gnome.org/sources/libxml2/$(LIBXML2_MAIN_VERSION)/libxml2-$(LIBXML2_VERSION).tar.xz -O $(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar.xz
 
-$(BUILD_PATH)/libxml2-$(LIBXML2_VERSION): $(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar.gz
-	# prepare
+$(DOWNLOAD_PATH)/libxslt-$(LIBXSLT_VERSION).tar.xz:
+	wget --no-check-certificate https://download.gnome.org/sources/libxslt/$(LIBXSLT_MAIN_VERSION)/libxslt-$(LIBXSLT_VERSION).tar.xz -O $(DOWNLOAD_PATH)/libxslt-$(LIBXSLT_VERSION).tar.xz
+
+$(BUILD_PATH)/libxml2-$(LIBXML2_VERSION) $(BUILD_PATH)/libxslt-$(LIBXSLT_VERSION): \
+	$(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar.xz \
+	$(DOWNLOAD_PATH)/libxslt-$(LIBXSLT_VERSION).tar.xz
+	# libxml2: prepare
+	pacman --needed --noconfirm -S python3 pkg-config
 	rm -r -f $(BUILD_PATH)/libxml2-*
-	tar xvf $(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar.gz
-	# build
+	tar xvf $(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar.xz
+	# libxslt: prepare
+	rm -r -f $(BUILD_PATH)/libxslt-*
+	tar xvf $(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar.xz
+	tar xvf $(DOWNLOAD_PATH)/libxslt-$(LIBXSLT_VERSION).tar.xz
+	# libxml2: build
 	cd libxml2-$(LIBXML2_VERSION) && ./configure --without-iconv -enable-shared=no
 	#cd libxml2-$(LIBXML2_VERSION) && make install exec_prefix="`pwd`/../$(BUILD_PATH)"
-	cd libxml2-$(LIBXML2_VERSION) && make
-	# copy files
+	cd libxml2-$(LIBXML2_VERSION) && make libxml2.la
+	# libxslt: build
+	cd libxslt-$(LIBXSLT_VERSION) && ./configure --with-libxml-src=../libxml2-$(LIBXML2_VERSION) -enable-shared=no CFLAGS=-DLIBXML_STATIC
+	cd libxslt-$(LIBXSLT_VERSION)/libxslt && make
+	cd libxslt-$(LIBXSLT_VERSION)/libexslt && make
+	# libxml2: copy files
 	mkdir -p $(BUILD_PATH)/libxml2-$(LIBXML2_VERSION).tmp/include/libxml
 	cp libxml2-$(LIBXML2_VERSION)/include/libxml/*.h $(BUILD_PATH)/libxml2-$(LIBXML2_VERSION).tmp/include/libxml/
 	mkdir -p $(BUILD_PATH)/libxml2-$(LIBXML2_VERSION).tmp/lib
 	cp libxml2-$(LIBXML2_VERSION)/.libs/libxml2.a $(BUILD_PATH)/libxml2-$(LIBXML2_VERSION).tmp/lib/
-	# cleanup
-	#rm -r -f libxml2-$(LIBXML2_VERSION) # see libxslt
-	mv $(BUILD_PATH)/libxml2-$(LIBXML2_VERSION).tmp $(BUILD_PATH)/libxml2-$(LIBXML2_VERSION)
-
-libxslt: $(BUILD_PATH)/libxslt-$(LIBXSLT_VERSION)
-
-$(DOWNLOAD_PATH)/libxslt-$(LIBXSLT_VERSION).tar.gz:
-	wget ftp://xmlsoft.org/libxml2/libxslt-$(LIBXSLT_VERSION).tar.gz -O $(DOWNLOAD_PATH)/libxslt-$(LIBXSLT_VERSION).tar.gz
-
-$(BUILD_PATH)/libxslt-$(LIBXSLT_VERSION): $(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar.gz $(DOWNLOAD_PATH)/libxslt-$(LIBXSLT_VERSION).tar.gz
-	# prepare
-	rm -r -f $(BUILD_PATH)/libxslt-*
-	tar xvf $(DOWNLOAD_PATH)/libxml2-$(LIBXML2_VERSION).tar.gz
-	tar xvf $(DOWNLOAD_PATH)/libxslt-$(LIBXSLT_VERSION).tar.gz
-	# build
-	cd libxslt-$(LIBXSLT_VERSION) && ./configure --with-libxml-src=../libxml2-$(LIBXML2_VERSION) -enable-shared=no CFLAGS=-DLIBXML_STATIC
-	cd libxslt-$(LIBXSLT_VERSION) && make
-	# copy files
+	# libxslt: copy files
 	mkdir -p $(BUILD_PATH)/libxslt-$(LIBXSLT_VERSION).tmp/include/libxslt
 	cp libxslt-$(LIBXSLT_VERSION)/libxslt/*.h $(BUILD_PATH)/libxslt-$(LIBXSLT_VERSION).tmp/include/libxslt/
 	mkdir -p $(BUILD_PATH)/libxslt-$(LIBXSLT_VERSION).tmp/lib
 	cp libxslt-$(LIBXSLT_VERSION)/libxslt/.libs/libxslt.a $(BUILD_PATH)/libxslt-$(LIBXSLT_VERSION).tmp/lib/
 	cp libxslt-$(LIBXSLT_VERSION)/libexslt/.libs/libexslt.a $(BUILD_PATH)/libxslt-$(LIBXSLT_VERSION).tmp/lib/
-	# cleanup
+	# libxml2: cleanup
 	rm -r -f libxml2-$(LIBXML2_VERSION)
+	# libxslt: cleanup
 	rm -r -f libxslt-$(LIBXSLT_VERSION)
+	# finish
+	mv $(BUILD_PATH)/libxml2-$(LIBXML2_VERSION).tmp $(BUILD_PATH)/libxml2-$(LIBXML2_VERSION)
 	mv $(BUILD_PATH)/libxslt-$(LIBXSLT_VERSION).tmp $(BUILD_PATH)/libxslt-$(LIBXSLT_VERSION)
 
 curl: $(BUILD_PATH)/curl-$(CURL_VERSION)
@@ -249,7 +253,7 @@ $(BUILD_PATH)/curl-$(CURL_VERSION): $(DOWNLOAD_PATH)/curl-$(CURL_VERSION).tar.gz
 	# build
 	cd curl-$(CURL_VERSION) && ./configure --disable-shared --with-ssl="`pwd`/../$(BUILD_PATH)/openssl-$(OPENSSL_VERSION)"
 	#cd curl-$(CURL_VERSION) && make install exec_prefix="`pwd`/../$(BUILD_PATH)"
-	cd curl-$(CURL_VERSION) && make
+	cd curl-$(CURL_VERSION)/lib && make
 	# copy files
 	mkdir -p $(BUILD_PATH)/curl-$(CURL_VERSION).tmp/include/curl
 	cp curl-$(CURL_VERSION)/include/curl/*.h $(BUILD_PATH)/curl-$(CURL_VERSION).tmp/include/curl/
@@ -312,13 +316,13 @@ $(BUILD_PATH)/libmicrohttpd-$(LIBMICROHTTPD_VERSION): $(DOWNLOAD_PATH)/libmicroh
 
 ffmpeg: $(BUILD_PATH)/ffmpeg-$(FFMPEG_VERSION)
 
-$(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.gz:
-	wget --no-check-certificate https://ffmpeg.org/releases/ffmpeg-$(FFMPEG_VERSION).tar.gz -O $(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.gz
+$(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.xz:
+	wget --no-check-certificate https://ffmpeg.org/releases/ffmpeg-$(FFMPEG_VERSION).tar.xz -O $(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.xz
 
-$(BUILD_PATH)/ffmpeg-$(FFMPEG_VERSION): $(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.gz
+$(BUILD_PATH)/ffmpeg-$(FFMPEG_VERSION): $(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.xz
 	# prepare
 	rm -r -f $(BUILD_PATH)/ffmpeg-*
-	tar xvf $(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.gz
+	tar xvf $(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.xz
 	# build
 	cd ffmpeg-$(FFMPEG_VERSION) && ./configure --disable-shared --enable-static --disable-programs --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-yasm --disable-everything --enable-encoder=mpeg4 --enable-decoder=mpeg4 --prefix="`pwd`/../$(BUILD_PATH)/ffmpeg-$(FFMPEG_VERSION).tmp"
 	cd ffmpeg-$(FFMPEG_VERSION) && make install
@@ -438,5 +442,5 @@ $(BUILD_PATH)/rnp-$(RNP_VERSION):
 copylibs:
 	rm -r -f $(LIBS_PATH) ; \
 	mkdir -p $(LIBS_PATH) ; \
-	cp $(BUILD_PATH)/gcc-version $(LIBS_PATH) ; \
-	find $(BUILD_PATH) -mindepth 1 -maxdepth 1 -type d -not -name "*.tmp" -print -exec cp -r {}/. $(LIBS_PATH) \; ; \
+	cp -p $(BUILD_PATH)/gcc-version $(LIBS_PATH) ; \
+	find $(BUILD_PATH) -mindepth 1 -maxdepth 1 -type d -not -name "*.tmp" -print -exec cp -r -p {}/. $(LIBS_PATH) \; ; \
