@@ -1299,7 +1299,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
     case 365: sync_string = tr("1 year");  break;
 	case 1095: sync_string = tr("3 years") ; break;
 	case 1825: sync_string = tr("5 years") ; break;
-    case   0: sync_string = tr("indefinitly");  break;
+    case   0: sync_string = tr("indefinitely");  break;
     default:
         sync_string = tr("Unknown");
     }
