@@ -4,19 +4,22 @@
 <context>
     <name>AudioInput</name>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="+17"/>
+        <location filename="../gui/VOIPConfigPanel.ui" line="+280"/>
         <source>Audio Wizard</source>
         <translation>语音向导</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Transmission</source>
-        <translation>送话</translation>
+        <translation type="vanished">送话</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>&amp;Transmit</source>
-        <translation>送话(&amp;T)</translation>
+        <translation type="vanished">送话(&amp;T)</translation>
+    </message>
+    <message>
+        <location line="-28"/>
+        <source>&amp;Transmit:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
@@ -29,7 +32,7 @@
         <translation>&lt;b&gt;此项设置何时发送语音。&lt;/b&gt;&lt;br /&gt;&lt;i&gt;持续传输&lt;/i&gt; - 持续传输音频&lt;br /&gt;&lt;i&gt;语音激活&lt;/i&gt; - 检测到语音信号时传输。&lt;br /&gt;&lt;i&gt;按键送话&lt;/i&gt; - 按住&lt;i&gt;快捷键&lt;/i&gt;中指定的送话热键时传输 。</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+37"/>
         <source>DoublePush Time</source>
         <translation>双击间隔</translation>
     </message>
@@ -90,32 +93,46 @@
         <translation>空</translation>
     </message>
     <message>
-        <location line="+17"/>
         <source>Audio Processing</source>
-        <translation>声音处理</translation>
+        <translation type="vanished">声音处理</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-293"/>
         <source>Noise Suppression</source>
         <translation>噪音抑制</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-22"/>
         <source>Noise suppression</source>
         <translation>噪音抑制</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-132"/>
+        <source>Video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Input device:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+66"/>
+        <source>Audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
         <source>&lt;b&gt;This sets the amount of noise suppression to apply.&lt;/b&gt;&lt;br /&gt;The higher this value, the more aggressively stationary noise will be suppressed.</source>
         <translation>&lt;b&gt;此项设置应用的噪音抑制强度。&lt;/b&gt;&lt;br /&gt;数值越大，静态噪音受到的抑制约大。</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+64"/>
         <source>Amplification</source>
         <translation>放大</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-22"/>
         <source>Maximum amplification of input sound</source>
         <translation>输入音频的最大放大值</translation>
     </message>
@@ -125,17 +142,16 @@
         <translation>&lt;b&gt;输入音频最大放大值。&lt;/b&gt;&lt;br /&gt;Mumble 在压缩声音前对音频进行正常化，此项设置允许的最大放大量。&lt;br /&gt;实际的放大级别根据您当前的语音模式持续调整，但总是在这里指定的最大值之内。&lt;br /&gt;如果“音频统计”中 &lt;i&gt;话筒响度&lt;/i&gt; 级别总是在 100% 左右，建议您将此项设置为 2.0 左右。但如果您跟多数人一样无法达到 100%，就将此项调大。&lt;br /&gt;理想情况下将此设置为 &lt;i&gt;麦克风响度 * 放大因数 &gt;= 100&lt;/i&gt;，即使您此时在轻声讲话。&lt;br /&gt;&lt;br /&gt;注意将此项设置为最大并无大碍。但如果对程序的自动调整音量不加限制，RetroShare 会将放大后的对应强度的声音作为语音。</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+37"/>
         <source>Echo Cancellation Processing</source>
         <translation>回声抑制</translation>
     </message>
     <message>
-        <location line="+15"/>
         <source>Video Processing</source>
-        <translation>声音处理</translation>
+        <translation type="vanished">声音处理</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="-157"/>
         <source>Available bandwidth:</source>
         <translation>可用带宽</translation>
     </message>
@@ -150,7 +166,7 @@
         <translation>KB/s</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+25"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Display encoded (and then decoded) frame, to check the codec&apos;s quality. If not selected, the image above only shows the frame that is grabbed from your camera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;展示</translation>
     </message>
@@ -163,39 +179,32 @@
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="+185"/>
         <source>Continuous</source>
-        <translation>连续</translation>
+        <translation type="vanished">连续</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Voice Activity</source>
-        <translation>语音检测</translation>
+        <translation type="vanished">语音检测</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Push To Talk</source>
-        <translation>按键送话</translation>
+        <translation type="vanished">按键送话</translation>
     </message>
     <message>
-        <location line="+91"/>
         <source>%1 s</source>
-        <translation>%1 s</translation>
+        <translation type="vanished">%1 s</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Off</source>
-        <translation>关闭</translation>
+        <translation type="vanished">关闭</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>-%1 dB</source>
-        <translation>-%1 dB</translation>
+        <translation type="vanished">-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="+85"/>
         <source>VOIP</source>
-        <translation>语音</translation>
+        <translation type="vanished">语音</translation>
     </message>
 </context>
 <context>
@@ -463,7 +472,7 @@
         <translation>语音检测</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+22"/>
         <source>Next you need to adjust the following slider. The first few utterances you say should end up in the green area (definitive speech). While talking, you should stay inside the yellow (might be speech) and when you&apos;re not talking, everything should be in the red (definitively not speech).</source>
         <translation>下面您需要调整以下滑竿。您每刚开始说话时指示条应处于绿色区域(代表激活语音状态)，您说话中间，指示条应处于黄色区域内(代表维持语音状态)，您停止说话时指示条应处于红色区域内(代表中止语音状态)</translation>
     </message>
@@ -491,7 +500,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="+128"/>
+        <location filename="../VOIPPlugin.cpp" line="+127"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;RetroShare VOIP 插件&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
@@ -542,7 +551,7 @@
         <translation>本插件为 RetroShare 好友间提供语音通信支持。</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+38"/>
         <location line="+4"/>
         <location line="+4"/>
         <location line="+4"/>
@@ -799,9 +808,53 @@
     </message>
 </context>
 <context>
+    <name>VOIPConfigPanel</name>
+    <message>
+        <location filename="../gui/VOIPConfigPanel.cpp" line="+100"/>
+        <source>Continuous</source>
+        <translation type="unfinished">连续</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Voice Activity</source>
+        <translation type="unfinished">语音检测</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Push To Talk</source>
+        <translation type="unfinished">按键送话</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+334"/>
+        <source>[No video]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-143"/>
+        <source>%1 s</source>
+        <translation type="unfinished">%1 s</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Off</source>
+        <translation type="unfinished">关闭</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>-%1 dB</source>
+        <translation type="unfinished">-%1 dB</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPConfigPanel.h" line="+84"/>
+        <source>VOIP</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="-48"/>
+        <location filename="../VOIPPlugin.cpp" line="-46"/>
         <source>VOIP</source>
         <translation>语音</translation>
     </message>
@@ -819,7 +872,7 @@
         <translation>接受视频聊天</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPToasterItem.ui" line="+232"/>
+        <location filename="../gui/VOIPToasterItem.ui" line="+239"/>
         <source>Decline</source>
         <translation>拒绝</translation>
     </message>
@@ -940,7 +993,7 @@
 <context>
     <name>voipGraphSource</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="-246"/>
+        <location filename="../gui/VOIPConfigPanel.cpp" line="-270"/>
         <source>Required bandwidth</source>
         <translation>需要带宽</translation>
     </message>

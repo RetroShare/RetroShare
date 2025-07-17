@@ -184,13 +184,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="+87"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="+88"/>
         <source>Feed Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+208"/>
-        <location line="+152"/>
+        <location line="+151"/>
         <location line="+15"/>
         <source>Edit feed</source>
         <translation type="unfinished"></translation>
@@ -515,7 +515,7 @@
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+126"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+127"/>
         <source>Title</source>
         <translation type="unfinished"></translation>
     </message>
@@ -622,7 +622,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+412"/>
+        <location line="+411"/>
         <source>Hide</source>
         <translation type="unfinished"></translation>
     </message>
