@@ -24,7 +24,6 @@
 #include <QShortcut>
 #include <QByteArray>
 #include <QKeySequence>
-#include <QDesktopWidget>
 #include <rshare.h>
 #include "rwindow.h"
 

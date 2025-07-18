@@ -35,6 +35,7 @@
 #include <QStyleFactory>
 #include <QTextStream>
 #include <QTimer>
+#include <QScreen>
 #ifdef __APPLE__
 #include <QUrl>
 #endif
@@ -675,4 +676,26 @@ bool RsApplication::updateLocalServer()
 		localServer->close();
 	}
 	return false;
+}
+
+/** Get available geometry of primary screen */
+QRect RsApplication::availablePrimaryScreenGeometry()
+{
+	QScreen *primaryScreen = QGuiApplication::primaryScreen();
+	if (!primaryScreen) {
+		return QRect(0, 0, 0, 0);
+	}
+
+	return primaryScreen->availableGeometry();
+}
+
+/** Get geometry of primary screen */
+QRect RsApplication::primaryScreenGeometry()
+{
+	QScreen *primaryScreen = QGuiApplication::primaryScreen();
+	if (!primaryScreen) {
+		return QRect(0, 0, 0, 0);
+	}
+
+	return primaryScreen->geometry();
 }

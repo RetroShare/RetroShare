@@ -29,6 +29,7 @@
 
 #include <retroshare-gui/RsAutoUpdatePage.h>
 
+#include "rshare.h"
 #include "MainWindow.h"
 #include "toaster/OnlineToaster.h"
 #include "toaster/MessageToaster.h"
@@ -49,7 +50,6 @@
 
 #include "retroshare/rsplugin.h"
 
-#include <QDesktopWidget>
 #include <QInputDialog>
 #include <QMessageBox>
 //#include <QMutexLocker>
@@ -1040,8 +1040,7 @@ void NotifyQt::startWaitingToasters()
 		/* Calculate positions */
 		QSize size = toaster->widget->size();
 
-		QDesktopWidget *desktop = QApplication::desktop();
-		QRect desktopGeometry = desktop->availableGeometry(desktop->primaryScreen());
+		QRect desktopGeometry = RsApplication::primaryScreenGeometry();
 
 		switch (toaster->position) {
 		case RshareSettings::TOASTERPOS_TOPLEFT:
