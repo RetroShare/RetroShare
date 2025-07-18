@@ -43,7 +43,7 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "util/DateTime.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/misc.h"
 
 #define COL_ID                  0

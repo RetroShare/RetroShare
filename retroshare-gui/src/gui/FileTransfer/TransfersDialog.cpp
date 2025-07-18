@@ -37,7 +37,7 @@
 #include "gui/FileTransfer/xprogressbar.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/misc.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/RsFile.h"
 #include "util/qtthreadsutils.h"
 

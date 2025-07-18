@@ -36,7 +36,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/advsearch/advancedsearchdialog.h"
 #include "gui/common/RSTreeWidgetItem.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/qtthreadsutils.h"
 #include "util/misc.h"
 

@@ -25,7 +25,7 @@
 #include "gui/common/RSComboBox.h"
 #endif
 #include "settings/rsharesettings.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 
 #include "retroshare/rsfiles.h"
 #include "retroshare/rsconfig.h"

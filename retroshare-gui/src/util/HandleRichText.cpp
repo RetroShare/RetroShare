@@ -31,7 +31,7 @@
 #include "gui/RetroShareLink.h"
 #include "util/ObjectPainter.h"
 #include "util/imageutil.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 
 #include "util/rsdebug.h"
 #include "util/rstime.h"

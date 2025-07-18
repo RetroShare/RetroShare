@@ -51,7 +51,7 @@
 #include "StatusDefs.h"
 #include "util/misc.h"
 #include "vmessagebox.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "gui/chat/ChatUserNotify.h"
 #include "gui/connect/ConnectProgressDialog.h"
 #include "gui/common/ElidedLabel.h"

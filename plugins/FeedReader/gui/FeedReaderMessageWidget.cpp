@@ -36,7 +36,7 @@
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/HandleRichText.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "gui/Posted/PostedCreatePostDialog.h"
 #include "gui/gxsforums/CreateGxsForumMsg.h"
 #include "gui/common/FilesDefs.h"
