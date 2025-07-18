@@ -34,7 +34,7 @@ class PopupDistantChatDialog: public PopupChatDialog
 
 	protected:
 		/** Default constructor */
-		PopupDistantChatDialog(const DistantChatPeerId &tunnel_id, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+		PopupDistantChatDialog(const DistantChatPeerId &tunnel_id, QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 		/** Default destructor */
 		virtual ~PopupDistantChatDialog();
 	

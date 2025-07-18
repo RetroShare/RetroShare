@@ -44,7 +44,7 @@ public:
     enum { DefaultDirection=0,Download=1 } ;
 
   /** Default constructor */
-  BandwidthGraph(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+  BandwidthGraph(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
   virtual ~BandwidthGraph();
 
 public slots:
