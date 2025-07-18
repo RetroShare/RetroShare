@@ -427,7 +427,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 			}
 
 		/* Set last post */
-		if(itemInfo.lastpost == QDateTime::fromTime_t(0))
+		if(itemInfo.lastpost == DateTime::DateTimeFromTime_t(0))
 		{
 			item->setText(GTW_COLUMN_LAST_POST, tr("Never"));
 			item->setData(GTW_COLUMN_LAST_POST, ROLE_SORT, QVariant());// To allow them not be sorted with ->setNoDataAsLast(true)
@@ -461,7 +461,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		if(!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags))
 			tooltip += "\n" + QString::number(itemInfo.max_visible_posts) + " messages available" ;
 		// if(itemInfo.max_visible_posts)  // wtf? this=0 when there are some posts definitely exist - lastpost is recent
-		if(itemInfo.lastpost == QDateTime::fromTime_t(0))
+		if(itemInfo.lastpost == DateTime::DateTimeFromTime_t(0))
 			tooltip += "\n" + tr("Last Post") + ": "  + tr("Never") ;
 		else
 			tooltip += "\n" + tr("Last Post") + ": "  + DateTime::formatLongDateTime(itemInfo.lastpost) ;

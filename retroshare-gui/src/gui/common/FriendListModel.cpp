@@ -730,13 +730,13 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
                         {
                                 const HierarchicalProfileInformation *hn = getProfileInfo(e);
 
-                                QDateTime most_recent_time = QDateTime::fromTime_t(0);
+                                QDateTime most_recent_time = DateTime::DateTimeFromTime_t(0);
                                 QString most_recent_ip("---");
 
                                 for(uint32_t i=0;i<hn->child_node_indices.size();++i)
                                 {
                                         const HierarchicalNodeInformation& node = mLocations[hn->child_node_indices[i]];
-                                        auto node_time = QDateTime::fromTime_t(node.node_info.lastConnect);
+                                        auto node_time = DateTime::DateTimeFromTime_t(node.node_info.lastConnect);
 
                                         if(most_recent_time < node_time)
                                         {
@@ -787,7 +787,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 						return QVariant(QString::fromUtf8(node->node_info.location.c_str()));
 				}
 
-				case COLUMN_THREAD_LAST_CONTACT:   return QVariant(QDateTime::fromTime_t(node->node_info.lastConnect).toString());
+				case COLUMN_THREAD_LAST_CONTACT:   return QVariant(DateTime::DateTimeFromTime_t(node->node_info.lastConnect).toString());
 				case COLUMN_THREAD_IP:             return QVariant(  (node->node_info.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(node->node_info) : QString("---"));
 				case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(node->node_info.id.toStdString()) );
 

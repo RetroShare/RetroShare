@@ -936,7 +936,7 @@ void FriendList::insertPeers()
                 AvatarDefs::getAvatarFromSslId(RsPeerId(sslDetail.id.toStdString()), sslAvatar);
 
                 /* last contact */
-                QDateTime sslLastContact = QDateTime::fromTime_t(sslDetail.lastConnect);
+                QDateTime sslLastContact = DateTime::DateTimeFromTime_t(sslDetail.lastConnect);
                 sslItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, QVariant(sslLastContact));
                 sslItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT_NAME, QVariant(sslLastContact));
                 if (sslLastContact > bestLastContact) {

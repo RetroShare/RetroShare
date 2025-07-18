@@ -41,6 +41,7 @@
 #include "gui/gxsforums/CreateGxsForumMsg.h"
 #include "gui/common/FilesDefs.h"
 #include "util/imageutil.h"
+#include "util/DateTime.h"
 
 #include "retroshare/rsiface.h"
 #include "retroshare/rsgxsforums.h"
@@ -476,8 +477,7 @@ void FeedReaderMessageWidget::calculateMsgIconsAndFonts(QTreeWidgetItem *item)
 void FeedReaderMessageWidget::updateMsgItem(QTreeWidgetItem *item, FeedMsgInfo &info)
 {
 	QString title = QString::fromUtf8(info.title.c_str());
-	QDateTime qdatetime;
-	qdatetime.setTime_t(info.pubDate);
+	QDateTime qdatetime = DateTime::DateTimeFromTime_t(info.pubDate);
 
 	/* add string to all data */
 	QString sort = QString("%1_%2_%3").arg(title, qdatetime.toString("yyyyMMdd_hhmmss")).arg(info.feedId);
