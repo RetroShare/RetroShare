@@ -30,7 +30,7 @@ class PeoplePage : public ConfigPage
 	Q_OBJECT
 
 public:
-	PeoplePage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+	PeoplePage(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 	~PeoplePage();
 
 	/** Loads the settings for this page */

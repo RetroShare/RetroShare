@@ -32,7 +32,7 @@ class ChannelPage : public ConfigPage
 	Q_OBJECT
 
 public:
-	ChannelPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+	ChannelPage(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 	~ChannelPage();
 
 	/** Loads the settings for this page */

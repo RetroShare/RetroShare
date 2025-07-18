@@ -36,7 +36,7 @@ public:
     static void showProgress(const RsPeerId& id);
 
 private:
-    ConnectProgressDialog(const RsPeerId& id, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    ConnectProgressDialog(const RsPeerId& id, QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
     ~ConnectProgressDialog();
 
     static ConnectProgressDialog *instance(const RsPeerId& peer_id);

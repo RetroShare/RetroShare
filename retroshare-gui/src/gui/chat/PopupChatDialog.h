@@ -42,7 +42,7 @@ private slots:
 
 protected:
 	/** Default constructor */
-	PopupChatDialog(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+	PopupChatDialog(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 	/** Default destructor */
 	virtual ~PopupChatDialog();
 

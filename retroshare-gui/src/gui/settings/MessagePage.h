@@ -34,7 +34,7 @@ class MessagePage : public ConfigPage
     Q_OBJECT
 
 public:
-    MessagePage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+    MessagePage(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
     ~MessagePage();
 
     /** Loads the settings for this page */

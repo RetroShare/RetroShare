@@ -31,7 +31,7 @@ class PluginsPage : public ConfigPage
 	Q_OBJECT
 
 	public:
-		PluginsPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+		PluginsPage(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 		~PluginsPage();
 
 		/** Loads the settings for this page */

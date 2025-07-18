@@ -31,7 +31,7 @@ class CryptoPage : public ConfigPage
 
   public:
       /** Default Constructor */
-      CryptoPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+      CryptoPage(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
       /** Default Destructor */
       ~CryptoPage();
 
