@@ -202,8 +202,8 @@ void FriendsDialog::chatMessageReceived(const ChatMessage &msg)
 {
     if(msg.chat_id.isBroadcast())
     {
-        QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
-        QDateTime recvTime = QDateTime::fromTime_t(msg.recvTime);
+        QDateTime sendTime = DateTime::DateTimeFromTime_t(msg.sendTime);
+        QDateTime recvTime = DateTime::DateTimeFromTime_t(msg.recvTime);
         QString message = QString::fromUtf8(msg.msg.c_str());
         QString name = QString::fromUtf8(rsPeers->getPeerName(msg.broadcast_peer_id).c_str());
 

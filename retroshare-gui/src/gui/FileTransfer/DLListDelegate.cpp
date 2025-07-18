@@ -29,6 +29,7 @@
 #include <math.h>
 
 #include "DLListDelegate.h"
+#include "util/DateTime.h"
 
 Q_DECLARE_METATYPE(FileProgressInfo)
 
@@ -261,7 +262,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
             break;
         qi64Value = index.data().value<qint64>();
         if (qi64Value < std::numeric_limits<qint64>::max()){
-            QDateTime qdtLastDL = QDateTime::fromTime_t(qi64Value);
+            QDateTime qdtLastDL = DateTime::DateTimeFromTime_t(qi64Value);
             painter->drawText(option.rect, Qt::AlignCenter, qdtLastDL.toString("yyyy-MM-dd_hh:mm:ss"));
         } else {
             painter->drawText(option.rect, Qt::AlignCenter, tr("File Never Seen"));

@@ -37,6 +37,7 @@
 #include "util/qtthreadsutils.h"
 #include "retroshare/rsgxsifacetypes.h"
 #include "GxsCommentDialog.h"
+#include "util/DateTime.h"
 
 //#define DEBUG_GROUPFRAMEDIALOG
 
@@ -331,7 +332,7 @@ void GxsGroupFrameDialog::updateSearchResults(const TurtleRequestId& sid)
 		i.id             = QString(it3->second.mGroupId.toStdString().c_str());
 		i.name           = QString::fromUtf8(it3->second.mGroupName.c_str());
 		i.popularity     = 0; // could be set to the number of hits
-		i.lastpost       = QDateTime::fromTime_t(it3->second.mLastMessageTs);
+		i.lastpost       = DateTime::DateTimeFromTime_t(it3->second.mLastMessageTs);
 		i.subscribeFlags = 0; // irrelevant here
 		i.publishKey     = false ; // IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags);
 		i.adminKey       = false ; // IS_GROUP_ADMIN(groupInfo.mSubscribeFlags);
@@ -950,7 +951,7 @@ void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *
 	groupItemInfo.id = QString::fromStdString(groupInfo->mMeta.mGroupId.toStdString());
 	groupItemInfo.name = QString::fromUtf8(groupInfo->mMeta.mGroupName.c_str());
 	groupItemInfo.popularity = groupInfo->mMeta.mPop;
-	groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo->mMeta.mLastPost);
+	groupItemInfo.lastpost = DateTime::DateTimeFromTime_t(groupInfo->mMeta.mLastPost);
 	groupItemInfo.subscribeFlags = groupInfo->mMeta.mSubscribeFlags;
 	groupItemInfo.publishKey = IS_GROUP_PUBLISHER(groupInfo->mMeta.mSubscribeFlags) ;
 	groupItemInfo.adminKey = IS_GROUP_ADMIN(groupInfo->mMeta.mSubscribeFlags) ;

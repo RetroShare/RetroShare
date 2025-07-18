@@ -39,6 +39,7 @@
 #include <retroshare/rsidentity.h>
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
+#include "util/DateTime.h"
 
 #define ROLE_MSGID     Qt::UserRole
 #define ROLE_PLAINTEXT Qt::UserRole + 1
@@ -292,7 +293,7 @@ void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg)
     }
 
     QColor backgroundColor = ui.listWidget->palette().base().color();
-    QString formatMsg = style.formatMessage(type, name, QDateTime::fromTime_t(msg.sendTime), messageText, 0, backgroundColor);
+    QString formatMsg = style.formatMessage(type, name, DateTime::DateTimeFromTime_t(msg.sendTime), messageText, 0, backgroundColor);
 
     itemWidget->setData(Qt::DisplayRole, qVariantFromValue(IMHistoryItemPainter(formatMsg)));
     itemWidget->setData(ROLE_MSGID, msg.msgId);
@@ -467,8 +468,8 @@ QString ImHistoryBrowser::getCurrentItemsQuotedText()
 			        ? QString::fromUtf8(details.mNickname.c_str())
 			        : QString::fromUtf8(msg.peerName.c_str());
 			QDateTime date = msg.incoming
-			        ? QDateTime::fromTime_t(msg.sendTime)
-			        : QDateTime::fromTime_t(msg.recvTime);
+			        ? DateTime::DateTimeFromTime_t(msg.sendTime)
+			        : DateTime::DateTimeFromTime_t(msg.recvTime);
 			QTextDocument doc;
 			doc.setHtml(QString::fromUtf8(msg.message.c_str()));
 
