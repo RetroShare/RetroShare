@@ -29,7 +29,6 @@
 
 #include <QLineEdit>
 #include <QMessageBox>
-#include <QDesktopWidget>
 
 #include <iostream>
 
@@ -49,7 +48,7 @@ StartDialog::StartDialog(QWidget *parent)
 	Settings->loadWidgetInformation(this);
 	
 	/* Put the Login dialog in the screen center */
-	const QRect screen = QApplication::desktop()->screenGeometry();
+	const QRect screen = RsApplication::primaryScreenGeometry();
 	this->move( screen.center() - this->rect().center() );
 
 	/* get all available pgp private certificates....
