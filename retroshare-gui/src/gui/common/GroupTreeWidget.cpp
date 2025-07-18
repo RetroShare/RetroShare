@@ -31,9 +31,9 @@
 #include "util/QtVersion.h"
 #include "util/DateTime.h"
 
-#include <QDesktopWidget>
 #include <QMenu>
 #include <QToolButton>
+#include <QScreen>
 
 #include <stdint.h>
 
@@ -192,8 +192,11 @@ void GroupTreeWidget::addToolButton(QToolButton *toolButton)
 
 	/* Initialize button */
 	int i = qt_defaultDpi();
-	auto desktopWidget = QApplication::desktop();
-	auto y = desktopWidget->logicalDpiY();
+	QScreen *primaryScreen = QGuiApplication::primaryScreen();
+	int y = i;
+	if (primaryScreen) {
+		y = primaryScreen->logicalDotsPerInchY();
+	}
 
 	toolButton->setAutoRaise(true);
 	toolButton->setIconSize(QSize(24*y/i,24*y/i));
