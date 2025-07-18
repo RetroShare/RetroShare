@@ -27,6 +27,7 @@
 #include <qmath.h>
 #include <QUrl>
 #include <QRegularExpression>
+#include <QRegExp>
 
 #include "HandleRichText.h"
 #include "gui/RetroShareLink.h"
@@ -359,7 +360,7 @@ void RsHtml::filterEmbeddedImages(QDomDocument &doc, QDomElement &currentElement
 	}
 }
 
-int RsHtml::indexInWithValidation(QRegExp &rx, const QString &text, EmbedInHtml &embedInfos, int pos)
+int RsHtml::indexInWithValidation(const QRegExp &rx, const QString &text, EmbedInHtml &embedInfos, int pos)
 {
 	int index = rx.indexIn(text, pos);
 	if(index == -1 || embedInfos.myType != Img) return index;

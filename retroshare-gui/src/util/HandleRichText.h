@@ -54,6 +54,7 @@ class QDomElement;
 class EmbedInHtml;
 class RetroShareLink;
 class QTextCursor;
+class QRegExp;
 
 class RsHtml
 {
@@ -89,7 +90,7 @@ protected:
 	virtual void   anchorStylesheetForImg(QDomDocument &doc, QDomElement &element, const RetroShareLink &link, QString &styleSheet);
 
 private:
-	int indexInWithValidation(QRegExp &rx, const QString &text, EmbedInHtml &embedInfos, int pos = 0);
+	int indexInWithValidation(const QRegExp &rx, const QString &text, EmbedInHtml &embedInfos, int pos = 0);
 };
 
 #endif // HANDLE_RICH_TEXT_H_
