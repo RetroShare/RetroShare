@@ -39,7 +39,7 @@ class WebuiPage : public ConfigPage
 
 public:
   /** Default Constructor */
-  WebuiPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+  WebuiPage(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
     /** Default Destructor */
   ~WebuiPage();
 

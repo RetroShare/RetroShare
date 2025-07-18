@@ -32,7 +32,7 @@ class TransferPage: public ConfigPage
 	Q_OBJECT
 
 	public:
-		TransferPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+		TransferPage(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 		~TransferPage() {}
 
 		/** Loads the settings for this page */
