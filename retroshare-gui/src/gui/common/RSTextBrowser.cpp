@@ -35,6 +35,7 @@
 #include <QPlainTextEdit>
 #include <QTextDocumentFragment>
 #include <QScrollBar>
+#include <QRegExp>
 
 #include <iostream>
 

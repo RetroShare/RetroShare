@@ -25,6 +25,8 @@ CONFIG += console
 TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
 
+greaterThan(QT_MAJOR_VERSION,5): QT += core5compat
+
 DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR}
 INCLUDEPATH *= $${PWD}
 

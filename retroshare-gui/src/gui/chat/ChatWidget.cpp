@@ -61,6 +61,7 @@
 #include <QTimer>
 #include <QToolTip>
 #include <QInputDialog>
+#include <QRegExp>
 
 #include <time.h>
 
