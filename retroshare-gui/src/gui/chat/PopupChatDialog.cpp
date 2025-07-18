@@ -27,6 +27,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/notifyqt.h"
+#include "util/DateTime.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsiface.h>
@@ -130,8 +131,8 @@ void PopupChatDialog::addChatMsg(const ChatMessage &msg)
 {
 	ChatWidget *cw = getChatWidget();
 	if (cw) {
-        QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
-        QDateTime recvTime = QDateTime::fromTime_t(msg.recvTime);
+        QDateTime sendTime = DateTime::DateTimeFromTime_t(msg.sendTime);
+        QDateTime recvTime = DateTime::DateTimeFromTime_t(msg.recvTime);
 		QString additional_info ;
         QString message = QString::fromUtf8(msg.msg.c_str());
         QString name = msg.incoming? getPeerName(msg.chat_id,additional_info): getOwnName();
