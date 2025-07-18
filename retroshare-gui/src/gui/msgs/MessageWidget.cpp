@@ -45,7 +45,7 @@
 #include "util/printpreview.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/qtthreadsutils.h"
 
 #include <retroshare/rspeers.h>

@@ -65,7 +65,7 @@
 #include "util/misc.h"
 #include "util/DateTime.h"
 #include "util/HandleRichText.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "textformat.h"
 #include "TagsMenu.h"
 

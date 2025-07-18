@@ -44,7 +44,7 @@
 #include "gui/msgs/MessageComposer.h"
 #include "util/DateTime.h"
 #include "gui/common/UIStateHelper.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/imageutil.h"
 
 #include <retroshare/rsgxsforums.h>
