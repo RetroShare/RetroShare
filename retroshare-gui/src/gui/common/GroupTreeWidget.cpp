@@ -28,7 +28,7 @@
 #include "RSElidedItemDelegate.h"
 #include "RSTreeWidgetItem.h"
 #include "gui/settings/rsharesettings.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/DateTime.h"
 
 #include <QMenu>

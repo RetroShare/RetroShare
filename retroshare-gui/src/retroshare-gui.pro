@@ -446,7 +446,7 @@ HEADERS +=  rshare.h \
             util/misc.h \
             util/HandleRichText.h \
             util/ObjectPainter.h \
-            util/QtVersion.h \
+            util/RsQtVersion.h \
             util/RsFile.h \
             util/qtthreadsutils.h \
             util/ClickableLabel.h \

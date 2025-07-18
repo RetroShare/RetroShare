@@ -33,7 +33,7 @@
 #include "gui/gxsforums/GxsForumsDialog.h"
 #include "gui/settings/AddFileAssociationDialog.h"
 #include "gui/settings/rsharesettings.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/RsAction.h"
 #include "util/misc.h"
 #include "util/rstime.h"

@@ -20,7 +20,7 @@
 
 #include "DhtWindow.h"
 #include "ui_DhtWindow.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 
 #include <QClipboard>
 #include <QTimer>

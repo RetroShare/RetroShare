@@ -41,7 +41,7 @@
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 #include "gui/common/FilesDefs.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 
 #include "GxsChannelPostsWidgetWithModel.h"
 #include "GxsChannelPostsModel.h"

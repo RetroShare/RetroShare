@@ -43,7 +43,7 @@
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/HandleRichText.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 
 #include "retroshare/rsnotify.h"
 #include "util/rstime.h"

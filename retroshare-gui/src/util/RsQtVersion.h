@@ -18,8 +18,8 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef QTVERSION_H
-#define QTVERSION_H
+#ifndef RS_QTVERSION_H
+#define RS_QTVERSION_H
 
 // Macros to compile with Qt 4, Qt 5 and Qt 6
 

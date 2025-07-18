@@ -20,7 +20,7 @@
  *                                                                             *
  *******************************************************************************/
 #include "expressionwidget.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 
 ExpressionWidget::ExpressionWidget(QWidget * parent, bool initial)
     : QWidget(parent)

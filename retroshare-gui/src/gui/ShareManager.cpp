@@ -36,7 +36,7 @@
 #include "gui/common/GroupSelectionBox.h"
 #include "gui/common/GroupDefs.h"
 #include "gui/notifyqt.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/misc.h"
 #include "gui/common/FilesDefs.h"
 
