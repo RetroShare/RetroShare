@@ -32,7 +32,7 @@ class AppearancePage : public ConfigPage
 
 public:
 	/** Default Constructor */
-	AppearancePage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+	AppearancePage(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 
 	/** Loads the settings for this page */
 	virtual void load();

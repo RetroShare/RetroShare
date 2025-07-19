@@ -52,7 +52,7 @@ public:
 public:
     /** Default Constructor */
 
-    MessageComposer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    MessageComposer(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
     ~MessageComposer();
 
     static void msgFriend(const RsPeerId &id);

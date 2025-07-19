@@ -36,7 +36,7 @@ class FileTransferInfoWidget : public RsAutoUpdatePage
     Q_OBJECT
 
 public:
-    FileTransferInfoWidget(QWidget * parent = 0, Qt::WindowFlags f = 0 );
+    FileTransferInfoWidget(QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags() );
 
      void setFileHash(const RsFileHash& hash) { _file_hash = hash ; }
 
