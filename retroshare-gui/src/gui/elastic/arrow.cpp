@@ -33,7 +33,7 @@ static double TwoPi = 2.0 * Pi;
 Arrow::Arrow(Node *sourceNode, Node *destNode)
     : arrowSize(10)
 {
-    setAcceptedMouseButtons(0);
+    setAcceptedMouseButtons(Qt::MouseButton::NoButton);
     source = sourceNode;
     dest = destNode;
 #ifdef SUSP
