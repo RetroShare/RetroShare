@@ -348,7 +348,7 @@ HelpBrowser::find(bool forward)
     return;
   }
   
-  QTextDocument::FindFlags flags = 0;
+  QTextDocument::FindFlags flags = QTextDocument::FindFlags();
   QTextCursor cursor = ui.txtBrowser->textCursor();
   QString searchPhrase = ui.lineFind->text();
   
