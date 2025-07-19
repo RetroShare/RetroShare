@@ -33,3 +33,21 @@ ClickableLabel::~ClickableLabel() {
 void ClickableLabel::mousePressEvent(QMouseEvent* /*event*/) {
     emit clicked();
 }
+
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+void ClickableLabel::enterEvent(QEnterEvent* /*event*/)
+#else
+void ClickableLabel::enterEvent(QEvent* /*event*/)
+#endif
+{
+    if (mUseStyleSheet) {
+        setStyleSheet("QLabel { border: 2px solid #039bd5; }");
+    }
+}
+
+void ClickableLabel::leaveEvent(QEvent* /*event*/)
+{
+    if (mUseStyleSheet) {
+        setStyleSheet("");
+    }
+}

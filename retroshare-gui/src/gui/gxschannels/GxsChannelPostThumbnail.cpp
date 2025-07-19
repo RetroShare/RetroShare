@@ -309,6 +309,24 @@ void ZoomableLabel::wheelEvent(QWheelEvent *me)
     updateView();
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+void ZoomableLabel::enterEvent(QEnterEvent* /*event*/)
+#else
+void ZoomableLabel::enterEvent(QEvent* /*event*/)
+#endif
+{
+    if (mUseStyleSheet) {
+        setStyleSheet("QLabel { border: 2px solid #039bd5; }");
+    }
+}
+
+void ZoomableLabel::ZoomableLabel::leaveEvent(QEvent* /*event*/)
+{
+    if (mUseStyleSheet) {
+        setStyleSheet("QLabel { border: 2px solid #CCCCCC; border-radius: 3px; }");
+    }
+}
+
 QPixmap ZoomableLabel::extractCroppedScaledPicture() const
 {
     QRect rect(mCenterX - 0.5 * width()*mZoomFactor, mCenterY - 0.5 * height()*mZoomFactor, width()*mZoomFactor, height()*mZoomFactor);
