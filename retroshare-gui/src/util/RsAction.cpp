@@ -20,7 +20,7 @@
 
 #include "util/RsAction.h"
 
-RsAction::RsAction(QWidget * parent, std::string rsid)
+RsAction::RsAction(QObject * parent, std::string rsid)
 	: QAction(parent), RsId(rsid) 
 {
 	connect(this, SIGNAL( triggered( bool ) ), this, SLOT( triggerEvent( bool ) ) );
