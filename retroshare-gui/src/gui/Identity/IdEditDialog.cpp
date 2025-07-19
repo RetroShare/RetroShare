@@ -700,8 +700,8 @@ void IdEditDialog::removeAvatar()
 
 void IdEditDialog::updateInterface()
 {
-	const QPixmap *pixmap = ui->avatarLabel->pixmap();
-	if (pixmap && !pixmap->isNull()) {
+	QPixmap pixmap = ui->avatarLabel->pixmap(Qt::ReturnByValue);
+	if (!pixmap.isNull()) {
 		ui->removeButton->setEnabled(true);
     } else if (mEditGroup.mImage.mSize > 0) {
 		ui->removeButton->setEnabled(true);

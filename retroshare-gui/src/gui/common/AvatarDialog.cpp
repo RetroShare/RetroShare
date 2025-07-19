@@ -107,8 +107,8 @@ void AvatarDialog::removeAvatar()
 
 void AvatarDialog::updateInterface()
 {
-	const QPixmap *pixmap = ui->avatarLabel->pixmap();
-	if (pixmap && !pixmap->isNull()) {
+	QPixmap pixmap = ui->avatarLabel->pixmap(Qt::ReturnByValue);
+	if (!pixmap.isNull()) {
 		ui->removeButton->setEnabled(true);
 	} else {
 		ui->removeButton->setEnabled(false);
@@ -123,13 +123,7 @@ void AvatarDialog::setAvatar(const QPixmap &avatar)
 
 void AvatarDialog::getAvatar(QPixmap &avatar)
 {
-	const QPixmap *pixmap = ui->avatarLabel->pixmap();
-	if (!pixmap) {
-		avatar = QPixmap();
-		return;
-	}
-
-	avatar = *pixmap;
+	avatar = ui->avatarLabel->pixmap(Qt::ReturnByValue);
 }
 
 void AvatarDialog::getAvatar(QByteArray &avatar)
