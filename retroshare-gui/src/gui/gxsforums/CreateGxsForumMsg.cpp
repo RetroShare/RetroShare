@@ -23,7 +23,6 @@
 
 #include <QMessageBox>
 #include <QFile>
-#include <QDesktopWidget>
 #include <QDropEvent>
 #include <QPushButton>
 #include <QTextDocumentFragment>

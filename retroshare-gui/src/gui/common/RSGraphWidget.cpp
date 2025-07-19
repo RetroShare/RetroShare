@@ -33,6 +33,7 @@
 #include <QTimer>
 
 #include <retroshare-gui/RsAutoUpdatePage.h>
+#include "rshare.h"
 #include "RSGraphWidget.h"
 
 #if QT_VERSION < 0x040700
@@ -314,8 +315,7 @@ void RSGraphWidget::setFiltering(bool b)
 int
 RSGraphWidget::getNumPoints()
 {
-  QDesktopWidget *desktop = QApplication::desktop();
-  int width = desktop->width();
+  int width = RsApplication::primaryScreenGeometry().width();
   return width;
 }
 
