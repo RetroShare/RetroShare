@@ -45,6 +45,7 @@
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 #include "gui/common/FilesDefs.h"
+#include "util/QtVersion.h"
 
 #include "gui/MainWindow.h"
 
@@ -417,7 +418,7 @@ void PostedListWidgetWithModel::updateShowLabel()
 
 void PostedListWidgetWithModel::filterItems(QString text)
 {
-	QStringList lst = text.split(" ",QString::SkipEmptyParts) ;
+	QStringList lst = text.split(" ",QtSkipEmptyParts) ;
 
     uint32_t count;
 	mPostedPostsModel->setFilter(lst,count) ;

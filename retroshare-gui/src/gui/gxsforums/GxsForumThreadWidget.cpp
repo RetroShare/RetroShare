@@ -1846,7 +1846,7 @@ void GxsForumThreadWidget::filterColumnChanged(int column)
 
 void GxsForumThreadWidget::filterItems(const QString& text)
 {
-    QStringList lst = text.split(" ",QString::SkipEmptyParts) ;
+    QStringList lst = text.split(" ",QtSkipEmptyParts) ;
 
     int filterColumn = ui->filterLineEdit->currentFilter();
 

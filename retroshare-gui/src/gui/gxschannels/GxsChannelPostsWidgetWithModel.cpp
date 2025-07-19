@@ -41,6 +41,7 @@
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 #include "gui/common/FilesDefs.h"
+#include "util/QtVersion.h"
 
 #include "GxsChannelPostsWidgetWithModel.h"
 #include "GxsChannelPostsModel.h"
@@ -1454,7 +1455,7 @@ void GxsChannelPostsWidgetWithModel::switchOnlyUnread(bool)
 }
 void GxsChannelPostsWidgetWithModel::filterChanged(QString s)
 {
-    QStringList ql = s.split(' ',QString::SkipEmptyParts);
+    QStringList ql = s.split(' ',QtSkipEmptyParts);
     uint32_t count;
     mChannelPostsModel->setFilter(ql,ui->showUnread_TB->isChecked(),count);
     mChannelFilesModel->setFilter(ql,count);

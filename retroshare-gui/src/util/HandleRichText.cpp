@@ -31,6 +31,7 @@
 #include "gui/RetroShareLink.h"
 #include "util/ObjectPainter.h"
 #include "util/imageutil.h"
+#include "util/QtVersion.h"
 
 #include "util/rsdebug.h"
 #include "util/rstime.h"
@@ -1252,7 +1253,7 @@ QString RsHtml::makeQuotedText(RSTextBrowser *browser)
 	{
 		text = browser->toPlainText();
 	}
-	QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
+	QStringList sl = text.split(QRegExp("[\r\n]"),QtSkipEmptyParts);
 	text = sl.join("\n> ");
 	text.replace("\n> >","\n>>"); // Don't add space for already quotted lines.
 	text.replace(QChar(-4)," ");//Char used when image on text.

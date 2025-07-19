@@ -898,7 +898,7 @@ void SearchDialog::searchKeywords(const QString& keywords)
 	if (keywords.length() < 3)
 		return ;
 
-	QStringList qWords = keywords.split(" ", QString::SkipEmptyParts);
+	QStringList qWords = keywords.split(" ", QtSkipEmptyParts);
 	std::list<std::string> words;
 	QStringListIterator qWordsIter(qWords);
 	while (qWordsIter.hasNext())
@@ -1236,7 +1236,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 			int friendSource = 0;
 			int anonymousSource = 0;
 			QString resultCount = it->text(SR_SOURCES_COL);
-			QStringList modifiedResultCount = resultCount.split("/", QString::SkipEmptyParts);
+			QStringList modifiedResultCount = resultCount.split("/", QtSkipEmptyParts);
 			if(searchType == FRIEND_SEARCH)
 			{
 				friendSource = modifiedResultCount.at(0).toInt() + 1;

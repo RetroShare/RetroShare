@@ -1673,7 +1673,7 @@ void NewFriendList::setShowGroups(bool show)
  */
 void NewFriendList::filterItems(const QString &text)
 {
-    QStringList lst = text.split(' ',QString::SkipEmptyParts);
+    QStringList lst = text.split(' ',QtSkipEmptyParts);
 	int filterColumn = ui->filterLineEdit->currentFilter();
 
     if(filterColumn == 0)

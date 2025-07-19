@@ -21,7 +21,7 @@
 #ifndef QTVERSION_H
 #define QTVERSION_H
 
-// Macros to compile with Qt 4 and Qt 5
+// Macros to compile with Qt 4, Qt 5 and Qt 6
 
 // Renamed QHeaderView::setResizeMode to QHeaderView::setSectionResizeMode
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
@@ -41,6 +41,12 @@
 #define QHeaderView_setSectionsMovable(header, movable) header->setSectionsMovable(movable);
 #else
 #define QHeaderView_setSectionsMovable(header, movable) header->setMovable(movable);
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#define QtSkipEmptyParts Qt::SkipEmptyParts
+#else
+#define QtSkipEmptyParts QString::SkipEmptyParts
 #endif
 
 #endif

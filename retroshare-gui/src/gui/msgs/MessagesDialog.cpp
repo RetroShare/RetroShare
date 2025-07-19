@@ -1246,7 +1246,7 @@ void MessagesDialog::undeletemessage()
 
 void MessagesDialog::filterChanged(const QString& text)
 {
-    QStringList items = text.split(' ',QString::SkipEmptyParts);
+    QStringList items = text.split(' ',QtSkipEmptyParts);
 
     RsMessageModel::FilterType f = RsMessageModel::FILTER_TYPE_NONE;
 
@@ -1287,7 +1287,7 @@ void MessagesDialog::filterColumnChanged(int column)
     default:break;
     }
 
-    QStringList items = ui.filterLineEdit->text().split(' ',QString::SkipEmptyParts);
+    QStringList items = ui.filterLineEdit->text().split(' ',QtSkipEmptyParts);
     mMessageModel->setFilter(f,items);
 	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));	// this triggers the update of the proxy model
 

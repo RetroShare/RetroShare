@@ -20,6 +20,7 @@
  *                                                                             *
  *******************************************************************************/
 #include "expressionwidget.h"
+#include "util/QtVersion.h"
 
 ExpressionWidget::ExpressionWidget(QWidget * parent, bool initial)
     : QWidget(parent)
@@ -109,11 +110,7 @@ RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
     if (isStringSearchExpression()) 
     {
         QString txt = exprParamElem->getStrSearchValue();
-#if QT_VERSION < QT_VERSION_CHECK(5,15,0)
-        QStringList words = txt.split(" ", QString::SkipEmptyParts);
-#else
-        QStringList words = txt.split(" ", Qt::SkipEmptyParts);
-#endif
+        QStringList words = txt.split(" ", QtSkipEmptyParts);
         for (int i = 0; i < words.size(); ++i)
             wordList.push_back(words.at(i).toUtf8().constData());
     } else if (inRangedConfig){

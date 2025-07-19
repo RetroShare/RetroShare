@@ -640,7 +640,7 @@ void MessageWidget::fill(const std::string &msgId)
 
     ui.trans_ToText->setText(to_text);
 
-	int recipientsCount = ui.trans_ToText->toPlainText().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts).count();
+	int recipientsCount = ui.trans_ToText->toPlainText().split(QRegExp("(\\s|\\n|\\r)+"), QtSkipEmptyParts).count();
 	ui.expandButton->setText( QString::number(recipientsCount)+ " " + tr("more"));
 
 	if (recipientsCount >=20) {
