@@ -43,7 +43,7 @@
 
 #include "gui/Identity/IdDetailsDialog.h"
 #include "gui/settings/rsharesettings.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "gui/common/UIStateHelper.h"
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"

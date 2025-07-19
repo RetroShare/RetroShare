@@ -512,7 +512,7 @@ list(
 	src/util/misc.h 
 	src/util/HandleRichText.h 
 	src/util/ObjectPainter.h 
-	src/util/QtVersion.h 
+	src/util/RsQtVersion.h 
 	src/util/RsFile.h 
 	src/util/qtthreadsutils.h 
 	src/util/ClickableLabel.h 

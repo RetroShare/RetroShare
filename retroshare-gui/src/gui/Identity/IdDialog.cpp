@@ -47,7 +47,7 @@
 #include "util/qtthreadsutils.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "util/misc.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/rstime.h"
 #include "util/rsdebug.h"
 

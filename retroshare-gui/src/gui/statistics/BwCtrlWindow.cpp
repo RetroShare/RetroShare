@@ -21,7 +21,7 @@
 #include "BwCtrlWindow.h"
 #include "gui/common/RSGraphWidget.h"
 #include "ui_BwCtrlWindow.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include <QTimer>
 #include <QDateTime>
 

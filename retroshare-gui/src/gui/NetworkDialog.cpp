@@ -42,7 +42,7 @@
 #include "connect/PGPKeyDialog.h"
 #include "settings/rsharesettings.h"
 #include "RetroShareLink.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 
 #include <time.h>
 
