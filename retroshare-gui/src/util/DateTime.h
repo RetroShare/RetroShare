@@ -49,6 +49,9 @@ public:
 	/* format date and time (see formatDate & formatTime) */
 	static QString formatDateTime(time_t datetimeValue);
 	static QString formatDateTime(const QDateTime &datetimeValue);
+
+	/* Convert time_t to QDateTime */
+	static QDateTime DateTimeFromTime_t(time_t timeValue);
 };
 
 #endif
