@@ -107,7 +107,7 @@ bool RSButtonOnText::eventFilter(QObject *obj, QEvent *event)
 		}
 		if (event->type() == QEvent::MouseButtonPress)	{
 			QMouseEvent* mouseEvent = new QMouseEvent(QEvent::MouseButtonPress
-			                                          ,QPoint(1,1),Qt::LeftButton,Qt::LeftButton,0);
+			                                          ,QPoint(1,1),Qt::LeftButton,Qt::LeftButton,Qt::KeyboardModifier::NoModifier);
 			QPushButton::mousePressEvent(mouseEvent);
 			delete mouseEvent;
             if (guard) _pressed = true;
@@ -116,7 +116,7 @@ bool RSButtonOnText::eventFilter(QObject *obj, QEvent *event)
 		}
 		if (event->type() == QEvent::MouseButtonRelease)	{
 			QMouseEvent* mouseEvent = new QMouseEvent(QEvent::MouseButtonPress
-			                                          ,QPoint(1,1),Qt::LeftButton,Qt::LeftButton,0);
+			                                          ,QPoint(1,1),Qt::LeftButton,Qt::LeftButton,Qt::KeyboardModifier::NoModifier);
 			QPushButton::mouseReleaseEvent(mouseEvent);
 			delete mouseEvent;
             if (guard) _pressed = false;
@@ -152,7 +152,7 @@ bool RSButtonOnText::eventFilter(QObject *obj, QEvent *event)
 			}
 			if (_pressed){
 				QMouseEvent* mouseEvent = new QMouseEvent(QEvent::MouseButtonPress
-				                                          ,QPoint(1,1),Qt::LeftButton,Qt::LeftButton,0);
+				                                          ,QPoint(1,1),Qt::LeftButton,Qt::LeftButton,Qt::KeyboardModifier::NoModifier);
 				QPushButton::mouseReleaseEvent(mouseEvent);
 				delete mouseEvent;
 				//if (guard) emit released();
