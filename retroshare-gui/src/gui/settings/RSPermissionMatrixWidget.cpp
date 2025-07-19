@@ -32,6 +32,7 @@
 
 #include "RSPermissionMatrixWidget.h"
 #include "gui/settings/ServicePermissionsPage.h"
+#include "gui/settings/rsharesettings.h"
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsservicecontrol.h>
@@ -246,8 +247,14 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
   _painter->setRenderHint(QPainter::TextAntialiasing);
 
   /* Fill in the background */
-  _painter->fillRect(_rec, QBrush(BACK_COLOR));
+  //_painter->fillRect(_rec, QBrush(BACK_COLOR));
   _painter->drawRect(_rec);
+ 
+  if (Settings->getSheetName() == ":Standard_Dark"){
+    brushColor = Qt::gray ;
+  } else {
+    brushColor = Qt::black ;
+  }
 
   // draw one line per friend.
   std::list<RsPeerId> ssllist ;
@@ -306,7 +313,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
   QPen pen ;
   pen.setWidth(2) ;
-  pen.setBrush(FOREGROUND_COLOR) ;
+  pen.setBrush(brushColor) ;
 
   _painter->setPen(pen) ;
   int i=0;
@@ -371,7 +378,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       _painter->drawLine(QPointF(X,Y+3),QPointF(X+text_width,Y+3)) ;
       _painter->drawLine(QPointF(X+text_width/2, Y+3), QPointF(X+text_width/2,S*fMATRIX_START_Y+peer_ids.size()*S*fROW_SIZE - S*fROW_SIZE+5)) ;
 
-      pen.setBrush(FOREGROUND_COLOR) ;
+      pen.setBrush(brushColor) ;
       _painter->setPen(pen) ;
 
       _painter->drawText(QPointF(X,Y),name);
@@ -553,7 +560,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 				brush.setStyle(Qt::SolidPattern) ;
 				QPen pen ;
 				pen.setWidth(1) ;
-				pen.setBrush(FOREGROUND_COLOR) ;
+				pen.setBrush(brushColor) ;
 				_painter->setPen(pen) ;
 				QRect position = computeNodePosition(0,i,false) ;
 				int popup_x = position.x() + (50 * S / 14.0);
