@@ -449,7 +449,7 @@ void  CreateGxsForumMsg::createMsg()
 		default:
 			std::cerr << "CreateGxsForumMsg::createMsg() ERROR GETTING AuthorId!";
 			std::cerr << std::endl;
-			QMessageBox::warning(this, tr("RetroShare"),tr("Congrats, you found a bug!")+" "+QString(__FILE__)+":"+QString(__LINE__), QMessageBox::Ok, QMessageBox::Ok);
+			QMessageBox::warning(this, tr("RetroShare"),tr("Congrats, you found a bug!")+" "+QString(__FILE__)+":"+QString::number(__LINE__), QMessageBox::Ok, QMessageBox::Ok);
 
 			return;
 		}//switch (ui->idChooser->getChosenId(authorId))
