@@ -30,6 +30,7 @@
 #include <QWidget>
 #include <QMessageBox>
 #include <QDir>
+#include <QVectorIterator>
 
 #include <iostream>
 #include <math.h>

@@ -23,6 +23,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QWidgetAction>
+#include <QActionGroup>
 
 #include "ChatLobbyDialog.h"
 

@@ -29,6 +29,7 @@
 #include <QUrl>
 #include <QtDebug>
 #include <QMenuBar>
+#include <QActionGroup>
 
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsconfig.h>

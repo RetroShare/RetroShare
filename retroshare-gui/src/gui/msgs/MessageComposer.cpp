@@ -36,6 +36,7 @@
 #include <QFileInfo>
 #include <QTextStream>
 #include <QScrollBar>
+#include <QActionGroup>
 
 #include <algorithm>
 

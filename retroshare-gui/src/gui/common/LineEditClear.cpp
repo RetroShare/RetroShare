@@ -24,6 +24,7 @@
 #include <QToolButton>
 #include <QStyle>
 #include <QMenu>
+#include <QActionGroup>
 //#if QT_VERSION < 0x040700
 #if QT_VERSION < 0x050000//PlaceHolder text only shown when not have focus in Qt4
 #include <QLabel>
