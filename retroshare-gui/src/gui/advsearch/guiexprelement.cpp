@@ -21,6 +21,8 @@
  *******************************************************************************/
 
 #include "guiexprelement.h"
+#include "util/DateTime.h"
+
 #define STR_FIELDS_MIN_WFACTOR  20.0
 #define SIZE_FIELDS_MIN_WFACTOR  8.0
 #define DATE_FIELDS_MIN_WFACTOR 10.0
@@ -607,7 +609,7 @@ uint64_t ExprParamElement::getIntValueFromField(QString fieldName, bool isToFiel
 #else
             QDateTime time = dateEdit->date().startOfDay();
 #endif
-            val = (uint64_t)time.toTime_t();
+            val = (uint64_t) DateTime::DateTimeToTime_t(time);
             break;
         }
         case SizeSearch:

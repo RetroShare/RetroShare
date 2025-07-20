@@ -87,3 +87,12 @@ QDateTime DateTime::DateTimeFromTime_t(time_t timeValue)
 	return QDateTime::fromTime_t(timeValue);
 #endif
 }
+
+time_t DateTime::DateTimeToTime_t(const QDateTime& dateTime)
+{
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+	return dateTime.toSecsSinceEpoch();
+#else
+	return dateTime.toTime_t();
+#endif
+}
