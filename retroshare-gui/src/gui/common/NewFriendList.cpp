@@ -319,7 +319,7 @@ void NewFriendList::headerContextMenuRequested(QPoint /*p*/)
 
     // create menu header
     QHBoxLayout *hbox = new QHBoxLayout(widget);
-    hbox->setMargin(0);
+    hbox->setContentsMargins(0, 0, 0, 0);
     hbox->setSpacing(6);
 
     QLabel *iconLabel = new QLabel(widget);
@@ -591,7 +591,7 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
 
     // create menu header
     QHBoxLayout *hbox = new QHBoxLayout(widget);
-    hbox->setMargin(0);
+    hbox->setContentsMargins(0, 0, 0, 0);
     hbox->setSpacing(6);
 
     QLabel *iconLabel = new QLabel(widget);

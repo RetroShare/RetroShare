@@ -34,7 +34,7 @@ HashingStatus::HashingStatus(QWidget *parent)
  : QWidget(parent)
 {
     QHBoxLayout *hbox = new QHBoxLayout(this);
-    hbox->setMargin(0);
+    hbox->setContentsMargins(0, 0, 0, 0);
     hbox->setSpacing(6);
         
     movie = new QMovie(":/images/loader/indicator-16.gif");
