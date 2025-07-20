@@ -52,6 +52,9 @@ public:
 
 	/* Convert time_t to QDateTime */
 	static QDateTime DateTimeFromTime_t(time_t timeValue);
+
+	/* Convert QDateTime to time_t */
+	static time_t DateTimeToTime_t(const QDateTime& dateTime);
 };
 
 #endif

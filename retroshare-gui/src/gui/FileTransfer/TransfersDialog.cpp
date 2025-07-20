@@ -40,6 +40,7 @@
 #include "util/RsQtVersion.h"
 #include "util/RsFile.h"
 #include "util/qtthreadsutils.h"
+#include "util/DateTime.h"
 
 #include "retroshare/rsdisc.h"
 #include "retroshare/rsfiles.h"
@@ -434,7 +435,7 @@ public:
 
 					//Get Last Access on File
 					if (file.exists())
-						qi64LastDL = file.lastModified().toTime_t();
+						qi64LastDL = DateTime::DateTimeToTime_t(file.lastModified());
 				}
 				return QVariant(qi64LastDL) ;
 			}
