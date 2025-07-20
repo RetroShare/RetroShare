@@ -1,0 +1,84 @@
+name: build-msys2
+
+on:
+  push:
+    paths-ignore:
+    - '**/*.md'
+  pull_request:
+    paths-ignore:
+    - '**/*.md'
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+  
+env:
+  TARGET: "msys2"
+  NO_FORCE: 1
+  GA_CI_SECRET: ${{ secrets.CI_SECRET }}
+  USE_ARTIFACT: false
+  DISABLE_WORKFLOW: "false"
+
+jobs:  
+  pre-check:
+    runs-on: windows-latest
+    outputs:
+      workflow_disabled: ${{ steps.check-disabled.outputs.disabled }}
+    steps:
+    - name: Check if Workflow is disabled
+      id: check-disabled
+      shell: bash
+      run: |
+        if [ "${{ env.DISABLE_WORKFLOW }}" == "true" ]; then
+          echo "disabled=true" >> $GITHUB_ENV
+          echo "::set-output name=disabled::true"
+        else
+          echo "::set-output name=disabled::false"
+        fi
+  build-msys2:
+    if: needs.pre-check.outputs.workflow_disabled != 'true'
+    needs: pre-check
+    strategy:
+      matrix:
+        flavor:
+          - mingw64
+          - ucrt64
+    name: ${{ matrix.flavor }}
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2.27.0
+        with:
+          update: true
+          release : false
+          cache: false
+          msystem: ${{ matrix.flavor }}
+          install: >-
+            base-devel
+            git
+            wget
+            p7zip
+            gcc
+            perl
+            ruby
+            doxygen
+            cmake
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-miniupnpc
+            mingw-w64-x86_64-libxslt
+            mingw-w64-x86_64-xapian-core
+            mingw-w64-x86_64-sqlcipher
+            mingw-w64-x86_64-qt5-base
+            mingw-w64-x86_64-qt5-multimedia
+            mingw-w64-x86_64-ccmake
+            mingw-w64-x86_64-rapidjson
+            mingw-w64-x86_64-json-c
+            mingw-w64-x86_64-libbotan
+            mingw-w64-x86_64-asio
+
+       uses: actions/checkout@v4
