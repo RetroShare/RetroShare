@@ -68,9 +68,9 @@ environment:
   global:
 ## Qt: https://www.appveyor.com/docs/installed-software#qt
 #    QTDIR: C:\Qt\5.10.1\mingw53_32
-    MSYS2_ARCH: i686
-    TARGET: i686_32-pc-msys
-    MINGW_PREFIX: C:\msys64\mingw32
+    MSYS2_ARCH: x86_64
+    TARGET: msys
+    MINGW_PREFIX: C:\msys64\mingw64
     RS_DEPLOY: RetroShare_deploy
 
 
@@ -93,32 +93,32 @@ install:
   #- git submodule update --init
   # Configuring MSys2
   - set PATH=C:\msys64\usr\bin;%PATH%
-  - set PATH=C:\msys64\mingw32\bin;%PATH%
+  - set PATH=C:\msys64\mingw64\bin;%PATH%
   - >
     pacman --noconfirm -Sy
-    mingw-w64-i686-qt5 mingw-w64-i686-miniupnpc mingw-w64-i686-rapidjson
-    mingw-w64-i686-sqlcipher mingw-w64-i686-xapian-core mingw-w64-i686-cmark
-  #- set PATH=C:\msys64\mingw32\qt5-static\bin\;%PATH%
+    mingw-w64-x86_64-qt5-base mingw-w64-x86_64-miniupnpc mingw-w64-x86_64-rapidjson
+    mingw-w64-x86_64-sqlcipher mingw-w64-x86_64-xapian-core mingw-w64-x86_64-cmark
+  #- set PATH=C:\msys64\mingw64\qt5-static\bin\;%PATH%
 
   # Configuring Qt
 #  - set PATH=%QTDIR%\bin;C:\Qt\Tools\mingw491_32\bin;%PATH%
 
   # Hack for new MSys2
-  - copy C:\msys64\mingw32\i686-w64-mingw32\bin\ar.exe C:\msys64\mingw32\bin\i686-w64-mingw32-ar.exe
-  - copy C:\msys64\mingw32\i686-w64-mingw32\bin\ranlib.exe C:\msys64\mingw32\bin\i686-w64-mingw32-ranlib.exe
-  - copy C:\msys64\mingw32\bin\windres.exe C:\msys64\mingw32\bin\i686-w64-mingw32-windres.exe
+  - copy C:\msys64\mingw64\x86_64-w64-mingw32\bin\ar.exe C:\msys64\mingw32\bin\x86_64-w64-mingw32-ar.exe
+  - copy C:\msys64\mingw64\x86_64-w64-mingw32\bin\ranlib.exe C:\msys64\mingw32\bin\x86_64-w64-mingw32-ranlib.exe
+  - copy C:\msys64\mingw64\bin\windres.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-windres.exe
   - copy C:\msys64\mingw64\x86_64-w64-mingw32\bin\ar.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-ar.exe
   - copy C:\msys64\mingw64\x86_64-w64-mingw32\bin\ranlib.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-ranlib.exe
   - copy C:\msys64\mingw64\bin\windres.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-windres.exe
 
   # Work-around linker looking for Qt dll in wrong place
-  - copy C:\msys64\mingw32\bin\Qt5PrintSupport.dll C:\msys64\mingw32\lib\Qt5PrintSupport.dll
-  - copy C:\msys64\mingw32\bin\Qt5Widgets.dll C:\msys64\mingw32\lib\Qt5Widgets.dll
-  - copy C:\msys64\mingw32\bin\Qt5Multimedia.dll C:\msys64\mingw32\lib\Qt5Multimedia.dll
-  - copy C:\msys64\mingw32\bin\Qt5Gui.dll C:\msys64\mingw32\lib\Qt5Gui.dll
-  - copy C:\msys64\mingw32\bin\Qt5Network.dll C:\msys64\mingw32\lib\Qt5Network.dll
-  - copy C:\msys64\mingw32\bin\Qt5Xml.dll C:\msys64\mingw32\lib\Qt5Xml.dll
-  - copy C:\msys64\mingw32\bin\Qt5Core.dll C:\msys64\mingw32\lib\Qt5Core.dll
+  - copy C:\msys64\mingw64\bin\Qt5PrintSupport.dll C:\msys64\mingw64\lib\Qt5PrintSupport.dll
+  - copy C:\msys64\mingw64\bin\Qt5Widgets.dll C:\msys64\mingw64\lib\Qt5Widgets.dll
+  - copy C:\msys64\mingw64\bin\Qt5Multimedia.dll C:\msys64\mingw64\lib\Qt5Multimedia.dll
+  - copy C:\msys64\mingw64\bin\Qt5Gui.dll C:\msys64\mingw64\lib\Qt5Gui.dll
+  - copy C:\msys64\mingw64\bin\Qt5Network.dll C:\msys64\mingw64\lib\Qt5Network.dll
+  - copy C:\msys64\mingw64\bin\Qt5Xml.dll C:\msys64\mingw64\lib\Qt5Xml.dll
+  - copy C:\msys64\mingw64\bin\Qt5Core.dll C:\msys64\mingw64\lib\Qt5Core.dll
 
 
 #---------------------------------#
@@ -126,7 +126,7 @@ install:
 #---------------------------------#
 
 # build platform, i.e. x86, x64, Any CPU. This setting is optional.
-platform: x86
+platform: x64
 
 # to add several platforms to build matrix:
 #platform:
@@ -170,86 +170,86 @@ after_build:
 #  - copy retroshare-gui\src\retroshare.exe %RS_DEPLOY%\
 
 ## In Debug build winedeplyqt forget the non debug Qt libs
-  - copy C:\msys64\mingw32\bin\Qt5Svg.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\Qt5Core.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\Qt5Multimedia.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\Qt5Widgets.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\Qt5Xml.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\Qt5PrintSupport.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\Qt5Gui.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\Qt5Network.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\Qt5Svg.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\Qt5Core.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\Qt5Multimedia.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\Qt5Widgets.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\Qt5Xml.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\Qt5PrintSupport.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\Qt5Gui.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\Qt5Network.dll %RS_DEPLOY%\
 
   - mkdir %RS_DEPLOY%\playlistformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\playlistformats\qtmultimedia_m3u.dll %RS_DEPLOY%\playlistformats
+  - copy C:\msys64\mingw64\share\qt5\plugins\playlistformats\qtmultimedia_m3u.dll %RS_DEPLOY%\playlistformats
 
   - mkdir %RS_DEPLOY%\printsupport\
-  - copy C:\msys64\mingw32\share\qt5\plugins\printsupport\windowsprintersupport.dll %RS_DEPLOY%\printsupport\
+  - copy C:\msys64\mingw64\share\qt5\plugins\printsupport\windowsprintersupport.dll %RS_DEPLOY%\printsupport\
 
   - mkdir %RS_DEPLOY%\iconengines\
-  - copy C:\msys64\mingw32\share\qt5\plugins\iconengines\qsvgicon.dll %RS_DEPLOY%\iconengines\
+  - copy C:\msys64\mingw64\share\qt5\plugins\iconengines\qsvgicon.dll %RS_DEPLOY%\iconengines\
 
   - mkdir %RS_DEPLOY%\bearer\
-  - copy C:\msys64\mingw32\share\qt5\plugins\bearer\qgenericbearer.dll %RS_DEPLOY%\bearer\
+  - copy C:\msys64\mingw64\share\qt5\plugins\bearer\qgenericbearer.dll %RS_DEPLOY%\bearer\
 
   - mkdir %RS_DEPLOY%\mediaservice\
-  - copy C:\msys64\mingw32\share\qt5\plugins\mediaservice\qtmedia_audioengine.dll %RS_DEPLOY%\mediaservice\
-  - copy C:\msys64\mingw32\share\qt5\plugins\mediaservice\dsengine.dll %RS_DEPLOY%\mediaservice\
+  - copy C:\msys64\mingw64\share\qt5\plugins\mediaservice\qtmedia_audioengine.dll %RS_DEPLOY%\mediaservice\
+  - copy C:\msys64\mingw64\share\qt5\plugins\mediaservice\dsengine.dll %RS_DEPLOY%\mediaservice\
 
   - mkdir %RS_DEPLOY%\styles\
-  - copy C:\msys64\mingw32\share\qt5\plugins\styles\qwindowsvistastyle.dll %RS_DEPLOY%\styles\
+  - copy C:\msys64\mingw64\share\qt5\plugins\styles\qwindowsvistastyle.dll %RS_DEPLOY%\styles\
 
   - mkdir %RS_DEPLOY%\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qwebp.dll %RS_DEPLOY%\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qicns.dll %RS_DEPLOY%\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qjpeg.dll %RS_DEPLOY%\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qtiff.dll %RS_DEPLOY%\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qtga.dll %RS_DEPLOY%\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qjp2.dll %RS_DEPLOY%\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qico.dll %RS_DEPLOY%\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qwbmp.dll %RS_DEPLOY%\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qicns.dll %RS_DEPLOY%\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qgif.dll %RS_DEPLOY%\imageformats\
-  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qsvg.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw64\share\qt5\plugins\imageformats\qwebp.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw64\share\qt5\plugins\imageformats\qicns.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw64\share\qt5\plugins\imageformats\qjpeg.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw64\share\qt5\plugins\imageformats\qtiff.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw64\share\qt5\plugins\imageformats\qtga.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw64\share\qt5\plugins\imageformats\qjp2.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw64\share\qt5\plugins\imageformats\qico.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw64\share\qt5\plugins\imageformats\qwbmp.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw64\share\qt5\plugins\imageformats\qicns.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw64\share\qt5\plugins\imageformats\qgif.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw64\share\qt5\plugins\imageformats\qsvg.dll %RS_DEPLOY%\imageformats\
 
   - mkdir %RS_DEPLOY%\platforms\
-  - copy C:\msys64\mingw32\share\qt5\plugins\platforms\qwindows.dll %RS_DEPLOY%\platforms\
+  - copy C:\msys64\mingw64\share\qt5\plugins\platforms\qwindows.dll %RS_DEPLOY%\platforms\
 
   - mkdir %RS_DEPLOY%\audio\
-  - copy C:\msys64\mingw32\share\qt5\plugins\audio\qtaudio_windows.dll %RS_DEPLOY%\audio\
+  - copy C:\msys64\mingw64\share\qt5\plugins\audio\qtaudio_windows.dll %RS_DEPLOY%\audio\
 
   - windeployqt %RS_DEPLOY%\retroshare.exe
 
-  - copy C:\msys64\mingw32\bin\libbz2*.dll %RS_DEPLOY%\
-  #- copy C:\msys64\mingw32\bin\libeay32.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libbz2*.dll %RS_DEPLOY%\
+  #- copy C:\msys64\mingw64\bin\libeay32.dll %RS_DEPLOY%\
   - copy C:\OpenSSL-Win32\libeay32.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libminiupnpc.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libsqlcipher*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libsqlite3*.dll %RS_DEPLOY%\
-  #- copy C:\msys64\mingw32\bin\ssleay32.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libminiupnpc.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libsqlcipher*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libsqlite3*.dll %RS_DEPLOY%\
+  #- copy C:\msys64\mingw64\bin\ssleay32.dll %RS_DEPLOY%\
   - copy C:\OpenSSL-Win32\ssleay32.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\zlib*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libstdc*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libwinpthread*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libicu*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libpcre*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libharfbuzz*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libpng*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libfreetype*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libglib*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libgraphite2.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libintl*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libiconv*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libjasper*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libjpeg*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libtiff*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libwebp*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libwebpdemux*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\liblzma*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\zlib*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libgcc_s_dw2*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libstdc*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libwinpthread*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libicu*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libpcre*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libharfbuzz*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libpng*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libfreetype*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libglib*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libgraphite2.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libintl*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libiconv*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libjasper*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libjpeg*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libtiff*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libwebp*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libwebpdemux*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\liblzma*.dll %RS_DEPLOY%\
 
 ## Needed for cmark
-  - copy C:\msys64\mingw32\bin\libcmark*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libdouble-conversion*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libcmark*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw64\bin\libdouble-conversion*.dll %RS_DEPLOY%\
 
 # to disable automatic builds
 #build: off
