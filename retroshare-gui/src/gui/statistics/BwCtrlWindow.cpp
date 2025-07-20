@@ -96,12 +96,12 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 
 	switch(index.column()) {
 	case COLUMN_IN_RATE:
-		temp.sprintf("%.3f ", index.data().toFloat());
+		temp = QString::asprintf("%.3f ", index.data().toFloat());
 		//temp=QString::number(index.data().toFloat());
 		painter->drawText(option.rect, Qt::AlignRight, temp);
 		break;
 	case COLUMN_IN_MAX:
-		temp.sprintf("%.3f ", index.data().toFloat());
+		temp = QString::asprintf("%.3f ", index.data().toFloat());
 		//temp=QString::number(index.data().toFloat());
 		painter->drawText(option.rect, Qt::AlignRight, temp);
 		break;
@@ -112,7 +112,7 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	case COLUMN_IN_ALLOC:
 		flValue = index.data().toFloat();
 		if (flValue < std::numeric_limits<float>::max()){
-			temp.sprintf("%.3f ", flValue);
+			temp = QString::asprintf("%.3f ", flValue);
 		} else {
 			temp=strNA;
 		}
@@ -128,12 +128,12 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 		painter->drawText(option.rect, Qt::AlignRight, temp);
 		break;
 	case COLUMN_OUT_RATE:
-		temp.sprintf("%.3f ", index.data().toFloat());
+		temp = QString::asprintf("%.3f ", index.data().toFloat());
 		//temp=QString::number(index.data().toFloat());
 		painter->drawText(option.rect, Qt::AlignRight, temp);
 		break;
 	case COLUMN_OUT_MAX:
-		temp.sprintf("%.3f ", index.data().toFloat());
+		temp = QString::asprintf("%.3f ", index.data().toFloat());
 		//temp=QString::number(index.data().toFloat());
 		painter->drawText(option.rect, Qt::AlignRight, temp);
 		break;
