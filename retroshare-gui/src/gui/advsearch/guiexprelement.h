@@ -34,6 +34,8 @@
 
 #include <iostream>
 
+class QRegularExpressionValidator;
+
 enum ExprSearchType
 {
     NameSearch,
@@ -191,8 +193,8 @@ public:
     virtual QString toString();
 
 private:
-    QRegExpValidator * numValidator;
-    QRegExpValidator * hexValidator;
+    QRegularExpressionValidator * numValidator;
+    QRegularExpressionValidator * hexValidator;
     QFrame * rangeParamsFrame;
     bool inRangedConfig;
     uint64_t getIntValueFromField(QString fieldName, bool isToField=false,bool *ok = NULL);

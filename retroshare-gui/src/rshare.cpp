@@ -27,7 +27,7 @@
 #include <QFileOpenEvent>
 #include <QLocale>
 #include <QLocalSocket>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QSharedMemory>
 #include <QShortcut>
 #include <QString>
@@ -311,8 +311,8 @@ void RsApplication::customizeDateFormat()
   QLocale locale = QLocale(); // set to default locale
   /* get long date format without weekday */
   options.dateformat = locale.dateFormat(QLocale::LongFormat);
-  options.dateformat.replace(QRegExp("^dddd,*[^ ]* *('[^']+' )*"), "");
-  options.dateformat.replace(QRegExp(",* *dddd"), "");
+  options.dateformat.replace(QRegularExpression("^dddd,*[^ ]* *('[^']+' )*"), "");
+  options.dateformat.replace(QRegularExpression(",* *dddd"), "");
   options.dateformat = options.dateformat.trimmed();
 }
 

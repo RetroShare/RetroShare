@@ -18,6 +18,8 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <QRegularExpression>
+
 #include "RsSyntaxHighlighter.h"
 
 RsSyntaxHighlighter::RsSyntaxHighlighter(QTextEdit *parent)
@@ -65,7 +67,7 @@ void RsSyntaxHighlighter::highlightBlock(const QString &text)
 {
 	if (text == "") return;
 
-	QRegExp endl("[\\r\\n\\x2028]"); //Usually 0x2028 character is used for newline, no idea why
+	QRegularExpression endl("[\\r\\n\\x2028]"); //Usually 0x2028 character is used for newline, no idea why
 	int index = 0;
 	QStringList lines = text.split(endl);
 	foreach (const QString &cLine, lines) {
