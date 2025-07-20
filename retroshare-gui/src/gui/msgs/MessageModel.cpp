@@ -504,8 +504,7 @@ QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
     case COLUMN_THREAD_SPAM:
     case COLUMN_THREAD_READ:return QVariant();
     case COLUMN_THREAD_DATE:{
-        QDateTime qtime;
-        qtime.setTime_t(fmpe.ts);
+        QDateTime qtime = DateTime::DateTimeFromTime_t(fmpe.ts);
 
         return QVariant(DateTime::formatDateTime(qtime));
     }
