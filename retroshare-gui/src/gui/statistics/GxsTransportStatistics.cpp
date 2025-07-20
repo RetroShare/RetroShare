@@ -331,8 +331,7 @@ void GxsTransportStatistics::updateContent()
 			rsIdentity->getIdDetails(meta.mAuthorId,idDetails);
 			
 			QPixmap pixmap ;
-			QDateTime qdatetime;
-			qdatetime.setTime_t(meta.mPublishTs);
+			QDateTime qdatetime = DateTime::DateTimeFromTime_t(meta.mPublishTs);
 
 			if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
 				pixmap = GxsIdDetails::makeDefaultIcon(meta.mAuthorId,GxsIdDetails::SMALL);

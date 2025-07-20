@@ -188,10 +188,8 @@ void GlobalRouterStatistics::updateContent()
         if(nicknames.isEmpty())
           nicknames = tr("Unknown");
 	  
-	    QDateTime routingtime;
-		routingtime.setTime_t(cache_infos[i].routing_time);
-		QDateTime senttime;
-		senttime.setTime_t(cache_infos[i].last_sent_time);
+	    QDateTime routingtime = DateTime::DateTimeFromTime_t(cache_infos[i].routing_time);
+		QDateTime senttime = DateTime::DateTimeFromTime_t(cache_infos[i].last_sent_time);
 	  
 		item -> setId(cache_infos[i].destination,COL_NICKNAME, false) ;
         item -> setData(COL_ID,           Qt::DisplayRole, QString::number(cache_infos[i].mid,16).rightJustified(16,'0'));

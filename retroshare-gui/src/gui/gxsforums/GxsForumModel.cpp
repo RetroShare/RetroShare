@@ -670,8 +670,7 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
         							if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING)
                                         return QVariant(QString());
 
-    							    QDateTime qtime;
-									qtime.setTime_t(fmpe.mPublishTs);
+    							    QDateTime qtime = DateTime::DateTimeFromTime_t(fmpe.mPublishTs);
 
 									return QVariant(DateTime::formatDateTime(qtime));
     							}
