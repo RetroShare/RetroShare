@@ -26,6 +26,7 @@
 #include <QTextDocumentFragment>
 #include <qmath.h>
 #include <QUrl>
+#include <QRegularExpression>
 
 #include "HandleRichText.h"
 #include "gui/RetroShareLink.h"
@@ -1171,7 +1172,7 @@ void RsHtml::optimizeHtml(QString &text, unsigned int flag /*= 0*/
 {
 
 	// remove doctype
-	text.remove(QRegExp("<!DOCTYPE[^>]*>"));
+	text.remove(QRegularExpression("<!DOCTYPE[^>]*>"));
 	//remove all prepend char that make doc.setContent() fail
 	text.remove(0,text.indexOf("<"));
 	// Save Space and Tab because doc loose it.
@@ -1253,7 +1254,7 @@ QString RsHtml::makeQuotedText(RSTextBrowser *browser)
 	{
 		text = browser->toPlainText();
 	}
-	QStringList sl = text.split(QRegExp("[\r\n]"),QtSkipEmptyParts);
+	QStringList sl = text.split(QRegularExpression("[\r\n]"),QtSkipEmptyParts);
 	text = sl.join("\n> ");
 	text.replace("\n> >","\n>>"); // Don't add space for already quotted lines.
 	text.replace(QChar(-4)," ");//Char used when image on text.

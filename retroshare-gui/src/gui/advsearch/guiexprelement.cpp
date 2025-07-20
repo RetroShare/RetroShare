@@ -20,6 +20,8 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <QRegularExpression>
+
 #include "guiexprelement.h"
 #include "util/DateTime.h"
 
@@ -400,10 +402,10 @@ void ExprParamElement::adjustForSearchType(ExprSearchType type)
 {
 	// record which search type is active
 	searchType = type;
-	QRegExp regExp("0|[1-9][0-9]*");
-	numValidator = new QRegExpValidator(regExp, this);
-	QRegExp hexRegExp("[A-Fa-f0-9]*");
-	hexValidator = new QRegExpValidator(hexRegExp, this);
+	QRegularExpression regExp("0|[1-9][0-9]*");
+	numValidator = new QRegularExpressionValidator(regExp, this);
+	QRegularExpression hexRegExp("[A-Fa-f0-9]*");
+	hexValidator = new QRegularExpressionValidator(hexRegExp, this);
 
 	QHBoxLayout* hbox = static_cast<QHBoxLayout*>(layout());
 	clearLayout(hbox);
