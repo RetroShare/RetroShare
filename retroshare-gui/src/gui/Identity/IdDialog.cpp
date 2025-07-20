@@ -50,6 +50,7 @@
 #include "util/RsQtVersion.h"
 #include "util/rstime.h"
 #include "util/rsdebug.h"
+#include "util/DateTime.h"
 
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsmsgs.h"
@@ -1653,7 +1654,7 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
 	/* get GPG Details from rsPeers */
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
-    ui->lineEdit_PublishTS->setText(QDateTime::fromMSecsSinceEpoch(qint64(1000)*data.mMeta.mPublishTs).toString(Qt::SystemLocaleShortDate));
+    ui->lineEdit_PublishTS->setText(QLocale::system().toString(DateTime::DateTimeFromTime_t(data.mMeta.mPublishTs), QLocale::ShortFormat));
     //ui->lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
 	ui->lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 	//ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
