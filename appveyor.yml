@@ -96,8 +96,8 @@ install:
   - set PATH=C:\msys64\mingw64\bin;%PATH%
   - >
     pacman --noconfirm -Sy
-    mingw-w64-x86_64-qt5-base mingw-w64-x86_64-miniupnpc mingw-w64-x86_64-rapidjson
-    mingw-w64-x86_64-sqlcipher mingw-w64-x86_64-xapian-core mingw-w64-x86_64-cmark
+    mingw-w64-x86_64-miniupnpc mingw-w64-x86_64-rapidjson mingw-w64-x86_64-sqlcipher
+    mingw-w64-x86_64-xapian-core mingw-w64-x86_64-cmark mingw-w64-x86_64-qt5-base
   #- set PATH=C:\msys64\mingw64\qt5-static\bin\;%PATH%
 
   # Configuring Qt
