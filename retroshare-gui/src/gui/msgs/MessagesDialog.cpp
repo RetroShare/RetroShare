@@ -157,7 +157,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     mMessageProxyModel->setSortRole(RsMessageModel::SortRole);
     mMessageProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
 	mMessageProxyModel->setFilterRole(RsMessageModel::FilterRole);
-	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));
+	QSortFilterProxyModel_setFilterRegularExpression(mMessageProxyModel, RsMessageModel::FilterString);
 
     ui.messageTreeWidget->setModel(mMessageProxyModel);
 
@@ -1016,7 +1016,7 @@ void MessagesDialog::changeQuickView(int newrow)
 	}
 
 	mMessageModel->setQuickViewFilter(f);
-    mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));	// this triggers the update of the proxy model
+    QSortFilterProxyModel_setFilterRegularExpression(mMessageProxyModel, RsMessageModel::FilterString);	// this triggers the update of the proxy model
 }
 
 // click in messageTreeWidget
@@ -1263,7 +1263,7 @@ void MessagesDialog::filterChanged(const QString& text)
     }
 
     mMessageModel->setFilter(f,items);
-	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));	// this triggers the update of the proxy model
+	QSortFilterProxyModel_setFilterRegularExpression(mMessageProxyModel, RsMessageModel::FilterString);	// this triggers the update of the proxy model
 
     QCoreApplication::processEvents();
 }
@@ -1289,7 +1289,7 @@ void MessagesDialog::filterColumnChanged(int column)
 
     QStringList items = ui.filterLineEdit->text().split(' ',QtSkipEmptyParts);
     mMessageModel->setFilter(f,items);
-	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));	// this triggers the update of the proxy model
+	QSortFilterProxyModel_setFilterRegularExpression(mMessageProxyModel, RsMessageModel::FilterString);	// this triggers the update of the proxy model
 
     // save index
     Settings->setValueToGroup("MessageDialog", "filterColumn", column);

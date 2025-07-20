@@ -49,4 +49,10 @@
 #define QtSkipEmptyParts QString::SkipEmptyParts
 #endif
 
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#define QSortFilterProxyModel_setFilterRegularExpression(proxyModel, pattern) proxyModel->setFilterRegularExpression(pattern);
+#else
+#define QSortFilterProxyModel_setFilterRegularExpression(proxyModel, pattern) proxyModel->setFilterRegExp(pattern);
+#endif
+
 #endif

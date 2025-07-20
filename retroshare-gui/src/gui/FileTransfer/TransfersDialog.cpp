@@ -2647,5 +2647,5 @@ void TransfersDialog::filterChanged(const QString& /*text*/)
 	int filterColumn = ui.filterLineEdit->currentFilter();
 	QString text = ui.filterLineEdit->text();
 	DLLFilterModel->setFilterKeyColumn(filterColumn);
-	DLLFilterModel->setFilterRegExp(text);
+	QSortFilterProxyModel_setFilterRegularExpression(DLLFilterModel, text);
 }

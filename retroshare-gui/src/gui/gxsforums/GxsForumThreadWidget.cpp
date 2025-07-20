@@ -264,7 +264,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->threadTreeWidget->setModel(mThreadProxyModel);
 
     mThreadProxyModel->setFilterRole(RsGxsForumModel::FilterRole);
-    mThreadProxyModel->setFilterRegExp(QRegExp(QString(RsGxsForumModel::FilterString))) ;
+    QSortFilterProxyModel_setFilterRegularExpression(mThreadProxyModel, QString(RsGxsForumModel::FilterString)) ;
 
     ui->threadTreeWidget->setSortingEnabled(true);
 
@@ -1854,7 +1854,7 @@ void GxsForumThreadWidget::filterItems(const QString& text)
     mThreadModel->setFilter(filterColumn,lst,count) ;
 
     // We do this in order to trigger a new filtering action in the proxy model.
-    mThreadProxyModel->setFilterRegExp(QRegExp(QString(RsGxsForumModel::FilterString))) ;
+    QSortFilterProxyModel_setFilterRegularExpression(mThreadProxyModel, QString(RsGxsForumModel::FilterString)) ;
 
     if(!lst.empty())
         ui->threadTreeWidget->expandAll();
