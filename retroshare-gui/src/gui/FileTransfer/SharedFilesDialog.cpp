@@ -199,7 +199,7 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     tree_proxyModel->setSortRole(RetroshareDirModel::SortRole);
     tree_proxyModel->sort(SHARED_FILES_DIALOG_COLUMN_NAME);
     tree_proxyModel->setFilterRole(RetroshareDirModel::FilterRole);
-    tree_proxyModel->setFilterRegExp(QRegExp(QString(SHARED_FILES_DIALOG_FILTER_STRING))) ;
+    QSortFilterProxyModel_setFilterRegularExpression(tree_proxyModel, QString(SHARED_FILES_DIALOG_FILTER_STRING)) ;
 
     flat_proxyModel = new SFDSortFilterProxyModel(flat_model, this);
     flat_proxyModel->setSourceModel(flat_model);
@@ -207,7 +207,7 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     flat_proxyModel->setSortRole(RetroshareDirModel::SortRole);
     flat_proxyModel->sort(SHARED_FILES_DIALOG_COLUMN_NAME);
     flat_proxyModel->setFilterRole(RetroshareDirModel::FilterRole);
-    flat_proxyModel->setFilterRegExp(QRegExp(QString(SHARED_FILES_DIALOG_FILTER_STRING))) ;
+    QSortFilterProxyModel_setFilterRegularExpression(flat_proxyModel, QString(SHARED_FILES_DIALOG_FILTER_STRING)) ;
 
     connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
     connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));

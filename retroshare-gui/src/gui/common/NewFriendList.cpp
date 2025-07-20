@@ -213,7 +213,7 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
     mProxyModel->setSortRole(RsFriendListModel::SortRole);
     mProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
 	mProxyModel->setFilterRole(RsFriendListModel::FilterRole);
-	mProxyModel->setFilterRegExp(QRegExp(RsFriendListModel::FilterString));
+	QSortFilterProxyModel_setFilterRegularExpression(mProxyModel, RsFriendListModel::FilterString);
 
 	ui->peerTreeWidget->setModel(mProxyModel);
 	RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
@@ -558,7 +558,7 @@ void NewFriendList::processSettings(bool load)
 void NewFriendList::toggleSortByState(bool sort)
 {
     mProxyModel->setSortByState(sort);
-	mProxyModel->setFilterRegExp(QRegExp(QString(RsFriendListModel::FilterString))) ;// triggers a re-display.
+	QSortFilterProxyModel_setFilterRegularExpression(mProxyModel, QString(RsFriendListModel::FilterString)) ;// triggers a re-display.
     processSettings(false);
 }
 
@@ -1623,7 +1623,7 @@ bool NewFriendList::getOrCreateGroup(const std::string& name, uint flag, RsNodeG
 void NewFriendList::setShowUnconnected(bool show)
 {
     mProxyModel->setShowOfflineNodes(show);
-	mProxyModel->setFilterRegExp(QRegExp(QString(RsFriendListModel::FilterString))) ;// triggers a re-display.
+	QSortFilterProxyModel_setFilterRegularExpression(mProxyModel, QString(RsFriendListModel::FilterString)) ;// triggers a re-display.
 }
 
 bool NewFriendList::isColumnVisible(int col) const
@@ -1682,7 +1682,7 @@ void NewFriendList::filterItems(const QString &text)
 		mModel->setFilter(RsFriendListModel::FILTER_TYPE_ID,lst);
 
     // We do this in order to trigger a new filtering action in the proxy model.
-	mProxyModel->setFilterRegExp(QRegExp(QString(RsFriendListModel::FilterString))) ;
+	QSortFilterProxyModel_setFilterRegularExpression(mProxyModel, QString(RsFriendListModel::FilterString)) ;
 
     if(!lst.empty())
 		ui->peerTreeWidget->expandAll();

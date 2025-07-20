@@ -231,7 +231,7 @@ IdDialog::IdDialog(QWidget *parent)
     mProxyModel->setSortRole(RsIdentityListModel::SortRole);
     mProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
     mProxyModel->setFilterRole(RsIdentityListModel::FilterRole);
-    mProxyModel->setFilterRegExp(QRegExp(RsIdentityListModel::FilterString));
+    QSortFilterProxyModel_setFilterRegularExpression(mProxyModel, RsIdentityListModel::FilterString);
 
     ui->idTreeWidget->setModel(mProxyModel);
     //ui->idTreeWidget->setSelectionModel(new QItemSelectionModel(mProxyModel));// useless in Qt5.
