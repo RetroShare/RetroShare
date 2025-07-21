@@ -181,14 +181,14 @@ RichTextEdit::RichTextEdit(QWidget *parent) : QWidget(parent) {
     // text foreground color
 
     QPixmap pix(16, 16);
-    pix.fill(QApplication::palette().foreground().color());
+    pix.fill(QApplication::palette().windowText().color());
     f_fgcolor->setIcon(pix);
 
     connect(f_fgcolor, SIGNAL(clicked()), this, SLOT(textFgColor()));
 
     // text background color
 
-    pix.fill(QApplication::palette().background().color());
+    pix.fill(QApplication::palette().window().color());
     f_bgcolor->setIcon(pix);
 
     connect(f_bgcolor, SIGNAL(clicked()), this, SLOT(textBgColor()));
@@ -519,7 +519,7 @@ void RichTextEdit::fgColorChanged(const QColor &c) {
     if (c.isValid()) {
         pix.fill(c);
       } else {
-        pix.fill(QApplication::palette().foreground().color());
+        pix.fill(QApplication::palette().windowText().color());
         }
     f_fgcolor->setIcon(pix);
 }
@@ -529,7 +529,7 @@ void RichTextEdit::bgColorChanged(const QColor &c) {
     if (c.isValid()) {
         pix.fill(c);
       } else {
-        pix.fill(QApplication::palette().background().color());
+        pix.fill(QApplication::palette().window().color());
         }
     f_bgcolor->setIcon(pix);
 }
