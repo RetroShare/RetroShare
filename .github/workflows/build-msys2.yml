@@ -57,8 +57,8 @@ jobs:
           update: true
           release : false
           cache: false
-          msystem: ${{ matrix.flavor }}
-          install: >-
+          msystem: ${{matrix.sys}}
+          install: mingw-w64-${{matrix.env}}-openssl
             base-devel
             git
             wget
