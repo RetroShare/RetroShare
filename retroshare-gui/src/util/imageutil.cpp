@@ -391,14 +391,14 @@ void ImageUtil::quantization(QList<QRgb>::iterator begin, QList<QRgb>::iterator 
 	//order by the widest channel
 	if(red > green)
 		if(red > blue)
-			qSort(begin, end, redLessThan);
+			std::sort(begin, end, redLessThan);
 		else
-			qSort(begin, end, blueLessThan);
+			std::sort(begin, end, blueLessThan);
 	else
 		if(green > blue)
-			qSort(begin, end, greenLessThan);
+			std::sort(begin, end, greenLessThan);
 		else
-			qSort(begin, end, blueLessThan);
+			std::sort(begin, end, blueLessThan);
 
 	//split into two buckets
 	QList<QRgb>::iterator split = begin + count / 2;
