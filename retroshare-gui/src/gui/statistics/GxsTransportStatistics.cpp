@@ -273,7 +273,7 @@ void GxsTransportStatistics::updateContent()
     std::set<RsGxsGroupId> openned_groups ;
 
 	for(int i=0; i<groupTreeWidget->topLevelItemCount(); ++i)
-		if( groupTreeWidget->isItemExpanded(groupTreeWidget->topLevelItem(i)) )
+		if( groupTreeWidget->topLevelItem(i)->isExpanded() )
 			openned_groups.insert(RsGxsGroupId(groupTreeWidget->topLevelItem(i)->data(COL_GROUP_GRP_ID, Qt::DisplayRole).toString().toStdString()));
 
 	groupTreeWidget->clear();
@@ -295,7 +295,7 @@ void GxsTransportStatistics::updateContent()
 		}
 
         groupTreeWidget->addTopLevelItem(item);
-		groupTreeWidget->setItemExpanded(item,openned_groups.find(it->first) != openned_groups.end());
+		item->setExpanded(openned_groups.find(it->first) != openned_groups.end());
 
 		QString msg_time_string = (stat.last_publish_TS>0)?QString("(Last msg: %1)").arg(DateTime::DateTimeFromTime_t((uint)stat.last_publish_TS).toString()):"" ;
 
