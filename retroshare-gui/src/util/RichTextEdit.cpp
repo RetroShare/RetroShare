@@ -45,7 +45,11 @@ static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE = 199000;
 RichTextEdit::RichTextEdit(QWidget *parent) : QWidget(parent) {
     setupUi(this);
     m_lastBlockList = 0;
+#if QT_VERSION >= QT_VERSION_CHECK (5, 10, 0)
+    f_textedit->setTabStopDistance(40);
+#else
     f_textedit->setTabStopWidth(40);
+#endif
 
     connect(f_textedit, SIGNAL(currentCharFormatChanged(QTextCharFormat)),
             this,     SLOT(slotCurrentCharFormatChanged(QTextCharFormat)));
