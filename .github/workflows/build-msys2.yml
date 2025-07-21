@@ -42,9 +42,9 @@ jobs:
     needs: pre-check
     strategy:
       matrix:
-        flavor:
-          - mingw64
-          - ucrt64
+       include:
+        - { sys: mingw64, env: x86_64 }
+        - { sys: ucrt64,  env: ucrt-x86_64 }
     name: ${{ matrix.flavor }}
     runs-on: windows-latest
     defaults:
