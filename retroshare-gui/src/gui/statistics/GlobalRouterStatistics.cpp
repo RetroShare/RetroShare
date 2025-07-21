@@ -31,6 +31,9 @@
 #include <QStylePainter>
 #include <QLayout>
 #include <QHeaderView>
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#include <QPointF>
+#endif
 
 #include <retroshare/rsgrouter.h>
 #include <retroshare/rspeers.h>
@@ -429,16 +432,26 @@ void GlobalRouterStatisticsWidget::updateContent()
 
 void GlobalRouterStatisticsWidget::wheelEvent(QWheelEvent *e)
 {
-    if(e->x() < mMinWheelZoneX || e->x() > mMaxWheelZoneX || e->y() < mMinWheelZoneY || e->y() > mMaxWheelZoneY)
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    int x = e->position().toPoint().x();
+    int y = e->position().toPoint().y();
+    int delta = e->angleDelta().y();
+#else
+    int x = e->x();
+    int y = e->y();
+    int delta = e->delta();
+#endif
+
+    if(x < mMinWheelZoneX || x > mMaxWheelZoneX || y < mMinWheelZoneY || y > mMaxWheelZoneY)
     {
         QWidget::wheelEvent(e) ;
         return ;
     }
     
-    if(e->delta() < 0 && mCurrentN+PARTIAL_VIEW_SIZE/2+1 < mNumberOfKnownKeys)
+    if(delta < 0 && mCurrentN+PARTIAL_VIEW_SIZE/2+1 < mNumberOfKnownKeys)
 	    mCurrentN++ ;
     
-    if(e->delta() > 0 && mCurrentN > PARTIAL_VIEW_SIZE/2+1)
+    if(delta > 0 && mCurrentN > PARTIAL_VIEW_SIZE/2+1)
 	    mCurrentN-- ;
     
     updateContent();

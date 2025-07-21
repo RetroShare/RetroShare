@@ -342,7 +342,13 @@ void GraphWidget::resizeEvent(QResizeEvent *event)
 
 void GraphWidget::wheelEvent(QWheelEvent *event)
 {
-    scaleView(pow((double)2, -event->delta() / 240.0));
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    int delta = event->angleDelta().y();
+#else
+    int delta = event->delta();
+#endif
+
+    scaleView(pow((double)2, -delta / 240.0));
 }
 
 void GraphWidget::scaleView(qreal scaleFactor)
