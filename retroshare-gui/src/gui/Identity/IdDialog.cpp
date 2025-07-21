@@ -394,7 +394,7 @@ IdDialog::IdDialog(QWidget *parent)
 
 	/* Set initial section sizes */
     QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
-    circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, fm.width("Circle name")*1.5) ;
+    circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QFontMetrics_horizontalAdvance(fm, "Circle name")*1.5) ;
     ui->treeWidget_membership->setColumnWidth(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 270);
 
 	/* Setup tree */

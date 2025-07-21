@@ -35,6 +35,7 @@
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include "rshare.h"
 #include "RSGraphWidget.h"
+#include "util/RsQtVersion.h"
 
 #if QT_VERSION < 0x040700
 #include <sys/time.h>
@@ -655,12 +656,12 @@ void RSGraphWidget::paintScale1()
 
 		if (_flags & RSGRAPH_FLAGS_DARK_STYLE){
 			_painter->setPen(SCALE_COLOR_DARK);
-			_painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetricsF(font()).width(text) - 4*fact, pos+0.4*FS),  text);
+			_painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetrics_horizontalAdvance(QFontMetricsF(font()), text) - 4*fact, pos+0.4*FS),  text);
 			_painter->setPen(GRID_COLOR_DARK);
 			_painter->drawLine(QPointF(SCALE_WIDTH*fact, pos),  QPointF(_rec.width(), pos));
 		}else{
 			_painter->setPen(SCALE_COLOR);
-			_painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetricsF(font()).width(text) - 4*fact, pos+0.4*FS),  text);
+			_painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetrics_horizontalAdvance(QFontMetricsF(font()), text) - 4*fact, pos+0.4*FS),  text);
 			_painter->setPen(GRID_COLOR);
 			_painter->drawLine(QPointF(SCALE_WIDTH*fact, pos),  QPointF(_rec.width(), pos));
 		}

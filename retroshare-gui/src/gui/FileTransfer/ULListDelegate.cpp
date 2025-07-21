@@ -22,6 +22,7 @@
 
 #include "ULListDelegate.h"
 #include "xprogressbar.h"
+#include "util/RsQtVersion.h"
 
 Q_DECLARE_METATYPE(FileProgressInfo)
 
@@ -179,7 +180,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 
 QSize ULListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
-    float w = QFontMetricsF(option.font).width(index.data(Qt::DisplayRole).toString());
+    float w = QFontMetrics_horizontalAdvance(QFontMetricsF(option.font), index.data(Qt::DisplayRole).toString());
 
     int S = QFontMetricsF(option.font).height()*1.5 ;
     return QSize(w,S);

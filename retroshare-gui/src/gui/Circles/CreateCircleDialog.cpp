@@ -38,6 +38,7 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/Identity/IdEditDialog.h"
+#include "util/RsQtVersion.h"
 
 //#define DEBUG_CREATE_CIRCLE_DIALOG 1
 
@@ -74,7 +75,7 @@ CreateCircleDialog::CreateCircleDialog()
 	ui.IdFilter->addFilter(QIcon(), headerText, RSCIRCLEID_COL_KEYID, QString("%1 %2").arg(tr("Search"), headerText));
 	
 	/* Set initial column width */
-	int fontWidth = QFontMetricsF(ui.treeWidget_IdList->font()).width("W");
+	int fontWidth = QFontMetrics_horizontalAdvance(QFontMetricsF(ui.treeWidget_IdList->font()), "W");
 	ui.treeWidget_IdList->setColumnWidth(RSCIRCLEID_COL_NICKNAME, 17 * fontWidth);
 	ui.treeWidget_membership->setColumnWidth(RSCIRCLEID_COL_NICKNAME, 17 * fontWidth);
 	

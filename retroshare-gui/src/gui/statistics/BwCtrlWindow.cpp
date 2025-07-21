@@ -172,7 +172,7 @@ QSize BWListDelegate::sizeHint(const QStyleOptionViewItem & option/*option*/, co
     float FS = QFontMetricsF(option.font).height();
     //float fact = FS/14.0 ;
 
-    float w = QFontMetricsF(option.font).width(index.data(Qt::DisplayRole).toString());
+    float w = QFontMetrics_horizontalAdvance(QFontMetricsF(option.font), index.data(Qt::DisplayRole).toString());
 
     return QSize(w,FS*1.2);
     //return QSize(50*fact,17*fact);
