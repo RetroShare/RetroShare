@@ -43,6 +43,9 @@
 #include <QMessageBox>
 #include <QStyle>
 #include <assert.h>
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#include <QRandomGenerator>
+#endif
 
 AboutWidget::AboutWidget(QWidget* parent)
 : QWidget(parent)
@@ -821,7 +824,12 @@ void TBoard::drawSquare(QPainter &painter, int x, int y, TPiece::Shape shape) {
 
 
 void TPiece::setRandomShape() {
-    setShape(TPiece::Shape(qrand() % 7 + 1));
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    int rand = QRandomGenerator::global()->generate();
+#else
+    int rand = qrand();
+#endif
+    setShape(TPiece::Shape(rand % 7 + 1));
 }
 
 
