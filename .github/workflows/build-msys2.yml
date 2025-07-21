@@ -79,7 +79,6 @@ jobs:
             mingw-w64-x86_64-rapidjson
             mingw-w64-x86_64-json-c
             mingw-w64-x86_64-libbotan
-            mingw-w64-x86_64-asio
-            
-            - uses: actions/checkout@v4
+            mingw-w64-x86_64-asio    
+
 
