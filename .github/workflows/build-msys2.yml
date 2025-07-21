@@ -44,14 +44,14 @@ jobs:
       matrix:
        include:
         - { sys: mingw64, env: x86_64 }
-        - { sys: ucrt64,  env: ucrt-x86_64 }
-    name: ${{ matrix.flavor }}
+    name: ${{ matrix.sys }}
     runs-on: windows-latest
     defaults:
       run:
         shell: msys2 {0}
     steps:
       - name: Setup MSYS2
+      - uses: actions/checkout@v4
         uses: msys2/setup-msys2@v2.27.0
         with:
           update: true
@@ -79,6 +79,10 @@ jobs:
             mingw-w64-x86_64-rapidjson
             mingw-w64-x86_64-json-c
             mingw-w64-x86_64-libbotan
-            mingw-w64-x86_64-asio    
+            mingw-w64-x86_64-asio
+        - name: CI-Build
+        run: |
+            qmake
+            mingw32-make
 
 
