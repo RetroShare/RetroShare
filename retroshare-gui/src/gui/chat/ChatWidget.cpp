@@ -1507,10 +1507,9 @@ void ChatWidget::on_markButton_clicked(bool bValue)
 
 void ChatWidget::chooseColor()
 {
-	bool ok;
-	QRgb color = QColorDialog::getRgba(currentColor.rgba(), &ok, window());
-	if (ok) {
-		currentColor = QColor(color);
+	QColor color = QColorDialog::getColor(currentColor, window(), "", QColorDialog::ShowAlphaChannel);
+	if (color.isValid()) {
+		currentColor = color;
 		PeerSettings->setPrivateChatColor(chatId, currentColor.name());
 		colorChanged();
 		setColorAndFont(false);
