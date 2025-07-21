@@ -775,7 +775,7 @@ void TBoard::showNextPiece() {
 
     QPixmap pixmap(dx * squareWidth(), dy * squareHeight());
     QPainter painter(&pixmap);
-    painter.fillRect(pixmap.rect(), nextPieceLabel->palette().background());
+    painter.fillRect(pixmap.rect(), nextPieceLabel->palette().window());
 
     for (int i = 0; i < 4; ++i) {
         int x = nextPiece.x(i) - nextPiece.minX();

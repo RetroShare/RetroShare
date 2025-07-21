@@ -645,7 +645,7 @@ void FlowLayout::performDrag()
 				if (curs==0) dragPixmap = itemPixmap;
 				QPixmap oldPixmap = dragPixmap;
 				if (curs!=0) dragPixmap = QPixmap(oldPixmap.width() + 20 , oldPixmap.height());
-				dragPixmap.fill(widget->palette().background().color());
+				dragPixmap.fill(widget->palette().window().color());
 				QPainter painter(&dragPixmap);
 				painter.drawPixmap(0, 0, oldPixmap);
 				if (curs!=0) painter.drawPixmap((20 * curs), 0, itemPixmap);
