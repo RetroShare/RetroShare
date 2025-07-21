@@ -194,7 +194,7 @@ RsCollection::RsCollection(const QString& fileName, RsCollectionErrorCode& error
     }
 
     QDomDocument xml_doc;
-    bool ok = xml_doc.setContent(&file) ;
+    bool ok = (bool) xml_doc.setContent(&file);
 
     if(!ok)
     {

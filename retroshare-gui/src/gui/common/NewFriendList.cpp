@@ -1472,7 +1472,7 @@ bool NewFriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &
             return false;
         }
 
-        bool ok = doc.setContent(&file);
+        bool ok = (bool) doc.setContent(&file);
         file.close();
 
         if(!ok) {
