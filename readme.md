@@ -4,10 +4,9 @@ RetroShare is a decentralized, private, secure, cross-platform, communication
 toolkit.
 RetroShare provides file sharing, chat, messages, forums, channels, boards and more.
 
-[![GitHub release](https://img.shields.io/github/release/retroshare/retroshare.svg?label=latest%20release)]([https://github.com/zapek/Xeres/releases/latest](https://github.com/RetroShare/RetroShare/releases/tag/v0.6.7.2))
+[![GitHub release](https://img.shields.io/github/release/retroshare/retroshare.svg?label=latest%20release)](https://github.com/retroshare/retroshare/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/retroshare/retroshare/total)](https://github.com/retroshare/retroshare/releases/latest)
 [![GNU/Linux (via Gitlab CI)](https://gitlab.com/RetroShare/RetroShare/badges/master/pipeline.svg)](https://gitlab.com/RetroShare/RetroShare/-/commits/master)
-[![Windows (via AppVeyor)](https://ci.appveyor.com/api/projects/status/github/RetroShare/RetroShare?svg=true)](https://ci.appveyor.com/project/RetroShare58622/retroshare")
 [![libretroshare GNU/Linux, Android (via Gitlab CI)](https://gitlab.com/RetroShare/libretroshare/badges/master/pipeline.svg)](https://gitlab.com/RetroShare/libretroshare/-/commits/master)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/RetroShare/RetroShare)
 
