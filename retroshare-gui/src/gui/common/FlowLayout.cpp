@@ -23,6 +23,7 @@
 #include <QtGui>
 #include <QScrollBar>
 #include <QDebug>
+#include <QMargins>
 
 //*** FlowLayoutItem **********************************************************
 
@@ -598,7 +599,8 @@ QSize FlowLayout::minimumSize() const
 	foreach (item, m_itemList)
 		size = size.expandedTo(item->minimumSize());
 
-	size += QSize(2*margin(), 2*margin());
+	QMargins margins = contentsMargins();
+	size += QSize(margins.left() + margins.right(), margins.top() + margins.bottom());
 	return size;
 }
 
