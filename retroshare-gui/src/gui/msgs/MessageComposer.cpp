@@ -2403,8 +2403,13 @@ bool MessageComposer::fileSave()
     if (!file.open(QFile::WriteOnly))
         return false;
     QTextStream ts(&file);
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    ts.setEncoding(QStringConverter::Utf8);
+    ts << ui.msgText->document()->toHtml();
+#else
     ts.setCodec(QTextCodec::codecForName("UTF-8"));
     ts << ui.msgText->document()->toHtml("UTF-8");
+#endif
     std::cerr << "Setting modified 002 = false" << std::endl;
     ui.msgText->document()->setModified(false);
     return true;

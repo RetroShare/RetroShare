@@ -352,7 +352,11 @@ void HomePage::saveCert()
     //Todo: move save to file to p3Peers::SaveCertificateToFile
 
     QTextStream ts(&file);
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    ts.setEncoding(QStringConverter::Utf8);
+#else
     ts.setCodec(QTextCodec::codecForName("UTF-8"));
+#endif
     ts << ui->retroshareid->text();
 }
 
