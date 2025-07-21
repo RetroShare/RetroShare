@@ -209,15 +209,15 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_CONTENT,true);
     ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_MSGID,true);
 
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_STAR,       fm.width('0')*1.5);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_ATTACHMENT, fm.width('0')*1.5);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_READ,       fm.width('0')*1.5);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_SPAM,       fm.width('0')*1.5);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_STAR,       QFontMetrics_horizontalAdvance(fm, '0')*1.5);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_ATTACHMENT, QFontMetrics_horizontalAdvance(fm, '0')*1.5);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_READ,       QFontMetrics_horizontalAdvance(fm, '0')*1.5);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_SPAM,       QFontMetrics_horizontalAdvance(fm, '0')*1.5);
 
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_SUBJECT,    fm.width("You have a message")*3.0);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_AUTHOR,     fm.width("[Retroshare]")*1.1);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_TO,         fm.width("[Retroshare]")*1.1);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_DATE,       fm.width("01/01/1970")*1.1);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_SUBJECT,    QFontMetrics_horizontalAdvance(fm, "You have a message")*3.0);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_AUTHOR,     QFontMetrics_horizontalAdvance(fm, "[Retroshare]")*1.1);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_TO,         QFontMetrics_horizontalAdvance(fm, "[Retroshare]")*1.1);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_DATE,       QFontMetrics_horizontalAdvance(fm, "01/01/1970")*1.1);
 
     msgwheader->setSectionResizeMode(RsMessageModel::COLUMN_THREAD_SUBJECT,    QHeaderView::Interactive);
     msgwheader->setSectionResizeMode(RsMessageModel::COLUMN_THREAD_AUTHOR,     QHeaderView::Interactive);

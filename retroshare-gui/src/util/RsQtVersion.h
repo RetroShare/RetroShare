@@ -55,4 +55,10 @@
 #define QSortFilterProxyModel_setFilterRegularExpression(proxyModel, pattern) proxyModel->setFilterRegExp(pattern);
 #endif
 
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#define QFontMetrics_horizontalAdvance(fontMetrics, text) fontMetrics.horizontalAdvance(text)
+#else
+#define QFontMetrics_horizontalAdvance(fontMetrics, text) fontMetrics.width(text)
+#endif
+
 #endif

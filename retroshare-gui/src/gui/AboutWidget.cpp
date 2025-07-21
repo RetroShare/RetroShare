@@ -33,6 +33,7 @@
 #include <retroshare/rsdisc.h>
 #include <retroshare/rspeers.h>
 #include "settings/rsharesettings.h"
+#include "util/RsQtVersion.h"
 
 #include <QClipboard>
 #include <QSysInfo>
@@ -306,7 +307,7 @@ void AWidget::drawBitField()
 AWidget::AWidget()
     : page(0), density(5)
     , mImagesReady(false), mState(0), mTimerId(0)
-    , mStep(1.0f), mMaxStep(QFontMetricsF(font()).width(' '))
+    , mStep(1.0f), mMaxStep(QFontMetrics_horizontalAdvance(QFontMetricsF(font()), ' '))
 {
 	setMouseTracking(true);
 	//startTimer(15);
