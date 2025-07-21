@@ -340,7 +340,11 @@ void ImageUtil::quantization(const QImage &img, QVector<QRgb> &palette)
 		colors.insert(pixel);
 	}
 
+#if QT_VERSION >= QT_VERSION_CHECK (5, 14, 0)
+	QList<QRgb> colorlist(colors.begin(), colors.end());
+#else
 	QList<QRgb> colorlist = colors.toList();
+#endif
 	//don't do the algoritmh if we have less than 16 different colors
 	if(colorlist.size() <= (1 << bits)) {
 		for(int i = 0; i < colors.count(); ++i)
