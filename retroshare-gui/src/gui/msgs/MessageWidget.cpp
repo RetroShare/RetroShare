@@ -802,8 +802,13 @@ void MessageWidget::saveAs()
 		if (!file.open(QFile::WriteOnly))
 			return;
 		QTextStream ts(&file);
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+		ts.setEncoding(QStringConverter::Utf8);
+		ts << ui.msgText->document()->toHtml();
+#else
 		ts.setCodec(QTextCodec::codecForName("UTF-8"));
 		ts << ui.msgText->document()->toHtml("UTF-8");
+#endif
 		ui.msgText->document()->setModified(false);
 	}
 }
