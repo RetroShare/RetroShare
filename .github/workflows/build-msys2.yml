@@ -51,7 +51,7 @@ jobs:
         shell: msys2 {0}
     steps:
       - name: Setup MSYS2
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
         uses: msys2/setup-msys2@v2.27.0
         with:
           update: true
