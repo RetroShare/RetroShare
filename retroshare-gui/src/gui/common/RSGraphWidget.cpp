@@ -697,18 +697,24 @@ void RSGraphWidget::paintScale2()
 
 void RSGraphWidget::wheelEvent(QWheelEvent *e)
 {
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+	int delta = e->angleDelta().y();
+#else
+	int delta = e->delta();
+#endif
+
     if(e->modifiers() & Qt::ShiftModifier)
-	    if(e->delta() > 0)
+	    if(delta > 0)
 		    _time_filter *= 1.1 ;
 	    else
 		    _time_filter /= 1.1 ;
     else if(e->modifiers() & Qt::ControlModifier)
-        if(e->delta() > 0)
+        if(delta > 0)
             _linewidthscale *= 1.2 ;
 		else
             _linewidthscale /= 1.2 ;
     else
-	    if(e->delta() > 0)
+	    if(delta > 0)
 		    _time_scale *= 1.1 ;
 	    else
 		    _time_scale /= 1.1 ;
