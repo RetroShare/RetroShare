@@ -40,7 +40,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 {
 	QString byteUnits[4] = {tr("B"), tr("KB"), tr("MB"), tr("GB")};
 	QStyleOptionViewItem opt = option;
-	QStyleOptionProgressBarV2 newopt;
+	QStyleOptionProgressBar newopt;
 	QRect pixmapRect;
 	QPixmap pixmap;
 	qlonglong fileSize;
