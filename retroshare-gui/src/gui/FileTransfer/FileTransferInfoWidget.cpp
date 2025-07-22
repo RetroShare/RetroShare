@@ -84,7 +84,7 @@ void FileTransferInfoWidget::updateDisplay()
 	setFixedHeight(maxHeight);
 
 	QPainter painter(&pixmap);
-	painter.initFrom(this);
+	painter.begin(this);
 
         float S = QFontMetricsF(font()).height();
         int chunk_square_size = S*chunk_square_size_factor;

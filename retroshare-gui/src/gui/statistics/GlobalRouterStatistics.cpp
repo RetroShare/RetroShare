@@ -268,7 +268,7 @@ void GlobalRouterStatisticsWidget::updateContent()
     setFixedHeight(maxHeight);
 
     QPainter painter(&tmppixmap);
-    painter.initFrom(this);
+    painter.begin(this);
     painter.setPen(QColor::fromRgb(0,0,0)) ;
 
     QFont times_f(font());//"Times") ;
