@@ -117,7 +117,11 @@ public:
 protected:
 	bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
 	{
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+		return QVariant::compare(sourceModel()->data(left, RsMessageModel::SortRole), sourceModel()->data(right, RsMessageModel::SortRole)) < 0;
+#else
 		return sourceModel()->data(left, RsMessageModel::SortRole) < sourceModel()->data(right, RsMessageModel::SortRole) ;
+#endif
 	}
 
 	bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override

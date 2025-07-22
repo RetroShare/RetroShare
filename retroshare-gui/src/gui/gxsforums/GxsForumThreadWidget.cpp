@@ -219,7 +219,11 @@ public:
         if(left_is_not_pinned ^ right_is_not_pinned)
             return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?right_is_not_pinned:left_is_not_pinned ;	// always put pinned posts on top
 
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+        return QVariant::compare(left.data(RsGxsForumModel::SortRole), right.data(RsGxsForumModel::SortRole)) < 0;
+#else
         return left.data(RsGxsForumModel::SortRole) < right.data(RsGxsForumModel::SortRole) ;
+#endif
     }
 
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override
