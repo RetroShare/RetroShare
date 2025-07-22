@@ -2165,7 +2165,7 @@ void IdDialog::headerContextMenuRequested(QPoint)
 
     // create menu header
     //QHBoxLayout *hbox = new QHBoxLayout(widget);
-    //hbox->setMargin(0);
+    //hbox->setContentsMargins(0, 0, 0, 0);
     //hbox->setSpacing(6);
 
     auto addEntry = [&](const QString& name,RsIdentityListModel::Columns col)
@@ -2264,7 +2264,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 
         // create menu header
         QHBoxLayout *hbox = new QHBoxLayout(widget);
-        hbox->setMargin(0);
+        hbox->setContentsMargins(0, 0, 0, 0);
         hbox->setSpacing(6);
 
         QLabel *iconLabel = new QLabel(widget);

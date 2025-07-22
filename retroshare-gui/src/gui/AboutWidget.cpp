@@ -49,7 +49,7 @@ AboutWidget::AboutWidget(QWidget* parent)
     setupUi(this);
 
     QHBoxLayout* l = new QHBoxLayout();
-    l->setMargin(0);
+	l->setContentsMargins(0, 0, 0, 0);
     l->addStretch(1);
     l->addStretch(1);
     specialFrame->setContentsMargins(0, 0, 0, 0);

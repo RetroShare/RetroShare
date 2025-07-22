@@ -261,7 +261,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     QWidget *widget = new QWidget();
     widget->setObjectName("trans_statusComboBoxFrame");
     QHBoxLayout *hbox = new QHBoxLayout();
-    hbox->setMargin(0);
+    hbox->setContentsMargins(0, 0, 0, 0);
     hbox->setSpacing(6);
     hbox->addWidget(statusComboBox);
     widget->setLayout(hbox);

@@ -219,7 +219,7 @@ QStringList GuiExprElement::getConditionOptions(ExprSearchType t)
 QHBoxLayout * GuiExprElement::createLayout(QWidget * parent /*= nullptr*/)
 {
     QHBoxLayout * hboxLayout = new QHBoxLayout(parent);
-    hboxLayout->setMargin(0);
+    hboxLayout->setContentsMargins(0, 0, 0, 0);
     hboxLayout->setSpacing(0);
     return hboxLayout;
 }
