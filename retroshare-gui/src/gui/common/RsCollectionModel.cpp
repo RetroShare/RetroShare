@@ -239,7 +239,7 @@ QVariant RsCollectionModel::data(const QModelIndex& index, int role) const
     case Qt::DisplayRole:    return displayRole(i,index.column());
     case Qt::DecorationRole: return decorationRole(i,index.column());
     case Qt::CheckStateRole: return checkStateRole(i,index.column());
-    case Qt::TextColorRole:  return textColorRole(i,index.column());
+    case Qt::ForegroundRole: return textColorRole(i,index.column());
     default:
         return QVariant();
     }

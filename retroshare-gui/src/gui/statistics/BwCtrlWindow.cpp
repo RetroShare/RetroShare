@@ -70,7 +70,7 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	painter->setClipRect(opt.rect);
 
 	//set text color
-	QVariant value = index.data(Qt::TextColorRole);
+	QVariant value = index.data(Qt::ForegroundRole);
 	if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
 		opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
 	}
