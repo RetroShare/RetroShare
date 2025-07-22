@@ -114,7 +114,10 @@ endif(RS_DEVELOPMENT_BUILD)
 
 include(src/CMakeLists.txt)
 
-qt5_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
+qt_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
+if (NOT Qt6_FOUND)
+	qt5_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
+endif()
 
 add_executable(${PROJECT_NAME} ${RS_GUI_SOURCES} ${RS_UI_HEADERS} ${RS_GUI_QTRESOURCES})
 install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
