@@ -287,7 +287,7 @@ public:
 		{
 		case Qt::SizeHintRole:       return sizeHintRole(index.column()) ;
 		case Qt::TextAlignmentRole:
-		case Qt::TextColorRole:
+		case Qt::ForegroundRole:
 		case Qt::WhatsThisRole:
 		case Qt::EditRole:
 		case Qt::ToolTipRole:
