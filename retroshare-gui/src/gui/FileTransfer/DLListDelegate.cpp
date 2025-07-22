@@ -95,7 +95,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				for(int i = 0; i < 4; ++i) {
 					if (fileSize < 1024) {
 						fileSize = index.data().toLongLong();
-						temp.sprintf("%.2f ", fileSize / multi);
+						temp = QString::asprintf("%.2f ", fileSize / multi);
 						temp += byteUnits[i];
 						break;
 					}
@@ -114,7 +114,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				for(int i = 0; i < 4; ++i) {
 					if (remaining < 1024) {
 						remaining = index.data().toLongLong();
-						temp.sprintf("%.2f ", remaining / multi);
+						temp = QString::asprintf("%.2f ", remaining / multi);
 						temp += byteUnits[i];
 						break;
 					}
@@ -133,7 +133,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				for(int i = 0; i < 4; ++i) {
 					if (completed < 1024) {
 						completed = index.data().toLongLong();
-						temp.sprintf("%.2f ", completed / multi);
+						temp = QString::asprintf("%.2f ", completed / multi);
 						temp += byteUnits[i];
 						break;
 					}
@@ -149,7 +149,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                             temp = "";
                         } else {
                             temp.clear();
-                            temp.sprintf("%.2f", dlspeed/1024.);
+                            temp = QString::asprintf("%.2f", dlspeed/1024.);
                             temp += " KB/s";
                         }
 			painter->drawText(option.rect, Qt::AlignRight | Qt::AlignVCenter, temp);
