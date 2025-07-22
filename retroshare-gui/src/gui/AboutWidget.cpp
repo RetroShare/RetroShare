@@ -215,7 +215,7 @@ void AWidget::initImages()
     if(height() == 0) return ;
 
     image1 = QImage(width(),height(),QImage::Format_ARGB32);
-    image1.fill(palette().color(QPalette::Background));
+    image1.fill(palette().color(QPalette::Window));
 
     //QImage image(":/images/logo/logo_info.png");
     QPixmap image(":/images/logo/logo_splash.png");
@@ -271,7 +271,7 @@ void AWidget::initGoL()
 
 void AWidget::drawBitField()
 {
-    image2.fill(palette().color(QPalette::Background));
+    image2.fill(palette().color(QPalette::Window));
     QPainter p(&image2) ;
 
     p.setPen(QColor(200,200,200));
@@ -914,7 +914,7 @@ TPiece TPiece::rotatedRight() const {
 NextPieceLabel::NextPieceLabel( QWidget* parent /* = 0*/ ) : QLabel(parent)
 {
     QPalette p = palette();
-    p.setColor(QPalette::Background, Qt::white);
+    p.setColor(QPalette::Window, Qt::white);
     setPalette(p);
     setFrameShape(QFrame::Box);
     setAlignment(Qt::AlignCenter);
