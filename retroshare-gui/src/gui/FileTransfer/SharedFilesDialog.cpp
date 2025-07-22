@@ -1018,7 +1018,7 @@ void SharedFilesDialog::recursExpandAll(const QModelIndex& index)
 
     for(int row=0;row<ui.dirTreeView->model()->rowCount(index);++row)
     {
-        QModelIndex idx(index.child(row,0)) ;
+        QModelIndex idx(ui.dirTreeView->model()->index(row,0,index)) ;
 
         if(ui.dirTreeView->model()->rowCount(idx) > 0)
             recursExpandAll(idx) ;

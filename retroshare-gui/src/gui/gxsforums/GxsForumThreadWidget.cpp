@@ -540,7 +540,7 @@ void GxsForumThreadWidget::recursSaveExpandedItems(const QModelIndex& index, QLi
     if(ui->threadTreeWidget->isExpanded(index))
     {
         for(int row=0;row<mThreadProxyModel->rowCount(index);++row)
-            recursSaveExpandedItems(index.child(row,0),expanded_items) ;
+            recursSaveExpandedItems(mThreadProxyModel->index(row,0,index),expanded_items) ;
 
         RsGxsMessageId message_id(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID).data(Qt::UserRole).toString().toStdString());
         expanded_items.push_back(message_id);

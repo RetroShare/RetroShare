@@ -2720,7 +2720,7 @@ void IdDialog::recursSaveExpandedItems_idTreeView(const QModelIndex& proxy_index
             expanded.insert(local_path) ;
 
         for(int row=0;row<mProxyModel->rowCount(proxy_index);++row)
-            recursSaveExpandedItems_idTreeView(proxy_index.child(row,0),local_path,expanded,selected) ;
+            recursSaveExpandedItems_idTreeView(mProxyModel->index(row,0,proxy_index),local_path,expanded,selected) ;
     }
 
     if(ui->idTreeWidget->selectionModel()->isSelected(proxy_index))
@@ -2752,7 +2752,7 @@ void IdDialog::recursRestoreExpandedItems_idTreeView(const QModelIndex& proxy_in
         ui->idTreeWidget->setExpanded(proxy_index,true) ;
 
         for(int row=0;row<mProxyModel->rowCount(proxy_index);++row)
-            recursRestoreExpandedItems_idTreeView(proxy_index.child(row,0),local_path,expanded,selected) ;
+            recursRestoreExpandedItems_idTreeView(mProxyModel->index(row,0,proxy_index),local_path,expanded,selected) ;
     }
 
     if(selected.find(local_path) != selected.end())
