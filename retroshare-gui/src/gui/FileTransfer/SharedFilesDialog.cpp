@@ -1131,7 +1131,10 @@ void  SharedFilesDialog::postModDirectories(bool local)
 #ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "****** updated directories! Re-enabling sorting ******" << std::endl;
 #endif
+
+#if QT_VERSION < QT_VERSION_CHECK (6, 0, 0)
     QCoreApplication::flush();
+#endif
 }
 
 class ChannelCompare
