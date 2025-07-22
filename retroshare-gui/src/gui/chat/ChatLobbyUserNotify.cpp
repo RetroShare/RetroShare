@@ -229,7 +229,7 @@ void ChatLobbyUserNotify::iconClicked()
 	QString strName=tr("Remove All");
 	QAction *pAction = new QAction( QIcon(), strName, trayMenu);
 	ActionTag actionTag={0x0, "", true};
-	pAction->setData(qVariantFromValue(actionTag));
+	pAction->setData(QVariant::fromValue(actionTag));
 	trayMenu->addAction(pAction);
 
 	trayMenu->exec(QCursor::pos());
@@ -268,14 +268,14 @@ void ChatLobbyUserNotify::makeSubMenu(QMenu* parentMenu, QIcon icoLobby, QString
 		QAction *pAction = new QAction( icoLobby, strName, lobbyMenu);
 		pAction->setToolTip(doc.toPlainText());
 		ActionTag actionTag={itCL->first, itMsg->first, false};
-		pAction->setData(qVariantFromValue(actionTag));
+		pAction->setData(QVariant::fromValue(actionTag));
 		lobbyMenu->addAction(pAction);
 	}
 
 	QString strName=tr("Remove All");
 	QAction *pAction = new QAction( icoLobby, strName, lobbyMenu);
 	ActionTag actionTag={itCL->first, "", true};
-	pAction->setData(qVariantFromValue(actionTag));
+	pAction->setData(QVariant::fromValue(actionTag));
 	lobbyMenu->addAction(pAction);
 }
 

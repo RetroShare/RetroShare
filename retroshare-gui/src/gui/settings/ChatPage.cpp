@@ -78,7 +78,7 @@ QString ChatPage::loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_
     {
         whileBlocking(style_CB)->insertItem(n,style->styleName);
 
-        style_CB->setItemData(n, qVariantFromValue(*style),Qt::UserRole);
+        style_CB->setItemData(n, QVariant::fromValue(*style),Qt::UserRole);
 
         if (style->stylePath == stylePath) {
             activeItem = n;
