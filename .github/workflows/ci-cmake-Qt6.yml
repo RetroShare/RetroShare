@@ -1,0 +1,77 @@
+name: CMake Qt6 Build
+
+on:
+  push:
+    paths-ignore:
+    - '**/*.md'
+  pull_request:
+    paths-ignore:
+    - '**/*.md'
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+concurrency:  
+  group: ${{ github.workflow}}-${{ github.head_ref }}  
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      actions: write
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@40677d36a502eb2cf0fb808cc9dec31bf6152638 # v2.28.0
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            base-devel
+            git
+            wget
+            p7zip
+            gcc
+            perl
+            ruby
+            doxygen
+            cmake
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-miniupnpc
+            mingw-w64-x86_64-libxslt
+            mingw-w64-x86_64-xapian-core
+            mingw-w64-x86_64-sqlcipher
+            mingw-w64-x86_64-qt6-base
+            mingw-w64-x86_64-qt6-multimedia
+            mingw-w64-x86_64-ccmake
+            mingw-w64-x86_64-rapidjson
+            mingw-w64-x86_64-json-c
+            mingw-w64-x86_64-libbotan
+            mingw-w64-x86_64-asio
+
+      - name: Checkout submodules
+        run: |
+          env
+          git submodule update --init --remote libbitdht/ libretroshare/ retroshare-webui/
+          git submodule update --init supportlibs/librnp supportlibs/rapidjson
+
+      - name: Configure CMake
+        run: |
+          cd retroshare-gui
+          cmake -B ${{github.workspace}}/build -DRS_WEBUI=ON -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
