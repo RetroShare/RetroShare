@@ -145,7 +145,7 @@ public:
     {
         Q_ASSERT(index.isValid());
 
-        QStyleOptionViewItemV4 opt = option;
+        QStyleOptionViewItem opt = option;
         initStyleOption(&opt, index);
         // disable default icon
         opt.icon = QIcon();

@@ -21,7 +21,7 @@
 #include <retroshare/rstypes.h>
 #include <QModelIndex>
 #include <QPainter>
-#include <QStyleOptionProgressBarV2>
+#include <QStyleOptionProgressBar>
 #include <QProgressBar>
 #include <QApplication>
 #include <QDateTime>
@@ -44,7 +44,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 {
 	QString byteUnits[4] = {tr("B"), tr("KB"), tr("MB"), tr("GB")};
 	QStyleOptionViewItem opt = option;
-	QStyleOptionProgressBarV2 newopt;
+	QStyleOptionProgressBar newopt;
 	QRect pixmapRect;
 	QPixmap pixmap;
 	qlonglong fileSize;
