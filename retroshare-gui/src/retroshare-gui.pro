@@ -96,12 +96,11 @@ HEADERS += TorControl/TorControlWindow.h
 greaterThan(QT_MAJOR_VERSION, 4) {
 	# Qt 5
         QT     += widgets multimedia printsupport
-	linux-* {
-		QT += x11extras
-	}
-} else {
-	# Qt 4
-	CONFIG += uitools
+        lessThan(QT_MAJOR_VERSION, 6) {
+                linux-*{
+                        QT += x11extras
+                }
+        }
 }
 
 CONFIG += identities
