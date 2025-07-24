@@ -42,6 +42,7 @@
 #include "gui/common/FilesDefs.h"
 #include "util/HandleRichText.h"
 #include "util/imageutil.h"
+#include "util/RsQtVersion.h"
 #include "retroshare/rsinit.h"
 
 #define ICONNAME "groupicon.png"
@@ -107,7 +108,7 @@ void AvatarDialog::removeAvatar()
 
 void AvatarDialog::updateInterface()
 {
-	QPixmap pixmap = ui->avatarLabel->pixmap(Qt::ReturnByValue);
+	QPixmap pixmap = QLabel_pixmap(ui->avatarLabel);
 	if (!pixmap.isNull()) {
 		ui->removeButton->setEnabled(true);
 	} else {
@@ -123,7 +124,7 @@ void AvatarDialog::setAvatar(const QPixmap &avatar)
 
 void AvatarDialog::getAvatar(QPixmap &avatar)
 {
-	avatar = ui->avatarLabel->pixmap(Qt::ReturnByValue);
+	avatar = QLabel_pixmap(ui->avatarLabel);
 }
 
 void AvatarDialog::getAvatar(QByteArray &avatar)
