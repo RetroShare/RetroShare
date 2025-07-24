@@ -12,7 +12,9 @@ set ParamNoupdate=0
 set CoreCount=%NUMBER_OF_PROCESSORS%
 set RS_QMAKE_CONFIG=
 set RsToolchain=
+set ParamQtVersion=5
 set tcc=0
+set QtVersionCount=0
 
 :parameter_loop
 if "%~1" NEQ "" (
@@ -43,6 +45,12 @@ if "%~1" NEQ "" (
 			set /A tcc=tcc+1
 		) else if "%%~a"=="release" (
 			set ParamRelease=1
+		) else if "%%~a"=="qt5" (
+			set ParamQtVersion=5
+			set /A QtVersionCount+=1
+		) else if "%%~a"=="qt6" (
+			set ParamQtVersion=6
+			set /A QtVersionCount+=1
 		) else if "%%~a"=="debug" (
 			set ParamDebug=1
 		) else if "%%~a"=="autologin" (
@@ -75,6 +83,16 @@ if "%~1" NEQ "" (
 
 if %tcc% NEQ 1 (
 	echo Multiple or no toolchain specified
+	goto :usage
+)
+
+if %QtVersionCount% GTR 1 (
+	echo Multiple Qt versions specified
+	goto :usage
+)
+
+if "%ParamQtVersion%" NEQ "5" if "%ParamQtVersion%" NEQ "6" (
+	echo Wrong Qt version specified
 	goto :usage
 )
 
@@ -140,7 +158,7 @@ exit /B 0
 
 :usage
 echo.
-echo Usage: 32^|64^|other release^|debug [autologin plugins webui singlethread clang indexing friendserver noupdate] ["CONFIG+=..."]
+echo Usage: 32^|64^|other release^|debug qt5^|qt6 [autologin plugins webui singlethread clang indexing friendserver noupdate] ["CONFIG+=..."]
 echo.
 echo Mandatory parameter
 echo 32^|64              32-bit or 64-bit version (same as mingw32 or mingw64)
@@ -148,6 +166,7 @@ echo                    Or you can specify any other toolchain supported by msys
 echo                         mingw32^|mingw64^|clang32^|clang64^|ucrt64^|clangarm64
 echo                         More info: https://www.msys2.org/docs/environments
 echo release^|debug      Build release or debug version
+echo qt5^|qt6            Build with Qt 5 (default) or Qt 6
 echo.
 echo Optional parameter (need clean when changed)
 echo autologin          Build with autologin

@@ -45,6 +45,7 @@ set NSIS_PARAM=%NSIS_PARAM% /DINSTALLERADD="%RsArchiveAdd%"
 set NSIS_PARAM=%NSIS_PARAM% /DARCHITECTURE="%RsArchitecture%"
 set NSIS_PARAM=%NSIS_PARAM% /DTOOLCHAIN="%RsToolchain%"
 set NSIS_PARAM=%NSIS_PARAM% /DREVISION=%RsVersion.Extra%
+set NSIS_PARAM=%NSIS_PARAM% /DQTVERSION=%QtVersion%
 
 set QtMainVersion=%QtVersion:~0,1%
 
@@ -54,7 +55,10 @@ rem makensis %NSIS_PARAM% "%SourcePath%\build_scripts\Windows-msys2\installer\re
 rem pushd "%SourcePath%\build_scripts\Windows-msys2\installer"
 rem %EnvMSYS2Cmd% "makensis $0 retroshare-Qt%QtMainVersion%.nsi" "%NSIS_PARAM%"
 rem popd
-"%RsMinGWPath%\bin\makensis" %NSIS_PARAM% "%SourcePath%\build_scripts\Windows-msys2\installer\retroshare-Qt%QtMainVersion%.nsi"
+
+rem Currently no need for separate nsi files
+rem "%RsMinGWPath%\bin\makensis" %NSIS_PARAM% "%SourcePath%\build_scripts\Windows-msys2\installer\retroshare-Qt%QtMainVersion%.nsi"
+"%RsMinGWPath%\bin\makensis" %NSIS_PARAM% "%SourcePath%\build_scripts\Windows-msys2\installer\retroshare.nsi"
 
 exit /B %ERRORLEVEL%
 

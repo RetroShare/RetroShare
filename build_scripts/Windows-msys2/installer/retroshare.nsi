@@ -76,7 +76,7 @@ ${!defineifexist} TOR_EXISTS "${DEPLOYDIR}\tor.exe"
 # Main Install settings
 Name "${APPNAMEANDVERSION}"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "${OUTDIR_}RetroShare-${VERSION}-${Date}-${REVISION}-${TOOLCHAIN}-msys2${RSTYPE}${INSTALLERADD}-setup.exe"
+OutFile "${OUTDIR_}RetroShare-${VERSION}-${Date}-${REVISION}-Qt-${QTVERSION}-${TOOLCHAIN}-msys2${RSTYPE}${INSTALLERADD}-setup.exe"
 BrandingText "${APPNAMEANDVERSION}"
 RequestExecutionlevel highest
 # Use compression

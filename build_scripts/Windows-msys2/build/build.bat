@@ -15,9 +15,11 @@ call "%~dp0env-base.bat" %*
 if errorlevel 2 exit /B 2
 if errorlevel 1 goto error_env
 
+title Build - %SourceName%-%RsBuildConfig% Qt-%QtVersion% %RsToolchain% [Prerequisites]
+
 if not "%ParamNoupdate%"=="1" (
 	:: Install needed things
-	%EnvMSYS2Cmd% "pacman --noconfirm --needed -S make git mingw-w64-%RsMSYS2Architecture%-toolchain mingw-w64-%RsMSYS2Architecture%-qt5 mingw-w64-%RsMSYS2Architecture%-miniupnpc mingw-w64-%RsMSYS2Architecture%-sqlcipher mingw-w64-%RsMSYS2Architecture%-cmake mingw-w64-%RsMSYS2Architecture%-rapidjson"
+	%EnvMSYS2Cmd% "pacman --noconfirm --needed -S make git mingw-w64-%RsMSYS2Architecture%-toolchain mingw-w64-%RsMSYS2Architecture%-qt%ParamQtVersion% mingw-w64-%RsMSYS2Architecture%-miniupnpc mingw-w64-%RsMSYS2Architecture%-sqlcipher mingw-w64-%RsMSYS2Architecture%-cmake mingw-w64-%RsMSYS2Architecture%-rapidjson"
 	:: rnp
 	%EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-json-c mingw-w64-%RsMSYS2Architecture%-libbotan"
 
@@ -53,7 +55,7 @@ echo.
 echo === Version
 echo.
 
-title Build - %SourceName%-%RsBuildConfig% [Version]
+title Build - %SourceName%-%RsBuildConfig% Qt-%QtVersion% %RsToolchain% [Version]
 
 pushd "%SourcePath%\retroshare-gui\src\gui\images"
 :: Touch resource file
@@ -67,7 +69,7 @@ echo.
 echo === qmake
 echo.
 
-title Build - %SourceName%-%RsBuildConfig% [qmake]
+title Build - %SourceName%-%RsBuildConfig% Qt-%QtVersion% %RsToolchain% [qmake]
 
 set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=%RsBuildConfig%"
 if "%ParamAutologin%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=rs_autologin"
@@ -83,9 +85,9 @@ echo %RsToolchain% >> buildinfo.txt
 call "%ToolsPath%\msys2-path.bat" "%SourcePath%" MSYS2SourcePath
 call "%ToolsPath%\msys2-path.bat" "%EnvMSYS2Path%" MSYS2EnvMSYS2Path
 if "%ClangCompiler%"=="1" (
-	%EnvMSYS2Cmd% "qmake "%MSYS2SourcePath%/RetroShare.pro" -r -spec win32-clang-g++ %RS_QMAKE_CONFIG%"
+	%EnvMSYS2Cmd% "%QMakeCmd% "%MSYS2SourcePath%/RetroShare.pro" -r -spec win32-clang-g++ %RS_QMAKE_CONFIG%"
 ) else (
-	%EnvMSYS2Cmd% "qmake "%MSYS2SourcePath%/RetroShare.pro" -r -spec win32-g++ %RS_QMAKE_CONFIG%"
+	%EnvMSYS2Cmd% "%QMakeCmd% "%MSYS2SourcePath%/RetroShare.pro" -r -spec win32-g++ %RS_QMAKE_CONFIG%"
 )
 if errorlevel 1 goto error
 
@@ -93,7 +95,7 @@ echo.
 echo === make
 echo.
 
-title Build - %SourceName%-%RsBuildConfig% [make]
+title Build - %SourceName%-%RsBuildConfig% Qt-%QtVersion% %RsToolchain% [make]
 
 %EnvMSYS2Cmd% "make -j %CoreCount%"
 if errorlevel 1 goto error
