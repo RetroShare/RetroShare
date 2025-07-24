@@ -232,7 +232,7 @@ Section $(Section_Main) Section_Main
 
   ; Qt styles
   SetOutPath "$INSTDIR\styles"
-  File /NONFATAL "${QTDIR}\plugins\styles\qwindowsvistastyle.dll"
+  File "${QTDIR}\plugins\styles\qwindowsvistastyle.dll"
 
   ; MinGW binaries
   SetOutPath "$INSTDIR"
