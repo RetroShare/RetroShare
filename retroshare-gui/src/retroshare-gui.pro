@@ -816,6 +816,7 @@ SOURCES +=  main.cpp \
             util/misc.cpp \
             util/HandleRichText.cpp \
             util/ObjectPainter.cpp \
+            util/RsQtVersion.cpp \
             util/RsFile.cpp \
             util/RichTextEdit.cpp \
             util/ClickableLabel.cpp \
