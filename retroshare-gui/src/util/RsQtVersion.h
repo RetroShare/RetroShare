@@ -70,4 +70,8 @@ class QLabel;
 extern QPixmap QLabel_pixmap(QLabel* label);
 #endif
 
+#if QT_VERSION < QT_VERSION_CHECK (5, 8, 0)
+#define Q_FALLTHROUGH() (void)0
+#endif
+
 #endif
