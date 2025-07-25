@@ -54,7 +54,7 @@ class RSHumanReadableDelegate: public QAbstractItemDelegate
 			// This part of the code is copied from DLListDelegate.cpp
 			//
 			QPalette::ColorGroup cg = option.state & QStyle::State_Enabled ? QPalette::Normal : QPalette::Disabled;
-			QVariant value = index.data(Qt::TextColorRole);
+			QVariant value = index.data(Qt::ForegroundRole);
 
 			if(value.isValid() && qvariant_cast<QColor>(value).isValid()) 
 				option.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
@@ -75,7 +75,7 @@ class RSHumanReadableDelegate: public QAbstractItemDelegate
 			} 
 			else 
 			{
-				value = index.data(Qt::BackgroundColorRole);
+				value = index.data(Qt::BackgroundRole);
 
 				if(value.isValid() && qvariant_cast<QColor>(value).isValid()) 
 					painter->fillRect(option.rect, qvariant_cast<QColor>(value));

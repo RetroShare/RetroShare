@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/qthreadutils.h                                                         *
+ * util/RsQtVersion.h                                                         *
  *                                                                             *
  * Copyright (C) 2013 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -47,6 +47,31 @@
 #define QtSkipEmptyParts Qt::SkipEmptyParts
 #else
 #define QtSkipEmptyParts QString::SkipEmptyParts
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#define QSortFilterProxyModel_setFilterRegularExpression(proxyModel, pattern) proxyModel->setFilterRegularExpression(pattern);
+#else
+#define QSortFilterProxyModel_setFilterRegularExpression(proxyModel, pattern) proxyModel->setFilterRegExp(pattern);
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#define QFontMetrics_horizontalAdvance(fontMetrics, text) fontMetrics.horizontalAdvance(text)
+#else
+#define QFontMetrics_horizontalAdvance(fontMetrics, text) fontMetrics.width(text)
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK (6, 6, 0)
+#define QLabel_pixmap(label) label->pixmap()
+#elif QT_VERSION >= QT_VERSION_CHECK (5, 15, 0)
+#define QLabel_pixmap(label) label->pixmap(Qt::ReturnByValue)
+#else
+class QLabel;
+extern QPixmap QLabel_pixmap(QLabel* label);
+#endif
+
+#if QT_VERSION < QT_VERSION_CHECK (5, 8, 0)
+#define Q_FALLTHROUGH() (void)0
 #endif
 
 #endif

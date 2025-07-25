@@ -25,6 +25,8 @@ CONFIG += console
 TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
 
+greaterThan(QT_MAJOR_VERSION,5): QT += core5compat
+
 DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR}
 INCLUDEPATH *= $${PWD}
 
@@ -816,6 +818,7 @@ SOURCES +=  main.cpp \
             util/misc.cpp \
             util/HandleRichText.cpp \
             util/ObjectPainter.cpp \
+            util/RsQtVersion.cpp \
             util/RsFile.cpp \
             util/RichTextEdit.cpp \
             util/ClickableLabel.cpp \

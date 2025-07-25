@@ -194,7 +194,7 @@ RsCollection::RsCollection(const QString& fileName, RsCollectionErrorCode& error
     }
 
     QDomDocument xml_doc;
-    bool ok = xml_doc.setContent(&file) ;
+    bool ok = (bool) xml_doc.setContent(&file);
 
     if(!ok)
     {
@@ -311,7 +311,11 @@ bool RsCollection::save(const QString& fileName) const
     xml_doc.appendChild(root);
 
     QTextStream stream(&file) ;
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    stream.setEncoding(QStringConverter::Utf8);
+#else
     stream.setCodec("UTF-8") ;
+#endif
 
     stream << xml_doc.toString() ;
     file.close();

@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QDateTime>
+#include <QLocale>
 
 #include "DateTime.h"
 #include "rshare.h"
@@ -66,7 +67,7 @@ QString DateTime::formatDate(time_t dateValue)
 
 QString DateTime::formatDate(const QDate &dateValue)
 {
-	return dateValue.toString(Qt::SystemLocaleShortDate);
+	return QLocale::system().toString(dateValue, QLocale::ShortFormat);
 }
 
 QString DateTime::formatTime(time_t timeValue)
@@ -76,7 +77,7 @@ QString DateTime::formatTime(time_t timeValue)
 
 QString DateTime::formatTime(const QTime &timeValue)
 {
-	return timeValue.toString(Qt::SystemLocaleShortDate);
+	return QLocale::system().toString(timeValue, QLocale::ShortFormat);
 }
 
 QDateTime DateTime::DateTimeFromTime_t(time_t timeValue)
@@ -85,5 +86,14 @@ QDateTime DateTime::DateTimeFromTime_t(time_t timeValue)
 	return QDateTime::fromSecsSinceEpoch(timeValue);
 #else
 	return QDateTime::fromTime_t(timeValue);
+#endif
+}
+
+time_t DateTime::DateTimeToTime_t(const QDateTime& dateTime)
+{
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+	return dateTime.toSecsSinceEpoch();
+#else
+	return dateTime.toTime_t();
 #endif
 }

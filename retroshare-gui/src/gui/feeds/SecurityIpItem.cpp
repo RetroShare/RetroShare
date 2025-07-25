@@ -110,7 +110,7 @@ void SecurityIpItem::updateItemStatic()
 	}
 
 	QDateTime currentTime = QDateTime::currentDateTime();
-	ui->timeLabel->setText(DateTime::formatLongDateTime(currentTime.toTime_t()));
+	ui->timeLabel->setText(DateTime::formatLongDateTime(currentTime));
 }
 
 void SecurityIpItem::updateItem()

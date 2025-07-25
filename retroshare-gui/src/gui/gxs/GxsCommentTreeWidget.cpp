@@ -28,6 +28,7 @@
 #include "gui/gxs/GxsCreateCommentDialog.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "util/qtthreadsutils.h"
+#include "util/DateTime.h"
 
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
@@ -798,8 +799,7 @@ void GxsCommentTreeWidget::insertComments(const std::vector<RsGxsComment>& comme
 		QString text;
 
 		{
-			QDateTime qtime ;
-			qtime.setTime_t(comment.mMeta.mPublishTs) ;
+			QDateTime qtime = DateTime::DateTimeFromTime_t(comment.mMeta.mPublishTs) ;
 
 			text = qtime.toString("yyyy-MM-dd hh:mm:ss") ;
 			item->setText(PCITEM_COLUMN_DATE, text) ;
