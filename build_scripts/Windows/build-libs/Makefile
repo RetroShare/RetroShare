@@ -63,8 +63,7 @@ $(BUILD_PATH)/zlib-$(ZLIB_VERSION): $(DOWNLOAD_PATH)/zlib-$(ZLIB_VERSION).tar.gz
 	rm -r -f $(BUILD_PATH)/zlib-*
 	tar xvf $(DOWNLOAD_PATH)/zlib-$(ZLIB_VERSION).tar.gz
 	# build
-	cd zlib-$(ZLIB_VERSION) && make -f win32/Makefile.gcc libz.a
-	cd zlib-$(ZLIB_VERSION) && make
+	cd zlib-$(ZLIB_VERSION) && make -j -f win32/Makefile.gcc libz.a
 	# copy files
 	mkdir -p $(BUILD_PATH)/zlib-$(ZLIB_VERSION).tmp/include
 	cp zlib-$(ZLIB_VERSION)/zlib.h $(BUILD_PATH)/zlib-$(ZLIB_VERSION).tmp/include/
@@ -86,7 +85,7 @@ $(BUILD_PATH)/bzip2-$(BZIP2_VERSION): $(DOWNLOAD_PATH)/bzip2-$(BZIP2_VERSION).ta
 	tar xvf $(DOWNLOAD_PATH)/bzip2-$(BZIP2_VERSION).tar.gz
 	# build
 	#cd bzip2-$(BZIP2_VERSION) && make install PREFIX="`pwd`/../$(BUILD_PATH)"
-	cd bzip2-$(BZIP2_VERSION) && make
+	cd bzip2-$(BZIP2_VERSION) && make -j
 	# copy files
 	mkdir -p $(BUILD_PATH)/bzip2-$(BZIP2_VERSION).tmp/include
 	cp bzip2-$(BZIP2_VERSION)/bzlib.h $(BUILD_PATH)/bzip2-$(BZIP2_VERSION).tmp/include/
@@ -106,7 +105,7 @@ $(BUILD_PATH)/miniupnpc-$(MINIUPNPC_VERSION): $(DOWNLOAD_PATH)/miniupnpc-$(MINIU
 	rm -r -f $(BUILD_PATH)/miniupnpc-*
 	tar xvf $(DOWNLOAD_PATH)/miniupnpc-$(MINIUPNPC_VERSION).tar.gz
 	# build
-	cd miniupnpc-$(MINIUPNPC_VERSION) && export CC=gcc && export PATH=.:$$PATH && make -f Makefile.mingw libminiupnpc.a miniupnpc.dll
+	cd miniupnpc-$(MINIUPNPC_VERSION) && export CC=gcc && export PATH=.:$$PATH && make -j -f Makefile.mingw libminiupnpc.a miniupnpc.dll
 	# copy files
 	mkdir -p $(BUILD_PATH)/miniupnpc-$(MINIUPNPC_VERSION).tmp/include/miniupnpc
 	cp miniupnpc-$(MINIUPNPC_VERSION)/include/*.h $(BUILD_PATH)/miniupnpc-$(MINIUPNPC_VERSION).tmp/include/miniupnpc/
@@ -131,7 +130,7 @@ $(BUILD_PATH)/openssl-$(OPENSSL_VERSION): $(DOWNLOAD_PATH)/openssl-$(OPENSSL_VER
 	#cd openssl-$(OPENSSL_VERSION) && ./config --prefix="`pwd`/../$(BUILD_PATH)"
 	#cd openssl-$(OPENSSL_VERSION) && make install
 	cd openssl-$(OPENSSL_VERSION) && ./config shared
-	cd openssl-$(OPENSSL_VERSION) && make
+	cd openssl-$(OPENSSL_VERSION) && make -j
 	# copy files
 	mkdir -p $(BUILD_PATH)/openssl-$(OPENSSL_VERSION).tmp/include/openssl
 	cp openssl-$(OPENSSL_VERSION)/include/openssl/*.h $(BUILD_PATH)/openssl-$(OPENSSL_VERSION).tmp/include/openssl/
@@ -160,7 +159,7 @@ $(BUILD_PATH)/speex-$(SPEEX_VERSION): $(DOWNLOAD_PATH)/speex-$(SPEEX_VERSION).ta
 	# build
 	cd speex-$(SPEEX_VERSION) && ./configure
 	#cd speex-$(SPEEX_VERSION) && make install exec_prefix="`pwd`/../$(BUILD_PATH)"
-	cd speex-$(SPEEX_VERSION) && make
+	cd speex-$(SPEEX_VERSION) && make -j
 	# copy files
 	mkdir -p $(BUILD_PATH)/speex-$(SPEEX_VERSION).tmp/include/speex
 	cp speex-$(SPEEX_VERSION)/include/speex/*.h $(BUILD_PATH)/speex-$(SPEEX_VERSION).tmp/include/speex/
@@ -181,7 +180,7 @@ $(BUILD_PATH)/speexdsp-$(SPEEXDSP_VERSION): $(DOWNLOAD_PATH)/speexdsp-$(SPEEXDSP
 	tar xvf $(DOWNLOAD_PATH)/speexdsp-$(SPEEXDSP_VERSION).tar.gz
 	# build
 	cd speexdsp-$(SPEEXDSP_VERSION) && ./configure
-	cd speexdsp-$(SPEEXDSP_VERSION) && make
+	cd speexdsp-$(SPEEXDSP_VERSION) && make -j
 	# copy files
 	mkdir -p $(BUILD_PATH)/speexdsp-$(SPEEXDSP_VERSION).tmp/include/speex
 	cp speexdsp-$(SPEEXDSP_VERSION)/include/speex/*.h $(BUILD_PATH)/speexdsp-$(SPEEXDSP_VERSION).tmp/include/speex/
@@ -215,11 +214,11 @@ $(BUILD_PATH)/libxml2-$(LIBXML2_VERSION) $(BUILD_PATH)/libxslt-$(LIBXSLT_VERSION
 	# libxml2: build
 	cd libxml2-$(LIBXML2_VERSION) && ./configure --without-iconv -enable-shared=no
 	#cd libxml2-$(LIBXML2_VERSION) && make install exec_prefix="`pwd`/../$(BUILD_PATH)"
-	cd libxml2-$(LIBXML2_VERSION) && make libxml2.la
+	cd libxml2-$(LIBXML2_VERSION) && make -j libxml2.la
 	# libxslt: build
 	cd libxslt-$(LIBXSLT_VERSION) && ./configure --with-libxml-src=../libxml2-$(LIBXML2_VERSION) -enable-shared=no CFLAGS=-DLIBXML_STATIC
-	cd libxslt-$(LIBXSLT_VERSION)/libxslt && make
-	cd libxslt-$(LIBXSLT_VERSION)/libexslt && make
+	cd libxslt-$(LIBXSLT_VERSION)/libxslt && make -j
+	cd libxslt-$(LIBXSLT_VERSION)/libexslt && make -j
 	# libxml2: copy files
 	mkdir -p $(BUILD_PATH)/libxml2-$(LIBXML2_VERSION).tmp/include/libxml
 	cp libxml2-$(LIBXML2_VERSION)/include/libxml/*.h $(BUILD_PATH)/libxml2-$(LIBXML2_VERSION).tmp/include/libxml/
@@ -251,7 +250,7 @@ $(BUILD_PATH)/curl-$(CURL_VERSION): $(DOWNLOAD_PATH)/curl-$(CURL_VERSION).tar.gz
 	# build
 	cd curl-$(CURL_VERSION) && ./configure --disable-shared --with-ssl="`pwd`/../$(BUILD_PATH)/openssl-$(OPENSSL_VERSION)"
 	#cd curl-$(CURL_VERSION) && make install exec_prefix="`pwd`/../$(BUILD_PATH)"
-	cd curl-$(CURL_VERSION)/lib && make
+	cd curl-$(CURL_VERSION)/lib && make -j
 	# copy files
 	mkdir -p $(BUILD_PATH)/curl-$(CURL_VERSION).tmp/include/curl
 	cp curl-$(CURL_VERSION)/include/curl/*.h $(BUILD_PATH)/curl-$(CURL_VERSION).tmp/include/curl/
@@ -276,14 +275,14 @@ $(BUILD_PATH)/sqlcipher-$(SQLCIPHER_VERSION): $(DOWNLOAD_PATH)/tcl$(TCL_VERSION)
 	tar xvf $(DOWNLOAD_PATH)/tcl$(TCL_VERSION)-src.tar.gz
 	mkdir -p tcl$(TCL_VERSION)/build
 	cd tcl$(TCL_VERSION)/build && ../win/configure
-	cd tcl$(TCL_VERSION)/build && make
+	cd tcl$(TCL_VERSION)/build && make -j
 	#sqlcipher
 	tar xvf $(DOWNLOAD_PATH)/sqlcipher-$(SQLCIPHER_VERSION).tar.gz
 	cd sqlcipher-$(SQLCIPHER_VERSION) && ln -s ../tcl$(TCL_VERSION)/build/tclsh86.exe tclsh
 	mkdir -p tcl$(TCL_VERSION)/lib
 	ln -s `pwd`/tcl$(TCL_VERSION)/library `pwd`/tcl$(TCL_VERSION)/lib/tcl8.6
 	# build
-	cd sqlcipher-$(SQLCIPHER_VERSION) && PATH=.:$$PATH:`pwd`/../tcl$(TCL_VERSION)/build && export LIBS="-L`pwd`/../$(BUILD_PATH)/openssl-$(OPENSSL_VERSION)/lib -lgdi32 $$LIBS" && ./configure --disable-shared --enable-static --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC -I`pwd`/../$(BUILD_PATH)/openssl-$(OPENSSL_VERSION)/include -I`pwd`/../tcl$(TCL_VERSION)/generic" LDFLAGS="-L`pwd`/../$(BUILD_PATH)/openssl-$(OPENSSL_VERSION)/lib -lcrypto -lgdi32" --with-tcl="`pwd`/../tcl$(TCL_VERSION)/build" && make install prefix="`pwd`/install"
+	cd sqlcipher-$(SQLCIPHER_VERSION) && PATH=.:$$PATH:`pwd`/../tcl$(TCL_VERSION)/build && export LIBS="-L`pwd`/../$(BUILD_PATH)/openssl-$(OPENSSL_VERSION)/lib -lgdi32 $$LIBS" && ./configure --disable-shared --enable-static --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC -I`pwd`/../$(BUILD_PATH)/openssl-$(OPENSSL_VERSION)/include -I`pwd`/../tcl$(TCL_VERSION)/generic" LDFLAGS="-L`pwd`/../$(BUILD_PATH)/openssl-$(OPENSSL_VERSION)/lib -lcrypto -lgdi32" --with-tcl="`pwd`/../tcl$(TCL_VERSION)/build" && make -j install prefix="`pwd`/install"
 	# copy files
 	mkdir -p $(BUILD_PATH)/sqlcipher-$(SQLCIPHER_VERSION).tmp/include
 	cp -r sqlcipher-$(SQLCIPHER_VERSION)/install/include/* $(BUILD_PATH)/sqlcipher-$(SQLCIPHER_VERSION).tmp/include/
@@ -307,7 +306,7 @@ $(BUILD_PATH)/ffmpeg-$(FFMPEG_VERSION): $(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION
 	tar xvf $(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.xz
 	# build
 	cd ffmpeg-$(FFMPEG_VERSION) && ./configure --disable-shared --enable-static --disable-programs --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-yasm --disable-everything --enable-encoder=mpeg4 --enable-decoder=mpeg4 --prefix="`pwd`/../$(BUILD_PATH)/ffmpeg-$(FFMPEG_VERSION).tmp"
-	cd ffmpeg-$(FFMPEG_VERSION) && make install
+	cd ffmpeg-$(FFMPEG_VERSION) && make -j install
 	# cleanup
 	rm -r -f ffmpeg-$(FFMPEG_VERSION)
 	mv $(BUILD_PATH)/ffmpeg-$(FFMPEG_VERSION).tmp $(BUILD_PATH)/ffmpeg-$(FFMPEG_VERSION)
@@ -345,7 +344,7 @@ $(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION): $(DOWNLOAD_PATH)/xapian-core-$(XAPI
 	#cd xapian-core-$(XAPIAN_VERSION) && ./configure --disable-shared --enable-static --prefix="`pwd`/../$(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION).tmp"
 	#cd xapian-core-$(XAPIAN_VERSION) && make install
 	cd xapian-core-$(XAPIAN_VERSION) && ./configure --disable-shared --enable-static
-	cd xapian-core-$(XAPIAN_VERSION) && make
+	cd xapian-core-$(XAPIAN_VERSION) && make -j
 	# copy files
 	mkdir -p $(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION).tmp/include
 	cp -r xapian-core-$(XAPIAN_VERSION)/include/* $(BUILD_PATH)/xapian-core-$(XAPIAN_VERSION).tmp/include/
@@ -365,7 +364,7 @@ $(BUILD_PATH)/json-c-$(JSON_C_VERSION):
 	# build
 	mkdir -p json-c-$(JSON_C_VERSION)/build
 	cd json-c-$(JSON_C_VERSION)/build && cmake .. -G"MSYS Makefiles" -Wno-dev -DCMAKE_BUILD_TYPE="release" -DBUILD_SHARED_LIBS=off -DBUILD_STATIC_LIBS=on -DBUILD_TESTING=off -DCMAKE_CXX_FLAGS="-D__MINGW_USE_VC2005_COMPAT" -DCMAKE_INSTALL_PREFIX="`pwd`/install" -DCMAKE_INSTALL_PREFIX="`pwd`/../../$(BUILD_PATH)/json-c-$(JSON_C_VERSION).tmp"
-	cd json-c-$(JSON_C_VERSION)/build && make install
+	cd json-c-$(JSON_C_VERSION)/build && make -j install
 	# cleanup
 	rm -r -f json-c-$(JSON_C_VERSION)
 	mv $(BUILD_PATH)/json-c-$(JSON_C_VERSION).tmp $(BUILD_PATH)/json-c-$(JSON_C_VERSION)
@@ -380,7 +379,7 @@ $(BUILD_PATH)/botan-$(BOTAN_VERSION):
 	# build
 	if [ $(MSYSTEM) = "MINGW32" ] ; then cd botan-$(BOTAN_VERSION) && ./configure.py --os=mingw --cpu=x86_32 --disable-shared-library --enable-static-library --extra-cxxflags="-D__MINGW_USE_VC2005_COMPAT" --prefix="`pwd`/../$(BUILD_PATH)/botan-$(BOTAN_VERSION).tmp" ; fi
 	if [ $(MSYSTEM) = "MINGW64" ] ; then cd botan-$(BOTAN_VERSION) && ./configure.py --os=mingw --cpu=x86_64 --disable-shared-library --enable-static-library --prefix="`pwd`/../$(BUILD_PATH)/botan-$(BOTAN_VERSION).tmp" ; fi
-	cd botan-$(BOTAN_VERSION) && make install
+	cd botan-$(BOTAN_VERSION) && make -j install
 	# cleanup
 	rm -r -f botan-$(BOTAN_VERSION)
 	mv $(BUILD_PATH)/botan-$(BOTAN_VERSION).tmp $(BUILD_PATH)/botan-$(BOTAN_VERSION)
