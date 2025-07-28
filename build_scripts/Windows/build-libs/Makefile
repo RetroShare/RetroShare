@@ -11,7 +11,6 @@ LIBXSLT_VERSION=$(LIBXSLT_MAIN_VERSION).43
 CURL_VERSION=8.9.1
 TCL_VERSION=8.6.10
 SQLCIPHER_VERSION=4.5.0
-LIBMICROHTTPD_VERSION=0.9.75
 FFMPEG_VERSION=4.4.6
 RAPIDJSON_VERSION=1.1.0
 XAPIAN_VERSION=1.4.29
@@ -26,7 +25,7 @@ DOWNLOAD_PATH?=download
 BUILD_PATH=build
 LIBS_PATH?=libs
 
-all: dirs zlib bzip2 miniupnpc openssl speex speexdsp libxml curl sqlcipher libmicrohttpd ffmpeg rapidjson xapian jsonc botan asio copylibs
+all: dirs zlib bzip2 miniupnpc openssl speex speexdsp libxml curl sqlcipher ffmpeg rapidjson xapian jsonc botan asio copylibs
 #rnp
 
 download: \
@@ -41,7 +40,6 @@ download: \
 	$(DOWNLOAD_PATH)/curl-$(CURL_VERSION).tar.gz \
 	$(DOWNLOAD_PATH)/tcl$(TCL_VERSION)-src.tar.gz \
 	$(DOWNLOAD_PATH)/sqlcipher-$(SQLCIPHER_VERSION).tar.gz \
-	$(DOWNLOAD_PATH)/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz \
 	$(DOWNLOAD_PATH)/ffmpeg-$(FFMPEG_VERSION).tar.xz \
 	$(DOWNLOAD_PATH)/rapidjson-$(RAPIDJSON_VERSION).tar.gz \
 	$(DOWNLOAD_PATH)/xapian-core-$(XAPIAN_VERSION).tar.xz
@@ -297,22 +295,6 @@ $(BUILD_PATH)/sqlcipher-$(SQLCIPHER_VERSION): $(DOWNLOAD_PATH)/tcl$(TCL_VERSION)
 	rm -r -f sqlcipher-$(SQLCIPHER_VERSION)
 	rm -r -f tcl$(TCL_VERSION)
 	mv $(BUILD_PATH)/sqlcipher-$(SQLCIPHER_VERSION).tmp $(BUILD_PATH)/sqlcipher-$(SQLCIPHER_VERSION)
-
-libmicrohttpd: $(BUILD_PATH)/libmicrohttpd-$(LIBMICROHTTPD_VERSION)
-
-$(DOWNLOAD_PATH)/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz:
-	wget --no-check-certificate http://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz -O $(DOWNLOAD_PATH)/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz
-
-$(BUILD_PATH)/libmicrohttpd-$(LIBMICROHTTPD_VERSION): $(DOWNLOAD_PATH)/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz
-	# prepare
-	rm -r -f $(BUILD_PATH)/libmicrohttpd-*
-	tar xvf $(DOWNLOAD_PATH)/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz
-	# build
-	cd libmicrohttpd-$(LIBMICROHTTPD_VERSION) && ./configure --disable-shared --enable-static --prefix="`pwd`/../$(BUILD_PATH)/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tmp"
-	cd libmicrohttpd-$(LIBMICROHTTPD_VERSION) && make install
-	# cleanup
-	rm -r -f libmicrohttpd-$(LIBMICROHTTPD_VERSION)
-	mv $(BUILD_PATH)/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tmp $(BUILD_PATH)/libmicrohttpd-$(LIBMICROHTTPD_VERSION)
 
 ffmpeg: $(BUILD_PATH)/ffmpeg-$(FFMPEG_VERSION)
 
