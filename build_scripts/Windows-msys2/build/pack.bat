@@ -55,10 +55,11 @@ set RsVersion=%RsVersion.Major%.%RsVersion.Minor%.%RsVersion.Mini%
 :: Check WMIC is available
 wmic.exe alias /? >nul 2>&1 || echo WMIC is not available.&& goto error
 
-:: Use WMIC to retrieve date in format YYYYMMDD
-set RsDate=
-for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list') do set RsDate=%%I
-set RsDate=%RsDate:~0,4%%RsDate:~4,2%%RsDate:~6,2%
+:: Get date
+call "%ToolsPath%\get-rs-date.bat" "%SourcePath%" RsDate
+if errorlevel 1 %cecho% error "Could not get date."& goto error
+
+if "%RsDate%"=="" %cecho% error "Could not get date."& goto error
 
 set QtMainVersion=%QtVersion:~0,1%
 set QtSharePath=%RsMinGWPath%\share\qt%QtMainVersion%\
