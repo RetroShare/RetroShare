@@ -1,0 +1,67 @@
+name: macOS Build
+
+on:
+  push:
+    paths-ignore:
+    - '**/*.md'
+  pull_request:
+    paths-ignore:
+    - '**/*.md'
+
+concurrency:  
+  group: ${{ github.workflow}}-${{ github.head_ref }}  
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    permissions:
+      actions: write
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Setup XCode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 16.0
+
+      - name: Show current version of Xcode
+        run: xcodebuild -version
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+
+      - name: Install Packages
+        run: brew install openssl
+          miniupnpc
+          rapidjson
+          sqlcipher
+          cmake
+          bzip2
+          zlib
+          botan@2
+          libxslt
+          libxml2
+          qt
+
+      - name: Checkout submodules
+        run: |
+          env
+          git submodule update --init --remote libbitdht/ libretroshare/ retroshare-webui/
+          git submodule update --init supportlibs/librnp supportlibs/rapidjson supportlibs/restbed
+
+      - name: CI-Build
+        run: |
+          qmake6 . -r "CONFIG+=release" "CONFIG+=rs_jsonapi" "CONFIG+=rs_webui" "CONFIG+=rs_autologin" "CONFIG+=no_rs_sam3" "CONFIG+=no_rs_sam3_libsam3"
+          make
