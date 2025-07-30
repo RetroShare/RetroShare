@@ -27,8 +27,8 @@ jobs:
     steps:
       - name: Setup XCode
         uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: latest
+        with:
+          xcode-version: latest
 
       - name: Checkout repository
         uses: actions/checkout@v4
