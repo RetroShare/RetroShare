@@ -34,17 +34,17 @@ jobs:
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@main
 
-      - name: Cache Homebrew Bundler RubyGems
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.set-up-homebrew.outputs.gems-path }}
-          key: ${{ runner.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
-          restore-keys: ${{ runner.os }}-rubygems-
-
-      - name: Install Homebrew Bundler RubyGems
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: brew install-bundler-gems
+      - name: Install Libraries
+        run: brew install openssl
+          miniupnpc
+          rapidjson
+          sqlcipher
+          cmake
+          bzip2
+          zlib
+          botan@2
+          libxslt
+          libxml2
 
       - name: Checkout submodules
         run: |
