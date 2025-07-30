@@ -18,6 +18,10 @@ permissions:
 jobs:
   build:
     runs-on: macos-15
+    steps:
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest
     permissions:
       actions: write
     defaults:
@@ -58,5 +62,5 @@ jobs:
 
       - name: CI-Build
         run: |
-          qmake6 . -r "QMAKE_MAC_SDK = macosx16.0" "CONFIG+=release" "CONFIG+=rs_jsonapi" "CONFIG+=rs_webui" "CONFIG+=rs_autologin" "CONFIG+=no_rs_sam3" "CONFIG+=no_rs_sam3_libsam3"
+          qmake6 . -r "CONFIG+=release" "CONFIG+=rs_jsonapi" "CONFIG+=rs_webui" "CONFIG+=rs_autologin" "CONFIG+=no_rs_sam3" "CONFIG+=no_rs_sam3_libsam3"
           make
