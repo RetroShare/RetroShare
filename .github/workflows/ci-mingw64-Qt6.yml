@@ -63,9 +63,9 @@ jobs:
         run: |
           env
           git submodule update --init --remote libbitdht/ libretroshare/ retroshare-webui/
-          git submodule update --init supportlibs/librnp supportlibs/rapidjson
+          git submodule update --init supportlibs/librnp supportlibs/rapidjson supportlibs/restbed
 
       - name: Build
         run: |
-          qmake6 ../RetroShare -spec win32-g++ "CONFIG+=no_rs_sam3" "CONFIG+=no_rs_sam3_libsam3"
+          qmake6 . -r -spec win32-g++ "CONFIG+=release" "CONFIG+=rs_jsonapi" "CONFIG+=rs_webui" "CONFIG+=rs_autologin" "CONFIG+=no_rs_sam3" "CONFIG+=no_rs_sam3_libsam3"
           mingw32-make -j3
