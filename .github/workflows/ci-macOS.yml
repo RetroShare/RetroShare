@@ -30,6 +30,9 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Show current version of Xcode
+        run: xcodebuild -version
+
       - name: Setup Homebrew
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@main
