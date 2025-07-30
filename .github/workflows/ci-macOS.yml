@@ -28,15 +28,15 @@ jobs:
       - name: Setup XCode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest
+          xcode-version: 16.0
+
+      - name: Show current version of Xcode
+        run: xcodebuild -version
 
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           persist-credentials: false
-
-      - name: Show current version of Xcode
-        run: xcodebuild -version
 
       - name: Setup Homebrew
         id: set-up-homebrew
