@@ -871,7 +871,7 @@ macx-* {
 	INCLUDEPATH += "/usr/local/opt/libxslt/include"
 	QMAKE_LIBDIR += "/usr/local/opt/libxslt/lib"
 	INCLUDEPATH+="/opt/homebrew/opt/openssl@3/include"
-	NCLUDEPATH+="/opt/homebrew/opt/rapidjson/include"
+	INCLUDEPATH+="/opt/homebrew/opt/rapidjson/include"
 }
 
 # If not yet defined attempt UPnP library autodetection should works at least
