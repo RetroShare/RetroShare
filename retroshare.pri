@@ -863,7 +863,8 @@ macx-* {
 	INCLUDEPATH += "/usr/local/include"
 	RS_UPNP_LIB = miniupnpc
 	#QT += macextras
-	INCLUDEPATH += "/usr/local/opt/openssl/include"
+	#INCLUDEPATH += "/usr/local/opt/openssl/include"
+	INCLUDEPATH +="/opt/homebrew/Cellar/openssl@3/3.5.1/include"
 	QMAKE_LIBDIR += "/usr/local/opt/openssl/lib"
 	QMAKE_LIBDIR += "/usr/local/opt/sqlcipher/lib"
 	QMAKE_LIBDIR += "/usr/local/opt/miniupnpc/lib"
