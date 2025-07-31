@@ -63,7 +63,6 @@ jobs:
           env
           git submodule update --init --remote libbitdht/ libretroshare/ retroshare-webui/
           git submodule update --init supportlibs/librnp openpgpsdk/
-          git submodule update libretroshare
 
       - name: CI-Build
         run: |
