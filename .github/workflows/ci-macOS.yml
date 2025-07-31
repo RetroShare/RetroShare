@@ -42,6 +42,9 @@ jobs:
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@main
 
+      - name: OpenSSL info
+        run: pkg-config --cflags libcrypto
+
       - name: Install Packages
         run: brew install openssl
           miniupnpc
