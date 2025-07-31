@@ -42,7 +42,7 @@ jobs:
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@main
 
-      - name: OpenSSL info
+      - name: Show OpenSSL version
         run: pkg-config --cflags libcrypto
 
       - name: Install Packages
@@ -68,5 +68,5 @@ jobs:
       - name: CI-Build
         run: |
           qmake6 . -r "CONFIG+=release" "CONFIG+=rs_autologin" "CONFIG+=no_rs_sam3" "CONFIG+=no_rs_sam3_libsam3" "CONFIG += rs_no_rnplib"
-          INCLUDEPATH+="/opt/homebrew/Cellar/openssl/include"
+          INCLUDEPATH+="/opt/homebrew/Cellar/openssl@3/3.5.1/include"
           make
