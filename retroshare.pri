@@ -852,7 +852,6 @@ macx-* {
 		message(***retroshare.pri: Set Target and SDK to MacOS 15.5 )
 		QMAKE_MACOSX_DEPLOYMENT_TARGET=15.5
 		QMAKE_MAC_SDK = macosx15.5
-		INCLUDEPATH+="/opt/homebrew/opt/openssl@3/include"
 		QMAKE_CXXFLAGS += -Wno-nullability-completeness
 		QMAKE_CFLAGS += -Wno-nullability-completeness
 	}
@@ -871,6 +870,8 @@ macx-* {
 	INCLUDEPATH += "/usr/local/opt/libxml2/include/libxml2"
 	INCLUDEPATH += "/usr/local/opt/libxslt/include"
 	QMAKE_LIBDIR += "/usr/local/opt/libxslt/lib"
+	INCLUDEPATH+="/opt/homebrew/opt/openssl@3/include"
+	NCLUDEPATH+="/opt/homebrew/opt/rapidjson/include"
 }
 
 # If not yet defined attempt UPnP library autodetection should works at least
