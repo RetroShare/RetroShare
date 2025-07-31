@@ -852,6 +852,7 @@ macx-* {
 		message(***retroshare.pri: Set Target and SDK to MacOS 15.5 )
 		QMAKE_MACOSX_DEPLOYMENT_TARGET=15.5
 		QMAKE_MAC_SDK = macosx15.5
+		INCLUDEPATH+="/opt/homebrew/opt/openssl@3/include"
 		QMAKE_CXXFLAGS += -Wno-nullability-completeness
 		QMAKE_CFLAGS += -Wno-nullability-completeness
 	}
@@ -864,7 +865,6 @@ macx-* {
 	RS_UPNP_LIB = miniupnpc
 	#QT += macextras
 	INCLUDEPATH += "/usr/local/opt/openssl/include"
-	#INCLUDEPATH +="/opt/homebrew/Cellar/openssl@3/3.5.1/include"
 	QMAKE_LIBDIR += "/usr/local/opt/openssl/lib"
 	QMAKE_LIBDIR += "/usr/local/opt/sqlcipher/lib"
 	QMAKE_LIBDIR += "/usr/local/opt/miniupnpc/lib"
