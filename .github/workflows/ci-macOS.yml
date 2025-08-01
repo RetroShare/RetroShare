@@ -28,7 +28,7 @@ jobs:
       - name: Setup XCode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: 16.0
+          xcode-version: 16.4
 
       - name: Show current version of Xcode
         run: xcodebuild -version
@@ -67,4 +67,5 @@ jobs:
       - name: CI-Build
         run: |
           qmake6 . -r "CONFIG+=release" "CONFIG+=rs_autologin" "CONFIG+=no_rs_sam3" "CONFIG+=no_rs_sam3_libsam3" "CONFIG += rs_no_rnplib"
+          CONFIG+=rs_macos15.5
           make
