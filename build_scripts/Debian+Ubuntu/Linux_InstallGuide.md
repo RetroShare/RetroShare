@@ -113,10 +113,27 @@ You need to place sqlcipher so that the hierarchy is:
 	cd ..
 ``` 
 
+### Build options
 
-### Compile and run tests  
-       qmake CONFIG+=tests  
-       make  
-       tests/unittests/unittests  
+* Mandatory
+  * release or debug:         normally you would like to use the release option
+* Extra features (optional)
+  * rs_autologin:             enable autologin
+  * retroshare_plugins:       build plugins
+  * rs_webui:                 enable remoting features
+  * rs_jsonapi:               enable json api interface
+  * gxsthewire                enable The wire service
+  * wikipoos                  enable Wiki service
+  * rs_deep_channels_index    build with deep channel indexing support
+  * rs_deep_files_index       build with deep file indexing support
+  * "CONFIG+=..."             enable other extra compile time features, you can find the almost complete list in file *&lt;sourcefolder&gt;\retroshare.pri*
+
+Example:
+
+```batch
+qmake CONFIG-=debug CONFIG+=release CONFIG+=rs_use_native_dialog CONFIG+=rs_gui_cmark
+qmake CONFIG+=rs_jsonapi CONFIG+=rs_webui CONFIG+=rs_autologin
+qmake CONFIG+=rs_deep_channels_index CONFIG += gxsthewire CONFIG += wikipoos
+```
 
 
