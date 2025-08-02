@@ -435,7 +435,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		else
 		{
 			item->setText(GTW_COLUMN_LAST_POST, itemInfo.lastpost.toString(Qt::ISODate).replace("T"," "));
-			item->setData(GTW_COLUMN_LAST_POST, ROLE_SORT, itemInfo.lastpost.toTime_t());
+			item->setData(GTW_COLUMN_LAST_POST, ROLE_SORT, (qint64) DateTime::DateTimeToTime_t(itemInfo.lastpost));
 		}
 
 

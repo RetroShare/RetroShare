@@ -35,6 +35,7 @@
 #include "util/HandleRichText.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/MainWindow.h"
+#include "util/DateTime.h"
 
 #include "ui_BoardPostDisplayWidget_compact.h"
 #include "ui_BoardPostDisplayWidget_card.h"
@@ -194,16 +195,14 @@ void BoardPostDisplayWidgetBase::baseSetup()
         voteDownButton()->setDisabled(true);
         fromLabel()->setId(mPost.mMeta.mAuthorId);
         titleLabel()->setText(tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(mPost.mMeta.mAuthorId.toStdString()))) ;
-        QDateTime qtime;
-        qtime.setTime_t(mPost.mMeta.mPublishTs);
+        QDateTime qtime = DateTime::DateTimeFromTime_t(mPost.mMeta.mPublishTs);
         QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
         dateLabel()->setText(timestamp);
         pictureLabel()->setDisabled(true);
     }
     else
     {
-        QDateTime qtime;
-        qtime.setTime_t(mPost.mMeta.mPublishTs);
+        QDateTime qtime = DateTime::DateTimeFromTime_t(mPost.mMeta.mPublishTs);
         QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
         QString timestamp2 = misc::timeRelativeToNow(mPost.mMeta.mPublishTs) + " " + tr("ago");
         dateLabel()->setText(timestamp);

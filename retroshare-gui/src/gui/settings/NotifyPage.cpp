@@ -129,7 +129,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
         QCheckBox *enabledCheckBox = new QCheckBox(name, this);
         enabledCheckBox->setFont(font);
-        ui.notifyLayout->addWidget(enabledCheckBox, rowFeed, 0, 0);
+        ui.notifyLayout->addWidget(enabledCheckBox, rowFeed, 0);
         connect(enabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(notifyToggled()));
 
         QCheckBox *combinedCheckBox = new QCheckBox(tr("Combined"), this);

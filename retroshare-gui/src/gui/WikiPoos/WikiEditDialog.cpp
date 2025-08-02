@@ -22,6 +22,7 @@
 
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "gui/WikiPoos/WikiEditDialog.h"
+#include "util/DateTime.h"
 
 #include <iostream>
 
@@ -727,10 +728,9 @@ void WikiEditDialog::loadBaseHistory(const uint32_t &token)
 
 		{
 			// From Forum stuff.
-			QDateTime qtime;
+			QDateTime qtime = DateTime::DateTimeFromTime_t(page.mMeta.mPublishTs);
 			QString text;
 			QString sort;
-			qtime.setTime_t(page.mMeta.mPublishTs);	
 			sort = qtime.toString("yyyyMMdd_hhmmss");
 			text = qtime.toString("dd/MM/yy hh:mm");
 			
@@ -841,10 +841,9 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 
 		{
 			// From Forum stuff.
-			QDateTime qtime;
+			QDateTime qtime = DateTime::DateTimeFromTime_t(snapshot.mMeta.mPublishTs);
 			QString text;
 			QString sort;
-			qtime.setTime_t(snapshot.mMeta.mPublishTs);	
 			sort = qtime.toString("yyyyMMdd_hhmmss");
 			text = qtime.toString("dd/MM/yy hh:mm");
 			

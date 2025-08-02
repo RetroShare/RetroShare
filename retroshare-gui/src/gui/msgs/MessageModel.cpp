@@ -273,7 +273,7 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
 	case Qt::DecorationRole: return decorationRole(fmpe,index.column()) ;
 	case Qt::ToolTipRole:	 return toolTipRole   (fmpe,index.column()) ;
 	case Qt::UserRole:	 	 return userRole      (fmpe,index.column()) ;
-	case Qt::TextColorRole:  return textColorRole (fmpe,index.column()) ;
+	case Qt::ForegroundRole: return textColorRole (fmpe,index.column()) ;
 	case Qt::BackgroundRole: return backgroundRole(fmpe,index.column()) ;
 
 	case FilterRole:         return filterRole    (fmpe,index.column()) ;
@@ -504,8 +504,7 @@ QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
     case COLUMN_THREAD_SPAM:
     case COLUMN_THREAD_READ:return QVariant();
     case COLUMN_THREAD_DATE:{
-        QDateTime qtime;
-        qtime.setTime_t(fmpe.ts);
+        QDateTime qtime = DateTime::DateTimeFromTime_t(fmpe.ts);
 
         return QVariant(DateTime::formatDateTime(qtime));
     }

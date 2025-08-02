@@ -39,6 +39,7 @@
 #include "edge.h"
 #include "elnode.h"
 #include "graphwidget.h"
+#include "util/RsQtVersion.h"
 
 #define IMAGE_AUTHED         ":/images/accepted16.png"
 #define IMAGE_DENIED         ":/images/denied16.png"
@@ -318,7 +319,7 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
 	if (!mDeterminedBB)
 	{
-		QRect textBox = painter->boundingRect(-10, 5*f, QFontMetricsF(graph->font()).width(txt), 1.5*m, Qt::AlignVCenter, QString::fromUtf8(_desc_string.c_str()));
+		QRect textBox = painter->boundingRect(-10, 5*f, QFontMetrics_horizontalAdvance(QFontMetricsF(graph->font()), txt), 1.5*m, Qt::AlignVCenter, QString::fromUtf8(_desc_string.c_str()));
 		mBBWidth = textBox.width()+40*f;
 		mDeterminedBB = true;
 	}

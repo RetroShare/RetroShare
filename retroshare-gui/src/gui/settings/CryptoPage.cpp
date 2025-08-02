@@ -212,7 +212,11 @@ bool CryptoPage::fileSave()
     if (!file.open(QFile::WriteOnly))
         return false;
     QTextStream ts(&file);
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    ts.setEncoding(QStringConverter::Utf8);
+#else
     ts.setCodec(QTextCodec::codecForName("UTF-8"));
+#endif
     ts << ui.certplainTextEdit->document()->toPlainText();
     return true;
 }

@@ -1,7 +1,7 @@
 /*******************************************************************************
- * util/DateTime.h                                                             *
+ * util/RsQtVersion.cpp                                                        *
  *                                                                             *
- * Copyright (c) 2012 Retroshare Team  <retroshare.project@gmail.com>          *
+ * Copyright (C) 2025 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,43 +18,19 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef _DATETIME_H
-#define _DATETIME_H
+#include <QtGlobal>
 
-#include <QString>
+// Functions to compile with Qt 4, Qt 5 and Qt 6
 
-class QDateTime;
-class QDate;
-class QTime;
-
-class DateTime
+#if QT_VERSION < QT_VERSION_CHECK (5, 15, 0)
+#include <QLabel>
+QPixmap QLabel_pixmap(QLabel* label)
 {
-public:
-	/* format long date and time e.g. "September 30, 2012" */
-	static QString formatLongDate(time_t dateValue);
-	static QString formatLongDate(const QDate &dateValue);
+	const QPixmap *pixmap = label->pixmap();
+	if (pixmap) {
+		return *pixmap;
+	}
 
-	/* format long date and time e.g. "September 30, 2012 01:05 PM" */
-	static QString formatLongDateTime(time_t datetimeValue);
-	static QString formatLongDateTime(const QDateTime &datetimeValue);
-
-	/* format date e.g. "9/30/12", "30.09.12" */
-	static QString formatDate(time_t dateValue);
-	static QString formatDate(const QDate &dateValue);
-
-	/* format time e.g. "13:05:12" */
-	static QString formatTime(time_t timeValue);
-	static QString formatTime(const QTime &timeValue);
-
-	/* format date and time (see formatDate & formatTime) */
-	static QString formatDateTime(time_t datetimeValue);
-	static QString formatDateTime(const QDateTime &datetimeValue);
-
-	/* Convert time_t to QDateTime */
-	static QDateTime DateTimeFromTime_t(time_t timeValue);
-
-	/* Convert QDateTime to time_t */
-	static time_t DateTimeToTime_t(const QDateTime& dateTime);
-};
-
+	return QPixmap();
+}
 #endif
