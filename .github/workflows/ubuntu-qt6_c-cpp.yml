@@ -18,12 +18,12 @@ jobs:
     - name: git submodule supportlibs
       run: git submodule update --init supportlibs/librnp #supportlibs/rapidjson
     - name: apt install
-      run: sudo apt-get install g++ cmake qt5-qmake qtmultimedia5-dev libqt5x11extras5-dev libasio-dev libbz2-dev libjson-c-dev libssl-dev libsqlcipher-dev libupnp-dev libxss-dev rapidjson-dev libbotan-2-dev
+      run: sudo apt-get install g++ cmake qt6-base-dev qt6-multimedia-dev libasio-dev libbz2-dev libjson-c-dev libssl-dev libsqlcipher-dev libupnp-dev libxss-dev rapidjson-dev libbotan-2-dev
     - name: print working directory
       run: pwd && ls -la
     - name: qmake
       run: |
-        qmake CONFIG+=debug \
+        qmake6 CONFIG+=debug \
         CONFIG+=rs_autologin \
         CONFIG+=rs_webui \
         CONFIG+=rs_jsonapi \
