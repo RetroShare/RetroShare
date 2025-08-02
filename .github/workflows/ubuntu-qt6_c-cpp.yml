@@ -16,7 +16,7 @@ jobs:
     - name: git init
       run: git submodule update --init --remote libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/ && git --no-pager log --max-count 1
     - name: git submodule supportlibs
-      run: git submodule update --init supportlibs/librnp #supportlibs/rapidjson
+      run: git submodule update --init supportlibs/librnp supportlibs/restbed #supportlibs/rapidjson
     - name: apt install
       run: sudo apt-get install g++ cmake qt6-base-dev qt6-multimedia-dev libasio-dev libbz2-dev libjson-c-dev libssl-dev libsqlcipher-dev libupnp-dev libxss-dev rapidjson-dev libbotan-2-dev
     - name: print working directory
