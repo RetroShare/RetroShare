@@ -25,6 +25,7 @@
 
 #include <QApplication>
 #include <QFrame>
+#include <QColor>
 
 #include <stdint.h>
 #include <retroshare/rspeers.h>
@@ -102,6 +103,7 @@ private:
 
     /** The current dimensions of the graph. */
     QRect _rec;
+    QColor brushColor;
 
     bool mHideOffline;
 
