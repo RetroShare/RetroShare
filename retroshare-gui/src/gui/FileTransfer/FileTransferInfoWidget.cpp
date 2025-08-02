@@ -29,6 +29,7 @@
 #include "FileTransferInfoWidget.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/FilesDefs.h"
+#include "gui/settings/rsharesettings.h"
 
 // Variables to decide of display behaviour. All variables are expressed as a factor of font height
 //
@@ -132,7 +133,13 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
     int ch_num_size = ch_num_size_factor*S ;
     int tab_size = tab_size_factor*S ;
 
-	 painter->setPen(QColor::fromRgb(0,0,0)) ;
+	if (Settings->getSheetName() == ":Standard_Dark"){
+		penColor = Qt::gray ;
+	} else {
+		penColor = Qt::black ;
+	}
+
+	 painter->setPen(penColor) ;
 	 y += text_height ;
 	 painter->drawText(0,y,tr("Chunk map") + ":") ;
 	 y += block_sep ;
@@ -176,13 +183,13 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
      uint32_t sizeY = 1*S ;
 	 y += block_sep ;
 	 y += text_height ;
-	 painter->setPen(QColor::fromRgb(0,0,0)) ;
+	 painter->setPen(penColor) ;
 	 painter->drawText(0,y,tr("Active chunks") + ":") ;
 	 y += block_sep ;
 
 	 for(uint i=0;i<info.active_chunks.size();++i)
 	 {
-		 painter->setPen(QColor::fromRgb(0,0,0)) ;
+		 painter->setPen(penColor) ;
          painter->drawText(0.5*S,y+text_height*0.9,QString::number(info.active_chunks[i].first)) ;
 
 		 int size_of_this_chunk = ( info.active_chunks[i].first == info.chunks.size()-1 && ((info.file_size % blockSize)>0) )?(info.file_size % blockSize):blockSize ;
@@ -212,7 +219,7 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 
 			 }
 
-		 painter->setPen(QColor::fromRgb(0,0,0)) ;
+		 painter->setPen(penColor) ;
 		 float percent = (size_of_this_chunk - info.active_chunks[i].second)*100.0/size_of_this_chunk ;
 
          painter->drawText(sizeX+5.5*S,y+text_height*0.9,QString::number(percent,'f',2) + " %") ;
@@ -227,7 +234,7 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 
 	 y += block_sep ;
 	 y += text_height ;
-	 painter->setPen(QColor::fromRgb(0,0,0)) ;
+	 painter->setPen(penColor) ;
 	 painter->drawText(0,y,(info.compressed_peer_availability_maps.size() == 1 ? tr("Availability map (%1 active source)") : tr("Availability map (%1 active sources)")).arg(info.compressed_peer_availability_maps.size())) ;
 	 y += block_sep ;
 
@@ -254,7 +261,8 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 
 	 // various info:
 	 //
-	 painter->setPen(QColor::fromRgb(0,0,0)) ;
+	 painter->setPen(penColor) ;
+
 	 y += text_height ; painter->drawText(0,y,tr("File info") + ":") ;
 	 y += block_sep ;
      y += text_height ; painter->drawText(2*S,y,tr("File name") + ":") ; painter->drawText(tab_size,y,QString::fromUtf8(nfo.fname.c_str())) ;
