@@ -18,7 +18,7 @@ jobs:
     - name: git submodule supportlibs
       run: git submodule update --init supportlibs/librnp supportlibs/restbed #supportlibs/rapidjson
     - name: apt install
-      run: sudo apt-get install g++ cmake qt5-qmake qtmultimedia5-dev libqt5x11extras5-dev libasio-dev libbz2-dev libjson-c-dev libssl-dev libsqlcipher-dev libupnp-dev libxss-dev rapidjson-dev libbotan-2-dev doxygen libsecret-1-dev libxml2-dev libxslt1-dev
+      run: sudo apt-get install g++ cmake qt5-qmake qtmultimedia5-dev libqt5x11extras5-dev libasio-dev libbz2-dev libjson-c-dev libssl-dev libsqlcipher-dev libupnp-dev libxss-dev rapidjson-dev libbotan-2-dev doxygen libsecret-1-dev libxml2-dev libxslt1-dev libcurl4-openssl-dev
     - name: print working directory
       run: pwd && ls -la
     - name: qmake
