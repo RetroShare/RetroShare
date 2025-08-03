@@ -34,9 +34,15 @@ Autologin:
 
 #### openSUSE
 ```bash
-   sudo zypper install gcc-c++ cmake libqt5-qtbase-devel \
+   sudo zypper install git gcc-c++ cmake libqt5-qtbase-devel \
    libqt5-qtmultimedia-devel libqt5-qtx11extras-devel libbz2-devel \
-   libopenssl-devel libupnp-devel libXss-devel sqlcipher-devel rapidjson-devel
+   libopenssl-devel libupnp-devel libXss-devel sqlcipher-devel rapidjson-devel \
+   json-c botan bzip2
+```
+
+Additional packages to compile with Qt6:
+```bash
+   sudo zypper install qt6-base-devel qt6-multimedia-devel qt6-qt5compat-devel
 ```
 
 Additional dependencies for plugins:
