@@ -61,8 +61,8 @@ Additional dependencies for plugins:
 ### Checkout the submodules
 ```bash
    cd retroshare
-   git submodule update --init --remote libbitdht/ libretroshare/ retroshare-webui/ 
-   git submodule update --init --remote supportlibs/librnp supportlibs/rapidjson supportlibs/restbed
+   git submodule update --init --remote libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/ 
+   git submodule update --init --remote supportlibs/librnp supportlibs/restbed supportlibs/rapidjson
 ```
 
 ### Compile
@@ -77,9 +77,9 @@ Additional dependencies for plugins:
 ```
 
 The executable produced will be:  
- 
+```bash
  - /usr/bin/RetroShare06  
- 
+```
 
 ### For packagers
 
@@ -116,17 +116,18 @@ You need to place sqlcipher so that the hierarchy is:
 ### Build options
 
 * Mandatory
-  * release or debug:         normally you would like to use the release option
+  * release or debug:			normally you would like to use the release option
 * Extra features (optional)
-  * rs_autologin:             enable autologin
-  * retroshare_plugins:       build plugins
-  * rs_webui:                 enable remoting features
-  * rs_jsonapi:               enable json api interface
-  * gxsthewire                enable The wire service
-  * wikipoos                  enable Wiki service
-  * rs_deep_channels_index    build with deep channel indexing support
-  * rs_deep_files_index       build with deep file indexing support
-  * "CONFIG+=..."             enable other extra compile time features, you can find the almost complete list in file *&lt;sourcefolder&gt;\retroshare.pri*
+  * rs_autologin:				enable autologin
+  * retroshare_plugins:			build plugins
+  * rs_webui:					enable remoting features
+  * rs_jsonapi:					enable json api interface
+  * gxsthewire					enable Wire service
+  * wikipoos 					enable Wiki service
+  * rs_use_native_dialogs		enable native dialogs
+  * rs_deep_channels_index		build with deep channel indexing support
+  * rs_deep_files_index			build with deep file indexing support
+  * "CONFIG+=..."				enable other extra compile time features, you can find the almost complete list in file *&lt;sourcefolder&gt;\retroshare.pri*
 
 Example:
 
