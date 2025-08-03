@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: Ubuntu Qt 6 C/C++ CI
 
 on:
   push:
