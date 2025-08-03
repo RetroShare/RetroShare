@@ -6,6 +6,8 @@ RetroShare provides file sharing, chat, messages, forums, channels, boards and m
 
 [![GitHub release](https://img.shields.io/github/release/retroshare/retroshare.svg?label=latest%20release)](https://github.com/retroshare/retroshare/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/retroshare/retroshare/total)](https://github.com/retroshare/retroshare/releases/latest)
+[![MINGW64 Qt5 Build](https://github.com/RetroShare/RetroShare/actions/workflows/ci-mingw64.yml/badge.svg)](https://github.com/RetroShare/RetroShare/actions/workflows/ci-mingw64.yml)
+[![UCRT64 Qt5 Build](https://github.com/RetroShare/RetroShare/actions/workflows/ci-ucrt64.yml/badge.svg)](https://github.com/RetroShare/RetroShare/actions/workflows/ci-ucrt64.yml)
 [![GNU/Linux (via Gitlab CI)](https://gitlab.com/RetroShare/RetroShare/badges/master/pipeline.svg)](https://gitlab.com/RetroShare/RetroShare/-/commits/master)
 [![libretroshare GNU/Linux, Android (via Gitlab CI)](https://gitlab.com/RetroShare/libretroshare/badges/master/pipeline.svg)](https://gitlab.com/RetroShare/libretroshare/-/commits/master)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/RetroShare/RetroShare)
