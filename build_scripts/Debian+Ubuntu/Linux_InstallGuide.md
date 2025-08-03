@@ -10,20 +10,26 @@
    libupnp-dev libxss-dev rapidjson-dev libbotan-2-dev libasio-dev
 ```
 
-Additional dependencies for Qt6 compile
+Additional packages to compile with Qt6:
 ```bash
    sudo apt-get install qt6-base-dev qt6-multimedia-dev qt6-5compat-dev
 ```
+To use only Qt6 the packages `qt5-qmake qtmultimedia5-dev libqt5x11extras5-dev` are not needed.
 
 Additional dependencies for Feedreader plugin:
 ```bash
-   sudo apt-get install libxml2-dev libxslt1-dev
+   sudo apt-get install libxml2-dev libxslt1-dev libcurl4-openssl-dev
 ```
 
 Additional dependencies for Voip plugin:
 ```bash
    sudo apt-get install libavcodec-dev libcurl4-openssl-dev \
    libqt5multimedia5-plugins libspeexdsp-dev
+```
+
+Autologin:
+```bash
+   sudo apt install libsecret-1-dev
 ```
 
 #### openSUSE
