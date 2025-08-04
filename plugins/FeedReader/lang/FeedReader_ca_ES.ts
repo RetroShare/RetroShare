@@ -9,7 +9,7 @@
         <translation>Crear nova font</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+37"/>
         <source>Authentication (not yet supported)</source>
         <translation>Autenticació (Encara no suportat)</translation>
     </message>
@@ -34,7 +34,7 @@
         <translation>Buidar memòria cau</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+29"/>
         <source>Update interval</source>
         <translation>Interval d&apos;actualització</translation>
     </message>
@@ -59,12 +59,37 @@
         <translation>Mai</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+88"/>
         <source>Embed images</source>
         <translation>Incrustar imatges</translation>
     </message>
     <message>
-        <location line="-249"/>
+        <location line="+105"/>
+        <source>Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Update board information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Only image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Use first image as board image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Shrink image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-330"/>
         <source>Storage time</source>
         <translation>Temps d&apos;emmagatzematge</translation>
     </message>
@@ -89,32 +114,30 @@
         <translation>Utilitza servidor intermediari estàndard</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Server</source>
-        <translation>Servidor</translation>
+        <translation type="vanished">Servidor</translation>
     </message>
     <message>
-        <location line="+10"/>
         <source>:</source>
-        <translation>:</translation>
+        <translation type="vanished">:</translation>
     </message>
     <message>
-        <location line="-148"/>
+        <location line="+196"/>
         <source>Type</source>
         <translation>Tipus</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+24"/>
         <source>Forum</source>
         <translation>Fòrum</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+10"/>
         <source>Local Feed</source>
         <translation>Font local</translation>
     </message>
     <message>
-        <location line="+239"/>
+        <location line="-67"/>
         <source>Transformation</source>
         <translation>Transformació</translation>
     </message>
@@ -129,7 +152,7 @@
         <translation>Pre-visualitzar &amp;&amp; Transformació</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="-58"/>
         <source>Misc</source>
         <translation>Miscel·lània</translation>
     </message>
@@ -144,17 +167,17 @@
         <translation>Utilitza nom i descripció a la font</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+100"/>
         <source>Update forum information</source>
         <translation>Actualitzar informació del fòrum</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="-86"/>
         <source>Save complete web page (experimental for local feeds)</source>
         <translation>Desar pàgina web completa (Experimental per fonts locals)</translation>
     </message>
     <message>
-        <location line="-103"/>
+        <location line="-70"/>
         <source>Description:</source>
         <translation>Descripció:</translation>
     </message>
@@ -164,18 +187,18 @@
         <translation>RSS-Font-URL:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+17"/>
         <source>Name:</source>
         <translation>Nom:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="+77"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="+87"/>
         <source>Feed Details</source>
         <translation>Detalls de la font</translation>
     </message>
     <message>
-        <location line="+142"/>
-        <location line="+115"/>
+        <location line="+208"/>
+        <location line="+152"/>
         <location line="+15"/>
         <source>Edit feed</source>
         <translation>Editar font</translation>
@@ -239,17 +262,15 @@
         <translation>Utilitza servidor intermediari</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Server</source>
-        <translation>Servidor</translation>
+        <translation type="vanished">Servidor</translation>
     </message>
     <message>
-        <location line="+17"/>
         <source>:</source>
-        <translation>:</translation>
+        <translation type="vanished">:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+13"/>
         <source>Misc</source>
         <translation>Miscel·lània</translation>
     </message>
@@ -277,7 +298,7 @@
 <context>
     <name>FeedReaderDialog</name>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="+91"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="+98"/>
         <source>Feeds</source>
         <translation>Fonts</translation>
     </message>
@@ -292,12 +313,12 @@
         <translation>Actualitzar font</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="+92"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="+105"/>
         <source>Message Folders</source>
         <translation>Carpetes de missatges</translation>
     </message>
     <message>
-        <location line="+197"/>
+        <location line="+199"/>
         <source>New</source>
         <translation>Nou</translation>
     </message>
@@ -342,12 +363,12 @@
         <translation>Desactivar</translation>
     </message>
     <message>
-        <location line="+195"/>
+        <location line="+198"/>
         <source>No name</source>
         <translation>Sense nom</translation>
     </message>
     <message>
-        <location line="+210"/>
+        <location line="+259"/>
         <source>Add new folder</source>
         <translation>Afegir nou directori</translation>
     </message>
@@ -398,11 +419,21 @@
         <source>Please enter a new name for the folder</source>
         <translation>Si us plau, introdueix un nou nom pel directori</translation>
     </message>
+    <message>
+        <location line="+61"/>
+        <source>Move feed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Cannot move feed.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FeedReaderFeedItem</name>
     <message>
-        <location filename="../gui/FeedReaderFeedItem.ui" line="+195"/>
+        <location filename="../gui/FeedReaderFeedItem.ui" line="+197"/>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="+116"/>
         <source>Expand</source>
         <translation>Ampliar</translation>
@@ -500,7 +531,7 @@
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+113"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+126"/>
         <source>Title</source>
         <translation>Títol</translation>
     </message>
@@ -515,6 +546,11 @@
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="+1"/>
         <source>Author</source>
         <translation>Autor</translation>
+    </message>
+    <message>
+        <location line="+121"/>
+        <source>Copy Link Location</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="-2"/>
@@ -532,7 +568,7 @@
         <translation>Cerca autor</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+16"/>
         <source>Open link in browser</source>
         <translation>Obrir enllaç al navegador</translation>
     </message>
@@ -542,12 +578,22 @@
         <translation>Copiar enllaç al porta-retalls</translation>
     </message>
     <message>
-        <location line="+122"/>
+        <location line="+128"/>
+        <source>The messages will be added to the forum and the board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>The messages will be added to the forum</source>
         <translation>El missatge s&apos;afegirà al fòrum</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+3"/>
+        <source>The messages will be added to the board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>No name</source>
         <translation>Sense nom</translation>
     </message>
@@ -577,12 +623,22 @@
         <translation>Treure</translation>
     </message>
     <message>
+        <location line="+7"/>
+        <source>Add to forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+5"/>
+        <source>Add to board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Retransform</source>
         <translation>Re-transformar</translation>
     </message>
     <message>
-        <location line="+374"/>
+        <location line="+412"/>
         <source>Hide</source>
         <translation>Amagar</translation>
     </message>
@@ -659,12 +715,12 @@
     </message>
     <message>
         <location line="+3"/>
-        <location line="+96"/>
+        <location line="+114"/>
         <source>Unknown</source>
         <translation>Desconegut</translation>
     </message>
     <message>
-        <location line="-79"/>
+        <location line="-97"/>
         <source>Internal download error</source>
         <translation>Error intern de descarrega</translation>
     </message>
@@ -689,6 +745,11 @@
         <translation>Codi de resposta desconegut</translation>
     </message>
     <message>
+        <location line="+3"/>
+        <source>Download blocked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+5"/>
         <source>Internal process error</source>
         <translation>Error del procés intern</translation>
@@ -699,12 +760,11 @@
         <translation>Format XML desconegut</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Can&apos;t create forum</source>
-        <translation>No es pot crear fòrum</translation>
+        <translation type="vanished">No es pot crear fòrum</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+6"/>
         <source>Forum not found</source>
         <translation>Fòrum no trobat</translation>
     </message>
@@ -717,6 +777,26 @@
         <location line="+3"/>
         <source>Forum has no author</source>
         <translation>El fòrum no té autor</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Board not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>You are not admin of the board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Board has no author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Some posts could not be created</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
@@ -790,7 +870,7 @@
         <translation>Visualització prèvia</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+55"/>
         <source>Name:</source>
         <translation>Nom:</translation>
     </message>
@@ -825,7 +905,7 @@
         <translation>Estructura</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+28"/>
         <source>Title:</source>
         <translation>Títol:</translation>
     </message>
@@ -880,6 +960,39 @@
         <location line="+21"/>
         <source>Error parsing document</source>
         <translation>Error interpretant document</translation>
+    </message>
+</context>
+<context>
+    <name>ProxyWidget</name>
+    <message>
+        <location filename="../gui/ProxyWidget.cpp" line="+17"/>
+        <source>HTTP Proxy.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>HTTPS Proxy.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>SOCKS4 Proxy.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>SOCKS4a Proxy. Proxy resolves URL hostname.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>SOCKS5 Proxy.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>SOCKS5 Proxy. Proxy resolves URL hostname.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

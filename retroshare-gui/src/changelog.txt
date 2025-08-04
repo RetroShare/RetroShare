@@ -497,7 +497,7 @@ Changes for 0.5.4e
  
 
 	* Bugs:
-		- removed dead-end for peers not answering downloads, that would get file cache transfers to get stuck indefinitly 
+		- removed dead-end for peers not answering downloads, that would get file cache transfers to get stuck indefinitely 
 		  when peers are too much stressed for a short period. The offline state is entirely given by setPeerState()
 		- fixed a few fixed other uninitialized memory read (In p3NetMgr, ftChunkMap)
 		- do not show msg icon for current lobby (Improved upon patch from AC)
