@@ -14,7 +14,6 @@ Additional packages to compile with Qt6:
 ```bash
    sudo apt-get install qt6-base-dev qt6-multimedia-dev qt6-5compat-dev
 ```
-To use only Qt6 the packages `qt5-qmake qtmultimedia5-dev libqt5x11extras5-dev` are not needed.
 
 Additional dependencies for Feedreader plugin:
 ```bash
@@ -90,7 +89,7 @@ Additional dependencies for plugins:
 
 The executable produced will be:  
 ```bash
- - /usr/bin/RetroShare  
+ ~/usr/bin/RetroShare  
 ```
 
 ### For packagers
@@ -124,6 +123,20 @@ You need to place sqlcipher so that the hierarchy is:
 	make
 	cd ..
 ``` 
+
+### Build infos
+
+When you use only Qt6 the packages `qt5-qmake qtmultimedia5-dev libqt5x11extras5-dev` are not needed.
+
+For the `FeedReader` it is required to append the config option `CONFIG+=retroshare_plugins`.
+Make sure `plugins/plugins.pro` contains `FeedReader` in the list of plugins to compile. 
+Do not mix plugins compiled with Qt5 with those compiled with Qt6. They work only if they are compiled
+with the same Qt version as RetroShare.
+
+Voip is outdated and is not compileable on the latest Debian.
+
+For `Autologin` it is required to append the config option `CONFIG+=rs_autologin`.
+
 
 ### Build options
 
