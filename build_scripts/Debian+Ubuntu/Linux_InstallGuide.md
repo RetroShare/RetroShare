@@ -117,12 +117,12 @@ You need to place sqlcipher so that the hierarchy is:
 ```bash
 	mkdir lib
 	cd lib
-	git clone git://github.com/sqlcipher/sqlcipher.git
+	git clone https://github.com/sqlcipher/sqlcipher.git --depth=1 --branch v3.4.1
 	cd sqlcipher
 	./configure --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC" LDFLAGS="-lcrypto"
 	make
 	cd ..
-``` 
+```
 
 ### Build infos
 
