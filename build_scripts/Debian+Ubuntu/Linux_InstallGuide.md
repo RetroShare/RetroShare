@@ -107,9 +107,9 @@ If libsqlcipher is not available as a package
 
 You need to place sqlcipher so that the hierarchy is:
 
-      retroshare
+        ~Home
           |
-          +--- trunk
+          +--- retroshare
           |
           +--- lib
                 |
