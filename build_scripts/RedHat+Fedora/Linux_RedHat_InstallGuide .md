@@ -7,12 +7,12 @@
 ```bash
     sudo dnf install mesa-libGL-devel gcc cmake qt5-qtbase-devel qt5-qtmultimedia \
     qt5-qtx11extras rapidjson-devel libupnp openssl sqlcipher sqlcipher-devel \
-    botan2 botan2-devel json-c-devel bzip2-devel asio-devel libsecret
+    botan2 botan2-devel json-c-devel bzip2-devel asio-devel libsecret libXScrnSaver-devel
 ```
 
 Additional packages to compile with Qt6:
 ```bash
-   sudo dnf install qt6-qtbase-devel qt6-qtmultimedia qt6-qt5compat
+   sudo dnf install qt6-qtbase-devel qt6-qtmultimedia-devel qt6-qt5compat-devel
 ```
 
 Additional dependencies for Feedreader plugin:
