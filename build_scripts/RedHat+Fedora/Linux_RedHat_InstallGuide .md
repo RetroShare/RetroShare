@@ -17,7 +17,7 @@ Additional packages to compile with Qt6:
 
 Additional dependencies for Feedreader plugin:
 ```bash
-   sudo dnf install libxml2 libxslt libcurl-devel
+   sudo dnf install libxml2-devel libxslt-devel libcurl-devel
 ```
 
 ### Checkout the source code
