@@ -1,5 +1,5 @@
 :: Usage:
-:: call get-qt-version.bat variable
+:: call get-qt-version.bat variable qmake
 
 setlocal
 
@@ -10,9 +10,16 @@ if "%Var%"=="" (
 	exit /B 1
 )
 
+set QMakeCmd=%~2
+if "%QMakeCmd%"=="" (
+	echo.
+	echo Parameter error.
+	exit /B 1
+)
+
 set QtVersion=
 
-%EnvMSYS2Cmd% "qmake -version" >"%~dp0qtversion.tmp"
+%EnvMSYS2Cmd% "%QMakeCmd% -version" >"%~dp0qtversion.tmp"
 for /F "tokens=1,2,3,4" %%A in (%~sdp0qtversion.tmp) do (
 	if "%%A"=="Using" (
 		set QtVersion=%%D

@@ -45,7 +45,11 @@ static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE = 199000;
 RichTextEdit::RichTextEdit(QWidget *parent) : QWidget(parent) {
     setupUi(this);
     m_lastBlockList = 0;
+#if QT_VERSION >= QT_VERSION_CHECK (5, 10, 0)
+    f_textedit->setTabStopDistance(40);
+#else
     f_textedit->setTabStopWidth(40);
+#endif
 
     connect(f_textedit, SIGNAL(currentCharFormatChanged(QTextCharFormat)),
             this,     SLOT(slotCurrentCharFormatChanged(QTextCharFormat)));
@@ -177,14 +181,14 @@ RichTextEdit::RichTextEdit(QWidget *parent) : QWidget(parent) {
     // text foreground color
 
     QPixmap pix(16, 16);
-    pix.fill(QApplication::palette().foreground().color());
+    pix.fill(QApplication::palette().windowText().color());
     f_fgcolor->setIcon(pix);
 
     connect(f_fgcolor, SIGNAL(clicked()), this, SLOT(textFgColor()));
 
     // text background color
 
-    pix.fill(QApplication::palette().background().color());
+    pix.fill(QApplication::palette().window().color());
     f_bgcolor->setIcon(pix);
 
     connect(f_bgcolor, SIGNAL(clicked()), this, SLOT(textBgColor()));
@@ -515,7 +519,7 @@ void RichTextEdit::fgColorChanged(const QColor &c) {
     if (c.isValid()) {
         pix.fill(c);
       } else {
-        pix.fill(QApplication::palette().foreground().color());
+        pix.fill(QApplication::palette().windowText().color());
         }
     f_fgcolor->setIcon(pix);
 }
@@ -525,7 +529,7 @@ void RichTextEdit::bgColorChanged(const QColor &c) {
     if (c.isValid()) {
         pix.fill(c);
       } else {
-        pix.fill(QApplication::palette().background().color());
+        pix.fill(QApplication::palette().window().color());
         }
     f_bgcolor->setIcon(pix);
 }
@@ -547,9 +551,9 @@ void RichTextEdit::slotClipboardDataChanged() {
 QString RichTextEdit::toHtml() const {
     QString s = f_textedit->toHtml();
     // convert emails to links
-    s = s.replace(QRegExp("(<[^a][^>]+>(?:<span[^>]+>)?|\\s)([a-zA-Z\\d]+@[a-zA-Z\\d]+\\.[a-zA-Z]+)"), "\\1<a href=\"mailto:\\2\">\\2</a>");
+    s = s.replace(QRegularExpression("(<[^a][^>]+>(?:<span[^>]+>)?|\\s)([a-zA-Z\\d]+@[a-zA-Z\\d]+\\.[a-zA-Z]+)"), "\\1<a href=\"mailto:\\2\">\\2</a>");
     // convert links
-    s = s.replace(QRegExp("(<[^a][^>]+>(?:<span[^>]+>)?|\\s)((?:https?|ftp|file)://[^\\s'\"<>]+)"), "\\1<a href=\"\\2\">\\2</a>");
+    s = s.replace(QRegularExpression("(<[^a][^>]+>(?:<span[^>]+>)?|\\s)((?:https?|ftp|file)://[^\\s'\"<>]+)"), "\\1<a href=\"\\2\">\\2</a>");
     // see also: Utils::linkify()
     return s;
 }

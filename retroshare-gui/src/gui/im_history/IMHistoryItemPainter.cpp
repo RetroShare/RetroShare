@@ -44,7 +44,7 @@ void IMHistoryItemPainter::paint(QPainter *painter, const QStyleOptionViewItem &
 //    if (mode == Editable) {
 //        painter->setBrush(option.palette.highlight());
 //    } else {
-        painter->setBrush(option.palette.foreground());
+        painter->setBrush(option.palette.windowText());
 //    }
     if (option.state & QStyle::State_Selected) {
         painter->fillRect(option.rect, option.palette.highlight());

@@ -219,7 +219,11 @@ public:
         if(left_is_not_pinned ^ right_is_not_pinned)
             return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?right_is_not_pinned:left_is_not_pinned ;	// always put pinned posts on top
 
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+        return QVariant::compare(left.data(RsGxsForumModel::SortRole), right.data(RsGxsForumModel::SortRole)) < 0;
+#else
         return left.data(RsGxsForumModel::SortRole) < right.data(RsGxsForumModel::SortRole) ;
+#endif
     }
 
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override
@@ -264,7 +268,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->threadTreeWidget->setModel(mThreadProxyModel);
 
     mThreadProxyModel->setFilterRole(RsGxsForumModel::FilterRole);
-    mThreadProxyModel->setFilterRegExp(QRegExp(QString(RsGxsForumModel::FilterString))) ;
+    QSortFilterProxyModel_setFilterRegularExpression(mThreadProxyModel, QString(RsGxsForumModel::FilterString)) ;
 
     ui->threadTreeWidget->setSortingEnabled(true);
 
@@ -540,7 +544,7 @@ void GxsForumThreadWidget::recursSaveExpandedItems(const QModelIndex& index, QLi
     if(ui->threadTreeWidget->isExpanded(index))
     {
         for(int row=0;row<mThreadProxyModel->rowCount(index);++row)
-            recursSaveExpandedItems(index.child(row,0),expanded_items) ;
+            recursSaveExpandedItems(mThreadProxyModel->index(row,0,index),expanded_items) ;
 
         RsGxsMessageId message_id(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID).data(Qt::UserRole).toString().toStdString());
         expanded_items.push_back(message_id);
@@ -1854,7 +1858,7 @@ void GxsForumThreadWidget::filterItems(const QString& text)
     mThreadModel->setFilter(filterColumn,lst,count) ;
 
     // We do this in order to trigger a new filtering action in the proxy model.
-    mThreadProxyModel->setFilterRegExp(QRegExp(QString(RsGxsForumModel::FilterString))) ;
+    QSortFilterProxyModel_setFilterRegularExpression(mThreadProxyModel, QString(RsGxsForumModel::FilterString)) ;
 
     if(!lst.empty())
         ui->threadTreeWidget->expandAll();

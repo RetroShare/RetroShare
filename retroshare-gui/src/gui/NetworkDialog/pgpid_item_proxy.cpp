@@ -44,7 +44,7 @@ pgpid_item_proxy::pgpid_item_proxy(QObject *parent) :
 void pgpid_item_proxy::use_only_trusted_keys(bool val)
 {
     only_trusted_keys = val;
-    filterChanged();
+    invalidateFilter();
 }
 
 bool pgpid_item_proxy::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const

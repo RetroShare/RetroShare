@@ -123,10 +123,9 @@ void NewTag::textChanged(const QString &text)
 
 void NewTag::setTagColor()
 {
-    bool ok;
-    QRgb color = QColorDialog::getRgba(m_Color, &ok, this);
-    if (ok) {
-        m_Color = color;
+    QColor color = QColorDialog::getColor(QColor::fromRgba(m_Color), this, "", QColorDialog::ShowAlphaChannel);
+    if (color.isValid()) {
+        m_Color = color.rgba();
         showColor (m_Color);
     }
 }

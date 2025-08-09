@@ -28,6 +28,8 @@
 #include <QTimer>
 #include <QStringListModel>
 #include <QProgressDialog>
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 
 #define IMAGE_LEDOFF  ":/images/ledoff1.png"
 #define IMAGE_LEDON   ":/images/ledon1.png"
@@ -47,8 +49,8 @@ JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
     // This limits the possible tokens to alphanumeric
 
     QString anRange = "[a-zA-Z0-9]+";
-    QRegExp anRegex ("^" + anRange + ":" + anRange + "$");
-    QRegExpValidator *anValidator = new QRegExpValidator(anRegex, this);
+    QRegularExpression anRegex ("^" + anRange + ":" + anRange + "$");
+    QRegularExpressionValidator *anValidator = new QRegularExpressionValidator(anRegex, this);
 
     ui.tokenLineEdit->setValidator(anValidator);
 
@@ -56,8 +58,8 @@ JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 
     QString ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
     // You may want to use QRegularExpression for new code with Qt 5 (not mandatory).
-    QRegExp ipRegex ("^" + ipRange + "\\." + ipRange + "\\." + ipRange + "\\." + ipRange + "$");
-    QRegExpValidator *ipValidator = new QRegExpValidator(ipRegex, this);
+    QRegularExpression ipRegex ("^" + ipRange + "\\." + ipRange + "\\." + ipRange + "\\." + ipRange + "$");
+    QRegularExpressionValidator *ipValidator = new QRegularExpressionValidator(ipRegex, this);
 
     ui.listenAddressLineEdit->setValidator(ipValidator);
     ui.providersListView->setSelectionMode(QAbstractItemView::NoSelection);	// prevents edition.

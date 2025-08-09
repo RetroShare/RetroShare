@@ -29,6 +29,9 @@
 #include <QDebug>
 #include <QGraphicsScene>
 #include <QWheelEvent>
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#include <QRandomGenerator>
+#endif
 
 #include <math.h>
 
@@ -131,8 +134,16 @@ void GraphWidget::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Space:
     case Qt::Key_Enter:
         foreach (QGraphicsItem *item, scene()->items()) {
-            if (qgraphicsitem_cast<Node *>(item))
-                item->setPos(-150 + qrand() % 300, -150 + qrand() % 300);
+            if (qgraphicsitem_cast<Node *>(item)) {
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+                int x = QRandomGenerator::global()->generate();
+                int y = QRandomGenerator::global()->generate();
+#else
+                int x = qrand();
+                int y = qrand();
+#endif
+                item->setPos(-150 + x % 300, -150 + y % 300);
+            }
         }
         break;
     default:
@@ -331,12 +342,18 @@ void GraphWidget::resizeEvent(QResizeEvent *event)
 
 void GraphWidget::wheelEvent(QWheelEvent *event)
 {
-    scaleView(pow((double)2, -event->delta() / 240.0));
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    int delta = event->angleDelta().y();
+#else
+    int delta = event->delta();
+#endif
+
+    scaleView(pow((double)2, -delta / 240.0));
 }
 
 void GraphWidget::scaleView(qreal scaleFactor)
 {
-    qreal factor = matrix().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
+    qreal factor = transform().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
     if (factor < 0.07 || factor > 100)
         return;
 
