@@ -37,7 +37,7 @@ Follow this file : [MacOS_X_InstallGuide](https://github.com/RetroShare/RetroSha
 
 ## Compilation on Linux
 
-Follow this file : [Linux_InstallGuide](https://github.com/defnax/RetroShare/blob/master/build_scripts/Debian%2BUbuntu/Linux_InstallGuide.md)
+Follow this file : [Linux_InstallGuide](https://github.com/RetroShare/RetroShare/blob/master/build_scripts/Debian+Ubuntu/Linux_InstallGuide.md)
 
 ## Releases
 
