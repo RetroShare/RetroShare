@@ -38,6 +38,7 @@
 #include <retroshare/rsservicecontrol.h>
 #include "rsitems/rsserviceids.h"
 #include <QTextDocument>
+#include "util/RsQtVersion.h"
 
 #define NOT_IMPLEMENTED std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl;
 
@@ -307,7 +308,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       if(name.length() > 20 + 3)
           name = name.left(20)+"..." ;
 
-      peer_name_size = std::max(peer_name_size, fm.width(name)) ;
+      peer_name_size = std::max(peer_name_size, QFontMetrics_horizontalAdvance(fm, name)) ;
       names.push_back(name) ;
   }
 
@@ -322,13 +323,13 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
   for(std::list<RsPeerId>::const_iterator it(ssllist.begin());it!=ssllist.end();++it,++i)
   {
-      float X = S*fMATRIX_START_X + peer_name_size - fm.width(names[i]) ;
+      float X = S*fMATRIX_START_X + peer_name_size - QFontMetrics_horizontalAdvance(fm, names[i]) ;
       float Y = S*fMATRIX_START_Y + (i+0.5)*S*fROW_SIZE + line_height/2.0f-2 ;
 
       _painter->drawText(QPointF(X,Y),names[i]) ;
 
       if(*it == _current_peer_id)
-          _painter->drawLine(QPointF(X,Y+3),QPointF(X+fm.width(names[i]),Y+3)) ;
+          _painter->drawLine(QPointF(X,Y+3),QPointF(X+QFontMetrics_horizontalAdvance(fm, names[i]),Y+3)) ;
 
       y += line_height ;
   }
@@ -343,7 +344,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
   for(std::map<uint32_t, RsServiceInfo>::const_iterator it(ownServices.mServiceList.begin());it!=ownServices.mServiceList.end();++it,++i)
   {
       QString name = QString::fromUtf8(it->second.mServiceName.c_str()) ;
-      int text_width = fm.width(name) ;
+      int text_width = QFontMetrics_horizontalAdvance(fm, name) ;
 
       int X = matrix_start_x + S*fCOL_SIZE/2 - 2 + i*S*fCOL_SIZE - text_width/2;
 
@@ -497,11 +498,11 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       QFontMetrics fm(font);
 
       int text_size_x = 0 ;
-      text_size_x = std::max(text_size_x,fm.width(service_name));
-      text_size_x = std::max(text_size_x,fm.width(peer_name));
-      text_size_x = std::max(text_size_x,fm.width(peer_id));
-      text_size_x = std::max(text_size_x,fm.width(local_status));
-      text_size_x = std::max(text_size_x,fm.width(remote_status));
+      text_size_x = std::max(text_size_x,QFontMetrics_horizontalAdvance(fm, service_name));
+      text_size_x = std::max(text_size_x,QFontMetrics_horizontalAdvance(fm, peer_name));
+      text_size_x = std::max(text_size_x,QFontMetrics_horizontalAdvance(fm, peer_id));
+      text_size_x = std::max(text_size_x,QFontMetrics_horizontalAdvance(fm, local_status));
+      text_size_x = std::max(text_size_x,QFontMetrics_horizontalAdvance(fm, remote_status));
 
        // draw a half-transparent rectangle
 
@@ -565,7 +566,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 				QRect position = computeNodePosition(0,i,false) ;
 				int popup_x = position.x() + (50 * S / 14.0);
 				int popup_y = position.y() - (10 * S / 14.0) + line_height;
-				int popup_width = std::max((int)td.size().width(), fm.width(service_name)) + S;
+				int popup_width = std::max((int)td.size().width(), QFontMetrics_horizontalAdvance(fm, service_name)) + S;
 				int popup_height = td.size().height() + line_height*2;
 				while (popup_x + popup_width > _max_width)
 					popup_x -= S;

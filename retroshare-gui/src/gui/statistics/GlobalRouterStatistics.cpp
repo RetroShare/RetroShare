@@ -31,6 +31,9 @@
 #include <QStylePainter>
 #include <QLayout>
 #include <QHeaderView>
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#include <QPointF>
+#endif
 
 #include <retroshare/rsgrouter.h>
 #include <retroshare/rspeers.h>
@@ -45,6 +48,7 @@
 #include "util/DateTime.h"
 #include "util/RsQtVersion.h"
 #include "util/misc.h"
+#include "util/RsQtVersion.h"
 
 #define COL_ID                  0
 #define COL_NICKNAME            1
@@ -188,10 +192,8 @@ void GlobalRouterStatistics::updateContent()
         if(nicknames.isEmpty())
           nicknames = tr("Unknown");
 	  
-	    QDateTime routingtime;
-		routingtime.setTime_t(cache_infos[i].routing_time);
-		QDateTime senttime;
-		senttime.setTime_t(cache_infos[i].last_sent_time);
+	    QDateTime routingtime = DateTime::DateTimeFromTime_t(cache_infos[i].routing_time);
+		QDateTime senttime = DateTime::DateTimeFromTime_t(cache_infos[i].last_sent_time);
 	  
 		item -> setId(cache_infos[i].destination,COL_NICKNAME, false) ;
         item -> setData(COL_ID,           Qt::DisplayRole, QString::number(cache_infos[i].mid,16).rightJustified(16,'0'));
@@ -266,7 +268,7 @@ void GlobalRouterStatisticsWidget::updateContent()
     setFixedHeight(maxHeight);
 
     QPainter painter(&tmppixmap);
-    painter.initFrom(this);
+    painter.begin(this);
     painter.setPen(QColor::fromRgb(0,0,0)) ;
 
     QFont times_f(font());//"Times") ;
@@ -277,7 +279,7 @@ void GlobalRouterStatisticsWidget::updateContent()
     QFontMetricsF fm_monospace(monospace_f) ;
     QFontMetricsF fm_times(times_f) ;
 
-    static const int cellx = fm_monospace.width(QString(" ")) ;
+    static const int cellx = QFontMetrics_horizontalAdvance(fm_monospace, QString(" ")) ;
     static const int celly = fm_monospace.height() ;
 
     maxHeight = 500*fact ;
@@ -318,11 +320,11 @@ void GlobalRouterStatisticsWidget::updateContent()
     for(int i=0;i<100*fact;++i)
     {
         painter.setPen(colorScale(i/100.0/fact)) ;
-        painter.drawLine(ox+fm_times.width(Q)+i,oy+fm_times.height()*0.5,ox+fm_times.width(Q)+i,oy+fm_times.height()) ;
+        painter.drawLine(ox+QFontMetrics_horizontalAdvance(fm_times, Q)+i,oy+fm_times.height()*0.5,ox+QFontMetrics_horizontalAdvance(fm_times, Q)+i,oy+fm_times.height()) ;
     }
     painter.setPen(QColor::fromRgb(0,0,0)) ;
 
-    painter.drawText(ox+fm_times.width(Q) + 102*fact,oy+celly,")") ;
+    painter.drawText(ox+QFontMetrics_horizontalAdvance(fm_times, Q) + 102*fact,oy+celly,")") ;
 
     oy += celly ;
     oy += celly ;
@@ -372,21 +374,21 @@ void GlobalRouterStatisticsWidget::updateContent()
 		painter.drawText(ox+2*cellx,oy+celly,ids) ;
 
 		for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
-			painter.fillRect(ox+i*cellx+fm_monospace.width(ids),oy+0.15*celly,cellx,celly,colorScale(it->second[i])) ;
+			painter.fillRect(ox+i*cellx+QFontMetrics_horizontalAdvance(fm_monospace, ids),oy+0.15*celly,cellx,celly,colorScale(it->second[i])) ;
 
 		if(n == mCurrentN)
 		{
 			current_probs = it->second ;
 			current_oy = oy ;
             		current_id = it->first ;
-                    	current_width = ox+matrix_info.friend_ids.size()*cellx+fm_monospace.width(ids);
+                    	current_width = ox+matrix_info.friend_ids.size()*cellx+QFontMetrics_horizontalAdvance(fm_monospace, ids);
 		}
 
 		oy += celly ;
 		//}
 
 	}
-    mMaxWheelZoneX = ox+matrix_info.friend_ids.size()*cellx + fm_monospace.width(ids);
+    mMaxWheelZoneX = ox+matrix_info.friend_ids.size()*cellx + QFontMetrics_horizontalAdvance(fm_monospace, ids);
     
     RsIdentityDetails iddetails ;
     if(rsIdentity->getIdDetails(current_id,iddetails))
@@ -399,14 +401,14 @@ void GlobalRouterStatisticsWidget::updateContent()
     painter.setPen(QColor::fromRgb(0,0,0)) ;
     
     painter.setPen(QColor::fromRgb(127,127,127));
-    painter.drawRect(ox+2*cellx,current_oy+0.15*celly,fm_monospace.width(ids)+cellx*matrix_info.friend_ids.size()- 2*cellx,celly) ;
+    painter.drawRect(ox+2*cellx,current_oy+0.15*celly,QFontMetrics_horizontalAdvance(fm_monospace, ids)+cellx*matrix_info.friend_ids.size()- 2*cellx,celly) ;
 
     float total_length = (matrix_info.friend_ids.size()+2)*cellx ;
     
     if(!current_probs.empty())
     for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
     {
-        float x1 = ox+(i+0.5)*cellx+fm_monospace.width(ids) ;
+        float x1 = ox+(i+0.5)*cellx+QFontMetrics_horizontalAdvance(fm_monospace, ids) ;
         float y1 = oy+0.15*celly ;
         float y2 = y1+(matrix_info.friend_ids.size()-1-i+1)*celly;
         
@@ -430,16 +432,26 @@ void GlobalRouterStatisticsWidget::updateContent()
 
 void GlobalRouterStatisticsWidget::wheelEvent(QWheelEvent *e)
 {
-    if(e->x() < mMinWheelZoneX || e->x() > mMaxWheelZoneX || e->y() < mMinWheelZoneY || e->y() > mMaxWheelZoneY)
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    int x = e->position().toPoint().x();
+    int y = e->position().toPoint().y();
+    int delta = e->angleDelta().y();
+#else
+    int x = e->x();
+    int y = e->y();
+    int delta = e->delta();
+#endif
+
+    if(x < mMinWheelZoneX || x > mMaxWheelZoneX || y < mMinWheelZoneY || y > mMaxWheelZoneY)
     {
         QWidget::wheelEvent(e) ;
         return ;
     }
     
-    if(e->delta() < 0 && mCurrentN+PARTIAL_VIEW_SIZE/2+1 < mNumberOfKnownKeys)
+    if(delta < 0 && mCurrentN+PARTIAL_VIEW_SIZE/2+1 < mNumberOfKnownKeys)
 	    mCurrentN++ ;
     
-    if(e->delta() > 0 && mCurrentN > PARTIAL_VIEW_SIZE/2+1)
+    if(delta > 0 && mCurrentN > PARTIAL_VIEW_SIZE/2+1)
 	    mCurrentN-- ;
     
     updateContent();

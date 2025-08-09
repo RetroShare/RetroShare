@@ -23,6 +23,9 @@
 #include <QPixmap>
 #include <QCloseEvent>
 #include <QMenu>
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#include <QRandomGenerator>
+#endif
 
 #include "gui/common/FilesDefs.h"
 #include "PopupChatWindow.h"
@@ -205,7 +208,14 @@ void PopupChatWindow::showEvent(QShowEvent */*event*/)
 		if (tabbedWindow) {
 			Settings->loadWidgetInformation(this);
 		} else {
-			this->move(qrand()%100, qrand()%100); //avoid to stack multiple popup chat windows on the same position
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+			int x = QRandomGenerator::global()->generate();
+			int y = QRandomGenerator::global()->generate();
+#else
+			int x = qrand();
+			int y = qrand();
+#endif
+			this->move(x % 100, y % 100); //avoid to stack multiple popup chat windows on the same position
             PeerSettings->loadWidgetInformation(chatId, this);
 		}
 	}

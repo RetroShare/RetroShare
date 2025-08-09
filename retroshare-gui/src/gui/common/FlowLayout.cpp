@@ -23,6 +23,7 @@
 #include <QtGui>
 #include <QScrollBar>
 #include <QDebug>
+#include <QMargins>
 
 //*** FlowLayoutItem **********************************************************
 
@@ -598,7 +599,8 @@ QSize FlowLayout::minimumSize() const
 	foreach (item, m_itemList)
 		size = size.expandedTo(item->minimumSize());
 
-	size += QSize(2*margin(), 2*margin());
+	QMargins margins = contentsMargins();
+	size += QSize(margins.left() + margins.right(), margins.top() + margins.bottom());
 	return size;
 }
 
@@ -645,7 +647,7 @@ void FlowLayout::performDrag()
 				if (curs==0) dragPixmap = itemPixmap;
 				QPixmap oldPixmap = dragPixmap;
 				if (curs!=0) dragPixmap = QPixmap(oldPixmap.width() + 20 , oldPixmap.height());
-				dragPixmap.fill(widget->palette().background().color());
+				dragPixmap.fill(widget->palette().window().color());
 				QPainter painter(&dragPixmap);
 				painter.drawPixmap(0, 0, oldPixmap);
 				if (curs!=0) painter.drawPixmap((20 * curs), 0, itemPixmap);

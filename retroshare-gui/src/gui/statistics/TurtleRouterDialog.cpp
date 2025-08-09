@@ -402,7 +402,7 @@ void GxsAuthenticatedTunnelsDialog::updateDisplay()
 	//setFixedHeight(maxHeight);
 
 	QPainter painter(&tmppixmap);
-	painter.initFrom(this);
+	painter.begin(this);
 
         // extracts the height of the fonts in pixels. This is used to calibrate the size of the objects to draw.
 
@@ -576,7 +576,7 @@ void GxsNetTunnelsDialog::updateDisplay()
 	//setFixedHeight(maxHeight);
 
 	QPainter painter(&tmppixmap);
-	painter.initFrom(this);
+	painter.begin(this);
 
 	// extracts the height of the fonts in pixels. This is used to calibrate the size of the objects to draw.
 

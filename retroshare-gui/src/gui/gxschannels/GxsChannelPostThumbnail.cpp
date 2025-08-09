@@ -283,7 +283,13 @@ void ZoomableLabel::wheelEvent(QWheelEvent *me)
     if(!mZoomEnabled)
         return;
 
-    float new_zoom_factor = (me->delta() > 0)?(mZoomFactor*1.05):(mZoomFactor/1.05);
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    int delta = me->angleDelta().y();
+#else
+    int delta = me->delta();
+#endif
+
+    float new_zoom_factor = (delta > 0)?(mZoomFactor*1.05):(mZoomFactor/1.05);
     float new_center_x = mCenterX;
     float new_center_y = mCenterY;
 

@@ -70,7 +70,7 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	painter->setClipRect(opt.rect);
 
 	//set text color
-	QVariant value = index.data(Qt::TextColorRole);
+	QVariant value = index.data(Qt::ForegroundRole);
 	if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
 		opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
 	}
@@ -172,7 +172,7 @@ QSize BWListDelegate::sizeHint(const QStyleOptionViewItem & option/*option*/, co
     float FS = QFontMetricsF(option.font).height();
     //float fact = FS/14.0 ;
 
-    float w = QFontMetricsF(option.font).width(index.data(Qt::DisplayRole).toString());
+    float w = QFontMetrics_horizontalAdvance(QFontMetricsF(option.font), index.data(Qt::DisplayRole).toString());
 
     return QSize(w,FS*1.2);
     //return QSize(50*fact,17*fact);

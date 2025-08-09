@@ -20,7 +20,11 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <QRegularExpression>
+
 #include "guiexprelement.h"
+#include "util/DateTime.h"
+
 #define STR_FIELDS_MIN_WFACTOR  20.0
 #define SIZE_FIELDS_MIN_WFACTOR  8.0
 #define DATE_FIELDS_MIN_WFACTOR 10.0
@@ -398,10 +402,10 @@ void ExprParamElement::adjustForSearchType(ExprSearchType type)
 {
 	// record which search type is active
 	searchType = type;
-	QRegExp regExp("0|[1-9][0-9]*");
-	numValidator = new QRegExpValidator(regExp, this);
-	QRegExp hexRegExp("[A-Fa-f0-9]*");
-	hexValidator = new QRegExpValidator(hexRegExp, this);
+	QRegularExpression regExp("0|[1-9][0-9]*");
+	numValidator = new QRegularExpressionValidator(regExp, this);
+	QRegularExpression hexRegExp("[A-Fa-f0-9]*");
+	hexValidator = new QRegularExpressionValidator(hexRegExp, this);
 
 	QHBoxLayout* hbox = static_cast<QHBoxLayout*>(layout());
 	clearLayout(hbox);
@@ -607,7 +611,7 @@ uint64_t ExprParamElement::getIntValueFromField(QString fieldName, bool isToFiel
 #else
             QDateTime time = dateEdit->date().startOfDay();
 #endif
-            val = (uint64_t)time.toTime_t();
+            val = (uint64_t) DateTime::DateTimeToTime_t(time);
             break;
         }
         case SizeSearch:

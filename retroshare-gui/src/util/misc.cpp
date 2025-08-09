@@ -335,8 +335,7 @@ bool misc::getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type
 
 #ifdef WINDOWS_SYS
     // fix bug in Qt for Windows Vista and higher, convert path from native separators
-    if (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA && (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based))
-        file = QDir::fromNativeSeparators(file);
+    file = QDir::fromNativeSeparators(file);
 #endif
 
     return true;
@@ -361,11 +360,9 @@ bool misc::getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type
     Settings->setLastDir(type, lastDir);
 
 #ifdef WINDOWS_SYS
-    // fix bug in Qt for Windows Vista and higher, convert path from native separators
-    if (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA && (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based))
-        for (QStringList::iterator file = files.begin(); file != files.end(); ++file) {
-            (*file) = QDir::fromNativeSeparators(*file);
-        }
+    for (QStringList::iterator file = files.begin(); file != files.end(); ++file) {
+        (*file) = QDir::fromNativeSeparators(*file);
+    }
 #endif
 
     return true;
