@@ -31,6 +31,7 @@ in the [build_scripts](https://github.com/RetroShare/RetroShare/tree/master/buil
 
 ## Compilation on Windows
 Follow this file : [WindowsMSys2_InstallGuide](https://github.com/RetroShare/RetroShare/blob/master/build_scripts/Windows-msys2/WindowsMSys2_InstallGuide.md)
+
 With QtCreator :   [Windows-QtCreator-InstallGuide](https://github.com/RetroShare/RetroShare/blob/master/build_scripts/Windows/Windows-QtCreator-InstallGuide.md)
 
 ## Compilation on MacOSX
