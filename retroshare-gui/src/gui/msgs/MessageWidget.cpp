@@ -45,7 +45,7 @@
 #include "util/printpreview.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/qtthreadsutils.h"
 
 #include <retroshare/rspeers.h>
@@ -640,7 +640,7 @@ void MessageWidget::fill(const std::string &msgId)
 
     ui.trans_ToText->setText(to_text);
 
-	int recipientsCount = ui.trans_ToText->toPlainText().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts).count();
+	int recipientsCount = ui.trans_ToText->toPlainText().split(QRegularExpression("(\\s|\\n|\\r)+"), QtSkipEmptyParts).count();
 	ui.expandButton->setText( QString::number(recipientsCount)+ " " + tr("more"));
 
 	if (recipientsCount >=20) {
@@ -775,7 +775,7 @@ void MessageWidget::print()
 	printer.setFullPage(true);
 	QPrintDialog *dlg = new QPrintDialog(&printer, this);
 	if (ui.msgText->textCursor().hasSelection())
-		dlg->addEnabledOption(QAbstractPrintDialog::PrintSelection);
+		dlg->setOption(QPrintDialog::PrintSelection);
 	dlg->setWindowTitle(tr("Print Document"));
 	if (dlg->exec() == QDialog::Accepted) {
 		ui.msgText->print(&printer);
@@ -802,8 +802,13 @@ void MessageWidget::saveAs()
 		if (!file.open(QFile::WriteOnly))
 			return;
 		QTextStream ts(&file);
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+		ts.setEncoding(QStringConverter::Utf8);
+		ts << ui.msgText->document()->toHtml();
+#else
 		ts.setCodec(QTextCodec::codecForName("UTF-8"));
 		ts << ui.msgText->document()->toHtml("UTF-8");
+#endif
 		ui.msgText->document()->setModified(false);
 	}
 }

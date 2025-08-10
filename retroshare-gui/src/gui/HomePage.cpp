@@ -65,6 +65,9 @@ HomePage::HomePage(QWidget *parent) :
     QAction *RecAction = new QAction(QIcon(),tr("Recommend friends to each others"), this);
     connect(RecAction, SIGNAL(triggered()), this, SLOT(recommendFriends()));
 
+    QAction *SaveAction = new QAction(QIcon(),tr("Save to File"), this);
+    connect(SaveAction, SIGNAL(triggered()), this, SLOT(saveCert()));
+
     QAction *SendAction = new QAction(QIcon(),tr("Send via Email"), this);
     connect(SendAction, SIGNAL(triggered()), this, SLOT(runEmailClient()));
 
@@ -75,6 +78,7 @@ HomePage::HomePage(QWidget *parent) :
     menu->addAction(CopyIdAction);
 
     menu->addSeparator();
+    menu->addAction(SaveAction);
     menu->addAction(SendAction);
     menu->addAction(WebMailAction);
     menu->addAction(RecAction);
@@ -348,7 +352,11 @@ void HomePage::saveCert()
     //Todo: move save to file to p3Peers::SaveCertificateToFile
 
     QTextStream ts(&file);
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    ts.setEncoding(QStringConverter::Utf8);
+#else
     ts.setCodec(QTextCodec::codecForName("UTF-8"));
+#endif
     ts << ui->retroshareid->text();
 }
 

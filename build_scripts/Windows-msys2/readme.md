@@ -44,8 +44,9 @@ Run the scripts in this order:
 **Always delete the build artifacts folder if you enable or disable extra features after the build command: &lt;sourcefolder&gt;-msys2\deploy\builds**
 
 * Mandatory
-  * 32 or 64: 32 or 64 bit version
+  * 32, 64, mingw32, mingw64, ucrt64, clang32, clang64 or clangarm64: It sets the msys2 build environment to the selected value. 32 is a shortcut for mingw32, 64 is a shortcut for mingw64. Default in build.bat and buil-tor.bat is 64.
   * release or debug:   normally you would like to use the release option
+  * qt5 or qt6:         build with Qt 5 (default) or Qt 6
 * Extra features (optional)
   * autologin:          enable autologin
   * plugins:            build plugins
@@ -55,7 +56,6 @@ Run the scripts in this order:
   * "CONFIG+=..."       enable other extra compile time features, you can find the almost complete list in file *&lt;sourcefolder&gt;\retroshare.pri*
 * For fixing compile problems (optional)
   * singlethread:       use only 1 thread for building, slow but useful if you don't find the error message in the console
-  * clang:              use clang compiler instead of GCC
   * noupdate:           skip the msys2 update step, sometimes some msys2 packages are broken, you can manually switch back to the older package, and this option will prevent updating to the broken version again
 
 Example:

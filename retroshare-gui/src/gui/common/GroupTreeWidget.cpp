@@ -28,12 +28,12 @@
 #include "RSElidedItemDelegate.h"
 #include "RSTreeWidgetItem.h"
 #include "gui/settings/rsharesettings.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/DateTime.h"
 
-#include <QDesktopWidget>
 #include <QMenu>
 #include <QToolButton>
+#include <QScreen>
 
 #include <stdint.h>
 
@@ -192,8 +192,11 @@ void GroupTreeWidget::addToolButton(QToolButton *toolButton)
 
 	/* Initialize button */
 	int i = qt_defaultDpi();
-	auto desktopWidget = QApplication::desktop();
-	auto y = desktopWidget->logicalDpiY();
+	QScreen *primaryScreen = QGuiApplication::primaryScreen();
+	int y = i;
+	if (primaryScreen) {
+		y = primaryScreen->logicalDotsPerInchY();
+	}
 
 	toolButton->setAutoRaise(true);
 	toolButton->setIconSize(QSize(24*y/i,24*y/i));
@@ -424,7 +427,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 			}
 
 		/* Set last post */
-		if(itemInfo.lastpost == QDateTime::fromTime_t(0))
+		if(itemInfo.lastpost == DateTime::DateTimeFromTime_t(0))
 		{
 			item->setText(GTW_COLUMN_LAST_POST, tr("Never"));
 			item->setData(GTW_COLUMN_LAST_POST, ROLE_SORT, QVariant());// To allow them not be sorted with ->setNoDataAsLast(true)
@@ -432,7 +435,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		else
 		{
 			item->setText(GTW_COLUMN_LAST_POST, itemInfo.lastpost.toString(Qt::ISODate).replace("T"," "));
-			item->setData(GTW_COLUMN_LAST_POST, ROLE_SORT, itemInfo.lastpost.toTime_t());
+			item->setData(GTW_COLUMN_LAST_POST, ROLE_SORT, (qint64) DateTime::DateTimeToTime_t(itemInfo.lastpost));
 		}
 
 
@@ -458,7 +461,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		if(!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags))
 			tooltip += "\n" + QString::number(itemInfo.max_visible_posts) + " messages available" ;
 		// if(itemInfo.max_visible_posts)  // wtf? this=0 when there are some posts definitely exist - lastpost is recent
-		if(itemInfo.lastpost == QDateTime::fromTime_t(0))
+		if(itemInfo.lastpost == DateTime::DateTimeFromTime_t(0))
 			tooltip += "\n" + tr("Last Post") + ": "  + tr("Never") ;
 		else
 			tooltip += "\n" + tr("Last Post") + ": "  + DateTime::formatLongDateTime(itemInfo.lastpost) ;

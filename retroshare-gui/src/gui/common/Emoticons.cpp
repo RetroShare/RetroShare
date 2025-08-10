@@ -19,7 +19,6 @@
  *******************************************************************************/
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QFile>
 #include <QDir>
 #include <QGridLayout>
@@ -34,6 +33,7 @@
 #include <iostream>
 #include <math.h>
 
+#include "rshare.h"
 #include "Emoticons.h"
 #include "util/HandleRichText.h"
 #include "retroshare/rsinit.h"
@@ -261,7 +261,7 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 	//Get widget's size
 	QSize sizeWidget = smWidget->sizeHint();
 	//Get screen's size
-	QSize sizeScreen = QApplication::desktop()->size();
+	QSize sizeScreen = RsApplication::primaryScreenGeometry().size();
 
 	//Calculate left distance to screen start
 	int distToScreenLeft = butTopLeft.x();
@@ -437,7 +437,7 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 	//Get widget's size
 	QSize sizeWidget = smWidget->sizeHint();
 	//Get screen's size
-	QSize sizeScreen = QApplication::desktop()->size();
+	QSize sizeScreen = RsApplication::primaryScreenGeometry().size();
 
 	//Calculate left distance to screen start
 	int distToScreenLeft = butTopLeft.x();

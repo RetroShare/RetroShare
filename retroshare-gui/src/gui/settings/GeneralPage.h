@@ -32,7 +32,7 @@ class GeneralPage : public ConfigPage
 
 public:
 	/** Default Constructor */
-	GeneralPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+	GeneralPage(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 	/** Default Destructor */
 	~GeneralPage();
 

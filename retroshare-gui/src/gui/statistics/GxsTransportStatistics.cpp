@@ -43,7 +43,7 @@
 
 #include "gui/Identity/IdDetailsDialog.h"
 #include "gui/settings/rsharesettings.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "gui/common/UIStateHelper.h"
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
@@ -53,6 +53,7 @@
 #include "gui/Identity/IdDialog.h"
 #include "gui/MainWindow.h"
 #include "gui/common/FilesDefs.h"
+#include "util/DateTime.h"
 
 #define COL_PENDING_ID                  0
 #define COL_PENDING_DESTINATION         1
@@ -255,7 +256,7 @@ void GxsTransportStatistics::updateContent()
         item -> setData(COL_PENDING_DATASTATUS,   Qt::DisplayRole, getStatusString(rec.status));
         item -> setData(COL_PENDING_DATASIZE,     Qt::DisplayRole, misc::friendlyUnit(rec.data_size));
         item -> setData(COL_PENDING_DATAHASH,     Qt::DisplayRole, QString::fromStdString(rec.data_hash.toStdString()));
-		item -> setData(COL_PENDING_SEND,         Qt::DisplayRole, QDateTime::fromTime_t(rec.send_TS).toString());
+		item -> setData(COL_PENDING_SEND,         Qt::DisplayRole, DateTime::DateTimeFromTime_t(rec.send_TS).toString());
         item -> setData(COL_PENDING_GROUP_ID,     Qt::DisplayRole, QString::fromStdString(rec.group_id.toStdString()));
 		item -> setData(COL_PENDING_DESTINATION_ID,  Qt::DisplayRole, QString::fromStdString(rec.recipient.toStdString()));
 		item -> setData(COL_PENDING_SENDTIME,        Qt::DisplayRole, QString::number(now - rec.send_TS));
@@ -272,7 +273,7 @@ void GxsTransportStatistics::updateContent()
     std::set<RsGxsGroupId> openned_groups ;
 
 	for(int i=0; i<groupTreeWidget->topLevelItemCount(); ++i)
-		if( groupTreeWidget->isItemExpanded(groupTreeWidget->topLevelItem(i)) )
+		if( groupTreeWidget->topLevelItem(i)->isExpanded() )
 			openned_groups.insert(RsGxsGroupId(groupTreeWidget->topLevelItem(i)->data(COL_GROUP_GRP_ID, Qt::DisplayRole).toString().toStdString()));
 
 	groupTreeWidget->clear();
@@ -294,9 +295,9 @@ void GxsTransportStatistics::updateContent()
 		}
 
         groupTreeWidget->addTopLevelItem(item);
-		groupTreeWidget->setItemExpanded(item,openned_groups.find(it->first) != openned_groups.end());
+		item->setExpanded(openned_groups.find(it->first) != openned_groups.end());
 
-		QString msg_time_string = (stat.last_publish_TS>0)?QString("(Last msg: %1)").arg(QDateTime::fromTime_t((uint)stat.last_publish_TS).toString()):"" ;
+		QString msg_time_string = (stat.last_publish_TS>0)?QString("(Last msg: %1)").arg(DateTime::DateTimeFromTime_t((uint)stat.last_publish_TS).toString()):"" ;
 
         item->setData(COL_GROUP_PUBLISHTS,  Qt::DisplayRole,  msg_time_string) ;
 		item->setData(COL_GROUP_NUM_MSGS,  Qt::DisplayRole,  QString::number(stat.mNumMsgs) ) ;
@@ -330,8 +331,7 @@ void GxsTransportStatistics::updateContent()
 			rsIdentity->getIdDetails(meta.mAuthorId,idDetails);
 			
 			QPixmap pixmap ;
-			QDateTime qdatetime;
-			qdatetime.setTime_t(meta.mPublishTs);
+			QDateTime qdatetime = DateTime::DateTimeFromTime_t(meta.mPublishTs);
 
 			if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
 				pixmap = GxsIdDetails::makeDefaultIcon(meta.mAuthorId,GxsIdDetails::SMALL);
@@ -340,7 +340,7 @@ void GxsTransportStatistics::updateContent()
 
 			sitem->setData(COL_GROUP_UNIQUE_ID, Qt::DisplayRole,QString::fromStdString(meta.mMsgId.toStdString()));
 			sitem->setData(COL_GROUP_AUTHOR_ID, Qt::DisplayRole,  QString::fromStdString(meta.mAuthorId.toStdString())) ;
-			sitem->setText(COL_GROUP_PUBLISHTS, QDateTime::fromTime_t(meta.mPublishTs).toString());
+			sitem->setText(COL_GROUP_PUBLISHTS, DateTime::DateTimeFromTime_t(meta.mPublishTs).toString());
 			sitem->setData(COL_GROUP_PUBLISHTS, Qt::UserRole, qdatetime);
         }
     }

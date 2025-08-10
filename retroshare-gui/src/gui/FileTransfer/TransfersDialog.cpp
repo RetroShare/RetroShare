@@ -37,9 +37,10 @@
 #include "gui/FileTransfer/xprogressbar.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/misc.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/RsFile.h"
 #include "util/qtthreadsutils.h"
+#include "util/DateTime.h"
 
 #include "retroshare/rsdisc.h"
 #include "retroshare/rsfiles.h"
@@ -286,7 +287,7 @@ public:
 		{
 		case Qt::SizeHintRole:       return sizeHintRole(index.column()) ;
 		case Qt::TextAlignmentRole:
-		case Qt::TextColorRole:
+		case Qt::ForegroundRole:
 		case Qt::WhatsThisRole:
 		case Qt::EditRole:
 		case Qt::ToolTipRole:
@@ -434,7 +435,7 @@ public:
 
 					//Get Last Access on File
 					if (file.exists())
-						qi64LastDL = file.lastModified().toTime_t();
+						qi64LastDL = DateTime::DateTimeToTime_t(file.lastModified());
 				}
 				return QVariant(qi64LastDL) ;
 			}
@@ -2646,5 +2647,5 @@ void TransfersDialog::filterChanged(const QString& /*text*/)
 	int filterColumn = ui.filterLineEdit->currentFilter();
 	QString text = ui.filterLineEdit->text();
 	DLLFilterModel->setFilterKeyColumn(filterColumn);
-	DLLFilterModel->setFilterRegExp(text);
+	QSortFilterProxyModel_setFilterRegularExpression(DLLFilterModel, text);
 }

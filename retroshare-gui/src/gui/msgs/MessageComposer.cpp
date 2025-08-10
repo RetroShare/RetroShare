@@ -36,6 +36,7 @@
 #include <QFileInfo>
 #include <QTextStream>
 #include <QScrollBar>
+#include <QActionGroup>
 
 #include <algorithm>
 
@@ -65,7 +66,7 @@
 #include "util/misc.h"
 #include "util/DateTime.h"
 #include "util/HandleRichText.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "textformat.h"
 #include "TagsMenu.h"
 
@@ -2402,8 +2403,13 @@ bool MessageComposer::fileSave()
     if (!file.open(QFile::WriteOnly))
         return false;
     QTextStream ts(&file);
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    ts.setEncoding(QStringConverter::Utf8);
+    ts << ui.msgText->document()->toHtml();
+#else
     ts.setCodec(QTextCodec::codecForName("UTF-8"));
     ts << ui.msgText->document()->toHtml("UTF-8");
+#endif
     std::cerr << "Setting modified 002 = false" << std::endl;
     ui.msgText->document()->setModified(false);
     return true;
@@ -2432,7 +2438,7 @@ void MessageComposer::filePrint()
     printer.setFullPage(true);
     QPrintDialog *dlg = new QPrintDialog(&printer, this);
     if (ui.msgText->textCursor().hasSelection())
-        dlg->addEnabledOption(QAbstractPrintDialog::PrintSelection);
+        dlg->setOption(QPrintDialog::PrintSelection);
     dlg->setWindowTitle(tr("Print Document"));
     if (dlg->exec() == QDialog::Accepted) {
         ui.msgText->print(&printer);

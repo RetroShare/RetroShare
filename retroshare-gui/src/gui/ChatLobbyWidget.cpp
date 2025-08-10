@@ -35,7 +35,7 @@
 #include "settings/rsharesettings.h"
 #include "util/HandleRichText.h"
 #include "util/misc.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"

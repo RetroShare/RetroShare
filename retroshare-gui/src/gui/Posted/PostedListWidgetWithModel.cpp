@@ -45,6 +45,7 @@
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 #include "gui/common/FilesDefs.h"
+#include "util/RsQtVersion.h"
 
 #include "gui/MainWindow.h"
 
@@ -417,7 +418,7 @@ void PostedListWidgetWithModel::updateShowLabel()
 
 void PostedListWidgetWithModel::filterItems(QString text)
 {
-	QStringList lst = text.split(" ",QString::SkipEmptyParts) ;
+	QStringList lst = text.split(" ",QtSkipEmptyParts) ;
 
     uint32_t count;
 	mPostedPostsModel->setFilter(lst,count) ;
@@ -1022,7 +1023,7 @@ void PostedListWidget::createPostItemFromMetaData(const RsGxsMsgMetaData& meta,b
             post.mOlderVersions.insert(post.mMeta.mMsgId);
 
 			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post, true, false,post.mOlderVersions);
-			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
+			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, DateTime::DateTimeFromTime_t(post.mMeta.mPublishTs));
 
 			return ;
 		}
@@ -1036,12 +1037,12 @@ void PostedListWidget::createPostItemFromMetaData(const RsGxsMsgMetaData& meta,b
 	if (item)
     {
 		item->setPost(post);
-		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
+		ui->feedWidget->setSort(item, ROLE_PUBLISH, DateTime::DateTimeFromTime_t(meta.mPublishTs));
 	}
     else
     {
 		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, meta.mGroupId,meta.mMsgId, true, true);
-		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
+		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, DateTime::DateTimeFromTime_t(post.mMeta.mPublishTs));
 	}
 #ifdef TODO
 	ui->fileWidget->addFiles(post, related);
@@ -1067,7 +1068,7 @@ void PostedListWidget::createPostItem(const RsGxsChannelPost& post, bool related
             older_versions.insert(meta.mMsgId);
 
 			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, mGroup.mMeta,meta.mMsgId, true, false,older_versions);
-			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
+			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, DateTime::DateTimeFromTime_t(meta.mPublishTs));
 
 			return ;
 		}
@@ -1081,12 +1082,12 @@ void PostedListWidget::createPostItem(const RsGxsChannelPost& post, bool related
 	if (item)
     {
 		item->setPost(post);
-		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
+		ui->feedWidget->setSort(item, ROLE_PUBLISH, DateTime::DateTimeFromTime_t(meta.mPublishTs));
 	}
     else
     {
 		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, mGroup.mMeta,meta.mMsgId, true, true);
-		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
+		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, DateTime::DateTimeFromTime_t(meta.mPublishTs));
 	}
 
 	ui->fileWidget->addFiles(post, related);

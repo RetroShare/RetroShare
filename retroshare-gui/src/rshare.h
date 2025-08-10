@@ -154,6 +154,11 @@ public:
   static void createShortcut(const QKeySequence &key, QWidget *sender,
                              QWidget *receiver, const char *slot);
 
+  /** Get available geometry of primary screen */
+  static QRect availablePrimaryScreenGeometry();
+  /** Get geometry of primary screen */
+  static QRect primaryScreenGeometry();
+
 #ifdef __APPLE__
   /**To process event from Mac system */
   bool event(QEvent *);

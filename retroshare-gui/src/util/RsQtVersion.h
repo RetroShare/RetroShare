@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/qthreadutils.h                                                         *
+ * util/RsQtVersion.h                                                         *
  *                                                                             *
  * Copyright (C) 2013 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -18,10 +18,10 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef QTVERSION_H
-#define QTVERSION_H
+#ifndef RS_QTVERSION_H
+#define RS_QTVERSION_H
 
-// Macros to compile with Qt 4 and Qt 5
+// Macros to compile with Qt 4, Qt 5 and Qt 6
 
 // Renamed QHeaderView::setResizeMode to QHeaderView::setSectionResizeMode
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
@@ -41,6 +41,37 @@
 #define QHeaderView_setSectionsMovable(header, movable) header->setSectionsMovable(movable);
 #else
 #define QHeaderView_setSectionsMovable(header, movable) header->setMovable(movable);
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#define QtSkipEmptyParts Qt::SkipEmptyParts
+#else
+#define QtSkipEmptyParts QString::SkipEmptyParts
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#define QSortFilterProxyModel_setFilterRegularExpression(proxyModel, pattern) proxyModel->setFilterRegularExpression(pattern);
+#else
+#define QSortFilterProxyModel_setFilterRegularExpression(proxyModel, pattern) proxyModel->setFilterRegExp(pattern);
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#define QFontMetrics_horizontalAdvance(fontMetrics, text) fontMetrics.horizontalAdvance(text)
+#else
+#define QFontMetrics_horizontalAdvance(fontMetrics, text) fontMetrics.width(text)
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK (6, 6, 0)
+#define QLabel_pixmap(label) label->pixmap()
+#elif QT_VERSION >= QT_VERSION_CHECK (5, 15, 0)
+#define QLabel_pixmap(label) label->pixmap(Qt::ReturnByValue)
+#else
+class QLabel;
+extern QPixmap QLabel_pixmap(QLabel* label);
+#endif
+
+#if QT_VERSION < QT_VERSION_CHECK (5, 8, 0)
+#define Q_FALLTHROUGH() (void)0
 #endif
 
 #endif

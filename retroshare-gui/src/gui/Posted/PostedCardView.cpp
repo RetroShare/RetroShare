@@ -31,6 +31,7 @@
 #include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
+#include "util/DateTime.h"
 
 #include "ui_PostedCardView.h"
 
@@ -186,8 +187,7 @@ void PostedCardView::fill()
 		ui->picture_frame->hide();
 		ui->fromLabel->setId(mPost.mMeta.mAuthorId);
 		ui->titleLabel->setText(tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(mPost.mMeta.mAuthorId.toStdString()))) ;
-		QDateTime qtime;
-		qtime.setTime_t(mPost.mMeta.mPublishTs);
+		QDateTime qtime = DateTime::DateTimeFromTime_t(mPost.mMeta.mPublishTs);
 		QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
 		ui->dateLabel->setText(timestamp);
 	} else {
@@ -198,8 +198,7 @@ void PostedCardView::fill()
 		//int desired_height = 1.5*(ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height());
 		//int desired_width =  sqpixmap2.width()*desired_height/(float)sqpixmap2.height();
 
-		QDateTime qtime;
-		qtime.setTime_t(mPost.mMeta.mPublishTs);
+		QDateTime qtime = DateTime::DateTimeFromTime_t(mPost.mMeta.mPublishTs);
 		QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
 		QString timestamp2 = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
 		ui->dateLabel->setText(timestamp2);
