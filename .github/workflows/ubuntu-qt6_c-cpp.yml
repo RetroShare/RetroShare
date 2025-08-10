@@ -2,9 +2,11 @@ name: Ubuntu Qt 6 C/C++ CI
 
 on:
   push:
-    branches: [ "master" ]
+    paths-ignore:
+    - '**/*.md'
   pull_request:
-    branches: [ "master" ]
+    paths-ignore:
+    - '**/*.md'
 
 jobs:
   build:
