@@ -78,7 +78,7 @@ QString ChatPage::loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_
     {
         whileBlocking(style_CB)->insertItem(n,style->styleName);
 
-        style_CB->setItemData(n, qVariantFromValue(*style),Qt::UserRole);
+        style_CB->setItemData(n, QVariant::fromValue(*style),Qt::UserRole);
 
         if (style->stylePath == stylePath) {
             activeItem = n;
@@ -686,10 +686,9 @@ void ChatPage::on_cbSearch_WithoutLimit_toggled(bool checked)
 
 void ChatPage::on_btSearch_FoundColor_clicked()
 {
-	bool ok;
-	QRgb color = QColorDialog::getRgba(rgbChatSearchFoundColor, &ok, window());
-	if (ok) {
-		rgbChatSearchFoundColor=color;
+	QColor color = QColorDialog::getColor(QColor::fromRgba(rgbChatSearchFoundColor), window(), "", QColorDialog::ShowAlphaChannel);
+	if (color.isValid()) {
+		rgbChatSearchFoundColor = color.rgba();
 		QPixmap pix(24, 24);
 		pix.fill(color);
 		ui.btSearch_FoundColor->setIcon(pix);

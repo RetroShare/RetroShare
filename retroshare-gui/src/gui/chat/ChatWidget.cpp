@@ -61,6 +61,7 @@
 #include <QTimer>
 #include <QToolTip>
 #include <QInputDialog>
+#include <QRegExp>
 
 #include <time.h>
 
@@ -1507,10 +1508,9 @@ void ChatWidget::on_markButton_clicked(bool bValue)
 
 void ChatWidget::chooseColor()
 {
-	bool ok;
-	QRgb color = QColorDialog::getRgba(currentColor.rgba(), &ok, window());
-	if (ok) {
-		currentColor = QColor(color);
+	QColor color = QColorDialog::getColor(currentColor, window(), "", QColorDialog::ShowAlphaChannel);
+	if (color.isValid()) {
+		currentColor = color;
 		PeerSettings->setPrivateChatColor(chatId, currentColor.name());
 		colorChanged();
 		setColorAndFont(false);
@@ -1763,7 +1763,11 @@ bool ChatWidget::fileSave()
 	if (!file.open(QFile::WriteOnly))
 		return false;
 	QTextStream ts(&file);
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+	ts.setEncoding(QStringConverter::Utf8);
+#else
 	ts.setCodec(QTextCodec::codecForName("UTF-8"));
+#endif
 	ts << ui->textBrowser->document()->toPlainText();
 	ui->textBrowser->document()->setModified(false);
 	return true;
@@ -1930,7 +1934,7 @@ void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QStr
 
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString, bool permanent)
 {
-	ui->typingLabel->setText(QString(statusMask).arg(trUtf8(statusString.toUtf8()))); // displays info for 5 secs.
+	ui->typingLabel->setText(QString(statusMask).arg(tr(statusString.toUtf8()))); // displays info for 5 secs.
     ui->typingPixmapLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":icons/png/typing.png") );
 
 	if (statusString == "is typing...") {

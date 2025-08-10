@@ -35,6 +35,7 @@
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include "rshare.h"
 #include "RSGraphWidget.h"
+#include "util/RsQtVersion.h"
 
 #if QT_VERSION < 0x040700
 #include <sys/time.h>
@@ -655,12 +656,12 @@ void RSGraphWidget::paintScale1()
 
 		if (_flags & RSGRAPH_FLAGS_DARK_STYLE){
 			_painter->setPen(SCALE_COLOR_DARK);
-			_painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetricsF(font()).width(text) - 4*fact, pos+0.4*FS),  text);
+			_painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetrics_horizontalAdvance(QFontMetricsF(font()), text) - 4*fact, pos+0.4*FS),  text);
 			_painter->setPen(GRID_COLOR_DARK);
 			_painter->drawLine(QPointF(SCALE_WIDTH*fact, pos),  QPointF(_rec.width(), pos));
 		}else{
 			_painter->setPen(SCALE_COLOR);
-			_painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetricsF(font()).width(text) - 4*fact, pos+0.4*FS),  text);
+			_painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetrics_horizontalAdvance(QFontMetricsF(font()), text) - 4*fact, pos+0.4*FS),  text);
 			_painter->setPen(GRID_COLOR);
 			_painter->drawLine(QPointF(SCALE_WIDTH*fact, pos),  QPointF(_rec.width(), pos));
 		}
@@ -696,18 +697,24 @@ void RSGraphWidget::paintScale2()
 
 void RSGraphWidget::wheelEvent(QWheelEvent *e)
 {
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+	int delta = e->angleDelta().y();
+#else
+	int delta = e->delta();
+#endif
+
     if(e->modifiers() & Qt::ShiftModifier)
-	    if(e->delta() > 0)
+	    if(delta > 0)
 		    _time_filter *= 1.1 ;
 	    else
 		    _time_filter /= 1.1 ;
     else if(e->modifiers() & Qt::ControlModifier)
-        if(e->delta() > 0)
+        if(delta > 0)
             _linewidthscale *= 1.2 ;
 		else
             _linewidthscale /= 1.2 ;
     else
-	    if(e->delta() > 0)
+	    if(delta > 0)
 		    _time_scale *= 1.1 ;
 	    else
 		    _time_scale /= 1.1 ;

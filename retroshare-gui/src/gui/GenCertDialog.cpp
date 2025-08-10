@@ -613,7 +613,9 @@ void GenCertDialog::genPerson()
         std::cout << "Waiting ed->processEvents()" << std::endl;
 #endif
 		time_t waitEnd = time(NULL) + 10;//Wait no more than 10 sec to processEvents
+#if QT_VERSION < QT_VERSION_CHECK (6, 0, 0)
 		if (ed->hasPendingEvents())
+#endif
 			while(ed->processEvents(QEventLoop::AllEvents) && (time(NULL) < waitEnd));
 
 		std::string email_str = "" ;

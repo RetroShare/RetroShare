@@ -21,7 +21,7 @@
 #include <retroshare/rstypes.h>
 #include <QModelIndex>
 #include <QPainter>
-#include <QStyleOptionProgressBarV2>
+#include <QStyleOptionProgressBar>
 #include <QProgressBar>
 #include <QApplication>
 #include <QDateTime>
@@ -30,6 +30,7 @@
 
 #include "DLListDelegate.h"
 #include "util/DateTime.h"
+#include "util/RsQtVersion.h"
 
 Q_DECLARE_METATYPE(FileProgressInfo)
 
@@ -43,7 +44,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 {
 	QString byteUnits[4] = {tr("B"), tr("KB"), tr("MB"), tr("GB")};
 	QStyleOptionViewItem opt = option;
-	QStyleOptionProgressBarV2 newopt;
+	QStyleOptionProgressBar newopt;
 	QRect pixmapRect;
 	QPixmap pixmap;
 	qlonglong fileSize;
@@ -60,7 +61,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	painter->setClipRect(opt.rect);
 
 	//set text color
-        QVariant value = index.data(Qt::TextColorRole);
+        QVariant value = index.data(Qt::ForegroundRole);
         if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
                 opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
         }
@@ -278,7 +279,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 
 QSize DLListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
-    float w = QFontMetricsF(option.font).width(index.data(Qt::DisplayRole).toString());
+    float w = QFontMetrics_horizontalAdvance(QFontMetricsF(option.font), index.data(Qt::DisplayRole).toString());
 
     int S = QFontMetricsF(option.font).height()*1.5 ;
     return QSize(w,S);

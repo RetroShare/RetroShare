@@ -24,6 +24,10 @@
 #include <QObject>
 #include <QMap>
 
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#include <QSoundEffect>
+#endif
+
 #define SOUND_NEW_CHAT_MESSAGE  "NewChatMessage"
 #define SOUND_USER_ONLINE       "User_go_Online"
 #define SOUND_MESSAGE_ARRIVED   "MessageArrived"
@@ -91,6 +95,10 @@ public:
     
 private:
 	SoundManager();
+
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+	QSoundEffect mSoundEffect;
+#endif
 };
 
 extern SoundManager *soundManager;
