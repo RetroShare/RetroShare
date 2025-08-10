@@ -328,7 +328,7 @@ void GxsForumMsgItem::fillParentMessage()
     ui->parentFrame->hide();
 
     RetroShareLink linkParent = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_FORUM, mParentMessage.mMeta.mGroupId, mParentMessage.mMeta.mMsgId, QString::fromUtf8(mParentMessage.mMeta.mMsgName.c_str()));
-    ui->parentSubLabel->setText(linkParent.toHtml());
+    ui->parentSubLabel->setText(linkParent.toHtmlColored());
     ui->parentMsgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mParentMessage.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
     ui->parentNameLabel->setId(mParentMessage.mMeta.mAuthorId);
 
@@ -358,7 +358,7 @@ void GxsForumMsgItem::fillMessage()
 
     QString title = tr("Forum Feed") + ": ";
     RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_FORUM, mMessage.mMeta.mGroupId, groupName());
-    title += link.toHtml();
+    title += link.toHtmlColored();
     ui->titleLabel->setText(title);
 
     setReadStatus(IS_MSG_NEW(mMessage.mMeta.mMsgStatus), IS_MSG_UNREAD(mMessage.mMeta.mMsgStatus) || IS_MSG_NEW(mMessage.mMeta.mMsgStatus));
@@ -379,14 +379,14 @@ void GxsForumMsgItem::fillMessage()
     ui->currNameLabel->setId(mMessage.mMeta.mAuthorId);
 
     RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_FORUM, mMessage.mMeta.mGroupId, mMessage.mMeta.mMsgId, messageName());
-    ui->currSubLabel->setText(msgLink.toHtml());
+    ui->currSubLabel->setText(msgLink.toHtmlColored());
     if (wasExpanded() || ui->expandFrame->isVisible())
         fillExpandFrame();
 
     ui->timestamplabel->setText(DateTime::formatLongDateTime(mMessage.mMeta.mPublishTs));
 
     /* header stuff */
-    ui->subjectLabel->setText(msgLink.toHtml());
+    ui->subjectLabel->setText(msgLink.toHtmlColored());
 
     if (mIsHome)
     {

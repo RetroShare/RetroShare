@@ -39,6 +39,7 @@
 #include "util/misc.h"
 
 #include <QAbstractItemView>
+#include <QColorDialog>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QDir>
@@ -363,6 +364,11 @@ void AppearancePage::load()
 	whileBlocking(ui.checkBoxShowSystrayOnStatus)->setChecked(Settings->valueFromGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(false)).toBool());
 
 	whileBlocking(ui.minimumFontSize_SB)->setValue(Settings->getFontSize());
+	
+	rgbLinkColor=Settings->getLinkColor();
+	QPixmap colorpix(24, 24);
+	colorpix.fill(rgbLinkColor);
+	ui.linkColorButton->setIcon(colorpix);
 }
 
 void AppearancePage::updateFontSize()
@@ -370,4 +376,27 @@ void AppearancePage::updateFontSize()
 	Settings->setFontSize(ui.minimumFontSize_SB->value());
 
 	NotifyQt::getInstance()->notifySettingsChanged();
+}
+
+void AppearancePage::on_linkColorButton_clicked()
+{
+	bool ok;
+	QRgb color = QColorDialog::getRgba(rgbLinkColor, &ok, window());
+	if (ok) {
+		rgbLinkColor=color;
+		QPixmap pix(24, 24);
+		pix.fill(color);
+		ui.linkColorButton->setIcon(pix);
+		Settings->setLinkColor(rgbLinkColor);
+	}
+}
+
+void AppearancePage::on_resetButton_clicked()
+{
+	QRgb color  = QString::number(QColor(3, 155, 198).rgba()).toUInt();
+	defaultColor = color;
+	QPixmap pix(24, 24);
+	pix.fill(color);
+	ui.linkColorButton->setIcon(pix);
+	Settings->setLinkColor(defaultColor);
 }
