@@ -2,9 +2,9 @@ name: Ubuntu Qt 6 C/C++ CI
 
 on:
   push:
-    branches: [ "gitbuild" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "gitbuild" ]
+    branches: [ "master" ]
 
 jobs:
   build:
