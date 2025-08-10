@@ -131,12 +131,8 @@ CONFIG *= no_use_dht_stunner_ext_ip
 use_dht_stunner_ext_ip:CONFIG -= no_use_dht_stunner_ext_ip
 
 # To select your MacOsX version append the following assignation to qmake
-# command line "CONFIG+=rs_macos10.11" where 10.11 depends your version
-macx:CONFIG *= rs_macos10.11
-rs_macos10.8:CONFIG -= rs_macos10.11
-rs_macos10.9:CONFIG -= rs_macos10.11
-rs_macos10.10:CONFIG -= rs_macos10.11
-rs_macos10.12:CONFIG -= rs_macos10.11
+# command line "CONFIG+=rs_macos10.13" where 10.13 depends your version
+macx:CONFIG *= rs_macos10.13
 rs_macos10.13:CONFIG -= rs_macos10.11
 rs_macos10.14:CONFIG -= rs_macos10.11
 rs_macos10.15:CONFIG -= rs_macos10.11
@@ -799,37 +795,6 @@ win32-clang-g++ {
 }
 
 macx-* {
-	rs_macos10.8 {
-		message(***retroshare.pri: Set Target and SDK to MacOS 10.8 )
-		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.8
-		QMAKE_MAC_SDK = macosx10.8
-	}
-
-	rs_macos10.9 {
-		message(***retroshare.pri: Set Target and SDK to MacOS 10.9 )
-		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.9
-		QMAKE_MAC_SDK = macosx10.9
-	}
-
-	rs_macos10.10 {
-		message(***retroshare.pri: Set Target and SDK to MacOS 10.10 )
-		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.10
-		QMAKE_MAC_SDK = macosx10.10
-	}
-
-	rs_macos10.11 {
-		message(***retroshare.pri: Set Target and SDK to MacOS 10.11 )
-		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.11
-		QMAKE_MAC_SDK = macosx10.11
-	}
-
-	rs_macos10.12 {
-		message(***retroshare.pri: Set Target and SDK to MacOS 10.12 )
-		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.12
-		QMAKE_MAC_SDK = macosx10.12
-		QMAKE_CXXFLAGS += -Wno-nullability-completeness
-		QMAKE_CFLAGS += -Wno-nullability-completeness
-	}
 	rs_macos10.13 {
 		message(***retroshare.pri: Set Target and SDK to MacOS 10.13 )
 		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.13
@@ -839,21 +804,21 @@ macx-* {
 	}
 	rs_macos10.14 {
 		message(***retroshare.pri: Set Target and SDK to MacOS 10.14 )
-		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.14
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.13
 		QMAKE_MAC_SDK = macosx10.14
 		QMAKE_CXXFLAGS += -Wno-nullability-completeness
 		QMAKE_CFLAGS += -Wno-nullability-completeness
 	}
 	rs_macos10.15 {
 		message(***retroshare.pri: Set Target and SDK to MacOS 10.15 )
-		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.15
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.13
 		QMAKE_MAC_SDK = macosx10.15
 		QMAKE_CXXFLAGS += -Wno-nullability-completeness
 		QMAKE_CFLAGS += -Wno-nullability-completeness
 	}
 	rs_macos11.1 {
 		message(***retroshare.pri: Set Target and SDK to MacOS 11.1 )
-		QMAKE_MACOSX_DEPLOYMENT_TARGET=11.1
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.13
 		QMAKE_MAC_SDK = macosx11.1
 		QMAKE_CXXFLAGS += -Wno-nullability-completeness
 		QMAKE_CFLAGS += -Wno-nullability-completeness
