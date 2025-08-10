@@ -46,7 +46,7 @@ Additional dependencies for Feedreader plugin:
 
 The executable produced will be:  
 ```bash
- ./retroshare-gui/src/retroshare
+   ./retroshare-gui/src/retroshare
 ```
 
 ### Install
@@ -56,7 +56,7 @@ The executable produced will be:
 
 The executable produced will be:  
 ```bash
- ~/usr/bin/RetroShare  
+   ~/usr/bin/RetroShare  
 ```
 
 ### For packagers
@@ -122,7 +122,7 @@ For `Autologin` it is required to append the config option `CONFIG+=rs_autologin
 Example:
 
 ```batch
-qmake CONFIG-=debug CONFIG+=release CONFIG+=rs_use_native_dialog CONFIG+=rs_gui_cmark
+qmake CONFIG+=debug CONFIG+=release CONFIG+=rs_use_native_dialog CONFIG+=rs_gui_cmark
 qmake CONFIG+=rs_jsonapi CONFIG+=rs_webui CONFIG+=rs_autologin
-qmake CONFIG+=rs_deep_channels_index CONFIG += gxsthewire CONFIG += wikipoos
+qmake CONFIG+=rs_deep_channels_index CONFIG +=gxsthewire CONFIG+=wikipoos
 ```
