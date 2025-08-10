@@ -35,6 +35,10 @@ Follow this file : [WindowsMSys2_InstallGuide.md](https://github.com/RetroShare/
 
 Follow this file : [MacOS_X_InstallGuide](https://github.com/RetroShare/RetroShare/blob/master/build_scripts/OSX/MacOS_X_InstallGuide.md)
 
+## Compilation on Linux
+
+Follow this file : [Linux_InstallGuide](https://github.com/RetroShare/RetroShare/blob/master/build_scripts/Debian+Ubuntu/Linux_InstallGuide.md)
+
 ## Releases
 
 Latest release [here](https://github.com/RetroShare/RetroShare/releases)
