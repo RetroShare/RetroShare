@@ -1,0 +1,38 @@
+name: Ubuntu Qt 5 C/C++ CI
+
+on:
+  push:
+    paths-ignore:
+    - '**/*.md'
+  pull_request:
+    paths-ignore:
+    - '**/*.md'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: git init
+      run: git submodule update --init --remote libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/ && git --no-pager log --max-count 1
+    - name: git submodule supportlibs
+      run: git submodule update --init supportlibs/librnp supportlibs/restbed #supportlibs/rapidjson
+    - name: apt install
+      run: sudo apt-get install g++ cmake qt5-qmake qtmultimedia5-dev libqt5x11extras5-dev libasio-dev libbz2-dev libjson-c-dev libssl-dev libsqlcipher-dev libupnp-dev libxss-dev rapidjson-dev libbotan-2-dev doxygen libsecret-1-dev libxml2-dev libxslt1-dev libcurl4-openssl-dev
+    - name: print working directory
+      run: pwd && ls -la
+    - name: qmake
+      run: |
+        qmake CONFIG+=debug \
+        CONFIG+=rs_autologin \
+        CONFIG+=rs_webui \
+        CONFIG+=rs_jsonapi \
+        CONFIG+=wikipoos \
+        CONFIG+=gxsthewire \
+        CONFIG+=retroshare_plugins
+    - name: make
+      run: make
+    - name: make check
+      run: make check
