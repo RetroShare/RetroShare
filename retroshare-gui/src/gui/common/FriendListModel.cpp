@@ -422,7 +422,7 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
 	case Qt::SizeHintRole:   return sizeHintRole(entry,index.column()) ;
 	case Qt::DisplayRole:    return displayRole(entry,index.column()) ;
 	case Qt::FontRole:       return fontRole(entry,index.column()) ;
- 	case Qt::TextColorRole:  return textColorRole(entry,index.column()) ;
+ 	case Qt::ForegroundRole: return textColorRole(entry,index.column()) ;
  	case Qt::DecorationRole: return decorationRole(entry,index.column()) ;
 
  	case FilterRole:         return filterRole(entry,index.column()) ;

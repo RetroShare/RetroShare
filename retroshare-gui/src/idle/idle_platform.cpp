@@ -24,10 +24,15 @@
 #ifdef HAVE_XSS
 
 #include <qapplication.h>
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#include <QGuiApplication>
+#else
+#include <QX11Info>
+#endif
+
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 #include <QDesktopWidget>
 #endif
-#include <QX11Info>
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -75,7 +80,10 @@ bool IdlePlatform::init()
 	old_handler = XSetErrorHandler(xerrhandler);
 
 	int event_base, error_base;
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    QNativeInterface::QX11Application *nativeInterface = qGuiApp->nativeInterface<QNativeInterface::QX11Application>();
+    if (nativeInterface && XScreenSaverQueryExtension(nativeInterface->display(), &event_base, &error_base)) {
+#elif QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 	if(QX11Info::isPlatformX11() && XScreenSaverQueryExtension(QX11Info::display(), &event_base, &error_base)) {
 #else
 	if(XScreenSaverQueryExtension(QApplication::desktop()->screen()->x11Info().display(), &event_base, &error_base)) {
@@ -90,7 +98,10 @@ int IdlePlatform::secondsIdle()
 {
 	if(!d->ss_info)
 		return 0;
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    QNativeInterface::QX11Application *nativeInterface = qGuiApp->nativeInterface<QNativeInterface::QX11Application>();
+    if(!nativeInterface || !XScreenSaverQueryInfo(nativeInterface->display(), DefaultRootWindow(nativeInterface->display()), d->ss_info))
+#elif QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 	if(!QX11Info::isPlatformX11() || !XScreenSaverQueryInfo(QX11Info::display(), QX11Info::appRootWindow(), d->ss_info))
 #else
 	if(!XScreenSaverQueryInfo(QApplication::desktop()->screen()->x11Info().display(), QX11Info::appRootWindow(), d->ss_info))

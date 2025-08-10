@@ -20,6 +20,7 @@
 
 #include "gui/common/FilesDefs.h"
 #include "LineEditClear.h"
+#include "util/RsQtVersion.h"
 
 #include <QToolButton>
 #include <QStyle>
@@ -237,7 +238,7 @@ void LineEditClear::setFilterButtonIcon(const QIcon &icon)
 	ensurePolished();
 #if !defined(Q_OS_DARWIN)
 	QFontMetrics fm(this->font());
-	QSize size(fm.width("___"), fm.height());
+	QSize size(QFontMetrics_horizontalAdvance(fm, "___"), fm.height());
 	mFilterButton->setFixedSize(size);
 	mFilterButton->setIconSize(size);
 #endif

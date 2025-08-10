@@ -418,7 +418,7 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 	case Qt::DecorationRole: return decorationRole(fmpe,index.column()) ;
 	case Qt::ToolTipRole:	 return toolTipRole   (fmpe,index.column()) ;
 	case Qt::UserRole:	 	 return userRole      (fmpe,index.column()) ;
-	case Qt::TextColorRole:  return textColorRole (fmpe,index.column()) ;
+	case Qt::ForegroundRole: return textColorRole (fmpe,index.column()) ;
 	case Qt::BackgroundRole: return backgroundRole(fmpe,index.column()) ;
 
 	case FilterRole:         return filterRole    (fmpe,index.column()) ;
@@ -670,8 +670,7 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
         							if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING)
                                         return QVariant(QString());
 
-    							    QDateTime qtime;
-									qtime.setTime_t(fmpe.mPublishTs);
+    							    QDateTime qtime = DateTime::DateTimeFromTime_t(fmpe.mPublishTs);
 
 									return QVariant(DateTime::formatDateTime(qtime));
     							}

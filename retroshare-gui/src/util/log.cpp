@@ -171,7 +171,12 @@ Log::LogMessage::~LogMessage()
   if (!--stream->ref) {
     if (stream->out && !stream->buf.isEmpty()) {
       QTextStream log(stream->out);
-      log << toString() << endl;
+      log << toString() <<
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+        Qt::endl;
+#else
+        endl;
+#endif
       log.flush();
     }
     delete stream;
