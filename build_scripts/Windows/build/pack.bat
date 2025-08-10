@@ -77,7 +77,7 @@ if exist "%Archive%" del /Q "%Archive%"
 :: Create deploy path
 mkdir "%RsDeployPath%"
 
-title Pack - %SourceName%%RsType%-%RsBuildConfig% Qt-%QtVersion% [copy files]
+title Pack - %SourceName%%RsType%-%RsBuildConfig% Qt-%QtVersion%-%GCCArchitecture% [copy files]
 
 set ExtensionsFile=%SourcePath%\libretroshare\src\rsserver\rsinit.cc
 set Extensions=
@@ -206,7 +206,7 @@ if "%ParamTor%"=="1" (
 )
 
 rem pack files
-title Pack - %SourceName%%RsType%-%RsBuildConfig% Qt-%QtVersion% [pack files]
+title Pack - %SourceName%%RsType%-%RsBuildConfig% Qt-%QtVersion%-%GCCArchitecture% [pack files]
 
 "%EnvSevenZipExe%" a -mx=9 -t7z "%Archive%" "%RsDeployPath%\*"
 
