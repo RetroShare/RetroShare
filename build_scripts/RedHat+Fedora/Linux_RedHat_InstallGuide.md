@@ -5,9 +5,9 @@
 ### Install package dependencies:
 #### RedHat/Fedora
 ```bash
-    sudo dnf install mesa-libGL-devel gcc cmake rapidjson-devel \
-    libupnp openssl sqlcipher sqlcipher-devel \
-    botan2 botan2-devel json-c-devel bzip2-devel asio-devel libsecret libXScrnSaver-devel
+   sudo dnf install mesa-libGL-devel gcc cmake rapidjson-devel \
+   libupnp openssl sqlcipher sqlcipher-devel \
+   botan2 botan2-devel json-c-devel bzip2-devel asio-devel libsecret libXScrnSaver-devel
 ```
 
 To compile with Qt5:
