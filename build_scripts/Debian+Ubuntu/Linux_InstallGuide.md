@@ -3,7 +3,7 @@
 
 
 ### Install package dependencies:
-#### Debian/Ubuntu
+#### Debian / Ubuntu
 ```bash
    sudo apt-get install g++ cmake libbz2-dev libjson-c-dev libssl-dev libsqlcipher-dev \
    libupnp-dev libxss-dev rapidjson-dev libbotan-2-dev libasio-dev
@@ -61,10 +61,15 @@ Additional dependencies for plugins:
    rapidjson-dev doxygen libbz2-dev libjson-c-dev libbotan-2-dev libasio-dev
 ```
 
-#### Arch Linux
+#### Arch Linux / Manjaro
 ```bash
-   pacman -S base-devel libgnome-keyring cmake qt5-tools qt5-multimedia qt5-x11extras \
+   sudo pacman -S base-devel libgnome-keyring cmake qt5-tools qt5-multimedia qt5-x11extras \
    rapidjson libupnp libxslt libxss sqlcipher botan2 bzip2 json-c
+```
+
+To compile with Qt6:
+```bash
+   sudo pacman -S qt6-base qt6-multimedia qt6-5compat
 ```
 
 ### Checkout the source code
