@@ -89,7 +89,7 @@ protected slots:
 	void unsubscribeItem();
 	void itemDoubleClicked(QTreeWidgetItem *item, int column);
 	void updateCurrentLobby() ;
-    void handleChatLobbyEvent(uint64_t lobby_id, RsChatStatusEventCode event_type, const RsGxsId &gxs_id, const QString& str);
+    void handleChatLobbyEvent(uint64_t lobby_id, RsChatLobbyEventCode event_type, const RsGxsId &gxs_id, const QString& str);
     void readChatLobbyInvites();
 	void showLobby(QTreeWidgetItem *lobby_item) ;
 	void showBlankPage(ChatLobbyId id, bool subscribed = false) ;

@@ -113,25 +113,27 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
     {
         RsQThreadUtils::postToObject([=](){
-            auto ev = dynamic_cast<const RsChatStatusEvent *>(event.get());
+            auto ev = dynamic_cast<const RsChatLobbyEvent *>(event.get());
+
+            if(!ev) return;
 
             switch(ev->mEventCode)
             {
-            case RsChatStatusEventCode::CHAT_LOBBY_INVITE_RECEIVED:
+            case RsChatLobbyEventCode::CHAT_LOBBY_INVITE_RECEIVED:
                 readChatLobbyInvites();
                 break;
 
-            case RsChatStatusEventCode::CHAT_LOBBY_LIST_CHANGED:
+            case RsChatLobbyEventCode::CHAT_LOBBY_LIST_CHANGED:
                 lobbyChanged();
                 break;
 
-            case RsChatStatusEventCode::CHAT_LOBBY_EVENT_PEER_LEFT:
-            case RsChatStatusEventCode::CHAT_LOBBY_EVENT_PEER_STATUS:
-            case RsChatStatusEventCode::CHAT_LOBBY_EVENT_PEER_JOINED:
-            case RsChatStatusEventCode::CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
-            case RsChatStatusEventCode::CHAT_LOBBY_EVENT_KEEP_ALIVE:
+            case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_LEFT:
+            case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_STATUS:
+            case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_JOINED:
+            case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
+            case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_KEEP_ALIVE:
 
-                handleChatLobbyEvent(ev->mLobbyId,ev->mEventCode,ev->mGxsId,QString::fromUtf8(ev->str.c_str()));
+                handleChatLobbyEvent(ev->mLobbyId,ev->mEventCode,ev->mGxsId,QString::fromUtf8(ev->mStr.c_str()));
                 break;
 
             default:
@@ -1190,7 +1192,7 @@ void ChatLobbyWidget::itemDoubleClicked(QTreeWidgetItem *item, int /*column*/)
     subscribeChatLobbyAtItem(item);
 }
 
-void ChatLobbyWidget::handleChatLobbyEvent(uint64_t lobby_id, RsChatStatusEventCode event_type, const RsGxsId &gxs_id, const QString& str)
+void ChatLobbyWidget::handleChatLobbyEvent(uint64_t lobby_id, RsChatLobbyEventCode event_type, const RsGxsId &gxs_id, const QString& str)
 {
     if (ChatLobbyDialog *cld = dynamic_cast<ChatLobbyDialog*>(ChatDialog::getExistingChat(ChatId(lobby_id)))) {
         cld->handleLobbyEvent(event_type, gxs_id, str);

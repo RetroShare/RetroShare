@@ -109,15 +109,16 @@ NotifyQt::NotifyQt() : cDialog(NULL)
     qRegisterMetaType<RsGxsId>("RsGxsId");
 }
 
-//void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
-//{
-//	{
-//		QMutexLocker m(&_mutex) ;
-//		if(!_enabled)
-//			return ;
-//	}
-//	emit errorOccurred(list,type,QString::fromUtf8(msg.c_str())) ;
-//}
+#ifdef TO_REMOVE
+void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
+{
+    {
+        QMutexLocker m(&_mutex) ;
+        if(!_enabled)
+            return ;
+    }
+    emit errorOccurred(list,type,QString::fromUtf8(msg.c_str())) ;
+}
 
 void NotifyQt::notifyChatMessage(const ChatMessage &msg)
 {
@@ -133,7 +134,6 @@ void NotifyQt::notifyChatMessage(const ChatMessage &msg)
     emit chatMessageReceived(msg);
 }
 
-#ifdef TO_REMOVE
 void NotifyQt::notifyOwnAvatarChanged()
 {
 	{

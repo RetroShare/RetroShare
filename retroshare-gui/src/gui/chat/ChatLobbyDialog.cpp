@@ -846,7 +846,7 @@ QString ChatLobbyDialog::getParticipantName(const RsGxsId& gxs_id) const
 }
 
 
-void ChatLobbyDialog::handleLobbyEvent(RsChatStatusEventCode event_type, const RsGxsId& gxs_id, const QString& str)
+void ChatLobbyDialog::handleLobbyEvent(RsChatLobbyEventCode event_type, const RsGxsId& gxs_id, const QString& str)
 {
     RsGxsId qsParticipant;
 
@@ -854,17 +854,17 @@ void ChatLobbyDialog::handleLobbyEvent(RsChatStatusEventCode event_type, const R
 
     switch (event_type)
     {
-    case RsChatStatusEventCode::CHAT_LOBBY_EVENT_PEER_LEFT:
+    case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_LEFT:
         qsParticipant=gxs_id;
         ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the room.").arg(RsHtml::plainText(name)), ChatWidget::MSGTYPE_SYSTEM);
         emit peerLeft(id()) ;
         break;
-    case RsChatStatusEventCode::CHAT_LOBBY_EVENT_PEER_JOINED:
+    case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_JOINED:
         qsParticipant=gxs_id;
         ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the room.").arg(RsHtml::plainText(name)), ChatWidget::MSGTYPE_SYSTEM);
         emit peerJoined(id()) ;
         break;
-    case RsChatStatusEventCode::CHAT_LOBBY_EVENT_PEER_STATUS:
+    case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_STATUS:
     {
 
         qsParticipant=gxs_id;
@@ -876,7 +876,7 @@ void ChatLobbyDialog::handleLobbyEvent(RsChatStatusEventCode event_type, const R
 
     }
         break;
-    case RsChatStatusEventCode::CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
+    case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
     {
         qsParticipant=gxs_id;
 
@@ -892,7 +892,7 @@ void ChatLobbyDialog::handleLobbyEvent(RsChatStatusEventCode event_type, const R
             muteParticipant(RsGxsId(str.toStdString())) ;
     }
         break;
-    case RsChatStatusEventCode::CHAT_LOBBY_EVENT_KEEP_ALIVE:
+    case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_KEEP_ALIVE:
         //std::cerr << "Received keep alive packet from " << nickname.toStdString() << " in chat room " << getPeerId() << std::endl;
         break;
     default:
