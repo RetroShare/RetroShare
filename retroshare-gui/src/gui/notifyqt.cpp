@@ -109,14 +109,15 @@ NotifyQt::NotifyQt() : cDialog(NULL)
     qRegisterMetaType<RsGxsId>("RsGxsId");
 }
 
+#ifdef TO_REMOVE
 void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 {
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-	emit errorOccurred(list,type,QString::fromUtf8(msg.c_str())) ;
+    {
+        QMutexLocker m(&_mutex) ;
+        if(!_enabled)
+            return ;
+    }
+    emit errorOccurred(list,type,QString::fromUtf8(msg.c_str())) ;
 }
 
 void NotifyQt::notifyChatMessage(const ChatMessage &msg)
@@ -146,6 +147,7 @@ void NotifyQt::notifyOwnAvatarChanged()
 #endif
 	emit ownAvatarChanged() ;
 }
+#endif
 
 class SignatureEventData
 {
@@ -320,6 +322,7 @@ void NotifyQt::notifyDiscInfoChanged()
 	emit discInfoChanged() ;
 }
 
+#ifdef TO_REMOVE
 void NotifyQt::notifyDiskFull(uint32_t loc,uint32_t size_in_mb)
 {
 	{
@@ -391,6 +394,7 @@ void NotifyQt::notifyPeerHasNewAvatar(std::string peer_id)
 #endif
 	emit peerHasNewAvatar(QString::fromStdString(peer_id)) ;
 }
+#endif
 
 void NotifyQt::notifyCustomState(const std::string& peer_id, const std::string& status_string)
 {
@@ -406,6 +410,7 @@ void NotifyQt::notifyCustomState(const std::string& peer_id, const std::string& 
 	emit peerHasNewCustomStateString(QString::fromStdString(peer_id), QString::fromUtf8(status_string.c_str())) ;
 }
 
+#ifdef TO_REMOVE
 void NotifyQt::notifyChatLobbyTimeShift(int shift)
 {
 	{
@@ -448,6 +453,7 @@ void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const 
 #endif
     emit chatLobbyEvent(lobby_id,event_type,nickname,QString::fromUtf8(str.c_str())) ;
 }
+#endif
 
 void NotifyQt::notifyChatStatus(const ChatId& chat_id,const std::string& status_string)
 {
@@ -477,10 +483,10 @@ void NotifyQt::notifyChatCleared(const ChatId& chat_id)
 	emit chatCleared(chat_id);
 }
 
-void NotifyQt::notifyTurtleSearchResult(uint32_t /*search_id*/,const std::list<TurtleGxsInfo>& /*found_groups*/)
-{
-    std::cerr << "(EE) missing code to handle GXS turtle search result." << std::endl;
-}
+//void NotifyQt::notifyTurtleSearchResult(uint32_t /*search_id*/,const std::list<TurtleGxsInfo>& /*found_groups*/)
+//{
+//    std::cerr << "(EE) missing code to handle GXS turtle search result." << std::endl;
+//}
 
 #ifdef TO_REMOVE
 // Mai 2023: distant turtle search now uses RsEvents.
@@ -534,7 +540,8 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 	switch(list)
 	{
-		case NOTIFY_LIST_NEIGHBOURS:
+#ifdef TO_REMOVE
+        case NOTIFY_LIST_NEIGHBOURS:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received neighbours changed" << std::endl ;
 #endif
@@ -552,36 +559,36 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit filesPostModChanged(true) ;  /* Local */
 			break;
-		case NOTIFY_LIST_CHAT_LOBBY_INVITATION:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received files changed" << std::endl ;
-#endif
-			emit chatLobbyInviteReceived() ;  /* Local */
-			break;
 		case NOTIFY_LIST_DIRLIST_FRIENDS:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received files changed" << std::endl ;
 #endif
 			emit filesPostModChanged(false) ;  /* Local */
 			break;
-		case NOTIFY_LIST_SEARCHLIST:
-			break;
-		case NOTIFY_LIST_CHANNELLIST:
-			break;
-		case NOTIFY_LIST_TRANSFERLIST:
+        case NOTIFY_LIST_CHAT_LOBBY_INVITATION:
 #ifdef NOTIFY_DEBUG
-			std::cerr << "received transfer changed" << std::endl ;
+            std::cerr << "received files changed" << std::endl ;
 #endif
-			emit transfersChanged() ;
-			break;
-		case NOTIFY_LIST_CONFIG:
+            emit chatLobbyInviteReceived() ;  /* Local */
+            break;
+        case NOTIFY_LIST_CONFIG:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received config changed" << std::endl ;
 #endif
 			emit configChanged() ;
 			break ;
 
-#ifdef REMOVE
+        case NOTIFY_LIST_SEARCHLIST:
+            break;
+        case NOTIFY_LIST_CHANNELLIST:
+            break;
+        case NOTIFY_LIST_TRANSFERLIST:
+#ifdef NOTIFY_DEBUG
+            std::cerr << "received transfer changed" << std::endl ;
+#endif
+            emit transfersChanged() ;
+            break;
+
 		case NOTIFY_LIST_FORUMLIST_LOCKED:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received forum msg changed" << std::endl ;
@@ -615,19 +622,21 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit lobbyListChanged();
 			break;
-
+#ifdef TO_REMOVE
 		case NOTIFY_LIST_GROUPLIST:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received groups changed" << std::endl ;
 #endif
 			emit groupsChanged(type);
 			break;
+#endif
 		default:
 			break;
 	}
 	return;
 }
 
+#ifdef TO_REMOVE
 void NotifyQt::notifyListPreChange(int list, int /*type*/)
 {
 	{
@@ -652,7 +661,7 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 		case NOTIFY_LIST_DIRLIST_LOCAL:
 			emit filesPreModChanged(true) ;	/* local */
 			break;
-		case NOTIFY_LIST_SEARCHLIST:
+        case NOTIFY_LIST_SEARCHLIST:
 			break;
 		case NOTIFY_LIST_CHANNELLIST:
 			break;
@@ -663,6 +672,7 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 	}
 	return;
 }
+#endif
 
 void NotifyQt::enable()
 {
@@ -686,7 +696,7 @@ void NotifyQt::UpdateGUI()
 														// the gui is running, then they get updated by callbacks.
 	if(!already_updated)
 	{
-		emit neighboursChanged();
+//		emit neighboursChanged();
 		emit configChanged();
 
 		already_updated = true ;

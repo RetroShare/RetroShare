@@ -31,9 +31,11 @@
 #include <QMenuBar>
 #include <QActionGroup>
 
-#include <retroshare/rsplugin.h>
-#include <retroshare/rsconfig.h>
-#include <util/argstream.h>
+#include "retroshare/rsplugin.h"
+#include "retroshare/rsconfig.h"
+#include "retroshare/rsevents.h"
+#include "util/argstream.h"
+#include "util/qtthreadsutils.h"
 
 #if defined(Q_OS_DARWIN)
 #include "gui/common/MacDockIconHandler.h"
@@ -341,10 +343,27 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     createNotifyIcons();
 
-    /* calculate friend count */
+    /* intialize friend count */
     updateFriends();
-    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateFriends()));
-    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateFriends()));
+
+//    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateFriends()));
+//    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateFriends()));
+
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+
+            if(!fe)
+                return;
+
+            updateFriends();
+        }
+        , this );
+    }, mEventHandlerId, RsEventType::FRIEND_LIST );
 
     loadOwnStatus();
 
@@ -363,6 +382,29 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     settingsChanged();
 
     mFontSizeHandler.registerFontSize(ui->listWidget, 1.5f);
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){
+            auto ev = dynamic_cast<const RsSystemErrorEvent *>(event.get());
+
+            switch(ev->mEventCode)
+            {
+            case RsSystemErrorEventCode::TIME_SHIFT_PROBLEM:
+                std::cerr << "Time shift problem notification. Ignored." << std::endl;
+                break;
+
+            case RsSystemErrorEventCode::DISK_SPACE_ERROR:
+                displayDiskSpaceWarning(ev->mDiskErrorLocation,ev->mDiskErrorSizeLimit);
+
+                break;
+
+            default:
+                break;
+            }
+        }, this );
+    }, mEventHandlerId, RsEventType::SYSTEM_ERROR );
+
 }
 
 /** Destructor. */
@@ -372,6 +414,8 @@ MainWindow::~MainWindow()
     /* Save listWidget position */
     Settings->setValueToGroup("MainWindow", "SplitterState", ui->splitter->saveState());
     Settings->setValueToGroup("MainWindow", "State", saveState());
+
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 
     delete statusComboBox;
     delete peerstatus;
@@ -1454,7 +1498,7 @@ MainWindow::retranslateUi()
 }
 
 /* set status object to status value */
-static void setStatusObject(QObject *pObject, int nStatus)
+static void setStatusObject(QObject *pObject, RsStatusValue nStatus)
 {
     QMenu *pMenu = dynamic_cast<QMenu*>(pObject);
     if (pMenu) {
@@ -1465,7 +1509,7 @@ static void setStatusObject(QObject *pObject, int nStatus)
                 continue;
             }
 
-            if (pAction->data().toInt() == nStatus) {
+            if (pAction->data().toInt() == (int)nStatus) {
                 pAction->setChecked(true);
                 break;
             }
@@ -1475,7 +1519,7 @@ static void setStatusObject(QObject *pObject, int nStatus)
     RSComboBox *pComboBox = dynamic_cast<RSComboBox*>(pObject);
     if (pComboBox) {
         /* set index of combobox */
-        int nIndex = pComboBox->findData(nStatus, Qt::UserRole);
+        int nIndex = pComboBox->findData((int)nStatus, Qt::UserRole);
         if (nIndex != -1) {
             pComboBox->setCurrentIndex(nIndex);
         }
@@ -1538,20 +1582,20 @@ void MainWindow::initializeStatusObject(QObject *pObject, bool bConnect)
         /* initialize menu */
         QActionGroup *pGroup = new QActionGroup(pMenu);
 
-        QAction *pAction = new QAction(QIcon(StatusDefs::imageStatus(RS_STATUS_ONLINE)), StatusDefs::name(RS_STATUS_ONLINE), pMenu);
-        pAction->setData(RS_STATUS_ONLINE);
+        QAction *pAction = new QAction(QIcon(StatusDefs::imageStatus(RsStatusValue::RS_STATUS_ONLINE)), StatusDefs::name(RsStatusValue::RS_STATUS_ONLINE), pMenu);
+        pAction->setData((int)RsStatusValue::RS_STATUS_ONLINE);
         pAction->setCheckable(true);
         pMenu->addAction(pAction);
         pGroup->addAction(pAction);
 
-        pAction = new QAction(QIcon(StatusDefs::imageStatus(RS_STATUS_BUSY)), StatusDefs::name(RS_STATUS_BUSY), pMenu);
-        pAction->setData(RS_STATUS_BUSY);
+        pAction = new QAction(QIcon(StatusDefs::imageStatus(RsStatusValue::RS_STATUS_BUSY)), StatusDefs::name(RsStatusValue::RS_STATUS_BUSY), pMenu);
+        pAction->setData((int)RsStatusValue::RS_STATUS_BUSY);
         pAction->setCheckable(true);
         pMenu->addAction(pAction);
         pGroup->addAction(pAction);
 
-        pAction = new QAction(QIcon(StatusDefs::imageStatus(RS_STATUS_AWAY)), StatusDefs::name(RS_STATUS_AWAY), pMenu);
-        pAction->setData(RS_STATUS_AWAY);
+        pAction = new QAction(QIcon(StatusDefs::imageStatus(RsStatusValue::RS_STATUS_AWAY)), StatusDefs::name(RsStatusValue::RS_STATUS_AWAY), pMenu);
+        pAction->setData((int)RsStatusValue::RS_STATUS_AWAY);
         pAction->setCheckable(true);
         pMenu->addAction(pAction);
         pGroup->addAction(pAction);
@@ -1563,9 +1607,9 @@ void MainWindow::initializeStatusObject(QObject *pObject, bool bConnect)
         /* initialize combobox */
         RSComboBox *pComboBox = dynamic_cast<RSComboBox*>(pObject);
         if (pComboBox) {
-            pComboBox->addItem(QIcon(StatusDefs::imageStatus(RS_STATUS_ONLINE)), StatusDefs::name(RS_STATUS_ONLINE), RS_STATUS_ONLINE);
-            pComboBox->addItem(QIcon(StatusDefs::imageStatus(RS_STATUS_BUSY)), StatusDefs::name(RS_STATUS_BUSY), RS_STATUS_BUSY);
-            pComboBox->addItem(QIcon(StatusDefs::imageStatus(RS_STATUS_AWAY)), StatusDefs::name(RS_STATUS_AWAY), RS_STATUS_AWAY);
+            pComboBox->addItem(QIcon(StatusDefs::imageStatus(RsStatusValue::RS_STATUS_ONLINE)), StatusDefs::name(RsStatusValue::RS_STATUS_ONLINE), (int)RsStatusValue::RS_STATUS_ONLINE);
+            pComboBox->addItem(QIcon(StatusDefs::imageStatus(RsStatusValue::RS_STATUS_BUSY)), StatusDefs::name(RsStatusValue::RS_STATUS_BUSY), (int)RsStatusValue::RS_STATUS_BUSY);
+            pComboBox->addItem(QIcon(StatusDefs::imageStatus(RsStatusValue::RS_STATUS_AWAY)), StatusDefs::name(RsStatusValue::RS_STATUS_AWAY), (int)RsStatusValue::RS_STATUS_AWAY);
 
             if (bConnect) {
                 connect(pComboBox, SIGNAL(activated(int)), this, SLOT(statusChangedComboBox(int)));
@@ -1593,11 +1637,11 @@ void MainWindow::removeStatusObject(QObject *pObject)
 }
 
 /** Save own status Online,Away,Busy **/
-void MainWindow::setStatus(QObject *pObject, int nStatus)
+void MainWindow::setStatus(QObject *pObject, RsStatusValue nStatus)
 {
-    if (isIdle && nStatus == (int) RS_STATUS_ONLINE) {
+    if (isIdle && nStatus == RsStatusValue::RS_STATUS_ONLINE) {
         /* set idle only when I am online */
-        nStatus = RS_STATUS_INACTIVE;
+        nStatus = RsStatusValue::RS_STATUS_INACTIVE;
     }
 
     rsStatus->sendStatus(RsPeerId(), nStatus);
@@ -1617,7 +1661,7 @@ void MainWindow::statusChangedMenu(QAction *pAction)
         return;
     }
 
-    setStatus(pAction->parent(), pAction->data().toInt());
+    setStatus(pAction->parent(), RsStatusValue(pAction->data().toInt()));
 }
 
 /* new status from combobox in statusbar */
@@ -1628,7 +1672,7 @@ void MainWindow::statusChangedComboBox(int index)
     }
 
     /* no object known */
-    setStatus(NULL, statusComboBox->itemData(index, Qt::UserRole).toInt());
+    setStatus(NULL, RsStatusValue(statusComboBox->itemData(index, Qt::UserRole).toInt()));
 }
 
 /*new setting*/
