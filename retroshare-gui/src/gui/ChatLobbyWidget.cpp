@@ -36,7 +36,6 @@
 #include "util/HandleRichText.h"
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
-#include "util/QtVersion.h"
 #include "util/RsQtVersion.h"
 
 #include "retroshare/rsmsgs.h"
