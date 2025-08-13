@@ -24,6 +24,8 @@
 #include <QPainter>
 #include <QMouseEvent>
 
+#include "util/RsQtVersion.h"
+
 RetroStyleLabel::RetroStyleLabel(QWidget * parent, Mode mode, Qt::AlignmentFlag hAlign)
 	: QLabel(parent), _mode(mode) {
 
@@ -206,7 +208,7 @@ void RetroStyleLabel::mouseReleaseEvent(QMouseEvent * event) {
 void RetroStyleLabel::setText(const QString & text) {
 	QLabel::setText(text);
 	QFontMetrics fm(font());
-	int textWidth = fm.width(text);
+	int textWidth = QFontMetrics_horizontalAdvance(fm, text);
 	textWidth += 40;
 	QSize s = size();
 	if (textWidth > s.width()) {

@@ -74,7 +74,7 @@ signals:
 
 protected:
 	/** Default constructor */
-	ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+	ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 
 	/** Default destructor */
 	virtual ~ChatLobbyDialog();

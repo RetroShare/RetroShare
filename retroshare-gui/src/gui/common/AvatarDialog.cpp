@@ -30,6 +30,7 @@
 #include <QWidget>
 #include <QMessageBox>
 #include <QDir>
+#include <QVectorIterator>
 
 #include <iostream>
 #include <math.h>
@@ -41,6 +42,7 @@
 #include "gui/common/FilesDefs.h"
 #include "util/HandleRichText.h"
 #include "util/imageutil.h"
+#include "util/RsQtVersion.h"
 #include "retroshare/rsinit.h"
 
 #define ICONNAME "groupicon.png"
@@ -106,8 +108,8 @@ void AvatarDialog::removeAvatar()
 
 void AvatarDialog::updateInterface()
 {
-	const QPixmap *pixmap = ui->avatarLabel->pixmap();
-	if (pixmap && !pixmap->isNull()) {
+	QPixmap pixmap = QLabel_pixmap(ui->avatarLabel);
+	if (!pixmap.isNull()) {
 		ui->removeButton->setEnabled(true);
 	} else {
 		ui->removeButton->setEnabled(false);
@@ -122,13 +124,7 @@ void AvatarDialog::setAvatar(const QPixmap &avatar)
 
 void AvatarDialog::getAvatar(QPixmap &avatar)
 {
-	const QPixmap *pixmap = ui->avatarLabel->pixmap();
-	if (!pixmap) {
-		avatar = QPixmap();
-		return;
-	}
-
-	avatar = *pixmap;
+	avatar = QLabel_pixmap(ui->avatarLabel);
 }
 
 void AvatarDialog::getAvatar(QByteArray &avatar)

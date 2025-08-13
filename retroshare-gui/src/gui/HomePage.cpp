@@ -27,11 +27,13 @@
 #include "util/misc.h"
 
 #include "gui/notifyqt.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/connect/ConfCertDialog.h"
 #include <gui/QuickStartWizard.h>
 #include "gui/connect/FriendRecommendDialog.h"
+#include "settings/rsharesettings.h"
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 #include <QUrlQuery>
@@ -63,6 +65,9 @@ HomePage::HomePage(QWidget *parent) :
     QAction *RecAction = new QAction(QIcon(),tr("Recommend friends to each others"), this);
     connect(RecAction, SIGNAL(triggered()), this, SLOT(recommendFriends()));
 
+    QAction *SaveAction = new QAction(QIcon(),tr("Save to File"), this);
+    connect(SaveAction, SIGNAL(triggered()), this, SLOT(saveCert()));
+
     QAction *SendAction = new QAction(QIcon(),tr("Send via Email"), this);
     connect(SendAction, SIGNAL(triggered()), this, SLOT(runEmailClient()));
 
@@ -73,6 +78,7 @@ HomePage::HomePage(QWidget *parent) :
     menu->addAction(CopyIdAction);
 
     menu->addSeparator();
+    menu->addAction(SaveAction);
     menu->addAction(SendAction);
     menu->addAction(WebMailAction);
     menu->addAction(RecAction);
@@ -135,6 +141,8 @@ HomePage::HomePage(QWidget *parent) :
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId, RsEventType::NETWORK );
 
     updateOwnCert();
+
+    updateHomeLogo();
 }
 
 void HomePage::handleEvent(std::shared_ptr<const RsEvent> e)
@@ -344,7 +352,11 @@ void HomePage::saveCert()
     //Todo: move save to file to p3Peers::SaveCertificateToFile
 
     QTextStream ts(&file);
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    ts.setEncoding(QStringConverter::Utf8);
+#else
     ts.setCodec(QTextCodec::codecForName("UTF-8"));
+#endif
     ts << ui->retroshareid->text();
 }
 
@@ -376,4 +388,19 @@ void HomePage::webMail()
 void HomePage::openWebHelp()
 {
     QDesktopServices::openUrl(QUrl(QString("https://retrosharedocs.readthedocs.io/en/latest/")));
+}
+
+void HomePage::showEvent(QShowEvent *event)
+{
+	if (!event->spontaneous()) {
+		updateHomeLogo();
+	}
+}
+
+void HomePage::updateHomeLogo()
+{
+	if (Settings->getSheetName() == ":Standard_Dark")
+		ui->label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":images/logo/logo_web_nobackground_black.png"));
+	else
+		ui->label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":images/logo/logo_web_nobackground.png"));
 }

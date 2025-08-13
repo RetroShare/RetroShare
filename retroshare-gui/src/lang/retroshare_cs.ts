@@ -14334,7 +14334,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <location line="+249"/>
-        <source>Stared</source>
+        <source>Starred</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

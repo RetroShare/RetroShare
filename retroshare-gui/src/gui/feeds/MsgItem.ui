@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>707</width>
-    <height>180</height>
+    <width>777</width>
+    <height>234</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="MsgItem_GL">
@@ -35,10 +35,10 @@
       <bool>true</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+      <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="feedFrame_GL">
       <item row="0" column="0">

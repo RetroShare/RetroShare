@@ -33,7 +33,7 @@ echo.
 echo === Version
 echo.
 
-title Build - %SourceName%-%RsBuildConfig% [Version]
+title Build - %SourceName%-%RsBuildConfig% Qt-%QtVersion%-%GCCArchitecture% [Version]
 
 pushd "%SourcePath%\retroshare-gui\src\gui\images"
 :: Touch resource file
@@ -47,7 +47,7 @@ echo.
 echo === qmake
 echo.
 
-title Build - %SourceName%-%RsBuildConfig% [qmake]
+title Build - %SourceName%-%RsBuildConfig% Qt-%QtVersion%-%GCCArchitecture% [qmake]
 
 set RS_QMAKE_CONFIG=%RsBuildConfig%
 if "%ParamAutologin%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% rs_autologin
@@ -66,7 +66,7 @@ echo.
 echo === make
 echo.
 
-title Build - %SourceName%-%RsBuildConfig% [make]
+title Build - %SourceName%-%RsBuildConfig% Qt-%QtVersion%-%GCCArchitecture% [make]
 
 mingw32-make -j %CoreCount%
 if errorlevel 1 goto error
@@ -75,7 +75,7 @@ echo.
 echo === Changelog
 echo.
 
-title Build - %SourceName%-%RsBuildConfig% [changelog]
+title Build - %SourceName%-%RsBuildConfig% Qt-%QtVersion%-%GCCArchitecture% [changelog]
 call "%ToolsPath%\generate-changelog.bat" "%SourcePath%" "%RsBuildPath%\changelog.txt"
 
 :error

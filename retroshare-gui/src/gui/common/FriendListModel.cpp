@@ -304,10 +304,10 @@ uint32_t   RsFriendListModel::EntryIndex::parentRow(uint32_t nb_groups) const
     switch(type)
     {
     default:
-    	case ENTRY_TYPE_UNKNOWN  : return 0;
-    	case ENTRY_TYPE_GROUP    : return group_index;
-		case ENTRY_TYPE_PROFILE  : return (group_index==UNDEFINED_GROUP_INDEX_VALUE)?(profile_index+nb_groups):profile_index;
-    	case ENTRY_TYPE_NODE     : return node_index;
+        case ENTRY_TYPE_UNKNOWN  : return -1;
+        case ENTRY_TYPE_GROUP    : return -1;
+        case ENTRY_TYPE_PROFILE  : return (group_index==UNDEFINED_GROUP_INDEX_VALUE)?(-1):group_index;
+        case ENTRY_TYPE_NODE     : return (group_index==UNDEFINED_GROUP_INDEX_VALUE)?(profile_index+nb_groups):profile_index;
     }
 }
 
@@ -422,7 +422,7 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
 	case Qt::SizeHintRole:   return sizeHintRole(entry,index.column()) ;
 	case Qt::DisplayRole:    return displayRole(entry,index.column()) ;
 	case Qt::FontRole:       return fontRole(entry,index.column()) ;
- 	case Qt::TextColorRole:  return textColorRole(entry,index.column()) ;
+ 	case Qt::ForegroundRole: return textColorRole(entry,index.column()) ;
  	case Qt::DecorationRole: return decorationRole(entry,index.column()) ;
 
  	case FilterRole:         return filterRole(entry,index.column()) ;
@@ -730,13 +730,13 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
                         {
                                 const HierarchicalProfileInformation *hn = getProfileInfo(e);
 
-                                QDateTime most_recent_time = QDateTime::fromTime_t(0);
+                                QDateTime most_recent_time = DateTime::DateTimeFromTime_t(0);
                                 QString most_recent_ip("---");
 
                                 for(uint32_t i=0;i<hn->child_node_indices.size();++i)
                                 {
                                         const HierarchicalNodeInformation& node = mLocations[hn->child_node_indices[i]];
-                                        auto node_time = QDateTime::fromTime_t(node.node_info.lastConnect);
+                                        auto node_time = DateTime::DateTimeFromTime_t(node.node_info.lastConnect);
 
                                         if(most_recent_time < node_time)
                                         {
@@ -787,7 +787,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 						return QVariant(QString::fromUtf8(node->node_info.location.c_str()));
 				}
 
-				case COLUMN_THREAD_LAST_CONTACT:   return QVariant(QDateTime::fromTime_t(node->node_info.lastConnect).toString());
+				case COLUMN_THREAD_LAST_CONTACT:   return QVariant(DateTime::DateTimeFromTime_t(node->node_info.lastConnect).toString());
 				case COLUMN_THREAD_IP:             return QVariant(  (node->node_info.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(node->node_info) : QString("---"));
 				case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(node->node_info.id.toStdString()) );
 

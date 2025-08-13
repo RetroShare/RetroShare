@@ -33,7 +33,7 @@ DiscStatus::DiscStatus(QWidget *parent)
 	hide (); // show only, when pending operations are available
 
 	QHBoxLayout *hbox = new QHBoxLayout(this);
-	hbox->setMargin(0);
+	hbox->setContentsMargins(0, 0, 0, 0);
 	hbox->setSpacing(6);
 
 	QLabel *iconLabel = new QLabel(this);

@@ -296,7 +296,7 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 	setFixedHeight(maxHeight);
 
 	QPainter painter(&tmppixmap);
-	painter.initFrom(this);
+	painter.begin(this);
 
 
         // extracts the height of the fonts in pixels. This is used to callibrate the size of the objects to draw.

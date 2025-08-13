@@ -520,6 +520,18 @@ trough qmake command line arguments!")
     }
 }
 
+# Some supportlibs compilation won't start if the intstalled CMAKE verison is >=3.5.
+# Force compilation in that case
+CMAKE_FORCE_MINVERSION=""
+CMAKE_VERSION_SPLIT = $$system(cmake --version)
+CMAKE_VERSION_SPLIT = $$split(CMAKE_VERSION_SPLIT, \\s+)
+CMAKE_VERSION = $$member(CMAKE_VERSION_SPLIT, 2)
+message("Cmake version detected: $${CMAKE_VERSION}")
+versionAtLeast(CMAKE_VERSION, 3.5) {
+    warning("Forcing compilation with CMAKE_POLICY_VERSION_MINIMUM=3.5")
+    CMAKE_FORCE_MINVERSION="-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+}
+
 gxsdistsync:DEFINES *= RS_USE_GXS_DISTANT_SYNC
 wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
@@ -722,7 +734,10 @@ android-* {
 # To export all symbols for the plugins on Windows build we need to build
 # libretroshare as shared library. Fix linking error (ld.exe: Error: export
 # ordinal too large) due to too many exported symbols.
-retroshare_plugins:win32:CONFIG *= libretroshare_shared
+#retroshare_plugins:win32:CONFIG *= libretroshare_shared
+
+# Always build libretroshare on Windows as shared library to be compatible when building with and without plugins
+win32:CONFIG *= libretroshare_shared
 
 win32-g++|win32-clang-g++ {
     !isEmpty(EXTERNAL_LIB_DIR) {

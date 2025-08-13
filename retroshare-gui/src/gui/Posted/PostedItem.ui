@@ -44,10 +44,10 @@
       <bool>false</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+      <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="feedFrame_GL">
       <property name="leftMargin">
@@ -726,15 +726,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>ElidedLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/ElidedLabel.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>GxsIdLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
   <customwidget>
    <class>ZoomableLabel</class>
@@ -743,9 +743,9 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../icons.qrc"/>
-  <include location="Posted_images.qrc"/>
   <include location="../images.qrc"/>
+  <include location="Posted_images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -23,6 +23,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QWidgetAction>
+#include <QActionGroup>
 
 #include "ChatLobbyDialog.h"
 
@@ -42,10 +43,11 @@
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/HandleRichText.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 
 #include "retroshare/rsnotify.h"
 #include "util/rstime.h"
+#include "util/DateTime.h"
 
 #include <time.h>
 #include <unistd.h>
@@ -529,8 +531,8 @@ void ChatLobbyDialog::changeNickname()
  */
 void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
 {
-    QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
-    QDateTime recvTime = QDateTime::fromTime_t(msg.recvTime);
+    QDateTime sendTime = DateTime::DateTimeFromTime_t(msg.sendTime);
+    QDateTime recvTime = DateTime::DateTimeFromTime_t(msg.recvTime);
     QString message = QString::fromUtf8(msg.msg.c_str());
     RsGxsId gxs_id = msg.lobby_peer_gxs_id ;
 

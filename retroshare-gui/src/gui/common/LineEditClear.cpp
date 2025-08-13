@@ -20,10 +20,12 @@
 
 #include "gui/common/FilesDefs.h"
 #include "LineEditClear.h"
+#include "util/RsQtVersion.h"
 
 #include <QToolButton>
 #include <QStyle>
 #include <QMenu>
+#include <QActionGroup>
 //#if QT_VERSION < 0x040700
 #if QT_VERSION < 0x050000//PlaceHolder text only shown when not have focus in Qt4
 #include <QLabel>
@@ -236,7 +238,7 @@ void LineEditClear::setFilterButtonIcon(const QIcon &icon)
 	ensurePolished();
 #if !defined(Q_OS_DARWIN)
 	QFontMetrics fm(this->font());
-	QSize size(fm.width("___"), fm.height());
+	QSize size(QFontMetrics_horizontalAdvance(fm, "___"), fm.height());
 	mFilterButton->setFixedSize(size);
 	mFilterButton->setIconSize(size);
 #endif

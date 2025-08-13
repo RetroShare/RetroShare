@@ -39,7 +39,7 @@ public slots:
 
 protected:
     /** Default Constructor */
-    MessengerWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    MessengerWindow(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
     /** Default Destructor */
     ~MessengerWindow();
 

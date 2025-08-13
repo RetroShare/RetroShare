@@ -32,7 +32,7 @@ ToasterDisable::ToasterDisable(QWidget *parent)
  : QWidget(parent)
 {
 	QHBoxLayout *hbox = new QHBoxLayout(this);
-	hbox->setMargin(0);
+	hbox->setContentsMargins(0, 0, 0, 0);
 	hbox->setSpacing(0);
 
 	imageButton = new QPushButton(this);

@@ -41,6 +41,7 @@
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 #include "gui/common/FilesDefs.h"
+#include "util/RsQtVersion.h"
 
 #include "GxsChannelPostsWidgetWithModel.h"
 #include "GxsChannelPostsModel.h"
@@ -226,7 +227,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         y += font_height;
         y += font_height/2.0;
 
-        QString info_text = QDateTime::fromMSecsSinceEpoch(qint64(1000)*post.mMeta.mPublishTs).toString(Qt::DefaultLocaleShortDate);
+        QString info_text = QLocale::system().toString(DateTime::DateTimeFromTime_t(post.mMeta.mPublishTs), QLocale::ShortFormat);
 
         if(post.mAttachmentCount > 0)
             info_text += ", " + QString::number(post.mAttachmentCount)+ " " +((post.mAttachmentCount>1)?tr("files"):tr("file")) + " (" + misc::friendlyUnit(qulonglong(post.mSize)) + ")" ;
@@ -354,9 +355,9 @@ QSize ChannelPostFilesDelegate::sizeHint(const QStyleOptionViewItem& option, con
 
     switch(index.column())
     {
-    case RsGxsChannelPostFilesModel::COLUMN_FILES_NAME: return QSize(1.1*fm.width(QString::fromUtf8(file.mName.c_str())),fm.height());
-    case RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE: return QSize(1.1*fm.width(misc::friendlyUnit(qulonglong(file.mSize))),fm.height());
-    case RsGxsChannelPostFilesModel::COLUMN_FILES_DATE: return QSize(1.1*fm.width(QDateTime::fromMSecsSinceEpoch(file.mPublishTime*1000).toString("MM/dd/yyyy, hh:mm")),fm.height());
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_NAME: return QSize(1.1*QFontMetrics_horizontalAdvance(fm, QString::fromUtf8(file.mName.c_str())),fm.height());
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE: return QSize(1.1*QFontMetrics_horizontalAdvance(fm, misc::friendlyUnit(qulonglong(file.mSize))),fm.height());
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_DATE: return QSize(1.1*QFontMetrics_horizontalAdvance(fm, QDateTime::fromMSecsSinceEpoch(file.mPublishTime*1000).toString("MM/dd/yyyy, hh:mm")),fm.height());
     default:
     case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE: return QSize(option.rect.width(),GxsChannelFilesStatusWidget(file).height());
     }
@@ -462,8 +463,8 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     QHeaderView * channelpostfilesheader = ui->channelPostFiles_TV->header () ;
     QHeaderView * channelfilesheader = ui->channelFiles_TV->header () ;
 
-    channelpostfilesheader->resizeSection (RsGxsChannelPostFilesModel::COLUMN_FILES_NAME, fm.width("RetroShare-v0.6.5-1487-g6714648e5-Windows-x64-portable-20200518-Qt-5.14.2.7z"));
-    channelfilesheader->resizeSection (RsGxsChannelPostFilesModel::COLUMN_FILES_NAME, fm.width("RetroShare-v0.6.5-1487-g6714648e5-Windows-x64-portable-20200518-Qt-5.14.2.7z"));
+    channelpostfilesheader->resizeSection (RsGxsChannelPostFilesModel::COLUMN_FILES_NAME, QFontMetrics_horizontalAdvance(fm, "RetroShare-v0.6.5-1487-g6714648e5-Windows-x64-portable-20200518-Qt-5.14.2.7z"));
+    channelfilesheader->resizeSection (RsGxsChannelPostFilesModel::COLUMN_FILES_NAME, QFontMetrics_horizontalAdvance(fm, "RetroShare-v0.6.5-1487-g6714648e5-Windows-x64-portable-20200518-Qt-5.14.2.7z"));
 
     /* Initialize feed widget */
     //ui->feedWidget->setSortRole(ROLE_PUBLISH, Qt::DescendingOrder);
@@ -1454,7 +1455,7 @@ void GxsChannelPostsWidgetWithModel::switchOnlyUnread(bool)
 }
 void GxsChannelPostsWidgetWithModel::filterChanged(QString s)
 {
-    QStringList ql = s.split(' ',QString::SkipEmptyParts);
+    QStringList ql = s.split(' ',QtSkipEmptyParts);
     uint32_t count;
     mChannelPostsModel->setFilter(ql,ui->showUnread_TB->isChecked(),count);
     mChannelFilesModel->setFilter(ql,count);

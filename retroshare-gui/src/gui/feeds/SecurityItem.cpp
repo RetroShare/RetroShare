@@ -174,7 +174,7 @@ void SecurityItem::updateItemStatic()
 	titleLabel->setText(title);
 
 	QDateTime currentTime = QDateTime::currentDateTime();
-	timeLabel->setText(DateTime::formatLongDateTime(currentTime.toTime_t()));
+	timeLabel->setText(DateTime::formatLongDateTime(currentTime));
 
 	if (mIsHome)
 	{

@@ -21,12 +21,22 @@
 #include <QApplication>
 #include <QFile>
 #include <QProcess>
-#include <QSound>
 #include <QDir>
+
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+#include <QAudioDevice>
+#include <QMediaDevices>
+#include <QUrl>
+#elif QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+#include <QAudioDeviceInfo>
+#endif
+
+#if QT_VERSION < QT_VERSION_CHECK (6, 0, 0)
+#include <QSound>
+#endif
 
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
 #include <QAudio>
-#include <QAudioDeviceInfo>
 #endif
 
 // #ifdef QMEDIAPLAYER
@@ -241,15 +251,25 @@ void SoundManager::playFile(const QString &filename)
 
 	QString playFilename = realFilename(filename);
         bool played = false ;
-    
-#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    if (!QMediaDevices::audioOutputs().isEmpty())
+#elif QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
     if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty())
 #else
     if (QSound::isAvailable())
 #endif
         {
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+        if (soundManager) {
+            soundManager->mSoundEffect.setSource(QUrl::fromLocalFile(playFilename));
+            soundManager->mSoundEffect.play();
+            played = true;
+        }
+#else
         QSound::play(playFilename);
             played = true ;
+#endif
         }
 
         if(!played)	// let's go for the hard core stuff
