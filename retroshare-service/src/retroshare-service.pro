@@ -67,6 +67,7 @@ unix {
 macx {
 	# ENABLE THIS OPTION FOR Univeral Binary BUILD.
 	#CONFIG += ppc x86
+	QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13
 	#QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
 	LIBS += -lz 
         #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan

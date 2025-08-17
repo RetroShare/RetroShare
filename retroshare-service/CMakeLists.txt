@@ -113,6 +113,23 @@ target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
 
 ################################################################################
 
+# Add RNP build directories to linker search path
+target_link_directories(${PROJECT_NAME} PRIVATE
+    ${PROJECT_SOURCE_DIR}/../supportlibs/librnp/Build/src/lib
+    ${PROJECT_SOURCE_DIR}/../supportlibs/librnp/Build/src/libsexpp
+)
+
+# Link libraries by name, including RNP libs and dependencies first
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    rnp             # Link by name
+    sexpp
+    botan-3
+    json-c
+    bz2
+    z
+    retroshare
+)
+
 if(RS_SERVICE_DESKTOP)
 	if(UNIX AND NOT APPLE)
 		install(
