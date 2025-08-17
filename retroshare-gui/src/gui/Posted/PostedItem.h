@@ -119,6 +119,8 @@ private slots:
     void toggleNotes()  override;
 
 private:
+	QColor linkColor;
+
 	/** Qt Designer generated object */
 	Ui::PostedItem *ui;
 };
