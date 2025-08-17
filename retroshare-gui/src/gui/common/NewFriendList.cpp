@@ -267,6 +267,7 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
     connect(ui->actionShowState,          SIGNAL(triggered(bool)), this, SLOT(setShowState(bool))      );
     connect(ui->actionShowStateIcon,      SIGNAL(triggered(bool)), this, SLOT(setShowStateIcon(bool))      );
     connect(ui->actionShowGroups,         SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool))     );
+    connect(ui->actionShowCircleAvatars,  SIGNAL(triggered(bool)), this, SLOT(setShowCircleAvatars(bool))     );
     connect(ui->actionExportFriendlist,   SIGNAL(triggered())    , this, SLOT(exportFriendlistClicked()));
     connect(ui->actionImportFriendlist,   SIGNAL(triggered())    , this, SLOT(importFriendlistClicked()));
 
@@ -349,12 +350,14 @@ void NewFriendList::headerContextMenuRequested(QPoint /*p*/)
     displayMenu.addAction(ui->actionShowOfflineFriends);
     displayMenu.addAction(ui->actionShowState);
     displayMenu.addAction(ui->actionShowStateIcon);
+    displayMenu.addAction(ui->actionShowCircleAvatars);
     displayMenu.addAction(ui->actionShowGroups);
 
     ui->actionShowOfflineFriends->setChecked(mProxyModel->showOfflineNodes());
     ui->actionShowState->setChecked(mModel->getDisplayStatusString());
     ui->actionShowStateIcon->setChecked(mModel->getDisplayStatusIcon());
     ui->actionShowGroups->setChecked(mModel->getDisplayGroups());
+    ui->actionShowCircleAvatars->setChecked(mModel->getDisplayCircleAvatars());
 
     QHeaderView *header = ui->peerTreeWidget->header();
 
@@ -515,6 +518,7 @@ void NewFriendList::processSettings(bool load)
         mModel->setDisplayStatusString(Settings->value("showState", mModel->getDisplayStatusString()).toBool());
         mModel->setDisplayGroups(Settings->value("showGroups", mModel->getDisplayGroups()).toBool());
         mModel->setDisplayStatusIcon(Settings->value("showStateIcon", mModel->getDisplayStatusIcon()).toBool());
+        mModel->setDisplayCircleAvatars(Settings->value("showCircleAvatars", mModel->getDisplayCircleAvatars()).toBool());
 
 
         setColumnVisible(RsFriendListModel::COLUMN_THREAD_IP,Settings->value("showIP", isColumnVisible(RsFriendListModel::COLUMN_THREAD_IP)).toBool());
@@ -540,7 +544,7 @@ void NewFriendList::processSettings(bool load)
         Settings->setValue("showState", mModel->getDisplayStatusString());
         Settings->setValue("showGroups", mModel->getDisplayGroups());
         Settings->setValue("showStateIcon", mModel->getDisplayStatusIcon());
-
+        Settings->setValue("showCircleAvatars", mModel->getDisplayCircleAvatars());
 
         Settings->setValue("showIP",isColumnVisible(RsFriendListModel::COLUMN_THREAD_IP));
         Settings->setValue("showID",isColumnVisible(RsFriendListModel::COLUMN_THREAD_ID));
@@ -1663,6 +1667,12 @@ void NewFriendList::setShowState(bool show)
 void NewFriendList::setShowStateIcon(bool show)
 {
     applyWhileKeepingTree([show,this]() { mModel->setDisplayStatusIcon(show) ; });
+    processSettings(false);
+}
+
+void NewFriendList::setShowCircleAvatars(bool show)
+{
+    applyWhileKeepingTree([show,this]() { mModel->setDisplayCircleAvatars(show) ; });
     processSettings(false);
 }
 
