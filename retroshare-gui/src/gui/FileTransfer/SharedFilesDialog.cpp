@@ -61,7 +61,8 @@
 #define SHARED_FILES_DIALOG_COLUMN_AGE           3
 #define SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS 4
 #define SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR   5
-#define SHARED_FILES_DIALOG_COLUMN_COUNT         6
+#define SHARED_FILES_DIALOG_COLUMN_UPLOADED      6
+#define SHARED_FILES_DIALOG_COLUMN_COUNT         7
 
 #define SHARED_FILES_DIALOG_FILTER_STRING "filtered"
 
@@ -235,6 +236,7 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_AGE          , charWidth*6 );
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, charWidth*10 );
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR  , charWidth*20 );
+	header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_UPLOADED     , charWidth*20 );
 
     header->setStretchLastSection(true);
 
@@ -293,6 +295,7 @@ RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
 {
     ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, false) ;
     ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, true) ;
+	ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_UPLOADED, true) ;
     ui.checkButton->hide() ;
 
     connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadRemoteSelected()));
@@ -490,6 +493,7 @@ void RemoteSharedFilesDialog::showProperColumns()
         ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FILENB, false) ;
         ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, true) ;
         ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, true) ;
+		ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_UPLOADED, true) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
         ui.filterLabel->hide();
         ui.filterPatternLineEdit->hide();
@@ -502,6 +506,7 @@ void RemoteSharedFilesDialog::showProperColumns()
         ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FILENB, true) ;
         ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, false) ;
         ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, false) ;
+		ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_UPLOADED, true) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
         ui.filterLabel->show();
         ui.filterPatternLineEdit->show();
