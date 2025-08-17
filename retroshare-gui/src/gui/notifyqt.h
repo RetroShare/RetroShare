@@ -83,7 +83,7 @@ class NotifyQt: public QObject, public NotifyClient
 		/* one or more peers has changed the states */
 //		virtual void notifyPeerStatusChangedSummary();
 
-		virtual void notifyHistoryChanged(uint32_t msgId, int type);
+//		virtual void notifyHistoryChanged(uint32_t msgId, int type);
 
 //		virtual void notifyDiscInfoChanged() ;
 		virtual bool askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password, bool &cancelled);

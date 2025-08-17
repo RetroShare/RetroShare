@@ -513,7 +513,6 @@ void NotifyQt::notifyTurtleSearchResult(const RsPeerId& pid,uint32_t search_id,c
 		emit gotTurtleSearchResult(search_id,det) ;
 	}
 }
-#endif
 
 void NotifyQt::notifyHistoryChanged(uint32_t msgId, int type)
 {
@@ -526,7 +525,6 @@ void NotifyQt::notifyHistoryChanged(uint32_t msgId, int type)
 	emit historyChanged(msgId, type);
 }
 
-#ifdef TO_REMOVE
 void NotifyQt::notifyListChange(int list, int type)
 {
 	{
