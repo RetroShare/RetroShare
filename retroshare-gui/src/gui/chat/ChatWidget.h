@@ -190,7 +190,7 @@ private slots:
 	void updateLenOfChatTextEdit();
 	void sendChat();
 
-	void updatePeersCustomStateString(const QString& peer_id, const QString& status_string) ;
+    void updatePeersCustomStateString(const ChatId& id, const QString& status_string) ;
 
 	bool fileSave();
 	bool fileSaveAs();

@@ -855,7 +855,14 @@ void ConnectFriendWizard::accept()
 		ConnectProgressDialog::showProgress(ssl_id);
 	}
 
-	NotifyQt::getInstance()->notifyListChange(NOTIFY_LIST_NEIGHBOURS,1) ;
+    //NotifyQt::getInstance()->notifyListChange(NOTIFY_LIST_NEIGHBOURS,1) ;
+
+    auto ev = std::make_shared<RsFriendListEvent>();
+    ev->mEventCode = RsFriendListEventCode::NODE_ADDED;
+    ev->mSslId = peerDetails.id;
+    ev->mPgpId = peerDetails.gpg_id;
+    rsEvents->postEvent(ev);
+
 	QDialog::accept();
 }
 

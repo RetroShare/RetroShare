@@ -379,7 +379,8 @@ private:
 
 	 Ui::MainWindow *ui ;
 
-     RsEventsHandlerId_t mEventHandlerId;
+     RsEventsHandlerId_t mEventHandlerId_friends;
+     RsEventsHandlerId_t mEventHandlerId_system;
 };
 
 #endif

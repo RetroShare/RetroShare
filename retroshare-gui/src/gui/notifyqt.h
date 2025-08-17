@@ -58,15 +58,15 @@ class NotifyQt: public QObject, public NotifyClient
 
 		virtual ~NotifyQt() = default;
 
-		void setNetworkDialog(NetworkDialog *c) { cDialog = c; }
+//		void setNetworkDialog(NetworkDialog *c) { cDialog = c; }
 
 //		virtual void notifyListPreChange(int list, int type);
-		virtual void notifyListChange(int list, int type);
+//		virtual void notifyListChange(int list, int type);
 //		virtual void notifyErrorMsg(int list, int sev, std::string msg);
 //		virtual void notifyChatMessage(const ChatMessage&        /* msg */);
-		virtual void notifyChatStatus(const ChatId &chat_id,const std::string& status_string);
-		virtual void notifyChatCleared(const ChatId &chat_id);
-		virtual void notifyCustomState(const std::string& peer_id, const std::string& status_string);
+//		virtual void notifyChatStatus(const ChatId &chat_id,const std::string& status_string);
+//		virtual void notifyChatCleared(const ChatId &chat_id);
+//		virtual void notifyCustomState(const std::string& peer_id, const std::string& status_string);
 //#ifdef TO_REMOVE
 //		virtual void notifyTurtleSearchResult(const RsPeerId &pid, uint32_t search_id, const std::list<TurtleFileInfo>& found_files);
 //#endif
@@ -85,7 +85,7 @@ class NotifyQt: public QObject, public NotifyClient
 
 		virtual void notifyHistoryChanged(uint32_t msgId, int type);
 
-		virtual void notifyDiscInfoChanged() ;
+//		virtual void notifyDiscInfoChanged() ;
 		virtual bool askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password, bool &cancelled);
 		virtual bool askForPluginConfirmation(const std::string& plugin_filename, const std::string& plugin_file_hash,bool first_time);
 
@@ -109,25 +109,25 @@ class NotifyQt: public QObject, public NotifyClient
 //		void filesPostModChanged(bool) const ;
 //		void transfersChanged() const ;
 //		void friendsChanged() const ;
-		void lobbyListChanged() const ;
-//        void chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&) ;
+//		void lobbyListChanged() const ;
+//      void chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&) ;
 //		void neighboursChanged() const ;
 		void configChanged() const ;
 		void logInfoChanged(const QString&) const ;
-		void chatStatusChanged(const ChatId&,const QString&) const ;
+//		void chatStatusChanged(const ChatId&,const QString&) const ;
 		void chatCleared(const ChatId&) const ;
-		void peerHasNewCustomStateString(const QString& /* peer_id */, const QString& /* status_string */) const ;
+//		void peerHasNewCustomStateString(const QString& /* peer_id */, const QString& /* status_string */) const ;
 //		void peerHasNewAvatar(const QString& peer_id) const ;
 //		void ownAvatarChanged() const ;
 //		void ownStatusMessageChanged() const ;
-		void errorOccurred(int,int,const QString&) const ;
-		void diskFull(int,int) const ;
+//		void errorOccurred(int,int,const QString&) const ;
+//		void diskFull(int,int) const ;
 //		void peerStatusChanged(const QString& /* peer_id */, int /* status */);
 //		void peerStatusChangedSummary() const;
-        void gxsChange(const RsGxsChanges& /* changes  */);
+//      void gxsChange(const RsGxsChanges& /* changes  */);
 //      void chatMessageReceived(ChatMessage msg);
 //		void groupsChanged(int type) const ;
-		void discInfoChanged() const ;
+//		void discInfoChanged() const ;
 		void historyChanged(uint msgId, int type);
 //		void chatLobbyInviteReceived() ;
 //		void deferredSignatureHandlingRequested() ;

@@ -34,6 +34,7 @@
 #include "gui/chat/ChatLobbyDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
 #include "gui/chat/ChatUserNotify.h"//For BradCast
 #include "util/DateTime.h"
@@ -181,15 +182,25 @@ ChatWidget::ChatWidget(QWidget *parent)
         RsQThreadUtils::postToObject([=](){
             auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
 
-            if(!fe || fe->mEventCode != RsFriendListEventCode::NODE_STATUS_CHANGED)
+            if(!fe)
                 return;
 
-            updateStatus(QString::fromStdString(fe->mSslId.toStdString()),fe->mStatus);
+            switch(fe->mEventCode)
+            {
+            case RsFriendListEventCode::NODE_STATUS_CHANGED: updateStatus(QString::fromStdString(fe->mSslId.toStdString()),fe->mStatus);
+                break;
+
+            case RsFriendListEventCode::NODE_STATE_STRING_CHANGED: updatePeersCustomStateString(ChatId(fe->mSslId),QString::fromUtf8(fe->mStateString.c_str()));
+                break;
+
+            default:
+                break;
+            }
 
         }, this );
     },mEventHandlerId,RsEventType::FRIEND_LIST);
 
-    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
+    //connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
 	connect(NotifyQt::getInstance(), SIGNAL(chatFontChanged()), this, SLOT(resetFonts()));
 
 	connect(ui->textBrowser, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
@@ -390,7 +401,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 
 		// initialize first custom state string
         QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(chatId.toPeerId()).c_str());
-        updatePeersCustomStateString(QString::fromStdString(chatId.toPeerId().toStdString()), customStateString);
+        updatePeersCustomStateString(chatId, customStateString);
     } else if (chatType() == CHATTYPE_DISTANT){
         hist_chat_type = RS_HISTORY_TYPE_DISTANT ;
         messageCount = Settings->getDistantChatHistoryCount();
@@ -1925,7 +1936,7 @@ void ChatWidget::updateTitle()
 	ui->titleLabel->setText(RsHtml::plainText(name) + "@" + RsHtml::plainText(title));
 }
 
-void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QString& status_string)
+void ChatWidget::updatePeersCustomStateString(const ChatId& id, const QString& status_string)
 {
 	if (chatType() != CHATTYPE_PRIVATE )
 	{
@@ -1934,7 +1945,7 @@ void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QStr
 
 	QString status_text;
 
-	if (RsPeerId(peer_id.toStdString()) == chatId.toPeerId()) {
+    if (id.toPeerId() == chatId.toPeerId()) {
 		// the peers status string has changed
 		if (status_string.isEmpty()) {
 			ui->statusMessageLabel->hide();

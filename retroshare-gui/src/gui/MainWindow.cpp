@@ -349,22 +349,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 //    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateFriends()));
 //    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateFriends()));
 
-    mEventHandlerId = 0;
-
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
-    {
-        RsQThreadUtils::postToObject([=]()
-        {
-            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
-
-            if(!fe)
-                return;
-
-            updateFriends();
-        }
-        , this );
-    }, mEventHandlerId, RsEventType::FRIEND_LIST );
-
     loadOwnStatus();
 
     /* Set focus to the current page */
@@ -383,6 +367,24 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     mFontSizeHandler.registerFontSize(ui->listWidget, 1.5f);
 
+    mEventHandlerId_friends = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+
+            if(!fe)
+                return;
+
+            updateFriends();
+        }
+        , this );
+    }, mEventHandlerId_friends, RsEventType::FRIEND_LIST );
+
+    mEventHandlerId_system = 0;
+
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
     {
         RsQThreadUtils::postToObject([=](){
@@ -391,19 +393,22 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
             switch(ev->mEventCode)
             {
             case RsSystemErrorEventCode::TIME_SHIFT_PROBLEM:
-                std::cerr << "Time shift problem notification. Ignored." << std::endl;
+                std::cerr << "Time shift problem notification. Make sure your machine is on time, because it will break chat rooms." << std::endl;
                 break;
 
             case RsSystemErrorEventCode::DISK_SPACE_ERROR:
                 displayDiskSpaceWarning(ev->mDiskErrorLocation,ev->mDiskErrorSizeLimit);
+                break;
 
+            case RsSystemErrorEventCode::GENERAL_ERROR:
+                displayErrorMessage(0,0,QString::fromUtf8(ev->mErrorMsg.c_str()));
                 break;
 
             default:
                 break;
             }
         }, this );
-    }, mEventHandlerId, RsEventType::SYSTEM_ERROR );
+    }, mEventHandlerId_system, RsEventType::SYSTEM_ERROR );
 
 }
 
@@ -415,7 +420,8 @@ MainWindow::~MainWindow()
     Settings->setValueToGroup("MainWindow", "SplitterState", ui->splitter->saveState());
     Settings->setValueToGroup("MainWindow", "State", saveState());
 
-    rsEvents->unregisterEventsHandler(mEventHandlerId);
+    rsEvents->unregisterEventsHandler(mEventHandlerId_friends);
+    rsEvents->unregisterEventsHandler(mEventHandlerId_system);
 
     delete statusComboBox;
     delete peerstatus;

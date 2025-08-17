@@ -102,11 +102,13 @@ NotifyQt::NotifyQt() : cDialog(NULL)
 		_enabled = false ;
 	}
 
+#ifdef TO_REMOVE
     // register to allow sending over Qt::QueuedConnection
     qRegisterMetaType<ChatId>("ChatId");
     qRegisterMetaType<ChatMessage>("ChatMessage");
     qRegisterMetaType<RsGxsChanges>("RsGxsChanges");
     qRegisterMetaType<RsGxsId>("RsGxsId");
+#endif
 }
 
 #ifdef TO_REMOVE
@@ -307,6 +309,7 @@ bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, con
 		return false;
 }
 
+#ifdef TO_REMOVE
 void NotifyQt::notifyDiscInfoChanged()
 {
 	{
@@ -322,7 +325,6 @@ void NotifyQt::notifyDiscInfoChanged()
 	emit discInfoChanged() ;
 }
 
-#ifdef TO_REMOVE
 void NotifyQt::notifyDiskFull(uint32_t loc,uint32_t size_in_mb)
 {
 	{
@@ -394,7 +396,6 @@ void NotifyQt::notifyPeerHasNewAvatar(std::string peer_id)
 #endif
 	emit peerHasNewAvatar(QString::fromStdString(peer_id)) ;
 }
-#endif
 
 void NotifyQt::notifyCustomState(const std::string& peer_id, const std::string& status_string)
 {
@@ -410,7 +411,6 @@ void NotifyQt::notifyCustomState(const std::string& peer_id, const std::string& 
 	emit peerHasNewCustomStateString(QString::fromStdString(peer_id), QString::fromUtf8(status_string.c_str())) ;
 }
 
-#ifdef TO_REMOVE
 void NotifyQt::notifyChatLobbyTimeShift(int shift)
 {
 	{
@@ -453,7 +453,6 @@ void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const 
 #endif
     emit chatLobbyEvent(lobby_id,event_type,nickname,QString::fromUtf8(str.c_str())) ;
 }
-#endif
 
 void NotifyQt::notifyChatStatus(const ChatId& chat_id,const std::string& status_string)
 {
@@ -488,7 +487,6 @@ void NotifyQt::notifyChatCleared(const ChatId& chat_id)
 //    std::cerr << "(EE) missing code to handle GXS turtle search result." << std::endl;
 //}
 
-#ifdef TO_REMOVE
 // Mai 2023: distant turtle search now uses RsEvents.
 void NotifyQt::notifyTurtleSearchResult(const RsPeerId& pid,uint32_t search_id,const std::list<TurtleFileInfo>& files)
 {
@@ -528,6 +526,7 @@ void NotifyQt::notifyHistoryChanged(uint32_t msgId, int type)
 	emit historyChanged(msgId, type);
 }
 
+#ifdef TO_REMOVE
 void NotifyQt::notifyListChange(int list, int type)
 {
 	{
@@ -540,7 +539,6 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 	switch(list)
 	{
-#ifdef TO_REMOVE
         case NOTIFY_LIST_NEIGHBOURS:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received neighbours changed" << std::endl ;
@@ -614,7 +612,6 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit privateChatChanged(list, type);
 			break;
-#endif
 
 		case NOTIFY_LIST_CHAT_LOBBY_LIST:
 #ifdef NOTIFY_DEBUG
@@ -622,21 +619,18 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit lobbyListChanged();
 			break;
-#ifdef TO_REMOVE
 		case NOTIFY_LIST_GROUPLIST:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received groups changed" << std::endl ;
 #endif
 			emit groupsChanged(type);
 			break;
-#endif
 		default:
 			break;
 	}
 	return;
 }
 
-#ifdef TO_REMOVE
 void NotifyQt::notifyListPreChange(int list, int /*type*/)
 {
 	{
@@ -1233,6 +1227,7 @@ void NotifyQt::addToaster(uint notifyFlags, const std::string& id, const std::st
 					}
 					toaster = new ToasterItem(new ChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
 				}
+                break;
 			case RS_POPUP_GROUPCHAT:
 #ifdef RS_DIRECT_CHAT
 				if ((popupflags & RS_POPUP_GROUPCHAT) && !_disableAllToaster)
