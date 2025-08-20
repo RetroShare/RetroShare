@@ -92,6 +92,8 @@ You need to place sqlcipher so that the hierarchy is:
 
 ### Build infos
 
+Note: If you installed Qt6 you need to use `qmake6` on the command line.
+
 For the `FeedReader` it is required to append the config option `CONFIG+=retroshare_plugins`.
 Make sure `plugins/plugins.pro` contains `FeedReader` in the list of plugins to compile. 
 
