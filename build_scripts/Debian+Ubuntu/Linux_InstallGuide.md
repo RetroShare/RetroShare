@@ -3,9 +3,9 @@
 
 
 ### Install package dependencies:
-#### Debian/Ubuntu
+#### Debian / Ubuntu
 ```bash
-   sudo apt-get install g++ cmake libbz2-dev libjson-c-dev libssl-dev libsqlcipher-dev \
+   sudo apt-get install git g++ cmake libbz2-dev libjson-c-dev libssl-dev libsqlcipher-dev \
    libupnp-dev libxss-dev rapidjson-dev libbotan-2-dev libasio-dev
 ```
 
@@ -61,10 +61,15 @@ Additional dependencies for plugins:
    rapidjson-dev doxygen libbz2-dev libjson-c-dev libbotan-2-dev libasio-dev
 ```
 
-#### Arch Linux
+#### Arch Linux / Manjaro
 ```bash
-   pacman -S base-devel libgnome-keyring cmake qt5-tools qt5-multimedia qt5-x11extras \
+   sudo pacman -S base-devel libgnome-keyring cmake qt5-tools qt5-multimedia qt5-x11extras \
    rapidjson libupnp libxslt libxss sqlcipher botan2 bzip2 json-c
+```
+
+To compile with Qt6:
+```bash
+   sudo pacman -S qt6-base qt6-multimedia qt6-5compat
 ```
 
 ### Checkout the source code
@@ -88,7 +93,7 @@ Additional dependencies for plugins:
 
 The executable produced will be:  
 ```bash
- ./retroshare-gui/src/retroshare
+   ./retroshare-gui/src/retroshare
 ```
 
 ### Install
@@ -98,7 +103,7 @@ The executable produced will be:
 
 The executable produced will be:  
 ```bash
- ~/usr/bin/RetroShare  
+   ~/usr/bin/RetroShare  
 ```
 
 ### For packagers
@@ -135,6 +140,8 @@ You need to place sqlcipher so that the hierarchy is:
 
 ### Build infos
 
+Note: If you installed Qt6 you need to use `qmake6` on the command line.
+
 For the `FeedReader` it is required to append the config option `CONFIG+=retroshare_plugins`.
 Make sure `plugins/plugins.pro` contains `FeedReader` in the list of plugins to compile. 
 
@@ -165,7 +172,7 @@ For `Autologin` it is required to append the config option `CONFIG+=rs_autologin
 Example:
 
 ```batch
-qmake CONFIG-=debug CONFIG+=release CONFIG+=rs_use_native_dialog CONFIG+=rs_gui_cmark
+qmake CONFIG+=debug CONFIG+=release CONFIG+=rs_use_native_dialog CONFIG+=rs_gui_cmark
 qmake CONFIG+=rs_jsonapi CONFIG+=rs_webui CONFIG+=rs_autologin
-qmake CONFIG+=rs_deep_channels_index CONFIG += gxsthewire CONFIG += wikipoos
+qmake CONFIG+=rs_deep_channels_index CONFIG +=gxsthewire CONFIG+=wikipoos
 ```
