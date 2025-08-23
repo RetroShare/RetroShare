@@ -32,6 +32,7 @@
 #include "IMHistoryItemDelegate.h"
 #include "IMHistoryItemPainter.h"
 #include "util/HandleRichText.h"
+#include "util/qtthreadsutils.h"
 #include "gui/common/FilesDefs.h"
 
 #include "rshare.h"
@@ -101,7 +102,7 @@ ImHistoryBrowser::ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit,const Q
     m_chatId = chatId;
     textEdit = edit;
 
-    connect(NotifyQt::getInstance(), SIGNAL(historyChanged(uint, int)), this, SLOT(historyChanged(uint, int)));
+    //connect(NotifyQt::getInstance(), SIGNAL(historyChanged(uint, int)), this, SLOT(historyChanged(uint, int)));
 
     connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
@@ -138,6 +139,19 @@ ImHistoryBrowser::ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit,const Q
     connect(m_createThread, SIGNAL(finished()), this, SLOT(createThreadFinished()));
     connect(m_createThread, SIGNAL(progress(int,int)), this, SLOT(createThreadProgress(int,int)));
     m_createThread->start();
+
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){
+
+            auto ev = dynamic_cast<const RsChatServiceEvent*>(event.get());
+
+            if(ev->mEventCode == RsChatServiceEventCode::CHAT_HISTORY_CHANGED)
+                historyChanged(ev->mMsgHistoryId,ev->mHistoryChangeType);
+        }, this );
+    }, mEventHandlerId, RsEventType::CHAT_SERVICE );
 }
 
 ImHistoryBrowser::~ImHistoryBrowser()

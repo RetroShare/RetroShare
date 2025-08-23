@@ -26,6 +26,7 @@
 #include "gui/MainWindow.h"
 #include "gui/chat/ChatDialog.h"
 #include "gui/settings/rsharesettings.h"
+#include "util/qtthreadsutils.h"
 
 #include <algorithm>
 #include <retroshare/rsnotify.h>
@@ -57,8 +58,31 @@ static ChatUserNotify* instance = 0;
 ChatUserNotify::ChatUserNotify(QObject *parent) :
     UserNotify(parent)
 {
-    connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
+    //connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
     instance = this;
+
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsChatServiceEvent*>(e.get());  if(!fe) return;
+
+            if(!fe)
+                return;
+
+            switch(fe->mEventCode)
+            {
+            case RsChatServiceEventCode::CHAT_MESSAGE_RECEIVED: chatMessageReceived(fe->mMsg); break;
+            default:
+                break;
+            }
+
+        }
+        , this );
+    }, mEventHandlerId, RsEventType::CHAT_SERVICE );
+
 }
 
 ChatUserNotify::~ChatUserNotify()

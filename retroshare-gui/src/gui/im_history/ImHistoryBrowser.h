@@ -86,6 +86,7 @@ private:
 
     /** Qt Designer generated object */
     Ui::ImHistoryBrowser ui;
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 class ImHistoryBrowserCreateItemsThread : public QThread
