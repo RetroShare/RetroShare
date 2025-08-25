@@ -3,10 +3,10 @@
 
 
 ### Install package dependencies:
-#### Debian / Ubuntu
+#### Debian / Ubuntu / Linux Mint
 ```bash
    sudo apt-get install git g++ cmake libbz2-dev libjson-c-dev libssl-dev libsqlcipher-dev \
-   libupnp-dev libxss-dev rapidjson-dev libbotan-2-dev libasio-dev
+   libupnp-dev doxygen libxss-dev rapidjson-dev libbotan-2-dev libasio-dev
 ```
 
 To compile with Qt5:
@@ -52,13 +52,6 @@ Additional dependencies for plugins:
 ```bash
    sudo zypper install ffmpeg-4-libavcodec-devel libcurl-devel libxml2-devel \
    libxslt-devel speex-devel speexdsp-devel
-```
-
-#### Linux Mint
-```bash
-   sudo apt-get install git g++ cmake qt5-qmake qtmultimedia5-dev \
-   libqt5x11extras5-dev libupnp-dev libxss-dev libssl-dev libsqlcipher-dev \
-   rapidjson-dev doxygen libbz2-dev libjson-c-dev libbotan-2-dev libasio-dev
 ```
 
 #### Arch Linux / Manjaro / EndeavourOS
