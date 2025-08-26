@@ -94,7 +94,8 @@ private:
     /** Qt Designer generated object */
     Ui::FriendsDialog ui;
 #ifdef RS_DIRECT_CHAT
-    RsEventsHandlerId_t mEventHandlerId ;
+    RsEventsHandlerId_t mEventHandlerId_friends ;
+    RsEventsHandlerId_t mEventHandlerId_chat ;
 #endif
 };
 

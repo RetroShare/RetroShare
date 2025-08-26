@@ -81,7 +81,8 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
     //connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
     //connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)), this, SLOT(chatStatusReceived(ChatId,QString)));
 
-    mEventHandlerId = 0;
+    mEventHandlerId_friends = 0;
+    mEventHandlerId_chat = 0;
 
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
     {
@@ -99,7 +100,25 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
 
         }
         , this );
-    }, mEventHandlerId, RsEventType::CHAT_SERVICE );
+    }, mEventHandlerId_chat, RsEventType::CHAT_SERVICE );
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());  if(!fe) return;
+
+            switch(fe->mEventCode)
+            {
+            case RsFriendListEventCode::OWN_STATUS_CHANGED:     loadmypersonalstatus();
+                break;
+            default:	// OWN_AVATAR_CHANGED is handled in AvatarWidget
+                break;
+            }
+
+        }
+        , this );
+    }, mEventHandlerId_friends, RsEventType::FRIEND_LIST );
 
 #else // def RS_DIRECT_CHAT
 	ui.tabWidget->removeTab(ui.tabWidget->indexOf(ui.groupChatTab));
@@ -175,6 +194,8 @@ FriendsDialog::~FriendsDialog ()
     if (this == instance) {
         instance = NULL;
     }
+    rsEvents->unregisterEventsHandler(mEventHandlerId_friends);
+    rsEvents->unregisterEventsHandler(mEventHandlerId_chat);
 }
 
 void FriendsDialog::activatePage(FriendsDialog::Page page)
