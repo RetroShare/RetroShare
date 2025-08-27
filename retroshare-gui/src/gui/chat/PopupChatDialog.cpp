@@ -28,6 +28,7 @@
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/notifyqt.h"
 #include "util/DateTime.h"
+#include "util/qtthreadsutils.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsiface.h>
@@ -51,6 +52,25 @@ PopupChatDialog::PopupChatDialog(QWidget *parent, Qt::WindowFlags flags)
 	connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
 	connect(ui.actionClearOfflineMessages, SIGNAL(triggered()), this, SLOT(clearOfflineMessages()));
     //connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)), this, SLOT(chatStatusChanged(ChatId,QString)));
+
+    mEventHandlerId_chat =0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsChatServiceEvent*>(e.get());  if(!fe) return;
+
+            switch(fe->mEventCode)
+            {
+            case RsChatServiceEventCode::CHAT_STATUS_CHANGED:   chatStatusChanged(fe->mCid,QString::fromUtf8(fe->mStr.c_str())); break;
+            default:
+                break;
+            }
+
+        }
+        , this );
+    }, mEventHandlerId_chat, RsEventType::CHAT_SERVICE );
 }
 
 void PopupChatDialog::init(const ChatId &chat_id, const QString &title)

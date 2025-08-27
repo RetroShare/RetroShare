@@ -338,12 +338,7 @@ void ChatDialog::setPeerStatus(RsStatusValue status)
         // convert to virtual peer id
         // this is only required for private and distant chat,
         // because lobby and broadcast does not have a status
-        RsPeerId vpid;
-        if(mChatId.isPeerId())
-            vpid = mChatId.toPeerId();
-        if(mChatId.isDistantChatId())
-            vpid = RsPeerId(mChatId.toDistantChatId());
-        cw->updateStatus(QString::fromStdString(vpid.toStdString()), status);
+        cw->updateStatus(mChatId, status);
     }
 }
 RsStatusValue ChatDialog::getPeerStatus()

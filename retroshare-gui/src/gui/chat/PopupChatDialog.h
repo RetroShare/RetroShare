@@ -65,6 +65,8 @@ protected:
 
 	/** Qt Designer generated object */
 	Ui::PopupChatDialog ui;
+
+    RsEventsHandlerId_t mEventHandlerId_chat;
 };
 
 #endif

@@ -131,7 +131,7 @@ public:
 	const QList<ChatWidgetHolder*> &chatWidgetHolderList() { return mChatWidgetHolder; }
 
 public slots:
-    void updateStatus(const QString &peer_id, RsStatusValue status);
+    void updateStatus(const ChatId &cid, RsStatusValue status);
 	void setUseCMark(const bool bUseCMark);
 	void updateCMPreview();
 
@@ -274,7 +274,8 @@ private:
 
 	Ui::ChatWidget *ui;
 
-    RsEventsHandlerId_t mEventHandlerId ;
+//    RsEventsHandlerId_t mEventHandlerId_chat ;
+    RsEventsHandlerId_t mEventHandlerId_friends ;
 };
 
 #endif // CHATWIDGET_H
