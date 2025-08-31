@@ -5,9 +5,9 @@
 ### Install package dependencies:
 #### RedHat/Fedora
 ```bash
-    sudo dnf install mesa-libGL-devel gcc cmake rapidjson-devel \
-    libupnp openssl sqlcipher sqlcipher-devel \
-    botan2 botan2-devel json-c-devel bzip2-devel asio-devel libsecret libXScrnSaver-devel
+   sudo dnf install mesa-libGL-devel gcc cmake rapidjson-devel \
+   libupnp openssl sqlcipher sqlcipher-devel \
+   botan2 botan2-devel json-c-devel bzip2-devel asio-devel libsecret libXScrnSaver-devel
 ```
 
 To compile with Qt5:
@@ -46,7 +46,7 @@ Additional dependencies for Feedreader plugin:
 
 The executable produced will be:  
 ```bash
- ./retroshare-gui/src/retroshare
+   ./retroshare-gui/src/retroshare
 ```
 
 ### Install
@@ -56,7 +56,7 @@ The executable produced will be:
 
 The executable produced will be:  
 ```bash
- ~/usr/bin/RetroShare  
+   ~/usr/bin/RetroShare  
 ```
 
 ### For packagers
@@ -92,6 +92,8 @@ You need to place sqlcipher so that the hierarchy is:
 
 ### Build infos
 
+Note: If you installed Qt6 you need to use `qmake6` on the command line.
+
 For the `FeedReader` it is required to append the config option `CONFIG+=retroshare_plugins`.
 Make sure `plugins/plugins.pro` contains `FeedReader` in the list of plugins to compile. 
 
@@ -122,7 +124,7 @@ For `Autologin` it is required to append the config option `CONFIG+=rs_autologin
 Example:
 
 ```batch
-qmake CONFIG-=debug CONFIG+=release CONFIG+=rs_use_native_dialog CONFIG+=rs_gui_cmark
+qmake CONFIG+=debug CONFIG+=release CONFIG+=rs_use_native_dialog CONFIG+=rs_gui_cmark
 qmake CONFIG+=rs_jsonapi CONFIG+=rs_webui CONFIG+=rs_autologin
-qmake CONFIG+=rs_deep_channels_index CONFIG += gxsthewire CONFIG += wikipoos
+qmake CONFIG+=rs_deep_channels_index CONFIG +=gxsthewire CONFIG+=wikipoos
 ```
