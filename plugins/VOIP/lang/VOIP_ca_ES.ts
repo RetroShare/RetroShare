@@ -4,19 +4,22 @@
 <context>
     <name>AudioInput</name>
     <message>
-        <location filename="../gui/AudioInputConfig.ui" line="+17"/>
+        <location filename="../gui/VOIPConfigPanel.ui" line="+280"/>
         <source>Audio Wizard</source>
         <translation>Assistent de so</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Transmission</source>
-        <translation>Transmissió</translation>
+        <translation type="vanished">Transmissió</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>&amp;Transmit</source>
-        <translation>&amp;Transmetre</translation>
+        <translation type="vanished">&amp;Transmetre</translation>
+    </message>
+    <message>
+        <location line="-28"/>
+        <source>&amp;Transmit:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
@@ -29,7 +32,7 @@
         <translation>&lt;b&gt;Estableix quan la veu serà transmesa.&lt;/b&gt;&lt;br /&gt;&lt;i&gt;Continuament&lt;/i&gt; - Tota l&apos;estona&lt;br /&gt;&lt;i&gt;Activitat de veu&lt;/i&gt; - Quan estàs clarament parlant.&lt;br /&gt;&lt;i&gt;Prémer per parlar&lt;/i&gt; - Quan mantens premuda la tecla especificada a &lt;i&gt;Dreceres de teclat&lt;/i&gt;.</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+37"/>
         <source>DoublePush Time</source>
         <translation>Interval per doble pulsació</translation>
     </message>
@@ -90,32 +93,46 @@
         <translation>buit</translation>
     </message>
     <message>
-        <location line="+17"/>
         <source>Audio Processing</source>
-        <translation>Processat de so</translation>
+        <translation type="vanished">Processat de so</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-293"/>
         <source>Noise Suppression</source>
         <translation>Reducció de soroll</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-22"/>
         <source>Noise suppression</source>
         <translation>Reducció de soroll</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-132"/>
+        <source>Video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Input device:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+66"/>
+        <source>Audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
         <source>&lt;b&gt;This sets the amount of noise suppression to apply.&lt;/b&gt;&lt;br /&gt;The higher this value, the more aggressively stationary noise will be suppressed.</source>
         <translation>&lt;b&gt;Especifica la quantitat de reducció de soroll que s&apos;aplicarà.&lt;/b&gt;&lt;br /&gt;A valors més alts més agressivitat suprimint soroll estàtic.</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+64"/>
         <source>Amplification</source>
         <translation>Amplificació</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-22"/>
         <source>Maximum amplification of input sound</source>
         <translation>Amplificació màxima de l&apos;entrada de so</translation>
     </message>
@@ -125,17 +142,16 @@
         <translation>&lt;b&gt;Amplificació màxima d&apos;entrada.&lt;/b&gt;&lt;br /&gt;Retroshare normalitza el volum d&apos;entrada abans de la compressió, i això estableix quant se li permet amplificar.&lt;br /&gt;El nivell real s&apos;actualitza contínuament basat en el seu patró de veu actual, però mai sobrepassarà el nivell especificat aquí.&lt;br /&gt;Si el nivell de &lt;i&gt; Volum del Micròfon &lt;/i&gt; de les estadístiques d&apos;àudio ronda el 100%, probablement desitgi establir això al voltant de 2.0, però si, com la majoria de la gent, no aconsegueix aconseguir el 100%, estableixi això a alguna cosa molt major.&lt;br /&gt; Idealment, fixi-ho de tal forma que el &lt;i&gt; Volum del Micròfon * Factor d&apos;Amplificació &gt;= 100 &lt;/i&gt; , fins i tot quan parli realment baix.&lt;br /&gt;&lt;br /&gt; Tingui en compte que no és perjudicial establir això al màxim, però Retroshare començarà a captar altres converses si ho deixa auto-ajustar-se a aquest nivell.</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+37"/>
         <source>Echo Cancellation Processing</source>
         <translation>Processant cancel·lació d&apos;eco</translation>
     </message>
     <message>
-        <location line="+15"/>
         <source>Video Processing</source>
-        <translation>Processat de vídeo</translation>
+        <translation type="vanished">Processat de vídeo</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="-157"/>
         <source>Available bandwidth:</source>
         <translation>Ample de banda disponible:</translation>
     </message>
@@ -150,7 +166,7 @@
         <translation>KB/s</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+25"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Display encoded (and then decoded) frame, to check the codec&apos;s quality. If not selected, the image above only shows the frame that is grabbed from your camera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mostra un fotograma codificat (i després descodificat) per comprovar la qualitat del codec. Si no es selecciona, la imatge superior només mostra el fotograma tal i com el captura la teva càmera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -163,39 +179,32 @@
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="+185"/>
         <source>Continuous</source>
-        <translation>Continuu</translation>
+        <translation type="vanished">Continuu</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Voice Activity</source>
-        <translation>Activitat de veu</translation>
+        <translation type="vanished">Activitat de veu</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Push To Talk</source>
-        <translation>Prem per parlar</translation>
+        <translation type="vanished">Prem per parlar</translation>
     </message>
     <message>
-        <location line="+91"/>
         <source>%1 s</source>
-        <translation>%1 s</translation>
+        <translation type="vanished">%1 s</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source>Off</source>
-        <translation>Apagat</translation>
+        <translation type="vanished">Apagat</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>-%1 dB</source>
-        <translation>-%1 dB</translation>
+        <translation type="vanished">-%1 dB</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.h" line="+85"/>
         <source>VOIP</source>
-        <translation>VeuIP</translation>
+        <translation type="vanished">VeuIP</translation>
     </message>
 </context>
 <context>
@@ -463,7 +472,7 @@
         <translation>Detecció de veu</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+22"/>
         <source>Next you need to adjust the following slider. The first few utterances you say should end up in the green area (definitive speech). While talking, you should stay inside the yellow (might be speech) and when you&apos;re not talking, everything should be in the red (definitively not speech).</source>
         <translation>Ara ha d&apos;ajustar els següents dos controls lliscants. Les primeres paraules que digui haurien d&apos;acabar a l&apos;àrea verda (està parlant amb tota certesa). Mentre parla, hauria de romandre en la groga (podria estar parlant) i quan no estigui parlant, tot deuria estar en la vermella (definitivament no està parlant).</translation>
     </message>
@@ -491,7 +500,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="+128"/>
+        <location filename="../VOIPPlugin.cpp" line="+127"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;Connector VeuIP RetroShare &lt;/h3&gt;&lt;br/&gt; * Col·laboradors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
@@ -542,7 +551,7 @@
         <translation>Aquest complement proporciona comunicació per veu amb els teus amics al RetroShare.</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+38"/>
         <location line="+4"/>
         <location line="+4"/>
         <location line="+4"/>
@@ -799,9 +808,53 @@
     </message>
 </context>
 <context>
+    <name>VOIPConfigPanel</name>
+    <message>
+        <location filename="../gui/VOIPConfigPanel.cpp" line="+100"/>
+        <source>Continuous</source>
+        <translation type="unfinished">Continuu</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Voice Activity</source>
+        <translation type="unfinished">Activitat de veu</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Push To Talk</source>
+        <translation type="unfinished">Prem per parlar</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+334"/>
+        <source>[No video]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-143"/>
+        <source>%1 s</source>
+        <translation type="unfinished">%1 s</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Off</source>
+        <translation type="unfinished">Apagat</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>-%1 dB</source>
+        <translation type="unfinished">-%1 dB</translation>
+    </message>
+    <message>
+        <location filename="../gui/VOIPConfigPanel.h" line="+84"/>
+        <source>VOIP</source>
+        <translation type="unfinished">VeuIP</translation>
+    </message>
+</context>
+<context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="-48"/>
+        <location filename="../VOIPPlugin.cpp" line="-46"/>
         <source>VOIP</source>
         <translation>VeuIP</translation>
     </message>
@@ -819,7 +872,7 @@
         <translation>Respondre amb vídeo</translation>
     </message>
     <message>
-        <location filename="../gui/VOIPToasterItem.ui" line="+232"/>
+        <location filename="../gui/VOIPToasterItem.ui" line="+239"/>
         <source>Decline</source>
         <translation>Declina</translation>
     </message>
@@ -940,7 +993,7 @@
 <context>
     <name>voipGraphSource</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="-246"/>
+        <location filename="../gui/VOIPConfigPanel.cpp" line="-270"/>
         <source>Required bandwidth</source>
         <translation>Ample de banda necessari</translation>
     </message>
