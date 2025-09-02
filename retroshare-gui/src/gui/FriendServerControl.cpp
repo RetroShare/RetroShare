@@ -118,7 +118,7 @@ FriendServerControl::FriendServerControl(QWidget *parent)
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
     {
         RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
-    }, mEventHandlerId_peer, RsEventType::PEER_STATE );
+    }, mEventHandlerId_peer, RsEventType::FRIEND_LIST );
 }
 
 void FriendServerControl::onAutoAddFriends(bool b)
@@ -145,14 +145,14 @@ void FriendServerControl::handleEvent_main_thread(std::shared_ptr<const RsEvent>
     }
 
     {
-        const RsConnectionEvent *pe = dynamic_cast<const RsConnectionEvent*>(event.get());
+        const RsFriendListEvent *pe = dynamic_cast<const RsFriendListEvent*>(event.get());
 
         if(pe)
-            switch(pe->mConnectionInfoCode)
+            switch(pe->mEventCode)
             {
-            case RsConnectionEventCode::PEER_ADDED:
-            case RsConnectionEventCode::PEER_REMOVED:
-            case RsConnectionEventCode::PEER_CONNECTED: updateContactsStatus();
+            case RsFriendListEventCode::NODE_ADDED:
+            case RsFriendListEventCode::NODE_REMOVED:
+            case RsFriendListEventCode::NODE_CONNECTED: updateContactsStatus();
                 break;
 
             default: ;
@@ -169,7 +169,7 @@ FriendServerControl::~FriendServerControl()
     rsEvents->unregisterEventsHandler(mEventHandlerId_peer);
 }
 
-void FriendServerControl::launchStatusContextMenu(QPoint p)
+void FriendServerControl::launchStatusContextMenu(QPoint /* p */)
 {
     RsPeerId peer_id = getCurrentPeer();
 
