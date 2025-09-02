@@ -330,7 +330,7 @@ QString ChatDialog::getOwnName() const
         return "ChatDialog::getOwnName(): invalid id type passed (RsPeerId is required). This is a bug.";
 }
 
-void ChatDialog::setPeerStatus(uint32_t status)
+void ChatDialog::setPeerStatus(RsStatusValue status)
 {
 	ChatWidget *cw = getChatWidget();
     if (cw)
@@ -338,22 +338,17 @@ void ChatDialog::setPeerStatus(uint32_t status)
         // convert to virtual peer id
         // this is only required for private and distant chat,
         // because lobby and broadcast does not have a status
-        RsPeerId vpid;
-        if(mChatId.isPeerId())
-            vpid = mChatId.toPeerId();
-        if(mChatId.isDistantChatId())
-            vpid = RsPeerId(mChatId.toDistantChatId());
-        cw->updateStatus(QString::fromStdString(vpid.toStdString()), status);
+        cw->updateStatus(mChatId, status);
     }
 }
-int ChatDialog::getPeerStatus()
+RsStatusValue ChatDialog::getPeerStatus()
 {
 	ChatWidget *cw = getChatWidget();
 	if (cw) {
 		return cw->getPeerStatus();
 	}
 
-	return 0;
+    return RsStatusValue::RS_STATUS_UNKNOWN;
 }
 
 QString ChatDialog::getTitle()

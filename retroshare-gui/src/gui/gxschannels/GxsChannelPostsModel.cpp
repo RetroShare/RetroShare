@@ -53,7 +53,7 @@ RsGxsChannelPostsModel::RsGxsChannelPostsModel(QObject *parent)
 
 RsGxsChannelPostsModel::~RsGxsChannelPostsModel()
 {
-    rsEvents->unregisterEventsHandler(mEventHandlerId);
+//    rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 void RsGxsChannelPostsModel::setMode(TreeMode mode)
