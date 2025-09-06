@@ -28,6 +28,11 @@ option(
 	OFF )
 
 option(
+	RS_RNPLIB
+	"Enable use RNP lib for PGP"
+	OFF )
+
+option(
 	RS_JSON_API
 	"Use restbed to expose libretroshare as JSON API via HTTP"
 	ON )
@@ -128,22 +133,24 @@ target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
 
 ################################################################################
 
-# Add RNP build directories to linker search path
-target_link_directories(${PROJECT_NAME} PRIVATE
-    ${PROJECT_SOURCE_DIR}/../../supportlibs/librnp/Build/src/lib
-    ${PROJECT_SOURCE_DIR}/../../supportlibs/librnp/Build/src/libsexpp
-)
+if(RS_RNPLIB)
+	# Add RNP build directories to linker search path
+	target_link_directories(${PROJECT_NAME} PRIVATE
+		${PROJECT_SOURCE_DIR}/../../supportlibs/librnp/Build/src/lib
+		${PROJECT_SOURCE_DIR}/../../supportlibs/librnp/Build/src/libsexpp
+	)
 
-# Link libraries by name, including RNP libs and dependencies first
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    rnp             # Link by name
-    sexpp
-    botan-3
-    json-c
-    bz2
-    z
-    retroshare
-)
+	# Link libraries by name, including RNP libs and dependencies first
+	target_link_libraries(${PROJECT_NAME} PRIVATE
+		rnp             # Link by name
+		sexpp
+		botan-3
+		json-c
+		bz2
+		z
+		retroshare
+	)
+endif(RS_RNPLIB)
 
 ################################################################################
 
