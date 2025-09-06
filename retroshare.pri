@@ -823,6 +823,13 @@ macx-* {
 		QMAKE_CXXFLAGS += -Wno-nullability-completeness
 		QMAKE_CFLAGS += -Wno-nullability-completeness
 	}
+	rs_macos14.0 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 14.0 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=14.0
+		QMAKE_MAC_SDK = macosx14.0
+		QMAKE_CXXFLAGS += -Wno-nullability-completeness
+		QMAKE_CFLAGS += -Wno-nullability-completeness
+	}
 	rs_macos14.5 {
 		message(***retroshare.pri: Set Target and SDK to MacOS 14.5 )
 		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.13
@@ -851,7 +858,7 @@ macx-* {
 	BIN_DIR += "/Applications/Xcode.app/Contents/Developer/usr/bin"
 	INCLUDEPATH += "/usr/local/include"
 	RS_UPNP_LIB = miniupnpc
-	QT += macextras
+	lessThan(QT_MAJOR_VERSION, 6): QT += macextras
 	INCLUDEPATH += "/usr/local/opt/openssl/include"
 	QMAKE_LIBDIR += "/usr/local/opt/openssl/lib"
 	QMAKE_LIBDIR += "/usr/local/opt/sqlcipher/lib"
