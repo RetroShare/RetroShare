@@ -854,6 +854,7 @@ void ChatLobbyDialog::handleLobbyEvent(RsChatLobbyEventCode event_type, const Rs
 
     QString name= getParticipantName(gxs_id) ;
 
+    //std::cerr << "Received ChatLobby event " << (int)event_type << " for lobby " << (void*)lobbyId << std::endl;
     switch (event_type)
     {
     case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_LEFT:

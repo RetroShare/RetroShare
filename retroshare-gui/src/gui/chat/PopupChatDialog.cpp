@@ -101,6 +101,7 @@ void PopupChatDialog::init(const ChatId &chat_id, const QString &title)
 /** Destructor. */
 PopupChatDialog::~PopupChatDialog()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId_chat);
 	// save settings
 	processSettings(false);
 }
