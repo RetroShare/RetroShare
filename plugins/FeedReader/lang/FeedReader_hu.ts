@@ -9,7 +9,7 @@
         <translation>Új hírcsatorna létrehozása</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+37"/>
         <source>Authentication (not yet supported)</source>
         <translation>Hitelesítés (még nem támogatott)</translation>
     </message>
@@ -34,7 +34,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+29"/>
         <source>Update interval</source>
         <translation>Frissítés gyakorisága</translation>
     </message>
@@ -59,12 +59,37 @@
         <translation>Soha</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+88"/>
         <source>Embed images</source>
         <translation>Beágyazott képek</translation>
     </message>
     <message>
-        <location line="-249"/>
+        <location line="+105"/>
+        <source>Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Update board information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Only image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Use first image as board image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Shrink image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-330"/>
         <source>Storage time</source>
         <translation>Tárolás ideje</translation>
     </message>
@@ -89,32 +114,30 @@
         <translation>Használja az általános proxyt</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Server</source>
-        <translation>Kiszolgáló</translation>
+        <translation type="vanished">Kiszolgáló</translation>
     </message>
     <message>
-        <location line="+10"/>
         <source>:</source>
-        <translation>:</translation>
+        <translation type="vanished">:</translation>
     </message>
     <message>
-        <location line="-148"/>
+        <location line="+196"/>
         <source>Type</source>
         <translation>Típus</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+24"/>
         <source>Forum</source>
         <translation>Fórum</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+10"/>
         <source>Local Feed</source>
         <translation>Helyi hírcsatorna</translation>
     </message>
     <message>
-        <location line="+239"/>
+        <location line="-67"/>
         <source>Transformation</source>
         <translation>Átalakítás</translation>
     </message>
@@ -129,7 +152,7 @@
         <translation>Előnézet &amp;&amp; Átalakítás</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="-58"/>
         <source>Misc</source>
         <translation>Vegyes</translation>
     </message>
@@ -144,17 +167,17 @@
         <translation>Név és részletek a hírcsatornából származzanak</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+100"/>
         <source>Update forum information</source>
         <translation>Fórum adatainak frissítése</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="-86"/>
         <source>Save complete web page (experimental for local feeds)</source>
         <translation>Teljes weboldal mentése (helyi hírcsatornáknál kísérleti állapotban)</translation>
     </message>
     <message>
-        <location line="-103"/>
+        <location line="-70"/>
         <source>Description:</source>
         <translation>Leírás:</translation>
     </message>
@@ -164,18 +187,18 @@
         <translation>RSS-Hírcsatorna-URL:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+17"/>
         <source>Name:</source>
         <translation>Név:</translation>
     </message>
     <message>
-        <location filename="../gui/AddFeedDialog.cpp" line="+77"/>
+        <location filename="../gui/AddFeedDialog.cpp" line="+87"/>
         <source>Feed Details</source>
         <translation>Hírcsatorna részletei</translation>
     </message>
     <message>
-        <location line="+142"/>
-        <location line="+115"/>
+        <location line="+208"/>
+        <location line="+152"/>
         <location line="+15"/>
         <source>Edit feed</source>
         <translation>Hírcsatorna szerkesztése</translation>
@@ -239,17 +262,15 @@
         <translation>Proxy használata</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>Server</source>
-        <translation>Kiszolgáló</translation>
+        <translation type="vanished">Kiszolgáló</translation>
     </message>
     <message>
-        <location line="+17"/>
         <source>:</source>
-        <translation>:</translation>
+        <translation type="vanished">:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+13"/>
         <source>Misc</source>
         <translation>Vegyes</translation>
     </message>
@@ -277,7 +298,7 @@
 <context>
     <name>FeedReaderDialog</name>
     <message>
-        <location filename="../gui/FeedReaderDialog.ui" line="+91"/>
+        <location filename="../gui/FeedReaderDialog.ui" line="+98"/>
         <source>Feeds</source>
         <translation>Hírcsatornák</translation>
     </message>
@@ -292,12 +313,12 @@
         <translation>Hírcsatorna frissítése</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="+92"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="+105"/>
         <source>Message Folders</source>
         <translation>Üzenetek mappái</translation>
     </message>
     <message>
-        <location line="+197"/>
+        <location line="+199"/>
         <source>New</source>
         <translation>Új</translation>
     </message>
@@ -342,12 +363,12 @@
         <translation>Letiltás</translation>
     </message>
     <message>
-        <location line="+195"/>
+        <location line="+198"/>
         <source>No name</source>
         <translation>Nincs név</translation>
     </message>
     <message>
-        <location line="+210"/>
+        <location line="+259"/>
         <source>Add new folder</source>
         <translation>Új mappa hozzáadása</translation>
     </message>
@@ -398,11 +419,21 @@
         <source>Please enter a new name for the folder</source>
         <translation>Kérlek, adj meg egy új nevet a mappának</translation>
     </message>
+    <message>
+        <location line="+61"/>
+        <source>Move feed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Cannot move feed.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FeedReaderFeedItem</name>
     <message>
-        <location filename="../gui/FeedReaderFeedItem.ui" line="+195"/>
+        <location filename="../gui/FeedReaderFeedItem.ui" line="+197"/>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="+116"/>
         <source>Expand</source>
         <translation>Lenyitás</translation>
@@ -500,7 +531,7 @@
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+113"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="+126"/>
         <source>Title</source>
         <translation>Cím</translation>
     </message>
@@ -515,6 +546,11 @@
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="+1"/>
         <source>Author</source>
         <translation>Szerző</translation>
+    </message>
+    <message>
+        <location line="+121"/>
+        <source>Copy Link Location</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="-2"/>
@@ -532,7 +568,7 @@
         <translation>Szerző keresése</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+16"/>
         <source>Open link in browser</source>
         <translation>Hivatkozás megnyitása a böngészőben</translation>
     </message>
@@ -542,12 +578,22 @@
         <translation>Hivatkozás másolása a vágólapra</translation>
     </message>
     <message>
-        <location line="+122"/>
+        <location line="+128"/>
+        <source>The messages will be added to the forum and the board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>The messages will be added to the forum</source>
         <translation>Az üzenet a fórumhoz lesz adva</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+3"/>
+        <source>The messages will be added to the board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>No name</source>
         <translation>Nincs név</translation>
     </message>
@@ -577,12 +623,22 @@
         <translation>Eltávolítás</translation>
     </message>
     <message>
+        <location line="+7"/>
+        <source>Add to forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+5"/>
+        <source>Add to board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Retransform</source>
         <translation>Átalakítás ismételten</translation>
     </message>
     <message>
-        <location line="+374"/>
+        <location line="+412"/>
         <source>Hide</source>
         <translation>Elrejt</translation>
     </message>
@@ -659,12 +715,12 @@
     </message>
     <message>
         <location line="+3"/>
-        <location line="+96"/>
+        <location line="+114"/>
         <source>Unknown</source>
         <translation>Ismeretlen</translation>
     </message>
     <message>
-        <location line="-79"/>
+        <location line="-97"/>
         <source>Internal download error</source>
         <translation>Belső letöltési hiba</translation>
     </message>
@@ -689,6 +745,11 @@
         <translation>Ismeretlen válaszkód</translation>
     </message>
     <message>
+        <location line="+3"/>
+        <source>Download blocked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+5"/>
         <source>Internal process error</source>
         <translation>Belső feldolgozási hiba</translation>
@@ -699,12 +760,11 @@
         <translation>Ismeretlen XML formátum</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Can&apos;t create forum</source>
-        <translation>Nem hozhatsz létre fórumot</translation>
+        <translation type="vanished">Nem hozhatsz létre fórumot</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+6"/>
         <source>Forum not found</source>
         <translation>Fórum nem található</translation>
     </message>
@@ -716,6 +776,26 @@
     <message>
         <location line="+3"/>
         <source>Forum has no author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Board not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>You are not admin of the board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Board has no author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Some posts could not be created</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -790,7 +870,7 @@
         <translation>Előnézet</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+55"/>
         <source>Name:</source>
         <translation>Név:</translation>
     </message>
@@ -825,7 +905,7 @@
         <translation>Struktúra</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+28"/>
         <source>Title:</source>
         <translation>Cím:</translation>
     </message>
@@ -880,6 +960,39 @@
         <location line="+21"/>
         <source>Error parsing document</source>
         <translation>Hiba a dokumentum elemzésekor</translation>
+    </message>
+</context>
+<context>
+    <name>ProxyWidget</name>
+    <message>
+        <location filename="../gui/ProxyWidget.cpp" line="+17"/>
+        <source>HTTP Proxy.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>HTTPS Proxy.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>SOCKS4 Proxy.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>SOCKS4a Proxy. Proxy resolves URL hostname.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>SOCKS5 Proxy.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>SOCKS5 Proxy. Proxy resolves URL hostname.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
