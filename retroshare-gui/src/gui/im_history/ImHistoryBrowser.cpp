@@ -148,6 +148,9 @@ ImHistoryBrowser::ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit,const Q
 
             auto ev = dynamic_cast<const RsChatServiceEvent*>(event.get());
 
+            if(!ev)
+                return;
+
             if(ev->mEventCode == RsChatServiceEventCode::CHAT_HISTORY_CHANGED)
                 historyChanged(ev->mMsgHistoryId,ev->mHistoryChangeType);
         }, this );
