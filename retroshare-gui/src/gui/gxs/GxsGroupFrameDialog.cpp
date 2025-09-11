@@ -484,7 +484,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 			actnn = ctxMenu2->addAction(tr("1 year"     ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 365)) ; if(current_sync_time == 365) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
 			actnn = ctxMenu2->addAction(tr("3 years"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(1095)) ; if(current_sync_time ==1095) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
 			actnn = ctxMenu2->addAction(tr("5 years"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(1825)) ; if(current_sync_time ==1825) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-			actnn = ctxMenu2->addAction(tr("Indefinitly"),this,SLOT(setStorePostsDelay())); actnn->setData(QVariant(   0)) ; if(current_store_time ==  0) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("Indefinitly"),this,SLOT(setSyncPostsDelay())); actnn->setData(QVariant(   0)) ; if(current_store_time ==  0) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
 			ctxMenu2->setEnabled(isSubscribed);
 
 			ctxMenu2 = contextMnu.addMenu(tr("Store posts for at most...")) ;
