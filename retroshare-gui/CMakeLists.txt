@@ -77,14 +77,24 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package( Qt5 COMPONENTS Core         REQUIRED)
-find_package( Qt5 COMPONENTS Widgets      REQUIRED)
-find_package( Qt5 COMPONENTS Xml          REQUIRED)
-find_package( Qt5 COMPONENTS Network      REQUIRED)
-find_package( Qt5 COMPONENTS Multimedia   REQUIRED)
-find_package( Qt5 COMPONENTS PrintSupport REQUIRED)
+find_package( Qt6 COMPONENTS Core         REQUIRED)
+find_package( Qt6 COMPONENTS Widgets      REQUIRED)
+find_package( Qt6 COMPONENTS Xml          REQUIRED)
+find_package( Qt6 COMPONENTS Network      REQUIRED)
+find_package( Qt6 COMPONENTS Multimedia   REQUIRED)
+find_package( Qt6 COMPONENTS PrintSupport REQUIRED)
 
-list( APPEND RS_LINK_LIBRARIES Qt5::Multimedia Qt5::Widgets Qt5::Xml Qt5::Network Qt5::PrintSupport)
+list( APPEND RS_LINK_LIBRARIES Qt6::Multimedia Qt6::Widgets Qt6::Xml Qt6::Network Qt6::PrintSupport)
+if (NOT Qt6_FOUND)
+	find_package( Qt5 COMPONENTS Core         REQUIRED)
+	find_package( Qt5 COMPONENTS Widgets      REQUIRED)
+	find_package( Qt5 COMPONENTS Xml          REQUIRED)
+	find_package( Qt5 COMPONENTS Network      REQUIRED)
+	find_package( Qt5 COMPONENTS Multimedia   REQUIRED)
+	find_package( Qt5 COMPONENTS PrintSupport REQUIRED)
+
+	list( APPEND RS_LINK_LIBRARIES Qt5::Multimedia Qt5::Widgets Qt5::Xml Qt5::Network Qt5::PrintSupport)
+endif()
 
 ################################################################################
 
@@ -104,7 +114,10 @@ endif(RS_DEVELOPMENT_BUILD)
 
 include(src/CMakeLists.txt)
 
-qt5_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
+qt_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
+if (NOT Qt6_FOUND)
+	qt5_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
+endif()
 
 add_executable(${PROJECT_NAME} ${RS_GUI_SOURCES} ${RS_UI_HEADERS} ${RS_GUI_QTRESOURCES})
 install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
