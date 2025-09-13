@@ -58,34 +58,34 @@ class NotifyQt: public QObject, public NotifyClient
 
 		virtual ~NotifyQt() = default;
 
-		void setNetworkDialog(NetworkDialog *c) { cDialog = c; }
+//		void setNetworkDialog(NetworkDialog *c) { cDialog = c; }
 
-		virtual void notifyListPreChange(int list, int type);
-		virtual void notifyListChange(int list, int type);
-		virtual void notifyErrorMsg(int list, int sev, std::string msg);
-		virtual void notifyChatMessage(const ChatMessage&        /* msg */);
-		virtual void notifyChatStatus(const ChatId &chat_id,const std::string& status_string);
-		virtual void notifyChatCleared(const ChatId &chat_id);
-		virtual void notifyCustomState(const std::string& peer_id, const std::string& status_string);
-#ifdef TO_REMOVE
-		virtual void notifyTurtleSearchResult(const RsPeerId &pid, uint32_t search_id, const std::list<TurtleFileInfo>& found_files);
-#endif
-		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleGxsInfo>& found_groups);
-		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
-		virtual void notifyOwnAvatarChanged() ;
-        virtual void notifyChatLobbyEvent(uint64_t /* lobby id */, uint32_t /* event type */, const RsGxsId & /*nickname*/, const std::string& /* any string */) ;
-		virtual void notifyChatLobbyTimeShift(int time_shift) ;
+//		virtual void notifyListPreChange(int list, int type);
+//		virtual void notifyListChange(int list, int type);
+//		virtual void notifyErrorMsg(int list, int sev, std::string msg);
+//		virtual void notifyChatMessage(const ChatMessage&        /* msg */);
+//		virtual void notifyChatStatus(const ChatId &chat_id,const std::string& status_string);
+//		virtual void notifyChatCleared(const ChatId &chat_id);
+//		virtual void notifyCustomState(const std::string& peer_id, const std::string& status_string);
+//#ifdef TO_REMOVE
+//		virtual void notifyTurtleSearchResult(const RsPeerId &pid, uint32_t search_id, const std::list<TurtleFileInfo>& found_files);
+//#endif
+//		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleGxsInfo>& found_groups);
+//		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
+//		virtual void notifyOwnAvatarChanged() ;
+//      virtual void notifyChatLobbyEvent(uint64_t /* lobby id */, uint32_t /* event type */, const RsGxsId & /*nickname*/, const std::string& /* any string */) ;
+//		virtual void notifyChatLobbyTimeShift(int time_shift) ;
 
-		virtual void notifyOwnStatusMessageChanged() ;
-		virtual void notifyDiskFull(uint32_t loc,uint32_t size_in_mb) ;
+//		virtual void notifyOwnStatusMessageChanged() ;
+//		virtual void notifyDiskFull(uint32_t loc,uint32_t size_in_mb) ;
 		/* peer has changed the state */
-		virtual void notifyPeerStatusChanged(const std::string& peer_id, uint32_t state);
+//		virtual void notifyPeerStatusChanged(const std::string& peer_id, uint32_t state);
 		/* one or more peers has changed the states */
-		virtual void notifyPeerStatusChangedSummary();
+//		virtual void notifyPeerStatusChangedSummary();
 
-		virtual void notifyHistoryChanged(uint32_t msgId, int type);
+//		virtual void notifyHistoryChanged(uint32_t msgId, int type);
 
-		virtual void notifyDiscInfoChanged() ;
+//		virtual void notifyDiscInfoChanged() ;
 		virtual bool askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password, bool &cancelled);
 		virtual bool askForPluginConfirmation(const std::string& plugin_filename, const std::string& plugin_file_hash,bool first_time);
 
@@ -104,34 +104,34 @@ class NotifyQt: public QObject, public NotifyClient
 		// It's beneficial to send info to the GUI using signals, because signals are thread-safe
 		// as they get queued by Qt.
 		//
-		void hashingInfoChanged(const QString&) const ;
-		void filesPreModChanged(bool) const ;
-		void filesPostModChanged(bool) const ;
-		void transfersChanged() const ;
-		void friendsChanged() const ;
-		void lobbyListChanged() const ;
-        void chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&) ;
-		void neighboursChanged() const ;
+//		void hashingInfoChanged(const QString&) const ;
+//		void filesPreModChanged(bool) const ;
+//		void filesPostModChanged(bool) const ;
+//		void transfersChanged() const ;
+//		void friendsChanged() const ;
+//		void lobbyListChanged() const ;
+//      void chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&) ;
+//		void neighboursChanged() const ;
 		void configChanged() const ;
 		void logInfoChanged(const QString&) const ;
-		void chatStatusChanged(const ChatId&,const QString&) const ;
+//		void chatStatusChanged(const ChatId&,const QString&) const ;
 		void chatCleared(const ChatId&) const ;
-		void peerHasNewCustomStateString(const QString& /* peer_id */, const QString& /* status_string */) const ;
-		void peerHasNewAvatar(const QString& peer_id) const ;
-		void ownAvatarChanged() const ;
-		void ownStatusMessageChanged() const ;
-		void errorOccurred(int,int,const QString&) const ;
-		void diskFull(int,int) const ;
-		void peerStatusChanged(const QString& /* peer_id */, int /* status */);
-		void peerStatusChangedSummary() const;
-        void gxsChange(const RsGxsChanges& /* changes  */);
-        void chatMessageReceived(ChatMessage msg);
-		void groupsChanged(int type) const ;
-		void discInfoChanged() const ;
+//		void peerHasNewCustomStateString(const QString& /* peer_id */, const QString& /* status_string */) const ;
+//		void peerHasNewAvatar(const QString& peer_id) const ;
+//		void ownAvatarChanged() const ;
+//		void ownStatusMessageChanged() const ;
+//		void errorOccurred(int,int,const QString&) const ;
+//		void diskFull(int,int) const ;
+//		void peerStatusChanged(const QString& /* peer_id */, int /* status */);
+//		void peerStatusChangedSummary() const;
+//      void gxsChange(const RsGxsChanges& /* changes  */);
+//      void chatMessageReceived(ChatMessage msg);
+//		void groupsChanged(int type) const ;
+//		void discInfoChanged() const ;
 		void historyChanged(uint msgId, int type);
-		void chatLobbyInviteReceived() ;
-		void deferredSignatureHandlingRequested() ;
-		void chatLobbyTimeShift(int time_shift) ;
+//		void chatLobbyInviteReceived() ;
+//		void deferredSignatureHandlingRequested() ;
+//		void chatLobbyTimeShift(int time_shift) ;
 		void connectionWithoutCert();
 
 		/* Notify from GUI */
@@ -147,7 +147,7 @@ class NotifyQt: public QObject, public NotifyClient
 	private slots:
 		void runningTick();
 		void handleSignatureEvent() ;
-		void handleChatLobbyTimeShift(int) ;
+//		void handleChatLobbyTimeShift(int) ;
 
 	private:
 		NotifyQt();
