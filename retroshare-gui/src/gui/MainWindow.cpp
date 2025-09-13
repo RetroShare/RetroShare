@@ -400,6 +400,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
                 displayDiskSpaceWarning(ev->mDiskErrorLocation,ev->mDiskErrorSizeLimit);
                 break;
 
+            case RsSystemErrorEventCode::DATA_STREAMING_ERROR:
             case RsSystemErrorEventCode::GENERAL_ERROR:
                 displayErrorMessage(0,0,QString::fromUtf8(ev->mErrorMsg.c_str()));
                 break;
