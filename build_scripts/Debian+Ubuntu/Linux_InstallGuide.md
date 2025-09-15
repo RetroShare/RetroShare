@@ -57,7 +57,7 @@ Additional dependencies for plugins:
 #### Arch Linux / Manjaro / EndeavourOS
 ```bash
    sudo pacman -S base-devel libgnome-keyring cmake qt5-tools qt5-multimedia qt5-x11extras \
-   rapidjson libupnp libxslt libxss sqlcipher botan2 bzip2 json-c
+   rapidjson doxygen libupnp libxslt libxss sqlcipher botan2 bzip2 json-c
 ```
 
 To compile with Qt6:
