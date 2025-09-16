@@ -360,7 +360,7 @@ void PopupChatWindow::calculateTitle(ChatDialog *dialog)
 	} else {
 		mBlinkIcon = QIcon();
 		if (cd && cd->hasPeerStatus()) {
-			icon = QIcon(StatusDefs::imageIM(cd->getPeerStatus()));
+            icon = QIcon(StatusDefs::imageIM((RsStatusValue)cd->getPeerStatus()));
 		} else {
 			icon = qApp->windowIcon();
 		}
@@ -371,7 +371,7 @@ void PopupChatWindow::calculateTitle(ChatDialog *dialog)
 	if (cd) {
 		QString title = cd->getTitle();
 		if (cd->hasPeerStatus()) {
-			title += " (" + StatusDefs::name(cd->getPeerStatus()) + ")";
+            title += " (" + StatusDefs::name((RsStatusValue)cd->getPeerStatus()) + ")";
 		}
 		setWindowTitle(title);
 	} else {

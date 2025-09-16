@@ -85,7 +85,7 @@
   </action>
   <action name="actionDockTab">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/tab-dock.png</normaloff>:/images/tab-dock.png</iconset>
    </property>
    <property name="text">
@@ -97,7 +97,7 @@
   </action>
   <action name="actionUndockTab">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/tab-undock.png</normaloff>:/images/tab-undock.png</iconset>
    </property>
    <property name="text">
