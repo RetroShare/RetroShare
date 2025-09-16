@@ -441,7 +441,6 @@ void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
 	{
     case RsFriendListEventCode::NODE_CONNECTED:
 		addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_CONNECT, false), true);
-		NotifyQt::getInstance()->addToaster(RS_POPUP_CONNECT, e.mSslId.toStdString().c_str(), "", "");
 		break;
     case RsFriendListEventCode::NODE_DISCONNECTED: // not handled yet
 		break;
@@ -506,8 +505,6 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 
 	if (Settings->getMessageFlags() & RS_MESSAGE_CONNECT_ATTEMPT)
 		MessageComposer::addConnectAttemptMsg(e.mPgpId, e.mSslId, QString::fromStdString(det.name + "(" + det.location + ")"));
-	
-	NotifyQt::getInstance()->addToaster(RS_POPUP_CONNECT_ATTEMPT, e.mPgpId.toStdString().c_str(), det.location, e.mSslId.toStdString().c_str());
 }
 
 void NewsFeed::testFeeds(uint /*notifyFlags*/)

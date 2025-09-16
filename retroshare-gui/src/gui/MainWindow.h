@@ -210,9 +210,7 @@ public:
 
 public slots:
     void receiveNewArgs(QStringList args);
-    void displayErrorMessage(int,int,const QString&) ;
     void postModDirectories(bool update_local);
-    void displayDiskSpaceWarning(int loc,int size_limit_mb) ;
     void checkAndSetIdle(int idleTime);
 
     void externalLinkActivated(const QUrl &url);
@@ -380,7 +378,5 @@ private:
 	 Ui::MainWindow *ui ;
 
      RsEventsHandlerId_t mEventHandlerId_friends;
-     RsEventsHandlerId_t mEventHandlerId_system;
 };
-
 #endif

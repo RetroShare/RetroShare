@@ -383,33 +383,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         , this );
     }, mEventHandlerId_friends, RsEventType::FRIEND_LIST );
 
-    mEventHandlerId_system = 0;
-
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
-    {
-        RsQThreadUtils::postToObject([=](){
-            auto ev = dynamic_cast<const RsSystemErrorEvent *>(event.get());
-
-            switch(ev->mEventCode)
-            {
-            case RsSystemErrorEventCode::TIME_SHIFT_PROBLEM:
-                std::cerr << "Time shift problem notification. Make sure your machine is on time, because it will break chat rooms." << std::endl;
-                break;
-
-            case RsSystemErrorEventCode::DISK_SPACE_ERROR:
-                displayDiskSpaceWarning(ev->mDiskErrorLocation,ev->mDiskErrorSizeLimit);
-                break;
-
-            case RsSystemErrorEventCode::DATA_STREAMING_ERROR:
-            case RsSystemErrorEventCode::GENERAL_ERROR:
-                displayErrorMessage(0,0,QString::fromUtf8(ev->mErrorMsg.c_str()));
-                break;
-
-            default:
-                break;
-            }
-        }, this );
-    }, mEventHandlerId_system, RsEventType::SYSTEM_ERROR );
 
 }
 
@@ -422,7 +395,6 @@ MainWindow::~MainWindow()
     Settings->setValueToGroup("MainWindow", "State", saveState());
 
     rsEvents->unregisterEventsHandler(mEventHandlerId_friends);
-    rsEvents->unregisterEventsHandler(mEventHandlerId_system);
 
     delete statusComboBox;
     delete peerstatus;
@@ -646,28 +618,6 @@ void MainWindow::setNewPage(int page)
 
 		ui->listWidget->setCurrentRow(ui->stackPages->currentIndex());
 	}
-}
-
-void MainWindow::displayDiskSpaceWarning(int loc,int size_limit_mb)
-{
-	QString locString ;
-	switch(loc)
-	{
-		case RS_PARTIALS_DIRECTORY: 	locString = "Partials" ;
-												break ;
-
-		case RS_CONFIG_DIRECTORY: 		locString = "Config" ;
-												break ;
-
-		case RS_DOWNLOAD_DIRECTORY: 	locString = "Download" ;
-												break ;
-
-		default:
-												std::cerr << "Error: " << __PRETTY_FUNCTION__ << " was called with an unknown parameter loc=" << loc << std::endl ;
-												return ;
-	}
-	QMessageBox::critical(NULL,tr("Low disk space warning"),
-				tr("The disk space in your")+" "+locString +" "+tr("directory is running low (current limit is")+" "+QString::number(size_limit_mb)+tr("MB). \n\n RetroShare will now safely suspend any disk access to this directory. \n\n Please make some free space and click Ok.")) ;
 }
 
 /** Creates a tray icon with a context menu and adds it to the system
@@ -1401,11 +1351,6 @@ void MainWindow::receiveNewArgs(QStringList args)
 
     for(auto link:rslinks)
         retroshareLinkActivated(link.toUrl());
-}
-
-void MainWindow::displayErrorMessage(int /*a*/,int /*b*/,const QString& error_msg)
-{
-	QMessageBox::critical(NULL, tr("Internal Error"),error_msg) ;
 }
 
 void MainWindow::closeEvent(QCloseEvent *e)

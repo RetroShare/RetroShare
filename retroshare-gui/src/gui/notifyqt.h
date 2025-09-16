@@ -96,8 +96,9 @@ class NotifyQt: public QObject, public NotifyClient
 		void testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
 		void testToaster(ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
 		void testToaster(QString tag, ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
-
+#ifdef TO_REMOVE
 		void addToaster(uint notifyFlags, const std::string& id, const std::string& title, const std::string& msg);
+#endif
 		void notifySettingsChanged();
 
 	signals:
@@ -141,7 +142,6 @@ class NotifyQt: public QObject, public NotifyClient
 		void disableAllChanged(bool disableAll) const;
 
 	public slots:
-		void UpdateGUI(); /* called by timer */
 		void SetDisableAll(bool bValue);
 
 	private slots:
@@ -152,7 +152,10 @@ class NotifyQt: public QObject, public NotifyClient
 	private:
 		NotifyQt();
 
-		static NotifyQt *_instance;
+        static void displayDiskSpaceWarning(int loc,int size_limit_mb);
+        static void displayErrorMessage(int type,const QString& title,const QString& error_msg);
+
+        static NotifyQt *_instance;
 		static bool _disableAllToaster;
 
 		/* system notifications */
@@ -172,6 +175,9 @@ class NotifyQt: public QObject, public NotifyClient
 
 		/* so we can update windows */
 		NetworkDialog *cDialog;
+
+        void handleIncomingEvent(std::shared_ptr<const RsEvent> e); /* called by timer */
+        RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif

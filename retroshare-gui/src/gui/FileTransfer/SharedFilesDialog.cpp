@@ -767,7 +767,6 @@ void SharedFilesDialog::collCreate()
     model->getDirDetailsFromSelect(lst, dirVec);
 
     auto RemoteMode = isRemote();
-    FileSearchFlags f = RemoteMode?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL ;
 
     QString dir_name;
 
