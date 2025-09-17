@@ -3,15 +3,15 @@
 
 
 ### Install package dependencies:
-#### Debian/Ubuntu
+#### Debian / Ubuntu / Linux Mint
 ```bash
-   sudo apt-get install g++ cmake libbz2-dev libjson-c-dev libssl-dev libsqlcipher-dev \
-   libupnp-dev libxss-dev rapidjson-dev libbotan-2-dev libasio-dev
+   sudo apt-get install git g++ cmake libbz2-dev libjson-c-dev libssl-dev libsqlcipher-dev \
+   libupnp-dev doxygen libxss-dev rapidjson-dev libbotan-2-dev libasio-dev
 ```
 
 To compile with Qt5:
 ```bash
-   sudo apt-get install qt5-qmake qtmultimedia5-dev qt6-5compat-dev libqt5x11extras5-dev
+   sudo apt-get install qt5-qmake qtmultimedia5-dev libqt5x11extras5-dev
 ```
 
 To compile with Qt6:
@@ -54,17 +54,15 @@ Additional dependencies for plugins:
    libxslt-devel speex-devel speexdsp-devel
 ```
 
-#### Linux Mint
+#### Arch Linux / Manjaro / EndeavourOS
 ```bash
-   sudo apt-get install git g++ cmake qt5-qmake qtmultimedia5-dev \
-   libqt5x11extras5-dev libupnp-dev libxss-dev libssl-dev libsqlcipher-dev \
-   rapidjson-dev doxygen libbz2-dev libjson-c-dev libbotan-2-dev libasio-dev
+   sudo pacman -S base-devel libgnome-keyring cmake qt5-tools qt5-multimedia qt5-x11extras \
+   rapidjson doxygen libupnp libxslt libxss sqlcipher botan2 bzip2 json-c
 ```
 
-#### Arch Linux
+To compile with Qt6:
 ```bash
-   pacman -S base-devel libgnome-keyring cmake qt5-tools qt5-multimedia qt5-x11extras \
-   rapidjson libupnp libxslt libxss sqlcipher botan2 bzip2 json-c
+   sudo pacman -S qt6-base qt6-multimedia qt6-5compat
 ```
 
 ### Checkout the source code
@@ -88,7 +86,7 @@ Additional dependencies for plugins:
 
 The executable produced will be:  
 ```bash
- ./retroshare-gui/src/retroshare
+   ./retroshare-gui/src/retroshare
 ```
 
 ### Install
@@ -98,7 +96,7 @@ The executable produced will be:
 
 The executable produced will be:  
 ```bash
- ~/usr/bin/RetroShare  
+   ~/usr/bin/RetroShare  
 ```
 
 ### For packagers
@@ -135,6 +133,8 @@ You need to place sqlcipher so that the hierarchy is:
 
 ### Build infos
 
+Note: If you installed Qt6 you need to use `qmake6` on the command line.
+
 For the `FeedReader` it is required to append the config option `CONFIG+=retroshare_plugins`.
 Make sure `plugins/plugins.pro` contains `FeedReader` in the list of plugins to compile. 
 
@@ -162,10 +162,9 @@ For `Autologin` it is required to append the config option `CONFIG+=rs_autologin
   * rs_deep_files_index:		build with deep file indexing support
   * "CONFIG+=..."				enable other extra compile time features, you can find the almost complete list in file *&lt;sourcefolder&gt;\retroshare.pri*
 
-Example:
+### Examples:
 
 ```batch
-qmake CONFIG-=debug CONFIG+=release CONFIG+=rs_use_native_dialog CONFIG+=rs_gui_cmark
+qmake CONFIG+=debug CONFIG+=release CONFIG+=rs_use_native_dialog CONFIG+=rs_gui_cmark
 qmake CONFIG+=rs_jsonapi CONFIG+=rs_webui CONFIG+=rs_autologin
-qmake CONFIG+=rs_deep_channels_index CONFIG += gxsthewire CONFIG += wikipoos
 ```
