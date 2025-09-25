@@ -861,15 +861,19 @@ void NotifyQt::handleIncomingEvent(std::shared_ptr<const RsEvent> event)
 
 
     /*Now check Plugins*/
-    int pluginCount = rsPlugins->nbPlugins();
 
-    for (int i = 0; i < pluginCount; ++i) {
-        RsPlugin *rsPlugin = rsPlugins->plugin(i);
-        if (rsPlugin) {
-            ToasterNotify *toasterNotify = rsPlugin->qt_toasterNotify();
-            if (toasterNotify) {
-                insertToaster(toasterNotify->toasterItem());
-                continue;
+    if(rsPlugins)	// rsPlugins may not be initialized yet if we're handlign TorManager events.
+    {
+        int pluginCount = rsPlugins->nbPlugins();
+
+        for (int i = 0; i < pluginCount; ++i) {
+            RsPlugin *rsPlugin = rsPlugins->plugin(i);
+            if (rsPlugin) {
+                ToasterNotify *toasterNotify = rsPlugin->qt_toasterNotify();
+                if (toasterNotify) {
+                    insertToaster(toasterNotify->toasterItem());
+                    continue;
+                }
             }
         }
     }
