@@ -46,6 +46,7 @@
 #include "gui/msgs/MessageComposer.h"
 
 #include <retroshare/rsiface.h>
+#include <retroshare/rsinit.h>
 #include <retroshare/rsbanlist.h>
 #include <retroshare/rsconfig.h>
 
@@ -767,7 +768,7 @@ void ConnectFriendWizard::accept()
                 bool cancelled;
                 std::string pgp_password;
 
-                if(!NotifyQt::getInstance()->askForPassword(tr("Profile password needed.").toStdString(), pgp_name + " (" + rsPeers->getOwnId().toStdString() + ")", prev_is_bad, pgp_password,cancelled))
+                if(!RsLoginHelper::askForPassword(tr("Profile password needed.").toStdString(), pgp_name + " (" + rsPeers->getOwnId().toStdString() + ")", prev_is_bad, pgp_password,cancelled))
                 {
                     QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create an identity linked to your profile without your profile password."));
                     return;

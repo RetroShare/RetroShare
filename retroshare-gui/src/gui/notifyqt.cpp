@@ -26,6 +26,7 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsmsgs.h>
+#include <retroshare/rsinit.h>
 #include <util/rsdir.h>
 #include <util/qtthreadsutils.h>
 
@@ -231,27 +232,25 @@ void NotifyQt::handleSignatureEvent()
 	}
 }
 
-
-
-bool NotifyQt::askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password,bool& cancelled)
+bool NotifyQt::graphical_askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password,bool& cancelled)
 {
 	RsAutoUpdatePage::lockAllEvents() ;
 
 	QString windowTitle;
-	if (title == "") {
+    if (title == "")
 		windowTitle = tr("Passphrase required");
-	} else if (title == "AuthSSLimpl::SignX509ReqWithGPG()") {
+    else if (title == "AuthSSLimpl::SignX509ReqWithGPG()")
 		windowTitle = tr("You need to sign your node's certificate.");
-	} else if (title == "p3IdService::service_CreateGroup()") {
+    else if (title == "p3IdService::service_CreateGroup()")
 		windowTitle = tr("You need to sign your forum/chatrooms identity.");
-	} else {
+    else
 		windowTitle = QString::fromStdString(title);
-	}
 
 	QString labelText = ( prev_is_bad ? QString("%1<br/><br/>").arg(tr("Wrong password !")) : QString() )
 	                    + QString("<b>%1</b><br/>Profile: <i>%2</i>\n")
 	                             .arg( tr("Please enter your Retroshare passphrase")
 	                                 , QString::fromUtf8(key_details.c_str()) );
+
 	QLineEdit::EchoMode textEchoMode = QLineEdit::Password;
 	bool modal = true;
 
@@ -267,12 +266,12 @@ bool NotifyQt::askForPassword(const std::string& title, const std::string& key_d
 	                         , Q_ARG(QLineEdit::EchoMode, textEchoMode)
 	                         , Q_ARG(bool,                modal)
 	                          );
-
 	cancelled = false ;
 
 	RsAutoUpdatePage::unlockAllEvents() ;
 
 	if (ret.execReturn == QDialog::Rejected) {
+        RsLoginHelper::clearPgpPassphrase();
 		password.clear() ;
 		cancelled = true ;
 		return true ;
@@ -280,10 +279,12 @@ bool NotifyQt::askForPassword(const std::string& title, const std::string& key_d
 
 	if (ret.execReturn == QDialog::Accepted) {
 		password = ret.textValue.toUtf8().constData();
-		return true;
+        RsLoginHelper::cachePgpPassphrase(password);
+        return true;
 	}
 
-	return false;
+    RsLoginHelper::clearPgpPassphrase();
+    return false;
 }
 bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, const std::string& plugin_file_hash, bool first_time)
 {
@@ -835,24 +836,32 @@ void NotifyQt::handleIncomingEvent(std::shared_ptr<const RsEvent> event)
         return;
     }
 
-    auto ev6 = dynamic_cast<const RsSystemErrorEvent*>(event.get());
+    auto ev6 = dynamic_cast<const RsSystemEvent*>(event.get());
 
     if(ev6)
     {
             switch(ev6->mEventCode)
             {
-            case RsSystemErrorEventCode::TIME_SHIFT_PROBLEM:
+            case RsSystemEventCode::TIME_SHIFT_PROBLEM:
                 displayErrorMessage(RS_SYS_WARNING,tr("System time mismatch"),tr("Time shift problem notification. Make sure your machine is on time, because it will break chat rooms."));
                 break;
 
-            case RsSystemErrorEventCode::DISK_SPACE_ERROR:
+            case RsSystemEventCode::DISK_SPACE_ERROR:
                 displayDiskSpaceWarning(ev6->mDiskErrorLocation,ev6->mDiskErrorSizeLimit);
                 break;
 
-            case RsSystemErrorEventCode::DATA_STREAMING_ERROR:
-            case RsSystemErrorEventCode::GENERAL_ERROR:
+            case RsSystemEventCode::DATA_STREAMING_ERROR:
+            case RsSystemEventCode::GENERAL_ERROR:
                 displayErrorMessage(RS_SYS_WARNING,tr("Internal error"),QString::fromUtf8(ev6->mErrorMsg.c_str()));
                 break;
+
+           case RsSystemEventCode::PASSWORD_REQUESTED:
+            {
+                std::string password;
+                bool cancelled;
+                graphical_askForPassword(ev6->passwd_request_title, ev6->passwd_request_key_details, ev6->passwd_request_prev_is_bad, password,cancelled);
+                break;
+            }
 
             default: break;
             }
