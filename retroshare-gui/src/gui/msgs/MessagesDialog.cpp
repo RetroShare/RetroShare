@@ -309,7 +309,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_STATUS );
 
     mTagEventHandlerId = 0;
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleTagEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_TAG );
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleTagEvent_main_thread(event); }); }, mTagEventHandlerId, RsEventType::MAIL_TAG );
 
     mFontSizeHandler.registerFontSize(ui.listWidget, 1.5f, [this] (QAbstractItemView*, int fontSize) {
         // Set new font size on all items
