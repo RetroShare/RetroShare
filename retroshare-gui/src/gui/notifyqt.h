@@ -146,7 +146,7 @@ class NotifyQt: public QObject, public NotifyClient
 
 	private slots:
 		void runningTick();
-		void handleSignatureEvent() ;
+        void handleSignatureEvent() ;
 //		void handleChatLobbyTimeShift(int) ;
 
 	private:
@@ -176,7 +176,9 @@ class NotifyQt: public QObject, public NotifyClient
 		/* so we can update windows */
 		NetworkDialog *cDialog;
 
-        void handleIncomingEvent(std::shared_ptr<const RsEvent> e); /* called by timer */
+        void async_handleIncomingEvent(std::shared_ptr<const RsEvent> e);
+        void sync_handleIncomingEvent(std::shared_ptr<const RsEvent> e);
+
         RsEventsHandlerId_t mEventHandlerId;
 };
 

@@ -110,7 +110,13 @@ NotifyQt::NotifyQt() : cDialog(NULL)
     // Catch all events that require toasters and
 
     mEventHandlerId = 0;
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject([=](){ handleIncomingEvent(event); }, this ); }, mEventHandlerId);	// No event type means we expect to catch all possible events
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        if(event->mType == RsEventType::SYSTEM_ERROR && dynamic_cast<const RsSystemEvent*>(event.get())->mEventCode == RsSystemEventCode::PASSWORD_REQUESTED)
+            sync_handleIncomingEvent(event);
+        else
+            RsQThreadUtils::postToObject([=](){ async_handleIncomingEvent(event); }, this );
+    }, mEventHandlerId);	// No event type means we expect to catch all possible events
 
 #ifdef TO_REMOVE
     // register to allow sending over Qt::QueuedConnection
@@ -270,7 +276,7 @@ bool NotifyQt::graphical_askForPassword(const std::string& title, const std::str
 
 	RsAutoUpdatePage::unlockAllEvents() ;
 
-	if (ret.execReturn == QDialog::Rejected) {
+    if (ret.execReturn == QDialog::Rejected) {
         RsLoginHelper::clearPgpPassphrase();
 		password.clear() ;
 		cancelled = true ;
@@ -683,7 +689,19 @@ void NotifyQt::enable()
 	_enabled = true ;
 }
 
-void NotifyQt::handleIncomingEvent(std::shared_ptr<const RsEvent> event)
+void NotifyQt::sync_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
+{
+    auto ev6 = dynamic_cast<const RsSystemEvent*>(event.get());
+
+    if(ev6->mEventCode == RsSystemEventCode::PASSWORD_REQUESTED)
+    {
+        std::string password;
+        bool cancelled;
+        graphical_askForPassword(ev6->passwd_request_title, ev6->passwd_request_key_details, ev6->passwd_request_prev_is_bad, password,cancelled);
+    }
+}
+
+void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
 {
 	static bool already_updated = false ;	// these only update once at start because they may already have been set before 
 														// the gui is running, then they get updated by callbacks.
@@ -854,15 +872,6 @@ void NotifyQt::handleIncomingEvent(std::shared_ptr<const RsEvent> event)
             case RsSystemEventCode::GENERAL_ERROR:
                 displayErrorMessage(RS_SYS_WARNING,tr("Internal error"),QString::fromUtf8(ev6->mErrorMsg.c_str()));
                 break;
-
-           case RsSystemEventCode::PASSWORD_REQUESTED:
-            {
-                std::string password;
-                bool cancelled;
-                graphical_askForPassword(ev6->passwd_request_title, ev6->passwd_request_key_details, ev6->passwd_request_prev_is_bad, password,cancelled);
-                break;
-            }
-
             default: break;
             }
             return;
