@@ -112,7 +112,7 @@ NotifyQt::NotifyQt() : cDialog(NULL)
     mEventHandlerId = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
     {
-        if(event->mType == RsEventType::SYSTEM_ERROR && dynamic_cast<const RsSystemEvent*>(event.get())->mEventCode == RsSystemEventCode::PASSWORD_REQUESTED)
+        if(event->mType == RsEventType::SYSTEM && dynamic_cast<const RsSystemEvent*>(event.get())->mEventCode == RsSystemEventCode::PASSWORD_REQUESTED)
             sync_handleIncomingEvent(event);
         else
             RsQThreadUtils::postToObject([=](){ async_handleIncomingEvent(event); }, this );
@@ -165,7 +165,6 @@ void NotifyQt::notifyOwnAvatarChanged()
 #endif
 	emit ownAvatarChanged() ;
 }
-#endif
 
 class SignatureEventData
 {
@@ -237,8 +236,9 @@ void NotifyQt::handleSignatureEvent()
 	working = false ;
 	}
 }
+#endif
 
-bool NotifyQt::graphical_askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password,bool& cancelled)
+bool NotifyQt::GUI_askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad)
 {
 	RsAutoUpdatePage::lockAllEvents() ;
 
@@ -272,19 +272,18 @@ bool NotifyQt::graphical_askForPassword(const std::string& title, const std::str
 	                         , Q_ARG(QLineEdit::EchoMode, textEchoMode)
 	                         , Q_ARG(bool,                modal)
 	                          );
-	cancelled = false ;
+    //cancelled = false ;
 
 	RsAutoUpdatePage::unlockAllEvents() ;
 
     if (ret.execReturn == QDialog::Rejected) {
         RsLoginHelper::clearPgpPassphrase();
-		password.clear() ;
-		cancelled = true ;
+        //cancelled = true ;
 		return true ;
 	}
 
 	if (ret.execReturn == QDialog::Accepted) {
-		password = ret.textValue.toUtf8().constData();
+        auto password = ret.textValue.toUtf8().constData();
         RsLoginHelper::cachePgpPassphrase(password);
         return true;
 	}
@@ -292,7 +291,7 @@ bool NotifyQt::graphical_askForPassword(const std::string& title, const std::str
     RsLoginHelper::clearPgpPassphrase();
     return false;
 }
-bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, const std::string& plugin_file_hash, bool first_time)
+bool NotifyQt::GUI_askForPluginConfirmation(const std::string& plugin_file_name, const RsFileHash& plugin_file_hash, bool first_time)
 {
 	// By default, when no information is known about plugins, just dont load them. They will be enabled from the GUI by the user.
 
@@ -307,7 +306,7 @@ bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, con
 	QString text ;
 	text += tr( "RetroShare has detected an unregistered plugin. This happens in two cases:<UL><LI>Your RetroShare executable has changed.</LI><LI>The plugin has changed</LI></UL>Click on Yes to authorize this plugin, or No to deny it. You can change your mind later in Options -> Plugins, then restart." ) ;
 	text += "<UL>" ;
-	text += "<LI>Hash:\t" + QString::fromStdString(plugin_file_hash) + "</LI>" ;
+    text += "<LI>Hash:\t" + QString::fromStdString(plugin_file_hash.toStdString()) + "</LI>" ;
 	text += "<LI>File:\t" + QString::fromStdString(plugin_file_name) + "</LI>";
 	text += "</UL>" ;
 
@@ -319,10 +318,13 @@ bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, con
 
 	RsAutoUpdatePage::unlockAllEvents() ;
 
-	if (ret == QMessageBox::Yes) 
-		return true ;
-	else
-		return false;
+    if (ret == QMessageBox::Yes)
+        return true;
+    else
+    {
+        rsPlugins->disablePlugin(plugin_file_hash);
+        return false;
+    }
 }
 
 #ifdef TO_REMOVE
@@ -694,11 +696,9 @@ void NotifyQt::sync_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
     auto ev6 = dynamic_cast<const RsSystemEvent*>(event.get());
 
     if(ev6->mEventCode == RsSystemEventCode::PASSWORD_REQUESTED)
-    {
-        std::string password;
-        bool cancelled;
-        graphical_askForPassword(ev6->passwd_request_title, ev6->passwd_request_key_details, ev6->passwd_request_prev_is_bad, password,cancelled);
-    }
+        GUI_askForPassword(ev6->passwd_request_title, ev6->passwd_request_key_details, ev6->passwd_request_prev_is_bad);
+    else if(ev6->mEventCode == RsSystemEventCode::NEW_PLUGIN_FOUND)
+        GUI_askForPluginConfirmation(ev6->plugin_file_name, ev6->plugin_file_hash, ev6->plugin_first_time);
 }
 
 void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)

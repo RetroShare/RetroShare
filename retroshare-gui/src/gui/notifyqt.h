@@ -47,7 +47,7 @@ class SignatureEventData ;
 struct TurtleFileInfo;
 struct TurtleGxsInfo;
 
-class NotifyQt: public QObject, public NotifyClient
+class NotifyQt: public QObject
 {
 	Q_OBJECT
 	public:
@@ -86,8 +86,9 @@ class NotifyQt: public QObject, public NotifyClient
 //		virtual void notifyHistoryChanged(uint32_t msgId, int type);
 
 //		virtual void notifyDiscInfoChanged() ;
-        virtual bool graphical_askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password, bool &cancelled);
-		virtual bool askForPluginConfirmation(const std::string& plugin_filename, const std::string& plugin_file_hash,bool first_time);
+
+        virtual bool GUI_askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad);
+        virtual bool GUI_askForPluginConfirmation(const std::string& plugin_filename, const RsFileHash& plugin_file_hash,bool first_time);
 
 		/* Notify from GUI */
 		void notifyChatFontChanged();
@@ -146,7 +147,7 @@ class NotifyQt: public QObject, public NotifyClient
 
 	private slots:
 		void runningTick();
-        void handleSignatureEvent() ;
+//        void handleSignatureEvent() ;
 //		void handleChatLobbyTimeShift(int) ;
 
 	private:
