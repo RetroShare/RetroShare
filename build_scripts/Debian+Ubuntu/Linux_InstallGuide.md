@@ -6,7 +6,7 @@
 #### Debian/Ubuntu
 ```bash
    sudo apt-get install g++ cmake libbz2-dev libjson-c-dev libssl-dev libsqlcipher-dev \
-   libupnp-dev libxss-dev rapidjson-dev libbotan-2-dev libasio-dev
+   libupnp-dev libxss-dev doxygen rapidjson-dev libbotan-2-dev libasio-dev
 ```
 
 To compile with Qt5:
