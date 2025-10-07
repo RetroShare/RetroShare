@@ -261,7 +261,9 @@ void MessageWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event
 	case RsMailStatusEventCode::MESSAGE_RECEIVED_ACK:
 	case RsMailStatusEventCode::SIGNATURE_FAILED:
 		break;
-	}
+    default:
+        break;
+    }
 }
 
 void MessageWidget::connectAction(enumActionType actionType, QToolButton* button)

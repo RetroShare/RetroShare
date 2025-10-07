@@ -113,7 +113,7 @@ ChatWidget *PopupChatDialog::getChatWidget()
 
 bool PopupChatDialog::notifyBlink()
 {
-	return (Settings->getChatFlags() & RS_CHAT_BLINK);
+    return (Settings->getChatFlags() & (uint32_t)RsChatFlags::RS_CHAT_BLINK);
 }
 
 void PopupChatDialog::processSettings(bool load)
@@ -129,7 +129,7 @@ void PopupChatDialog::processSettings(bool load)
 	Settings->endGroup();
 }
 
-void PopupChatDialog::showDialog(uint chatflags)
+void PopupChatDialog::showDialog(RsChatFlags chatflags)
 {
 	PopupChatWindow *window = WINDOW(this);
 	if (window) {

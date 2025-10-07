@@ -354,18 +354,18 @@ void ChatPage::updateChatLobbyUserNotify()
 
 void ChatPage::updateChatFlags()
 {
-	uint chatflags   = 0;
+    RsChatFlags chatflags(RsChatFlags::RS_CHAT_NONE);
 
 	if (ui.chat_NewWindow->isChecked())
-		chatflags |= RS_CHAT_OPEN;
+        chatflags |= RsChatFlags::RS_CHAT_OPEN;
 	if (ui.chat_Focus->isChecked())
-		chatflags |= RS_CHAT_FOCUS;
+        chatflags |= RsChatFlags::RS_CHAT_FOCUS;
 	if (ui.chat_tabbedWindow->isChecked())
-		chatflags |= RS_CHAT_TABBED_WINDOW;
+        chatflags |= RsChatFlags::RS_CHAT_TABBED_WINDOW;
 	if (ui.chat_Blink->isChecked())
-		chatflags |= RS_CHAT_BLINK;
+        chatflags |= RsChatFlags::RS_CHAT_BLINK;
 
-	Settings->setChatFlags(chatflags);
+    Settings->setChatFlags((uint32_t)chatflags);
 }
 
 void ChatPage::updateChatLobbyFlags()
@@ -473,12 +473,12 @@ ChatPage::load()
     if(!gxs_id.isNull())
         ui.chatLobbyIdentity_IC->setChosenId(gxs_id);
 
-    uint chatflags = Settings->getChatFlags();
+    RsChatFlags chatflags = (RsChatFlags) Settings->getChatFlags();
 
-    whileBlocking(ui.chat_NewWindow)->setChecked(chatflags & RS_CHAT_OPEN);
-    whileBlocking(ui.chat_Focus)->setChecked(chatflags & RS_CHAT_FOCUS);
-    whileBlocking(ui.chat_tabbedWindow)->setChecked(chatflags & RS_CHAT_TABBED_WINDOW);
-    whileBlocking(ui.chat_Blink)->setChecked(chatflags & RS_CHAT_BLINK);
+    whileBlocking(ui.chat_NewWindow)->setChecked(!!(chatflags & RsChatFlags::RS_CHAT_OPEN));
+    whileBlocking(ui.chat_Focus)->setChecked(!!(chatflags & RsChatFlags::RS_CHAT_FOCUS));
+    whileBlocking(ui.chat_tabbedWindow)->setChecked(!!(chatflags & RsChatFlags::RS_CHAT_TABBED_WINDOW));
+    whileBlocking(ui.chat_Blink)->setChecked(!!(chatflags & RsChatFlags::RS_CHAT_BLINK));
 
     uint chatLobbyFlags = Settings->getChatLobbyFlags();
 

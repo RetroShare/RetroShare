@@ -930,9 +930,9 @@ bool ChatLobbyDialog::canClose()
 	return false;
 }
 
-void ChatLobbyDialog::showDialog(uint chatflags)
+void ChatLobbyDialog::showDialog(RsChatFlags chatflags)
 {
-	if (chatflags & RS_CHAT_FOCUS)
+    if (!!(chatflags & RsChatFlags::RS_CHAT_FOCUS))
 	{
 		if (isWindowed() && mPCWindow) {
 			mPCWindow->showDialog(this, chatflags);
@@ -1020,5 +1020,5 @@ void ChatLobbyDialog::setWindowed(bool windowed)
 	}
 	show();
 	if (chatLobbyPage)// If not defined, we are on autosubscribe loop of lobby widget constructor. So don't recall it.
-		showDialog(RS_CHAT_FOCUS);
+        showDialog(RsChatFlags::RS_CHAT_FOCUS);
 }

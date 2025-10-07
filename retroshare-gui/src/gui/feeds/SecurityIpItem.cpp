@@ -40,14 +40,14 @@
  ****/
 
 /** Constructor */
-SecurityIpItem::SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string &ipAddr, uint32_t result, uint32_t type, bool isTest) :
+SecurityIpItem::SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string &ipAddr, uint32_t result, RsFeedTypeFlags type, bool isTest) :
     FeedItem(parent,0,NULL), mType(type), mSslId(sslId), mIpAddr(ipAddr), mResult(result), mIsTest(isTest),
     ui(new(Ui::SecurityIpItem))
 {
 	setup();
 }
 
-SecurityIpItem::SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported, uint32_t type, bool isTest) :
+SecurityIpItem::SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported, RsFeedTypeFlags type, bool isTest) :
     FeedItem(parent,0,NULL),  mType(type), mSslId(sslId), mIpAddr(ipAddr), mIpAddrReported(ipAddrReported), mResult(0), mIsTest(isTest),
     ui(new(Ui::SecurityIpItem))
 {
@@ -81,7 +81,7 @@ void SecurityIpItem::setup()
 
 uint64_t SecurityIpItem::uniqueIdentifier() const
 {
-    return hash_64bits("SecurityItem " + QString::number(mType).toStdString() + " " + mSslId.toStdString() + " " + mIpAddr + " " + mIpAddrReported) ;
+    return hash_64bits("SecurityItem " + QString::number((int)mType).toStdString() + " " + mSslId.toStdString() + " " + mIpAddr + " " + mIpAddrReported) ;
 }
 
 void SecurityIpItem::updateItemStatic()
@@ -97,12 +97,12 @@ void SecurityIpItem::updateItemStatic()
 
 	/* Specific type */
 	switch (mType) {
-	case RS_FEED_ITEM_SEC_IP_BLACKLISTED:
+    case RsFeedTypeFlags::RS_FEED_ITEM_SEC_IP_BLACKLISTED:
 		ui->rsBanListButton->setDisabled(mIsTest);
 		ui->ipAddrReported->hide();
 		ui->ipAddrReportedLabel->hide();
 		break;
-	case RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED:
+    case RsFeedTypeFlags::RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED:
 		ui->rsBanListButton->hide();
 		break;
 	default:
@@ -126,7 +126,7 @@ void SecurityIpItem::updateItem()
 
 	if(!RsAutoUpdatePage::eventsLocked()) {
 		switch (mType) {
-		case RS_FEED_ITEM_SEC_IP_BLACKLISTED:
+        case RsFeedTypeFlags::RS_FEED_ITEM_SEC_IP_BLACKLISTED:
 			ui->titleLabel->setText(RsBanListDefs::resultString(mResult));
 			ui->ipAddr->setText(QString::fromStdString(mIpAddr));
 
@@ -145,7 +145,7 @@ void SecurityIpItem::updateItem()
 				}
 			}
 			break;
-		case RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED:
+        case RsFeedTypeFlags::RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED:
 			ui->titleLabel->setText(tr("Wrong external ip address reported"));
 			ui->ipAddr->setText(QString::fromStdString(mIpAddr));
             ui->ipAddr->setToolTip(tr("<p>This is the external IP your Retroshare node thinks it is using.</p>")) ;

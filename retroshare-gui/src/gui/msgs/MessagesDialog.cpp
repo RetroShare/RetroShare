@@ -351,6 +351,8 @@ void MessagesDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> even
     case RsMailStatusEventCode::MESSAGE_RECEIVED_ACK:
     case RsMailStatusEventCode::SIGNATURE_FAILED:
         break;
+    default:
+        break;
     }
 }
 
@@ -1088,11 +1090,13 @@ void MessagesDialog::doubleClicked(const QModelIndex& proxy_index)
     }
 
     /* edit message */
-    switch (Settings->getMsgOpen()) {
-    case RshareSettings::MSG_OPEN_TAB:
+    switch (Settings->getMsgOpen())
+    {
+    default:
+    case RsSettingsMsgOptions::MSG_OPEN_TAB:
         openAsTab();
         break;
-    case RshareSettings::MSG_OPEN_WINDOW:
+    case RsSettingsMsgOptions::MSG_OPEN_WINDOW:
         openAsWindow();
         break;
     }

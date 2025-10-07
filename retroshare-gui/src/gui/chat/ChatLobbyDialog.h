@@ -44,10 +44,10 @@ class ChatLobbyDialog: public ChatDialog
 public:
     void handleLobbyEvent(RsChatLobbyEventCode event_type, const RsGxsId& gxs_id, const QString& str);
 
-	virtual void showDialog(uint chatflags);
-	virtual ChatWidget *getChatWidget();
-	virtual bool hasPeerStatus() { return false; }
-	virtual bool notifyBlink();
+    virtual void showDialog(RsChatFlags chatflags) override;
+    virtual ChatWidget *getChatWidget() override;
+    virtual bool hasPeerStatus()  override{ return false; }
+    virtual bool notifyBlink() override;
     void setIdentity(const RsGxsId& gxs_id);
     bool isParticipantMuted(const RsGxsId &participant);
 	ChatLobbyId id() const { return lobbyId ;}

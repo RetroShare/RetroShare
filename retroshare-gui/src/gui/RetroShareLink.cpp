@@ -1758,7 +1758,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				}
 				else
 				{
-					ChatDialog* chatDialog = ChatDialog::getChat(chatId, Settings->getChatFlags());
+                    ChatDialog* chatDialog = ChatDialog::getChat(chatId, (RsChatFlags)Settings->getChatFlags());
 					if (chatDialog) {
 						chatroomFound.append(link.name());
 					} else {

@@ -53,6 +53,17 @@ namespace Ui {
 class ChatWidget;
 }
 
+enum class RsChatFlags: uint32_t {
+    RS_CHAT_NONE          = 0x0000,
+    RS_CHAT_OPEN          = 0x0001,
+    RS_CHAT_FOCUS         = 0x0004,
+    RS_CHAT_TABBED_WINDOW = 0x0008,
+    RS_CHAT_BLINK         = 0x0010,
+};
+
+RS_REGISTER_ENUM_FLAGS_TYPE(RsChatFlags);
+
+
 // a Container for the logic behind buttons in a PopupChatDialog
 // Plugins can implement this interface to provide their own buttons
 class ChatWidgetHolder

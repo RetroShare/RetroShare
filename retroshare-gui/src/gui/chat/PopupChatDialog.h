@@ -46,11 +46,11 @@ protected:
 	/** Default destructor */
 	virtual ~PopupChatDialog();
 
-	virtual void init(const ChatId &chat_id, const QString &title);
-	virtual void showDialog(uint chatflags);
-	virtual ChatWidget *getChatWidget();
-	virtual bool hasPeerStatus() { return true; }
-	virtual bool notifyBlink();
+    virtual void init(const ChatId &chat_id, const QString &title) override;
+    virtual void showDialog(RsChatFlags chatflags) override;
+    virtual ChatWidget *getChatWidget() override;
+    virtual bool hasPeerStatus()  override{ return true; }
+    virtual bool notifyBlink() override;
 
 	virtual void updateStatus(int /*status*/) {}
 

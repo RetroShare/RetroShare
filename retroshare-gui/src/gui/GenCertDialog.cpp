@@ -643,7 +643,7 @@ void GenCertDialog::genPerson()
 	std::cout << "RsAccounts::GenerateSSLCertificate" << std::endl;
 
     // now cache the PGP password so that it's not asked again for immediately signing the key
-    rsNotify->cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
+    rsLoginHelper->cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
 
     bool okGen = RsAccounts::createNewAccount(PGPId, "", genLoc, "", isHiddenLoc, isAutoTor, sslPasswd, sslId, err);
 

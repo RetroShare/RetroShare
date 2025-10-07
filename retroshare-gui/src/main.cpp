@@ -731,7 +731,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 //    QObject::connect(notify,SIGNAL(diskFull(int,int))						,w                   		,SLOT(displayDiskSpaceWarning(int,int))) ;
 //    QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w                         ,SLOT(postModDirectories(bool)) ,Qt::QueuedConnection        ) ;
 //    QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  		,SLOT(insertTransfers()                )) ;
-    QObject::connect(notify,SIGNAL(publicChatChanged(int))            ,w->friendsDialog      		,SLOT(publicChatChanged(int)           ));
+//    QObject::connect(notify,SIGNAL(publicChatChanged(int))            ,w->friendsDialog      		,SLOT(publicChatChanged(int)           ));
 //    QObject::connect(notify,SIGNAL(neighboursChanged())               ,w->friendsDialog->networkDialog    		,SLOT(securedUpdateDisplay())) ;
 
 //    QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&,bool)),w->friendsDialog,SLOT(updatePeerStatusString(const QString&,const QString&,bool)));
@@ -752,11 +752,10 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
     }
 
     /* Startup a Timer to keep the gui's updated */
-    QTimer *timer = new QTimer(w);
-    timer -> connect(timer, SIGNAL(timeout()), notify, SLOT(UpdateGUI()));
-    timer->start(1000);
-
-    notify->enable() ;	// enable notification system after GUI creation, to avoid data races in Qt.
+    //QTimer *timer = new QTimer(w);
+    //timer -> connect(timer, SIGNAL(timeout()), notify, SLOT(UpdateGUI()));
+    //timer->start(1000);
+    //notify->enable() ;	// enable notification system after GUI creation, to avoid data races in Qt.
 
     // Read webui params in settings. We cannot save them to some webui.cfg because cfg needs the node id and
     // jsonapi is started before node ID selection in retroshare-service.

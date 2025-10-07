@@ -715,7 +715,7 @@ void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
 	
 	/* Finally Check for PopupMessages / System Error Messages */
 
-    uint popupflags = Settings->getNotifyFlags();
+    RsNotifyPopupFlags popupflags = (RsNotifyPopupFlags)Settings->getNotifyFlags();
 
     auto insertToaster = [this](ToasterItem *toaster) {
 
@@ -736,7 +736,7 @@ void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
         {
             SoundManager::play(SOUND_MESSAGE_ARRIVED);
 
-            if((popupflags & RS_POPUP_MSG) && !_disableAllToaster)
+            if((!!(popupflags & RsNotifyPopupFlags::RS_POPUP_MSG)) && !_disableAllToaster)
             {
                 for(auto msgid:ev1->mChangedMsgIds)
                 {
@@ -757,7 +757,7 @@ void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
         {
             SoundManager::play(SOUND_USER_ONLINE);
 
-            if ((popupflags & RS_POPUP_CONNECT) && !_disableAllToaster)
+            if ((!!(popupflags & RsNotifyPopupFlags::RS_POPUP_CONNECT)) && !_disableAllToaster)
                 insertToaster(new ToasterItem(new OnlineToaster(ev2->mSslId)));
         }
         return;
@@ -771,7 +771,7 @@ void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
         {
             SoundManager::play(SOUND_DOWNLOAD_COMPLETE);
 
-            if ((popupflags & RS_POPUP_DOWNLOAD) && !_disableAllToaster)
+            if ((!!(popupflags & RsNotifyPopupFlags::RS_POPUP_DOWNLOAD)) && !_disableAllToaster)
                 insertToaster(new ToasterItem(new DownloadToaster(ev3->mHash)));
         }
         return;
@@ -783,7 +783,7 @@ void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
     {
         if(ev4->mErrorCode == RsAuthSslError::NOT_A_FRIEND)
         {
-            if ((popupflags & RS_POPUP_CONNECT_ATTEMPT) && !_disableAllToaster)
+            if ((!!(popupflags & RsNotifyPopupFlags::RS_POPUP_CONNECT_ATTEMPT)) && !_disableAllToaster)
                         // id = gpgid
                         // title = ssl name
                         // msg = peer id
@@ -810,7 +810,7 @@ void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
 
         if(ev5->mEventCode == RsChatServiceEventCode::CHAT_MESSAGE_RECEIVED)
         {
-            if (ev5->mCid.isPeerId() && (popupflags & RS_POPUP_CHAT) && !_disableAllToaster)
+            if (ev5->mCid.isPeerId() && (!!(popupflags & RsNotifyPopupFlags::RS_POPUP_CHAT)) && !_disableAllToaster)
             {
                 // TODO: fix for distant chat, look up if dstant chat uses RS_POPUP_CHAT
                 ChatDialog *chatDialog = ChatDialog::getChat(ev5->mCid);
@@ -822,7 +822,7 @@ void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
                 insertToaster(new ToasterItem(new ChatToaster(ev5->mCid.toPeerId(), QString::fromUtf8(ev5->mMsg.msg.c_str()))));
             }
 #ifdef RS_DIRECT_CHAT
-            else if (ev5->mCid.isBroadcast() && (popupflags & RS_POPUP_GROUPCHAT) && !_disableAllToaster)
+            else if (ev5->mCid.isBroadcast() && (!!(popupflags & RsNotifyPopupFlags::RS_POPUP_GROUPCHAT)) && !_disableAllToaster)
             {
                 MainWindow *mainWindow = MainWindow::getInstance();
                 if (mainWindow && mainWindow->isActiveWindow() && !mainWindow->isMinimized()
@@ -832,7 +832,7 @@ void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
                 insertToaster(new ToasterItem(new GroupChatToaster(ev5->mCid.toPeerId(), QString::fromUtf8(ev5->mMsg.msg.c_str()))));
             }
 #endif
-            else if (ev5->mCid.isLobbyId() && (popupflags & RS_POPUP_CHATLOBBY) && !_disableAllToaster)
+            else if (ev5->mCid.isLobbyId() && (!!(popupflags & RsNotifyPopupFlags::RS_POPUP_CHATLOBBY)) && !_disableAllToaster)
             {
                 ChatDialog *chatDialog = ChatDialog::getChat(ev5->mCid);
                 ChatWidget *chatWidget;
@@ -861,7 +861,7 @@ void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
             switch(ev6->mEventCode)
             {
             case RsSystemEventCode::TIME_SHIFT_PROBLEM:
-                displayErrorMessage(RS_SYS_WARNING,tr("System time mismatch"),tr("Time shift problem notification. Make sure your machine is on time, because it will break chat rooms."));
+                displayErrorMessage(RsNotifySysFlags::RS_SYS_WARNING,tr("System time mismatch"),tr("Time shift problem notification. Make sure your machine is on time, because it will break chat rooms."));
                 break;
 
             case RsSystemEventCode::DISK_SPACE_ERROR:
@@ -870,7 +870,7 @@ void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
 
             case RsSystemEventCode::DATA_STREAMING_ERROR:
             case RsSystemEventCode::GENERAL_ERROR:
-                displayErrorMessage(RS_SYS_WARNING,tr("Internal error"),QString::fromUtf8(ev6->mErrorMsg.c_str()));
+                displayErrorMessage(RsNotifySysFlags::RS_SYS_WARNING,tr("Internal error"),QString::fromUtf8(ev6->mErrorMsg.c_str()));
                 break;
             default: break;
             }
@@ -913,7 +913,7 @@ void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
 	startWaitingToasters();
 }
 
-void NotifyQt::testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin)
+void NotifyQt::testToasters(RsNotifyPopupFlags notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin)
 {
 	QString title = tr("Test");
 	QString message = tr("This is a test.");
@@ -922,37 +922,38 @@ void NotifyQt::testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosit
 	RsPgpId pgpid = rsPeers->getGPGOwnId();
 
 	uint pos = 0;
+    uint nf = (uint)notifyFlags;
 
-	while (notifyFlags) {
-		uint type = notifyFlags & (1 << pos);
-		notifyFlags &= ~(1 << pos);
+    while (nf) {
+        uint type = nf & (1 << pos);
+        nf &= ~(1 << pos);
 		++pos;
 
 		ToasterItem *toaster = NULL;
 
 		switch(type)
 		{
-			case RS_POPUP_ENCRYPTED_MSG:
+            case (int)RsNotifyPopupFlags::RS_POPUP_ENCRYPTED_MSG:
 				toaster = new ToasterItem(new MessageToaster(std::string(), tr("Unknown title"), QString("[%1]").arg(tr("Encrypted message"))));
 				break;
-			case RS_POPUP_MSG:
+            case (int)RsNotifyPopupFlags::RS_POPUP_MSG:
 				toaster = new ToasterItem(new MessageToaster(id.toStdString(), title, message));
 				break;
-			case RS_POPUP_CONNECT:
+            case (int)RsNotifyPopupFlags::RS_POPUP_CONNECT:
 				toaster = new ToasterItem(new OnlineToaster(id));
 				break;
-			case RS_POPUP_DOWNLOAD:
+            case (int)RsNotifyPopupFlags::RS_POPUP_DOWNLOAD:
                 toaster = new ToasterItem(new DownloadToaster(RsFileHash::random()));
 				break;
-			case RS_POPUP_CHAT:
+            case (int)RsNotifyPopupFlags::RS_POPUP_CHAT:
                 toaster = new ToasterItem(new ChatToaster(id, message));
 				break;
-			case RS_POPUP_GROUPCHAT:
+            case (int)RsNotifyPopupFlags::RS_POPUP_GROUPCHAT:
 #ifdef RS_DIRECT_CHAT
 				toaster = new ToasterItem(new GroupChatToaster(id, message));
 #endif // RS_DIRECT_CHAT
 				break;
-			case RS_POPUP_CHATLOBBY:
+            case (int)RsNotifyPopupFlags::RS_POPUP_CHATLOBBY:
 				{
 					std::list<RsGxsId> gxsid;
 					if(rsIdentity->getOwnIds(gxsid) && (gxsid.size() > 0)){
@@ -960,7 +961,7 @@ void NotifyQt::testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosit
 					}
 					break;
 				}
-			case RS_POPUP_CONNECT_ATTEMPT:
+            case (int)RsNotifyPopupFlags::RS_POPUP_CONNECT_ATTEMPT:
                 toaster = new ToasterItem(new FriendRequestToaster(pgpid, id));
 				break;
 		}
@@ -1332,18 +1333,18 @@ void NotifyQt::addToaster(uint notifyFlags, const std::string& id, const std::st
 }
 #endif
 
-void NotifyQt::displayErrorMessage(int type,const QString& title,const QString& error_msg)
+void NotifyQt::displayErrorMessage(RsNotifySysFlags type,const QString& title,const QString& error_msg)
 {
     /* make a warning message */
     switch(type)
     {
-    case RS_SYS_ERROR: 		QMessageBox::critical(MainWindow::getInstance(),title,error_msg);
+    case RsNotifySysFlags::RS_SYS_ERROR: 		QMessageBox::critical(MainWindow::getInstance(),title,error_msg);
         break;
 
-    case RS_SYS_WARNING: 	QMessageBox::warning(MainWindow::getInstance(),title,error_msg);
+    case RsNotifySysFlags::RS_SYS_WARNING: 	QMessageBox::warning(MainWindow::getInstance(),title,error_msg);
         break;
 
-    case RS_SYS_INFO: 		QMessageBox::information(MainWindow::getInstance(),title,error_msg);
+    case RsNotifySysFlags::RS_SYS_INFO: 		QMessageBox::information(MainWindow::getInstance(),title,error_msg);
         break;
 
         default: std::cerr << "Warning: unhandled system error type " << type << std::endl;

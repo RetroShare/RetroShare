@@ -684,7 +684,7 @@ void ChatLobbyWidget::updateDisplay()
 
 		if (autoSubscribe && subscribed && _lobby_infos.find(lobby.lobby_id) == _lobby_infos.end())
 		{
-			ChatDialog *cd = ChatDialog::getChat(ChatId(lobby.lobby_id), RS_CHAT_OPEN);
+            ChatDialog *cd = ChatDialog::getChat(ChatId(lobby.lobby_id), RsChatFlags::RS_CHAT_OPEN);
 
 			addChatPage(dynamic_cast<ChatLobbyDialog*>(cd));
 		}
@@ -787,7 +787,7 @@ void ChatLobbyWidget::showLobby(QTreeWidgetItem *item)
 		showBlankPage(id) ;
 	else
 	{
-		_lobby_infos[id].dialog->showDialog(RS_CHAT_FOCUS);
+        _lobby_infos[id].dialog->showDialog(RsChatFlags::RS_CHAT_FOCUS);
 		if (_lobby_infos[id].dialog->isWindowed())
 			showBlankPage(id, true);
 	}
@@ -850,7 +850,7 @@ bool ChatLobbyWidget::showLobbyAnchor(ChatLobbyId id, QString anchor)
 			if(_lobby_infos.find(id) == _lobby_infos.end()) {
 				showBlankPage(id) ;
 			} else {
-				_lobby_infos[id].dialog->showDialog(RS_CHAT_FOCUS);
+                _lobby_infos[id].dialog->showDialog(RsChatFlags::RS_CHAT_FOCUS);
 				if (_lobby_infos[id].dialog->isWindowed())
 					showBlankPage(id, true);
 

@@ -132,7 +132,7 @@ void ChatUserNotify::iconClicked()
 {
 	ChatDialog *chatDialog = NULL;
     // ChatWidget removes the waiting chat from the list with clearWaitingChat()
-    chatDialog = ChatDialog::getChat(waitingChats.begin()->first, RS_CHAT_OPEN | RS_CHAT_FOCUS);
+    chatDialog = ChatDialog::getChat(waitingChats.begin()->first, RsChatFlags::RS_CHAT_OPEN | RsChatFlags::RS_CHAT_FOCUS);
 
 	if (chatDialog == NULL) {
 		MainWindow::showWindow(MainWindow::Friends);
@@ -144,7 +144,7 @@ void ChatUserNotify::chatMessageReceived(ChatMessage msg)
 {
     if(!msg.chat_id.isBroadcast()
             &&( ChatDialog::getExistingChat(msg.chat_id)
-                || (Settings->getChatFlags() & RS_CHAT_OPEN)
+                || (Settings->getChatFlags() & (uint32_t)RsChatFlags::RS_CHAT_OPEN)
                 || msg.chat_id.isDistantChatId()))
     {
         ChatDialog::chatMessageReceived(msg);

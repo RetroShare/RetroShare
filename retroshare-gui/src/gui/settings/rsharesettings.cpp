@@ -28,7 +28,10 @@
 #include <rshare.h>
 
 #include "rsharesettings.h"
+#include "rsharesettings.h"
 #include "gui/MainWindow.h"
+#include "gui/chat/ChatWidget.h"
+#include "gui/feeds/FeedItem.h"
 
 #ifdef RS_JSONAPI
 #include <retroshare/rsjsonapi.h>
@@ -133,15 +136,15 @@ void RshareSettings::initSettings()
 
 	/* defaults here are not ideal.... but dusent matter */
 
-	uint defChat = RS_CHAT_OPEN;
+    uint defChat = (uint32_t)RsChatFlags::RS_CHAT_OPEN;
 	// This is not default... RS_CHAT_FOCUS.
 
-	uint defNotify = (RS_POPUP_CONNECT | RS_POPUP_MSG);
-    uint defNewsFeed = (RS_FEED_TYPE_MSG | RS_FEED_TYPE_FILES | RS_FEED_TYPE_SECURITY | RS_FEED_TYPE_SECURITY_IP | RS_FEED_TYPE_CIRCLE | RS_FEED_TYPE_CHANNEL |RS_FEED_TYPE_FORUM | RS_FEED_TYPE_POSTED);
+    RsNotifyPopupFlags defNotify = (RsNotifyPopupFlags::RS_POPUP_CONNECT | RsNotifyPopupFlags::RS_POPUP_MSG);
+    RsFeedTypeFlags defNewsFeed = (RsFeedTypeFlags::RS_FEED_TYPE_MSG | RsFeedTypeFlags::RS_FEED_TYPE_FILES | RsFeedTypeFlags::RS_FEED_TYPE_SECURITY | RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP | RsFeedTypeFlags::RS_FEED_TYPE_CIRCLE | RsFeedTypeFlags::RS_FEED_TYPE_CHANNEL |RsFeedTypeFlags::RS_FEED_TYPE_FORUM | RsFeedTypeFlags::RS_FEED_TYPE_POSTED);
 
-	setDefault(SETTING_NEWSFEED_FLAGS, defNewsFeed);
+    setDefault(SETTING_NEWSFEED_FLAGS, (int)defNewsFeed);
 	setDefault(SETTING_CHAT_FLAGS, defChat);
-	setDefault(SETTING_NOTIFY_FLAGS, defNotify);
+    setDefault(SETTING_NOTIFY_FLAGS, (int)defNotify);
 
 	setDefault("DisplayTrayGroupChat", true);
 	setDefault("AddFeedsAtEnd", false);
@@ -1023,30 +1026,31 @@ void RshareSettings::setMsgLoadEmbeddedImages(bool value)
 	setValueToGroup("Message", "LoadEmbeddedImages", value);
 }
 
-RshareSettings::enumMsgOpen RshareSettings::getMsgOpen()
+RsSettingsMsgOptions RshareSettings::getMsgOpen()
 {
-	enumMsgOpen value = (enumMsgOpen) valueFromGroup("Message", "msgOpen", MSG_OPEN_TAB).toInt();
+    RsSettingsMsgOptions value = (RsSettingsMsgOptions) valueFromGroup("Message", "msgOpen", (int)RsSettingsMsgOptions::MSG_OPEN_TAB).toInt();
 
 	switch (value) {
-	case MSG_OPEN_TAB:
-	case MSG_OPEN_WINDOW:
+    default:
+    case RsSettingsMsgOptions::MSG_OPEN_TAB:
+    case RsSettingsMsgOptions::MSG_OPEN_WINDOW:
 		return value;
 	}
 
-	return MSG_OPEN_TAB;
+    return RsSettingsMsgOptions::MSG_OPEN_TAB;
 }
 
-void RshareSettings::setMsgOpen(enumMsgOpen value)
+void RshareSettings::setMsgOpen(RsSettingsMsgOptions value)
 {
 	switch (value) {
-	case MSG_OPEN_TAB:
-	case MSG_OPEN_WINDOW:
+    case RsSettingsMsgOptions::MSG_OPEN_TAB:
+    case RsSettingsMsgOptions::MSG_OPEN_WINDOW:
 		break;
 	default:
-		value = MSG_OPEN_TAB;
+        value = RsSettingsMsgOptions::MSG_OPEN_TAB;
 	}
 
-	setValueToGroup("Message", "msgOpen", value);
+    setValueToGroup("Message", "msgOpen", (int)value);
 }
 
 /* Forum */

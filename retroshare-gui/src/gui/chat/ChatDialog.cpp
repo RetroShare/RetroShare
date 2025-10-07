@@ -86,7 +86,7 @@ void ChatDialog::init(const ChatId &id, const QString &title)
     return NULL;
 }
 
-/*static*/ ChatDialog* ChatDialog::getChat(ChatId id, uint chatflags)
+/*static*/ ChatDialog* ChatDialog::getChat(ChatId id, RsChatFlags chatflags)
 {
     if(id.isBroadcast() || id.isNotSet())
         return NULL; // broadcast is not handled by a chat dialog
@@ -97,9 +97,9 @@ void ChatDialog::init(const ChatId &id, const QString &title)
     if (cd == NULL) {
 
         if(id.isDistantChatId())
-            chatflags = RS_CHAT_OPEN | RS_CHAT_FOCUS; // force open for distant chat
+            chatflags = RsChatFlags::RS_CHAT_OPEN | RsChatFlags::RS_CHAT_FOCUS; // force open for distant chat
 
-        if (chatflags & RS_CHAT_OPEN) {
+        if (!!(chatflags & RsChatFlags::RS_CHAT_OPEN)) {
             if (id.isLobbyId()) {
                 ChatLobbyDialog* cld = new ChatLobbyDialog(id.toLobbyId());
                 cld->init(ChatId(), "");
@@ -176,7 +176,7 @@ void ChatDialog::init(const ChatId &id, const QString &title)
         // play sound when recv a message
         SoundManager::play(SOUND_NEW_CHAT_MESSAGE);
 
-    ChatDialog *cd = getChat(msg.chat_id, Settings->getChatFlags());   
+    ChatDialog *cd = getChat(msg.chat_id, (RsChatFlags)Settings->getChatFlags());
     if(cd)
         cd->addChatMsg(msg);
     else
@@ -185,7 +185,7 @@ void ChatDialog::init(const ChatId &id, const QString &title)
 
 /*static*/ void ChatDialog::chatFriend(const ChatId &peerId, const bool forceFocus)
 {
-    getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN);
+    getChat(peerId, forceFocus ? (RsChatFlags::RS_CHAT_OPEN | RsChatFlags::RS_CHAT_FOCUS) : RsChatFlags::RS_CHAT_OPEN);
 
     // below is the old code witch does lots of error checking.
     // because there are many different chat types, there are also different ways to check if the id is valid

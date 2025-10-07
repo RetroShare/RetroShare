@@ -49,7 +49,7 @@ static PopupChatWindow *instance = NULL;
 
 /*static*/ PopupChatWindow *PopupChatWindow::getWindow(bool needSingleWindow)
 {
-	if (needSingleWindow == false && (Settings->getChatFlags() & RS_CHAT_TABBED_WINDOW)) {
+    if (needSingleWindow == false && (Settings->getChatFlags() & (uint32_t)RsChatFlags::RS_CHAT_TABBED_WINDOW)) {
 		if (instance == NULL) {
 			instance = new PopupChatWindow(true);
 		}
@@ -162,7 +162,7 @@ void PopupChatWindow::showContextMenu(QPoint)
 		}
 	}
 
-	if (Settings->getChatFlags() & RS_CHAT_TABBED_WINDOW)
+    if (Settings->getChatFlags() & (uint32_t)RsChatFlags::RS_CHAT_TABBED_WINDOW)
     {
         if(tabbedWindow)
             contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/tab-dock.png"),tr("Dock window"),this,SLOT(docTab()));
@@ -300,9 +300,9 @@ void PopupChatWindow::removeDialog(ChatDialog *dialog)
 	}
 }
 
-void PopupChatWindow::showDialog(ChatDialog *dialog, uint chatflags)
+void PopupChatWindow::showDialog(ChatDialog *dialog, RsChatFlags chatflags)
 {
-	if (chatflags & RS_CHAT_FOCUS) {
+    if (!!(chatflags & RsChatFlags::RS_CHAT_FOCUS)) {
 		if (tabbedWindow) {
 			ui.tabWidget->setCurrentWidget(dialog);
 		}
@@ -352,7 +352,7 @@ void PopupChatWindow::calculateTitle(ChatDialog *dialog)
         icon = FilesDefs::getIconFromQtResourcePath(IMAGE_TYPING);
 	} else if (hasNewMessages) {
         icon = FilesDefs::getIconFromQtResourcePath(IMAGE_CHAT);
-		if (Settings->getChatFlags() & RS_CHAT_BLINK) {
+        if (Settings->getChatFlags() & (uint32_t)RsChatFlags::RS_CHAT_BLINK) {
 			mBlinkIcon = icon;
 		} else {
 			mBlinkIcon = QIcon();
@@ -423,7 +423,7 @@ void PopupChatWindow::tabNewMessage(ChatDialog *dialog)
 
 void PopupChatWindow::dockTab()
 {
-	if ((Settings->getChatFlags() & RS_CHAT_TABBED_WINDOW) && chatDialog) {
+    if ((Settings->getChatFlags() & (uint32_t)RsChatFlags::RS_CHAT_TABBED_WINDOW) && chatDialog) {
 		PopupChatWindow *pcw = getWindow(false);
 		if (pcw) {
 			ChatDialog *pcd = chatDialog;

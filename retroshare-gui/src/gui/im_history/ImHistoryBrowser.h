@@ -52,7 +52,7 @@ private slots:
     void createThreadFinished();
     void createThreadProgress(int current, int count);
 
-    void historyChanged(uint msgId, int type);
+    void historyChanged(uint msgId, RsChatHistoryChangeFlags type);
 
     void filterChanged(const QString& text);
 

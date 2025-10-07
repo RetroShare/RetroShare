@@ -106,6 +106,8 @@ QString AvatarWidget::frameState()
 			return "AWAY";
         case RsStatusValue::RS_STATUS_BUSY:
 			return "BUSY";
+        default:
+            break;
 		}
 	}
 	return "NOTHING";

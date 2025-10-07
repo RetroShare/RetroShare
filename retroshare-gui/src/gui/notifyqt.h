@@ -30,6 +30,8 @@
 #include <QPoint>
 //#include <QMutex>
 
+#include "settings/rsharesettings.h"
+
 #include <string>
 
 class QTimer;
@@ -94,7 +96,7 @@ class NotifyQt: public QObject
 		void notifyChatFontChanged();
 		void notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
 
-		void testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
+        void testToasters(RsNotifyPopupFlags notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
 		void testToaster(ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
 		void testToaster(QString tag, ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
 #ifdef TO_REMOVE
@@ -154,7 +156,7 @@ class NotifyQt: public QObject
 		NotifyQt();
 
         static void displayDiskSpaceWarning(int loc,int size_limit_mb);
-        static void displayErrorMessage(int type,const QString& title,const QString& error_msg);
+        static void displayErrorMessage(RsNotifySysFlags type,const QString& title,const QString& error_msg);
 
         static NotifyQt *_instance;
 		static bool _disableAllToaster;

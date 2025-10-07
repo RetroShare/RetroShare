@@ -238,9 +238,9 @@ void ImHistoryBrowser::historyAdd(HistoryMsg& msg)
     }
 }
 
-void ImHistoryBrowser::historyChanged(uint msgId, int type)
+void ImHistoryBrowser::historyChanged(uint msgId, RsChatHistoryChangeFlags type)
 {
-	if (type == NOTIFY_TYPE_ADD) {
+    if (type == RsChatHistoryChangeFlags::ADD) {
 		/* history message added */
 		HistoryMsg msg;
 		if (rsHistory->getMessage(msgId, msg) == false) {
@@ -254,7 +254,7 @@ void ImHistoryBrowser::historyChanged(uint msgId, int type)
 		return;
 	}
 
-	if (type == NOTIFY_TYPE_DEL) {
+    if (type == RsChatHistoryChangeFlags::DEL) {
 		/* history message removed */
 		int count = ui.listWidget->count();
 		for (int i = 0; i < count; ++i) {
@@ -267,7 +267,7 @@ void ImHistoryBrowser::historyChanged(uint msgId, int type)
 		return;
 	}
 
-	if (type == NOTIFY_TYPE_MOD) {
+    if (type == RsChatHistoryChangeFlags::MOD) {
 		/* clear history */
 		// As no ChatId nor msgId are send via Notify,
 		//  only check if history of this chat is empty before clear our list.
