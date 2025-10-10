@@ -39,7 +39,6 @@
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsmsgs.h>
-#include <retroshare/rsnotify.h>
 
 
 #define IMAGE_TYPING         ":/images/white-bubble-64.png"

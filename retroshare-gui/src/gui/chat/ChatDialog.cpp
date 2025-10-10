@@ -35,7 +35,6 @@
 #include "gui/SoundManager.h"
 
 #include <retroshare/rsiface.h>
-#include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 
 static std::map<ChatId, ChatDialog*> chatDialogsList;

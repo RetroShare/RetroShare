@@ -27,7 +27,6 @@
 #include <retroshare/rsgxschannels.h>
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsmsgs.h>
-#include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsposted.h>

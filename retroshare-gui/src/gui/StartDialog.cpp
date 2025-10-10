@@ -25,7 +25,6 @@
 #include "settings/rsharesettings.h"
 
 #include "retroshare/rsinit.h"
-#include "retroshare/rsnotify.h"
 
 #include <QLineEdit>
 #include <QMessageBox>

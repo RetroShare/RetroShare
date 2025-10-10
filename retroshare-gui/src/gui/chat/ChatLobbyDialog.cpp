@@ -45,7 +45,6 @@
 #include "util/HandleRichText.h"
 #include "util/RsQtVersion.h"
 
-#include "retroshare/rsnotify.h"
 #include "util/rstime.h"
 #include "util/DateTime.h"
 

@@ -40,7 +40,6 @@
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
-#include "retroshare/rsnotify.h"
 #include "retroshare/rsidentity.h"
 
 #include <QGridLayout>

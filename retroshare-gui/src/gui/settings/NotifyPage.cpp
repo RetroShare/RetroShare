@@ -21,7 +21,6 @@
 #include <rshare.h>
 #include "NotifyPage.h"
 
-#include <retroshare/rsnotify.h>
 #include <retroshare/rsplugin.h>
 #include "rsharesettings.h"
 

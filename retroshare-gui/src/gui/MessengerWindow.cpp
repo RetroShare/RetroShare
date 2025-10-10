@@ -29,7 +29,6 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsstatus.h>
-#include <retroshare/rsnotify.h>
 
 #include "rshare.h"
 #include "MessengerWindow.h"

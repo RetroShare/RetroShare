@@ -33,7 +33,6 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsbanlist.h>
-#include <retroshare/rsnotify.h>
 
 /*****
  * #define DEBUG_ITEM 1

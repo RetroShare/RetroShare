@@ -22,7 +22,6 @@
 #include <retroshare/rsgxsifacehelper.h>
 
 #include "notifyqt.h"
-#include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsmsgs.h>

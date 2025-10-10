@@ -101,7 +101,6 @@
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsfiles.h"
-#include "retroshare/rsnotify.h"
 #include "retroshare/rsinit.h"
 
 #include "gui/gxschannels/GxsChannelDialog.h"

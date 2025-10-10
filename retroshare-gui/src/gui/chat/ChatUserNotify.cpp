@@ -29,7 +29,6 @@
 #include "util/qtthreadsutils.h"
 
 #include <algorithm>
-#include <retroshare/rsnotify.h>
 #include <retroshare/rsmsgs.h>
 
 static std::map<ChatId, int> waitingChats;

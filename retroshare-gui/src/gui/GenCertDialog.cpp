@@ -39,7 +39,6 @@
 #include "retroshare/rstor.h"
 #include "retroshare/rsidentity.h"
 #include "retroshare/rsinit.h"
-#include "retroshare/rsnotify.h"
 #include "rsserver/rsaccounts.h"
 #include "util/rsrandom.h"
 

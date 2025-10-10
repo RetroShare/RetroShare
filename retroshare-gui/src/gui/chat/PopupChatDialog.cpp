@@ -32,7 +32,6 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsiface.h>
-#include <retroshare/rsnotify.h>
 
 #include <algorithm>
 

@@ -41,7 +41,6 @@
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsmsgs.h>
-#include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 
 #include <QApplication>

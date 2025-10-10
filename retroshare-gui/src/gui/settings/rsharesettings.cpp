@@ -37,7 +37,6 @@
 #include <retroshare/rsjsonapi.h>
 #endif
 
-#include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 
 #ifdef Q_OS_WIN
