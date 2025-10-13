@@ -77,7 +77,7 @@
 
 ChatWidget::ChatWidget(QWidget *parent)
   : QWidget(parent)
-  , completionPosition(0), newMessages(false), typing(false), peerStatus(RsStatusValue::RS_STATUS_UNKNOWN)
+  , completionPosition(0), newMessages(false), typing(false), peerStatus(RsStatusValue::RS_STATUS_OFFLINE)
   , sendingBlocked(false), useCMark(false)
   , lastStatusSendTime(0)
   , firstShow(true), inChatCharFormatChanged(false), firstSearch(true)

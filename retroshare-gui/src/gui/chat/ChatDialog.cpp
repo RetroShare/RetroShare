@@ -347,7 +347,7 @@ RsStatusValue ChatDialog::getPeerStatus()
 		return cw->getPeerStatus();
 	}
 
-    return RsStatusValue::RS_STATUS_UNKNOWN;
+    return RsStatusValue::RS_STATUS_OFFLINE;
 }
 
 QString ChatDialog::getTitle()

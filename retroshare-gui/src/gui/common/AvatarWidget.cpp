@@ -213,7 +213,7 @@ void AvatarWidget::refreshStatus()
     }
     case STATUS_FRAME:
     {
-        RsStatusValue status = RsStatusValue::RS_STATUS_UNKNOWN;
+        RsStatusValue status = RsStatusValue::RS_STATUS_OFFLINE;
 
         if (mId.isNotSet())
             return;
