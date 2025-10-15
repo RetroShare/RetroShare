@@ -29,7 +29,6 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsstatus.h>
-#include <retroshare/rsnotify.h>
 
 #include "rshare.h"
 #include "MessengerWindow.h"
@@ -40,6 +39,7 @@
 #include "notifyqt.h"
 #include "connect/ConnectFriendWizard.h"
 #include "util/PixmapMerging.h"
+#include "util/qtthreadsutils.h"
 #include "LogoBar.h"
 #include "util/Widget.h"
 #include "util/misc.h"
@@ -95,8 +95,26 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
 
     connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
 
-    connect(NotifyQt::getInstance(), SIGNAL(ownStatusMessageChanged()), this, SLOT(loadmystatusmessage()));
-    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateOwnStatus(QString,int)));
+    mEventHandlerId = 0;
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=](){
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+
+            if(!fe) return;
+
+            switch(fe->mEventCode)
+            {
+            case RsFriendListEventCode::NODE_STATUS_CHANGED: updateOwnStatus(QString::fromStdString(fe->mSslId.toStdString()),fe->mStatus);
+                break;
+            case RsFriendListEventCode::OWN_STATUS_CHANGED: loadmystatusmessage();
+                break;
+            default:
+                break;
+            }
+
+        }, this );
+    },mEventHandlerId,RsEventType::FRIEND_LIST);
 
         for (std::set<RsPgpId>::iterator peerIt = expandedPeers.begin(); peerIt != expandedPeers.end(); ++peerIt) {
             ui.friendList->addPeerToExpand(*peerIt);
@@ -159,6 +177,7 @@ MessengerWindow::~MessengerWindow ()
 {
     // save settings
     processSettings(false);
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 
     MainWindow *pMainWindow = MainWindow::getInstance();
     if (pMainWindow) {
@@ -214,7 +233,7 @@ void MessengerWindow::savestatusmessage()
     rsMsgs->setCustomStateString(ui.messagelineEdit->currentText().toUtf8().constData());
 }
 
-void MessengerWindow::updateOwnStatus(const QString &peer_id, int status)
+void MessengerWindow::updateOwnStatus(const QString &peer_id, RsStatusValue status)
 {
     // add self nick + own status
     if (peer_id == QString::fromStdString(rsPeers->getOwnId().toStdString()))

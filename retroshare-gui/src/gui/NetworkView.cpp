@@ -28,6 +28,7 @@
 #include <algorithm>
 
 #include "gui/elastic/elnode.h"
+#include "util/qtthreadsutils.h"
 
 /********
 * #define DEBUG_NETWORKVIEW
@@ -60,12 +61,32 @@ NetworkView::NetworkView(QWidget *parent)
   connect( ui.nameBox, SIGNAL(textChanged(QString)), this, SLOT(setNameSearch(QString)));
 
   _should_update = true ;
+
+  rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+  {
+      RsQThreadUtils::postToObject([=](){
+          auto ev = dynamic_cast<const RsGossipDiscoveryEvent *>(event.get());
+
+          if(!ev) return;
+
+          switch(ev->mGossipDiscoveryEventType)
+          {
+          case RsGossipDiscoveryEventType::DISCOVERY_INFO_RECEIVED: update();
+              [[fallthrough]];
+          default:
+              break;
+          }
+      }, this );
+  }, mEventHandlerId, RsEventType::GOSSIP_DISCOVERY );
+
 }
 
 NetworkView::~NetworkView()
 {
-	if(mScene != NULL)
-		delete mScene ;
+      rsEvents->unregisterEventsHandler(mEventHandlerId);
+
+      if(mScene != NULL)
+      delete mScene ;
 }
 
 void NetworkView::setEdgeLength(int l)

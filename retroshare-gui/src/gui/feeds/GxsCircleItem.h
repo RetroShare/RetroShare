@@ -37,7 +37,7 @@ class GxsCircleItem : public FeedItem
 public:
 
 	/** Default Constructor */
-	GxsCircleItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsCircleId &circleId, const RsGxsId &gxsId, const uint32_t type);
+    GxsCircleItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsCircleId &circleId, const RsGxsId &gxsId, RsFeedTypeFlags type);
 	virtual ~GxsCircleItem();
 
     uint64_t uniqueIdentifier() const override;
@@ -60,7 +60,7 @@ private slots:
 private:
 	void setup();
 
-	uint32_t mType;
+    RsFeedTypeFlags mType;
 
 	RsGxsCircleId mCircleId;
 	RsGxsId mGxsId;

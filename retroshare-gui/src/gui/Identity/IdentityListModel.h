@@ -168,7 +168,7 @@ public:
 
 	/* Color definitions (for standard see default.qss) */
 	QColor mTextColorGroup;
-	QColor mTextColorStatus[RS_STATUS_COUNT];
+    QColor mTextColorStatus[(int)RsStatusValue::RS_STATUS_COUNT];
 
     void setIdentities(const std::list<RsGroupMetaData>& identities_meta);
 

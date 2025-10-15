@@ -33,6 +33,7 @@
 
 #include "retroshare/rsidentity.h"
 #include "retroshare/rspeers.h"
+#include "retroshare/rsinit.h"
 #include "gui/common/FilesDefs.h"
 #include "util/imageutil.h"
 #include "util/RsQtVersion.h"
@@ -596,9 +597,9 @@ void IdEditDialog::createId()
 		std::string gpg_name = rsPeers->getGPGName(rsPeers->getGPGOwnId());
         bool cancelled;
 
-        rsNotify->clearPgpPassphrase(); // just in case
+        RsLoginHelper::clearPgpPassphrase(); // just in case
 
-        if(!NotifyQt::getInstance()->askForPassword(tr("Profile password needed.").toStdString(),
+        if(!RsLoginHelper::askForPassword(tr("Profile password needed.").toStdString(),
 		                                            gpg_name + " (" + rsPeers->getOwnId().toStdString() + ")",
 		                                            false,
 		                                            gpg_password,cancelled))
@@ -670,9 +671,9 @@ void IdEditDialog::updateId()
         std::string gpg_name = rsPeers->getGPGName(rsPeers->getGPGOwnId());
         bool cancelled;
 
-        rsNotify->clearPgpPassphrase(); // just in case
+        RsLoginHelper::clearPgpPassphrase(); // just in case
 
-        if(!NotifyQt::getInstance()->askForPassword(tr("Profile password needed.").toStdString(),
+        if(!RsLoginHelper::askForPassword(tr("Profile password needed.").toStdString(),
                                                     gpg_name + " (" + rsPeers->getOwnId().toStdString() + ")",
                                                     false,
                                                     gpg_password,cancelled))

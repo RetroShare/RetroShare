@@ -49,8 +49,8 @@ MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
     ui.editpushButton->setEnabled(false);
     ui.deletepushButton->setEnabled(false);
 
-    ui.openComboBox->addItem(tr("A new tab"), RshareSettings::MSG_OPEN_TAB);
-    ui.openComboBox->addItem(tr("A new window"), RshareSettings::MSG_OPEN_WINDOW);
+    ui.openComboBox->addItem(tr("A new tab"), (int)RsSettingsMsgOptions::MSG_OPEN_TAB);
+    ui.openComboBox->addItem(tr("A new window"), (int)RsSettingsMsgOptions::MSG_OPEN_WINDOW);
 
     // Font size
     QFontDatabase db;
@@ -97,7 +97,7 @@ void MessagePage::distantMsgsComboBoxChanged(int i)
 
 void MessagePage::updateMsgToReadOnActivate() { Settings->setMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked()); }
 void MessagePage::updateLoadEmbededImages()   { Settings->setMsgLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked()); }
-void MessagePage::updateMsgOpen()             { Settings->setMsgOpen( static_cast<RshareSettings::enumMsgOpen>(ui.openComboBox->itemData(ui.openComboBox->currentIndex()).toInt()) ); }
+void MessagePage::updateMsgOpen()             { Settings->setMsgOpen( (RsSettingsMsgOptions)(ui.openComboBox->itemData(ui.openComboBox->currentIndex()).toInt()) ); }
 void MessagePage::updateDistantMsgs()         { Settings->setValue("DistantMessages", ui.comboBox->currentIndex()); }
 void MessagePage::updateLoadEmoticons()       { Settings->setValueToGroup("Messages", "Emoticons", ui.emoticonscheckBox->isChecked()); }
 
@@ -128,7 +128,7 @@ MessagePage::load()
 {
     whileBlocking(ui.setMsgToReadOnActivate)->setChecked(Settings->getMsgSetToReadOnActivate());
     whileBlocking(ui.loadEmbeddedImages)->setChecked(Settings->getMsgLoadEmbeddedImages());
-    whileBlocking(ui.openComboBox)->setCurrentIndex(ui.openComboBox->findData(Settings->getMsgOpen()));
+    whileBlocking(ui.openComboBox)->setCurrentIndex(ui.openComboBox->findData((uint)Settings->getMsgOpen()));
     whileBlocking(ui.emoticonscheckBox)->setChecked(Settings->value("Emoticons", true).toBool());
 	whileBlocking(ui.minimumFontSize)->setCurrentIndex(ui.minimumFontSize->findData(Settings->getMessageFontSize()));
 

@@ -22,10 +22,12 @@
 #include <retroshare/rsgxsifacehelper.h>
 
 #include "notifyqt.h"
-#include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
+#include <retroshare/rsmsgs.h>
+#include <retroshare/rsinit.h>
 #include <util/rsdir.h>
+#include <util/qtthreadsutils.h>
 
 #include <retroshare-gui/RsAutoUpdatePage.h>
 
@@ -60,12 +62,12 @@
  * #define NOTIFY_DEBUG
  ****/
 
-/*static*/ NotifyQt *NotifyQt::_instance = NULL;
+/*static*/ NotifyQt *NotifyQt::_instance = nullptr;
 /*static*/ bool NotifyQt::_disableAllToaster = false;
 
 /*static*/ NotifyQt *NotifyQt::Create ()
 {
-    if (_instance == NULL) {
+    if (_instance == nullptr) {
         _instance = new NotifyQt ();
     }
 
@@ -102,143 +104,39 @@ NotifyQt::NotifyQt() : cDialog(NULL)
 		_enabled = false ;
 	}
 
-    // register to allow sending over Qt::QueuedConnection
-    qRegisterMetaType<ChatId>("ChatId");
-    qRegisterMetaType<ChatMessage>("ChatMessage");
-    qRegisterMetaType<RsGxsChanges>("RsGxsChanges");
-    qRegisterMetaType<RsGxsId>("RsGxsId");
-}
+#warning TODO: do we need a timer anymore??
 
-void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-	emit errorOccurred(list,type,QString::fromUtf8(msg.c_str())) ;
-}
+    // Catch all events that require toasters and
 
-void NotifyQt::notifyChatMessage(const ChatMessage &msg)
-{
+    mEventHandlerId = 0;
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
     {
-        QMutexLocker m(&_mutex) ;
-        if(!_enabled)
-            return ;
-    }
-
-#ifdef NOTIFY_DEBUG
-    std::cerr << "notifyQt: Received chat message " << std::endl ;
-#endif
-    emit chatMessageReceived(msg);
+        if(event->mType == RsEventType::SYSTEM && dynamic_cast<const RsSystemEvent*>(event.get())->mEventCode == RsSystemEventCode::PASSWORD_REQUESTED)
+            sync_handleIncomingEvent(event);
+        else
+            RsQThreadUtils::postToObject([=](){ async_handleIncomingEvent(event); }, this );
+    }, mEventHandlerId);	// No event type means we expect to catch all possible events
 }
 
-void NotifyQt::notifyOwnAvatarChanged()
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "Notifyqt:: notified that own avatar changed" << std::endl ;
-#endif
-	emit ownAvatarChanged() ;
-}
-
-class SignatureEventData
-{
-	public:
-		SignatureEventData(const void *_data,int32_t _len,unsigned int _signlen, std::string _reason)
-		{
-			// We need a new memory chnk because there's no guarranty _sign nor _signlen are not in the stack
-
-			sign = (unsigned char *)rs_malloc(_signlen) ;
-            
-            		if(!sign)
-		    {
-			    signlen = NULL ;
-			    signature_result = SELF_SIGNATURE_RESULT_FAILED ;
-			    return ;
-		    }
-                    
-			signlen = new unsigned int ;
-			*signlen = _signlen ;
-            signature_result = SELF_SIGNATURE_RESULT_PENDING ;
-			data = rs_malloc(_len) ;
-            
-            		if(!data)
-                    {
-                        len = 0 ;
-                        return ;
-                    }
-			len = _len ;
-			memcpy(data,_data,len) ;
-			reason = _reason ;
-		}
-
-		~SignatureEventData()
-		{
-			free(sign) ;
-			delete signlen ;
-			free(data) ;
-		}
-
-		void performSignature()
-        {
-            if(rsPeers->gpgSignData(data,len,sign,signlen,reason))
-                signature_result = SELF_SIGNATURE_RESULT_SUCCESS ;
-            else
-                signature_result = SELF_SIGNATURE_RESULT_FAILED ;
-        }
-
-		void *data ;
-		uint32_t len ;
-		unsigned char *sign ;
-		unsigned int *signlen ;
-		int signature_result ;		// 0=pending, 1=done, 2=failed/cancelled.
-		std::string reason ;
-};
-
-void NotifyQt::handleSignatureEvent()
-{
-	std::cerr << "NotifyQt:: performing a deferred signature in the main GUI thread." << std::endl;
-
-	static bool working = false ;
-
-	if(!working)
-	{
-		working = true ;
-
-	for(std::map<std::string,SignatureEventData*>::const_iterator it(_deferred_signature_queue.begin());it!=_deferred_signature_queue.end();++it)
-		it->second->performSignature() ;
-
-	working = false ;
-	}
-}
-
-
-
-bool NotifyQt::askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password,bool& cancelled)
+bool NotifyQt::GUI_askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad)
 {
 	RsAutoUpdatePage::lockAllEvents() ;
 
 	QString windowTitle;
-	if (title == "") {
+    if (title == "")
 		windowTitle = tr("Passphrase required");
-	} else if (title == "AuthSSLimpl::SignX509ReqWithGPG()") {
+    else if (title == "AuthSSLimpl::SignX509ReqWithGPG()")
 		windowTitle = tr("You need to sign your node's certificate.");
-	} else if (title == "p3IdService::service_CreateGroup()") {
+    else if (title == "p3IdService::service_CreateGroup()")
 		windowTitle = tr("You need to sign your forum/chatrooms identity.");
-	} else {
+    else
 		windowTitle = QString::fromStdString(title);
-	}
 
 	QString labelText = ( prev_is_bad ? QString("%1<br/><br/>").arg(tr("Wrong password !")) : QString() )
 	                    + QString("<b>%1</b><br/>Profile: <i>%2</i>\n")
 	                             .arg( tr("Please enter your Retroshare passphrase")
 	                                 , QString::fromUtf8(key_details.c_str()) );
+
 	QLineEdit::EchoMode textEchoMode = QLineEdit::Password;
 	bool modal = true;
 
@@ -254,25 +152,26 @@ bool NotifyQt::askForPassword(const std::string& title, const std::string& key_d
 	                         , Q_ARG(QLineEdit::EchoMode, textEchoMode)
 	                         , Q_ARG(bool,                modal)
 	                          );
-
-	cancelled = false ;
+    //cancelled = false ;
 
 	RsAutoUpdatePage::unlockAllEvents() ;
 
-	if (ret.execReturn == QDialog::Rejected) {
-		password.clear() ;
-		cancelled = true ;
+    if (ret.execReturn == QDialog::Rejected) {
+        RsLoginHelper::clearPgpPassphrase();
+        //cancelled = true ;
 		return true ;
 	}
 
 	if (ret.execReturn == QDialog::Accepted) {
-		password = ret.textValue.toUtf8().constData();
-		return true;
+        auto password = ret.textValue.toUtf8().constData();
+        RsLoginHelper::cachePgpPassphrase(password);
+        return true;
 	}
 
-	return false;
+    RsLoginHelper::clearPgpPassphrase();
+    return false;
 }
-bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, const std::string& plugin_file_hash, bool first_time)
+bool NotifyQt::GUI_askForPluginConfirmation(const std::string& plugin_file_name, const RsFileHash& plugin_file_hash, bool first_time)
 {
 	// By default, when no information is known about plugins, just dont load them. They will be enabled from the GUI by the user.
 
@@ -287,7 +186,7 @@ bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, con
 	QString text ;
 	text += tr( "RetroShare has detected an unregistered plugin. This happens in two cases:<UL><LI>Your RetroShare executable has changed.</LI><LI>The plugin has changed</LI></UL>Click on Yes to authorize this plugin, or No to deny it. You can change your mind later in Options -> Plugins, then restart." ) ;
 	text += "<UL>" ;
-	text += "<LI>Hash:\t" + QString::fromStdString(plugin_file_hash) + "</LI>" ;
+    text += "<LI>Hash:\t" + QString::fromStdString(plugin_file_hash.toStdString()) + "</LI>" ;
 	text += "<LI>File:\t" + QString::fromStdString(plugin_file_name) + "</LI>";
 	text += "</UL>" ;
 
@@ -299,369 +198,13 @@ bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, con
 
 	RsAutoUpdatePage::unlockAllEvents() ;
 
-	if (ret == QMessageBox::Yes) 
-		return true ;
-	else
-		return false;
-}
-
-void NotifyQt::notifyDiscInfoChanged()
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "Notifyqt:: notified that discoveryInfo changed" << std::endl ;
-#endif
-
-	emit discInfoChanged() ;
-}
-
-void NotifyQt::notifyDiskFull(uint32_t loc,uint32_t size_in_mb)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-	std::cerr << "Notifyqt:: notified that disk is full" << std::endl ;
-
-	emit diskFull(loc,size_in_mb) ;
-}
-
-/* peer has changed the state */
-void NotifyQt::notifyPeerStatusChanged(const std::string& peer_id, uint32_t state)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "Notifyqt:: notified that peer " << peer_id << " has changed the state to " << state << std::endl;
-#endif
-
-	emit peerStatusChanged(QString::fromStdString(peer_id), state);
-}
-
-/* one or more peers has changed the states */
-void NotifyQt::notifyPeerStatusChangedSummary()
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "Notifyqt:: notified that one peer has changed the state" << std::endl;
-#endif
-
-	emit peerStatusChangedSummary();
-}
-
-void NotifyQt::notifyOwnStatusMessageChanged()
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "Notifyqt:: notified that own avatar changed" << std::endl ;
-#endif
-	emit ownStatusMessageChanged() ;
-}
-
-void NotifyQt::notifyPeerHasNewAvatar(std::string peer_id)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-#ifdef NOTIFY_DEBUG
-	std::cerr << "notifyQt: notification of new avatar." << std::endl ;
-#endif
-	emit peerHasNewAvatar(QString::fromStdString(peer_id)) ;
-}
-
-void NotifyQt::notifyCustomState(const std::string& peer_id, const std::string& status_string)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "notifyQt: Received custom status string notification" << std::endl ;
-#endif
-	emit peerHasNewCustomStateString(QString::fromStdString(peer_id), QString::fromUtf8(status_string.c_str())) ;
-}
-
-void NotifyQt::notifyChatLobbyTimeShift(int shift)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "notifyQt: Received chat lobby time shift message: shift = " << shift << std::endl;
-#endif
-	emit chatLobbyTimeShift(shift) ;
-}
-
-void NotifyQt::handleChatLobbyTimeShift(int /*shift*/)
-{
-	return ; // we say nothing. The help dialog of lobbies explains this already.
-	static bool already = false ;
-
-	if(!already)
-	{
-		already = true ;
-
-		QString string = tr("For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends).") ;
-
-		QMessageBox::warning(NULL,tr("Please check your system clock."),string) ;
-	}
-}
-
-void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const RsGxsId& nickname,const std::string& str)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "notifyQt: Received chat lobby event message: lobby #" << std::hex << lobby_id  << std::dec << ", event=" << event_type << ", str=\"" << str << "\"" << std::endl ;
-#endif
-    emit chatLobbyEvent(lobby_id,event_type,nickname,QString::fromUtf8(str.c_str())) ;
-}
-
-void NotifyQt::notifyChatStatus(const ChatId& chat_id,const std::string& status_string)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "notifyQt: Received chat status string: " << status_string << std::endl ;
-#endif
-    emit chatStatusChanged(chat_id, QString::fromUtf8(status_string.c_str()));
-}
-
-void NotifyQt::notifyChatCleared(const ChatId& chat_id)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "notifyQt: Received chat cleared." << std::endl ;
-#endif
-	emit chatCleared(chat_id);
-}
-
-void NotifyQt::notifyTurtleSearchResult(uint32_t /*search_id*/,const std::list<TurtleGxsInfo>& /*found_groups*/)
-{
-    std::cerr << "(EE) missing code to handle GXS turtle search result." << std::endl;
-}
-
-#ifdef TO_REMOVE
-// Mai 2023: distant turtle search now uses RsEvents.
-void NotifyQt::notifyTurtleSearchResult(const RsPeerId& pid,uint32_t search_id,const std::list<TurtleFileInfo>& files)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "in notify search result..." << std::endl ;
-#endif
-
-	for(std::list<TurtleFileInfo>::const_iterator it(files.begin());it!=files.end();++it)
-	{
-		FileDetail det ;
-		det.rank = 0 ;
-		det.age = 0 ;
-		det.name = (*it).name ;
-		det.hash = (*it).hash ;
-		det.size = (*it).size ;
-		det.id   = pid ;
-
-		emit gotTurtleSearchResult(search_id,det) ;
-	}
-}
-#endif
-
-void NotifyQt::notifyHistoryChanged(uint32_t msgId, int type)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-	emit historyChanged(msgId, type);
-}
-
-void NotifyQt::notifyListChange(int list, int type)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-#ifdef NOTIFY_DEBUG
-	std::cerr << "NotifyQt::notifyListChange()" << std::endl;
-#endif
-	switch(list)
-	{
-		case NOTIFY_LIST_NEIGHBOURS:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received neighbours changed" << std::endl ;
-#endif
-			emit neighboursChanged();
-			break;
-		case NOTIFY_LIST_FRIENDS:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received friends changed" << std::endl ;
-#endif
-			emit friendsChanged() ;
-			break;
-		case NOTIFY_LIST_DIRLIST_LOCAL:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received files changed" << std::endl ;
-#endif
-			emit filesPostModChanged(true) ;  /* Local */
-			break;
-		case NOTIFY_LIST_CHAT_LOBBY_INVITATION:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received files changed" << std::endl ;
-#endif
-			emit chatLobbyInviteReceived() ;  /* Local */
-			break;
-		case NOTIFY_LIST_DIRLIST_FRIENDS:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received files changed" << std::endl ;
-#endif
-			emit filesPostModChanged(false) ;  /* Local */
-			break;
-		case NOTIFY_LIST_SEARCHLIST:
-			break;
-		case NOTIFY_LIST_CHANNELLIST:
-			break;
-		case NOTIFY_LIST_TRANSFERLIST:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received transfer changed" << std::endl ;
-#endif
-			emit transfersChanged() ;
-			break;
-		case NOTIFY_LIST_CONFIG:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received config changed" << std::endl ;
-#endif
-			emit configChanged() ;
-			break ;
-
-#ifdef REMOVE
-		case NOTIFY_LIST_FORUMLIST_LOCKED:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received forum msg changed" << std::endl ;
-#endif
-			emit forumsChanged(); // use connect with Qt::QueuedConnection
-			break;
-		case NOTIFY_LIST_CHANNELLIST_LOCKED:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received channel msg changed" << std::endl ;
-#endif
-			emit channelsChanged(type); // use connect with Qt::QueuedConnection
-			break;
-		case NOTIFY_LIST_PUBLIC_CHAT:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received public chat changed" << std::endl ;
-#endif
-			emit publicChatChanged(type);
-			break;
-		case NOTIFY_LIST_PRIVATE_INCOMING_CHAT:
-		case NOTIFY_LIST_PRIVATE_OUTGOING_CHAT:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received private chat changed" << std::endl ;
-#endif
-			emit privateChatChanged(list, type);
-			break;
-#endif
-
-		case NOTIFY_LIST_CHAT_LOBBY_LIST:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received notify chat lobby list" << std::endl;
-#endif
-			emit lobbyListChanged();
-			break;
-
-		case NOTIFY_LIST_GROUPLIST:
-#ifdef NOTIFY_DEBUG
-			std::cerr << "received groups changed" << std::endl ;
-#endif
-			emit groupsChanged(type);
-			break;
-		default:
-			break;
-	}
-	return;
-}
-
-void NotifyQt::notifyListPreChange(int list, int /*type*/)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "NotifyQt::notifyListPreChange()" << std::endl;
-#endif
-	switch(list)
-	{
-		case NOTIFY_LIST_NEIGHBOURS:
-			break;
-		case NOTIFY_LIST_FRIENDS:
-			emit friendsChanged() ;
-			break;
-		case NOTIFY_LIST_DIRLIST_FRIENDS:
-			emit filesPreModChanged(false) ;	/* remote */
-			break ;
-		case NOTIFY_LIST_DIRLIST_LOCAL:
-			emit filesPreModChanged(true) ;	/* local */
-			break;
-		case NOTIFY_LIST_SEARCHLIST:
-			break;
-		case NOTIFY_LIST_CHANNELLIST:
-			break;
-		case NOTIFY_LIST_TRANSFERLIST:
-			break;
-		default:
-			break;
-	}
-	return;
+    if (ret == QMessageBox::Yes)
+        return true;
+    else
+    {
+        rsPlugins->disablePlugin(plugin_file_hash);
+        return false;
+    }
 }
 
 void NotifyQt::enable()
@@ -671,205 +214,196 @@ void NotifyQt::enable()
 	_enabled = true ;
 }
 
-void NotifyQt::UpdateGUI()
+void NotifyQt::sync_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
 {
-	if(RsAutoUpdatePage::eventsLocked())
-		return ;
+    auto ev6 = dynamic_cast<const RsSystemEvent*>(event.get());
 
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
+    if(ev6->mEventCode == RsSystemEventCode::PASSWORD_REQUESTED)
+        GUI_askForPassword(ev6->passwd_request_title, ev6->passwd_request_key_details, ev6->passwd_request_prev_is_bad);
+    else if(ev6->mEventCode == RsSystemEventCode::NEW_PLUGIN_FOUND)
+        GUI_askForPluginConfirmation(ev6->plugin_file_name, ev6->plugin_file_hash, ev6->plugin_first_time);
+}
 
-	static bool already_updated = false ;	// these only update once at start because they may already have been set before 
-														// the gui is running, then they get updated by callbacks.
-	if(!already_updated)
-	{
-		emit neighboursChanged();
-		emit configChanged();
-
-		already_updated = true ;
-	}
-	
+void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
+{
 	/* Finally Check for PopupMessages / System Error Messages */
 
-	if (rsNotify)
-	{
-		uint32_t sysid;
-		uint32_t type;
-        std::string title, id, msg;
+    RsNotifyPopupFlags popupflags = (RsNotifyPopupFlags)Settings->getNotifyFlags();
 
-		/* You can set timeToShow, timeToLive and timeToHide or can leave the standard */
-		ToasterItem *toaster = NULL;
-		if (rsNotify->NotifyPopupMessage(type, id, title, msg))
-		{
-			uint popupflags = Settings->getNotifyFlags();
+    auto insertToaster = [this](ToasterItem *toaster) {
 
-			switch(type)
-			{
-				case RS_POPUP_ENCRYPTED_MSG:
-					SoundManager::play(SOUND_MESSAGE_ARRIVED);
+            /* init attributes */
+            toaster->widget->setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint);
 
-					if ((popupflags & RS_POPUP_MSG) && !_disableAllToaster)
-					{
-						toaster = new ToasterItem(new MessageToaster("", tr("Encrypted message"), QString("[%1]").arg(tr("Encrypted message"))));
-					}
-					break;
-				case RS_POPUP_MSG:
-					SoundManager::play(SOUND_MESSAGE_ARRIVED);
+            /* add toaster to waiting list */
+            waitingToasterList.push_back(toaster);
+    };
 
-					if ((popupflags & RS_POPUP_MSG) && !_disableAllToaster)
-					{
-						toaster = new ToasterItem(new MessageToaster(id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
-					}
-					break;
-				case RS_POPUP_CONNECT:
-					SoundManager::play(SOUND_USER_ONLINE);
+    // check for all possibly handled events
 
-					if ((popupflags & RS_POPUP_CONNECT) && !_disableAllToaster)
-					{
-						toaster = new ToasterItem(new OnlineToaster(RsPeerId(id)));
-					}
-					break;
-				case RS_POPUP_DOWNLOAD:
-					SoundManager::play(SOUND_DOWNLOAD_COMPLETE);
+    auto ev1 = dynamic_cast<const RsMailStatusEvent*>(event.get());
 
-					if ((popupflags & RS_POPUP_DOWNLOAD) && !_disableAllToaster)
-					{
-						/* id = file hash */
-						toaster = new ToasterItem(new DownloadToaster(RsFileHash(id), QString::fromUtf8(title.c_str())));
-					}
-					break;
-				case RS_POPUP_CHAT:
-					if ((popupflags & RS_POPUP_CHAT) && !_disableAllToaster)
-					{
-                        // TODO: fix for distant chat, look up if dstant chat uses RS_POPUP_CHAT
-                        ChatDialog *chatDialog = ChatDialog::getChat(ChatId(RsPeerId(id)));
-						ChatWidget *chatWidget;
-						if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
-							// do not show when active
-							break;
-						}
-                        toaster = new ToasterItem(new ChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
-					}
-					break;
-				case RS_POPUP_GROUPCHAT:
+    if(ev1)
+    {
+        if(ev1->mMailStatusEventCode == RsMailStatusEventCode::NEW_MESSAGE)
+        {
+            SoundManager::play(SOUND_MESSAGE_ARRIVED);
+
+            if((!!(popupflags & RsNotifyPopupFlags::RS_POPUP_MSG)) && !_disableAllToaster)
+            {
+                for(auto msgid:ev1->mChangedMsgIds)
+                {
+                    Rs::Msgs::MessageInfo msgInfo;
+                    if(rsMsgs->getMessage(msgid, msgInfo))
+                        insertToaster(new ToasterItem(new MessageToaster(msgInfo.from.toStdString(), QString::fromUtf8(msgInfo.title.c_str()), QString::fromUtf8(msgInfo.msg.c_str()))));
+                }
+            }
+        }
+        return;
+    }
+
+    auto ev2 = dynamic_cast<const RsFriendListEvent*>(event.get());
+
+    if(ev2)
+    {
+        if(ev2->mEventCode == RsFriendListEventCode::NODE_CONNECTED)
+        {
+            SoundManager::play(SOUND_USER_ONLINE);
+
+            if ((!!(popupflags & RsNotifyPopupFlags::RS_POPUP_CONNECT)) && !_disableAllToaster)
+                insertToaster(new ToasterItem(new OnlineToaster(ev2->mSslId)));
+        }
+        return;
+    }
+
+    auto ev3 = dynamic_cast<const RsFileTransferEvent*>(event.get());
+
+    if(ev3)
+    {
+        if(ev3->mFileTransferEventCode == RsFileTransferEventCode::DOWNLOAD_COMPLETE)
+        {
+            SoundManager::play(SOUND_DOWNLOAD_COMPLETE);
+
+            if ((!!(popupflags & RsNotifyPopupFlags::RS_POPUP_DOWNLOAD)) && !_disableAllToaster)
+                insertToaster(new ToasterItem(new DownloadToaster(ev3->mHash)));
+        }
+        return;
+    }
+
+    auto ev4 = dynamic_cast<const RsAuthSslConnectionAutenticationEvent*>(event.get());
+
+    if(ev4)
+    {
+        if(ev4->mErrorCode == RsAuthSslError::NOT_A_FRIEND)
+        {
+            if ((!!(popupflags & RsNotifyPopupFlags::RS_POPUP_CONNECT_ATTEMPT)) && !_disableAllToaster)
+                        // id = gpgid
+                        // title = ssl name
+                        // msg = peer id
+                insertToaster(new ToasterItem(new FriendRequestToaster(ev4->mPgpId, ev4->mSslId)));
+        }
+        return;
+    }
+
+    auto ev5 = dynamic_cast<const RsChatServiceEvent*>(event.get());
+
+    if(ev5)
+    {
+        // This code below should be simplified.  In particular GroupChatToaster, ChatToaster and ChatLobbyToaster should be only one class.
+
+        if(ev5->mEventCode == RsChatServiceEventCode::CHAT_MESSAGE_RECEIVED)
+        {
+            if (ev5->mCid.isPeerId() && (!!(popupflags & RsNotifyPopupFlags::RS_POPUP_CHAT)) && !_disableAllToaster)
+            {
+                // TODO: fix for distant chat, look up if dstant chat uses RS_POPUP_CHAT
+                ChatDialog *chatDialog = ChatDialog::getChat(ev5->mCid);
+                ChatWidget *chatWidget;
+
+                if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive())  // do not show when active
+                            return;
+
+                insertToaster(new ToasterItem(new ChatToaster(ev5->mCid.toPeerId(), QString::fromUtf8(ev5->mMsg.msg.c_str()))));
+            }
 #ifdef RS_DIRECT_CHAT
-					if ((popupflags & RS_POPUP_GROUPCHAT) && !_disableAllToaster)
-					{
-						MainWindow *mainWindow = MainWindow::getInstance();
-						if (mainWindow && mainWindow->isActiveWindow() && !mainWindow->isMinimized()) {
-							if (MainWindow::getActivatePage() == MainWindow::Friends) {
-								if (FriendsDialog::isGroupChatActive()) {
-									// do not show when active
-									break;
-								}
-							}
-						}
-						toaster = new ToasterItem(new GroupChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
-					}
-#endif // RS_DIRECT_CHAT
-					break;
-				case RS_POPUP_CHATLOBBY:
-					if ((popupflags & RS_POPUP_CHATLOBBY) && !_disableAllToaster)
-					{
-                        ChatId chat_id(id);
+            else if (ev5->mCid.isBroadcast() && (!!(popupflags & RsNotifyPopupFlags::RS_POPUP_GROUPCHAT)) && !_disableAllToaster)
+            {
+                MainWindow *mainWindow = MainWindow::getInstance();
+                if (mainWindow && mainWindow->isActiveWindow() && !mainWindow->isMinimized()
+                        && (MainWindow::getActivatePage() == MainWindow::Friends)  && (FriendsDialog::isGroupChatActive()))
+                    return;
 
-                        ChatDialog *chatDialog = ChatDialog::getChat(chat_id);
-						ChatWidget *chatWidget;
-                        if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
-                            // do not show when active
-                            break;
-                        }
-                        ChatLobbyDialog *chatLobbyDialog = dynamic_cast<ChatLobbyDialog*>(chatDialog);
+                insertToaster(new ToasterItem(new GroupChatToaster(ev5->mCid.toPeerId(), QString::fromUtf8(ev5->mMsg.msg.c_str()))));
+            }
+#endif
+            else if (ev5->mCid.isLobbyId() && (!!(popupflags & RsNotifyPopupFlags::RS_POPUP_CHATLOBBY)) && !_disableAllToaster)
+            {
+                ChatDialog *chatDialog = ChatDialog::getChat(ev5->mCid);
+                ChatWidget *chatWidget;
 
-						RsGxsId sender(title);
-						if (!chatLobbyDialog || chatLobbyDialog->isParticipantMuted(sender))
-                            break; // participant is muted
+                if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive())
+                    return;
 
-                        toaster = new ToasterItem(new ChatLobbyToaster(chat_id.toLobbyId(), sender, QString::fromUtf8(msg.c_str())));
-					}
-					break;
-				case RS_POPUP_CONNECT_ATTEMPT:
-					if ((popupflags & RS_POPUP_CONNECT_ATTEMPT) && !_disableAllToaster)
-					{
-						// id = gpgid
-						// title = ssl name
-						// msg = peer id
-						toaster = new ToasterItem(new FriendRequestToaster(RsPgpId(id), QString::fromUtf8(title.c_str()), RsPeerId(msg)));
-					}
-					break;
-			}
-		}
+                ChatLobbyDialog *chatLobbyDialog = dynamic_cast<ChatLobbyDialog*>(chatDialog);
 
-		/*Now check Plugins*/
-		if (!toaster) {
-			int pluginCount = rsPlugins->nbPlugins();
-			for (int i = 0; i < pluginCount; ++i) {
-				RsPlugin *rsPlugin = rsPlugins->plugin(i);
-				if (rsPlugin) {
-					ToasterNotify *toasterNotify = rsPlugin->qt_toasterNotify();
-					if (toasterNotify) {
-						toaster = toasterNotify->toasterItem();
-						continue;
-					}
-				}
-			}
-		}
+                if (!chatLobbyDialog || chatLobbyDialog->isParticipantMuted(ev5->mMsg.lobby_peer_gxs_id))
+                    return;
 
-		if (toaster) {
-			/* init attributes */
-			toaster->widget->setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint);
+                insertToaster(new ToasterItem(new ChatLobbyToaster(ev5->mCid.toLobbyId(), ev5->mMsg.lobby_peer_gxs_id, QString::fromUtf8(ev5->mMsg.msg.c_str()))));
+            }
+            else
+                return;
+        }
 
-			/* add toaster to waiting list */
-			//QMutexLocker lock(&waitingToasterMutex);
-			waitingToasterList.push_back(toaster);
-		}
+        return;
+    }
 
-		if (rsNotify->NotifySysMessage(sysid, type, title, msg))
-		{
-			/* make a warning message */
-			switch(type)
-			{
-				case RS_SYS_ERROR:
-					QMessageBox::critical(MainWindow::getInstance(),
-							QString::fromUtf8(title.c_str()),
-							QString::fromUtf8(msg.c_str()));
-					break;
-				case RS_SYS_WARNING:
-					QMessageBox::warning(MainWindow::getInstance(),
-							QString::fromUtf8(title.c_str()),
-							QString::fromUtf8(msg.c_str()));
-					break;
-				default:
-				case RS_SYS_INFO:
-					QMessageBox::information(MainWindow::getInstance(),
-							QString::fromUtf8(title.c_str()),
-							QString::fromUtf8(msg.c_str()));
-					break;
-			}
-		}
+    auto ev6 = dynamic_cast<const RsSystemEvent*>(event.get());
 
-		if (rsNotify->NotifyLogMessage(sysid, type, title, msg))
-		{
-			/* make a log message */
-			std::string logMesString = title + " " + msg;
-			switch(type)
-			{
-				case RS_SYS_ERROR:
-				case RS_SYS_WARNING:
-				case RS_SYS_INFO:
-					emit logInfoChanged(QString::fromUtf8(logMesString.c_str()));
-			}
-		}
-	}
+    if(ev6)
+    {
+            switch(ev6->mEventCode)
+            {
+            case RsSystemEventCode::TIME_SHIFT_PROBLEM:
+                displayErrorMessage(RsNotifySysFlags::RS_SYS_WARNING,tr("System time mismatch"),tr("Time shift problem notification. Make sure your machine is on time, because it will break chat rooms."));
+                break;
+
+            case RsSystemEventCode::DISK_SPACE_ERROR:
+                displayDiskSpaceWarning(ev6->mDiskErrorLocation,ev6->mDiskErrorSizeLimit);
+                break;
+
+            case RsSystemEventCode::DATA_STREAMING_ERROR:
+            case RsSystemEventCode::GENERAL_ERROR:
+                displayErrorMessage(RsNotifySysFlags::RS_SYS_WARNING,tr("Internal error"),QString::fromUtf8(ev6->mErrorMsg.c_str()));
+                break;
+            default: break;
+            }
+            return;
+    };
+
+
+    /*Now check Plugins*/
+
+    if(rsPlugins)	// rsPlugins may not be initialized yet if we're handlign TorManager events.
+    {
+        int pluginCount = rsPlugins->nbPlugins();
+
+        for (int i = 0; i < pluginCount; ++i) {
+            RsPlugin *rsPlugin = rsPlugins->plugin(i);
+            if (rsPlugin) {
+                ToasterNotify *toasterNotify = rsPlugin->qt_toasterNotify();
+                if (toasterNotify) {
+                    insertToaster(toasterNotify->toasterItem());
+                    continue;
+                }
+            }
+        }
+    }
 
 	/* Now start the waiting toasters */
 	startWaitingToasters();
 }
 
-void NotifyQt::testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin)
+void NotifyQt::testToasters(RsNotifyPopupFlags notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin)
 {
 	QString title = tr("Test");
 	QString message = tr("This is a test.");
@@ -878,37 +412,38 @@ void NotifyQt::testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosit
 	RsPgpId pgpid = rsPeers->getGPGOwnId();
 
 	uint pos = 0;
+    uint nf = (uint)notifyFlags;
 
-	while (notifyFlags) {
-		uint type = notifyFlags & (1 << pos);
-		notifyFlags &= ~(1 << pos);
+    while (nf) {
+        uint type = nf & (1 << pos);
+        nf &= ~(1 << pos);
 		++pos;
 
 		ToasterItem *toaster = NULL;
 
 		switch(type)
 		{
-			case RS_POPUP_ENCRYPTED_MSG:
+            case (int)RsNotifyPopupFlags::RS_POPUP_ENCRYPTED_MSG:
 				toaster = new ToasterItem(new MessageToaster(std::string(), tr("Unknown title"), QString("[%1]").arg(tr("Encrypted message"))));
 				break;
-			case RS_POPUP_MSG:
+            case (int)RsNotifyPopupFlags::RS_POPUP_MSG:
 				toaster = new ToasterItem(new MessageToaster(id.toStdString(), title, message));
 				break;
-			case RS_POPUP_CONNECT:
+            case (int)RsNotifyPopupFlags::RS_POPUP_CONNECT:
 				toaster = new ToasterItem(new OnlineToaster(id));
 				break;
-			case RS_POPUP_DOWNLOAD:
-                toaster = new ToasterItem(new DownloadToaster(RsFileHash::random(), title));
+            case (int)RsNotifyPopupFlags::RS_POPUP_DOWNLOAD:
+                toaster = new ToasterItem(new DownloadToaster(RsFileHash::random()));
 				break;
-			case RS_POPUP_CHAT:
+            case (int)RsNotifyPopupFlags::RS_POPUP_CHAT:
                 toaster = new ToasterItem(new ChatToaster(id, message));
 				break;
-			case RS_POPUP_GROUPCHAT:
+            case (int)RsNotifyPopupFlags::RS_POPUP_GROUPCHAT:
 #ifdef RS_DIRECT_CHAT
 				toaster = new ToasterItem(new GroupChatToaster(id, message));
 #endif // RS_DIRECT_CHAT
 				break;
-			case RS_POPUP_CHATLOBBY:
+            case (int)RsNotifyPopupFlags::RS_POPUP_CHATLOBBY:
 				{
 					std::list<RsGxsId> gxsid;
 					if(rsIdentity->getOwnIds(gxsid) && (gxsid.size() > 0)){
@@ -916,8 +451,8 @@ void NotifyQt::testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosit
 					}
 					break;
 				}
-			case RS_POPUP_CONNECT_ATTEMPT:
-				toaster = new ToasterItem(new FriendRequestToaster(pgpid, title, id));
+            case (int)RsNotifyPopupFlags::RS_POPUP_CONNECT_ATTEMPT:
+                toaster = new ToasterItem(new FriendRequestToaster(pgpid, id));
 				break;
 		}
 
@@ -928,7 +463,7 @@ void NotifyQt::testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosit
 			toaster->margin = margin;
 
 			/* add toaster to waiting list */
-			//QMutexLocker lock(&waitingToasterMutex);
+
 			waitingToasterList.push_back(toaster);
 		}
 	}
@@ -971,7 +506,7 @@ void NotifyQt::testToaster(QString tag, ToasterNotify *toasterNotify, /*RshareSe
 		toaster->margin = margin;
 
 		/* add toaster to waiting list */
-		//QMutexLocker lock(&waitingToasterMutex);
+
 		waitingToasterList.push_back(toaster);
 	}
 }
@@ -1005,8 +540,6 @@ void NotifyQt::notifySettingsChanged()
 void NotifyQt::startWaitingToasters()
 {
 	{
-		//QMutexLocker lock(&waitingToasterMutex);
-
 		if (waitingToasterList.empty()) {
 			/* No toasters are waiting */
 			return;
@@ -1014,8 +547,6 @@ void NotifyQt::startWaitingToasters()
 	}
 
 	{
-		//QMutexLocker lock(&runningToasterMutex);
-
 		if (runningToasterList.size() >= 3) {
 			/* Don't show more than 3 toasters at once */
 			return;
@@ -1025,8 +556,6 @@ void NotifyQt::startWaitingToasters()
 	ToasterItem *toaster = NULL;
 
 	{
-		//QMutexLocker lock(&waitingToasterMutex);
-
 		if (waitingToasterList.size()) {
 			/* Take one toaster of the waiting list */
 			toaster = waitingToasterList.front();
@@ -1035,7 +564,6 @@ void NotifyQt::startWaitingToasters()
 	}
 
 	if (toaster) {
-		//QMutexLocker lock(&runningToasterMutex);
 
 		/* Calculate positions */
 		QSize size = toaster->widget->size();
@@ -1164,123 +692,44 @@ void NotifyQt::runningTick()
 	}
 }
 
-void NotifyQt::addToaster(uint notifyFlags, const std::string& id, const std::string& title, const std::string& msg)
+void NotifyQt::displayErrorMessage(RsNotifySysFlags type,const QString& title,const QString& error_msg)
 {
-	uint pos = 0;
+    /* make a warning message */
+    switch(type)
+    {
+    case RsNotifySysFlags::RS_SYS_ERROR: 		QMessageBox::critical(MainWindow::getInstance(),title,error_msg);
+        break;
 
-	while (notifyFlags) {
-		uint type = notifyFlags & (1 << pos);
-		notifyFlags &= ~(1 << pos);
-		++pos;
+    case RsNotifySysFlags::RS_SYS_WARNING: 	QMessageBox::warning(MainWindow::getInstance(),title,error_msg);
+        break;
 
-		ToasterItem *toaster = NULL;
+    case RsNotifySysFlags::RS_SYS_INFO: 		QMessageBox::information(MainWindow::getInstance(),title,error_msg);
+        break;
 
-		uint popupflags = Settings->getNotifyFlags();
-
-		switch(type)
-		{
-			case RS_POPUP_ENCRYPTED_MSG:
-				SoundManager::play(SOUND_MESSAGE_ARRIVED);
-
-				if ((popupflags & RS_POPUP_MSG) && !_disableAllToaster)
-				{
-					toaster = new ToasterItem(new MessageToaster(std::string(), tr("Unknown title"), QString("[%1]").arg(tr("Encrypted message"))));
-				}
-				break;
-			case RS_POPUP_MSG:
-				SoundManager::play(SOUND_MESSAGE_ARRIVED);
-
-				if ((popupflags & RS_POPUP_MSG) && !_disableAllToaster)
-				{
-					toaster = new ToasterItem(new MessageToaster(id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
-				}
-				break;
-			case RS_POPUP_CONNECT:
-				SoundManager::play(SOUND_USER_ONLINE);
-
-				if ((popupflags & RS_POPUP_CONNECT) && !_disableAllToaster)
-				{
-					toaster = new ToasterItem(new OnlineToaster(RsPeerId(id)));
-				}
-				break;
-			case RS_POPUP_DOWNLOAD:
-				SoundManager::play(SOUND_DOWNLOAD_COMPLETE);
-
-				if ((popupflags & RS_POPUP_DOWNLOAD) && !_disableAllToaster)
-				{
-					toaster = new ToasterItem(new DownloadToaster(RsFileHash(id), QString::fromUtf8(title.c_str())));
-				}
-				break;
-			case RS_POPUP_CHAT:
-				if ((popupflags & RS_POPUP_CHAT) && !_disableAllToaster)
-				{
-					// TODO: fix for distant chat, look up if dstant chat uses RS_POPUP_CHAT
-					ChatDialog *chatDialog = ChatDialog::getChat(ChatId(RsPeerId(id)));
-					ChatWidget *chatWidget;
-					if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
-						// do not show when active
-						break;
-					}
-					toaster = new ToasterItem(new ChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
-				}
-			case RS_POPUP_GROUPCHAT:
-#ifdef RS_DIRECT_CHAT
-				if ((popupflags & RS_POPUP_GROUPCHAT) && !_disableAllToaster)
-				{
-					MainWindow *mainWindow = MainWindow::getInstance();
-					if (mainWindow && mainWindow->isActiveWindow() && !mainWindow->isMinimized()) {
-						if (MainWindow::getActivatePage() == MainWindow::Friends) {
-							if (FriendsDialog::isGroupChatActive()) {
-								// do not show when active
-								break;
-							}
-						}
-					}
-					toaster = new ToasterItem(new GroupChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
-				}
-#endif // RS_DIRECT_CHAT
-				break;
-			case RS_POPUP_CHATLOBBY:
-				if ((popupflags & RS_POPUP_CHATLOBBY) && !_disableAllToaster)
-				{
-					ChatId chat_id(id);
-
-					ChatDialog *chatDialog = ChatDialog::getChat(chat_id);
-					ChatWidget *chatWidget;
-					if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
-						// do not show when active
-						break;
-					}
-
-					ChatLobbyDialog *chatLobbyDialog = dynamic_cast<ChatLobbyDialog*>(chatDialog);
-
-					RsGxsId sender(title);
-					if (!chatLobbyDialog || chatLobbyDialog->isParticipantMuted(sender))
-						break; // participant is muted
-
-					toaster = new ToasterItem(new ChatLobbyToaster(chat_id.toLobbyId(), sender, QString::fromUtf8(msg.c_str())));
-				}
-				break;
-			case RS_POPUP_CONNECT_ATTEMPT:
-				if ((popupflags & RS_POPUP_CONNECT_ATTEMPT) && !_disableAllToaster)
-				{
-					// id = gpgid
-					// title = ssl name
-					// msg = peer id
-					toaster = new ToasterItem(new FriendRequestToaster(RsPgpId(id), QString::fromUtf8(title.c_str()), RsPeerId(msg)));
-				}
-				break;
-		}
-
-		if (toaster) {
-			/* init attributes */
-			toaster->widget->setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint);
-
-			/* add toaster to waiting list */
-			//QMutexLocker lock(&waitingToasterMutex);
-			waitingToasterList.push_back(toaster);
-		}
-	}
-	/* Now start the waiting toasters */
-	startWaitingToasters();
+        default: std::cerr << "Warning: unhandled system error type " << type << std::endl;
+        break;
+    }
 }
+
+void NotifyQt::displayDiskSpaceWarning(int loc,int size_limit_mb)
+{
+    QString locString ;
+    switch(loc)
+    {
+        case RS_PARTIALS_DIRECTORY: 	locString = "Partials" ;
+                                                break ;
+
+        case RS_CONFIG_DIRECTORY: 		locString = "Config" ;
+                                                break ;
+
+        case RS_DOWNLOAD_DIRECTORY: 	locString = "Download" ;
+                                                break ;
+
+        default:
+                                                std::cerr << "Error: " << __PRETTY_FUNCTION__ << " was called with an unknown parameter loc=" << loc << std::endl ;
+                                                return ;
+    }
+    QMessageBox::critical(NULL,tr("Low disk space warning"),
+                tr("The disk space in your")+" "+locString +" "+tr("directory is running low (current limit is")+" "+QString::number(size_limit_mb)+tr("MB). \n\n RetroShare will now safely suspend any disk access to this directory. \n\n Please make some free space and click Ok.")) ;
+}
+
