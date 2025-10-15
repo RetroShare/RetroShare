@@ -111,8 +111,6 @@ private slots:
 	void syncI2PProxyAddrNormal(QString);
 	void syncI2PProxyAddrSam(QString);
 
-	void connectionWithoutCert();
-
 	//Relay Tab
 	void updateRelayOptions();
 	void updateEnabled();

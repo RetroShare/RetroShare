@@ -102,8 +102,6 @@ ImHistoryBrowser::ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit,const Q
     m_chatId = chatId;
     textEdit = edit;
 
-    //connect(NotifyQt::getInstance(), SIGNAL(historyChanged(uint, int)), this, SLOT(historyChanged(uint, int)));
-
     connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
     connect(ui.copyButton, SIGNAL(clicked()), SLOT(copyMessage()));

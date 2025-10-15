@@ -48,10 +48,6 @@ AvatarWidget::AvatarWidget(QWidget *parent) : QLabel(parent), ui(new Ui::AvatarW
 
     setFrameType(NO_FRAME);
 
-    /* connect signals */
-    //connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
-    //connect(NotifyQt::getInstance(), SIGNAL(ownAvatarChanged()), this, SLOT(updateOwnAvatar()));
-
     mEventHandlerId = 0;
 
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
@@ -136,22 +132,6 @@ void AvatarWidget::mouseReleaseEvent(QMouseEvent */*event*/)
 void AvatarWidget::setFrameType(FrameType type)
 {
 	mFrameType = type;
-
-#ifdef TO_REMOVE
-	switch (mFrameType) {
-	case NO_FRAME:
-		disconnect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateStatus(const QString&, int)));
-		break;
-	case NORMAL_FRAME:
-		disconnect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateStatus(const QString&, int)));
-		break;
-	case STATUS_FRAME:
-		connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateStatus(const QString&, int)));
-		break;
-	}
-#endif
-
-
 
     //refreshAvatarImage();
     refreshStatus();

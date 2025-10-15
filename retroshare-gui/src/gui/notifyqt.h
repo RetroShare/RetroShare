@@ -82,7 +82,6 @@ class NotifyQt: public QObject
 		void logInfoChanged(const QString&) const ;
 		void chatCleared(const ChatId&) const ;
 		void historyChanged(uint msgId, int type);
-		void connectionWithoutCert();
 
 		/* Notify from GUI */
 		void chatFontChanged();

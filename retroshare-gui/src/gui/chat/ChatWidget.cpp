@@ -174,8 +174,6 @@ ChatWidget::ChatWidget(QWidget *parent)
 
 	connect(ui->hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
-    //connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus(const QString&, int)));
-
     mEventHandlerId_friends = 0;
 
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
@@ -201,7 +199,6 @@ ChatWidget::ChatWidget(QWidget *parent)
         }, this );
     },mEventHandlerId_friends,RsEventType::FRIEND_LIST);
 
-    //connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
 	connect(NotifyQt::getInstance(), SIGNAL(chatFontChanged()), this, SLOT(resetFonts()));
 
 	connect(ui->textBrowser, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));

@@ -1010,7 +1010,6 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect(collViewAct,SIGNAL(triggered()),this,SLOT(collView()));
 	collOpenAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLOPEN), tr( "Download from collection file..." ), this );
 	connect(collOpenAct, SIGNAL(triggered()), this, SLOT(collOpen()));
-	connect(NotifyQt::getInstance(), SIGNAL(downloadComplete(QString)), this, SLOT(collAutoOpen(QString)));
 
 	/** Setup the actions for the download header context menu */
     showDLSizeAct= new QAction(tr("Size"),this);
@@ -1115,6 +1114,10 @@ void TransfersDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
  	switch (fe->mFileTransferEventCode)
     {
 	case RsFileTransferEventCode::DOWNLOAD_COMPLETE:
+        collAutoOpen(fe->mHash);
+
+        [[fallthrough]];
+
 	case RsFileTransferEventCode::COMPLETED_FILES_REMOVED:
 
         getUserNotify()->updateIcon();
@@ -2568,11 +2571,10 @@ void TransfersDialog::collOpen()
         QMessageBox::information(nullptr,tr("Error openning collection file"),RsCollection::errorString(code));
 }
 
-void TransfersDialog::collAutoOpen(const QString &fileHash)
+void TransfersDialog::collAutoOpen(const RsFileHash& hash)
 {
 	if (Settings->valueFromGroup("Transfer","AutoDLColl").toBool())
 	{
-		RsFileHash hash = RsFileHash(fileHash.toStdString());
 		FileInfo info;
 		if (rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, info)) {
 

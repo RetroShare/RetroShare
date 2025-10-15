@@ -345,9 +345,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     /* intialize friend count */
     updateFriends();
 
-//    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateFriends()));
-//    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateFriends()));
-
     loadOwnStatus();
 
     /* Set focus to the current page */

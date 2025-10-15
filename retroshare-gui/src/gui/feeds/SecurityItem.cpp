@@ -73,8 +73,6 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 	connect( peerDetailsButton, SIGNAL(clicked()), this, SLOT(peerDetails()));
 	connect( friendRequesttoolButton, SIGNAL(clicked()), this, SLOT(friendRequest()));
 
-    //connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
-
     mEventHandlerId = 0;
 
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)

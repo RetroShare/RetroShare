@@ -74,8 +74,6 @@ ShareManager::ShareManager()
     connect(ui.shareddirList, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(doubleClickedCell(int,int)));
     connect(ui.shareddirList, SIGNAL(cellChanged(int,int)), this, SLOT(handleCellChange(int,int)));
 
-    // connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(reload()));
-
     mEventHandlerId = 0;
 
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)

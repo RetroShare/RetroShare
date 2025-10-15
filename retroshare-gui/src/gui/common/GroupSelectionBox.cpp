@@ -35,8 +35,6 @@ GroupSelectionBox::GroupSelectionBox(QWidget *parent)
 {
 	setSelectionMode(QAbstractItemView::SingleSelection);
 
-    //connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(fillGroups()));
-
     mEventHandlerId = 0;
 
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)

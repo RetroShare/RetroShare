@@ -105,10 +105,6 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	myInviteYesButton = NULL;
 	myInviteIdChooser = NULL;
 
-    //QObject::connect( NotifyQt::getInstance(), SIGNAL(lobbyListChanged()), SLOT(lobbyChanged()));
-    //QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,RsGxsId,QString)), this, SLOT(displayChatLobbyEvent(qulonglong,int,RsGxsId,QString)));
-    //QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyInviteReceived()), this, SLOT(readChatLobbyInvites()));
-
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
     {
         RsQThreadUtils::postToObject([=](){

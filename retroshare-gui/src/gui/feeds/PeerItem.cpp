@@ -59,8 +59,6 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
     connect( chatButton, SIGNAL( clicked() ), this, SLOT( openChat() ) );
     connect( sendmsgButton, SIGNAL( clicked() ), this, SLOT( sendMsg() ) );
 
-    //connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
-
     mEventHandlerId = 0;
 
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)

@@ -216,8 +216,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     connect(ui.addBccButton, SIGNAL(clicked()), this, SLOT(addBcc()));
     connect(ui.addRecommendButton, SIGNAL(clicked()), this, SLOT(addRecommend()));
 
-    //connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(peerStatusChanged(QString,int)));
-
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
     {
         RsQThreadUtils::postToObject([=](){

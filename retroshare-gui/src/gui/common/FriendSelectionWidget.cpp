@@ -101,9 +101,6 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 	connect(ui->friendList, SIGNAL(itemSelectionChanged()), this, SIGNAL(itemSelectionChanged()));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
 
-    //connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged(int)));
-    //connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&,int)), this, SLOT(peerStatusChanged(const QString&,int)));
-
 	mCompareRole = new RSTreeWidgetItemCompareRole;
 	mActionSortByState = new QAction(tr("Sort by state"), this);
 	mActionSortByState->setCheckable(true);

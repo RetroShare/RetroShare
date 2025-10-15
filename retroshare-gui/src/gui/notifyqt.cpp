@@ -62,12 +62,12 @@
  * #define NOTIFY_DEBUG
  ****/
 
-/*static*/ NotifyQt *NotifyQt::_instance = NULL;
+/*static*/ NotifyQt *NotifyQt::_instance = nullptr;
 /*static*/ bool NotifyQt::_disableAllToaster = false;
 
 /*static*/ NotifyQt *NotifyQt::Create ()
 {
-    if (_instance == NULL) {
+    if (_instance == nullptr) {
         _instance = new NotifyQt ();
     }
 

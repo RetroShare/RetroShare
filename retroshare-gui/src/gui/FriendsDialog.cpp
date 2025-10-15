@@ -78,9 +78,6 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
     ui.chatWidget->setWelcomeMessage(msg);
     ui.chatWidget->init(ChatId::makeBroadcastId(), tr("Broadcast"));
 
-    //connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
-    //connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)), this, SLOT(chatStatusReceived(ChatId,QString)));
-
     mEventHandlerId_chat = 0;
 
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)

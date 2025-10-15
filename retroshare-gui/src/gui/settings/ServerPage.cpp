@@ -201,8 +201,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     QObject::connect(ui.hiddenpage_proxyAddress_i2p,   SIGNAL(textChanged(QString)), this, SLOT(syncI2PProxyAddrNormal(QString)));
 	QObject::connect(ui.hiddenpage_proxyAddress_i2p_2, SIGNAL(textChanged(QString)), this, SLOT(syncI2PProxyAddrSam(QString)));
 
-	connect(NotifyQt::getInstance(), SIGNAL(connectionWithoutCert()), this, SLOT(connectionWithoutCert()));
-
     QObject::connect(ui.localPort,SIGNAL(valueChanged(int)),this,SLOT(saveAddresses()));
     QObject::connect(ui.extPort,SIGNAL(valueChanged(int)),this,SLOT(saveAddresses()));
 
@@ -1668,14 +1666,6 @@ void ServerPage::taskFinished(taskTicket *&ticket)
     delete ticket;
 	ticket = nullptr;
  #endif //RS_USE_I2P_SAM3
-}
-
-void ServerPage::connectionWithoutCert()
-{
-    if (mOngoingConnectivityCheck > 0) {
-        mOngoingConnectivityCheck = -1;
-        updateInProxyIndicatorResult(true);
-    }
 }
 
 void ServerPage::loadCommon()

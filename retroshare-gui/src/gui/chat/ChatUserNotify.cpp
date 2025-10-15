@@ -57,7 +57,6 @@ static ChatUserNotify* instance = 0;
 ChatUserNotify::ChatUserNotify(QObject *parent) :
     UserNotify(parent)
 {
-    //connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
     instance = this;
 
     mEventHandlerId = 0;

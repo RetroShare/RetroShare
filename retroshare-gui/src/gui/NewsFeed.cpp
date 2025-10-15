@@ -432,10 +432,6 @@ void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
 
 	auto& e(*pe);
 
-#ifdef NEWS_DEBUG
-	std::cerr << "NotifyQt: handling connection event from peer " << e.mSslId << std::endl;
-#endif
-
     switch(e.mEventCode)
 	{
     case RsFriendListEventCode::NODE_CONNECTED:
@@ -465,9 +461,6 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
         return;
 
     auto& e(*pe);
-#ifdef NEWS_DEBUG
-	std::cerr << "NotifyQt: handling security event from (" << e.mSslId << "," << e.mPgpId << ") error code: " << (int)e.mErrorCode << std::endl;
-#endif
     RsFeedTypeFlags flags = (RsFeedTypeFlags)Settings->getNewsFeedFlags();
 
     if(e.mErrorCode == RsAuthSslError::PEER_REFUSED_CONNECTION && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP)))

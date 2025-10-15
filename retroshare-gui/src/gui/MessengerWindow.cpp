@@ -95,9 +95,6 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
 
     connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
 
-    //connect(NotifyQt::getInstance(), SIGNAL(ownStatusMessageChanged()), this, SLOT(loadmystatusmessage()));
-    //connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateOwnStatus(QString,int)));
-
     mEventHandlerId = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
     {
