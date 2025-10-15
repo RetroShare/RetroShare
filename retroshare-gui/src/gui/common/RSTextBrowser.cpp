@@ -35,6 +35,7 @@
 #include <QPlainTextEdit>
 #include <QTextDocumentFragment>
 #include <QScrollBar>
+#include <QRegExp>
 
 #include <iostream>
 
@@ -284,10 +285,10 @@ void RSTextBrowser::contextMenuEvent(QContextMenuEvent *event)
 
 QMenu *RSTextBrowser::createStandardContextMenuFromPoint(const QPoint &widgetPos)
 {
-	QMatrix matrix;
-	matrix.translate(horizontalScrollBar()->value(), verticalScrollBar()->value());
+	QTransform transform;
+	transform.translate(horizontalScrollBar()->value(), verticalScrollBar()->value());
 
-	QMenu *menu = QTextBrowser::createStandardContextMenu(matrix.map(widgetPos));
+	QMenu *menu = QTextBrowser::createStandardContextMenu(transform.map(widgetPos));
 
 	menu->addSeparator();
 	QAction *a = menu->addAction(FilesDefs::getIconFromQtResourcePath("://icons/textedit/code.png"), tr("View &Source"), this, SLOT(viewSource()));

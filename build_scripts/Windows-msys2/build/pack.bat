@@ -55,25 +55,28 @@ set RsVersion=%RsVersion.Major%.%RsVersion.Minor%.%RsVersion.Mini%
 :: Check WMIC is available
 wmic.exe alias /? >nul 2>&1 || echo WMIC is not available.&& goto error
 
-:: Use WMIC to retrieve date in format YYYYMMDD
-set RsDate=
-for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list') do set RsDate=%%I
-set RsDate=%RsDate:~0,4%%RsDate:~4,2%%RsDate:~6,2%
+:: Get date
+call "%ToolsPath%\get-rs-date.bat" "%SourcePath%" RsDate
+if errorlevel 1 %cecho% error "Could not get date."& goto error
+
+if "%RsDate%"=="" %cecho% error "Could not get date."& goto error
 
 set QtMainVersion=%QtVersion:~0,1%
 set QtSharePath=%RsMinGWPath%\share\qt%QtMainVersion%\
 
 rem Qt 4 = QtSvg4.dll
 rem Qt 5 = Qt5Svg.dll
+rem Qt 6 = Qt6Svg.dll
 set QtMainVersion1=
 set QtMainVersion2=
 if "%QtMainVersion%"=="4" set QtMainVersion2=4
 if "%QtMainVersion%"=="5" set QtMainVersion1=5
+if "%QtMainVersion%"=="6" set QtMainVersion1=6
 
 if "%RsBuildConfig%" NEQ "release" (
-	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-%RsArchitecture%-msys2%RsType%%RsArchiveAdd%-%RsBuildConfig%.7z
+	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-Qt-%QtVersion%-%RsToolchain%-msys2%RsType%%RsArchiveAdd%-%RsBuildConfig%.7z
 ) else (
-	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-%RsArchitecture%-msys2%RsType%%RsArchiveAdd%.7z
+	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-Qt-%QtVersion%-%RsToolchain%-msys2%RsType%%RsArchiveAdd%.7z
 )
 
 if exist "%Archive%" del /Q "%Archive%"
@@ -81,7 +84,7 @@ if exist "%Archive%" del /Q "%Archive%"
 :: Create deploy path
 mkdir "%RsDeployPath%"
 
-title Pack - %SourceName%%RsType%-%RsBuildConfig% [copy files]
+title Pack - %SourceName%%RsType%-%RsBuildConfig% Qt-%QtVersion% %RsToolchain% [copy files]
 
 set ExtensionsFile=%SourcePath%\libretroshare\src\rsserver\rsinit.cc
 set Extensions=
@@ -118,17 +121,23 @@ for /D %%D in ("%RsBuildPath%\plugins\*") do (
 echo copy Qt DLL's
 copy "%RsMinGWPath%\bin\Qt%QtMainVersion1%Svg%QtMainVersion2%.dll" "%RsDeployPath%" %Quite%
 
-if "%QtMainVersion%"=="5" (
+if %QtMainVersion% GEQ 5 (
 	mkdir "%RsDeployPath%\platforms"
 	copy "%QtSharePath%\plugins\platforms\qwindows.dll" "%RsDeployPath%\platforms" %Quite%
+)
+
+if "%QtMainVersion%"=="5" (
 	mkdir "%RsDeployPath%\audio"
 	copy "%QtSharePath%\plugins\audio\qtaudio_windows.dll" "%RsDeployPath%\audio" %Quite%
 )
 
-if exist "%QtSharePath%\plugins\styles\qwindowsvistastyle.dll" (
-	echo copy styles
-	mkdir "%RsDeployPath%\styles" %Quite%
+echo copy styles
+mkdir "%RsDeployPath%\styles" %Quite%
+if "%QtMainVersion%"=="5" (
 	copy "%QtSharePath%\plugins\styles\qwindowsvistastyle.dll" "%RsDeployPath%\styles" %Quite%
+)
+if "%QtMainVersion%"=="6" (
+	copy "%QtSharePath%\plugins\styles\qmodernwindowsstyle.dll" "%RsDeployPath%\styles" %Quite%
 )
 
 copy "%QtSharePath%\plugins\imageformats\*.dll" "%RsDeployPath%\imageformats" %Quite%
@@ -170,11 +179,13 @@ xcopy /S "%SourcePath%\retroshare-gui\src\license" "%RsDeployPath%\license" %Qui
 echo copy translation
 copy "%SourcePath%\retroshare-gui\src\translations\qt_tr.qm" "%RsDeployPath%\translations" %Quite%
 copy "%QtSharePath%\translations\qt_*.qm" "%RsDeployPath%\translations" %Quite%
-if "%QtMainVersion%"=="5" (
+if "%QtMainVersion%"=="6" (
 	copy "%QtSharePath%\translations\qtbase_*.qm" "%RsDeployPath%\translations" %Quite%
-	copy "%QtSharePath%\translations\qtscript_*.qm" "%RsDeployPath%\translations" %Quite%
 	copy "%QtSharePath%\translations\qtquick1_*.qm" "%RsDeployPath%\translations" %Quite%
 	copy "%QtSharePath%\translations\qtmultimedia_*.qm" "%RsDeployPath%\translations" %Quite%
+)
+if "%QtMainVersion%"=="5" (
+	copy "%QtSharePath%\translations\qtscript_*.qm" "%RsDeployPath%\translations" %Quite%
 	copy "%QtSharePath%\translations\qtxmlpatterns_*.qm" "%RsDeployPath%\translations" %Quite%
 )
 
@@ -199,7 +210,7 @@ if "%ParamWebui%"=="1" (
 )
 
 rem pack files
-title Pack - %SourceName%%RsType%-%RsBuildConfig% [pack files]
+title Pack - %SourceName%%RsType%-%RsBuildConfig% Qt-%QtVersion% %RsToolchain% [pack files]
 
 "%EnvSevenZipExe%" a -mx=9 -t7z "%Archive%" "%RsDeployPath%\*"
 

@@ -26,6 +26,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/chat/ChatDialog.h"
 #include "util/misc.h"
+#include "util/DateTime.h"
 
 #include "retroshare/rsconfig.h"
 #include "retroshare/rshistory.h"
@@ -77,7 +78,7 @@ QString ChatPage::loadStyleInfo(ChatStyle::enumStyleType type, QComboBox *style_
     {
         whileBlocking(style_CB)->insertItem(n,style->styleName);
 
-        style_CB->setItemData(n, qVariantFromValue(*style),Qt::UserRole);
+        style_CB->setItemData(n, QVariant::fromValue(*style),Qt::UserRole);
 
         if (style->stylePath == stylePath) {
             activeItem = n;
@@ -494,7 +495,7 @@ ChatPage::load()
 		 QString tt ;
 		 tt +=        tr("Name :")+" " + QString::fromUtf8(detail.name.c_str()) ;
 		 tt += "\n" + tr("PGP id :")+" " + QString::fromStdString(invites[i].destination_pgp_id.toStdString()) ;
-		 tt += "\n" + tr("Valid until :")+" " + QDateTime::fromTime_t(invites[i].time_of_validity).toString() ;
+		 tt += "\n" + tr("Valid until :")+" " + DateTime::DateTimeFromTime_t(invites[i].time_of_validity).toString() ;
 
 		 item->setData(Qt::UserRole,QString::fromStdString(invites[i].pid.toStdString())) ;
 		 item->setToolTip(tt) ;
@@ -538,7 +539,7 @@ void ChatPage::setPreviewMessages(QString &stylePath, QString styleVariant, QTex
 
     QString nameIncoming = tr("Incoming");
     QString nameOutgoing = tr("Outgoing");
-    QDateTime timestmp = QDateTime::fromTime_t(time(NULL));
+    QDateTime timestmp = DateTime::DateTimeFromTime_t(time(NULL));
     QColor backgroundColor = textBrowser->palette().base().color();
 
     textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HINCOMING, nameIncoming, timestmp, tr("Incoming message in history"), 0, backgroundColor));
@@ -685,10 +686,9 @@ void ChatPage::on_cbSearch_WithoutLimit_toggled(bool checked)
 
 void ChatPage::on_btSearch_FoundColor_clicked()
 {
-	bool ok;
-	QRgb color = QColorDialog::getRgba(rgbChatSearchFoundColor, &ok, window());
-	if (ok) {
-		rgbChatSearchFoundColor=color;
+	QColor color = QColorDialog::getColor(QColor::fromRgba(rgbChatSearchFoundColor), window(), "", QColorDialog::ShowAlphaChannel);
+	if (color.isValid()) {
+		rgbChatSearchFoundColor = color.rgba();
 		QPixmap pix(24, 24);
 		pix.fill(color);
 		ui.btSearch_FoundColor->setIcon(pix);

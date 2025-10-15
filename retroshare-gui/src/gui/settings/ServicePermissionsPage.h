@@ -32,7 +32,7 @@ class ServicePermissionsPage: public ConfigPage
     Q_OBJECT
 
 public:
-    ServicePermissionsPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+    ServicePermissionsPage(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
     ~ServicePermissionsPage() {}
 
     /** Loads the settings for this page */

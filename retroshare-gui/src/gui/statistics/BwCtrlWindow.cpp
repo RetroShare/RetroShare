@@ -21,7 +21,7 @@
 #include "BwCtrlWindow.h"
 #include "gui/common/RSGraphWidget.h"
 #include "ui_BwCtrlWindow.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include <QTimer>
 #include <QDateTime>
 
@@ -70,7 +70,7 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	painter->setClipRect(opt.rect);
 
 	//set text color
-	QVariant value = index.data(Qt::TextColorRole);
+	QVariant value = index.data(Qt::ForegroundRole);
 	if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
 		opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
 	}
@@ -96,12 +96,12 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 
 	switch(index.column()) {
 	case COLUMN_IN_RATE:
-		temp.sprintf("%.3f ", index.data().toFloat());
+		temp = QString::asprintf("%.3f ", index.data().toFloat());
 		//temp=QString::number(index.data().toFloat());
 		painter->drawText(option.rect, Qt::AlignRight, temp);
 		break;
 	case COLUMN_IN_MAX:
-		temp.sprintf("%.3f ", index.data().toFloat());
+		temp = QString::asprintf("%.3f ", index.data().toFloat());
 		//temp=QString::number(index.data().toFloat());
 		painter->drawText(option.rect, Qt::AlignRight, temp);
 		break;
@@ -112,7 +112,7 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	case COLUMN_IN_ALLOC:
 		flValue = index.data().toFloat();
 		if (flValue < std::numeric_limits<float>::max()){
-			temp.sprintf("%.3f ", flValue);
+			temp = QString::asprintf("%.3f ", flValue);
 		} else {
 			temp=strNA;
 		}
@@ -128,12 +128,12 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 		painter->drawText(option.rect, Qt::AlignRight, temp);
 		break;
 	case COLUMN_OUT_RATE:
-		temp.sprintf("%.3f ", index.data().toFloat());
+		temp = QString::asprintf("%.3f ", index.data().toFloat());
 		//temp=QString::number(index.data().toFloat());
 		painter->drawText(option.rect, Qt::AlignRight, temp);
 		break;
 	case COLUMN_OUT_MAX:
-		temp.sprintf("%.3f ", index.data().toFloat());
+		temp = QString::asprintf("%.3f ", index.data().toFloat());
 		//temp=QString::number(index.data().toFloat());
 		painter->drawText(option.rect, Qt::AlignRight, temp);
 		break;
@@ -172,7 +172,7 @@ QSize BWListDelegate::sizeHint(const QStyleOptionViewItem & option/*option*/, co
     float FS = QFontMetricsF(option.font).height();
     //float fact = FS/14.0 ;
 
-    float w = QFontMetricsF(option.font).width(index.data(Qt::DisplayRole).toString());
+    float w = QFontMetrics_horizontalAdvance(QFontMetricsF(option.font), index.data(Qt::DisplayRole).toString());
 
     return QSize(w,FS*1.2);
     //return QSize(50*fact,17*fact);

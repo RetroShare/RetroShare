@@ -44,7 +44,7 @@
 #include "gui/msgs/MessageComposer.h"
 #include "util/DateTime.h"
 #include "gui/common/UIStateHelper.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/imageutil.h"
 
 #include <retroshare/rsgxsforums.h>
@@ -219,7 +219,11 @@ public:
         if(left_is_not_pinned ^ right_is_not_pinned)
             return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?right_is_not_pinned:left_is_not_pinned ;	// always put pinned posts on top
 
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+        return QVariant::compare(left.data(RsGxsForumModel::SortRole), right.data(RsGxsForumModel::SortRole)) < 0;
+#else
         return left.data(RsGxsForumModel::SortRole) < right.data(RsGxsForumModel::SortRole) ;
+#endif
     }
 
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override
@@ -264,7 +268,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->threadTreeWidget->setModel(mThreadProxyModel);
 
     mThreadProxyModel->setFilterRole(RsGxsForumModel::FilterRole);
-    mThreadProxyModel->setFilterRegExp(QRegExp(QString(RsGxsForumModel::FilterString))) ;
+    QSortFilterProxyModel_setFilterRegularExpression(mThreadProxyModel, QString(RsGxsForumModel::FilterString)) ;
 
     ui->threadTreeWidget->setSortingEnabled(true);
 
@@ -540,7 +544,7 @@ void GxsForumThreadWidget::recursSaveExpandedItems(const QModelIndex& index, QLi
     if(ui->threadTreeWidget->isExpanded(index))
     {
         for(int row=0;row<mThreadProxyModel->rowCount(index);++row)
-            recursSaveExpandedItems(index.child(row,0),expanded_items) ;
+            recursSaveExpandedItems(mThreadProxyModel->index(row,0,index),expanded_items) ;
 
         RsGxsMessageId message_id(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID).data(Qt::UserRole).toString().toStdString());
         expanded_items.push_back(message_id);
@@ -966,13 +970,15 @@ static QString getDurationString(uint32_t days)
 {
     switch(days)
     {
-        case 0: return QObject::tr("Indefinitely") ;
-        case 5: return QObject::tr("5 days") ;
-        case 15: return QObject::tr("2 weeks") ;
-        case 30: return QObject::tr("1 month") ;
-        case 60: return QObject::tr("2 month") ;
-        case 180: return QObject::tr("6 month") ;
-        case 365: return QObject::tr("1 year") ;
+	    case    0: return QObject::tr("Indefinitely") ; break;
+	    case    5: return QObject::tr("5 days")  ; break;
+	    case   15: return QObject::tr("2 weeks") ; break;
+	    case   30: return QObject::tr("1 month") ; break;
+	    case   60: return QObject::tr("2 month") ; break;
+	    case  180: return QObject::tr("6 month") ; break;
+	    case  365: return QObject::tr("1 year")  ; break;
+	    case 1095: return QObject::tr("3 years") ; break;
+	    case 1825: return QObject::tr("5 years") ; break;
     default:
         return QString::number(days)+" " + QObject::tr("days") ;
     }
@@ -1846,7 +1852,7 @@ void GxsForumThreadWidget::filterColumnChanged(int column)
 
 void GxsForumThreadWidget::filterItems(const QString& text)
 {
-    QStringList lst = text.split(" ",QString::SkipEmptyParts) ;
+    QStringList lst = text.split(" ",QtSkipEmptyParts) ;
 
     int filterColumn = ui->filterLineEdit->currentFilter();
 
@@ -1854,7 +1860,7 @@ void GxsForumThreadWidget::filterItems(const QString& text)
     mThreadModel->setFilter(filterColumn,lst,count) ;
 
     // We do this in order to trigger a new filtering action in the proxy model.
-    mThreadProxyModel->setFilterRegExp(QRegExp(QString(RsGxsForumModel::FilterString))) ;
+    QSortFilterProxyModel_setFilterRegularExpression(mThreadProxyModel, QString(RsGxsForumModel::FilterString)) ;
 
     if(!lst.empty())
         ui->threadTreeWidget->expandAll();

@@ -40,7 +40,7 @@ TorStatus::TorStatus(QWidget *parent)
  : QWidget(parent)
 {
     QHBoxLayout *hbox = new QHBoxLayout();
-    hbox->setMargin(0);
+    hbox->setContentsMargins(0, 0, 0, 0);
     hbox->setSpacing(6);
        
     statusTor = new QLabel("<strong>" + tr("Tor") + ":</strong>", this );

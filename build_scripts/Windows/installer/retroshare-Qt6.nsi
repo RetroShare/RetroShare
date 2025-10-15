@@ -1,25 +1,29 @@
 ﻿; Script generated with the Venis Install Wizard & modified by defnax
 ; Reworked by Thunder
-; Adapted to msys2 and 64 bit by anmo
 
 !include ifexist.nsh
-!include x64.nsh
 
 # Needed defines
 ;!define REVISION ""
-;!define DEPLOYDIR ""
-;!define ARCHITECTURE ""
+;!define RELEASEDIR ""
+;!define QTDIR ""
+;!define MINGWDIR ""
 
 # Optional defines
 ;!define OUTDIR ""
-;!define INSTALLERADD ""
 
 # Check needed defines
-!ifndef DEPLOYDIR
-!error "DEPLOYDIR is not defined"
+!ifndef RELEASEDIR
+!error "RELEASEDIR is not defined"
+!endif
+!ifndef QTDIR
+!error "QTDIR is not defined"
+!endif
+!ifndef MINGWDIR
+!error "MINGWDIR is not defined"
 !endif
 !ifndef ARCHITECTURE
-!error "ARCHITECTURE is not defined"
+!error "Architecture is not defined"
 !endif
 
 # Check optional defines
@@ -38,9 +42,13 @@
 !define SOURCEDIR "..\..\.."
 
 # Get version from executable
-!GetDllVersion "${DEPLOYDIR}\retroshare.exe" VERSION_
+!GetDllVersion "${RELEASEDIR}\retroshare-gui\src\release\retroshare.exe" VERSION_
 !define VERSION ${VERSION_1}.${VERSION_2}.${VERSION_3}
 ;!define REVISION ${VERSION_4}
+
+# Get version of Qt
+!GetDllVersion "${QTDIR}\bin\Qt6Core.dll" QTVERSION_
+!define QTVERSION ${QTVERSION_1}.${QTVERSION_2}.${QTVERSION_3}
 
 # Check version
 !ifndef REVISION
@@ -48,14 +56,33 @@
 !endif
 
 # Date
-!define /date Date "%Y%m%d"
+!ifndef DATE
+!define /date DATE "%Y%m%d"
+!endif
 
-# Detect tor
-${!defineifexist} TOR_EXISTS "${DEPLOYDIR}\tor.exe"
+# Service
+${!defineifexist} SERVICE_EXISTS "${RELEASEDIR}\retroshare-service\src\release\retroshare-service.exe"
+
+# Tor
+!ifdef TORDIR
+${!defineifexist} TOR_EXISTS "${TORDIR}\tor.exe"
+!ifndef TOR_EXISTS
+!error "tor.exe not found"
+!endif
+!endif
+
+# WebUI
+!ifdef WEBUIDIR
+${!defineifexist} WEBUI_EXISTS "${WEBUIDIR}\index.html"
+!ifndef WEBUI_EXISTS
+!error "WebUI files not found"
+!endif
+!endif
+
+# Friend Server
 !ifdef TOR_EXISTS
-!define RSTYPE "-tor"
-!else
-!define RSTYPE ""
+# Add Friend Server with Tor only
+#${!defineifexist} FRIENDSERVER_EXISTS "${RELEASEDIR}\retroshare-friendserver\src\release\retroshare-friendserver.exe"
 !endif
 
 # Application name and version
@@ -64,6 +91,12 @@ ${!defineifexist} TOR_EXISTS "${DEPLOYDIR}\tor.exe"
 !define PUBLISHER "RetroShare Team"
 
 # Install path
+!if ${ARCHITECTURE} == "x86"
+  !define INSTDIR_NORMAL "$ProgramFiles32\${APPNAME}"
+!endif
+!if ${ARCHITECTURE} == "x64"
+  !define INSTDIR_NORMAL "$ProgramFiles64\${APPNAME}"
+!endif
 !define INSTDIR_PORTABLE "$Desktop\${APPNAME}"
 
 !define DATADIR_NORMAL "$APPDATA\${APPNAME}"
@@ -72,7 +105,7 @@ ${!defineifexist} TOR_EXISTS "${DEPLOYDIR}\tor.exe"
 # Main Install settings
 Name "${APPNAMEANDVERSION}"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "${OUTDIR_}RetroShare-${VERSION}-${Date}-${REVISION}-${ARCHITECTURE}${RSTYPE}${INSTALLERADD}-setup.exe"
+OutFile "${OUTDIR_}RetroShare-${VERSION}-${DATE}-${REVISION}-Qt-${QTVERSION}-${ARCHITECTURE}${INSTALLERADD}-setup.exe"
 BrandingText "${APPNAMEANDVERSION}"
 RequestExecutionlevel highest
 # Use compression
@@ -93,7 +126,7 @@ Var StyleSheetDir
 # Interface Settings
 !define MUI_ABORTWARNING
 !define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP "${SOURCEDIR}\build_scripts\Windows-msys2\installer\HeaderImage.bmp"
+!define MUI_HEADERIMAGE_BITMAP "${SOURCEDIR}\build_scripts\Windows\installer\HeaderImage.bmp"
 ;!define MUI_WELCOMEFINISHPAGE_BITMAP "...bmp"
 
 # MUI defines
@@ -106,7 +139,7 @@ Var StyleSheetDir
 !define MUI_FINISHPAGE_RUN "$INSTDIR\retroshare.exe"
 !define MUI_FINISHPAGE_SHOWREADME $INSTDIR\changelog.txt
 !define MUI_FINISHPAGE_SHOWREADME_TEXT changelog.txt
-!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+;!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\orange-uninstall.ico"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 ;!define MUI_LANGDLL_REGISTRY_ROOT HKLM
@@ -174,13 +207,128 @@ Section $(Section_Main) Section_Main
   ; Clears previous error logs
 ;  Delete "$INSTDIR\*.log"
 
-   SetOutPath "$INSTDIR"
-   File /r /x Data /x stylesheets /x qss /x portable "${DEPLOYDIR}\*.*"
+  ; Main binaries
+  SetOutPath "$INSTDIR"
+  File "${RELEASEDIR}\retroshare-gui\src\release\retroshare.exe"
+  File /nonfatal "${RELEASEDIR}\libretroshare\src\lib\retroshare.dll"
+
+  ; Qt binaries
+  File "${QTDIR}\bin\Qt6Core.dll"
+  File "${QTDIR}\bin\Qt6Core5Compat.dll"
+  File "${QTDIR}\bin\Qt6Gui.dll"
+  File "${QTDIR}\bin\Qt6Multimedia.dll"
+  File "${QTDIR}\bin\Qt6Network.dll"
+  File "${QTDIR}\bin\Qt6PrintSupport.dll"
+  File "${QTDIR}\bin\Qt6Svg.dll"
+  File "${QTDIR}\bin\Qt6Widgets.dll"
+  File "${QTDIR}\bin\Qt6Xml.dll"
+
+  ; Qt platforms
+  SetOutPath "$INSTDIR\platforms"
+  File "${QTDIR}\plugins\platforms\qwindows.dll"
+
+  ; Qt styles
+  SetOutPath "$INSTDIR\styles"
+  File "${QTDIR}\plugins\styles\qmodernwindowsstyle.dll"
+
+  ; MinGW binaries
+  SetOutPath "$INSTDIR"
+  File "${MINGWDIR}\bin\libstdc++-6.dll"
+  !if ${ARCHITECTURE} == "x86"
+    File "${MINGWDIR}\bin\libgcc_s_dw2-1.dll"
+  !endif
+  !if ${ARCHITECTURE} == "x64"
+    File "${MINGWDIR}\bin\libgcc_s_seh-1.dll"
+  !endif
+  File "${MINGWDIR}\bin\libwinpthread-1.dll"
+
+  ; External binaries
+  File "${EXTERNAL_LIB_DIR}\bin\miniupnpc.dll"
+  File "${RELEASEDIR}\supportlibs\librnp\Build\src\lib\librnp.dll"
+  !if ${ARCHITECTURE} == "x86"
+    File "${EXTERNAL_LIB_DIR}\bin\libcrypto-1_1.dll"
+    File "${EXTERNAL_LIB_DIR}\bin\libssl-1_1.dll"
+  !endif
+  !if ${ARCHITECTURE} == "x64"
+    File "${EXTERNAL_LIB_DIR}\bin\libcrypto-1_1-x64.dll"
+    File "${EXTERNAL_LIB_DIR}\bin\libssl-1_1-x64.dll"
+  !endif
+
+  ; Other files
+  File "${RELEASEDIR}\changelog.txt"
+  File "${SOURCEDIR}\libbitdht\src\bitdht\bdboot.txt"
+
+  ; License
+  SetOutPath "$INSTDIR\license"
+  File "${SOURCEDIR}\retroshare-gui\src\license\*.*"
+
+  ; Image formats
+  SetOutPath "$INSTDIR\imageformats"
+  File /r "${QTDIR}\plugins\imageformats\qgif.dll"
+  File /r "${QTDIR}\plugins\imageformats\qicns.dll"
+  File /r "${QTDIR}\plugins\imageformats\qico.dll"
+  File /r "${QTDIR}\plugins\imageformats\qjpeg.dll"
+  File /r "${QTDIR}\plugins\imageformats\qsvg.dll"
+  File /r "${QTDIR}\plugins\imageformats\qtga.dll"
+  File /r "${QTDIR}\plugins\imageformats\qtiff.dll"
+  File /r "${QTDIR}\plugins\imageformats\qwbmp.dll"
+  File /r "${QTDIR}\plugins\imageformats\qwebp.dll"
+
+  ; Sounds
+  SetOutPath "$INSTDIR\sounds"
+  File /r "${SOURCEDIR}\retroshare-gui\src\sounds\*.*"
+
+  ; Translations
+  SetOutPath "$INSTDIR\translations"
+  File /r "${SOURCEDIR}\retroshare-gui\src\translations\*.qm"
+  File /r "${QTDIR}\translations\qt_*.qm"
+  File /r "${QTDIR}\translations\qtbase_*.qm"
+  File /r "${QTDIR}\translations\qtmultimedia_*.qm"
+
+  ; WebUI
+;  SetOutPath "$INSTDIR\webui"
+;  File /r "${SOURCEDIR}\libresapi\src\webui\*.*"
+
+  ; License
+  SetOutPath "$INSTDIR\license"
+  File /r "${SOURCEDIR}\retroshare-gui\src\license\*.*"
 SectionEnd
 
+# Service
+!ifdef SERVICE_EXISTS
+  Section /o $(Section_Service) Section_Service
+    SetOutPath "$INSTDIR"
+  File "${RELEASEDIR}\retroshare-service\src\release\retroshare-service.exe"
+  SectionEnd
+!endif
+
+# Friend Server
+!ifdef FRIENDSERVER_EXISTS
+  Section /o $(Section_FriendServer) Section_FriendServer
+    SetOutPath "$INSTDIR"
+    File "${RELEASEDIR}\retroshare-friendserver\src\release\retroshare-friendserver.exe"
+  SectionEnd
+!endif
+
+# Tor
+!ifdef TOR_EXISTS
+  Section /o $(Section_Tor) Section_Tor
+    SetOutPath "$INSTDIR\tor"
+    File "${TORDIR}\*"
+  SectionEnd
+!endif
+
+# WebUI
+!ifdef WEBUI_EXISTS
+  Section /o $(Section_WebUI) Section_WebUI
+    SetOutPath "$INSTDIR\webui"
+    File /r "${WEBUIDIR}\*"
+  SectionEnd
+!endif
+
 # Plugins
-${!defineifexist} PLUGIN_FEEDREADER_EXISTS "${DEPLOYDIR}\Data\extensions6\FeedReader.dll"
-${!defineifexist} PLUGIN_VOIP_EXISTS "${DEPLOYDIR}\Data\extensions6\VOIP.dll"
+${!defineifexist} PLUGIN_FEEDREADER_EXISTS "${RELEASEDIR}\plugins\FeedReader\lib\FeedReader.dll"
+${!defineifexist} PLUGIN_VOIP_EXISTS "${RELEASEDIR}\plugins\VOIP\lib\VOIP.dll"
 
 !ifdef PLUGIN_FEEDREADER_EXISTS
 !define /ifndef PLUGIN_EXISTS
@@ -194,14 +342,16 @@ ${!defineifexist} PLUGIN_VOIP_EXISTS "${DEPLOYDIR}\Data\extensions6\VOIP.dll"
   !ifdef PLUGIN_FEEDREADER_EXISTS
     Section $(Section_Plugin_FeedReader) Section_Plugin_FeedReader
       SetOutPath "$DataDir\extensions6"
-      File "${DEPLOYDIR}\Data\extensions6\FeedReader.dll"
+      File "${RELEASEDIR}\plugins\FeedReader\lib\FeedReader.dll"
     SectionEnd
   !endif
 
   !ifdef PLUGIN_VOIP_EXISTS
     Section $(Section_Plugin_VOIP) Section_Plugin_VOIP
       SetOutPath "$DataDir\extensions6"
-      File "${DEPLOYDIR}\Data\extensions6\VOIP.dll"
+      File "${RELEASEDIR}\plugins\VOIP\lib\VOIP.dll"
+      SetOutPath "$INSTDIR\sounds"
+      File /r "${SOURCEDIR}\plugins\VOIP\gui\sounds\*.*"
     SectionEnd
   !endif
   SectionGroupEnd
@@ -213,12 +363,14 @@ Section $(Section_Data) Section_Data
   SetOverwrite on
 
   ; Chat style
-  SetOutPath "$StyleSheetDir\stylesheets"
-  File /r "${DEPLOYDIR}\stylesheets\*.*"
+  SetOutPath "$StyleSheetDir\stylesheets\Bubble"
+  File /r "${SOURCEDIR}\retroshare-gui\src\gui\qss\chat\Bubble\*.*"
+  SetOutPath "$StyleSheetDir\stylesheets\Bubble_Compact"
+  File /r "${SOURCEDIR}\retroshare-gui\src\gui\qss\chat\Bubble_Compact\*.*"
 
   ; Stylesheets
   SetOutPath "$INSTDIR\qss"
-  File /nonfatal /r "${DEPLOYDIR}\qss\*.*"
+  File /nonfatal /r "${SOURCEDIR}\retroshare-gui\src\qss\*.*"
 SectionEnd
 
 ;Section $(Section_Link) Section_Link
@@ -239,6 +391,22 @@ Section $(Section_StartMenu) Section_StartMenu
   CreateDirectory "$SMPROGRAMS\${APPNAME}"
   CreateShortCut "$SMPROGRAMS\${APPNAME}\$(Link_Uninstall).lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\retroshare.exe" "" "$INSTDIR\retroshare.exe" 0
+
+!ifdef SERVICE_EXISTS
+  SectionGetFlags ${Section_Service} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  ${If} $0 == ${SF_SELECTED}
+    CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME} Service.lnk" "$INSTDIR\retroshare-service.exe" "" "$INSTDIR\retroshare-service.exe" 0
+  ${EndIf}
+!endif
+
+!ifdef FRIENDSERVER_EXISTS
+  SectionGetFlags ${Section_FriendServer} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  ${If} $0 == ${SF_SELECTED}
+    CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME} Friend Server.lnk" "$INSTDIR\retroshare-friendserver.exe" "" "$INSTDIR\retroshare-friendserver.exe" 0
+  ${EndIf}
+!endif
 SectionEnd
 
 Section $(Section_Desktop) Section_Desktop
@@ -290,6 +458,10 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Plugin_VOIP} $(Section_Plugin_VOIP_Desc)
 ;  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Link} $(Section_Link_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_AutoStart} $(Section_AutoStart_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Tor} $(Section_Tor_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_WebUI} $(Section_WebUI_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Service} $(Section_Service_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_FriendServer} $(Section_FriendServer_Desc)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 # Uninstall
@@ -328,22 +500,7 @@ Section "Uninstall"
 SectionEnd
 
 Function .onInit
-; source: https://stackoverflow.com/questions/19374453/nsis-installer-define-installer-and-system-x32-x64 
-  ${If} ${RunningX64}
-    ${If} ${ARCHITECTURE} == "x64"
-      StrCpy $InstDirNormal "$PROGRAMFILES64\${APPNAME}"
-    ${Else}
-      StrCpy $InstDirNormal "$PROGRAMFILES32\${APPNAME}"
-    ${Endif}
-  ${Else}
-    ${If} ${ARCHITECTURE} == "x64"
-	  MessageBox MB_ICONSTOP "You cannot install the 64 bit version on a 32 bit system!"
-      Quit
-    ${Else}
-      StrCpy $InstDirNormal "$PROGRAMFILES\${APPNAME}"
-    ${Endif}
-  ${EndIf}
-
+  StrCpy $InstDirNormal "${INSTDIR_NORMAL}"
   StrCpy $InstDirPortable "${INSTDIR_PORTABLE}"
 
   StrCpy $PortableMode 0
@@ -358,6 +515,26 @@ Function .onInit
   Pop $R1
   !insertmacro MUI_LANGDLL_DISPLAY
 FunctionEnd
+
+!ifdef FRIENDSERVER_EXISTS
+Function .onSelChange
+  SectionGetFlags ${Section_FriendServer} $0
+  IntOp $0 $0 & ${SF_SELECTED}
+  ${If} $0 == ${SF_SELECTED}
+    # Activate Tor and set readonly
+    SectionGetFlags ${Section_Tor} $1
+    IntOp $1 $1 | ${SF_SELECTED}
+    IntOp $1 $1 | ${SF_RO}
+    SectionSetFlags ${Section_Tor} $1
+  ${Else}
+    # Remove readonly from Tor
+    SectionGetFlags ${Section_Tor} $1
+    IntOp $2 ${SF_RO} ~
+    IntOp $1 $1 & $2
+    SectionSetFlags ${Section_Tor} $1
+  ${EndIf}
+FunctionEnd
+!endif
 
 # Installation mode
 

@@ -22,6 +22,7 @@
 #include "ui_StatisticsWindow.h"
 #include <QTimer>
 #include <QDateTime>
+#include <QActionGroup>
 
 #include <algorithm>
 #include <iostream>

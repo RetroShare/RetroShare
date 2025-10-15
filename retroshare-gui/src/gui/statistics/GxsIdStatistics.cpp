@@ -40,7 +40,7 @@
 #include "GxsIdStatistics.h"
 
 #include "util/DateTime.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
 
@@ -258,7 +258,7 @@ void GxsIdStatisticsWidget::updateContent()
     setFixedHeight(mMaxHeight);
 
     QPainter painter(&tmppixmap);
-    painter.initFrom(this);
+    painter.begin(this);
     painter.setPen(QColor::fromRgb(0,0,0)) ;
 
     QFont times_f(font());//"Times") ;
@@ -269,7 +269,7 @@ void GxsIdStatisticsWidget::updateContent()
     QFontMetricsF fm_monospace(monospace_f) ;
     QFontMetricsF fm_times(times_f) ;
 
-    int cellx = fm_monospace.width(QString(" ")) ;
+    int cellx = QFontMetrics_horizontalAdvance(fm_monospace, QString(" ")) ;
     int celly = fm_monospace.height() ;
 
     // Display general statistics
@@ -336,13 +336,13 @@ void GxsIdStatisticsWidget::updateContent()
     for(size_t i=0;i<mPublishDateHist.entries().size();++i)
     {
         QString txt = QString::number(i);
-        painter.drawText(ox+4*cellx+i*2*cellx+cellx*1.5 - 0.5*fm_times.width(txt),oy+celly,txt);
+        painter.drawText(ox+4*cellx+i*2*cellx+cellx*1.5 - 0.5*QFontMetrics_horizontalAdvance(fm_times, txt),oy+celly,txt);
     }
 
     for(int i=0;i<5;++i)
     {
         QString txt = QString::number((int)rint(max_entry*i/5.0));
-        painter.drawText(ox + 4*cellx - cellx - fm_times.width(txt),oy - i*hist_height/5.0 * celly,txt );
+        painter.drawText(ox + 4*cellx - cellx - QFontMetrics_horizontalAdvance(fm_times, txt),oy - i*hist_height/5.0 * celly,txt );
     }
 
     oy += 2*celly;
@@ -374,13 +374,13 @@ void GxsIdStatisticsWidget::updateContent()
     for(size_t i=0;i<mLastUsedHist.entries().size();++i)
     {
         QString txt = QString::number(i);
-        painter.drawText(ox+4*cellx+i*2*cellx+cellx*1.5 - 0.5*fm_times.width(txt),oy+celly,txt);
+        painter.drawText(ox+4*cellx+i*2*cellx+cellx*1.5 - 0.5*QFontMetrics_horizontalAdvance(fm_times, txt),oy+celly,txt);
     }
 
     for(int i=0;i<5;++i)
     {
         QString txt = QString::number((int)rint(max_entry*i/5.0));
-        painter.drawText(ox + 4*cellx - cellx - fm_times.width(txt),oy - i*hist_height/5.0 * celly,txt );
+        painter.drawText(ox + 4*cellx - cellx - QFontMetrics_horizontalAdvance(fm_times, txt),oy - i*hist_height/5.0 * celly,txt );
     }
 
     oy += 2*celly;

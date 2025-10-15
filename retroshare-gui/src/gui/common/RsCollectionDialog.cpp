@@ -362,7 +362,7 @@ void RsCollectionDialog::directoryLoaded(QString dirLoaded)
     if(!_dirLoaded)
     {
 
-        QFileInfo lastDir = Settings->getLastDir(RshareSettings::LASTDIR_EXTRAFILE);
+        QFileInfo lastDir = QFileInfo(Settings->getLastDir(RshareSettings::LASTDIR_EXTRAFILE));
         if (lastDir.absoluteFilePath() == "") return;
         if (lastDir.absoluteFilePath() == dirLoaded) _dirLoaded = true;
 
@@ -513,7 +513,7 @@ void RsCollectionDialog::addSelectionRecursive()
 
 static void recursBuildFileTree(const QString& path,RsFileTree& tree,RsFileTree::DirIndex dir_index,bool recursive,std::map<QString,RsFileHash>& paths_to_hash)
 {
-    QFileInfo fileInfo = path;
+    QFileInfo fileInfo = QFileInfo(path);
 
     if (fileInfo.isDir())
     {
