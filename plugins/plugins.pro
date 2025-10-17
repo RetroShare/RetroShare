@@ -18,6 +18,10 @@
 
 TEMPLATE = subdirs
 
+win32-g++:isEmpty(QMAKE_SH):lessThan(QT_MAJOR_VERSION,6) {
+    # Qt 5 Windows native build
 SUBDIRS += \
                 VOIP \
+}
+SUBDIRS += \
 		FeedReader

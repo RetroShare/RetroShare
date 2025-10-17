@@ -975,13 +975,15 @@ static QString getDurationString(uint32_t days)
 {
     switch(days)
     {
-        case 0: return QObject::tr("Indefinitely") ;
-        case 5: return QObject::tr("5 days") ;
-        case 15: return QObject::tr("2 weeks") ;
-        case 30: return QObject::tr("1 month") ;
-        case 60: return QObject::tr("2 month") ;
-        case 180: return QObject::tr("6 month") ;
-        case 365: return QObject::tr("1 year") ;
+	    case    0: return QObject::tr("Indefinitely") ; break;
+	    case    5: return QObject::tr("5 days")  ; break;
+	    case   15: return QObject::tr("2 weeks") ; break;
+	    case   30: return QObject::tr("1 month") ; break;
+	    case   60: return QObject::tr("2 month") ; break;
+	    case  180: return QObject::tr("6 month") ; break;
+	    case  365: return QObject::tr("1 year")  ; break;
+	    case 1095: return QObject::tr("3 years") ; break;
+	    case 1825: return QObject::tr("5 years") ; break;
     default:
         return QString::number(days)+" " + QObject::tr("days") ;
     }

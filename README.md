@@ -30,7 +30,9 @@ in the aim of creating packages for the supported platforms (and more)
 in the [build_scripts](https://github.com/RetroShare/RetroShare/tree/master/build_scripts) directory of this repository.
 
 ## Compilation on Windows
-Follow this file : [WindowsMSys2_InstallGuide.md](https://github.com/RetroShare/RetroShare/blob/master/build_scripts/Windows-msys2/WindowsMSys2_InstallGuide.md)
+Follow this file : [WindowsMSys2_InstallGuide](https://github.com/RetroShare/RetroShare/blob/master/build_scripts/Windows-msys2/WindowsMSys2_InstallGuide.md)
+
+With QtCreator :   [Windows-QtCreator-InstallGuide](https://github.com/RetroShare/RetroShare/blob/master/build_scripts/Windows/Windows-QtCreator-InstallGuide.md)
 
 ## Compilation on MacOSX
 
