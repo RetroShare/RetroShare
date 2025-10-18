@@ -250,7 +250,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
   /* Fill in the background */
   //_painter->fillRect(_rec, QBrush(BACK_COLOR));
   _painter->drawRect(_rec);
- 
+
   if (Settings->getSheetName() == ":Standard_Dark"){
     brushColor = Qt::gray ;
   } else {
@@ -612,20 +612,24 @@ bool RSPermissionMatrixWidget::computeServiceAndPeer(int x,int y,uint32_t& servi
 
     x -= matrix_start_x ;
     y -= S*fMATRIX_START_Y ;
+    float fi = x / (S*fCOL_SIZE);
+    float fj = y / (S*fROW_SIZE);
+    int i = (int)fi;
+    int j = (int)fj;
+    const float icoFracX = fICON_SIZE_X/fCOL_SIZE;
+    const float icoFracY = fICON_SIZE_Y/fROW_SIZE;
 
-    if(x < 0 || x >= service_ids.size() * S*fCOL_SIZE) return false ;
-    if(y < 0 || y >= peer_ids.size()    * S*fROW_SIZE) return false ;
-
-    if( (x % (int)(S*fCOL_SIZE)) < (S*fCOL_SIZE - S*fICON_SIZE_X)/2) return false ;
-    if( (x % (int)(S*fCOL_SIZE)) > (S*fCOL_SIZE + S*fICON_SIZE_X)/2) return false ;
-
-    if( (y % (int)(S*fROW_SIZE)) < (S*fROW_SIZE - S*fICON_SIZE_Y)/2) return false ;
-    if( (y % (int)(S*fROW_SIZE)) > (S*fROW_SIZE + S*fICON_SIZE_Y)/2) return false ;
+    if(
+      i < 0 || i >= service_ids.size() ||
+      j < 0 || j >= peer_ids.size() ||
+      std::fmod(fi + icoFracX/2 + .5f, 1.f) >= icoFracX ||
+      std::fmod(fj + icoFracY/2 + .5f, 1.f) >= icoFracY
+    ) return false;
 
     // 2 - find which widget, by looking into the service perm matrix
 
-    service_id = service_ids[x / (int)(S*fCOL_SIZE)] ;
-    peer_id = peer_ids[y / (int)(S*fCOL_SIZE)] ;
+    service_id = service_ids[i];
+    peer_id = peer_ids[j];
 
     return true ;
 }
@@ -636,22 +640,23 @@ bool RSPermissionMatrixWidget::computeServiceGlobalSwitch(int x,int y,uint32_t& 
 
     float S = QFontMetricsF(font()).height();
 
-    x -= matrix_start_x ;
-    y -= S*fMATRIX_START_Y ;
+    x -= matrix_start_x;
+    y -= S*fMATRIX_START_Y;
+    float fi = x / (S*fCOL_SIZE);
+    int i = (int)fi;
+    const float icoFracX = fICON_SIZE_X/fCOL_SIZE;
 
-    if(x < 0 || x >= service_ids.size() * S*fCOL_SIZE) return false ;
-
-    if( (x % (int)(S*fCOL_SIZE)) < (S*fCOL_SIZE - S*fICON_SIZE_X)/2) return false ;
-    if( (x % (int)(S*fCOL_SIZE)) > (S*fCOL_SIZE + S*fICON_SIZE_X)/2) return false ;
-
-    if( y < -S*fROW_SIZE ) return false ;
-    if( y >  0        ) return false ;
+    if(
+      i < 0 || i >= service_ids.size() ||
+      y < -S*fROW_SIZE || y > 0 ||
+      std::fmod(fi + icoFracX/2 + .5f, 1.f) >= icoFracX
+    ) return false;
 
     // 2 - find which widget, by looking into the service perm matrix
 
-    service_id = service_ids[x / (int)(S*fCOL_SIZE)] ;
+    service_id = service_ids[i];
 
-    return true ;
+    return true;
 }
 
 void RSPermissionMatrixWidget::defaultPermissionSwitched(uint32_t /* ServiceId */,bool /* b */)
