@@ -620,8 +620,8 @@ bool RSPermissionMatrixWidget::computeServiceAndPeer(int x,int y,uint32_t& servi
     const float icoFracY = fICON_SIZE_Y/fROW_SIZE;
 
     if(
-      i < 0 || i >= service_ids.size() ||
-      j < 0 || j >= peer_ids.size() ||
+      fi < 0.f || i >= service_ids.size() ||
+      fj < 0.f || j >= peer_ids.size() ||
       std::fmod(fi + icoFracX/2 + .5f, 1.f) >= icoFracX ||
       std::fmod(fj + icoFracY/2 + .5f, 1.f) >= icoFracY
     ) return false;
@@ -647,8 +647,8 @@ bool RSPermissionMatrixWidget::computeServiceGlobalSwitch(int x,int y,uint32_t& 
     const float icoFracX = fICON_SIZE_X/fCOL_SIZE;
 
     if(
-      i < 0 || i >= service_ids.size() ||
-      y < -S*fROW_SIZE || y > 0 ||
+      fi < 0.f || i >= service_ids.size() ||
+      y >= 0.f || y < -S*fROW_SIZE ||
       std::fmod(fi + icoFracX/2 + .5f, 1.f) >= icoFracX
     ) return false;
 
