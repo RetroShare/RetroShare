@@ -105,6 +105,8 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	myInviteYesButton = NULL;
 	myInviteIdChooser = NULL;
 
+    mEventHandlerId = 0;
+
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
     {
         RsQThreadUtils::postToObject([=](){
