@@ -273,7 +273,7 @@ void NotifyPage::updateUserNotifySettings()
 	MainWindow::installNotifyIcons();
 }
 
-void NotifyPage::updateMessageFlags() {  Settings->setMessageFlags( ui.message_ConnectAttempt->isChecked()? RshareSettings::RS_MESSAGE_CONNECT_ATTEMPT : 0); }
+void NotifyPage::updateMessageFlags() {  Settings->setMessageFlags( ui.message_ConnectAttempt->isChecked()? uint(RshareSettings::RS_MESSAGE_CONNECT_ATTEMPT) : 0); }
 void NotifyPage::updateNotifyFlags()  {	 Settings->setNotifyFlags((int)getNotifyFlags()); }
 void NotifyPage::updateNewsFeedFlags(){  Settings->setNewsFeedFlags((int)getNewsFlags()); }
 
