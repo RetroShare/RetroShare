@@ -89,7 +89,7 @@ GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const 
 
 GxsForumMsgItem::~GxsForumMsgItem()
 {
-    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(300);
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
 
     while( (mLoadingGroup || mLoadingMessage || mLoadingSetAsRead || mLoadingParentMessage)
            && std::chrono::steady_clock::now() < timeout)
@@ -202,14 +202,16 @@ void GxsForumMsgItem::loadGroup()
 		if(!rsGxsForums->getForumsInfo(forumIds,groups))
 		{
 			RsErr() << "GxsForumGroupItem::loadGroup() ERROR getting data" << std::endl;
-			return;
+            mLoadingGroup = false;
+            return;
 		}
 
 		if (groups.size() != 1)
 		{
 			std::cerr << "GxsForumGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
-			return;
+            mLoadingGroup = false;
+            return;
 		}
 		RsGxsForumGroup group(groups[0]);
 
@@ -249,14 +251,16 @@ void GxsForumMsgItem::loadMessage()
 		{
 			std::cerr << "GxsForumMsgItem::loadMessage() ERROR getting data";
 			std::cerr << std::endl;
-			return;
+            mLoadingMessage = false;
+            return;
 		}
 
 		if (msgs.size() != 1)
 		{
 			std::cerr << "GxsForumMsgItem::loadMessage() Wrong number of Items";
 			std::cerr << std::endl;
-			return;
+            mLoadingMessage = false;
+            return;
 		}
         RsGxsForumMsg msg(msgs[0]);
 
@@ -296,14 +300,16 @@ void GxsForumMsgItem::loadParentMessage(const RsGxsMessageId& parent_msg)
 		{
 			std::cerr << "GxsForumMsgItem::loadMessage() ERROR getting data";
 			std::cerr << std::endl;
-			return;
+            mLoadingParentMessage = false;
+            return;
 		}
 
 		if (msgs.size() != 1)
 		{
 			std::cerr << "GxsForumMsgItem::loadMessage() Wrong number of Items";
 			std::cerr << std::endl;
-			return;
+            mLoadingParentMessage = false;
+            return;
 		}
         RsGxsForumMsg msg(msgs[0]);
 

@@ -102,7 +102,7 @@ void ChannelsCommentsItem::paintEvent(QPaintEvent *e)
 
 ChannelsCommentsItem::~ChannelsCommentsItem()
 {
-    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(300);
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
 
     while( mLoading && std::chrono::steady_clock::now() < timeout )
     {
@@ -293,12 +293,14 @@ void ChannelsCommentsItem::load()
         if(!rsGxsChannels->getChannelsInfo(groupIds,groups))	// would be better to call channel Summaries for a single group
         {
             RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
+            mLoading= false;
             return;
         }
 
         if (groups.size() != 1)
         {
             std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items" << std::endl;
+            mLoading= false;
             return;
         }
         RsGxsChannelGroup group(groups[0]);
@@ -312,7 +314,8 @@ void ChannelsCommentsItem::load()
         if(! rsGxsChannels->getChannelContent( groupId(), std::set<RsGxsMessageId>( { messageId(),mThreadId } ),posts,comments,votes))
 		{
 			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
-			return;
+            mLoading= false;
+            return;
 		}
 
             // now that everything is in place, update the UI
@@ -325,32 +328,30 @@ void ChannelsCommentsItem::load()
 
             mGroupMeta = group.mMeta;
 
-            if(comments.size()==1)
-            {
-                RsGxsComment cmt(comments[0]);
-
-                uint32_t autorized_lines = (int)floor( (ui->avatarLabel->height() - ui->button_HL->sizeHint().height())
-                                                      / QFontMetricsF(ui->subjectLabel->font()).height());
-
-                ui->commLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(cmt.mComment.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_LINKS));
-                ui->nameLabel->setId(cmt.mMeta.mAuthorId);
-                ui->datetimeLabel->setText(DateTime::formatLongDateTime(cmt.mMeta.mPublishTs));
-
-                RsIdentityDetails idDetails ;
-                rsIdentity->getIdDetails(cmt.mMeta.mAuthorId,idDetails);
-                QPixmap pixmap ;
-
-                if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
-                pixmap = GxsIdDetails::makeDefaultIcon(cmt.mMeta.mAuthorId,GxsIdDetails::LARGE);
-                ui->avatarLabel->setPixmap(pixmap);
-
-                //Change this item to be uploaded with thread element. This is really bad practice.
-            }
-            else
+            if(comments.size()!=1)
             {
                 mLoading=false;
                 removeItem();
             }
+
+            RsGxsComment cmt(comments[0]);
+
+            uint32_t autorized_lines = (int)floor( (ui->avatarLabel->height() - ui->button_HL->sizeHint().height())
+                                                      / QFontMetricsF(ui->subjectLabel->font()).height());
+
+            ui->commLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(cmt.mComment.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_LINKS));
+            ui->nameLabel->setId(cmt.mMeta.mAuthorId);
+            ui->datetimeLabel->setText(DateTime::formatLongDateTime(cmt.mMeta.mPublishTs));
+
+            RsIdentityDetails idDetails ;
+            rsIdentity->getIdDetails(cmt.mMeta.mAuthorId,idDetails);
+            QPixmap pixmap ;
+
+            if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
+            pixmap = GxsIdDetails::makeDefaultIcon(cmt.mMeta.mAuthorId,GxsIdDetails::LARGE);
+            ui->avatarLabel->setPixmap(pixmap);
+
+           //Change this item to be uploaded with thread element. This is really bad practice.
 
             if (posts.size() == 1)
                 setPost(posts[0]);

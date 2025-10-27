@@ -63,6 +63,7 @@ private:
 
 private:
 	RsPostedGroup mGroup;
+    bool mIsLoadingGroup;
 
 	/** Qt Designer generated object */
 	Ui::PostedGroupItem *ui;

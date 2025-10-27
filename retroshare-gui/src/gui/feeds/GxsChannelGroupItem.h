@@ -62,6 +62,8 @@ private:
 	void setup();
     void addEventHandler();
 
+    bool mIsLoading;
+
 private:
 	RsGxsChannelGroup mGroup;
 

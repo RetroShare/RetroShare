@@ -69,6 +69,8 @@ private:
 	/** Qt Designer generated object */
 	Ui::GxsForumGroupItem *ui;
 
+    bool mIsLoading;
+
     std::list<RsGxsId> mAddedModerators;
     std::list<RsGxsId> mRemovedModerators;
 

@@ -140,7 +140,7 @@ void GxsChannelPostItem::paintEvent(QPaintEvent *e)
 
 GxsChannelPostItem::~GxsChannelPostItem()
 {
-    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(300);
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
 
     while( (mLoadingGroup || mLoadingMessage || mLoadingComment)
            && std::chrono::steady_clock::now() < timeout)
@@ -306,14 +306,16 @@ void GxsChannelPostItem::loadGroup()
 		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))	// would be better to call channel Summaries for a single group
 		{
 			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
-			return;
+            mLoadingGroup = false;
+            return;
 		}
 
 		if (groups.size() != 1)
 		{
 			std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
-			return;
+            mLoadingGroup = false;
+            return;
 		}
 		RsGxsChannelGroup group(groups[0]);
 
@@ -348,7 +350,8 @@ void GxsChannelPostItem::loadMessage()
 		if(! rsGxsChannels->getChannelContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments,votes))
 		{
 			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
-			return;
+            mLoadingMessage = false;
+            return;
 		}
 
 		if (posts.size() == 1)
@@ -377,11 +380,11 @@ void GxsChannelPostItem::loadMessage()
 				ui->commLabel->show();
 				ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
 
-				//Change this item to be uploaded with thread element.
+                // Change this item to be uploaded with thread element. Note: this is terrible coding.
 				setMessageId(cmt.mMeta.mThreadId);
-				requestMessage();
-
                 mLoadingMessage = false;
+
+                requestMessage();
             }, this );
 
 		}
@@ -424,7 +427,8 @@ void GxsChannelPostItem::loadComment()
 		if(! rsGxsChannels->getChannelComments( groupId(),msgIds,comments))
 		{
 			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
-			return;
+            mLoadingComment = false;
+            return;
 		}
 
 		int comNb = comments.size();
@@ -446,13 +450,6 @@ void GxsChannelPostItem::loadComment()
 
 void GxsChannelPostItem::fill()
 {
-	/* fill in */
-
-//	if (isLoading()) {
-	//	/* Wait for all requests */
-		//return;
-//	}
-
 #ifdef DEBUG_ITEM
 	std::cerr << "GxsChannelPostItem::fill()";
 	std::cerr << std::endl;

@@ -36,7 +36,8 @@
 GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate) :
     GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsGxsChannels, autoUpdate)
 {
-	setup();
+    mIsLoading = false;
+    setup();
 	requestGroup();
     addEventHandler();
 }
@@ -44,6 +45,7 @@ GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId
 GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, bool isHome, bool autoUpdate) :
     GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsGxsChannels, autoUpdate)
 {
+    mIsLoading = false;
     setup();
     setGroup(group);
     addEventHandler();
@@ -77,6 +79,14 @@ void GxsChannelGroupItem::addEventHandler()
 
 GxsChannelGroupItem::~GxsChannelGroupItem()
 {
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
+
+    while( mIsLoading && std::chrono::steady_clock::now() < timeout )
+    {
+        RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for data to load " << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
     rsEvents->unregisterEventsHandler(mEventHandlerId);
 	delete(ui);
 }
@@ -121,6 +131,8 @@ bool GxsChannelGroupItem::setGroup(const RsGxsChannelGroup &group)
 
 void GxsChannelGroupItem::loadGroup()
 {
+    mIsLoading = true;
+
 	RsThread::async([this]()
 	{
 		// 1 - get group data
@@ -131,14 +143,16 @@ void GxsChannelGroupItem::loadGroup()
 		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))
 		{
 			RsErr() << "PostedItem::loadGroup() ERROR getting data" << std::endl;
-			return;
+            mIsLoading = false;
+            return;
 		}
 
 		if (groups.size() != 1)
 		{
 			std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
-			return;
+            mIsLoading = false;
+            return;
 		}
 		RsGxsChannelGroup group(groups[0]);
 
@@ -149,6 +163,7 @@ void GxsChannelGroupItem::loadGroup()
 			 * after a blocking call to RetroShare API complete */
 
 			setGroup(group);
+            mIsLoading = false;
 
 		}, this );
 	});

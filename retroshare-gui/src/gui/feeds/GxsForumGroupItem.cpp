@@ -34,7 +34,8 @@
 GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate) :
     GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsGxsForums, autoUpdate)
 {
-	setup();
+    mIsLoading = false;
+    setup();
 	requestGroup();
     addEventHandler();
 }
@@ -44,7 +45,8 @@ GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, co
     mAddedModerators(added_moderators),
     mRemovedModerators(removed_moderators)
 {
-	setup();
+    mIsLoading = false;
+    setup();
 	requestGroup();
     addEventHandler();
 }
@@ -85,6 +87,14 @@ GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, co
 
 GxsForumGroupItem::~GxsForumGroupItem()
 {
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
+
+    while( mIsLoading && std::chrono::steady_clock::now() < timeout )
+    {
+        RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for data to load " << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
     rsEvents->unregisterEventsHandler(mEventHandlerId);
     delete(ui);
 }
@@ -129,6 +139,8 @@ bool GxsForumGroupItem::setGroup(const RsGxsForumGroup &group)
 
 void GxsForumGroupItem::loadGroup()
 {
+    mIsLoading = true;
+
  	RsThread::async([this]()
 	{
 		// 1 - get group data
@@ -143,14 +155,16 @@ void GxsForumGroupItem::loadGroup()
 		if(!rsGxsForums->getForumsInfo(forumIds,groups))
 		{
 			RsErr() << "GxsForumGroupItem::loadGroup() ERROR getting data" << std::endl;
-			return;
+            mIsLoading = false;
+            return;
 		}
 
 		if (groups.size() != 1)
 		{
 			std::cerr << "GxsForumGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
-			return;
+            mIsLoading = false;
+            return;
 		}
         RsGxsForumGroup group(groups[0]);// no reference to teporary accross threads!
 
@@ -161,6 +175,7 @@ void GxsForumGroupItem::loadGroup()
 			 * after a blocking call to RetroShare API complete */
 
 			setGroup(group);
+            mIsLoading = false;
 
 		}, this );
 	});

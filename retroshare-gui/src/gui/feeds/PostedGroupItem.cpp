@@ -35,7 +35,8 @@
 PostedGroupItem::PostedGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate) :
     GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsPosted, autoUpdate)
 {
-	setup();
+    mIsLoadingGroup = false;
+    setup();
 
 	requestGroup();
 }
@@ -43,13 +44,24 @@ PostedGroupItem::PostedGroupItem(FeedHolder *feedHolder, uint32_t feedId, const 
 PostedGroupItem::PostedGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, bool isHome, bool autoUpdate) :
     GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsPosted, autoUpdate)
 {
-	setup();
+    mIsLoadingGroup = false;
+    setup();
 
 	setGroup(group);
 }
 
 PostedGroupItem::~PostedGroupItem()
 {
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
+
+    while( mIsLoadingGroup && std::chrono::steady_clock::now() < timeout)
+    {
+        RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
+                << (mIsLoadingGroup ? "Group " : "")
+                << "loading finished." << std::endl;
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
 	delete(ui);
 }
 
@@ -95,6 +107,8 @@ bool PostedGroupItem::setGroup(const RsPostedGroup &group)
 
 void PostedGroupItem::loadGroup()
 {
+    mIsLoadingGroup = true;
+
 	RsThread::async([this]()
 	{
 		// 1 - get group data
@@ -109,14 +123,16 @@ void PostedGroupItem::loadGroup()
 		if(!rsPosted->getBoardsInfo(groupIds,groups))
 		{
 			RsErr() << "GxsPostedGroupItem::loadGroup() ERROR getting data" << std::endl;
-			return;
+            mIsLoadingGroup = false;
+            return;
 		}
 
 		if (groups.size() != 1)
 		{
 			std::cerr << "GxsPostedGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
-			return;
+            mIsLoadingGroup = false;
+            return;
 		}
 		RsPostedGroup group(groups[0]);
 
@@ -127,6 +143,7 @@ void PostedGroupItem::loadGroup()
 			 * after a blocking call to RetroShare API complete */
 
 			setGroup(group);
+            mIsLoadingGroup = false;
 
 		}, this );
 	});

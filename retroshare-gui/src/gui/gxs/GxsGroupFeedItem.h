@@ -60,6 +60,7 @@ protected slots:
 protected:
 	bool mIsHome;
 	RsGxsIfaceHelper *mGxsIface;
+    static const uint GROUP_ITEM_LOADING_TIMEOUT_ms ;
 
 private slots:
 	/* RsGxsUpdateBroadcastBase */
