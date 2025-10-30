@@ -44,17 +44,25 @@ public:
 
 	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
 
+#ifdef UNUSED
 	// This one is used in channel thread widget. We don't want the group data to reload at every post, so we load it in the hosting
     // GxsChannelsPostsWidget and pass it to created items.
 
 	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData& group, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
+#endif
 
 	virtual ~GxsChannelPostItem();
 
     uint64_t uniqueIdentifier() const override { return hash_64bits("GxsChannelPostItem " + messageId().toStdString()) ; }
 
-	bool setGroup(const RsGxsChannelGroup& group, bool doFill = true);
-	bool setPost(const RsGxsChannelPost& post, bool doFill = true);
+protected:
+    enum LoadingStatus {
+        NO_DATA      =   0x00,
+        HAS_DATA     =   0x01,
+        FILLED       =   0x02
+    };
+
+    bool setPost(const RsGxsChannelPost& post);
 
     //void setFileCleanUpWarning(uint32_t time_left);
 
@@ -62,19 +70,17 @@ public:
 	QString getMsgLabel();
 	const std::list<SubFileItem *> &getFileItems() {return mFileItems; }
 
-	bool isLoaded() const {return mLoaded;};
 	bool isUnread() const ;
 	void setReadStatus(bool isNew, bool isUnread);
 
 	const std::set<RsGxsMessageId>& olderVersions() const { return mPost.mOlderVersions; }
 
 	static uint64_t computeIdentifier(const RsGxsMessageId& msgid) { return hash64("GxsChannelPostItem " + msgid.toStdString()) ; }
-protected:
 	//void init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions);
 
 	/* FeedItem */
-	virtual void doExpand(bool open);
-	virtual void expandFill(bool first);
+    virtual void doExpand(bool open) override;
+    virtual void expandFill(bool first) override;
 
 	// This does nothing except triggering the loading of the post data and comments. This function is mainly used to detect
 	// when the post is actually made visible.
@@ -82,14 +88,14 @@ protected:
 	virtual void paintEvent(QPaintEvent *) override;
 
 	/* GxsGroupFeedItem */
-	virtual QString groupName();
+    virtual QString groupName() override;
 	virtual void loadGroup() override;
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
+    virtual RetroShareLink::enumType getLinkType()  override{ return RetroShareLink::TYPE_CHANNEL; }
 
 	/* GxsFeedItem */
-	virtual QString messageName();
-	virtual void loadMessage();
-	virtual void loadComment();
+    virtual QString messageName() override;
+    virtual void loadMessage() override;
+    virtual void loadComment() override {}
 
 private slots:
 	/* default stuff */
@@ -98,7 +104,6 @@ private slots:
 	void download();
 	void play();
 	void edit();
-	void loadComments();
 
 	void readToggled(bool checked);
 
@@ -117,14 +122,12 @@ private:
 	void fillExpandFrame();
 
 private:
-	bool mInFill;
 	bool mCloseOnRead;
-    bool mLoaded;
+
+    LoadingStatus mLoadingStatus;
 
     bool mLoadingMessage;
     bool mLoadingGroup;
-    bool mLoadingComment;
-
 
 	RsGroupMetaData mGroupMeta;
 	RsGxsChannelPost mPost;

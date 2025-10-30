@@ -45,37 +45,9 @@
  * #define DEBUG_ITEM 1
  ****/
 
-GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData& group_meta, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
-    GxsFeedItem(feedHolder, feedId, group_meta.mGroupId, messageId, isHome, rsGxsChannels, autoUpdate),
-    mGroupMeta(group_meta)
-{
-    mLoadingGroup = false;
-    mLoadingMessage = false;
-    mLoadingComment = false;
-
-    mPost.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
-    mPost.mMeta.mGroupId = mGroupMeta.mGroupId;
-
-	QVector<RsGxsMessageId> v;
-	//bool self = false;
-
-	for(std::set<RsGxsMessageId>::const_iterator it(older_versions.begin());it!=older_versions.end();++it)
-		v.push_back(*it) ;
-
-	if(older_versions.find(messageId) == older_versions.end())
-		v.push_back(messageId);
-
-	setMessageVersions(v) ;
-	setup();
-
-	// no call to loadGroup() here because we have it already.
-}
-
 GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
     GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsChannels, autoUpdate) // this one should be in GxsFeedItem
 {
-    mPost.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
-
 	QVector<RsGxsMessageId> v;
 	//bool self = false;
 
@@ -85,55 +57,38 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 	if(older_versions.find(messageId) == older_versions.end())
 		v.push_back(messageId);
 
-	setMessageVersions(v) ;
+    mLoadingStatus = NO_DATA;
+
+    setMessageVersions(v) ;
 	setup();
-
-	loadGroup();
 }
-
-// GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost& post, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
-//     GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, autoUpdate)
-// {
-//     mPost.mMeta.mMsgId.clear(); // security
-// 	init(post.mMeta.mMsgId,older_versions) ;
-// 	mPost = post ;
-// }
-
-// void GxsChannelPostItem::init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions)
-// {
-// 	QVector<RsGxsMessageId> v;
-// 	//bool self = false;
-//
-// 	for(std::set<RsGxsMessageId>::const_iterator it(older_versions.begin());it!=older_versions.end();++it)
-// 		v.push_back(*it) ;
-//
-// 	if(older_versions.find(messageId) == older_versions.end())
-// 		v.push_back(messageId);
-//
-// 	setMessageVersions(v) ;
-//
-// 	setup();
-//
-// 	mLoaded = false ;
-// }
 
 void GxsChannelPostItem::paintEvent(QPaintEvent *e)
 {
 	/* This method employs a trick to trigger a deferred loading. The post and group is requested only
 	 * when actually displayed on the screen. */
 
-	if(!mLoaded)
-	{
-		mLoaded = true ;
+    if(mLoadingStatus != FILLED && !mGroupMeta.mGroupId.isNull() && !mPost.mMeta.mMsgId.isNull() )
+        mLoadingStatus = HAS_DATA;
 
-        std::set<RsGxsMessageId> older_versions;	// not so nice. We need to use std::set everywhere
-        for(auto& m:messageVersions())
-            older_versions.insert(m);
+    if(mGroupMeta.mGroupId.isNull() && !mLoadingGroup)
+        requestGroup();
 
-		fill();
-		requestMessage();
-		requestComment();
-	}
+    if(mPost.mMeta.mMsgId.isNull() && !mLoadingMessage)
+        requestMessage();
+
+    switch(mLoadingStatus)
+    {
+    case FILLED:
+    case NO_DATA:
+    default:
+        break;
+
+    case HAS_DATA:
+        fill();
+        mLoadingStatus = FILLED;
+        break;
+    }
 
 	GxsFeedItem::paintEvent(e) ;
 }
@@ -142,13 +97,12 @@ GxsChannelPostItem::~GxsChannelPostItem()
 {
     auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
 
-    while( (mLoadingGroup || mLoadingMessage || mLoadingComment)
+    while( (mLoadingGroup || mLoadingMessage)
            && std::chrono::steady_clock::now() < timeout)
     {
         RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for "
                 << (mLoadingGroup ? "Group " : "")
                 << (mLoadingMessage ? "Message " : "")
-                << (mLoadingComment ? "Comment " : "")
                 << "loading." << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
@@ -188,9 +142,7 @@ void GxsChannelPostItem::setup()
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
-	mInFill = false;
 	mCloseOnRead = false;
-	mLoaded = false;
 
 	/* clear ui */
 	ui->titleLabel->setText(tr("Loading..."));
@@ -210,7 +162,7 @@ void GxsChannelPostItem::setup()
 	connect(ui->downloadButton, SIGNAL(clicked()), this, SLOT(download()));
 	// HACK FOR NOW.
     ui->commentButton->hide();// hidden until properly enabled.
-	connect(ui->commentButton, SIGNAL(clicked()), this, SLOT(loadComments()));
+//	connect(ui->commentButton, SIGNAL(clicked()), this, SLOT(loadComments()));
 
 	connect(ui->playButton, SIGNAL(clicked()), this, SLOT(play(void)));
     //connect(ui->editButton, SIGNAL(clicked()), this, SLOT(edit(void)));
@@ -246,22 +198,9 @@ void GxsChannelPostItem::setup()
 }
 
 
-bool GxsChannelPostItem::setPost(const RsGxsChannelPost &post, bool doFill)
+bool GxsChannelPostItem::setPost(const RsGxsChannelPost &post)
 {
-	if (groupId() != post.mMeta.mGroupId || messageId() != post.mMeta.mMsgId) {
-		std::cerr << "GxsChannelPostItem::setPost() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
-
 	mPost = post;
-
-	if (doFill) {
-		fill();
-	}
-
-	updateItem();
-
 	return true;
 }
 
@@ -282,18 +221,10 @@ QString GxsChannelPostItem::groupName()
 	return QString::fromUtf8(mGroupMeta.mGroupName.c_str());
 }
 
-void GxsChannelPostItem::loadComments()
-{
-	QString title = QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
-	comments(title);
-}
-
 void GxsChannelPostItem::loadGroup()
 {
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsChannelGroupItem::loadGroup()";
-	std::cerr << std::endl;
-#endif
+    std::cerr << "GxsChannelGroupItem::loadGroup()" << std::endl;
+
     mLoadingGroup = true;
 
 	RsThread::async([this]()
@@ -305,14 +236,14 @@ void GxsChannelPostItem::loadGroup()
 
 		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))	// would be better to call channel Summaries for a single group
 		{
-			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
+            RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data for group " << groupId() << std::endl;
             mLoadingGroup = false;
             return;
 		}
 
 		if (groups.size() != 1)
 		{
-			std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items";
+            std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items for group " << groupId() ;
 			std::cerr << std::endl;
             mLoadingGroup = false;
             return;
@@ -327,6 +258,8 @@ void GxsChannelPostItem::loadGroup()
 
 			mGroupMeta = group.mMeta;
             mLoadingGroup = false;
+
+            update();	// this triggers a paintEvent if needed.
 
 		}, this );
 	});
@@ -365,28 +298,9 @@ void GxsChannelPostItem::loadMessage()
             {
                 setPost(post);
                 mLoadingMessage = false;
+                update();	// this triggers a paintEvent if needed.
+
             }, this );
-		}
-		else if(comments.size() == 1)
-		{
-			const RsGxsComment& cmt = comments[0];
-#ifdef DEBUG_ITEM
-			std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
-#endif
-
-			RsQThreadUtils::postToObject( [cmt,this]()
-			{
-				ui->newCommentLabel->show();
-				ui->commLabel->show();
-				ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
-
-                // Change this item to be uploaded with thread element. Note: this is terrible coding.
-				setMessageId(cmt.mMeta.mThreadId);
-                mLoadingMessage = false;
-
-                requestMessage();
-            }, this );
-
 		}
 		else
 		{
@@ -399,52 +313,9 @@ void GxsChannelPostItem::loadMessage()
             {
                 removeItem();
                 mLoadingMessage = false;
+                update();	// this triggers a paintEvent if needed.
             }, this );
 		}
-	});
-}
-
-void GxsChannelPostItem::loadComment()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsChannelPostItem::loadComment()";
-	std::cerr << std::endl;
-#endif
-    mLoadingComment = true;
-
-	RsThread::async([this]()
-	{
-		// 1 - get group data
-
-        std::set<RsGxsMessageId> msgIds;
-
-        for(auto MsgId: messageVersions())
-            msgIds.insert(MsgId);
-
-		std::vector<RsGxsChannelPost> posts;
-		std::vector<RsGxsComment> comments;
-
-		if(! rsGxsChannels->getChannelComments( groupId(),msgIds,comments))
-		{
-			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
-            mLoadingComment = false;
-            return;
-		}
-
-		int comNb = comments.size();
-
-		RsQThreadUtils::postToObject( [comNb,this]()
-		{
-			QString sComButText = tr("Comment");
-			if (comNb == 1)
-				sComButText = sComButText.append("(1)");
-			else if(comNb > 1)
-				sComButText = tr("Comments ").append("(%1)").arg(comNb);
-
-			ui->commentButton->setText(sComButText);
-            mLoadingComment = false;
-
-		}, this );
 	});
 }
 
@@ -454,8 +325,6 @@ void GxsChannelPostItem::fill()
 	std::cerr << "GxsChannelPostItem::fill()";
 	std::cerr << std::endl;
 #endif
-
-	mInFill = true;
 
 	QString title;
 	QString msgText;
@@ -559,21 +428,6 @@ void GxsChannelPostItem::fill()
 			ui->commentButton->hide();
 		}
 
-// THIS CODE IS doesn't compile - disabling until fixed.
-#if 0
-		if (post.mComments)
-		{
-			QString commentText = QString::number(post.mComments);
-			commentText += " ";
-			commentText += tr("Comments");
-			ui->commentButton->setText(commentText);
-		}
-		else
-		{
-			ui->commentButton->setText(tr("Comment"));
-		}
-#endif
-
 	}
 	else
 	{
@@ -639,8 +493,6 @@ void GxsChannelPostItem::fill()
 		QLayout *layout = ui->expandFrame->layout();
 		layout->addWidget(fi);
 	}
-
-	mInFill = false;
 }
 
 void GxsChannelPostItem::fillExpandFrame()
@@ -871,10 +723,6 @@ void GxsChannelPostItem::play()
 
 void GxsChannelPostItem::readToggled(bool /*checked*/)
 {
-	if (mInFill) {
-		return;
-	}
-
 	mCloseOnRead = false;
 
 	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
