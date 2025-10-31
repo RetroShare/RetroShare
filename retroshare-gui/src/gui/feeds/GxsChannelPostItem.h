@@ -76,7 +76,6 @@ protected:
 	const std::set<RsGxsMessageId>& olderVersions() const { return mPost.mOlderVersions; }
 
 	static uint64_t computeIdentifier(const RsGxsMessageId& msgid) { return hash64("GxsChannelPostItem " + msgid.toStdString()) ; }
-	//void init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions);
 
 	/* FeedItem */
     virtual void doExpand(bool open) override;
@@ -109,9 +108,6 @@ private slots:
 
 	void unsubscribeChannel();
 	void updateItem();
-
-	void makeUpVote();
-	void makeDownVote();
 
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);	

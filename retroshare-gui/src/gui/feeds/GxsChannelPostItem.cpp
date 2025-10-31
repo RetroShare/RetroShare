@@ -58,6 +58,8 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 		v.push_back(messageId);
 
     mLoadingStatus = NO_DATA;
+    mLoadingMessage = false;
+    mLoadingGroup = false;
 
     setMessageVersions(v) ;
 	setup();
@@ -173,8 +175,6 @@ void GxsChannelPostItem::setup()
     // hide voting buttons, backend is not implemented yet
     ui->voteUpButton->hide();
     ui->voteDownButton->hide();
-	//connect(ui-> voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
-	//connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT(makeDownVote()));
 
 	ui->scoreLabel->hide();
 
@@ -533,22 +533,6 @@ void GxsChannelPostItem::setReadStatus(bool isNew, bool isUnread)
 	ui->feedFrame->style()->polish(  ui->feedFrame);
 }
 
-// void GxsChannelPostItem::setFileCleanUpWarning(uint32_t time_left)
-// {
-// 	int hours = (int)time_left/3600;
-// 	int minutes = (time_left - hours*3600)%60;
-//
-// 	ui->warning_label->setText(tr("Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.").arg(
-// 			QString::number(hours)).arg(QString::number(minutes)));
-//
-// 	QFont warnFont = ui->warning_label->font();
-// 	warnFont.setBold(true);
-// 	ui->warning_label->setFont(warnFont);
-//
-// 	ui->warn_image_label->setVisible(true);
-// 	ui->warning_label->setVisible(true);
-// }
-
 void GxsChannelPostItem::updateItem()
 {
 	/* fill in */
@@ -731,29 +715,4 @@ void GxsChannelPostItem::readToggled(bool /*checked*/)
 
 	//setReadStatus(false, checked); // Updated by events
 }
-
-void GxsChannelPostItem::makeDownVote()
-{
-	RsGxsGrpMsgIdPair msgId;
-	msgId.first = mPost.mMeta.mGroupId;
-	msgId.second = mPost.mMeta.mMsgId;
-
-	ui->voteUpButton->setEnabled(false);
-	ui->voteDownButton->setEnabled(false);
-
-	emit vote(msgId, false);
-}
-
-void GxsChannelPostItem::makeUpVote()
-{
-	RsGxsGrpMsgIdPair msgId;
-	msgId.first = mPost.mMeta.mGroupId;
-	msgId.second = mPost.mMeta.mMsgId;
-
-	ui->voteUpButton->setEnabled(false);
-	ui->voteDownButton->setEnabled(false);
-
-	emit vote(msgId, true);
-}
-
 
