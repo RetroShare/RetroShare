@@ -45,6 +45,12 @@ public:
 	uint32_t feedId() const { return mFeedId; }
 
 protected:
+        enum LoadingStatus {
+        NO_DATA      =   0x00,
+        HAS_DATA     =   0x01,
+        FILLED       =   0x02
+    };
+
 	/* load group data */
 	void requestGroup();
 

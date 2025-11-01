@@ -34,9 +34,9 @@
 GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate) :
     GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsGxsForums, autoUpdate)
 {
-    mIsLoading = false;
+    mLoadingGroup = false;
+    mLoadingStatus = NO_DATA;
     setup();
-	requestGroup();
     addEventHandler();
 }
 
@@ -45,9 +45,9 @@ GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, co
     mAddedModerators(added_moderators),
     mRemovedModerators(removed_moderators)
 {
-    mIsLoading = false;
+    mLoadingGroup = false;
+    mLoadingStatus = NO_DATA;
     setup();
-	requestGroup();
     addEventHandler();
 }
 
@@ -68,7 +68,8 @@ void GxsForumGroupItem::addEventHandler()
                 case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
                 case RsForumEventCode::UPDATED_FORUM:
                 case RsForumEventCode::MODERATOR_LIST_CHANGED:
-                    loadGroup();
+                    mLoadingStatus = NO_DATA;
+                    mGroup = RsGxsForumGroup();
                     break;
                 default:
                     break;
@@ -77,19 +78,37 @@ void GxsForumGroupItem::addEventHandler()
     }, mEventHandlerId, RsEventType::GXS_FORUMS );
 }
 
-GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumGroup &group, bool isHome, bool autoUpdate) :
-    GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsGxsForums, autoUpdate)
+void GxsForumGroupItem::paintEvent(QPaintEvent *e)
 {
-	setup();
-	setGroup(group);
-    addEventHandler();
-}
+    /* This method employs a trick to trigger a deferred loading. The post and group is requested only
+     * when actually displayed on the screen. */
 
+    if(mLoadingStatus != FILLED && !mGroup.mMeta.mGroupId.isNull())
+        mLoadingStatus = HAS_DATA;
+
+    if(mGroup.mMeta.mGroupId.isNull() && !mLoadingGroup)
+        loadGroup();
+
+    switch(mLoadingStatus)
+    {
+    case FILLED:
+    case NO_DATA:
+    default:
+        break;
+
+    case HAS_DATA:
+        fill();
+        mLoadingStatus = FILLED;
+        break;
+    }
+
+    GxsGroupFeedItem::paintEvent(e) ;
+}
 GxsForumGroupItem::~GxsForumGroupItem()
 {
     auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
 
-    while( mIsLoading && std::chrono::steady_clock::now() < timeout )
+    while( mLoadingGroup && std::chrono::steady_clock::now() < timeout )
     {
         RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for data to load " << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -123,23 +142,9 @@ void GxsForumGroupItem::setup()
 	ui->expandFrame->hide();
 }
 
-bool GxsForumGroupItem::setGroup(const RsGxsForumGroup &group)
-{
-	if (groupId() != group.mMeta.mGroupId) {
-		std::cerr << "GxsForumGroupItem::setContent() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	mGroup = group;
-	fill();
-
-	return true;
-}
-
 void GxsForumGroupItem::loadGroup()
 {
-    mIsLoading = true;
+    mLoadingGroup = true;
 
  	RsThread::async([this]()
 	{
@@ -155,7 +160,7 @@ void GxsForumGroupItem::loadGroup()
 		if(!rsGxsForums->getForumsInfo(forumIds,groups))
 		{
 			RsErr() << "GxsForumGroupItem::loadGroup() ERROR getting data" << std::endl;
-            mIsLoading = false;
+            mLoadingGroup = false;
             return;
 		}
 
@@ -163,7 +168,7 @@ void GxsForumGroupItem::loadGroup()
 		{
 			std::cerr << "GxsForumGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
-            mIsLoading = false;
+            mLoadingGroup = false;
             return;
 		}
         RsGxsForumGroup group(groups[0]);// no reference to teporary accross threads!
@@ -174,8 +179,8 @@ void GxsForumGroupItem::loadGroup()
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			setGroup(group);
-            mIsLoading = false;
+            mGroup = group;
+            mLoadingGroup = false;
 
 		}, this );
 	});

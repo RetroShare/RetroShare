@@ -71,6 +71,7 @@ void GxsChannelGroupItem::addEventHandler()
                 case RsChannelEventCode::UPDATED_CHANNEL:
                 case RsChannelEventCode::RECEIVED_PUBLISH_KEY:
                     mLoadingStatus = NO_DATA;
+                    mGroup = RsGxsChannelGroup();
                     break;
                 default:
                     break;

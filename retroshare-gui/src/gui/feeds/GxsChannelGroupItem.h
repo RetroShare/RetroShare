@@ -43,11 +43,6 @@ public:
     uint64_t uniqueIdentifier() const override { return hash_64bits("GxsChannelGroupItem " + groupId().toStdString()) ; }
 
 protected:
-    enum LoadingStatus {
-        NO_DATA      =   0x00,
-        HAS_DATA     =   0x01,
-        FILLED       =   0x02
-    };
 
     /* FeedItem */
     virtual void doExpand(bool open) override;
