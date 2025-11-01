@@ -36,20 +36,22 @@
 GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate) :
     GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsGxsChannels, autoUpdate)
 {
-    mIsLoading = false;
+    mLoadingGroup = false;
+    mLoadingStatus = NO_DATA;
+
     setup();
 	requestGroup();
     addEventHandler();
 }
 
-GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, bool isHome, bool autoUpdate) :
-    GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsGxsChannels, autoUpdate)
-{
-    mIsLoading = false;
-    setup();
-    setGroup(group);
-    addEventHandler();
-}
+//GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, bool isHome, bool autoUpdate) :
+//    GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsGxsChannels, autoUpdate)
+//{
+//    mIsLoading = false;
+//    setup();
+//    setGroup(group);
+//    addEventHandler();
+//}
 
 void GxsChannelGroupItem::addEventHandler()
 {
@@ -68,7 +70,7 @@ void GxsChannelGroupItem::addEventHandler()
                 case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:
                 case RsChannelEventCode::UPDATED_CHANNEL:
                 case RsChannelEventCode::RECEIVED_PUBLISH_KEY:
-                    loadGroup();
+                    mLoadingStatus = NO_DATA;
                     break;
                 default:
                     break;
@@ -77,11 +79,37 @@ void GxsChannelGroupItem::addEventHandler()
     }, mEventHandlerId, RsEventType::GXS_CHANNELS );
 }
 
+void GxsChannelGroupItem::paintEvent(QPaintEvent *e)
+{
+    /* This method employs a trick to trigger a deferred loading. The post and group is requested only
+     * when actually displayed on the screen. */
+
+    if(mLoadingStatus != FILLED && !mGroup.mMeta.mGroupId.isNull())
+        mLoadingStatus = HAS_DATA;
+
+    if(mGroup.mMeta.mGroupId.isNull() && !mLoadingGroup)
+        loadGroup();
+
+    switch(mLoadingStatus)
+    {
+    case FILLED:
+    case NO_DATA:
+    default:
+        break;
+
+    case HAS_DATA:
+        fill();
+        mLoadingStatus = FILLED;
+        break;
+    }
+
+    GxsGroupFeedItem::paintEvent(e) ;
+}
 GxsChannelGroupItem::~GxsChannelGroupItem()
 {
     auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
 
-    while( mIsLoading && std::chrono::steady_clock::now() < timeout )
+    while( mLoadingGroup && std::chrono::steady_clock::now() < timeout )
     {
         RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for data to load " << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -115,23 +143,9 @@ void GxsChannelGroupItem::setup()
 	ui->expandFrame->hide();
 }
 
-bool GxsChannelGroupItem::setGroup(const RsGxsChannelGroup &group)
-{
-	if (groupId() != group.mMeta.mGroupId) {
-		std::cerr << "GxsChannelGroupItem::setContent() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	mGroup = group;
-	fill();
-
-	return true;
-}
-
 void GxsChannelGroupItem::loadGroup()
 {
-    mIsLoading = true;
+    mLoadingGroup = true;
 
 	RsThread::async([this]()
 	{
@@ -143,7 +157,7 @@ void GxsChannelGroupItem::loadGroup()
 		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))
 		{
 			RsErr() << "PostedItem::loadGroup() ERROR getting data" << std::endl;
-            mIsLoading = false;
+            mLoadingGroup = false;
             return;
 		}
 
@@ -151,7 +165,7 @@ void GxsChannelGroupItem::loadGroup()
 		{
 			std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
-            mIsLoading = false;
+            mLoadingGroup = false;
             return;
 		}
 		RsGxsChannelGroup group(groups[0]);
@@ -162,8 +176,8 @@ void GxsChannelGroupItem::loadGroup()
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			setGroup(group);
-            mIsLoading = false;
+            mGroup = group;
+            mLoadingGroup = false;
 
 		}, this );
 	});

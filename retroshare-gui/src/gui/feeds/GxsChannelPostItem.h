@@ -62,8 +62,6 @@ protected:
         FILLED       =   0x02
     };
 
-    bool setPost(const RsGxsChannelPost& post);
-
     //void setFileCleanUpWarning(uint32_t time_left);
 
 	QString getTitleLabel();

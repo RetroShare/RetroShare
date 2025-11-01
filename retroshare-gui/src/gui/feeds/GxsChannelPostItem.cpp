@@ -198,12 +198,6 @@ void GxsChannelPostItem::setup()
 }
 
 
-bool GxsChannelPostItem::setPost(const RsGxsChannelPost &post)
-{
-	mPost = post;
-	return true;
-}
-
 QString GxsChannelPostItem::getTitleLabel()
 {
 	return QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
@@ -296,7 +290,7 @@ void GxsChannelPostItem::loadMessage()
 
             RsQThreadUtils::postToObject( [post,this]()
             {
-                setPost(post);
+                mPost = post;
                 mLoadingMessage = false;
                 update();	// this triggers a paintEvent if needed.
 
