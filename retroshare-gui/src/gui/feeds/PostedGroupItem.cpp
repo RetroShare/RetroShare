@@ -35,29 +35,55 @@
 PostedGroupItem::PostedGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate) :
     GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsPosted, autoUpdate)
 {
-    mIsLoadingGroup = false;
-    setup();
+    mLoadingGroup = false;
+    mLoadingStatus = NO_DATA;
 
-	requestGroup();
+    setup();
 }
 
-PostedGroupItem::PostedGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, bool isHome, bool autoUpdate) :
-    GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsPosted, autoUpdate)
+//PostedGroupItem::PostedGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, bool isHome, bool autoUpdate) :
+//    GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsPosted, autoUpdate)
+//{
+//    mIsLoadingGroup = false;
+//    setup();
+//
+//	setGroup(group);
+//}
+
+void PostedGroupItem::paintEvent(QPaintEvent *e)
 {
-    mIsLoadingGroup = false;
-    setup();
+    /* This method employs a trick to trigger a deferred loading. The post and group is requested only
+     * when actually displayed on the screen. */
 
-	setGroup(group);
+    if(mLoadingStatus != FILLED && !mGroup.mMeta.mGroupId.isNull())
+        mLoadingStatus = HAS_DATA;
+
+    if(mGroup.mMeta.mGroupId.isNull() && !mLoadingGroup)
+        loadGroup();
+
+    switch(mLoadingStatus)
+    {
+    case FILLED:
+    case NO_DATA:
+    default:
+        break;
+
+    case HAS_DATA:
+        fill();
+        mLoadingStatus = FILLED;
+        break;
+    }
+
+    GxsGroupFeedItem::paintEvent(e) ;
 }
-
 PostedGroupItem::~PostedGroupItem()
 {
     auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
 
-    while( mIsLoadingGroup && std::chrono::steady_clock::now() < timeout)
+    while( mLoadingGroup && std::chrono::steady_clock::now() < timeout)
     {
         RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
-                << (mIsLoadingGroup ? "Group " : "")
+                << (mLoadingGroup ? "Group " : "")
                 << "loading finished." << std::endl;
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -91,23 +117,9 @@ void PostedGroupItem::setup()
 	ui->expandFrame->hide();
 }
 
-bool PostedGroupItem::setGroup(const RsPostedGroup &group)
-{
-	if (groupId() != group.mMeta.mGroupId) {
-		std::cerr << "PostedGroupItem::setContent() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	mGroup = group;
-	fill();
-
-	return true;
-}
-
 void PostedGroupItem::loadGroup()
 {
-    mIsLoadingGroup = true;
+    mLoadingGroup = true;
 
 	RsThread::async([this]()
 	{
@@ -123,7 +135,7 @@ void PostedGroupItem::loadGroup()
 		if(!rsPosted->getBoardsInfo(groupIds,groups))
 		{
 			RsErr() << "GxsPostedGroupItem::loadGroup() ERROR getting data" << std::endl;
-            mIsLoadingGroup = false;
+            mLoadingGroup = false;
             return;
 		}
 
@@ -131,7 +143,7 @@ void PostedGroupItem::loadGroup()
 		{
 			std::cerr << "GxsPostedGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
-            mIsLoadingGroup = false;
+            mLoadingGroup = false;
             return;
 		}
 		RsPostedGroup group(groups[0]);
@@ -142,8 +154,8 @@ void PostedGroupItem::loadGroup()
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			setGroup(group);
-            mIsLoadingGroup = false;
+            mGroup = group;
+            mLoadingGroup = false;
 
 		}, this );
 	});
