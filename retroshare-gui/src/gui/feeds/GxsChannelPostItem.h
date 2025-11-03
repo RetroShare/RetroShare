@@ -58,8 +58,6 @@ public:
 protected:
     //void setFileCleanUpWarning(uint32_t time_left);
 
-	QString getTitleLabel();
-	QString getMsgLabel();
 	const std::list<SubFileItem *> &getFileItems() {return mFileItems; }
 
 	bool isUnread() const ;

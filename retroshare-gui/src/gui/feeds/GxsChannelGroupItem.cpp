@@ -44,15 +44,6 @@ GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId
     addEventHandler();
 }
 
-//GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, bool isHome, bool autoUpdate) :
-//    GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsGxsChannels, autoUpdate)
-//{
-//    mIsLoading = false;
-//    setup();
-//    setGroup(group);
-//    addEventHandler();
-//}
-
 void GxsChannelGroupItem::addEventHandler()
 {
     mEventHandlerId = 0;

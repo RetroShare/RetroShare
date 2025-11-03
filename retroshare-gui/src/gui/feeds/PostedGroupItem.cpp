@@ -41,15 +41,6 @@ PostedGroupItem::PostedGroupItem(FeedHolder *feedHolder, uint32_t feedId, const 
     setup();
 }
 
-//PostedGroupItem::PostedGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, bool isHome, bool autoUpdate) :
-//    GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsPosted, autoUpdate)
-//{
-//    mIsLoadingGroup = false;
-//    setup();
-//
-//	setGroup(group);
-//}
-
 void PostedGroupItem::paintEvent(QPaintEvent *e)
 {
     /* This method employs a trick to trigger a deferred loading. The post and group is requested only

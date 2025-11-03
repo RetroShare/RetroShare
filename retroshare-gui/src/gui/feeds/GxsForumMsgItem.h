@@ -37,8 +37,6 @@ class GxsForumMsgItem : public GxsFeedItem
 public:
 	GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
 
-    //GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumGroup &group, const RsGxsForumMsg &post, bool isHome, bool autoUpdate);
-    //GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumMsg &post, bool isHome, bool autoUpdate);
 	virtual ~GxsForumMsgItem();
 
     uint64_t uniqueIdentifier() const override { return hash_64bits("GxsForumMsgItem " + messageId().toStdString()) ; }
@@ -52,7 +50,6 @@ protected:
 	virtual QString groupName() override;
 	virtual void loadGroup() override;
 	virtual RetroShareLink::enumType getLinkType() override { return RetroShareLink::TYPE_FORUM; }
-	//virtual bool isLoading();
 
 	/* GxsFeedItem */
 	virtual QString messageName() override;

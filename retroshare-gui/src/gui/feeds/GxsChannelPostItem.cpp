@@ -197,19 +197,6 @@ void GxsChannelPostItem::setup()
 	ui->expandFrame->hide();
 }
 
-
-QString GxsChannelPostItem::getTitleLabel()
-{
-	return QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
-}
-
-QString GxsChannelPostItem::getMsgLabel()
-{
-	//return RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
-    // Disabled, because emoticon replacement kills performance.
-	return QString::fromUtf8(mPost.mMsg.c_str());
-}
-
 QString GxsChannelPostItem::groupName()
 {
 	return QString::fromUtf8(mGroupMeta.mGroupName.c_str());

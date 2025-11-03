@@ -57,34 +57,6 @@ GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const 
     setup();
 }
 
-// GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumGroup &group, const RsGxsForumMsg &post, bool isHome, bool autoUpdate) :
-//     GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsForums, autoUpdate)
-// {
-// #ifdef DEBUG_ITEM
-// 	std::cerr << "GxsForumMsgItem::GxsForumMsgItem() Direct Load";
-// 	std::cerr << std::endl;
-// #endif
-//
-// 	setup();
-//
-// 	setGroup(group, false);
-// 	setMessage(post);
-// }
-
-// GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumMsg &post, bool isHome, bool autoUpdate) :
-//     GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsForums, autoUpdate)
-// {
-// #ifdef DEBUG_ITEM
-// 	std::cerr << "GxsForumMsgItem::GxsForumMsgItem() Direct Load";
-// 	std::cerr << std::endl;
-// #endif
-//
-// 	setup();
-//
-// 	requestGroup();
-// 	setMessage(post);
-// }
-
 void GxsForumMsgItem::paintEvent(QPaintEvent *e)
 {
     /* This method employs a trick to trigger a deferred loading. The post and group is requested only
