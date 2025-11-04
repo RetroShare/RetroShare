@@ -45,9 +45,6 @@
 GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
     GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsForums, autoUpdate)
 {
-    mMessage.mMeta.mMsgId = messageId;	// useful for uniqueIdentifier() before the post is actually loaded
-    mMessage.mMeta.mGroupId = groupId;
-
     mLoadingStatus = NO_DATA;
 
     mLoadingGroup = false;
@@ -160,14 +157,13 @@ void GxsForumMsgItem::loadGroup()
 	{
 		// 1 - get group data
 
-#ifdef DEBUG_FORUMS
-		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+#ifndef DEBUG_FORUMS
+        std::cerr << "Retrieving forum group data for forum " << groupId() << std::endl;
 #endif
 
 		std::vector<RsGxsForumGroup> groups;
-		const std::list<RsGxsGroupId> forumIds = { groupId() };
 
-		if(!rsGxsForums->getForumsInfo(forumIds,groups))
+        if(!rsGxsForums->getForumsInfo({ groupId() },groups))
 		{
 			RsErr() << "GxsForumGroupItem::loadGroup() ERROR getting data" << std::endl;
             mLoadingGroup = false;
