@@ -45,7 +45,7 @@
 GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
     GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsForums, autoUpdate)
 {
-    mLoadingStatus = NO_DATA;
+    mLoadingStatus = LOADING_STATUS_NO_DATA;
 
     mLoadingGroup = false;
     mLoadingMessage = false;
@@ -59,8 +59,8 @@ void GxsForumMsgItem::paintEvent(QPaintEvent *e)
     /* This method employs a trick to trigger a deferred loading. The post and group is requested only
      * when actually displayed on the screen. */
 
-    if(mLoadingStatus != FILLED && !mGroup.mMeta.mGroupId.isNull() && !mMessage.mMeta.mMsgId.isNull())
-        mLoadingStatus = HAS_DATA;
+    if(mLoadingStatus != LOADING_STATUS_FILLED && !mGroup.mMeta.mGroupId.isNull() && !mMessage.mMeta.mMsgId.isNull())
+        mLoadingStatus = LOADING_STATUS_HAS_DATA;
 
     if(mGroup.mMeta.mGroupId.isNull() && !mLoadingGroup)
         requestGroup();
@@ -70,19 +70,19 @@ void GxsForumMsgItem::paintEvent(QPaintEvent *e)
 
     switch(mLoadingStatus)
     {
-    case FILLED:
-    case NO_DATA:
+    case LOADING_STATUS_FILLED:
+    case LOADING_STATUS_NO_DATA:
     default:
         break;
 
-    case HAS_DATA:
+    case LOADING_STATUS_HAS_DATA:
         fillGroup();
         fillMessage();
 
         if(!mParentMessage.mMeta.mMsgId.isNull())
             fillParentMessage();
 
-        mLoadingStatus = FILLED;
+        mLoadingStatus = LOADING_STATUS_FILLED;
         break;
     }
 

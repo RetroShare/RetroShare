@@ -37,7 +37,7 @@ GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId
     GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsGxsChannels, autoUpdate)
 {
     mLoadingGroup = false;
-    mLoadingStatus = NO_DATA;
+    mLoadingStatus = LOADING_STATUS_NO_DATA;
 
     setup();
 	requestGroup();
@@ -61,7 +61,7 @@ void GxsChannelGroupItem::addEventHandler()
                 case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:
                 case RsChannelEventCode::UPDATED_CHANNEL:
                 case RsChannelEventCode::RECEIVED_PUBLISH_KEY:
-                    mLoadingStatus = NO_DATA;
+                    mLoadingStatus = LOADING_STATUS_NO_DATA;
                     mGroup = RsGxsChannelGroup();
                     break;
                 default:
@@ -76,22 +76,22 @@ void GxsChannelGroupItem::paintEvent(QPaintEvent *e)
     /* This method employs a trick to trigger a deferred loading. The post and group is requested only
      * when actually displayed on the screen. */
 
-    if(mLoadingStatus != FILLED && !mGroup.mMeta.mGroupId.isNull())
-        mLoadingStatus = HAS_DATA;
+    if(mLoadingStatus != LOADING_STATUS_FILLED && !mGroup.mMeta.mGroupId.isNull())
+        mLoadingStatus = LOADING_STATUS_HAS_DATA;
 
     if(mGroup.mMeta.mGroupId.isNull() && !mLoadingGroup)
         loadGroup();
 
     switch(mLoadingStatus)
     {
-    case FILLED:
-    case NO_DATA:
+    case LOADING_STATUS_FILLED:
+    case LOADING_STATUS_NO_DATA:
     default:
         break;
 
-    case HAS_DATA:
+    case LOADING_STATUS_HAS_DATA:
         fill();
-        mLoadingStatus = FILLED;
+        mLoadingStatus = LOADING_STATUS_FILLED;
         break;
     }
 

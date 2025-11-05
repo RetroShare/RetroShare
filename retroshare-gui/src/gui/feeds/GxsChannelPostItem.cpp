@@ -57,7 +57,7 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 	if(older_versions.find(messageId) == older_versions.end())
 		v.push_back(messageId);
 
-    mLoadingStatus = NO_DATA;
+    mLoadingStatus = LOADING_STATUS_NO_DATA;
     mLoadingMessage = false;
     mLoadingGroup = false;
 
@@ -70,8 +70,8 @@ void GxsChannelPostItem::paintEvent(QPaintEvent *e)
 	/* This method employs a trick to trigger a deferred loading. The post and group is requested only
 	 * when actually displayed on the screen. */
 
-    if(mLoadingStatus != FILLED && !mGroupMeta.mGroupId.isNull() && !mPost.mMeta.mMsgId.isNull() )
-        mLoadingStatus = HAS_DATA;
+    if(mLoadingStatus != LOADING_STATUS_FILLED && !mGroupMeta.mGroupId.isNull() && !mPost.mMeta.mMsgId.isNull() )
+        mLoadingStatus = LOADING_STATUS_HAS_DATA;
 
     if(mGroupMeta.mGroupId.isNull() && !mLoadingGroup)
         requestGroup();
@@ -81,14 +81,14 @@ void GxsChannelPostItem::paintEvent(QPaintEvent *e)
 
     switch(mLoadingStatus)
     {
-    case FILLED:
-    case NO_DATA:
+    case LOADING_STATUS_FILLED:
+    case LOADING_STATUS_NO_DATA:
     default:
         break;
 
-    case HAS_DATA:
+    case LOADING_STATUS_HAS_DATA:
         fill();
-        mLoadingStatus = FILLED;
+        mLoadingStatus = LOADING_STATUS_FILLED;
         break;
     }
 

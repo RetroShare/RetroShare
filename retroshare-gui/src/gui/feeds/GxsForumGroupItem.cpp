@@ -35,7 +35,7 @@ GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, co
     GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsGxsForums, autoUpdate)
 {
     mLoadingGroup = false;
-    mLoadingStatus = NO_DATA;
+    mLoadingStatus = LOADING_STATUS_NO_DATA;
     setup();
     addEventHandler();
 }
@@ -46,7 +46,7 @@ GxsForumGroupItem::GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, co
     mRemovedModerators(removed_moderators)
 {
     mLoadingGroup = false;
-    mLoadingStatus = NO_DATA;
+    mLoadingStatus = LOADING_STATUS_NO_DATA;
     setup();
     addEventHandler();
 }
@@ -68,7 +68,7 @@ void GxsForumGroupItem::addEventHandler()
                 case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
                 case RsForumEventCode::UPDATED_FORUM:
                 case RsForumEventCode::MODERATOR_LIST_CHANGED:
-                    mLoadingStatus = NO_DATA;
+                    mLoadingStatus = LOADING_STATUS_NO_DATA;
                     mGroup = RsGxsForumGroup();
                     break;
                 default:
@@ -83,22 +83,22 @@ void GxsForumGroupItem::paintEvent(QPaintEvent *e)
     /* This method employs a trick to trigger a deferred loading. The post and group is requested only
      * when actually displayed on the screen. */
 
-    if(mLoadingStatus != FILLED && !mGroup.mMeta.mGroupId.isNull())
-        mLoadingStatus = HAS_DATA;
+    if(mLoadingStatus != LOADING_STATUS_FILLED && !mGroup.mMeta.mGroupId.isNull())
+        mLoadingStatus = LOADING_STATUS_HAS_DATA;
 
     if(mGroup.mMeta.mGroupId.isNull() && !mLoadingGroup)
         loadGroup();
 
     switch(mLoadingStatus)
     {
-    case FILLED:
-    case NO_DATA:
+    case LOADING_STATUS_FILLED:
+    case LOADING_STATUS_NO_DATA:
     default:
         break;
 
-    case HAS_DATA:
+    case LOADING_STATUS_HAS_DATA:
         fill();
-        mLoadingStatus = FILLED;
+        mLoadingStatus = LOADING_STATUS_FILLED;
         break;
     }
 

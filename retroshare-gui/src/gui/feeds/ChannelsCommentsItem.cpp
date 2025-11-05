@@ -53,7 +53,7 @@ ChannelsCommentsItem::ChannelsCommentsItem(FeedHolder *feedHolder, uint32_t feed
     GxsFeedItem(feedHolder, feedId, groupId, commentId, isHome, rsGxsChannels, autoUpdate), // this one should be in GxsFeedItem
     mThreadId(threadId)
 {
-    mLoadingStatus = NO_DATA;
+    mLoadingStatus = LOADING_STATUS_NO_DATA;
     mLoadingComment = false;
     mLoadingGroup = false;
     mLoadingMessage = false;
@@ -66,8 +66,8 @@ void ChannelsCommentsItem::paintEvent(QPaintEvent *e)
 	/* This method employs a trick to trigger a deferred loading. The post and group is requested only
 	 * when actually displayed on the screen. */
 
-    if(mLoadingStatus != FILLED && !mGroupMeta.mGroupId.isNull() && !mComment.mMeta.mMsgId.isNull())
-        mLoadingStatus = HAS_DATA;
+    if(mLoadingStatus != LOADING_STATUS_FILLED && !mGroupMeta.mGroupId.isNull() && !mComment.mMeta.mMsgId.isNull())
+        mLoadingStatus = LOADING_STATUS_HAS_DATA;
 
     if(mGroupMeta.mGroupId.isNull() && !mLoadingGroup)
         loadGroupData();
@@ -80,13 +80,13 @@ void ChannelsCommentsItem::paintEvent(QPaintEvent *e)
 
     switch(mLoadingStatus)
     {
-    case FILLED:
-    case NO_DATA:
+    case LOADING_STATUS_FILLED:
+    case LOADING_STATUS_NO_DATA:
     default:
         break;
-    case HAS_DATA:
+    case LOADING_STATUS_HAS_DATA:
         fill();
-        mLoadingStatus = FILLED;
+        mLoadingStatus = LOADING_STATUS_FILLED;
         break;
     }
 

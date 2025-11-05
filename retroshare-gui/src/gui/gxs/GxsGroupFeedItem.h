@@ -46,9 +46,9 @@ public:
 
 protected:
         enum LoadingStatus {
-        NO_DATA      =   0x00,
-        HAS_DATA     =   0x01,
-        FILLED       =   0x02
+        LOADING_STATUS_NO_DATA      =   0x00,
+        LOADING_STATUS_HAS_DATA     =   0x01,
+        LOADING_STATUS_FILLED       =   0x02
     };
 
 	/* load group data */
