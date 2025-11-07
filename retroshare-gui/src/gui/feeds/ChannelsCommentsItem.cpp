@@ -53,6 +53,9 @@ ChannelsCommentsItem::ChannelsCommentsItem(FeedHolder *feedHolder, uint32_t feed
     GxsFeedItem(feedHolder, feedId, groupId, commentId, isHome, rsGxsChannels, autoUpdate), // this one should be in GxsFeedItem
     mThreadId(threadId)
 {
+    mGroupMeta.mGroupId.clear();	// safety measure
+    mComment.mMeta.mMsgId.clear();
+
     mLoadingStatus = LOADING_STATUS_NO_DATA;
     mLoadingComment = false;
     mLoadingGroup = false;
@@ -66,7 +69,7 @@ void ChannelsCommentsItem::paintEvent(QPaintEvent *e)
 	/* This method employs a trick to trigger a deferred loading. The post and group is requested only
 	 * when actually displayed on the screen. */
 
-    if(mLoadingStatus != LOADING_STATUS_FILLED && !mGroupMeta.mGroupId.isNull() && !mComment.mMeta.mMsgId.isNull())
+    if(mLoadingStatus != LOADING_STATUS_FILLED && !mGroupMeta.mGroupId.isNull() && !mComment.mMeta.mMsgId.isNull() && !mPost.mMeta.mMsgId.isNull())
         mLoadingStatus = LOADING_STATUS_HAS_DATA;
 
     if(mGroupMeta.mGroupId.isNull() && !mLoadingGroup)
@@ -328,60 +331,31 @@ void ChannelsCommentsItem::loadCommentData()
 void ChannelsCommentsItem::fill(bool missing_post)
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "ChannelsCommentsItem::fill()";
-	std::cerr << std::endl;
+    std::cerr << "ChannelsCommentsItem::fill()";
+    std::cerr << std::endl;
 #endif
 
-	if (!mIsHome)
-	{
-        if (mCloseOnRead && !IS_MSG_NEW(mComment.mMeta.mMsgStatus)) {
-			removeItem();
-		}
 
-		//RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, groupName());
-		//title += link.toHtml();
-		//ui->titleLabel->setText(title);
+    if (mCloseOnRead && !IS_MSG_NEW(mComment.mMeta.mMsgStatus)) {
+        removeItem();
+    }
 
-        RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
+    RetroShareLink grplink = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, mGroupMeta.mGroupId, groupName());
+    RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
 
-        if(missing_post)
-            ui->subjectLabel->setText("[" + QObject::tr("Missing channel post")+"]");
-        else
-            ui->subjectLabel->setText(msgLink.toHtml());
+    if(missing_post)
+        ui->subjectLabel->setText("[" + QObject::tr("Missing channel post")+"]");
+    else
+        ui->subjectLabel->setText(msgLink.toHtml());
 
-		ui->readButton->hide();
+    ui->readButton->hide();
 
-        if (IS_MSG_NEW(mComment.mMeta.mMsgStatus)) {
-			mCloseOnRead = true;
-		}
-	}
-	else
-	{
-        if(mPost.mMeta.mMsgId.isNull())
-            ui->subjectLabel->setText("[" + QObject::tr("Missing channel post")+"]");
-        else
-            ui->subjectLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 2)) ;
+    if (IS_MSG_NEW(mComment.mMeta.mMsgStatus)) {
+        mCloseOnRead = true;
+    }
 
-		/* disable buttons: deletion facility not enabled with cache services yet */
-		ui->clearButton->setEnabled(false);
-		ui->clearButton->hide();
-		ui->readAndClearButton->hide();
-		ui->copyLinkButton->show();
-		//ui->titleLabel->hide();
+    ui->newCommentLabel->setText(groupName()+": ");
 
-		if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
-		{
-			ui->readButton->setVisible(true);
-
-            setReadStatus(IS_MSG_NEW(mComment.mMeta.mMsgStatus), IS_MSG_UNREAD(mComment.mMeta.mMsgStatus) || IS_MSG_NEW(mComment.mMeta.mMsgStatus));
-		} 
-		else 
-		{
-			ui->readButton->setVisible(false);
-		}
-
-		mCloseOnRead = false;
-	}
     uint32_t autorized_lines = (int)floor( (ui->avatarLabel->height() - ui->button_HL->sizeHint().height())
                        / QFontMetricsF(ui->subjectLabel->font()).height());
 
@@ -396,7 +370,6 @@ void ChannelsCommentsItem::fill(bool missing_post)
     if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
         pixmap = GxsIdDetails::makeDefaultIcon(mComment.mMeta.mAuthorId,GxsIdDetails::LARGE);
     ui->avatarLabel->setPixmap(pixmap);
-
 }
 
 QString ChannelsCommentsItem::messageName()
