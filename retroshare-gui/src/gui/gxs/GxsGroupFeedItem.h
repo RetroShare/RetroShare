@@ -45,6 +45,12 @@ public:
 	uint32_t feedId() const { return mFeedId; }
 
 protected:
+        enum LoadingStatus {
+        LOADING_STATUS_NO_DATA      =   0x00,
+        LOADING_STATUS_HAS_DATA     =   0x01,
+        LOADING_STATUS_FILLED       =   0x02
+    };
+
 	/* load group data */
 	void requestGroup();
 
@@ -60,6 +66,7 @@ protected slots:
 protected:
 	bool mIsHome;
 	RsGxsIfaceHelper *mGxsIface;
+    static const uint GROUP_ITEM_LOADING_TIMEOUT_ms ;
 
 private slots:
 	/* RsGxsUpdateBroadcastBase */

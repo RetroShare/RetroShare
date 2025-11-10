@@ -1765,8 +1765,6 @@ void ServerPage::updateStatusSam()
             ui.leBobB32Addr->hide();
             ui.pbBobGenAddr->hide();
         }
-
-		saveAddresses();
     }
 
 	samStatus ss;

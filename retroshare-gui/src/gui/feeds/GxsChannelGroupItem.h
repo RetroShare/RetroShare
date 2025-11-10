@@ -37,19 +37,22 @@ class GxsChannelGroupItem : public GxsGroupFeedItem
 public:
 	/** Default Constructor */
 	GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate);
-	GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, bool isHome, bool autoUpdate);
-	~GxsChannelGroupItem();
+    //GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, bool isHome, bool autoUpdate);
+    virtual ~GxsChannelGroupItem();
 
-	bool setGroup(const RsGxsChannelGroup &group);
     uint64_t uniqueIdentifier() const override { return hash_64bits("GxsChannelGroupItem " + groupId().toStdString()) ; }
-protected:
-	/* FeedItem */
-	virtual void doExpand(bool open);
 
-	/* GxsGroupFeedItem */
-	virtual QString groupName();
+protected:
+
+    /* FeedItem */
+    virtual void doExpand(bool open) override;
+
+    virtual void paintEvent(QPaintEvent *) override;
+
+    /* GxsGroupFeedItem */
+    virtual QString groupName() override;
 	virtual void loadGroup() override;
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
+    virtual RetroShareLink::enumType getLinkType() override { return RetroShareLink::TYPE_CHANNEL; }
 
 private slots:
 	/* default stuff */
@@ -61,6 +64,9 @@ private:
 	void fill();
 	void setup();
     void addEventHandler();
+
+    LoadingStatus mLoadingStatus;
+    bool mLoadingGroup;
 
 private:
 	RsGxsChannelGroup mGroup;

@@ -501,6 +501,14 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 
 void NewsFeed::testFeeds(RsFeedTypeFlags /*notifyFlags*/)
 {
+    auto feedItem = new GxsChannelPostItem(instance,
+                                           NEWSFEED_CHANNELNEWLIST,
+                                           RsGxsGroupId  ("00000000000000000000000000000000"),
+                                           RsGxsMessageId("0000000000000000000000000000000000000000")
+                                           , false, true);
+
+    instance->addFeedItem(feedItem);
+
 #ifdef TO_REMOVE
 	if (!instance) {
 		return;

@@ -115,7 +115,7 @@ void ChatPage::updateFontsAndEmotes()
     Settings->setValue("Emoteicons_GroupChat", ui.checkBox_emotegroupchat->isChecked());
     Settings->setValue("EnableCustomFonts", ui.checkBox_enableCustomFonts->isChecked());
     Settings->setValue("EnableCustomFontSize", ui.checkBox_enableCustomFontSize->isChecked());
-	Settings->setValue("MinimumFontSize", ui.minimumFontSize->value());
+    Settings->setValue("MinimumFontSize", ui.minimumFontSize->value());
     Settings->setValue("EnableBold", ui.checkBox_enableBold->isChecked());
     Settings->setValue("EnableItalics", ui.checkBox_enableItalics->isChecked());
     Settings->setValue("MinimumContrast", ui.minimumContrast->value());
@@ -233,13 +233,14 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
 
     connect(ui.distantChatComboBox,        SIGNAL(currentIndexChanged(int)), this, SLOT(distantChatComboBoxChanged(int)));
 
-	connect(ui.checkBox_emoteprivchat,     SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
-	connect(ui.checkBox_emotegroupchat,    SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
-	connect(ui.checkBox_enableCustomFonts, SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
-	connect(ui.minimumFontSize,            SIGNAL(valueChanged(int)),        this, SLOT(updateFontsAndEmotes()));
-	connect(ui.checkBox_enableBold,        SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
-	connect(ui.checkBox_enableItalics,     SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
-	connect(ui.minimumContrast,            SIGNAL(valueChanged(int)),        this, SLOT(updateFontsAndEmotes()));
+	connect(ui.checkBox_emoteprivchat,        SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
+	connect(ui.checkBox_emotegroupchat,       SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
+	connect(ui.checkBox_enableCustomFonts,    SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
+	connect(ui.checkBox_enableCustomFontSize, SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
+	connect(ui.minimumFontSize,               SIGNAL(valueChanged(int)),        this, SLOT(updateFontsAndEmotes()));
+	connect(ui.checkBox_enableBold,           SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
+	connect(ui.checkBox_enableItalics,        SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
+	connect(ui.minimumContrast,               SIGNAL(valueChanged(int)),        this, SLOT(updateFontsAndEmotes()));
 
 	connect(ui.distantChatComboBox,        SIGNAL(currentIndexChanged(int)), this, SLOT(updateChatParams()));
 	connect(ui.sendMessageWithCtrlReturn,  SIGNAL(toggled(bool)),            this, SLOT(updateChatParams()));
@@ -261,12 +262,12 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.privateChatLoadCount,       SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
 	connect(ui.distantChatLoadCount,       SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
 	connect(ui.lobbyChatLoadCount,         SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
-	
+
 	connect(ui.publicChatEnable,           SIGNAL(toggled(bool)),            this, SLOT(updateHistoryParams()));
 	connect(ui.privateChatEnable,          SIGNAL(toggled(bool)),            this, SLOT(updateHistoryParams()));
 	connect(ui.distantChatEnable,          SIGNAL(toggled(bool)),            this, SLOT(updateHistoryParams()));
 	connect(ui.lobbyChatEnable,            SIGNAL(toggled(bool)),            this, SLOT(updateHistoryParams()));
-	
+
 	connect(ui.publicChatSaveCount,        SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
 	connect(ui.privateChatSaveCount,       SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
 	connect(ui.lobbyChatSaveCount,         SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
@@ -386,7 +387,7 @@ ChatPage::load()
     whileBlocking(ui.checkBox_emotegroupchat)->setChecked(Settings->value("Emoteicons_GroupChat", true).toBool());
     whileBlocking(ui.checkBox_enableCustomFonts)->setChecked(Settings->value("EnableCustomFonts", true).toBool());
     whileBlocking(ui.checkBox_enableCustomFontSize)->setChecked(Settings->value("EnableCustomFontSize", true).toBool());
-	whileBlocking(ui.minimumFontSize)->setValue(Settings->value("MinimumFontSize", 10).toInt());
+    whileBlocking(ui.minimumFontSize)->setValue(Settings->value("MinimumFontSize", 10).toInt());
     whileBlocking(ui.checkBox_enableBold)->setChecked(Settings->value("EnableBold", true).toBool());
     whileBlocking(ui.checkBox_enableItalics)->setChecked(Settings->value("EnableItalics", true).toBool());
     whileBlocking(ui.minimumContrast)->setValue(Settings->value("MinimumContrast", 4.5).toDouble());
@@ -450,7 +451,7 @@ ChatPage::load()
     whileBlocking(ui.lobbyChatSaveCount)->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_LOBBY));
 	whileBlocking(ui.distantChatSaveCount)->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_DISTANT));
 
-    
+
     // using fontTempChat.rawname() does not always work!
     // see http://doc.qt.digia.com/qt-maemo/qfont.html#rawName
     QStringList fontname = fontTempChat.toString().split(",");
@@ -710,4 +711,3 @@ void ChatPage::distantChatComboBoxChanged(int i)
 	}
 
 }
-
