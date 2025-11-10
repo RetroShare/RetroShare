@@ -50,34 +50,20 @@ public:
                          bool isHome,
                          bool autoUpdate);
 
-	// This one is used in channel thread widget. We don't want the group data to reload at every post, so we load it in the hosting
-    // GxsChannelsPostsWidget and pass it to created items.
-    // ChannelsCommentsItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData& group, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
-
 	virtual ~ChannelsCommentsItem();
 
     uint64_t uniqueIdentifier() const override { return hash_64bits("ChannelsCommentsItem " + messageId().toStdString()) ; }
 
-	bool setGroup(const RsGxsChannelGroup& group, bool doFill = true);
-	bool setPost(const RsGxsChannelPost& post, bool doFill = true);
-    bool setMissingPost();
+protected:
 
-	QString getTitleLabel();
-	QString getMsgLabel();
-
-	bool isLoaded() const {return mLoaded;};
 	bool isUnread() const ;
 	void setReadStatus(bool isNew, bool isUnread);
 
-	const std::set<RsGxsMessageId>& olderVersions() const { return mPost.mOlderVersions; }
-
 	static uint64_t computeIdentifier(const RsGxsMessageId& msgid) { return hash64("ChannelsCommentsItem " + msgid.toStdString()) ; }
-protected:
-	//void init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions);
 
 	/* FeedItem */
-	virtual void doExpand(bool open);
-	virtual void expandFill(bool first);
+    virtual void doExpand(bool open) override;
+    virtual void expandFill(bool first) override;
 
 	// This does nothing except triggering the loading of the post data and comments. This function is mainly used to detect
 	// when the post is actually made visible.
@@ -85,12 +71,12 @@ protected:
 	virtual void paintEvent(QPaintEvent *) override;
 
 	/* GxsGroupFeedItem */
-	virtual QString groupName();
-	virtual void loadGroup() override;
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
+    virtual QString groupName() override;
+    virtual void loadGroup() override {}
+    virtual RetroShareLink::enumType getLinkType() override { return RetroShareLink::TYPE_CHANNEL; }
 
 	/* GxsFeedItem */
-	virtual QString messageName();
+    virtual QString messageName() override;
     virtual void loadMessage() override {}
     virtual void loadComment() override {}
 
@@ -110,19 +96,23 @@ signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);	
 
 private:
-    void load();
     void setup();
     void fill(bool missing_post=false);
+    void loadGroupData();
+    void loadMessageData();
+    void loadCommentData();
 
-private:
-	bool mInFill;
 	bool mCloseOnRead;
-	bool mLoaded;
 
-    bool mLoading;
+    LoadingStatus mLoadingStatus;
+
+    bool mLoadingComment;
+    bool mLoadingGroup;
+    bool mLoadingMessage;
 
 	RsGroupMetaData mGroupMeta;
-	RsGxsChannelPost mPost;
+    RsGxsComment mComment;
+    RsGxsChannelPost mPost;
     RsGxsMessageId mThreadId;
 
 	/** Qt Designer generated object */
