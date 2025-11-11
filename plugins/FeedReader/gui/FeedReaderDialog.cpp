@@ -34,7 +34,7 @@
 #include "FeedReaderStringDefs.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/settings/rsharesettings.h"
-#include "gui/notifyqt.h"
+#include "gui/RsGUIEventManager.h"
 #include "FeedReaderUserNotify.h"
 #include "gui/Posted/PostedCreatePostDialog.h"
 #include "util/imageutil.h"
@@ -73,7 +73,7 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *n
 	connect(mNotify, &FeedReaderNotify::feedChanged, this, &FeedReaderDialog::feedChanged, Qt::QueuedConnection);
 	connect(mNotify, &FeedReaderNotify::optimizeImage, this, &FeedReaderDialog::optimizeImage, Qt::QueuedConnection);
 
-	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
+	connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 
 	/* connect signals */
 	connect(ui->feedTreeWidget, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(feedTreeItemActivated(QTreeWidgetItem*)));

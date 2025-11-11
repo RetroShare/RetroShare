@@ -20,7 +20,6 @@
 
 #include "ServerPage.h"
 
-#include <gui/notifyqt.h>
 #include "gui/MainWindow.h"
 #include "rshare.h"
 #include "rsharesettings.h"
@@ -85,7 +84,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     , manager(NULL), mOngoingConnectivityCheck(-1)
     , mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
     , mSamAccessible(false)
-    , mEventHandlerId(0)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -202,8 +200,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     QObject::connect(ui.hiddenpage_proxyAddress_i2p,   SIGNAL(textChanged(QString)), this, SLOT(syncI2PProxyAddrNormal(QString)));
 	QObject::connect(ui.hiddenpage_proxyAddress_i2p_2, SIGNAL(textChanged(QString)), this, SLOT(syncI2PProxyAddrSam(QString)));
 
-	connect(NotifyQt::getInstance(), SIGNAL(connectionWithoutCert()), this, SLOT(connectionWithoutCert()));
-
     QObject::connect(ui.localPort,SIGNAL(valueChanged(int)),this,SLOT(saveAddresses()));
     QObject::connect(ui.extPort,SIGNAL(valueChanged(int)),this,SLOT(saveAddresses()));
 
@@ -262,10 +258,15 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	if (ui.tabWidget->currentIndex() == TAB_HIDDEN_SERVICE)
 		updateOutProxyIndicator();
 
+    mEventHandlerId = 0;
 	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId, RsEventType::NETWORK );
 
 }
 
+ServerPage::~ServerPage()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
 void ServerPage::handleEvent(std::shared_ptr<const RsEvent> e)
 {
 	if(e->mType != RsEventType::NETWORK)
@@ -1664,14 +1665,6 @@ void ServerPage::taskFinished(taskTicket *&ticket)
     delete ticket;
 	ticket = nullptr;
  #endif //RS_USE_I2P_SAM3
-}
-
-void ServerPage::connectionWithoutCert()
-{
-    if (mOngoingConnectivityCheck > 0) {
-        mOngoingConnectivityCheck = -1;
-        updateInProxyIndicatorResult(true);
-    }
 }
 
 void ServerPage::loadCommon()

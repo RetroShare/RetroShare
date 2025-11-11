@@ -71,7 +71,29 @@ std::string colored(int color,const std::string& s)
     }
 }
 
+static void eventHandler(std::shared_ptr<const RsEvent> e)
+{
+    auto fe = dynamic_cast<const RsSystemEvent*>(e.get());
+
+    if(!fe)
+        return;
+
 #ifdef RS_SERVICE_TERMINAL_LOGIN
+    if(fe->mEventCode == RsSystemEventCode::PASSWORD_REQUESTED)
+    {
+        std::string question1 = fe->passwd_request_title + colored(COLOR_GREEN,"Please enter your PGP password for key:\n    ") + fe->passwd_request_key_details + " :";
+        std::string password = RsUtil::rs_getpass(question1.c_str()) ;
+
+        if(!password.empty())
+            RsLoginHelper::cachePgpPassphrase(password);
+    }
+#endif
+
+    // We should also handle plugin loading
+}
+
+
+#ifdef TO_REMOVE
 class RsServiceNotify: public NotifyClient
 {
 public:
@@ -86,7 +108,7 @@ public:
 		password = RsUtil::rs_getpass(question1.c_str()) ;
 		cancel = false ;
 
-		return !password.empty();
+        return !password.empty();
 	}
 };
 #endif // def RS_SERVICE_TERMINAL_LOGIN
@@ -148,6 +170,9 @@ int main(int argc, char* argv[])
 
 	RsInit::InitRsConfig();
 	RsControl::earlyInitNotificationSystem();
+
+    RsEventsHandlerId_t EventHandlerId = 0;
+    rsEvents->registerEventsHandler(eventHandler,EventHandlerId, RsEventType::SYSTEM);
 
 #ifdef __APPLE__
 	// TODO: is this still needed with argstream?
@@ -330,8 +355,8 @@ int main(int argc, char* argv[])
 			return -EINVAL;
 		}
 
-		RsServiceNotify* notify = new RsServiceNotify();
-		rsNotify->registerNotifyClient(notify);
+        //RsServiceNotify* notify = new RsServiceNotify();
+        //rsNotify->registerNotifyClient(notify);
 
 		// supply empty passwd so that it is properly asked 3 times on console
 		RsInit::LoadCertificateStatus result = rsLoginHelper->attemptLogin(ssl_id, "");

@@ -30,7 +30,6 @@
 #include "gui/common/AvatarDefs.h"
 #include "gui/settings/rsharesettings.h"
 
-#include "gui/notifyqt.h"
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>

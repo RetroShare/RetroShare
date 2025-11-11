@@ -21,6 +21,7 @@
 #include <QListWidget>
 #include <QDialog>
 #include <retroshare/rsids.h>
+#include <retroshare/rsevents.h>
 
 class GroupSelectionBox: public QListWidget
 {
@@ -28,6 +29,7 @@ class GroupSelectionBox: public QListWidget
 
 public:
 	GroupSelectionBox(QWidget *parent);
+    virtual ~GroupSelectionBox();
 
     static void selectGroups(const std::list<RsNodeGroupId>& default_groups) ;
 
@@ -38,6 +40,9 @@ public:
 
 private slots:
 	void fillGroups();
+
+private:
+    RsEventsHandlerId_t mEventHandlerId ;
 };
 
 class GroupSelectionDialog: public QDialog

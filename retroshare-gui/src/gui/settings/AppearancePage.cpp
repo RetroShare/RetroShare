@@ -22,7 +22,7 @@
 
 #include "rshare.h"
 #include "gui/MainWindow.h"
-#include "gui/notifyqt.h"
+#include "gui/RsGUIEventManager.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/statusbar/peerstatus.h"
@@ -173,7 +173,7 @@ void AppearancePage::updateRbtPageOnToolBar()
 		ui.cmboTollButtonsStyle->show();
 	}
 
-    NotifyQt::getInstance()->notifySettingsChanged();
+    RsGUIEventManager::getInstance()->notifySettingsChanged();
 }
 void AppearancePage::updateStatusToolTip()    { MainWindow::getInstance()->toggleStatusToolTip(ui.checkBoxDisableSysTrayToolTip->isChecked()); }
 
@@ -194,7 +194,7 @@ void AppearancePage::updateCmboToolButtonStyle()
 		default:
 			Settings->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 	}
-    NotifyQt::getInstance()->notifySettingsChanged();
+    RsGUIEventManager::getInstance()->notifySettingsChanged();
 }
 
 void AppearancePage::updateCmboToolButtonSize()
@@ -226,7 +226,7 @@ void AppearancePage::updateCmboToolButtonSize()
             Settings->setToolButtonSize(128);
 			Settings->setListItemIconSize(128);
     }
-    NotifyQt::getInstance()->notifySettingsChanged();
+    RsGUIEventManager::getInstance()->notifySettingsChanged();
 }
 // void AppearancePage::updateCmboListItemSize()
 // {
@@ -369,5 +369,5 @@ void AppearancePage::updateFontSize()
 {
 	Settings->setFontSize(ui.minimumFontSize_SB->value());
 
-	NotifyQt::getInstance()->notifySettingsChanged();
+	RsGUIEventManager::getInstance()->notifySettingsChanged();
 }
