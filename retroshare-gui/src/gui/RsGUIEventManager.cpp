@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/NotifyQt.cpp                                                            *
+ * gui/RsGUIEventManager.cpp                                                            *
  *                                                                             *
  * Copyright (c) 2010 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -62,29 +62,26 @@
  * #define NOTIFY_DEBUG
  ****/
 
-/*static*/ NotifyQt *NotifyQt::_instance = nullptr;
-/*static*/ bool NotifyQt::_disableAllToaster = false;
+/*static*/ RsGUIEventManager *RsGUIEventManager::_instance = nullptr;
+/*static*/ bool RsGUIEventManager::_disableAllToaster = false;
 
-/*static*/ NotifyQt *NotifyQt::Create ()
+/*static*/ void RsGUIEventManager::Create ()
 {
-    if (_instance == nullptr) {
-        _instance = new NotifyQt ();
-    }
-
-    return _instance;
+    if (_instance == nullptr)
+        _instance = new RsGUIEventManager ();
 }
 
-/*static*/ NotifyQt *NotifyQt::getInstance ()
+/*static*/ RsGUIEventManager *RsGUIEventManager::getInstance ()
 {
     return _instance;
 }
 
-/*static*/ bool NotifyQt::isAllDisable ()
+/*static*/ bool RsGUIEventManager::isAllDisable ()
 {
 	return _disableAllToaster;
 }
 
-void NotifyQt::SetDisableAll(bool bValue)
+void RsGUIEventManager::SetDisableAll(bool bValue)
 {
 	if (bValue!=_disableAllToaster)
 	{
@@ -93,7 +90,7 @@ void NotifyQt::SetDisableAll(bool bValue)
 	}
 }
 
-NotifyQt::NotifyQt() : cDialog(NULL)
+RsGUIEventManager::RsGUIEventManager() : cDialog(NULL)
 {
 	runningToasterTimer = new QTimer(this);
 	connect(runningToasterTimer, SIGNAL(timeout()), this, SLOT(runningTick()));
@@ -118,7 +115,7 @@ NotifyQt::NotifyQt() : cDialog(NULL)
     }, mEventHandlerId);	// No event type means we expect to catch all possible events
 }
 
-bool NotifyQt::GUI_askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad)
+bool RsGUIEventManager::GUI_askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad)
 {
 	RsAutoUpdatePage::lockAllEvents() ;
 
@@ -171,7 +168,7 @@ bool NotifyQt::GUI_askForPassword(const std::string& title, const std::string& k
     RsLoginHelper::clearPgpPassphrase();
     return false;
 }
-bool NotifyQt::GUI_askForPluginConfirmation(const std::string& plugin_file_name, const RsFileHash& plugin_file_hash, bool first_time)
+bool RsGUIEventManager::GUI_askForPluginConfirmation(const std::string& plugin_file_name, const RsFileHash& plugin_file_hash, bool first_time)
 {
 	// By default, when no information is known about plugins, just dont load them. They will be enabled from the GUI by the user.
 
@@ -207,14 +204,14 @@ bool NotifyQt::GUI_askForPluginConfirmation(const std::string& plugin_file_name,
     }
 }
 
-void NotifyQt::enable()
+void RsGUIEventManager::enable()
 {
 	QMutexLocker m(&_mutex) ;
 	std::cerr << "Enabling notification system" << std::endl;
 	_enabled = true ;
 }
 
-void NotifyQt::sync_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
+void RsGUIEventManager::sync_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
 {
     auto ev6 = dynamic_cast<const RsSystemEvent*>(event.get());
 
@@ -224,7 +221,7 @@ void NotifyQt::sync_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
         GUI_askForPluginConfirmation(ev6->plugin_file_name, ev6->plugin_file_hash, ev6->plugin_first_time);
 }
 
-void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
+void RsGUIEventManager::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
 {
 	/* Finally Check for PopupMessages / System Error Messages */
 
@@ -403,7 +400,7 @@ void NotifyQt::async_handleIncomingEvent(std::shared_ptr<const RsEvent> event)
 	startWaitingToasters();
 }
 
-void NotifyQt::testToasters(RsNotifyPopupFlags notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin)
+void RsGUIEventManager::testToasters(RsNotifyPopupFlags notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin)
 {
 	QString title = tr("Test");
 	QString message = tr("This is a test.");
@@ -469,7 +466,7 @@ void NotifyQt::testToasters(RsNotifyPopupFlags notifyFlags, /*RshareSettings::en
 	}
 }
 
-void NotifyQt::testToaster(ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin)
+void RsGUIEventManager::testToaster(ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin)
 {
 
 	if (!toasterNotify) {
@@ -490,7 +487,7 @@ void NotifyQt::testToaster(ToasterNotify *toasterNotify, /*RshareSettings::enumT
 	}
 }
 
-void NotifyQt::testToaster(QString tag, ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin)
+void RsGUIEventManager::testToaster(QString tag, ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin)
 {
 
 	if (!toasterNotify) {
@@ -511,7 +508,7 @@ void NotifyQt::testToaster(QString tag, ToasterNotify *toasterNotify, /*RshareSe
 	}
 }
 
-void NotifyQt::notifyChatFontChanged()
+void RsGUIEventManager::notifyChatFontChanged()
 {
 	{
 		QMutexLocker m(&_mutex) ;
@@ -521,7 +518,7 @@ void NotifyQt::notifyChatFontChanged()
 
 	emit chatFontChanged();
 }
-void NotifyQt::notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType)
+void RsGUIEventManager::notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType)
 {
 	{
 		QMutexLocker m(&_mutex) ;
@@ -532,12 +529,12 @@ void NotifyQt::notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType
 	emit chatStyleChanged(styleType);
 }
 
-void NotifyQt::notifySettingsChanged()
+void RsGUIEventManager::notifySettingsChanged()
 {
 	emit settingsChanged();
 }
 
-void NotifyQt::startWaitingToasters()
+void RsGUIEventManager::startWaitingToasters()
 {
 	{
 		if (waitingToasterList.empty()) {
@@ -607,7 +604,7 @@ void NotifyQt::startWaitingToasters()
 	}
 }
 
-void NotifyQt::runningTick()
+void RsGUIEventManager::runningTick()
 {
 	//QMutexLocker lock(&runningToasterMutex);
 
@@ -692,7 +689,7 @@ void NotifyQt::runningTick()
 	}
 }
 
-void NotifyQt::displayErrorMessage(RsNotifySysFlags type,const QString& title,const QString& error_msg)
+void RsGUIEventManager::displayErrorMessage(RsNotifySysFlags type,const QString& title,const QString& error_msg)
 {
     /* make a warning message */
     switch(type)
@@ -711,7 +708,7 @@ void NotifyQt::displayErrorMessage(RsNotifySysFlags type,const QString& title,co
     }
 }
 
-void NotifyQt::displayDiskSpaceWarning(int loc,int size_limit_mb)
+void RsGUIEventManager::displayDiskSpaceWarning(int loc,int size_limit_mb)
 {
     QString locString ;
     switch(loc)

@@ -199,7 +199,7 @@ ChatWidget::ChatWidget(QWidget *parent)
         }, this );
     },mEventHandlerId_friends,RsEventType::FRIEND_LIST);
 
-	connect(NotifyQt::getInstance(), SIGNAL(chatFontChanged()), this, SLOT(resetFonts()));
+	connect(RsGUIEventManager::getInstance(), SIGNAL(chatFontChanged()), this, SLOT(resetFonts()));
 
 	connect(ui->textBrowser, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
 

@@ -238,6 +238,6 @@ void SettingsPage::notifySettingsChanged()
 	/* call to RsIface save function.... */
 	//rsicontrol -> ConfigSave();
 
-	if (NotifyQt::getInstance())
-		NotifyQt::getInstance()->notifySettingsChanged();
+	if (RsGUIEventManager::getInstance())
+		RsGUIEventManager::getInstance()->notifySettingsChanged();
 }

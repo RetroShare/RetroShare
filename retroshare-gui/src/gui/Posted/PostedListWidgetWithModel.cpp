@@ -289,7 +289,7 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 	connect(ui->submitPostButton,    SIGNAL(clicked()),            this, SLOT(createMsg()));
 	connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)),      this, SLOT(subscribeGroup(bool)));
     connect(ui->filter_LE,           SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
-	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()),this, SLOT(settingsChanged()));
+	connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()),this, SLOT(settingsChanged()));
 
 	/* add filter actions */
     ui->postsTree->setPlaceholderText(tr("No posts available in this board"));

@@ -130,7 +130,7 @@ ChatStyle::ChatStyle() : QObject()
 {
     m_styleType = TYPE_UNKNOWN;
 
-    connect(NotifyQt::getInstance(), SIGNAL(chatStyleChanged(int)), SLOT(styleChanged(int)));
+    connect(RsGUIEventManager::getInstance(), SIGNAL(chatStyleChanged(int)), SLOT(styleChanged(int)));
 }
 
 /* Destructor. */

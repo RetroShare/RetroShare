@@ -47,11 +47,11 @@ ToasterDisable::ToasterDisable(QWidget *parent)
 
 	setLayout(hbox);
 
-	bool isDisable = NotifyQt::isAllDisable();
+	bool isDisable = RsGUIEventManager::isAllDisable();
 	imageButton->setChecked(isDisable);
 
-	connect(NotifyQt::getInstance(), SIGNAL(disableAllChanged(bool)), this, SLOT(disable(bool)));
-	connect(imageButton, SIGNAL(toggled(bool)), NotifyQt::getInstance(), SLOT(SetDisableAll(bool)));
+	connect(RsGUIEventManager::getInstance(), SIGNAL(disableAllChanged(bool)), this, SLOT(disable(bool)));
+	connect(imageButton, SIGNAL(toggled(bool)), RsGUIEventManager::getInstance(), SLOT(SetDisableAll(bool)));
 
 	disable(isDisable);
 }

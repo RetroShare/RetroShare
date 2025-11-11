@@ -346,7 +346,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
     //
     RsControl::earlyInitNotificationSystem() ;
 
-    NotifyQt *notify = NotifyQt::Create();
+    RsGUIEventManager::Create();
     //rsNotify->registerNotifyClient(notify);
 
     /* RetroShare Core Objects */

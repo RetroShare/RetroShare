@@ -44,8 +44,8 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
 	connect(ui.testFeedButton, SIGNAL(clicked()), this, SLOT(testFeed()));
 	connect(ui.testToasterButton, SIGNAL(clicked()), this, SLOT(testToaster()));
-	connect(ui.pushButtonDisableAll,SIGNAL(toggled(bool)), NotifyQt::getInstance(), SLOT(SetDisableAll(bool)));
-	connect(NotifyQt::getInstance(),SIGNAL(disableAllChanged(bool)), ui.pushButtonDisableAll, SLOT(setChecked(bool)));
+    connect(ui.pushButtonDisableAll,SIGNAL(toggled(bool)), RsGUIEventManager::getInstance(), SLOT(SetDisableAll(bool)));
+    connect(RsGUIEventManager::getInstance(),SIGNAL(disableAllChanged(bool)), ui.pushButtonDisableAll, SLOT(setChecked(bool)));
 
 	ui.notify_Blogs->hide();
 
@@ -325,7 +325,7 @@ void NotifyPage::load()
 	whileBlocking(ui.systray_GroupChat)->setChecked(Settings->getDisplayTrayGroupChat());
 	whileBlocking(ui.systray_ChatLobby)->setChecked(Settings->getDisplayTrayChatLobby());
 
-	whileBlocking(ui.pushButtonDisableAll)->setChecked(NotifyQt::isAllDisable());
+    whileBlocking(ui.pushButtonDisableAll)->setChecked(RsGUIEventManager::isAllDisable());
 
     RshareSettings::enumToasterPosition toasterPosition = Settings->getToasterPosition();
     ui.comboBoxToasterPosition->clear();
@@ -412,16 +412,16 @@ void NotifyPage::testToaster()
 {
     RshareSettings::enumToasterPosition pos = (RshareSettings::enumToasterPosition) ui.comboBoxToasterPosition->itemData(ui.comboBoxToasterPosition->currentIndex()).toInt();
     QPoint margin = QPoint(ui.spinBoxToasterXMargin->value(), ui.spinBoxToasterYMargin->value());
-    NotifyQt::getInstance()->testToasters(getNotifyFlags(), pos, margin);
+    RsGUIEventManager::getInstance()->testToasters(getNotifyFlags(), pos, margin);
 
     /* notify of plugins */
     QList<ToasterNotifySetting>::iterator toasterNotifyIt;
     for (toasterNotifyIt = mToasterNotifySettingList.begin(); toasterNotifyIt != mToasterNotifySettingList.end(); ++toasterNotifyIt) {
         if (toasterNotifyIt->mEnabledCheckBox->isChecked()){
             if (toasterNotifyIt->mEnabledCheckBox->accessibleName().isEmpty()){
-                NotifyQt::getInstance()->testToaster(toasterNotifyIt->mToasterNotify, pos, margin) ;
+                RsGUIEventManager::getInstance()->testToaster(toasterNotifyIt->mToasterNotify, pos, margin) ;
             } else {
-                NotifyQt::getInstance()->testToaster(toasterNotifyIt->mEnabledCheckBox->accessibleName(), toasterNotifyIt->mToasterNotify, pos, margin) ;
+                RsGUIEventManager::getInstance()->testToaster(toasterNotifyIt->mEnabledCheckBox->accessibleName(), toasterNotifyIt->mToasterNotify, pos, margin) ;
             }
         }
     }

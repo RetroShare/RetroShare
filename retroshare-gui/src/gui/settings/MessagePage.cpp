@@ -311,5 +311,5 @@ void MessagePage::updateFontSize()
 {
 	Settings->setMessageFontSize(ui.minimumFontSize->currentData().toInt());
 
-	NotifyQt::getInstance()->notifySettingsChanged();
+	RsGUIEventManager::getInstance()->notifySettingsChanged();
 }

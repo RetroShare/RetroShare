@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/NotifyQt.h                                                              *
+ * gui/RsGUIEventManager.h                                                              *
  *                                                                             *
  * Copyright (c) 2010 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -48,16 +48,16 @@ class SignatureEventData ;
 struct TurtleFileInfo;
 struct TurtleGxsInfo;
 
-class NotifyQt: public QObject
+class RsGUIEventManager: public QObject
 {
 	Q_OBJECT
 	public:
-		static NotifyQt *Create ();
-		static NotifyQt *getInstance ();
+        static void Create();
+        static RsGUIEventManager *getInstance ();
 		static bool isAllDisable();
 		void enable() ;
 
-		virtual ~NotifyQt() = default;
+        virtual ~RsGUIEventManager() = default;
 
         virtual bool GUI_askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad);
         virtual bool GUI_askForPluginConfirmation(const std::string& plugin_filename, const RsFileHash& plugin_file_hash,bool first_time);
@@ -96,12 +96,12 @@ class NotifyQt: public QObject
 		void runningTick();
 
 	private:
-		NotifyQt();
+        RsGUIEventManager();
 
         static void displayDiskSpaceWarning(int loc,int size_limit_mb);
         static void displayErrorMessage(RsNotifySysFlags type,const QString& title,const QString& error_msg);
 
-        static NotifyQt *_instance;
+        static RsGUIEventManager *_instance;
 		static bool _disableAllToaster;
 
 		/* system notifications */

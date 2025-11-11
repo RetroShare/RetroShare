@@ -78,6 +78,6 @@ void GroupFrameSettingsWidget::saveSettings()
 
 		Settings->setGroupFrameSettings(mType, groupFrameSettings);
 
-		NotifyQt::getInstance()->notifySettingsChanged();
+		RsGUIEventManager::getInstance()->notifySettingsChanged();
 	}
 }

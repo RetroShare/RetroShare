@@ -71,7 +71,7 @@ public:
 		data.callback = callback;
 		mWidget.insert(widget, data);
 
-		QObject::connect(NotifyQt::getInstance(), &NotifyQt::settingsChanged, widget, [this, widget, callback]() {
+		QObject::connect(RsGUIEventManager::getInstance(), &RsGUIEventManager::settingsChanged, widget, [this, widget, callback]() {
 			mFontSizeHandlerBase->updateFontSize(widget, callback);
 		});
 
@@ -93,7 +93,7 @@ public:
 		data.callback = callback;
 		mView.insert(view, data);
 
-		QObject::connect(NotifyQt::getInstance(), &NotifyQt::settingsChanged, view, [this, view, iconHeightFactor, callback]() {
+		QObject::connect(RsGUIEventManager::getInstance(), &RsGUIEventManager::settingsChanged, view, [this, view, iconHeightFactor, callback]() {
 			mFontSizeHandlerBase->updateFontSize(view, iconHeightFactor, callback);
 		});
 

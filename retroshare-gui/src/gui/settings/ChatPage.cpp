@@ -126,7 +126,7 @@ void ChatPage::updateFontsAndEmotes()
 void ChatPage::updateChatParams()
 {
 	Settings->setChatScreenFont(fontTempChat.toString());
-	NotifyQt::getInstance()->notifyChatFontChanged();
+	RsGUIEventManager::getInstance()->notifyChatFontChanged();
 
 	Settings->setChatSendMessageWithCtrlReturn(ui.sendMessageWithCtrlReturn->isChecked());
 	Settings->setChatSendAsPlainTextByDef(ui.sendAsPlainTextByDef->isChecked());
@@ -186,7 +186,7 @@ void ChatPage::updatePublicStyle()
 
 	if (publicStylePath != info.stylePath || publicStyleVariant != ui.publicComboBoxVariant->currentText()) {
 		Settings->setPublicChatStyle(info.stylePath, ui.publicComboBoxVariant->currentText());
-		NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_PUBLIC);
+		RsGUIEventManager::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_PUBLIC);
 	}
 }
 
@@ -196,7 +196,7 @@ void ChatPage::updatePrivateStyle()
 
 	if (privateStylePath != info.stylePath || privateStyleVariant != ui.privateComboBoxVariant->currentText()) {
 		Settings->setPrivateChatStyle(info.stylePath, ui.privateComboBoxVariant->currentText());
-		NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_PRIVATE);
+		RsGUIEventManager::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_PRIVATE);
 	}
 }
 
@@ -206,7 +206,7 @@ void ChatPage::updateHistoryStyle()
 
 	if (historyStylePath != info.stylePath || historyStyleVariant != ui.historyComboBoxVariant->currentText()) {
 		Settings->setHistoryChatStyle(info.stylePath, ui.historyComboBoxVariant->currentText());
-		NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_HISTORY);
+		RsGUIEventManager::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_HISTORY);
 	}
 }
 

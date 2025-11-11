@@ -358,7 +358,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
     timer->start(1000);
 
-    connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
+    connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
     settingsChanged();
 
     mFontSizeHandler.registerFontSize(ui->listWidget, 1.5f);
