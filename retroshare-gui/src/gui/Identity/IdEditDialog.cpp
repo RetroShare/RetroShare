@@ -29,7 +29,6 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/qtthreadsutils.h"
 #include "util/misc.h"
-#include "gui/notifyqt.h"
 
 #include "retroshare/rsidentity.h"
 #include "retroshare/rspeers.h"

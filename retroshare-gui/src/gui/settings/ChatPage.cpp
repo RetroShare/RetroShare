@@ -22,7 +22,7 @@
 
 #include "rsharesettings.h"
 #include "gui/MainWindow.h"
-#include "gui/notifyqt.h"
+#include "gui/RsGUIEventManager.h"
 #include "gui/RetroShareLink.h"
 #include "gui/chat/ChatDialog.h"
 #include "util/misc.h"

@@ -25,7 +25,6 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
 
-#include "gui/notifyqt.h"
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
 #include "gui/common/AvatarDefs.h"

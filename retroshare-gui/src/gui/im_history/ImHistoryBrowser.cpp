@@ -39,7 +39,6 @@
 #include <retroshare/rshistory.h>
 #include <retroshare/rsidentity.h>
 #include "gui/settings/rsharesettings.h"
-#include "gui/notifyqt.h"
 #include "util/DateTime.h"
 
 #define ROLE_MSGID     Qt::UserRole

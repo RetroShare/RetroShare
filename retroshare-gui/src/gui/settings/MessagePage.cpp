@@ -27,10 +27,10 @@
 #include "MessagePage.h"
 #include "util/misc.h"
 #include "gui/common/TagDefs.h"
+#include "gui/RsGUIEventManager.h"
 #include <algorithm>
 #include "NewTag.h"
 #include "util/qtthreadsutils.h"
-#include "gui/notifyqt.h"
 
 MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)

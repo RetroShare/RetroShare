@@ -40,7 +40,7 @@
 #include "PluginsPage.h"
 #include "ServicePermissionsPage.h"
 #include "rsharesettings.h"
-#include "gui/notifyqt.h"
+#include "gui/RsGUIEventManager.h"
 #include "gui/common/FloatingHelpBrowser.h"
 #include "gui/common/RSElidedItemDelegate.h"
 

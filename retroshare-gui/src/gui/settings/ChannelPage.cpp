@@ -21,7 +21,6 @@
 #include "ChannelPage.h"
 #include "rsharesettings.h"
 #include "util/misc.h"
-#include "gui/notifyqt.h"
 #include "retroshare/rsgxschannels.h"
 
 ChannelPage::ChannelPage(QWidget * parent, Qt::WindowFlags flags)

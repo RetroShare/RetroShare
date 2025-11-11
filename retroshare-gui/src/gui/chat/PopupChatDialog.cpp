@@ -26,7 +26,6 @@
 #include "gui/common/FilesDefs.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/RsharePeerSettings.h"
-#include "gui/notifyqt.h"
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 

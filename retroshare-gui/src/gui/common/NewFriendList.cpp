@@ -54,7 +54,6 @@
 #include "gui/chat/ChatUserNotify.h"
 #include "gui/connect/ConnectProgressDialog.h"
 #include "gui/common/ElidedLabel.h"
-#include "gui/notifyqt.h"
 
 #include "NewFriendList.h"
 #include "ui_NewFriendList.h"

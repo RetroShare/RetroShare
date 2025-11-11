@@ -20,7 +20,6 @@
 
 #include "gui/common/FilesDefs.h"
 #include "MessageUserNotify.h"
-#include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
 #include "util/qtthreadsutils.h"
 #include "gui/settings/rsharesettings.h"

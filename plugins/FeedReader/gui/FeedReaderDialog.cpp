@@ -34,7 +34,7 @@
 #include "FeedReaderStringDefs.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/settings/rsharesettings.h"
-#include "gui/notifyqt.h"
+#include "gui/RsGUIEventManager.h"
 #include "FeedReaderUserNotify.h"
 #include "gui/Posted/PostedCreatePostDialog.h"
 #include "util/imageutil.h"

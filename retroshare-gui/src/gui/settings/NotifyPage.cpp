@@ -25,11 +25,11 @@
 #include "rsharesettings.h"
 
 #include "gui/MainWindow.h"
+#include "gui/RsGUIEventManager.h"
 #include "gui/common/UserNotify.h"
 #include "gui/common/FeedNotify.h"
 #include "gui/common/ToasterNotify.h"
 #include "gui/feeds/FeedItem.h"
-#include "gui/notifyqt.h"
 #include "gui/NewsFeed.h"
 #include "util/misc.h"
 

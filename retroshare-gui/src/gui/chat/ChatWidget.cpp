@@ -23,7 +23,6 @@
 #include "ui_ChatWidget.h"
 
 #include "gui/MainWindow.h"
-#include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/rsettingswin.h"
@@ -33,6 +32,7 @@
 #include "gui/common/Emoticons.h"
 #include "gui/chat/ChatLobbyDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/RsGUIEventManager.h"
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"

@@ -22,7 +22,7 @@
 #include <QPushButton>
 
 #include "ToasterDisable.h"
-#include "gui/notifyqt.h"
+#include "gui/RsGUIEventManager.h"
 #include "gui/common/FilesDefs.h"
 
 #define IMAGE_TOASTERDISABLE   ":/images/toasterDisable.png"

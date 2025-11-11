@@ -21,7 +21,6 @@
 
 #include "ChatLobbyWidget.h"
 
-#include "notifyqt.h"
 #include "RetroShareLink.h"
 #include "chat/ChatLobbyDialog.h"
 #include "chat/ChatLobbyUserNotify.h"

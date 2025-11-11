@@ -34,7 +34,6 @@
 #include "groups/CreateGroup.h"
 #include "MainWindow.h"
 #include "NewsFeed.h"
-#include "notifyqt.h"
 #include "profile/ProfileWidget.h"
 #include "profile/StatusMessage.h"
 #include "RetroShareLink.h"

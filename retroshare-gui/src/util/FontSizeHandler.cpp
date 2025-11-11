@@ -25,7 +25,7 @@
 #include "rshare.h"
 #include "FontSizeHandler.h"
 #include "gui/settings/rsharesettings.h"
-#include "gui/notifyqt.h"
+#include "gui/RsGUIEventManager.h"
 
 // Data for QAbstractItemView
 struct FontSizeHandlerWidgetData

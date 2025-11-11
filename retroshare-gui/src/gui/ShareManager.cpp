@@ -35,7 +35,6 @@
 #include "gui/common/GroupFlagsWidget.h"
 #include "gui/common/GroupSelectionBox.h"
 #include "gui/common/GroupDefs.h"
-#include "gui/notifyqt.h"
 #include "util/RsQtVersion.h"
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"

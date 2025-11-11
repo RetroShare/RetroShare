@@ -22,7 +22,6 @@
 
 #include "gui/common/FilesDefs.h"
 #include "ChatUserNotify.h"
-#include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
 #include "gui/chat/ChatDialog.h"
 #include "gui/settings/rsharesettings.h"

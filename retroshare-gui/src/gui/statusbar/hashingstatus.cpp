@@ -28,7 +28,6 @@
 #include "gui/common/ElidedLabel.h"
 #include "util/qtthreadsutils.h"
 #include "util/misc.h"
-#include "gui/notifyqt.h"
 #include "gui/common/FilesDefs.h"
 
 //#define DEBUG_HASHING_STATUS 1

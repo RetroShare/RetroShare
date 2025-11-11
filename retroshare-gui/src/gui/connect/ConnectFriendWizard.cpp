@@ -41,7 +41,6 @@
 #include "ui_ConnectFriendWizard.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/connect/ConfCertDialog.h"
-#include "gui/notifyqt.h"
 #include "gui/common/GroupDefs.h"
 #include "gui/msgs/MessageComposer.h"
 

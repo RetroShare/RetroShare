@@ -51,7 +51,6 @@
 #include <retroshare/rsgxschannels.h>
 #include <retroshare/rsgxsforums.h>
 
-#include "gui/notifyqt.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/common/GroupDefs.h"
 #include "gui/common/StatusDefs.h"

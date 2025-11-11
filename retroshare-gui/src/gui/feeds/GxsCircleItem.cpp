@@ -22,7 +22,6 @@
 #include "ui_GxsCircleItem.h"
 
 #include "FeedHolder.h"
-#include "gui/notifyqt.h"
 #include "gui/Circles/CreateCircleDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"

@@ -31,7 +31,6 @@
 #include <QPlainTextEdit>
 #include <QDialog>
 
-#include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/TagDefs.h"
 #include "gui/common/PeerDefs.h"

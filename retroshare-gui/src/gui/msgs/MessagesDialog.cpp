@@ -27,7 +27,6 @@
 
 #include "MessagesDialog.h"
 
-#include "gui/notifyqt.h"
 #include "gui/common/TagDefs.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/RSElidedItemDelegate.h"

@@ -23,7 +23,6 @@
 #include <retroshare/rspeers.h>
 #include "GroupSelectionBox.h"
 #include "GroupDefs.h"
-#include "gui/notifyqt.h"
 #include "util/qtthreadsutils.h"
 
 #include <algorithm>

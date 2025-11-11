@@ -36,7 +36,6 @@
 
 #include "MainWindow.h"
 #include "ShareManager.h"
-#include "notifyqt.h"
 #include "connect/ConnectFriendWizard.h"
 #include "util/PixmapMerging.h"
 #include "util/qtthreadsutils.h"

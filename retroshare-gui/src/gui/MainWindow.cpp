@@ -67,7 +67,6 @@
 #include "chat/ChatDialog.h"
 #include "RetroShareLink.h"
 #include "SoundManager.h"
-#include "notifyqt.h"
 #include "common/UserNotify.h"
 #include "gui/ServicePermissionDialog.h"
 
@@ -122,11 +121,11 @@
 #include "gui/statistics/StatisticsWindow.h"
 
 #include "gui/connect/ConnectFriendWizard.h"
+#include "gui/RsGUIEventManager.h"
 #include "gui/common/RsCollectionDialog.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
 #include "common/StatusDefs.h"
-#include "gui/notifyqt.h"
 
 #ifdef RS_WEBUI
 #	include "settings/WebuiPage.h"

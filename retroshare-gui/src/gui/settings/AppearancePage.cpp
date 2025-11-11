@@ -22,7 +22,7 @@
 
 #include "rshare.h"
 #include "gui/MainWindow.h"
-#include "gui/notifyqt.h"
+#include "gui/RsGUIEventManager.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/statusbar/peerstatus.h"

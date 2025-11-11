@@ -57,7 +57,6 @@
 #include "msgs/MessageInterface.h"
 
 #include "common/FeedNotify.h"
-#include "notifyqt.h"
 
 #define ROLE_RECEIVED FEED_TREEWIDGET_SORTROLE
 

@@ -20,7 +20,6 @@
 
 #include "ServerPage.h"
 
-#include <gui/notifyqt.h>
 #include "gui/MainWindow.h"
 #include "rshare.h"
 #include "rsharesettings.h"

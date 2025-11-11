@@ -35,8 +35,6 @@
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 
-#include "gui/notifyqt.h"
-
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
 

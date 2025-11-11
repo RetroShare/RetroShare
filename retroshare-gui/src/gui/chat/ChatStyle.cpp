@@ -107,7 +107,7 @@
 
 #include "ChatStyle.h"
 #include "gui/settings/rsharesettings.h"
-#include "gui/notifyqt.h"
+#include "gui/RsGUIEventManager.h"
 #include "util/DateTime.h"
 #include "util/HandleRichText.h"
 
