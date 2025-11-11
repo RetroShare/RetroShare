@@ -371,7 +371,7 @@ HEADERS +=  rshare.h \
             retroshare-gui/configpage.h \
             retroshare-gui/RsAutoUpdatePage.h \
             retroshare-gui/mainpage.h \
-            gui/notifyqt.h \
+            gui/RsGUIEventManager.h \
             control/bandwidthevent.h \
             control/eventtype.h \
             gui/QuickStartWizard.h \
@@ -620,22 +620,6 @@ HEADERS +=  rshare.h \
             gui/NetworkDialog/pgpid_item_proxy.h \
             gui/common/RsCollection.h \
             util/retroshareWin32.h
-#            gui/ForumsDialog.h \
-#            gui/forums/ForumDetails.h \
-#            gui/forums/EditForumDetails.h \
-#            gui/forums/CreateForum.h \
-#            gui/forums/CreateForumMsg.h \
-#            gui/forums/ForumUserNotify.h \
-#            gui/feeds/ForumNewItem.h \
-#            gui/feeds/ForumMsgItem.h \
-#            gui/ChannelFeed.h \
-#            gui/feeds/ChanNewItem.h \
-#            gui/feeds/ChanMsgItem.h \
-#            gui/channels/CreateChannel.h \
-#            gui/channels/ChannelDetails.h \
-#            gui/channels/CreateChannelMsg.h \
-#            gui/channels/EditChanDetails.h \
-#            gui/channels/ChannelUserNotify.h \
 
 FORMS +=    gui/StartDialog.ui \
             gui/HomePage.ui\
@@ -654,7 +638,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/NetworkView.ui \
             gui/FriendsDialog.ui \
             gui/ShareManager.ui \
-#            gui/ShareDialog.ui \
             gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
             gui/ServicePermissionDialog.ui \
@@ -761,7 +744,7 @@ FORMS +=    gui/StartDialog.ui \
 
 SOURCES +=  main.cpp \
             rshare.cpp \
-            gui/notifyqt.cpp \
+            gui/RsGUIEventManager.cpp \
             gui/AboutDialog.cpp \
             gui/AboutWidget.cpp \
             gui/QuickStartWizard.cpp \

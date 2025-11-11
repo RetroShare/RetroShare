@@ -21,7 +21,6 @@
 #include "gui/common/FilesDefs.h"
 #include <retroshare/rsgxsifacehelper.h>
 
-#include "notifyqt.h"
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsmsgs.h>
@@ -42,6 +41,7 @@
 #include "toaster/FriendRequestToaster.h"
 #include "toaster/ToasterItem.h"
 #include "common/ToasterNotify.h"
+#include "RsGUIEventManager.h"
 
 #include "chat/ChatDialog.h"
 #include "chat/ChatLobbyDialog.h"

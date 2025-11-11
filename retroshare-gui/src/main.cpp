@@ -108,7 +108,7 @@ __declspec(dllexport) __cdecl BOOL _OPENSSL_isservice(void)
 #include <util/stringutil.h>
 #include <retroshare/rsinit.h>
 #include <retroshare/rsiface.h>
-#include "gui/notifyqt.h"
+#include "gui/RsGUIEventManager.h"
 #include <unistd.h>
 
 static void showHelp(const argstream& as)
