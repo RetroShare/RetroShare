@@ -100,7 +100,7 @@
            <enum>Qt::RightToLeft</enum>
           </property>
           <property name="text">
-           <string>Delete banned identities after (0 means indefinitely):</string>
+           <string>Delete banned identities after (0 means never):</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
