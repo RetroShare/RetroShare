@@ -514,6 +514,8 @@ void NewsFeed::testFeeds(uint /*notifyFlags*/)
 {
 	uint flags = Settings->getNewsFeedFlags();
 
+	//For test your feed add valid ID's for RsGxsGroupId & RsGxsMessageId, else test feed will be not displayed
+
 	if (flags & RS_FEED_TYPE_PEER)
 		instance->addFeedItemIfUnique(new PeerItem(instance, NEWSFEED_PEERLIST, RsPeerId(""), PEER_TYPE_CONNECT, false), true);
 
