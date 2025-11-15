@@ -71,6 +71,13 @@ void GxsCreateCommentDialog::createComment()
 	comment.mMeta.mParentId = mParentId.second;
 	comment.mMeta.mGroupId = mParentId.first;
 	comment.mMeta.mThreadId = mThreadId;
+	
+	if(text.isEmpty()) {
+		/* error message */
+		QMessageBox::warning(this, tr("RetroShare"),tr("Please add a comment"), QMessageBox::Ok, QMessageBox::Ok);
+
+		return; //Don't add a empty comment!!
+	}
 
 	std::cerr << "GxsCreateCommentDialog::createComment()";
 	std::cerr << std::endl;
