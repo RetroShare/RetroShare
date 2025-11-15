@@ -420,7 +420,9 @@ void GxsForumMsgItem::unsubscribeForum()
 void GxsForumMsgItem::setAsRead(bool doUpdate)
 {
     mCloseOnRead = false;
-    mLoadingSetAsRead = true;
+
+    if(doUpdate)
+        mLoadingSetAsRead = true;
 
     RsThread::async( [this, doUpdate]() {
         RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
