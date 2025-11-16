@@ -30,7 +30,7 @@ class DownloadToaster : public QWidget
 	Q_OBJECT
 
 public:
-    DownloadToaster(const RsFileHash &hash, const QString &name);
+    DownloadToaster(const RsFileHash &hash);
 
 private slots:
 	void play();

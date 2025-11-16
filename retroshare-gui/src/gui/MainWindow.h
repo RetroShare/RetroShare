@@ -25,6 +25,9 @@
 #include <QSystemTrayIcon>
 #include <set>
 
+#include "retroshare/rsevents.h"
+#include "retroshare/rsstatus.h"
+
 #include "gui/common/rwindow.h"
 #include "gui/common/RSComboBox.h"
 #include "util/FontSizeHandler.h"
@@ -183,7 +186,7 @@ public:
     /* initialize widget with status informations, status constant stored in data or in Qt::UserRole */
     void initializeStatusObject(QObject *pObject, bool bConnect);
     void removeStatusObject(QObject *pObject);
-    void setStatus(QObject *pObject, int nStatus);
+    void setStatus(QObject *pObject, RsStatusValue nStatus);
 
     RSComboBox *statusComboBoxInstance();
     PeerStatus *peerstatusInstance();
@@ -207,9 +210,7 @@ public:
 
 public slots:
     void receiveNewArgs(QStringList args);
-    void displayErrorMessage(int,int,const QString&) ;
     void postModDirectories(bool update_local);
-    void displayDiskSpaceWarning(int loc,int size_limit_mb) ;
     void checkAndSetIdle(int idleTime);
 
     void externalLinkActivated(const QUrl &url);
@@ -375,6 +376,7 @@ private:
     FontSizeHandler mFontSizeHandler;
 
 	 Ui::MainWindow *ui ;
-};
 
+     RsEventsHandlerId_t mEventHandlerId_friends;
+};
 #endif

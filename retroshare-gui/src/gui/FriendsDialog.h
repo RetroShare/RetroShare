@@ -70,9 +70,6 @@ public:
 	 IdDialog *idDialog;
 	 
 private slots:
-    void chatMessageReceived(const ChatMessage& msg);
-    void chatStatusReceived(const ChatId& chat_id, const QString& status_string);
-
     void addFriend();
 
     void statusmessage();
@@ -89,10 +86,17 @@ signals:
     void notifyGroupChat(const QString&,const QString&) ;
 
 private:
+    void chatMessageReceived(const ChatMessage& msg);
+    void chatStatusReceived(const ChatId& chat_id, const QString& status_string);
+
     void processSettings(bool bLoad);
 
     /** Qt Designer generated object */
     Ui::FriendsDialog ui;
+    RsEventsHandlerId_t mEventHandlerId_friends ;
+#ifdef RS_DIRECT_CHAT
+    RsEventsHandlerId_t mEventHandlerId_chat ;
+#endif
 };
 
 #endif

@@ -30,7 +30,6 @@
 #include "util/DateTime.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/common/FilesDefs.h"
-#include "gui/notifyqt.h"
 #include "util/qtthreadsutils.h"
 
 #include <retroshare/rsmsgs.h>

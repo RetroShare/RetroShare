@@ -27,7 +27,6 @@
 
 #include "MessagesDialog.h"
 
-#include "gui/notifyqt.h"
 #include "gui/common/TagDefs.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/RSElidedItemDelegate.h"
@@ -309,7 +308,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_STATUS );
 
     mTagEventHandlerId = 0;
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleTagEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_TAG );
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleTagEvent_main_thread(event); }); }, mTagEventHandlerId, RsEventType::MAIL_TAG );
 
     mFontSizeHandler.registerFontSize(ui.listWidget, 1.5f, [this] (QAbstractItemView*, int fontSize) {
         // Set new font size on all items
@@ -350,6 +349,8 @@ void MessagesDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> even
         break;
     case RsMailStatusEventCode::MESSAGE_RECEIVED_ACK:
     case RsMailStatusEventCode::SIGNATURE_FAILED:
+        break;
+    default:
         break;
     }
 }
@@ -1088,11 +1089,13 @@ void MessagesDialog::doubleClicked(const QModelIndex& proxy_index)
     }
 
     /* edit message */
-    switch (Settings->getMsgOpen()) {
-    case RshareSettings::MSG_OPEN_TAB:
+    switch (Settings->getMsgOpen())
+    {
+    default:
+    case RsSettingsMsgOptions::MSG_OPEN_TAB:
         openAsTab();
         break;
-    case RshareSettings::MSG_OPEN_WINDOW:
+    case RsSettingsMsgOptions::MSG_OPEN_WINDOW:
         openAsWindow();
         break;
     }
