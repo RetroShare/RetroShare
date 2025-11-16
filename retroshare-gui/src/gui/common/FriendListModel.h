@@ -131,7 +131,8 @@ public:
     bool getDisplayStatusString() const { return mDisplayStatusString; }
 	void setDisplayStatusIcon(bool b);
 	bool getDisplayStatusIcon() const { return mDisplayStatusIcon; }
-
+	void setDisplayCircleAvatars(bool b);
+	bool getDisplayCircleAvatars() const { return mDisplayCircleAvatars; }
 
 
     EntryType getType(const QModelIndex&) const;
@@ -231,6 +232,7 @@ private:
     bool mDisplayGroups ;
     bool mDisplayStatusString ;
     bool mDisplayStatusIcon ;
+    bool mDisplayCircleAvatars ;
     rstime_t mLastInternalDataUpdate;
     rstime_t mLastNodeUpdate;;
 

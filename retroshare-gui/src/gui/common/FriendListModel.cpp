@@ -34,6 +34,8 @@
 #include "gui/common/FriendListModel.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
+#include "gui/chat/ChatUserNotify.h"
+
 #include "retroshare/rsexpr.h"
 #include "retroshare/rsmsgs.h"
 
@@ -65,7 +67,7 @@ static const uint32_t NODE_DETAILS_UPDATE_DELAY = 5;	// update each node every 5
 
 RsFriendListModel::RsFriendListModel(QObject *parent)
     : QAbstractItemModel(parent)
-    , mDisplayGroups(true), mDisplayStatusString(true), mDisplayStatusIcon (false)
+    , mDisplayGroups(true), mDisplayStatusString(true), mDisplayStatusIcon (false), mDisplayCircleAvatars (false)
     , mLastInternalDataUpdate(0), mLastNodeUpdate(0)
 {
 	mFilterStrings.clear();
@@ -160,6 +162,27 @@ static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay)
 	return icon;
 }
 
+static QImage getCirclePhoto(const QImage original, int sizePhoto)
+{
+    QImage target(sizePhoto, sizePhoto, QImage::Format_ARGB32_Premultiplied);
+    target.fill(Qt::transparent);
+
+    QPainter painter(&target);
+    painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    painter.setBrush(QBrush(Qt::white));
+    auto scaledPhoto = original
+            .scaled(sizePhoto, sizePhoto, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation)
+            .convertToFormat(QImage::Format_ARGB32_Premultiplied);
+    int margin = 0;
+    if (scaledPhoto.width() > sizePhoto) {
+        margin = (scaledPhoto.width() - sizePhoto) / 2;
+    }
+    painter.drawEllipse(0, 0, sizePhoto, sizePhoto);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+    painter.drawImage(0, 0, scaledPhoto, margin, 0);
+    return target;
+}
+
 void RsFriendListModel::setDisplayStatusString(bool b)
 {
 	preMods();
@@ -171,6 +194,12 @@ void RsFriendListModel::setDisplayStatusIcon(bool b)
 {
 	preMods();
 	mDisplayStatusIcon = b;
+	postMods();
+}
+
+void RsFriendListModel::setDisplayCircleAvatars(bool b)
+{
+	mDisplayCircleAvatars = b;
 	postMods();
 }
 
@@ -998,6 +1027,12 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
 		{
 			QPixmap sslAvatar;
 			bool foundAvatar = false;
+			bool hasPrivateChat = false;
+			
+			// get peers with waiting incoming chats
+			std::vector<RsPeerId> privateChatIds;
+			ChatUserNotify::getPeersWithWaitingChat(privateChatIds);
+
         	const HierarchicalProfileInformation *hn = getProfileInfo(entry);
 			uint32_t status = RS_STATUS_OFFLINE;
 			const HierarchicalNodeInformation *bestNodeInformation = NULL;
@@ -1025,11 +1060,33 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
 			if (!foundAvatar || sslAvatar.isNull()) {
 				sslAvatar = FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE);
 			}
+			
+			if(mDisplayCircleAvatars) {
+				//make avatar as circle avatar
+				QImage orginalImage = sslAvatar.toImage();
+				QImage circleImage = getCirclePhoto(orginalImage,orginalImage.size().width());
+				sslAvatar.convertFromImage(circleImage);
+			}
+			
+			if (mDisplayStatusIcon) {
+				for(uint32_t i=0;i<hn->child_node_indices.size();++i) {
+					if (std::find(privateChatIds.begin(), privateChatIds.end(), RsPeerId(mLocations[hn->child_node_indices[i]].node_info.id.toStdString())) != privateChatIds.end()) {
+						// private chat is available
+						hasPrivateChat = true;
+						break;
+						}
+				}
+			}
 
 			if (mDisplayStatusIcon) {
 				if (bestNodeInformation) {
-					QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(status));
-					return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
+					if (hasPrivateChat) {
+						QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(":/images/orange-bubble-64.png");
+						return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
+					} else {
+						QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(status));
+						return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
+					}
 				}
 			}
 
@@ -1047,10 +1104,38 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
             return QVariant();
 
 		QPixmap sslAvatar;
+		bool hasPrivateChat = false;
 		AvatarDefs::getAvatarFromSslId(RsPeerId(hn->node_info.id.toStdString()), sslAvatar);
+
+		// get peers with waiting incoming chats
+		std::vector<RsPeerId> privateChatIds;
+		ChatUserNotify::getPeersWithWaitingChat(privateChatIds);
+
+		if(mDisplayCircleAvatars) {
+			//make avatar as circle avatar
+			QImage orginalImage = sslAvatar.toImage();
+			QImage circleImage = getCirclePhoto(orginalImage,orginalImage.size().width());
+			sslAvatar.convertFromImage(circleImage);
+		}
+
 		if (mDisplayStatusIcon) {
-			QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(statusRole(entry, col).toInt()));
-			return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
+			for(uint32_t i=0;i<mLocations.size();++i){
+				if (std::find(privateChatIds.begin(), privateChatIds.end(), RsPeerId(hn->node_info.id.toStdString())) != privateChatIds.end()) {
+					// private chat is available
+					hasPrivateChat = true;
+					break;
+				}
+			}
+		}
+		
+		if (mDisplayStatusIcon) {
+			if (hasPrivateChat) {
+				QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(":/images/orange-bubble-64.png");
+				return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
+			} else {
+				QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(statusRole(entry, col).toInt()));
+				return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
+			}
 		}
 
         return QVariant(QIcon(sslAvatar));
