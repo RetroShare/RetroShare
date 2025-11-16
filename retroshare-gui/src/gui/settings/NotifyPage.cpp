@@ -167,6 +167,10 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.notify_Security,     SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
 	connect(ui.notify_SecurityIp,   SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
 
+#ifdef RS_USE_WIRE
+    connect(ui.notify_Wire,         SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
+#endif
+
 	connect(ui.systray_ChatLobby,   SIGNAL(toggled(bool)), this, SLOT(updateSystrayChatLobby()));
 	connect(ui.systray_GroupChat,   SIGNAL(toggled(bool)), this, SLOT(updateSystrayGroupChat()));
 
@@ -194,6 +198,12 @@ uint NotifyPage::getNewsFlags()
         newsFlags |= RS_FEED_TYPE_FORUM;
     if (ui.notify_Posted->isChecked())
         newsFlags |= RS_FEED_TYPE_POSTED;
+
+#ifdef RS_USE_WIRE
+    if (ui.notify_Wire->isChecked())
+        newsFlags |= RS_FEED_TYPE_WIRE;
+#endif
+
 #if 0
     if (ui.notify_Blogs->isChecked())
         newsFlags |= RS_FEED_TYPE_BLOG;
@@ -311,6 +321,11 @@ void NotifyPage::load()
 	whileBlocking(ui.notify_Channels)->setChecked(newsflags & RS_FEED_TYPE_CHANNEL);
 	whileBlocking(ui.notify_Forums)->setChecked(newsflags & RS_FEED_TYPE_FORUM);
 	whileBlocking(ui.notify_Posted)->setChecked(newsflags & RS_FEED_TYPE_POSTED);
+
+#ifdef RS_USE_WIRE
+    whileBlocking(ui.notify_Wire)->setChecked(newsflags & RS_FEED_TYPE_WIRE);
+#endif
+
 #if 0
 	whileBlocking(ui.notify_Blogs)->setChecked(newsflags & RS_FEED_TYPE_BLOG);
 #endif
