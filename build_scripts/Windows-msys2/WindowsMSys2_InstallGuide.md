@@ -8,7 +8,7 @@ Requirements: about 12 GB of free space
 The resulting binary is a 32-bit build of Retroshare which will also work
 fine on a 64-bit system.
 
-**If you want to make complet solution without debugging it, prefer to use \build_scripts\Windows-msys2\build.bat**
+**If you want to make complete solution without debugging it, prefer to use \build_scripts\Windows-msys2\build.bat**
 
 This batch will install and build all for you.
 
