@@ -78,6 +78,7 @@ private slots:
     //void toggle() override;
 	void readAndClearItem();
 	void readToggled(bool checked);
+    void viewPicture();
 
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);	

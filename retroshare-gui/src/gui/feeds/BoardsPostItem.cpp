@@ -24,6 +24,7 @@
 
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
+#include "gui/Posted/PhotoView.h"
 #include "rshare.h"
 #include "BoardsPostItem.h"
 #include "ui_BoardsPostItem.h"
@@ -155,6 +156,7 @@ void BoardsPostItem::setup()
 	/* general ones */
 	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(toggle()));
 	connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(removeItem()));
+    connect(ui->logoLabel, SIGNAL(clicked()), this, SLOT(viewPicture()));
 
 	/* specific */
 	connect(ui->readAndClearButton, SIGNAL(clicked()), this, SLOT(readAndClearItem()));
@@ -406,6 +408,30 @@ QString BoardsPostItem::messageName()
 	return QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
 }
 
+void BoardsPostItem::viewPicture()
+{
+  if(mPost.mImage.mData == NULL) {
+    return;
+  }
+
+  QString timestamp = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
+  QPixmap pixmap;
+  GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+  RsGxsId authorID = mPost.mMeta.mAuthorId;
+
+  PhotoView *PView = new PhotoView(this);
+
+  PView->setPixmap(pixmap);
+  PView->setTitle(messageName());
+  PView->setName(authorID);
+  PView->setTime(timestamp);
+  PView->setGroupId(groupId());
+  PView->setMessageId(messageId());
+
+  PView->show();
+
+  /* window will destroy itself! */
+}
 void BoardsPostItem::setReadStatus(bool isNew, bool isUnread)
 {
 #ifdef TODO
