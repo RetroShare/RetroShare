@@ -35,6 +35,7 @@
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
 #include "feeds/BoardsCommentsItem.h"
+#include "feeds/BoardsPostItem.h"
 #include "feeds/ChatMsgItem.h"
 #include "feeds/GxsCircleItem.h"
 #include "feeds/ChannelsCommentsItem.h"
@@ -245,7 +246,7 @@ void NewsFeed::handlePostedEvent(std::shared_ptr<const RsEvent> event)
 		addFeedItem( new PostedGroupItem(this, NEWSFEED_POSTEDNEWLIST, pe->mPostedGroupId, false, true));
 		break;
 	case RsPostedEventCode::NEW_MESSAGE:
-		addFeedItem( new PostedItem(this, NEWSFEED_POSTEDMSGLIST, pe->mPostedGroupId, pe->mPostedMsgId, false, true));
+        addFeedItem( new BoardsPostItem(this, NEWSFEED_POSTEDMSGLIST, pe->mPostedGroupId, pe->mPostedMsgId, false, true));
 		break;
 	case RsPostedEventCode::NEW_COMMENT:
 		addFeedItem( new BoardsCommentsItem(this, NEWSFEED_POSTEDMSGLIST, pe->mPostedGroupId, pe->mPostedMsgId, false, true));
@@ -512,13 +513,21 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 
 void NewsFeed::testFeeds(uint /*notifyFlags*/)
 {
-    auto feedItem = new GxsChannelPostItem(instance,
+    auto feedItem = new PostedItem(instance,
                                            NEWSFEED_CHANNELNEWLIST,
                                            RsGxsGroupId  ("00000000000000000000000000000000"),
                                            RsGxsMessageId("0000000000000000000000000000000000000000")
                                            , false, true);
 
     instance->addFeedItem(feedItem);
+
+    auto feedItem2 = new BoardsPostItem(instance,
+                                           NEWSFEED_CHANNELNEWLIST,
+                                           RsGxsGroupId  ("00000000000000000000000000000000"),
+                                           RsGxsMessageId("0000000000000000000000000000000000000000")
+                                           , false, true);
+
+    instance->addFeedItem(feedItem2);
 
 #ifdef TO_REMOVE
 	if (!instance) {
