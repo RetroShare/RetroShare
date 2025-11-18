@@ -55,8 +55,8 @@ protected:
     static uint64_t computeIdentifier(const RsGxsMessageId& msgid) { return hash64("BoardsPostItem " + msgid.toStdString()) ; }
 
 	/* FeedItem */
-    virtual void doExpand(bool open) override {}
-    virtual void expandFill(bool first) override {}
+    virtual void doExpand(bool open) override ;
+    virtual void expandFill(bool first) override ;
 
 	// This does nothing except triggering the loading of the post data and comments. This function is mainly used to detect
 	// when the post is actually made visible.
@@ -75,7 +75,7 @@ protected:
 
 private slots:
 	/* default stuff */
-    //void toggle() override;
+    void toggle() override;
 	void readAndClearItem();
 	void readToggled(bool checked);
     void viewPicture();
@@ -86,6 +86,7 @@ signals:
 private:
 	void setup();
 	void fill();
+    void fillExpandFrame();
 
 private:
 	bool mCloseOnRead;

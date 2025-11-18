@@ -149,9 +149,9 @@ void BoardsPostItem::setup()
 	/* clear ui */
 	ui->titleLabel->setText(tr("Loading..."));
 	ui->datetimelabel->clear();
-	ui->filelabel->clear();
-    ui->newCommentLabel->clear();
-    ui->commLabel->clear();
+    ui->filelabel->hide();
+    ui->newCommentLabel->hide();
+    ui->commLabel->hide();
 
 	/* general ones */
 	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(toggle()));
@@ -329,7 +329,9 @@ void BoardsPostItem::fill()
 
     //if( !IS_GROUP_PUBLISHER(mGroupMeta.mSubscribeFlags) )
     ui->editButton->hide() ;	// never show this button. Feeds are not the place to edit posts.
-    ui->expandButton->hide() ;	// never show this button.
+
+    if(mPost.mNotes.empty())
+        ui->expandButton->hide() ;	// never show this button.
 
     if (mCloseOnRead && !IS_MSG_NEW(mPost.mMeta.mMsgStatus)) {
         removeItem();
@@ -353,8 +355,7 @@ void BoardsPostItem::fill()
 
     std::cerr << "Copying 1 line from \"" << mPost.mNotes << "\"" << std::endl;
     //ui->newCommentLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mNotes.c_str()), 1)) ;
-    ui->commLabel->hide();
-    ui->newCommentLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
+    //ui->newCommentLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
 
     if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
     {
@@ -460,22 +461,10 @@ void BoardsPostItem::setReadStatus(bool isNew, bool isUnread)
     ui->feedFrame->style()->polish(  ui->feedFrame);
 #endif
 }
-
-#ifdef TODO
-void BoardsPostItem::expandFill(bool first)
-{
-    GxsFeedItem::expandFill(first);
-
-    if (first) {
-        fillExpandFrame();
-    }
-}
-
 void BoardsPostItem::toggle()
 {
     expand(ui->expandFrame->isHidden());
 }
-#endif
 
 /*********** SPECIFIC FUNCTIONS ***********************/
 
@@ -496,5 +485,49 @@ void BoardsPostItem::readToggled(bool /*checked*/)
 	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
 
     rsPosted->setPostReadStatus(msgPair, isUnread());
+}
+
+void BoardsPostItem::fillExpandFrame()
+{
+    ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
+}
+
+void BoardsPostItem::doExpand(bool open)
+{
+    if (mFeedHolder)
+    {
+        mFeedHolder->lockLayout(this, true);
+    }
+
+    if (open)
+    {
+        ui->expandFrame->show();
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
+        ui->expandButton->setToolTip(tr("Hide"));
+
+        readToggled(false);
+    }
+    else
+    {
+        ui->expandFrame->hide();
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
+        ui->expandButton->setToolTip(tr("Expand"));
+    }
+
+    emit sizeChanged(this);
+
+    if (mFeedHolder)
+    {
+        mFeedHolder->lockLayout(this, false);
+    }
+}
+
+void BoardsPostItem::expandFill(bool first)
+{
+    GxsFeedItem::expandFill(first);
+
+    if (first) {
+        fillExpandFrame();
+    }
 }
 
