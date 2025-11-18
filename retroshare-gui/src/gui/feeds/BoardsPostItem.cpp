@@ -130,14 +130,14 @@ void BoardsPostItem::setup()
 
     ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default-video.png"));
     //ui->warn_image_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/status_unknown.png"));
-    ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
-    ui->voteUpButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_up.png"));
-    ui->voteDownButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_down.png"));
-    ui->downloadButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/download.png"));
-    ui->playButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/play.png"));
+    //ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
+    //ui->voteUpButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_up.png"));
+    //ui->voteDownButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_down.png"));
+    //ui->downloadButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/download.png"));
+    //ui->playButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/play.png"));
     ui->commentButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
     //ui->editButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/pencil-edit-button.png"));
-    ui->copyLinkButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/copy.png"));
+    //ui->copyLinkButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/copy.png"));
     ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/down-arrow.png"));
     ui->readAndClearButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/correct.png"));
     ui->clearButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/exit2.png"));
@@ -149,9 +149,9 @@ void BoardsPostItem::setup()
 	/* clear ui */
 	ui->titleLabel->setText(tr("Loading..."));
 	ui->datetimelabel->clear();
-    ui->filelabel->hide();
-    ui->newCommentLabel->hide();
-    ui->commLabel->hide();
+    //ui->filelabel->hide();
+    //ui->newCommentLabel->hide();
+    //ui->commLabel->hide();
 
 	/* general ones */
 	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(toggle()));
@@ -160,30 +160,30 @@ void BoardsPostItem::setup()
 
 	/* specific */
 	connect(ui->readAndClearButton, SIGNAL(clicked()), this, SLOT(readAndClearItem()));
-	connect(ui->unsubscribeButton, SIGNAL(clicked()), this, SLOT(unsubscribeChannel()));
+    //connect(ui->unsubscribeButton, SIGNAL(clicked()), this, SLOT(unsubscribeChannel()));
 
-	connect(ui->downloadButton, SIGNAL(clicked()), this, SLOT(download()));
+    //connect(ui->downloadButton, SIGNAL(clicked()), this, SLOT(download()));
 	// HACK FOR NOW.
     ui->commentButton->hide();// hidden until properly enabled.
 //	connect(ui->commentButton, SIGNAL(clicked()), this, SLOT(loadComments()));
 
-	connect(ui->playButton, SIGNAL(clicked()), this, SLOT(play(void)));
+    //connect(ui->playButton, SIGNAL(clicked()), this, SLOT(play(void)));
     //connect(ui->editButton, SIGNAL(clicked()), this, SLOT(edit(void)));
-	connect(ui->copyLinkButton, SIGNAL(clicked()), this, SLOT(copyMessageLink()));
+    //connect(ui->copyLinkButton, SIGNAL(clicked()), this, SLOT(copyMessageLink()));
 
-	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
+    //connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
 
     // hide voting buttons, backend is not implemented yet
-    ui->voteUpButton->hide();
-    ui->voteDownButton->hide();
+    //ui->voteUpButton->hide();
+    //ui->voteDownButton->hide();
 
-	ui->scoreLabel->hide();
+    //ui->scoreLabel->hide();
 
 	// hide unsubscribe button not necessary
-	ui->unsubscribeButton->hide();
+    //ui->unsubscribeButton->hide();
 
-	ui->downloadButton->hide();
-	ui->playButton->hide();
+    //ui->downloadButton->hide();
+    //ui->playButton->hide();
     //ui->warn_image_label->hide();
     //ui->warning_label->hide();
 
@@ -328,7 +328,7 @@ void BoardsPostItem::fill()
 		ui->logoLabel->setPicture( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default-video.png") );
 
     //if( !IS_GROUP_PUBLISHER(mGroupMeta.mSubscribeFlags) )
-    ui->editButton->hide() ;	// never show this button. Feeds are not the place to edit posts.
+    //ui->editButton->hide() ;	// never show this button. Feeds are not the place to edit posts.
 
     if(mPost.mNotes.empty())
         ui->expandButton->hide() ;	// never show this button.
@@ -357,17 +357,17 @@ void BoardsPostItem::fill()
     //ui->newCommentLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mNotes.c_str()), 1)) ;
     //ui->newCommentLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
 
-    if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
-    {
-        ui->unsubscribeButton->setEnabled(true);
-    }
-    else
-    {
-        ui->unsubscribeButton->setEnabled(false);
-    }
-    ui->readButton->hide();
+//    if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
+//    {
+//        ui->unsubscribeButton->setEnabled(true);
+//    }
+//    else
+//    {
+//        ui->unsubscribeButton->setEnabled(false);
+//    }
+    //ui->readButton->hide();
     ui->newLabel->hide();
-    ui->copyLinkButton->hide();
+    //ui->copyLinkButton->hide();
 
     if (IS_MSG_NEW(mPost.mMeta.mMsgStatus))
         mCloseOnRead = true;

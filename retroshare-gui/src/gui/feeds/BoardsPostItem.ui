@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1092</width>
-    <height>255</height>
+    <width>803</width>
+    <height>175</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="BoardsPostItem_GL">
@@ -139,189 +139,25 @@
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="subjectLabel">
-            <property name="font">
-             <font>
-              <pointsize>11</pointsize>
-              <weight>75</weight>
-              <italic>false</italic>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string notr="true">TextLabel</string>
-            </property>
-            <property name="openExternalLinks">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
            <layout class="QHBoxLayout" name="newCommHLayout">
             <property name="topMargin">
              <number>0</number>
             </property>
             <item>
-             <widget class="QLabel" name="newCommentLabel">
-              <property name="text">
-               <string>New Comment:</string>
-              </property>
-              <property name="scaledContents">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="ElidedLabel" name="commLabel">
-              <property name="text">
-               <string>Comment Value</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="buttonHLayout">
-            <property name="spacing">
-             <number>8</number>
-            </property>
-            <item>
-             <widget class="QPushButton" name="readButton">
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="toolTip">
-               <string>Toggle Message Read Status</string>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-              <property name="flat">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="scoreLabel">
+             <widget class="QLabel" name="subjectLabel">
               <property name="font">
                <font>
+                <pointsize>11</pointsize>
                 <weight>75</weight>
+                <italic>false</italic>
                 <bold>true</bold>
                </font>
               </property>
               <property name="text">
-               <string>0</string>
+               <string notr="true">TextLabel</string>
               </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="voteUpButton">
-              <property name="toolTip">
-               <string>I like this</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="voteDownButton">
-              <property name="toolTip">
-               <string>I dislike this</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="downloadButton">
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text">
-               <string>Download</string>
-              </property>
-              <property name="autoExclusive">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="playButton">
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text">
-               <string>Play</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="commentButton">
-              <property name="text">
-               <string>Comments</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="editButton">
-              <property name="text">
-               <string>Edit</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="copyLinkButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="toolTip">
-               <string>Copy RetroShare Link</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="filelabel">
-              <property name="text">
-               <string notr="true">fileLabel</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="unsubscribeButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="toolTip">
-               <string>Unsubscribe From Channel</string>
-              </property>
-              <property name="text">
-               <string>Unsubscribe</string>
+              <property name="openExternalLinks">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -337,6 +173,13 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="commentButton">
+              <property name="text">
+               <string>Comments</string>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QPushButton" name="expandButton">
@@ -479,17 +322,13 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ElidedLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/ElidedLabel.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ZoomableLabel</class>
    <extends>QLabel</extends>
    <header>gui/gxschannels/GxsChannelPostThumbnail.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
