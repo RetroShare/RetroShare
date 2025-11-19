@@ -36,6 +36,7 @@
 #include "gui/common/GroupTreeWidget.h"
 #include "util/qtthreadsutils.h"
 #include "util/misc.h"
+#include "util/RsQtVersion.h"
 
 // class GxsChannelGroupInfoData : public RsUserdata
 // {

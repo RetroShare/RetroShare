@@ -27,7 +27,7 @@
 #include <QFileOpenEvent>
 #include <QLocale>
 #include <QLocalSocket>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QSharedMemory>
 #include <QShortcut>
 #include <QString>
@@ -35,6 +35,7 @@
 #include <QStyleFactory>
 #include <QTextStream>
 #include <QTimer>
+#include <QScreen>
 #ifdef __APPLE__
 #include <QUrl>
 #endif
@@ -310,8 +311,8 @@ void RsApplication::customizeDateFormat()
   QLocale locale = QLocale(); // set to default locale
   /* get long date format without weekday */
   options.dateformat = locale.dateFormat(QLocale::LongFormat);
-  options.dateformat.replace(QRegExp("^dddd,*[^ ]* *('[^']+' )*"), "");
-  options.dateformat.replace(QRegExp(",* *dddd"), "");
+  options.dateformat.replace(QRegularExpression("^dddd,*[^ ]* *('[^']+' )*"), "");
+  options.dateformat.replace(QRegularExpression(",* *dddd"), "");
   options.dateformat = options.dateformat.trimmed();
 }
 
@@ -705,4 +706,26 @@ bool RsApplication::updateLocalServer()
 		localServer->close();
 	}
 	return false;
+}
+
+/** Get available geometry of primary screen */
+QRect RsApplication::availablePrimaryScreenGeometry()
+{
+	QScreen *primaryScreen = QGuiApplication::primaryScreen();
+	if (!primaryScreen) {
+		return QRect(0, 0, 0, 0);
+	}
+
+	return primaryScreen->availableGeometry();
+}
+
+/** Get geometry of primary screen */
+QRect RsApplication::primaryScreenGeometry()
+{
+	QScreen *primaryScreen = QGuiApplication::primaryScreen();
+	if (!primaryScreen) {
+		return QRect(0, 0, 0, 0);
+	}
+
+	return primaryScreen->geometry();
 }

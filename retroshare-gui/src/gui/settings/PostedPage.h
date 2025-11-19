@@ -33,7 +33,7 @@ class PostedPage : public ConfigPage
 	Q_OBJECT
 
 public:
-	PostedPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+	PostedPage(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 	~PostedPage();
 
 	/** Loads the settings for this page */

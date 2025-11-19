@@ -40,7 +40,7 @@ class RsGxsUpdateBroadcastPage : public MainPage
 	Q_OBJECT
 
 public:
-	RsGxsUpdateBroadcastPage(RsGxsIfaceHelper* ifaceImpl, QWidget *parent = NULL, Qt::WindowFlags flags = 0);
+	RsGxsUpdateBroadcastPage(RsGxsIfaceHelper* ifaceImpl, QWidget *parent = NULL, Qt::WindowFlags flags = Qt::WindowFlags());
 	virtual ~RsGxsUpdateBroadcastPage();
 
 	void fillComplete();

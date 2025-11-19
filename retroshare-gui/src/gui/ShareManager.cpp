@@ -36,7 +36,7 @@
 #include "gui/common/GroupSelectionBox.h"
 #include "gui/common/GroupDefs.h"
 #include "gui/notifyqt.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/misc.h"
 #include "gui/common/FilesDefs.h"
 
@@ -242,7 +242,7 @@ void ShareManager::load()
         listWidget->setCellWidget(row, COLUMN_SHARE_FLAGS, widget);
 
         listWidget->setItem(row, COLUMN_GROUPS, new QTableWidgetItem()) ;
-        listWidget->item(row,COLUMN_GROUPS)->setBackgroundColor(QColor(183,236,181)) ;
+        listWidget->item(row,COLUMN_GROUPS)->setBackground(QColor(183,236,181)) ;
 
         connect(widget,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateFlags())) ;
 

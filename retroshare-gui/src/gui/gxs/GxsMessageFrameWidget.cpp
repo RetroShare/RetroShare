@@ -35,7 +35,7 @@ GxsMessageFrameWidget::GxsMessageFrameWidget(RsGxsIfaceHelper *ifaceImpl, QWidge
 	mAcknowledgeReadStatusToken = 0;
 
 	/* Add dummy entry to store waiting status */
-	mStateHelper->addWidget(mTokenTypeAcknowledgeReadStatus, NULL, 0);
+	mStateHelper->addWidget(mTokenTypeAcknowledgeReadStatus, NULL, UIStates());
 }
 
 GxsMessageFrameWidget::~GxsMessageFrameWidget()

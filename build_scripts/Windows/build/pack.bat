@@ -59,10 +59,12 @@ set QtMainVersion=%QtVersion:~0,1%
 
 rem Qt 4 = QtSvg4.dll
 rem Qt 5 = Qt5Svg.dll
+rem Qt 6 = Qt6Svg.dll
 set QtMainVersion1=
 set QtMainVersion2=
 if "%QtMainVersion%"=="4" set QtMainVersion2=4
 if "%QtMainVersion%"=="5" set QtMainVersion1=5
+if "%QtMainVersion%"=="6" set QtMainVersion1=6
 
 if "%RsBuildConfig%" NEQ "release" (
 	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-Qt-%QtVersion%-%GCCArchitecture%%RsType%%RsArchiveAdd%-%RsBuildConfig%.7z
@@ -75,7 +77,7 @@ if exist "%Archive%" del /Q "%Archive%"
 :: Create deploy path
 mkdir "%RsDeployPath%"
 
-title Pack - %SourceName%%RsType%-%RsBuildConfig% [copy files]
+title Pack - %SourceName%%RsType%-%RsBuildConfig% Qt-%QtVersion%-%GCCArchitecture% [copy files]
 
 set ExtensionsFile=%SourcePath%\libretroshare\src\rsserver\rsinit.cc
 set Extensions=
@@ -131,17 +133,23 @@ if exist "%RsDeployPath%\retroshare.dll" call :copy_dependencies "%RsDeployPath%
 echo copy Qt DLL's
 copy "%QtPath%\Qt%QtMainVersion1%Svg%QtMainVersion2%.dll" "%RsDeployPath%" %Quite%
 
-if "%QtMainVersion%"=="5" (
+if %QtMainVersion% GEQ 5 (
 	mkdir "%RsDeployPath%\platforms"
 	copy "%QtPath%\..\plugins\platforms\qwindows.dll" "%RsDeployPath%\platforms" %Quite%
+)
+
+if "%QtMainVersion%"=="5" (
 	mkdir "%RsDeployPath%\audio"
 	copy "%QtPath%\..\plugins\audio\qtaudio_windows.dll" "%RsDeployPath%\audio" %Quite%
 )
 
-if exist "%QtPath%\..\plugins\styles\qwindowsvistastyle.dll" (
-	echo Copy styles
-	mkdir "%RsDeployPath%\styles" %Quite%
+echo Copy styles
+mkdir "%RsDeployPath%\styles" %Quite%
+if "%QtMainVersion%"=="5" (
 	copy "%QtPath%\..\plugins\styles\qwindowsvistastyle.dll" "%RsDeployPath%\styles" %Quite%
+)
+if "%QtMainVersion%"=="6" (
+	copy "%QtPath%\..\plugins\styles\qmodernwindowsstyle.dll" "%RsDeployPath%\styles" %Quite%
 )
 
 copy "%QtPath%\..\plugins\imageformats\*.dll" "%RsDeployPath%\imageformats" %Quite%
@@ -169,10 +177,12 @@ xcopy /S "%SourcePath%\retroshare-gui\src\license" "%RsDeployPath%\license" %Qui
 echo copy translation
 copy "%SourcePath%\retroshare-gui\src\translations\qt_tr.qm" "%RsDeployPath%\translations" %Quite%
 copy "%QtPath%\..\translations\qt_*.qm" "%RsDeployPath%\translations" %Quite%
-if "%QtMainVersion%"=="5" (
+if %QtMainVersion% GEQ 5 (
 	copy "%QtPath%\..\translations\qtbase_*.qm" "%RsDeployPath%\translations" %Quite%
-	copy "%QtPath%\..\translations\qtscript_*.qm" "%RsDeployPath%\translations" %Quite%
 	copy "%QtPath%\..\translations\qtmultimedia_*.qm" "%RsDeployPath%\translations" %Quite%
+)
+if "%QtMainVersion%"=="5" (
+	copy "%QtPath%\..\translations\qtscript_*.qm" "%RsDeployPath%\translations" %Quite%
 	copy "%QtPath%\..\translations\qtxmlpatterns_*.qm" "%RsDeployPath%\translations" %Quite%
 )
 
@@ -196,7 +206,7 @@ if "%ParamTor%"=="1" (
 )
 
 rem pack files
-title Pack - %SourceName%%RsType%-%RsBuildConfig% [pack files]
+title Pack - %SourceName%%RsType%-%RsBuildConfig% Qt-%QtVersion%-%GCCArchitecture% [pack files]
 
 "%EnvSevenZipExe%" a -mx=9 -t7z "%Archive%" "%RsDeployPath%\*"
 

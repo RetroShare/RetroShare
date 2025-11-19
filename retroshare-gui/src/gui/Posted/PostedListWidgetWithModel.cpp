@@ -45,6 +45,7 @@
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 #include "gui/common/FilesDefs.h"
+#include "util/RsQtVersion.h"
 
 #include "gui/MainWindow.h"
 
@@ -417,7 +418,7 @@ void PostedListWidgetWithModel::updateShowLabel()
 
 void PostedListWidgetWithModel::filterItems(QString text)
 {
-	QStringList lst = text.split(" ",QString::SkipEmptyParts) ;
+	QStringList lst = text.split(" ",QtSkipEmptyParts) ;
 
     uint32_t count;
 	mPostedPostsModel->setFilter(lst,count) ;
@@ -876,13 +877,15 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
     QString sync_string;
     switch(current_sync_time)
     {
-    case 5: sync_string = tr("5 days");  break;
-    case 15: sync_string = tr("2 weeks");  break;
-    case 30: sync_string = tr("1 month");  break;
-    case 90: sync_string = tr("3 months");  break;
-    case 180: sync_string = tr("6 months");  break;
-    case 365: sync_string = tr("1 year");  break;
-    case   0: sync_string = tr("indefinitly");  break;
+	case    5: sync_string = tr("5 days");   break;
+	case   15: sync_string = tr("2 weeks");  break;
+	case   30: sync_string = tr("1 month");  break;
+	case   90: sync_string = tr("3 months"); break;
+	case  180: sync_string = tr("6 months"); break;
+	case  365: sync_string = tr("1 year");   break;
+	case 1095: sync_string = tr("3 years");  break;
+	case 1825: sync_string = tr("5 years");  break;
+	case   0: sync_string = tr("indefinitly"); break;
     default:
         sync_string = tr("Unknown");
     }
@@ -939,196 +942,10 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 	}
 
 	ui->infoDistribution->setText(distrib_string);
-#ifdef TODO
-	ui->infoWidget->show();
-	ui->feedWidget->hide();
-	ui->fileWidget->hide();
-
-	//ui->feedToolButton->setEnabled(false);
-	//ui->fileToolButton->setEnabled(false);
-#endif
 }
-
-#ifdef TODO
-int PostedListWidgetWithModel::viewMode()
-{
-	if (ui->feedToolButton->isChecked()) {
-		return VIEW_MODE_FEEDS;
-	} else if (ui->fileToolButton->isChecked()) {
-		return VIEW_MODE_FILES;
-	}
-
-	/* Default */
-	return VIEW_MODE_FEEDS;
-}
-#endif
-
-#ifdef TODO
-/*static*/ bool PostedListWidgetWithModel::filterItem(FeedItem *feedItem, const QString &text, int filter)
-{
-	GxsChannelPostItem *item = dynamic_cast<GxsChannelPostItem*>(feedItem);
-	if (!item) {
-		return true;
-	}
-
-	bool bVisible = text.isEmpty();
-
-	if (!bVisible)
-	{
-		switch(filter)
-		{
-			case FILTER_TITLE:
-				bVisible = item->getTitleLabel().contains(text,Qt::CaseInsensitive);
-			break;
-			case FILTER_MSG:
-				bVisible = item->getMsgLabel().contains(text,Qt::CaseInsensitive);
-			break;
-			case FILTER_FILE_NAME:
-			{
-				std::list<SubFileItem *> fileItems = item->getFileItems();
-				std::list<SubFileItem *>::iterator lit;
-				for(lit = fileItems.begin(); lit != fileItems.end(); ++lit)
-				{
-					SubFileItem *fi = *lit;
-					QString fileName = QString::fromUtf8(fi->FileName().c_str());
-					bVisible = (bVisible || fileName.contains(text,Qt::CaseInsensitive));
-				}
-				break;
-			}
-			default:
-				bVisible = true;
-			break;
-		}
-	}
-
-	return bVisible;
-}
-
-void PostedListWidget::createPostItemFromMetaData(const RsGxsMsgMetaData& meta,bool related)
-{
-	GxsChannelPostItem *item = NULL;
-    RsGxsChannelPost post;
-
-    if(!meta.mOrigMsgId.isNull())
-    {
-		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mOrigMsgId)) ;
-		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
-
-        if(item)
-		{
-            post = feedItem->post();
-			ui->feedWidget->removeFeedItem(item) ;
-
-            post.mOlderVersions.insert(post.mMeta.mMsgId);
-
-			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post, true, false,post.mOlderVersions);
-			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
-
-			return ;
-		}
-    }
-
-	if (related)
-    {
-		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mMsgId)) ;
-		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
-	}
-	if (item)
-    {
-		item->setPost(post);
-		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
-	}
-    else
-    {
-		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, meta.mGroupId,meta.mMsgId, true, true);
-		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
-	}
-#ifdef TODO
-	ui->fileWidget->addFiles(post, related);
-#endif
-}
-
-void PostedListWidget::createPostItem(const RsGxsChannelPost& post, bool related)
-{
-	GxsChannelPostItem *item = NULL;
-
-    const RsMsgMetaData& meta(post.mMeta);
-
-    if(!meta.mOrigMsgId.isNull())
-    {
-		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mOrigMsgId)) ;
-		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
-
-        if(item)
-		{
-            std::set<RsGxsMessageId> older_versions(item->olderVersions()); // we make a copy because the item will be deleted
-			ui->feedWidget->removeFeedItem(item) ;
-
-            older_versions.insert(meta.mMsgId);
-
-			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, mGroup.mMeta,meta.mMsgId, true, false,older_versions);
-			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
-
-			return ;
-		}
-    }
-
-	if (related)
-    {
-		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mMsgId)) ;
-		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
-	}
-	if (item)
-    {
-		item->setPost(post);
-		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
-	}
-    else
-    {
-		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, mGroup.mMeta,meta.mMsgId, true, true);
-		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
-	}
-
-	ui->fileWidget->addFiles(post, related);
-}
-
-void PostedListWidget::fillThreadCreatePost(const QVariant &post, bool related, int current, int count)
-{
-	/* show fill progress */
-	if (count) {
-		ui->progressBar->setValue(current * ui->progressBar->maximum() / count);
-	}
-
-	if (!post.canConvert<RsGxsChannelPost>()) {
-		return;
-	}
-
-	createPostItem(post.value<RsGxsChannelPost>(), related);
-}
-#endif
 
 void PostedListWidgetWithModel::blank()
 {
-#ifdef TODO
-	ui->postButton->setEnabled(false);
-	ui->subscribeToolButton->setEnabled(false);
-
-	ui->channelName_LB->setText(tr("No Channel Selected"));
-	ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/channels.png"));
-	ui->infoPosts->setText("");
-	ui->infoLastPost->setText("");
-	ui->infoAdministrator->setText("");
-	ui->infoDistribution->setText("");
-	ui->infoCreated->setText("");
-	ui->infoDescription->setText("");
-
-	mChannelPostsModel->clear();
-	mChannelPostFilesModel->clear();
-	ui->postDetails_TE->clear();
-	ui->postLogo_LB->hide();
-	ui->postName_LB->hide();
-	ui->postTime_LB->hide();
-#endif
 	groupNameChanged(QString());
 }
 
