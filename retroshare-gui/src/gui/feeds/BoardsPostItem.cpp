@@ -313,8 +313,8 @@ void BoardsPostItem::fill()
 	//float f = QFontMetricsF(font()).height()/14.0 ;
 
     ui->logoLabel->setEnableZoom(false);
-    int desired_height = QFontMetricsF(font()).height() * 8;
-	ui->logoLabel->setFixedSize(4/3.0*desired_height,desired_height);
+    int desired_height = QFontMetricsF(font()).height() * ITEM_HEIGHT_FACTOR;
+    ui->logoLabel->setFixedSize(ITEM_PICTURE_FORMAT_RATIO*desired_height,desired_height);
 
     if(mPost.mImage.mData != NULL)
 	{

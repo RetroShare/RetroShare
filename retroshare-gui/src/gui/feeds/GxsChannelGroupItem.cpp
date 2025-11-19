@@ -192,11 +192,16 @@ void GxsChannelGroupItem::fill()
 	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, mGroup.mMeta.mGroupId, groupName());
 	ui->nameLabel->setText(link.toHtml());
 
-	ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));
+    ui->logoLabel->setEnableZoom(false);
+    int desired_height = QFontMetricsF(font()).height() * ITEM_HEIGHT_FACTOR;
+    ui->logoLabel->setFixedSize(ITEM_PICTURE_FORMAT_RATIO*desired_height,desired_height);
+
+    ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));
 
 	if (mGroup.mImage.mData != NULL) {
 		QPixmap chanImage;
 		GxsIdDetails::loadPixmapFromData(mGroup.mImage.mData, mGroup.mImage.mSize, chanImage,GxsIdDetails::ORIGINAL);
+
         ui->logoLabel->setPixmap(chanImage);
 	}
 
