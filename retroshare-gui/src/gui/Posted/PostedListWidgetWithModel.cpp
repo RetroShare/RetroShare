@@ -911,7 +911,7 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 	ui->infoAdministrator->setId(group.mMeta.mAuthorId) ;
 
 	link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
-	ui->infoAdministrator->setText(link.toHtml());
+	ui->infoAdministrator->setText(link.toHtmlColored());
 
 	ui->createdinfolabel->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
 
