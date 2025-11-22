@@ -150,6 +150,7 @@ void GxsChannelGroupItem::loadGroup()
 		{
 			RsErr() << "PostedItem::loadGroup() ERROR getting data" << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
 		}
 
@@ -157,6 +158,7 @@ void GxsChannelGroupItem::loadGroup()
 		{
 			std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
+            deferred_update();
             mLoadingGroup = false;
             return;
 		}

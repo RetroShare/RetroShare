@@ -161,6 +161,7 @@ void GxsForumGroupItem::loadGroup()
 		{
 			RsErr() << "GxsForumGroupItem::loadGroup() ERROR getting data" << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
 		}
 
@@ -169,6 +170,7 @@ void GxsForumGroupItem::loadGroup()
 			std::cerr << "GxsForumGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
 		}
         RsGxsForumGroup group(groups[0]);// no reference to teporary accross threads!

@@ -127,6 +127,7 @@ void PostedGroupItem::loadGroup()
 		{
 			RsErr() << "GxsPostedGroupItem::loadGroup() ERROR getting data" << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
 		}
 
@@ -135,6 +136,7 @@ void PostedGroupItem::loadGroup()
 			std::cerr << "GxsPostedGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
 		}
 		RsPostedGroup group(groups[0]);

@@ -220,6 +220,7 @@ void BoardsPostItem::loadGroup()
 		{
             RsErr() << "BoardsPostItem::loadGroup() ERROR getting data for group " << groupId() << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
 		}
 
@@ -228,6 +229,7 @@ void BoardsPostItem::loadGroup()
             std::cerr << "BoardsPostItem::loadGroup() Wrong number of Items for group " << groupId() ;
 			std::cerr << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
 		}
         RsPostedGroup group(groups[0]);
@@ -266,6 +268,7 @@ void BoardsPostItem::loadMessage()
 		{
             RsErr() << "BoardsPostedItem::loadMessage() ERROR getting data" << std::endl;
             mLoadingMessage = false;
+            deferred_update();
             return;
 		}
 
@@ -353,7 +356,7 @@ void BoardsPostItem::fill()
 
     ui->subjectLabel->setText(msgText);
 
-    std::cerr << "Copying 1 line from \"" << mPost.mNotes << "\"" << std::endl;
+    //std::cerr << "Copying 1 line from \"" << mPost.mNotes << "\"" << std::endl;
     //ui->newCommentLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mNotes.c_str()), 1)) ;
     //ui->newCommentLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
 

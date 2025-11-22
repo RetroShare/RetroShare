@@ -167,6 +167,7 @@ void GxsForumMsgItem::loadGroup()
 		{
 			RsErr() << "GxsForumGroupItem::loadGroup() ERROR getting data" << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
 		}
 
@@ -175,6 +176,7 @@ void GxsForumMsgItem::loadGroup()
 			std::cerr << "GxsForumGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
 		}
 		RsGxsForumGroup group(groups[0]);
@@ -229,6 +231,7 @@ void GxsForumMsgItem::loadMessage()
         {
             std::cerr << "GxsForumMsgItem::loadMessage() ERROR getting message data";
             mLoadingMessage = false;
+            deferred_update();
             return;
         }
         // now load the parent message. If not found, it's not a problem.

@@ -58,6 +58,9 @@ protected:
 	virtual RetroShareLink::enumType getLinkType() = 0;
 	virtual QString groupName() = 0;
 
+    // This triggers an update in the main thread after a short waiting period. Help loading objects that havn't loaded yet.
+    void deferred_update();
+
 protected slots:
 	void subscribe();
 	void unsubscribe();
@@ -74,6 +77,7 @@ private slots:
 
 private:
 	RsGxsGroupId mGroupId;
+    int mLastDelay;
 };
 
 Q_DECLARE_METATYPE(RsGxsGroupId)
