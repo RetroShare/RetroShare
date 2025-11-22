@@ -704,7 +704,7 @@ void MessageWidget::fill(const std::string &msgId)
     }
     else
     {
-		ui.fromText->setText(link.toHtml());
+		ui.fromText->setText(link.toHtmlColored());
 		ui.fromText->setToolTip(tooltip_string) ;
 		if (toolButtonReply) toolButtonReply->setEnabled(true);
 	}

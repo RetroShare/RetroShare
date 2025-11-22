@@ -36,6 +36,7 @@
 #include "msgs/MessageComposer.h"
 #include "Posted/PostedDialog.h"
 #include "util/misc.h"
+#include "gui/settings/rsharesettings.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsgxsforums.h>
@@ -431,6 +432,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
 RetroShareLink::RetroShareLink()
 {
 	clear();
+	linkColor = Settings->getLinkColor();
 }
 
 RetroShareLink RetroShareLink::createFile(const QString& name, uint64_t size, const QString& hash)
@@ -1128,6 +1130,22 @@ QString RetroShareLink::toHtml() const
 		html += " title=\"" + linkTitle + "\"";
 	}
 	html += ">" + niceName() + "</a>" ;
+
+	return html;
+}
+
+QString RetroShareLink::toHtmlColored() const
+{
+	//linkColor = Settings->getLinkColor();
+	QString colorstring = QString("%1;").arg(linkColor.name());
+
+	QString html = "<a href=\"" + toString() + "\"";
+
+	QString linkTitle = title();
+	if (!linkTitle.isEmpty()) {
+		html += " title=\"" + linkTitle + "\"";
+	}
+	html += "style=\"color:" + colorstring + "\"> " + niceName() + "</a>" ;
 
 	return html;
 }
