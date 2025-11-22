@@ -31,6 +31,8 @@
  * #define DEBUG_ITEM	1
  **/
 
+const uint GxsGroupFeedItem::GROUP_ITEM_LOADING_TIMEOUT_ms = 2000;
+
 GxsGroupFeedItem::GxsGroupFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, RsGxsIfaceHelper *iface, bool /*autoUpdate*/) :
     FeedItem(feedHolder,feedId,NULL)
 {
