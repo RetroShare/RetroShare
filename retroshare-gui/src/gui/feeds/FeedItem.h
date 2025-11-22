@@ -60,6 +60,9 @@ protected:
 
 	FeedHolder *mFeedHolder;
 	uint32_t mFeedId;
+    static const int   ITEM_HEIGHT_FACTOR ;
+    static const float ITEM_PICTURE_FORMAT_RATIO ;
+
 signals:
 	void sizeChanged(FeedItem *feedItem);
 	void feedItemNeedsClosing(qulonglong);

@@ -24,6 +24,8 @@
 #include "gui/feeds/FeedHolder.h"
 #include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 
+#include "util/qtthreadsutils.h"
+
 #include <iostream>
 #include <algorithm>
 
@@ -43,6 +45,7 @@ GxsGroupFeedItem::GxsGroupFeedItem(FeedHolder *feedHolder, uint32_t feedId, cons
 
 	/* this are just generally useful for all children */
 	mIsHome = isHome;
+    mLastDelay = 300;	// re-update after 300ms on fail. See deferred_update()
 
 	/* load data if we can */
 	mGroupId = groupId;
@@ -115,4 +118,20 @@ void GxsGroupFeedItem::requestGroup()
 {
     loadGroup();
 }
+
+void GxsGroupFeedItem::deferred_update()
+{
+    mLastDelay = (int)(float(mLastDelay)*1.2);
+    mLastDelay += 100.0*drand48();
+
+    if(mLastDelay < 10000.0)
+    {
+        std::cerr << "Launching deferred update at " << mLastDelay << " ms." << std::endl;
+        RsQThreadUtils::postToObject( [this]() { QTimer::singleShot(mLastDelay,this,SLOT(update())); }, this );
+    }
+}
+
+
+
+
 

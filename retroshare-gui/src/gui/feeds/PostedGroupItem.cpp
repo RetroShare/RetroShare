@@ -127,6 +127,7 @@ void PostedGroupItem::loadGroup()
 		{
 			RsErr() << "GxsPostedGroupItem::loadGroup() ERROR getting data" << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
 		}
 
@@ -135,6 +136,7 @@ void PostedGroupItem::loadGroup()
 			std::cerr << "GxsPostedGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
 		}
 		RsPostedGroup group(groups[0]);
@@ -173,7 +175,11 @@ void PostedGroupItem::fill()
 
 	ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));
 	
-	if (mGroup.mGroupImage.mData != NULL) {
+    ui->logoLabel->setEnableZoom(false);
+    int desired_height = QFontMetricsF(font()).height() * ITEM_HEIGHT_FACTOR;
+    ui->logoLabel->setFixedSize(ITEM_PICTURE_FORMAT_RATIO*desired_height,desired_height);
+
+    if (mGroup.mGroupImage.mData != NULL) {
 		QPixmap postedImage;
 		GxsIdDetails::loadPixmapFromData(mGroup.mGroupImage.mData, mGroup.mGroupImage.mSize, postedImage,GxsIdDetails::ORIGINAL);
 		ui->logoLabel->setPixmap(QPixmap(postedImage));

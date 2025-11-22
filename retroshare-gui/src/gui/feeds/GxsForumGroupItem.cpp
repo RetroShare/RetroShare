@@ -161,6 +161,7 @@ void GxsForumGroupItem::loadGroup()
 		{
 			RsErr() << "GxsForumGroupItem::loadGroup() ERROR getting data" << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
 		}
 
@@ -169,6 +170,7 @@ void GxsForumGroupItem::loadGroup()
 			std::cerr << "GxsForumGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
 		}
         RsGxsForumGroup group(groups[0]);// no reference to teporary accross threads!
@@ -205,7 +207,11 @@ void GxsForumGroupItem::fill()
 
 	ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));
 
-	if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
+    ui->forumlogo_label->setEnableZoom(false);
+    int desired_height = QFontMetricsF(font()).height() * ITEM_HEIGHT_FACTOR;
+    ui->forumlogo_label->setFixedSize(ITEM_PICTURE_FORMAT_RATIO*desired_height,desired_height);
+
+    if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
         ui->forumlogo_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
 	} else {
         ui->forumlogo_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums-default.png"));

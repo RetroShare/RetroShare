@@ -135,7 +135,7 @@
       <item>
        <layout class="QGridLayout" name="top_GL">
         <item row="0" column="0" rowspan="2">
-         <widget class="QLabel" name="forumlogo_label">
+         <widget class="ZoomableLabel" name="forumlogo_label">
           <property name="minimumSize">
            <size>
             <width>70</width>
@@ -406,6 +406,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ZoomableLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxschannels/GxsChannelPostThumbnail.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../icons.qrc"/>
  </resources>
