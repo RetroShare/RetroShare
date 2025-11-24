@@ -25,6 +25,8 @@ CONFIG += console
 TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
 
+greaterThan(QT_MAJOR_VERSION,5): QT += core5compat
+
 DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR}
 INCLUDEPATH *= $${PWD}
 
@@ -96,12 +98,11 @@ HEADERS += TorControl/TorControlWindow.h
 greaterThan(QT_MAJOR_VERSION, 4) {
 	# Qt 5
         QT     += widgets multimedia printsupport
-	linux-* {
-		QT += x11extras
-	}
-} else {
-	# Qt 4
-	CONFIG += uitools
+        lessThan(QT_MAJOR_VERSION, 6) {
+                linux-*{
+                        QT += x11extras
+                }
+        }
 }
 
 CONFIG += identities
@@ -357,7 +358,10 @@ openbsd-* {
 wikipoos {
 	PRE_TARGETDEPS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-	LIBS *= -lglib-2.0
+
+	!win32 {
+		LIBS *= -lglib-2.0
+	}
 }
 
 ################################### HEADERS & SOURCES #############################
@@ -446,7 +450,7 @@ HEADERS +=  rshare.h \
             util/misc.h \
             util/HandleRichText.h \
             util/ObjectPainter.h \
-            util/QtVersion.h \
+            util/RsQtVersion.h \
             util/RsFile.h \
             util/qtthreadsutils.h \
             util/ClickableLabel.h \
@@ -815,6 +819,7 @@ SOURCES +=  main.cpp \
             util/misc.cpp \
             util/HandleRichText.cpp \
             util/ObjectPainter.cpp \
+            util/RsQtVersion.cpp \
             util/RsFile.cpp \
             util/RichTextEdit.cpp \
             util/ClickableLabel.cpp \

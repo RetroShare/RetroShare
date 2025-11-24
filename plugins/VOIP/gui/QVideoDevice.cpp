@@ -37,6 +37,7 @@ QVideoInputDevice::QVideoInputDevice(QWidget *parent)
 	_capture_device = NULL ;
 	_video_processor = NULL ;
 	_echo_output_device = NULL ;
+	_image_capture = NULL;
 }
 
 QVideoInputDevice::~QVideoInputDevice()

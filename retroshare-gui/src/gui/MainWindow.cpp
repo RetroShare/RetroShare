@@ -29,6 +29,7 @@
 #include <QUrl>
 #include <QtDebug>
 #include <QMenuBar>
+#include <QActionGroup>
 
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsconfig.h>
@@ -260,7 +261,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     QWidget *widget = new QWidget();
     widget->setObjectName("trans_statusComboBoxFrame");
     QHBoxLayout *hbox = new QHBoxLayout();
-    hbox->setMargin(0);
+    hbox->setContentsMargins(0, 0, 0, 0);
     hbox->setSpacing(6);
     hbox->addWidget(statusComboBox);
     widget->setLayout(hbox);
@@ -938,7 +939,9 @@ void MainWindow::postModDirectories(bool /*update_local*/)
 {
     //RSettingsPage::postModDirectories(update_local);
 
+#if QT_VERSION < QT_VERSION_CHECK (6, 0, 0)
     QCoreApplication::flush();
+#endif
 }
 
 #ifdef WINDOWS_SYS

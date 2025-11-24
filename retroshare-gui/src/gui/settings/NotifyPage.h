@@ -72,7 +72,7 @@ class NotifyPage : public ConfigPage
 
 public:
     /** Default Constructor */
-    NotifyPage(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    NotifyPage(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
     /** Default Destructor */
     ~NotifyPage();
 

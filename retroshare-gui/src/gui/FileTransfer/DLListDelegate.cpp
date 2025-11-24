@@ -21,7 +21,7 @@
 #include <retroshare/rstypes.h>
 #include <QModelIndex>
 #include <QPainter>
-#include <QStyleOptionProgressBarV2>
+#include <QStyleOptionProgressBar>
 #include <QProgressBar>
 #include <QApplication>
 #include <QDateTime>
@@ -29,6 +29,8 @@
 #include <math.h>
 
 #include "DLListDelegate.h"
+#include "util/DateTime.h"
+#include "util/RsQtVersion.h"
 
 Q_DECLARE_METATYPE(FileProgressInfo)
 
@@ -42,7 +44,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 {
 	QString byteUnits[4] = {tr("B"), tr("KB"), tr("MB"), tr("GB")};
 	QStyleOptionViewItem opt = option;
-	QStyleOptionProgressBarV2 newopt;
+	QStyleOptionProgressBar newopt;
 	QRect pixmapRect;
 	QPixmap pixmap;
 	qlonglong fileSize;
@@ -59,7 +61,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	painter->setClipRect(opt.rect);
 
 	//set text color
-        QVariant value = index.data(Qt::TextColorRole);
+        QVariant value = index.data(Qt::ForegroundRole);
         if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
                 opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
         }
@@ -94,7 +96,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				for(int i = 0; i < 4; ++i) {
 					if (fileSize < 1024) {
 						fileSize = index.data().toLongLong();
-						temp.sprintf("%.2f ", fileSize / multi);
+						temp = QString::asprintf("%.2f ", fileSize / multi);
 						temp += byteUnits[i];
 						break;
 					}
@@ -113,7 +115,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				for(int i = 0; i < 4; ++i) {
 					if (remaining < 1024) {
 						remaining = index.data().toLongLong();
-						temp.sprintf("%.2f ", remaining / multi);
+						temp = QString::asprintf("%.2f ", remaining / multi);
 						temp += byteUnits[i];
 						break;
 					}
@@ -132,7 +134,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				for(int i = 0; i < 4; ++i) {
 					if (completed < 1024) {
 						completed = index.data().toLongLong();
-						temp.sprintf("%.2f ", completed / multi);
+						temp = QString::asprintf("%.2f ", completed / multi);
 						temp += byteUnits[i];
 						break;
 					}
@@ -148,7 +150,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                             temp = "";
                         } else {
                             temp.clear();
-                            temp.sprintf("%.2f", dlspeed/1024.);
+                            temp = QString::asprintf("%.2f", dlspeed/1024.);
                             temp += " KB/s";
                         }
 			painter->drawText(option.rect, Qt::AlignRight | Qt::AlignVCenter, temp);
@@ -261,7 +263,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
             break;
         qi64Value = index.data().value<qint64>();
         if (qi64Value < std::numeric_limits<qint64>::max()){
-            QDateTime qdtLastDL = QDateTime::fromTime_t(qi64Value);
+            QDateTime qdtLastDL = DateTime::DateTimeFromTime_t(qi64Value);
             painter->drawText(option.rect, Qt::AlignCenter, qdtLastDL.toString("yyyy-MM-dd_hh:mm:ss"));
         } else {
             painter->drawText(option.rect, Qt::AlignCenter, tr("File Never Seen"));
@@ -277,7 +279,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 
 QSize DLListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
-    float w = QFontMetricsF(option.font).width(index.data(Qt::DisplayRole).toString());
+    float w = QFontMetrics_horizontalAdvance(QFontMetricsF(option.font), index.data(Qt::DisplayRole).toString());
 
     int S = QFontMetricsF(option.font).height()*1.5 ;
     return QSize(w,S);

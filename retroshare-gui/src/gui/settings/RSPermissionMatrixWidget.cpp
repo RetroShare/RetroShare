@@ -32,11 +32,13 @@
 
 #include "RSPermissionMatrixWidget.h"
 #include "gui/settings/ServicePermissionsPage.h"
+#include "gui/settings/rsharesettings.h"
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsservicecontrol.h>
 #include "rsitems/rsserviceids.h"
 #include <QTextDocument>
+#include "util/RsQtVersion.h"
 
 #define NOT_IMPLEMENTED std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl;
 
@@ -246,8 +248,14 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
   _painter->setRenderHint(QPainter::TextAntialiasing);
 
   /* Fill in the background */
-  _painter->fillRect(_rec, QBrush(BACK_COLOR));
+  //_painter->fillRect(_rec, QBrush(BACK_COLOR));
   _painter->drawRect(_rec);
+
+  if (Settings->getSheetName() == ":Standard_Dark"){
+    brushColor = Qt::gray ;
+  } else {
+    brushColor = Qt::black ;
+  }
 
   // draw one line per friend.
   std::list<RsPeerId> ssllist ;
@@ -300,13 +308,13 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       if(name.length() > 20 + 3)
           name = name.left(20)+"..." ;
 
-      peer_name_size = std::max(peer_name_size, fm.width(name)) ;
+      peer_name_size = std::max(peer_name_size, QFontMetrics_horizontalAdvance(fm, name)) ;
       names.push_back(name) ;
   }
 
   QPen pen ;
   pen.setWidth(2) ;
-  pen.setBrush(FOREGROUND_COLOR) ;
+  pen.setBrush(brushColor) ;
 
   _painter->setPen(pen) ;
   int i=0;
@@ -315,13 +323,13 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
   for(std::list<RsPeerId>::const_iterator it(ssllist.begin());it!=ssllist.end();++it,++i)
   {
-      float X = S*fMATRIX_START_X + peer_name_size - fm.width(names[i]) ;
+      float X = S*fMATRIX_START_X + peer_name_size - QFontMetrics_horizontalAdvance(fm, names[i]) ;
       float Y = S*fMATRIX_START_Y + (i+0.5)*S*fROW_SIZE + line_height/2.0f-2 ;
 
       _painter->drawText(QPointF(X,Y),names[i]) ;
 
       if(*it == _current_peer_id)
-          _painter->drawLine(QPointF(X,Y+3),QPointF(X+fm.width(names[i]),Y+3)) ;
+          _painter->drawLine(QPointF(X,Y+3),QPointF(X+QFontMetrics_horizontalAdvance(fm, names[i]),Y+3)) ;
 
       y += line_height ;
   }
@@ -336,7 +344,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
   for(std::map<uint32_t, RsServiceInfo>::const_iterator it(ownServices.mServiceList.begin());it!=ownServices.mServiceList.end();++it,++i)
   {
       QString name = QString::fromUtf8(it->second.mServiceName.c_str()) ;
-      int text_width = fm.width(name) ;
+      int text_width = QFontMetrics_horizontalAdvance(fm, name) ;
 
       int X = matrix_start_x + S*fCOL_SIZE/2 - 2 + i*S*fCOL_SIZE - text_width/2;
 
@@ -371,7 +379,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       _painter->drawLine(QPointF(X,Y+3),QPointF(X+text_width,Y+3)) ;
       _painter->drawLine(QPointF(X+text_width/2, Y+3), QPointF(X+text_width/2,S*fMATRIX_START_Y+peer_ids.size()*S*fROW_SIZE - S*fROW_SIZE+5)) ;
 
-      pen.setBrush(FOREGROUND_COLOR) ;
+      pen.setBrush(brushColor) ;
       _painter->setPen(pen) ;
 
       _painter->drawText(QPointF(X,Y),name);
@@ -490,11 +498,11 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       QFontMetrics fm(font);
 
       int text_size_x = 0 ;
-      text_size_x = std::max(text_size_x,fm.width(service_name));
-      text_size_x = std::max(text_size_x,fm.width(peer_name));
-      text_size_x = std::max(text_size_x,fm.width(peer_id));
-      text_size_x = std::max(text_size_x,fm.width(local_status));
-      text_size_x = std::max(text_size_x,fm.width(remote_status));
+      text_size_x = std::max(text_size_x,QFontMetrics_horizontalAdvance(fm, service_name));
+      text_size_x = std::max(text_size_x,QFontMetrics_horizontalAdvance(fm, peer_name));
+      text_size_x = std::max(text_size_x,QFontMetrics_horizontalAdvance(fm, peer_id));
+      text_size_x = std::max(text_size_x,QFontMetrics_horizontalAdvance(fm, local_status));
+      text_size_x = std::max(text_size_x,QFontMetrics_horizontalAdvance(fm, remote_status));
 
        // draw a half-transparent rectangle
 
@@ -553,12 +561,12 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 				brush.setStyle(Qt::SolidPattern) ;
 				QPen pen ;
 				pen.setWidth(1) ;
-				pen.setBrush(FOREGROUND_COLOR) ;
+				pen.setBrush(brushColor) ;
 				_painter->setPen(pen) ;
 				QRect position = computeNodePosition(0,i,false) ;
 				int popup_x = position.x() + (50 * S / 14.0);
 				int popup_y = position.y() - (10 * S / 14.0) + line_height;
-				int popup_width = std::max((int)td.size().width(), fm.width(service_name)) + S;
+				int popup_width = std::max((int)td.size().width(), QFontMetrics_horizontalAdvance(fm, service_name)) + S;
 				int popup_height = td.size().height() + line_height*2;
 				while (popup_x + popup_width > _max_width)
 					popup_x -= S;
@@ -604,20 +612,24 @@ bool RSPermissionMatrixWidget::computeServiceAndPeer(int x,int y,uint32_t& servi
 
     x -= matrix_start_x ;
     y -= S*fMATRIX_START_Y ;
+    float fi = x / (S*fCOL_SIZE);
+    float fj = y / (S*fROW_SIZE);
+    int i = (int)fi;
+    int j = (int)fj;
+    const float icoFracX = fICON_SIZE_X/fCOL_SIZE;
+    const float icoFracY = fICON_SIZE_Y/fROW_SIZE;
 
-    if(x < 0 || x >= service_ids.size() * S*fCOL_SIZE) return false ;
-    if(y < 0 || y >= peer_ids.size()    * S*fROW_SIZE) return false ;
-
-    if( (x % (int)(S*fCOL_SIZE)) < (S*fCOL_SIZE - S*fICON_SIZE_X)/2) return false ;
-    if( (x % (int)(S*fCOL_SIZE)) > (S*fCOL_SIZE + S*fICON_SIZE_X)/2) return false ;
-
-    if( (y % (int)(S*fROW_SIZE)) < (S*fROW_SIZE - S*fICON_SIZE_Y)/2) return false ;
-    if( (y % (int)(S*fROW_SIZE)) > (S*fROW_SIZE + S*fICON_SIZE_Y)/2) return false ;
+    if(
+      fi < 0.f || i >= service_ids.size() ||
+      fj < 0.f || j >= peer_ids.size() ||
+      std::fmod(fi + icoFracX/2 + .5f, 1.f) >= icoFracX ||
+      std::fmod(fj + icoFracY/2 + .5f, 1.f) >= icoFracY
+    ) return false;
 
     // 2 - find which widget, by looking into the service perm matrix
 
-    service_id = service_ids[x / (int)(S*fCOL_SIZE)] ;
-    peer_id = peer_ids[y / (int)(S*fCOL_SIZE)] ;
+    service_id = service_ids[i];
+    peer_id = peer_ids[j];
 
     return true ;
 }
@@ -628,22 +640,23 @@ bool RSPermissionMatrixWidget::computeServiceGlobalSwitch(int x,int y,uint32_t& 
 
     float S = QFontMetricsF(font()).height();
 
-    x -= matrix_start_x ;
-    y -= S*fMATRIX_START_Y ;
+    x -= matrix_start_x;
+    y -= S*fMATRIX_START_Y;
+    float fi = x / (S*fCOL_SIZE);
+    int i = (int)fi;
+    const float icoFracX = fICON_SIZE_X/fCOL_SIZE;
 
-    if(x < 0 || x >= service_ids.size() * S*fCOL_SIZE) return false ;
-
-    if( (x % (int)(S*fCOL_SIZE)) < (S*fCOL_SIZE - S*fICON_SIZE_X)/2) return false ;
-    if( (x % (int)(S*fCOL_SIZE)) > (S*fCOL_SIZE + S*fICON_SIZE_X)/2) return false ;
-
-    if( y < -S*fROW_SIZE ) return false ;
-    if( y >  0        ) return false ;
+    if(
+      fi < 0.f || i >= service_ids.size() ||
+      y >= 0.f || y < -S*fROW_SIZE ||
+      std::fmod(fi + icoFracX/2 + .5f, 1.f) >= icoFracX
+    ) return false;
 
     // 2 - find which widget, by looking into the service perm matrix
 
-    service_id = service_ids[x / (int)(S*fCOL_SIZE)] ;
+    service_id = service_ids[i];
 
-    return true ;
+    return true;
 }
 
 void RSPermissionMatrixWidget::defaultPermissionSwitched(uint32_t /* ServiceId */,bool /* b */)

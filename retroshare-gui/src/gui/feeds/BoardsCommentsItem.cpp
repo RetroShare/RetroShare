@@ -78,7 +78,8 @@ BaseBoardsCommentsItem::BaseBoardsCommentsItem( FeedHolder *feedHolder, uint32_t
 
 BaseBoardsCommentsItem::~BaseBoardsCommentsItem()
 {
-	auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(200);
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
+
 	while( (mIsLoadingGroup || mIsLoadingMessage || mIsLoadingComment)
 	       && std::chrono::steady_clock::now() < timeout)
 	{
@@ -126,6 +127,7 @@ bool BaseBoardsCommentsItem::setPost(const RsPostedPost &post, bool doFill)
 void BaseBoardsCommentsItem::loadGroup()
 {
 	mIsLoadingGroup = true;
+
 	RsThread::async([this]()
 	{
 		// 1 - get group data

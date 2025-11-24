@@ -52,7 +52,7 @@ void GroupSelectionBox::fillGroups()
 	for (std::list<RsGroupInfo>::const_iterator it(groupIds.begin()); it != groupIds.end(); ++it) {
 		QListWidgetItem *item = new QListWidgetItem(GroupDefs::name(*it));
         item->setData(ROLE_ID, QString::fromStdString(it->id.toStdString()));
-		item->setBackgroundColor(QColor(183,236,181));
+		item->setBackground(QColor(183,236,181));
 		addItem(item);
 	}
 

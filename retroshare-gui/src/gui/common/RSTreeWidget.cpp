@@ -27,6 +27,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QWidgetAction>
+#include <QActionGroup>
 
 #include "gui/settings/rsharesettings.h"
 #include "gui/common/FilesDefs.h"
@@ -259,7 +260,7 @@ QMenu *RSTreeWidget::createStandardContextMenu(QMenu *contextMenu)
 
 		// create menu header
 		QHBoxLayout *hbox = new QHBoxLayout(widget);
-		hbox->setMargin(0);
+		hbox->setContentsMargins(0, 0, 0, 0);
 		hbox->setSpacing(6);
 
 		QLabel *iconLabel = new QLabel(widget);

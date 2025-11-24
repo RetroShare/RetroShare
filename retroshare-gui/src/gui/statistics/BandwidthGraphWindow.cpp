@@ -84,12 +84,6 @@ BandwidthGraph::BandwidthGraph(QWidget *parent, Qt::WindowFlags flags)
   /* Load the previously saved settings */
 
    /* Turn off opacity group on unsupported platforms */
- #if defined(Q_OS_WIN)
-   if(!(QSysInfo::WV_2000 <= QSysInfo::WindowsVersion)) {
-     ui.frmOpacity->setVisible(false);
-   }
- #endif
-
  #if defined(Q_OS_LINUX)
    ui.frmOpacity->setVisible(false);
    ui.chkAlwaysOnTop->setVisible(false);
@@ -283,10 +277,8 @@ void BandwidthGraph::setOpacity(int value)
   this->setWindowOpacity(newValue);
   ui.lblPercentOpacity->setText(QString::number(value));
 #elif defined(Q_OS_WIN)
-  if(QSysInfo::WV_2000 <= QSysInfo::WindowsVersion) {
-    this->setWindowOpacity(newValue);
-    ui.lblPercentOpacity->setText(QString::number(value));
-  }
+  this->setWindowOpacity(newValue);
+  ui.lblPercentOpacity->setText(QString::number(value));
 #else
   Q_UNUSED(newValue);
 #endif

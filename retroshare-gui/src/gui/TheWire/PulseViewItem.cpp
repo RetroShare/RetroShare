@@ -450,15 +450,15 @@ QString ToNumberUnits(uint32_t count)
 	QString ans;
 	if (count > 1000000)
 	{
-		ans.sprintf("%6.2fm", count / 1000000.0);
+		ans = QString::asprintf("%6.2fm", count / 1000000.0);
 	}
 	else if (count > 1000)
 	{
-		ans.sprintf("%6.2fk", count / 1000.0);
+		ans = QString::asprintf("%6.2fk", count / 1000.0);
 	}
 	else
 	{
-		ans.sprintf("%6d", count);
+		ans = QString::asprintf("%6d", count);
 	}
 	return ans;
 }
