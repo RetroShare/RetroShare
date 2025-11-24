@@ -345,7 +345,8 @@
         <file>icons/fullscreen-exit.png</file>
         <file>icons/notification.png</file>
         <file>icons/wire.png</file>
-        <file>icons/wire-circle.png</file>
+        <file>icons/png/wire-notify.png</file>
+        <file>icons/png/wire-circle.png</file>
         <file>icons/folder-account.svg</file>
         <file>icons/notification.svg</file>
         <file>icons/groups/blue.svg</file>
