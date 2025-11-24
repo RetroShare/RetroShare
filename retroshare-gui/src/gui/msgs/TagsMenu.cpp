@@ -29,7 +29,6 @@
 #include "TagsMenu.h"
 #include "gui/common/TagDefs.h"
 #include "gui/settings/NewTag.h"
-#include "gui/notifyqt.h"
 #include "util/qtthreadsutils.h"
 
 #include "gui/msgs/MessageInterface.h"

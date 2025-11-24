@@ -28,6 +28,7 @@
 #include <QSettings>
 
 #include <stdint.h>
+#include <retroshare/rsflags.h>
 #include <gui/linetypes.h>
 #include "rsettings.h"
 
@@ -56,6 +57,38 @@ public:
 	bool mOpenAllInNewTab;
 	bool mHideTabBarWithOneTab;
 };
+enum class RsNotifyPopupFlags: uint32_t {
+    RS_POPUP_NONE            = 0x0000,
+    RS_POPUP_MSG             = 0x0001,
+    RS_POPUP_CHAT            = 0x0002,
+    RS_POPUP_CONNECT         = 0x0008,
+//    RS_SYSTRAY_GROUP_MSG     = 0x0010,
+    RS_POPUP_DOWNLOAD        = 0x0020,
+    RS_POPUP_GROUPCHAT       = 0x0040,
+    RS_POPUP_CHATLOBBY       = 0x0080,
+    RS_POPUP_CONNECT_ATTEMPT = 0x0100,
+    RS_POPUP_ENCRYPTED_MSG   = 0x0200,
+};
+RS_REGISTER_ENUM_FLAGS_TYPE(RsNotifyPopupFlags);
+
+//enum class RsNotifySystrayFlags: uint32_t {
+//    RS_SYSTRAY_GROUP_MSG     = 0x0010,
+//}
+enum class RsNotifySysFlags: uint32_t {
+    RS_SYS_ERROR 	= 0x0001,
+    RS_SYS_WARNING 	= 0x0002,
+    RS_SYS_INFO     = 0x0004,
+};
+RS_REGISTER_ENUM_FLAGS_TYPE(RsNotifySysFlags);
+
+enum class RsSettingsMsgOptions: uint8_t
+{
+    MSG_OPEN_NONE     = 0x00,
+    MSG_OPEN_TAB      = 0x01,
+    MSG_OPEN_WINDOW   = 0x02,
+};
+
+RS_REGISTER_ENUM_FLAGS_TYPE(RsSettingsMsgOptions);
 
 /** Handles saving and restoring RShares's settings
  *
@@ -86,11 +119,10 @@ public:
 		TOASTERPOS_BOTTOMRIGHT
 	};
 
-	enum enumMsgOpen
-	{
-		MSG_OPEN_TAB,
-		MSG_OPEN_WINDOW
-	};
+    enum enumMsgOptions :uint32_t
+    {
+        RS_MESSAGE_CONNECT_ATTEMPT    = 0x0001,
+    };
 
 public:
 	/* create settings object */
@@ -191,8 +223,8 @@ public:
 	uint getNewsFeedFlags();
 	void setNewsFeedFlags(uint flags);
 
-	uint getChatFlags();
-	void setChatFlags(uint flags);
+    uint getChatFlags();
+    void setChatFlags(uint flags);
 
 	uint getChatLobbyFlags();
 	void setChatLobbyFlags(uint flags);
@@ -305,8 +337,8 @@ public:
 	bool getMsgLoadEmbeddedImages();
 	void setMsgLoadEmbeddedImages(bool value);
 
-	enumMsgOpen getMsgOpen();
-	void setMsgOpen(enumMsgOpen value);
+    RsSettingsMsgOptions getMsgOpen();
+    void setMsgOpen(RsSettingsMsgOptions value);
 
 	/* Forum */
 	bool getForumMsgSetToReadOnActivate();

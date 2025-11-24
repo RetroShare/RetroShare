@@ -34,7 +34,7 @@
 #include "FeedReaderStringDefs.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/settings/rsharesettings.h"
-#include "gui/notifyqt.h"
+#include "gui/RsGUIEventManager.h"
 #include "FeedReaderUserNotify.h"
 #include "gui/Posted/PostedCreatePostDialog.h"
 #include "util/imageutil.h"
@@ -73,7 +73,7 @@ FeedReaderDialog::FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *n
 	connect(mNotify, &FeedReaderNotify::feedChanged, this, &FeedReaderDialog::feedChanged, Qt::QueuedConnection);
 	connect(mNotify, &FeedReaderNotify::optimizeImage, this, &FeedReaderDialog::optimizeImage, Qt::QueuedConnection);
 
-	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
+	connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 
 	/* connect signals */
 	connect(ui->feedTreeWidget, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(feedTreeItemActivated(QTreeWidgetItem*)));
@@ -570,7 +570,7 @@ void FeedReaderDialog::feedChanged(uint32_t feedId, int type)
 	}
 
 	FeedInfo feedInfo;
-	if (type != NOTIFY_TYPE_DEL) {
+    if (type != FeedReaderNotify::NOTIFY_TYPE_DEL) {
 		if (!mFeedReader->getFeedInfo(feedId, feedInfo)) {
 			return;
 		}
@@ -580,12 +580,12 @@ void FeedReaderDialog::feedChanged(uint32_t feedId, int type)
 		}
 	}
 
-	if (type == NOTIFY_TYPE_MOD || type == NOTIFY_TYPE_DEL) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_MOD || type == FeedReaderNotify::NOTIFY_TYPE_DEL) {
 		QTreeWidgetItemIterator it(ui->feedTreeWidget);
 		QTreeWidgetItem *item;
 		while ((item = *it) != NULL) {
 			if (item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt() == feedId) {
-				if (type == NOTIFY_TYPE_MOD) {
+                if (type == FeedReaderNotify::NOTIFY_TYPE_MOD) {
 					updateFeedItem(item, feedInfo);
 				} else {
 					delete(item);
@@ -596,7 +596,7 @@ void FeedReaderDialog::feedChanged(uint32_t feedId, int type)
 		}
 	}
 
-	if (type == NOTIFY_TYPE_ADD) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_ADD) {
 		QTreeWidgetItemIterator it(ui->feedTreeWidget);
 		QTreeWidgetItem *itemParent;
 		while ((itemParent = *it) != NULL) {

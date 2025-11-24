@@ -20,6 +20,7 @@
 
 #include "rsFeedReaderItems.h"
 #include "p3FeedReader.h"
+#include "gui/FeedReaderNotify.h"
 #include "p3FeedReaderThread.h"
 #include "rsitems/rsconfigitems.h"
 #include "retroshare/rsiface.h"
@@ -415,7 +416,7 @@ RsFeedResult p3FeedReader::addFolder(uint32_t parentId, const std::string &name,
 	IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 	if (mNotify) {
-		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_ADD);
+        mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_ADD);
 	}
 
 	return RS_FEED_RESULT_SUCCESS;
@@ -455,7 +456,7 @@ RsFeedResult p3FeedReader::setFolder(uint32_t feedId, const std::string &name)
 	IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 	if (mNotify) {
-		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+        mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_MOD);
 	}
 
 	return RS_FEED_RESULT_SUCCESS;
@@ -502,7 +503,7 @@ RsFeedResult p3FeedReader::addFeed(const FeedInfo &feedInfo, uint32_t &feedId)
 	IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 	if (mNotify) {
-		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_ADD);
+        mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_ADD);
 	}
 
 	return RS_FEED_RESULT_SUCCESS;
@@ -587,7 +588,7 @@ RsFeedResult p3FeedReader::setFeed(uint32_t feedId, const FeedInfo &feedInfo)
 	IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 	if (mNotify) {
-		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+        mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_MOD);
 	}
 
 	if (!forumId.empty()) {
@@ -658,7 +659,7 @@ RsFeedResult p3FeedReader::setParent(uint32_t feedId, uint32_t parentId)
 		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 
 		if (mNotify) {
-			mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+            mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_MOD);
 		}
 	}
 
@@ -756,7 +757,7 @@ bool p3FeedReader::removeFeed(uint32_t feedId)
 		/* only notify remove of feed */
 		std::list<uint32_t>::iterator it;
 		for (it = removedFeedIds.begin(); it != removedFeedIds.end(); ++it) {
-			mNotify->notifyFeedChanged(*it, NOTIFY_TYPE_DEL);
+            mNotify->notifyFeedChanged(*it, FeedReaderNotify::NOTIFY_TYPE_DEL);
 		}
 	}
 
@@ -803,7 +804,7 @@ bool p3FeedReader::addPreviewFeed(const FeedInfo &feedInfo, uint32_t &feedId)
 	}
 
 	if (mNotify) {
-		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_ADD);
+        mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_ADD);
 	}
 
 	{
@@ -925,8 +926,8 @@ bool p3FeedReader::removeMsg(uint32_t feedId, const std::string &msgId)
 	}
 
 	if (mNotify) {
-		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
-		mNotify->notifyMsgChanged(feedId, msgId, NOTIFY_TYPE_DEL);
+        mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_MOD);
+        mNotify->notifyMsgChanged(feedId, msgId, FeedReaderNotify::NOTIFY_TYPE_DEL);
 	}
 
 	return true;
@@ -977,11 +978,11 @@ bool p3FeedReader::removeMsgs(uint32_t feedId, const std::list<std::string> &msg
 	}
 
 	if (mNotify && !removedMsgs.empty()) {
-		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+        mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_MOD);
 
 		std::list<std::string>::iterator it;
 		for (it = removedMsgs.begin(); it != removedMsgs.end(); ++it) {
-			mNotify->notifyMsgChanged(feedId, *it, NOTIFY_TYPE_DEL);
+            mNotify->notifyMsgChanged(feedId, *it, FeedReaderNotify::NOTIFY_TYPE_DEL);
 		}
 	}
 
@@ -1224,7 +1225,7 @@ bool p3FeedReader::processFeed(uint32_t feedId)
 
 	if (mNotify) {
 		for (it = notifyIds.begin(); it != notifyIds.end(); ++it) {
-			mNotify->notifyFeedChanged(*it, NOTIFY_TYPE_MOD);
+            mNotify->notifyFeedChanged(*it, FeedReaderNotify::NOTIFY_TYPE_MOD);
 		}
 	}
 
@@ -1273,8 +1274,8 @@ bool p3FeedReader::setMessageRead(uint32_t feedId, const std::string &msgId, boo
 	if (changed) {
 		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_OFTEN);
 		if (mNotify) {
-			mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
-			mNotify->notifyMsgChanged(feedId, msgId, NOTIFY_TYPE_MOD);
+            mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_MOD);
+            mNotify->notifyMsgChanged(feedId, msgId, FeedReaderNotify::NOTIFY_TYPE_MOD);
 		}
 	}
 
@@ -1328,10 +1329,10 @@ bool p3FeedReader::retransformMsg(uint32_t feedId, const std::string &msgId)
 		IndicateConfigChanged(RsConfigMgr::CheckPriority::SAVE_NOW);
 		if (mNotify) {
 			if (feedChanged) {
-				mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+                mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_MOD);
 			}
 			if (msgChanged) {
-				mNotify->notifyMsgChanged(feedId, msgId, NOTIFY_TYPE_MOD);
+                mNotify->notifyMsgChanged(feedId, msgId, FeedReaderNotify::NOTIFY_TYPE_MOD);
 			}
 		}
 	}
@@ -1466,7 +1467,7 @@ int p3FeedReader::tick()
 
 	if (mNotify) {
 		for (it = notifyIds.begin(); it != notifyIds.end(); ++it) {
-			mNotify->notifyFeedChanged(*it, NOTIFY_TYPE_MOD);
+            mNotify->notifyFeedChanged(*it, FeedReaderNotify::NOTIFY_TYPE_MOD);
 		}
 		if (imageToOptimze) {
 			mNotify->notifyOptimizeImage();
@@ -1526,7 +1527,7 @@ void p3FeedReader::cleanFeeds()
 			if (mNotify) {
 				std::list<std::pair<uint32_t, std::string> >::iterator it;
 				for (it = removedMsgIds.begin(); it != removedMsgIds.end(); ++it) {
-					mNotify->notifyMsgChanged(it->first, it->second, NOTIFY_TYPE_DEL);
+                    mNotify->notifyMsgChanged(it->first, it->second, FeedReaderNotify::NOTIFY_TYPE_DEL);
 				}
 			}
 		}
@@ -1801,7 +1802,7 @@ bool p3FeedReader::getFeedToDownload(RsFeedReaderFeed &feed, uint32_t neededFeed
 	}
 
 	if (mNotify) {
-		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+        mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_MOD);
 	}
 
 	return true;
@@ -1852,7 +1853,7 @@ void p3FeedReader::onDownloadSuccess(uint32_t feedId, const std::string &content
 	}
 
 	if (mNotify) {
-		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+        mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_MOD);
 	}
 }
 
@@ -1889,7 +1890,7 @@ void p3FeedReader::onDownloadError(uint32_t feedId, RsFeedReaderErrorState resul
 	}
 
 	if (mNotify) {
-		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+        mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_MOD);
 	}
 }
 
@@ -1944,7 +1945,7 @@ bool p3FeedReader::getFeedToProcess(RsFeedReaderFeed &feed, uint32_t neededFeedI
 	}
 
 	if (mNotify) {
-		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+        mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_MOD);
 	}
 
 	return true;
@@ -2323,11 +2324,11 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 	}
 
 	if (mNotify) {
-		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+        mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_MOD);
 
 		std::list<std::string>::iterator it;
 		for (it = addedMsgs.begin(); it != addedMsgs.end(); ++it) {
-			mNotify->notifyMsgChanged(feedId, *it, NOTIFY_TYPE_ADD);
+            mNotify->notifyMsgChanged(feedId, *it, FeedReaderNotify::NOTIFY_TYPE_ADD);
 		}
 	}
 }
@@ -2365,7 +2366,7 @@ void p3FeedReader::onProcessError(uint32_t feedId, RsFeedReaderErrorState result
 	}
 
 	if (mNotify) {
-		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+        mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_MOD);
 	}
 }
 
@@ -2433,7 +2434,7 @@ void p3FeedReader::setFeedInfo(uint32_t feedId, const std::string &name, const s
 		}
 
 		if (mNotify) {
-			mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
+            mNotify->notifyFeedChanged(feedId, FeedReaderNotify::NOTIFY_TYPE_MOD);
 		}
 	}
 

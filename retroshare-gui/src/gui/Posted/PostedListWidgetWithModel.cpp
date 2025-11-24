@@ -37,8 +37,8 @@
 #include "gui/common/UIStateHelper.h"
 #include "gui/common/RSTabWidget.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/RsGUIEventManager.h"
 #include "gui/feeds/SubFileItem.h"
-#include "gui/notifyqt.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
@@ -289,7 +289,7 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 	connect(ui->submitPostButton,    SIGNAL(clicked()),            this, SLOT(createMsg()));
 	connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)),      this, SLOT(subscribeGroup(bool)));
     connect(ui->filter_LE,           SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
-	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()),this, SLOT(settingsChanged()));
+	connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()),this, SLOT(settingsChanged()));
 
 	/* add filter actions */
     ui->postsTree->setPlaceholderText(tr("No posts available in this board"));

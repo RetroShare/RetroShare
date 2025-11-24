@@ -29,6 +29,13 @@ class FeedReaderNotify : public QObject, public RsFeedReaderNotify
 	Q_OBJECT
 
 public:
+    // These replace the variables from the old notify system. It's simpler than switching the entire
+    // feedreader plugin to the new rsEvents system
+
+    static const int NOTIFY_TYPE_ADD = 0x01;
+    static const int NOTIFY_TYPE_DEL = 0x02;
+    static const int NOTIFY_TYPE_MOD = 0x03;
+
 	FeedReaderNotify();
 
 	/* RsFeedReaderNotify */

@@ -67,7 +67,7 @@ void FeedReaderUserNotify::iconClicked()
 
 void FeedReaderUserNotify::feedChanged(uint32_t /*feedId*/, int type)
 {
-	if (type == NOTIFY_TYPE_DEL) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_DEL) {
 		updateIcon();
 	}
 }

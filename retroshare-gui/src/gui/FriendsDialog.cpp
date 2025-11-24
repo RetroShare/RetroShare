@@ -34,12 +34,12 @@
 #include "groups/CreateGroup.h"
 #include "MainWindow.h"
 #include "NewsFeed.h"
-#include "notifyqt.h"
 #include "profile/ProfileWidget.h"
 #include "profile/StatusMessage.h"
 #include "RetroShareLink.h"
 #include "settings/rsharesettings.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 #include "util/DateTime.h"
 #include "FriendsDialog.h"
 #include "NetworkView.h"
@@ -77,12 +77,49 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
     ui.chatWidget->setWelcomeMessage(msg);
     ui.chatWidget->init(ChatId::makeBroadcastId(), tr("Broadcast"));
 
-    connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
-    connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)), this, SLOT(chatStatusReceived(ChatId,QString)));
+    mEventHandlerId_chat = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsChatServiceEvent*>(e.get());  if(!fe) return;
+
+            switch(fe->mEventCode)
+            {
+            case RsChatServiceEventCode::CHAT_MESSAGE_RECEIVED: chatMessageReceived(fe->mMsg); break;
+            case RsChatServiceEventCode::CHAT_STATUS_CHANGED:   chatStatusReceived(fe->mCid,QString::fromUtf8(fe->mStr.c_str())); break;
+            default:
+                break;
+            }
+
+        }
+        , this );
+    }, mEventHandlerId_chat, RsEventType::CHAT_SERVICE );
+
 #else // def RS_DIRECT_CHAT
-	ui.tabWidget->removeTab(ui.tabWidget->indexOf(ui.groupChatTab));
+    ui.tabWidget->removeTab(ui.tabWidget->indexOf(ui.groupChatTab));
 #endif // def RS_DIRECT_CHAT
 
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());  if(!fe) return;
+
+            switch(fe->mEventCode)
+            {
+            case RsFriendListEventCode::OWN_STATUS_CHANGED:     loadmypersonalstatus();
+                break;
+            default:	// OWN_AVATAR_CHANGED is handled in AvatarWidget
+                break;
+            }
+
+        }
+        , this );
+    }, mEventHandlerId_friends, RsEventType::FRIEND_LIST );
+
+    mEventHandlerId_friends = 0;
 
     connect( ui.mypersonalstatusLabel, SIGNAL(clicked()), SLOT(statusmessage()));
     connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
@@ -153,6 +190,8 @@ FriendsDialog::~FriendsDialog ()
     if (this == instance) {
         instance = NULL;
     }
+    rsEvents->unregisterEventsHandler(mEventHandlerId_friends);
+    rsEvents->unregisterEventsHandler(mEventHandlerId_chat);
 }
 
 void FriendsDialog::activatePage(FriendsDialog::Page page)
@@ -200,7 +239,17 @@ void FriendsDialog::processSettings(bool bLoad)
 
 void FriendsDialog::chatMessageReceived(const ChatMessage &msg)
 {
-    if(msg.chat_id.isBroadcast())
+    if(!msg.chat_id.isBroadcast())
+        return;
+
+    QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
+    QDateTime recvTime = QDateTime::fromTime_t(msg.recvTime);
+    QString message = QString::fromUtf8(msg.msg.c_str());
+    QString name = QString::fromUtf8(rsPeers->getPeerName(msg.broadcast_peer_id).c_str());
+
+    ui.chatWidget->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
+
+    if(ui.chatWidget->isActive())
     {
         QDateTime sendTime = DateTime::DateTimeFromTime_t(msg.sendTime);
         QDateTime recvTime = DateTime::DateTimeFromTime_t(msg.recvTime);
@@ -220,11 +269,11 @@ void FriendsDialog::chatMessageReceived(const ChatMessage &msg)
 
 void FriendsDialog::chatStatusReceived(const ChatId &chat_id, const QString &status_string)
 {
-    if(chat_id.isBroadcast())
-    {
-        QString name = QString::fromUtf8(rsPeers->getPeerName(chat_id.broadcast_status_peer_id).c_str());
-        ui.chatWidget->updateStatusString(name + " %1", status_string);
-    }
+    if(!chat_id.isBroadcast())
+        return;
+
+    QString name = QString::fromUtf8(rsPeers->getPeerName(chat_id.broadcast_status_peer_id).c_str());
+    ui.chatWidget->updateStatusString(name + " %1", status_string);
 }
 
 void FriendsDialog::addFriend()

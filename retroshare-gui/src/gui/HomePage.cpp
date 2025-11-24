@@ -26,7 +26,6 @@
 #include "util/qtthreadsutils.h"
 #include "util/misc.h"
 
-#include "gui/notifyqt.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/connect/ConnectFriendWizard.h"

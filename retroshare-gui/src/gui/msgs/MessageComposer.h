@@ -157,7 +157,7 @@ private slots:
     void editingRecipientFinished();
     void contactDetails();
 
-    void peerStatusChanged(const QString& peer_id, int status);
+    void peerStatusChanged(const QString& peer_id, RsStatusValue status);
     void friendSelectionChanged();
 
     void tagAboutToShow();
@@ -274,6 +274,7 @@ private:
     Ui::MessageComposer ui;
 
     std::list<FileInfo> _recList ;
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif

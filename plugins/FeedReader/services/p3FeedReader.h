@@ -32,9 +32,9 @@ class RsFeedReaderMsg;
 class p3FeedReaderThread;
 
 class RsGxsForums;
-struct RsGxsForumGroup;
+class RsGxsForumGroup;
 class RsPosted;
-struct RsPostedGroup;
+class RsPostedGroup;
 class RsGxsIfaceHelper;
 
 class p3FeedReader : public RsPQIService, public RsFeedReader

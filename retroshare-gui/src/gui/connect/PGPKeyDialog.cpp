@@ -32,6 +32,7 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
 #include <retroshare/rsmsgs.h>
+#include <retroshare/rsinit.h>
 
 #include <retroshare-gui/mainpage.h>
 
@@ -39,7 +40,6 @@
 #include "gui/common/PeerDefs.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/RetroShareLink.h"
-#include "gui/notifyqt.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/MainWindow.h"
 #include "util/DateTime.h"
@@ -364,13 +364,13 @@ void PGPKeyDialog::signGPGKey()
     bool cancelled;
     std::string gpg_password;
 
-    if(!NotifyQt::getInstance()->askForPassword(tr("Profile password needed.").toStdString(), gpg_name + " (" + rsPeers->getOwnId().toStdString() + ")", false, gpg_password,cancelled))
+    if(!RsLoginHelper::askForPassword(tr("Profile password needed.").toStdString(), gpg_name + " (" + rsPeers->getOwnId().toStdString() + ")", false, gpg_password,cancelled))
     {
         QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create an identity linked to your profile without your profile password."));
         return;
     }
 
-    rsNotify->clearPgpPassphrase(); // just in case
+    RsLoginHelper::clearPgpPassphrase(); // just in case
 
     if(!rsPeers->signGPGCertificate(pgpId,gpg_password))
         QMessageBox::warning ( NULL, tr("Signature Failure"), tr("Check the password!"), QMessageBox::Ok);

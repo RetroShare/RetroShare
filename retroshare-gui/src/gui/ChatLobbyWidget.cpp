@@ -21,7 +21,6 @@
 
 #include "ChatLobbyWidget.h"
 
-#include "notifyqt.h"
 #include "RetroShareLink.h"
 #include "chat/ChatLobbyDialog.h"
 #include "chat/ChatLobbyUserNotify.h"
@@ -35,11 +34,11 @@
 #include "settings/rsharesettings.h"
 #include "util/HandleRichText.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 #include "util/RsQtVersion.h"
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
-#include "retroshare/rsnotify.h"
 #include "retroshare/rsidentity.h"
 
 #include <QGridLayout>
@@ -105,9 +104,39 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	myInviteYesButton = NULL;
 	myInviteIdChooser = NULL;
 
-	QObject::connect( NotifyQt::getInstance(), SIGNAL(lobbyListChanged()), SLOT(lobbyChanged()));
-	QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,RsGxsId,QString)), this, SLOT(displayChatLobbyEvent(qulonglong,int,RsGxsId,QString)));
-	QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyInviteReceived()), this, SLOT(readChatLobbyInvites()));
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){
+            auto ev = dynamic_cast<const RsChatLobbyEvent *>(event.get());
+
+            if(!ev) return;
+
+            switch(ev->mEventCode)
+            {
+            case RsChatLobbyEventCode::CHAT_LOBBY_INVITE_RECEIVED:
+                readChatLobbyInvites();
+                break;
+
+            case RsChatLobbyEventCode::CHAT_LOBBY_LIST_CHANGED:
+                lobbyChanged();
+                break;
+
+            case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_LEFT:
+            case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_STATUS:
+            case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_JOINED:
+            case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
+            case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_KEEP_ALIVE:
+
+                handleChatLobbyEvent(ev->mLobbyId,ev->mEventCode,ev->mGxsId,QString::fromUtf8(ev->mStr.c_str()));
+                break;
+
+            default:
+                break;
+            }
+        }, this );
+    }, mEventHandlerId, RsEventType::CHAT_SERVICE );
 
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCustomPopupMenu(QPoint)));
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
@@ -236,6 +265,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
 ChatLobbyWidget::~ChatLobbyWidget()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
     // save settings
     processSettings(false);
 
@@ -650,7 +680,7 @@ void ChatLobbyWidget::updateDisplay()
 
 		if (autoSubscribe && subscribed && _lobby_infos.find(lobby.lobby_id) == _lobby_infos.end())
 		{
-			ChatDialog *cd = ChatDialog::getChat(ChatId(lobby.lobby_id), RS_CHAT_OPEN);
+            ChatDialog *cd = ChatDialog::getChat(ChatId(lobby.lobby_id), RsChatFlags::RS_CHAT_OPEN);
 
 			addChatPage(dynamic_cast<ChatLobbyDialog*>(cd));
 		}
@@ -753,7 +783,7 @@ void ChatLobbyWidget::showLobby(QTreeWidgetItem *item)
 		showBlankPage(id) ;
 	else
 	{
-		_lobby_infos[id].dialog->showDialog(RS_CHAT_FOCUS);
+        _lobby_infos[id].dialog->showDialog(RsChatFlags::RS_CHAT_FOCUS);
 		if (_lobby_infos[id].dialog->isWindowed())
 			showBlankPage(id, true);
 	}
@@ -816,7 +846,7 @@ bool ChatLobbyWidget::showLobbyAnchor(ChatLobbyId id, QString anchor)
 			if(_lobby_infos.find(id) == _lobby_infos.end()) {
 				showBlankPage(id) ;
 			} else {
-				_lobby_infos[id].dialog->showDialog(RS_CHAT_FOCUS);
+                _lobby_infos[id].dialog->showDialog(RsChatFlags::RS_CHAT_FOCUS);
 				if (_lobby_infos[id].dialog->isWindowed())
 					showBlankPage(id, true);
 
@@ -1158,10 +1188,10 @@ void ChatLobbyWidget::itemDoubleClicked(QTreeWidgetItem *item, int /*column*/)
     subscribeChatLobbyAtItem(item);
 }
 
-void ChatLobbyWidget::displayChatLobbyEvent(qulonglong lobby_id, int event_type, const RsGxsId &gxs_id, const QString& str)
+void ChatLobbyWidget::handleChatLobbyEvent(uint64_t lobby_id, RsChatLobbyEventCode event_type, const RsGxsId &gxs_id, const QString& str)
 {
     if (ChatLobbyDialog *cld = dynamic_cast<ChatLobbyDialog*>(ChatDialog::getExistingChat(ChatId(lobby_id)))) {
-        cld->displayLobbyEvent(event_type, gxs_id, str);
+        cld->handleLobbyEvent(event_type, gxs_id, str);
     }
 }
 

@@ -28,7 +28,7 @@
 
 #include <retroshare/rsfiles.h>
 
-DownloadToaster::DownloadToaster(const RsFileHash &hash, const QString &name) : QWidget(NULL)
+DownloadToaster::DownloadToaster(const RsFileHash &hash) : QWidget(NULL)
 {
 	ui.setupUi(this);
 
@@ -38,8 +38,11 @@ DownloadToaster::DownloadToaster(const RsFileHash &hash, const QString &name) : 
 	connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(hide()));
 	connect(ui.toasterButton, SIGNAL(clicked()), this, SLOT(play()));
 
+    FileInfo info;
+    rsFiles->FileDetails(hash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_DOWNLOAD, info ) ;
+
 	/* set informations */
-	ui.textLabel->setText(name);
+    ui.textLabel->setText(QString::fromStdString(info.fname));
 }
 
 void DownloadToaster::play()
