@@ -570,7 +570,7 @@ void FeedReaderDialog::feedChanged(uint32_t feedId, int type)
 	}
 
 	FeedInfo feedInfo;
-	if (type != NOTIFY_TYPE_DEL) {
+    if (type != FeedReaderNotify::NOTIFY_TYPE_DEL) {
 		if (!mFeedReader->getFeedInfo(feedId, feedInfo)) {
 			return;
 		}
@@ -580,12 +580,12 @@ void FeedReaderDialog::feedChanged(uint32_t feedId, int type)
 		}
 	}
 
-	if (type == NOTIFY_TYPE_MOD || type == NOTIFY_TYPE_DEL) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_MOD || type == FeedReaderNotify::NOTIFY_TYPE_DEL) {
 		QTreeWidgetItemIterator it(ui->feedTreeWidget);
 		QTreeWidgetItem *item;
 		while ((item = *it) != NULL) {
 			if (item->data(COLUMN_FEED_DATA, ROLE_FEED_ID).toUInt() == feedId) {
-				if (type == NOTIFY_TYPE_MOD) {
+                if (type == FeedReaderNotify::NOTIFY_TYPE_MOD) {
 					updateFeedItem(item, feedInfo);
 				} else {
 					delete(item);
@@ -596,7 +596,7 @@ void FeedReaderDialog::feedChanged(uint32_t feedId, int type)
 		}
 	}
 
-	if (type == NOTIFY_TYPE_ADD) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_ADD) {
 		QTreeWidgetItemIterator it(ui->feedTreeWidget);
 		QTreeWidgetItem *itemParent;
 		while ((itemParent = *it) != NULL) {
