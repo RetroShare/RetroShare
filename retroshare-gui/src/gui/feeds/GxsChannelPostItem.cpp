@@ -219,6 +219,7 @@ void GxsChannelPostItem::loadGroup()
 		{
             RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data for group " << groupId() << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
 		}
 
@@ -227,6 +228,7 @@ void GxsChannelPostItem::loadGroup()
             std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items for group " << groupId() ;
 			std::cerr << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
 		}
 		RsGxsChannelGroup group(groups[0]);
@@ -265,6 +267,7 @@ void GxsChannelPostItem::loadMessage()
 		{
 			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
             mLoadingMessage = false;
+            deferred_update();
             return;
 		}
 
@@ -312,8 +315,8 @@ void GxsChannelPostItem::fill()
 	//float f = QFontMetricsF(font()).height()/14.0 ;
 
 	ui->logoLabel->setEnableZoom(false);
-	int desired_height = QFontMetricsF(font()).height() * 8;
-	ui->logoLabel->setFixedSize(4/3.0*desired_height,desired_height);
+    int desired_height = QFontMetricsF(font()).height() * ITEM_HEIGHT_FACTOR;
+    ui->logoLabel->setFixedSize(ITEM_PICTURE_FORMAT_RATIO*desired_height,desired_height);
 
 	if(mPost.mThumbnail.mData != NULL)
 	{
@@ -373,7 +376,7 @@ void GxsChannelPostItem::fill()
 
         ui->subjectLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 2)) ;
 
-		//QString score = QString::number(post.mTopScore);
+        //QString score = QString::number(post.mTopScore);
 		// scoreLabel->setText(score); 
 
 		/* disable buttons: deletion facility not enabled with cache services yet */
