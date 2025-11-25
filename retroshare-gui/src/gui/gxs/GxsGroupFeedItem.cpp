@@ -122,7 +122,7 @@ void GxsGroupFeedItem::requestGroup()
 void GxsGroupFeedItem::deferred_update()
 {
     mLastDelay = (int)(float(mLastDelay)*1.2);
-    mLastDelay += 100.0*drand48();
+    mLastDelay += 100.0*RsRandom::random_f32();
 
     if(mLastDelay < 10000.0)
     {
