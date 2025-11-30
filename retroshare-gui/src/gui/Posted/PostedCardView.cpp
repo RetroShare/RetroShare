@@ -45,14 +45,14 @@
 PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData &group_meta, const RsGxsMessageId &post_id, bool isHome, bool autoUpdate)
     : BasePostedItem(feedHolder, feedId, group_meta, post_id, isHome, autoUpdate)
 {
-    setup();
+    PostedCardView::setup();
 }
 
 PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate)
     : BasePostedItem(feedHolder, feedId, groupId, post_id, isHome, autoUpdate)
 {
-    setup();
-    loadGroup();
+    PostedCardView::setup();
+    PostedCardView::loadGroup();
 }
 
 void PostedCardView::setCommentsSize(int comNb)

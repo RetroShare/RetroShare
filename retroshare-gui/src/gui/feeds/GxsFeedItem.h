@@ -1,7 +1,7 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/gxs/GxsGroupFeedItem.h                               *
+ * retroshare-gui/src/gui/feeds/GxsFeedItem.h                                  *
  *                                                                             *
- * Copyright 2012-2013  by Robert Fernie      <retroshare.project@gmail.com>   *
+ * Copyright 2012-2013 by Robert Fernie   <retroshare.project@gmail.com>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,64 +18,51 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef _GXS_GROUPFEEDITEM_H
-#define _GXS_GROUPFEEDITEM_H
+#ifndef _GXS_GENERIC_FEED_ITEM_H
+#define _GXS_GENERIC_FEED_ITEM_H
 
-#include <QMetaType>
+#include "GxsGroupFeedItem.h"
 
-#include <retroshare/rsgxsifacehelper.h>
-#include "gui/feeds/FeedItem.h"
-#include "gui/RetroShareLink.h"
-
-#include <stdint.h>
-
-class FeedHolder;
-class RsGxsUpdateBroadcastBase;
-
-class GxsGroupFeedItem : public FeedItem
+class GxsFeedItem : public GxsGroupFeedItem
 {
 	Q_OBJECT
 
 public:
 	/** Note parent can = NULL */
-	GxsGroupFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, RsGxsIfaceHelper *iface, bool autoUpdate);
-	virtual ~GxsGroupFeedItem();
+	GxsFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool autoUpdate);
+	virtual ~GxsFeedItem();
 
-	RsGxsGroupId groupId() const { return mGroupId; }
-	uint32_t feedId() const { return mFeedId; }
+	RsGxsMessageId messageId() const { return mMessageId; }
+    const QVector<RsGxsMessageId>& messageVersions() const { return mMessageVersions ; }
+
+	//To be able to update with thread message when comment is received.
+	void setMessageId( RsGxsMessageId id) {mMessageId = id;}
+	void setMessageVersions( const QVector<RsGxsMessageId>& v) { mMessageVersions = v;}
 
 protected:
-        enum LoadingStatus {
-        LOADING_STATUS_NO_DATA      =   0x00,
-        LOADING_STATUS_HAS_DATA     =   0x01,
-        LOADING_STATUS_FILLED       =   0x02
-    };
+	/* load message data */
+	void requestMessage();
+	void requestComment();
 
-	/* load group data */
-	void requestGroup();
+	virtual QString messageName() = 0;
+	virtual void loadMessage() = 0;
+	virtual void loadComment() = 0;
 
-	virtual void loadGroup() = 0;
-	virtual RetroShareLink::enumType getLinkType() = 0;
-	virtual QString groupName() = 0;
+	/* GxsGroupFeedItem */
+	//virtual bool isLoading();
+	//virtual void fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool complete);
 
 protected slots:
-	void subscribe();
-	void unsubscribe();
-	void copyGroupLink();
-
-protected:
-	bool mIsHome;
-	RsGxsIfaceHelper *mGxsIface;
-    static const uint GROUP_ITEM_LOADING_TIMEOUT_ms ;
-
-private slots:
-	/* RsGxsUpdateBroadcastBase */
-	void fillDisplaySlot(bool complete);
+	void comments(const QString &title);
+	void copyMessageLink();
 
 private:
-	RsGxsGroupId mGroupId;
+	RsGxsMessageId mMessageId;
+    QVector<RsGxsMessageId> mMessageVersions ;
+	uint32_t mTokenTypeMessage;
+	uint32_t mTokenTypeComment;
 };
 
-Q_DECLARE_METATYPE(RsGxsGroupId)
+Q_DECLARE_METATYPE(RsGxsMessageId)
 
 #endif

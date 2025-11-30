@@ -18,7 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#include "gui/gxs/GxsFeedItem.h"
+#include "gui/feeds/GxsFeedItem.h"
 #include "gui/feeds/FeedHolder.h"
 #include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 

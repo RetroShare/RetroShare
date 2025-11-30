@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/GxsChannelPostItem.h                                              *
+ * gui/feeds/BoardsPostItem.h                                              *
  *                                                                             *
  * Copyright (c) 2012, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -18,22 +18,22 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef _GXS_CHANNEL_POST_ITEM_H
-#define _GXS_CHANNEL_POST_ITEM_H
+#ifndef _BOARDS_POST_ITEM_H
+#define _BOARDS_POST_ITEM_H
 
 #include <QMetaType>
 
-#include <retroshare/rsgxschannels.h>
+#include <retroshare/rsposted.h>
 #include "gui/feeds/GxsFeedItem.h"
 
 namespace Ui {
-class GxsChannelPostItem;
+class BoardsPostItem;
 }
 
 class FeedHolder;
 class SubFileItem;
 
-class GxsChannelPostItem : public GxsFeedItem
+class BoardsPostItem : public GxsFeedItem
 {
 	Q_OBJECT
 
@@ -42,34 +42,21 @@ public:
 	// It can be used for all apparences of channel posts. But in rder to merge comments from the previous versions of the post, the list of
 	// previous posts should be supplied. It's optional. If not supplied only the comments of the new version will be displayed.
 
-	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
+    BoardsPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
+    virtual ~BoardsPostItem();
 
-#ifdef UNUSED
-	// This one is used in channel thread widget. We don't want the group data to reload at every post, so we load it in the hosting
-    // GxsChannelsPostsWidget and pass it to created items.
-
-	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData& group, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
-#endif
-
-	virtual ~GxsChannelPostItem();
-
-    uint64_t uniqueIdentifier() const override { return hash_64bits("GxsChannelPostItem " + messageId().toStdString()) ; }
+    uint64_t uniqueIdentifier() const override { return hash_64bits("BoardsPostItem " + messageId().toStdString()) ; }
 
 protected:
-    //void setFileCleanUpWarning(uint32_t time_left);
-
-	const std::list<SubFileItem *> &getFileItems() {return mFileItems; }
 
 	bool isUnread() const ;
 	void setReadStatus(bool isNew, bool isUnread);
 
-	const std::set<RsGxsMessageId>& olderVersions() const { return mPost.mOlderVersions; }
-
-	static uint64_t computeIdentifier(const RsGxsMessageId& msgid) { return hash64("GxsChannelPostItem " + msgid.toStdString()) ; }
+    static uint64_t computeIdentifier(const RsGxsMessageId& msgid) { return hash64("BoardsPostItem " + msgid.toStdString()) ; }
 
 	/* FeedItem */
-    virtual void doExpand(bool open) override;
-    virtual void expandFill(bool first) override;
+    virtual void doExpand(bool open) override ;
+    virtual void expandFill(bool first) override ;
 
 	// This does nothing except triggering the loading of the post data and comments. This function is mainly used to detect
 	// when the post is actually made visible.
@@ -88,16 +75,10 @@ protected:
 
 private slots:
 	/* default stuff */
-	void toggle() override;
+    void toggle() override;
 	void readAndClearItem();
-	void download();
-	void play();
-	void edit();
-
 	void readToggled(bool checked);
-
-	void unsubscribeChannel();
-	void updateItem();
+    void viewPicture();
 
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);	
@@ -105,7 +86,7 @@ signals:
 private:
 	void setup();
 	void fill();
-	void fillExpandFrame();
+    void fillExpandFrame();
 
 private:
 	bool mCloseOnRead;
@@ -116,14 +97,10 @@ private:
     bool mLoadingGroup;
 
 	RsGroupMetaData mGroupMeta;
-	RsGxsChannelPost mPost;
-
-	std::list<SubFileItem*> mFileItems;
+    RsPostedPost mPost;
 
 	/** Qt Designer generated object */
-	Ui::GxsChannelPostItem *ui;
+    Ui::BoardsPostItem *ui;
 };
-
-Q_DECLARE_METATYPE(RsGxsChannelPost)
 
 #endif

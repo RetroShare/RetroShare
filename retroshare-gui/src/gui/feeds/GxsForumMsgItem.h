@@ -22,7 +22,7 @@
 #define _GXSFORUMMSGITEM_H
 
 #include <retroshare/rsgxsforums.h>
-#include "gui/gxs/GxsFeedItem.h"
+#include "gui/feeds/GxsFeedItem.h"
 
 namespace Ui {
 class GxsForumMsgItem;

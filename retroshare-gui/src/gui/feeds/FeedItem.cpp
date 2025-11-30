@@ -22,6 +22,11 @@
 #include "FeedItem.h"
 #include "FeedHolder.h"
 
+// Height of feed items as a factor of font size height.
+
+const int   FeedItem::ITEM_HEIGHT_FACTOR = 8;
+const float FeedItem::ITEM_PICTURE_FORMAT_RATIO = 16.0/9.0;
+
 /** Constructor */
 FeedItem::FeedItem(FeedHolder *fh, uint32_t feedId, QWidget *parent) : QWidget(parent),mFeedHolder(fh),mFeedId(feedId),mHash(0)
 {

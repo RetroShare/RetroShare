@@ -211,6 +211,7 @@ void ChannelsCommentsItem::loadGroupData()
         {
             RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data for group " << groupId() << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
         }
 
@@ -219,6 +220,7 @@ void ChannelsCommentsItem::loadGroupData()
             std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items for group " << groupId() ;
             std::cerr << std::endl;
             mLoadingGroup = false;
+            deferred_update();
             return;
         }
         RsGxsChannelGroup group(groups[0]);
@@ -257,6 +259,7 @@ void ChannelsCommentsItem::loadMessageData()
         {
             RsErr() << "GxsGxsChannelGroupItem::loadMessage() ERROR getting data" << std::endl;
             mLoadingMessage = false;
+            deferred_update();
             return;
         }
 
@@ -303,11 +306,13 @@ void ChannelsCommentsItem::loadCommentData()
 		{
             RsErr() << "GxsGxsChannelGroupItem::loadComment() ERROR getting data" << std::endl;
             mLoadingComment = false;
+            deferred_update();
             return;
 		}
         if(comments.size()!=1)
         {
             mLoadingComment = false;
+            deferred_update();
             return;
         }
 

@@ -22,7 +22,7 @@
 #define _GXSCHANNELGROUPITEM_H
 
 #include <retroshare/rsgxschannels.h>
-#include "gui/gxs/GxsGroupFeedItem.h"
+#include "gui/feeds/GxsGroupFeedItem.h"
 
 namespace Ui {
 class GxsChannelGroupItem;

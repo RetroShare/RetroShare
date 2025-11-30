@@ -22,7 +22,7 @@
 #define _POSTEDGROUPITEM_H
 
 #include <retroshare/rsposted.h>
-#include "gui/gxs/GxsGroupFeedItem.h"
+#include "gui/feeds/GxsGroupFeedItem.h"
 
 namespace Ui {
 class PostedGroupItem;
