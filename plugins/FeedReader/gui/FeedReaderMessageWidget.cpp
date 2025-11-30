@@ -515,12 +515,12 @@ void FeedReaderMessageWidget::feedChanged(uint32_t feedId, int type)
 		return;
 	}
 
-	if (type == NOTIFY_TYPE_DEL) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_DEL) {
 		setFeedId(0);
 		return;
 	}
 
-	if (type == NOTIFY_TYPE_MOD) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_MOD) {
 		if (!mFeedReader->getFeedInfo(mFeedId, mFeedInfo)) {
 			setFeedId(0);
 			return;
@@ -555,18 +555,18 @@ void FeedReaderMessageWidget::msgChanged(uint32_t feedId, const QString &msgId, 
 	}
 
 	FeedMsgInfo msgInfo;
-	if (type != NOTIFY_TYPE_DEL) {
+    if (type != FeedReaderNotify::NOTIFY_TYPE_DEL) {
 		if (!mFeedReader->getMsgInfo(feedId, msgId.toStdString(), msgInfo)) {
 			return;
 		}
 	}
 
-	if (type == NOTIFY_TYPE_MOD || type == NOTIFY_TYPE_DEL) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_MOD || type == FeedReaderNotify::NOTIFY_TYPE_DEL) {
 		QTreeWidgetItemIterator it(ui->msgTreeWidget);
 		QTreeWidgetItem *item;
 		while ((item = *it) != NULL) {
 			if (item->data(COLUMN_MSG_DATA, ROLE_MSG_ID).toString() == msgId) {
-				if (type == NOTIFY_TYPE_MOD) {
+                if (type == FeedReaderNotify::NOTIFY_TYPE_MOD) {
 					updateMsgItem(item, msgInfo);
 					filterItem(item);
 				} else {
@@ -578,13 +578,13 @@ void FeedReaderMessageWidget::msgChanged(uint32_t feedId, const QString &msgId, 
 		}
 	}
 
-	if (type == NOTIFY_TYPE_MOD) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_MOD) {
 		if (msgId.toStdString() == currentMsgId()) {
 			updateCurrentMessage();
 		}
 	}
 
-	if (type == NOTIFY_TYPE_ADD) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_ADD) {
 		QTreeWidgetItem *item = new RSTreeWidgetItem(mMsgCompareRole);
 		updateMsgItem(item, msgInfo);
 		ui->msgTreeWidget->addTopLevelItem(item);

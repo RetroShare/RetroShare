@@ -23,7 +23,6 @@
 #include "GxsForumThreadWidget.h"
 #include "CreateGxsForumMsg.h"
 #include "GxsForumUserNotify.h"
-#include "gui/notifyqt.h"
 #include "gui/common/GroupTreeWidget.h"
 #include "gui/gxs/GxsGroupShareKey.h"
 #include "util/misc.h"

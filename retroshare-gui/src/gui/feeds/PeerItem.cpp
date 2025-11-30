@@ -28,9 +28,8 @@
 #include "gui/common/StatusDefs.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/common/AvatarDefs.h"
+#include "util/qtthreadsutils.h"
 #include "util/DateTime.h"
-
-#include "gui/notifyqt.h"
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
@@ -58,7 +57,21 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
     connect( chatButton, SIGNAL( clicked() ), this, SLOT( openChat() ) );
     connect( sendmsgButton, SIGNAL( clicked() ), this, SLOT( sendMsg() ) );
 
-    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+
+            if(!fe)
+                return;
+
+            updateItem();
+        }
+        , this );
+    }, mEventHandlerId, RsEventType::FRIEND_LIST );
 
     avatar->setId(ChatId(mPeerId));// TODO: remove unnecesary converstation
 
@@ -68,6 +81,10 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
     updateItem();
 }
 
+PeerItem::~PeerItem()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
 uint64_t PeerItem::uniqueIdentifier() const
 {
     return hash_64bits("PeerItem " + mPeerId.toStdString() + " " + QString::number(mType).toStdString()) ;

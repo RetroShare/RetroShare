@@ -30,12 +30,12 @@
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/GxsGroupFrameDialog.h"
+#include "gui/RsGUIEventManager.h"
 #include "util/misc.h"
 #include "gui/gxschannels/CreateGxsChannelMsg.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/feeds/SubFileItem.h"
-#include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
@@ -446,7 +446,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     /* Connect signals */
     connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
     connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
-    connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
+    connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 
     ui->postButton->setText(tr("Add new post"));
 

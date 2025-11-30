@@ -32,7 +32,6 @@
 #include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/settings/rsharesettings.h"
-#include "gui/notifyqt.h"
 #include "gui/common/GroupTreeWidget.h"
 #include "util/qtthreadsutils.h"
 #include "util/misc.h"

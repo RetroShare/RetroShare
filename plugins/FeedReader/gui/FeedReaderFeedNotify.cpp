@@ -72,7 +72,7 @@ void FeedReaderFeedNotify::msgChanged(uint32_t feedId, const QString &msgId, int
 		return;
 	}
 
-	if (type != NOTIFY_TYPE_ADD) {
+    if (type != FeedReaderNotify::NOTIFY_TYPE_ADD) {
 		return;
 	}
 

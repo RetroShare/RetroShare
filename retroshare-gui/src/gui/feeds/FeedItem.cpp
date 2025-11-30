@@ -48,7 +48,7 @@ uint64_t FeedItem::hash_64bits(const std::string& s) const
     if(mHash == 0)
         mHash = hash64(s);
 
-	return mHash;
+    return mHash;
 }
 
 uint64_t FeedItem::hash64(const std::string& s)

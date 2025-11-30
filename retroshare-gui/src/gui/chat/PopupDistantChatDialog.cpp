@@ -121,7 +121,7 @@ void PopupDistantChatDialog::updateDisplay()
 		getChatWidget()->blockSending(tr( "Can't send message immediately, "
 		                                  "because there is no tunnel "
 		                                  "available." ));
-		setPeerStatus(RS_STATUS_OFFLINE);
+        setPeerStatus(RsStatusValue::RS_STATUS_OFFLINE);
 		break ;
 	case RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED:
 		std::cerr << "Chat remotely closed. " << std::endl;
@@ -131,7 +131,7 @@ void PopupDistantChatDialog::updateDisplay()
 		getChatWidget()->updateStatusString("%1", tr( "Your partner closed the conversation." ), true );
 		getChatWidget()->blockSending(tr( "Your partner closed the conversation."));
 
-		setPeerStatus(RS_STATUS_OFFLINE) ;
+        setPeerStatus(RsStatusValue::RS_STATUS_OFFLINE) ;
 		break ;
 
 	case RS_DISTANT_CHAT_STATUS_TUNNEL_DN:
@@ -145,7 +145,7 @@ void PopupDistantChatDialog::updateDisplay()
 		_status_label->setToolTip(msg);
 		getChatWidget()->updateStatusString("%1", msg, true);
 		getChatWidget()->blockSending(msg);
-		setPeerStatus(RS_STATUS_OFFLINE);
+        setPeerStatus(RsStatusValue::RS_STATUS_OFFLINE);
 		break;
 	case RS_DISTANT_CHAT_STATUS_CAN_TALK:
 
@@ -153,7 +153,7 @@ void PopupDistantChatDialog::updateDisplay()
 		msg = QObject::tr( "End-to-end encrypted conversation established");
 		_status_label->setToolTip(msg);
 		getChatWidget()->unblockSending();
-		setPeerStatus(RS_STATUS_ONLINE);
+        setPeerStatus(RsStatusValue::RS_STATUS_ONLINE);
 		break;
 	}
 }

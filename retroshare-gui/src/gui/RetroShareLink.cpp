@@ -41,7 +41,6 @@
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsmsgs.h>
-#include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 
 #include <QApplication>
@@ -1758,7 +1757,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				}
 				else
 				{
-					ChatDialog* chatDialog = ChatDialog::getChat(chatId, Settings->getChatFlags());
+                    ChatDialog* chatDialog = ChatDialog::getChat(chatId, (RsChatFlags)Settings->getChatFlags());
 					if (chatDialog) {
 						chatroomFound.append(link.name());
 					} else {

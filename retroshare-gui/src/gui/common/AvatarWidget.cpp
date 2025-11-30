@@ -25,8 +25,8 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
 
-#include "gui/notifyqt.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/common/AvatarDialog.h"
 
@@ -39,21 +39,44 @@
 
 AvatarWidget::AvatarWidget(QWidget *parent) : QLabel(parent), ui(new Ui::AvatarWidget)
 {
-	ui->setupUi(this);
+    ui->setupUi(this);
 
-	mFlag.isOwnId = false;
-	defaultAvatar = ":/images/no_avatar_background.png";
-	mPeerState = RS_STATUS_OFFLINE ;
+    mFlag.isOwnId = false;
+    defaultAvatar = ":/images/no_avatar_background.png";
+    mPeerState = RsStatusValue::RS_STATUS_OFFLINE ;
 
-	setFrameType(NO_FRAME);
+    setFrameType(NO_FRAME);
 
-	/* connect signals */
-	connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
-	connect(NotifyQt::getInstance(), SIGNAL(ownAvatarChanged()), this, SLOT(updateOwnAvatar()));
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){
+
+            const RsFriendListEvent *e = dynamic_cast<const RsFriendListEvent*>(event.get());
+            if(!e)
+                return;
+
+            switch(e->mEventCode)
+            {
+            case RsFriendListEventCode::OWN_AVATAR_CHANGED:
+            case RsFriendListEventCode::NODE_AVATAR_CHANGED: updateAvatar(QString::fromStdString(e->mSslId.toStdString()));
+                    break;
+            case RsFriendListEventCode::OWN_STATUS_CHANGED:
+            case RsFriendListEventCode::NODE_STATUS_CHANGED:  updateStatus(QString::fromStdString(e->mSslId.toStdString()),e->mStatus);
+            default:
+                break;
+            }
+
+
+        }, this );
+    }, mEventHandlerId, RsEventType::FRIEND_LIST );
+
 }
 
 AvatarWidget::~AvatarWidget()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 	delete ui;
 }
 
@@ -68,16 +91,18 @@ QString AvatarWidget::frameState()
 	case STATUS_FRAME:
 		switch (mPeerState)
 		{
-		case RS_STATUS_OFFLINE:
+        case RsStatusValue::RS_STATUS_OFFLINE:
 			return "OFFLINE";
-		case RS_STATUS_INACTIVE:
+        case RsStatusValue::RS_STATUS_INACTIVE:
 			return "INACTIVE";
-		case RS_STATUS_ONLINE:
+        case RsStatusValue::RS_STATUS_ONLINE:
 			return "ONLINE";
-		case RS_STATUS_AWAY:
+        case RsStatusValue::RS_STATUS_AWAY:
 			return "AWAY";
-		case RS_STATUS_BUSY:
+        case RsStatusValue::RS_STATUS_BUSY:
 			return "BUSY";
+        default:
+            break;
 		}
 	}
 	return "NOTHING";
@@ -106,18 +131,6 @@ void AvatarWidget::mouseReleaseEvent(QMouseEvent */*event*/)
 void AvatarWidget::setFrameType(FrameType type)
 {
 	mFrameType = type;
-
-	switch (mFrameType) {
-	case NO_FRAME:
-		disconnect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateStatus(const QString&, int)));
-		break;
-	case NORMAL_FRAME:
-		disconnect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateStatus(const QString&, int)));
-		break;
-	case STATUS_FRAME:
-		connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateStatus(const QString&, int)));
-		break;
-	}
 
     //refreshAvatarImage();
     refreshStatus();
@@ -179,7 +192,7 @@ void AvatarWidget::refreshStatus()
     }
     case STATUS_FRAME:
     {
-        uint32_t status = 0;
+        RsStatusValue status = RsStatusValue::RS_STATUS_OFFLINE;
 
         if (mId.isNotSet())
             return;
@@ -193,7 +206,7 @@ void AvatarWidget::refreshStatus()
                 status = statusInfo.status ;
             }
             else if(mId.isDistantChatId())
-                status = RS_STATUS_ONLINE ;
+                status = RsStatusValue::RS_STATUS_ONLINE ;
             else
             {
                 std::cerr << "Unhandled chat id type in AvatarWidget::refreshStatus()" << std::endl;
@@ -217,10 +230,10 @@ void AvatarWidget::refreshStatus()
             {
                 switch (dcpinfo.status)
                 {
-                    case RS_DISTANT_CHAT_STATUS_CAN_TALK        : status = RS_STATUS_ONLINE ; break;
+                    case RS_DISTANT_CHAT_STATUS_CAN_TALK        : status = RsStatusValue::RS_STATUS_ONLINE ; break;
                     case RS_DISTANT_CHAT_STATUS_UNKNOWN         : // Fall-through
                     case RS_DISTANT_CHAT_STATUS_TUNNEL_DN       : // Fall-through
-                    case RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED : status = RS_STATUS_OFFLINE;
+                    case RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED : status = RsStatusValue::RS_STATUS_OFFLINE;
                 }
             }
             else
@@ -238,20 +251,20 @@ void AvatarWidget::refreshStatus()
     }
 }
 
-void AvatarWidget::updateStatus(const QString& peerId, int status)
+void AvatarWidget::updateStatus(const QString& peerId, RsStatusValue status)
 {
         if (mId.isPeerId() && mId.toPeerId() == RsPeerId(peerId.toStdString()))
         updateStatus(status) ;
 }
 
-void AvatarWidget::updateStatus(int status)
+void AvatarWidget::updateStatus(RsStatusValue status)
 {
     if (mFrameType != STATUS_FRAME)
 		return;
 
     mPeerState = status;
 
-    setEnabled(((uint32_t) status == RS_STATUS_OFFLINE) ? false : true);
+    setEnabled((status == RsStatusValue::RS_STATUS_OFFLINE) ? false : true);
     RsApplication::refreshStyleSheet(this, false);
 }
 

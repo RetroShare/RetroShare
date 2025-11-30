@@ -31,6 +31,7 @@
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsfiles.h>
+#include <retroshare/rsstatus.h>
 
 #include <QCompleter>
 #include <QTextCharFormat>
@@ -52,6 +53,17 @@ namespace Ui {
 class ChatWidget;
 }
 
+enum class RsChatFlags: uint32_t {
+    RS_CHAT_NONE          = 0x0000,
+    RS_CHAT_OPEN          = 0x0001,
+    RS_CHAT_FOCUS         = 0x0004,
+    RS_CHAT_TABBED_WINDOW = 0x0008,
+    RS_CHAT_BLINK         = 0x0010,
+};
+
+RS_REGISTER_ENUM_FLAGS_TYPE(RsChatFlags);
+
+
 // a Container for the logic behind buttons in a PopupChatDialog
 // Plugins can implement this interface to provide their own buttons
 class ChatWidgetHolder
@@ -62,7 +74,7 @@ public:
 
 	// status comes from notifyPeerStatusChanged
 	// see rststaus.h for possible values
-	virtual void updateStatus(int /*status*/) {}
+    virtual void updateStatus(RsStatusValue /*status*/) {}
 
 protected:
 	ChatWidget *mChatWidget;
@@ -105,7 +117,7 @@ public:
 	void addToolsAction(QAction *action);
 
 	QString getTitle() { return title; }
-	int getPeerStatus() { return peerStatus; }
+    RsStatusValue getPeerStatus() { return peerStatus; }
 	void setName(const QString &name);
 
 	bool setStyle();
@@ -130,7 +142,7 @@ public:
 	const QList<ChatWidgetHolder*> &chatWidgetHolderList() { return mChatWidgetHolder; }
 
 public slots:
-	void updateStatus(const QString &peer_id, int status);
+    void updateStatus(const ChatId &cid, RsStatusValue status);
 	void setUseCMark(const bool bUseCMark);
 	void updateCMPreview();
 
@@ -144,7 +156,7 @@ private slots:
 signals:
 	void infoChanged(ChatWidget*);
 	void newMessage(ChatWidget*);
-	void statusChanged(int);
+    void statusChanged(RsStatusValue);
 	void textBrowserAskContextMenu(QMenu* contextMnu, QString anchorForPosition, const QPoint point);
 
 protected:
@@ -189,7 +201,7 @@ private slots:
 	void updateLenOfChatTextEdit();
 	void sendChat();
 
-	void updatePeersCustomStateString(const QString& peer_id, const QString& status_string) ;
+    void updatePeersCustomStateString(const ChatId& id, const QString& status_string) ;
 
 	bool fileSave();
 	bool fileSaveAs();
@@ -229,7 +241,7 @@ private:
 
 	bool newMessages;
 	bool typing;
-	int peerStatus;
+    RsStatusValue peerStatus;
 
 	bool sendingBlocked;
 	bool useCMark;
@@ -272,6 +284,9 @@ private:
 	ChatLobbyUserNotify* notify;
 
 	Ui::ChatWidget *ui;
+
+//    RsEventsHandlerId_t mEventHandlerId_chat ;
+    RsEventsHandlerId_t mEventHandlerId_friends ;
 };
 
 #endif // CHATWIDGET_H

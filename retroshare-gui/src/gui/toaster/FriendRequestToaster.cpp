@@ -24,8 +24,8 @@
 
 #include <retroshare/rspeers.h>
 
-FriendRequestToaster::FriendRequestToaster(const RsPgpId &gpgId, const QString &sslName, const RsPeerId &peerId)
-	: QWidget(NULL), mGpgId(gpgId), mSslId(peerId), mSslName(sslName)
+FriendRequestToaster::FriendRequestToaster(const RsPgpId &gpgId, const RsPeerId &peerId)
+    : QWidget(NULL), mGpgId(gpgId), mSslId(peerId)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -33,7 +33,8 @@ FriendRequestToaster::FriendRequestToaster(const RsPgpId &gpgId, const QString &
 	bool knownPeer = false;
 	RsPeerDetails details;
 	if (rsPeers->getGPGDetails(mGpgId, details)) {
-		knownPeer = true;
+        knownPeer = true;
+        mSslName = QString::fromUtf8(details.name.c_str());
 	}
 
 	if (knownPeer) {
@@ -51,7 +52,7 @@ FriendRequestToaster::FriendRequestToaster(const RsPgpId &gpgId, const QString &
 		ui.textLabel->setText( peerName + " " + tr("wants to be friend with you on RetroShare"));
 		ui.avatarWidget->setDefaultAvatar(":/images/avatar_request.png");
 	} else {
-		ui.textLabel->setText( sslName + " " + tr("Unknown (Incoming) Connect Attempt"));
+        ui.textLabel->setText( mSslName + " " + tr("Unknown (Incoming) Connect Attempt"));
 		ui.avatarWidget->setDefaultAvatar(":/images/avatar_request_unknown.png");
 	}
 }

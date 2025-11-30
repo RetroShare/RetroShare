@@ -25,7 +25,6 @@
 #include "settings/rsharesettings.h"
 
 #include "retroshare/rsinit.h"
-#include "retroshare/rsnotify.h"
 
 #include <QLineEdit>
 #include <QMessageBox>
@@ -119,13 +118,11 @@ void StartDialog::loadPerson()
 	RsPeerId accountId = RsPeerId((data.toString()).toStdString());
 
 	// Cache the passphrase, so that it is not asked again.
-	rsNotify->cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
-	rsNotify->setDisableAskPassword(true);
+    RsLoginHelper::cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
 
     bool res = RsApplication::loadCertificate(accountId, ui.autologin_checkbox->isChecked()) ;
 
-	rsNotify->setDisableAskPassword(false);
-    rsNotify->clearPgpPassphrase();
+    RsLoginHelper::clearPgpPassphrase();
 
 	if(res)
 		accept();
