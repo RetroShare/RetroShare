@@ -947,9 +947,9 @@ void VOIPChatWidgetHolder::sendAudioData()
     }
 }
 
-void VOIPChatWidgetHolder::updateStatus(int status)
+void VOIPChatWidgetHolder::updateStatus(RsStatusValue status)
 {
-	bool enabled = (status != RS_STATUS_OFFLINE);
+	bool enabled = (status != RsStatusValue::RS_STATUS_OFFLINE);
 
 	audioListenToggleButton->setEnabled(audioCaptureToggleButton->isChecked() && enabled);
 	audioListenToggleButtonFS->setEnabled(audioCaptureToggleButton->isChecked() && enabled);
