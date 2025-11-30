@@ -501,35 +501,35 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 
 void NewsFeed::testFeeds(RsFeedTypeFlags /*notifyFlags*/)
 {
-	uint flags = Settings->getNewsFeedFlags();
+    RsFeedTypeFlags flags = RsFeedTypeFlags(Settings->getNewsFeedFlags());
 
 	//For test your feed add valid ID's for RsGxsGroupId & RsGxsMessageId, else test feed will be not displayed
 
-	if (flags & RS_FEED_TYPE_PEER)
+    if (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_PEER))
 		instance->addFeedItemIfUnique(new PeerItem(instance, NEWSFEED_PEERLIST, RsPeerId(""), PEER_TYPE_CONNECT, false), true);
 
-	if (flags & RS_FEED_TYPE_MSG)
+    if (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_MSG))
 		instance->addFeedItemIfUnique(new MsgItem(instance, NEWSFEED_MESSAGELIST, std::string(""), false), true);
 
-	if (flags & RS_FEED_TYPE_CHANNEL){
+    if (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_CHANNEL)){
 		instance->addFeedItem(new GxsChannelGroupItem(instance, NEWSFEED_CHANNELNEWLIST, RsGxsGroupId(""), false, true));
 		instance->addFeedItem(new GxsChannelPostItem(instance, NEWSFEED_CHANNELNEWLIST, RsGxsGroupId(""), RsGxsMessageId(""), false, true));
 		instance->addFeedItem(new ChannelsCommentsItem(instance, NEWSFEED_CHANNELNEWLIST, RsGxsGroupId(""), RsGxsMessageId(""), RsGxsMessageId(""), false, true));
 	}
 
-	if(flags & RS_FEED_TYPE_FORUM){
+    if(!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_FORUM)){
 		instance->addFeedItem(new GxsForumGroupItem(instance, NEWSFEED_NEW_FORUM, RsGxsGroupId(""), false, true));
 		instance->addFeedItem(new GxsForumMsgItem(instance, NEWSFEED_NEW_FORUM, RsGxsGroupId(""), RsGxsMessageId(""), false, true ));
 	}
 
-	if(flags & RS_FEED_TYPE_POSTED){
+    if(!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_POSTED)){
 		instance->addFeedItem( new PostedGroupItem(instance, NEWSFEED_POSTEDNEWLIST, RsGxsGroupId(""), false, true));
 		instance->addFeedItem( new PostedItem(instance, NEWSFEED_POSTEDMSGLIST, RsGxsGroupId(""), RsGxsMessageId(""), false, true));
 		instance->addFeedItem( new BoardsCommentsItem(instance, NEWSFEED_POSTEDMSGLIST, RsGxsGroupId(""), RsGxsMessageId(""), false, true));
 	}
 
-	if (flags & RS_FEED_TYPE_CIRCLE)
-		instance->addFeedItemIfUnique(new GxsCircleItem(instance, NEWSFEED_CIRCLELIST, RsGxsCircleId(""), RsGxsId(""), RS_FEED_ITEM_CIRCLE_MEMB_JOIN),true);;
+    if (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_CIRCLE))
+        instance->addFeedItemIfUnique(new GxsCircleItem(instance, NEWSFEED_CIRCLELIST, RsGxsCircleId(""), RsGxsId(""), RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_JOIN),true);;
 
     auto feedItem2 = new BoardsPostItem(instance,
                                            NEWSFEED_CHANNELNEWLIST,
