@@ -1,5 +1,5 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/gxs/GxsGroupFeedItem.cpp                             *
+ * retroshare-gui/src/gui/feeds/GxsGroupFeedItem.cpp                           *
  *                                                                             *
  * Copyright 2012-2013  by Robert Fernie      <retroshare.project@gmail.com>   *
  *                                                                             *
@@ -20,7 +20,8 @@
 
 #include <QTimer>
 
-#include "gui/gxs/GxsGroupFeedItem.h"
+#include "GxsGroupFeedItem.h"
+
 #include "gui/feeds/FeedHolder.h"
 #include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 

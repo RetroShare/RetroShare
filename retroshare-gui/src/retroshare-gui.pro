@@ -599,8 +599,10 @@ HEADERS +=  rshare.h \
             gui/feeds/BoardsPostItem.h \
             gui/feeds/FeedItem.h \
             gui/feeds/FeedHolder.h \
+	    gui/feeds/GxsGroupFeedItem.h \
             gui/feeds/GxsCircleItem.h \
             gui/feeds/ChannelsCommentsItem.h \
+	    gui/feeds/GxsFeedItem.h \
             gui/feeds/PeerItem.h \
             gui/feeds/MsgItem.h \
             gui/feeds/ChatMsgItem.h \
@@ -963,9 +965,11 @@ SOURCES +=  main.cpp \
             gui/feeds/BoardsCommentsItem.cpp \
             gui/feeds/BoardsPostItem.cpp \
             gui/feeds/FeedItem.cpp \
+	    gui/feeds/GxsGroupFeedItem.cpp \
             gui/feeds/FeedHolder.cpp \
             gui/feeds/GxsCircleItem.cpp \
             gui/feeds/ChannelsCommentsItem.cpp \
+	    gui/feeds/GxsFeedItem.cpp \
             gui/feeds/PeerItem.cpp \
             gui/feeds/MsgItem.cpp \
             gui/feeds/ChatMsgItem.cpp \
@@ -1447,11 +1451,9 @@ gxsgui {
 		gui/gxs/GxsGroupFrameDialog.h \
 		gui/gxs/GxsMessageFrameWidget.h \
 		gui/gxs/GxsMessageFramePostWidget.h \
-		gui/gxs/GxsGroupFeedItem.h \
-		gui/gxs/GxsFeedItem.h \
 		gui/gxs/GxsGroupShareKey.h \
 		gui/gxs/GxsUserNotify.h \
-		gui/gxs/GxsFeedWidget.h \
+#		gui/gxs/GxsFeedWidget.h \
 		util/TokenQueue.h \
 		util/RsGxsUpdateBroadcast.h \
 	
@@ -1481,10 +1483,8 @@ gxsgui {
 		gui/gxs/GxsGroupFrameDialog.cpp \
 		gui/gxs/GxsMessageFrameWidget.cpp \
 		gui/gxs/GxsMessageFramePostWidget.cpp \
-		gui/gxs/GxsGroupFeedItem.cpp \
-		gui/gxs/GxsFeedItem.cpp \
 		gui/gxs/GxsUserNotify.cpp \
-		gui/gxs/GxsFeedWidget.cpp \
+#		gui/gxs/GxsFeedWidget.cpp \
 		util/TokenQueue.cpp \
 		util/RsGxsUpdateBroadcast.cpp \
 	

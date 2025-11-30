@@ -23,7 +23,7 @@
 
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsevents.h>
-#include "gui/gxs/GxsGroupFeedItem.h"
+#include "gui/feeds/GxsGroupFeedItem.h"
 
 namespace Ui {
 class GxsForumGroupItem;
