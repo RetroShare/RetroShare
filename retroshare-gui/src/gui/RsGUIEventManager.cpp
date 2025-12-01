@@ -108,7 +108,10 @@ RsGUIEventManager::RsGUIEventManager() : cDialog(NULL)
     mEventHandlerId = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
     {
-        if(event->mType == RsEventType::SYSTEM && dynamic_cast<const RsSystemEvent*>(event.get())->mEventCode == RsSystemEventCode::PASSWORD_REQUESTED)
+        if(event->mType == RsEventType::SYSTEM
+                && (dynamic_cast<const RsSystemEvent*>(event.get())->mEventCode == RsSystemEventCode::PASSWORD_REQUESTED
+                    ||dynamic_cast<const RsSystemEvent*>(event.get())->mEventCode == RsSystemEventCode::NEW_PLUGIN_FOUND))
+
             sync_handleIncomingEvent(event);
         else
             RsQThreadUtils::postToObject([=](){ async_handleIncomingEvent(event); }, this );
@@ -196,7 +199,10 @@ bool RsGUIEventManager::GUI_askForPluginConfirmation(const std::string& plugin_f
 	RsAutoUpdatePage::unlockAllEvents() ;
 
     if (ret == QMessageBox::Yes)
+    {
+        rsPlugins->enablePlugin(plugin_file_hash);
         return true;
+    }
     else
     {
         rsPlugins->disablePlugin(plugin_file_hash);
