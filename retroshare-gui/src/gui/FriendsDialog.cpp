@@ -242,8 +242,13 @@ void FriendsDialog::chatMessageReceived(const ChatMessage &msg)
     if(!msg.chat_id.isBroadcast())
         return;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+    QDateTime sendTime = QDateTime::fromSecsSinceEpoch(msg.sendTime);
+    QDateTime recvTime = QDateTime::fromSecsSinceEpoch(msg.recvTime);
+#else
     QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
     QDateTime recvTime = QDateTime::fromTime_t(msg.recvTime);
+#endif
     QString message = QString::fromUtf8(msg.msg.c_str());
     QString name = QString::fromUtf8(rsPeers->getPeerName(msg.broadcast_peer_id).c_str());
 
