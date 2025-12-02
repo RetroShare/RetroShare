@@ -108,7 +108,10 @@ RsGUIEventManager::RsGUIEventManager() : cDialog(NULL)
     mEventHandlerId = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
     {
-        if(event->mType == RsEventType::SYSTEM && dynamic_cast<const RsSystemEvent*>(event.get())->mEventCode == RsSystemEventCode::PASSWORD_REQUESTED)
+        if(event->mType == RsEventType::SYSTEM
+                && (dynamic_cast<const RsSystemEvent*>(event.get())->mEventCode == RsSystemEventCode::PASSWORD_REQUESTED
+                    ||dynamic_cast<const RsSystemEvent*>(event.get())->mEventCode == RsSystemEventCode::NEW_PLUGIN_FOUND))
+
             sync_handleIncomingEvent(event);
         else
             RsQThreadUtils::postToObject([=](){ async_handleIncomingEvent(event); }, this );
@@ -171,6 +174,9 @@ bool RsGUIEventManager::GUI_askForPassword(const std::string& title, const std::
 bool RsGUIEventManager::GUI_askForPluginConfirmation(const std::string& plugin_file_name, const RsFileHash& plugin_file_hash, bool first_time)
 {
 	// By default, when no information is known about plugins, just dont load them. They will be enabled from the GUI by the user.
+    // Note: the code below is not running in the Qt thread, which is likely to cause a crash. If needed, we should use
+    // the same mechanism than GUI_askForPassword. As far as testing goes, it seems that because there is no other window running
+    // at the time plugin confirmation is required, this is not a problem for Qt.
 
 	if(first_time)
 		return false ;
@@ -196,7 +202,10 @@ bool RsGUIEventManager::GUI_askForPluginConfirmation(const std::string& plugin_f
 	RsAutoUpdatePage::unlockAllEvents() ;
 
     if (ret == QMessageBox::Yes)
+    {
+        rsPlugins->enablePlugin(plugin_file_hash);
         return true;
+    }
     else
     {
         rsPlugins->disablePlugin(plugin_file_hash);
