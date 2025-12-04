@@ -240,6 +240,7 @@ void NewsFeed::handlePostedEvent(std::shared_ptr<const RsEvent> event)
 
 	switch(pe->mPostedEventCode)
 	{
+	case RsPostedEventCode::UPDATED_POSTED_GROUP:
 	case RsPostedEventCode::NEW_POSTED_GROUP:
 		addFeedItem( new PostedGroupItem(this, NEWSFEED_POSTEDNEWLIST, pe->mPostedGroupId, false, true));
 		break;
