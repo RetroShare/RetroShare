@@ -1,5 +1,5 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/gxschannels/GxsChannelPostsWidget.cpp                *
+ * retroshare-gui/src/gui/gxschannels/GxsChannelPostsWidgetWithModel.cpp       *
  *                                                                             *
  * Copyright 2013 by Robert Fernie     <retroshare.project@gmail.com>          *
  *                                                                             *
