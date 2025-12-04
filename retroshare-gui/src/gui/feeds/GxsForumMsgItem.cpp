@@ -45,59 +45,60 @@
 GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
     GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsForums, autoUpdate)
 {
-    mMessage.mMeta.mMsgId = messageId;	// useful for uniqueIdentifier() before the post is actually loaded
-    mMessage.mMeta.mGroupId = groupId;
+    mLoadingStatus = LOADING_STATUS_NO_DATA;
 
     mLoadingGroup = false;
     mLoadingMessage = false;
     mLoadingSetAsRead = false;
-    mLoadingParentMessage = false;
 
     setup();
-
-	requestGroup();
-	requestMessage();
 }
 
-GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumGroup &group, const RsGxsForumMsg &post, bool isHome, bool autoUpdate) :
-    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsForums, autoUpdate)
+void GxsForumMsgItem::paintEvent(QPaintEvent *e)
 {
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsForumMsgItem::GxsForumMsgItem() Direct Load";
-	std::cerr << std::endl;
-#endif
+    /* This method employs a trick to trigger a deferred loading. The post and group is requested only
+     * when actually displayed on the screen. */
 
-	setup();
+    if(mLoadingStatus != LOADING_STATUS_FILLED && !mGroup.mMeta.mGroupId.isNull() && !mMessage.mMeta.mMsgId.isNull())
+        mLoadingStatus = LOADING_STATUS_HAS_DATA;
 
-	setGroup(group, false);
-	setMessage(post);
-}
+    if(mGroup.mMeta.mGroupId.isNull() && !mLoadingGroup)
+        requestGroup();
 
-GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumMsg &post, bool isHome, bool autoUpdate) :
-    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsForums, autoUpdate)
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsForumMsgItem::GxsForumMsgItem() Direct Load";
-	std::cerr << std::endl;
-#endif
+    if(mMessage.mMeta.mMsgId.isNull() && !mLoadingMessage)
+        requestMessage();
 
-	setup();
+    switch(mLoadingStatus)
+    {
+    case LOADING_STATUS_FILLED:
+    case LOADING_STATUS_NO_DATA:
+    default:
+        break;
 
-	requestGroup();
-	setMessage(post);
+    case LOADING_STATUS_HAS_DATA:
+        fillGroup();
+        fillMessage();
+
+        if(!mParentMessage.mMeta.mMsgId.isNull())
+            fillParentMessage();
+
+        mLoadingStatus = LOADING_STATUS_FILLED;
+        break;
+    }
+
+    GxsFeedItem::paintEvent(e) ;
 }
 
 GxsForumMsgItem::~GxsForumMsgItem()
 {
-    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(300);
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
 
-    while( (mLoadingGroup || mLoadingMessage || mLoadingSetAsRead || mLoadingParentMessage)
+    while( (mLoadingGroup || mLoadingMessage || mLoadingSetAsRead)
            && std::chrono::steady_clock::now() < timeout)
     {
         RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for "
                 << (mLoadingGroup ? "Group " : "")
                 << (mLoadingMessage ? "Message " : "")
-                << (mLoadingParentMessage ? "Parent message " : "")
                 << (mLoadingSetAsRead ? "Set as read" : "")
                 << "loading." << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -113,7 +114,6 @@ void GxsForumMsgItem::setup()
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
-	mInFill = false;
 	mCloseOnRead = false;
 
 	/* clear ui */
@@ -144,41 +144,6 @@ void GxsForumMsgItem::setup()
 	ui->parentFrame->hide();
 }
 
-bool GxsForumMsgItem::setGroup(const RsGxsForumGroup &group, bool doFill)
-{
-	if (groupId() != group.mMeta.mGroupId) {
-		std::cerr << "GxsForumMsgItem::setGroup() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	mGroup = group;
-
-    if (doFill)
-        fillGroup();
-
-	return true;
-}
-
-bool GxsForumMsgItem::setMessage(const RsGxsForumMsg &msg, bool doFill)
-{
-	if (groupId() != msg.mMeta.mGroupId || messageId() != msg.mMeta.mMsgId) {
-		std::cerr << "GxsForumMsgItem::setPost() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	mMessage = msg;
-
-    if(! mMessage.mMeta.mParentId.isNull())
-        loadParentMessage(mMessage.mMeta.mParentId);
-
-    if(doFill)
-        fillMessage();
-
-	return true;
-}
-
 QString GxsForumMsgItem::groupName()
 {
 	return QString::fromUtf8(mGroup.mMeta.mGroupName.c_str());
@@ -192,24 +157,27 @@ void GxsForumMsgItem::loadGroup()
 	{
 		// 1 - get group data
 
-#ifdef DEBUG_FORUMS
-		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+#ifndef DEBUG_FORUMS
+        std::cerr << "Retrieving forum group data for forum " << groupId() << std::endl;
 #endif
 
 		std::vector<RsGxsForumGroup> groups;
-		const std::list<RsGxsGroupId> forumIds = { groupId() };
 
-		if(!rsGxsForums->getForumsInfo(forumIds,groups))
+        if(!rsGxsForums->getForumsInfo({ groupId() },groups))
 		{
 			RsErr() << "GxsForumGroupItem::loadGroup() ERROR getting data" << std::endl;
-			return;
+            mLoadingGroup = false;
+            deferred_update();
+            return;
 		}
 
 		if (groups.size() != 1)
 		{
 			std::cerr << "GxsForumGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
-			return;
+            mLoadingGroup = false;
+            deferred_update();
+            return;
 		}
 		RsGxsForumGroup group(groups[0]);
 
@@ -219,7 +187,7 @@ void GxsForumMsgItem::loadGroup()
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			setGroup(group);
+            mGroup = group;
             mLoadingGroup = false;
 
 		}, this );
@@ -242,89 +210,51 @@ void GxsForumMsgItem::loadMessage()
 		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 #endif
 
-		std::vector<RsGxsForumMsg> msgs;
-		const std::list<RsGxsGroupId> forumIds = { groupId() };
+        auto getMessageData = [](const RsGxsGroupId& gid,const RsGxsMessageId& msg_id,RsGxsForumMsg& msg) -> bool
+        {
+            std::vector<RsGxsForumMsg> msgs;
 
-		if(!rsGxsForums->getForumContent(groupId(),std::set<RsGxsMessageId>( { messageId() } ),msgs))
-		{
-			std::cerr << "GxsForumMsgItem::loadMessage() ERROR getting data";
-			std::cerr << std::endl;
-			return;
-		}
+            if(!rsGxsForums->getForumContent(gid,std::set<RsGxsMessageId>( { msg_id } ),msgs))
+                return false;
 
-		if (msgs.size() != 1)
-		{
-			std::cerr << "GxsForumMsgItem::loadMessage() Wrong number of Items";
-			std::cerr << std::endl;
-			return;
-		}
-        RsGxsForumMsg msg(msgs[0]);
+            if (msgs.size() != 1)
+                return false;
 
-		RsQThreadUtils::postToObject( [msg,this]()
+            msg = msgs[0];
+
+            return true;
+        };
+
+        RsGxsForumMsg msg,parent_msg;
+
+        if(!getMessageData(groupId(),messageId(),msg))
+        {
+            std::cerr << "GxsForumMsgItem::loadMessage() ERROR getting message data";
+            mLoadingMessage = false;
+            deferred_update();
+            return;
+        }
+        // now load the parent message. If not found, it's not a problem.
+
+        if(!msg.mMeta.mParentId.isNull() && !getMessageData(groupId(),msg.mMeta.mParentId,parent_msg))
+            std::cerr << "GxsForumMsgItem::loadMessage() ERROR getting parent message data. Maybe the parent msg is not available.";
+
+        RsQThreadUtils::postToObject( [msg,parent_msg,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			setMessage(msg);
+            mMessage = msg;
+            mParentMessage = parent_msg;
             mLoadingMessage = false;
 
 		}, this );
 	});
 }
 
-void GxsForumMsgItem::loadParentMessage(const RsGxsMessageId& parent_msg)
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsForumMsgItem::loadParentMessage()";
-	std::cerr << std::endl;
-#endif
-    mLoadingParentMessage = true;
-
-	RsThread::async([parent_msg,this]()
-	{
-		// 1 - get group data
-
-#ifdef DEBUG_FORUMS
-		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
-#endif
-
-		std::vector<RsGxsForumMsg> msgs;
-		const std::list<RsGxsGroupId> forumIds = { groupId() };
-
-		if(!rsGxsForums->getForumContent(groupId(),std::set<RsGxsMessageId>( { parent_msg } ),msgs))
-		{
-			std::cerr << "GxsForumMsgItem::loadMessage() ERROR getting data";
-			std::cerr << std::endl;
-			return;
-		}
-
-		if (msgs.size() != 1)
-		{
-			std::cerr << "GxsForumMsgItem::loadMessage() Wrong number of Items";
-			std::cerr << std::endl;
-			return;
-		}
-        RsGxsForumMsg msg(msgs[0]);
-
-		RsQThreadUtils::postToObject( [msg,this]()
-		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
-
-			mParentMessage = msg;
-            fillParentMessage();
-
-            mLoadingParentMessage = false;
-
-		}, this );
-	});
-}
 void GxsForumMsgItem::fillParentMessage()
 {
-    mInFill = true;
-
     ui->parentFrame->hide();
 
     RetroShareLink linkParent = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_FORUM, mParentMessage.mMeta.mGroupId, mParentMessage.mMeta.mMsgId, QString::fromUtf8(mParentMessage.mMeta.mMsgName.c_str()));
@@ -341,8 +271,6 @@ void GxsForumMsgItem::fillParentMessage()
         pixmap = GxsIdDetails::makeDefaultIcon(mParentMessage.mMeta.mAuthorId,GxsIdDetails::SMALL);
 
     ui->parentAvatar->setPixmap(pixmap);
-
-    mInFill = false;
 }
 void GxsForumMsgItem::fillMessage()
 {
@@ -350,8 +278,6 @@ void GxsForumMsgItem::fillMessage()
     std::cerr << "GxsForumMsgItem::fill()";
     std::cerr << std::endl;
 #endif
-
-    mInFill = true;
 
     if(!mIsHome && mCloseOnRead && !IS_MSG_NEW(mMessage.mMeta.mMsgStatus))
         removeItem();
@@ -394,21 +320,15 @@ void GxsForumMsgItem::fillMessage()
         ui->clearButton->setEnabled(false);
         ui->clearButton->hide();
     }
-
-    mInFill = false;
 }
 void GxsForumMsgItem::fillGroup()
 {
-	mInFill = true;
-
     ui->unsubscribeButton->setEnabled(IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroup.mMeta.mSubscribeFlags)) ;
 
     if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
         ui->iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
     else
         ui->iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums-default.png"));
-
-	mInFill = false;
 }
 
 void GxsForumMsgItem::fillExpandFrame()
@@ -502,12 +422,10 @@ void GxsForumMsgItem::unsubscribeForum()
 
 void GxsForumMsgItem::setAsRead(bool doUpdate)
 {
-    if (mInFill) {
-        return;
-    }
-
     mCloseOnRead = false;
-    mLoadingSetAsRead = true;
+
+    if(doUpdate)
+        mLoadingSetAsRead = true;
 
     RsThread::async( [this, doUpdate]() {
         RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());

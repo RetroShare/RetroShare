@@ -103,10 +103,11 @@
 #include <QXmlStreamReader>
 #include <QDomDocument>
 #include <QTextStream>
+#include <QRegularExpression>
 
 #include "ChatStyle.h"
 #include "gui/settings/rsharesettings.h"
-#include "gui/notifyqt.h"
+#include "gui/RsGUIEventManager.h"
 #include "util/DateTime.h"
 #include "util/HandleRichText.h"
 
@@ -129,7 +130,7 @@ ChatStyle::ChatStyle() : QObject()
 {
     m_styleType = TYPE_UNKNOWN;
 
-    connect(NotifyQt::getInstance(), SIGNAL(chatStyleChanged(int)), SLOT(styleChanged(int)));
+    connect(RsGUIEventManager::getInstance(), SIGNAL(chatStyleChanged(int)), SLOT(styleChanged(int)));
 }
 
 /* Destructor. */
@@ -376,7 +377,7 @@ QString ChatStyle::formatMessage(enumFormatMessage type
 	QString strDate = DateTime::formatDate(timestamp.date()).prepend(QString("<a name=\"date\">")).append(QString("</a>"));
 	QString strTime = DateTime::formatTime(timestamp.time()).prepend(QString("<a name=\"time\">")).append(QString("</a>"));
 
-	int bi = name.lastIndexOf(QRegExp(" \\(.*\\)")); //trim location from the end
+	int bi = name.lastIndexOf(QRegularExpression(" \\(.*\\)")); //trim location from the end
 	QString strShortName = RsHtml::plainText(name.left(bi)).prepend(QString("<a name=\"name\">")).append(QString("</a>"));
 
 	//handle /me
@@ -384,9 +385,9 @@ QString ChatStyle::formatMessage(enumFormatMessage type
 	//meName class for modifying the style of the name in the palce of /me
 	if(me){
 		messageBody = messageBody.replace(messageBody.indexOf("/me "), 3, strShortName.prepend(QString("<span class=\"meName\">")).append(QString("</span>"))); //replace only the first /me
-		style = style.remove(QRegExp("%nome%.*%/nome%")).remove("%me%").remove("%/me%");
+		style = style.remove(QRegularExpression("%nome%.*%/nome%")).remove("%me%").remove("%/me%");
 	} else {
-		style = style.remove(QRegExp("%me%.*%/me%")).remove("%nome%").remove("%/nome%");
+		style = style.remove(QRegularExpression("%me%.*%/me%")).remove("%nome%").remove("%/nome%");
 	}
 
 	QString formatMsg = style.replace("%name%", strName)
@@ -425,8 +426,8 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
     while (reader.atEnd() == false) {
         reader.readNext();
         if (reader.isStartElement()) {
-            if (reader.name() == "RetroShare_Style") {
-                if (reader.attributes().value("version") == "1.0") {
+            if (reader.name() == QString("RetroShare_Style")) {
+                if (reader.attributes().value("version") == QString("1.0")) {
                     info.stylePath = stylePathRelative;
                     continue;
                 }
@@ -438,22 +439,22 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
                 continue;
             }
 
-            if (reader.name() == "style") {
+            if (reader.name() == QString("style")) {
                 // read style information
                 while (reader.atEnd() == false) {
                     reader.readNext();
                     if (reader.isEndElement()) {
-                        if (reader.name() == "style") {
+                        if (reader.name() == QString("style")) {
                             break;
                         }
                         continue;
                     }
                     if (reader.isStartElement()) {
-                        if (reader.name() == "name") {
+                        if (reader.name() == QString("name")) {
                             info.styleName = reader.readElementText();
                             continue;
                         }
-                        if (reader.name() == "description") {
+                        if (reader.name() == QString("description")) {
                             info.styleDescription = reader.readElementText();
                             continue;
                         }
@@ -463,22 +464,22 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
                 continue;
             }
 
-            if (reader.name() == "author") {
+            if (reader.name() == QString("author")) {
                 // read author information
                 while (reader.atEnd() == false) {
                     reader.readNext();
                     if (reader.isEndElement()) {
-                        if (reader.name() == "author") {
+                        if (reader.name() == QString("author")) {
                             break;
                         }
                         continue;
                     }
                     if (reader.isStartElement()) {
-                        if (reader.name() == "name") {
+                        if (reader.name() == QString("name")) {
                             info.authorName = reader.readElementText();
                             continue;
                         }
-                        if (reader.name() == "email") {
+                        if (reader.name() == QString("email")) {
                             info.authorEmail = reader.readElementText();
                             continue;
                         }

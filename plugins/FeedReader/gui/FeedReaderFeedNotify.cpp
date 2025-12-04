@@ -27,6 +27,7 @@
 #include "FeedReaderFeedItem.h"
 #include "gui/settings/rsharesettings.h"
 #include "retroshare/rsiface.h"
+#include "util/DateTime.h"
 
 FeedReaderFeedNotify::FeedReaderFeedNotify(RsFeedReader *feedReader, FeedReaderNotify *notify, QObject *parent) :
 	FeedNotify(parent), mFeedReader(feedReader), mNotify(notify)
@@ -71,7 +72,7 @@ void FeedReaderFeedNotify::msgChanged(uint32_t feedId, const QString &msgId, int
 		return;
 	}
 
-	if (type != NOTIFY_TYPE_ADD) {
+    if (type != FeedReaderNotify::NOTIFY_TYPE_ADD) {
 		return;
 	}
 
@@ -135,7 +136,7 @@ FeedItem *FeedReaderFeedNotify::testFeedItem(FeedHolder */*parent*/)
 	FeedMsgInfo msgInfo;
 	msgInfo.title = tr("Test message").toUtf8().constData();
 	msgInfo.description = tr("This is a test message.").toUtf8().constData();
-	msgInfo.pubDate = QDateTime::currentDateTime().toTime_t();
+	msgInfo.pubDate = DateTime::DateTimeToTime_t(QDateTime::currentDateTime());
 
 	//TODO: parent?
 	return new FeedReaderFeedItem(mFeedReader, mNotify, feedInfo, msgInfo);

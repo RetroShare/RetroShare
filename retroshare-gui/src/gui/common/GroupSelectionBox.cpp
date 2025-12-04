@@ -23,7 +23,7 @@
 #include <retroshare/rspeers.h>
 #include "GroupSelectionBox.h"
 #include "GroupDefs.h"
-#include "gui/notifyqt.h"
+#include "util/qtthreadsutils.h"
 
 #include <algorithm>
 
@@ -34,10 +34,37 @@ GroupSelectionBox::GroupSelectionBox(QWidget *parent)
 {
 	setSelectionMode(QAbstractItemView::SingleSelection);
 
-	connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(fillGroups()));
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+
+            if(!fe)
+                return;
+
+            switch(fe->mEventCode)
+            {
+            case RsFriendListEventCode::GROUP_ADDED:
+            case RsFriendListEventCode::GROUP_REMOVED:
+            case RsFriendListEventCode::GROUP_CHANGED: fillGroups();
+
+            default:
+                break;
+            }
+        }
+        , this );
+    }, mEventHandlerId, RsEventType::FRIEND_LIST );
 
 	// Fill with available groups
 	fillGroups();
+}
+
+GroupSelectionBox::~GroupSelectionBox()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 void GroupSelectionBox::fillGroups()
 {
@@ -52,7 +79,7 @@ void GroupSelectionBox::fillGroups()
 	for (std::list<RsGroupInfo>::const_iterator it(groupIds.begin()); it != groupIds.end(); ++it) {
 		QListWidgetItem *item = new QListWidgetItem(GroupDefs::name(*it));
         item->setData(ROLE_ID, QString::fromStdString(it->id.toStdString()));
-		item->setBackgroundColor(QColor(183,236,181));
+		item->setBackground(QColor(183,236,181));
 		addItem(item);
 	}
 

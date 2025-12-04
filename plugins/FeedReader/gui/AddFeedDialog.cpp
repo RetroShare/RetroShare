@@ -28,6 +28,7 @@
 #include "FeedReaderStringDefs.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/common/UIStateHelper.h"
+#include "util/DateTime.h"
 
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsposted.h>
@@ -339,8 +340,7 @@ bool AddFeedDialog::fillFeed(uint32_t feedId)
 
 		ui->useStandardUpdateInterval->setChecked(feedInfo.flag.standardUpdateInterval);
 		ui->updateIntervalSpinBox->setValue(feedInfo.updateInterval / 60);
-		QDateTime dateTime;
-		dateTime.setTime_t(feedInfo.lastUpdate);
+		QDateTime dateTime = DateTime::DateTimeFromTime_t(feedInfo.lastUpdate);
 		ui->lastUpdate->setText(dateTime.toString());
 
 		ui->useStandardStorageTimeCheckBox->setChecked(feedInfo.flag.standardStorageTime);

@@ -40,6 +40,7 @@ class PeerItem : public FeedItem, private Ui::PeerItem
 public:
 	/** Default Constructor */
 	PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, uint32_t type, bool isHome);
+    virtual ~PeerItem();
 
 	void updateItemStatic();
 
@@ -66,6 +67,7 @@ private:
     RsPeerId mPeerId;
 	uint32_t mType;
 	bool mIsHome;
+    RsEventsHandlerId_t mEventHandlerId ;
 };
 
 #endif

@@ -33,8 +33,7 @@
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/common/AvatarDefs.h"
 #include "util/DateTime.h"
-
-#include "gui/notifyqt.h"
+#include "util/qtthreadsutils.h"
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
@@ -44,7 +43,7 @@
  ****/
 
 /** Constructor */
-SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &gpgId, const RsPeerId &sslId, const std::string &sslCn, const std::string& ip_address,uint32_t type, bool isHome) :
+SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &gpgId, const RsPeerId &sslId, const std::string &sslCn, const std::string& ip_address,RsFeedTypeFlags type, bool isHome) :
     FeedItem(parent,feedId,NULL),
     mGpgId(gpgId), mSslId(sslId), mSslCn(sslCn), mIP(ip_address), mType(type), mIsHome(isHome)
 {
@@ -72,7 +71,21 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 	connect( peerDetailsButton, SIGNAL(clicked()), this, SLOT(peerDetails()));
 	connect( friendRequesttoolButton, SIGNAL(clicked()), this, SLOT(friendRequest()));
 
-	connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+
+            if(!fe)
+                return;
+
+            updateItem();
+        }
+        , this );
+    }, mEventHandlerId, RsEventType::FRIEND_LIST );
 
     avatar->setId(ChatId(mSslId));
 
@@ -82,9 +95,13 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 	updateItem();
 }
 
+SecurityItem::~SecurityItem()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
 uint64_t SecurityItem::uniqueIdentifier() const
 {
-    return hash_64bits("SecurityItem " + QString::number(mType).toStdString() + " " + mSslId.toStdString());
+    return hash_64bits("SecurityItem " + QString::number((uint)mType).toStdString() + " " + mSslId.toStdString());
 }
 
 void SecurityItem::updateItemStatic()
@@ -101,35 +118,35 @@ void SecurityItem::updateItemStatic()
 
 	switch(mType)
 	{
-		case RS_FEED_ITEM_SEC_CONNECT_ATTEMPT:
+        case RsFeedTypeFlags::RS_FEED_ITEM_SEC_CONNECT_ATTEMPT:
 			title = tr("Connect Attempt");
 			requestLabel->show();
 			avatar->setDefaultAvatar(":images/avatar_request.png");
 			break;
-		case RS_FEED_ITEM_SEC_AUTH_DENIED:
+        case RsFeedTypeFlags::RS_FEED_ITEM_SEC_AUTH_DENIED:
 			title = tr("Connection refused by remote peer");
 			requestLabel->hide();
 			avatar->setDefaultAvatar(":images/avatar_refused.png");
 			break;
-		case RS_FEED_ITEM_SEC_UNKNOWN_IN:
+        case RsFeedTypeFlags::RS_FEED_ITEM_SEC_UNKNOWN_IN:
 			title = tr("Unknown (Incoming) Connect Attempt");
 			requestLabel->hide();
 			avatar->setDefaultAvatar(":images/avatar_request_unknown.png");
 			break;
-		case RS_FEED_ITEM_SEC_UNKNOWN_OUT:
+        case RsFeedTypeFlags::RS_FEED_ITEM_SEC_UNKNOWN_OUT:
 			title = tr("Unknown (Outgoing) Connect Attempt");
 			requestLabel->hide();
 			break;
-		case RS_FEED_ITEM_SEC_WRONG_SIGNATURE:
+        case RsFeedTypeFlags::RS_FEED_ITEM_SEC_WRONG_SIGNATURE:
 			title = tr("Certificate has wrong signature!! This peer is not who he claims to be.");
 			requestLabel->hide();
 			break;
-		case RS_FEED_ITEM_SEC_MISSING_CERTIFICATE:
+        case RsFeedTypeFlags::RS_FEED_ITEM_SEC_MISSING_CERTIFICATE:
             title = tr("Peer/node not in friendlist (PGP id=")+QString::fromStdString(mGpgId.toStdString())+")";
 			avatar->setDefaultAvatar(":images/avatar_request_unknown.png");
 			requestLabel->show();
 			break;
-		case RS_FEED_ITEM_SEC_BAD_CERTIFICATE:
+        case RsFeedTypeFlags::RS_FEED_ITEM_SEC_BAD_CERTIFICATE:
 			{
 			RsPeerDetails details ;
             if(rsPeers->getGPGDetails(mGpgId, details))
@@ -140,7 +157,7 @@ void SecurityItem::updateItemStatic()
 			}
 			avatar->setDefaultAvatar(":icons/ssl.png");
 			break;
-		case RS_FEED_ITEM_SEC_INTERNAL_ERROR:
+        case RsFeedTypeFlags::RS_FEED_ITEM_SEC_INTERNAL_ERROR:
 			title = tr("Certificate caused an internal error.");
 			requestLabel->hide();
 			break;
@@ -153,7 +170,7 @@ void SecurityItem::updateItemStatic()
 	titleLabel->setText(title);
 
 	QDateTime currentTime = QDateTime::currentDateTime();
-	timeLabel->setText(DateTime::formatLongDateTime(currentTime.toTime_t()));
+	timeLabel->setText(DateTime::formatLongDateTime(currentTime));
 
 	if (mIsHome)
 	{
@@ -211,7 +228,7 @@ void SecurityItem::updateItem()
 			removeFriendButton->hide();
 			peerDetailsButton->setEnabled(false);
 			
-			if(mType == RS_FEED_ITEM_SEC_BAD_CERTIFICATE)
+            if(mType == RsFeedTypeFlags::RS_FEED_ITEM_SEC_BAD_CERTIFICATE)
 			{
 				peerNameLabel->setText(tr("SSL request"));
 				friendRequesttoolButton->hide();

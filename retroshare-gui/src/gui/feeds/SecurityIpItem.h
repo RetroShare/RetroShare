@@ -38,8 +38,8 @@ class SecurityIpItem : public FeedItem
 
 public:
 	/** Default Constructor */
-	SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string& ipAddr, uint32_t result, uint32_t type, bool isTest);
-	SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported, uint32_t type, bool isTest);
+    SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string& ipAddr, uint32_t result, RsFeedTypeFlags type, bool isTest);
+    SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported, RsFeedTypeFlags type, bool isTest);
 
 	void updateItemStatic();
 
@@ -60,7 +60,7 @@ private slots:
 	void banIpListChanged(const QString &ipAddress);
 
 private:
-	uint32_t mType;
+    RsFeedTypeFlags mType;
 	RsPeerId mSslId;
 	std::string mIpAddr;
 	std::string mIpAddrReported;

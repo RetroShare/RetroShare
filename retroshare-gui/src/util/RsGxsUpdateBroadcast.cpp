@@ -21,7 +21,6 @@
 #include <QMap>
 
 #include "RsGxsUpdateBroadcast.h"
-#include "gui/notifyqt.h"
 #include "util/qtthreadsutils.h"
 
 #include <retroshare/rsgxsifacehelper.h>

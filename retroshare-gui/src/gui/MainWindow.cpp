@@ -29,10 +29,13 @@
 #include <QUrl>
 #include <QtDebug>
 #include <QMenuBar>
+#include <QActionGroup>
 
-#include <retroshare/rsplugin.h>
-#include <retroshare/rsconfig.h>
-#include <util/argstream.h>
+#include "retroshare/rsplugin.h"
+#include "retroshare/rsconfig.h"
+#include "retroshare/rsevents.h"
+#include "util/argstream.h"
+#include "util/qtthreadsutils.h"
 
 #if defined(Q_OS_DARWIN)
 #include "gui/common/MacDockIconHandler.h"
@@ -64,7 +67,6 @@
 #include "chat/ChatDialog.h"
 #include "RetroShareLink.h"
 #include "SoundManager.h"
-#include "notifyqt.h"
 #include "common/UserNotify.h"
 #include "gui/ServicePermissionDialog.h"
 
@@ -98,7 +100,6 @@
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsfiles.h"
-#include "retroshare/rsnotify.h"
 #include "retroshare/rsinit.h"
 
 #include "gui/gxschannels/GxsChannelDialog.h"
@@ -120,11 +121,11 @@
 #include "gui/statistics/StatisticsWindow.h"
 
 #include "gui/connect/ConnectFriendWizard.h"
+#include "gui/RsGUIEventManager.h"
 #include "gui/common/RsCollectionDialog.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
 #include "common/StatusDefs.h"
-#include "gui/notifyqt.h"
 
 #ifdef RS_WEBUI
 #	include "settings/WebuiPage.h"
@@ -270,7 +271,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     QWidget *widget = new QWidget();
     widget->setObjectName("trans_statusComboBoxFrame");
     QHBoxLayout *hbox = new QHBoxLayout();
-    hbox->setMargin(0);
+    hbox->setContentsMargins(0, 0, 0, 0);
     hbox->setSpacing(6);
     hbox->addWidget(statusComboBox);
     widget->setLayout(hbox);
@@ -350,10 +351,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     createNotifyIcons();
 
-    /* calculate friend count */
+    /* intialize friend count */
     updateFriends();
-    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateFriends()));
-    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateFriends()));
 
     loadOwnStatus();
 
@@ -368,10 +367,28 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
     timer->start(1000);
 
-    connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
+    connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
     settingsChanged();
 
     mFontSizeHandler.registerFontSize(ui->listWidget, 1.5f);
+
+    mEventHandlerId_friends = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+
+            if(!fe)
+                return;
+
+            updateFriends();
+        }
+        , this );
+    }, mEventHandlerId_friends, RsEventType::FRIEND_LIST );
+
+
 }
 
 /** Destructor. */
@@ -381,6 +398,8 @@ MainWindow::~MainWindow()
     /* Save listWidget position */
     Settings->setValueToGroup("MainWindow", "SplitterState", ui->splitter->saveState());
     Settings->setValueToGroup("MainWindow", "State", saveState());
+
+    rsEvents->unregisterEventsHandler(mEventHandlerId_friends);
 
     delete statusComboBox;
     delete peerstatus;
@@ -604,28 +623,6 @@ void MainWindow::setNewPage(int page)
 
 		ui->listWidget->setCurrentRow(ui->stackPages->currentIndex());
 	}
-}
-
-void MainWindow::displayDiskSpaceWarning(int loc,int size_limit_mb)
-{
-	QString locString ;
-	switch(loc)
-	{
-		case RS_PARTIALS_DIRECTORY: 	locString = "Partials" ;
-												break ;
-
-		case RS_CONFIG_DIRECTORY: 		locString = "Config" ;
-												break ;
-
-		case RS_DOWNLOAD_DIRECTORY: 	locString = "Download" ;
-												break ;
-
-		default:
-												std::cerr << "Error: " << __PRETTY_FUNCTION__ << " was called with an unknown parameter loc=" << loc << std::endl ;
-												return ;
-	}
-	QMessageBox::critical(NULL,tr("Low disk space warning"),
-				tr("The disk space in your")+" "+locString +" "+tr("directory is running low (current limit is")+" "+QString::number(size_limit_mb)+tr("MB). \n\n RetroShare will now safely suspend any disk access to this directory. \n\n Please make some free space and click Ok.")) ;
 }
 
 /** Creates a tray icon with a context menu and adds it to the system
@@ -967,7 +964,9 @@ void MainWindow::postModDirectories(bool /*update_local*/)
 {
     //RSettingsPage::postModDirectories(update_local);
 
+#if QT_VERSION < QT_VERSION_CHECK (6, 0, 0)
     QCoreApplication::flush();
+#endif
 }
 
 #ifdef WINDOWS_SYS
@@ -1378,11 +1377,6 @@ void MainWindow::receiveNewArgs(QStringList args)
         retroshareLinkActivated(link.toUrl());
 }
 
-void MainWindow::displayErrorMessage(int /*a*/,int /*b*/,const QString& error_msg)
-{
-	QMessageBox::critical(NULL, tr("Internal Error"),error_msg) ;
-}
-
 void MainWindow::closeEvent(QCloseEvent *e)
 {
     e->ignore();
@@ -1480,7 +1474,7 @@ MainWindow::retranslateUi()
 }
 
 /* set status object to status value */
-static void setStatusObject(QObject *pObject, int nStatus)
+static void setStatusObject(QObject *pObject, RsStatusValue nStatus)
 {
     QMenu *pMenu = dynamic_cast<QMenu*>(pObject);
     if (pMenu) {
@@ -1491,7 +1485,7 @@ static void setStatusObject(QObject *pObject, int nStatus)
                 continue;
             }
 
-            if (pAction->data().toInt() == nStatus) {
+            if (pAction->data().toInt() == (int)nStatus) {
                 pAction->setChecked(true);
                 break;
             }
@@ -1501,7 +1495,7 @@ static void setStatusObject(QObject *pObject, int nStatus)
     RSComboBox *pComboBox = dynamic_cast<RSComboBox*>(pObject);
     if (pComboBox) {
         /* set index of combobox */
-        int nIndex = pComboBox->findData(nStatus, Qt::UserRole);
+        int nIndex = pComboBox->findData((int)nStatus, Qt::UserRole);
         if (nIndex != -1) {
             pComboBox->setCurrentIndex(nIndex);
         }
@@ -1564,20 +1558,20 @@ void MainWindow::initializeStatusObject(QObject *pObject, bool bConnect)
         /* initialize menu */
         QActionGroup *pGroup = new QActionGroup(pMenu);
 
-        QAction *pAction = new QAction(QIcon(StatusDefs::imageStatus(RS_STATUS_ONLINE)), StatusDefs::name(RS_STATUS_ONLINE), pMenu);
-        pAction->setData(RS_STATUS_ONLINE);
+        QAction *pAction = new QAction(QIcon(StatusDefs::imageStatus(RsStatusValue::RS_STATUS_ONLINE)), StatusDefs::name(RsStatusValue::RS_STATUS_ONLINE), pMenu);
+        pAction->setData((int)RsStatusValue::RS_STATUS_ONLINE);
         pAction->setCheckable(true);
         pMenu->addAction(pAction);
         pGroup->addAction(pAction);
 
-        pAction = new QAction(QIcon(StatusDefs::imageStatus(RS_STATUS_BUSY)), StatusDefs::name(RS_STATUS_BUSY), pMenu);
-        pAction->setData(RS_STATUS_BUSY);
+        pAction = new QAction(QIcon(StatusDefs::imageStatus(RsStatusValue::RS_STATUS_BUSY)), StatusDefs::name(RsStatusValue::RS_STATUS_BUSY), pMenu);
+        pAction->setData((int)RsStatusValue::RS_STATUS_BUSY);
         pAction->setCheckable(true);
         pMenu->addAction(pAction);
         pGroup->addAction(pAction);
 
-        pAction = new QAction(QIcon(StatusDefs::imageStatus(RS_STATUS_AWAY)), StatusDefs::name(RS_STATUS_AWAY), pMenu);
-        pAction->setData(RS_STATUS_AWAY);
+        pAction = new QAction(QIcon(StatusDefs::imageStatus(RsStatusValue::RS_STATUS_AWAY)), StatusDefs::name(RsStatusValue::RS_STATUS_AWAY), pMenu);
+        pAction->setData((int)RsStatusValue::RS_STATUS_AWAY);
         pAction->setCheckable(true);
         pMenu->addAction(pAction);
         pGroup->addAction(pAction);
@@ -1589,9 +1583,9 @@ void MainWindow::initializeStatusObject(QObject *pObject, bool bConnect)
         /* initialize combobox */
         RSComboBox *pComboBox = dynamic_cast<RSComboBox*>(pObject);
         if (pComboBox) {
-            pComboBox->addItem(QIcon(StatusDefs::imageStatus(RS_STATUS_ONLINE)), StatusDefs::name(RS_STATUS_ONLINE), RS_STATUS_ONLINE);
-            pComboBox->addItem(QIcon(StatusDefs::imageStatus(RS_STATUS_BUSY)), StatusDefs::name(RS_STATUS_BUSY), RS_STATUS_BUSY);
-            pComboBox->addItem(QIcon(StatusDefs::imageStatus(RS_STATUS_AWAY)), StatusDefs::name(RS_STATUS_AWAY), RS_STATUS_AWAY);
+            pComboBox->addItem(QIcon(StatusDefs::imageStatus(RsStatusValue::RS_STATUS_ONLINE)), StatusDefs::name(RsStatusValue::RS_STATUS_ONLINE), (int)RsStatusValue::RS_STATUS_ONLINE);
+            pComboBox->addItem(QIcon(StatusDefs::imageStatus(RsStatusValue::RS_STATUS_BUSY)), StatusDefs::name(RsStatusValue::RS_STATUS_BUSY), (int)RsStatusValue::RS_STATUS_BUSY);
+            pComboBox->addItem(QIcon(StatusDefs::imageStatus(RsStatusValue::RS_STATUS_AWAY)), StatusDefs::name(RsStatusValue::RS_STATUS_AWAY), (int)RsStatusValue::RS_STATUS_AWAY);
 
             if (bConnect) {
                 connect(pComboBox, SIGNAL(activated(int)), this, SLOT(statusChangedComboBox(int)));
@@ -1619,11 +1613,11 @@ void MainWindow::removeStatusObject(QObject *pObject)
 }
 
 /** Save own status Online,Away,Busy **/
-void MainWindow::setStatus(QObject *pObject, int nStatus)
+void MainWindow::setStatus(QObject *pObject, RsStatusValue nStatus)
 {
-    if (isIdle && nStatus == (int) RS_STATUS_ONLINE) {
+    if (isIdle && nStatus == RsStatusValue::RS_STATUS_ONLINE) {
         /* set idle only when I am online */
-        nStatus = RS_STATUS_INACTIVE;
+        nStatus = RsStatusValue::RS_STATUS_INACTIVE;
     }
 
     rsStatus->sendStatus(RsPeerId(), nStatus);
@@ -1643,7 +1637,7 @@ void MainWindow::statusChangedMenu(QAction *pAction)
         return;
     }
 
-    setStatus(pAction->parent(), pAction->data().toInt());
+    setStatus(pAction->parent(), RsStatusValue(pAction->data().toInt()));
 }
 
 /* new status from combobox in statusbar */
@@ -1654,7 +1648,7 @@ void MainWindow::statusChangedComboBox(int index)
     }
 
     /* no object known */
-    setStatus(NULL, statusComboBox->itemData(index, Qt::UserRole).toInt());
+    setStatus(NULL, RsStatusValue(statusComboBox->itemData(index, Qt::UserRole).toInt()));
 }
 
 /*new setting*/

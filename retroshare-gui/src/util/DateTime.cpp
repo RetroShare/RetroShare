@@ -19,13 +19,14 @@
  *******************************************************************************/
 
 #include <QDateTime>
+#include <QLocale>
 
 #include "DateTime.h"
 #include "rshare.h"
 
 QString DateTime::formatLongDate(time_t dateValue)
 {
-	return formatLongDate(QDateTime::fromTime_t(dateValue).date());
+	return formatLongDate(DateTimeFromTime_t(dateValue).date());
 }
 
 QString DateTime::formatLongDate(const QDate &dateValue)
@@ -41,7 +42,7 @@ QString DateTime::formatLongDate(const QDate &dateValue)
 
 QString DateTime::formatLongDateTime(time_t datetimeValue)
 {
-	return formatLongDateTime(QDateTime::fromTime_t(datetimeValue));
+	return formatLongDateTime(DateTimeFromTime_t(datetimeValue));
 }
 
 QString DateTime::formatLongDateTime(const QDateTime &datetimeValue)
@@ -51,7 +52,7 @@ QString DateTime::formatLongDateTime(const QDateTime &datetimeValue)
 
 QString DateTime::formatDateTime(time_t datetimeValue)
 {
-	return formatDateTime(QDateTime::fromTime_t(datetimeValue));
+	return formatDateTime(DateTimeFromTime_t(datetimeValue));
 }
 
 QString DateTime::formatDateTime(const QDateTime &datetimeValue)
@@ -61,20 +62,38 @@ QString DateTime::formatDateTime(const QDateTime &datetimeValue)
 
 QString DateTime::formatDate(time_t dateValue)
 {
-	return formatDate(QDateTime::fromTime_t(dateValue).date());
+	return formatDate(DateTimeFromTime_t(dateValue).date());
 }
 
 QString DateTime::formatDate(const QDate &dateValue)
 {
-	return dateValue.toString(Qt::SystemLocaleShortDate);
+	return QLocale::system().toString(dateValue, QLocale::ShortFormat);
 }
 
 QString DateTime::formatTime(time_t timeValue)
 {
-	return formatTime(QDateTime::fromTime_t(timeValue).time());
+	return formatTime(DateTimeFromTime_t(timeValue).time());
 }
 
 QString DateTime::formatTime(const QTime &timeValue)
 {
-	return timeValue.toString(Qt::SystemLocaleShortDate);
+	return QLocale::system().toString(timeValue, QLocale::ShortFormat);
+}
+
+QDateTime DateTime::DateTimeFromTime_t(time_t timeValue)
+{
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+	return QDateTime::fromSecsSinceEpoch(timeValue);
+#else
+	return QDateTime::fromTime_t(timeValue);
+#endif
+}
+
+time_t DateTime::DateTimeToTime_t(const QDateTime& dateTime)
+{
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+	return dateTime.toSecsSinceEpoch();
+#else
+	return dateTime.toTime_t();
+#endif
 }

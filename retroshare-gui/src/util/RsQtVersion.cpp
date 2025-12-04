@@ -1,7 +1,7 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/gxs/GxsGroupFeedItem.h                               *
+ * util/RsQtVersion.cpp                                                        *
  *                                                                             *
- * Copyright 2012-2013  by Robert Fernie      <retroshare.project@gmail.com>   *
+ * Copyright (C) 2025 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,57 +18,19 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef _GXS_GROUPFEEDITEM_H
-#define _GXS_GROUPFEEDITEM_H
+#include <QtGlobal>
 
-#include <QMetaType>
+// Functions to compile with Qt 4, Qt 5 and Qt 6
 
-#include <retroshare/rsgxsifacehelper.h>
-#include "gui/feeds/FeedItem.h"
-#include "gui/RetroShareLink.h"
-
-#include <stdint.h>
-
-class FeedHolder;
-class RsGxsUpdateBroadcastBase;
-
-class GxsGroupFeedItem : public FeedItem
+#if QT_VERSION < QT_VERSION_CHECK (5, 15, 0)
+#include <QLabel>
+QPixmap QLabel_pixmap(QLabel* label)
 {
-	Q_OBJECT
+	const QPixmap *pixmap = label->pixmap();
+	if (pixmap) {
+		return *pixmap;
+	}
 
-public:
-	/** Note parent can = NULL */
-	GxsGroupFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, RsGxsIfaceHelper *iface, bool autoUpdate);
-	virtual ~GxsGroupFeedItem();
-
-	RsGxsGroupId groupId() const { return mGroupId; }
-	uint32_t feedId() const { return mFeedId; }
-
-protected:
-	/* load group data */
-	void requestGroup();
-
-	virtual void loadGroup() = 0;
-	virtual RetroShareLink::enumType getLinkType() = 0;
-	virtual QString groupName() = 0;
-
-protected slots:
-	void subscribe();
-	void unsubscribe();
-	void copyGroupLink();
-
-protected:
-	bool mIsHome;
-	RsGxsIfaceHelper *mGxsIface;
-
-private slots:
-	/* RsGxsUpdateBroadcastBase */
-	void fillDisplaySlot(bool complete);
-
-private:
-	RsGxsGroupId mGroupId;
-};
-
-Q_DECLARE_METATYPE(RsGxsGroupId)
-
+	return QPixmap();
+}
 #endif

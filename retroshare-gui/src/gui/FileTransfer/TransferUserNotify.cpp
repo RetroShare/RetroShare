@@ -20,7 +20,6 @@
 
 #include "retroshare/rsfiles.h"
 #include "TransferUserNotify.h"
-#include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
 
 TransferUserNotify::TransferUserNotify(QObject *parent) :

@@ -27,7 +27,6 @@
 
 #include "MessagesDialog.h"
 
-#include "gui/notifyqt.h"
 #include "gui/common/TagDefs.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/RSElidedItemDelegate.h"
@@ -45,7 +44,7 @@
 
 #include "util/DateTime.h"
 #include "util/misc.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/qtthreadsutils.h"
 #include "util/RsProtectedTimer.h"
 
@@ -117,7 +116,11 @@ public:
 protected:
 	bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
 	{
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+		return QVariant::compare(sourceModel()->data(left, RsMessageModel::SortRole), sourceModel()->data(right, RsMessageModel::SortRole)) < 0;
+#else
 		return sourceModel()->data(left, RsMessageModel::SortRole) < sourceModel()->data(right, RsMessageModel::SortRole) ;
+#endif
 	}
 
 	bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override
@@ -157,7 +160,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     mMessageProxyModel->setSortRole(RsMessageModel::SortRole);
     mMessageProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
 	mMessageProxyModel->setFilterRole(RsMessageModel::FilterRole);
-	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));
+	QSortFilterProxyModel_setFilterRegularExpression(mMessageProxyModel, RsMessageModel::FilterString);
 
     ui.messageTreeWidget->setModel(mMessageProxyModel);
 
@@ -209,15 +212,15 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_CONTENT,true);
     ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_MSGID,true);
 
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_STAR,       fm.width('0')*1.5);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_ATTACHMENT, fm.width('0')*1.5);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_READ,       fm.width('0')*1.5);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_SPAM,       fm.width('0')*1.5);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_STAR,       QFontMetrics_horizontalAdvance(fm, '0')*1.5);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_ATTACHMENT, QFontMetrics_horizontalAdvance(fm, '0')*1.5);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_READ,       QFontMetrics_horizontalAdvance(fm, '0')*1.5);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_SPAM,       QFontMetrics_horizontalAdvance(fm, '0')*1.5);
 
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_SUBJECT,    fm.width("You have a message")*3.0);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_AUTHOR,     fm.width("[Retroshare]")*1.1);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_TO,         fm.width("[Retroshare]")*1.1);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_DATE,       fm.width("01/01/1970")*1.1);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_SUBJECT,    QFontMetrics_horizontalAdvance(fm, "You have a message")*3.0);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_AUTHOR,     QFontMetrics_horizontalAdvance(fm, "[Retroshare]")*1.1);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_TO,         QFontMetrics_horizontalAdvance(fm, "[Retroshare]")*1.1);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_DATE,       QFontMetrics_horizontalAdvance(fm, "01/01/1970")*1.1);
 
     msgwheader->setSectionResizeMode(RsMessageModel::COLUMN_THREAD_SUBJECT,    QHeaderView::Interactive);
     msgwheader->setSectionResizeMode(RsMessageModel::COLUMN_THREAD_AUTHOR,     QHeaderView::Interactive);
@@ -305,7 +308,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_STATUS );
 
     mTagEventHandlerId = 0;
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleTagEvent_main_thread(event); }); }, mEventHandlerId, RsEventType::MAIL_TAG );
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject( [this,event]() { handleTagEvent_main_thread(event); }); }, mTagEventHandlerId, RsEventType::MAIL_TAG );
 
     mFontSizeHandler.registerFontSize(ui.listWidget, 1.5f, [this] (QAbstractItemView*, int fontSize) {
         // Set new font size on all items
@@ -346,6 +349,8 @@ void MessagesDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> even
         break;
     case RsMailStatusEventCode::MESSAGE_RECEIVED_ACK:
     case RsMailStatusEventCode::SIGNATURE_FAILED:
+        break;
+    default:
         break;
     }
 }
@@ -1016,7 +1021,7 @@ void MessagesDialog::changeQuickView(int newrow)
 	}
 
 	mMessageModel->setQuickViewFilter(f);
-    mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));	// this triggers the update of the proxy model
+    QSortFilterProxyModel_setFilterRegularExpression(mMessageProxyModel, RsMessageModel::FilterString);	// this triggers the update of the proxy model
 }
 
 // click in messageTreeWidget
@@ -1084,11 +1089,13 @@ void MessagesDialog::doubleClicked(const QModelIndex& proxy_index)
     }
 
     /* edit message */
-    switch (Settings->getMsgOpen()) {
-    case RshareSettings::MSG_OPEN_TAB:
+    switch (Settings->getMsgOpen())
+    {
+    default:
+    case RsSettingsMsgOptions::MSG_OPEN_TAB:
         openAsTab();
         break;
-    case RshareSettings::MSG_OPEN_WINDOW:
+    case RsSettingsMsgOptions::MSG_OPEN_WINDOW:
         openAsWindow();
         break;
     }
@@ -1246,7 +1253,7 @@ void MessagesDialog::undeletemessage()
 
 void MessagesDialog::filterChanged(const QString& text)
 {
-    QStringList items = text.split(' ',QString::SkipEmptyParts);
+    QStringList items = text.split(' ',QtSkipEmptyParts);
 
     RsMessageModel::FilterType f = RsMessageModel::FILTER_TYPE_NONE;
 
@@ -1263,7 +1270,7 @@ void MessagesDialog::filterChanged(const QString& text)
     }
 
     mMessageModel->setFilter(f,items);
-	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));	// this triggers the update of the proxy model
+	QSortFilterProxyModel_setFilterRegularExpression(mMessageProxyModel, RsMessageModel::FilterString);	// this triggers the update of the proxy model
 
     QCoreApplication::processEvents();
 }
@@ -1287,9 +1294,9 @@ void MessagesDialog::filterColumnChanged(int column)
     default:break;
     }
 
-    QStringList items = ui.filterLineEdit->text().split(' ',QString::SkipEmptyParts);
+    QStringList items = ui.filterLineEdit->text().split(' ',QtSkipEmptyParts);
     mMessageModel->setFilter(f,items);
-	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));	// this triggers the update of the proxy model
+	QSortFilterProxyModel_setFilterRegularExpression(mMessageProxyModel, RsMessageModel::FilterString);	// this triggers the update of the proxy model
 
     // save index
     Settings->setValueToGroup("MessageDialog", "filterColumn", column);

@@ -21,6 +21,7 @@
 // This code is inspired from http://doc.qt.io/qt-5/qtwidgets-graphicsview-elasticnodes-node-cpp.html
 
 #include "gui/common/FilesDefs.h"
+#include "gui/settings/rsharesettings.h"
 #include <math.h>
 
 #include <QApplication>
@@ -38,6 +39,7 @@
 #include "edge.h"
 #include "elnode.h"
 #include "graphwidget.h"
+#include "util/RsQtVersion.h"
 
 #define IMAGE_AUTHED         ":/images/accepted16.png"
 #define IMAGE_DENIED         ":/images/denied16.png"
@@ -302,7 +304,11 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 #endif
 	}
 	painter->setBrush(gradient);
-	painter->setPen(QPen(Qt::black, 0));
+	if (Settings->getSheetName() == ":Standard_Dark"){
+		painter->setPen(QPen(Qt::white, 0));
+	} else {
+		painter->setPen(QPen(Qt::black, 0));
+	}
 	painter->drawEllipse(-mNodeDrawSize2, -mNodeDrawSize2, mNodeDrawSize, mNodeDrawSize);
     
     	QString txt = QString::fromUtf8(_desc_string.c_str());
@@ -313,7 +319,7 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
 	if (!mDeterminedBB)
 	{
-		QRect textBox = painter->boundingRect(-10, 5*f, QFontMetricsF(graph->font()).width(txt), 1.5*m, Qt::AlignVCenter, QString::fromUtf8(_desc_string.c_str()));
+		QRect textBox = painter->boundingRect(-10, 5*f, QFontMetrics_horizontalAdvance(QFontMetricsF(graph->font()), txt), 1.5*m, Qt::AlignVCenter, QString::fromUtf8(_desc_string.c_str()));
 		mBBWidth = textBox.width()+40*f;
 		mDeterminedBB = true;
 	}

@@ -36,11 +36,12 @@
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/HandleRichText.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "gui/Posted/PostedCreatePostDialog.h"
 #include "gui/gxsforums/CreateGxsForumMsg.h"
 #include "gui/common/FilesDefs.h"
 #include "util/imageutil.h"
+#include "util/DateTime.h"
 
 #include "retroshare/rsiface.h"
 #include "retroshare/rsgxsforums.h"
@@ -476,8 +477,7 @@ void FeedReaderMessageWidget::calculateMsgIconsAndFonts(QTreeWidgetItem *item)
 void FeedReaderMessageWidget::updateMsgItem(QTreeWidgetItem *item, FeedMsgInfo &info)
 {
 	QString title = QString::fromUtf8(info.title.c_str());
-	QDateTime qdatetime;
-	qdatetime.setTime_t(info.pubDate);
+	QDateTime qdatetime = DateTime::DateTimeFromTime_t(info.pubDate);
 
 	/* add string to all data */
 	QString sort = QString("%1_%2_%3").arg(title, qdatetime.toString("yyyyMMdd_hhmmss")).arg(info.feedId);
@@ -515,12 +515,12 @@ void FeedReaderMessageWidget::feedChanged(uint32_t feedId, int type)
 		return;
 	}
 
-	if (type == NOTIFY_TYPE_DEL) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_DEL) {
 		setFeedId(0);
 		return;
 	}
 
-	if (type == NOTIFY_TYPE_MOD) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_MOD) {
 		if (!mFeedReader->getFeedInfo(mFeedId, mFeedInfo)) {
 			setFeedId(0);
 			return;
@@ -555,18 +555,18 @@ void FeedReaderMessageWidget::msgChanged(uint32_t feedId, const QString &msgId, 
 	}
 
 	FeedMsgInfo msgInfo;
-	if (type != NOTIFY_TYPE_DEL) {
+    if (type != FeedReaderNotify::NOTIFY_TYPE_DEL) {
 		if (!mFeedReader->getMsgInfo(feedId, msgId.toStdString(), msgInfo)) {
 			return;
 		}
 	}
 
-	if (type == NOTIFY_TYPE_MOD || type == NOTIFY_TYPE_DEL) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_MOD || type == FeedReaderNotify::NOTIFY_TYPE_DEL) {
 		QTreeWidgetItemIterator it(ui->msgTreeWidget);
 		QTreeWidgetItem *item;
 		while ((item = *it) != NULL) {
 			if (item->data(COLUMN_MSG_DATA, ROLE_MSG_ID).toString() == msgId) {
-				if (type == NOTIFY_TYPE_MOD) {
+                if (type == FeedReaderNotify::NOTIFY_TYPE_MOD) {
 					updateMsgItem(item, msgInfo);
 					filterItem(item);
 				} else {
@@ -578,13 +578,13 @@ void FeedReaderMessageWidget::msgChanged(uint32_t feedId, const QString &msgId, 
 		}
 	}
 
-	if (type == NOTIFY_TYPE_MOD) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_MOD) {
 		if (msgId.toStdString() == currentMsgId()) {
 			updateCurrentMessage();
 		}
 	}
 
-	if (type == NOTIFY_TYPE_ADD) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_ADD) {
 		QTreeWidgetItem *item = new RSTreeWidgetItem(mMsgCompareRole);
 		updateMsgItem(item, msgInfo);
 		ui->msgTreeWidget->addTopLevelItem(item);

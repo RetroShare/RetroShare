@@ -26,7 +26,6 @@
 #include <set>
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QFrame>
 
 #include <stdint.h>

@@ -174,7 +174,7 @@ void HashBox::addAttachments(const QStringList& files,TransferRequestFlags tfl, 
 		hashingInfo.item = file;
 		hashingInfo.flag = flag;
 		mHashingInfos.push_back(hashingInfo);
-		ui->verticalLayout->addWidget(file, 1, 0);
+		ui->verticalLayout->addWidget(file, 1);
 	}
 	QApplication::processEvents();
 
@@ -259,7 +259,7 @@ void HashBox::checkAttachmentReady()
 	emit fileHashingFinished(hashedFiles);
 
 	auto ev = std::make_shared<RsSharedDirectoriesEvent>();
-	ev->mEventCode = RsSharedDirectoriesEventCode::DIRECTORY_SWEEP_ENDED;
+    ev->mEventCode = RsSharedDirectoriesEventCode::HASHING_PROCESS_FINISHED;
 	if(rsEvents)
 		rsEvents->postEvent(ev);
 }

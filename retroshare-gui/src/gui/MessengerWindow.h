@@ -39,7 +39,7 @@ public slots:
 
 protected:
     /** Default Constructor */
-    MessengerWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    MessengerWindow(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
     /** Default Destructor */
     ~MessengerWindow();
 
@@ -52,7 +52,7 @@ private slots:
     /** Open Shared Manager **/
     void openShareManager();
 
-    void updateOwnStatus(const QString &peer_id, int status);
+    void updateOwnStatus(const QString &peer_id, RsStatusValue status);
 
     void savestatusmessage();
 
@@ -68,6 +68,7 @@ private:
 
     static std::set<RsPgpId> expandedPeers ;
     static std::set<RsNodeGroupId> expandedGroups ;
+    RsEventsHandlerId_t mEventHandlerId ;
 };
 
 #endif

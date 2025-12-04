@@ -39,7 +39,6 @@
 #include "retroshare/rstor.h"
 #include "retroshare/rsidentity.h"
 #include "retroshare/rsinit.h"
-#include "retroshare/rsnotify.h"
 #include "rsserver/rsaccounts.h"
 #include "util/rsrandom.h"
 
@@ -633,7 +632,9 @@ void GenCertDialog::genPerson()
         std::cout << "Waiting ed->processEvents()" << std::endl;
 #endif
 		time_t waitEnd = time(NULL) + 10;//Wait no more than 10 sec to processEvents
+#if QT_VERSION < QT_VERSION_CHECK (6, 0, 0)
 		if (ed->hasPendingEvents())
+#endif
 			while(ed->processEvents(QEventLoop::AllEvents) && (time(NULL) < waitEnd));
 
 		std::string email_str = "" ;
@@ -661,7 +662,7 @@ void GenCertDialog::genPerson()
 	std::cout << "RsAccounts::GenerateSSLCertificate" << std::endl;
 
     // now cache the PGP password so that it's not asked again for immediately signing the key
-    rsNotify->cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
+    rsLoginHelper->cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
 
     bool okGen = RsAccounts::createNewAccount(PGPId, "", genLoc, "", isHiddenLoc, isAutoTor, sslPasswd, sslId, err);
 
@@ -674,7 +675,7 @@ void GenCertDialog::genPerson()
             // Normally we should clear the cached passphrase as soon as possible. However,some other GUI components may still need it at start.
             // (csoler) This is really bad: we have to guess that 30 secs will be enough. I have no better way to do this.
 
-            QTimer::singleShot(30000, []() { rsNotify->clearPgpPassphrase(); } );
+            QTimer::singleShot(30000, []() { RsLoginHelper::clearPgpPassphrase(); } );
 
             accept();
 		}
@@ -682,7 +683,7 @@ void GenCertDialog::genPerson()
 	else
     {
         // Now clear the cached passphrase
-        rsNotify->clearPgpPassphrase();
+        RsLoginHelper::clearPgpPassphrase();
 
         /* Message Dialog */
         QMessageBox::warning(this,

@@ -35,21 +35,50 @@
 PostedGroupItem::PostedGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate) :
     GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsPosted, autoUpdate)
 {
-	setup();
+    mLoadingGroup = false;
+    mLoadingStatus = LOADING_STATUS_NO_DATA;
 
-	requestGroup();
+    setup();
 }
 
-PostedGroupItem::PostedGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, bool isHome, bool autoUpdate) :
-    GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsPosted, autoUpdate)
+void PostedGroupItem::paintEvent(QPaintEvent *e)
 {
-	setup();
+    /* This method employs a trick to trigger a deferred loading. The post and group is requested only
+     * when actually displayed on the screen. */
 
-	setGroup(group);
+    if(mLoadingStatus != LOADING_STATUS_FILLED && !mGroup.mMeta.mGroupId.isNull())
+        mLoadingStatus = LOADING_STATUS_HAS_DATA;
+
+    if(mGroup.mMeta.mGroupId.isNull() && !mLoadingGroup)
+        loadGroup();
+
+    switch(mLoadingStatus)
+    {
+    case LOADING_STATUS_FILLED:
+    case LOADING_STATUS_NO_DATA:
+    default:
+        break;
+
+    case LOADING_STATUS_HAS_DATA:
+        fill();
+        mLoadingStatus = LOADING_STATUS_FILLED;
+        break;
+    }
+
+    GxsGroupFeedItem::paintEvent(e) ;
 }
-
 PostedGroupItem::~PostedGroupItem()
 {
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
+
+    while( mLoadingGroup && std::chrono::steady_clock::now() < timeout)
+    {
+        RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
+                << (mLoadingGroup ? "Group " : "")
+                << "loading finished." << std::endl;
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
 	delete(ui);
 }
 
@@ -79,22 +108,10 @@ void PostedGroupItem::setup()
 	ui->expandFrame->hide();
 }
 
-bool PostedGroupItem::setGroup(const RsPostedGroup &group)
-{
-	if (groupId() != group.mMeta.mGroupId) {
-		std::cerr << "PostedGroupItem::setContent() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	mGroup = group;
-	fill();
-
-	return true;
-}
-
 void PostedGroupItem::loadGroup()
 {
+    mLoadingGroup = true;
+
 	RsThread::async([this]()
 	{
 		// 1 - get group data
@@ -109,14 +126,18 @@ void PostedGroupItem::loadGroup()
 		if(!rsPosted->getBoardsInfo(groupIds,groups))
 		{
 			RsErr() << "GxsPostedGroupItem::loadGroup() ERROR getting data" << std::endl;
-			return;
+            mLoadingGroup = false;
+            deferred_update();
+            return;
 		}
 
 		if (groups.size() != 1)
 		{
 			std::cerr << "GxsPostedGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
-			return;
+            mLoadingGroup = false;
+            deferred_update();
+            return;
 		}
 		RsPostedGroup group(groups[0]);
 
@@ -126,7 +147,8 @@ void PostedGroupItem::loadGroup()
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			setGroup(group);
+            mGroup = group;
+            mLoadingGroup = false;
 
 		}, this );
 	});
@@ -153,7 +175,11 @@ void PostedGroupItem::fill()
 
 	ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));
 	
-	if (mGroup.mGroupImage.mData != NULL) {
+    ui->logoLabel->setEnableZoom(false);
+    int desired_height = QFontMetricsF(font()).height() * ITEM_HEIGHT_FACTOR;
+    ui->logoLabel->setFixedSize(ITEM_PICTURE_FORMAT_RATIO*desired_height,desired_height);
+
+    if (mGroup.mGroupImage.mData != NULL) {
 		QPixmap postedImage;
 		GxsIdDetails::loadPixmapFromData(mGroup.mGroupImage.mData, mGroup.mGroupImage.mSize, postedImage,GxsIdDetails::ORIGINAL);
 		ui->logoLabel->setPixmap(QPixmap(postedImage));

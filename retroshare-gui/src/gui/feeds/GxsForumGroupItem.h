@@ -23,7 +23,7 @@
 
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsevents.h>
-#include "gui/gxs/GxsGroupFeedItem.h"
+#include "gui/feeds/GxsGroupFeedItem.h"
 
 namespace Ui {
 class GxsForumGroupItem;
@@ -39,14 +39,15 @@ public:
 	/** Default Constructor */
 	GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate);
 	GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const std::list<RsGxsId>& added_moderators,const std::list<RsGxsId>& removed_moderators,bool isHome, bool autoUpdate);
-	GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumGroup &group, bool isHome, bool autoUpdate);
-    virtual ~GxsForumGroupItem() override;
+    //GxsForumGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumGroup &group, bool isHome, bool autoUpdate);
 
-	bool setGroup(const RsGxsForumGroup &group);
+    virtual ~GxsForumGroupItem() override;
 
     uint64_t uniqueIdentifier() const override { return hash_64bits("GxsForumGroupItem " + groupId().toStdString()) ; }
 protected:
-	/* FeedItem */
+    virtual void paintEvent(QPaintEvent *) override;
+
+    /* FeedItem */
     virtual void doExpand(bool open) override;
 
 	/* GxsGroupFeedItem */
@@ -68,6 +69,9 @@ private:
 
 	/** Qt Designer generated object */
 	Ui::GxsForumGroupItem *ui;
+
+    bool mLoadingGroup;
+    LoadingStatus mLoadingStatus;
 
     std::list<RsGxsId> mAddedModerators;
     std::list<RsGxsId> mRemovedModerators;

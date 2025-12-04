@@ -21,15 +21,15 @@
 #include <rshare.h>
 #include "NotifyPage.h"
 
-#include <retroshare/rsnotify.h>
 #include <retroshare/rsplugin.h>
 #include "rsharesettings.h"
 
 #include "gui/MainWindow.h"
+#include "gui/RsGUIEventManager.h"
 #include "gui/common/UserNotify.h"
 #include "gui/common/FeedNotify.h"
 #include "gui/common/ToasterNotify.h"
-#include "gui/notifyqt.h"
+#include "gui/feeds/FeedItem.h"
 #include "gui/NewsFeed.h"
 #include "util/misc.h"
 
@@ -44,8 +44,8 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
 	connect(ui.testFeedButton, SIGNAL(clicked()), this, SLOT(testFeed()));
 	connect(ui.testToasterButton, SIGNAL(clicked()), this, SLOT(testToaster()));
-	connect(ui.pushButtonDisableAll,SIGNAL(toggled(bool)), NotifyQt::getInstance(), SLOT(SetDisableAll(bool)));
-	connect(NotifyQt::getInstance(),SIGNAL(disableAllChanged(bool)), ui.pushButtonDisableAll, SLOT(setChecked(bool)));
+    connect(ui.pushButtonDisableAll,SIGNAL(toggled(bool)), RsGUIEventManager::getInstance(), SLOT(SetDisableAll(bool)));
+    connect(RsGUIEventManager::getInstance(),SIGNAL(disableAllChanged(bool)), ui.pushButtonDisableAll, SLOT(setChecked(bool)));
 
 	ui.notify_Blogs->hide();
 
@@ -129,7 +129,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
         QCheckBox *enabledCheckBox = new QCheckBox(name, this);
         enabledCheckBox->setFont(font);
-        ui.notifyLayout->addWidget(enabledCheckBox, rowFeed, 0, 0);
+        ui.notifyLayout->addWidget(enabledCheckBox, rowFeed, 0);
         connect(enabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(notifyToggled()));
 
         QCheckBox *combinedCheckBox = new QCheckBox(tr("Combined"), this);
@@ -180,32 +180,32 @@ NotifyPage::~NotifyPage()
 {
 }
 
-uint NotifyPage::getNewsFlags()
+RsFeedTypeFlags NotifyPage::getNewsFlags()
 {
-    uint newsFlags = 0;
+    RsFeedTypeFlags newsFlags(RsFeedTypeFlags::RS_FEED_TYPE_NONE);
 
     if (ui.notify_Peers->isChecked())
-        newsFlags |= RS_FEED_TYPE_PEER;
+        newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_PEER;
     if (ui.notify_Circles->isChecked())
-        newsFlags |= RS_FEED_TYPE_CIRCLE;
+        newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_CIRCLE;
     if (ui.notify_Channels->isChecked())
-        newsFlags |= RS_FEED_TYPE_CHANNEL;
+        newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_CHANNEL;
     if (ui.notify_Forums->isChecked())
-        newsFlags |= RS_FEED_TYPE_FORUM;
+        newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_FORUM;
     if (ui.notify_Posted->isChecked())
-        newsFlags |= RS_FEED_TYPE_POSTED;
+        newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_POSTED;
 #if 0
     if (ui.notify_Blogs->isChecked())
         newsFlags |= RS_FEED_TYPE_BLOG;
 #endif
     if (ui.notify_Messages->isChecked())
-        newsFlags |= RS_FEED_TYPE_MSG;
+        newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_MSG;
     if (ui.notify_Chat->isChecked())
-        newsFlags |= RS_FEED_TYPE_CHAT;
+        newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_CHAT;
     if (ui.notify_Security->isChecked())
-        newsFlags |= RS_FEED_TYPE_SECURITY;
+        newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_SECURITY;
     if (ui.notify_SecurityIp->isChecked())
-        newsFlags |= RS_FEED_TYPE_SECURITY_IP;
+        newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP;
 
     return newsFlags;
 }
@@ -220,24 +220,24 @@ QString NotifyPage::helpText() const
 
 }
 
-uint NotifyPage::getNotifyFlags()
+RsNotifyPopupFlags NotifyPage::getNotifyFlags()
 {
-    uint notifyFlags = 0;
+    RsNotifyPopupFlags notifyFlags(RsNotifyPopupFlags::RS_POPUP_NONE);
 
     if (ui.popup_Connect->isChecked())
-        notifyFlags |= RS_POPUP_CONNECT;
+        notifyFlags |= RsNotifyPopupFlags::RS_POPUP_CONNECT;
     if (ui.popup_NewMsg->isChecked())
-        notifyFlags |= RS_POPUP_MSG;
+        notifyFlags |= RsNotifyPopupFlags::RS_POPUP_MSG;
     if (ui.popup_DownloadFinished->isChecked())
-        notifyFlags |= RS_POPUP_DOWNLOAD;
+        notifyFlags |= RsNotifyPopupFlags::RS_POPUP_DOWNLOAD;
     if (ui.popup_PrivateChat->isChecked())
-        notifyFlags |= RS_POPUP_CHAT;
+        notifyFlags |= RsNotifyPopupFlags::RS_POPUP_CHAT;
     if (ui.popup_GroupChat->isChecked())
-        notifyFlags |= RS_POPUP_GROUPCHAT;
+        notifyFlags |= RsNotifyPopupFlags::RS_POPUP_GROUPCHAT;
     if (ui.popup_ChatLobby->isChecked())
-        notifyFlags |= RS_POPUP_CHATLOBBY;
+        notifyFlags |= RsNotifyPopupFlags::RS_POPUP_CHATLOBBY;
     if (ui.popup_ConnectAttempt->isChecked())
-        notifyFlags |= RS_POPUP_CONNECT_ATTEMPT;
+        notifyFlags |= RsNotifyPopupFlags::RS_POPUP_CONNECT_ATTEMPT;
 
     return notifyFlags;
 }
@@ -273,9 +273,9 @@ void NotifyPage::updateUserNotifySettings()
 	MainWindow::installNotifyIcons();
 }
 
-void NotifyPage::updateMessageFlags() {  Settings->setMessageFlags( ui.message_ConnectAttempt->isChecked()? RS_MESSAGE_CONNECT_ATTEMPT : 0); }
-void NotifyPage::updateNotifyFlags()  {	 Settings->setNotifyFlags(getNotifyFlags()); }
-void NotifyPage::updateNewsFeedFlags(){  Settings->setNewsFeedFlags(getNewsFlags()); }
+void NotifyPage::updateMessageFlags() {  Settings->setMessageFlags( ui.message_ConnectAttempt->isChecked()? uint(RshareSettings::RS_MESSAGE_CONNECT_ATTEMPT) : 0); }
+void NotifyPage::updateNotifyFlags()  {	 Settings->setNotifyFlags((int)getNotifyFlags()); }
+void NotifyPage::updateNewsFeedFlags(){  Settings->setNewsFeedFlags((int)getNewsFlags()); }
 
 void NotifyPage::updateSystrayChatLobby() { Settings->setDisplayTrayChatLobby(ui.systray_ChatLobby->isChecked()); }
 void NotifyPage::updateSystrayGroupChat() { Settings->setDisplayTrayGroupChat(ui.systray_GroupChat->isChecked()); MainWindow::installGroupChatNotifier(); }
@@ -292,40 +292,40 @@ void NotifyPage::updateToasterPosition()
 void NotifyPage::load()
 {
 	/* Extract from rsNotify the flags */
-	uint notifyflags = Settings->getNotifyFlags() ;
-	uint newsflags = Settings->getNewsFeedFlags() ;
+    RsNotifyPopupFlags notifyflags = (RsNotifyPopupFlags)Settings->getNotifyFlags() ;
+    RsFeedTypeFlags newsflags = (RsFeedTypeFlags)Settings->getNewsFeedFlags() ;
 	uint messageflags = Settings->getMessageFlags() ;
 
-	whileBlocking(ui.popup_Connect)->setChecked(notifyflags & RS_POPUP_CONNECT);
-	whileBlocking(ui.popup_NewMsg)->setChecked(notifyflags & RS_POPUP_MSG);
-	whileBlocking(ui.popup_DownloadFinished)->setChecked(notifyflags & RS_POPUP_DOWNLOAD);
-	whileBlocking(ui.popup_PrivateChat)->setChecked(notifyflags & RS_POPUP_CHAT);
+    whileBlocking(ui.popup_Connect)->setChecked(!!(notifyflags & RsNotifyPopupFlags::RS_POPUP_CONNECT));
+    whileBlocking(ui.popup_NewMsg)->setChecked(!!(notifyflags & RsNotifyPopupFlags::RS_POPUP_MSG));
+    whileBlocking(ui.popup_DownloadFinished)->setChecked(!!(notifyflags & RsNotifyPopupFlags::RS_POPUP_DOWNLOAD));
+    whileBlocking(ui.popup_PrivateChat)->setChecked(!!(notifyflags & RsNotifyPopupFlags::RS_POPUP_CHAT));
 #ifdef RS_DIRECT_CHAT
-	whileBlocking(ui.popup_GroupChat)->setChecked(notifyflags & RS_POPUP_GROUPCHAT);
+    whileBlocking(ui.popup_GroupChat)->setChecked(!!(notifyflags & RsNotifyPopupFlags::RS_POPUP_GROUPCHAT));
 #endif // def RS_DIRECT_CHAT
-	whileBlocking(ui.popup_ChatLobby)->setChecked(notifyflags & RS_POPUP_CHATLOBBY);
-	whileBlocking(ui.popup_ConnectAttempt)->setChecked(notifyflags & RS_POPUP_CONNECT_ATTEMPT);
+    whileBlocking(ui.popup_ChatLobby)->setChecked(!!(notifyflags & RsNotifyPopupFlags::RS_POPUP_CHATLOBBY));
+    whileBlocking(ui.popup_ConnectAttempt)->setChecked(!!(notifyflags & RsNotifyPopupFlags::RS_POPUP_CONNECT_ATTEMPT));
 
-	whileBlocking(ui.notify_Peers)->setChecked(newsflags & RS_FEED_TYPE_PEER);
-	whileBlocking(ui.notify_Circles)->setChecked(newsflags & RS_FEED_TYPE_CIRCLE);
-	whileBlocking(ui.notify_Channels)->setChecked(newsflags & RS_FEED_TYPE_CHANNEL);
-	whileBlocking(ui.notify_Forums)->setChecked(newsflags & RS_FEED_TYPE_FORUM);
-	whileBlocking(ui.notify_Posted)->setChecked(newsflags & RS_FEED_TYPE_POSTED);
+    whileBlocking(ui.notify_Peers     )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_PEER));
+    whileBlocking(ui.notify_Circles   )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_CIRCLE));
+    whileBlocking(ui.notify_Channels  )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_CHANNEL));
+    whileBlocking(ui.notify_Forums    )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_FORUM));
+    whileBlocking(ui.notify_Posted    )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_POSTED));
 #if 0
 	whileBlocking(ui.notify_Blogs)->setChecked(newsflags & RS_FEED_TYPE_BLOG);
 #endif
-	whileBlocking(ui.notify_Chat)->setChecked(newsflags & RS_FEED_TYPE_CHAT);
-	whileBlocking(ui.notify_Messages)->setChecked(newsflags & RS_FEED_TYPE_MSG);
-	whileBlocking(ui.notify_Chat)->setChecked(newsflags & RS_FEED_TYPE_CHAT);
-	whileBlocking(ui.notify_Security)->setChecked(newsflags & RS_FEED_TYPE_SECURITY);
-	whileBlocking(ui.notify_SecurityIp)->setChecked(newsflags & RS_FEED_TYPE_SECURITY_IP);
+    whileBlocking(ui.notify_Chat      )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_CHAT));
+    whileBlocking(ui.notify_Messages  )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_MSG));
+    whileBlocking(ui.notify_Chat      )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_CHAT));
+    whileBlocking(ui.notify_Security  )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_SECURITY));
+    whileBlocking(ui.notify_SecurityIp)->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP));
 
-	whileBlocking(ui.message_ConnectAttempt)->setChecked(messageflags & RS_MESSAGE_CONNECT_ATTEMPT);
+    whileBlocking(ui.message_ConnectAttempt)->setChecked(messageflags & RshareSettings::RS_MESSAGE_CONNECT_ATTEMPT);
 
 	whileBlocking(ui.systray_GroupChat)->setChecked(Settings->getDisplayTrayGroupChat());
 	whileBlocking(ui.systray_ChatLobby)->setChecked(Settings->getDisplayTrayChatLobby());
 
-	whileBlocking(ui.pushButtonDisableAll)->setChecked(NotifyQt::isAllDisable());
+    whileBlocking(ui.pushButtonDisableAll)->setChecked(RsGUIEventManager::isAllDisable());
 
     RshareSettings::enumToasterPosition toasterPosition = Settings->getToasterPosition();
     ui.comboBoxToasterPosition->clear();
@@ -412,16 +412,16 @@ void NotifyPage::testToaster()
 {
     RshareSettings::enumToasterPosition pos = (RshareSettings::enumToasterPosition) ui.comboBoxToasterPosition->itemData(ui.comboBoxToasterPosition->currentIndex()).toInt();
     QPoint margin = QPoint(ui.spinBoxToasterXMargin->value(), ui.spinBoxToasterYMargin->value());
-    NotifyQt::getInstance()->testToasters(getNotifyFlags(), pos, margin);
+    RsGUIEventManager::getInstance()->testToasters(getNotifyFlags(), pos, margin);
 
     /* notify of plugins */
     QList<ToasterNotifySetting>::iterator toasterNotifyIt;
     for (toasterNotifyIt = mToasterNotifySettingList.begin(); toasterNotifyIt != mToasterNotifySettingList.end(); ++toasterNotifyIt) {
         if (toasterNotifyIt->mEnabledCheckBox->isChecked()){
             if (toasterNotifyIt->mEnabledCheckBox->accessibleName().isEmpty()){
-                NotifyQt::getInstance()->testToaster(toasterNotifyIt->mToasterNotify, pos, margin) ;
+                RsGUIEventManager::getInstance()->testToaster(toasterNotifyIt->mToasterNotify, pos, margin) ;
             } else {
-                NotifyQt::getInstance()->testToaster(toasterNotifyIt->mEnabledCheckBox->accessibleName(), toasterNotifyIt->mToasterNotify, pos, margin) ;
+                RsGUIEventManager::getInstance()->testToaster(toasterNotifyIt->mEnabledCheckBox->accessibleName(), toasterNotifyIt->mToasterNotify, pos, margin) ;
             }
         }
     }

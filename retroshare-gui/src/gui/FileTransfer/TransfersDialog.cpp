@@ -20,7 +20,6 @@
 
 #include "TransfersDialog.h"
 
-#include "gui/notifyqt.h"
 #include "gui/SoundManager.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/FilesDefs.h"
@@ -37,9 +36,10 @@
 #include "gui/FileTransfer/xprogressbar.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/misc.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/RsFile.h"
 #include "util/qtthreadsutils.h"
+#include "util/DateTime.h"
 
 #include "retroshare/rsdisc.h"
 #include "retroshare/rsfiles.h"
@@ -286,7 +286,7 @@ public:
 		{
 		case Qt::SizeHintRole:       return sizeHintRole(index.column()) ;
 		case Qt::TextAlignmentRole:
-		case Qt::TextColorRole:
+		case Qt::ForegroundRole:
 		case Qt::WhatsThisRole:
 		case Qt::EditRole:
 		case Qt::ToolTipRole:
@@ -434,7 +434,7 @@ public:
 
 					//Get Last Access on File
 					if (file.exists())
-						qi64LastDL = file.lastModified().toTime_t();
+						qi64LastDL = DateTime::DateTimeToTime_t(file.lastModified());
 				}
 				return QVariant(qi64LastDL) ;
 			}
@@ -1009,7 +1009,6 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect(collViewAct,SIGNAL(triggered()),this,SLOT(collView()));
 	collOpenAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLOPEN), tr( "Download from collection file..." ), this );
 	connect(collOpenAct, SIGNAL(triggered()), this, SLOT(collOpen()));
-	connect(NotifyQt::getInstance(), SIGNAL(downloadComplete(QString)), this, SLOT(collAutoOpen(QString)));
 
 	/** Setup the actions for the download header context menu */
     showDLSizeAct= new QAction(tr("Size"),this);
@@ -1114,14 +1113,8 @@ void TransfersDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
  	switch (fe->mFileTransferEventCode)
     {
 	case RsFileTransferEventCode::DOWNLOAD_COMPLETE:
-    {
-        FileInfo nfo ;
-        if(!rsFiles->FileDetails(fe->mHash, RS_FILE_HINTS_DOWNLOAD, nfo))
-            break;
+        collAutoOpen(fe->mHash);
 
-		SoundManager::play(SOUND_DOWNLOAD_COMPLETE);
-		NotifyQt::getInstance()->addToaster(RS_POPUP_DOWNLOAD, fe->mHash.toStdString(), nfo.fname.c_str(),"");
-    }
         [[fallthrough]];
 
 	case RsFileTransferEventCode::COMPLETED_FILES_REMOVED:
@@ -2577,11 +2570,10 @@ void TransfersDialog::collOpen()
         QMessageBox::information(nullptr,tr("Error openning collection file"),RsCollection::errorString(code));
 }
 
-void TransfersDialog::collAutoOpen(const QString &fileHash)
+void TransfersDialog::collAutoOpen(const RsFileHash& hash)
 {
 	if (Settings->valueFromGroup("Transfer","AutoDLColl").toBool())
 	{
-		RsFileHash hash = RsFileHash(fileHash.toStdString());
 		FileInfo info;
 		if (rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, info)) {
 
@@ -2646,5 +2638,5 @@ void TransfersDialog::filterChanged(const QString& /*text*/)
 	int filterColumn = ui.filterLineEdit->currentFilter();
 	QString text = ui.filterLineEdit->text();
 	DLLFilterModel->setFilterKeyColumn(filterColumn);
-	DLLFilterModel->setFilterRegExp(text);
+	QSortFilterProxyModel_setFilterRegularExpression(DLLFilterModel, text);
 }

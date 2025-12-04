@@ -37,7 +37,7 @@
 #include <QMessageBox>
 #include <QHeaderView>
 
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 
 /* Images for context menu icons */
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"

@@ -162,7 +162,7 @@ public:
 
 	/* Color definitions (for standard see default.qss) */
 	QColor mTextColorGroup;
-	QColor mTextColorStatus[RS_STATUS_COUNT];
+    QColor mTextColorStatus[(int)RsStatusValue::RS_STATUS_COUNT];
 
 private:
     const HierarchicalGroupInformation   *getGroupInfo  (const EntryIndex&) const;
@@ -223,7 +223,7 @@ private:
 
 	uint32_t updateFilterStatus(ForumModelIndex i,int column,const QStringList& strings);
 
-	const HierarchicalNodeInformation *getBestNodeInformation(const HierarchicalProfileInformation *profileInfo, uint32_t *status = NULL) const;
+    const HierarchicalNodeInformation *getBestNodeInformation(const HierarchicalProfileInformation *profileInfo, RsStatusValue *status = NULL) const;
 
     QStringList mFilterStrings;
     FilterType  mFilterType;

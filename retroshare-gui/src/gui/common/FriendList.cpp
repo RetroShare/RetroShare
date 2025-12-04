@@ -51,7 +51,7 @@
 #include "StatusDefs.h"
 #include "util/misc.h"
 #include "vmessagebox.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "gui/chat/ChatUserNotify.h"
 #include "gui/connect/ConnectProgressDialog.h"
 #include "gui/common/ElidedLabel.h"
@@ -304,7 +304,7 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
 
     // create menu header
     QHBoxLayout *hbox = new QHBoxLayout(widget);
-    hbox->setMargin(0);
+    hbox->setContentsMargins(0, 0, 0, 0);
     hbox->setSpacing(6);
 
     QLabel *iconLabel = new QLabel(widget);
@@ -936,7 +936,7 @@ void FriendList::insertPeers()
                 AvatarDefs::getAvatarFromSslId(RsPeerId(sslDetail.id.toStdString()), sslAvatar);
 
                 /* last contact */
-                QDateTime sslLastContact = QDateTime::fromTime_t(sslDetail.lastConnect);
+                QDateTime sslLastContact = DateTime::DateTimeFromTime_t(sslDetail.lastConnect);
                 sslItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, QVariant(sslLastContact));
                 sslItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT_NAME, QVariant(sslLastContact));
                 if (sslLastContact > bestLastContact) {

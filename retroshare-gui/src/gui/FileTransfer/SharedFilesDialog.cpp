@@ -22,7 +22,6 @@
 
 #include "rshare.h"
 #include "gui/MainWindow.h"
-#include "gui/notifyqt.h"
 #include "gui/RemoteDirModel.h"
 #include "gui/RetroShareLink.h"
 #include "gui/ShareManager.h"
@@ -33,8 +32,9 @@
 #include "gui/gxsforums/GxsForumsDialog.h"
 #include "gui/settings/AddFileAssociationDialog.h"
 #include "gui/settings/rsharesettings.h"
-#include "util/QtVersion.h"
+#include "util/RsQtVersion.h"
 #include "util/RsAction.h"
+#include "util/qtthreadsutils.h"
 #include "util/misc.h"
 #include "util/rstime.h"
 #include "util/rsdir.h"
@@ -145,7 +145,7 @@ public:
     {
         Q_ASSERT(index.isValid());
 
-        QStyleOptionViewItemV4 opt = option;
+        QStyleOptionViewItem opt = option;
         initStyleOption(&opt, index);
         // disable default icon
         opt.icon = QIcon();
@@ -166,6 +166,7 @@ public:
 
 SharedFilesDialog::~SharedFilesDialog()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
     delete tree_model;
     delete flat_model;
     delete tree_proxyModel;
@@ -177,9 +178,36 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
-    NotifyQt *notify = NotifyQt::getInstance();
-    connect(notify, SIGNAL(filesPreModChanged(bool)), this, SLOT(preModDirectories(bool)));
-    connect(notify, SIGNAL(filesPostModChanged(bool)), this, SLOT(postModDirectories(bool)));
+    //connect(notify, SIGNAL(filesPreModChanged(bool)), this, SLOT(preModDirectories(bool)));
+    //connect(notify, SIGNAL(filesPostModChanged(bool)), this, SLOT(postModDirectories(bool)));
+
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler([this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){
+
+            auto e = dynamic_cast<const RsSharedDirectoriesEvent*>(event.get());
+
+            switch(e->mEventCode)
+            {
+            case RsSharedDirectoriesEventCode::OWN_DIR_LIST_PROCESSING:
+                preModDirectories(true);
+                break;
+
+            case RsSharedDirectoriesEventCode::OWN_DIR_LIST_UPDATED:
+                postModDirectories(true);
+                break;
+
+            case RsSharedDirectoriesEventCode::FRIEND_DIR_LIST_UPDATED:
+                preModDirectories(false);
+                postModDirectories(false);
+                break;
+
+            default:
+                break;
+        };}, this);
+    }, mEventHandlerId,RsEventType::SHARED_DIRECTORIES);
 
     connect(ui.viewType_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changeCurrentViewModel(int)));
     connect(ui.dirTreeView, SIGNAL(customContextMenuRequested(QPoint)), this,  SLOT( spawnCustomPopupMenu( QPoint ) ) );
@@ -199,7 +227,7 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     tree_proxyModel->setSortRole(RetroshareDirModel::SortRole);
     tree_proxyModel->sort(SHARED_FILES_DIALOG_COLUMN_NAME);
     tree_proxyModel->setFilterRole(RetroshareDirModel::FilterRole);
-    tree_proxyModel->setFilterRegExp(QRegExp(QString(SHARED_FILES_DIALOG_FILTER_STRING))) ;
+    QSortFilterProxyModel_setFilterRegularExpression(tree_proxyModel, QString(SHARED_FILES_DIALOG_FILTER_STRING)) ;
 
     flat_proxyModel = new SFDSortFilterProxyModel(flat_model, this);
     flat_proxyModel->setSourceModel(flat_model);
@@ -207,7 +235,7 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     flat_proxyModel->setSortRole(RetroshareDirModel::SortRole);
     flat_proxyModel->sort(SHARED_FILES_DIALOG_COLUMN_NAME);
     flat_proxyModel->setFilterRole(RetroshareDirModel::FilterRole);
-    flat_proxyModel->setFilterRegExp(QRegExp(QString(SHARED_FILES_DIALOG_FILTER_STRING))) ;
+    QSortFilterProxyModel_setFilterRegularExpression(flat_proxyModel, QString(SHARED_FILES_DIALOG_FILTER_STRING)) ;
 
     connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
     connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));
@@ -739,7 +767,6 @@ void SharedFilesDialog::collCreate()
     model->getDirDetailsFromSelect(lst, dirVec);
 
     auto RemoteMode = isRemote();
-    FileSearchFlags f = RemoteMode?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL ;
 
     QString dir_name;
 
@@ -1018,7 +1045,7 @@ void SharedFilesDialog::recursExpandAll(const QModelIndex& index)
 
     for(int row=0;row<ui.dirTreeView->model()->rowCount(index);++row)
     {
-        QModelIndex idx(index.child(row,0)) ;
+        QModelIndex idx(ui.dirTreeView->model()->index(row,0,index)) ;
 
         if(ui.dirTreeView->model()->rowCount(idx) > 0)
             recursExpandAll(idx) ;
@@ -1131,7 +1158,10 @@ void  SharedFilesDialog::postModDirectories(bool local)
 #ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "****** updated directories! Re-enabling sorting ******" << std::endl;
 #endif
+
+#if QT_VERSION < QT_VERSION_CHECK (6, 0, 0)
     QCoreApplication::flush();
+#endif
 }
 
 class ChannelCompare
@@ -1619,7 +1649,7 @@ void SharedFilesDialog::FilterItems()
         return ;
 
     //FileSearchFlags flags = isRemote()?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL;
-    QStringList lst = text.split(" ",QString::SkipEmptyParts) ;
+    QStringList lst = text.split(" ",QtSkipEmptyParts) ;
     std::list<std::string> keywords ;
 
     for(auto it(lst.begin());it!=lst.end();++it)

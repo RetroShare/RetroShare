@@ -52,8 +52,8 @@ class ServerPage: public ConfigPage, public autoProxyCallback
     Q_OBJECT
 
 public:
-    ServerPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
-    ~ServerPage() {}
+    ServerPage(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
+    ~ServerPage() ;
 
     /** Loads the settings for this page */
     virtual void load();
@@ -110,8 +110,6 @@ private slots:
 
 	void syncI2PProxyAddrNormal(QString);
 	void syncI2PProxyAddrSam(QString);
-
-	void connectionWithoutCert();
 
 	//Relay Tab
 	void updateRelayOptions();

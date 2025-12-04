@@ -52,7 +52,7 @@ private slots:
     void createThreadFinished();
     void createThreadProgress(int current, int count);
 
-    void historyChanged(uint msgId, int type);
+    void historyChanged(uint msgId, RsChatHistoryChangeFlags type);
 
     void filterChanged(const QString& text);
 
@@ -86,6 +86,7 @@ private:
 
     /** Qt Designer generated object */
     Ui::ImHistoryBrowser ui;
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 class ImHistoryBrowserCreateItemsThread : public QThread

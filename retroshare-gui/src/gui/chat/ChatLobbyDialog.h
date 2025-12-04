@@ -42,12 +42,12 @@ class ChatLobbyDialog: public ChatDialog
 	friend class ChatDialog;
 
 public:
-    void displayLobbyEvent(int event_type, const RsGxsId &gxs_id, const QString& str);
+    void handleLobbyEvent(RsChatLobbyEventCode event_type, const RsGxsId& gxs_id, const QString& str);
 
-	virtual void showDialog(uint chatflags);
-	virtual ChatWidget *getChatWidget();
-	virtual bool hasPeerStatus() { return false; }
-	virtual bool notifyBlink();
+    virtual void showDialog(RsChatFlags chatflags) override;
+    virtual ChatWidget *getChatWidget() override;
+    virtual bool hasPeerStatus()  override{ return false; }
+    virtual bool notifyBlink() override;
     void setIdentity(const RsGxsId& gxs_id);
     bool isParticipantMuted(const RsGxsId &participant);
 	ChatLobbyId id() const { return lobbyId ;}
@@ -74,7 +74,7 @@ signals:
 
 protected:
 	/** Default constructor */
-	ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+	ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 
 	/** Default destructor */
 	virtual ~ChatLobbyDialog();
