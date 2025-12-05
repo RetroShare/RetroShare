@@ -242,13 +242,6 @@ void FriendsDialog::chatMessageReceived(const ChatMessage &msg)
     if(!msg.chat_id.isBroadcast())
         return;
 
-    QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
-    QDateTime recvTime = QDateTime::fromTime_t(msg.recvTime);
-    QString message = QString::fromUtf8(msg.msg.c_str());
-    QString name = QString::fromUtf8(rsPeers->getPeerName(msg.broadcast_peer_id).c_str());
-
-    ui.chatWidget->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
-
     if(ui.chatWidget->isActive())
     {
         QDateTime sendTime = DateTime::DateTimeFromTime_t(msg.sendTime);
