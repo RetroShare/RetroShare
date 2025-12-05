@@ -242,29 +242,19 @@ void FriendsDialog::chatMessageReceived(const ChatMessage &msg)
     if(!msg.chat_id.isBroadcast())
         return;
 
-    QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
-    QDateTime recvTime = QDateTime::fromTime_t(msg.recvTime);
-    QString message = QString::fromUtf8(msg.msg.c_str());
-    QString name = QString::fromUtf8(rsPeers->getPeerName(msg.broadcast_peer_id).c_str());
+	QDateTime sendTime = DateTime::DateTimeFromTime_t(msg.sendTime);
+	QDateTime recvTime = DateTime::DateTimeFromTime_t(msg.recvTime);
+	QString message = QString::fromUtf8(msg.msg.c_str());
+	QString name = QString::fromUtf8(rsPeers->getPeerName(msg.broadcast_peer_id).c_str());
 
-    ui.chatWidget->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
+	ui.chatWidget->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
 
-    if(ui.chatWidget->isActive())
-    {
-        QDateTime sendTime = DateTime::DateTimeFromTime_t(msg.sendTime);
-        QDateTime recvTime = DateTime::DateTimeFromTime_t(msg.recvTime);
-        QString message = QString::fromUtf8(msg.msg.c_str());
-        QString name = QString::fromUtf8(rsPeers->getPeerName(msg.broadcast_peer_id).c_str());
-
-        ui.chatWidget->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
-
-        if(ui.chatWidget->isActive())
-        {
+	if(ui.chatWidget->isActive())
+	{
             // clear the chat notify when control returns to the Qt event loop
             // we have to do this later, because we don't know if we or the notify receives the chat message first
             QMetaObject::invokeMethod(this, "clearChatNotify", Qt::QueuedConnection);
-        }
-    }
+	}
 }
 
 void FriendsDialog::chatStatusReceived(const ChatId &chat_id, const QString &status_string)
