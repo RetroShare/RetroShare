@@ -22,6 +22,7 @@
 
 #include "ULListDelegate.h"
 #include "xprogressbar.h"
+#include "util/RsQtVersion.h"
 
 Q_DECLARE_METATYPE(FileProgressInfo)
 
@@ -39,7 +40,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 {
 	QString byteUnits[4] = {tr("B"), tr("KB"), tr("MB"), tr("GB")};
 	QStyleOptionViewItem opt = option;
-	QStyleOptionProgressBarV2 newopt;
+	QStyleOptionProgressBar newopt;
 	QRect pixmapRect;
 	QPixmap pixmap;
 	qlonglong fileSize;
@@ -52,7 +53,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	painter->setClipRect(opt.rect);
 
 	//set text color
-	QVariant value = index.data(Qt::TextColorRole);
+	QVariant value = index.data(Qt::ForegroundRole);
 	if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
 		opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
 	}
@@ -93,7 +94,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				for(int i = 0; i < 4; ++i) {
 					if (fileSize < 1024) {
 						fileSize = index.data().toLongLong();
-						temp.sprintf("%.2f ", fileSize / multi);
+						temp = QString::asprintf("%.2f ", fileSize / multi);
 						temp += byteUnits[i];
 						break;
 					}
@@ -112,7 +113,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				for(int i = 0; i < 4; ++i) {
 					if (transferred < 1024) {
 						transferred = index.data().toLongLong();
-						temp.sprintf("%.2f ", transferred / multi);
+						temp = QString::asprintf("%.2f ", transferred / multi);
 						temp += byteUnits[i];
 						break;
 					}
@@ -128,7 +129,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                             temp = "";
                         } else {
                             temp.clear();
-                            temp.sprintf("%.2f", ulspeed/1024.);
+                            temp = QString::asprintf("%.2f", ulspeed/1024.);
                             temp += " KB/s";
                         }
 			painter->drawText(option.rect, Qt::AlignRight | Qt::AlignVCenter, temp);
@@ -179,7 +180,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 
 QSize ULListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
-    float w = QFontMetricsF(option.font).width(index.data(Qt::DisplayRole).toString());
+    float w = QFontMetrics_horizontalAdvance(QFontMetricsF(option.font), index.data(Qt::DisplayRole).toString());
 
     int S = QFontMetricsF(option.font).height()*1.5 ;
     return QSize(w,S);

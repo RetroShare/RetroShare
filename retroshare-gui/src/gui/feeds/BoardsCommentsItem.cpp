@@ -78,7 +78,8 @@ BaseBoardsCommentsItem::BaseBoardsCommentsItem( FeedHolder *feedHolder, uint32_t
 
 BaseBoardsCommentsItem::~BaseBoardsCommentsItem()
 {
-	auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(200);
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
+
 	while( (mIsLoadingGroup || mIsLoadingMessage || mIsLoadingComment)
 	       && std::chrono::steady_clock::now() < timeout)
 	{
@@ -126,6 +127,7 @@ bool BaseBoardsCommentsItem::setPost(const RsPostedPost &post, bool doFill)
 void BaseBoardsCommentsItem::loadGroup()
 {
 	mIsLoadingGroup = true;
+
 	RsThread::async([this]()
 	{
 		// 1 - get group data
@@ -141,6 +143,7 @@ void BaseBoardsCommentsItem::loadGroup()
 		{
 			RsErr() << "GxsPostedGroupItem::loadGroup() ERROR getting data" << std::endl;
 			mIsLoadingGroup = false;
+            deferred_update();
 			return;
 		}
 
@@ -148,7 +151,8 @@ void BaseBoardsCommentsItem::loadGroup()
 		{
 			std::cerr << "GxsPostedGroupItem::loadGroup() Wrong number of Items" << std::endl;
 			mIsLoadingGroup = false;
-			return;
+            deferred_update();
+            return;
 		}
 		RsPostedGroup group(groups[0]);
 
@@ -180,7 +184,8 @@ void BaseBoardsCommentsItem::loadMessage()
 		{
 			RsErr() << "BaseBoardsCommentsItem::loadMessage() ERROR getting data" << std::endl;
 			mIsLoadingMessage = false;
-			return;
+            deferred_update();
+            return;
 		}
 
 		if (posts.size() == 1)
@@ -241,7 +246,8 @@ void BaseBoardsCommentsItem::loadComment()
 		{
 			RsErr() << "BaseBoardsCommentsItem::loadGroup() ERROR getting data" << std::endl;
 			mIsLoadingComment = false;
-			return;
+            deferred_update();
+            return;
 		}
 
 		int comNb = comments.size();

@@ -32,13 +32,14 @@
 #include "IMHistoryItemDelegate.h"
 #include "IMHistoryItemPainter.h"
 #include "util/HandleRichText.h"
+#include "util/qtthreadsutils.h"
 #include "gui/common/FilesDefs.h"
 
 #include "rshare.h"
 #include <retroshare/rshistory.h>
 #include <retroshare/rsidentity.h>
 #include "gui/settings/rsharesettings.h"
-#include "gui/notifyqt.h"
+#include "util/DateTime.h"
 
 #define ROLE_MSGID     Qt::UserRole
 #define ROLE_PLAINTEXT Qt::UserRole + 1
@@ -100,8 +101,6 @@ ImHistoryBrowser::ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit,const Q
     m_chatId = chatId;
     textEdit = edit;
 
-    connect(NotifyQt::getInstance(), SIGNAL(historyChanged(uint, int)), this, SLOT(historyChanged(uint, int)));
-
     connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
     connect(ui.copyButton, SIGNAL(clicked()), SLOT(copyMessage()));
@@ -137,6 +136,22 @@ ImHistoryBrowser::ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit,const Q
     connect(m_createThread, SIGNAL(finished()), this, SLOT(createThreadFinished()));
     connect(m_createThread, SIGNAL(progress(int,int)), this, SLOT(createThreadProgress(int,int)));
     m_createThread->start();
+
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){
+
+            auto ev = dynamic_cast<const RsChatServiceEvent*>(event.get());
+
+            if(!ev)
+                return;
+
+            if(ev->mEventCode == RsChatServiceEventCode::CHAT_HISTORY_CHANGED)
+                historyChanged(ev->mMsgHistoryId,ev->mHistoryChangeType);
+        }, this );
+    }, mEventHandlerId, RsEventType::CHAT_SERVICE );
 }
 
 ImHistoryBrowser::~ImHistoryBrowser()
@@ -220,9 +235,9 @@ void ImHistoryBrowser::historyAdd(HistoryMsg& msg)
     }
 }
 
-void ImHistoryBrowser::historyChanged(uint msgId, int type)
+void ImHistoryBrowser::historyChanged(uint msgId, RsChatHistoryChangeFlags type)
 {
-	if (type == NOTIFY_TYPE_ADD) {
+    if (type == RsChatHistoryChangeFlags::ADD) {
 		/* history message added */
 		HistoryMsg msg;
 		if (rsHistory->getMessage(msgId, msg) == false) {
@@ -236,7 +251,7 @@ void ImHistoryBrowser::historyChanged(uint msgId, int type)
 		return;
 	}
 
-	if (type == NOTIFY_TYPE_DEL) {
+    if (type == RsChatHistoryChangeFlags::DEL) {
 		/* history message removed */
 		int count = ui.listWidget->count();
 		for (int i = 0; i < count; ++i) {
@@ -249,7 +264,7 @@ void ImHistoryBrowser::historyChanged(uint msgId, int type)
 		return;
 	}
 
-	if (type == NOTIFY_TYPE_MOD) {
+    if (type == RsChatHistoryChangeFlags::MOD) {
 		/* clear history */
 		// As no ChatId nor msgId are send via Notify,
 		//  only check if history of this chat is empty before clear our list.
@@ -292,9 +307,9 @@ void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg)
     }
 
     QColor backgroundColor = ui.listWidget->palette().base().color();
-    QString formatMsg = style.formatMessage(type, name, QDateTime::fromTime_t(msg.sendTime), messageText, 0, backgroundColor);
+    QString formatMsg = style.formatMessage(type, name, DateTime::DateTimeFromTime_t(msg.sendTime), messageText, 0, backgroundColor);
 
-    itemWidget->setData(Qt::DisplayRole, qVariantFromValue(IMHistoryItemPainter(formatMsg)));
+    itemWidget->setData(Qt::DisplayRole, QVariant::fromValue(IMHistoryItemPainter(formatMsg)));
     itemWidget->setData(ROLE_MSGID, msg.msgId);
 
     /* calculate plain text */
@@ -467,8 +482,8 @@ QString ImHistoryBrowser::getCurrentItemsQuotedText()
 			        ? QString::fromUtf8(details.mNickname.c_str())
 			        : QString::fromUtf8(msg.peerName.c_str());
 			QDateTime date = msg.incoming
-			        ? QDateTime::fromTime_t(msg.sendTime)
-			        : QDateTime::fromTime_t(msg.recvTime);
+			        ? DateTime::DateTimeFromTime_t(msg.sendTime)
+			        : DateTime::DateTimeFromTime_t(msg.recvTime);
 			QTextDocument doc;
 			doc.setHtml(QString::fromUtf8(msg.message.c_str()));
 

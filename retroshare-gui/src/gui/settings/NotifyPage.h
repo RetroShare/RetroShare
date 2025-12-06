@@ -23,8 +23,10 @@
 
 #include <retroshare-gui/configpage.h>
 #include "ui_NotifyPage.h"
+#include "rsharesettings.h"
 
 #include "gui/chat/ChatLobbyUserNotify.h"
+#include "gui/feeds/FeedItem.h"
 #include "gui/common/FilesDefs.h"
 
 class UserNotify;
@@ -72,7 +74,7 @@ class NotifyPage : public ConfigPage
 
 public:
     /** Default Constructor */
-    NotifyPage(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    NotifyPage(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
     /** Default Destructor */
     ~NotifyPage();
 
@@ -102,8 +104,8 @@ private slots:
 	void updateToasterPosition();
 
 private:
-	uint getNewsFlags();
-	uint getNotifyFlags();
+    RsFeedTypeFlags getNewsFlags();
+    RsNotifyPopupFlags getNotifyFlags();
 
     QList<FeedNotifySetting> mFeedNotifySettingList;
     QList<ToasterNotifySetting> mToasterNotifySettingList;

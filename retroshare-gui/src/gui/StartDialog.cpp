@@ -26,11 +26,9 @@
 #include "gui/common/FilesDefs.h"
 
 #include "retroshare/rsinit.h"
-#include "retroshare/rsnotify.h"
 
 #include <QLineEdit>
 #include <QMessageBox>
-#include <QDesktopWidget>
 
 #include <iostream>
 
@@ -50,7 +48,7 @@ StartDialog::StartDialog(QWidget *parent)
 	Settings->loadWidgetInformation(this);
 	
 	/* Put the Login dialog in the screen center */
-	const QRect screen = QApplication::desktop()->screenGeometry();
+	const QRect screen = RsApplication::primaryScreenGeometry();
 	this->move( screen.center() - this->rect().center() );
 
 	/* get all available pgp private certificates....
@@ -124,13 +122,11 @@ void StartDialog::loadPerson()
 	RsPeerId accountId = RsPeerId((data.toString()).toStdString());
 
 	// Cache the passphrase, so that it is not asked again.
-	rsNotify->cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
-	rsNotify->setDisableAskPassword(true);
+    RsLoginHelper::cachePgpPassphrase(ui.password_input->text().toUtf8().constData()) ;
 
     bool res = RsApplication::loadCertificate(accountId, ui.autologin_checkbox->isChecked()) ;
 
-	rsNotify->setDisableAskPassword(false);
-    rsNotify->clearPgpPassphrase();
+    RsLoginHelper::clearPgpPassphrase();
 
 	if(res)
 		accept();

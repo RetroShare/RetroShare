@@ -31,12 +31,13 @@
 #include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/common/GroupTreeWidget.h"
 #include "gui/common/RSTreeWidget.h"
-#include "gui/notifyqt.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/common/UserNotify.h"
+#include "gui/RsGUIEventManager.h"
 #include "util/qtthreadsutils.h"
 #include "retroshare/rsgxsifacetypes.h"
 #include "GxsCommentDialog.h"
+#include "util/DateTime.h"
 
 //#define DEBUG_GROUPFRAMEDIALOG
 
@@ -172,7 +173,7 @@ void GxsGroupFrameDialog::initUi()
 	processSettings(true);
 
 	if (groupFrameSettingsType() != GroupFrameSettings::Nothing) {
-		connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
+        connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 		settingsChanged();
 	}
 
@@ -331,7 +332,7 @@ void GxsGroupFrameDialog::updateSearchResults(const TurtleRequestId& sid)
 		i.id             = QString(it3->second.mGroupId.toStdString().c_str());
 		i.name           = QString::fromUtf8(it3->second.mGroupName.c_str());
 		i.popularity     = 0; // could be set to the number of hits
-		i.lastpost       = QDateTime::fromTime_t(it3->second.mLastMessageTs);
+		i.lastpost       = DateTime::DateTimeFromTime_t(it3->second.mLastMessageTs);
 		i.subscribeFlags = 0; // irrelevant here
 		i.publishKey     = false ; // IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags);
 		i.adminKey       = false ; // IS_GROUP_ADMIN(groupInfo.mSubscribeFlags);
@@ -403,8 +404,11 @@ uint32_t GxsGroupFrameDialog::checkDelay(uint32_t time_in_secs)
         return 90 * 86400;
     if(time_in_secs <= 250 * 86400)
         return 180 * 86400;
-
-   return 365 * 86400;
+	if(time_in_secs <= 400 * 86400)
+		return 365 * 86400;
+	if(time_in_secs <= 1200 * 86400)
+		return 1095 * 86400;
+   return 1825 * 86400;
 }
 
 void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
@@ -472,23 +476,27 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 			QAction *actnn = NULL;
 
 			QMenu *ctxMenu2 = contextMnu.addMenu(tr("Synchronise posts of last...")) ;
-			actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_sync_time ==  5) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-			actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_sync_time == 15) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-			actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_sync_time == 30) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-			actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_sync_time == 90) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-			actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_sync_time ==180) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-			actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_sync_time ==365) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-			actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_sync_time ==  0) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("5 days"     ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(   5)) ; if(current_sync_time ==   5) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("2 weeks"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  15)) ; if(current_sync_time ==  15) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("1 month"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  30)) ; if(current_sync_time ==  30) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("3 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  90)) ; if(current_sync_time ==  90) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("6 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 180)) ; if(current_sync_time == 180) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("1 year"     ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 365)) ; if(current_sync_time == 365) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("3 years"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(1095)) ; if(current_sync_time ==1095) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("5 years"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(1825)) ; if(current_sync_time ==1825) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+            actnn = ctxMenu2->addAction(tr("Indefinitly"),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(   0)) ; if(current_sync_time ==  0)  { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
 			ctxMenu2->setEnabled(isSubscribed);
 
 			ctxMenu2 = contextMnu.addMenu(tr("Store posts for at most...")) ;
-			actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_store_time ==  5) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-			actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_store_time == 15) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-			actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_store_time == 30) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-			actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_store_time == 90) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-			actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_store_time ==180) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-			actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_store_time ==365) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
-			actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_store_time ==  0) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("5 days"     ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(   5)) ; if(current_store_time ==   5) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("2 weeks"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  15)) ; if(current_store_time ==  15) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("1 month"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  30)) ; if(current_store_time ==  30) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("3 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  90)) ; if(current_store_time ==  90) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("6 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 180)) ; if(current_store_time == 180) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("1 year"     ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 365)) ; if(current_store_time == 365) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("3 years"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(1095)) ; if(current_store_time ==1095) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("5 years"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(1825)) ; if(current_store_time ==1825) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
+			actnn = ctxMenu2->addAction(tr("Indefinitly"),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(   0)) ; if(current_store_time ==   0) { actnn->setEnabled(false);actnn->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/start.png"));}
 			ctxMenu2->setEnabled(isSubscribed);
 
 			if (shareKeyType()) {
@@ -950,7 +958,7 @@ void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *
 	groupItemInfo.id = QString::fromStdString(groupInfo->mMeta.mGroupId.toStdString());
 	groupItemInfo.name = QString::fromUtf8(groupInfo->mMeta.mGroupName.c_str());
 	groupItemInfo.popularity = groupInfo->mMeta.mPop;
-	groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo->mMeta.mLastPost);
+	groupItemInfo.lastpost = DateTime::DateTimeFromTime_t(groupInfo->mMeta.mLastPost);
 	groupItemInfo.subscribeFlags = groupInfo->mMeta.mSubscribeFlags;
 	groupItemInfo.publishKey = IS_GROUP_PUBLISHER(groupInfo->mMeta.mSubscribeFlags) ;
 	groupItemInfo.adminKey = IS_GROUP_ADMIN(groupInfo->mMeta.mSubscribeFlags) ;

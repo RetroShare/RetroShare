@@ -104,7 +104,7 @@ HelpBrowser::HelpBrowser(QWidget *parent)
 
   /* Show the first help topic in the tree */
   ui.treeContents->setCurrentItem(ui.treeContents->topLevelItem(0));
-  ui.treeContents->setItemExpanded(ui.treeContents->topLevelItem(0), true);
+  ui.treeContents->topLevelItem(0)->setExpanded(true);
 }
 
 HelpBrowser::~HelpBrowser()
@@ -231,7 +231,7 @@ HelpBrowser::contentsItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *prev
   QList<QTreeWidgetItem *> selected = ui.treeSearch->selectedItems();
   /* Deselect the selection in the search tree */
   if (!selected.isEmpty()) {
-    ui.treeSearch->setItemSelected(selected[0], false);
+    selected[0]->setSelected(false);
   }
   currentItemChanged(current, prev);
 }
@@ -243,7 +243,7 @@ HelpBrowser::searchItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *prev)
   QList<QTreeWidgetItem *> selected = ui.treeContents->selectedItems();
   /* Deselect the selection in the contents tree */
   if (!selected.isEmpty()) {
-    ui.treeContents->setItemSelected(selected[0], false);
+    selected[0]->setSelected(false);
   }
 
   /* Change to selected page */
@@ -288,7 +288,7 @@ HelpBrowser::findTopicItem(QTreeWidgetItem *startItem, QString topic)
     
     if (subtopic == item->data(0, ROLE_TOPIC_ID).toString().toLower()) {
       /* Found a subtopic match, so expand this item */
-      ui.treeContents->setItemExpanded(item, true);
+      item->setSelected(true);
       if (!topic.contains(".")) {
         /* Found the exact topic */
         return item;
@@ -314,10 +314,10 @@ HelpBrowser::showTopic(QString topic)
      * tree item. */
     QTreeWidgetItem* selected = ui.treeContents->selectedItems()[0];
     if (selected) {
-      ui.treeContents->setItemSelected(selected, false);
+      selected->setSelected(false);
     }
-    ui.treeContents->setItemExpanded(ui.treeContents->topLevelItem(0), true);
-    ui.treeContents->setItemSelected(item, true);
+    ui.treeContents->topLevelItem(0)->setExpanded(true);
+    item->setSelected(true);
     currentItemChanged(item, selected);
   }
 }
@@ -348,7 +348,7 @@ HelpBrowser::find(bool forward)
     return;
   }
   
-  QTextDocument::FindFlags flags = 0;
+  QTextDocument::FindFlags flags = QTextDocument::FindFlags();
   QTextCursor cursor = ui.txtBrowser->textCursor();
   QString searchPhrase = ui.lineFind->text();
   

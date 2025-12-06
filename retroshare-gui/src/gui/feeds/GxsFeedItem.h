@@ -1,5 +1,5 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/gxs/GxsFeedItem.h                                    *
+ * retroshare-gui/src/gui/feeds/GxsFeedItem.h                                  *
  *                                                                             *
  * Copyright 2012-2013 by Robert Fernie   <retroshare.project@gmail.com>       *
  *                                                                             *

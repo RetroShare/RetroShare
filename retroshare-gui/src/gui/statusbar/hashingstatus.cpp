@@ -27,14 +27,16 @@
 #include "hashingstatus.h"
 #include "gui/common/ElidedLabel.h"
 #include "util/qtthreadsutils.h"
-#include "gui/notifyqt.h"
+#include "util/misc.h"
 #include "gui/common/FilesDefs.h"
+
+//#define DEBUG_HASHING_STATUS 1
 
 HashingStatus::HashingStatus(QWidget *parent)
  : QWidget(parent)
 {
     QHBoxLayout *hbox = new QHBoxLayout(this);
-    hbox->setMargin(0);
+    hbox->setContentsMargins(0, 0, 0, 0);
     hbox->setSpacing(6);
         
     movie = new QMovie(":/images/loader/indicator-16.gif");
@@ -60,36 +62,98 @@ HashingStatus::HashingStatus(QWidget *parent)
 
 void HashingStatus::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
-    // Warning: no GUI calls should happen here!
-
     if(event->mType != RsEventType::SHARED_DIRECTORIES)
         return;
 
-	const RsSharedDirectoriesEvent *fe = dynamic_cast<const RsSharedDirectoriesEvent*>(event.get());
+    const RsSharedDirectoriesEvent *fe = dynamic_cast<const RsSharedDirectoriesEvent*>(event.get());
+
 	if(!fe)
         return;
-
-    QString info;
 
  	switch (fe->mEventCode)
     {
     default:
-    case RsSharedDirectoriesEventCode::STARTING_DIRECTORY_SWEEP:
-		info = tr("Examining shared files...");
-		break;
-    case RsSharedDirectoriesEventCode::DIRECTORY_SWEEP_ENDED:
-		break;
-	case RsSharedDirectoriesEventCode::HASHING_FILE:
-		info = tr("Hashing file") + " " + QString::fromUtf8(fe->mMessage.c_str());
-		break;
+        break;
+
+    case RsSharedDirectoriesEventCode::HASHING_PROCESS_RESUMED:
+        statusHashing->setText(mLastText);						// fallthrough
+#ifdef DEBUG_HASHING_STATUS
+        std::cerr << "HashStatusEventHandler: received event " << (void*)fe->mEventCode << ": " ;
+        std::cerr << "HASHING RESUMED" << std::endl;
+#endif
+
+    case RsSharedDirectoriesEventCode::HASHING_PROCESS_STARTED:
+    {
+#ifdef DEBUG_HASHING_STATUS
+        std::cerr << "HashStatusEventHandler: received event " << (void*)fe->mEventCode << ": " ;
+        std::cerr << "HASHING STARTED" << std::endl;
+#endif
+        hashloader->show() ;
+        hashloader->setMovie(movie) ;
+        movie->start() ;
+
+        statusHashing->setVisible(!_compactMode) ;
+    }
+    break;
+
+    case RsSharedDirectoriesEventCode::HASHING_PROCESS_PAUSED:
+    {
+#ifdef DEBUG_HASHING_STATUS
+        std::cerr << "HashStatusEventHandler: received event " << (void*)fe->mEventCode << ": " ;
+        std::cerr << "HASHING PAUSED" << std::endl;
+#endif
+        movie->stop() ;
+        hashloader->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/resume.png")) ;
+
+        mLastText = statusHashing->text();
+        statusHashing->setText(QObject::tr("[Hashing is paused]"));
+        setToolTip(QObject::tr("Click to resume the hashing process"));
+    }
+    break;
+
+    case RsSharedDirectoriesEventCode::HASHING_PROCESS_FINISHED:
+    {
+#ifdef DEBUG_HASHING_STATUS
+        std::cerr << "HashStatusEventHandler: received event " << (void*)fe->mEventCode << ": " ;
+        std::cerr << "HASHING FINISHED" << std::endl;
+#endif
+        movie->stop() ;
+        statusHashing->setText(QString());
+        statusHashing->hide() ;
+        setToolTip(QString());
+        hashloader->hide() ;
+    }
+    break;
+
+    case RsSharedDirectoriesEventCode::HASHING_FILE:
+    {
+        QString msg = QString::number((unsigned long int)fe->mHashCounter+1) + "/" + QString::number((unsigned long int)fe->mTotalFilesToHash);
+
+        msg += " (" + misc::friendlyUnit(fe->mTotalHashedSize) + " - "
+                + QString::number(int(fe->mTotalHashedSize/double(fe->mTotalSizeToHash)*100.0)) + "%"
+                + ((fe->mHashingSpeed>0)?("," + QString::number((double)fe->mHashingSpeed,'f',2) + " MB/s)"):(QString()))
+                + " : " + QString::fromUtf8(fe->mFilePath.c_str()) ;
+
+        statusHashing->setText(tr("Hashing file") + " " + msg);
+        setToolTip(msg + "\n"+QObject::tr("Click to pause the hashing process"));
+#ifdef DEBUG_HASHING_STATUS
+        std::cerr << "HashStatusEventHandler: received event " << (void*)fe->mEventCode << ": " ;
+        std::cerr << "HASHING FILE " << msg.toStdString() << std::endl;
+#endif
+    }
+    break;
+
 	case RsSharedDirectoriesEventCode::SAVING_FILE_INDEX:
-		info = tr("Saving file index...");
-		break;
-	}
+    {
+#ifdef DEBUG_HASHING_STATUS
+        std::cerr << "HashStatusEventHandler: received event " << (void*)fe->mEventCode << ": " ;
+        std::cerr << "SAVING FILE INDEX" << std::endl;
+#endif
+        statusHashing->setText(tr("Saving file index..."));
+    }
+    break;
 
-    // GUI calls should only happen in the GUI thread, which is achieved by postToObject().
-
-    updateHashingInfo(info);
+    };
 }
 
 HashingStatus::~HashingStatus()
@@ -98,47 +162,8 @@ HashingStatus::~HashingStatus()
     delete(movie);
 }
 
-void HashingStatus::updateHashingInfo(const QString& s)
-{
-    if (s.isEmpty())
-	{
-        statusHashing->hide() ;
-        hashloader->hide() ;
-        setToolTip(QString());
-
-        movie->stop() ;
-    } else {
-        setToolTip(s + "\n"+QObject::tr("Click to pause the hashing process"));
-
-        if (_compactMode) {
-            statusHashing->hide() ;
-        } else {
-            statusHashing->setText(s) ;
-            statusHashing->show() ;
-        }
-        hashloader->show() ;
-
-        movie->start() ;
-    }
-}
-
 void HashingStatus::mousePressEvent(QMouseEvent *)
 {
 	rsFiles->togglePauseHashingProcess() ;
-
-	if(rsFiles->hashingProcessPaused())
-	{
-		movie->stop() ;
-        hashloader->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/resume.png")) ;
-
-		mLastText = statusHashing->text();
-		statusHashing->setText(QObject::tr("[Hashing is paused]"));
-        setToolTip(QObject::tr("Click to resume the hashing process"));
-	}
-	else
-	{
-		hashloader->setMovie(movie) ;
-		statusHashing->setText(mLastText);
-		movie->start() ;
-	}
 }
+

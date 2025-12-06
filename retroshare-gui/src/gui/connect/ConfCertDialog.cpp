@@ -31,6 +31,7 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
 #include <retroshare/rsmsgs.h>
+#include <retroshare/rsiface.h>
 
 #include <retroshare-gui/mainpage.h>
 
@@ -38,7 +39,6 @@
 #include "gui/common/PeerDefs.h"
 #include "gui/common/StatusDefs.h"
 #include "gui/RetroShareLink.h"
-#include "gui/notifyqt.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/MainWindow.h"

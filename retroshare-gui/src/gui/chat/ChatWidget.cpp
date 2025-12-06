@@ -23,7 +23,6 @@
 #include "ui_ChatWidget.h"
 
 #include "gui/MainWindow.h"
-#include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/rsettingswin.h"
@@ -33,11 +32,14 @@
 #include "gui/common/Emoticons.h"
 #include "gui/chat/ChatLobbyDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/RsGUIEventManager.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
 #include "gui/chat/ChatUserNotify.h"//For BradCast
 #include "util/DateTime.h"
 #include "util/imageutil.h"
+#include "util/qtthreadsutils.h"
 #include "gui/im_history/ImHistoryBrowser.h"
 
 #include <retroshare/rsstatus.h>
@@ -61,6 +63,7 @@
 #include <QTimer>
 #include <QToolTip>
 #include <QInputDialog>
+#include <QRegExp>
 
 #include <time.h>
 
@@ -74,7 +77,7 @@
 
 ChatWidget::ChatWidget(QWidget *parent)
   : QWidget(parent)
-  , completionPosition(0), newMessages(false), typing(false), peerStatus(0)
+  , completionPosition(0), newMessages(false), typing(false), peerStatus(RsStatusValue::RS_STATUS_OFFLINE)
   , sendingBlocked(false), useCMark(false)
   , lastStatusSendTime(0)
   , firstShow(true), inChatCharFormatChanged(false), firstSearch(true)
@@ -171,9 +174,32 @@ ChatWidget::ChatWidget(QWidget *parent)
 
 	connect(ui->hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
-	connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus(const QString&, int)));
-	connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
-	connect(NotifyQt::getInstance(), SIGNAL(chatFontChanged()), this, SLOT(resetFonts()));
+    mEventHandlerId_friends = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=](){
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+
+            if(!fe)
+                return;
+
+            switch(fe->mEventCode)
+            {
+            case RsFriendListEventCode::NODE_STATUS_CHANGED: updateStatus(ChatId(fe->mSslId),fe->mStatus);
+                break;
+
+            case RsFriendListEventCode::NODE_STATE_STRING_CHANGED: updatePeersCustomStateString(ChatId(fe->mSslId),QString::fromUtf8(fe->mStateString.c_str()));
+                break;
+
+            default:
+                break;
+            }
+
+        }, this );
+    },mEventHandlerId_friends,RsEventType::FRIEND_LIST);
+
+	connect(RsGUIEventManager::getInstance(), SIGNAL(chatFontChanged()), this, SLOT(resetFonts()));
 
 	connect(ui->textBrowser, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
 
@@ -254,6 +280,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 ChatWidget::~ChatWidget()
 {
 	processSettings(false);
+    rsEvents->unregisterEventsHandler(mEventHandlerId_friends);
 
 	/* Cleanup plugin functions */
 	foreach (ChatWidgetHolder *chatWidgetHolder, mChatWidgetHolder) {
@@ -368,11 +395,11 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 		StatusInfo peerStatusInfo;
 		// No check of return value. Non existing status info is handled as offline.
         rsStatus->getStatus(chatId.toPeerId(), peerStatusInfo);
-        updateStatus(QString::fromStdString(chatId.toPeerId().toStdString()), peerStatusInfo.status);
+        updateStatus(chatId, peerStatusInfo.status);
 
 		// initialize first custom state string
         QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(chatId.toPeerId()).c_str());
-        updatePeersCustomStateString(QString::fromStdString(chatId.toPeerId().toStdString()), customStateString);
+        updatePeersCustomStateString(chatId, customStateString);
     } else if (chatType() == CHATTYPE_DISTANT){
         hist_chat_type = RS_HISTORY_TYPE_DISTANT ;
         messageCount = Settings->getDistantChatHistoryCount();
@@ -416,7 +443,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 					name = QString::fromUtf8(historyIt->peerId.toStdString().c_str());
 				}
 
-				addChatMsg(historyIt->incoming, name, RsGxsId(historyIt->peerId.toStdString().c_str()), QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
+				addChatMsg(historyIt->incoming, name, RsGxsId(historyIt->peerId.toStdString().c_str()), DateTime::DateTimeFromTime_t(historyIt->sendTime), DateTime::DateTimeFromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
 			}
 		}
 	}
@@ -1507,10 +1534,9 @@ void ChatWidget::on_markButton_clicked(bool bValue)
 
 void ChatWidget::chooseColor()
 {
-	bool ok;
-	QRgb color = QColorDialog::getRgba(currentColor.rgba(), &ok, window());
-	if (ok) {
-		currentColor = QColor(color);
+	QColor color = QColorDialog::getColor(currentColor, window(), "", QColorDialog::ShowAlphaChannel);
+	if (color.isValid()) {
+		currentColor = color;
 		PeerSettings->setPrivateChatColor(chatId, currentColor.name());
 		colorChanged();
 		setColorAndFont(false);
@@ -1763,7 +1789,11 @@ bool ChatWidget::fileSave()
 	if (!file.open(QFile::WriteOnly))
 		return false;
 	QTextStream ts(&file);
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+	ts.setEncoding(QStringConverter::Utf8);
+#else
 	ts.setCodec(QTextCodec::codecForName("UTF-8"));
+#endif
 	ts << ui->textBrowser->document()->toPlainText();
 	ui->textBrowser->document()->setModified(false);
 	return true;
@@ -1788,108 +1818,106 @@ void ChatWidget::setCurrentFileName(const QString &fileName)
 	setWindowModified(false);
 }
 
-void ChatWidget::updateStatus(const QString &peer_id, int status)
+void ChatWidget::updateStatus(const ChatId& cid, RsStatusValue status)
 {
     if (! (chatType() == CHATTYPE_PRIVATE || chatType() == CHATTYPE_DISTANT))
     {
-		// updateTitle is used
-		return;
+        // updateTitle is used
+        return;
     }
 
-    // make virtual peer id from gxs id in case of distant chat
-    RsPeerId vpid;
+    //    // make virtual peer id from gxs id in case of distant chat
+    //    RsPeerId vpid;
+    //    if(chatId.isDistantChatId())
+    //        vpid = RsPeerId(chatId.toDistantChatId());
+    //    else
+    //        vpid = chatId.toPeerId();
+
+    /* set font size for status  */
+    if (!(cid == chatId))
+        return;
+
+    // the peers status has changed
+
+    QString tooltip_info ;
+    QString peerName ;
+
     if(chatId.isDistantChatId())
-        vpid = RsPeerId(chatId.toDistantChatId());
-    else
-        vpid = chatId.toPeerId();
-
-	/* set font size for status  */
-    if (peer_id.toStdString() == vpid.toStdString())
     {
-	    // the peers status has changed
+        DistantChatPeerInfo dcpinfo ;
+        RsIdentityDetails details  ;
 
-		QString tooltip_info ;
-	    QString peerName ;
+        if(rsMsgs->getDistantChatStatus(chatId.toDistantChatId(),dcpinfo))
+        {
+            if(rsIdentity->getIdDetails(dcpinfo.to_id,details))
+                peerName = QString::fromUtf8( details.mNickname.c_str() ) ;
+            else
+                peerName = QString::fromStdString(dcpinfo.to_id.toStdString()) ;
 
-	    if(chatId.isDistantChatId())
-	    {
-		    DistantChatPeerInfo dcpinfo ;
-		    RsIdentityDetails details  ;
-
-		    if(rsMsgs->getDistantChatStatus(chatId.toDistantChatId(),dcpinfo))
-			{
-			    if(rsIdentity->getIdDetails(dcpinfo.to_id,details))
-				    peerName = QString::fromUtf8( details.mNickname.c_str() ) ;
-			    else
-				    peerName = QString::fromStdString(dcpinfo.to_id.toStdString()) ;
-
-				tooltip_info = QString("Identity Id: ")+QString::fromStdString(dcpinfo.to_id.toStdString());
-			}
-		    else
-			{
-			    peerName = QString::fromStdString(chatId.toDistantChatId().toStdString()) ;
-				tooltip_info = QString("Identity Id: unknown (bug?)");
-			}
-	    }
-	    else
-		{
-		    peerName = QString::fromUtf8(rsPeers->getPeerName(chatId.toPeerId()).c_str());
-			tooltip_info = QString("Peer Id: ") + QString::fromStdString(chatId.toPeerId().toStdString());
-		}
-
-	    // is scrollbar at the end?
-	    QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
-	    bool atEnd = (scrollbar->value() == scrollbar->maximum());
-
-	    switch (status) {
-	    case RS_STATUS_OFFLINE:
-		    ui->info_Frame->setVisible(true);
-		    ui->infoLabel->setText(peerName + " " + tr("appears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online."));
-		    break;
-
-	    case RS_STATUS_INACTIVE:
-		    ui->info_Frame->setVisible(true);
-		    ui->infoLabel->setText(peerName + " " + tr("is Idle and may not reply"));
-		    break;
-
-	    case RS_STATUS_ONLINE:
-		    ui->info_Frame->setVisible(false);
-		    break;
-
-	    case RS_STATUS_AWAY:
-		    ui->infoLabel->setText(peerName + " " + tr("is Away and may not reply"));
-		    ui->info_Frame->setVisible(true);
-		    break;
-
-	    case RS_STATUS_BUSY:
-		    ui->infoLabel->setText(peerName + " " + tr("is Busy and may not reply"));
-		    ui->info_Frame->setVisible(true);
-		    break;
-	    }
-
-	    ui->titleLabel->setText(peerName);
-	    ui->titleLabel->setToolTip(tooltip_info);
-	    ui->statusLabel->setText(QString("(%1)").arg(StatusDefs::name(status)));
-
-	    peerStatus = status;
-
-	    if (atEnd) {
-		    // scroll to the end
-		    scrollbar->setValue(scrollbar->maximum());
-	    }
-
-	    emit infoChanged(this);
-	    emit statusChanged(status);
-
-	    // Notify all ChatWidgetHolder
-	    foreach (ChatWidgetHolder *chatWidgetHolder, mChatWidgetHolder) {
-		    chatWidgetHolder->updateStatus(status);
-	    }
-
-	    return;
+            tooltip_info = QString("Identity Id: ")+QString::fromStdString(dcpinfo.to_id.toStdString());
+        }
+        else
+        {
+            peerName = QString::fromStdString(chatId.toDistantChatId().toStdString()) ;
+            tooltip_info = QString("Identity Id: unknown (bug?)");
+        }
+    }
+    else
+    {
+        peerName = QString::fromUtf8(rsPeers->getPeerName(chatId.toPeerId()).c_str());
+        tooltip_info = QString("Peer Id: ") + QString::fromStdString(chatId.toPeerId().toStdString());
     }
 
-	// ignore status change
+    // is scrollbar at the end?
+    QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
+    bool atEnd = (scrollbar->value() == scrollbar->maximum());
+
+    switch (status) {
+    default:
+    case RsStatusValue::RS_STATUS_OFFLINE:
+        ui->info_Frame->setVisible(true);
+        ui->infoLabel->setText(peerName + " " + tr("appears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online."));
+        break;
+
+    case RsStatusValue::RS_STATUS_INACTIVE:
+        ui->info_Frame->setVisible(true);
+        ui->infoLabel->setText(peerName + " " + tr("is Idle and may not reply"));
+        break;
+
+    case RsStatusValue::RS_STATUS_ONLINE:
+        ui->info_Frame->setVisible(false);
+        break;
+
+    case RsStatusValue::RS_STATUS_AWAY:
+        ui->infoLabel->setText(peerName + " " + tr("is Away and may not reply"));
+        ui->info_Frame->setVisible(true);
+        break;
+
+    case RsStatusValue::RS_STATUS_BUSY:
+        ui->infoLabel->setText(peerName + " " + tr("is Busy and may not reply"));
+        ui->info_Frame->setVisible(true);
+        break;
+    }
+
+    ui->titleLabel->setText(peerName);
+    ui->titleLabel->setToolTip(tooltip_info);
+#warning inconsistent conversion here
+    ui->statusLabel->setText(QString("(%1)").arg(StatusDefs::name((RsStatusValue)status)));
+
+    peerStatus = status;
+
+    if (atEnd) {
+        // scroll to the end
+        scrollbar->setValue(scrollbar->maximum());
+    }
+
+    emit infoChanged(this);
+    emit statusChanged(status);
+
+    // Notify all ChatWidgetHolder
+    foreach (ChatWidgetHolder *chatWidgetHolder, mChatWidgetHolder) {
+        chatWidgetHolder->updateStatus(status);
+    }
 }
 
 void ChatWidget::updateTitle()
@@ -1902,7 +1930,7 @@ void ChatWidget::updateTitle()
 	ui->titleLabel->setText(RsHtml::plainText(name) + "@" + RsHtml::plainText(title));
 }
 
-void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QString& status_string)
+void ChatWidget::updatePeersCustomStateString(const ChatId& id, const QString& status_string)
 {
 	if (chatType() != CHATTYPE_PRIVATE )
 	{
@@ -1911,7 +1939,7 @@ void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QStr
 
 	QString status_text;
 
-	if (RsPeerId(peer_id.toStdString()) == chatId.toPeerId()) {
+    if (id.toPeerId() == chatId.toPeerId()) {
 		// the peers status string has changed
 		if (status_string.isEmpty()) {
 			ui->statusMessageLabel->hide();
@@ -1930,7 +1958,7 @@ void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QStr
 
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString, bool permanent)
 {
-	ui->typingLabel->setText(QString(statusMask).arg(trUtf8(statusString.toUtf8()))); // displays info for 5 secs.
+	ui->typingLabel->setText(QString(statusMask).arg(tr(statusString.toUtf8()))); // displays info for 5 secs.
     ui->typingPixmapLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":icons/png/typing.png") );
 
 	if (statusString == "is typing...") {

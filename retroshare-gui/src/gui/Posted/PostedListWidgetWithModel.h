@@ -1,5 +1,5 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/gxschannels/BoardPostsWidget.h                       *
+ * retroshare-gui/src/gui/Posted/PostedListWidgetWithModel.h                   *
  *                                                                             *
  * Copyright 2013 by Robert Fernie     <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -18,8 +18,8 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef _GXS_CHANNELPOSTSWIDGET_H
-#define _GXS_CHANNELPOSTSWIDGET_H
+#ifndef _POSTED_LISTWIDGETWITHMODEL_H
+#define _POSTED_LISTWIDGETWITHMODEL_H
 
 #include <map>
 

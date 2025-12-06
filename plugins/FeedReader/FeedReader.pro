@@ -28,6 +28,8 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 	QT += widgets
 }
 
+greaterThan(QT_MAJOR_VERSION,5): QT += core5compat
+
 target.files = lib/libFeedReader.so
 
 SOURCES =	FeedReaderPlugin.cpp \
@@ -45,6 +47,7 @@ SOURCES =	FeedReaderPlugin.cpp \
 			gui/FeedReaderUserNotify.cpp \
 			gui/FeedReaderFeedItem.cpp \
 			gui/FeedTreeWidget.cpp \
+			gui/ProxyWidget.cpp \
 			util/CURLWrapper.cpp \
 			util/XMLWrapper.cpp \
 			util/HTMLWrapper.cpp \
@@ -66,6 +69,7 @@ HEADERS =	FeedReaderPlugin.h \
 			gui/FeedReaderUserNotify.h \
 			gui/FeedReaderFeedItem.h \
 			gui/FeedTreeWidget.h \
+			gui/ProxyWidget.h \
 			util/CURLWrapper.h \
 			util/XMLWrapper.h \
 			util/HTMLWrapper.h \
@@ -76,7 +80,8 @@ FORMS =		gui/FeedReaderDialog.ui \
 			gui/AddFeedDialog.ui \
 			gui/PreviewFeedDialog.ui \
 			gui/FeedReaderConfig.ui \
-			gui/FeedReaderFeedItem.ui
+			gui/FeedReaderFeedItem.ui \
+			gui/ProxyWidget.ui
 
 TARGET = FeedReader
 
@@ -125,7 +130,7 @@ win32 {
 
 	isEmpty(QMAKE_SH) {
 		# MinGW
-		LIBS += -lcrypt32
+		LIBS += -lcrypt32 -lbcrypt
 	}
 
 	# Check for msys2

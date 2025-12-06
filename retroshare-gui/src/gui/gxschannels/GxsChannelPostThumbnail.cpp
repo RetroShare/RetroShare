@@ -283,7 +283,13 @@ void ZoomableLabel::wheelEvent(QWheelEvent *me)
     if(!mZoomEnabled)
         return;
 
-    float new_zoom_factor = (me->delta() > 0)?(mZoomFactor*1.05):(mZoomFactor/1.05);
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    int delta = me->angleDelta().y();
+#else
+    int delta = me->delta();
+#endif
+
+    float new_zoom_factor = (delta > 0)?(mZoomFactor*1.05):(mZoomFactor/1.05);
     float new_center_x = mCenterX;
     float new_center_y = mCenterY;
 
@@ -307,6 +313,24 @@ void ZoomableLabel::wheelEvent(QWheelEvent *me)
     mCenterY = new_center_y;
 
     updateView();
+}
+
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+void ZoomableLabel::enterEvent(QEnterEvent* /*event*/)
+#else
+void ZoomableLabel::enterEvent(QEvent* /*event*/)
+#endif
+{
+    if (mUseStyleSheet) {
+        setStyleSheet("QLabel { border: 2px solid #039bd5; }");
+    }
+}
+
+void ZoomableLabel::ZoomableLabel::leaveEvent(QEvent* /*event*/)
+{
+    if (mUseStyleSheet) {
+        setStyleSheet("QLabel { border: 2px solid #CCCCCC; border-radius: 3px; }");
+    }
 }
 
 QPixmap ZoomableLabel::extractCroppedScaledPicture() const

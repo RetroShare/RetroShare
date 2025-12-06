@@ -30,7 +30,7 @@ class ForumPage : public ConfigPage
 	Q_OBJECT
 
 public:
-	ForumPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+	ForumPage(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 	~ForumPage();
 
 	/** Loads the settings for this page */

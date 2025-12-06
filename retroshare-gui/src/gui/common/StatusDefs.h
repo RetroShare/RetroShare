@@ -24,18 +24,20 @@
 #include <QColor>
 #include <QFont>
 
+#include "retroshare/rsstatus.h"
+
 struct RsPeerDetails;
 
 class StatusDefs
 {
 public:
-	static QString     name(unsigned int status);
-	static const char* imageIM(unsigned int status);
-	static const char* imageUser(unsigned int status);
-	static const char* imageStatus(unsigned int status);
-	static QString     tooltip(unsigned int status);
+    static QString     name(RsStatusValue status);
+    static const char* imageIM(RsStatusValue status);
+    static const char* imageUser(RsStatusValue status);
+    static const char* imageStatus(RsStatusValue status);
+    static QString     tooltip(RsStatusValue status);
 
-	static QFont       font(unsigned int status);
+    static QFont       font(RsStatusValue status);
 
 	static QString     peerStateString(int peerState);
 	static QString     connectStateString(RsPeerDetails &details);

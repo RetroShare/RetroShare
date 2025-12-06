@@ -27,6 +27,9 @@
 #include "ui_PopupChatWindow.h"
 #include <retroshare/rstypes.h>
 #include <retroshare/rsmsgs.h>
+
+#include "gui/chat/ChatWidget.h"
+
 Q_DECLARE_METATYPE(RsGxsId)
 Q_DECLARE_METATYPE(QList<RsGxsId>)
 
@@ -43,13 +46,13 @@ public:
 public:
 	void addDialog(ChatDialog *dialog);
 	void removeDialog(ChatDialog *dialog);
-	void showDialog(ChatDialog *dialog, uint chatflags);
+    void showDialog(ChatDialog *dialog, RsChatFlags chatflags);
 	void alertDialog(ChatDialog *dialog);
 	void calculateTitle(ChatDialog *dialog);
 
 protected:
 	/** Default constructor */
-	PopupChatWindow(bool tabbed, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+	PopupChatWindow(bool tabbed, QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 	/** Default destructor */
 	~PopupChatWindow();
 

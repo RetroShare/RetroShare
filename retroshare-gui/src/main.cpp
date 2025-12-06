@@ -59,6 +59,7 @@ CrashStackTrace gCrashStackTrace;
 #include "util/rsdir.h"
 #include "util/rstime.h"
 #include "retroshare/rsinit.h"
+#include "util/RsQtVersion.h"
 
 #ifdef MESSENGER_WINDOW
 #include "gui/MessengerWindow.h"
@@ -107,7 +108,7 @@ __declspec(dllexport) __cdecl BOOL _OPENSSL_isservice(void)
 #include <util/stringutil.h>
 #include <retroshare/rsinit.h>
 #include <retroshare/rsiface.h>
-#include "gui/notifyqt.h"
+#include "gui/RsGUIEventManager.h"
 #include <unistd.h>
 
 static void showHelp(const argstream& as)
@@ -136,7 +137,7 @@ static void showHelp(const argstream& as)
         box.setWindowTitle(QObject::tr("Retroshare commandline arguments"));
 
         // now compute the size of text and set the size of the box. For the record, this doesn't work...
-        box.setBaseSize( QSize(QFontMetricsF(font).width(text),QFontMetricsF(font).height()*text.count('\n')) );
+        box.setBaseSize( QSize(QFontMetrics_horizontalAdvance(QFontMetricsF(font), text),QFontMetricsF(font).height()*text.count('\n')) );
         box.exec();
 }
 
@@ -345,8 +346,8 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
     //
     RsControl::earlyInitNotificationSystem() ;
 
-    NotifyQt *notify = NotifyQt::Create();
-    rsNotify->registerNotifyClient(notify);
+    RsGUIEventManager::Create();
+    //rsNotify->registerNotifyClient(notify);
 
     /* RetroShare Core Objects */
     RsInit::InitRsConfig();
@@ -725,20 +726,20 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 #ifdef DEBUG
     std::cerr << "connecting signals and slots" << std::endl ;
 #endif
-    QObject::connect(notify,SIGNAL(deferredSignatureHandlingRequested()),notify,SLOT(handleSignatureEvent()),Qt::QueuedConnection) ;
-    QObject::connect(notify,SIGNAL(chatLobbyTimeShift(int)),notify,SLOT(handleChatLobbyTimeShift(int)),Qt::QueuedConnection) ;
-    QObject::connect(notify,SIGNAL(diskFull(int,int))						,w                   		,SLOT(displayDiskSpaceWarning(int,int))) ;
-    QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w                         ,SLOT(postModDirectories(bool)) ,Qt::QueuedConnection        ) ;
-    QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  		,SLOT(insertTransfers()                )) ;
-    QObject::connect(notify,SIGNAL(publicChatChanged(int))            ,w->friendsDialog      		,SLOT(publicChatChanged(int)           ));
-    QObject::connect(notify,SIGNAL(neighboursChanged())               ,w->friendsDialog->networkDialog    		,SLOT(securedUpdateDisplay())) ;
+//    QObject::connect(notify,SIGNAL(deferredSignatureHandlingRequested()),notify,SLOT(handleSignatureEvent()),Qt::QueuedConnection) ;
+//    QObject::connect(notify,SIGNAL(chatLobbyTimeShift(int)),notify,SLOT(handleChatLobbyTimeShift(int)),Qt::QueuedConnection) ;
+//    QObject::connect(notify,SIGNAL(diskFull(int,int))						,w                   		,SLOT(displayDiskSpaceWarning(int,int))) ;
+//    QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w                         ,SLOT(postModDirectories(bool)) ,Qt::QueuedConnection        ) ;
+//    QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  		,SLOT(insertTransfers()                )) ;
+//    QObject::connect(notify,SIGNAL(publicChatChanged(int))            ,w->friendsDialog      		,SLOT(publicChatChanged(int)           ));
+//    QObject::connect(notify,SIGNAL(neighboursChanged())               ,w->friendsDialog->networkDialog    		,SLOT(securedUpdateDisplay())) ;
 
-    QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&,bool)),w->friendsDialog,SLOT(updatePeerStatusString(const QString&,const QString&,bool)));
-    QObject::connect(notify,SIGNAL(ownStatusMessageChanged()),w->friendsDialog,SLOT(loadmypersonalstatus()));
+//    QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&,bool)),w->friendsDialog,SLOT(updatePeerStatusString(const QString&,const QString&,bool)));
+//    QObject::connect(notify,SIGNAL(ownStatusMessageChanged()),w->friendsDialog,SLOT(loadmypersonalstatus()));
 
 //	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&))		,w->friendsDialog->networkDialog,SLOT(setLogInfo(QString))) ;
-    QObject::connect(notify,SIGNAL(discInfoChanged())						,w->friendsDialog->networkView,SLOT(update()),Qt::QueuedConnection) ;
-    QObject::connect(notify,SIGNAL(errorOccurred(int,int,const QString&)),w,SLOT(displayErrorMessage(int,int,const QString&))) ;
+//  QObject::connect(notify,SIGNAL(discInfoChanged())						,w->friendsDialog->networkView,SLOT(update()),Qt::QueuedConnection) ;
+//  QObject::connect(notify,SIGNAL(errorOccurred(int,int,const QString&)),w,SLOT(displayErrorMessage(int,int,const QString&))) ;
 
     w->installGroupChatNotifier();
 
@@ -751,11 +752,10 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
     }
 
     /* Startup a Timer to keep the gui's updated */
-    QTimer *timer = new QTimer(w);
-    timer -> connect(timer, SIGNAL(timeout()), notify, SLOT(UpdateGUI()));
-    timer->start(1000);
-
-    notify->enable() ;	// enable notification system after GUI creation, to avoid data races in Qt.
+    //QTimer *timer = new QTimer(w);
+    //timer -> connect(timer, SIGNAL(timeout()), notify, SLOT(UpdateGUI()));
+    //timer->start(1000);
+    //notify->enable() ;	// enable notification system after GUI creation, to avoid data races in Qt.
 
     // Read webui params in settings. We cannot save them to some webui.cfg because cfg needs the node id and
     // jsonapi is started before node ID selection in retroshare-service.

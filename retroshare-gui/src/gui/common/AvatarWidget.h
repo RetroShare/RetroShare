@@ -24,7 +24,9 @@
 #include <QLabel>
 #include <stdint.h>
 #include <retroshare/rstypes.h>
+#include <retroshare/rsevents.h>
 #include <retroshare/rsmsgs.h>
+#include <retroshare/rsstatus.h>
 
 namespace Ui {
 	class AvatarWidget;
@@ -57,14 +59,14 @@ protected:
 	void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
-    void updateStatus(const QString& peerId, int status);
+    void updateStatus(const QString& peerId, RsStatusValue status);
 	void updateAvatar(const QString& peerId);
     void updateOwnAvatar();
 
 private:
     void refreshAvatarImage() ;
     void refreshStatus();
-    void updateStatus(int status);
+    void updateStatus(RsStatusValue status);
 
 	QString defaultAvatar;
 	Ui::AvatarWidget *ui;
@@ -77,7 +79,9 @@ private:
 //		bool isGpg : 1;
 	} mFlag;
 	FrameType mFrameType;
-	uint32_t  mPeerState;
+    RsStatusValue  mPeerState;
+
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif // AVATARWIDGET_H

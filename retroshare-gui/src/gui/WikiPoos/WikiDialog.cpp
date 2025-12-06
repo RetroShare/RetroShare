@@ -30,6 +30,7 @@
 #include "gui/WikiPoos/WikiEditDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/WikiGroupDialog.h"
+#include "util/DateTime.h"
 
 #include <retroshare/rswiki.h>
 
@@ -715,7 +716,7 @@ void WikiDialog::GroupMetaDataToGroupItemInfo(const RsGroupMetaData &groupInfo, 
 	groupItemInfo.name = QString::fromUtf8(groupInfo.mGroupName.c_str());
 	//groupItemInfo.description = QString::fromUtf8(groupInfo.forumDesc);
 	groupItemInfo.popularity = groupInfo.mPop;
-	groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo.mLastPost);
+	groupItemInfo.lastpost = DateTime::DateTimeFromTime_t(groupInfo.mLastPost);
 	groupItemInfo.subscribeFlags = groupInfo.mSubscribeFlags;
 
 	groupItemInfo.icon = QIcon(IMAGE_WIKI);

@@ -22,7 +22,6 @@
 #include "ui_GxsCircleItem.h"
 
 #include "FeedHolder.h"
-#include "gui/notifyqt.h"
 #include "gui/Circles/CreateCircleDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
@@ -40,7 +39,7 @@
 #define CIRCLESDIALOG_GROUPUPDATE  3
 
 
-GxsCircleItem::GxsCircleItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsCircleId &circleId, const RsGxsId &gxsId, const uint32_t type)
+GxsCircleItem::GxsCircleItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsCircleId &circleId, const RsGxsId &gxsId, RsFeedTypeFlags type)
     :FeedItem(feedHolder,feedId,NULL), mType(type), mCircleId(circleId), mGxsId(gxsId)
 {
 	setup();
@@ -92,7 +91,7 @@ void GxsCircleItem::setup()
 
         // from here we can figure out if we already have requested membership or not
 
-		if (mType == RS_FEED_ITEM_CIRCLE_MEMB_REQ)
+        if (mType == RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_REQ)
 		{
 			ui->titleLabel->setText(tr("You received a membership request a circle you're administrating:"));
 			ui->iconLabel->setPixmap(pixmap);
@@ -105,7 +104,7 @@ void GxsCircleItem::setup()
 
 			ui->membershipButton->setHidden(true);
 		}
-		else if (mType == RS_FEED_ITEM_CIRCLE_INVITE_REC)
+        else if (mType == RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_INVITE_REC)
 		{
 			ui->titleLabel->setText(tr("You received an invitation to join this circle:"));
 			ui->iconLabel->setPixmap(pixmap);
@@ -118,7 +117,7 @@ void GxsCircleItem::setup()
 			connect(ui->membershipButton, SIGNAL(clicked()), this, SLOT(requestCircleSubscription()));
 			ui->inviteeButton->setHidden(true);
 		}
-		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_LEAVE)
+        else if (mType == RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_LEAVE)
 		{
 			ui->titleLabel->setText(idName + tr(" has left this circle."));
 			ui->iconLabel->setPixmap(pixmap);
@@ -127,7 +126,7 @@ void GxsCircleItem::setup()
 			ui->membershipButton->setHidden(true);
 			ui->inviteeButton->setHidden(true);
 		}
-		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_JOIN)
+        else if (mType == RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_JOIN)
 		{
             if(circleDetails.mAmIAdmin)
 			{
@@ -148,7 +147,7 @@ void GxsCircleItem::setup()
 
 			ui->membershipButton->setHidden(true);
 		}
-		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_REVOKED)
+        else if (mType == RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_REVOKED)
 		{
 			ui->titleLabel->setText(tr("Your identity %1 has been revoked from this circle.").arg(idName));
 
@@ -162,7 +161,7 @@ void GxsCircleItem::setup()
 
 			ui->inviteeButton->setHidden(true);
 		}
-		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_ACCEPTED)
+        else if (mType == RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_ACCEPTED)
 		{
 			ui->titleLabel->setText(tr("Your identity %1 as been accepted in this circle.").arg(idName));
 
@@ -198,7 +197,7 @@ void GxsCircleItem::showCircleDetails()
 {
 	CreateCircleDialog dlg;
 
-	dlg.editExistingId(RsGxsGroupId(mCircleId), true, mType != RS_FEED_ITEM_CIRCLE_MEMB_REQ) ;
+    dlg.editExistingId(RsGxsGroupId(mCircleId), true, mType != RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_REQ) ;
 	dlg.exec();
 }
 
@@ -215,9 +214,9 @@ void GxsCircleItem::toggleCircleMembership()
         return;
     }
 
-    if(mType == RS_FEED_ITEM_CIRCLE_INVITE_REC)
+    if(mType == RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_INVITE_REC)
         rsGxsCircles->requestCircleMembership(mGxsId,mCircleId);
-    else if(mType == RS_FEED_ITEM_CIRCLE_MEMB_REVOKED)
+    else if(mType == RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_REVOKED)
         rsGxsCircles->cancelCircleMembership(mGxsId,mCircleId);
 	else
 		RsErr() << __PRETTY_FUNCTION__ << ": inconsistent call. mType is " << mType << std::endl;
@@ -225,12 +224,12 @@ void GxsCircleItem::toggleCircleMembership()
 
 void GxsCircleItem::toggleCircleInvite()
 {
-	if(mType == RS_FEED_ITEM_CIRCLE_MEMB_JOIN)
+    if(mType == RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_JOIN)
 		RsThread::async([this]()
 		{
 			rsGxsCircles->revokeIdsFromCircle(std::set<RsGxsId>( { mGxsId } ),mCircleId);
 		});
-	else if(mType == RS_FEED_ITEM_CIRCLE_MEMB_REQ)
+    else if(mType == RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_REQ)
 		RsThread::async([this]()
 		{
 			rsGxsCircles->inviteIdsToCircle(std::set<RsGxsId>( { mGxsId } ),mCircleId);

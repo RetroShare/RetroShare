@@ -22,7 +22,7 @@
 #define _POSTEDGROUPITEM_H
 
 #include <retroshare/rsposted.h>
-#include "gui/gxs/GxsGroupFeedItem.h"
+#include "gui/feeds/GxsGroupFeedItem.h"
 
 namespace Ui {
 class PostedGroupItem;
@@ -37,21 +37,20 @@ class PostedGroupItem : public GxsGroupFeedItem
 public:
 	/** Default Constructor */
 	PostedGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate);
-	PostedGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, bool isHome, bool autoUpdate);
-	~PostedGroupItem();
-
-	bool setGroup(const RsPostedGroup &group);
+    virtual ~PostedGroupItem() override;
 
     uint64_t uniqueIdentifier() const override { return hash_64bits("PostedGroupItem " + groupId().toStdString()) ; }
 
 protected:
+    virtual void paintEvent(QPaintEvent *e) override;
+
 	/* FeedItem */
-	virtual void doExpand(bool open);
+    virtual void doExpand(bool open) override;
 
 	/* GxsGroupFeedItem */
-	virtual QString groupName();
+    virtual QString groupName() override;
 	virtual void loadGroup() override;
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
+    virtual RetroShareLink::enumType getLinkType() override { return RetroShareLink::TYPE_UNKNOWN; }
 
 private slots:
 	void toggle() override;
@@ -63,6 +62,8 @@ private:
 
 private:
 	RsPostedGroup mGroup;
+    bool mLoadingGroup;
+    LoadingStatus mLoadingStatus;
 
 	/** Qt Designer generated object */
 	Ui::PostedGroupItem *ui;

@@ -24,6 +24,7 @@
 #include <QWidget>
 #include <QPainter>
 #include <QBitmap>
+#include <QColor>
 
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include <retroshare/rstypes.h>
@@ -36,7 +37,7 @@ class FileTransferInfoWidget : public RsAutoUpdatePage
     Q_OBJECT
 
 public:
-    FileTransferInfoWidget(QWidget * parent = 0, Qt::WindowFlags f = 0 );
+    FileTransferInfoWidget(QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags() );
 
      void setFileHash(const RsFileHash& hash) { _file_hash = hash ; }
 
@@ -58,6 +59,7 @@ private:
     QPixmap downloadingPixmap;
     QPixmap notDownloadPixmap;
     QPixmap checkingPixmap;
+    QColor penColor;
 
      RsFileHash _file_hash ;
 };

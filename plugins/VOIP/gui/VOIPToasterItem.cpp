@@ -27,7 +27,7 @@
 
 /*Retroshare-Gui*/
 #include "gui/chat/ChatDialog.h"
-#include "gui/notifyqt.h"
+#include "gui/RsGUIEventManager.h"
 #include "util/HandleRichText.h"
 
 VOIPToasterItem::VOIPToasterItem(const RsPeerId &peer_id, const QString &msg, const voipToasterItem_Type type)

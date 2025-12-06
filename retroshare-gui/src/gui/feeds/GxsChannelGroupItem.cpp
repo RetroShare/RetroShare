@@ -36,16 +36,11 @@
 GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate) :
     GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsGxsChannels, autoUpdate)
 {
-	setup();
-	requestGroup();
-    addEventHandler();
-}
+    mLoadingGroup = false;
+    mLoadingStatus = LOADING_STATUS_NO_DATA;
 
-GxsChannelGroupItem::GxsChannelGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, bool isHome, bool autoUpdate) :
-    GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsGxsChannels, autoUpdate)
-{
     setup();
-    setGroup(group);
+	requestGroup();
     addEventHandler();
 }
 
@@ -66,7 +61,8 @@ void GxsChannelGroupItem::addEventHandler()
                 case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:
                 case RsChannelEventCode::UPDATED_CHANNEL:
                 case RsChannelEventCode::RECEIVED_PUBLISH_KEY:
-                    loadGroup();
+                    mLoadingStatus = LOADING_STATUS_NO_DATA;
+                    mGroup = RsGxsChannelGroup();
                     break;
                 default:
                     break;
@@ -75,8 +71,42 @@ void GxsChannelGroupItem::addEventHandler()
     }, mEventHandlerId, RsEventType::GXS_CHANNELS );
 }
 
+void GxsChannelGroupItem::paintEvent(QPaintEvent *e)
+{
+    /* This method employs a trick to trigger a deferred loading. The post and group is requested only
+     * when actually displayed on the screen. */
+
+    if(mLoadingStatus != LOADING_STATUS_FILLED && !mGroup.mMeta.mGroupId.isNull())
+        mLoadingStatus = LOADING_STATUS_HAS_DATA;
+
+    if(mGroup.mMeta.mGroupId.isNull() && !mLoadingGroup)
+        loadGroup();
+
+    switch(mLoadingStatus)
+    {
+    case LOADING_STATUS_FILLED:
+    case LOADING_STATUS_NO_DATA:
+    default:
+        break;
+
+    case LOADING_STATUS_HAS_DATA:
+        fill();
+        mLoadingStatus = LOADING_STATUS_FILLED;
+        break;
+    }
+
+    GxsGroupFeedItem::paintEvent(e) ;
+}
 GxsChannelGroupItem::~GxsChannelGroupItem()
 {
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
+
+    while( mLoadingGroup && std::chrono::steady_clock::now() < timeout )
+    {
+        RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for data to load " << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
     rsEvents->unregisterEventsHandler(mEventHandlerId);
 	delete(ui);
 }
@@ -105,22 +135,10 @@ void GxsChannelGroupItem::setup()
 	ui->expandFrame->hide();
 }
 
-bool GxsChannelGroupItem::setGroup(const RsGxsChannelGroup &group)
-{
-	if (groupId() != group.mMeta.mGroupId) {
-		std::cerr << "GxsChannelGroupItem::setContent() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	mGroup = group;
-	fill();
-
-	return true;
-}
-
 void GxsChannelGroupItem::loadGroup()
 {
+    mLoadingGroup = true;
+
 	RsThread::async([this]()
 	{
 		// 1 - get group data
@@ -131,14 +149,18 @@ void GxsChannelGroupItem::loadGroup()
 		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))
 		{
 			RsErr() << "PostedItem::loadGroup() ERROR getting data" << std::endl;
-			return;
+            mLoadingGroup = false;
+            deferred_update();
+            return;
 		}
 
 		if (groups.size() != 1)
 		{
 			std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
-			return;
+            deferred_update();
+            mLoadingGroup = false;
+            return;
 		}
 		RsGxsChannelGroup group(groups[0]);
 
@@ -148,7 +170,8 @@ void GxsChannelGroupItem::loadGroup()
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			setGroup(group);
+            mGroup = group;
+            mLoadingGroup = false;
 
 		}, this );
 	});
@@ -171,11 +194,16 @@ void GxsChannelGroupItem::fill()
 	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, mGroup.mMeta.mGroupId, groupName());
 	ui->nameLabel->setText(link.toHtml());
 
-	ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));
+    ui->logoLabel->setEnableZoom(false);
+    int desired_height = QFontMetricsF(font()).height() * ITEM_HEIGHT_FACTOR;
+    ui->logoLabel->setFixedSize(ITEM_PICTURE_FORMAT_RATIO*desired_height,desired_height);
+
+    ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));
 
 	if (mGroup.mImage.mData != NULL) {
 		QPixmap chanImage;
 		GxsIdDetails::loadPixmapFromData(mGroup.mImage.mData, mGroup.mImage.mSize, chanImage,GxsIdDetails::ORIGINAL);
+
         ui->logoLabel->setPixmap(chanImage);
 	}
 

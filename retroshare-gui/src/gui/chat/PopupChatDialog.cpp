@@ -26,11 +26,11 @@
 #include "gui/common/FilesDefs.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/RsharePeerSettings.h"
-#include "gui/notifyqt.h"
+#include "util/DateTime.h"
+#include "util/qtthreadsutils.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsiface.h>
-#include <retroshare/rsnotify.h>
 
 #include <algorithm>
 
@@ -49,7 +49,25 @@ PopupChatDialog::PopupChatDialog(QWidget *parent, Qt::WindowFlags flags)
 
 	connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
 	connect(ui.actionClearOfflineMessages, SIGNAL(triggered()), this, SLOT(clearOfflineMessages()));
-    connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)), this, SLOT(chatStatusChanged(ChatId,QString)));
+
+    mEventHandlerId_chat =0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsChatServiceEvent*>(e.get());  if(!fe) return;
+
+            switch(fe->mEventCode)
+            {
+            case RsChatServiceEventCode::CHAT_STATUS_CHANGED:   chatStatusChanged(fe->mCid,QString::fromUtf8(fe->mStr.c_str())); break;
+            default:
+                break;
+            }
+
+        }
+        , this );
+    }, mEventHandlerId_chat, RsEventType::CHAT_SERVICE );
 }
 
 void PopupChatDialog::init(const ChatId &chat_id, const QString &title)
@@ -80,6 +98,7 @@ void PopupChatDialog::init(const ChatId &chat_id, const QString &title)
 /** Destructor. */
 PopupChatDialog::~PopupChatDialog()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId_chat);
 	// save settings
 	processSettings(false);
 }
@@ -91,7 +110,7 @@ ChatWidget *PopupChatDialog::getChatWidget()
 
 bool PopupChatDialog::notifyBlink()
 {
-	return (Settings->getChatFlags() & RS_CHAT_BLINK);
+    return (Settings->getChatFlags() & (uint32_t)RsChatFlags::RS_CHAT_BLINK);
 }
 
 void PopupChatDialog::processSettings(bool load)
@@ -107,7 +126,7 @@ void PopupChatDialog::processSettings(bool load)
 	Settings->endGroup();
 }
 
-void PopupChatDialog::showDialog(uint chatflags)
+void PopupChatDialog::showDialog(RsChatFlags chatflags)
 {
 	PopupChatWindow *window = WINDOW(this);
 	if (window) {
@@ -130,8 +149,8 @@ void PopupChatDialog::addChatMsg(const ChatMessage &msg)
 {
 	ChatWidget *cw = getChatWidget();
 	if (cw) {
-        QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
-        QDateTime recvTime = QDateTime::fromTime_t(msg.recvTime);
+        QDateTime sendTime = DateTime::DateTimeFromTime_t(msg.sendTime);
+        QDateTime recvTime = DateTime::DateTimeFromTime_t(msg.recvTime);
 		QString additional_info ;
         QString message = QString::fromUtf8(msg.msg.c_str());
         QString name = msg.incoming? getPeerName(msg.chat_id,additional_info): getOwnName();
