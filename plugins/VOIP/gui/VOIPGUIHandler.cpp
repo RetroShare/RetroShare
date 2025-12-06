@@ -33,7 +33,7 @@ void VOIPGUIHandler::ReceivedInvitation(const RsPeerId &peer_id, int flags)
 #ifdef VOIPGUIHANDLER_DEBUG
 	std::cerr << "****** VOIPGUIHandler: received Invitation from peer " << peer_id.toStdString() << " with flags==" << flags << std::endl;
 #endif
-	ChatDialog *di = ChatDialog::getChat(ChatId(peer_id), Settings->getChatFlags());
+	ChatDialog *di = ChatDialog::getChat(ChatId(peer_id), (RsChatFlags) Settings->getChatFlags());
 	if (di) {
 		ChatWidget *cw = di->getChatWidget();
 		if(cw) {
@@ -113,7 +113,7 @@ void VOIPGUIHandler::ReceivedVoipData(const RsPeerId &peer_id)
 		return ;
 	}
 
-	ChatDialog *di = ChatDialog::getChat(ChatId(peer_id), Settings->getChatFlags());
+	ChatDialog *di = ChatDialog::getChat(ChatId(peer_id), (RsChatFlags) Settings->getChatFlags());
 	if (di) {
 		ChatWidget *cw = di->getChatWidget();
 		if (cw) {

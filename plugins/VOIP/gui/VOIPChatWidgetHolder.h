@@ -52,7 +52,7 @@ public:
 	VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *notify);
 	virtual ~VOIPChatWidgetHolder();
 
-	virtual void updateStatus(int status);
+	virtual void updateStatus(RsStatusValue status);
 
 	void addAudioData(const RsPeerId &peer_id, QByteArray* array) ;
 	void addVideoData(const RsPeerId &peer_id, QByteArray* array) ;
