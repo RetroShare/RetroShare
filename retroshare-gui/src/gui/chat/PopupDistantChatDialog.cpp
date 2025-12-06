@@ -145,6 +145,8 @@ void PopupDistantChatDialog::handleEvent_main_thread(std::shared_ptr<const RsEve
 		getChatWidget()->updateStatusString("%1", tr( "Your partner closed the conversation." ), true );
 		getChatWidget()->blockSending(tr( "Your partner closed the conversation."));
 
+		getChatWidget()->addChatMsg(true, tr("Chat status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+			, tr("Your partner closed the conversation."), ChatWidget::MSGTYPE_SYSTEM);
         setPeerStatus(RsStatusValue::RS_STATUS_OFFLINE) ;
 		break ;
 
@@ -173,6 +175,8 @@ void PopupDistantChatDialog::handleEvent_main_thread(std::shared_ptr<const RsEve
 		msg = QObject::tr( "End-to-end encrypted conversation established");
         getChatWidget()->updateStatusString("%1", msg, true);
         _status_label->setToolTip(msg);
+		getChatWidget()->addChatMsg(true, tr("Chat status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+			, tr("Tunnel is secured. You can talk!"), ChatWidget::MSGTYPE_SYSTEM);
 		getChatWidget()->unblockSending();
         setPeerStatus(RsStatusValue::RS_STATUS_ONLINE);
 		break;
