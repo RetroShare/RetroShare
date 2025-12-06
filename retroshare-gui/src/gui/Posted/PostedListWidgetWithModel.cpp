@@ -1,5 +1,5 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/gxschannels/PostedListWidgetWithModel.cpp            *
+ * retroshare-gui/src/gui/Posted/PostedListWidgetWithModel.cpp                 *
  *                                                                             *
  * Copyright 2013 by Robert Fernie     <retroshare.project@gmail.com>          *
  *                                                                             *
