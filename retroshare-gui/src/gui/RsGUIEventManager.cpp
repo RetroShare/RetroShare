@@ -398,7 +398,10 @@ void RsGUIEventManager::async_handleIncomingEvent(std::shared_ptr<const RsEvent>
             if (rsPlugin) {
                 ToasterNotify *toasterNotify = rsPlugin->qt_toasterNotify();
                 if (toasterNotify) {
-                    insertToaster(toasterNotify->toasterItem());
+                    ToasterItem *toasterItem = toasterNotify->toasterItem();
+                    if (toasterItem) {
+                        insertToaster(toasterItem);
+                    }
                     continue;
                 }
             }
