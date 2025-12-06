@@ -239,8 +239,8 @@ void FriendsDialog::processSettings(bool bLoad)
 
 void FriendsDialog::chatMessageReceived(const ChatMessage &msg)
 {
-    if(!msg.chat_id.isBroadcast())
-        return;
+	if(!msg.chat_id.isBroadcast())
+		return;
 
 	QDateTime sendTime = DateTime::DateTimeFromTime_t(msg.sendTime);
 	QDateTime recvTime = DateTime::DateTimeFromTime_t(msg.recvTime);
@@ -251,9 +251,9 @@ void FriendsDialog::chatMessageReceived(const ChatMessage &msg)
 
 	if(ui.chatWidget->isActive())
 	{
-            // clear the chat notify when control returns to the Qt event loop
-            // we have to do this later, because we don't know if we or the notify receives the chat message first
-            QMetaObject::invokeMethod(this, "clearChatNotify", Qt::QueuedConnection);
+		// clear the chat notify when control returns to the Qt event loop
+		// we have to do this later, because we don't know if we or the notify receives the chat message first
+		QMetaObject::invokeMethod(this, "clearChatNotify", Qt::QueuedConnection);
 	}
 }
 
