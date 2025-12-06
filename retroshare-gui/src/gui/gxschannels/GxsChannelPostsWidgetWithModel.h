@@ -1,5 +1,5 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/gxschannels/GxsChannelPostsWidget.h                  *
+ * retroshare-gui/src/gui/gxschannels/GxsChannelPostsWidgetWithModel.h         *
  *                                                                             *
  * Copyright 2013 by Robert Fernie     <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -18,8 +18,8 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef _GXS_CHANNELPOSTSWIDGET_H
-#define _GXS_CHANNELPOSTSWIDGET_H
+#ifndef _GXS_CHANNELPOSTSWIDGETWITHMODEL_H
+#define _GXS_CHANNELPOSTSWIDGETWITHMODEL_H
 
 #include <map>
 
