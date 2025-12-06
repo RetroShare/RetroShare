@@ -383,5 +383,7 @@
         <file>icons/filetype/dll.svg</file>
         <file>icons/filetype/collection.svg</file>
         <file>icons/filetype/patch.svg</file>
+        <file>icons/zoom-in.png</file>
+        <file>icons/zoom-out.png</file>
     </qresource>
 </RCC>
