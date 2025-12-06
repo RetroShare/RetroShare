@@ -41,6 +41,7 @@
 #include <QString>
 #include <QUrl>
 #include <QVector>
+#include <QColor>
 
 #include <stdint.h>
 
@@ -138,6 +139,8 @@ class RetroShareLink
 		
 		QString toHtmlSize() const ;
 
+		QString toHtmlColored() const;
+
 		QUrl toUrl() const ;
 
 		bool operator==(const RetroShareLink& l) const { return _type == l._type && _hash == l._hash ; }
@@ -176,6 +179,7 @@ class RetroShareLink
 		time_t   _time_stamp ; 				// time stamp at which the link will expire.
 		QString  _radix_group_data;
 		uint32_t _count ;
+		QColor linkColor;
 
 		unsigned int _subType; // for general use as sub type for _type (RSLINK_SUBTYPE_...)
 };

@@ -33,6 +33,7 @@
 #include "util/HandleRichText.h"
 #include "gui/RetroShareLink.h"
 #include "util/imageutil.h"
+#include "gui/settings/rsharesettings.h"
 
 #include <retroshare/rspeers.h>
 
@@ -44,6 +45,10 @@ MimeTextEdit::MimeTextEdit(QWidget *parent)
 	mForceCompleterShowNextKeyEvent = false;
 	highliter = new RsSyntaxHighlighter(this);
 	mOnlyPlainText = false;
+
+	linkColor = Settings->getLinkColor();
+	QString sheet = QString::fromLatin1("a { text-decoration: underline; color: %1 }").arg(linkColor.name());
+	document()->setDefaultStyleSheet(sheet);
 }
 
 bool MimeTextEdit::canInsertFromMimeData(const QMimeData* source) const

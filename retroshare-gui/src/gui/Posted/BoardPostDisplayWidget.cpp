@@ -34,6 +34,7 @@
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
 #include "gui/Identity/IdDialog.h"
+#include "gui/settings/rsharesettings.h"
 #include "gui/MainWindow.h"
 #include "util/DateTime.h"
 
@@ -234,8 +235,10 @@ void BoardPostDisplayWidgetBase::baseSetup()
         if (urlOkay)
         {
             QString siteurl = url.toEncoded();
+            linkColor = Settings->getLinkColor();
 
-            label->setStyleSheet("text-decoration: underline; color:#2255AA;");
+            QString colorstring = QString("%1;").arg(linkColor.name());
+            label->setStyleSheet("text-decoration: underline; color:" + colorstring );
             label->setCursor(QCursor(Qt::PointingHandCursor));
             label->setToolTip(siteurl);
 
