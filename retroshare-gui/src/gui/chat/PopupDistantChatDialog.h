@@ -25,7 +25,6 @@
 #include <retroshare/rsgxstunnel.h>
 #include "PopupChatDialog.h"
 
-class QTimer ;
 class QCloseEvent ;
 
 class PopupDistantChatDialog: public PopupChatDialog 
@@ -44,15 +43,16 @@ class PopupDistantChatDialog: public PopupChatDialog
         virtual QString getPeerName(const ChatId &id, QString& additional_info) const ;
         virtual QString getOwnName() const;
 
-	protected slots:
-		void updateDisplay() ; // overloads RsAutoUpdatePage
+    protected:
+        void handleEvent_main_thread(std::shared_ptr<const RsEvent> e) ; // overloads RsAutoUpdatePage
 
 	private:
-		QTimer *_update_timer ;
 		DistantChatPeerId _tunnel_id ;
 		QToolButton *_status_label ;
 
 		friend class ChatDialog;
+
+        RsEventsHandlerId_t mEventHandlerId;
 };
 
 
