@@ -124,6 +124,8 @@ void PopupDistantChatDialog::handleEvent_main_thread(std::shared_ptr<const RsEve
         _status_label->setToolTip(msg);
         getChatWidget()->updateStatusString("%1", msg, true);
         getChatWidget()->blockSending(tr( "The distant peer refuses distant chat." ));
+        getChatWidget()->addChatMsg(true, tr("Chat status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+            , tr("The distant peer refuses distant chat."), ChatWidget::MSGTYPE_SYSTEM);
         setPeerStatus(RsStatusValue::RS_STATUS_OFFLINE);
         break ;
 
