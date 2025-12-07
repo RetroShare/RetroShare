@@ -87,7 +87,6 @@ void PopupDistantChatDialog::init(const ChatId &chat_id, const QString &/*title*
 
     ui.ownAvatarWidget->setOwnId() ;			// sets the flag
     ui.ownAvatarWidget->setId(chat_id) ;	// sets the actual Id
-    ui.avatarWidget->setId(chat_id);
 
     _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_GRY_LED));
     auto msg = tr("Remote status unknown.");
@@ -111,6 +110,8 @@ void PopupDistantChatDialog::handleEvent_main_thread(std::shared_ptr<const RsEve
 
     std::cerr << "Got event!" << std::endl;
     std::cerr << "Event code = " << (int)ev->mEventCode << std::endl;
+
+    ui.avatarWidget->setId(ChatId(_tunnel_id));
 
     QString msg;
 
