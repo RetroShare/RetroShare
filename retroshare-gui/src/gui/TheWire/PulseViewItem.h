@@ -137,8 +137,11 @@ protected:
 	// 
 	void setReference(uint32_t flags, RsGxsGroupId groupId, std::string groupName);
 
+    void mousePressEvent(QMouseEvent *event);
+
 	// DATA.
 	RsWirePulseSPtr mPulse;
+
 };
 
 

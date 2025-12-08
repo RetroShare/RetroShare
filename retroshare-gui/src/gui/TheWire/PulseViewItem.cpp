@@ -463,3 +463,16 @@ QString ToNumberUnits(uint32_t count)
 	return ans;
 }
 
+void PulseDataItem::mousePressEvent(QMouseEvent *event)
+{
+    // Check if the event is a left mouse button press
+    if (event->button() == Qt::LeftButton)
+    {
+        // Perform some action when the left mouse button is pressed
+        std::cout << "Left mouse button pressed on PulseViewItem!" <<std::endl;
+        // You can add your own custom code here
+    }
+
+    // Call the base class implementation to ensure proper event handling
+    QWidget::mousePressEvent(event);
+}

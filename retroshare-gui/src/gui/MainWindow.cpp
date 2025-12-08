@@ -1080,6 +1080,11 @@ void SetForegroundWindowInternal(HWND hWnd)
 		case Posted:
 			_instance->ui->stackPages->setCurrentPage( _instance->postedDialog );
 			return true ;
+#ifdef RS_USE_WIRE
+        case Wire:
+            _instance->ui->stackPages->setCurrentPage( _instance->wireDialog );
+            return true ;
+#endif
 		 default:
 			 std::cerr << "Show page called on value that is not handled yet. Please code it! (value = " << page << ")" << std::endl;
 	 }
@@ -1117,6 +1122,11 @@ void SetForegroundWindowInternal(HWND hWnd)
    if (page == _instance->messagesDialog) {
        return Messages;
    }
+#ifdef RS_USE_WIRE
+   if (page == _instance->wireDialog) {
+       return Wire;
+   }
+#endif
 #if 0
    if (page == _instance->channelFeed) {
        return Channels;
@@ -1156,6 +1166,7 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return _instance->transfersDialog->searchDialog;
 		case Messages:
 			return _instance->messagesDialog;
+
 		case Channels:
 			return _instance->gxschannelDialog;
 		case Forums:
@@ -1164,6 +1175,10 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return _instance->postedDialog;
         case Home:
             return _instance->homePage;
+#ifdef RS_USE_WIRE
+        case Wire:
+            return _instance->wireDialog;
+#endif
     }
 
    return NULL;

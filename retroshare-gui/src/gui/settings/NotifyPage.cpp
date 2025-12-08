@@ -167,6 +167,10 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.notify_Security,     SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
 	connect(ui.notify_SecurityIp,   SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
 
+#ifdef RS_USE_WIRE
+    connect(ui.notify_Wire,         SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
+#endif
+
 	connect(ui.systray_ChatLobby,   SIGNAL(toggled(bool)), this, SLOT(updateSystrayChatLobby()));
 	connect(ui.systray_GroupChat,   SIGNAL(toggled(bool)), this, SLOT(updateSystrayGroupChat()));
 
@@ -314,6 +318,11 @@ void NotifyPage::load()
 #if 0
 	whileBlocking(ui.notify_Blogs)->setChecked(newsflags & RS_FEED_TYPE_BLOG);
 #endif
+
+#ifdef RS_USE_WIRE
+    whileBlocking(ui.notify_Wire)->setChecked(newsflags & RS_FEED_TYPE_WIRE);
+#endif
+
     whileBlocking(ui.notify_Chat      )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_CHAT));
     whileBlocking(ui.notify_Messages  )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_MSG));
     whileBlocking(ui.notify_Chat      )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_CHAT));
