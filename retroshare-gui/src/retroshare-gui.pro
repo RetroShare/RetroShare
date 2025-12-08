@@ -117,7 +117,7 @@ CONFIG += gxscircles
 
 ## To enable unfinished services
 #CONFIG += wikipoos
-#CONFIG += gxsthewire
+CONFIG += gxsthewire
 #CONFIG += gxsphotoshare
 
 DEFINES += RS_RELEASE_VERSION
@@ -622,6 +622,7 @@ HEADERS +=  rshare.h \
             gui/NetworkDialog/pgpid_item_model.h \
             gui/NetworkDialog/pgpid_item_proxy.h \
             gui/common/RsCollection.h \
+            gui/common/NotifyWidget.h \
             util/retroshareWin32.h
 
 FORMS +=    gui/StartDialog.ui \
@@ -715,6 +716,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/RsCollectionDialog.ui \
             gui/common/HeaderFrame.ui \
             gui/common/RSFeedWidget.ui \
+            gui/common/NotifyWidget.ui \
             gui/style/StyleDialog.ui \
             gui/statistics/BandwidthGraphWindow.ui \
             gui/statistics/BandwidthStatsWidget.ui \
@@ -890,6 +892,7 @@ SOURCES +=  main.cpp \
             gui/common/FlowLayout.cpp \
             gui/common/PictureFlow.cpp \
             gui/common/ToasterNotify.cpp \
+            gui/common/NotifyWidget.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/RSPermissionMatrixWidget.cpp \
@@ -1219,7 +1222,10 @@ gxsthewire {
 		gui/TheWire/PulseReply.h \
 		gui/TheWire/PulseReplySeperator.h \
 		gui/TheWire/PulseMessage.h \
-                gui/TheWire/CustomFrame.h \
+		gui/TheWire/CustomFrame.h \
+		gui/TheWire/WireUserNotify.h \
+		gui/feeds/WireNotifyGroupItem.h \
+		gui/feeds/WireNotifyPostItem.h \
 
 	FORMS += gui/TheWire/WireDialog.ui \
 		gui/TheWire/WireGroupItem.ui \
@@ -1230,7 +1236,9 @@ gxsthewire {
 		gui/TheWire/PulseReply.ui \
 		gui/TheWire/PulseReplySeperator.ui \
 		gui/TheWire/PulseMessage.ui \
-	
+		gui/feeds/WireNotifyGroupItem.ui \
+		gui/feeds/WireNotifyPostItem.ui \
+
 	SOURCES += gui/TheWire/WireDialog.cpp \
 		gui/TheWire/WireGroupItem.cpp \
 		gui/TheWire/WireGroupDialog.cpp \
@@ -1242,7 +1250,10 @@ gxsthewire {
 		gui/TheWire/PulseReply.cpp \
 		gui/TheWire/PulseReplySeperator.cpp \
 		gui/TheWire/PulseMessage.cpp \
-                gui/TheWire/CustomFrame.cpp \
+		gui/TheWire/CustomFrame.cpp \
+		gui/TheWire/WireUserNotify.cpp \
+		gui/feeds/WireNotifyGroupItem.cpp \
+		gui/feeds/WireNotifyPostItem.cpp \
 
 	RESOURCES += gui/TheWire/TheWire_images.qrc
 }
@@ -1436,7 +1447,7 @@ gxsgui {
 #		gui/gxs/GxsFeedWidget.h \
 		util/TokenQueue.h \
 		util/RsGxsUpdateBroadcast.h \
-	
+		gui/gxs/GxsStatisticsProvider.h \
 #		gui/gxs/GxsMsgDialog.h \
 	
 	FORMS += gui/gxs/GxsGroupDialog.ui \
@@ -1467,7 +1478,7 @@ gxsgui {
 #		gui/gxs/GxsFeedWidget.cpp \
 		util/TokenQueue.cpp \
 		util/RsGxsUpdateBroadcast.cpp \
-	
+		gui/gxs/GxsStatisticsProvider.cpp \
 #		gui/gxs/GxsMsgDialog.cpp \
 	
 	
