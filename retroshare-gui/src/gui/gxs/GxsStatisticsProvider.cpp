@@ -24,8 +24,6 @@
 
 #include "GxsStatisticsProvider.h"
 
-
-#include "gui/notifyqt.h"
 #include "gui/common/UserNotify.h"
 #include "util/qtthreadsutils.h"
 #include "retroshare/rsgxsifacetypes.h"

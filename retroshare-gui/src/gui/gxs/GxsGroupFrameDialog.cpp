@@ -31,7 +31,6 @@
 #include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/common/GroupTreeWidget.h"
 #include "gui/common/RSTreeWidget.h"
-#include "gui/notifyqt.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/common/UserNotify.h"
 #include "util/qtthreadsutils.h"
@@ -173,7 +172,7 @@ void GxsGroupFrameDialog::initUi()
 	processSettings(true);
 
 	if (groupFrameSettingsType() != GroupFrameSettings::Nothing) {
-		connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
+		//connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 		settingsChanged();
 	}
 

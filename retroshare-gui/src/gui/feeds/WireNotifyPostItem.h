@@ -23,8 +23,8 @@
 #include <QMetaType>
 #include <QWidget>
 #include <retroshare/rswire.h>
-#include "gui/gxs/GxsFeedItem.h"
-#include "gui/gxs/GxsGroupFeedItem.h"
+#include "gui/feeds/GxsFeedItem.h"
+#include "gui/feeds/GxsGroupFeedItem.h"
 
 namespace Ui {
 class WireNotifyPostItem;

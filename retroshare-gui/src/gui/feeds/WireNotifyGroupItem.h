@@ -22,7 +22,7 @@
 #define WIRENOTIFYGROUPITEM_H
 
 #include <retroshare/rswire.h>
-#include "gui/gxs/GxsGroupFeedItem.h"
+#include "gui/feeds/GxsGroupFeedItem.h"
 
 namespace Ui {
 class WireNotifyGroupItem;

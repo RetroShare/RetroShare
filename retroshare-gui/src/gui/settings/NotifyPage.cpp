@@ -316,11 +316,11 @@ void NotifyPage::load()
     whileBlocking(ui.notify_Forums    )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_FORUM));
     whileBlocking(ui.notify_Posted    )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_POSTED));
 #if 0
-	whileBlocking(ui.notify_Blogs)->setChecked(newsflags & RS_FEED_TYPE_BLOG);
+	whileBlocking(ui.notify_Blogs)->setChecked(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_BLOG);
 #endif
 
 #ifdef RS_USE_WIRE
-    whileBlocking(ui.notify_Wire)->setChecked(newsflags & RS_FEED_TYPE_WIRE);
+    whileBlocking(ui.notify_Wire)->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_WIRE));
 #endif
 
     whileBlocking(ui.notify_Chat      )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_CHAT));

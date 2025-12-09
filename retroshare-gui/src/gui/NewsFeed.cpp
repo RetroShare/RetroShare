@@ -221,7 +221,7 @@ void NewsFeed::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
     if(event->mType == RsEventType::MAIL_STATUS && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_MSG)))
 		handleMailEvent(event);
 
-    if(event->mType == RsEventType::WIRE && (flags & RS_FEED_TYPE_WIRE))
+    if(event->mType == RsEventType::WIRE && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_WIRE)))
 		handleWireEvent(event);
 
 }
