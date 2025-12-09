@@ -33,6 +33,9 @@
 CONFIG *= retroshare_gui
 no_retroshare_gui:CONFIG -= retroshare_gui
 
+# Enable TheWire - RsWire - is intended to be a Twitter clone
+CONFIG *= gxsthewire
+
 # Enable GXS distant syncronization
 CONFIG *= gxsdistsync
 
