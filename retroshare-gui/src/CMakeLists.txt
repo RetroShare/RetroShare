@@ -176,6 +176,7 @@ list(
 	src/gui/common/FlowLayout.cpp 
 	src/gui/common/PictureFlow.cpp 
 	src/gui/common/ToasterNotify.cpp 
+	src/gui/common/NotifyWidget.cpp 
 
 	src/gui/style/RSStyle.cpp 
 	src/gui/style/StyleDialog.cpp 
@@ -382,6 +383,7 @@ list(
 	src/gui/common/RsCollectionDialog.ui 
 	src/gui/common/HeaderFrame.ui 
 	src/gui/common/RSFeedWidget.ui 
+	src/gui/common/NotifyWidget.ui 
 
 	src/gui/style/StyleDialog.ui 
 
@@ -641,6 +643,7 @@ list(
 	src/gui/common/FlowLayout.h 
 	src/gui/common/PictureFlow.h 
 	src/gui/common/ToasterNotify.h 
+	src/gui/common/NotifyWidget.h 
 
 	src/gui/style/RSStyle.h 
 	src/gui/style/StyleDialog.h 
@@ -999,7 +1002,10 @@ if(RS_GXSTHEWIRE)
 		src/gui/TheWire/PulseViewGroup.h 
 		src/gui/TheWire/PulseReply.h 
 		src/gui/TheWire/PulseReplySeperator.h 
-		src/gui/TheWire/PulseMessage.h 
+		src/gui/TheWire/PulseMessage.h
+		src/gui/TheWire/WireUserNotify.h
+		src/gui/feeds/WireNotifyGroupItem.h 
+		src/gui/feeds/WireNotifyPostItem.h
 		)
 
 	list(
@@ -1012,7 +1018,9 @@ if(RS_GXSTHEWIRE)
 		src/gui/TheWire/PulseViewGroup.ui 
 		src/gui/TheWire/PulseReply.ui 
 		src/gui/TheWire/PulseReplySeperator.ui 
-		src/gui/TheWire/PulseMessage.ui 
+		src/gui/TheWire/PulseMessage.ui
+		src/gui/feeds/WireNotifyGroupItem.ui
+		src/gui/feeds/WireNotifyPostItem.ui
 		)
 
 	list(
@@ -1028,6 +1036,9 @@ if(RS_GXSTHEWIRE)
 		src/gui/TheWire/PulseReply.cpp 
 		src/gui/TheWire/PulseReplySeperator.cpp 
 		src/gui/TheWire/PulseMessage.cpp 
+		src/gui/TheWire/WireUserNotify.cpp
+		src/gui/feeds/WireNotifyGroupItem.cpp
+		src/gui/feeds/WireNotifyPostItem.cpp
 		)
 
 	list(
@@ -1112,6 +1123,7 @@ if(RS_GXSGUI)
 		src/gui/gxs/GxsFeedWidget.h 
 		src/util/TokenQueue.h 
 		src/util/RsGxsUpdateBroadcast.h 
+		src/gui/gxs/GxsStatisticsProvider.h
 		)
 
 	list(
@@ -1147,6 +1159,7 @@ if(RS_GXSGUI)
 		src/gui/gxs/GxsFeedWidget.cpp 
 		src/util/TokenQueue.cpp 
 		src/util/RsGxsUpdateBroadcast.cpp 
+		src/gui/gxs/GxsStatisticsProvider.cpp 
 		)
 endif(RS_GXSGUI)
 	

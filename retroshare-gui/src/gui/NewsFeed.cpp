@@ -31,6 +31,7 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsposted.h>
+#include <retroshare/rswire.h>
 
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
@@ -49,6 +50,8 @@
 #include "feeds/PostedGroupItem.h"
 #include "feeds/SecurityItem.h"
 #include "feeds/SecurityIpItem.h"
+#include "feeds/WireNotifyGroupItem.h"
+#include "feeds/WireNotifyPostItem.h"
 
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
@@ -83,7 +86,8 @@ NewsFeed::NewsFeed(QWidget *parent) : MainPage(parent), ui(new Ui::NewsFeed),
         RsEventType::GXS_CHANNELS                    ,
         RsEventType::GXS_FORUMS                      ,
         RsEventType::GXS_POSTED                      ,
-        RsEventType::MAIL_STATUS
+        RsEventType::MAIL_STATUS                     ,
+        RsEventType::WIRE
     })
 {
     /* Invoke the Qt Designer generated object setup routine */
@@ -129,6 +133,9 @@ NewsFeed::NewsFeed(QWidget *parent) : MainPage(parent), ui(new Ui::NewsFeed),
 	    "    <li>Channel and Board comments</li>"
 	    "    <li>New Mail messages</li>"
 	    "    <li>Private messages from your friends</li>"
+#ifdef RS_USE_WIRE
+        "    <li>New Wire pulses and mentions</li>"
+#endif	
 	    "   </ul> </p>"
 	                    ).arg(QString::number(2*H));
 
@@ -216,6 +223,10 @@ void NewsFeed::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 
     if(event->mType == RsEventType::MAIL_STATUS && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_MSG)))
 		handleMailEvent(event);
+
+    if(event->mType == RsEventType::WIRE && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_WIRE)))
+		handleWireEvent(event);
+
 }
 
 void NewsFeed::handleMailEvent(std::shared_ptr<const RsEvent> event)
@@ -502,6 +513,44 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
     if (Settings->getMessageFlags() & RshareSettings::RS_MESSAGE_CONNECT_ATTEMPT)
 		MessageComposer::addConnectAttemptMsg(e.mPgpId, e.mSslId, QString::fromStdString(det.name + "(" + det.location + ")"));
 }
+
+void NewsFeed::handleWireEvent(std::shared_ptr<const RsEvent> event)
+{
+    const RsWireEvent *pe =
+            dynamic_cast<const RsWireEvent*>(event.get());
+    if(!pe) return;
+
+    switch(pe->mWireEventCode)
+    {
+    case RsWireEventCode::FOLLOW_STATUS_CHANGED:
+        addFeedItem( new WireNotifyGroupItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, false, true));
+        break;
+    case RsWireEventCode::NEW_WIRE:
+        addFeedItem( new WireNotifyGroupItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, false, true));
+        break;
+    case RsWireEventCode::NEW_POST:
+        addFeedItem( new WireNotifyPostItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, pe->mWireMsgId, false, true));
+        break;
+    case RsWireEventCode::NEW_REPLY:
+        addFeedItem( new WireNotifyPostItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, pe->mWireMsgId, false, true));
+        break;
+    case RsWireEventCode::NEW_REPUBLISH:
+        addFeedItem( new WireNotifyPostItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, pe->mWireMsgId, false, true));
+        break;
+    case RsWireEventCode::NEW_LIKE:
+        addFeedItem( new WireNotifyPostItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, pe->mWireMsgId, false, true));
+        break;
+    case RsWireEventCode::WIRE_UPDATED:
+        addFeedItem( new WireNotifyGroupItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, false, true));
+        break;
+//    case RsWireEventCode::POST_UPDATED:
+//        addFeedItem( new WireNotifyGroupItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, false, true));
+//        break;
+    default: break;
+    }
+    sendNewsFeedChanged();
+}
+
 
 void NewsFeed::testFeeds(RsFeedTypeFlags /*notifyFlags*/)
 {
