@@ -84,6 +84,7 @@ ChatUserNotify::ChatUserNotify(QObject *parent) :
 
 ChatUserNotify::~ChatUserNotify()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
     instance = 0;
 }
 
