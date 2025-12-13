@@ -60,15 +60,11 @@
  * #define FRIENDS_DEBUG 1
  *****/
 
-static FriendsDialog *instance = NULL;
-
 /** Constructor */
 FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
-
-	if (!instance) instance = this;
 
 #ifdef RS_DIRECT_CHAT
     QString msg = tr("Retroshare broadcast chat: messages are sent to all connected friends.");
@@ -185,14 +181,12 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
 FriendsDialog::~FriendsDialog ()
 {
     rsEvents->unregisterEventsHandler(mEventHandlerId_friends);
+#ifdef RS_DIRECT_CHAT
     rsEvents->unregisterEventsHandler(mEventHandlerId_chat);
+#endif
 
     // save settings
     processSettings(false);
-
-    if (this == instance) {
-        instance = NULL;
-    }
 }
 
 void FriendsDialog::activatePage(FriendsDialog::Page page)
