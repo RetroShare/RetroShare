@@ -101,6 +101,8 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
     ui.tabWidget->removeTab(ui.tabWidget->indexOf(ui.groupChatTab));
 #endif // def RS_DIRECT_CHAT
 
+    mEventHandlerId_friends = 0;
+
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
     {
         RsQThreadUtils::postToObject([=]()
@@ -118,8 +120,6 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
         }
         , this );
     }, mEventHandlerId_friends, RsEventType::FRIEND_LIST );
-
-    mEventHandlerId_friends = 0;
 
     connect( ui.mypersonalstatusLabel, SIGNAL(clicked()), SLOT(statusmessage()));
     connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
