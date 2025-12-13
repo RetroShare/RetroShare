@@ -54,7 +54,7 @@ PulseAddDialog::PulseAddDialog(QWidget *parent)
 	ui.pushButton_remove->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/mail/delete.png")));
 
 	ui.frame_picture->hide();
-	ui.pushButton_picture->hide();
+	//ui.pushButton_picture->hide();
 
     // initially hiding the browse button as the attach image button is not pressed
 	//ui.frame_PictureBrowse->hide();
