@@ -381,6 +381,9 @@ public:
     int getMessageFontSize();
     void setMessageFontSize(int value);
 
+    void setLinkColor(QRgb rgbValue);
+    QRgb getLinkColor();
+
 #ifdef RS_JSONAPI
 	bool getJsonApiEnabled();
 	void setJsonApiEnabled(bool enabled);
