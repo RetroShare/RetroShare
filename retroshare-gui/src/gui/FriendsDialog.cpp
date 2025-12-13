@@ -184,14 +184,15 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
 
 FriendsDialog::~FriendsDialog ()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId_friends);
+    rsEvents->unregisterEventsHandler(mEventHandlerId_chat);
+
     // save settings
     processSettings(false);
 
     if (this == instance) {
         instance = NULL;
     }
-    rsEvents->unregisterEventsHandler(mEventHandlerId_friends);
-    rsEvents->unregisterEventsHandler(mEventHandlerId_chat);
 }
 
 void FriendsDialog::activatePage(FriendsDialog::Page page)
