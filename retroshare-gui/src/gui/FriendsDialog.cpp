@@ -60,15 +60,11 @@
  * #define FRIENDS_DEBUG 1
  *****/
 
-static FriendsDialog *instance = NULL;
-
 /** Constructor */
 FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
-
-	if (!instance) instance = this;
 
 #ifdef RS_DIRECT_CHAT
     QString msg = tr("Retroshare broadcast chat: messages are sent to all connected friends.");
@@ -101,6 +97,8 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
     ui.tabWidget->removeTab(ui.tabWidget->indexOf(ui.groupChatTab));
 #endif // def RS_DIRECT_CHAT
 
+    mEventHandlerId_friends = 0;
+
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
     {
         RsQThreadUtils::postToObject([=]()
@@ -118,8 +116,6 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
         }
         , this );
     }, mEventHandlerId_friends, RsEventType::FRIEND_LIST );
-
-    mEventHandlerId_friends = 0;
 
     connect( ui.mypersonalstatusLabel, SIGNAL(clicked()), SLOT(statusmessage()));
     connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
@@ -184,14 +180,13 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
 
 FriendsDialog::~FriendsDialog ()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId_friends);
+#ifdef RS_DIRECT_CHAT
+    rsEvents->unregisterEventsHandler(mEventHandlerId_chat);
+#endif
+
     // save settings
     processSettings(false);
-
-    if (this == instance) {
-        instance = NULL;
-    }
-    rsEvents->unregisterEventsHandler(mEventHandlerId_friends);
-    rsEvents->unregisterEventsHandler(mEventHandlerId_chat);
 }
 
 void FriendsDialog::activatePage(FriendsDialog::Page page)
