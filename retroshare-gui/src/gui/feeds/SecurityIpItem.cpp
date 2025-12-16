@@ -76,6 +76,11 @@ void SecurityIpItem::setup()
 
 	updateItemStatic();
 	updateItem();
+
+	m_updateTimer = new QTimer(this);
+	m_updateTimer->setSingleShot(false);
+	connect(m_updateTimer, SIGNAL(timeout()), this, SLOT(updateItem()));
+	m_updateTimer->start(1000);
 }
 
 uint64_t SecurityIpItem::uniqueIdentifier() const
@@ -178,11 +183,6 @@ void SecurityIpItem::updateItem()
 			ui->peerDetailsButton->setEnabled(true);
 		}
 	}
-
-	/* slow Tick  */
-	int msec_rate = 10129;
-
-	QTimer::singleShot( msec_rate, this, SLOT(updateItem(void)));
 }
 
 void SecurityIpItem::toggle()

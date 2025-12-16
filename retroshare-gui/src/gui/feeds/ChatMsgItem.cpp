@@ -67,6 +67,11 @@ ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &pe
     updateItemStatic();
     updateItem();
     insertChat(message);
+
+    m_updateTimer = new QTimer(this);
+    m_updateTimer->setSingleShot(false);
+    connect(m_updateTimer, SIGNAL(timeout()), this, SLOT(updateItem()));
+    m_updateTimer->start(1000);
 }
 
 void ChatMsgItem::updateItemStatic()
@@ -122,11 +127,6 @@ void ChatMsgItem::updateItem()
             msgButton->setEnabled(false);
         }
     }
-    
-    /* slow Tick  */
-    int msec_rate = 10129;
-
-    QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
     return;
 }
 

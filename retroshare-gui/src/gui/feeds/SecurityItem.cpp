@@ -93,6 +93,11 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 
 	updateItemStatic();
 	updateItem();
+
+	m_updateTimer = new QTimer(this);
+	m_updateTimer->setSingleShot(false); 
+	connect(m_updateTimer, &QTimer::timeout, this, &SecurityItem::updateItem);
+	m_updateTimer->start(1000);
 }
 
 SecurityItem::~SecurityItem()
@@ -303,10 +308,6 @@ void SecurityItem::updateItem()
 		//quickmsgButton->show();
 	}
 
-	/* slow Tick  */
-	int msec_rate = 10129;
-
-	QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
 	return;
 }
 

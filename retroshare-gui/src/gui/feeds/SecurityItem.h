@@ -66,8 +66,9 @@ private:
 	RsPeerId mSslId;
 	std::string mSslCn;
 	std::string mIP;
-    RsFeedTypeFlags mType;
+	RsFeedTypeFlags mType;
 	bool mIsHome;
+	QTimer *m_updateTimer;
 
     RsEventsHandlerId_t mEventHandlerId;
 };

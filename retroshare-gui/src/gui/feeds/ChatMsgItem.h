@@ -60,6 +60,7 @@ private:
 	void insertChat(const std::string &message);
 
 	RsPeerId mPeerId;
+	QTimer *m_updateTimer;
 };
 
 #endif
