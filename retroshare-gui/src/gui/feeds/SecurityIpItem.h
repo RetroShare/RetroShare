@@ -60,12 +60,13 @@ private slots:
 	void banIpListChanged(const QString &ipAddress);
 
 private:
-    RsFeedTypeFlags mType;
+	RsFeedTypeFlags mType;
 	RsPeerId mSslId;
 	std::string mIpAddr;
 	std::string mIpAddrReported;
 	uint32_t mResult;
 	bool mIsTest;
+	QTimer *m_updateTimer;
 
 	/** Qt Designer generated object */
 	Ui::SecurityIpItem *ui;
