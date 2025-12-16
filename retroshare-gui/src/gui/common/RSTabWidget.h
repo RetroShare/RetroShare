@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RSTabWidget.h                                                    *
+ * retroshare-gui/src/gui/common/RSTabWidget.h                                 *
  *                                                                             *
  * Copyright (C) 2010 RetroShare Team <retroshare.project@gmail.com>           *
  *                                                                             *

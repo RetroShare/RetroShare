@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/AvatarDialog.cpp                                                 *
+ * retroshare-gui/src/gui/common/AvatarDialog.cpp                              *
  *                                                                             *
  * Copyright (C) 2012, Robert Fernie <retroshare.project@gmail.com>            *
  *                                                                             *

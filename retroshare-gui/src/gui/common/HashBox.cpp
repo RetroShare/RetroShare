@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/HashBox.cpp                                                      *
+ * retroshare-gui/src/gui/common/HashBox.cpp                                   *
  *                                                                             *
  * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

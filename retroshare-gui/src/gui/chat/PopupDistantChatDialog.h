@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/chat/PopupDistantChatDialog.h                                           *
+ * retroshare-gui/src/gui/chat/PopupDistantChatDialog.h                        *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *
@@ -20,14 +20,14 @@
  *                                                                             *
  *******************************************************************************/
 
-#pragma once 
+#pragma once
 
 #include <retroshare/rsgxstunnel.h>
 #include "PopupChatDialog.h"
 
 class QCloseEvent ;
 
-class PopupDistantChatDialog: public PopupChatDialog 
+class PopupDistantChatDialog: public PopupChatDialog
 {
 	Q_OBJECT
 
@@ -36,10 +36,10 @@ class PopupDistantChatDialog: public PopupChatDialog
 		PopupDistantChatDialog(const DistantChatPeerId &tunnel_id, QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 		/** Default destructor */
 		virtual ~PopupDistantChatDialog();
-	
+
 		virtual void init(const ChatId& chat_id, const QString &title);
 		virtual void closeEvent(QCloseEvent *e) ;
-	
+
         virtual QString getPeerName(const ChatId &id, QString& additional_info) const ;
         virtual QString getOwnName() const;
 

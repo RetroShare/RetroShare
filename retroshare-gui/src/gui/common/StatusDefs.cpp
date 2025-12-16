@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/StatusDefs.cpp                                                   *
+ * retroshare-gui/src/gui/common/StatusDefs.cpp                                *
  *                                                                             *
  * Copyright (c) 2010, RetroShare Team <retroshare.project@gmail.com>          *
  *                                                                             *

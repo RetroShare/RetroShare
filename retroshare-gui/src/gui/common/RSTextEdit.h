@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RSTextEdit.h                                                     *
+ * retroshare-gui/src/gui/common/RSTextEdit.h                                  *
  *                                                                             *
  * Copyright (C) 2014 RetroShare Team <retroshare.project@gmail.com>           *
  *                                                                             *

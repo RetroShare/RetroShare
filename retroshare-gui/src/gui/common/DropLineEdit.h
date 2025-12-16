@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/DropLineEdit.h                                                   *
+ * retroshare-gui/src/gui/common/DropLineEdit.h                                *
  *                                                                             *
  * Copyright (C) 2012, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

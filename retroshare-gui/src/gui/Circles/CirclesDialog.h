@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/Circles/CirclesDialog.h                                                 *
+ * retroshare-gui/src/gui/Circles/CirclesDialog.h                              *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *

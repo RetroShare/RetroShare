@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/advsearch/advancedsearchdialog.cpp                                      *
+ * retroshare-gui/src/gui/advsearch/advancedsearchdialog.cpp                   *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *
@@ -26,7 +26,7 @@
 
 #include <QGridLayout>
 
-AdvancedSearchDialog::AdvancedSearchDialog(QWidget * parent) : QDialog (parent) 
+AdvancedSearchDialog::AdvancedSearchDialog(QWidget * parent) : QDialog (parent)
 {
 	setupUi(this);
 
@@ -94,7 +94,7 @@ void AdvancedSearchDialog::reset()
 {
     while (!expressions->isEmpty())
         deleteExpression(expressions->takeLast());
-    
+
     // now add a new default expressions
     addNewExpression();
 }

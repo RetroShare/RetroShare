@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RsButtonOnText.h                                                 *
+ * retroshare-gui/src/gui/common/RsButtonOnText.h                              *
  *                                                                             *
  * Copyright (C) 2015, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

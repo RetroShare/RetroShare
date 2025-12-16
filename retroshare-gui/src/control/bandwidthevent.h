@@ -1,5 +1,5 @@
 /*******************************************************************************
- * control/bandwidthevent.h                                                    *
+ * retroshare-gui/src/control/bandwidthevent.h                                 *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *
@@ -39,7 +39,7 @@ public:
   quint64 bytesRead() { return _bytesRead; }
   /** Returns the number of bytes written in the last second */
   quint64 bytesWritten() { return _bytesWritten; }
-  
+
 private:
   quint64 _bytesWritten;
   quint64 _bytesRead;

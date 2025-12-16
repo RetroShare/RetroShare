@@ -1,5 +1,5 @@
 /*******************************************************************************
- * control/eventtype.h                                                         *
+ * retroshare-gui/src/control/eventtype.h                                      *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/GroupSelectionBox.cpp                                            *
+ * retroshare-gui/src/gui/common/GroupSelectionBox.cpp                         *
  *                                                                             *
  * Copyright (C) 2010, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

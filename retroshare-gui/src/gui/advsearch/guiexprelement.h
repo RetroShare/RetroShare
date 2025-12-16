@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/advsearch/guiexprelement.h                                              *
+ * retroshare-gui/src/gui/advsearch/guiexprelement.h                           *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *

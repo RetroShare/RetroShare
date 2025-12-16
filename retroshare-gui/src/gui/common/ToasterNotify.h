@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/ToasterNotify.h                                                  *
+ * retroshare-gui/src/gui/common/ToasterNotify.h                               *
  *                                                                             *
  * Copyright (c) 2015, RetroShare Team <retroshare.project@gmail.com>          *
  *                                                                             *

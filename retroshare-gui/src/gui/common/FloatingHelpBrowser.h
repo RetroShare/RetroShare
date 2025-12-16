@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/FloatingHelpBrowser.h                                            *
+ * retroshare-gui/src/gui/common/FloatingHelpBrowser.h                         *
  *                                                                             *
  * Copyright (C) 2013, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -17,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
- 
+
 #ifndef FLOATINGHELPBROWSER_H
 #define FLOATINGHELPBROWSER_H
 

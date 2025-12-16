@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/advsearch/advancedsearchdialog.h                                        *
+ * retroshare-gui/src/gui/advsearch/advancedsearchdialog.h                     *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *
@@ -28,23 +28,23 @@
 
 #include <retroshare/rsexpr.h>
 
-class AdvancedSearchDialog : public QDialog, public Ui::AdvancedSearchDialog 
+class AdvancedSearchDialog : public QDialog, public Ui::AdvancedSearchDialog
 {
     Q_OBJECT
-        
+
 public:
     AdvancedSearchDialog(QWidget * parent = 0 );
     RsRegularExpression::Expression * getRsExpr();
     QString getSearchAsString();
 signals:
     void search(RsRegularExpression::Expression*);
-    
+
 private slots:
     void deleteExpression(ExpressionWidget*);
     void addNewExpression();
     void reset();
     void prepareSearch();
-    
+
 private:
     QList<ExpressionWidget*> * expressions;
 };
