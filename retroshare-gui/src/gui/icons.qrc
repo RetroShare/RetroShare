@@ -49,6 +49,9 @@
         <file>icons/bullet_yellow_128.png</file>
         <file>icons/collections.png</file>
         <file>icons/flag-green.png</file>
+        <file>icons/feeds_board.png</file>
+        <file>icons/feeds_channel.png</file>
+        <file>icons/feeds_forum.png</file>
         <file>icons/friends_128.png</file>
         <file>icons/folder.png</file>
         <file>icons/folderopen.png</file>
