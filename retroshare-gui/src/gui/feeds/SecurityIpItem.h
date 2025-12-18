@@ -26,6 +26,8 @@
 #include "FeedItem.h"
 #include <stdint.h>
 
+#include <retroshare/rsevents.h>
+
 namespace Ui {
 class SecurityIpItem;
 } 
@@ -44,6 +46,7 @@ public:
 	void updateItemStatic();
 
     uint64_t uniqueIdentifier() const override;
+    virtual ~SecurityIpItem();
 
 protected:
 	/* FeedItem */
@@ -66,7 +69,7 @@ private:
 	std::string mIpAddrReported;
 	uint32_t mResult;
 	bool mIsTest;
-	QTimer *m_updateTimer;
+	RsEventsHandlerId_t mEventHandlerId;
 
 	/** Qt Designer generated object */
 	Ui::SecurityIpItem *ui;

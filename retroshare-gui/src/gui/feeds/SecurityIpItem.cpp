@@ -34,6 +34,8 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsbanlist.h>
 
+#include "util/qtthreadsutils.h"
+
 /*****
  * #define DEBUG_ITEM 1
  ****/
@@ -51,6 +53,11 @@ SecurityIpItem::SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const 
     ui(new(Ui::SecurityIpItem))
 {
 	setup();
+}
+
+SecurityIpItem::~SecurityIpItem()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 void SecurityIpItem::setup()
@@ -77,10 +84,16 @@ void SecurityIpItem::setup()
 	updateItemStatic();
 	updateItem();
 
-	m_updateTimer = new QTimer(this);
-	m_updateTimer->setSingleShot(false);
-	connect(m_updateTimer, SIGNAL(timeout()), this, SLOT(updateItem()));
-	m_updateTimer->start(1000);
+	mEventHandlerId = 0;
+
+	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+	{
+	        RsQThreadUtils::postToObject([=]()
+        	{
+		        updateItem();
+	        }
+	        , this );
+	}, mEventHandlerId, RsEventType::FRIEND_LIST );	
 }
 
 uint64_t SecurityIpItem::uniqueIdentifier() const

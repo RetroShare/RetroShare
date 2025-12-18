@@ -68,7 +68,6 @@ private:
 	std::string mIP;
 	RsFeedTypeFlags mType;
 	bool mIsHome;
-	QTimer *m_updateTimer;
 
     RsEventsHandlerId_t mEventHandlerId;
 };
