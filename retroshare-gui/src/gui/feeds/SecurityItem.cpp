@@ -93,17 +93,13 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 
 	updateItemStatic();
 	updateItem();
-
-	m_updateTimer = new QTimer(this);
-	m_updateTimer->setSingleShot(false); 
-	connect(m_updateTimer, &QTimer::timeout, this, &SecurityItem::updateItem);
-	m_updateTimer->start(1000);
 }
 
 SecurityItem::~SecurityItem()
 {
     rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
+
 uint64_t SecurityItem::uniqueIdentifier() const
 {
     return hash_64bits("SecurityItem " + QString::number((uint)mType).toStdString() + " " + mSslId.toStdString());
