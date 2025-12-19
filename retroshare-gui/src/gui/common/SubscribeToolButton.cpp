@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/SubscribeToolButton.cpp                                          *
+ * retroshare-gui/src/gui/common/SubscribeToolButton.cpp                       *
  *                                                                             *
  * Copyright (c) 2018, RetroShare Team <retroshare.project@gmail.com>          *
  *                                                                             *

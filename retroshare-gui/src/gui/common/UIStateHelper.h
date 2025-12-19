@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/UIStateHelper.h                                                  *
+ * retroshare-gui/src/gui/common/UIStateHelper.h                               *
  *                                                                             *
  * Copyright (c) 2013, RetroShare Team <retroshare.project@gmail.com>          *
  *                                                                             *

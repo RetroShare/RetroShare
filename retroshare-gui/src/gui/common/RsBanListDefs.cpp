@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RsBanListDefs.cpp                                                *
+ * retroshare-gui/src/gui/common/RsBanListDefs.cpp                             *
  *                                                                             *
  * Copyright (C) 2015, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

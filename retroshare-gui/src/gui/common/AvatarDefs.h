@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/AvatarDefs.h                                                     *
+ * retroshare-gui/src/gui/common/AvatarDefs.h                                  *
  *                                                                             *
  * Copyright (C) 2012, Robert Fernie <retroshare.project@gmail.com>            *
  *                                                                             *

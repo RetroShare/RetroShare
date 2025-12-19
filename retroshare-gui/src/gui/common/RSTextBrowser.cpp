@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RSTextBrowser.cpp                                                *
+ * retroshare-gui/src/gui/common/RSTextBrowser.cpp                             *
  *                                                                             *
  * Copyright (C) 2018 RetroShare Team <retroshare.project@gmail.com>           *
  *                                                                             *

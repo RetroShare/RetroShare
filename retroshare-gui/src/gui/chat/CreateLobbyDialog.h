@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/chat/CreateLobbyDialog.h                                                *
+ * retroshare-gui/src/gui/chat/CreateLobbyDialog.h                             *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/chat/ChatUserNotify.cpp                                                 *
+ * retroshare-gui/src/gui/chat/ChatUserNotify.cpp                              *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *

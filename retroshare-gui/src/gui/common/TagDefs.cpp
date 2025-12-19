@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/TagDefs.cpp                                                      *
+ * retroshare-gui/src/gui/common/TagDefs.cpp                                   *
  *                                                                             *
  * Copyright (c) 2010, RetroShare Team <retroshare.project@gmail.com>          *
  *                                                                             *

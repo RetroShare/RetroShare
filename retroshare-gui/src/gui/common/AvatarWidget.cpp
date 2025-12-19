@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/AvatarWidget.cpp                                                 *
+ * retroshare-gui/src/gui/common/AvatarWidget.cpp                              *
  *                                                                             *
  * Copyright (C) 2012, Robert Fernie <retroshare.project@gmail.com>            *
  *                                                                             *
