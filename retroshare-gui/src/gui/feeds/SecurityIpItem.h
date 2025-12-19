@@ -21,12 +21,11 @@
 #ifndef _SECURITYIPITEM_H
 #define _SECURITYIPITEM_H
 
-#include "retroshare/rstypes.h"
-
-#include "FeedItem.h"
 #include <stdint.h>
 
-#include <retroshare/rsevents.h>
+#include "retroshare/rstypes.h"
+#include "retroshare/rsevents.h"
+#include "FeedItem.h"
 
 namespace Ui {
 class SecurityIpItem;

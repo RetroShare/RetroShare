@@ -90,9 +90,13 @@ void SecurityIpItem::setup()
 	{
 	        RsQThreadUtils::postToObject([=]()
         	{
-		        updateItem();
-	        }
-	        , this );
+			// Filter events to only update relevant items.
+			auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+			if(fe && fe->mSslId != mSslId)
+				return;
+			updateItem();
+		}
+		, this );
 	}, mEventHandlerId, RsEventType::FRIEND_LIST );	
 }
 

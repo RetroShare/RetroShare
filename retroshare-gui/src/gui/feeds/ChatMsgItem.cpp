@@ -37,7 +37,7 @@
 #include "gui/msgs/MessageInterface.h"
 
 #include "util/qtthreadsutils.h"
-#include <retroshare/rsevents.h>
+#include "retroshare/rsevents.h"
 
 /*****
  * #define DEBUG_ITEM 1
