@@ -29,8 +29,6 @@ jobs:
       run: |
         qmake CONFIG+=debug \
         CONFIG+=rs_autologin \
-        CONFIG+=rs_webui \
-        CONFIG+=rs_jsonapi \
         CONFIG+=wikipoos \
         CONFIG+=gxsthewire \
         CONFIG+=retroshare_plugins

@@ -113,7 +113,14 @@ TRANSLATIONS +=  \
 # when rapidjson is mainstream on all distribs, we will not need the sources anymore
 # in the meantime, they are part of the RS directory so that it is always possible to find them
 
-INCLUDEPATH += ../../rapidjson-1.1.0
+# INCLUDEPATH += ../../rapidjson-1.1.0
+RAPIDJSON_AVAILABLE = $$system(pkg-config --atleast-version 1.1 RapidJSON && echo yes)
+isEmpty(RAPIDJSON_AVAILABLE) {
+    message("using rapidjson from submodule FeedReader")
+    INCLUDEPATH *= $$clean_path($${PWD}/../../supportlibs/rapidjson/include)
+} else {
+    message("using system rapidjson FeedReader")
+}
 
 
 linux-* {
