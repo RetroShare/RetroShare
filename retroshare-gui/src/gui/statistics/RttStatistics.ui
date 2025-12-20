@@ -6,50 +6,49 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>611</width>
-    <height>408</height>
+    <width>750</width>
+    <height>450</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>RTT Statistics</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="images.qrc">
-    <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
-  </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QSplitter" name="splitter">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTreeWidget" name="treeWidget">
+     <property name="rootIsDecorated">
+      <bool>false</bool>
      </property>
-     <widget class="QScrollArea" name="_tunnel_statistics_F">
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <column>
+      <property name="text">
+       <string>Peer Name</string>
       </property>
-      <property name="horizontalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
+     </column>
+     <column>
+      <property name="text">
+       <string>RTT (ms)</string>
       </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
+     </column>
+     <column>
+      <property name="text">
+       <string>Node ID</string>
       </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>593</width>
-         <height>390</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
+     </column>
+     <column>
+      <property name="text">
+       <string>IP Address</string>
+      </property>
+     </column>
     </widget>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

@@ -20,44 +20,26 @@
 
 #pragma once
 
-#include <QPoint>
-#include <retroshare/rsrtt.h>
+#include <QTreeWidget>
+#include <QTimer>
+#include <QHeaderView>
 #include <retroshare-gui/RsAutoUpdatePage.h>
-
 #include "ui_RttStatistics.h"
-#include <gui/common/RSGraphWidget.h>
-
-class RttStatisticsWidget ;
-
-class RttGraphSource: public RSGraphSource
-{
-public:
-    RttGraphSource() {}
-
-    virtual void getValues(std::map<std::string,float>& vals) const ;
-    virtual QString unitName() const ;
-    virtual QString displayName(int i) const ;
-};
-
-class RttStatisticsGraph: public RSGraphWidget
-{
-public:
-    RttStatisticsGraph(QWidget *parent);
-};
 
 class RttStatistics: public MainPage, public Ui::RttStatistics
 {
+    Q_OBJECT
+
 public:
-    RttStatistics(QWidget *parent = NULL) ;
+    RttStatistics(QWidget *parent = NULL);
     ~RttStatistics();
+
+private slots:
+    void updateRttValues();
 
 private:
     void processSettings(bool bLoad);
     bool m_bProcessSettings;
 
-    RttStatisticsGraph *_tst_CW ;
-} ;
-
-
-
-
+    QTimer *m_timer;
+};
