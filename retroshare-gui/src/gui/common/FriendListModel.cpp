@@ -458,7 +458,7 @@ QVariant RsFriendListModel::statusRole(const EntryIndex& fmpe,int /*column*/) co
         StatusInfo status;
         rsStatus->getStatus(node->node_info.id, status);
 
-        return QVariant(status.status);
+        return QVariant((int)status.status);
     }
     return QVariant();
 }
@@ -603,7 +603,7 @@ QVariant RsFriendListModel::onlineRole(const EntryIndex& e, int /*col*/) const
 
 				for(uint32_t i=0;i<prof.child_node_indices.size();++i)
 					if(mLocations[prof.child_node_indices[i]].node_info.state & RS_PEER_STATE_CONNECTED)
-						return QVariant(RS_STATUS_ONLINE);
+                        return QVariant((int)RsStatusValue::RS_STATUS_ONLINE);
 			}
 			break;
 		}
@@ -616,7 +616,7 @@ QVariant RsFriendListModel::onlineRole(const EntryIndex& e, int /*col*/) const
 			{
 				for(uint32_t i=0;i<prof->child_node_indices.size();++i)
 					if(mLocations[prof->child_node_indices[i]].node_info.state & RS_PEER_STATE_CONNECTED)
-						return QVariant(RS_STATUS_ONLINE);
+                        return QVariant((int)RsStatusValue::RS_STATUS_ONLINE);
 			}
 		}
 		break;
@@ -626,12 +626,12 @@ QVariant RsFriendListModel::onlineRole(const EntryIndex& e, int /*col*/) const
 			const HierarchicalNodeInformation *node = getNodeInfo(e);
 
             if(node && bool(node->node_info.state & RS_PEER_STATE_CONNECTED))
-                return QVariant(RS_STATUS_ONLINE);
+                return QVariant((int)RsStatusValue::RS_STATUS_ONLINE);
             else
-                return QVariant(RS_STATUS_OFFLINE);
+                return QVariant((int)RsStatusValue::RS_STATUS_OFFLINE);
 		}
 	}
-	return QVariant(RS_STATUS_OFFLINE);
+    return QVariant((int)RsStatusValue::RS_STATUS_OFFLINE);
 }
 
 QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const
@@ -640,14 +640,14 @@ QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const
 	std::cerr << "  font role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": " << std::endl;
 #endif
 
-	int status = onlineRole(e,col).toInt();
+    auto status = RsStatusValue(onlineRole(e,col).toInt());
 
 	switch (status)
 	{
-		case RS_STATUS_AWAY:
-		case RS_STATUS_BUSY:
-		case RS_STATUS_ONLINE:
-		case RS_STATUS_INACTIVE:
+        case RsStatusValue::RS_STATUS_AWAY:
+        case RsStatusValue::RS_STATUS_BUSY:
+        case RsStatusValue::RS_STATUS_ONLINE:
+        case RsStatusValue::RS_STATUS_INACTIVE:
 		{
 			QFont font ;
 			QTreeView* myParent = dynamic_cast<QTreeView*>(QAbstractItemModel::parent());
@@ -781,7 +781,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 						else
 						{
 							return QVariant(QString::fromUtf8(node->node_info.location.c_str())+"\n"
-                                        + "(" + StatusDefs::name(statusRole(e,col).toInt()) + ")");
+                                        + "(" + StatusDefs::name(RsStatusValue(statusRole(e,col).toInt())) + ")");
 						}
 					else
 						return QVariant(QString::fromUtf8(node->node_info.location.c_str()));
@@ -900,10 +900,10 @@ bool RsFriendListModel::getPeerOnlineStatus(const EntryIndex& e) const
     return (noded && (noded->node_info.state & RS_PEER_STATE_CONNECTED));
 }
 
-const RsFriendListModel::HierarchicalNodeInformation *RsFriendListModel::getBestNodeInformation(const HierarchicalProfileInformation *profileInfo, uint32_t *status) const
+const RsFriendListModel::HierarchicalNodeInformation *RsFriendListModel::getBestNodeInformation(const HierarchicalProfileInformation *profileInfo, RsStatusValue *status) const
 {
 	if (status) {
-		*status = RS_STATUS_OFFLINE;
+        *status = RsStatusValue::RS_STATUS_OFFLINE;
 	}
 
 	if (!profileInfo) {
@@ -921,28 +921,28 @@ const RsFriendListModel::HierarchicalNodeInformation *RsFriendListModel::getBest
 
 		int statusIndex = 0;
 		switch (statusInfo.status) {
-		case RS_STATUS_OFFLINE:
+        case RsStatusValue::RS_STATUS_OFFLINE:
 			statusIndex = 1;
 			break;
 
-		case RS_STATUS_INACTIVE:
+        case RsStatusValue::RS_STATUS_INACTIVE:
 			statusIndex = 2;
 			break;
 
-		case RS_STATUS_AWAY:
+        case RsStatusValue::RS_STATUS_AWAY:
 			statusIndex = 3;
 			break;
 
-		case RS_STATUS_BUSY:
+        case RsStatusValue::RS_STATUS_BUSY:
 			statusIndex = 4;
 			break;
 
-		case RS_STATUS_ONLINE:
+        case RsStatusValue::RS_STATUS_ONLINE:
 			statusIndex = 5;
 			break;
 
 		default:
-			std::cerr << "FriendListModel: Unknown status " << statusInfo.status << std::endl;
+            std::cerr << "FriendListModel: Unknown status " << (int)statusInfo.status << std::endl;
 		}
 
 		if (bestStatusIndex == 0 || statusIndex > bestStatusIndex) {
@@ -999,7 +999,7 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
 			QPixmap sslAvatar;
 			bool foundAvatar = false;
         	const HierarchicalProfileInformation *hn = getProfileInfo(entry);
-			uint32_t status = RS_STATUS_OFFLINE;
+            RsStatusValue status = RsStatusValue::RS_STATUS_OFFLINE;
 			const HierarchicalNodeInformation *bestNodeInformation = NULL;
 
 			if (mDisplayStatusIcon) {
@@ -1049,7 +1049,7 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
 		QPixmap sslAvatar;
 		AvatarDefs::getAvatarFromSslId(RsPeerId(hn->node_info.id.toStdString()), sslAvatar);
 		if (mDisplayStatusIcon) {
-			QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(statusRole(entry, col).toInt()));
+            QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(RsStatusValue(statusRole(entry, col).toInt())));
 			return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
 		}
 

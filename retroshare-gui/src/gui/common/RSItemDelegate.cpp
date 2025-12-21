@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RSItemDelegate.cpp                                               *
+ * retroshare-gui/src/gui/common/RSItemDelegate.cpp                            *
  *                                                                             *
  * Copyright (C) 2010 RetroShare Team <retroshare.project@gmail.com>           *
  *                                                                             *

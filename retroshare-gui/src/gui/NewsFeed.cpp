@@ -27,7 +27,6 @@
 #include <retroshare/rsgxschannels.h>
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsmsgs.h>
-#include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsposted.h>
@@ -35,6 +34,7 @@
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
 #include "feeds/BoardsCommentsItem.h"
+#include "feeds/BoardsPostItem.h"
 #include "feeds/ChatMsgItem.h"
 #include "feeds/GxsCircleItem.h"
 #include "feeds/ChannelsCommentsItem.h"
@@ -58,7 +58,6 @@
 #include "msgs/MessageInterface.h"
 
 #include "common/FeedNotify.h"
-#include "notifyqt.h"
 
 #define ROLE_RECEIVED FEED_TREEWIDGET_SORTROLE
 
@@ -76,7 +75,7 @@ static NewsFeed* instance = nullptr;
 NewsFeed::NewsFeed(QWidget *parent) : MainPage(parent), ui(new Ui::NewsFeed),
     mEventTypes({
         RsEventType::AUTHSSL_CONNECTION_AUTENTICATION,
-        RsEventType::PEER_CONNECTION                 ,
+        RsEventType::FRIEND_LIST                     ,
         RsEventType::GXS_CIRCLES                     ,
         RsEventType::GXS_CHANNELS                    ,
         RsEventType::GXS_FORUMS                      ,
@@ -192,27 +191,27 @@ void NewsFeed::handleEvent(std::shared_ptr<const RsEvent> event)
 
 void NewsFeed::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
-	uint flags = Settings->getNewsFeedFlags();
+    RsFeedTypeFlags flags = (RsFeedTypeFlags)Settings->getNewsFeedFlags();
 
-    if(event->mType == RsEventType::AUTHSSL_CONNECTION_AUTENTICATION && (flags & RS_FEED_TYPE_SECURITY))
+    if(event->mType == RsEventType::AUTHSSL_CONNECTION_AUTENTICATION && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_SECURITY)))
 		handleSecurityEvent(event);
 
-    if(event->mType == RsEventType::PEER_CONNECTION && (flags & RS_FEED_TYPE_PEER))
+    if(event->mType == RsEventType::FRIEND_LIST && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_PEER)))
 		handleConnectionEvent(event);
 
-    if(event->mType == RsEventType::GXS_CIRCLES && (flags & RS_FEED_TYPE_CIRCLE))
+    if(event->mType == RsEventType::GXS_CIRCLES && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_CIRCLE)))
 		handleCircleEvent(event);
 
-    if(event->mType == RsEventType::GXS_CHANNELS && (flags & RS_FEED_TYPE_CHANNEL))
+    if(event->mType == RsEventType::GXS_CHANNELS && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_CHANNEL)))
 		handleChannelEvent(event);
 
-    if(event->mType == RsEventType::GXS_FORUMS && (flags & RS_FEED_TYPE_FORUM))
+    if(event->mType == RsEventType::GXS_FORUMS && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_FORUM)))
 		handleForumEvent(event);
 
-    if(event->mType == RsEventType::GXS_POSTED && (flags & RS_FEED_TYPE_POSTED))
+    if(event->mType == RsEventType::GXS_POSTED && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_POSTED)))
 		handlePostedEvent(event);
 
-    if(event->mType == RsEventType::MAIL_STATUS && (flags & RS_FEED_TYPE_MSG))
+    if(event->mType == RsEventType::MAIL_STATUS && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_MSG)))
 		handleMailEvent(event);
 }
 
@@ -241,11 +240,12 @@ void NewsFeed::handlePostedEvent(std::shared_ptr<const RsEvent> event)
 
 	switch(pe->mPostedEventCode)
 	{
+	case RsPostedEventCode::UPDATED_POSTED_GROUP:
 	case RsPostedEventCode::NEW_POSTED_GROUP:
 		addFeedItem( new PostedGroupItem(this, NEWSFEED_POSTEDNEWLIST, pe->mPostedGroupId, false, true));
 		break;
 	case RsPostedEventCode::NEW_MESSAGE:
-		addFeedItem( new PostedItem(this, NEWSFEED_POSTEDMSGLIST, pe->mPostedGroupId, pe->mPostedMsgId, false, true));
+        addFeedItem( new BoardsPostItem(this, NEWSFEED_POSTEDMSGLIST, pe->mPostedGroupId, pe->mPostedMsgId, false, true));
 		break;
 	case RsPostedEventCode::NEW_COMMENT:
 		addFeedItem( new BoardsCommentsItem(this, NEWSFEED_POSTEDMSGLIST, pe->mPostedGroupId, pe->mPostedMsgId, false, true));
@@ -389,25 +389,25 @@ void NewsFeed::handleCircleEvent(std::shared_ptr<const RsEvent> event)
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REQUEST:
 			// only show membership requests if we're an admin of that circle
 			if(details.isIdInInviteeList(pe->mGxsId))
-				addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_JOIN),true);
+                addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_JOIN),true);
 			else if(details.mAmIAdmin)
-				addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REQ),true);
+                addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_REQ),true);
 
 			break;
 
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE:
 
 			if(details.isIdInInviteeList(pe->mGxsId))
-				addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_LEAVE),true);
+                addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_LEAVE),true);
 			break;
 
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_ADDED_TO_INVITEE_LIST:
 			if(rsIdentity->isOwnId(pe->mGxsId))
 			{
 				if(details.isIdRequestingMembership(pe->mGxsId))
-					addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_ACCEPTED),true);
+                    addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_ACCEPTED),true);
 				else
-					addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_INVITE_REC),true);
+                    addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_INVITE_REC),true);
 			}
 			break;
 
@@ -415,9 +415,9 @@ void NewsFeed::handleCircleEvent(std::shared_ptr<const RsEvent> event)
 			if(rsIdentity->isOwnId(pe->mGxsId))
 			{
 				if(details.isIdRequestingMembership(pe->mGxsId))
-					addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REVOKED),true);
+                    addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_REVOKED),true);
 				else
-					addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_INVITE_CANCELLED),true);
+                    addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_INVITE_CANCELLED),true);
 			}
 			break;
 
@@ -428,31 +428,26 @@ void NewsFeed::handleCircleEvent(std::shared_ptr<const RsEvent> event)
 
 void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
 {
-	const RsConnectionEvent *pe = dynamic_cast<const RsConnectionEvent*>(event.get());
+    const RsFriendListEvent *pe = dynamic_cast<const RsFriendListEvent*>(event.get());
 	if(!pe) return;
 
 	auto& e(*pe);
 
-#ifdef NEWS_DEBUG
-	std::cerr << "NotifyQt: handling connection event from peer " << e.mSslId << std::endl;
-#endif
-
-	switch(e.mConnectionInfoCode)
+    switch(e.mEventCode)
 	{
-	case RsConnectionEventCode::PEER_CONNECTED:
+    case RsFriendListEventCode::NODE_CONNECTED:
 		addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_CONNECT, false), true);
-		NotifyQt::getInstance()->addToaster(RS_POPUP_CONNECT, e.mSslId.toStdString().c_str(), "", "");
 		break;
-	case RsConnectionEventCode::PEER_DISCONNECTED: // not handled yet
+    case RsFriendListEventCode::NODE_DISCONNECTED: // not handled yet
 		break;
-	case RsConnectionEventCode::PEER_TIME_SHIFT:
+    case RsFriendListEventCode::NODE_TIME_SHIFT:
 		addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_OFFSET, false),false);
 		break;
-	case RsConnectionEventCode::PEER_REPORTS_WRONG_IP:
+    case RsFriendListEventCode::NODE_REPORTS_WRONG_IP:
 		addFeedItemIfUnique(new SecurityIpItem(
 		                        this, e.mSslId, e.mOwnLocator.toString(),
 		                        e.mReportedLocator.toString(),
-		                        RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED,
+                                RsFeedTypeFlags::RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED,
 		                        false ), false);
 		break;
 	default: break;
@@ -467,34 +462,31 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
         return;
 
     auto& e(*pe);
-#ifdef NEWS_DEBUG
-	std::cerr << "NotifyQt: handling security event from (" << e.mSslId << "," << e.mPgpId << ") error code: " << (int)e.mErrorCode << std::endl;
-#endif
-	uint flags = Settings->getNewsFeedFlags();
+    RsFeedTypeFlags flags = (RsFeedTypeFlags)Settings->getNewsFeedFlags();
 
-	if(e.mErrorCode == RsAuthSslError::PEER_REFUSED_CONNECTION && (flags & RS_FEED_TYPE_SECURITY_IP))
+    if(e.mErrorCode == RsAuthSslError::PEER_REFUSED_CONNECTION && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP)))
 	{
 		addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_HELLO, false), true );
 		return;
 	}
 	
 
-    uint32_t FeedItemType=0;
+    RsFeedTypeFlags FeedItemType(RsFeedTypeFlags::RS_FEED_TYPE_NONE);
 
 	switch(e.mErrorCode)
 	{
 	case RsAuthSslError::NO_CERTIFICATE_SUPPLIED:      // fallthrough
 	case RsAuthSslError::MISMATCHED_PGP_ID:            // fallthrough
 	case RsAuthSslError::MISSING_AUTHENTICATION_INFO:
-		FeedItemType = RS_FEED_ITEM_SEC_BAD_CERTIFICATE; break;
+        FeedItemType = RsFeedTypeFlags::RS_FEED_ITEM_SEC_BAD_CERTIFICATE; break;
 	case RsAuthSslError::PGP_SIGNATURE_VALIDATION_FAILED:
-		FeedItemType = RS_FEED_ITEM_SEC_WRONG_SIGNATURE; break;
+        FeedItemType = RsFeedTypeFlags::RS_FEED_ITEM_SEC_WRONG_SIGNATURE; break;
 	case RsAuthSslError::NOT_A_FRIEND:
-		FeedItemType = RS_FEED_ITEM_SEC_CONNECT_ATTEMPT; break;
+        FeedItemType = RsFeedTypeFlags::RS_FEED_ITEM_SEC_CONNECT_ATTEMPT; break;
 	case RsAuthSslError::IP_IS_BLACKLISTED:
-		FeedItemType = RS_FEED_ITEM_SEC_IP_BLACKLISTED; break;
+        FeedItemType = RsFeedTypeFlags::RS_FEED_ITEM_SEC_IP_BLACKLISTED; break;
 	case RsAuthSslError::MISSING_CERTIFICATE:
-		FeedItemType = RS_FEED_ITEM_SEC_MISSING_CERTIFICATE; break;
+        FeedItemType = RsFeedTypeFlags::RS_FEED_ITEM_SEC_MISSING_CERTIFICATE; break;
 	default:
 		return; // display nothing
 	}
@@ -504,43 +496,49 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 
 	addFeedItemIfUnique(new SecurityItem(this, NEWSFEED_SECLIST, e.mPgpId, e.mSslId, det.location, e.mLocator.toString(), FeedItemType, false), true );
 
-	if (Settings->getMessageFlags() & RS_MESSAGE_CONNECT_ATTEMPT)
+    if (Settings->getMessageFlags() & RshareSettings::RS_MESSAGE_CONNECT_ATTEMPT)
 		MessageComposer::addConnectAttemptMsg(e.mPgpId, e.mSslId, QString::fromStdString(det.name + "(" + det.location + ")"));
-	
-	NotifyQt::getInstance()->addToaster(RS_POPUP_CONNECT_ATTEMPT, e.mPgpId.toStdString().c_str(), det.location, e.mSslId.toStdString().c_str());
 }
 
-void NewsFeed::testFeeds(uint /*notifyFlags*/)
+void NewsFeed::testFeeds(RsFeedTypeFlags /*notifyFlags*/)
 {
-	uint flags = Settings->getNewsFeedFlags();
+    RsFeedTypeFlags flags = RsFeedTypeFlags(Settings->getNewsFeedFlags());
 
 	//For test your feed add valid ID's for RsGxsGroupId & RsGxsMessageId, else test feed will be not displayed
 
-	if (flags & RS_FEED_TYPE_PEER)
+    if (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_PEER))
 		instance->addFeedItemIfUnique(new PeerItem(instance, NEWSFEED_PEERLIST, RsPeerId(""), PEER_TYPE_CONNECT, false), true);
 
-	if (flags & RS_FEED_TYPE_MSG)
+    if (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_MSG))
 		instance->addFeedItemIfUnique(new MsgItem(instance, NEWSFEED_MESSAGELIST, std::string(""), false), true);
 
-	if (flags & RS_FEED_TYPE_CHANNEL){
+    if (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_CHANNEL)){
 		instance->addFeedItem(new GxsChannelGroupItem(instance, NEWSFEED_CHANNELNEWLIST, RsGxsGroupId(""), false, true));
 		instance->addFeedItem(new GxsChannelPostItem(instance, NEWSFEED_CHANNELNEWLIST, RsGxsGroupId(""), RsGxsMessageId(""), false, true));
 		instance->addFeedItem(new ChannelsCommentsItem(instance, NEWSFEED_CHANNELNEWLIST, RsGxsGroupId(""), RsGxsMessageId(""), RsGxsMessageId(""), false, true));
 	}
 
-	if(flags & RS_FEED_TYPE_FORUM){
+    if(!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_FORUM)){
 		instance->addFeedItem(new GxsForumGroupItem(instance, NEWSFEED_NEW_FORUM, RsGxsGroupId(""), false, true));
 		instance->addFeedItem(new GxsForumMsgItem(instance, NEWSFEED_NEW_FORUM, RsGxsGroupId(""), RsGxsMessageId(""), false, true ));
 	}
 
-	if(flags & RS_FEED_TYPE_POSTED){
+    if(!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_POSTED)){
 		instance->addFeedItem( new PostedGroupItem(instance, NEWSFEED_POSTEDNEWLIST, RsGxsGroupId(""), false, true));
 		instance->addFeedItem( new PostedItem(instance, NEWSFEED_POSTEDMSGLIST, RsGxsGroupId(""), RsGxsMessageId(""), false, true));
 		instance->addFeedItem( new BoardsCommentsItem(instance, NEWSFEED_POSTEDMSGLIST, RsGxsGroupId(""), RsGxsMessageId(""), false, true));
 	}
 
-	if (flags & RS_FEED_TYPE_CIRCLE)
-		instance->addFeedItemIfUnique(new GxsCircleItem(instance, NEWSFEED_CIRCLELIST, RsGxsCircleId(""), RsGxsId(""), RS_FEED_ITEM_CIRCLE_MEMB_JOIN),true);;
+    if (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_CIRCLE))
+        instance->addFeedItemIfUnique(new GxsCircleItem(instance, NEWSFEED_CIRCLELIST, RsGxsCircleId(""), RsGxsId(""), RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_JOIN),true);;
+
+    auto feedItem2 = new BoardsPostItem(instance,
+                                           NEWSFEED_CHANNELNEWLIST,
+                                           RsGxsGroupId  ("00000000000000000000000000000000"),
+                                           RsGxsMessageId("0000000000000000000000000000000000000000")
+                                           , false, true);
+
+    instance->addFeedItem(feedItem2);
 
 #ifdef TO_REMOVE
 	if (!instance) {

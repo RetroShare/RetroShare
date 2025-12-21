@@ -24,7 +24,7 @@
 #include <QMetaType>
 
 #include <retroshare/rsgxschannels.h>
-#include "gui/gxs/GxsFeedItem.h"
+#include "gui/feeds/GxsFeedItem.h"
 
 namespace Ui {
 class GxsChannelPostItem;

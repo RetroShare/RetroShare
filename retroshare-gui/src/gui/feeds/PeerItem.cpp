@@ -28,9 +28,8 @@
 #include "gui/common/StatusDefs.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/common/AvatarDefs.h"
+#include "util/qtthreadsutils.h"
 #include "util/DateTime.h"
-
-#include "gui/notifyqt.h"
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
@@ -58,7 +57,21 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
     connect( chatButton, SIGNAL( clicked() ), this, SLOT( openChat() ) );
     connect( sendmsgButton, SIGNAL( clicked() ), this, SLOT( sendMsg() ) );
 
-    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+
+            if(!fe || fe->mSslId != mPeerId)
+                return;
+
+            updateItem();
+        }
+        , this );
+    }, mEventHandlerId, RsEventType::FRIEND_LIST );
 
     avatar->setId(ChatId(mPeerId));// TODO: remove unnecesary converstation
 
@@ -68,6 +81,10 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
     updateItem();
 }
 
+PeerItem::~PeerItem()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
 uint64_t PeerItem::uniqueIdentifier() const
 {
     return hash_64bits("PeerItem " + mPeerId.toStdString() + " " + QString::number(mType).toStdString()) ;
@@ -156,78 +173,62 @@ void PeerItem::updateItemStatic()
 
 void PeerItem::updateItem()
 {
-	if (!rsPeers)
-		return;
+    if (!rsPeers)
+        return;
 
-	/* fill in */
+    /* fill in */
 #ifdef DEBUG_ITEM
-	std::cerr << "PeerItem::updateItem()";
-	std::cerr << std::endl;
+    std::cerr << "PeerItem::updateItem()";
+    std::cerr << std::endl;
 #endif
-	if(!RsAutoUpdatePage::eventsLocked()) {
-		RsPeerDetails details;
-		if (!rsPeers->getPeerDetails(mPeerId, details))
-		{
-			chatButton->setEnabled(false);
-			sendmsgButton->setEnabled(false);
+    RsPeerDetails details;
+    if (!rsPeers->getPeerDetails(mPeerId, details))
+    {
+        chatButton->setEnabled(false);
+        sendmsgButton->setEnabled(false);
 
-			return;
-		}
+        return;
+    }
 
-		/* top Level info */
-		QString status = StatusDefs::peerStateString(details.state);
+    /* top Level info */
+    QString status = StatusDefs::peerStateString(details.state);
 
-#if 0
-		/* Append additional status info from status service */
-		StatusInfo statusInfo;
-		if ((rsStatus) && (rsStatus->getStatus(*it, statusInfo)))
-		{
-			status.append(QString::fromStdString("/" + RsStatusString(statusInfo.status)));
-		}
-#endif
-		statusLabel->setText(status);
-		trustLabel->setText(QString::fromStdString(RsPeerTrustString(details.trustLvl)));
+    statusLabel->setText(status);
+    trustLabel->setText(QString::fromStdString(RsPeerTrustString(details.trustLvl)));
 
-        QString ip_string;
+    QString ip_string;
 
-        if(details.localPort != 0)
-            ip_string += QString("%1:%2").arg(QString::fromStdString(details.localAddr)).arg(details.localPort);
+    if(details.localPort != 0)
+        ip_string += QString("%1:%2").arg(QString::fromStdString(details.localAddr)).arg(details.localPort);
 
-        if(details.extPort != 0)
-        {
-            if(!ip_string.isNull())
-                ip_string += "/" ;
+    if(details.extPort != 0)
+    {
+        if(!ip_string.isNull())
+            ip_string += "/" ;
 
-            ip_string += ip_string += QString("%1:%2").arg(QString::fromStdString(details.extAddr)).arg(details.extPort);
-        }
-		ipLabel->setText(ip_string);
+        ip_string += ip_string += QString("%1:%2").arg(QString::fromStdString(details.extAddr)).arg(details.extPort);
+    }
+    ipLabel->setText(ip_string);
 
-		connLabel->setText(StatusDefs::connectStateString(details));
+    connLabel->setText(StatusDefs::connectStateString(details));
 
-		/* do buttons */
-		chatButton->setEnabled(details.state & RS_PEER_STATE_CONNECTED);
-		if (details.state & RS_PEER_STATE_CONNECTED)
-		{
-			sendmsgButton->setEnabled(true);
-		}
-		else
-		{
-			sendmsgButton->setEnabled(false);
-		}
+    /* do buttons */
+    chatButton->setEnabled(details.state & RS_PEER_STATE_CONNECTED);
 
-		if (rsRtt)
-		{
-			double offset = rsRtt->getMeanOffset(RsPeerId(mPeerId));
-			offsetLabel->setText(QString::number(offset,'f',2).append(" s"));
-		}
+    if (details.state & RS_PEER_STATE_CONNECTED)
+    {
+        sendmsgButton->setEnabled(true);
+    }
+    else
+    {
+        sendmsgButton->setEnabled(false);
+    }
 
-	}
-
-	/* slow Tick  */
-	int msec_rate = 10129;
-	
-	QTimer::singleShot( msec_rate, this, SLOT(updateItem() ));
-	return;
+    if (rsRtt)
+    {
+        double offset = rsRtt->getMeanOffset(RsPeerId(mPeerId));
+        offsetLabel->setText(QString::number(offset,'f',2).append(" s"));
+    }
 }
 
 void PeerItem::toggle()

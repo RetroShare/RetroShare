@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/chat/ChatLobbyDialog.cpp                                                *
+ * retroshare-gui/src/gui/chat/ChatLobbyDialog.cpp                             *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *
@@ -45,7 +45,6 @@
 #include "util/HandleRichText.h"
 #include "util/RsQtVersion.h"
 
-#include "retroshare/rsnotify.h"
 #include "util/rstime.h"
 #include "util/DateTime.h"
 
@@ -848,25 +847,26 @@ QString ChatLobbyDialog::getParticipantName(const RsGxsId& gxs_id) const
 }
 
 
-void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, const QString& str)
+void ChatLobbyDialog::handleLobbyEvent(RsChatLobbyEventCode event_type, const RsGxsId& gxs_id, const QString& str)
 {
     RsGxsId qsParticipant;
 
     QString name= getParticipantName(gxs_id) ;
 
+    //std::cerr << "Received ChatLobby event " << (int)event_type << " for lobby " << (void*)lobbyId << std::endl;
     switch (event_type)
     {
-    case RS_CHAT_LOBBY_EVENT_PEER_LEFT:
+    case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_LEFT:
         qsParticipant=gxs_id;
         ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the room.").arg(RsHtml::plainText(name)), ChatWidget::MSGTYPE_SYSTEM);
         emit peerLeft(id()) ;
         break;
-    case RS_CHAT_LOBBY_EVENT_PEER_JOINED:
+    case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_JOINED:
         qsParticipant=gxs_id;
         ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the room.").arg(RsHtml::plainText(name)), ChatWidget::MSGTYPE_SYSTEM);
         emit peerJoined(id()) ;
         break;
-    case RS_CHAT_LOBBY_EVENT_PEER_STATUS:
+    case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_STATUS:
     {
 
         qsParticipant=gxs_id;
@@ -878,7 +878,7 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, c
 
     }
         break;
-    case RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
+    case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
     {
         qsParticipant=gxs_id;
 
@@ -894,11 +894,11 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, c
             muteParticipant(RsGxsId(str.toStdString())) ;
     }
         break;
-    case RS_CHAT_LOBBY_EVENT_KEEP_ALIVE:
+    case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_KEEP_ALIVE:
         //std::cerr << "Received keep alive packet from " << nickname.toStdString() << " in chat room " << getPeerId() << std::endl;
         break;
     default:
-        std::cerr << "ChatLobbyDialog::displayLobbyEvent() Unhandled chat room event type " << event_type << std::endl;
+        std::cerr << "ChatLobbyDialog::handledLobbyEvent() Unhandled chat room event type " << (int)event_type << std::endl;
     }
 
     if (!qsParticipant.isNull())
@@ -929,9 +929,9 @@ bool ChatLobbyDialog::canClose()
 	return false;
 }
 
-void ChatLobbyDialog::showDialog(uint chatflags)
+void ChatLobbyDialog::showDialog(RsChatFlags chatflags)
 {
-	if (chatflags & RS_CHAT_FOCUS)
+    if (!!(chatflags & RsChatFlags::RS_CHAT_FOCUS))
 	{
 		if (isWindowed() && mPCWindow) {
 			mPCWindow->showDialog(this, chatflags);
@@ -1019,5 +1019,5 @@ void ChatLobbyDialog::setWindowed(bool windowed)
 	}
 	show();
 	if (chatLobbyPage)// If not defined, we are on autosubscribe loop of lobby widget constructor. So don't recall it.
-		showDialog(RS_CHAT_FOCUS);
+        showDialog(RsChatFlags::RS_CHAT_FOCUS);
 }

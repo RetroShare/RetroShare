@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/chat/ChatStyle.h                                                        *
+ * retroshare-gui/src/gui/chat/ChatStyle.h                                     *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *

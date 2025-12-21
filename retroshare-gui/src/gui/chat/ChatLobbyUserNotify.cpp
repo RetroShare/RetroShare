@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/chat/ChatLobbyUserNotify.cpp                                            *
+ * retroshare-gui/src/gui/chat/ChatLobbyUserNotify.cpp                         *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *
@@ -28,7 +28,6 @@
 
 #include "gui/ChatLobbyWidget.h"
 #include "gui/MainWindow.h"
-#include "gui/notifyqt.h"
 #include "gui/SoundManager.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/DateTime.h"

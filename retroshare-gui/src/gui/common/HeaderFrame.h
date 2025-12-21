@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/HeaderFrame.h                                                    *
+ * retroshare-gui/src/gui/common/HeaderFrame.h                                 *
  *                                                                             *
  * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -30,7 +30,7 @@ class HeaderFrame;
 class HeaderFrame : public QFrame
 {
 	Q_OBJECT
-    
+
 public:
 	HeaderFrame(QWidget *parent = 0);
 	~HeaderFrame();

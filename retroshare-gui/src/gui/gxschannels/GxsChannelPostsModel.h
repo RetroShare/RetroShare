@@ -256,6 +256,6 @@ private:
     QColor mTextColorNotSubscribed ;
     QColor mTextColorMissing       ;
 
-	RsEventsHandlerId_t mEventHandlerId ;
+    //RsEventsHandlerId_t mEventHandlerId ;
     friend class const_iterator;
 };

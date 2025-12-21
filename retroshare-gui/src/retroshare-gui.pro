@@ -371,7 +371,7 @@ HEADERS +=  rshare.h \
             retroshare-gui/configpage.h \
             retroshare-gui/RsAutoUpdatePage.h \
             retroshare-gui/mainpage.h \
-            gui/notifyqt.h \
+            gui/RsGUIEventManager.h \
             control/bandwidthevent.h \
             control/eventtype.h \
             gui/QuickStartWizard.h \
@@ -596,10 +596,13 @@ HEADERS +=  rshare.h \
             gui/elastic/elnode.h \
             gui/NewsFeed.h \
             gui/feeds/BoardsCommentsItem.h \
+            gui/feeds/BoardsPostItem.h \
             gui/feeds/FeedItem.h \
             gui/feeds/FeedHolder.h \
+	    gui/feeds/GxsGroupFeedItem.h \
             gui/feeds/GxsCircleItem.h \
             gui/feeds/ChannelsCommentsItem.h \
+	    gui/feeds/GxsFeedItem.h \
             gui/feeds/PeerItem.h \
             gui/feeds/MsgItem.h \
             gui/feeds/ChatMsgItem.h \
@@ -620,22 +623,6 @@ HEADERS +=  rshare.h \
             gui/NetworkDialog/pgpid_item_proxy.h \
             gui/common/RsCollection.h \
             util/retroshareWin32.h
-#            gui/ForumsDialog.h \
-#            gui/forums/ForumDetails.h \
-#            gui/forums/EditForumDetails.h \
-#            gui/forums/CreateForum.h \
-#            gui/forums/CreateForumMsg.h \
-#            gui/forums/ForumUserNotify.h \
-#            gui/feeds/ForumNewItem.h \
-#            gui/feeds/ForumMsgItem.h \
-#            gui/ChannelFeed.h \
-#            gui/feeds/ChanNewItem.h \
-#            gui/feeds/ChanMsgItem.h \
-#            gui/channels/CreateChannel.h \
-#            gui/channels/ChannelDetails.h \
-#            gui/channels/CreateChannelMsg.h \
-#            gui/channels/EditChanDetails.h \
-#            gui/channels/ChannelUserNotify.h \
 
 FORMS +=    gui/StartDialog.ui \
             gui/HomePage.ui\
@@ -654,7 +641,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/NetworkView.ui \
             gui/FriendsDialog.ui \
             gui/ShareManager.ui \
-#            gui/ShareDialog.ui \
             gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
             gui/ServicePermissionDialog.ui \
@@ -708,6 +694,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/advsearch/expressionwidget.ui \
             gui/NewsFeed.ui \
             gui/feeds/BoardsCommentsItem.ui \
+            gui/feeds/BoardsPostItem.ui \
             gui/feeds/GxsCircleItem.ui \
             gui/feeds/ChannelsCommentsItem.ui \
             gui/feeds/PeerItem.ui \
@@ -761,7 +748,7 @@ FORMS +=    gui/StartDialog.ui \
 
 SOURCES +=  main.cpp \
             rshare.cpp \
-            gui/notifyqt.cpp \
+            gui/RsGUIEventManager.cpp \
             gui/AboutDialog.cpp \
             gui/AboutWidget.cpp \
             gui/QuickStartWizard.cpp \
@@ -959,10 +946,13 @@ SOURCES +=  main.cpp \
             gui/elastic/elnode.cpp \
             gui/NewsFeed.cpp \
             gui/feeds/BoardsCommentsItem.cpp \
+            gui/feeds/BoardsPostItem.cpp \
             gui/feeds/FeedItem.cpp \
+	    gui/feeds/GxsGroupFeedItem.cpp \
             gui/feeds/FeedHolder.cpp \
             gui/feeds/GxsCircleItem.cpp \
             gui/feeds/ChannelsCommentsItem.cpp \
+	    gui/feeds/GxsFeedItem.cpp \
             gui/feeds/PeerItem.cpp \
             gui/feeds/MsgItem.cpp \
             gui/feeds/ChatMsgItem.cpp \
@@ -1050,12 +1040,9 @@ unfinishedtranslations {
 }
 
 messenger {
-     SOURCES +=       gui/MessengerWindow.cpp \
-	 				  gui/common/FriendList.cpp
-     HEADERS +=       gui/MessengerWindow.h \
-	 				  gui/common/FriendList.h 
-     FORMS   +=       gui/MessengerWindow.ui \
-	 				  gui/common/FriendList.ui
+     SOURCES +=       gui/MessengerWindow.cpp 
+     HEADERS +=       gui/MessengerWindow.h 
+     FORMS   +=       gui/MessengerWindow.ui 
 
 	 DEFiNES += MESSENGER_WINDOW
 }
@@ -1444,11 +1431,9 @@ gxsgui {
 		gui/gxs/GxsGroupFrameDialog.h \
 		gui/gxs/GxsMessageFrameWidget.h \
 		gui/gxs/GxsMessageFramePostWidget.h \
-		gui/gxs/GxsGroupFeedItem.h \
-		gui/gxs/GxsFeedItem.h \
 		gui/gxs/GxsGroupShareKey.h \
 		gui/gxs/GxsUserNotify.h \
-		gui/gxs/GxsFeedWidget.h \
+#		gui/gxs/GxsFeedWidget.h \
 		util/TokenQueue.h \
 		util/RsGxsUpdateBroadcast.h \
 	
@@ -1478,10 +1463,8 @@ gxsgui {
 		gui/gxs/GxsGroupFrameDialog.cpp \
 		gui/gxs/GxsMessageFrameWidget.cpp \
 		gui/gxs/GxsMessageFramePostWidget.cpp \
-		gui/gxs/GxsGroupFeedItem.cpp \
-		gui/gxs/GxsFeedItem.cpp \
 		gui/gxs/GxsUserNotify.cpp \
-		gui/gxs/GxsFeedWidget.cpp \
+#		gui/gxs/GxsFeedWidget.cpp \
 		util/TokenQueue.cpp \
 		util/RsGxsUpdateBroadcast.cpp \
 	

@@ -20,8 +20,8 @@
 
 #include <iostream>
 
-#include "gui/notifyqt.h"
 #include "util/misc.h"
+#include "gui/RsGUIEventManager.h"
 #include "GroupFrameSettingsWidget.h"
 #include "ui_GroupFrameSettingsWidget.h"
 
@@ -78,6 +78,6 @@ void GroupFrameSettingsWidget::saveSettings()
 
 		Settings->setGroupFrameSettings(mType, groupFrameSettings);
 
-		NotifyQt::getInstance()->notifySettingsChanged();
+		RsGUIEventManager::getInstance()->notifySettingsChanged();
 	}
 }

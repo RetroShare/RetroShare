@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/GroupSelectionBox.cpp                                            *
+ * retroshare-gui/src/gui/common/GroupSelectionBox.cpp                         *
  *                                                                             *
  * Copyright (C) 2010, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -23,7 +23,7 @@
 #include <retroshare/rspeers.h>
 #include "GroupSelectionBox.h"
 #include "GroupDefs.h"
-#include "gui/notifyqt.h"
+#include "util/qtthreadsutils.h"
 
 #include <algorithm>
 
@@ -34,10 +34,37 @@ GroupSelectionBox::GroupSelectionBox(QWidget *parent)
 {
 	setSelectionMode(QAbstractItemView::SingleSelection);
 
-	connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(fillGroups()));
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+
+            if(!fe)
+                return;
+
+            switch(fe->mEventCode)
+            {
+            case RsFriendListEventCode::GROUP_ADDED:
+            case RsFriendListEventCode::GROUP_REMOVED:
+            case RsFriendListEventCode::GROUP_CHANGED: fillGroups();
+
+            default:
+                break;
+            }
+        }
+        , this );
+    }, mEventHandlerId, RsEventType::FRIEND_LIST );
 
 	// Fill with available groups
 	fillGroups();
+}
+
+GroupSelectionBox::~GroupSelectionBox()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 void GroupSelectionBox::fillGroups()
 {

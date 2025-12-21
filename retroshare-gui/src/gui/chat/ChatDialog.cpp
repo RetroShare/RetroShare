@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/chat/ChatDialog.cpp                                                     *
+ * retroshare-gui/src/gui/chat/ChatDialog.cpp                                  *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *
@@ -35,7 +35,6 @@
 #include "gui/SoundManager.h"
 
 #include <retroshare/rsiface.h>
-#include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 
 static std::map<ChatId, ChatDialog*> chatDialogsList;
@@ -86,7 +85,7 @@ void ChatDialog::init(const ChatId &id, const QString &title)
     return NULL;
 }
 
-/*static*/ ChatDialog* ChatDialog::getChat(ChatId id, uint chatflags)
+/*static*/ ChatDialog* ChatDialog::getChat(ChatId id, RsChatFlags chatflags)
 {
     if(id.isBroadcast() || id.isNotSet())
         return NULL; // broadcast is not handled by a chat dialog
@@ -97,9 +96,9 @@ void ChatDialog::init(const ChatId &id, const QString &title)
     if (cd == NULL) {
 
         if(id.isDistantChatId())
-            chatflags = RS_CHAT_OPEN | RS_CHAT_FOCUS; // force open for distant chat
+            chatflags = RsChatFlags::RS_CHAT_OPEN | RsChatFlags::RS_CHAT_FOCUS; // force open for distant chat
 
-        if (chatflags & RS_CHAT_OPEN) {
+        if (!!(chatflags & RsChatFlags::RS_CHAT_OPEN)) {
             if (id.isLobbyId()) {
                 ChatLobbyDialog* cld = new ChatLobbyDialog(id.toLobbyId());
                 cld->init(ChatId(), "");
@@ -176,7 +175,7 @@ void ChatDialog::init(const ChatId &id, const QString &title)
         // play sound when recv a message
         SoundManager::play(SOUND_NEW_CHAT_MESSAGE);
 
-    ChatDialog *cd = getChat(msg.chat_id, Settings->getChatFlags());   
+    ChatDialog *cd = getChat(msg.chat_id, (RsChatFlags)Settings->getChatFlags());
     if(cd)
         cd->addChatMsg(msg);
     else
@@ -185,7 +184,7 @@ void ChatDialog::init(const ChatId &id, const QString &title)
 
 /*static*/ void ChatDialog::chatFriend(const ChatId &peerId, const bool forceFocus)
 {
-    getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN);
+    getChat(peerId, forceFocus ? (RsChatFlags::RS_CHAT_OPEN | RsChatFlags::RS_CHAT_FOCUS) : RsChatFlags::RS_CHAT_OPEN);
 
     // below is the old code witch does lots of error checking.
     // because there are many different chat types, there are also different ways to check if the id is valid
@@ -330,7 +329,7 @@ QString ChatDialog::getOwnName() const
         return "ChatDialog::getOwnName(): invalid id type passed (RsPeerId is required). This is a bug.";
 }
 
-void ChatDialog::setPeerStatus(uint32_t status)
+void ChatDialog::setPeerStatus(RsStatusValue status)
 {
 	ChatWidget *cw = getChatWidget();
     if (cw)
@@ -338,22 +337,17 @@ void ChatDialog::setPeerStatus(uint32_t status)
         // convert to virtual peer id
         // this is only required for private and distant chat,
         // because lobby and broadcast does not have a status
-        RsPeerId vpid;
-        if(mChatId.isPeerId())
-            vpid = mChatId.toPeerId();
-        if(mChatId.isDistantChatId())
-            vpid = RsPeerId(mChatId.toDistantChatId());
-        cw->updateStatus(QString::fromStdString(vpid.toStdString()), status);
+        cw->updateStatus(mChatId, status);
     }
 }
-int ChatDialog::getPeerStatus()
+RsStatusValue ChatDialog::getPeerStatus()
 {
 	ChatWidget *cw = getChatWidget();
 	if (cw) {
 		return cw->getPeerStatus();
 	}
 
-	return 0;
+    return RsStatusValue::RS_STATUS_OFFLINE;
 }
 
 QString ChatDialog::getTitle()

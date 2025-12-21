@@ -77,6 +77,7 @@ private:
     Ui::ShareManager ui;
 
     std::vector<SharedDirInfo> mDirInfos ;
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif

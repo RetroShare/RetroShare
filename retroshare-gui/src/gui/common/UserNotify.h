@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/UserNotify.h                                                     *
+ * retroshare-gui/src/gui/common/UserNotify.h                                  *
  *                                                                             *
  * Copyright (c) 2012, RetroShare Team <retroshare.project@gmail.com>          *
  *                                                                             *

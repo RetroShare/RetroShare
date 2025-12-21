@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RSComboBox.cpp                                                   *
+ * retroshare-gui/src/gui/common/RSComboBox.cpp                                *
  *                                                                             *
  * Copyright (C) 2010, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

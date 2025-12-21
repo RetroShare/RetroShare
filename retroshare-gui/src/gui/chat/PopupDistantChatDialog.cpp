@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/chat/PopupDistantChatDialog.cpp                                         *
+ * retroshare-gui/src/gui/chat/PopupDistantChatDialog.cpp                      *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *
@@ -27,6 +27,7 @@
 #include <unistd.h>
 
 #include "gui/common/FilesDefs.h"
+#include "util/qtthreadsutils.h"
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
@@ -42,8 +43,7 @@
 
 PopupDistantChatDialog::~PopupDistantChatDialog() 
 { 
-	_update_timer->stop() ;
-	delete _update_timer ;
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 PopupDistantChatDialog::PopupDistantChatDialog(const DistantChatPeerId& tunnel_id,QWidget *parent, Qt::WindowFlags flags)
@@ -52,18 +52,16 @@ PopupDistantChatDialog::PopupDistantChatDialog(const DistantChatPeerId& tunnel_i
     _tunnel_id = tunnel_id ;
     
 	_status_label = new QToolButton ;
-	_update_timer = new QTimer ;
-	
 	_status_label->setAutoRaise(true);
 	_status_label->setIconSize(QSize(24,24));
 
-	_update_timer->setInterval(1000) ;
-	QObject::connect(_update_timer,SIGNAL(timeout()),this,SLOT(updateDisplay())) ;
+    mEventHandlerId = 0;
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
+    }, mEventHandlerId, RsEventType::CHAT_SERVICE );
 
-	_update_timer->start() ;
-
-	getChatWidget()->addTopBarWidget(_status_label) ;
-	updateDisplay() ;
+    getChatWidget()->addTopBarWidget(_status_label) ;
 }
 
 void PopupDistantChatDialog::init(const ChatId &chat_id, const QString &/*title*/)
@@ -89,30 +87,49 @@ void PopupDistantChatDialog::init(const ChatId &chat_id, const QString &/*title*
 
     ui.ownAvatarWidget->setOwnId() ;			// sets the flag
     ui.ownAvatarWidget->setId(chat_id) ;	// sets the actual Id
+
+    _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_GRY_LED));
+    auto msg = tr("Remote status unknown.");
+    _status_label->setToolTip(msg);
+    getChatWidget()->updateStatusString("%1", msg, true);
+    getChatWidget()->blockSending(tr( "Can't send message immediately, "
+                      "because there is no tunnel "
+                      "available." ));
+    setPeerStatus(RsStatusValue::RS_STATUS_OFFLINE);
 }
 
-void PopupDistantChatDialog::updateDisplay()
+void PopupDistantChatDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> e)
 {
-    if(RsAutoUpdatePage::eventsLocked())	// we need to do that by end, because it's not possible to derive from both PopupChatDialog and RsAutoUpdatePage 
-	    return ;										// which both derive from QObject. Signals-slot connexions won't work anymore.
+    auto ev = dynamic_cast<const RsDistantChatEvent*>(e.get());
 
-    if(!isVisible())
-	    return ;
+    if(!ev)
+        return;
 
-    //std::cerr << "Checking tunnel..." ;
-    // make sure about the tunnel status
-    //
+    if(ev->mId != _tunnel_id)
+        return;
 
-    DistantChatPeerInfo tinfo;
-    rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
+    std::cerr << "Got event!" << std::endl;
+    std::cerr << "Event code = " << (int)ev->mEventCode << std::endl;
 
     ui.avatarWidget->setId(ChatId(_tunnel_id));
 
     QString msg;
 
-	switch(tinfo.status)
+    switch(ev->mEventCode)
 	{
-	case RS_DISTANT_CHAT_STATUS_UNKNOWN:
+    case RsDistantChatEventCode::TUNNEL_STATUS_CONNECTION_REFUSED:
+
+        _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_RED_LED));
+        msg = tr("Connexion refused.");
+        _status_label->setToolTip(msg);
+        getChatWidget()->updateStatusString("%1", msg, true);
+        getChatWidget()->blockSending(tr( "The distant peer refuses distant chat." ));
+        getChatWidget()->addChatMsg(true, tr("Chat status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+            , tr("The distant peer refuses distant chat."), ChatWidget::MSGTYPE_SYSTEM);
+        setPeerStatus(RsStatusValue::RS_STATUS_OFFLINE);
+        break ;
+
+    case RsDistantChatEventCode::TUNNEL_STATUS_UNKNOWN:
 
         _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_GRY_LED));
 		msg = tr("Remote status unknown.");
@@ -121,9 +138,9 @@ void PopupDistantChatDialog::updateDisplay()
 		getChatWidget()->blockSending(tr( "Can't send message immediately, "
 		                                  "because there is no tunnel "
 		                                  "available." ));
-		setPeerStatus(RS_STATUS_OFFLINE);
+        setPeerStatus(RsStatusValue::RS_STATUS_OFFLINE);
 		break ;
-	case RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED:
+    case RsDistantChatEventCode::TUNNEL_STATUS_REMOTELY_CLOSED:
 		std::cerr << "Chat remotely closed. " << std::endl;
         _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_RED_LED));
 		_status_label->setToolTip( QObject::tr("Distant peer has closed the chat") );
@@ -131,29 +148,40 @@ void PopupDistantChatDialog::updateDisplay()
 		getChatWidget()->updateStatusString("%1", tr( "Your partner closed the conversation." ), true );
 		getChatWidget()->blockSending(tr( "Your partner closed the conversation."));
 
-		setPeerStatus(RS_STATUS_OFFLINE) ;
+		getChatWidget()->addChatMsg(true, tr("Chat status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+			, tr("Your partner closed the conversation."), ChatWidget::MSGTYPE_SYSTEM);
+        setPeerStatus(RsStatusValue::RS_STATUS_OFFLINE) ;
 		break ;
 
-	case RS_DISTANT_CHAT_STATUS_TUNNEL_DN:
+    case RsDistantChatEventCode::TUNNEL_STATUS_TUNNEL_DN:
 
         _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_YEL_LED));
 		msg = QObject::tr( "Tunnel is pending");
 
-        if(tinfo.pending_items > 0)
-            msg += QObject::tr("(some undelivered messages)") ;	// we cannot use the pending_items count because it accounts for ACKS and keep alive packets as well.
+        {
+            DistantChatPeerInfo tinfo;
+            rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
+
+            if(tinfo.pending_items > 0)
+                msg += QObject::tr("(some undelivered messages)") ;	// we cannot use the pending_items count because it accounts for ACKS and keep alive packets as well.
+        }
 
 		_status_label->setToolTip(msg);
 		getChatWidget()->updateStatusString("%1", msg, true);
 		getChatWidget()->blockSending(msg);
-		setPeerStatus(RS_STATUS_OFFLINE);
+        setPeerStatus(RsStatusValue::RS_STATUS_OFFLINE);
 		break;
-	case RS_DISTANT_CHAT_STATUS_CAN_TALK:
+
+    case RsDistantChatEventCode::TUNNEL_STATUS_CAN_TALK:
 
         _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_GRN_LED));
 		msg = QObject::tr( "End-to-end encrypted conversation established");
-		_status_label->setToolTip(msg);
+        getChatWidget()->updateStatusString("%1", msg, true);
+        _status_label->setToolTip(msg);
+		getChatWidget()->addChatMsg(true, tr("Chat status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
+			, tr("Tunnel is secured. You can talk!"), ChatWidget::MSGTYPE_SYSTEM);
 		getChatWidget()->unblockSending();
-		setPeerStatus(RS_STATUS_ONLINE);
+        setPeerStatus(RsStatusValue::RS_STATUS_ONLINE);
 		break;
 	}
 }

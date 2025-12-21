@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/Circles/CreateCirclesDialog.cpp                                         *
+ * retroshare-gui/src/gui/Circles/CreateCirclesDialog.cpp                      *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *

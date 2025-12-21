@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/rwindow.h                                                        *
+ * retroshare-gui/src/gui/common/rwindow.h                                     *
  *                                                                             *
  * Copyright (c) 2006-2007, crypton                                            *
  * Copyright (c) 2006, Matt Edman, Justin Hipple                               *
@@ -38,7 +38,7 @@ public:
   RWindow(QString name, QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
   /** Destructor. */
   ~RWindow();
-  
+
   /** Associates a shortcut key sequence with a slot. */
   void setShortcut(QString shortcut, const char *slot);
   /** Saves the size and location of the window. */
@@ -55,10 +55,10 @@ public:
 public slots:
   /** Shows or hides this window. */
   virtual void setVisible(bool visible);
-  /** Show this window. This method really just exists for subclasses to 
+  /** Show this window. This method really just exists for subclasses to
    * override, since QMainWindow::show() is non-virtual. */
   virtual void showWindow() { QMainWindow::show(); }
-  
+
 signals:
   /** Emitted when a RWindow requests help information on the specified
    * <b>topic</b>. */

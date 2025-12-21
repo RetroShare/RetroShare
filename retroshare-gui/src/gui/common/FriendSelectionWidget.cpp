@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/FriendSelectionWidget.cpp                                        *
+ * retroshare-gui/src/gui/common/FriendSelectionWidget.cpp                     *
  *                                                                             *
  * Copyright (C) 2012, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -25,7 +25,6 @@
 #include "ui_FriendSelectionWidget.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include <retroshare-gui/RsAutoUpdatePage.h>
-#include "gui/notifyqt.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/common/StatusDefs.h"
 #include "util/qtthreadsutils.h"
@@ -101,9 +100,6 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 	connect(ui->friendList, SIGNAL(itemSelectionChanged()), this, SIGNAL(itemSelectionChanged()));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
 
-	connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged(int)));
-	connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&,int)), this, SLOT(peerStatusChanged(const QString&,int)));
-
 	mCompareRole = new RSTreeWidgetItemCompareRole;
 	mActionSortByState = new QAction(tr("Sort by state"), this);
 	mActionSortByState->setCheckable(true);
@@ -134,7 +130,7 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
         RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }) ;}, mEventHandlerId_identities, RsEventType::GXS_IDENTITY );
     mEventHandlerId_peers = 0;
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) {
-        RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }) ;}, mEventHandlerId_peers, RsEventType::PEER_CONNECTION );
+        RsQThreadUtils::postToObject( [this,event]() { handleEvent_main_thread(event); }) ;}, mEventHandlerId_peers, RsEventType::FRIEND_LIST );
 
     mFontSizeHandler.registerFontSize(ui->friendList);
 }
@@ -149,17 +145,31 @@ void FriendSelectionWidget::handleEvent_main_thread(std::shared_ptr<const RsEven
         update(); // Qt flush
         return;
     }
-    const RsConnectionEvent *fp = dynamic_cast<const RsConnectionEvent*>(event.get());
+    const RsFriendListEvent *fp = dynamic_cast<const RsFriendListEvent*>(event.get());
 
     if(fp)
-        switch(fp->mConnectionInfoCode)
+        switch(fp->mEventCode)
         {
-        case RsConnectionEventCode::PEER_REMOVED:
-        case RsConnectionEventCode::PEER_ADDED:
+        case RsFriendListEventCode::NODE_REMOVED:
+        case RsFriendListEventCode::NODE_ADDED:
             updateDisplay(true);
             update(); // Qt flush
             break;
-        default: break ;
+        case RsFriendListEventCode::GROUP_ADDED:
+        case RsFriendListEventCode::GROUP_REMOVED:
+        case RsFriendListEventCode::GROUP_CHANGED:
+            groupsChanged();
+            break;
+
+        case RsFriendListEventCode::NODE_STATUS_CHANGED:
+        {
+            StatusInfo i;
+            rsStatus->getStatus(fp->mSslId,i);
+
+            peerStatusChanged(fp->mSslId,i.status);
+        }
+        default:
+            break ;
         }
 }
 
@@ -241,7 +251,7 @@ static void initSslItem(QTreeWidgetItem *item, const RsPeerDetails &detail, cons
 	QString name = PeerDefs::nameWithLocation(detail);
 	item->setText(COLUMN_NAME, name);
 
-	int state = RS_STATUS_OFFLINE;
+    RsStatusValue state = RsStatusValue::RS_STATUS_OFFLINE;
 	if (detail.state & RS_PEER_STATE_CONNECTED) {
 		std::list<StatusInfo>::const_iterator it;
 		for (it = statusInfo.begin(); it != statusInfo.end() ; ++it) {
@@ -252,7 +262,7 @@ static void initSslItem(QTreeWidgetItem *item, const RsPeerDetails &detail, cons
 		}
 	}
 
-	if (state != (int) RS_STATUS_OFFLINE) {
+    if (state != RsStatusValue::RS_STATUS_OFFLINE) {
 		item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline);
 	}
 
@@ -262,7 +272,7 @@ static void initSslItem(QTreeWidgetItem *item, const RsPeerDetails &detail, cons
 	item->setData(COLUMN_NAME, ROLE_SORT_GROUP, 1);
 	item->setData(COLUMN_NAME, ROLE_SORT_STANDARD_GROUP, 0);
 	item->setData(COLUMN_NAME, ROLE_SORT_NAME, name);
-	item->setData(COLUMN_NAME, ROLE_SORT_STATE, state);
+    item->setData(COLUMN_NAME, ROLE_SORT_STATE, (int)state);
 }
 
 void FriendSelectionWidget::fillList()
@@ -501,17 +511,17 @@ void FriendSelectionWidget::secured_fillList()
 				sslIds.clear();
 				rsPeers->getAssociatedSSLIds(*gpgIt, sslIds);
 
-				int state = RS_STATUS_OFFLINE;
+                RsStatusValue state = RsStatusValue::RS_STATUS_OFFLINE;
 				for (statusIt = statusInfo.begin(); statusIt != statusInfo.end() ; ++statusIt) {
 					if (std::find(sslIds.begin(), sslIds.end(), statusIt->id) != sslIds.end()) {
-						if (statusIt->status != RS_STATUS_OFFLINE) {
-							state = RS_STATUS_ONLINE;
+                        if (statusIt->status != RsStatusValue::RS_STATUS_OFFLINE) {
+                            state = RsStatusValue::RS_STATUS_ONLINE;
 							break;
 						}
 					}
 				}
 
-				if (state != (int) RS_STATUS_OFFLINE) {
+                if (state != RsStatusValue::RS_STATUS_OFFLINE) {
 					gpgItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 				}
 
@@ -522,7 +532,7 @@ void FriendSelectionWidget::secured_fillList()
 				gpgItem->setData(COLUMN_NAME, ROLE_SORT_GROUP, 1);
 				gpgItem->setData(COLUMN_NAME, ROLE_SORT_STANDARD_GROUP, 0);
 				gpgItem->setData(COLUMN_NAME, ROLE_SORT_NAME, name);
-				gpgItem->setData(COLUMN_NAME, ROLE_SORT_STATE, state);
+                gpgItem->setData(COLUMN_NAME, ROLE_SORT_STATE, (int)state);
 
 				if (mListModus == MODUS_CHECK) {
 					gpgItem->setCheckState(0, Qt::Unchecked);
@@ -770,23 +780,20 @@ template<> inline void FriendSelectionWidget::setSelectedIds<RsGxsId,FriendSelec
     loadIdentities();
 }
 
-void FriendSelectionWidget::groupsChanged(int /*type*/)
+void FriendSelectionWidget::groupsChanged()
 {
 	if (mShowTypes & SHOW_GROUP) {
 		fillList();
 	}
 }
 
-void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
+void FriendSelectionWidget::peerStatusChanged(const RsPeerId& peerid, RsStatusValue status)
 {
 	if(!isVisible())
 		return ;
-	if(RsAutoUpdatePage::eventsLocked())
-		return ;
 
-    RsPeerId peerid(peerId.toStdString()) ;
 	QString gpgId;
-	int gpgStatus = RS_STATUS_OFFLINE;
+    RsStatusValue gpgStatus = RsStatusValue::RS_STATUS_OFFLINE;
 
 	if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG)) {
 		/* need gpg id and online state */
@@ -795,7 +802,7 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
         {
             gpgId = QString::fromStdString(detail.gpg_id.toStdString());
 
-			if (status == (int) RS_STATUS_OFFLINE) {
+            if (status == RsStatusValue::RS_STATUS_OFFLINE) {
 				/* try other nodes */
                 std::list<RsPeerId> sslIds;
 				rsPeers->getAssociatedSSLIds(detail.gpg_id, sslIds);
@@ -806,15 +813,15 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 
 				for (statusIt = statusInfo.begin(); statusIt != statusInfo.end() ; ++statusIt) {
 					if (std::find(sslIds.begin(), sslIds.end(), statusIt->id) != sslIds.end()) {
-						if (statusIt->status != RS_STATUS_OFFLINE) {
-							gpgStatus = RS_STATUS_ONLINE;
+                        if (statusIt->status != RsStatusValue::RS_STATUS_OFFLINE) {
+                            gpgStatus = RsStatusValue::RS_STATUS_ONLINE;
 							break;
 						}
 					}
 				}
 			} else {
 				/* one node is online */
-				gpgStatus = RS_STATUS_ONLINE;
+                gpgStatus = RsStatusValue::RS_STATUS_ONLINE;
 			}
 		}
 	}
@@ -834,7 +841,7 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 		case IDTYPE_GPG:
 			{
 				if (item->data(COLUMN_DATA, ROLE_ID).toString() == gpgId) {
-					if (status != (int) RS_STATUS_OFFLINE) {
+                    if (status != RsStatusValue::RS_STATUS_OFFLINE) {
 						item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 					} else {
 						item->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
@@ -842,7 +849,7 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 
                     item->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(gpgStatus)));
 
-					item->setData(COLUMN_NAME, ROLE_SORT_STATE, gpgStatus);
+                    item->setData(COLUMN_NAME, ROLE_SORT_STATE, (int)gpgStatus);
 
 					bFoundGPG = true;
 				}
@@ -850,8 +857,9 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 			break;
 		case IDTYPE_SSL:
 			{
-				if (item->data(COLUMN_DATA, ROLE_ID).toString() == peerId) {
-					if (status != (int) RS_STATUS_OFFLINE) {
+                if (RsPeerId(item->data(COLUMN_DATA, ROLE_ID).toString().toStdString()) == peerid)
+                {
+                    if (status != RsStatusValue::RS_STATUS_OFFLINE) {
 						item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 					} else {
 						item->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
@@ -859,7 +867,7 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 
                     item->setIcon(COLUMN_NAME, FilesDefs::getIconFromQtResourcePath(StatusDefs::imageUser(status)));
 
-					item->setData(COLUMN_NAME, ROLE_SORT_STATE, status);
+                    item->setData(COLUMN_NAME, ROLE_SORT_STATE, (int)status);
 
 					bFoundSSL = true;
 				}
@@ -1262,7 +1270,7 @@ bool FriendSelectionWidget::isSortByState()
 
 void FriendSelectionWidget::filterConnected(bool filter)
 {
-	ui->friendList->filterMinValItems(COLUMN_NAME, filter ? RS_STATUS_AWAY : RS_STATUS_OFFLINE, ROLE_SORT_STATE);
+    ui->friendList->filterMinValItems(COLUMN_NAME, filter ? double(RsStatusValue::RS_STATUS_AWAY) : double(RsStatusValue::RS_STATUS_OFFLINE), ROLE_SORT_STATE);
 
 	mActionFilterConnected->setChecked(filter);
 

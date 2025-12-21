@@ -24,7 +24,7 @@
 #include <QMetaType>
 
 #include <retroshare/rsposted.h>
-#include "gui/gxs/GxsFeedItem.h"
+#include "gui/feeds/GxsFeedItem.h"
 
 namespace Ui {
 class BoardsCommentsItem;

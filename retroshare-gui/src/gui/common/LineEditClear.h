@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/LineEditClear.h                                                  *
+ * retroshare-gui/src/gui/common/LineEditClear.h                               *
  *                                                                             *
  * Copyright (C) 2012, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

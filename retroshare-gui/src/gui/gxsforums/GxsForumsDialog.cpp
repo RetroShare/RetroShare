@@ -23,7 +23,6 @@
 #include "GxsForumThreadWidget.h"
 #include "CreateGxsForumMsg.h"
 #include "GxsForumUserNotify.h"
-#include "gui/notifyqt.h"
 #include "gui/common/GroupTreeWidget.h"
 #include "gui/gxs/GxsGroupShareKey.h"
 #include "util/misc.h"
@@ -75,7 +74,8 @@ void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
             break;
 
         case RsForumEventCode::STATISTICS_CHANGED:
-            updateGroupStatistics(e->mForumGroupId);   // update the list when redraw less often than once every 2 mins
+	    updateDisplay(true);
+            updateGroupStatisticsReal(e->mForumGroupId);
             break;
 
         default:

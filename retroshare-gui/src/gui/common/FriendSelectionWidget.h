@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/FriendSelectionWidget.h                                          *
+ * retroshare-gui/src/gui/common/FriendSelectionWidget.h                       *
  *                                                                             *
  * Copyright (C) 2012, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -25,6 +25,7 @@
 #include <QDialog>
 
 #include "retroshare/rsevents.h"
+#include "retroshare/rsstatus.h"
 #include <gui/gxs/RsGxsUpdateBroadcastPage.h>
 #include "util/FontSizeHandler.h"
 
@@ -137,8 +138,7 @@ public slots:
     void filterConnected(bool filter);
 
 private slots:
-	void groupsChanged(int type);
-	void peerStatusChanged(const QString& peerId, int status);
+    void peerStatusChanged(const RsPeerId &peerid, RsStatusValue status);
 	void filterItems(const QString &text);
 	void contextMenuRequested(const QPoint &pos);
 	void itemDoubleClicked(QTreeWidgetItem *item, int column);
@@ -147,7 +147,8 @@ private slots:
 	void deselectAll() ;
 
 private:
-	void fillList();
+    void groupsChanged();
+    void fillList();
 	void secured_fillList();
 
     void selectedIds_internal(IdType idType, std::set<std::string> &ids, bool onlyDirectSelected);

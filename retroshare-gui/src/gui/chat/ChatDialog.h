@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/chat/ChatDialog.h                                                       *
+ * retroshare-gui/src/gui/chat/ChatDialog.h                                    *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *
@@ -23,10 +23,13 @@
 #ifndef CHATDIALOG_H
 #define CHATDIALOG_H
 
+#include "retroshare/rsstatus.h"
+
 #include <QWidget>
 #include <retroshare/rsmsgs.h>
 
-class ChatWidget;
+#include "gui/chat/ChatWidget.h"
+
 class RSStyle;
 
 class ChatDialog : public QWidget
@@ -35,14 +38,14 @@ class ChatDialog : public QWidget
 
 public:
     static ChatDialog *getExistingChat(ChatId id);
-    static ChatDialog *getChat(ChatId id, uint chatflags = 0);
+    static ChatDialog *getChat(ChatId id, RsChatFlags chatflags = RsChatFlags::RS_CHAT_NONE);
 	static void cleanupChat();
     static void chatFriend(const ChatId &peerId, bool forceFocus = true);
 	static void chatFriend(const RsPgpId &gpgId, bool forceFocus = true);
     static void closeChat(const ChatId &chat_id);
     static void chatMessageReceived(ChatMessage msg);
 
-	virtual void showDialog(uint /*chatflags*/) {}
+    virtual void showDialog(RsChatFlags /*chatflags*/) {}
 
 	virtual ChatWidget *getChatWidget() = 0;
 	virtual bool hasPeerStatus() = 0;
@@ -58,8 +61,8 @@ public:
 	bool setStyle();
 	const RSStyle *getStyle();
 
-	int getPeerStatus();
-	void setPeerStatus(uint32_t state);
+    RsStatusValue getPeerStatus();
+    void setPeerStatus(RsStatusValue state);
 
 	void focusDialog();
 

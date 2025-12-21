@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RSTreeWidget.h                                                   *
+ * retroshare-gui/src/gui/common/RSTreeWidget.h                                *
  *                                                                             *
  * Copyright (C) 2012 RetroShare Team <retroshare.project@gmail.com>           *
  *                                                                             *

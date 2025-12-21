@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/chat/ChatUserNotify.cpp                                                 *
+ * retroshare-gui/src/gui/chat/ChatUserNotify.cpp                              *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *
@@ -22,13 +22,12 @@
 
 #include "gui/common/FilesDefs.h"
 #include "ChatUserNotify.h"
-#include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
 #include "gui/chat/ChatDialog.h"
 #include "gui/settings/rsharesettings.h"
+#include "util/qtthreadsutils.h"
 
 #include <algorithm>
-#include <retroshare/rsnotify.h>
 #include <retroshare/rsmsgs.h>
 
 static std::map<ChatId, int> waitingChats;
@@ -57,12 +56,35 @@ static ChatUserNotify* instance = 0;
 ChatUserNotify::ChatUserNotify(QObject *parent) :
     UserNotify(parent)
 {
-    connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
     instance = this;
+
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsChatServiceEvent*>(e.get());  if(!fe) return;
+
+            if(!fe)
+                return;
+
+            switch(fe->mEventCode)
+            {
+            case RsChatServiceEventCode::CHAT_MESSAGE_RECEIVED: chatMessageReceived(fe->mMsg); break;
+            default:
+                break;
+            }
+
+        }
+        , this );
+    }, mEventHandlerId, RsEventType::CHAT_SERVICE );
+
 }
 
 ChatUserNotify::~ChatUserNotify()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
     instance = 0;
 }
 
@@ -108,7 +130,7 @@ void ChatUserNotify::iconClicked()
 {
 	ChatDialog *chatDialog = NULL;
     // ChatWidget removes the waiting chat from the list with clearWaitingChat()
-    chatDialog = ChatDialog::getChat(waitingChats.begin()->first, RS_CHAT_OPEN | RS_CHAT_FOCUS);
+    chatDialog = ChatDialog::getChat(waitingChats.begin()->first, RsChatFlags::RS_CHAT_OPEN | RsChatFlags::RS_CHAT_FOCUS);
 
 	if (chatDialog == NULL) {
 		MainWindow::showWindow(MainWindow::Friends);
@@ -120,7 +142,7 @@ void ChatUserNotify::chatMessageReceived(ChatMessage msg)
 {
     if(!msg.chat_id.isBroadcast()
             &&( ChatDialog::getExistingChat(msg.chat_id)
-                || (Settings->getChatFlags() & RS_CHAT_OPEN)
+                || (Settings->getChatFlags() & (uint32_t)RsChatFlags::RS_CHAT_OPEN)
                 || msg.chat_id.isDistantChatId()))
     {
         ChatDialog::chatMessageReceived(msg);

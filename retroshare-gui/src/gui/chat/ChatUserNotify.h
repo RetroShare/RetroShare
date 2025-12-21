@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/chat/ChatUserNotify.h                                                   *
+ * retroshare-gui/src/gui/chat/ChatUserNotify.h                                *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *
@@ -42,11 +42,10 @@ public:
 
 	virtual bool hasSetting(QString *name, QString *group) override;
 
-private slots:
-	void chatMessageReceived(ChatMessage msg);
-
 private:
-	virtual QIcon getIcon() override;
+    void chatMessageReceived(ChatMessage msg);
+
+    virtual QIcon getIcon() override;
 	virtual QIcon getMainIcon(bool hasNew) override;
 	virtual unsigned int getNewCount() override;
 
@@ -54,6 +53,8 @@ private:
 	virtual QString getNotifyMessage(bool plural) override;
 
 	virtual void iconClicked() override;
+
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif // CHATUSERNOTIFY_H

@@ -33,7 +33,7 @@ class FriendRequestToaster : public QWidget
 	Q_OBJECT
 
 public:
-	FriendRequestToaster(const RsPgpId &gpgId, const QString &sslName, const RsPeerId &peerId);
+    FriendRequestToaster(const RsPgpId &gpgId, const RsPeerId &peerId);
 
 private slots:
 	void friendrequestButtonSlot();

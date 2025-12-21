@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RSGraphWidget.h                                                  *
+ * retroshare-gui/src/gui/common/RSGraphWidget.h                               *
  *                                                                             *
  * Copyright (C) 2014 RetroShare Team                                          *
  * Copyright (c) 2006-2007, crypton                                            *

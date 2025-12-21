@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/advsearch/expressionwidget.cpp                                          *
+ * retroshare-gui/src/gui/advsearch/expressionwidget.cpp                       *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *

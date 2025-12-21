@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/rwindow.cpp                                                      *
+ * retroshare-gui/src/gui/common/rwindow.cpp                                   *
  *                                                                             *
  * Copyright (c) 2006-2007, crypton                                            *
  * Copyright (c) 2006, Matt Edman, Justin Hipple                               *

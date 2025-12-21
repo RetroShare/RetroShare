@@ -367,14 +367,14 @@ void BasePostedItem::showAuthorInPeople()
 PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData &group_meta, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate) :
     BasePostedItem(feedHolder, feedId, group_meta, post_id, isHome, autoUpdate)
 {
-	setup();
+    PostedItem::setup();
 }
 
 PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate) :
     BasePostedItem(feedHolder, feedId, groupId, post_id, isHome, autoUpdate)
 {
-	setup();
-    loadGroup();
+    PostedItem::setup();
+    PostedItem::loadGroup();
 }
 
 

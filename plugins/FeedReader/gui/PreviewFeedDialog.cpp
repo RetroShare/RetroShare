@@ -294,13 +294,13 @@ void PreviewFeedDialog::feedChanged(uint32_t feedId, int type)
 		return;
 	}
 
-	if (type == NOTIFY_TYPE_DEL) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_DEL) {
 		/* feed deleted */
 		mFeedId = 0;
 		return;
 	}
 
-	if (type == NOTIFY_TYPE_ADD || type == NOTIFY_TYPE_MOD) {
+    if (type == FeedReaderNotify::NOTIFY_TYPE_ADD || type == FeedReaderNotify::NOTIFY_TYPE_MOD) {
 		FeedInfo feedInfo;
 		if (!mFeedReader->getFeedInfo(mFeedId, feedInfo)) {
 			return;
@@ -320,18 +320,18 @@ void PreviewFeedDialog::msgChanged(uint32_t feedId, const QString &msgId, int ty
 	}
 
 	switch (type) {
-	case NOTIFY_TYPE_ADD:
+    case FeedReaderNotify::NOTIFY_TYPE_ADD:
 		if (mMsgId.empty()) {
 			mMsgId = msgId.toStdString();
 			updateMsg();
 		}
 		break;
-	case NOTIFY_TYPE_MOD:
+    case FeedReaderNotify::NOTIFY_TYPE_MOD:
 		if (mMsgId == msgId.toStdString()) {
 			updateMsg();
 		}
 		break;
-	case NOTIFY_TYPE_DEL:
+    case FeedReaderNotify::NOTIFY_TYPE_DEL:
 		if (mMsgId == msgId.toStdString()) {
 			std::list<std::string>::iterator it = std::find(mMsgIds.begin(), mMsgIds.end(), mMsgId);
 			if (it != mMsgIds.end()) {

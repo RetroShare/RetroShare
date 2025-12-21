@@ -22,7 +22,7 @@
 
 #include "rsharesettings.h"
 #include "gui/MainWindow.h"
-#include "gui/notifyqt.h"
+#include "gui/RsGUIEventManager.h"
 #include "gui/RetroShareLink.h"
 #include "gui/chat/ChatDialog.h"
 #include "util/misc.h"
@@ -31,7 +31,6 @@
 #include "retroshare/rsconfig.h"
 #include "retroshare/rshistory.h"
 #include "retroshare/rsmsgs.h"
-#include "retroshare/rsnotify.h"
 #include "retroshare/rspeers.h"
 
 #include <QColorDialog>
@@ -127,7 +126,7 @@ void ChatPage::updateFontsAndEmotes()
 void ChatPage::updateChatParams()
 {
 	Settings->setChatScreenFont(fontTempChat.toString());
-	NotifyQt::getInstance()->notifyChatFontChanged();
+	RsGUIEventManager::getInstance()->notifyChatFontChanged();
 
 	Settings->setChatSendMessageWithCtrlReturn(ui.sendMessageWithCtrlReturn->isChecked());
 	Settings->setChatSendAsPlainTextByDef(ui.sendAsPlainTextByDef->isChecked());
@@ -187,7 +186,7 @@ void ChatPage::updatePublicStyle()
 
 	if (publicStylePath != info.stylePath || publicStyleVariant != ui.publicComboBoxVariant->currentText()) {
 		Settings->setPublicChatStyle(info.stylePath, ui.publicComboBoxVariant->currentText());
-		NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_PUBLIC);
+		RsGUIEventManager::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_PUBLIC);
 	}
 }
 
@@ -197,7 +196,7 @@ void ChatPage::updatePrivateStyle()
 
 	if (privateStylePath != info.stylePath || privateStyleVariant != ui.privateComboBoxVariant->currentText()) {
 		Settings->setPrivateChatStyle(info.stylePath, ui.privateComboBoxVariant->currentText());
-		NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_PRIVATE);
+		RsGUIEventManager::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_PRIVATE);
 	}
 }
 
@@ -207,7 +206,7 @@ void ChatPage::updateHistoryStyle()
 
 	if (historyStylePath != info.stylePath || historyStyleVariant != ui.historyComboBoxVariant->currentText()) {
 		Settings->setHistoryChatStyle(info.stylePath, ui.historyComboBoxVariant->currentText());
-		NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_HISTORY);
+		RsGUIEventManager::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_HISTORY);
 	}
 }
 
@@ -355,18 +354,18 @@ void ChatPage::updateChatLobbyUserNotify()
 
 void ChatPage::updateChatFlags()
 {
-	uint chatflags   = 0;
+    RsChatFlags chatflags(RsChatFlags::RS_CHAT_NONE);
 
 	if (ui.chat_NewWindow->isChecked())
-		chatflags |= RS_CHAT_OPEN;
+        chatflags |= RsChatFlags::RS_CHAT_OPEN;
 	if (ui.chat_Focus->isChecked())
-		chatflags |= RS_CHAT_FOCUS;
+        chatflags |= RsChatFlags::RS_CHAT_FOCUS;
 	if (ui.chat_tabbedWindow->isChecked())
-		chatflags |= RS_CHAT_TABBED_WINDOW;
+        chatflags |= RsChatFlags::RS_CHAT_TABBED_WINDOW;
 	if (ui.chat_Blink->isChecked())
-		chatflags |= RS_CHAT_BLINK;
+        chatflags |= RsChatFlags::RS_CHAT_BLINK;
 
-	Settings->setChatFlags(chatflags);
+    Settings->setChatFlags((uint32_t)chatflags);
 }
 
 void ChatPage::updateChatLobbyFlags()
@@ -474,12 +473,12 @@ ChatPage::load()
     if(!gxs_id.isNull())
         ui.chatLobbyIdentity_IC->setChosenId(gxs_id);
 
-    uint chatflags = Settings->getChatFlags();
+    RsChatFlags chatflags = (RsChatFlags) Settings->getChatFlags();
 
-    whileBlocking(ui.chat_NewWindow)->setChecked(chatflags & RS_CHAT_OPEN);
-    whileBlocking(ui.chat_Focus)->setChecked(chatflags & RS_CHAT_FOCUS);
-    whileBlocking(ui.chat_tabbedWindow)->setChecked(chatflags & RS_CHAT_TABBED_WINDOW);
-    whileBlocking(ui.chat_Blink)->setChecked(chatflags & RS_CHAT_BLINK);
+    whileBlocking(ui.chat_NewWindow)->setChecked(!!(chatflags & RsChatFlags::RS_CHAT_OPEN));
+    whileBlocking(ui.chat_Focus)->setChecked(!!(chatflags & RsChatFlags::RS_CHAT_FOCUS));
+    whileBlocking(ui.chat_tabbedWindow)->setChecked(!!(chatflags & RsChatFlags::RS_CHAT_TABBED_WINDOW));
+    whileBlocking(ui.chat_Blink)->setChecked(!!(chatflags & RsChatFlags::RS_CHAT_BLINK));
 
     uint chatLobbyFlags = Settings->getChatLobbyFlags();
 

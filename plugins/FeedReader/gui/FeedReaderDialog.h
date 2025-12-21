@@ -40,15 +40,15 @@ class FeedReaderDialog : public MainPage
 	Q_OBJECT
 
 public:
-	FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent = 0);
+    FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent = 0);
 	~FeedReaderDialog();
 
 	static QIcon iconFromFeed(const FeedInfo &feedInfo);
 
 protected:
 	virtual UserNotify *createUserNotify(QObject *parent) override;
-	virtual void showEvent(QShowEvent *event);
-	bool eventFilter(QObject *obj, QEvent *ev);
+    virtual void showEvent(QShowEvent *event) override;
+    bool eventFilter(QObject *obj, QEvent *ev) override;
 
 private slots:
 	void settingsChanged();

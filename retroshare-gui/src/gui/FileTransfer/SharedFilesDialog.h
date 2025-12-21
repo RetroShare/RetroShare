@@ -21,6 +21,7 @@
 #ifndef _SHAREDFILESDIALOG_H
 #define _SHAREDFILESDIALOG_H
 
+#include <retroshare/rsevents.h>
 #include "ui_SharedFilesDialog.h"
 
 #include <retroshare-gui/RsAutoUpdatePage.h>
@@ -145,6 +146,8 @@ protected:
   QString lastFilterString;
   QString mLastFilterText ;
   RsProtectedTimer* mFilterTimer;
+
+  RsEventsHandlerId_t mEventHandlerId ;
 };
 
 class LocalSharedFilesDialog : public SharedFilesDialog
