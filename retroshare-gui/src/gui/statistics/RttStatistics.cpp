@@ -18,195 +18,229 @@
  *                                                                             *
  *******************************************************************************/
 
-#include "RttStatistics.h"
+/*******************************************************************************
+ * gui/statistics/RttStatistics.cpp                                            *
+ *******************************************************************************/
+
 #include <iostream>
 #include <limits>
-#include <QHeaderView>
+#include <QTimer>
+#include <QObject>
+#include <QPainter>
+#include <QStylePainter>
 #include <QHostAddress>
+#include <QHash>
+
 #include <retroshare/rsrtt.h>
 #include <retroshare/rspeers.h>
+#include "RttStatistics.h"
+#include "time.h"
+
 #include "gui/settings/rsharesettings.h"
 
-// --- CUSTOM SORTING CLASS ---
-// Handles numeric sorting for RTT and IP addresses instead of default alphabetical sort
+// --- Custom Item for Sorting (Table) ---
 class RttTreeItem : public QTreeWidgetItem {
 public:
     using QTreeWidgetItem::QTreeWidgetItem;
 
-    bool operator<(const QTreeWidgetItem &other) const override {
+    bool operator<(const QTreeWidgetItem &other) const {
         int sortCol = treeWidget() ? treeWidget()->sortColumn() : 0;
 
-        // 1. RTT SORTING (Column 1)
+        // RTT Sort
         if (sortCol == 1) {
             QString txt1 = text(1);
             QString txt2 = other.text(1);
-
-            // Treat "?" as infinite so it appears at the bottom when sorting ascending
             long val1 = (txt1 == "?") ? std::numeric_limits<long>::max() : txt1.toLong();
             long val2 = (txt2 == "?") ? std::numeric_limits<long>::max() : txt2.toLong();
-
             return val1 < val2;
         }
-
-        // 2. SMART IP SORTING (Column 3)
+        // IP Sort
         if (sortCol == 3) {
             QString s1 = text(3);
             QString s2 = other.text(3);
-
-            QHostAddress ip1(s1);
-            QHostAddress ip2(s2);
-
-            // Check if addresses are Tor/I2P (non-numeric IPs)
+            QHostAddress ip1(s1); QHostAddress ip2(s2);
             bool isTorI2p1 = s1.contains(".onion") || s1.contains(".i2p");
             bool isTorI2p2 = s2.contains(".onion") || s2.contains(".i2p");
 
-            // If both are valid standard IPs (IPv4/IPv6) and NOT Tor/I2P
             if (!ip1.isNull() && !ip2.isNull() && !isTorI2p1 && !isTorI2p2) {
-                // Sort by protocol first (IPv4 vs IPv6)
-                if (ip1.protocol() != ip2.protocol())
-                    return ip1.protocol() < ip2.protocol();
-
-                // Sort IPv4 numerically
-                if (ip1.protocol() == QAbstractSocket::IPv4Protocol)
-                    return ip1.toIPv4Address() < ip2.toIPv4Address();
+                if (ip1.protocol() != ip2.protocol()) return ip1.protocol() < ip2.protocol();
+                if (ip1.protocol() == QAbstractSocket::IPv4Protocol) return ip1.toIPv4Address() < ip2.toIPv4Address();
             }
-
-            // Fallback to standard string sort (handles Tor/I2P/Mixed)
             return s1 < s2;
         }
-
-        // For Name (0) and Node ID (2), standard alphabetical sort is fine
         return QTreeWidgetItem::operator<(other);
     }
 };
 
-// --- IMPLEMENTATION ---
+// --- Main Constructor ---
 
-RttStatistics::RttStatistics(QWidget *parent)
-    : MainPage(parent)
+RttStatistics::RttStatistics(QWidget * /*parent*/)
 {
-    setupUi(this);
+	setupUi(this) ;
 
-    m_bProcessSettings = false;
+	m_bProcessSettings = false;
 
-    // UI Configuration
+    // Setup Graph in Tab 1
+    _tunnel_statistics_F->setWidget( _tst_CW = new RttStatisticsGraph(this) ) ;
+	_tunnel_statistics_F->setWidgetResizable(true);
+	_tunnel_statistics_F->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	_tunnel_statistics_F->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+	_tunnel_statistics_F->viewport()->setBackgroundRole(QPalette::NoRole);
+	_tunnel_statistics_F->setFrameStyle(QFrame::NoFrame);
+	_tunnel_statistics_F->setFocusPolicy(Qt::NoFocus);
+
+    // Setup Table in Tab 2
     treeWidget->setAlternatingRowColors(true);
     treeWidget->setSortingEnabled(true);
-
-    // Default sort: RTT Ascending (Lowest ping first)
     treeWidget->sortByColumn(1, Qt::AscendingOrder);
 
-    // Timer setup (1000ms = 1 second)
+    // Timer for Table Update
     m_timer = new QTimer(this);
-    connect(m_timer, &QTimer::timeout, this, &RttStatistics::updateRttValues);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(updateRttValues()));
     m_timer->start(1000);
 
-    // Initial immediate update
-    updateRttValues();
-
-    // Restore column layout (Must be done AFTER initial update to apply correctly)
+	// load settings
     processSettings(true);
 }
 
 RttStatistics::~RttStatistics()
 {
     if(m_timer) m_timer->stop();
-
-    // Force save settings on destruction
+    // save settings
     processSettings(false);
 }
 
 void RttStatistics::processSettings(bool bLoad)
 {
     m_bProcessSettings = true;
+
     Settings->beginGroup(QString("RttStatistics"));
 
     if (bLoad) {
-        // Load column configuration (widths, sort order, hidden columns)
+        // load settings
         QByteArray state = Settings->value("TreeState").toByteArray();
-        if (!state.isEmpty()) {
-            treeWidget->header()->restoreState(state);
-        }
+        if (!state.isEmpty()) treeWidget->header()->restoreState(state);
+
+        tabWidget->setCurrentIndex(Settings->value("ActiveTab", 0).toInt());
     } else {
-        // Save column configuration
+        // save settings
         Settings->setValue("TreeState", treeWidget->header()->saveState());
+        Settings->setValue("ActiveTab", tabWidget->currentIndex());
     }
 
     Settings->endGroup();
+
     m_bProcessSettings = false;
 }
 
+// --- Table Update Logic (O(N) Optimized) ---
 void RttStatistics::updateRttValues()
 {
+    // Optimize: Only update if Table tab is visible (Index 1)
+    if (tabWidget->currentIndex() != 1) return;
+
     std::list<RsPeerId> idList;
     if (!rsPeers) return;
-
     rsPeers->getOnlineList(idList);
-    QList<QString> currentPeerIds;
 
-    for(const RsPeerId& pid : idList)
+    QHash<QString, QTreeWidgetItem*> existingItems;
+    for(int i = 0; i < treeWidget->topLevelItemCount(); ++i) {
+        QTreeWidgetItem* item = treeWidget->topLevelItem(i);
+        existingItems.insert(item->data(0, Qt::UserRole).toString(), item);
+    }
+
+    for(std::list<RsPeerId>::const_iterator it = idList.begin(); it != idList.end(); ++it)
     {
-        std::string peerIdStr = pid.toStdString();
+        std::string peerIdStr = (*it).toStdString();
         QString qPeerId = QString::fromStdString(peerIdStr);
-        currentPeerIds.append(qPeerId);
 
-        // 1. Get RTT Data
         std::list<RsRttPongResult> results;
-        rsRtt->getPongResults(pid, 1, results);
+        rsRtt->getPongResults(*it, 1, results);
         int rttInMs = -1;
-
         if (!results.empty()) {
             float rttSec = results.back().mRTT;
-            // Only consider RTT valid if slightly positive
             if (rttSec > 0.000001f) rttInMs = (int)(rttSec * 1000.0f);
         }
 
-        // 2. Get Peer Details
         RsPeerDetails details;
-        rsPeers->getPeerDetails(pid, details);
-
+        rsPeers->getPeerDetails(*it, details);
         QString peerName = QString::fromUtf8(details.name.c_str());
         QString ipAddress = QString::fromStdString(details.extAddr);
 
-        // 3. Update Table Item
-        QTreeWidgetItem* item = nullptr;
-
-        // Find existing item via hidden ID (UserRole)
-        for(int i=0; i < treeWidget->topLevelItemCount(); ++i) {
-            QTreeWidgetItem* temp = treeWidget->topLevelItem(i);
-            if(temp->data(0, Qt::UserRole).toString() == qPeerId) {
-                item = temp;
-                break;
-            }
-        }
+        QTreeWidgetItem* item = existingItems.take(qPeerId);
 
         if (!item) {
-            // Create new item with custom sorting logic
             item = new RttTreeItem(treeWidget);
-            // Store Peer ID in hidden data to identify the row later
             item->setData(0, Qt::UserRole, qPeerId);
         }
 
-        // Col 0: Peer Name
         item->setText(0, peerName);
-
-        // Col 1: RTT (Display number or "?")
         if (rttInMs != -1) item->setText(1, QString::number(rttInMs));
         else item->setText(1, "?");
-
-        // Col 2: Node ID (Full Peer ID)
         item->setText(2, qPeerId);
-
-        // Col 3: IP Address
         item->setText(3, ipAddress);
     }
 
-    // 4. Cleanup disconnected peers
-    for(int i = treeWidget->topLevelItemCount() - 1; i >= 0; --i) {
-        QTreeWidgetItem* item = treeWidget->topLevelItem(i);
-        // If the item in table is not in the current online list, delete it
-        if(!currentPeerIds.contains(item->data(0, Qt::UserRole).toString())) {
-            delete item;
+    qDeleteAll(existingItems);
+}
+
+
+// --- Graph Source Implementation (Unchanged logic) ---
+
+QString RttGraphSource::unitName() const
+{
+    return QObject::tr("secs") ;
+}
+
+QString RttGraphSource::displayName(int i) const
+{
+    int n=0 ;
+    for(std::map<std::string, std::list<std::pair<qint64,float> > >::const_iterator it=_points.begin();it!=_points.end();++it,++n)
+        if(n==i)
+            return QString::fromUtf8(rsPeers->getPeerName(RsPeerId(it->first)).c_str()) ;
+
+    return QString() ;
+}
+
+void RttGraphSource::getValues(std::map<std::string,float>& vals) const
+{
+    std::list<RsPeerId> idList;
+    rsPeers->getOnlineList(idList);
+
+    vals.clear() ;
+    std::list<RsRttPongResult> results ;
+
+    for(std::list<RsPeerId>::const_iterator it(idList.begin());it!=idList.end();++it)
+    {
+        rsRtt->getPongResults(*it, 1, results);
+        if(!results.empty()) {
+            vals[(*it).toStdString()] = results.back().mRTT ;
         }
     }
+}
+
+RttStatisticsGraph::RttStatisticsGraph(QWidget *parent)
+        : RSGraphWidget(parent)
+{
+    RttGraphSource *src = new RttGraphSource() ;
+
+    src->setCollectionTimeLimit(10*60*1000) ; // 10 mins
+    src->setCollectionTimePeriod(1000) ;     // collect every second
+    src->setDigits(3) ;
+    src->start() ;
+
+    setSource(src) ;
+
+    setTimeScale(2.0f) ; // 1 pixels per second of time.
+
+    resetFlags(RSGRAPH_FLAGS_LOG_SCALE_Y) ;
+    resetFlags(RSGRAPH_FLAGS_PAINT_STYLE_PLAIN) ;
+    setFlags(RSGRAPH_FLAGS_SHOW_LEGEND) ;
+
+	int graphColor = Settings->valueFromGroup("BandwidthStatsWidget", "cmbGraphColor", 0).toInt();
+
+	if(graphColor==0)
+		resetFlags(RSGraphWidget::RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+	else
+		setFlags(RSGraphWidget::RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
 }

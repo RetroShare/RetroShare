@@ -6,49 +6,103 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>750</width>
-    <height>450</height>
+    <width>700</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>RTT Statistics</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_Main">
    <item>
-    <widget class="QTreeWidget" name="treeWidget">
-     <property name="rootIsDecorated">
-      <bool>false</bool>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-     <property name="sortingEnabled">
-      <bool>true</bool>
-     </property>
-     <property name="alternatingRowColors">
-      <bool>true</bool>
-     </property>
-     <column>
-      <property name="text">
-       <string>Peer Name</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>RTT (ms)</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Node ID</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>IP Address</string>
-      </property>
-     </column>
+     
+     <widget class="QWidget" name="tab_graph">
+      <attribute name="title">
+       <string>Graph View</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_Graph">
+       <item row="0" column="0">
+        <widget class="QSplitter" name="splitter">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <widget class="QScrollArea" name="_tunnel_statistics_F">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>100</width>
+             <height>100</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+
+     <widget class="QWidget" name="tab_table">
+      <attribute name="title">
+       <string>Table View</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_Table">
+       <item>
+        <widget class="QTreeWidget" name="treeWidget">
+         <property name="rootIsDecorated">
+          <bool>false</bool>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <column>
+          <property name="text">
+           <string>Peer Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>RTT (ms)</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Node ID</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>IP Address</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+
     </widget>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
  <connections/>
 </ui>
