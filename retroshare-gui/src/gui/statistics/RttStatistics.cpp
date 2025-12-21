@@ -136,8 +136,8 @@ void RttStatistics::processSettings(bool bLoad)
 // --- Table Update Logic (O(N) Optimized) ---
 void RttStatistics::updateRttValues()
 {
-    // Optimize: Only update if Table tab is visible (Index 1)
-    if (tabWidget->currentIndex() != 1) return;
+    // Only update if the rtt tab is visible and the table view is selected
+    if (!isVisible() || tabWidget->currentIndex() != 1) return;
 
     std::list<RsPeerId> idList;
     if (!rsPeers) return;
