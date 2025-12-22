@@ -1201,16 +1201,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 
 					switch (node->type) {
 					case XML_ELEMENT_NODE:
-						if (xmlStrcasecmp(node->name, BAD_CAST"img") == 0) {
-							/* process images */
-
-							if ((feed.flag & RS_FEED_FLAG_EMBED_IMAGES) == 0) {
-								/* remove image */
-								xmlUnlinkNode(node);
-								nodesToDelete.push_back(node);
-								continue;
-							}
-						} else if (xmlStrcasecmp(node->name, BAD_CAST"script") == 0) {
+						if (xmlStrcasecmp(node->name, BAD_CAST"script") == 0) {
 							/* remove script */
 							xmlUnlinkNode(node);
 							nodesToDelete.push_back(node);
@@ -1297,8 +1288,8 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 								if (node->type == XML_ELEMENT_NODE) {
 									bool removeImage = true;
 
-									if (feed.flag & RS_FEED_FLAG_EMBED_IMAGES) {
-										/* embed image */
+									if ((feed.flag & RS_FEED_FLAG_EMBED_IMAGES) || (processPostedFirstImage && !postedFirstImageNode)) {
+										/* embed image or use first image for posted */
 										std::string src = html.getAttr(node, "src");
 										if (!src.empty()) {
 											/* download image */
@@ -1311,23 +1302,26 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 											if (code == CURLE_OK && CURL.responseCode() == 200) {
 												std::string contentType = CURL.contentType();
 												if (isContentType(contentType, "image/")) {
-													std::vector<unsigned char> optimizedData;
-													std::string optimizedMimeType;
-													if (mFeedReader->optimizeImage(FeedReaderOptimizeImageTask::SIZE, data, contentType, optimizedData, optimizedMimeType)) {
-														std::string base64;
-														if (toBase64(optimizedData, base64)) {
-															std::string imageBase64;
-															rs_sprintf(imageBase64, "data:%s;base64,%s", optimizedMimeType.c_str(), base64.c_str());
-															if (html.setAttr(node, "src", imageBase64.c_str())) {
-																removeImage = false;
+													if (feed.flag & RS_FEED_FLAG_EMBED_IMAGES) {
+														std::vector<unsigned char> optimizedData;
+														std::string optimizedMimeType;
+														if (mFeedReader->optimizeImage(FeedReaderOptimizeImageTask::SIZE, data, contentType, optimizedData, optimizedMimeType)) {
+															std::string base64;
+															if (toBase64(optimizedData, base64)) {
+																std::string imageBase64;
+																rs_sprintf(imageBase64, "data:%s;base64,%s", optimizedMimeType.c_str(), base64.c_str());
+																if (html.setAttr(node, "src", imageBase64.c_str())) {
+																	removeImage = false;
+																}
 															}
 														}
 													}
-													if (processPostedFirstImage && postedFirstImageNode == NULL) {
+													if (processPostedFirstImage && !postedFirstImageNode) {
 														/* set first image */
 														msg->postedFirstImage = data;
 														msg->postedFirstImageMimeType = contentType;
 														postedFirstImageNode = node;
+														removeImage = false;
 													}
 												}
 											}
