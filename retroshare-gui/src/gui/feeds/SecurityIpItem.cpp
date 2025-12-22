@@ -34,6 +34,8 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsbanlist.h>
 
+#include "util/qtthreadsutils.h"
+
 /*****
  * #define DEBUG_ITEM 1
  ****/
@@ -51,6 +53,11 @@ SecurityIpItem::SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const 
     ui(new(Ui::SecurityIpItem))
 {
 	setup();
+}
+
+SecurityIpItem::~SecurityIpItem()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 void SecurityIpItem::setup()
@@ -76,6 +83,21 @@ void SecurityIpItem::setup()
 
 	updateItemStatic();
 	updateItem();
+
+	mEventHandlerId = 0;
+
+	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+	{
+	        RsQThreadUtils::postToObject([=]()
+        	{
+			// Filter events to only update relevant items.
+			auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+			if(!fe || fe->mSslId != mSslId)
+				return;
+			updateItem();
+		}
+		, this );
+	}, mEventHandlerId, RsEventType::FRIEND_LIST );	
 }
 
 uint64_t SecurityIpItem::uniqueIdentifier() const
@@ -178,11 +200,6 @@ void SecurityIpItem::updateItem()
 			ui->peerDetailsButton->setEnabled(true);
 		}
 	}
-
-	/* slow Tick  */
-	int msec_rate = 10129;
-
-	QTimer::singleShot( msec_rate, this, SLOT(updateItem(void)));
 }
 
 void SecurityIpItem::toggle()

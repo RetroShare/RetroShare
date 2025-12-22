@@ -35,6 +35,8 @@ public:
 	/** Default Constructor */
 	ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, const std::string &message);
 
+	virtual ~ChatMsgItem();
+
 	void updateItemStatic();
 
     virtual uint64_t uniqueIdentifier() const override { return hash_64bits("ChatMsgItem " + mPeerId.toStdString()); }
@@ -60,6 +62,7 @@ private:
 	void insertChat(const std::string &message);
 
 	RsPeerId mPeerId;
+	RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif
