@@ -92,7 +92,7 @@ void SecurityIpItem::setup()
         	{
 			// Filter events to only update relevant items.
 			auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
-			if(fe && fe->mSslId != mSslId)
+			if(!fe || fe->mSslId != mSslId)
 				return;
 			updateItem();
 		}
