@@ -44,7 +44,7 @@
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsidentity.h>

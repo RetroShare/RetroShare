@@ -32,7 +32,8 @@
 #include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
+#include <retroshare/rschats.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 

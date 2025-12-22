@@ -30,7 +30,7 @@
 
 #include "retroshare/rsconfig.h"
 #include "retroshare/rshistory.h"
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rschats.h"
 #include "retroshare/rspeers.h"
 
 #include <QColorDialog>

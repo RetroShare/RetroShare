@@ -72,7 +72,7 @@ void PopupDistantChatDialog::init(const ChatId &chat_id, const QString &/*title*
     _tunnel_id = chat_id.toDistantChatId();
     DistantChatPeerInfo tinfo;
     
-    if(!rsMsgs->getDistantChatStatus(_tunnel_id,tinfo))
+    if(!rsChats->getDistantChatStatus(_tunnel_id,tinfo))
         return ;
     
     RsIdentityDetails iddetails ;
@@ -160,7 +160,7 @@ void PopupDistantChatDialog::handleEvent_main_thread(std::shared_ptr<const RsEve
 
         {
             DistantChatPeerInfo tinfo;
-            rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
+            rsChats->getDistantChatStatus(_tunnel_id,tinfo) ;
 
             if(tinfo.pending_items > 0)
                 msg += QObject::tr("(some undelivered messages)") ;	// we cannot use the pending_items count because it accounts for ACKS and keep alive packets as well.
@@ -190,14 +190,14 @@ void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 {
     DistantChatPeerInfo tinfo ;
     
-	rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
+    rsChats->getDistantChatStatus(_tunnel_id,tinfo) ;
 
 	if(tinfo.status != RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED)
 	{
 		QString msg = tr("Closing this window will end the conversation. Unsent messages will be dropped.") ;
 
 		if(QMessageBox::Ok == QMessageBox::critical(NULL,tr("Close conversation?"),msg, QMessageBox::Ok | QMessageBox::Cancel))
-			rsMsgs->closeDistantChatConnexion(_tunnel_id) ;
+            rsChats->closeDistantChatConnexion(_tunnel_id) ;
 		else
 		{
 			e->ignore() ;
@@ -214,7 +214,7 @@ QString PopupDistantChatDialog::getPeerName(const ChatId& /*id*/, QString& addit
 {
     DistantChatPeerInfo tinfo;
 
-    rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
+    rsChats->getDistantChatStatus(_tunnel_id,tinfo) ;
 
 	additional_info = QString("Identity ID: ") + QString::fromStdString(tinfo.to_id.toStdString());
 
@@ -229,7 +229,7 @@ QString PopupDistantChatDialog::getOwnName() const
 {
     DistantChatPeerInfo tinfo;
 
-    rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
+    rsChats->getDistantChatStatus(_tunnel_id,tinfo) ;
 
     RsIdentityDetails details  ;
     if(rsIdentity->getIdDetails(tinfo.own_id,details))

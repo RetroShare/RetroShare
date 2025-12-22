@@ -53,7 +53,7 @@
 #include "util/DateTime.h"
 
 #include "retroshare/rsgxsflags.h"
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rschats.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsservicecontrol.h"
 

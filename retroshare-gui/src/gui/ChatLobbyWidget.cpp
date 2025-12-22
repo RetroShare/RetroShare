@@ -37,7 +37,7 @@
 #include "util/qtthreadsutils.h"
 #include "util/RsQtVersion.h"
 
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rschats.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsidentity.h"
 

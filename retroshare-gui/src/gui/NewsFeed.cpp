@@ -26,7 +26,8 @@
 #include <retroshare/rsbanlist.h>
 #include <retroshare/rsgxschannels.h>
 #include <retroshare/rsgxsforums.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
+#include <retroshare/rsmail.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsposted.h>

@@ -24,7 +24,7 @@
 #include <QColor>
 #include <QFont>
 
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rsmail.h"
 
 // This class holds the actual hierarchy of posts, represented by identifiers
 // It is responsible for auto-updating when necessary and holds a mutex to allow the Model to

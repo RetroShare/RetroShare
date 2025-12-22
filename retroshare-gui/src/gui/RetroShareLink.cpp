@@ -40,7 +40,6 @@
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsidentity.h>
-#include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
 
 #include <QApplication>

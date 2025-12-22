@@ -23,7 +23,7 @@
 #include <rshare.h>
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"

@@ -49,7 +49,7 @@
 #include "util/RsProtectedTimer.h"
 
 #include <retroshare/rspeers.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
 
 #include <algorithm>
 

@@ -28,7 +28,7 @@
 #include "util/qtthreadsutils.h"
 
 #include <algorithm>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 
 static std::map<ChatId, int> waitingChats;
 static ChatUserNotify* instance = 0;

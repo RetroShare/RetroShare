@@ -49,7 +49,7 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
 
 /* Images for context menu icons */
 #define IMAGE_DOWNLOAD         ":/icons/png/download.png"

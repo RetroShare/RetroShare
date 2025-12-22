@@ -25,7 +25,7 @@
 #include "TagsMenu.h"
 #include "gui/settings/rsharesettings.h"
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
 
 #include "gui/msgs/MessageInterface.h"
 

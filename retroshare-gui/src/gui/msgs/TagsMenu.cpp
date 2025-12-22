@@ -24,7 +24,7 @@
 
 #include <algorithm>
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
 
 #include "TagsMenu.h"
 #include "gui/common/TagDefs.h"

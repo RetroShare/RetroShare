@@ -31,7 +31,7 @@
 #include "gui/settings/rsharesettings.h"
 
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 #include <retroshare/rspeers.h>
 
 #include "gui/msgs/MessageInterface.h"

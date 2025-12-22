@@ -38,7 +38,7 @@
 #include "rshare.h"
 
 #include <retroshare/rsidentity.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 
 
 #define IMAGE_TYPING         ":/images/white-bubble-64.png"
@@ -134,7 +134,7 @@ void PopupChatWindow::showContextMenu(QPoint)
 	if (ch_id.isDistantChatId()) {
 		DistantChatPeerId dc_id = ch_id.toDistantChatId();
 		DistantChatPeerInfo dc_info;
-		if(rsMsgs->getDistantChatStatus(dc_id, dc_info)) {
+        if(rsChats->getDistantChatStatus(dc_id, dc_info)) {
 			RsGxsId gxs_id = dc_info.to_id;
 			if(!gxs_id.isNull() && !rsIdentity->isOwnId(gxs_id)) {
 			    contextMnu.addAction(votePositive);
@@ -384,7 +384,7 @@ void PopupChatWindow::getAvatar()
 	if (misc::getOpenAvatarPicture(this, ba)) {
 		std::cerr << "Avatar image size = " << ba.size() << std::endl ;
 
-		rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()), ba.size());	// last char 0 included.
+        rsChats->setOwnAvatarData((unsigned char *)(ba.data()), ba.size());	// last char 0 included.
 	}
 }
 

@@ -34,7 +34,7 @@
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "MessageModel.h"
 #include "retroshare/rsexpr.h"
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rsmail.h"
 
 //#define DEBUG_MESSAGE_MODEL
 

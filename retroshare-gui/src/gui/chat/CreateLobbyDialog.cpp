@@ -26,7 +26,7 @@
 #include <QPushButton>
 #include <algorithm>
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rstypes.h>
 

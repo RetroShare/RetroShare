@@ -27,7 +27,7 @@
 #include "common/StatusDefs.h"
 
 #include <retroshare/rspeers.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 #include <retroshare/rsstatus.h>
 
 #include "rshare.h"

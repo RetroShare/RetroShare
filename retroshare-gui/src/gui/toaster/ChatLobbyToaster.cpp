@@ -23,7 +23,8 @@
 #include "util/HandleRichText.h"
 #include <retroshare/rsidentity.h>
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
+#include <retroshare/rsmail.h>
 
 ChatLobbyToaster::ChatLobbyToaster(const ChatLobbyId &lobby_id, const RsGxsId &sender_id, const QString &message):
     QWidget(NULL), mLobbyId(lobby_id)

@@ -28,7 +28,6 @@
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
-#include <retroshare/rsmsgs.h>
 
 #include "common/vmessagebox.h"
 #include "common/RSTreeWidgetItem.h"

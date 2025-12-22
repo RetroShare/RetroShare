@@ -22,7 +22,8 @@
 
 #include "rshare.h"
 #include "rsharesettings.h"
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rschats.h"
+#include "retroshare/rsmail.h"
 
 #include "MessagePage.h"
 #include "util/misc.h"

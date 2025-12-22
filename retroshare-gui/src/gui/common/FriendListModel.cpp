@@ -35,7 +35,7 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "retroshare/rsexpr.h"
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rschats.h"
 
 //#define DEBUG_MODEL
 //#define DEBUG_MODEL_INDEX

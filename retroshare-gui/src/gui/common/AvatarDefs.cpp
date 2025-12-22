@@ -20,7 +20,7 @@
 
 #include <QPixmap>
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 #include <gui/gxs/GxsIdDetails.h>
