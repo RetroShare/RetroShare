@@ -43,6 +43,8 @@
  * #define DEBUG_ITEM 1
  ****/
 
+using namespace Rs::Msgs;
+
 /** Constructor */
 MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, bool isHome) :
    FeedItem(parent,feedId,NULL), mMsgId(msgId), mIsHome(isHome)
@@ -123,6 +125,7 @@ void MsgItem::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 	case RsMailStatusEventCode::TAG_CHANGED:
 	case RsMailStatusEventCode::MESSAGE_RECEIVED_ACK:
 	case RsMailStatusEventCode::SIGNATURE_FAILED:
+    default:
 		break;
 	}
 }

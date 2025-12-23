@@ -223,7 +223,7 @@ void MessengerWindow::openShareManager()
 /** Loads own personal status message */
 void MessengerWindow::loadmystatusmessage()
 { 
-    ui.messagelineEdit->setEditText( QString::fromUtf8(rsChats->getCustomStateString().c_str()));
+    ui.messagelineEdit->setEditText( QString::fromUtf8(rsChats->getOwnCustomStateString().c_str()));
 }
 
 /** Save own status message */

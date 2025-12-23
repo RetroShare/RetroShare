@@ -384,7 +384,7 @@ void PopupChatWindow::getAvatar()
 	if (misc::getOpenAvatarPicture(this, ba)) {
 		std::cerr << "Avatar image size = " << ba.size() << std::endl ;
 
-        rsChats->setOwnAvatarData((unsigned char *)(ba.data()), ba.size());	// last char 0 included.
+        rsChats->setOwnNodeAvatarData((unsigned char *)(ba.data()), ba.size());	// last char 0 included.
 	}
 }
 

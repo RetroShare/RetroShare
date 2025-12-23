@@ -124,7 +124,7 @@ void AvatarWidget::mouseReleaseEvent(QMouseEvent */*event*/)
 		QByteArray newAvatar;
 		dialog.getAvatar(newAvatar);
 
-        rsChats->setOwnAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;	// last char 0 included.
+        rsChats->setOwnNodeAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;	// last char 0 included.
 	}
 }
 

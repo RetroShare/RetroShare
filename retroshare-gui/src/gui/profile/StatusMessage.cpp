@@ -32,7 +32,7 @@ StatusMessage::StatusMessage(QWidget *parent)
   connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(save()));
   connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
   
-  ui.txt_StatusMessage->setText(QString::fromUtf8(rsChats->getCustomStateString().c_str()));
+  ui.txt_StatusMessage->setText(QString::fromUtf8(rsChats->getOwnCustomStateString().c_str()));
 }
 
 /** Saves the changes on this page */

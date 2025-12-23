@@ -284,14 +284,14 @@ void FriendsDialog::getAvatar()
 		std::cerr << "Avatar image size = " << ba.size() << std::endl ;
 #endif
 
-        rsChats->setOwnAvatarData((unsigned char *)(ba.data()), ba.size()) ;	// last char 0 included.
+        rsChats->setOwnNodeAvatarData((unsigned char *)(ba.data()), ba.size()) ;	// last char 0 included.
 	}
 }
 
 /** Loads own personal status */
 void FriendsDialog::loadmypersonalstatus()
 {
-    QString statustring =  QString::fromUtf8(rsChats->getCustomStateString().c_str());
+    QString statustring =  QString::fromUtf8(rsChats->getOwnCustomStateString().c_str());
 
 	if (statustring.isEmpty())
 		ui.mypersonalstatusLabel->setText(tr("Set your status message here."));
