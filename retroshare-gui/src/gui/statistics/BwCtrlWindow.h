@@ -24,9 +24,10 @@
 
 #include <QAbstractItemDelegate>
 
-#include <retroshare-gui/RsAutoUpdatePage.h>
 #include "gui/common/RSGraphWidget.h"
 #include "ui_BwCtrlWindow.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 
 // Defines for download list list columns
 #define COLUMN_RSNAME 0
@@ -41,28 +42,26 @@
 #define COLUMN_OUT_QUEUE 9
 #define COLUMN_OUT_ALLOC 10
 #define COLUMN_OUT_ALLOC_SENT 11
-#define COLUMN_ALLOWED RECVD 12
-#define COLUMN_COUNT 13
-
+#define COLUMN_ALLOWED_RECVD 12
+#define COLUMN_IN_TOTAL 13
+#define COLUMN_OUT_TOTAL 14
+#define COLUMN_COUNT 15
 
 class QModelIndex;
 class QPainter;
-class BWListDelegate ;
+class BWListDelegate;
 
-class BwCtrlWindow : public RsAutoUpdatePage,  public Ui::BwCtrlWindow
-{
-    Q_OBJECT
+class BwCtrlWindow : public RsAutoUpdatePage, public Ui::BwCtrlWindow {
+  Q_OBJECT
 public:
+  BwCtrlWindow(QWidget *parent = 0);
+  ~BwCtrlWindow();
 
-    BwCtrlWindow(QWidget *parent = 0);
-    ~BwCtrlWindow();
-
-    void updateBandwidth();
+  void updateBandwidth();
 
 public slots:
-    virtual void updateDisplay() ;
+  virtual void updateDisplay();
 
 protected:
-    BWListDelegate *BWDelegate;
-
+  BWListDelegate *BWDelegate;
 };
