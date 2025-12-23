@@ -153,7 +153,7 @@ void ChatPage::updateDefaultLobbyIdentity()
 	{
 	case GxsIdChooser::KnowId:
 	case GxsIdChooser::UnKnowId:
-		rsMsgs->setDefaultIdentityForChatLobby(chosen_id) ;
+        rsChats->setDefaultIdentityForChatLobby(chosen_id) ;
 		break ;
 
 	default:;
@@ -395,7 +395,7 @@ ChatPage::load()
 
     // state of distant Chat combobox
 
-    switch(rsMsgs->getDistantChatPermissionFlags())
+    switch(rsChats->getDistantChatPermissionFlags())
     {
         default:
         case RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NONE:
@@ -466,7 +466,7 @@ ChatPage::load()
     historyStylePath = loadStyleInfo(ChatStyle::TYPE_HISTORY, ui.historyStyle, ui.historyComboBoxVariant, historyStyleVariant);
 
     RsGxsId gxs_id ;
-    rsMsgs->getDefaultIdentityForChatLobby(gxs_id) ;
+    rsChats->getDefaultIdentityForChatLobby(gxs_id) ;
 
     ui.chatLobbyIdentity_IC->setFlags(IDCHOOSER_ID_REQUIRED) ;
 
@@ -700,13 +700,13 @@ void ChatPage::distantChatComboBoxChanged(int i)
 	switch(i)
 	{
 		default:
-		case 0: rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NONE) ;
+        case 0: rsChats->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NONE) ;
 		break ;
 
-		case 1: rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS) ;
+        case 1: rsChats->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS) ;
 		break ;
 
-		case 2: rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY) ;
+        case 2: rsChats->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY) ;
 		break ;
 	}
 

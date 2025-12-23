@@ -96,6 +96,8 @@
 
 // #define DEBUG_MESSAGES_DIALOG 1
 
+using namespace Rs::Msgs;
+
 class MessageSortFilterProxyModel: public QSortFilterProxyModel
 {
 public:
@@ -1567,7 +1569,7 @@ void MessagesDialog::tagSet(int tagId, bool set)
 void MessagesDialog::emptyTrash()
 {
     std::list<Rs::Msgs::MsgInfoSummary> msgs ;
-    rsMsgs->getMessageSummaries(Rs::Msgs::BoxName::BOX_TRASH,msgs);
+    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_TRASH,msgs);
 
     for(auto it(msgs.begin());it!=msgs.end();++it)
 		rsMail->MessageDelete(it->msgId);

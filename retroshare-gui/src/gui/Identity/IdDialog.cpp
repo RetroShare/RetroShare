@@ -1917,7 +1917,7 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
     {
 		ChatId id = ChatId(ChatLobbyId(u.mAdditionalId));
 		ChatLobbyInfo linfo ;
-		rsMsgs->getChatLobbyInfo(ChatLobbyId(u.mAdditionalId),linfo);
+        rsChats->getChatLobbyInfo(ChatLobbyId(u.mAdditionalId),linfo);
 		RetroShareLink l = RetroShareLink::createChatRoom(id, QString::fromUtf8(linfo.lobby_name.c_str()));
 		return tr("Message in chat room %1").arg(l.toHtml()) ;
     }
@@ -2456,7 +2456,7 @@ void IdDialog::chatIdentity(const RsGxsId& toGxsId)
 	uint32_t error_code;
 	DistantChatPeerId did;
 
-	if(!rsMsgs->initiateDistantChatConnexion(toGxsId, fromGxsId, did, error_code))
+    if(!rsChats->initiateDistantChatConnexion(toGxsId, fromGxsId, did, error_code))
 		QMessageBox::information(
 		            nullptr, tr("Distant chat cannot work")
 		            , QString("%1 %2: %3")

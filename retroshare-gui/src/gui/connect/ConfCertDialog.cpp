@@ -163,7 +163,7 @@ void ConfCertDialog::load()
 	ui.version->setText(QString::fromStdString(version));
 
 	/* Custom state string */
-	QString statustring =  QString::fromUtf8(rsMsgs->getCustomStateString(detail.id).c_str());
+    QString statustring =  QString::fromUtf8(rsChats->getCustomStateString(detail.id).c_str());
 	ui.statusmessage->setText(statustring);
 
 

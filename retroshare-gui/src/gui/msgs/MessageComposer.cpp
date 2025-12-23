@@ -99,6 +99,8 @@
 
 static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE = 199000;
 
+using namespace Rs::Msgs;
+
 class MessageItemDelegate : public QItemDelegate
 {
 public:

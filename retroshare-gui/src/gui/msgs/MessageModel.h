@@ -61,7 +61,7 @@ public:
 
     enum QuickViewFilter {
         QUICK_VIEW_ALL             = 0x00,
-        QUICK_VIEW_IMPORTANT       = 0x01,	// These numbers have been carefuly chosen to match the ones in rsmsgs.h
+        QUICK_VIEW_IMPORTANT       = 0x01,	// These numbers have been carefuly chosen to match the ones in rsmail.h
         QUICK_VIEW_WORK            = 0x02,
         QUICK_VIEW_PERSONAL        = 0x03,
         QUICK_VIEW_TODO            = 0x04,
@@ -75,7 +75,7 @@ public:
 
     enum FilterType {
         FILTER_TYPE_NONE             = 0x00,
-        FILTER_TYPE_SUBJECT          = 0x01,	// These numbers have been carefuly chosen to match the ones in rsmsgs.h
+        FILTER_TYPE_SUBJECT          = 0x01,	// These numbers have been carefuly chosen to match the ones in rsmail.h
         FILTER_TYPE_FROM             = 0x02,
         FILTER_TYPE_TO               = 0x03,
         FILTER_TYPE_DATE             = 0x04,

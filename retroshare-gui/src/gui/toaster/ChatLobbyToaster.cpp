@@ -52,7 +52,7 @@ ChatLobbyToaster::ChatLobbyToaster(const ChatLobbyId &lobby_id, const RsGxsId &s
 	QString lobbyName = RsHtml::plainText(idd.mNickname);
 
     ChatLobbyInfo clinfo ;
-    if(rsMsgs->getChatLobbyInfo(mLobbyId,clinfo))
+    if(rsChats->getChatLobbyInfo(mLobbyId,clinfo))
             lobbyName += "@" + RsHtml::plainText(clinfo.lobby_name);
 
 	ui.toasterLabel->setText(lobbyName);

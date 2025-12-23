@@ -62,6 +62,8 @@
 
 #include "gui/msgs/MessageInterface.h"
 
+using namespace Rs::Msgs;
+
 class RsHtmlMsg : public RsHtml
 {
 public:

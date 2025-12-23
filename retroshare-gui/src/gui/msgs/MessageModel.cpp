@@ -38,6 +38,8 @@
 
 //#define DEBUG_MESSAGE_MODEL
 
+using namespace Rs::Msgs;
+
 #define IS_MESSAGE_UNREAD(flags) (flags &  (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
 
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
@@ -103,7 +105,7 @@ bool RsMessageModel::getMessageData(const QModelIndex& i,Rs::Msgs::MessageInfo& 
 	if(!convertInternalIdToMsgIndex(ref,index) || index >= mMessages.size())
 		return false ;
 
-	return rsMsgs->getMessage(mMessages[index].msgId,fmpe);
+    return rsMail->getMessage(mMessages[index].msgId,fmpe);
 }
 
 bool RsMessageModel::hasChildren(const QModelIndex &parent) const
@@ -291,7 +293,7 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
 QVariant RsMessageModel::textColorRole(const Rs::Msgs::MsgInfoSummary& fmpe,int /*column*/) const
 {
 	Rs::Msgs::MsgTagType tags;
-	rsMsgs->getMessageTagTypes(tags);
+    rsMail->getMessageTagTypes(tags);
 
 	for(auto it(fmpe.msgtags.begin());it!=fmpe.msgtags.end();++it)
 		for(auto it2(tags.types.begin());it2!=tags.types.end();++it2)
@@ -334,7 +336,7 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int /*col
 			break;
 		case FILTER_TYPE_CONTENT:   {
 			Rs::Msgs::MessageInfo minfo;
-			rsMsgs->getMessage(fmpe.msgId,minfo);
+            rsMail->getMessage(fmpe.msgId,minfo);
 			s = QTextDocument(QString::fromUtf8(minfo.msg.c_str())).toPlainText();
 		}
 			break;
@@ -344,7 +346,7 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int /*col
 		case FILTER_TYPE_ATTACHMENTS:
 		{
 			Rs::Msgs::MessageInfo minfo;
-			rsMsgs->getMessage(fmpe.msgId,minfo);
+            rsMail->getMessage(fmpe.msgId,minfo);
 
 			for(auto it(minfo.files.begin());it!=minfo.files.end();++it)
 				s += QString::fromUtf8((*it).fname.c_str())+" ";
@@ -512,10 +514,10 @@ QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
     case COLUMN_THREAD_TAGS:{
         // Tags
         Rs::Msgs::MsgTagInfo tagInfo;
-        rsMsgs->getMessageTag(fmpe.msgId, tagInfo);
+        rsMail->getMessageTag(fmpe.msgId, tagInfo);
 
         Rs::Msgs::MsgTagType Tags;
-        rsMsgs->getMessageTagTypes(Tags);
+        rsMail->getMessageTagTypes(Tags);
 
         QString text;
 
@@ -734,7 +736,7 @@ void RsMessageModel::updateMessages()
 
     std::list<Rs::Msgs::MsgInfoSummary> msgs;
 
-    rsMsgs->getMessageSummaries(mCurrentBox,msgs);
+    rsMail->getMessageSummaries(mCurrentBox,msgs);
 	setMessages(msgs);
 
     emit messagesLoaded();
@@ -746,7 +748,7 @@ void RsMessageModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
 		return ;
 
 	preMods();
-	rsMsgs->MessageRead(i.data(MsgIdRole).toString().toStdString(),!read_status);
+    rsMail->MessageRead(i.data(MsgIdRole).toString().toStdString(),!read_status);
 
 	emit dataChanged(i,i);
 }
@@ -766,7 +768,7 @@ void RsMessageModel::setMsgsReadStatus(const QModelIndexList& mil,bool read_stat
 
 	preMods();
 	for(auto& it : list)
-		rsMsgs->MessageRead(it,!read_status);
+        rsMail->MessageRead(it,!read_status);
 
 	emit dataChanged(createIndex(start,0),createIndex(stop,RsMessageModel::columnCount()-1));
 }
@@ -777,7 +779,7 @@ void RsMessageModel::setMsgStar(const QModelIndex& i,bool star)
 		return ;
 
 	preMods();
-	rsMsgs->MessageStar(i.data(MsgIdRole).toString().toStdString(),star);
+    rsMail->MessageStar(i.data(MsgIdRole).toString().toStdString(),star);
 
 	emit dataChanged(i,i);
 }
@@ -797,7 +799,7 @@ void RsMessageModel::setMsgsStar(const QModelIndexList& mil,bool star)
 
 	preMods();
 	for(auto& it : list)
-		rsMsgs->MessageStar(it,star);
+        rsMail->MessageStar(it,star);
 
 	emit dataChanged(createIndex(start,0),createIndex(stop,RsMessageModel::columnCount()-1));
 }
@@ -808,7 +810,7 @@ void RsMessageModel::setMsgJunk(const QModelIndex& i,bool junk)
 		return ;
 
 	preMods();
-	rsMsgs->MessageJunk(i.data(MsgIdRole).toString().toStdString(),junk);
+    rsMail->MessageJunk(i.data(MsgIdRole).toString().toStdString(),junk);
 
 	emit dataChanged(i,i);
 }
@@ -828,7 +830,7 @@ void RsMessageModel::setMsgsJunk(const QModelIndexList& mil,bool junk)
 
 	preMods();
 	for(auto& it : list)
-		rsMsgs->MessageJunk(it,junk);
+        rsMail->MessageJunk(it,junk);
 
 	emit dataChanged(createIndex(start,0),createIndex(stop,RsMessageModel::columnCount()-1));
 }

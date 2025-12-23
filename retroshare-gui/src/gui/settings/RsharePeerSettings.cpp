@@ -28,6 +28,7 @@
 
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rschats.h>
 
 #include "RsharePeerSettings.h"
 #include "rsharesettings.h"

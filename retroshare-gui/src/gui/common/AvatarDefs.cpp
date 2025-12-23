@@ -34,7 +34,7 @@ void AvatarDefs::getOwnAvatar(QPixmap &avatar, const QString& defaultImage)
 	int size = 0;
 
 	/* get avatar */
-	rsMsgs->getOwnAvatarData(data, size);
+    rsChats->getOwnAvatarData(data, size);
 
 	if (size == 0) {
         avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
@@ -52,7 +52,7 @@ bool AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, cons
     int size = 0;
 
     /* get avatar */
-    rsMsgs->getAvatarData(RsPeerId(sslId), data, size);
+    rsChats->getAvatarData(RsPeerId(sslId), data, size);
     if (size == 0) {
         if (!defaultImage.isEmpty()) {
             avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
@@ -94,14 +94,14 @@ bool AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const
 
     if (gpgId == rsPeers->getGPGOwnId()) {
 		/* Its me */
-		rsMsgs->getOwnAvatarData(data,size);
+        rsChats->getOwnAvatarData(data,size);
 	} else {
 		/* get the first available avatar of one of the ssl ids */
         std::list<RsPeerId> sslIds;
         if (rsPeers->getAssociatedSSLIds(gpgId, sslIds)) {
             std::list<RsPeerId>::iterator sslId;
 			for (sslId = sslIds.begin(); sslId != sslIds.end(); ++sslId) {
-				rsMsgs->getAvatarData(*sslId, data, size);
+                rsChats->getAvatarData(*sslId, data, size);
 				if (size) {
 					break;
 				}

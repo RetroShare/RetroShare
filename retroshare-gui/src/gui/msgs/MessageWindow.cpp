@@ -29,6 +29,8 @@
 
 #include "gui/msgs/MessageInterface.h"
 
+using namespace Rs::Msgs;
+
 /** Constructor */
 MessageWindow::MessageWindow(QWidget *parent, Qt::WindowFlags flags)
 : RWindow("MessageWindow", parent, flags)
