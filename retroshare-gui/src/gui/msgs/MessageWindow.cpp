@@ -29,7 +29,7 @@
 
 #include "gui/msgs/MessageInterface.h"
 
-using namespace Rs::Msgs;
+using namespace Rs::Mail;
 
 /** Constructor */
 MessageWindow::MessageWindow(QWidget *parent, Qt::WindowFlags flags)

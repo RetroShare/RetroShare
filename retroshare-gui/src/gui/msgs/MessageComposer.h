@@ -172,8 +172,8 @@ private slots:
 	void checkLength();
 
 private:
-    static QString buildReplyHeader(const Rs::Msgs::MessageInfo &msgInfo);
-    bool buildMessage(Rs::Msgs::MessageInfo& mi);
+    static QString buildReplyHeader(const Rs::Mail::MessageInfo &msgInfo);
+    bool buildMessage(Rs::Mail::MessageInfo& mi);
 
     void processSettings(bool bLoad);
 

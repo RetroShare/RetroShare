@@ -70,7 +70,7 @@
  * #define NEWS_DEBUG  1
  ****/
 
-using namespace Rs::Msgs;
+using namespace Rs::Mail;
 
 static NewsFeed* instance = nullptr;
 

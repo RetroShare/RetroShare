@@ -43,7 +43,7 @@
  * #define DEBUG_ITEM 1
  ****/
 
-using namespace Rs::Msgs;
+using namespace Rs::Mail;
 
 /** Constructor */
 ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, const std::string &message) :

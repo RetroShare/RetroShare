@@ -62,7 +62,7 @@
 
 #include "gui/msgs/MessageInterface.h"
 
-using namespace Rs::Msgs;
+using namespace Rs::Mail;
 
 class RsHtmlMsg : public RsHtml
 {
@@ -689,7 +689,7 @@ void MessageWidget::fill(const std::string &msgId)
 //		link.createMessage(ownId, "");
 //	}
 
-    if(msgInfo.from.type()==Rs::Msgs::MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)	// distant message
+    if(msgInfo.from.type()==Rs::Mail::MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)	// distant message
 	{
         tooltip_string = PeerDefs::rsidFromId(msgInfo.from.toGxsId()) ;
         link = RetroShareLink::createMessage(msgInfo.from.toGxsId(), "");

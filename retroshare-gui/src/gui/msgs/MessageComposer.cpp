@@ -99,7 +99,7 @@
 
 static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE = 199000;
 
-using namespace Rs::Msgs;
+using namespace Rs::Mail;
 
 class MessageItemDelegate : public QItemDelegate
 {
@@ -680,7 +680,7 @@ void MessageComposer::addConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId 
     std::list<MsgInfoSummary> msgList;
     std::list<MsgInfoSummary>::const_iterator it;
 
-    rsMail->getMessageSummaries(Rs::Msgs::BoxName::BOX_INBOX,msgList);
+    rsMail->getMessageSummaries(Rs::Mail::BoxName::BOX_INBOX,msgList);
 
     // do not re-add an existing request.
     // note: the test with name() is very unsecure. We should use the ID instead.
@@ -1504,7 +1504,7 @@ bool MessageComposer::buildMessage(MessageInfo& mi)
         }
 
     if(!at_least_one_gxsid)
-        mi.from = Rs::Msgs::MsgAddress(rsPeers->getOwnId(),MsgAddress::MSG_ADDRESS_MODE_TO);
+        mi.from = Rs::Mail::MsgAddress(rsPeers->getOwnId(),MsgAddress::MSG_ADDRESS_MODE_TO);
     else
     {
         auto gxs_id_from = RsGxsId(ui.respond_to_CB->itemData(ui.respond_to_CB->currentIndex()).toString().toStdString());

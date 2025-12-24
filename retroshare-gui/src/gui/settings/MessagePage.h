@@ -67,7 +67,7 @@ private:
     void fillTags();
 
     /* Pointer for not include of rsmail.h */
-    Rs::Msgs::MsgTagType *m_pTags;
+    Rs::Mail::MsgTagType *m_pTags;
     std::list<uint32_t> m_changedTagIds;
     RsEventsHandlerId_t mTagEventHandlerId;
 

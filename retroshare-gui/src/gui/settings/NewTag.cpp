@@ -24,7 +24,7 @@
 
 #include <QColorDialog>
 
-using namespace Rs::Msgs;
+using namespace Rs::Mail;
 
 /** Default constructor */
 NewTag::NewTag(MsgTagType &Tags, uint32_t nId /* = 0*/, QWidget *parent, Qt::WindowFlags flags)

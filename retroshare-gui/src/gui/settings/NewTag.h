@@ -35,7 +35,7 @@ class NewTag : public QDialog
 
 public:
     /** Default constructor */
-    NewTag(Rs::Msgs::MsgTagType &Tags, uint32_t nId = 0, QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
+    NewTag(Rs::Mail::MsgTagType &Tags, uint32_t nId = 0, QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 
     uint32_t m_nId;
 
@@ -50,7 +50,7 @@ private slots:
 private:
     void showColor(QRgb color);
 
-    Rs::Msgs::MsgTagType &m_Tags;
+    Rs::Mail::MsgTagType &m_Tags;
     QRgb m_Color;
 
     /** Qt Designer generated object */

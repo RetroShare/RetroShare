@@ -100,8 +100,8 @@ public:
 
     // This method will asynchroneously update the data
 
-    void setCurrentBox(Rs::Msgs::BoxName bn) ;
-    Rs::Msgs::BoxName currentBox() const ;
+    void setCurrentBox(Rs::Mail::BoxName bn) ;
+    Rs::Mail::BoxName currentBox() const ;
     void setQuickViewFilter(QuickViewFilter fn) ;
 
     void setFilter(FilterType filter_type, const QStringList& strings) ;
@@ -118,22 +118,22 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-	bool getMessageData(const QModelIndex& i,Rs::Msgs::MessageInfo& fmpe) const;
+    bool getMessageData(const QModelIndex& i,Rs::Mail::MessageInfo& fmpe) const;
     void clear() ;
 
     QVariant sizeHintRole  (int col) const;
 
-	QVariant displayRole   (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant decorationRole(const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant toolTipRole   (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant userRole      (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant statusRole    (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant authorRole    (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant sortRole      (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant fontRole      (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant filterRole    (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant textColorRole (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant backgroundRole(const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
+    QVariant displayRole   (const Rs::Mail::MsgInfoSummary& fmpe, int col) const;
+    QVariant decorationRole(const Rs::Mail::MsgInfoSummary& fmpe, int col) const;
+    QVariant toolTipRole   (const Rs::Mail::MsgInfoSummary& fmpe, int col) const;
+    QVariant userRole      (const Rs::Mail::MsgInfoSummary& fmpe, int col) const;
+    QVariant statusRole    (const Rs::Mail::MsgInfoSummary& fmpe, int col) const;
+    QVariant authorRole    (const Rs::Mail::MsgInfoSummary& fmpe, int col) const;
+    QVariant sortRole      (const Rs::Mail::MsgInfoSummary& fmpe, int col) const;
+    QVariant fontRole      (const Rs::Mail::MsgInfoSummary& fmpe, int col) const;
+    QVariant filterRole    (const Rs::Mail::MsgInfoSummary& fmpe, int col) const;
+    QVariant textColorRole (const Rs::Mail::MsgInfoSummary& fmpe, int col) const;
+    QVariant backgroundRole(const Rs::Mail::MsgInfoSummary& fmpe, int col) const;
 
 #ifdef DEBUG_MESSAGE_MODEL
 	/*!
@@ -159,7 +159,7 @@ signals:
     void messagesAboutToLoad();
 
 private:
-	bool passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const;
+    bool passesFilter(const Rs::Mail::MsgInfoSummary& fmpe,int column) const;
 
 	void preMods() ;
 	void postMods() ;
@@ -174,7 +174,7 @@ private:
 
 	uint32_t updateFilterStatus(ForumModelIndex i,int column,const QStringList& strings);
 
-	void setMessages(const std::list<Rs::Msgs::MsgInfoSummary>& msgs);
+    void setMessages(const std::list<Rs::Mail::MsgInfoSummary>& msgs);
 
     QColor mTextColorRead          ;
     QColor mTextColorUnread        ;
@@ -182,12 +182,12 @@ private:
     QColor mTextColorNotSubscribed ;
     QColor mTextColorMissing       ;
 
-    Rs::Msgs::BoxName mCurrentBox ;
+    Rs::Mail::BoxName mCurrentBox ;
     QuickViewFilter mQuickViewFilter ;
     QStringList mFilterStrings;
     FilterType  mFilterType;
     QFont mFont;
 
-    std::vector<Rs::Msgs::MsgInfoSummary> mMessages;
+    std::vector<Rs::Mail::MsgInfoSummary> mMessages;
     std::map<std::string,uint32_t> mMessagesMap;
 };

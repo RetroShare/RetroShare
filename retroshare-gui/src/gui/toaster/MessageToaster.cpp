@@ -43,7 +43,7 @@ MessageToaster::MessageToaster(const std::string &peerId, const QString &title, 
 	ui.textLabel->setText(message);
 	ui.textLabel->setToolTip(message);
 
-    Rs::Msgs::MessageInfo mi;
+    Rs::Mail::MessageInfo mi;
 
 	if (!rsMail->getMessage(peerId, mi))
 		return;

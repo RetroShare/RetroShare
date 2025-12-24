@@ -43,7 +43,7 @@
  * #define DEBUG_ITEM 1
  ****/
 
-using namespace Rs::Msgs;
+using namespace Rs::Mail;
 
 /** Constructor */
 MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, bool isHome) :

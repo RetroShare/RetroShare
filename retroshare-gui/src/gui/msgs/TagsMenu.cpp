@@ -42,7 +42,7 @@
 #define ACTION_TAGS_TAG       1
 #define ACTION_TAGS_NEWTAG    2
 
-using namespace Rs::Msgs;
+using namespace Rs::Mail;
 
 TagsMenu::TagsMenu(const QString &title, QWidget *parent)
 	: QMenu (title, parent)

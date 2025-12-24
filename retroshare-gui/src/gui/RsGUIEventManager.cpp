@@ -260,7 +260,7 @@ void RsGUIEventManager::async_handleIncomingEvent(std::shared_ptr<const RsEvent>
             {
                 for(auto msgid:ev1->mChangedMsgIds)
                 {
-                    Rs::Msgs::MessageInfo msgInfo;
+                    Rs::Mail::MessageInfo msgInfo;
                     if(rsMail->getMessage(msgid, msgInfo))
                         insertToaster(new ToasterItem(new MessageToaster(msgInfo.from.toStdString(), QString::fromUtf8(msgInfo.title.c_str()), QString::fromUtf8(msgInfo.msg.c_str()))));
                 }

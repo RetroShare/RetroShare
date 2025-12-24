@@ -33,7 +33,7 @@
 #include "NewTag.h"
 #include "util/qtthreadsutils.h"
 
-using namespace Rs::Msgs;
+using namespace Rs::Mail;
 
 MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
