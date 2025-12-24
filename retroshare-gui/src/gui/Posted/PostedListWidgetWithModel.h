@@ -152,6 +152,7 @@ private slots:
     void prevPosts();
 	void filterItems(QString s);
 	void updateShowLabel();
+	void editPost();
 
 public slots:
 	void handlePostsTreeSizeChange(QSize size);

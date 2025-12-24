@@ -357,12 +357,9 @@ void PostedListWidgetWithModel::postContextMenu(const QPoint& point)
 
     menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR), tr("Show author in People tab"), this, SLOT(showAuthorInPeople()))->setData(index);
 
-#ifdef TODO
-    // This feature is not implemented yet in libretroshare.
-
     if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
         menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
-#endif
+
 
     menu.exec(QCursor::pos());
 }
@@ -528,16 +525,17 @@ void PostedListWidgetWithModel::copyMessageLink()
     }
 }
 
-#ifdef TODO
 void PostedListWidgetWithModel::editPost()
 {
     QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
 	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
 
-	CreatePostedMsg *msgDialog = new CreatePostedMsg(post.mMeta.mGroupId,post.mMeta.mMsgId);
+	RsGxsId author_id;
+	ui->idChooser->getChosenId(author_id);
+
+	PostedCreatePostDialog *msgDialog = new PostedCreatePostDialog(rsPosted,post.mMeta.mGroupId,author_id, post.mMeta.mMsgId);
     msgDialog->show();
 }
-#endif
 
 void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {

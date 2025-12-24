@@ -38,7 +38,7 @@ public:
 	 * @param tokenQ parent callee token
 	 * @param posted
 	 */
-    explicit PostedCreatePostDialog(RsPosted* posted, const RsGxsGroupId& grpId, const RsGxsId& default_author=RsGxsId(),QWidget *parent = 0);
+    explicit PostedCreatePostDialog(RsPosted* posted, const RsGxsGroupId& grpId, const RsGxsId& default_author=RsGxsId(), RsGxsMessageId existing_post = RsGxsMessageId(), QWidget *parent = 0);
 	~PostedCreatePostDialog();
 
 	void setTitle(const QString& title);
@@ -46,6 +46,8 @@ public:
 	void setLink(const QString& link);
 
 	static bool optimizeImage(const QImage &image, QByteArray &imagebytes, QImage &imageOpt);
+
+	void newBoardMsg();
 
 private:
 	QString imagefilename;
@@ -63,11 +65,18 @@ private slots:
 private:
 	void processSettings(bool load);
 	int viewMode();
+	void loadBoardInfo();
+	void loadOriginalBoardPostInfo();
+	void saveBoardInfo(const RsGroupMetaData &group);
 
 	QString mLink;
 	QString mNotes;
 	RsPosted* mPosted;
 	RsGxsGroupId mGrpId;
+	RsGxsMessageId mOrigPostId;
+	RsGroupMetaData mBoardMeta;
+	RsMsgMetaData mOrigMeta;
+	bool mBoardMetaLoaded;
 
 	Ui::PostedCreatePostDialog *ui;
 };

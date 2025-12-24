@@ -41,6 +41,7 @@
 #include <gui/RetroShareLink.h>
 #include <util/imageutil.h>
 #include "gui/common/FilesDefs.h"
+#include "gui/gxs/GxsIdDetails.h"
 
 /* View Page */
 #define VIEW_POST   0
@@ -52,9 +53,9 @@
 
 const int MAXMESSAGESIZE = 199000;
 
-PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGroupId& grpId, const RsGxsId& default_author, QWidget *parent):
+PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGroupId& grpId, const RsGxsId& default_author,RsGxsMessageId existing_post, QWidget *parent):
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
-	mPosted(posted), mGrpId(grpId),
+	mPosted(posted), mGrpId(grpId), mOrigPostId(existing_post),
 	ui(new Ui::PostedCreatePostDialog)
 {
 	ui->setupUi(this);
@@ -66,7 +67,13 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 	connect(ui->RichTextEditWidget, SIGNAL(textSizeOk(bool)),ui->postButton, SLOT(setEnabled(bool)));
 
 	ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/postedlinks.png"));
-	ui->headerFrame->setHeaderText(tr("Create a new Post"));
+
+	if(!existing_post.isNull()){
+		ui->headerFrame->setHeaderText(tr("Edit Board Post"));
+		ui->postButton->setText(tr("Update"));
+	}else{
+		ui->headerFrame->setHeaderText(tr("Create a new Post"));
+	}
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
@@ -92,6 +99,8 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 	
 	ui->removeButton->hide();
 	ui->stackedWidgetPicture->setCurrentIndex(IMG_ATTACH);
+
+	newBoardMsg();
 
 	/* load settings */
 	processSettings(true);
@@ -198,6 +207,103 @@ void PostedCreatePostDialog::createPost()
         }, this );
     });
 }
+
+void PostedCreatePostDialog::loadOriginalBoardPostInfo()
+{
+#ifdef DEBUG_CREATE_GXS_MSG
+	std::cerr << "PostedCreatePostDialog::loadBoardPostInfo()";
+	std::cerr << std::endl;
+#endif
+	RsThread::async([this]()
+	{
+		std::vector<RsPostedPost> posts;
+		std::vector<RsGxsComment> comments;
+		std::vector<RsGxsVote> votes;
+
+		if( !rsPosted->getBoardContent(mGrpId,std::set<RsGxsMessageId>({mOrigPostId}),posts,comments,votes) || posts.size() != 1)
+		{
+			std::cerr << "Cannot get board post data for board " << mGrpId << " and post " << mOrigPostId << std::endl;
+			return;
+		}
+
+		RsQThreadUtils::postToObject( [posts,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+            const RsPostedPost& post(posts[0]);
+
+			if(post.mMeta.mGroupId != mGrpId || post.mMeta.mMsgId != mOrigPostId)
+			{
+				std::cerr << "PostedCreatePostDialog::loadBoardPostInfo() ERROR INVALID post ID or board ID" << std::endl;
+				return ;
+			}
+
+			ui->titleEdit->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str())) ;
+			ui->RichTextEditWidget->setText(QString::fromUtf8(post.mNotes.c_str()));
+			ui->linkEdit->setText(QString::fromUtf8(post.mLink.c_str()));
+
+			if(post.mImage.mData != NULL)
+			{
+				QPixmap pixmap;
+				GxsIdDetails::loadPixmapFromData(post.mImage.mData, post.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+				ui->imageLabel->setPixmap(pixmap);
+			}
+
+		}, this );
+	});
+
+}
+
+void PostedCreatePostDialog::loadBoardInfo()
+{
+#ifdef DEBUG_CREATE_GXS_MSG
+	std::cerr << "PostedCreatePostDialog::loadBoardInfo()";
+	std::cerr << std::endl;
+#endif
+
+
+	RsThread::async([this]()
+	{
+		std::vector<RsPostedGroup> groups;
+
+        if( !rsPosted->getBoardsInfo(std::list<RsGxsGroupId>({mGrpId}),groups) || groups.size() != 1)
+        {
+            std::cerr << "Cannot get board group data for board " << mGrpId << std::endl;
+            return;
+        }
+
+        RsQThreadUtils::postToObject( [groups,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+			if (groups.size() == 1)
+			{
+				const RsGroupMetaData& fi = groups.front().mMeta;
+				saveBoardInfo(fi);
+			}
+			else
+			{
+				std::cerr << "PostedCreatePostDialog::loadForumInfo() ERROR INVALID Number of Boards";
+				std::cerr << std::endl;
+			}
+
+		}, this );
+	});
+}
+
+void PostedCreatePostDialog::saveBoardInfo(const RsGroupMetaData &meta)
+{
+	mBoardMeta = meta;
+	mBoardMetaLoaded = true;
+
+	//channelName->setText(QString::fromUtf8(mChannelMeta.mGroupName.c_str()));
+	//subjectEdit->setFocus();
+}
+
 
 void PostedCreatePostDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
 {
@@ -352,4 +458,20 @@ void PostedCreatePostDialog::setNotes(const QString& notes)
 void PostedCreatePostDialog::setLink(const QString& link)
 {
 	ui->linkEdit->setText(link);
+}
+
+void PostedCreatePostDialog::newBoardMsg()
+{
+	if (!rsPosted)
+		return;
+
+	mBoardMetaLoaded = false;
+
+	/* request Data */
+	{
+		loadBoardInfo();
+
+		if(!mOrigPostId.isNull())
+			loadOriginalBoardPostInfo();
+	}
 }
