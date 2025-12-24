@@ -1,21 +1,21 @@
 /*******************************************************************************
  * retroshare-gui/src/gui/FileTransfer/SharedFilesDialog.h                     *
- *                                                                             *
+ * *
  * Copyright (c) 2009 Retroshare Team <retroshare.project@gmail.com>           *
- *                                                                             *
+ * *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
  * published by the Free Software Foundation, either version 3 of the          *
  * License, or (at your option) any later version.                             *
- *                                                                             *
+ * *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
  * GNU Affero General Public License for more details.                         *
- *                                                                             *
+ * *
  * You should have received a copy of the GNU Affero General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
- *                                                                             *
+ * *
  *******************************************************************************/
 
 #ifndef _SHAREDFILESDIALOG_H
@@ -29,9 +29,11 @@
 #include "util/RsProtectedTimer.h"
 
 #include <set>
+#include <QCheckBox> // Ajout pour la checkbox
 
 class RetroshareDirModel;
 class QSortFilterProxyModel;
+class SFDSortFilterProxyModel; // Forward declaration
 
 class SharedFilesDialog : public RsAutoUpdatePage
 {
@@ -83,6 +85,9 @@ private slots:
   void startFilter();
 
   void updateDirTreeView();
+  
+  // Nouveau slot pour le filtre
+  void filterUploadedOnlyToggled(bool checked);
 
   public slots:
   void changeCurrentViewModel(int viewTypeIndex);
@@ -136,8 +141,10 @@ protected:
   RetroshareDirModel *tree_model;
   RetroshareDirModel *flat_model;
   RetroshareDirModel *model;
-  QSortFilterProxyModel *tree_proxyModel;
-  QSortFilterProxyModel *flat_proxyModel;
+  
+  // Changé le type pour utiliser notre classe personnalisée
+  SFDSortFilterProxyModel *tree_proxyModel;
+  SFDSortFilterProxyModel *flat_proxyModel;
   QSortFilterProxyModel *proxyModel;
 
   QString currentCommand;
@@ -148,6 +155,9 @@ protected:
   RsProtectedTimer* mFilterTimer;
 
   RsEventsHandlerId_t mEventHandlerId ;
+
+  // Nouvelle CheckBox
+  QCheckBox *uploadedOnly_CB;
 };
 
 class LocalSharedFilesDialog : public SharedFilesDialog
@@ -208,4 +218,3 @@ class RemoteSharedFilesDialog : public SharedFilesDialog
 };
 
 #endif
-
