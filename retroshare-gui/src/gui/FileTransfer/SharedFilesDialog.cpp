@@ -52,7 +52,8 @@
 #include <QString>
 #include <QStyledItemDelegate>
 #include <QTreeView>
-#include <QCheckBox> // Ajouté
+#include <QCheckBox> // Added
+#include <QHBoxLayout> // Added
 
 #include <set>
 
@@ -128,7 +129,7 @@ public:
 protected:
     virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
     {
-        // 1. Custom Upload Check
+        // 1. Custom Upload Check (MODIFIED)
         if (m_uploadedOnly) {
             // Check column 6 (Uploaded)
             QModelIndex uploadIdx = sourceModel()->index(source_row, SHARED_FILES_DIALOG_COLUMN_UPLOADED, source_parent);
@@ -137,7 +138,6 @@ protected:
             if (uploadStr.isEmpty() || uploadStr == "-") return false;
         }
 
-        // 2. Default logic (preserves the "filtered" role check used by RetroShare for search/filtering)
         return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
     }
 
@@ -155,7 +155,7 @@ protected:
 
 private:
     RetroshareDirModel *m_dirModel;
-    bool m_uploadedOnly;
+    bool m_uploadedOnly; // Added member
 };
 
 // This class allows to draw the item in the share flags column using an appropriate size
@@ -197,18 +197,10 @@ SharedFilesDialog::~SharedFilesDialog()
 }
 /** Constructor */
 SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
-  : RsAutoUpdatePage(1000,parent), model(NULL)
+  : RsAutoUpdatePage(1000,parent), model(NULL), uploadedOnly_CB(NULL)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
-
-    // --- Ajout de la CheckBox ---
-    uploadedOnly_CB = new QCheckBox(tr("Uploaded only"), this);
-    uploadedOnly_CB->setToolTip(tr("Show only files and folders that have been uploaded"));
-    // On l'ajoute au layout horizontal existant qui contient les filtres
-    ui.horizontalLayout_2->addWidget(uploadedOnly_CB); 
-    connect(uploadedOnly_CB, SIGNAL(toggled(bool)), this, SLOT(filterUploadedOnlyToggled(bool)));
-    // ----------------------------
 
     //connect(notify, SIGNAL(filesPreModChanged(bool)), this, SLOT(preModDirectories(bool)));
     //connect(notify, SIGNAL(filesPostModChanged(bool)), this, SLOT(postModDirectories(bool)));
@@ -293,7 +285,8 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_FILENB       , charWidth*15 );
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_SIZE         , charWidth*10 );
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_AGE          , charWidth*6 );
-    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, charWidth*10 );
+    // MODIFIED: Reduced column width for Access (from 10 to 4) as requested
+    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, charWidth*4 );
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR  , charWidth*20 );
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_UPLOADED     , charWidth*20 );
 
@@ -326,6 +319,16 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
 LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
     : SharedFilesDialog(false,parent)
 {
+    // MODIFIED: Create and insert the checkbox only here (for My files)
+    uploadedOnly_CB = new QCheckBox(tr("Uploaded only"), this);
+    uploadedOnly_CB->setToolTip(tr("Show only files and folders that have been uploaded"));
+    
+    // Insert immediately after the view selector
+    int cbIndex = ui.horizontalLayout_2->indexOf(ui.viewType_CB);
+    ui.horizontalLayout_2->insertWidget(cbIndex + 1, uploadedOnly_CB);
+    
+    connect(uploadedOnly_CB, SIGNAL(toggled(bool)), this, SLOT(filterUploadedOnlyToggled(bool)));
+
     // Hide columns after loading the settings
     ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, false) ;
     ui.downloadButton->hide() ;
