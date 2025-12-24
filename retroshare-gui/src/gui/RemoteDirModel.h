@@ -1,21 +1,21 @@
-/*******************************************************************************
+ /*******************************************************************************
  * gui/RemoteDirModel.h                                                        *
- *                                                                             *
+ * *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
- *                                                                             *
+ * *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
  * published by the Free Software Foundation, either version 3 of the          *
  * License, or (at your option) any later version.                             *
- *                                                                             *
+ * *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
  * GNU Affero General Public License for more details.                         *
- *                                                                             *
+ * *
  * You should have received a copy of the GNU Affero General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
- *                                                                             *
+ * *
  *******************************************************************************/
 
 #ifndef REMOTE_DIR_MODEL
@@ -28,6 +28,8 @@
 #include <QAction>
 #include <QIcon>
 #include <QMenu>
+#include <QHash>   // Changed from map to QHash for efficiency with QString
+#include <QString>
 
 #include <stdint.h>
 #include <vector>
@@ -209,6 +211,11 @@ class TreeStyle_RDM: public RetroshareDirModel
 	private:
 		QAction *_showEmptyAct;
 		bool _showEmpty;
+
+        // Helper: Calculate totals using normalized paths
+        void recalculateDirectoryTotals();
+        QHash<QString, uint64_t> m_folderUploadTotals;
+
 	protected:
 		mutable std::vector<int> _parentRow ; // used to store the real parent row for non empty child
 };

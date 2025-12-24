@@ -1,21 +1,21 @@
 /*******************************************************************************
  * retroshare-gui/src/gui/FileTransfer/SharedFilesDialog.cpp                   *
- *                                                                             *
+ * *
  * Copyright (c) 2009 Retroshare Team <retroshare.project@gmail.com>           *
- *                                                                             *
+ * *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
  * published by the Free Software Foundation, either version 3 of the          *
  * License, or (at your option) any later version.                             *
- *                                                                             *
+ * *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
  * GNU Affero General Public License for more details.                         *
- *                                                                             *
+ * *
  * You should have received a copy of the GNU Affero General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
- *                                                                             *
+ * *
  *******************************************************************************/
 
 #include "SharedFilesDialog.h"
@@ -52,6 +52,7 @@
 #include <QString>
 #include <QStyledItemDelegate>
 #include <QTreeView>
+#include <QCheckBox> // Ajouté
 
 #include <set>
 
@@ -107,7 +108,8 @@ const QString Image_AddNewAssotiationForFile = ":/icons/svg/options.svg";
 class SFDSortFilterProxyModel : public QSortFilterProxyModel
 {
 public:
-    SFDSortFilterProxyModel(RetroshareDirModel *dirModel, QObject *parent) : QSortFilterProxyModel(parent)
+    SFDSortFilterProxyModel(RetroshareDirModel *dirModel, QObject *parent) 
+        : QSortFilterProxyModel(parent), m_uploadedOnly(false)
     {
         m_dirModel = dirModel;
 
@@ -118,7 +120,27 @@ public:
         setDynamicSortFilter(false);
     }
 
+    void setUploadedOnly(bool val) {
+        m_uploadedOnly = val;
+        invalidateFilter();
+    }
+
 protected:
+    virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
+    {
+        // 1. Custom Upload Check
+        if (m_uploadedOnly) {
+            // Check column 6 (Uploaded)
+            QModelIndex uploadIdx = sourceModel()->index(source_row, SHARED_FILES_DIALOG_COLUMN_UPLOADED, source_parent);
+            QString uploadStr = sourceModel()->data(uploadIdx, Qt::DisplayRole).toString();
+            // If empty or "-", treat as 0 -> filtered out
+            if (uploadStr.isEmpty() || uploadStr == "-") return false;
+        }
+
+        // 2. Default logic (preserves the "filtered" role check used by RetroShare for search/filtering)
+        return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
+    }
+
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const
     {
         bool dirLeft = (m_dirModel->getType(left) == DIR_TYPE_DIR);
@@ -133,6 +155,7 @@ protected:
 
 private:
     RetroshareDirModel *m_dirModel;
+    bool m_uploadedOnly;
 };
 
 // This class allows to draw the item in the share flags column using an appropriate size
@@ -178,6 +201,14 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
+
+    // --- Ajout de la CheckBox ---
+    uploadedOnly_CB = new QCheckBox(tr("Uploaded only"), this);
+    uploadedOnly_CB->setToolTip(tr("Show only files and folders that have been uploaded"));
+    // On l'ajoute au layout horizontal existant qui contient les filtres
+    ui.horizontalLayout_2->addWidget(uploadedOnly_CB); 
+    connect(uploadedOnly_CB, SIGNAL(toggled(bool)), this, SLOT(filterUploadedOnlyToggled(bool)));
+    // ----------------------------
 
     //connect(notify, SIGNAL(filesPreModChanged(bool)), this, SLOT(preModDirectories(bool)));
     //connect(notify, SIGNAL(filesPostModChanged(bool)), this, SLOT(postModDirectories(bool)));
@@ -513,6 +544,9 @@ void LocalSharedFilesDialog::showProperColumns()
         ui.filterPatternLineEdit->show();
 #endif
     }
+    // MODIFICATION: On s'assure que la colonne Uploaded est visible en mode local
+    // (Le filtre ne fonctionnera que si la colonne contient des données)
+    ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_UPLOADED, false);
 }
 void RemoteSharedFilesDialog::showProperColumns()
 {
@@ -1408,7 +1442,7 @@ void SharedFilesDialog::indicatorChanged(int index)
     else
         ui.dirTreeView->sortByColumn(SHARED_FILES_DIALOG_COLUMN_NAME, Qt::AscendingOrder);
 
-    updateDisplay() ;
+    //updateDisplay() ;
 }
 
 void SharedFilesDialog::onFilterTextEdited()
@@ -1500,6 +1534,21 @@ void SharedFilesDialog::startFilter()
     lastFilterString = ui.filterPatternLineEdit->text();
 
     FilterItems();
+}
+
+void SharedFilesDialog::filterUploadedOnlyToggled(bool checked)
+{
+    tree_proxyModel->setUploadedOnly(checked);
+    flat_proxyModel->setUploadedOnly(checked);
+    
+    // Forcer le rafraîchissement
+    tree_proxyModel->invalidate();
+    flat_proxyModel->invalidate();
+    
+    // En mode Arbre, il peut être nécessaire d'étendre les éléments pour voir les résultats
+    if(checked && ui.viewType_CB->currentIndex() == VIEW_TYPE_TREE) {
+        expandAll();
+    }
 }
 
 void SharedFilesDialog::updateDirTreeView()
@@ -1760,3 +1809,4 @@ void SharedFilesDialog::updateFontSize()
         ui.dirTreeView->setIconSize(QSize(iconHeight, iconHeight));
     }
 }
+
