@@ -527,14 +527,14 @@ void PostedListWidgetWithModel::copyMessageLink()
 
 void PostedListWidgetWithModel::editPost()
 {
-    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+	QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
 	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
 
 	RsGxsId author_id;
 	ui->idChooser->getChosenId(author_id);
 
-	PostedCreatePostDialog *msgDialog = new PostedCreatePostDialog(rsPosted,post.mMeta.mGroupId,author_id, post.mMeta.mMsgId);
-    msgDialog->show();
+	PostedCreatePostDialog *msgDialog = new PostedCreatePostDialog(rsPosted, groupId(),author_id, post.mMeta.mMsgId);
+	msgDialog->show();
 }
 
 void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
