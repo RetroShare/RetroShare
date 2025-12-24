@@ -34,7 +34,7 @@ void AvatarDefs::getOwnAvatar(QPixmap &avatar, const QString& defaultImage)
 	int size = 0;
 
 	/* get avatar */
-    rsChats->getOwnAvatarData(data, size);
+    rsChats->getOwnNodeAvatarData(data, size);
 
 	if (size == 0) {
         avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
@@ -94,7 +94,7 @@ bool AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const
 
     if (gpgId == rsPeers->getGPGOwnId()) {
 		/* Its me */
-        rsChats->getOwnAvatarData(data,size);
+        rsChats->getOwnNodeAvatarData(data,size);
 	} else {
 		/* get the first available avatar of one of the ssl ids */
         std::list<RsPeerId> sslIds;
