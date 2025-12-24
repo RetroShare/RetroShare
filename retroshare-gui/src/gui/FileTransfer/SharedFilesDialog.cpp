@@ -1538,14 +1538,19 @@ void SharedFilesDialog::startFilter()
 
 void SharedFilesDialog::filterUploadedOnlyToggled(bool checked)
 {
+    // CRITICAL FIX: Clear selection before filtering to avoid SIGSEGV in QSortFilterProxyModel::parent
+    // This happens because QItemSelectionModel tries to access parents of items being hidden/removed.
+    if (ui.dirTreeView->selectionModel()) {
+        ui.dirTreeView->selectionModel()->clear();
+    }
+
+    // Apply filter
     tree_proxyModel->setUploadedOnly(checked);
     flat_proxyModel->setUploadedOnly(checked);
     
-    // Forcer le rafraîchissement
-    tree_proxyModel->invalidate();
-    flat_proxyModel->invalidate();
+    // Note: invalidate() calls removed as setUploadedOnly already calls invalidateFilter()
     
-    // En mode Arbre, il peut être nécessaire d'étendre les éléments pour voir les résultats
+    // In Tree view, we might need to expand items to see results if they are deep
     if(checked && ui.viewType_CB->currentIndex() == VIEW_TYPE_TREE) {
         expandAll();
     }
