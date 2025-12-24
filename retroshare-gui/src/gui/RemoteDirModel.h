@@ -1,4 +1,4 @@
- /*******************************************************************************
+/*******************************************************************************
  * gui/RemoteDirModel.h                                                        *
  * *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
@@ -28,7 +28,7 @@
 #include <QAction>
 #include <QIcon>
 #include <QMenu>
-#include <QHash>   // Changed from map to QHash for efficiency with QString
+#include <QHash>
 #include <QString>
 
 #include <stdint.h>
@@ -212,7 +212,7 @@ class TreeStyle_RDM: public RetroshareDirModel
 		QAction *_showEmptyAct;
 		bool _showEmpty;
 
-        // Helper: Calculate totals using normalized paths
+        // Helper to calculate total upload per directory
         void recalculateDirectoryTotals();
         QHash<QString, uint64_t> m_folderUploadTotals;
 

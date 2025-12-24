@@ -29,7 +29,7 @@
 #include "util/RsProtectedTimer.h"
 
 #include <set>
-#include <QCheckBox> // Ajout pour la checkbox
+#include <QCheckBox> // For the new filter feature
 
 class RetroshareDirModel;
 class QSortFilterProxyModel;
@@ -86,7 +86,7 @@ private slots:
 
   void updateDirTreeView();
   
-  // Nouveau slot pour le filtre
+  // Slot for the new checkbox filter
   void filterUploadedOnlyToggled(bool checked);
 
   public slots:
@@ -142,7 +142,7 @@ protected:
   RetroshareDirModel *flat_model;
   RetroshareDirModel *model;
   
-  // Changé le type pour utiliser notre classe personnalisée
+  // Changed to specific Proxy model type to access new methods
   SFDSortFilterProxyModel *tree_proxyModel;
   SFDSortFilterProxyModel *flat_proxyModel;
   QSortFilterProxyModel *proxyModel;
@@ -156,7 +156,7 @@ protected:
 
   RsEventsHandlerId_t mEventHandlerId ;
 
-  // Nouvelle CheckBox
+  // New Checkbox member (protected to be accessible by LocalSharedFilesDialog)
   QCheckBox *uploadedOnly_CB;
 };
 

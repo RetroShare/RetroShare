@@ -211,7 +211,7 @@ void TreeStyle_RDM::recalculateDirectoryTotals()
         }
     }
     // DEBUG: Summary
-    std::cerr << "UPLOAD_DBG: --- Finished Recalc. Processed " << processedFiles << " active files. Map size: " << m_folderUploadTotals.size() << " ---" << std::endl;
+    // std::cerr << "UPLOAD_DBG: --- Finished Recalc. Processed " << processedFiles << " active files. Map size: " << m_folderUploadTotals.size() << " ---" << std::endl;
 }
 
 void TreeStyle_RDM::update()
@@ -381,15 +381,10 @@ int FlatStyle_RDM::columnCount(const QModelIndex &/*parent*/) const
 	return REMOTEDIRMODEL_COLUMN_COUNT;
 }
 
-QString RetroshareDirModel::getFlagsString(FileStorageFlags flags)
+// MODIFIED: Return empty string to hide B, S, N letters
+QString RetroshareDirModel::getFlagsString(FileStorageFlags /*flags*/)
 {
-	char str[11] = "-  -  -" ;
-
-    if(flags & DIR_FLAGS_BROWSABLE) 	     str[0] = 'B' ;
-    if(flags & DIR_FLAGS_ANONYMOUS_SEARCH) 	 str[3] = 'S' ;
-	if(flags & DIR_FLAGS_ANONYMOUS_DOWNLOAD) str[6] = 'N' ;
-
-	return QString(str) ;
+	return QString("") ;
 }
 QString RetroshareDirModel::getGroupsString(FileStorageFlags flags,const std::list<RsNodeGroupId>& group_ids)
 {
@@ -706,13 +701,13 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
                 auto it = m_folderUploadTotals.find(path);
                 
                 // DEBUG: Display role request
-                std::cerr << "UPLOAD_DBG: Display Role for DIR. Name: " << details.name 
-                          << " | Raw Path: " << details.path 
-                          << " | Lookup Key: [" << path.toStdString() << "]" << std::endl;
+                // std::cerr << "UPLOAD_DBG: Display Role for DIR. Name: " << details.name 
+                //           << " | Raw Path: " << details.path 
+                //           << " | Lookup Key: [" << path.toStdString() << "]" << std::endl;
 
                 if(it != m_folderUploadTotals.end() && it.value() > 0)
                 {
-                     std::cerr << "UPLOAD_DBG:    -> FOUND! Value: " << it.value() << std::endl;
+                    // std::cerr << "UPLOAD_DBG:    -> FOUND! Value: " << it.value() << std::endl;
                     return misc::friendlyUnit(it.value());
                 }
 
@@ -950,6 +945,15 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 
 	if (role == Qt::ForegroundRole)
 	{
+        // MODIFIED: Colorize Uploaded column (Directory=Blue, File=Green)
+        if (coln == REMOTEDIRMODEL_COLUMN_UPLOADED)
+        {
+            if (details.type == DIR_TYPE_DIR)
+                return QColor(Qt::blue);
+            else if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE)
+                return QColor(Qt::darkGreen);
+        }
+
         if((details.type == DIR_TYPE_FILE  || details.type == DIR_TYPE_EXTRA_FILE) && details.hash.isNull())
             return QVariant(QColor(Qt::green)) ;
         else if(ageIndicator != IND_ALWAYS && details.max_mtime + ageIndicator < time(NULL))
