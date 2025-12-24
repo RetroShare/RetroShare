@@ -1,21 +1,21 @@
 /*******************************************************************************
- * gui/RemoteDirModel.cpp                                                      *
- *                                                                             *
+ * gui/RemoteDirModel.cpp                                                        *
+ * *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
- *                                                                             *
+ * *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
  * published by the Free Software Foundation, either version 3 of the          *
  * License, or (at your option) any later version.                             *
- *                                                                             *
+ * *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
  * GNU Affero General Public License for more details.                         *
- *                                                                             *
+ * *
  * You should have received a copy of the GNU Affero General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
- *                                                                             *
+ * *
  *******************************************************************************/
 
 #include "RemoteDirModel.h"
@@ -42,6 +42,7 @@
 #include <algorithm>
 #include <set>
 #include <time.h>
+#include <iostream> // Keep iostream for debug logs
 
 /*****
  * #define RDM_DEBUG
@@ -58,8 +59,8 @@
 #define REMOTEDIRMODEL_COLUMN_COUNT         7
 #define RETROSHARE_DIR_MODEL_FILTER_STRING "filtered"
 
-static const uint32_t FLAT_VIEW_MAX_REFS_PER_SECOND       = 2000 ;
-static const size_t   FLAT_VIEW_MAX_REFS_TABLE_SIZE       = 10000 ; //
+static const uint32_t FLAT_VIEW_MAX_REFS_PER_SECOND       = 10000 ;
+static const size_t   FLAT_VIEW_MAX_REFS_TABLE_SIZE       = 30000 ; //
 static const uint32_t FLAT_VIEW_MIN_DELAY_BETWEEN_UPDATES = 120 ;	// dont rebuild ref list more than every 2 mins.
 
 RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
@@ -148,8 +149,76 @@ void RetroshareDirModel::treeStyle()
 	categoryIcon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/folderopen.png"), QIcon::Normal, QIcon::On);
 	peerIcon = FilesDefs::getIconFromQtResourcePath(":/icons/folder-account.svg");
 }
+
+void TreeStyle_RDM::recalculateDirectoryTotals()
+{
+    // DEBUG: Start of recalculation
+    // std::cerr << "UPLOAD_DBG: --- Starting recalculateDirectoryTotals ---" << std::endl;
+
+    m_folderUploadTotals.clear();
+
+    // Only relevant for local files. Remote files do not expose upload statistics per file in the same way here.
+    if(RemoteMode)
+        return;
+
+    std::vector<void*> stack;
+    // Start with NULL (Root)
+    stack.push_back(NULL);
+
+    int processedFiles = 0;
+
+    while(!stack.empty())
+    {
+        void* ref = stack.back();
+        stack.pop_back();
+
+        DirDetails details;
+        if(requestDirDetails(ref, RemoteMode, details))
+        {
+            if(details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE)
+            {
+                uint64_t uploaded = rsFiles->getCumulativeUpload(details.hash);
+                if(uploaded > 0)
+                {
+                    processedFiles++;
+                    // details.path for a file is the directory containing it.
+                    QString currentPath = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
+                    
+                    // Iterate up the directory tree
+                    while(!currentPath.isEmpty() && currentPath != ".")
+                    {
+                        m_folderUploadTotals[currentPath] += uploaded;
+                        
+                        // Get parent directory using QFileInfo logic
+                        QString parent = QFileInfo(currentPath).path();
+                        
+                        // Break if we reached root or top (QFileInfo returns path itself if no parent)
+                        if(parent == currentPath || parent.isEmpty()) {
+                             break;
+                        }
+                        currentPath = parent;
+                    }
+                }
+            }
+            // Included DIR_TYPE_PERSON to allow recursion into root "My Files"
+            else if(details.type == DIR_TYPE_DIR || details.type == DIR_TYPE_ROOT || details.type == DIR_TYPE_PERSON)
+            {
+                for(const auto& child : details.children)
+                {
+                    stack.push_back(child.ref);
+                }
+            }
+        }
+    }
+    // DEBUG: Summary
+    std::cerr << "UPLOAD_DBG: --- Finished Recalc. Processed " << processedFiles << " active files. Map size: " << m_folderUploadTotals.size() << " ---" << std::endl;
+}
+
 void TreeStyle_RDM::update()
 {
+    // Recalculate totals before notifying view update
+    recalculateDirectoryTotals();
+
 	preMods() ;
 	postMods() ;
 }
@@ -610,7 +679,6 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 		{
 			case REMOTEDIRMODEL_COLUMN_NAME:
 				return QString::fromUtf8(details.name.c_str());
-				break;
 			case REMOTEDIRMODEL_COLUMN_FILENB:
                 if (details.children.size() > 1)
 				{
@@ -622,11 +690,34 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
             case REMOTEDIRMODEL_COLUMN_AGE:
 				return misc::timeRelativeToNow(details.max_mtime);
 			case REMOTEDIRMODEL_COLUMN_FRIEND_ACCESS:
-				return QVariant();
+				return getFlagsString(details.flags);
 			case REMOTEDIRMODEL_COLUMN_WN_VISU_DIR:
 				return getGroupsString(details.flags,details.parent_groups) ;
 			case REMOTEDIRMODEL_COLUMN_UPLOADED:
+            {
+                // New logic: Check if we have a calculated total for this directory
+                
+                // Based on logs, the 'details.path' for a directory IS the full path to that directory.
+                // We do NOT need to append the name.
+                
+                QString path = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
+
+                // Fallback / Safety: try constructed path if direct path fails (covers root vs sub-dir anomalies)
+                auto it = m_folderUploadTotals.find(path);
+                
+                // DEBUG: Display role request
+                std::cerr << "UPLOAD_DBG: Display Role for DIR. Name: " << details.name 
+                          << " | Raw Path: " << details.path 
+                          << " | Lookup Key: [" << path.toStdString() << "]" << std::endl;
+
+                if(it != m_folderUploadTotals.end() && it.value() > 0)
+                {
+                     std::cerr << "UPLOAD_DBG:    -> FOUND! Value: " << it.value() << std::endl;
+                    return misc::friendlyUnit(it.value());
+                }
+
 				return "";
+            }
 
 			default:
 				return tr("DIR");
@@ -1753,3 +1844,4 @@ void TreeStyle_RDM::showEmpty(const bool value)
 	_showEmpty = value;
 	update();
 }
+
