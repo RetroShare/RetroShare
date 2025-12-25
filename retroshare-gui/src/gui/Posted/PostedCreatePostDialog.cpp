@@ -55,7 +55,7 @@ const int MAXMESSAGESIZE = 199000;
 
 PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGroupId& grpId, const RsGxsId& default_author,RsGxsMessageId existing_post, QWidget *parent):
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
-	mPosted(posted), mGrpId(grpId), mOrigPostId(existing_post),
+	mPosted(posted), mBoardId(grpId), mOrigPostId(existing_post),
 	ui(new Ui::PostedCreatePostDialog)
 {
 	ui->setupUi(this);
@@ -167,7 +167,7 @@ void PostedCreatePostDialog::createPost()
 	}//switch (ui->idChooser->getChosenId(authorId))
 
 	RsPostedPost post;
-	post.mMeta.mGroupId = mGrpId;
+	post.mMeta.mGroupId = mBoardId;
 	post.mLink = std::string(ui->linkEdit->text().toUtf8());
 	
 	if(!ui->RichTextEditWidget->toPlainText().trimmed().isEmpty()) {
@@ -220,9 +220,9 @@ void PostedCreatePostDialog::loadOriginalBoardPostInfo()
 		std::vector<RsGxsComment> comments;
 		std::vector<RsGxsVote> votes;
 
-		if( !rsPosted->getBoardContent(mGrpId,std::set<RsGxsMessageId>({mOrigPostId}),posts,comments,votes) || posts.size() != 1)
+		if( !rsPosted->getBoardContent(mBoardId,std::set<RsGxsMessageId>({mOrigPostId}),posts,comments,votes) || posts.size() != 1)
 		{
-			std::cerr << "Cannot get board post data for board " << mGrpId << " and post " << mOrigPostId << std::endl;
+			std::cerr << "Cannot get board post data for board " << mBoardId << " and post " << mOrigPostId << std::endl;
 			return;
 		}
 
@@ -234,7 +234,7 @@ void PostedCreatePostDialog::loadOriginalBoardPostInfo()
 
             const RsPostedPost& post(posts[0]);
 
-			if(post.mMeta.mGroupId != mGrpId || post.mMeta.mMsgId != mOrigPostId)
+			if(post.mMeta.mGroupId != mBoardId || post.mMeta.mMsgId != mOrigPostId)
 			{
 				std::cerr << "PostedCreatePostDialog::loadBoardPostInfo() ERROR INVALID post ID or board ID" << std::endl;
 				return ;
@@ -268,9 +268,9 @@ void PostedCreatePostDialog::loadBoardInfo()
 	{
 		std::vector<RsPostedGroup> groups;
 
-        if( !rsPosted->getBoardsInfo(std::list<RsGxsGroupId>({mGrpId}),groups) || groups.size() != 1)
+        if( !rsPosted->getBoardsInfo(std::list<RsGxsGroupId>({mBoardId}),groups) || groups.size() != 1)
         {
-            std::cerr << "Cannot get board group data for board " << mGrpId << std::endl;
+            std::cerr << "Cannot get board group data for board " << mBoardId << std::endl;
             return;
         }
 
@@ -287,7 +287,7 @@ void PostedCreatePostDialog::loadBoardInfo()
 			}
 			else
 			{
-				std::cerr << "PostedCreatePostDialog::loadForumInfo() ERROR INVALID Number of Boards";
+				std::cerr << "PostedCreatePostDialog::loadBoardInfo() ERROR INVALID Number of Boards";
 				std::cerr << std::endl;
 			}
 
@@ -300,8 +300,7 @@ void PostedCreatePostDialog::saveBoardInfo(const RsGroupMetaData &meta)
 	mBoardMeta = meta;
 	mBoardMetaLoaded = true;
 
-	//channelName->setText(QString::fromUtf8(mChannelMeta.mGroupName.c_str()));
-	//subjectEdit->setFocus();
+	ui->titleEdit->setFocus();
 }
 
 

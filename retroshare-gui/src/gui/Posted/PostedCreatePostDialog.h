@@ -72,7 +72,7 @@ private:
 	QString mLink;
 	QString mNotes;
 	RsPosted* mPosted;
-	RsGxsGroupId mGrpId;
+	RsGxsGroupId mBoardId;
 	RsGxsMessageId mOrigPostId;
 	RsGroupMetaData mBoardMeta;
 	RsMsgMetaData mOrigMeta;
