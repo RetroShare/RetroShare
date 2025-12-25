@@ -72,7 +72,7 @@ static const int POSTED_TABS_POSTS  = 1;
 // for the image, so it's important that the height is a bit larger so as to leave some room for the text.
 //
 //
-#define IMAGE_COPYLINK     ":/images/copyrslink.png"
+#define IMAGE_COPYLINK     ":icons/png/copy.png"
 #define IMAGE_AUTHOR       ":/images/user/personal64.png"
 #define IMAGE_COPYHTTP     ":/images/emblem-web.png"
 
@@ -358,7 +358,7 @@ void PostedListWidgetWithModel::postContextMenu(const QPoint& point)
     menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR), tr("Show author in People tab"), this, SLOT(showAuthorInPeople()))->setData(index);
 
     if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
-        menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
+        menu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/pencil-edit-button.png"), tr("Edit"), this, SLOT(editPost()));
 
 
     menu.exec(QCursor::pos());
