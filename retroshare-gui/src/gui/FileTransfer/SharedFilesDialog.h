@@ -29,11 +29,12 @@
 #include "util/RsProtectedTimer.h"
 
 #include <set>
-#include <QCheckBox> // For the new filter feature
+#include <QCheckBox>
+#include <QItemSelection>
 
 class RetroshareDirModel;
 class QSortFilterProxyModel;
-class SFDSortFilterProxyModel; // Forward declaration
+class SFDSortFilterProxyModel;
 
 class SharedFilesDialog : public RsAutoUpdatePage
 {
@@ -86,7 +87,7 @@ private slots:
 
   void updateDirTreeView();
   
-  // Slot for the new checkbox filter
+  /** Slot for the Uploaded Only checkbox filter */
   void filterUploadedOnlyToggled(bool checked);
 
   public slots:
@@ -99,7 +100,8 @@ protected:
   Ui::SharedFilesDialog ui;
   virtual void processSettings(bool bLoad) = 0;
 
-  void recursRestoreExpandedItems(const QModelIndex& index, const std::string& path, const std::set<std::string>& exp, const std::set<std::string>& vis, const std::set<std::string>& sel);
+  /** signature updated to support selection batching to prevent hangs/crashes */
+  void recursRestoreExpandedItems(const QModelIndex& index, const std::string& path, const std::set<std::string>& exp, const std::set<std::string>& vis, const std::set<std::string>& sel, QItemSelection& batchSelection);
   void recursSaveExpandedItems(const QModelIndex& index, const std::string &path, std::set<std::string> &exp,std::set<std::string>& vis, std::set<std::string>& sel);
   void saveExpandedPathsAndSelection(std::set<std::string>& paths,std::set<std::string>& visible_indexes, std::set<std::string>& selected_indexes) ;
   void restoreExpandedPathsAndSelection(const std::set<std::string>& paths,const std::set<std::string>& visible_indexes, const std::set<std::string>& selected_indexes) ;
@@ -142,7 +144,6 @@ protected:
   RetroshareDirModel *flat_model;
   RetroshareDirModel *model;
   
-  // Changed to specific Proxy model type to access new methods
   SFDSortFilterProxyModel *tree_proxyModel;
   SFDSortFilterProxyModel *flat_proxyModel;
   QSortFilterProxyModel *proxyModel;
@@ -156,7 +157,7 @@ protected:
 
   RsEventsHandlerId_t mEventHandlerId ;
 
-  // New Checkbox member (protected to be accessible by LocalSharedFilesDialog)
+  /** Checkbox to filter files with 0 upload */
   QCheckBox *uploadedOnly_CB;
 };
 
