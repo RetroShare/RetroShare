@@ -52,8 +52,8 @@
 #include <QString>
 #include <QStyledItemDelegate>
 #include <QTreeView>
-#include <QCheckBox> // Added
-#include <QHBoxLayout> // Added
+#include <QCheckBox>
+#include <QHBoxLayout>
 
 #include <set>
 
@@ -129,15 +129,16 @@ public:
 protected:
     virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
     {
-        // 1. Custom Upload Check (MODIFIED)
+        // Custom check for "Uploaded only" filter
         if (m_uploadedOnly) {
-            // Check column 6 (Uploaded)
+            // Retrieve data from column 6
             QModelIndex uploadIdx = sourceModel()->index(source_row, SHARED_FILES_DIALOG_COLUMN_UPLOADED, source_parent);
             QString uploadStr = sourceModel()->data(uploadIdx, Qt::DisplayRole).toString();
-            // If empty or "-", treat as 0 -> filtered out
+            // If empty or "-", treat as 0 and filter row out
             if (uploadStr.isEmpty() || uploadStr == "-") return false;
         }
 
+        // Standard RetroShare logic for search/keywords
         return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
     }
 
@@ -155,7 +156,7 @@ protected:
 
 private:
     RetroshareDirModel *m_dirModel;
-    bool m_uploadedOnly; // Added member
+    bool m_uploadedOnly;
 };
 
 // This class allows to draw the item in the share flags column using an appropriate size
@@ -285,7 +286,7 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_FILENB       , charWidth*15 );
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_SIZE         , charWidth*10 );
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_AGE          , charWidth*6 );
-    // MODIFIED: Reduced column width for Access (from 10 to 4) as requested
+    // REDUCED WIDTH: Set to 4 instead of 10 to only fit icons
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, charWidth*4 );
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR  , charWidth*20 );
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_UPLOADED     , charWidth*20 );
@@ -319,13 +320,12 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
 LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
     : SharedFilesDialog(false,parent)
 {
-    // MODIFIED: Create and insert the checkbox only here (for My files)
+    // CREATION & POSITIONING: Box created only here and placed right of view selector
     uploadedOnly_CB = new QCheckBox(tr("Uploaded only"), this);
     uploadedOnly_CB->setToolTip(tr("Show only files and folders that have been uploaded"));
     
-    // Insert immediately after the view selector
-    int cbIndex = ui.horizontalLayout_2->indexOf(ui.viewType_CB);
-    ui.horizontalLayout_2->insertWidget(cbIndex + 1, uploadedOnly_CB);
+    int viewTypeIdx = ui.horizontalLayout_2->indexOf(ui.viewType_CB);
+    ui.horizontalLayout_2->insertWidget(viewTypeIdx + 1, uploadedOnly_CB);
     
     connect(uploadedOnly_CB, SIGNAL(toggled(bool)), this, SLOT(filterUploadedOnlyToggled(bool)));
 
@@ -547,8 +547,7 @@ void LocalSharedFilesDialog::showProperColumns()
         ui.filterPatternLineEdit->show();
 #endif
     }
-    // MODIFICATION: On s'assure que la colonne Uploaded est visible en mode local
-    // (Le filtre ne fonctionnera que si la colonne contient des données)
+    // Column 6 must be visible for filtering to work
     ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_UPLOADED, false);
 }
 void RemoteSharedFilesDialog::showProperColumns()
@@ -1051,12 +1050,18 @@ void SharedFilesDialog::restoreExpandedPathsAndSelection(const std::set<std::str
 #ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "Restoring expanded items. " << std::endl;
 #endif
+
+    /** Use batch selection to avoid SIGSEGV in selectionModel */
+    QItemSelection batchSelection;
+
     for(int row = 0; row < ui.dirTreeView->model()->rowCount(); ++row)
     {
         std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
-        recursRestoreExpandedItems(ui.dirTreeView->model()->index(row,0),path,expanded_indexes,hidden_indexes,selected_indexes);
+        recursRestoreExpandedItems(ui.dirTreeView->model()->index(row,0),path,expanded_indexes,hidden_indexes,selected_indexes, batchSelection);
     }
-    //QItemSelection selection ;
+    
+    if(!batchSelection.isEmpty())
+        ui.dirTreeView->selectionModel()->select(batchSelection, QItemSelectionModel::Select | QItemSelectionModel::Rows);
 
     ui.dirTreeView->blockSignals(false) ;
 }
@@ -1139,15 +1144,17 @@ void SharedFilesDialog::recursSaveExpandedItems(const QModelIndex& index,const s
 void SharedFilesDialog::recursRestoreExpandedItems(const QModelIndex& index, const std::string &path,
                                                    const std::set<std::string>& exp,
                                                    const std::set<std::string>& hid,
-                                                   const std::set<std::string> &sel)
+                                                   const std::set<std::string> &sel,
+                                                   QItemSelection& batchSelection)
 {
     std::string local_path = path+"/"+index.data(Qt::DisplayRole).toString().toStdString();
 #ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "at index " << index.row() << ". data[1]=" << local_path << std::endl;
 #endif
 
+    /** Collect index for batch selection later */
     if(sel.find(local_path) != sel.end())
-        ui.dirTreeView->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+        batchSelection.select(index, index);
 
     // Disable hidden check as we don't use it and Qt bug: https://bugreports.qt.io/browse/QTBUG-11438
     /*bool invisible = hid.find(local_path) != hid.end();
@@ -1165,9 +1172,9 @@ void SharedFilesDialog::recursRestoreExpandedItems(const QModelIndex& index, con
 
         for(int row=0;row<ui.dirTreeView->model()->rowCount(index);++row)
 #if QT_VERSION >= QT_VERSION_CHECK(5, 8, 0)
-            recursRestoreExpandedItems(ui.dirTreeView->model()->index(row,0,index),local_path,exp,hid,sel) ;
+            recursRestoreExpandedItems(ui.dirTreeView->model()->index(row,0,index),local_path,exp,hid,sel, batchSelection) ;
 #else
-            recursRestoreExpandedItems(index.child(row,0),local_path,exp,hid,sel) ;
+            recursRestoreExpandedItems(index.child(row,0),local_path,exp,hid,sel, batchSelection) ;
 #endif
     }
 }
@@ -1193,9 +1200,10 @@ void  SharedFilesDialog::postModDirectories(bool local)
     if (ui.filterPatternLineEdit->text().isEmpty() == false)
         FilterItems();
 
-    ui.dirTreeView->setSortingEnabled(true);
-
+    /** FIX: Restore selection and expansion BEFORE enabling sorting to avoid mismatch */
     restoreExpandedPathsAndSelection(expanded_indexes,hidden_indexes,selected_indexes) ;
+
+    ui.dirTreeView->setSortingEnabled(true);
 
 #ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "****** updated directories! Re-enabling sorting ******" << std::endl;
@@ -1541,19 +1549,16 @@ void SharedFilesDialog::startFilter()
 
 void SharedFilesDialog::filterUploadedOnlyToggled(bool checked)
 {
-    // CRITICAL FIX: Clear selection before filtering to avoid SIGSEGV in QSortFilterProxyModel::parent
-    // This happens because QItemSelectionModel tries to access parents of items being hidden/removed.
+    /** FIX: Clear selection before filtering to avoid SIGSEGV in parent calculations */
     if (ui.dirTreeView->selectionModel()) {
         ui.dirTreeView->selectionModel()->clear();
     }
 
-    // Apply filter
+    // Apply the boolean filter to both proxies
     tree_proxyModel->setUploadedOnly(checked);
     flat_proxyModel->setUploadedOnly(checked);
     
-    // Note: invalidate() calls removed as setUploadedOnly already calls invalidateFilter()
-    
-    // In Tree view, we might need to expand items to see results if they are deep
+    // Expand to show results in tree view
     if(checked && ui.viewType_CB->currentIndex() == VIEW_TYPE_TREE) {
         expandAll();
     }
