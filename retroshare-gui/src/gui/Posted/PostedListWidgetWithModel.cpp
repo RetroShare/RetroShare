@@ -533,6 +533,13 @@ void PostedListWidgetWithModel::editPost()
 	RsGxsId author_id;
 	ui->idChooser->getChosenId(author_id);
 
+	if(!rsIdentity->isOwnId(author_id))
+	{
+		QString errorMessage = QString(tr("Attempt to edit a board post with an author that is not a own ID"));
+		QMessageBox::warning(this, "RetroShare", errorMessage, QMessageBox::Ok, QMessageBox::Ok);
+		return;
+	}
+
 	PostedCreatePostDialog *msgDialog = new PostedCreatePostDialog(rsPosted, groupId(),author_id, post.mMeta.mMsgId);
 	msgDialog->show();
 }
