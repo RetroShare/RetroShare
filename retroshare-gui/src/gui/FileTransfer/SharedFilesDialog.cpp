@@ -342,22 +342,28 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
 
 /**
  * Constructor for LocalSharedFilesDialog.
+ * Sets the new "Popular files" label and a more descriptive tooltip.
  */
 LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
     : SharedFilesDialog(false,parent)
 {
-    // Updated label to "Popular files" as requested
+    // Label updated to "Popular files"
     uploadedOnly_CB = new QCheckBox(tr("Popular files"), this);
-    uploadedOnly_CB->setToolTip(tr("Show only files and folders that have been uploaded by others"));
     
+    // Updated tooltip to be more descriptive of the "Popularity" (upload activity)
+    uploadedOnly_CB->setToolTip(tr("Show only files and folders that have been successfully uploaded to other peers"));
+    
+    // Positioning the checkbox next to the view selector
     int cbIndex = ui.horizontalLayout_2->indexOf(ui.viewType_CB);
     ui.horizontalLayout_2->insertWidget(cbIndex + 1, uploadedOnly_CB);
     
     connect(uploadedOnly_CB, SIGNAL(toggled(bool)), this, SLOT(filterUploadedOnlyToggled(bool)));
 
+    // Ensure proper columns are visible for local sharing
     ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, false) ;
     ui.downloadButton->hide() ;
 
+    // Load user settings and apply current view
     processSettings(true);
     changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
 
@@ -1626,20 +1632,34 @@ void SharedFilesDialog::startFilter()
     FilterItems();
 }
 
+/**
+ * Handles the "Popular files" checkbox logic.
+ * Correctly manages tree expansion and returns to a clean state when unchecked.
+ */
 void SharedFilesDialog::filterUploadedOnlyToggled(bool checked)
 {
-    /** FIX: Clear selection before filtering to avoid SIGSEGV in parent calculations */
+    /** FIX: Clear selection before filtering to avoid potential proxy index crashes */
     if (ui.dirTreeView->selectionModel()) {
         ui.dirTreeView->selectionModel()->clear();
     }
 
-    // Apply the boolean filter to both proxies
-    tree_proxyModel->setUploadedOnly(checked);
-    flat_proxyModel->setUploadedOnly(checked);
+    // Apply the boolean filter to the proxy models
+    if (tree_proxyModel) tree_proxyModel->setUploadedOnly(checked);
+    if (flat_proxyModel) flat_proxyModel->setUploadedOnly(checked);
     
-    // Expand to show results in tree view
-    if(checked && ui.viewType_CB->currentIndex() == VIEW_TYPE_TREE) {
-        expandAll();
+    // Notify the views that the filter state has changed to trigger a redraw
+    if (tree_proxyModel) tree_proxyModel->invalidate();
+    if (flat_proxyModel) flat_proxyModel->invalidate();
+    
+    // Handle Tree View specific behavior: Expand on check, Collapse on uncheck
+    if(ui.viewType_CB->currentIndex() == VIEW_TYPE_TREE) {
+        if (checked) {
+            // Reveal all popular files found in subdirectories
+            expandAll();
+        } else {
+            // Return to a clean base state showing only root directories
+            ui.dirTreeView->collapseAll();
+        }
     }
 }
 
