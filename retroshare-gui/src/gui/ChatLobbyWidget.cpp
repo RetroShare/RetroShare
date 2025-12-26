@@ -199,7 +199,14 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
     publicLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
 	ui.lobbyTreeWidget->insertTopLevelItem(3, publicLobbyItem);
 
-	ui.lobbyTreeWidget->expandAll();
+        // expand subscribed lobbvies
+        ui.lobbyTreeWidget->expandItem(privateSubLobbyItem);
+        ui.lobbyTreeWidget->expandItem(publicSubLobbyItem);
+
+        // collapse aunsubscribed lobbies
+        ui.lobbyTreeWidget->collapseItem(privateLobbyItem);
+        ui.lobbyTreeWidget->collapseItem(publicLobbyItem);
+
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_NAME,false) ;
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_USER_COUNT,true) ;
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_TOPIC,true) ;
