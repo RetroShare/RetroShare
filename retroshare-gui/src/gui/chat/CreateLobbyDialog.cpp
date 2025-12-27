@@ -129,6 +129,8 @@ void CreateLobbyDialog::createLobby()
     // create chat lobby !!
     std::string lobby_name = ui->lobbyName_LE->text().toUtf8().constData() ;
     std::string lobby_topic = ui->lobbyTopic_LE->text().toUtf8().constData() ;
+    std::string lobby_description = ui->lobbyDescription_TE->toPlainText().toUtf8().constData() ;
+    std::string lobby_topicwithdesc = lobby_topic + "\n" + lobby_description;
 
     // set nick name !
     RsGxsId gxs_id ;
@@ -149,7 +151,7 @@ void CreateLobbyDialog::createLobby()
     if(ui->pgp_signed_CB->isChecked())
         lobby_flags |= RS_CHAT_LOBBY_FLAGS_PGP_SIGNED ;
     
-    ChatLobbyId id = rsMsgs->createChatLobby(lobby_name,gxs_id, lobby_topic, shareList, lobby_flags);
+    ChatLobbyId id = rsMsgs->createChatLobby(lobby_name,gxs_id, lobby_topicwithdesc, shareList, lobby_flags);
 
     std::cerr << "gui: Created chat room " << std::hex << id << std::dec << std::endl ;
 
