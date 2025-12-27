@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/PulseViewGroup.h                                                *
+ * retroshare-gui/src/gui/TheWire/PulseViewGroup.h                             *
  *                                                                             *
  * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *

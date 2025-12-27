@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/RsGUIEventManager.h                                                              *
+ * retroshare-gui/src/gui/RsGUIEventManager.h                                  *
  *                                                                             *
  * Copyright (c) 2010 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *

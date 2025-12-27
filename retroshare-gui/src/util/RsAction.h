@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/RsAction.h                                                             *
+ * retroshare-gui/src/util/RsAction.h                                          *
  *                                                                             *
  * Copyright (c) 2007 DrBob          <retroshare.project@gmail.com>            *
  *                                                                             *

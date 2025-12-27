@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/elastic/arrow.h                                                         *
+ * retroshare-gui/src/gui/elastic/arrow.h                                      *
  *                                                                             *
  * Copyright (c) 2012, RetroShare Team <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -43,11 +43,11 @@ public:
 
     enum { Type = UserType + 3 };
     int type() const { return Type; }
-    
+
 protected:
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    
+
 private:
     Node *source, *dest;
 

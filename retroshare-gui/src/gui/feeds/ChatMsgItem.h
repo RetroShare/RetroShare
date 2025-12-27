@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/ChatMsgItem.h                                                     *
+ * retroshare-gui/src/gui/feeds/ChatMsgItem.h                                  *
  *                                                                             *
  * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *

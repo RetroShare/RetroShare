@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/NetworkView.h                                                           *
+ * retroshare-gui/src/gui/NetworkView.h                                        *
  *                                                                             *
  * Copyright (c) 2008 Robert Fernie    <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -30,7 +30,7 @@
 #include "ui_NetworkView.h"
 
 
-class NetworkView : public RsAutoUpdatePage 
+class NetworkView : public RsAutoUpdatePage
 {
 	Q_OBJECT
 

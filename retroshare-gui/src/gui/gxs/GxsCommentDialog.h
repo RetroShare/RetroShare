@@ -27,7 +27,7 @@ namespace Ui {
 class GxsCommentDialog;
 }
 
-class GxsCommentDialog: public QWidget 
+class GxsCommentDialog: public QWidget
 {
 	Q_OBJECT
 

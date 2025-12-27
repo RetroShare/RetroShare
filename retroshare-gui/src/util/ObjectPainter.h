@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/ObjectPainter.h                                                        *
+ * retroshare-gui/src/util/ObjectPainter.h                                     *
  *                                                                             *
  * Copyright (c) 2012 Retroshare Team   <retroshare.project@gmail.com>         *
  *                                                                             *

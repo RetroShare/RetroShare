@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ui_TrustView.h"
 #include <retroshare-gui/RsAutoUpdatePage.h>
 

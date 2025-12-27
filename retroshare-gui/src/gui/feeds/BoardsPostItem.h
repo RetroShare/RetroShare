@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/BoardsPostItem.h                                              *
+ * retroshare-gui/src/gui/feeds/BoardsPostItem.h                               *
  *                                                                             *
  * Copyright (c) 2012, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -81,7 +81,7 @@ private slots:
     void viewPicture();
 
 signals:
-	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);	
+	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
 
 private:
 	void setup();

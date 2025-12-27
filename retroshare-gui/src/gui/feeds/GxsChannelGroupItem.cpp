@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/GxsChannelGroupItem.cpp                                           *
+ * retroshare-gui/src/gui/feeds/GxsChannelGroupItem.cpp                        *
  *                                                                             *
  * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *

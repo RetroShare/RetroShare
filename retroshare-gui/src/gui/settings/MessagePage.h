@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/MessagePage.h                                                  *
+ * retroshare-gui/src/gui/settings/MessagePage.h                               *
  *                                                                             *
  * Copyright (C) 2006 Crypton <retroshare.project@gmail.com>                   *
  *                                                                             *

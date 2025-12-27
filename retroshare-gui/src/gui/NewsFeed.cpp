@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/NewsFeed.cpp                                                            *
+ * retroshare-gui/src/gui/NewsFeed.cpp                                         *
  *                                                                             *
  * Copyright (c) 2008 Robert Fernie    <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -472,7 +472,7 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 		addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_HELLO, false), true );
 		return;
 	}
-	
+
 
     RsFeedTypeFlags FeedItemType(RsFeedTypeFlags::RS_FEED_TYPE_NONE);
 

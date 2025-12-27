@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/rsettingswin.h                                                 *
+ * retroshare-gui/src/gui/settings/rsettingswin.h                              *
  *                                                                             *
  * Copyright (c) 2008, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

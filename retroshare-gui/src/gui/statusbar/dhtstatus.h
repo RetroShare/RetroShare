@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/dhtstatus.h                                                   *
+ * retroshare-gui/src/gui/statusbar/dhtstatus.h                                *
  *                                                                             *
  * Copyright (c) 2009 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

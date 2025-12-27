@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/EventFilter.h                                                          *
+ * retroshare-gui/src/util/EventFilter.h                                       *
  *                                                                             *
  * Copyright (C) 2006, 2007 crypton  <retroshare.project@gmail.com>            *
  *                                                                             *
@@ -42,7 +42,7 @@ class QEvent;
  * widget->installEventFilter(resizeFilter);
  * </code>
  *
- * 
+ *
  */
 class RSQTUTIL_API EventFilter : public QObject, NonCopyable {
 	Q_OBJECT

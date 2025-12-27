@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/ObjectPainter.cpp                                                      *
+ * retroshare-gui/src/util/ObjectPainter.cpp                                   *
  *                                                                             *
  * Copyright (c) 2012 Retroshare Team   <retroshare.project@gmail.com>         *
  *                                                                             *

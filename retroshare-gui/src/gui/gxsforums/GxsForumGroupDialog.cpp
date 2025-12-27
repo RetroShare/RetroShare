@@ -25,8 +25,8 @@
 #include <iostream>
 
 // To start with we only have open forums - with distribution controls.
-			
-const uint32_t ForumCreateEnabledFlags = ( 
+
+const uint32_t ForumCreateEnabledFlags = (
 			GXS_GROUP_FLAGS_NAME          |
 //			GXS_GROUP_FLAGS_ICON          |
 			GXS_GROUP_FLAGS_DESCRIPTION   |
@@ -38,20 +38,20 @@ const uint32_t ForumCreateEnabledFlags = (
 			// GXS_GROUP_FLAGS_PERSONALSIGN  |
 			// GXS_GROUP_FLAGS_COMMENTS      |
 			0);
-			
+
 const uint32_t ForumCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
 			//GXS_GROUP_DEFAULTS_DISTRIB_GROUP        |
 			//GXS_GROUP_DEFAULTS_DISTRIB_LOCAL        |
-			
+
 			GXS_GROUP_DEFAULTS_PUBLISH_OPEN           |
 			//GXS_GROUP_DEFAULTS_PUBLISH_THREADS      |
 			//GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED     |
 			//GXS_GROUP_DEFAULTS_PUBLISH_ENCRYPTED    |
-			
+
 			//GXS_GROUP_DEFAULTS_PERSONAL_PGP         |
 			GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED      |
 			//GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     |
-			
+
 			//GXS_GROUP_DEFAULTS_COMMENTS_YES         |
 			GXS_GROUP_DEFAULTS_COMMENTS_NO            |
 			0);

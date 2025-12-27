@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/connect/ConnectFriendWizard.cpp                                         *
+ * retroshare-gui/src/gui/connect/ConnectFriendWizard.cpp                      *
  *                                                                             *
  * Copyright (C) 2009 retroshare team <retroshare.project@gmail.com>           *
  * Copyright (C) 2009 Oleksiy Bilyanskyy                                       *
@@ -84,7 +84,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
     error = 0;
 	mTitleFontSize = 0; // Standard
 	mTitleFontWeight = 0; // Standard
-	
+
 //	ui->userFileFrame->hide(); // in homepage dropmenu now
 
 // this define comes from Qt example. I don't have mac, so it wasn't tested
@@ -109,13 +109,13 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	/* disable not used pages */
 	//ui->foffRadioButton->hide();
 	//ui->rsidRadioButton->hide();
-	
+
 	ui->info_Label_FrdReq->hide();
 	ui->info_Label_Request->hide();
-	
+
     connect(ui->acceptNoSignGPGCheckBox,SIGNAL(toggled(bool)), ui->_options_GB,SLOT(setEnabled(bool))) ;
     connect(ui->addKeyToKeyring_CB,SIGNAL(toggled(bool)), ui->acceptNoSignGPGCheckBox,SLOT(setChecked(bool))) ;
-	
+
     connect(ui->gmailButton, SIGNAL(clicked()), this, SLOT(inviteGmail()));
     connect(ui->yahooButton, SIGNAL(clicked()), this, SLOT(inviteYahoo()));
     connect(ui->outlookButton, SIGNAL(clicked()), this, SLOT(inviteOutlook()));
@@ -123,13 +123,13 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
     connect(ui->yandexButton, SIGNAL(clicked()), this, SLOT(inviteYandex()));
     connect(ui->emailButton, SIGNAL(clicked()), this, SLOT(runEmailClient2()));
 	connect(ui->toggleadvancedButton, SIGNAL(clicked()), this, SLOT(toggleAdvanced()));
-    
+
     subject = tr("RetroShare Invitation");
     body = GetStartedDialog::GetInviteText();
-	
+
     body += "\n" + GetStartedDialog::GetCutBelowText();
 	body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite().c_str());
-	
+
     mIsShortInvite = false;
 
 	std::string advsetting;
@@ -144,7 +144,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 		ui->trustLabel->hide();
 		ui->trustEdit->hide();
 	}
-	
+
 	//Add warning to direct source checkbox depends general setting.
 	switch (rsFiles->filePermDirectDL())
 	{
@@ -587,7 +587,7 @@ void ConnectFriendWizard::initializePage(int id)
 			}
 
 			fillGroups(this, ui->groupComboBox, groupId);
-			
+
 			if(peerDetails.isHiddenNode)
 			{
 				ui->_addIPToWhiteList_CB_2->setEnabled(false) ;
@@ -752,7 +752,7 @@ void ConnectFriendWizard::accept()
 
     // first, set data related to profile key.
 
-	if(accept_connection && !peerDetails.gpg_id.isNull()) 
+	if(accept_connection && !peerDetails.gpg_id.isNull())
 	{
 		std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
 
@@ -847,7 +847,7 @@ void ConnectFriendWizard::accept()
 		}
 
 	}
-		
+
 	if (runProgressDialog)
 	{
 		RsPeerId ssl_id = peerDetails.id;
@@ -914,7 +914,7 @@ void ConnectFriendWizard::cleanFriendCert()
                 RetroshareInviteFlags dummy_flags = RetroshareInviteFlags::ALL;
                 certDetail = ConfCertDialog::getCertificateDescription(details,false,mIsShortInvite,dummy_flags);
 			}
-			
+
 			if (mIsShortInvite)
 				errorMsg = tr("Valid Retroshare ID") + (mIsShortInvite?" (Short format)":" (plain format with profile key)");
 			else

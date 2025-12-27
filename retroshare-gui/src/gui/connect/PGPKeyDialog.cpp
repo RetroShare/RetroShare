@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/connect/PGPKeyDialog.cpp                                                *
+ * retroshare-gui/src/gui/connect/PGPKeyDialog.cpp                             *
  *                                                                             *
  * Copyright 2006 by Crypton              <retroshare.project@gmail.com>       *
  *                                                                             *

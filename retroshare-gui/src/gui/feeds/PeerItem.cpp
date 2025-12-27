@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/PeerItem.cpp                                                      *
+ * retroshare-gui/src/gui/feeds/PeerItem.cpp                                   *
  *                                                                             *
  * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -46,7 +46,7 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
 {
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
-  
+
     sendmsgButton->setEnabled(false);
 
     /* general ones */

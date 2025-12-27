@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/NonCopyable.h                                                          *
+ * retroshare-gui/src/util/NonCopyable.h                                       *
  *                                                                             *
  * Copyright (c) 2006, Crypton          <retroshare.project@gmail.com>         *
  *                                                                             *
@@ -21,7 +21,7 @@
 #ifndef NONCOPYABLE_H
 #define NONCOPYABLE_H
 
-#include <util/rsutildll.h>
+#include "util/rsutildll.h"
 
 /**
  * Ensures derived classes have private copy constructor and copy assignment.
@@ -37,7 +37,7 @@
  * Taken from Boost library.
  *
  * @see boost::noncopyable
- * 
+ *
  */
 class NonCopyable {
 protected:

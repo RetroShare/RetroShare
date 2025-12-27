@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/WireGroupItem.h                                                 *
+ * retroshare-gui/src/gui/TheWire/WireGroupItem.h                              *
  *                                                                             *
  * Copyright (c) 2020 Robert Fernie   <retroshare.project@gmail.com>           *
  *                                                                             *

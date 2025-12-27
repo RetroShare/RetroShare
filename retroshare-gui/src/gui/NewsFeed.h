@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/NewsFeed.h                                                              *
+ * retroshare-gui/src/gui/NewsFeed.h                                           *
  *                                                                             *
  * Copyright (c) 2008 Robert Fernie    <retroshare.project@gmail.com>          *
  *                                                                             *

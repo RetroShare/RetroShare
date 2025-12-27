@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/torstatus.cpp                                                 *
+ * retroshare-gui/src/gui/statusbar/torstatus.cpp                              *
  *                                                                             *
  * Copyright (c) 2012 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -42,15 +42,15 @@ TorStatus::TorStatus(QWidget *parent)
     QHBoxLayout *hbox = new QHBoxLayout();
     hbox->setContentsMargins(0, 0, 0, 0);
     hbox->setSpacing(6);
-       
+
     statusTor = new QLabel("<strong>" + tr("Tor") + ":</strong>", this );
 	statusTor->setToolTip(tr("<p>This version of Retroshare uses Tor to connect to your trusted nodes.</p>")) ;
     hbox->addWidget(statusTor);
-    
+
     torstatusLabel = new QLabel( this );
     torstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/no-tor.png"));
     hbox->addWidget(torstatusLabel);
-    
+
     _compactMode = false;
     _updated = false;
 

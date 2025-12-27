@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/MsgItem.cpp                                                       *
+ * retroshare-gui/src/gui/feeds/MsgItem.cpp                                    *
  *                                                                             *
  * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -140,7 +140,7 @@ void MsgItem::updateItemStatic()
 
 	MessageInfo mi;
 
-	if (!rsMail) 
+	if (!rsMail)
 		return;
 
 	if (!rsMail->getMessage(mMsgId, mi))
@@ -248,7 +248,7 @@ void MsgItem::updateItemStatic()
 	}
 
 	playButton->setEnabled(false);
-	
+
 	if (mIsHome)
 	{
 		/* disable buttons */
@@ -366,7 +366,7 @@ void MsgItem::replyMsg()
 	if (mFeedHolder)
 	{
 		//mParent->openMsg(FEEDHOLDER_MSG_MESSAGE, mPeerId, mMsgId);
-		
+
     MessageComposer *nMsgDialog = MessageComposer::replyMsg(mMsgId, false);
     if (nMsgDialog == NULL) {
         return;
@@ -396,7 +396,7 @@ void MsgItem::sendInvite()
 {
 	MessageInfo mi;
 
-	if (!rsMail) 
+	if (!rsMail)
 		return;
 
 	if (!rsMail->getMessage(mMsgId, mi))

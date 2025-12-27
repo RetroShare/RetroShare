@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/connect/FriendRecommendDialog.cpp                                       *
+ * retroshare-gui/src/gui/connect/FriendRecommendDialog.cpp                    *
  *                                                                             *
  * Copyright 2018      by Retroshare Team <retroshare.project@gmail.com>       *
  *                                                                             *

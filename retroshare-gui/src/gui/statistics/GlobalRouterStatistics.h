@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/GlobalRouterStatistics.h                                     *
+ * retroshare-gui/src/gui/statistics/GlobalRouterStatistics.h                  *
  *                                                                             *
  * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -37,19 +37,19 @@ class GlobalRouterStatistics: public RsAutoUpdatePage, public Ui::GlobalRouterSt
 	public:
 		GlobalRouterStatistics(QWidget *parent = NULL) ;
 		~GlobalRouterStatistics();
-		
+
 		// Cache for peer names.
         static QString getPeerName(const RsPeerId& peer_id) ;
-        
+
 		void updateContent() ;
-		
+
 private slots:
 	/** Create the context popup menu and it's submenus */
 	void CustomPopupMenu( QPoint point );
 	void personDetails();
-	
+
 	private:
-											
+
 		void processSettings(bool bLoad);
 		bool m_bProcessSettings;
 

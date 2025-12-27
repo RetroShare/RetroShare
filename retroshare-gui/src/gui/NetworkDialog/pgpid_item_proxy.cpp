@@ -25,7 +25,7 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
 
-bool pgpid_item_proxy::lessThan(const QModelIndex &left, const QModelIndex &right) const 
+bool pgpid_item_proxy::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
     if(left.column() == pgpid_item_model::PGP_ITEM_MODEL_COLUMN_LAST_USED)
 		return left.data(Qt::EditRole).toUInt() < right.data(Qt::EditRole).toUInt();

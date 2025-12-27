@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -95,7 +95,7 @@ PhotoDialog::PhotoDialog(QWidget *parent)
 
   QSize iconSize(PHOTO_ICON_SIZE,PHOTO_ICON_SIZE);
   ui.photoTreeWidget->setIconSize(iconSize);
-  
+
   /* Set header resize modes and initial section sizes */
   QHeaderView * ptw_header = ui.peerTreeWidget->header () ;
   ptw_header->setResizeMode (0, QHeaderView::Interactive);
@@ -105,7 +105,7 @@ PhotoDialog::PhotoDialog(QWidget *parent)
 
 
 	/* Set a GUI update timer - much cleaner than
-	 * doing everything through the notify agent 
+	 * doing everything through the notify agent
 	 */
 
   QTimer *timer = new QTimer(this);
@@ -147,7 +147,7 @@ void PhotoDialog::photoTreeWidgetCustomPopupMenu( QPoint point )
 
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
-      
+
       QAction *openphotoAct = new QAction(QIcon(":/images/openimage.png"), tr( "Open" ), this );
       openphotoAct->setShortcut(Qt::CTRL + Qt::Key_O);
       connect( openphotoAct , SIGNAL( triggered(QTreeWidgetItem * , int) ), this, SLOT( showPhoto( QTreeWidgetItem *, int ) ) );
@@ -155,31 +155,31 @@ void PhotoDialog::photoTreeWidgetCustomPopupMenu( QPoint point )
       QAction *removephotoAct = new QAction(QIcon(IMAGE_REMOVE), tr( "Remove" ), this );
       removephotoAct->setShortcut(Qt::Key_Delete);
       connect( removephotoAct , SIGNAL( triggered() ), this, SLOT( removePhoto() ) );
-      
+
       rateExcellenAct = new QAction(QIcon(":/images/rate-5.png"), tr("Excellent"), this);
       rateExcellenAct->setShortcut(Qt::CTRL + Qt::Key_5);
       connect(rateExcellenAct, SIGNAL(triggered()), this, SLOT(rateExcellent()));
-      
+
       rateGoodAct = new QAction(QIcon(":/images/rate-4.png"), tr("Good"), this);
       rateGoodAct->setShortcut(Qt::CTRL + Qt::Key_4);
       connect(rateGoodAct, SIGNAL(triggered()), this, SLOT(rateGood()));
-      
+
       rateAverageAct = new QAction(QIcon(":/images/rate-3.png"), tr("Average"), this);
       rateAverageAct->setShortcut(Qt::CTRL + Qt::Key_3);
       connect(rateAverageAct, SIGNAL(triggered()), this, SLOT(rateAvarge()));
-      
+
       rateBelowAvarageAct = new QAction(QIcon(":/images/rate-2.png"), tr("Below avarage"), this);
       rateBelowAvarageAct->setShortcut(Qt::CTRL + Qt::Key_2);
-      connect(rateBelowAvarageAct, SIGNAL(triggered()), this, SLOT(rateBelowAverage()));      
-      
+      connect(rateBelowAvarageAct, SIGNAL(triggered()), this, SLOT(rateBelowAverage()));
+
       rateBadAct = new QAction(QIcon(":/images/rate-1.png"), tr("Bad"), this);
       rateBadAct->setShortcut(Qt::CTRL + Qt::Key_1);
       connect(rateBadAct, SIGNAL(triggered()), this, SLOT(rateBad()));
-      
+
       rateUnratedAct = new QAction(tr("Unrated"), this);
       rateUnratedAct->setShortcut(Qt::CTRL + Qt::Key_0);
       connect(rateUnratedAct, SIGNAL(triggered()), this, SLOT(rateUnrated()));
-      
+
       QMenu *ratingMenu = new QMenu(tr("Rating"), this);
       ratingMenu->addAction(rateExcellenAct);
       ratingMenu->addAction(rateGoodAct);
@@ -193,13 +193,13 @@ void PhotoDialog::photoTreeWidgetCustomPopupMenu( QPoint point )
       contextMnu.addSeparator();
       contextMnu.addMenu( ratingMenu);
       contextMnu.addSeparator();
-      contextMnu.addAction(removephotoAct); 
+      contextMnu.addAction(removephotoAct);
       contextMnu.exec( mevent->globalPos() );
 }
 
 void PhotoDialog::togglefileview()
 {
-	/* if msg header visible -> hide by changing splitter 
+	/* if msg header visible -> hide by changing splitter
 	 * three widgets...
 	 */
 
@@ -344,7 +344,7 @@ void PhotoDialog::addShows(std::string id)
 
 void PhotoDialog::updatePhotoList()
 {
-#ifdef PHOTO_DEBUG 
+#ifdef PHOTO_DEBUG
 	std::cerr << "PhotoDialog::updatePhotoList()" << std::endl;
 #endif
 
@@ -354,7 +354,7 @@ void PhotoDialog::updatePhotoList()
 	if (!item)
 	{
 		/* leave current list */
-#ifdef PHOTO_DEBUG 
+#ifdef PHOTO_DEBUG
 		std::cerr << "PhotoDialog::updatePhotoList() No Current item -> leave" << std::endl;
 #endif
 		return;
@@ -367,13 +367,13 @@ void PhotoDialog::updatePhotoList()
 	if ((mCurrentPID == pid) && (mCurrentSID == sid))
 	{
 		/* still good */
-#ifdef PHOTO_DEBUG 
+#ifdef PHOTO_DEBUG
 		std::cerr << "PhotoDialog::updatePhotoList() List still good!" << std::endl;
 #endif
 		return;
 	}
 
-#ifdef PHOTO_DEBUG 
+#ifdef PHOTO_DEBUG
 	std::cerr << "PhotoDialog::updatePhotoList() pid: " << pid << " sid: " << sid << std::endl;
 #endif
 	/* get the list of photos */
@@ -383,7 +383,7 @@ void PhotoDialog::updatePhotoList()
 
 	if (sid != "")
 	{
-#ifdef PHOTO_DEBUG 
+#ifdef PHOTO_DEBUG
 		std::cerr << "PhotoDialog::updatePhotoList() SID -> showing show" << std::endl;
 #endif
 		/* load up show list */
@@ -398,7 +398,7 @@ void PhotoDialog::updatePhotoList()
 
 			if (!rsPhoto->getPhotoDetails(pid, sit->photoId, photoDetail))
 			{
-#ifdef PHOTO_DEBUG 
+#ifdef PHOTO_DEBUG
 	std::cerr << "PhotoDialog::updatePhotoList() getPhotoDetails: " << sit->photoId << " FAILED" << std::endl;
 #endif
 				continue;
@@ -408,7 +408,7 @@ void PhotoDialog::updatePhotoList()
 			if (photoDetail.isAvailable)
 			{
 				QPixmap qpp(QString::fromStdString(photoDetail.path));
-				photoItem->setIcon(PHOTO_LIST_COL_PHOTO, 
+				photoItem->setIcon(PHOTO_LIST_COL_PHOTO,
 					QIcon(qpp.scaledToHeight(PHOTO_ICON_SIZE)));
 
   				QSize iconSize(PHOTO_ICON_SIZE + 10,PHOTO_ICON_SIZE + 10);
@@ -419,19 +419,19 @@ void PhotoDialog::updatePhotoList()
 				photoItem->setText(PHOTO_LIST_COL_PHOTO, "Photo Not Available");
 			}
 
-			photoItem->setText(PHOTO_LIST_COL_NAME, 
+			photoItem->setText(PHOTO_LIST_COL_NAME,
 					QString::fromStdString(photoDetail.name));
-			photoItem->setText(PHOTO_LIST_COL_COMMENT, 
+			photoItem->setText(PHOTO_LIST_COL_COMMENT,
 					QString::fromStdWString(photoDetail.comment));
-			photoItem->setText(PHOTO_LIST_COL_DATE, 
+			photoItem->setText(PHOTO_LIST_COL_DATE,
 					QString::fromStdString(photoDetail.date));
-			photoItem->setText(PHOTO_LIST_COL_LOCATION, 
+			photoItem->setText(PHOTO_LIST_COL_LOCATION,
 					QString::fromStdString(photoDetail.location));
-			photoItem->setText(PHOTO_LIST_COL_SIZE, 
+			photoItem->setText(PHOTO_LIST_COL_SIZE,
 					QString::number(photoDetail.size));
-			photoItem->setText(PHOTO_LIST_COL_PEERID, 
+			photoItem->setText(PHOTO_LIST_COL_PEERID,
 					QString::fromStdString(photoDetail.id));
-			photoItem->setText(PHOTO_LIST_COL_PHOTOID, 
+			photoItem->setText(PHOTO_LIST_COL_PHOTOID,
 					QString::fromStdString(photoDetail.hash));
 
 			items.append(photoItem);
@@ -439,7 +439,7 @@ void PhotoDialog::updatePhotoList()
 	}
 	else
 	{
-#ifdef PHOTO_DEBUG 
+#ifdef PHOTO_DEBUG
 		std::cerr << "PhotoDialog::updatePhotoList() No SID -> show all" << std::endl;
 #endif
 
@@ -452,7 +452,7 @@ void PhotoDialog::updatePhotoList()
 
 			if (!rsPhoto->getPhotoDetails(pid, *pit, photoDetail))
 			{
-#ifdef PHOTO_DEBUG 
+#ifdef PHOTO_DEBUG
 	std::cerr << "PhotoDialog::updatePhotoList() getPhotoDetails: " << *pit << " FAILED" << std::endl;
 #endif
 				continue;
@@ -462,7 +462,7 @@ void PhotoDialog::updatePhotoList()
 			if (photoDetail.isAvailable)
 			{
 				QPixmap qpp(QString::fromStdString(photoDetail.path));
-				photoItem->setIcon(PHOTO_LIST_COL_PHOTO, 
+				photoItem->setIcon(PHOTO_LIST_COL_PHOTO,
 					QIcon(qpp.scaledToHeight(PHOTO_ICON_SIZE)));
 
   				QSize iconSize(PHOTO_ICON_SIZE + 10,PHOTO_ICON_SIZE + 10);
@@ -473,23 +473,23 @@ void PhotoDialog::updatePhotoList()
 				photoItem->setText(PHOTO_LIST_COL_PHOTO, "Photo Not Available");
 			}
 
-			photoItem->setText(PHOTO_LIST_COL_NAME, 
+			photoItem->setText(PHOTO_LIST_COL_NAME,
 					QString::fromStdString(photoDetail.name));
-			photoItem->setText(PHOTO_LIST_COL_COMMENT, 
+			photoItem->setText(PHOTO_LIST_COL_COMMENT,
 					QString::fromStdWString(photoDetail.comment));
-			photoItem->setText(PHOTO_LIST_COL_DATE, 
+			photoItem->setText(PHOTO_LIST_COL_DATE,
 					QString::fromStdString(photoDetail.date));
-			photoItem->setText(PHOTO_LIST_COL_LOCATION, 
+			photoItem->setText(PHOTO_LIST_COL_LOCATION,
 					QString::fromStdString(photoDetail.location));
-			photoItem->setText(PHOTO_LIST_COL_SIZE, 
+			photoItem->setText(PHOTO_LIST_COL_SIZE,
 					QString::number(photoDetail.size));
-			photoItem->setText(PHOTO_LIST_COL_PEERID, 
+			photoItem->setText(PHOTO_LIST_COL_PEERID,
 					QString::fromStdString(photoDetail.id));
-			photoItem->setText(PHOTO_LIST_COL_PHOTOID, 
+			photoItem->setText(PHOTO_LIST_COL_PHOTOID,
 					QString::fromStdString(photoDetail.hash));
 
 
-#ifdef PHOTO_DEBUG 
+#ifdef PHOTO_DEBUG
 			std::cerr << "PhotoDialog::updatePhotoList() added Item: " << *pit << std::endl;
 #endif
 			items.append(photoItem);
@@ -523,14 +523,14 @@ QTreeWidgetItem *PhotoDialog::getCurrentLine()
         QTreeWidgetItem *item = peerWidget -> currentItem();
         if (!item)
         {
-#ifdef PHOTO_DEBUG 
+#ifdef PHOTO_DEBUG
 		std::cerr << "Invalid Current Item" << std::endl;
 #endif
 		return NULL;
 	}
 
 	/* Display the columns of this item. */
-#ifdef PHOTO_DEBUG 
+#ifdef PHOTO_DEBUG
 	std::ostringstream out;
         out << "CurrentPeerItem: " << std::endl;
 
@@ -547,7 +547,7 @@ QTreeWidgetItem *PhotoDialog::getCurrentLine()
 void PhotoDialog::removePhoto()
 {
 	QTreeWidgetItem *c = getCurrentLine();
-#ifdef PHOTO_DEBUG 
+#ifdef PHOTO_DEBUG
 	std::cerr << "PhotoDialog::removePhoto()" << std::endl;
 #endif
 }

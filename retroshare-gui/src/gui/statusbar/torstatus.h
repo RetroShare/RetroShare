@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/torstatus.h                                                   *
+ * retroshare-gui/src/gui/statusbar/torstatus.h                                *
  *                                                                             *
  * Copyright (c) 2012 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

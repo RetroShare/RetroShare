@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/rsharesettings.cpp                                             *
+ * retroshare-gui/src/gui/settings/rsharesettings.cpp                          *
  *                                                                             *
  * Copyright (c) 2006-2007, crypton                                            *
  * Copyright (c) 2006, Matt Edman, Justin Hipple                               *
@@ -68,7 +68,7 @@
 
 #if defined(Q_OS_WIN)
 #define STARTUP_REG_KEY        "Software\\Microsoft\\Windows\\CurrentVersion\\Run"
-#define RETROSHARE_REG_KEY         "RetroShare" 
+#define RETROSHARE_REG_KEY         "RetroShare"
 #endif
 
 /* Default bandwidth graph settings */
@@ -105,7 +105,7 @@ RshareSettings::RshareSettings()
 }
 
 void RshareSettings::initSettings()
-{ 
+{
 #ifdef Q_OS_LINUX
 	// use GTK as default style on linux
 	setDefault(SETTING_STYLE, "GTK+");
@@ -180,7 +180,7 @@ QString RshareSettings::getSheetName()
 }
 /** Sets the sheetname.*/
 void RshareSettings::setSheetName(const QString& sheet)
-{ 
+{
 	setValue(SETTING_SHEETNAME, sheet);
 }
 
@@ -248,18 +248,18 @@ int RshareSettings::computeBestIconSize(int n_sizes,int *sizes,int recommended_s
     float default_size = QFontMetricsF(QWidget().font()).height()/16.0 * recommended_size ;
     float closest_ratio_dist = 10000.0f ;
     int best_default_size = sizes[0] ;
-    
+
     for(int i=0;i<n_sizes;++i)
     {
         float ratio = default_size / sizes[i] ;
-        
+
         if(fabsf(ratio - 1.0f) < closest_ratio_dist)
         {
             closest_ratio_dist = fabsf(ratio-1.0f) ;
             best_default_size = sizes[i] ;
         }
     }
-    
+
     return best_default_size ;
 }
 
@@ -267,7 +267,7 @@ int RshareSettings::computeBestIconSize(int n_sizes,int *sizes,int recommended_s
 int RshareSettings::getToolButtonSize()
 {
     static int sizes[6] = { 8,16,24,32,64,128 } ;
-    
+
     return value(SETTING_TOOLBUTTONSIZE, computeBestIconSize(6,sizes,32)).toInt();
 }
 
@@ -302,7 +302,7 @@ void RshareSettings::setToolButtonSize(int size)
 int RshareSettings::getListItemIconSize()
 {
     static int sizes[6] = { 8,16,24,32,64,128 } ;
-    
+
     return value(SETTING_LISTITEMICONSIZE, computeBestIconSize(6,sizes,24)).toInt();
 }
 

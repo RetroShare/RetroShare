@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/ChatLobbyWidget.cpp                                                     *
+ * retroshare-gui/src/gui/ChatLobbyWidget.cpp                                  *
  *                                                                             *
  * Copyright (C) 2012 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -78,12 +78,12 @@
 #define IMAGE_PUBLIC          ":/icons/png/chats.png"
 #define IMAGE_PRIVATE         ":/icons/png/chats-private.png"
 #define IMAGE_SIGNED          ":/icons/png/chats-signed.png"
-#define IMAGE_SUBSCRIBE       ":/icons/png/enter.png"  
+#define IMAGE_SUBSCRIBE       ":/icons/png/enter.png"
 #define IMAGE_UNSUBSCRIBE     ":/icons/png/leave2.png"
 #define IMAGE_PEER_ENTERING   ":images/user/add_user24.png"
 #define IMAGE_PEER_LEAVING    ":images/user/remove_user24.png"
-#define IMAGE_TYPING          ":icons/png/typing.png" 
-#define IMAGE_MESSAGE	      ":images/chat.png" 
+#define IMAGE_TYPING          ":icons/png/typing.png"
+#define IMAGE_MESSAGE	      ":images/chat.png"
 #define IMAGE_AUTOSUBSCRIBE   ":images/accepted16.png"
 #define IMAGE_COPYRSLINK      ":/icons/png/copy.png"
 
@@ -263,7 +263,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	                     ).arg(QString::number(2*hbH), QString::number(hbH)) ;
 
 	registerHelpButton(ui.helpButton,help_str,"ChatLobbyDialog") ;
-	
+
 	int ltwH = misc::getFontSizeFactor("LobbyTreeWidget", 1.5).height();
 	ui.lobbyTreeWidget->setIconSize(QSize(ltwH,ltwH));
 
@@ -441,7 +441,7 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
 	//TODO (Phenom): Add qproperty for these text colors in stylesheets
 	// As palette is not updated by stylesheet
 	QColor color = treeWidget->palette().color(QPalette::Active, QPalette::Text);
-    
+
 	if (!subscribed) {
 		// Average between Base and Text colors
 		QColor color2 = treeWidget->palette().color(QPalette::Active, QPalette::Base);
@@ -455,7 +455,7 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
                      +QObject::tr("Participants:")+" "+QString::number(count)+"\n"
                      +QObject::tr("Auto Subscribe:")+" "+(autoSubscribe? QObject::tr("enabled"): QObject::tr("disabled"))+"\n"
                      +QObject::tr("Id:")+" "+QString::number(id,16) ;
-    
+
     if(lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
 	{
         tooltipstr += QObject::tr("\nSecurity: no anonymous IDs") ;
@@ -468,7 +468,7 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
 
 void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
 {
-	// check that the page does not already exist. 
+	// check that the page does not already exist.
 
 	if(_lobby_infos.find(d->id()) == _lobby_infos.end())
 	{
@@ -538,7 +538,7 @@ void ChatLobbyWidget::updateDisplay()
 #endif
 
 	// now, do a nice display of lobbies
-	
+
     RsPeerId vpid;
     std::list<ChatLobbyId>::const_iterator lobbyIt;
 
@@ -547,7 +547,7 @@ void ChatLobbyWidget::updateDisplay()
 	for(int p=0;p<4;++p)
 	{
 		QTreeWidgetItem *lobby_item =NULL;
-		switch (p) 
+		switch (p)
 		{
 			case 0: lobby_item = privateSubLobbyItem; break;
 			case 1: lobby_item = publicSubLobbyItem; break;
@@ -562,25 +562,25 @@ void ChatLobbyWidget::updateDisplay()
 
 		while (childIndex < childCnt) {
 			QTreeWidgetItem *itemLoop = lobby_item->child(childIndex);
-			if (itemLoop->type() == TYPE_LOBBY) 
+			if (itemLoop->type() == TYPE_LOBBY)
 			{
 				// check for visible lobby
 				//
 				uint32_t i;
-	
-				for (i = 0; i < visibleLobbies.size(); ++i) 
-					if (itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == visibleLobbies[i].lobby_id) 
+
+				for (i = 0; i < visibleLobbies.size(); ++i)
+					if (itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == visibleLobbies[i].lobby_id)
 						break;
 
-				if (i >= visibleLobbies.size()) 
+				if (i >= visibleLobbies.size())
 				{
 					// Check for participating lobby with public level
 					//
-					for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) 
+					for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt)
                         if(itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == *lobbyIt)
 							break;
 
-					if (lobbyIt == lobbies.end()) 
+					if (lobbyIt == lobbies.end())
 					{
 						delete(lobby_item->takeChild(lobby_item->indexOfChild(itemLoop)));
 						childCnt = lobby_item->childCount();
@@ -594,7 +594,7 @@ void ChatLobbyWidget::updateDisplay()
 
 	// Now add visible lobbies
 	//
-	for (uint32_t i = 0; i < visibleLobbies.size(); ++i) 
+	for (uint32_t i = 0; i < visibleLobbies.size(); ++i)
 	{
 		const VisibleChatLobbyRecord &lobby = visibleLobbies[i];
 
@@ -660,15 +660,15 @@ void ChatLobbyWidget::updateDisplay()
 		}
 
 	ChatLobbyFlags lobby_flags = lobby.lobby_flags ;
-    
+
 		QIcon icon;
-		if (item == NULL) 
+		if (item == NULL)
 		{
 			item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
             icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? FilesDefs::getIconFromQtResourcePath(IMAGE_PUBLIC) : FilesDefs::getIconFromQtResourcePath(IMAGE_PRIVATE);
 			lobby_item->addChild(item);
-            
-		} 
+
+		}
 		else
 		{
 			if (item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool() != subscribed) {
@@ -699,7 +699,7 @@ void ChatLobbyWidget::updateDisplay()
 
 	// Now add participating lobbies.
 	//
-	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) 
+	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt)
     {
         ChatLobbyInfo lobby ;
         rsChats->getChatLobbyInfo(*lobbyIt,lobby) ;
@@ -727,10 +727,10 @@ void ChatLobbyWidget::updateDisplay()
 		}
 
 		QIcon icon;
-        
+
         ChatLobbyFlags lobby_flags = lobby.lobby_flags ;
-        
-        if (item == NULL) 
+
+        if (item == NULL)
         {
             item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
             icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? FilesDefs::getIconFromQtResourcePath(IMAGE_PUBLIC) : FilesDefs::getIconFromQtResourcePath(IMAGE_PRIVATE);
@@ -809,10 +809,10 @@ void ChatLobbyWidget::createIdentityAndSubscribe()
 
     IdEditDialog dlg(this);
     dlg.setupNewId(false);
-    
+
     if(flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED) //
 	    dlg.enforceNoAnonIds() ;
-    
+
     dlg.exec();
     // fetch new id
     std::list<RsGxsId> own_ids;
@@ -891,7 +891,7 @@ void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
     {
         IdEditDialog dlg(this);
         dlg.setupNewId(false);
-        
+
         if(flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED) //
 		dlg.enforceNoAnonIds() ;
         dlg.exec();
@@ -903,11 +903,11 @@ void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
     else
     {
         rsChats->getDefaultIdentityForChatLobby(gxs_id);
-        
+
         RsIdentityDetails idd ;
         if(!rsIdentity->getIdDetails(gxs_id,idd))
             return ;
-        
+
         if( (flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED) && !(idd.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
         {
             QMessageBox::warning(NULL,tr("Default identity is anonymous"),tr("You cannot join this chat room with your default identity, since it is anonymous and the chat room forbids it.")) ;
@@ -1032,7 +1032,7 @@ QTreeWidgetItem *ChatLobbyWidget::getTreeWidgetItem(ChatLobbyId id)
 		while (childIndex < childCnt) {
 			QTreeWidgetItem *itemLoop = lobby_item->child(childIndex);
 
-			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == id) 
+			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == id)
 				return itemLoop ;
 
 			++childIndex ;
@@ -1043,7 +1043,7 @@ QTreeWidgetItem *ChatLobbyWidget::getTreeWidgetItem(ChatLobbyId id)
 void ChatLobbyWidget::updateTypingStatus(ChatLobbyId id)
 {
 	QTreeWidgetItem *item = getTreeWidgetItem(id) ;
-	
+
 	if(item != NULL)
 	{
         item->setIcon(COLUMN_NAME,FilesDefs::getIconFromQtResourcePath(IMAGE_TYPING)) ;
@@ -1055,7 +1055,7 @@ void ChatLobbyWidget::updateTypingStatus(ChatLobbyId id)
 void ChatLobbyWidget::updatePeerLeaving(ChatLobbyId id)
 {
 	QTreeWidgetItem *item = getTreeWidgetItem(id) ;
-	
+
 	if(item != NULL)
 	{
         item->setIcon(COLUMN_NAME,FilesDefs::getIconFromQtResourcePath(IMAGE_PEER_LEAVING)) ;
@@ -1067,7 +1067,7 @@ void ChatLobbyWidget::updatePeerLeaving(ChatLobbyId id)
 void ChatLobbyWidget::updatePeerEntering(ChatLobbyId id)
 {
 	QTreeWidgetItem *item = getTreeWidgetItem(id) ;
-	
+
 	if(item != NULL)
 	{
         item->setIcon(COLUMN_NAME,FilesDefs::getIconFromQtResourcePath(IMAGE_PEER_ENTERING)) ;

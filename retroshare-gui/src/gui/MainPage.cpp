@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/MainPage.cpp                                                            *
+ * retroshare-gui/src/gui/MainPage.cpp                                         *
  *                                                                             *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -50,7 +50,7 @@ void MainPage::registerHelpButton(QToolButton *button, const QString& help_html_
 
 	if (mHelpBrowser == nullptr)
 		mHelpBrowser = new FloatingHelpBrowser(this, button) ;
-	
+
 	int H = misc::getFontSizeFactor("HelpButton").height();
 	button->setIconSize(QSize(H, H)) ;//Square Icon
 

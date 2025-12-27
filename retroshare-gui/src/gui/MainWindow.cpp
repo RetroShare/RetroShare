@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/MainWindow.cpp                                                          *
+ * retroshare-gui/src/gui/MainWindow.cpp                                       *
  *                                                                             *
  * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -692,7 +692,7 @@ void MainWindow::createMenuBar()
     actionMinimize->setShortcutContext(Qt::ApplicationShortcut);
     actionMinimize->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_M));
     actionMinimize->setShortcutVisibleInContextMenu(true);
-    connect(actionMinimize,SIGNAL(triggered()),this,SLOT(minimizeWindow())) ; 
+    connect(actionMinimize,SIGNAL(triggered()),this,SLOT(minimizeWindow())) ;
 
     actionCloseWindow = new QAction(tr("Close window"),this);
     actionCloseWindow->setShortcutContext(Qt::ApplicationShortcut);
@@ -1229,7 +1229,7 @@ void MainWindow::showWebinterface()
     WebuiPage::showWebui();
 }
 #endif // ENABLE_WEBUI
-#endif 
+#endif
 
 /** Shows Application window */
 #ifdef UNFINISHED

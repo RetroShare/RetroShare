@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/style/StyleDialog.cpp                                                   *
+ * retroshare-gui/src/gui/style/StyleDialog.cpp                                *
  *                                                                             *
  * Copyright (c) 2006 Crypton         <retroshare.project@gmail.com>           *
  *                                                                             *

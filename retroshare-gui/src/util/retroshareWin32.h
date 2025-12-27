@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/retroshareWin32.h                                                      *
+ * retroshare-gui/src/util/retroshareWin32.h                                   *
  *                                                                             *
  * Copyright (c) 2006-2007, crypton                                            *
  * Copyright (c) 2006, Matt Edman, Justin Hipple                               *

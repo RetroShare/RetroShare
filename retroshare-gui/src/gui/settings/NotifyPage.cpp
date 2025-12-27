@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/NotifyPage.cpp                                                 *
+ * retroshare-gui/src/gui/settings/NotifyPage.cpp                              *
  *                                                                             *
  * Copyright 2009, Retroshare Team <retroshare.project@gmail.com>              *
  *                                                                             *

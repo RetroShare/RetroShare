@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/toaster/MessageToaster.cpp                                              *
+ * retroshare-gui/src/gui/toaster/MessageToaster.cpp                           *
  *                                                                             *
  * Copyright (C) 2010 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

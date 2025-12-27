@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/SubFileItem.cpp                                                   *
+ * retroshare-gui/src/gui/feeds/SubFileItem.cpp                                *
  *                                                                             *
  * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -50,7 +50,7 @@
  * a) Addition to General Dialog (1), (2), (3)
  *   (i) (1), request Hash -> (3).
  *   (ii) (2), download complete -> (3)
- *   (iii) (3) 
+ *   (iii) (3)
  *
  * b) Message/Blog/Channel (2), (3)
  *   (i) (2), download complete -> (3)
@@ -85,7 +85,7 @@ SubFileItem::SubFileItem(const RsFileHash &hash, const std::string &name, const 
 
 	/* all other states are possible */
 
-	if (!rsFiles) 
+	if (!rsFiles)
 	{
 		mMode = SFI_STATE_ERROR;
 	}
@@ -103,7 +103,7 @@ void SubFileItem::Setup()
   connect( copyLinkButton, SIGNAL( clicked( ) ), this, SLOT( copyLink ( ) ) );
   connect( saveButton, SIGNAL( clicked( ) ), this, SLOT( save ( ) ) );
 
-  /* once off check - if remote, check if we have it 
+  /* once off check - if remote, check if we have it
    * NB: This check might be expensive - and it'll happen often!
    */
 #ifdef DEBUG_ITEM
@@ -177,7 +177,7 @@ void SubFileItem::updateItemStatic()
 		progressBar->setFormat("%v kB");
 		mDivisor = 1000;
 	}
-	else 
+	else
 	{
 		progressBar->setRange(0, mFileSize);
 		progressBar->setFormat("%v B");
@@ -506,7 +506,7 @@ void SubFileItem::updateItem()
 			break;
 	}
 
-	
+
 	if (repeat)
 	{
 #ifdef DEBUG_ITEM
@@ -623,7 +623,7 @@ void SubFileItem::download()
 		}
 	}
 #endif
-	
+
 
 	// Add possible direct sources.
 	//
@@ -639,7 +639,7 @@ void SubFileItem::download()
 
 	if (!mSrcId.isNull())
 		sources.push_back(mSrcId);
-	
+
 	rsFiles->FileRequest(mFileName, mFileHash, mFileSize, destination, RS_FILE_REQ_ANONYMOUS_ROUTING, sources);
 
 	downloadButton->setEnabled(false);

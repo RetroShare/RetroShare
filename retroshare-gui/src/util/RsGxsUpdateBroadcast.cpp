@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/RsGxsUpdateBroadcast.cpp                                               *
+ * retroshare-gui/src/util/RsGxsUpdateBroadcast.cpp                            *
  *                                                                             *
  * Copyright (C) 2014-2020 Retroshare Team <contact@retroshare.cc>             *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/NetworkView.h                                                           *
+ * retroshare-gui/src/gui/FriendServerControl.h                                *
  *                                                                             *
  * Copyright (c) 2008 Robert Fernie    <retroshare.project@gmail.com>          *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/connect/ConnectFriendWizard.h                                           *
+ * retroshare-gui/src/gui/connect/ConnectFriendWizard.h                        *
  *                                                                             *
  * Copyright (C) 2018 retroshare team <retroshare.project@gmail.com>           *
  *                                                                             *

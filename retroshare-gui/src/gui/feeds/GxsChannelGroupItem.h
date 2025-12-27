@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/GxsChannelGroupItem.h                                             *
+ * retroshare-gui/src/gui/feeds/GxsChannelGroupItem.h                          *
  *                                                                             *
  * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -27,7 +27,7 @@
 namespace Ui {
 class GxsChannelGroupItem;
 }
- 
+
 class FeedHolder;
 
 class GxsChannelGroupItem : public GxsGroupFeedItem

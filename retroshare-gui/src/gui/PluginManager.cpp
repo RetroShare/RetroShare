@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/PluginManager.cpp                                                       *
+ * retroshare-gui/src/gui/PluginManager.cpp                                    *
  *                                                                             *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -24,7 +24,7 @@
 
 #include <QDebug>
 
-#include <QWidget> //a strange thing: it compiles without this header, but 
+#include <QWidget> //a strange thing: it compiles without this header, but
                   //then segfaults in some place
 
 #include <QApplication>
@@ -50,10 +50,10 @@ RsApplication::dataDirectory() + "/plugins" ;
 }
 
 //=============================================================================
-      
-void      
+
+void
 PluginManager::defaultLoad(  )
-{   
+{
    qDebug() << "  " << "Default load started" ;
 
     QDir workDir(baseFolder);
@@ -62,7 +62,7 @@ PluginManager::defaultLoad(  )
     {
         QString em= tr("base folder %1 doesn't exist, default load failed")
 	              .arg( baseFolder );
-        emit errorAppeared( em ); 
+        emit errorAppeared( em );
 	return ;
     }
 
@@ -81,7 +81,7 @@ PluginManager::defaultLoad(  )
 
     qDebug() << "  " << "can load this plugins: " << currAvailable ;
 
-  //=== 
+  //===
     foreach(QString pluginFileName, currAvailable)
     {
        QString fullfn( workDir.absoluteFilePath( pluginFileName ) );
@@ -114,7 +114,7 @@ PluginManager::readPluginInformation(QString fullFileName, QString& pluginName)
     }
     else
     {
-       //do not emit anything, cuz error message already was sent 
+       //do not emit anything, cuz error message already was sent
       //from loadPluginInterface(..)
         return 1; //this means, some rrror appeared
     }
@@ -122,7 +122,7 @@ PluginManager::readPluginInformation(QString fullFileName, QString& pluginName)
 
 //=============================================================================
 
-PluginInterface* 
+PluginInterface*
 PluginManager::loadPluginInterface(QString fileName)
 {
     QString errorMessage = "Default Error Message" ;
@@ -134,16 +134,16 @@ PluginManager::loadPluginInterface(QString fileName)
     {
         //qDebug() << "  " << "loaded..." ;
         plugin = qobject_cast<PluginInterface*> (pluginObject) ;
-	   
+
         if (plugin)
         {
-            errorMessage = "No error" ;            
+            errorMessage = "No error" ;
         }
         else
         {
-            errorMessage = "Cast to 'PluginInterface*' failed";         
+            errorMessage = "Cast to 'PluginInterface*' failed";
             emit errorAppeared( errorMessage );
-        }        
+        }
     }
     else
     {
@@ -158,12 +158,12 @@ PluginManager::loadPluginInterface(QString fileName)
 //=============================================================================
 
 PluginManager:: ~PluginManager()
-{   
+{
 }
 
 //=============================================================================
 
-void 
+void
 PluginManager::acceptPlugin(QString fileName, QString pluginName)
 {
     qDebug() << "  " << "accepting plugin " << pluginName;
@@ -179,7 +179,7 @@ PluginManager::acceptPlugin(QString fileName, QString pluginName)
 
 //=============================================================================
 
-QWidget* 
+QWidget*
 PluginManager::pluginWidget(QString pluginName)
 {
     QWidget* result = 0;
@@ -217,30 +217,30 @@ PluginManager::pluginWidget(QString pluginName)
         QString em = tr("Error: no plugin with name '%1' found")
                         .arg(pluginName);
         emit errorAppeared( em );
-    }      
+    }
 }
 
 //=============================================================================
 
-QWidget* 
+QWidget*
 PluginManager::getViewWidget(QWidget* parent )
 {
     if (viewWidget)
         return viewWidget;
-    
+
   //=== else, create the viewWidget and return it
   //
     viewWidget = new PluginManagerWidget();
-    
+
     foreach(QString pn, names)
     {
        qDebug() << "  " << "reg new plg " << pn;
        viewWidget->registerNewPlugin( pn );
     }
-    
+
     connect(this      , SIGNAL( errorAppeared(QString) )    ,
             viewWidget, SLOT( acceptErrorMessage( QString)));
-    
+
     connect(viewWidget, SIGNAL( destroyed() )    ,
             this      , SLOT( viewWidgetDestroyed( )));
 
@@ -249,8 +249,8 @@ PluginManager::getViewWidget(QWidget* parent )
 
     connect(viewWidget, SIGNAL( removeRequested( QString ) ),
 	    this      , SLOT(   removePlugin(QString )));
-	    
-    
+
+
 
 
     qDebug() << "  PluginManager::getViewWidget done";
@@ -262,15 +262,15 @@ PluginManager::getViewWidget(QWidget* parent )
 
 void
 PluginManager::viewWidgetDestroyed(QObject* obj )
-{ 
+{
     qDebug() << "  PluginManager::viewWidgetDestroyed is here";
-    
+
     viewWidget = 0;
 }
 
 //=============================================================================
 
-void 
+void
 PluginManager::removePlugin(QString pluginName)
 {
     QWidget* result = 0;
@@ -309,9 +309,9 @@ void
 PluginManager::installPlugin(QString fileName)
 {
     qDebug() << "  " << "PluginManager::installPlugin is here" ;
-   
+
     if (!QFile::exists( fileName) )
-    {       
+    {
        QString em = tr("Error (installation): plugin file %1 doesn't exist")
  		      .arg( fileName );
 
@@ -333,7 +333,7 @@ PluginManager::installPlugin(QString fileName)
             {
                 acceptPlugin(newFileName, pn);
             }
-        } //    
+        } //
 	else
 	{
 	    QString em = tr("Error: can't copy %1 to %2")

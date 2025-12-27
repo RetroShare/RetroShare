@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/GeneralPage.h                                                  *
+ * retroshare-gui/src/gui/settings/GeneralPage.h                               *
  *                                                                             *
  * Copyright 2009, Retroshare Team <retroshare.project@gmail.com>              *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/WireDialog.cpp                                                  *
+ * retroshare-gui/src/gui/TheWire/WireDialog.cpp                               *
  *                                                                             *
  * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
@@ -138,7 +138,7 @@ WireDialog::~WireDialog()
 {
 	// save settings
 	processSettings(false);
-	
+
 	clearTwitterView();
     std::cerr << "WireDialog::~WireDialog()" << std::endl;
     delete(mWireQueue);
@@ -360,14 +360,14 @@ void WireDialog::updateGroups(std::vector<RsWireGroup>& groups)
 		{
 			// grab own groups.
 			// setup Chooser too.
-			mOwnGroups.push_back(it); 
+			mOwnGroups.push_back(it);
 			QPixmap pixmap;
 			if (it.mHeadshot.mData)
 			{
 				if (GxsIdDetails::loadPixmapFromData( it.mHeadshot.mData,it.mHeadshot.mSize,pixmap,GxsIdDetails::ORIGINAL))
 					pixmap = pixmap.scaled(32,32);
-			} 
-			else 
+			}
+			else
 			{
 				// default.
 				pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(32,32);
@@ -691,7 +691,7 @@ void WireDialog::postTestTwitterView()
 	clearTwitterView();
     std::cerr << "WireDialog::postTestTwitterView()" << std::endl;
 
-	addTwitterView(new PulseTopLevel(NULL,RsWirePulseSPtr())); 
+	addTwitterView(new PulseTopLevel(NULL,RsWirePulseSPtr()));
 	addTwitterView(new PulseReply(NULL,RsWirePulseSPtr()));
 	addTwitterView(new PulseReply(NULL,RsWirePulseSPtr()));
 	addTwitterView(new PulseReply(NULL,RsWirePulseSPtr()));

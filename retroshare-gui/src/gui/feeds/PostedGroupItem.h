@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/PostedGroupItem.h                                                 *
+ * retroshare-gui/src/gui/feeds/PostedGroupItem.h                              *
  *                                                                             *
  * Copyright (c) 2014, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -27,7 +27,7 @@
 namespace Ui {
 class PostedGroupItem;
 }
- 
+
 class FeedHolder;
 
 class PostedGroupItem : public GxsGroupFeedItem

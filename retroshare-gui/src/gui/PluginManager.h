@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/PluginManager.h                                                         *
+ * retroshare-gui/src/gui/PluginManager.h                                      *
  *                                                                             *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -71,7 +71,7 @@ public:
     //! PluginManager provides ablolutely no control over returned widget;
     //! the application should delete it, like all other widgets
     QWidget* pluginWidget(QString pluginName);
-        
+
     //! returns last error appeared;
 
     //! Sorry, doesn't work in current implementation
@@ -93,7 +93,7 @@ public slots:
     //! Processes plugin remove request
 
     //!   'Remove' means that plugin file (so or dll) will be physically deleted
-    //! from 'plugins' folder. 
+    //! from 'plugins' folder.
     void removePlugin(QString pluginName);
 
 signals:
@@ -116,7 +116,7 @@ signals:
 
 protected:
     PluginManagerWidget* viewWidget;
-    
+
     QStringList fileNames;
     QStringList names;
 
@@ -139,7 +139,7 @@ protected:
 
     PluginInterface* loadPluginInterface(QString fileName ) ;
 
-}; 
+};
 
 
 #endif

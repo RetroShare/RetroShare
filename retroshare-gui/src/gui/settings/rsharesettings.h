@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/rsharesettings.h                                               *
+ * retroshare-gui/src/gui/settings/rsharesettings.h                            *
  *                                                                             *
  * Copyright (c) 2006-2007, crypton                                            *
  * Copyright (c) 2006, Matt Edman, Justin Hipple                               *
@@ -308,7 +308,7 @@ public:
 
 	int  getLobbyChatHistoryCount();
 	void setLobbyChatHistoryCount(int value);
-	
+
 	int  getDistantChatHistoryCount();
 	void setDistantChatHistoryCount(int value);
 

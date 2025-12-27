@@ -23,7 +23,7 @@ class CircleItem: public QObject, public QGraphicsItem
 
 		static CircleItem *_selected_node ;
 
-		const RsGroupMetaData& groupInfo() const { return _group_info  ; }	
+		const RsGroupMetaData& groupInfo() const { return _group_info  ; }
 signals:
 		void itemChanged() ;
 

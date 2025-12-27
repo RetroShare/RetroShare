@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/Histogram.h                                                  *
+ * retroshare-gui/src/gui/statistics/Histogram.h                               *
  *                                                                             *
  * Copyright (c) 2020 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

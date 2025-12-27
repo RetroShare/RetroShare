@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/PulseAddDialog.cpp                                              *
+ * retroshare-gui/src/gui/TheWire/PulseAddDialog.cpp                           *
  *                                                                             *
  * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
@@ -71,7 +71,7 @@ void PulseAddDialog::setGroup(RsWireGroup &group)
 {
 	ui.label_groupName->setText(QString::fromStdString(group.mMeta.mGroupName));
 	ui.label_idName->setText(QString::fromStdString(group.mMeta.mAuthorId.toStdString()));
-	
+
 	if (group.mHeadshot.mData )
 	{
 		QPixmap pixmap;
@@ -92,7 +92,7 @@ void PulseAddDialog::setGroup(RsWireGroup &group)
 		ui.headshot->setPixmap(pixmap);
 		ui.topheadshot->setPixmap(pixmap);
 	}
-	
+
 	mGroup = group;
 }
 

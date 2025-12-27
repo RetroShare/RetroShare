@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/Widget.cpp                                                             *
+ * retroshare-gui/src/util/Widget.h                                            *
  *                                                                             *
  * Copyright (c) 2006  Crypton                 <retroshare.project@gmail.com>  *
  *                                                                             *
@@ -32,7 +32,7 @@ class QDialog;
 /**
  * Helper functions for QWidget.
  *
- * 
+ *
  */
 class Widget : NonCopyable {
 public:

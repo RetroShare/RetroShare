@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/RsNetUtil.cpp                                                          *
+ * retroshare-gui/src/util/RsNetUtil.cpp                                       *
  *                                                                             *
  * Copyright (c) 2014 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

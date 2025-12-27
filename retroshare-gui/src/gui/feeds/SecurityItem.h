@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/SecurityItem.h                                                    *
+ * retroshare-gui/src/gui/feeds/SecurityItem.h                                 *
  *                                                                             *
  * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *

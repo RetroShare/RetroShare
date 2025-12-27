@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/NewTag.cpp                                                     *
+ * retroshare-gui/src/gui/settings/NewTag.cpp                                  *
  *                                                                             *
  * Copyright 2009, Retroshare Team <retroshare.project@gmail.com>              *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/linetypes.h                                                             *
+ * retroshare-gui/src/gui/linetypes.h                                          *
  *                                                                             *
  * Copyright (c) 2006-2007, crypton                                            *
  * Copyright (c) 2006, Matt Edman, Justin Hipple                               *

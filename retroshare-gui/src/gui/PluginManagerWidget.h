@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/PluginManagerWidget.h                                                   *
+ * retroshare-gui/src/gui/PluginManagerWidget.h                                *
  *                                                                             *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -34,7 +34,7 @@ class QSpacerItem;
 class QTextEdit;
 
 //=============================================================================
-   
+
 class PluginFrame : public QFrame
 {
     Q_OBJECT
@@ -47,7 +47,7 @@ public:
 
 signals:
     void needToRemove(QString pluginName);
-    
+
 protected slots:
     void removeButtonClicked();
 
@@ -70,10 +70,10 @@ protected:
 //! GUI representation of the PluginManager class
 
 //!     This is something like GUI for PluginManager class. Or you can think
-//! about PluginManagerWidget as a view, and a PluginManager as a model. 
+//! about PluginManagerWidget as a view, and a PluginManager as a model.
 //! Instances should be created only by PluginManager class; maybe later i'll
 //! hide constructor in some way. Parent (or somebody else) can delete it.
-//! Widget itself can be used anywere, in some 'settings' dialogs. 
+//! Widget itself can be used anywere, in some 'settings' dialogs.
 class PluginManagerWidget: public QFrame
 {
     Q_OBJECT
@@ -93,7 +93,7 @@ public slots:
     void acceptErrorMessage(QString errorMessage);
 
 protected slots:
-    
+
 protected:
     QVBoxLayout* mainLayout;
     QFrame*      pluginFramesContainer;
@@ -108,7 +108,7 @@ protected:
 protected slots:
     void installPluginButtonClicked();
 };
-			   
+
 //=============================================================================
 
 #endif

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/NetworkDialog.h                                                         *
+ * retroshare-gui/src/gui/NetworkDialog.h                                      *
  *                                                                             *
  * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -85,7 +85,7 @@ private slots:
   //void on_actionAddFriend_activated();
   //void on_actionExportKey_activated();
   //void on_actionCreate_New_Profile_activated();
-    
+
   void filterColumnChanged(int);
 
 private:

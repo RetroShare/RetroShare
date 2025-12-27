@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/SoundManager.cpp                                                        *
+ * retroshare-gui/src/gui/SoundManager.cpp                                     *
  *                                                                             *
  * Copyright (c) 2012 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *

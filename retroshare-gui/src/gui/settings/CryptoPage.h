@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/CryptoPage.h                                                   *
+ * retroshare-gui/src/gui/settings/CryptoPage.h                                *
  *                                                                             *
  * Copyright 2006, Retroshare Team <retroshare.project@gmail.com>              *
  *                                                                             *

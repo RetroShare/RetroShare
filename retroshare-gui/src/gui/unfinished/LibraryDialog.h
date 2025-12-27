@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -30,7 +30,7 @@
 #include <retroshare/rstypes.h>
 #include "gui/RemoteDirModel.h"
 
-class LibraryDialog : public MainPage 
+class LibraryDialog : public MainPage
 {
   Q_OBJECT
 
@@ -41,16 +41,16 @@ public:
 
 
 private slots:
-  
+
   	void PopulateList();
-  	
+
   	void CallShareFilesBtn_library();
     void CallTileViewBtn_library();
     void CallShowDetailsBtn_library();
     void CallCreateAlbumBtn_library();
-    void CallDeleteAlbumBtn_library();		
+    void CallDeleteAlbumBtn_library();
     void CallFindBtn_library();
-    
+
     void browseFile();
     void player();
     void PlayFrmList();

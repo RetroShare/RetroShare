@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/DhtWindow.h                                                  *
+ * retroshare-gui/src/gui/statistics/DhtWindow.h                               *
  *                                                                             *
  * Copyright (c) 2011 Robert Fernie   <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -40,15 +40,15 @@ public:
 
 public slots:
 	virtual void updateDisplay() ;
-	
+
   void filterColumnChanged(int);
   void filterItems(const QString &text);
-  
+
 private slots:
 	/** Create the context popup menu and it's submenus */
 	void DHTCustomPopupMenu( QPoint point );
 	void copyIP();
-	
+
 protected:
     //void changeEvent(QEvent *e);
 

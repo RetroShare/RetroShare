@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/RsGxsUpdateBroadcast.h                                                 *
+ * retroshare-gui/src/util/RsGxsUpdateBroadcast.h                              *
  *                                                                             *
  * Copyright (c) 2014 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

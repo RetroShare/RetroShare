@@ -1,5 +1,5 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/msgs/TagsMenu.h                                      *
+ * retroshare-gui/src/gui/msgs/textformat.h                                    *
  *                                                                             *
  * Copyright (C) 2006-2010 by Retroshare Team  <retroshare.project@gmail.com>  *
  * Copyright (C) 2008-2009 Mehrdad Momeny <mehrdad.momeny@gmail.com>           *
@@ -46,7 +46,7 @@ public:
         /// Image properties
         ImageTitle = 0x100020,
         ImageAlternateText = 0x100021,
-        
+
         HasCodeStyle = 0x100030,
 
         /// Block Properties

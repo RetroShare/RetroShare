@@ -43,7 +43,7 @@ void GxsCircleChooser::loadCircles(const RsGxsCircleId &defaultId)
 bool MakeGxsCircleDesc(const RsGxsCircleId &id, QString &desc)
 {
 	RsGxsCircleDetails details;
-	
+
 	if (rsGxsCircles->getCircleDetails(id, details))
 	{
 		desc = QString::fromUtf8(details.mCircleName.c_str());
@@ -71,9 +71,9 @@ void GxsCircleChooser::loadGxsCircles()
 		std::cerr << "GxsCircleChooser::loadGxsCircles() ERROR no ids";
 		std::cerr << std::endl;
 		return;
-	}	
+	}
 
-	int i = 0; 
+	int i = 0;
 	int def = -1;
     for(auto it(ids.begin()); it != ids.end(); ++it, ++i)
 	{
@@ -111,4 +111,4 @@ bool GxsCircleChooser::getChosenCircle(RsGxsCircleId &id)
 
 	return true;
 }
-		
+

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/retroshareWin32.cpp                                                    *
+ * retroshare-gui/src/util/retroshareWin32.cpp                                 *
  *                                                                             *
  * Copyright (c) 2006-2007, crypton                                            *
  * Copyright (c) 2006, Matt Edman, Justin Hipple                               *
@@ -63,7 +63,7 @@ win32_get_folder_location(int /*folder*/, QString defaultPath)
   return defaultPath;
 }
 
-/** Returns the value in keyName at keyLocation. 
+/** Returns the value in keyName at keyLocation.
  *  Returns an empty QString if the keyName doesn't exist */
 QString
 win32_registry_get_key_value(QString keyLocation, QString keyName)
@@ -75,11 +75,11 @@ win32_registry_get_key_value(QString keyLocation, QString keyName)
 
   /* Open the key for reading (opens new key if it doesn't exist) */
   if (RegOpenKeyExA(HKEY_CURRENT_USER,
-                    qPrintable(keyLocation), 
+                    qPrintable(keyLocation),
                     0L, KEY_READ, &key) == ERROR_SUCCESS) {
-    
+
     /* Key exists, so read the value into data */
-    RegQueryValueExA(key, qPrintable(keyName), 
+    RegQueryValueExA(key, qPrintable(keyName),
                     NULL, NULL, (LPBYTE)data, &size);
   }
 
@@ -101,7 +101,7 @@ win32_registry_set_key_value(QString keyLocation, QString keyName, QString keyVa
 {
 #ifdef WIN32
   HKEY key;
-  
+
   /* Open the key for writing (opens new key if it doesn't exist */
   if (RegOpenKeyExA(HKEY_CURRENT_USER,
                    qPrintable(keyLocation),
@@ -115,7 +115,7 @@ win32_registry_set_key_value(QString keyLocation, QString keyName, QString keyVa
   }
 
   /* Save the value in the key */
-  RegSetValueExA(key, qPrintable(keyName), 0, REG_SZ, 
+  RegSetValueExA(key, qPrintable(keyName), 0, REG_SZ,
                 (BYTE *)qPrintable(keyValue),
                 (DWORD)keyValue.length() + 1); // include null terminator
 
@@ -134,12 +134,12 @@ win32_registry_remove_key(QString keyLocation, QString keyName)
 {
 #ifdef WIN32
   HKEY key;
-  
+
   /* Open the key for writing (opens new key if it doesn't exist */
   if (RegOpenKeyExA(HKEY_CURRENT_USER,
                    qPrintable(keyLocation),
                    0, KEY_SET_VALUE, &key) == ERROR_SUCCESS) {
-  
+
     /* Key exists so delete it */
     RegDeleteValueA(key, qPrintable(keyName));
   }
@@ -158,9 +158,9 @@ win32_program_files_folder()
 {
   return win32_get_folder_location(
 #if 0
-     CSIDL_PROGRAM_FILES, 
+     CSIDL_PROGRAM_FILES,
 #else
-     0, 
+     0,
 #endif
 	  QDir::rootPath() + "\\Program Files");
 }
@@ -171,9 +171,9 @@ win32_app_data_folder()
 {
   return win32_get_folder_location(
 #if 0
-      CSIDL_APPDATA, 
+      CSIDL_APPDATA,
 #else
-      0, 
+      0,
 #endif
 			QDir::homePath() + "\\Application Data");
 

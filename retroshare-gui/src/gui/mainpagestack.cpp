@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/mainpagestack.cpp                                                       *
+ * retroshare-gui/src/gui/mainpagestack.cpp                                    *
  *                                                                             *
  * Copyright (c) 2006-2007, crypton    <retroshare.project@gmail.com>          *
  * Copyright (c) 2006, Matt Edman, Justin Hipple                               *

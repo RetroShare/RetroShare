@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/ChannelPage.cpp                                                *
+ * retroshare-gui/src/gui/settings/ChannelPage.cpp                             *
  *                                                                             *
  * Copyright 2006, Crypton         <retroshare.project@gmail.com>              *
  *                                                                             *
@@ -48,7 +48,7 @@ ChannelPage::~ChannelPage()
 void ChannelPage::load()
 {
 	ui.groupFrameSettingsWidget->loadSettings(GroupFrameSettings::Channel);
-	
+
 	Settings->beginGroup(QString("ChannelPostsWidget"));
     whileBlocking(ui.emoteicon_checkBox)->setChecked(Settings->value("Emoteicons_ChannelDecription", true).toBool());
     Settings->endGroup();

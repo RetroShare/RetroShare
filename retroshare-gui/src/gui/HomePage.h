@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/HomePage.h                                                              *
+ * retroshare-gui/src/gui/HomePage.h                                           *
  *                                                                             *
  * Copyright (C) 2016 Defnax          <retroshare.project@gmail.com>           *
  *                                                                             *

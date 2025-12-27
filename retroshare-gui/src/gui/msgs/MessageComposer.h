@@ -40,7 +40,7 @@ class RSTreeWidgetItemCompareRole;
 struct RsGxsChannelGroup;
 struct RsGxsForumGroup;
 
-class MessageComposer : public QMainWindow 
+class MessageComposer : public QMainWindow
 {
     Q_OBJECT
 
@@ -90,7 +90,7 @@ public slots:
     void  sendMessage();
     void  cancelMessage();
     void  addImage();
-    
+
     void changeFormatType(int styleIndex );
 
 protected:
@@ -163,7 +163,7 @@ private slots:
     void tagAboutToShow();
     void tagSet(int tagId, bool set);
     void tagRemoveAll();
-    
+
     void on_closeInfoFrameButton_Distant_clicked();
     void on_closeInfoFrameButton_SizeLimit_clicked();
 
@@ -220,7 +220,7 @@ private:
     *actionRedo,
     *actionCut,
     *actionCopy,
-    *actionPaste,   
+    *actionPaste,
     *actionDisc,
     *actionCircle,
     *actionSquare,

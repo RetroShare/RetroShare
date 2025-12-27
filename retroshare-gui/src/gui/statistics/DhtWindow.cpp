@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/DhtWindow.cpp                                                *
+ * retroshare-gui/src/gui/statistics/DhtWindow.cpp                             *
  *                                                                             *
  * Copyright (c) 2011 Robert Fernie   <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -49,11 +49,11 @@ DhtWindow::DhtWindow(QWidget *parent)
 : RsAutoUpdatePage(1000,parent)
 {
     ui.setupUi(this);
-    
+
     connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
     connect( ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
     connect( ui.dhtTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(DHTCustomPopupMenu(QPoint)));
-    
+
         /* add filter actions */
     ui.filterLineEdit->addFilter(QIcon(), tr("IP"), DTW_COL_IPADDR, tr("Search IP"));
     ui.filterLineEdit->setCurrentFilter(DTW_COL_IPADDR);
@@ -67,10 +67,10 @@ DhtWindow::~DhtWindow()
 void DhtWindow::DHTCustomPopupMenu( QPoint )
 {
 	QMenu contextMnu( this );
-	
+
 	QTreeWidgetItem *item = ui.dhtTreeWidget->currentItem();
 	if (item) {
-	
+
 	QString Ip = item->text(DTW_COL_IPADDR);
 
 	contextMnu.addAction(QIcon(), tr("Copy %1 to clipboard").arg(Ip), this, SLOT(copyIP()));
@@ -83,7 +83,7 @@ void DhtWindow::DHTCustomPopupMenu( QPoint )
 void DhtWindow::updateDisplay()
 {
 	/* do nothing if locked, or not visible */
-	if (RsAutoUpdatePage::eventsLocked() == true) 
+	if (RsAutoUpdatePage::eventsLocked() == true)
 	{
 #ifdef DEBUG_DHTWINDOW
 		std::cerr << "DhtWindow::update() events Are Locked" << std::endl;
@@ -307,20 +307,20 @@ void DhtWindow::updateNetPeers()
 #define PTW_COL_RSNAME			0
 #define PTW_COL_PEERID			1
 #define PTW_COL_DHT_STATUS		2
-	
+
 #define PTW_COL_PEER_CONNECTLOGIC	3
 
 #define PTW_COL_PEER_CONNECT_STATUS	4
 #define PTW_COL_PEER_CONNECT_MODE	5
 #define PTW_COL_PEER_REQ_STATUS		6
-	
+
 #define PTW_COL_PEER_CB_MSG		7
 #define PTW_COL_RSID			8
 
 #if 0
 	/* clear old entries */
 	int itemCount = peerTreeWidget->topLevelItemCount();
-	for (int nIndex = 0; nIndex < itemCount;) 
+	for (int nIndex = 0; nIndex < itemCount;)
 	{
 		QTreeWidgetItem *tmp_item = ui.peerTreeWidget->topLevelItem(nIndex);
 		std::string tmpid = tmp_item->data(PTW_COL_PEERID, Qt::DisplayRole).toString().toStdString();
@@ -348,7 +348,7 @@ void DhtWindow::updateNetPeers()
 		for (int nIndex = 0; nIndex < itemCount; ++nIndex)
 		{
 			QTreeWidgetItem *tmp_item = ui.peerTreeWidget->topLevelItem(nIndex);
-			if (tmp_item->data(PTW_COL_PEERID, Qt::DisplayRole).toString() == qpeerid) 
+			if (tmp_item->data(PTW_COL_PEERID, Qt::DisplayRole).toString() == qpeerid)
 			{
 				peer_item = tmp_item;
 				break;
@@ -362,11 +362,11 @@ void DhtWindow::updateNetPeers()
 			peer_item = new QTreeWidgetItem();
 			ui.peerTreeWidget->addTopLevelItem(peer_item);
 		}
-		
+
 		/* Set header resize modes and initial section sizes Peer TreeView*/
     QHeaderView * _header = ui.peerTreeWidget->header () ;
     _header->resizeSection ( PTW_COL_RSNAME, 170 );
-    
+
 		/* update the data */
 		RsDhtNetPeer status;
 		rsDht->getNetPeerStatus(*it, status);
@@ -403,7 +403,7 @@ void DhtWindow::updateNetPeers()
 				++nOnlinePeers;
 				break;
 		}
-			
+
 		peer_item -> setData(PTW_COL_DHT_STATUS, Qt::DisplayRole, dhtstate);
 
 		// NOW CONNECT STATE
@@ -459,16 +459,16 @@ void DhtWindow::updateNetPeers()
 		}
 
 		peer_item -> setData(PTW_COL_PEER_CONNECT_STATUS, Qt::DisplayRole, cpsstr);
-		
+
 		if (status.mPeerConnectState == RsDhtPeerConnectState::DISCONNECTED)
 		{
 			peer_item -> setData(PTW_COL_PEER_CONNECT_MODE, Qt::DisplayRole, "");
 		}
-		else 
+		else
 		{
 			peer_item -> setData(PTW_COL_PEER_CONNECT_MODE, Qt::DisplayRole, cpmstr);
 		}
-	
+
 		// NOW REQ STATE.
 		QString reqstr;
 		if (status.mExclusiveProxyLock)
@@ -490,7 +490,7 @@ void DhtWindow::updateNetPeers()
 		peer_item -> setData(PTW_COL_PEER_REQ_STATUS, Qt::DisplayRole, reqstr);
 
 		peer_item -> setData(PTW_COL_PEER_CB_MSG, Qt::DisplayRole, QString::fromStdString(status.mCbPeerMsg));
-		peer_item -> setData(PTW_COL_PEER_CONNECTLOGIC, Qt::DisplayRole, 
+		peer_item -> setData(PTW_COL_PEER_CONNECTLOGIC, Qt::DisplayRole,
 						QString::fromStdString(status.mConnectState));
 	}
 
@@ -505,17 +505,17 @@ void DhtWindow::updateNetPeers()
 	connstr += tr(",#proxy:") + QString::number(nProxyPeers);
 	connstr += tr(",#relay:") + QString::number(nRelayPeers);
 	connstr += ")";*/
-	
+
 	ui.label_peers->setText(QString::number(nPeers));
-	ui.label_offline->setText(QString::number(nOfflinePeers)); 
-	ui.label_unreachable->setText(QString::number(nUnreachablePeers)); 
-	ui.label_online->setText(QString::number(nOnlinePeers)); 
-	
+	ui.label_offline->setText(QString::number(nOfflinePeers));
+	ui.label_unreachable->setText(QString::number(nUnreachablePeers));
+	ui.label_online->setText(QString::number(nOnlinePeers));
+
 	ui.label_disconnected->setText(QString::number(nDisconnPeers));
-	ui.label_direct->setText(QString::number(nDirectPeers)); 
-	ui.label_proxy->setText(QString::number(nProxyPeers)); 
-	ui.label_relay->setText(QString::number(nRelayPeers)); 
-	
+	ui.label_direct->setText(QString::number(nDirectPeers));
+	ui.label_proxy->setText(QString::number(nProxyPeers));
+	ui.label_relay->setText(QString::number(nRelayPeers));
+
 	ui.tabWidget_2->setTabText(1, tr("Peers") + " (" + QString::number(ui.peerTreeWidget->topLevelItemCount()) + ")" );
 
 
@@ -607,7 +607,7 @@ void DhtWindow::updateRelays()
 		item -> setData(RTW_COL_BANDWIDTH, Qt::DisplayRole, bandwidthstr);
 
 	}
-	
+
 		ui.tabWidget_2->setTabText(2, tr("Relays") + " (" + QString::number(ui.relayTreeWidget->topLevelItemCount()) + ")" );
 
 }
@@ -642,7 +642,7 @@ void DhtWindow::updateDhtPeers()
 	/* Hackish display of all Dht peers, should be split into buckets (as children) */
   //QString status = QString::fromStdString(mPeerNet->getDhtStatusString());
 	//dhtLabel->setText(status);
-	
+
 	std::list<RsDhtPeer> allpeers;
 	std::list<RsDhtPeer>::iterator it;
 	int i;
@@ -698,14 +698,14 @@ void DhtWindow::updateDhtPeers()
 		dht_item -> setData(DTW_COL_RECV, Qt::DisplayRole, lastrecvstr);
 
 		ui.dhtTreeWidget->addTopLevelItem(dht_item);
-		
+
 		if (ui.filterLineEdit->text().isEmpty() == false) {
 		filterItems(ui.filterLineEdit->text());
     }
-    
+
     ui.tabWidget_2->setTabText(0, tr("DHT") + " (" + QString::number(ui.dhtTreeWidget->topLevelItemCount()) + ")" );
 	}
-	
+
 
 
 }

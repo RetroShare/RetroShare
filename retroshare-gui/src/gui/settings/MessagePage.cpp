@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/MessagePage.cpp                                                *
+ * retroshare-gui/src/gui/settings/MessagePage.cpp                             *
  *                                                                             *
  * Copyright (C) 2006 Crypton <retroshare.project@gmail.com>                   *
  *                                                                             *

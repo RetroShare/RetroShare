@@ -1,5 +1,5 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/Posted/BoardsCommentsItem.h                          *
+ * retroshare-gui/src/gui/feeds/BoardsCommentsItem.h                           *
  *                                                                             *
  * Copyright (C) 2020 by RetroShare Team     <retroshare.project@gmail.com>    *
  *                                                                             *

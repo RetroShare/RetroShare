@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/StartDialog.cpp                                                         *
+ * retroshare-gui/src/gui/StartDialog.cpp                                      *
  *                                                                             *
  * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -45,7 +45,7 @@ StartDialog::StartDialog(QWidget *parent)
 #endif
 
 	Settings->loadWidgetInformation(this);
-	
+
 	/* Put the Login dialog in the screen center */
 	const QRect screen = RsApplication::primaryScreenGeometry();
 	this->move( screen.center() - this->rect().center() );

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/CryptoPage.cpp                                                 *
+ * retroshare-gui/src/gui/settings/CryptoPage.cpp                              *
  *                                                                             *
  * Copyright 2006, Retroshare Team <retroshare.project@gmail.com>              *
  *                                                                             *
@@ -111,7 +111,7 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         std::string invite ;
         rsPeers->getShortInvite(invite,rsPeers->getOwnId(),RetroshareInviteFlags::RADIX_FORMAT | RsPeers::defaultCertificateFlags);
         ui.retroshareId_content_LB->setText(QString::fromUtf8(invite.c_str()));
-		
+
         /* set retroshare version */
         ui.version->setText(RsApplication::retroshareVersion(true));
 
@@ -121,8 +121,8 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         int friends = ids.size();
 
         ui.friendsEdit->setText(QString::number(friends));
-		
-		
+
+
 		QString string ;
 		string = rsFiles->getPartialsDirectory().c_str();
 		QString datadir = string;

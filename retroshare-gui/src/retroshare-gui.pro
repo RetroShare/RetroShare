@@ -19,8 +19,8 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = app
-QT     += network xml 
-CONFIG += qt gui uic qrc resources idle 
+QT     += network xml
+CONFIG += qt gui uic qrc resources idle
 CONFIG += console
 TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
@@ -92,7 +92,7 @@ FORMS   += TorControl/TorControlWindow.ui
 SOURCES += TorControl/TorControlWindow.cpp
 HEADERS += TorControl/TorControlWindow.h
 
-#QMAKE_CFLAGS += -fmudflap 
+#QMAKE_CFLAGS += -fmudflap
 #LIBS *= /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflap.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflapth.a
 
 greaterThan(QT_MAJOR_VERSION, 4) {
@@ -135,7 +135,7 @@ linux-* {
 
 	PKGCONFIG *= x11 xscrnsaver
 
-	LIBS *= -rdynamic 
+	LIBS *= -rdynamic
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 }
 
@@ -283,7 +283,7 @@ macx {
 		$$PWD/gui/qss/chat/Bubble \
 		$$PWD/gui/qss/chat/Bubble_Compact
 	dplChatStyles.path = Contents/Resources/stylesheets
-	QMAKE_BUNDLE_DATA += dplChatStyles 
+	QMAKE_BUNDLE_DATA += dplChatStyles
 #	mac_webui.files = $$files($$PWD/../../libresapi/src/webui)
 #	mac_webui.path = Contents/Resources
 #	QMAKE_BUNDLE_DATA += mac_webui
@@ -291,7 +291,7 @@ macx {
 	OBJECTS_DIR = temp/obj
 
 	CONFIG += version_detail_bash_script
-	LIBS += -lssl -lcrypto -lz 
+	LIBS += -lssl -lcrypto -lz
 	for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
@@ -1039,9 +1039,9 @@ unfinishedtranslations {
 }
 
 messenger {
-     SOURCES +=       gui/MessengerWindow.cpp 
-     HEADERS +=       gui/MessengerWindow.h 
-     FORMS   +=       gui/MessengerWindow.ui 
+     SOURCES +=       gui/MessengerWindow.cpp
+     HEADERS +=       gui/MessengerWindow.h
+     FORMS   +=       gui/MessengerWindow.ui
 
 	 DEFiNES += MESSENGER_WINDOW
 }
@@ -1093,11 +1093,11 @@ rs_efs {
 }
 
 # BELOW IS GXS Unfinished Services.
-	
+
 unfinished_services {
-	
+
 	DEPENDPATH += gui/unfinished \
-	
+
 	HEADERS += gui/unfinished/ApplicationWindow.h \
 
 #		gui/unfinished/CalDialog.h \
@@ -1108,7 +1108,7 @@ unfinished_services {
 #		gui/unfinished/StatisticDialog.h \
 #		gui/unfinished/PhotoDialog.h \
 #		gui/unfinished/PhotoShow.h \
-	
+
 	FORMS += gui/unfinished/ApplicationWindow.ui \
 
 #		gui/unfinished/CalDialog.ui \
@@ -1119,7 +1119,7 @@ unfinished_services {
 #		gui/unfinished/StatisticDialog.ui \
 #		gui/unfinished/PhotoDialog.ui \
 #		gui/unfinished/PhotoShow.ui \
-	
+
 	SOURCES += gui/unfinished/ApplicationWindow.cpp \
 
 #		gui/unfinished/CalDialog.cpp \
@@ -1130,11 +1130,11 @@ unfinished_services {
 #		gui/unfinished/StatisticDialog.cpp \
 #		gui/unfinished/PhotoDialog.cpp \
 #		gui/unfinished/PhotoShow.cpp \
-	
+
 	DEFINES *= UNFINISHED
 }
-	
-	
+
+
 gxsphotoshare {
 	#DEFINES += RS_USE_PHOTOSHARE # to enable in unfinished.
 	DEFINES += RS_USE_PHOTO # enable in MainWindow
@@ -1175,8 +1175,8 @@ gxsphotoshare {
 	RESOURCES += gui/PhotoShare/Photo_images.qrc
 
 }
-	
-	
+
+
 wikipoos {
     message(Including WikiPoos)
     DEFINES += RS_USE_WIKI
@@ -1204,11 +1204,11 @@ wikipoos {
 
     RESOURCES += gui/WikiPoos/Wiki_images.qrc
 }
-	
-	
-	
+
+
+
 gxsthewire {
-	
+
 	DEFINES += RS_USE_WIRE
 
 	HEADERS += gui/TheWire/WireDialog.h \
@@ -1233,7 +1233,7 @@ gxsthewire {
 		gui/TheWire/PulseReply.ui \
 		gui/TheWire/PulseReplySeperator.ui \
 		gui/TheWire/PulseMessage.ui \
-	
+
 	SOURCES += gui/TheWire/WireDialog.cpp \
 		gui/TheWire/WireGroupItem.cpp \
 		gui/TheWire/WireGroupDialog.cpp \
@@ -1251,13 +1251,13 @@ gxsthewire {
 }
 
 identities {
-	
+
 	HEADERS +=  \
 		gui/Identity/IdDialog.h \
 		gui/Identity/IdentityListModel.h \
 		gui/Identity/IdEditDialog.h \
 		gui/Identity/IdDetailsDialog.h \
-	
+
 	FORMS += gui/Identity/IdDialog.ui \
 		gui/Identity/IdEditDialog.ui \
 		gui/Identity/IdDetailsDialog.ui \
@@ -1267,9 +1267,9 @@ identities {
 		gui/Identity/IdentityListModel.cpp \
 		gui/Identity/IdEditDialog.cpp \
 		gui/Identity/IdDetailsDialog.cpp \
-	
+
 }
-	
+
 gxscircles {
 	DEFINES += RS_USE_CIRCLES
 #	DEFINES += RS_USE_NEW_PEOPLE_DIALOG
@@ -1277,10 +1277,10 @@ gxscircles {
 	HEADERS +=  \
 		gui/Circles/CirclesDialog.h \
 		gui/Circles/CreateCircleDialog.h \
-	
+
 	FORMS += gui/Circles/CirclesDialog.ui \
 		gui/Circles/CreateCircleDialog.ui \
-	
+
 	SOURCES +=  \
 		gui/Circles/CirclesDialog.cpp \
 		gui/Circles/CreateCircleDialog.cpp \
@@ -1289,11 +1289,11 @@ gxscircles {
 	HEADERS += gui/People/CircleWidget.h
 	HEADERS += gui/People/IdentityWidget.h
 
-	FORMS   += gui/People/PeopleDialog.ui 
+	FORMS   += gui/People/PeopleDialog.ui
 	FORMS   += gui/People/CircleWidget.ui
 	FORMS   += gui/People/IdentityWidget.ui
 
-	SOURCES += gui/People/PeopleDialog.cpp 
+	SOURCES += gui/People/PeopleDialog.cpp
 	SOURCES += gui/People/CircleWidget.cpp
 	SOURCES += gui/People/IdentityWidget.cpp
 
@@ -1306,8 +1306,8 @@ gxscircles {
 
 
 }
-	
-	
+
+
 gxsforums {
 
 	HEADERS += gui/gxsforums/GxsForumsDialog.h \
@@ -1333,10 +1333,10 @@ gxsforums {
 		gui/feeds/GxsForumGroupItem.cpp \
 		gui/feeds/GxsForumMsgItem.cpp
 }
-	
-	
+
+
 gxschannels {
-	
+
 	HEADERS += gui/gxschannels/GxsChannelDialog.h \
 		gui/gxschannels/GxsChannelGroupDialog.h \
 		gui/gxschannels/CreateGxsChannelMsg.h \
@@ -1348,14 +1348,14 @@ gxschannels {
 		gui/feeds/GxsChannelGroupItem.h \
 		gui/feeds/GxsChannelPostItem.h \
 		gui/gxschannels/GxsChannelUserNotify.h
-	
+
 	FORMS += \
 		gui/gxschannels/GxsChannelPostsWidgetWithModel.ui \
 		gui/gxschannels/GxsChannelFilesStatusWidget.ui \
 		gui/gxschannels/CreateGxsChannelMsg.ui \
 		gui/feeds/GxsChannelGroupItem.ui \
 		gui/feeds/GxsChannelPostItem.ui
-	
+
 	SOURCES += gui/gxschannels/GxsChannelDialog.cpp \
 		gui/gxschannels/GxsChannelPostsWidgetWithModel.cpp \
 		gui/gxschannels/GxsChannelPostsModel.cpp \
@@ -1368,10 +1368,10 @@ gxschannels {
 		gui/feeds/GxsChannelPostItem.cpp \
 		gui/gxschannels/GxsChannelUserNotify.cpp
 }
-	
-	
+
+
 posted {
-	
+
 	HEADERS += gui/Posted/PostedDialog.h \
 		gui/Posted/PostedListWidgetWithModel.h \
 		gui/Posted/PostedPostsModel.h \
@@ -1386,7 +1386,7 @@ posted {
 
 		#gui/Posted/PostedCreateCommentDialog.h \
 		#gui/Posted/PostedComments.h \
-	
+
 	FORMS += gui/Posted/PostedListWidgetWithModel.ui \
 		gui/feeds/PostedGroupItem.ui \
 		gui/Posted/BoardPostDisplayWidget_compact.ui \
@@ -1398,7 +1398,7 @@ posted {
 		#gui/Posted/PostedDialog.ui \
 		#gui/Posted/PostedComments.ui \
 		#gui/Posted/PostedCreateCommentDialog.ui
-	
+
 	SOURCES += gui/Posted/PostedDialog.cpp \
 		gui/Posted/PostedListWidgetWithModel.cpp \
 		gui/Posted/BoardPostDisplayWidget.cpp \
@@ -1414,12 +1414,12 @@ posted {
 		#gui/Posted/PostedDialog.cpp \
 		#gui/Posted/PostedComments.cpp \
 		#gui/Posted/PostedCreateCommentDialog.cpp
-	
+
 	RESOURCES += gui/Posted/Posted_images.qrc
 }
-	
+
 gxsgui {
-	
+
 	HEADERS += gui/gxs/GxsGroupDialog.h \
 		gui/gxs/GxsIdDetails.h \
 		gui/gxs/GxsIdChooser.h \
@@ -1439,18 +1439,18 @@ gxsgui {
 #		gui/gxs/GxsFeedWidget.h \
 		util/TokenQueue.h \
 		util/RsGxsUpdateBroadcast.h \
-	
+
 #		gui/gxs/GxsMsgDialog.h \
-	
+
 	FORMS += gui/gxs/GxsGroupDialog.ui \
 		gui/gxs/GxsCommentContainer.ui \
 		gui/gxs/GxsCommentDialog.ui \
 		gui/gxs/GxsCreateCommentDialog.ui \
 		gui/gxs/GxsGroupFrameDialog.ui\
-		gui/gxs/GxsGroupShareKey.ui 
+		gui/gxs/GxsGroupShareKey.ui
 #		gui/gxs/GxsMsgDialog.ui \
-#		gui/gxs/GxsCommentTreeWidget.ui 
-	
+#		gui/gxs/GxsCommentTreeWidget.ui
+
 	SOURCES += gui/gxs/GxsGroupDialog.cpp \
 		gui/gxs/GxsIdDetails.cpp \
 		gui/gxs/GxsIdChooser.cpp \
@@ -1470,10 +1470,10 @@ gxsgui {
 #		gui/gxs/GxsFeedWidget.cpp \
 		util/TokenQueue.cpp \
 		util/RsGxsUpdateBroadcast.cpp \
-	
+
 #		gui/gxs/GxsMsgDialog.cpp \
-	
-	
+
+
 }
 
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/PluginsPage.cpp                                                         *
+ * retroshare-gui/src/gui/PluginsPage.cpp                                      *
  *                                                                             *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -42,20 +42,20 @@
 #include "PluginsPage.h"
 #include "PluginManager.h"
 
-//============================================================================== 
+//==============================================================================
 
 PluginsPage::PluginsPage(QWidget *parent )
 //          :QGroupBox(parent) // this is for toy applications, do not remove
             :MainPage(parent)  // this for real retroshare app
 {
-  //=== 
+  //===
     pluginManager = new PluginManager();
     connect( pluginManager, SIGNAL( newPluginRegistered(QString) ),
              this         , SLOT(   pluginRegistered(QString) ) );
-    
+
   //=== create some gui elements =====
     pluginPageLayout = new QVBoxLayout(this);
-    
+
 //    this->setTitle("RetroShare plugins");
 
     pluginTabs = new QTabWidget(this) ;
@@ -73,8 +73,8 @@ PluginsPage::PluginsPage(QWidget *parent )
     pmLay->addItem(pmSpacer);
 
     pluginTabs->addTab( pmFrame, "Manager" ) ;
-    
-    
+
+
     pluginManager->defaultLoad( ) ;
 }
 

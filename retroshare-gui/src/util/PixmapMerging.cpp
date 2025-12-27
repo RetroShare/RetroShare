@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/PixmapMerging.cpp                                                      *
+ * retroshare-gui/src/util/PixmapMerging.cpp                                   *
  *                                                                             *
  * Copyright (c) 2012 Crypton           <retroshare.project@gmail.com>         *
  *                                                                             *
@@ -19,8 +19,8 @@
  *******************************************************************************/
 
 #ifdef UNUSED_CODE
-#include <gui/gxs/GxsIdDetails.h>
-#include <util/PixmapMerging.h>
+#include "gui/gxs/GxsIdDetails.h"
+#include "util/PixmapMerging.h"
 
 #include <QPixmap>
 #include <QPainter>

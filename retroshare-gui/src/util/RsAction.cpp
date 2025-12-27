@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/RsAction.cpp                                                           *
+ * retroshare-gui/src/util/RsAction.cpp                                        *
  *                                                                             *
  * Copyright (c) 2007 DrBob          <retroshare.project@gmail.com>            *
  *                                                                             *
@@ -21,21 +21,21 @@
 #include "util/RsAction.h"
 
 RsAction::RsAction(QObject * parent, std::string rsid)
-	: QAction(parent), RsId(rsid) 
+	: QAction(parent), RsId(rsid)
 {
 	connect(this, SIGNAL( triggered( bool ) ), this, SLOT( triggerEvent( bool ) ) );
 }
 
 
 RsAction::RsAction(const QString & text, QObject * parent, std::string rsid)
-	: QAction(text, parent), RsId(rsid) 
+	: QAction(text, parent), RsId(rsid)
 {
 	connect(this, SIGNAL( triggered( bool ) ), this, SLOT( triggerEvent( bool ) ) );
 }
 
 
 RsAction::RsAction(const QIcon & icon, const QString & text, QObject * parent , std::string rsid)
-	: QAction(icon, text, parent), RsId(rsid) 
+	: QAction(icon, text, parent), RsId(rsid)
 {
 	connect(this, SIGNAL( triggered( bool ) ), this, SLOT( triggerEvent( bool ) ) );
 }

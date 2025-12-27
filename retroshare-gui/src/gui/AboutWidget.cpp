@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/AboutWidget.cpp                                                         *
+ * retroshare-gui/src/gui/AboutWidget.cpp                                      *
  *                                                                             *
  * Copyright (C) 2012 Retroshare Team <retroshare.project@gmail.com>           *
  * Copyright (C) 2008 Unipro, Russia (http://ugene.unipro.ru)                  *
@@ -417,7 +417,7 @@ void AWidget::mouseMoveEvent(QMouseEvent* e) {
 }
 
 
-void AWidget::calcWater(int npage, int density) { 
+void AWidget::calcWater(int npage, int density) {
     int w = image1.width();
     int h = image1.height();
     int count = w + 1;
@@ -529,7 +529,7 @@ void AWidget::drawWater(QRgb* srcImage,QRgb* dstImage) {
 // T
 TBoard::TBoard(QWidget *parent) {
     Q_UNUSED(parent);
-    
+
     setFocusPolicy(Qt::StrongFocus);
     isStarted = false;
     isWaitingAfterLine = false;
@@ -598,12 +598,12 @@ void TBoard::paintEvent(QPaintEvent *event) {
     QWidget::paintEvent(event);
 
     QPainter painter(this);
-    
+
     painter.setPen(Qt::black);
-    painter.drawRect(frameRect());  
+    painter.drawRect(frameRect());
     QRect rect = boardRect();
     painter.fillRect(rect, Qt::white);
-    
+
     if (isPaused) {
         painter.drawText(rect, Qt::AlignCenter, tr("Pause"));
         return;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/qthreadutils.h                                                         *
+ * retroshare-gui/src/util/qthreadutils.h                                      *
  *                                                                             *
  * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/GroupFrameSettingsWidget.h                                     *
+ * retroshare-gui/src/gui/settings/GroupFrameSettingsWidget.h                  *
  *                                                                             *
  * Copyright 2009, Retroshare Team <retroshare.project@gmail.com>              *
  *                                                                             *

@@ -21,7 +21,7 @@
 #ifndef MRK_MESSAGE_INTERFACE_H
 #define MRK_MESSAGE_INTERFACE_H
 
-/* This header will be used to switch the GUI from 
+/* This header will be used to switch the GUI from
  * the old RsMsg to the new RsMail interface.
  *
  * The GUI uses similar interface, with the differences

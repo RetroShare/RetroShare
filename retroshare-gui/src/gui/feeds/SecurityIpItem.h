@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/SecurityIpItem.h                                                  *
+ * retroshare-gui/src/gui/feeds/SecurityIpItem.h                               *
  *                                                                             *
  * Copyright (c) 2015, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -29,7 +29,7 @@
 
 namespace Ui {
 class SecurityIpItem;
-} 
+}
 
 class FeedHolder;
 

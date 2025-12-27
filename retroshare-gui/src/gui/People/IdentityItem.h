@@ -19,7 +19,7 @@ class IdentityItem: public QObject, public QGraphicsItem
 		static const int IMG_SIZE = 64;
 		static IdentityItem *_selected_node ;
 
-		const RsGxsIdGroup& groupInfo() const { return _group_info  ; }	
+		const RsGxsIdGroup& groupInfo() const { return _group_info  ; }
 
 	public slots:
 		void distantChat() ;

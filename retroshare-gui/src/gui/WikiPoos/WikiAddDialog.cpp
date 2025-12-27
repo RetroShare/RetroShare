@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/WikiPoos/WikiAddDialog.cpp                                              *
+ * retroshare-gui/src/gui/WikiPoos/WikiAddDialog.cpp                           *
  *                                                                             *
  * Copyright (C) 2012 Robert Fernie   <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -82,4 +82,4 @@ void WikiAddDialog::clearDialog()
 	ui.lineEdit_Name->setText(QString("title"));
 }
 
-	
+

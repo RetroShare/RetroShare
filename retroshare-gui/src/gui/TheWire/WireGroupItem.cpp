@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/WireGroupItem.cpp                                               *
+ * retroshare-gui/src/gui/TheWire/WireGroupItem.cpp                            *
  *                                                                             *
  * Copyright (c) 2020 Robert Fernie   <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -102,7 +102,7 @@ void WireGroupItem::setup()
         QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(32,32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 		label_headshot->setPixmap(pixmap);
 	}
-	
+
 	RsIdentityDetails idDetails ;
 	rsIdentity->getIdDetails(mGroup.mMeta.mAuthorId,idDetails);
 
@@ -168,7 +168,7 @@ void WireGroupItem::setSelected(bool on)
 {
 	mSelected = on;
 	// set color too
-	if (mSelected) 
+	if (mSelected)
 	{
 		setBackground(QColor (65, 159, 217));
 	}

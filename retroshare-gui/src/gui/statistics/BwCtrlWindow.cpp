@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/BwCtrlWindow.cpp                                             *
+ * retroshare-gui/src/gui/statistics/BwCtrlWindow.cpp                          *
  *                                                                             *
  * Copyright (c) 2012 Robert Fernie   <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -178,14 +178,14 @@ QSize BWListDelegate::sizeHint(const QStyleOptionViewItem & option/*option*/, co
     //return QSize(50*fact,17*fact);
 }
 
-BwCtrlWindow::BwCtrlWindow(QWidget *parent) 
+BwCtrlWindow::BwCtrlWindow(QWidget *parent)
 : RsAutoUpdatePage(1000,parent)
 {
     setupUi(this);
 
     BWDelegate = new BWListDelegate();
     bwTreeWidget->setItemDelegate(BWDelegate);
-    
+
     //float FS = QFontMetricsF(font()).height();
     //float fact = FS/14.0 ;
 
@@ -202,7 +202,7 @@ BwCtrlWindow::~BwCtrlWindow()
 void BwCtrlWindow::updateDisplay()
 {
 	/* do nothing if locked, or not visible */
-	if (RsAutoUpdatePage::eventsLocked() == true) 
+	if (RsAutoUpdatePage::eventsLocked() == true)
 	{
 #ifdef DEBUG_BWCTRLWINDOW
 		std::cerr << "BwCtrlWindow::update() events Are Locked" << std::endl;
@@ -238,7 +238,7 @@ void BwCtrlWindow::updateBandwidth()
 	QTreeWidgetItem *item = new QTreeWidgetItem();
 	peerTreeWidget->addTopLevelItem(item);
 	peerTreeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-	
+
 	/* do Totals */
 	item -> setData(COLUMN_PEERID, Qt::DisplayRole, tr("TOTALS"));
 	item -> setData(COLUMN_RSNAME, Qt::DisplayRole, tr("Totals"));
@@ -311,18 +311,18 @@ void BwCtrlWindow::updateBandwidth()
 		if (it->second.mAllowedTs != 0)
 		{
 			if (it->second.mAllowedOut < it->second.mRateOut)
-			{	
+			{
 				/* RED */
 				QColor bc("#ff4444"); // red
 				peer_item -> setBackground(COLUMN_OUT_RATE,QBrush(bc));
-	
+
 			}
 			else if (it->second.mAllowedOut < it->second.mRateMaxOut)
 			{
 				/* YELLOW */
 				QColor bc("#ffff66"); // yellow
 				peer_item -> setBackground(COLUMN_OUT_MAX,QBrush(bc));
-	
+
 			}
 			else
 			{
@@ -346,11 +346,11 @@ void BwCtrlWindow::updateBandwidth()
 #define QUEUE_YELLOW	500
 
 		if (it->second.mQueueOut > QUEUE_RED)
-		{	
+		{
 			/* RED */
 			QColor bc("#ff4444"); // red
 			peer_item -> setBackground(COLUMN_OUT_QUEUE,QBrush(bc));
-	
+
 		}
 		else if (it->second.mQueueOut > QUEUE_ORANGE)
 		{

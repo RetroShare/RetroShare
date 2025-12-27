@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/OpModeStatus.cpp                                              *
+ * retroshare-gui/src/gui/statusbar/OpModeStatus.cpp                           *
  *                                                                             *
  * Copyright (c) 2008 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/natstatus.cpp                                                 *
+ * retroshare-gui/src/gui/statusbar/natstatus.cpp                              *
  *                                                                             *
  * Copyright (c) 2009 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -33,11 +33,11 @@ NATStatus::NATStatus(QWidget *parent)
     QHBoxLayout *hbox = new QHBoxLayout(this);
     hbox->setContentsMargins(0, 0, 0, 0);
     hbox->setSpacing(6);
-       
+
     statusNAT = new QLabel( tr("<strong>NAT:</strong>"), this );
 //    statusDHT->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
     hbox->addWidget(statusNAT);
-    
+
     iconLabel = new QLabel(this);
     iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/grayled.png"));
     // iconLabel doesn't change over time, so we didn't need a minimum size

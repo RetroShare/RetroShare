@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/RsQtVersion.cpp                                                        *
+ * retroshare-gui/src/util/RsQtVersion.cpp                                     *
  *                                                                             *
  * Copyright (C) 2025 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

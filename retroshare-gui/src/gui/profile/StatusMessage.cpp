@@ -28,10 +28,10 @@ StatusMessage::StatusMessage(QWidget *parent)
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
-  
+
   connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(save()));
   connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
-  
+
   ui.txt_StatusMessage->setText(QString::fromUtf8(rsChats->getOwnCustomStateString().c_str()));
 }
 

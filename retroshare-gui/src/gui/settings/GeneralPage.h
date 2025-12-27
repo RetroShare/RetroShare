@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/GeneralPage.h                                                  *
+ * retroshare-gui/src/gui/settings/GeneralPage.h                               *
  *                                                                             *
  * Copyright (c) 2006-2007, crypton <retroshare.project@gmail.com>             *
  * Copyright (c) 2006, Matt Edman, Justin Hipple                               *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/RemoteDirModel.cpp                                                      *
+ * retroshare-gui/src/gui/RemoteDirModel.cpp                                   *
  *                                                                             *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -334,7 +334,7 @@ QString RetroshareDirModel::getGroupsString(FileStorageFlags flags,const std::li
 	RsGroupInfo group_info ;
 
     for(std::list<RsNodeGroupId>::const_iterator it(group_ids.begin());it!=group_ids.end();)
-		if(rsPeers->getGroupInfo(*it,group_info)) 
+		if(rsPeers->getGroupInfo(*it,group_info))
 		{
 			groups_str += GroupDefs::name(group_info) ;
 
@@ -671,7 +671,7 @@ QString FlatStyle_RDM::computeDirectoryPath(const DirDetails& details) const
 	}
 	while(det->parent != NULL);
 #endif
-	
+
 	return dir ;
 }
 
@@ -1417,7 +1417,7 @@ void RetroshareDirModel::getFileInfoFromIndexList(const QModelIndexList& list, s
 			std::cerr << "Path: " << details.path << std::endl;
 #endif
 			// Note: for directories, the returned hash, is the peer id, so if we collect
-			// dirs, we need to be a bit more conservative for the 
+			// dirs, we need to be a bit more conservative for the
 
             if(already_in.find(details.hash.toStdString()+details.name) == already_in.end())
 			{

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/ChatPage.cpp                                                   *
+ * retroshare-gui/src/gui/settings/ChatPage.cpp                                *
  *                                                                             *
  * Copyright 2006, Retroshare Team <retroshare.project@gmail.com>              *
  *                                                                             *

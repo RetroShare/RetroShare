@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/elastic/graphwidget.cpp                                                 *
+ * retroshare-gui/src/gui/elastic/graphwidget.cpp                              *
  *                                                                             *
  * Copyright (c) 2012, RetroShare Team <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -52,7 +52,7 @@ void GraphWidget::clearGraph()
 {
 	scene()->clear();
 	scene()->setSceneRect(0, 0, width(), height());
-    
+
 	_edges.clear();
 	_nodes.clear();
 	_friction_factor = 1.0f ;
@@ -271,7 +271,7 @@ void GraphWidget::timerEvent(QTimerEvent *event)
 	 }
 
     bool itemsMoved = false;
-    foreach (Node *node, _nodes) 
+    foreach (Node *node, _nodes)
         if(node->progress())
             itemsMoved = true;
 
@@ -304,7 +304,7 @@ void GraphWidget::setEdgeLength(uint32_t l)
 void GraphWidget::setNameSearch(QString s)
 {
     float f = QFontMetrics(font()).height()/16.0 ;
-    
+
 	if (s.length() == 0){
 		for(uint32_t i=0;i<_nodes.size();++i)
 			_nodes[i]->setNodeDrawSize(12 * f);

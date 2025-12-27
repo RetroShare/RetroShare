@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/systraystatus.cpp                                             *
+ * retroshare-gui/src/gui/statusbar/systraystatus.cpp                          *
  *                                                                             *
  * Copyright (c) 2012 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

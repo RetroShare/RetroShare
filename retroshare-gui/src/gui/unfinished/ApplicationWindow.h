@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/unfinished/ApplicationWindow.h                                          *
+ * retroshare-gui/src/gui/unfinished/ApplicationWindow.h                       *
  *                                                                             *
  * Copyright (C) 2006 Crypton         <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -33,12 +33,12 @@ class ApplicationWindow : public QMainWindow
 public:
     /** Default Constructor */
     ApplicationWindow(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
-    
+
     /** Destructor. */
     ~ApplicationWindow();
 
-    /* A Bit of a Hack... but public variables for 
-    * the dialogs, so we can add them to the 
+    /* A Bit of a Hack... but public variables for
+    * the dialogs, so we can add them to the
     * Notify Class...
     */
 

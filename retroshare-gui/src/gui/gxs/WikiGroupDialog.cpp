@@ -24,7 +24,7 @@
 #include <retroshare/rswiki.h>
 #include <iostream>
 
-const uint32_t WikiCreateEnabledFlags = ( 
+const uint32_t WikiCreateEnabledFlags = (
 			GXS_GROUP_FLAGS_NAME            |
 			// GXS_GROUP_FLAGS_ICON         |
 			GXS_GROUP_FLAGS_DESCRIPTION     |

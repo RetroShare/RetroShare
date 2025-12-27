@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/JsonApiPage.h                                                  *
+ * retroshare-gui/src/gui/settings/JsonApiPage.h                               *
  *                                                                             *
  * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *

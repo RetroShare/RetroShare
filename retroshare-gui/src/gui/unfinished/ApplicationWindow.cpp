@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/unfinished/ApplicationWindow.cpp                                        *
+ * retroshare-gui/src/gui/unfinished/ApplicationWindow.cpp                     *
  *                                                                             *
  * Copyright (C) 2006 Crypton         <retroshare.project@gmail.com>           *
  *                                                                             *

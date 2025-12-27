@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/FriendServer.cpp                                                        *
+ * retroshare-gui/src/gui/FriendServer.cpp                                     *
  *                                                                             *
  * Copyright (c) 2021 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *

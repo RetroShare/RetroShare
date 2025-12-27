@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/BandwidthGraphWindow.cpp                                     *
+ * retroshare-gui/src/gui/statistics/BandwidthGraphWindow.cpp                  *
  *                                                                             *
  * Copyright (c) 2006-2007, crypton                                            *
  * Copyright (c) 2006, Matt Edman, Justin Hipple                               *
@@ -170,7 +170,7 @@ BandwidthGraph::loadSettings()
 
   whileBlocking(ui.chkSendRate   )->setChecked(bool(defaultdirection & BWGraphSource::DIRECTION_UP  ));
   whileBlocking(ui.chkReceiveRate)->setChecked(bool(defaultdirection & BWGraphSource::DIRECTION_DOWN));
-  
+
   /* Default Settings for the Graph */
   ui.frmGraph->setDirection(BWGraphSource::DIRECTION_UP | BWGraphSource::DIRECTION_DOWN);
 
@@ -229,7 +229,7 @@ void BandwidthGraph::saveSettings()
 }
 
 /** Simply restores the previously saved settings. */
-void 
+void
 BandwidthGraph::cancelChanges()
 {
   /* Hide the settings frame and reset toggle button */
@@ -244,7 +244,7 @@ void
 BandwidthGraph::showSettingsFrame(bool show)
 {
   static QSize minSize = minimumSize();
-  
+
   QSize newSize = size();
   if (show) {
     /* Extend the bottom of the bandwidth graph and show the settings */
@@ -259,7 +259,7 @@ BandwidthGraph::showSettingsFrame(bool show)
     ui.frmSettings->setVisible(false);
 //    ui.btnToggleSettings->setChecked(false);
 //    ui.btnToggleSettings->setText(tr("Show Settings"));
-    
+
     /* 6 = vertical spacing between the settings frame and graph frame */
     newSize.setHeight(newSize.height() - ui.frmSettings->height() - 6);
     setMinimumSize(minSize);
@@ -271,7 +271,7 @@ BandwidthGraph::showSettingsFrame(bool show)
 void BandwidthGraph::setOpacity(int value)
 {
   qreal newValue = value / 100.0;
-  
+
   /* Opacity only supported by Mac and Win32 */
 #if defined(Q_OS_MAC)
   this->setWindowOpacity(newValue);

@@ -70,11 +70,11 @@ HelpBrowser::HelpBrowser(QWidget *parent)
 
   /* Hide Search frame */
   ui.frmFind->setHidden(true);
- 
+
   /* Set the splitter pane sizes so that only the txtBrowser pane expands
    * and set to arbitrary sizes (the minimum sizes will take effect */
   QList<int> sizes;
-  sizes.append(MINIMUM_PANE_SIZE); 
+  sizes.append(MINIMUM_PANE_SIZE);
   sizes.append(MINIMUM_PANE_SIZE);
   ui.splitter->setSizes(sizes);
   ui.splitter->setStretchFactor(LEFT_PANE_INDEX, NO_STRETCH);
@@ -91,14 +91,14 @@ HelpBrowser::HelpBrowser(QWidget *parent)
   connect(ui.actionHome, SIGNAL(triggered()), ui.txtBrowser, SLOT(home()));
   connect(ui.actionBack, SIGNAL(triggered()), ui.txtBrowser, SLOT(backward()));
   connect(ui.actionForward, SIGNAL(triggered()), ui.txtBrowser, SLOT(forward()));
-  connect(ui.txtBrowser, SIGNAL(backwardAvailable(bool)), 
+  connect(ui.txtBrowser, SIGNAL(backwardAvailable(bool)),
           ui.actionBack, SLOT(setEnabled(bool)));
   connect(ui.txtBrowser, SIGNAL(forwardAvailable(bool)),
           ui.actionForward, SLOT(setEnabled(bool)));
   connect(ui.btnFindNext, SIGNAL(clicked()), this, SLOT(findNext()));
   connect(ui.btnFindPrev, SIGNAL(clicked()), this, SLOT(findPrev()));
   connect(ui.btnSearch, SIGNAL(clicked()), this, SLOT(search()));
-  
+
   /* Load the help topics from XML */
   loadContentsFromXml(":/help/" + language() + "/contents.xml");
 
@@ -130,7 +130,7 @@ HelpBrowser::loadContentsFromXml(QString xmlFile)
   QString errorString;
   QFile file(xmlFile);
   QDomDocument document;
-  
+
   /* Load the XML contents into the DOM document */
   if (!document.setContent(&file, true, &errorString)) {
     ui.txtBrowser->setPlainText(tr("Error Loading Help Contents:")+" "+errorString);
@@ -158,7 +158,7 @@ HelpBrowser::loadContents(const QDomDocument *document, QString &errorString)
   /* Create the home item */
   QTreeWidgetItem *home = createTopicTreeItem(root, 0);
   ui.treeContents->addTopLevelItem(home);
-  
+
   /* Process all top-level help topics */
   QDomElement child = root.firstChildElement(ELEMENT_TOPIC);
   while (!child.isNull()) {
@@ -170,7 +170,7 @@ HelpBrowser::loadContents(const QDomDocument *document, QString &errorString)
 
 /** Parse a Topic element and handle all its children recursively. */
 void
-HelpBrowser::parseHelpTopic(const QDomElement &topicElement, 
+HelpBrowser::parseHelpTopic(const QDomElement &topicElement,
                             QTreeWidgetItem *parent)
 {
   /* Check that we have a valid help topic */
@@ -214,7 +214,7 @@ HelpBrowser::getResourcePath(const QDomElement &topicElement)
 
 /** Creates a new element to be inserted into the topic tree. */
 QTreeWidgetItem*
-HelpBrowser::createTopicTreeItem(const QDomElement &topicElement, 
+HelpBrowser::createTopicTreeItem(const QDomElement &topicElement,
                                  QTreeWidgetItem *parent)
 {
   QTreeWidgetItem *topic = new QTreeWidgetItem(parent);
@@ -264,7 +264,7 @@ HelpBrowser::currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *prev)
 {
   Q_UNUSED(prev);
   if (current) {
-    ui.txtBrowser->setSource(QUrl(current->data(0, 
+    ui.txtBrowser->setSource(QUrl(current->data(0,
                                               ROLE_TOPIC_QRC_PATH).toString()));
   }
   _foundBefore = false;
@@ -285,7 +285,7 @@ HelpBrowser::findTopicItem(QTreeWidgetItem *startItem, QString topic)
   /* Search through all children of startItem and look for a subtopic match */
   for (int i = 0; i < startItem->childCount(); i++) {
     QTreeWidgetItem *item = startItem->child(i);
-    
+
     if (subtopic == item->data(0, ROLE_TOPIC_ID).toString().toLower()) {
       /* Found a subtopic match, so expand this item */
       item->setSelected(true);
@@ -308,7 +308,7 @@ HelpBrowser::showTopic(QString topic)
   /* Search for the topic in the contents tree */
   QTreeWidgetItem *item =
     findTopicItem(ui.treeContents->topLevelItem(0), topic);
-  
+
   if (item) {
     /* Item was found, so show its location in the hierarchy and select its
      * tree item. */
@@ -347,14 +347,14 @@ HelpBrowser::find(bool forward)
   if (ui.lineFind->text().isEmpty()) {
     return;
   }
-  
+
   QTextDocument::FindFlags flags = QTextDocument::FindFlags();
   QTextCursor cursor = ui.txtBrowser->textCursor();
   QString searchPhrase = ui.lineFind->text();
-  
+
   /* Clear status bar */
   this->statusBar()->clearMessage();
-  
+
   /* Set search direction and other flags */
   if (!forward) {
     flags |= QTextDocument::FindBackward;
@@ -365,13 +365,13 @@ HelpBrowser::find(bool forward)
   if (ui.chkbxWholePhrase->isChecked()) {
     flags |= QTextDocument::FindWholeWords;
   }
-  
+
   /* Check if search phrase is the same as the previous */
   if (searchPhrase != _lastFind) {
     _foundBefore = false;
   }
   _lastFind = searchPhrase;
-  
+
   /* Set the cursor to the appropriate start location if necessary */
   if (!cursor.hasSelection()) {
     if (forward) {
@@ -385,26 +385,26 @@ HelpBrowser::find(bool forward)
   /* Search the page */
   QTextCursor found;
   found = ui.txtBrowser->document()->find(searchPhrase, cursor, flags);
-  
+
   /* If found, move the cursor to the location */
   if (!found.isNull()) {
     ui.txtBrowser->setTextCursor(found);
   /* If not found, display appropriate error message */
   } else {
     if (_foundBefore) {
-      if (forward) 
+      if (forward)
         this->statusBar()->showMessage(tr("Search reached end of document"));
-      else 
+      else
         this->statusBar()->showMessage(tr("Search reached start of document"));
     } else {
       this->statusBar()->showMessage(tr("Text not found in document"));
     }
   }
-  
+
   /* Even if not found this time, may have been found previously */
   _foundBefore |= !found.isNull();
 }
- 
+
 /** Searches all help pages for the phrase the Search box.
  *  Fills treeSearch with documents containing matches and sets the
  *  status bar text appropriately.
@@ -414,12 +414,12 @@ HelpBrowser::search()
 {
   /* Clear the list */
   ui.treeSearch->clear();
-  
+
   /* Don't search if invalid document or blank search phrase */
   if (ui.lineSearch->text().isEmpty()) {
     return;
   }
-    
+
   HelpTextBrowser browser;
   QTextCursor found;
   QTextDocument::FindFlags flags = QTextDocument::FindWholeWords;
@@ -430,7 +430,7 @@ HelpBrowser::search()
   for (int i=0; i < _elementList.size(); ++i) {
     /* Load page data into browser */
     browser.setSource(QUrl(getResourcePath(_elementList[i])));
-      
+
     /* Search current document */
     found = browser.document()->find(ui.lineSearch->text(), 0, flags);
 

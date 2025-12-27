@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/SecurityIpItem.cpp                                                *
+ * retroshare-gui/src/gui/feeds/SecurityIpItem.cpp                             *
  *                                                                             *
  * Copyright (c) 2015, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

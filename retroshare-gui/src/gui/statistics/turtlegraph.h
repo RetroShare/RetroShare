@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/turtlegraph.h                                                *
+ * retroshare-gui/src/gui/statistics/turtlegraph.h                             *
  *                                                                             *
  * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

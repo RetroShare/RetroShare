@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/toaster/MessageToaster.h                                                *
+ * retroshare-gui/src/gui/toaster/MessageToaster.h                             *
  *                                                                             *
  * Copyright (C) 2007 - 2008 Xesc & Technology                                 *
  *                                                                             *

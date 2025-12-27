@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/WireGroupDialog.cpp                                             *
+ * retroshare-gui/src/gui/TheWire/WireGroupDialog.cpp                          *
  *                                                                             *
  * Copyright (C) 2020 by Robert Fernie       <retroshare.project@gmail.com>    *
  *                                                                             *
@@ -27,7 +27,7 @@
 
 #include <iostream>
 
-const uint32_t WireCreateEnabledFlags = ( 
+const uint32_t WireCreateEnabledFlags = (
 							GXS_GROUP_FLAGS_NAME          |
 							GXS_GROUP_FLAGS_ICON          |
 							// GXS_GROUP_FLAGS_DESCRIPTION   |

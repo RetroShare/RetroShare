@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/hashingstatus.cpp                                             *
+ * retroshare-gui/src/gui/statusbar/hashingstatus.cpp                          *
  *                                                                             *
  * Copyright (c) 2008 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -38,7 +38,7 @@ HashingStatus::HashingStatus(QWidget *parent)
     QHBoxLayout *hbox = new QHBoxLayout(this);
     hbox->setContentsMargins(0, 0, 0, 0);
     hbox->setSpacing(6);
-        
+
     movie = new QMovie(":/images/loader/indicator-16.gif");
     movie->setSpeed(80); // 2x speed
     hashloader = new QLabel(this);

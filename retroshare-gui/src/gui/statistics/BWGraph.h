@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/BWGraph.h                                                    *
+ * retroshare-gui/src/gui/statistics/BWGraph.h                                 *
  *                                                                             *
  * Copyright (c) 2012 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

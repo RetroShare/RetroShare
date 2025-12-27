@@ -37,7 +37,7 @@ MessageWindow::MessageWindow(QWidget *parent, Qt::WindowFlags flags)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
-        
+
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
 	actionSaveAs = NULL;
@@ -57,7 +57,7 @@ MessageWindow::MessageWindow(QWidget *parent, Qt::WindowFlags flags)
 	ui.actionTextUnderIcon->setData(Qt::ToolButtonTextUnderIcon);
 
 	msgWidget = NULL;
-	
+
 	// create tag menu
 	TagsMenu *menu = new TagsMenu (tr("Tags"), this);
 	connect(menu, SIGNAL(aboutToShow()), this, SLOT(tagAboutToShow()));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/MainWindow.h                                                            *
+ * retroshare-gui/src/gui/MainWindow.h                                         *
  *                                                                             *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -253,7 +253,7 @@ protected:
     MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
     void closeEvent(QCloseEvent *);
-    
+
     /** Called when the user changes the UI translation. */
     virtual void retranslateUi();
 
@@ -285,7 +285,7 @@ private slots:
 #endif
     //void servicePermission();
 
-#ifdef UNFINISHED    
+#ifdef UNFINISHED
     void showApplWindow();
 #endif
 
@@ -307,7 +307,7 @@ private slots:
 
     /** Called when user attempts to quit via quit button*/
     void doQuit();
-    
+
     void updateTrayCombine();
 
 private:

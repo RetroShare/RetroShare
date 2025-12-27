@@ -33,7 +33,7 @@ QT_END_NAMESPACE
 
 //! a base class for plugins
 
-//! All plugin classes must inherite this class and QObject. 
+//! All plugin classes must inherite this class and QObject.
 class PluginInterface
 {
 public:
@@ -42,7 +42,7 @@ public:
 public slots:
     //! A description of the plugin
 
-    //! A description of the plugin. Is not used in current version. 
+    //! A description of the plugin. Is not used in current version.
     virtual QString pluginDescription() const = 0;
 
     //! The plugin's name
@@ -68,4 +68,4 @@ Q_DECLARE_INTERFACE(PluginInterface,
 QT_END_NAMESPACE
 
 #endif
- 
+

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/BoardsPostItem.cpp                                            *
+ * retroshare-gui/src/gui/feeds/BoardsPostItem.cpp                             *
  *                                                                             *
  * Copyright (c) 2012, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -374,7 +374,7 @@ void BoardsPostItem::fill()
 
     if (IS_MSG_NEW(mPost.mMeta.mMsgStatus))
         mCloseOnRead = true;
-	
+
 	// differences between Feed or Top of Comment.
     if(mFeedHolder)
     {

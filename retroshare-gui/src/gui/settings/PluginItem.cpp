@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/PluginItem.cpp                                                 *
+ * retroshare-gui/src/gui/settings/PluginItem.cpp                              *
  *                                                                             *
  * Copyright 2011, Cyril Soler     <retroshare.project@gmail.com>              *
  *                                                                             *
@@ -39,10 +39,10 @@ PluginItem::PluginItem(const QString& pluginVersion, int id, const QString& plug
 
 	QObject::connect(_configure_PB,SIGNAL(clicked()),this,SLOT(configurePlugin())) ;
 	QObject::connect(_about_PB,SIGNAL(clicked()),this,SLOT(aboutPlugin())) ;
-	
+
 	QObject::connect(enableButton,SIGNAL(clicked()),this,SLOT(enablePlugin())) ;
 	QObject::connect(disableButton,SIGNAL(clicked()),this,SLOT(disablePlugin())) ;
-	
+
 	expandFrame->hide();
 }
 
@@ -50,7 +50,7 @@ void PluginItem::enablePlugin()
 {
 	emit( pluginEnabled(_hashLabel->text()) ) ;
 	infoLabel->show();
-	disableButton->show();	
+	disableButton->show();
 	enableButton->hide();
 }
 
@@ -59,7 +59,7 @@ void PluginItem::disablePlugin()
 	emit( pluginDisabled(_hashLabel->text()) ) ;
 	infoLabel->hide();
 	enableButton->show();
-	disableButton->hide();	
+	disableButton->hide();
 }
 
 void PluginItem::aboutPlugin()

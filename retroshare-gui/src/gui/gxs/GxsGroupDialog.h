@@ -33,7 +33,7 @@
  *  - programmatically added to the GUI.
  *  - called to fill in fields in the Data Structures.
  *
- * To enable extension, we have a bunch of flags so various options can 
+ * To enable extension, we have a bunch of flags so various options can
  *    be shown / disabled for each specific service.
  * 	- Enabled.
  * 	- Defaults.

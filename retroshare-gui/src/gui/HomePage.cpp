@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/HomePage.cpp                                                            *
+ * retroshare-gui/src/gui/HomePage.cpp                                         *
  *                                                                             *
  * Copyright (C) 2016 Defnax          <retroshare.project@gmail.com>           *
  *                                                                             *

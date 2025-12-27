@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -35,7 +35,7 @@
 /** Redraw graph every 1000ms **/
 #define REFRESH_RATE    1000
 
-class StatisticDialog : public MainPage 
+class StatisticDialog : public MainPage
 {
   Q_OBJECT
 
@@ -63,13 +63,13 @@ private slots:
   /** Called when the reset button is pressed */
   void reset();
 
-  
+
 private:
   /** Create and bind actions to events **/
   void createActions();
   /** Loads the saved Bandwidth Graph settings */
   void loadSettings();
- 
+
   /** Qt Designer generated object */
   Ui::StatisticDialog ui;
 };

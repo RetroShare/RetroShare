@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/rsettings.h                                                    *
+ * retroshare-gui/src/gui/settings/rsettings.h                                 *
  *                                                                             *
  * Copyright (c) 2008, crypton                                                 *
  * Copyright (c) 2008, Matt Edman, Justin Hipple                               *
@@ -71,7 +71,7 @@ protected:
 
 private:
   /** Association of setting key names to default setting values. */
-  QHash<QString, QVariant> _defaults; 
+  QHash<QString, QVariant> _defaults;
 };
 
 #endif

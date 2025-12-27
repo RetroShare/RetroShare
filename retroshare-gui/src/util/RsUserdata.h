@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/RsUserdata.h                                                           *
+ * retroshare-gui/src/util/RsUserdata.h                                        *
  *                                                                             *
  * Copyright (C) 2013 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

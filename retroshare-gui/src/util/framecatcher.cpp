@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/framecatcher.cpp                                                       *
+ * retroshare-gui/src/util/framecatcher.cpp                                    *
  *                                                                             *
  * Copyright (c) 2006 Raul E.                                                  *
  * Copyright (c) 2010 Chris Evi-Parker <retroshare.project@gmail.com>          *
@@ -247,7 +247,7 @@ unsigned char * framecatcher::yv12ToRgb (uint8_t *src_y, uint8_t *src_u, uint8_t
 	rgb = new unsigned char[(width * height * 4)]; //qt needs a 32bit align
 	if (!rgb)   //qDebug ("Not enough memory!");
 		return NULL;
-	
+
 
 	for (i = 0; i < height; ++i){
 		/*

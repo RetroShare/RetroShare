@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/elastic/graphwidget.h                                                   *
+ * retroshare-gui/src/gui/elastic/graphwidget.h                                *
  *                                                                             *
  * Copyright (c) 2012, RetroShare Team <retroshare.project@gmail.com>          *
  *                                                                             *

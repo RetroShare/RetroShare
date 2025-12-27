@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/WikiPoos/WikiDialog.h                                                   *
+ * retroshare-gui/src/gui/WikiPoos/WikiDialog.h                                *
  *                                                                             *
  * Copyright (C) 2012 Robert Fernie   <retroshare.project@gmail.com>           *
  *                                                                             *

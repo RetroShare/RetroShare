@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/PulseViewItem.h                                                 *
+ * retroshare-gui/src/gui/TheWire/PulseViewItem.h                              *
  *                                                                             *
  * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
@@ -73,7 +73,7 @@ protected:
 	virtual void setRepublishesString(QString repub) = 0;
 	virtual void setRepliesString(QString reply) = 0;
 
-	// 
+	//
 	virtual void setReferenceString(QString ref) = 0;
 	virtual void setPulseStatus(PulseStatus status) = 0;
 };
@@ -134,7 +134,7 @@ protected:
 	void setRepublishes(uint32_t count);
 	void setReplies(uint32_t count);
 
-	// 
+	//
 	void setReference(uint32_t flags, RsGxsGroupId groupId, std::string groupName);
 
 	// DATA.

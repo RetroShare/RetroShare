@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/PulseReply.cpp                                                  *
+ * retroshare-gui/src/gui/TheWire/PulseReply.cpp                               *
  *                                                                             *
  * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
@@ -111,7 +111,7 @@ void PulseReply::setRepublishesString(QString repub)
 
 void PulseReply::setRepliesString(QString reply)
 {
-	label_replies->setText(reply);	
+	label_replies->setText(reply);
 }
 
 void PulseReply::setPulseStatus(PulseStatus status)

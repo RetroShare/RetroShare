@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/peerstatus.h                                                  *
+ * retroshare-gui/src/gui/statusbar/peerstatus.h                               *
  *                                                                             *
  * Copyright (c) 2008 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

@@ -41,7 +41,7 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, const RsGxsId &default_autho
     setGxsService(comment_service);
     init(default_author);
 }
-	
+
 void GxsCommentDialog::init(const RsGxsId& default_author)
 {
     ui->refreshButton->hide();	// this is not needed anymore. Let's keep this piece of code for some time just in case.
@@ -57,15 +57,15 @@ void GxsCommentDialog::init(const RsGxsId& default_author)
 	connect(ui->idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));
     connect(ui->idChooser, SIGNAL(idsLoaded()), this, SLOT(idChooserReady()));
     connect(ui->treeWidget,SIGNAL(commentsLoaded(int)),this,SLOT(notifyCommentsLoaded(int)));
-	
+
 	connect(ui->commentButton, SIGNAL(clicked()), ui->treeWidget, SLOT(makeComment()));
 	connect(ui->sortBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sortComments(int)));
-	
+
 	// default sort method "HOT".
 	ui->treeWidget->sortByColumn(4, Qt::DescendingOrder);
-	
+
 	int S = QFontMetricsF(font()).height() ;
-	
+
 	ui->sortBox->setIconSize(QSize(S*1.5,S*1.5));
 }
 
@@ -136,7 +136,7 @@ void GxsCommentDialog::voterSelectionChanged( int index )
 	std::cerr << std::endl;
 #endif
 
-	RsGxsId voterId; 
+	RsGxsId voterId;
 	switch (ui->idChooser->getChosenId(voterId)) {
 		case GxsIdChooser::KnowId:
 		case GxsIdChooser::UnKnowId:
@@ -203,13 +203,13 @@ void GxsCommentDialog::sortComments(int i)
 	{
 	default:
 	case 0:
-		ui->treeWidget->sortByColumn(4, Qt::DescendingOrder); 
+		ui->treeWidget->sortByColumn(4, Qt::DescendingOrder);
 		break;
 	case 1:
-		ui->treeWidget->sortByColumn(2, Qt::DescendingOrder); 
+		ui->treeWidget->sortByColumn(2, Qt::DescendingOrder);
 		break;
 	case 2:
-		ui->treeWidget->sortByColumn(3, Qt::DescendingOrder); 
+		ui->treeWidget->sortByColumn(3, Qt::DescendingOrder);
 		break;
 	}
 

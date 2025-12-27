@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/FriendsDialog.h                                                         *
+ * retroshare-gui/src/gui/FriendsDialog.h                                      *
  *                                                                             *
  * Copyright (C) 2012 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -44,7 +44,7 @@ public:
 							NetworkTab         = 2,  /** Network page. */
 							NetworkViewTab     = 3,  /** Network new graph. */
 							BroadcastTab       = 4   /** Old group chat page. */
-							
+
 		 };
 
     /** Default Constructor */
@@ -68,7 +68,7 @@ public:
      FriendServerControl *friendServerControl ;
 
 	 IdDialog *idDialog;
-	 
+
 private slots:
     void addFriend();
 

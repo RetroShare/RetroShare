@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/FontSizeHandler.h                                                      *
+ * retroshare-gui/src/util/FontSizeHandler.h                                   *
  *                                                                             *
  * Copyright (C) 2025, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

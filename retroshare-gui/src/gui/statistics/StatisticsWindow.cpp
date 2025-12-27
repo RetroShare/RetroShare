@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/StatisticsWindow.cpp                                         *
+ * retroshare-gui/src/gui/statistics/StatisticsWindow.cpp                      *
  *                                                                             *
  * Copyright (c) 2011 Robert Fernier  <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -103,13 +103,13 @@ StatisticsWindow::StatisticsWindow(QWidget *parent) :
     ui(new Ui::StatisticsWindow)
 {
     ui->setupUi(this);
-   
+
     Settings->loadWidgetInformation(this);
-    
+
     // Ensure the window is NOT destroyed on close to preserve temporal curves
     // and avoid async race conditions.
     this->setAttribute(Qt::WA_DeleteOnClose, false);
-    
+
     initStackedPage();
     connect(ui->stackPages, SIGNAL(currentChanged(int)), this, SLOT(setNewPage(int)));
     ui->stackPages->setCurrentIndex(0);
@@ -151,25 +151,25 @@ void StatisticsWindow::initStackedPage()
   /* Create the Main pages and actions */
   QActionGroup *grp = new QActionGroup(this);
   QAction *action;
-  
+
   ui->stackPages->add(bwdlg = new BwCtrlWindow(ui->stackPages),
                    action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_BWGRAPH), tr("Bandwidth"), grp));
-                   
+
   ui->stackPages->add(trsdlg = new TurtleRouterStatistics(ui->stackPages),
                    action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_TURTLE), tr("Turtle Router"), grp));
-                   
+
   ui->stackPages->add(gxsiddlg = new GxsIdStatistics(ui->stackPages),
                    action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_IDENTITIES), tr("Identities"), grp));
 
   ui->stackPages->add(grsdlg = new GlobalRouterStatistics(ui->stackPages),
                    action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_GLOBALROUTER), tr("Global Router"), grp));
-                   
+
   ui->stackPages->add(gxsdlg = new GxsTransportStatistics(ui->stackPages),
                    action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_GXSTRANSPORT), tr("Gxs Transport"), grp));
 
   ui->stackPages->add(rttdlg = new RttStatistics(ui->stackPages),
                    action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_RTT), tr("RTT Statistics"), grp));
-                   
+
 	bool showdht = true;
 	RsPeerDetails detail;
 	if (rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
@@ -182,7 +182,7 @@ void StatisticsWindow::initStackedPage()
 	ui->stackPages->add(dhtw = new DhtWindow(ui->stackPages),
                    action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DHT), tr("DHT"), grp));
 	}
-	
+
    /*std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
 	 for(int i = 0;i<rsPlugins->nbPlugins();++i)
 	 {
@@ -206,7 +206,7 @@ void StatisticsWindow::initStackedPage()
 		 else
 			 std::cerr << "  No plugin page !" << std::endl;
 
-	 } */                                                    
+	 } */
 
   /* Create the toolbar */
   ui->toolBar->addActions(grp->actions());
@@ -241,7 +241,7 @@ void StatisticsWindow::setNewPage(int page)
 void StatisticsWindow::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) {
-        // Just call close(), which will hide the window without destroying 
+        // Just call close(), which will hide the window without destroying
         // the static instance or resetting statistics data.
         this->close();
     } else {

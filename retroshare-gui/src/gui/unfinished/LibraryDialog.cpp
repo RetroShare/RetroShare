@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -56,20 +56,20 @@ LibraryDialog::LibraryDialog(QWidget *parent)
 {
   	/* Invoke the Qt Designer generated object setup routine */
   	ui.setupUi(this);
-  	
+
 	connect(ui.shareFiles_btn,SIGNAL(clicked()),this, SLOT(CallShareFilesBtn_library()));
 	//connect(ui.tileView_btn_library,SIGNAL(clicked()),this, SLOT(CallTileViewBtn_library()));
 	//connect(ui.showDetails_btn_library,SIGNAL(clicked()),this, SLOT(CallShowDetailsBtn_library()));
 	//connect(ui.createAlbum_btn_library,SIGNAL(clicked()),this, SLOT(CallCreateAlbumBtn_library()));
 	//connect(ui.deleteAlbum_btn_library,SIGNAL(clicked()),this, SLOT(CallDeleteAlbumBtn_library()));
 	//connect(ui.find_btn_library,SIGNAL(clicked()),this, SLOT(CallFindBtn_library()));
-	
+
 	//Load the library
 	fileSystemModelLibraryFolders.setFilter(QDir::AllDirs|QDir::NoDotAndDotDot);
 	fileSystemModelLibraryFolders.setRootPath(Settings.Library.Shares.join(" "));
 
 	ui.treeViewLibraryNavigatorFolders->setModel(&fileSystemModelLibraryFolders);
-  
+
 
 	/*QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
@@ -80,17 +80,17 @@ LibraryDialog::LibraryDialog(QWidget *parent)
 
 void LibraryDialog::copyFile()
 {
-	
+
 }
 
 void LibraryDialog::DeleteFile()
 {
-	
+
 }
 
 void LibraryDialog::RenameFile()
 {
-	
+
 }
 
 void LibraryDialog::StopRename()
@@ -132,7 +132,7 @@ void LibraryDialog::CallFindBtn_library()
 void LibraryDialog:: player()
 {
 
-	
+
 }
 
 void LibraryDialog::browseFile()

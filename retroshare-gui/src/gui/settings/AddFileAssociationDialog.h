@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/AddFileAssociationDialog.h                                     *
+ * retroshare-gui/src/gui/settings/AddFileAssociationDialog.h                  *
  *                                                                             *
  * Copyright 2009, Retroshare Team <retroshare.project@gmail.com>              *
  * Copyright 2009, Oleksiy Bilyanskyy                                          *
@@ -62,7 +62,7 @@ protected:
     QPushButton* selectExecutable;
     QLabel* commandLabel;
     QLineEdit* commandEdit;
-    QDialogButtonBox *buttonBox;    
+    QDialogButtonBox *buttonBox;
 
 protected slots:
     void fileTypeEdited(const QString & text );

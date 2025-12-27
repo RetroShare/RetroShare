@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/ratestatus.h                                                  *
+ * retroshare-gui/src/gui/statusbar/ratestatus.h                               *
  *                                                                             *
  * Copyright (c) 2008 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/RsAutoUpdatePage.h                                                      *
+ * retroshare-gui/src/gui/RsAutoUpdatePage.h                                   *
  *                                                                             *
  * Copyright (c) 2009 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -58,7 +58,7 @@ class RsAutoUpdatePage: public MainPage
 		// This is overloaded in subclasses.
 		//
 		virtual void updateDisplay() {}
-	
+
 		virtual void showEvent(QShowEvent *e) ;
 
 	private slots:

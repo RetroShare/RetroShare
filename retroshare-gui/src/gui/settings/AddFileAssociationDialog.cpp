@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/AddFileAssociationDialog.cpp                                   *
+ * retroshare-gui/src/gui/settings/AddFileAssociationDialog.cpp                *
  *                                                                             *
  * Copyright 2009, Retroshare Team <retroshare.project@gmail.com>              *
  * Copyright 2009, Oleksiy Bilyanskyy                                          *

@@ -27,7 +27,7 @@
 #include "retroshare/rswiki.h"
 #include <iostream>
 
-const uint32_t PostedCreateEnabledFlags = ( 
+const uint32_t PostedCreateEnabledFlags = (
 			  GXS_GROUP_FLAGS_NAME        |
 			   GXS_GROUP_FLAGS_ICON        |
                           GXS_GROUP_FLAGS_DESCRIPTION   |
@@ -154,7 +154,7 @@ bool PostedGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mod
 
 	const RsPostedGroup& group = *pgroup;
 	description = QString::fromUtf8(group.mDescription.c_str());
-	
+
 	if (group.mGroupImage.mData)
     {
 		QPixmap pixmap;

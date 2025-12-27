@@ -1,5 +1,5 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/PhotoShare/AlbumGroupDialog.cpp                         *
+ * retroshare-gui/src/gui/PhotoShare/AlbumGroupDialog.cpp                      *
  *                                                                             *
  * Copyright (C) 2020 by Robert Fernie       <retroshare.project@gmail.com>    *
  *                                                                             *
@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-const uint32_t AlbumCreateEnabledFlags = ( 
+const uint32_t AlbumCreateEnabledFlags = (
                           GXS_GROUP_FLAGS_NAME        |
                           GXS_GROUP_FLAGS_ICON        |
                           GXS_GROUP_FLAGS_DESCRIPTION   |
@@ -169,7 +169,7 @@ bool AlbumGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mode
 
     const RsPhotoAlbum& group = *pgroup;
     description = QString::fromUtf8(group.mDescription.c_str());
-    
+
     if (group.mThumbnail.mData) {
         QPixmap pixmap;
         if (GxsIdDetails::loadPixmapFromData(group.mThumbnail.mData, group.mThumbnail.mSize, pixmap,GxsIdDetails::ORIGINAL)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/ChannelPage.h                                                  *
+ * retroshare-gui/src/gui/settings/ChannelPage.h                               *
  *                                                                             *
  * Copyright 2006, Crypton         <retroshare.project@gmail.com>              *
  *                                                                             *
@@ -44,7 +44,7 @@ public:
 
 private slots:
 	void updateEmotes();
-  
+
     // Function to update the maximum size allowed for auto download in channels
     void updateMaxAutoDownloadSizeLimit(int value);
 

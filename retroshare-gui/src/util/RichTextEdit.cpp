@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/RichTextEdit.cpp                                                       *
+ * retroshare-gui/src/util/RichTextEdit.cpp                                    *
  *                                                                             *
  * Copyright (c) 2019 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

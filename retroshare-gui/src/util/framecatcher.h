@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/framecatcher.h                                                         *
+ * retroshare-gui/src/util/framecatcher.h                                      *
  *                                                                             *
  * Copyright (c) 2006 Raul E.                                                  *
  * Copyright (c) 2010 Chris Evi-Parker <retroshare.project@gmail.com>          *

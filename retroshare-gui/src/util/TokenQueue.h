@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/TokenQueue.h                                                           *
+ * retroshare-gui/src/util/TokenQueue.h                                        *
  *                                                                             *
  * Copyright (c) 2012  Robert Fernie           <retroshare.project@gmail.com>  *
  * Copyright (c) 2012  Christopher Evi-Parker                                  *
@@ -28,7 +28,7 @@
 #include <string>
 #include <sys/time.h>
 
-#include <retroshare/rstokenservice.h>
+#include "retroshare/rstokenservice.h"
 
 
 #define COMPLETED_REQUEST       4

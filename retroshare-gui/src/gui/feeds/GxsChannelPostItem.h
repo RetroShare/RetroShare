@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/GxsChannelPostItem.h                                              *
+ * retroshare-gui/src/gui/feeds/GxsChannelPostItem.h                           *
  *                                                                             *
  * Copyright (c) 2012, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -100,7 +100,7 @@ private slots:
 	void updateItem();
 
 signals:
-	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);	
+	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
 
 private:
 	void setup();

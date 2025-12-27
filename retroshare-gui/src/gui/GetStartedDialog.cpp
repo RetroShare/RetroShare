@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/GetStartedDialog.cpp                                                    *
+ * retroshare-gui/src/gui/GetStartedDialog.cpp                                 *
  *                                                                             *
  * Copyright (C) 2011 Robert Fernie   <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -209,7 +209,7 @@ void GetStartedDialog::addFriends()
 void GetStartedDialog::inviteFriends()
 {
 	if (RsAutoUpdatePage::eventsLocked() == true)
-	{	
+	{
 		std::cerr << "GetStartedDialog::inviteFriends() EventsLocked... waiting";
 		std::cerr << std::endl;
 
@@ -303,7 +303,7 @@ void GetStartedDialog::emailFeedback()
 void GetStartedDialog::emailSupport()
 {
 	if (RsAutoUpdatePage::eventsLocked() == true)
-	{	
+	{
 		std::cerr << "GetStartedDialog::emailSupport() EventsLocked... waiting";
 		std::cerr << std::endl;
 

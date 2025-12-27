@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/ShareManager.h                                                          *
+ * retroshare-gui/src/gui/ShareManager.h                                       *
  *                                                                             *
  * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/NetworkView.cpp                                                         *
+ * retroshare-gui/src/gui/NetworkView.cpp                                      *
  *                                                                             *
  * Copyright (c) 2008 Robert Fernie    <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -168,7 +168,7 @@ void  NetworkView::updateDisplay()
 	// Put own id in queue, and empty the queue, treating all nodes.
 	//
 	while(!nodes_to_treat.empty())
-	{	
+	{
 		NodeInfo info(nodes_to_treat.back()) ;
 		nodes_to_treat.pop_back() ;
 #ifdef DEBUG_NETWORKVIEW
@@ -199,7 +199,7 @@ void  NetworkView::updateDisplay()
 			case RS_TRUST_LVL_FULL:
 			case RS_TRUST_LVL_ULTIMATE: auth = GraphWidget::ELASTIC_NODE_AUTH_FULL ; break;
 			case RS_TRUST_LVL_UNKNOWN:
-			case RS_TRUST_LVL_UNDEFINED: 
+			case RS_TRUST_LVL_UNDEFINED:
 			case RS_TRUST_LVL_NEVER:
 			default: 							auth = GraphWidget::ELASTIC_NODE_AUTH_UNKNOWN ; break ;
 		}
@@ -241,7 +241,7 @@ void  NetworkView::updateDisplay()
 	{
         std::list<RsPgpId> friendList ;
 
-		if(rsDisc->getDiscPgpFriends(it->first,friendList)) 
+		if(rsDisc->getDiscPgpFriends(it->first,friendList))
             for(std::list<RsPgpId>::const_iterator sit(friendList.begin()); sit != friendList.end(); ++sit)
 			{
 #ifdef DEBUG_NETWORKVIEW

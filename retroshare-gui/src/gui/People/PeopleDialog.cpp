@@ -66,7 +66,7 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	//mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
 	//connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
 
-	
+
 	tabWidget->removeTab(1);
 	//hide circle flow widget not functional yet
 	pictureFlowWidgetExternal->hide();
@@ -442,7 +442,7 @@ void PeopleDialog::iw_AddButtonClickedExt()
 	if (dest)
     {
 		QMenu contextMnu( this );
-		
+
 		QMenu *mnu = contextMnu.addMenu(FilesDefs::getIconFromQtResourcePath(":/icons/png/circles.png"),tr("Invite to Circle")) ;
 
 		std::map<RsGxsGroupId, CircleWidget*>::iterator itCurs;
@@ -456,10 +456,10 @@ void PeopleDialog::iw_AddButtonClickedExt()
 			action->setData(QString::fromStdString(curs->groupInfo().mGroupId.toStdString())
 			                + ";" + QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
 		}
-		
+
 		  std::list<RsGxsId> own_identities ;
       rsIdentity->getOwnIds(own_identities) ;
-      
+
       if(own_identities.size() <= 1)
 			{
 				QAction *action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/chats.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
@@ -487,20 +487,20 @@ void PeopleDialog::iw_AddButtonClickedExt()
 					action->setData(QString::fromStdString((*it).toStdString()) + ";" + QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString())) ;
 				}
 			}
-			
+
 			QAction *actionsendmsg = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/mail/write-mail.png"), tr("Send message"), this, SLOT(sendMessage()));
 			actionsendmsg->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
-			
+
 			QAction *actionsendinvite = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/mail/write-mail.png"), tr("Send invite"), this, SLOT(sendInvite()));
 			actionsendinvite->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
-			
+
 			contextMnu.addSeparator();
-			
+
 			QAction *actionaddcontact = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(""), tr("Add to Contacts"), this, SLOT(addtoContacts()));
 			actionaddcontact->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
-			
+
 			contextMnu.addSeparator();
-			
+
 			QAction *actionDetails = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/info16.png"), tr("Person details"), this, SLOT(personDetails()));
 			actionDetails->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
 
@@ -600,11 +600,11 @@ void PeopleDialog::chatIdentity()
 
       RsGxsId from_gxs_id = RsGxsId(idList.at(0).toStdString());
 			RsGxsId gxs_id = RsGxsId(idList.at(1).toStdString());
-				
+
 			uint32_t error_code ;
 
             DistantChatPeerId dpid ;
-            
+
       if(!rsChats->initiateDistantChatConnexion(RsGxsId(gxs_id), from_gxs_id, dpid,error_code))
 	      QMessageBox::information(NULL, tr("Distant chat cannot work"), QString("%1 %2: %3").arg(tr("Distant chat refused with this person.")).arg(tr("Error code")).arg(error_code)) ;
 
@@ -630,7 +630,7 @@ void PeopleDialog::sendMessage()
 		nMsgDialog->activateWindow();
 
     /* window will destroy itself! */
-    
+
     }
 
 }
@@ -643,11 +643,11 @@ void PeopleDialog::sendInvite()
 		QString data = action->data().toString();
 
    	RsGxsId gxs_id = RsGxsId(data.toStdString());;
-    
+
     MessageComposer::sendInvite(gxs_id,false);
 
 	}
-    
+
 
 }
 
@@ -657,7 +657,7 @@ void PeopleDialog::addtoContacts()
 	    qobject_cast<QAction *>(QObject::sender());
 	if (action) {
 		QString data = action->data().toString();
-		
+
 	RsGxsId gxs_id = RsGxsId(data.toStdString());;
 
 	rsIdentity->setAsRegularContact(RsGxsId(gxs_id),true);
@@ -673,7 +673,7 @@ void PeopleDialog::personDetails()
 		QString data = action->data().toString();
 
    	RsGxsId gxs_id = RsGxsId(data.toStdString());
-   	
+
     if (RsGxsGroupId(gxs_id).isNull()) {
         return;
     }
@@ -1076,7 +1076,7 @@ void PeopleDialog::pf_dropEventOccursInt(QDropEvent *event)
 									dlg.addMember(idDropped->keyId(), idDropped->idtype(), idDropped->nickname(), QIcon(QPixmap::fromImage(idDropped->avatar())) );
 									atLeastOne = true;
 								}//if (idDropped->havePGPDetail())
-	
+
 							}//if (idDropped)
 						}//else (cirDropped)
 

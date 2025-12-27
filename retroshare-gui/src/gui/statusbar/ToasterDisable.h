@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/ToasterDisable.h                                              *
+ * retroshare-gui/src/gui/statusbar/ToasterDisable.h                           *
  *                                                                             *
  * Copyright (c) 2012 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

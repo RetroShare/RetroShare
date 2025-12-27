@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/printpreview.h                                                         *
+ * retroshare-gui/src/util/printpreview.h                                      *
  *                                                                             *
  * Copyright (C) 2004-2007 Trolltech ASA. All rights reserved.                 *
  *                                                                             *

@@ -21,9 +21,9 @@
 #ifndef WIDGETBACKGROUNDIMAGE_H
 #define WIDGETBACKGROUNDIMAGE_H
 
-#include <util/rsqtutildll.h>
+#include "util/rsqtutildll.h"
 
-#include <util/NonCopyable.h>
+#include "util/NonCopyable.h"
 
 class QWidget;
 

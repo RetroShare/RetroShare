@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/toaster/ChatToaster.h                                                   *
+ * retroshare-gui/src/gui/toaster/ChatToaster.h                                *
  *                                                                             *
  * Copyright (c) 2012 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -26,7 +26,7 @@
 /**
  * Shows a toaster when a chat is incoming.
  *
- * 
+ *
  */
 class ChatToaster : public QWidget
 {

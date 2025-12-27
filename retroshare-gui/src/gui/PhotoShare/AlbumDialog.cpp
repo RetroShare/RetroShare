@@ -32,7 +32,7 @@ AlbumDialog::AlbumDialog(const RsPhotoAlbum& album, TokenQueue* photoQueue, RsPh
     ui(new Ui::AlbumDialog), mRsPhoto(rs_Photo), mPhotoShareQueue(photoQueue), mAlbum(album), mPhotoSelected(NULL)
 {
     ui->setupUi(this);
-    
+
     ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/kview_64.png"));
     ui->headerFrame->setHeaderText(tr("Album"));
 

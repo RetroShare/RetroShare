@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/GxsChannelPostItem.cpp                                            *
+ * retroshare-gui/src/gui/feeds/GxsChannelPostItem.cpp                         *
  *                                                                             *
  * Copyright (c) 2012, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -352,7 +352,7 @@ void GxsChannelPostItem::fill()
 		{
 			ui->unsubscribeButton->setEnabled(true);
 		}
-		else 
+		else
 		{
 			ui->unsubscribeButton->setEnabled(false);
 		}
@@ -377,7 +377,7 @@ void GxsChannelPostItem::fill()
         ui->subjectLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 2)) ;
 
         //QString score = QString::number(post.mTopScore);
-		// scoreLabel->setText(score); 
+		// scoreLabel->setText(score);
 
 		/* disable buttons: deletion facility not enabled with cache services yet */
 		ui->clearButton->setEnabled(false);
@@ -392,8 +392,8 @@ void GxsChannelPostItem::fill()
 			ui->readButton->setVisible(true);
 
 			setReadStatus(IS_MSG_NEW(mPost.mMeta.mMsgStatus), IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) || IS_MSG_NEW(mPost.mMeta.mMsgStatus));
-		} 
-		else 
+		}
+		else
 		{
 			ui->readButton->setVisible(false);
 			ui->newLabel->setVisible(false);
@@ -401,7 +401,7 @@ void GxsChannelPostItem::fill()
 
 		mCloseOnRead = false;
 	}
-	
+
 	// differences between Feed or Top of Comment.
 	if (mFeedHolder)
 	{
@@ -417,7 +417,7 @@ void GxsChannelPostItem::fill()
 	{
 		ui->commentButton->hide();
 	}
-	
+
 	// disable voting buttons - if they have already voted.
 	/*if (post.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
 	{
@@ -461,10 +461,10 @@ void GxsChannelPostItem::fill()
 		std::string path;
 		SubFileItem *fi = new SubFileItem(it->mHash, it->mName, path, it->mSize, SFI_STATE_REMOTE | SFI_TYPE_CHANNEL, RsPeerId());
 		mFileItems.push_back(fi);
-		
+
 		/* check if the file is a media file */
 		if (!misc::isPreviewable(QFileInfo(QString::fromUtf8(it->mName.c_str())).suffix()))
-		{ 
+		{
         fi->mediatype();
 				/* check if the file is not a media file and change text */
         ui->playButton->setText(tr("Open"));

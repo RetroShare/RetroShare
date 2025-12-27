@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/WireDialog.h                                                    *
+ * retroshare-gui/src/gui/TheWire/WireDialog.h                                 *
  *                                                                             *
  * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *

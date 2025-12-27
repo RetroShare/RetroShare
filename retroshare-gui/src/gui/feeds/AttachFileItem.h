@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/AttachFileItem.h                                                  *
+ * retroshare-gui/src/gui/feeds/AttachFileItem.h                               *
  *                                                                             *
  * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *

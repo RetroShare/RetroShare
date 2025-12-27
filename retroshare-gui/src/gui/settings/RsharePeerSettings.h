@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/RsharePeerSettings.h                                           *
+ * retroshare-gui/src/gui/settings/RsharePeerSettings.h                        *
  *                                                                             *
  * Copyright (c) 2010, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
