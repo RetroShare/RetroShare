@@ -354,7 +354,6 @@ int TreeStyle_RDM::rowCount(const QModelIndex &parent) const
 	if ((!ref) && RemoteMode)
 		_parentRow.clear(); //Only clear it when asking root child number and in remote mode.
 
-
 	DirDetails details ;
 
 	if (! requestDirDetails(ref, RemoteMode,details))
@@ -383,8 +382,6 @@ int TreeStyle_RDM::rowCount(const QModelIndex &parent) const
 	{
 		DirDetails childDetails;
 		//Scan all children to know if they are empty.
-		//And save their real row index
-		//Prefer do like that than modify requestDirDetails with a new flag (rsFiles->RequestDirDetails)
         for(uint64_t i = 0; i < details.children.size(); ++i)
 		{
             if (requestDirDetails(details.children[i].ref, RemoteMode,childDetails) && (childDetails.children.size() > 0))
@@ -393,19 +390,9 @@ int TreeStyle_RDM::rowCount(const QModelIndex &parent) const
 		return _parentRow.size();
 	}
 
-	// MODIFICATION 3: Count filtered children correctly
-	if (!mFilteredPointers.empty())
-	{
-	    int visibleCount = 0;
-	    for(uint32_t i = 0; i < details.children.size(); ++i)
-	    {
-	        // Check if this specific child pointer is in the visible set
-	        if (mFilteredPointers.find(details.children[i].ref) != mFilteredPointers.end())
-	            visibleCount++;
-	    }
-    	    return visibleCount;
-	}
-
+    // MODIFICATION: Removed the manual mFilteredPointers count logic. 
+    // QSortFilterProxyModel relies on the source model reporting all rows. 
+    // Filtering here creates an index mismatch that results in an empty list.
 	return details.children.size();
 }
 
@@ -1502,7 +1489,7 @@ void RetroshareDirModel::filterItems(const std::list<std::string>& keywords, uin
     if(keywords.empty())
     {
         mFilteredPointers.clear();
-        // MODIFICATION: Call update to refresh the view when the filter is cleared
+        // MODIFICATION: Refresh the model to show all items again
         update();
         return ;
     }
@@ -1531,7 +1518,7 @@ void RetroshareDirModel::filterItems(const std::list<std::string>& keywords, uin
         mFilteredPointers.insert(p) ;
         ++found ;
 
-        // Climb the directory tree to mark all parents as visible
+        // Climb the directory tree to mark all parents as visible for Tree View
         while(det.type == DIR_TYPE_FILE || det.type == DIR_TYPE_EXTRA_FILE || 
               det.type == DIR_TYPE_DIR || det.type == DIR_TYPE_PERSON)
         {
@@ -1543,14 +1530,12 @@ void RetroshareDirModel::filterItems(const std::list<std::string>& keywords, uin
 
             mFilteredPointers.insert(p); // Mark parent node as visible
 
-            // If we reach the Person node (root of extra list), stop climbing
+            // If we reach the Person node (root of files), stop climbing
             if (det.type == DIR_TYPE_PERSON) break;
         }
     }
     
-    // MODIFICATION: Restore the update call. 
-    // This triggers beginResetModel/endResetModel which notifies the view 
-    // that row counts and visibility have changed.
+    // MODIFICATION: Restore the update call to notify the UI of search completion
     update(); 
 }
 
