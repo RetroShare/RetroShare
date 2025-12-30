@@ -81,6 +81,9 @@ class RetroshareDirModel : public QAbstractItemModel
 
 		bool requestDirDetails(void *ref, bool remote,DirDetails& d) const;
 
+		// MODIFICATION A: Virtual method to check if a branch has cumulative uploads
+		virtual bool hasUploads(void *ref) const = 0;
+
 		virtual void update() {}
 		virtual void updateRef(const QModelIndex&) const =0;
 
@@ -205,6 +208,9 @@ class TreeStyle_RDM: public RetroshareDirModel
 
 		virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
+		// MODIFICATION B: Implementation for Tree Style
+		virtual bool hasUploads(void *ref) const;
+
 	private slots:
 		void showEmpty(const bool value);
 
@@ -244,6 +250,8 @@ class FlatStyle_RDM: public RetroshareDirModel
  		//Overloaded from RetroshareDirModel
 		virtual void postMods();/* Callback from Core */
 		virtual void updateRef(const QModelIndex&) const {}
+		// MODIFICATION H: Implement hasUploads for Flat Style to fix compilation
+		virtual bool hasUploads(void *ref) const;
 		virtual QVariant displayRole(const DirDetails&,int) const ;
 		virtual QVariant sortRole(const QModelIndex&,const DirDetails&,int) const ;
 
