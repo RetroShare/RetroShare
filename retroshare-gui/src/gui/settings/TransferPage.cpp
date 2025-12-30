@@ -64,6 +64,7 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
 	QObject::connect(ui.editShareButton, SIGNAL(clicked()), this, SLOT(editDirectories()));
 	QObject::connect(ui.autoCheckDirectories_CB, SIGNAL(clicked(bool)), this, SLOT(toggleAutoCheckDirectories(bool)));
 	QObject::connect(ui.minimumFontSize_SB, SIGNAL(valueChanged(int)), this, SLOT(updateFontSize())) ;
+	QObject::connect(ui.clearuploadStatsButton, SIGNAL(clicked( bool ) ), this , SLOT(clearUploadStatistics() ) );
 
 	QObject::connect(ui.autoCheckDirectories_CB,     SIGNAL(toggled(bool)),    this,SLOT(updateAutoCheckDirectories())) ;
 	QObject::connect(ui.autoCheckDirectoriesDelay_SB,SIGNAL(valueChanged(int)),this,SLOT(updateAutoScanDirectoriesPeriod())) ;
@@ -329,6 +330,11 @@ void TransferPage::updateFontSize()
 	Settings->beginGroup(QString("File"));
 	Settings->setValue("MinimumFontSize", ui.minimumFontSize_SB->value());
 	Settings->endGroup();
+}
+
+void TransferPage::clearUploadStatistics()
+{
+	rsFiles->clearUploadStats();
 }
 
 void TransferPage::updateAutoCheckDirectories()       {    rsFiles->setWatchEnabled(ui.autoCheckDirectories_CB->isChecked()) ; }

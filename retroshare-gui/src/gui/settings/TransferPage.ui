@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>701</width>
-    <height>638</height>
+    <width>562</width>
+    <height>579</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
@@ -26,15 +26,22 @@
          <property name="title">
           <string>Shared Directories</string>
          </property>
-         <layout class="QVBoxLayout" name="sharedGBoxVLayout">
-          <item>
+         <layout class="QGridLayout" name="sharedGBoxVLayout">
+          <item row="0" column="0">
            <widget class="QPushButton" name="editShareButton">
             <property name="text">
              <string>Configure shared directories</string>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="clearuploadStatsButton">
+            <property name="text">
+             <string>Clear upload statistics</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2">
            <widget class="QCheckBox" name="shareDownloadDirectoryCB">
             <property name="enabled">
              <bool>true</bool>
@@ -47,7 +54,7 @@
             </property>
            </widget>
           </item>
-          <item>
+          <item row="3" column="0" colspan="2">
            <layout class="QHBoxLayout" name="autoCheckDirectoriesHLayout">
             <item>
              <widget class="QCheckBox" name="autoCheckDirectories_CB">
@@ -86,7 +93,7 @@
             </item>
            </layout>
           </item>
-          <item>
+          <item row="4" column="0" colspan="2">
            <layout class="QHBoxLayout" name="followSymLinksHLayout">
             <item>
              <widget class="QCheckBox" name="followSymLinks_CB">
@@ -103,7 +110,7 @@
             </item>
            </layout>
           </item>
-          <item>
+          <item row="5" column="0" colspan="2">
            <layout class="QHBoxLayout" name="ignoreDuplicatesHLayout">
             <item>
              <widget class="QCheckBox" name="ignoreDuplicates_CB">
@@ -134,7 +141,7 @@
             </item>
            </layout>
           </item>
-          <item>
+          <item row="6" column="0" colspan="2">
            <layout class="QHBoxLayout" name="suffixesIgnoreListHLayout">
             <item>
              <widget class="QCheckBox" name="suffixesIgnoreList_CB">
@@ -152,7 +159,7 @@
             </item>
            </layout>
           </item>
-          <item>
+          <item row="7" column="0" colspan="2">
            <layout class="QHBoxLayout" name="prefixesIgnoreListHLayout">
             <item>
              <widget class="QCheckBox" name="prefixesIgnoreList_CB">
