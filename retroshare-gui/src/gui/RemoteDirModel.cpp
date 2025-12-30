@@ -181,26 +181,36 @@ void TreeStyle_RDM::recalculateDirectoryTotals()
                 if(uploaded > 0)
                 {
                     processedFiles++;
-                    // details.path for a file is the directory containing it.
-                    QString currentPath = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
-                    
-                    // Iterate up the directory tree
-                    while(!currentPath.isEmpty() && currentPath != ".")
+
+                    // MODIFICATION C: Track uploads for Extra Files separately using a special key.
+                    // Normal files climb the directory tree, but Extra Files use a virtual root.
+                    if (details.type == DIR_TYPE_EXTRA_FILE) 
                     {
-                        m_folderUploadTotals[currentPath] += uploaded;
+                        m_folderUploadTotals["!!RS_EXTRA_FILES_ROOT!!"] += uploaded;
+                    } 
+                    else 
+                    {
+                        // details.path for a file is the directory containing it.
+                        QString currentPath = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
                         
-                        // Get parent directory using QFileInfo logic
-                        QString parent = QFileInfo(currentPath).path();
-                        
-                        // Break if we reached root or top (QFileInfo returns path itself if no parent)
-                        if(parent == currentPath || parent.isEmpty()) {
-                             break;
+                        // Iterate up the directory tree to add this file's upload total to all parent folders
+                        while(!currentPath.isEmpty() && currentPath != ".")
+                        {
+                            m_folderUploadTotals[currentPath] += uploaded;
+                            
+                            // Get parent directory using QFileInfo logic
+                            QString parent = QFileInfo(currentPath).path();
+                            
+                            // Break if we reached root or top (QFileInfo returns path itself if no parent)
+                            if(parent == currentPath || parent.isEmpty()) {
+                                 break;
+                            }
+                            currentPath = parent;
                         }
-                        currentPath = parent;
-                    }
-                }
+                    } // End of else (Normal Files)
+                } // End of if (uploaded > 0)
             }
-            // Included DIR_TYPE_PERSON to allow recursion into root "My Files"
+            // Included DIR_TYPE_PERSON to allow recursion into root "My Files" and "Temporary shared files"
             else if(details.type == DIR_TYPE_DIR || details.type == DIR_TYPE_ROOT || details.type == DIR_TYPE_PERSON)
             {
                 for(const auto& child : details.children)
@@ -212,6 +222,31 @@ void TreeStyle_RDM::recalculateDirectoryTotals()
     }
     // DEBUG: Summary
     // std::cerr << "UPLOAD_DBG: --- Finished Recalc. Processed " << processedFiles << " active files. Map size: " << m_folderUploadTotals.size() << " ---" << std::endl;
+}
+
+// MODIFICATION D: Check if a specific node or any of its descendants have uploads
+bool TreeStyle_RDM::hasUploads(void *ref) const
+{
+    DirDetails details;
+    if (!requestDirDetails(ref, RemoteMode, details)) return false;
+
+    // For files, check their individual cumulative upload
+    if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE) {
+        return rsFiles->getCumulativeUpload(details.hash) > 0;
+    }
+
+    // For the Extra Files root person node
+    if (details.type == DIR_TYPE_PERSON && details.id != rsPeers->getOwnId()) {
+        return m_folderUploadTotals.value("!!RS_EXTRA_FILES_ROOT!!", 0) > 0;
+    }
+
+    // For standard directories, check the pre-calculated totals map
+    if (details.type == DIR_TYPE_DIR) {
+        QString path = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
+        return m_folderUploadTotals.value(path, 0) > 0;
+    }
+
+    return true; // Keep "My Files" root or other root nodes visible
 }
 
 void TreeStyle_RDM::update()
@@ -1805,5 +1840,19 @@ void TreeStyle_RDM::showEmpty(const bool value)
 {
 	_showEmpty = value;
 	update();
+}
+
+// MODIFICATION I: Simple implementation for Flat View
+bool FlatStyle_RDM::hasUploads(void *ref) const
+{
+    DirDetails details;
+    if (!requestDirDetails(ref, RemoteMode, details)) return false;
+
+    // In Flat View, we only care if the file itself has been uploaded
+    if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE) {
+        return rsFiles->getCumulativeUpload(details.hash) > 0;
+    }
+
+    return false;
 }
 
