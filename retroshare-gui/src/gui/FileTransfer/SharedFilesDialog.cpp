@@ -152,18 +152,29 @@ public:
     }
 
 protected:
+
+    // MODIFICATION 1: Update the filter to allow folders (Person/Dir) to stay visible
     virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
     {
-        // Custom check for "Uploaded only" filter
         if (m_uploadedOnly) {
-            // Retrieve data from column 6
+            // Get the type of the current row to avoid filtering out parent folders
+            QModelIndex typeIdx = sourceModel()->index(source_row, 0, source_parent);
+            int type = m_dirModel->getType(typeIdx);
+
+            // ALWAYS accept Person (Temporary shared files) and Directories
+            // so the filter can look at the files inside them.
+            if (type == DIR_TYPE_PERSON || type == DIR_TYPE_DIR) {
+                return true;
+            }
+
+            // For files, check the Uploaded column (column 6)
             QModelIndex uploadIdx = sourceModel()->index(source_row, SHARED_FILES_DIALOG_COLUMN_UPLOADED, source_parent);
             QString uploadStr = sourceModel()->data(uploadIdx, Qt::DisplayRole).toString();
-            // If empty or "-", treat as 0 and filter row out
+            
             if (uploadStr.isEmpty() || uploadStr == "-") return false;
         }
 
-        // Standard RetroShare logic for search/keywords
+        // Standard search logic
         return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
     }
 
@@ -1093,9 +1104,10 @@ void SharedFilesDialog::restoreExpandedPathsAndSelection(const std::set<std::str
     ui.dirTreeView->blockSignals(false) ;
 }
 
+// MODIFICATION 3: Update the main expand loop
 void SharedFilesDialog::expandAll()
 {
-    if(ui.dirTreeView->model() == NULL || ui.dirTreeView->model() == flat_proxyModel)	// this method causes infinite loops on flat models
+    if(ui.dirTreeView->model() == NULL || ui.dirTreeView->model() == flat_proxyModel) // this method causes infinite loops on flat models
         return ;
 
     ui.dirTreeView->blockSignals(true) ;
@@ -1103,27 +1115,45 @@ void SharedFilesDialog::expandAll()
 #ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "Restoring expanded items. " << std::endl;
 #endif
+
     for(int row = 0; row < ui.dirTreeView->model()->rowCount(); ++row)
     {
-        std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
-        recursExpandAll(ui.dirTreeView->model()->index(row,0));
+        // Call the new smart recursive function for each root node
+        recursExpandAll(ui.dirTreeView->model()->index(row, 0));
     }
 
     ui.dirTreeView->blockSignals(false) ;
-
 }
 
-void SharedFilesDialog::recursExpandAll(const QModelIndex& index)
+// MODIFICATION 2: Smart recursive expansion that only opens folders leading to visible files
+bool SharedFilesDialog::recursExpandAll(const QModelIndex& index)
 {
-    ui.dirTreeView->setExpanded(index,true) ;
+    // Get the type of the current item (need to map to source model first)
+    int type = model->getType(proxyModel->mapToSource(index));
 
-    for(int row=0;row<ui.dirTreeView->model()->rowCount(index);++row)
-    {
-        QModelIndex idx(ui.dirTreeView->model()->index(row,0,index)) ;
-
-        if(ui.dirTreeView->model()->rowCount(idx) > 0)
-            recursExpandAll(idx) ;
+    // If it's a file, it means it's visible (otherwise it wouldn't be in the Proxy Model)
+    // We return true to tell the parent folder to expand.
+    if (type == DIR_TYPE_FILE || type == DIR_TYPE_EXTRA_FILE) {
+        return true;
     }
+
+    // If it's a folder or person node, check its children
+    bool hasVisibleFileChild = false;
+    int childCount = ui.dirTreeView->model()->rowCount(index);
+    
+    for(int row = 0; row < childCount; ++row) {
+        QModelIndex childIdx = ui.dirTreeView->model()->index(row, 0, index);
+        if (recursExpandAll(childIdx)) {
+            hasVisibleFileChild = true;
+        }
+    }
+
+    // Only expand this folder if at least one child is a visible file
+    if (hasVisibleFileChild) {
+        ui.dirTreeView->setExpanded(index, true);
+    }
+
+    return hasVisibleFileChild;
 }
 
 void SharedFilesDialog::recursSaveExpandedItems(const QModelIndex& index,const std::string& path,
@@ -1651,10 +1681,10 @@ void SharedFilesDialog::filterUploadedOnlyToggled(bool checked)
     if (tree_proxyModel) tree_proxyModel->invalidate();
     if (flat_proxyModel) flat_proxyModel->invalidate();
     
-    // Handle Tree View specific behavior: Expand on check, Collapse on uncheck
+    // MODIFICATION 5: Handle Tree View specific behavior: Expand on check, Collapse on uncheck
     if(ui.viewType_CB->currentIndex() == VIEW_TYPE_TREE) {
         if (checked) {
-            // Reveal all popular files found in subdirectories
+            // Reveal all popular files found in subdirectories (including extra files)
             expandAll();
         } else {
             // Return to a clean base state showing only root directories

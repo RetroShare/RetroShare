@@ -341,7 +341,7 @@ int TreeStyle_RDM::rowCount(const QModelIndex &parent) const
 
 	/* else PERSON/DIR*/
 #ifdef RDM_DEBUG
-    std::cerr << "lookup PER/DIR #" << details.size;
+	std::cerr << "lookup PER/DIR #" << details.size;
 	std::cerr << std::endl;
 #endif
 	if ((details.type == DIR_TYPE_ROOT) && !_showEmpty && RemoteMode)
@@ -357,8 +357,23 @@ int TreeStyle_RDM::rowCount(const QModelIndex &parent) const
 		}
 		return _parentRow.size();
 	}
-    return details.children.size();
+
+	// MODIFICATION 3: Count filtered children correctly
+	if (!mFilteredPointers.empty())
+	{
+	    int visibleCount = 0;
+	    for(uint32_t i = 0; i < details.children.size(); ++i)
+	    {
+	        // Check if this specific child pointer is in the visible set
+	        if (mFilteredPointers.find(details.children[i].ref) != mFilteredPointers.end())
+	            visibleCount++;
+	    }
+    	    return visibleCount;
+	}
+
+	return details.children.size();
 }
+
 int FlatStyle_RDM::rowCount(const QModelIndex &parent) const
 {
 	Q_UNUSED(parent);
@@ -1475,14 +1490,21 @@ void RetroshareDirModel::filterItems(const std::list<std::string>& keywords, uin
         mFilteredPointers.insert(p) ;
         ++found ;
 
-        while(det.type == DIR_TYPE_FILE || det.type == DIR_TYPE_EXTRA_FILE || det.type == DIR_TYPE_DIR)
-        {
-            p = det.parent ;
-            if (!rsFiles->RequestDirDetails(p, det, flags))
-                break;
+	// MODIFICATION 2: Include DIR_TYPE_PERSON in the parent visibility loop
+	while(det.type == DIR_TYPE_FILE || det.type == DIR_TYPE_EXTRA_FILE || 
+	      det.type == DIR_TYPE_DIR || det.type == DIR_TYPE_PERSON)
+	{
+	    p = det.parent;
+	    if (p == NULL) break; 
 
-            mFilteredPointers.insert(p) ;
-        }
+	    if (!rsFiles->RequestDirDetails(p, det, flags))
+	        break;
+
+	    mFilteredPointers.insert(p); // Mark parent node as visible
+
+	    // If we reach the Person node (root of extra list), stop climbing
+	    if (det.type == DIR_TYPE_PERSON) break;
+	}
     }
     
     // CRITICAL: Removed update() call to prevent full model reset and collapse
@@ -1507,28 +1529,25 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details, int coln) const
             }
             break;
 
-            case REMOTEDIRMODEL_COLUMN_FILENB:
+	    case REMOTEDIRMODEL_COLUMN_FILENB:
             {
-                SharedDirStats stats ;
+                SharedDirStats stats;
                 if(RemoteMode)
-                    rsFiles->getSharedDirStatistics(details.id,stats) ;
+                    rsFiles->getSharedDirStatistics(details.id, stats) ;
                 else if(details.id == rsPeers->getOwnId())
-                    rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
-                else
-                    stats.total_number_of_files = details.children.size();
-
-                if(stats.total_number_of_files > 0)
-                {
-                    if (stats.total_number_of_files > 1)
-                        return QString::number(stats.total_number_of_files) + " " + tr("Files");
-                    else
-                        return QString::number(stats.total_number_of_files) + " " + tr("File");
+                    rsFiles->getSharedDirStatistics(rsPeers->getOwnId(), stats) ;
+                else {
+                    // MODIFICATION 4: Specific handling for "Temporary shared files" node.
+                    // Return the count of children directly from the DirDetails structure.
+                    uint32_t nb = details.children.size();
+                    if(nb > 1) return QString::number(nb) + " " + tr("Files");
+                    if(nb == 1) return QString::number(nb) + " " + tr("File");
+                    return tr("Empty");
                 }
-                return tr("Empty");
             }
             break;
 
-            case REMOTEDIRMODEL_COLUMN_SIZE:
+	    case REMOTEDIRMODEL_COLUMN_SIZE:
             {
                 SharedDirStats stats ;
                 if(RemoteMode)
