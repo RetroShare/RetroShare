@@ -1502,6 +1502,8 @@ void RetroshareDirModel::filterItems(const std::list<std::string>& keywords, uin
     if(keywords.empty())
     {
         mFilteredPointers.clear();
+        // MODIFICATION: Call update to refresh the view when the filter is cleared
+        update();
         return ;
     }
     else if(keywords.size() > 1)
@@ -1513,7 +1515,11 @@ void RetroshareDirModel::filterItems(const std::list<std::string>& keywords, uin
         rsFiles->SearchKeywords(keywords, result_list, flags) ;
 
     if(result_list.empty())
+    {
+        mFilteredPointers.clear();
+        update();
         return ;
+    }
 
     mFilteredPointers.clear();
 
@@ -1525,24 +1531,27 @@ void RetroshareDirModel::filterItems(const std::list<std::string>& keywords, uin
         mFilteredPointers.insert(p) ;
         ++found ;
 
-	// MODIFICATION 2: Include DIR_TYPE_PERSON in the parent visibility loop
-	while(det.type == DIR_TYPE_FILE || det.type == DIR_TYPE_EXTRA_FILE || 
-	      det.type == DIR_TYPE_DIR || det.type == DIR_TYPE_PERSON)
-	{
-	    p = det.parent;
-	    if (p == NULL) break; 
+        // Climb the directory tree to mark all parents as visible
+        while(det.type == DIR_TYPE_FILE || det.type == DIR_TYPE_EXTRA_FILE || 
+              det.type == DIR_TYPE_DIR || det.type == DIR_TYPE_PERSON)
+        {
+            p = det.parent;
+            if (p == NULL) break; 
 
-	    if (!rsFiles->RequestDirDetails(p, det, flags))
-	        break;
+            if (!rsFiles->RequestDirDetails(p, det, flags))
+                break;
 
-	    mFilteredPointers.insert(p); // Mark parent node as visible
+            mFilteredPointers.insert(p); // Mark parent node as visible
 
-	    // If we reach the Person node (root of extra list), stop climbing
-	    if (det.type == DIR_TYPE_PERSON) break;
-	}
+            // If we reach the Person node (root of extra list), stop climbing
+            if (det.type == DIR_TYPE_PERSON) break;
+        }
     }
     
-    // CRITICAL: Removed update() call to prevent full model reset and collapse
+    // MODIFICATION: Restore the update call. 
+    // This triggers beginResetModel/endResetModel which notifies the view 
+    // that row counts and visibility have changed.
+    update(); 
 }
 
 QVariant TreeStyle_RDM::displayRole(const DirDetails& details, int coln) const

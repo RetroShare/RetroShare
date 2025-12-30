@@ -1286,6 +1286,10 @@ void SharedFilesDialog::FilterItems()
     if(text == "")
     {
         model->filterItems(std::list<std::string>(), found) ;
+        
+        // MODIFICATION: Ensure the model and its totals are updated
+        model->update();
+        
         if (tree_proxyModel) tree_proxyModel->invalidate();
         if (flat_proxyModel) flat_proxyModel->invalidate();
         return ;
@@ -1301,6 +1305,9 @@ void SharedFilesDialog::FilterItems()
         keywords.push_back((*it).toStdString());
 
     model->filterItems(keywords, found) ;
+
+    // MODIFICATION: Refresh the model to reflect search results and updated row counts
+    model->update(); 
 
     if (tree_proxyModel) tree_proxyModel->invalidate();
     if (flat_proxyModel) flat_proxyModel->invalidate();
