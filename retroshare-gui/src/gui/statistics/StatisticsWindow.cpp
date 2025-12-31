@@ -23,6 +23,7 @@
 #include <QTimer>
 #include <QDateTime>
 #include <QActionGroup>
+#include <QKeyEvent>
 
 #include <algorithm>
 #include <iostream>
@@ -227,4 +228,13 @@ void StatisticsWindow::setNewPage(int page)
 	{
 		ui->stackPages->setCurrentIndex(page);
 	}
+}
+
+void StatisticsWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        close(); // Close window is escape is pressed
+    } else {
+        QMainWindow::keyPressEvent(event);
+    }
 }
