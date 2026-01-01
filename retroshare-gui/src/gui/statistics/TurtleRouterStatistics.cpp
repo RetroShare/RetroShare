@@ -29,6 +29,7 @@
 #include <retroshare/rspeers.h>
 #include "TurtleRouterStatistics.h"
 #include "TurtleRouterDialog.h"
+#include "GxsNetTunnelsDialog.h"
 
 #include "gui/settings/rsharesettings.h"
 
