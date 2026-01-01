@@ -28,6 +28,9 @@
 #include "ui_TurtleRouterDialog.h"
 #include "ui_TurtleRouterStatistics.h"
 
+class QModelIndex;
+class QPainter;
+class FTTunnelsListDelegate ;
 
 class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialogForm
 {
@@ -56,6 +59,9 @@ class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialog
 		QTreeWidgetItem *top_level_unknown_hashes ;
 		QTreeWidgetItem *top_level_s_requests ;
 		QTreeWidgetItem *top_level_t_requests ;
+
+protected:
+	FTTunnelsListDelegate *FTTDelegate;
 
 } ;
 
@@ -95,18 +101,6 @@ class GxsAuthenticatedTunnelsDialog: public TunnelStatisticsDialog
 public:
     GxsAuthenticatedTunnelsDialog(QWidget *parent = NULL) ;
     ~GxsAuthenticatedTunnelsDialog() {}
-
-private:
-    virtual void updateDisplay() ;
-} ;
-
-class GxsNetTunnelsDialog: public TunnelStatisticsDialog
-{
-    Q_OBJECT
-
-public:
-    GxsNetTunnelsDialog(QWidget *parent = NULL) ;
-    ~GxsNetTunnelsDialog() {}
 
 private:
     virtual void updateDisplay() ;
