@@ -74,8 +74,14 @@ void StatisticsWindow::showYourself()
         mInstance = new StatisticsWindow();
     }
 
+    /* Ensure the window is visible and restored if minimized */
+    if (mInstance->isMinimized()) {
+        mInstance->showNormal();
+    }
+
     mInstance->show();
-    mInstance->activateWindow();
+    mInstance->raise();          /* Bring to front */
+    mInstance->activateWindow(); /* Give focus */
 }
 
 StatisticsWindow* StatisticsWindow::getInstance()
@@ -93,22 +99,26 @@ void StatisticsWindow::releaseInstance()
 /********************************************** STATIC WINDOW *************************************/
 
 
-
 StatisticsWindow::StatisticsWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::StatisticsWindow)
 {
     ui->setupUi(this);
    
-	Settings->loadWidgetInformation(this);
-	
+    /* Automatically destroy the object when the window is closed */
+    setAttribute(Qt::WA_DeleteOnClose);
+
+    Settings->loadWidgetInformation(this);
+    
     initStackedPage();
     connect(ui->stackPages, SIGNAL(currentChanged(int)), this, SLOT(setNewPage(int)));
     ui->stackPages->setCurrentIndex(0);
-	int toolSize = Settings->getToolButtonSize();
-	ui->toolBar->setToolButtonStyle(Settings->getToolButtonStyle());
-	ui->toolBar->setIconSize(QSize(toolSize,toolSize));
-	setWindowTitle("RetroShare Statistics - " + MainWindow::getInstance()->get_nameAndLocation());
+    
+    int toolSize = Settings->getToolButtonSize();
+    ui->toolBar->setToolButtonStyle(Settings->getToolButtonStyle());
+    ui->toolBar->setIconSize(QSize(toolSize,toolSize));
+    
+    setWindowTitle("RetroShare Statistics - " + MainWindow::getInstance()->get_nameAndLocation());
 }
 
 StatisticsWindow::~StatisticsWindow()
@@ -233,8 +243,11 @@ void StatisticsWindow::setNewPage(int page)
 void StatisticsWindow::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) {
-        close(); // Close window is escape is pressed
+        /* This will trigger the closeEvent and, thanks to WA_DeleteOnClose, the destructor */
+        close();
     } else {
+        /* Pass the event to the base class for default handling */
         QMainWindow::keyPressEvent(event);
     }
 }
+
