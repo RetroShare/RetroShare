@@ -33,6 +33,7 @@
 #include <QTimer>
 #include <QTreeWidget>
 #include <QWheelEvent>
+#include <QPointer> // Required for thread safety check
 
 #include <retroshare/rsgxstrans.h>
 #include <retroshare/rspeers.h>
@@ -452,42 +453,58 @@ void GxsTransportStatistics::loadGroupStats(const RsGxsGroupId& groupId)
 }
 #endif
 
-
 void GxsTransportStatistics::loadGroups()
 {
 	mStateHelper->setLoading(GXSTRANS_GROUP_META, true);
 
-	RsThread::async([this]()
+	// FIX: Use a QPointer to track 'this'. Since the window can now be closed via 
+	// the Escape key, we must ensure the object still exists before updating it.
+	QPointer<GxsTransportStatistics> self(this);
+
+	RsThread::async([self]()
 	{
-        // 1 - get message data from p3GxsForums
+		// 1 - get message data from p3GxsForums
 
 #ifdef DEBUG_FORUMS
-        std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+		// Original dev debug trace
+		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 #endif
-        auto stats = new std::map<RsGxsGroupId,RsGxsTransGroupStatistics>();
+		auto stats = new std::map<RsGxsGroupId,RsGxsTransGroupStatistics>();
 
 		if(!rsGxsTrans->getGroupStatistics(*stats))
 		{
 			RS_ERR("Cannot retrieve group statistics in GxsTransportStatistics");
-            delete stats;
+			delete stats;
 			return;
 		}
 
-        RsQThreadUtils::postToObject( [stats, this]()
+		// Only proceed if the widget hasn't been destroyed by the user
+		if (self) 
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
+			RsQThreadUtils::postToObject( [stats, self]()
+			{
+				/* Here it goes any code you want to be executed on the Qt Gui
+				 * thread, for example to update the data model with new information
+				 * after a blocking call to RetroShare API complete */
 
-			// TODO: consider making mGroupStats an unique_ptr to avoid copying
-			mGroupStats = *stats;
-			updateContent();
-			mStateHelper->setLoading(GXSTRANS_GROUP_META, false);
+				// Final safety check: ensure the object wasn't deleted while 
+				// waiting for the GUI thread event loop.
+				if (self) 
+				{
+					// TODO: consider making mGroupStats an unique_ptr to avoid copying
+					self->mGroupStats = *stats;
+					self->updateContent();
+					self->mStateHelper->setLoading(GXSTRANS_GROUP_META, false);
+				}
 
-            delete stats;
-        }, this );
-
-    });
+				delete stats;
+			}, self.data() );
+		}
+		else 
+		{
+			// Clean up memory if the window was closed during background processing
+			delete stats;
+		}
+	});
 }
-
 
