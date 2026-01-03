@@ -422,6 +422,7 @@ HEADERS +=  rshare.h \
             gui/statistics/StatisticsWindow.h \
             gui/statistics/BwCtrlWindow.h \
             gui/statistics/RttStatistics.h \
+            gui/statistics/TunnelStatisticsDialog.h \
             gui/FileTransfer/TransferUserNotify.h \
             gui/plugins/PluginInterface.h \
             gui/im_history/ImHistoryBrowser.h \
@@ -728,6 +729,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/statistics/StatisticsWindow.ui \
             gui/statistics/BwCtrlWindow.ui \
             gui/statistics/RttStatistics.ui \
+            gui/statistics/TunnelStatisticsDialog.ui \
             gui/GetStartedDialog.ui \
             util/RichTextEdit.ui
 
@@ -980,6 +982,7 @@ SOURCES +=  main.cpp \
             gui/statistics/StatisticsWindow.cpp \
             gui/statistics/BwCtrlWindow.cpp \
             gui/statistics/RttStatistics.cpp \
+            gui/statistics/TunnelStatisticsDialog.cpp \
             gui/statistics/BWGraph.cpp \
     util/RsSyntaxHighlighter.cpp \
     util/imageutil.cpp \
