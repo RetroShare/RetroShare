@@ -34,6 +34,7 @@
 #include <algorithm> // for sort
 #include <time.h>
 
+#include "util/misc.h"
 #include "util/RsQtVersion.h"
 #include "gui/settings/rsharesettings.h"
 
@@ -51,6 +52,14 @@ TunnelStatisticsDialog::TunnelStatisticsDialog(QWidget *parent)
 	setupUi(this) ;
 
 	m_bProcessSettings = false;
+
+	float FS = QFontMetricsF(font()).height();
+	float fact = FS/14.0 ;
+
+	QHeaderView * _header = authenticatedTunnels_TW->header () ;
+	_header->resizeSection (COLUMN_TUNNELID, 270*fact);
+	_header->resizeSection (COLUMN_FROM, 270*fact);
+	_header->resizeSection (COLUMN_DESTINATION, 270*fact);
 
 	// load settings
     processSettings(true);
@@ -181,12 +190,12 @@ void TunnelStatisticsDialog::updateTunnels()
         QString dstName = getPeerName(tunnel_infos[i].destination_gxs_id);
 
         // Populate Tunnel Data
-        tunnelItem->setData(COLUMN_TUNNELID,     Qt::DisplayRole, QString::fromStdString(tunnel_infos[i].tunnel_id.toStdString()));
-        tunnelItem->setData(COLUMN_FROM,     Qt::DisplayRole, QString::fromStdString(tunnel_infos[i].source_gxs_id.toStdString())+ srcName );
-        tunnelItem->setData(COLUMN_DESTINATION,     Qt::DisplayRole, QString::fromStdString(tunnel_infos[i].destination_gxs_id.toStdString()) + dstName );
-        tunnelItem->setData(COLUMN_STATUS,     Qt::DisplayRole, QString::number(tunnel_infos[i].tunnel_status));
-        tunnelItem->setData(COLUMN_TOTALSENT,     Qt::DisplayRole, QString::number(tunnel_infos[i].total_size_sent));
-        tunnelItem->setData(COLUMN_TOTALRECEIVED,     Qt::DisplayRole, QString::number(tunnel_infos[i].total_size_received));
+        tunnelItem->setData(COLUMN_TUNNELID,          Qt::DisplayRole, QString::fromStdString(tunnel_infos[i].tunnel_id.toStdString()));
+        tunnelItem->setData(COLUMN_FROM,              Qt::DisplayRole, QString::fromStdString(tunnel_infos[i].source_gxs_id.toStdString())+ " (" + srcName + ")");
+        tunnelItem->setData(COLUMN_DESTINATION,       Qt::DisplayRole, QString::fromStdString(tunnel_infos[i].destination_gxs_id.toStdString()) + " (" + dstName + ")");
+        tunnelItem->setData(COLUMN_STATUS,            Qt::DisplayRole, QString::number(tunnel_infos[i].tunnel_status));
+        tunnelItem->setData(COLUMN_TOTALSENT,         Qt::DisplayRole, misc::friendlyUnit(tunnel_infos[i].total_size_sent ));
+        tunnelItem->setData(COLUMN_TOTALRECEIVED,     Qt::DisplayRole, misc::friendlyUnit(tunnel_infos[i].total_size_received));
 
     }
 }
