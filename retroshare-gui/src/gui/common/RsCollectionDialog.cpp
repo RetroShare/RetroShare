@@ -1,21 +1,21 @@
 /*******************************************************************************
  * retroshare-gui/src/gui/common/RsCollectionDialog.cpp                        *
- * *
+ *                                                                             *
  * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
- * *
+ *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
  * published by the Free Software Foundation, either version 3 of the          *
  * License, or (at your option) any later version.                             *
- * *
+ *                                                                             *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
  * GNU Affero General Public License for more details.                         *
- * *
+ *                                                                             *
  * You should have received a copy of the GNU Affero General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
- * *
+ *                                                                             *
  *******************************************************************************/
 
 #include "gui/common/FilesDefs.h"
@@ -55,12 +55,12 @@
 #define ROLE_FILEC Qt::UserRole + 6
 #define ROLE_SELFILEC Qt::UserRole + 7
 
-#define MAX_FILE_ADDED_BEFORE_ASK  500 //Number of file added in Recursive mode before asking to continue
+#define MAX_FILE_ADDED_BEFORE_ASK  500 //Number of files added in Recursive mode before asking to continue
 
 #define IMAGE_SEARCH               ":/icons/svg/magnifying-glass.svg"
 
 /**
- * @brief The FSMSortFilterProxyModel class sort directory before file.
+ * @brief The FSMSortFilterProxyModel class sorts directories before files.
  */
 class FSMSortFilterProxyModel : public QSortFilterProxyModel
 {
@@ -98,21 +98,20 @@ protected:
 			return asc;
 
 
-		/*If sorting by Size (Take real size, not Display one 10<2)*/
+		/*If sorting by Size (Take real size, not Display string)*/
 		if ((sortColumn()==1) && (!leftFileInfo.isDir() && !rightFileInfo.isDir())) {
 			if (leftFileInfo.size() < rightFileInfo.size())
 				return true;
 			if (leftFileInfo.size() > rightFileInfo.size())
 				return false;
 		}
-		/*If sorting by Date Modified (Take real date, not Display one 01-10-2014<02-01-1980)*/
+		/*If sorting by Date Modified (Take real date, not Display string)*/
 		if (sortColumn()==3) {
 			if (leftFileInfo.lastModified() < rightFileInfo.lastModified())
 				return true;
 			if (leftFileInfo.lastModified() > rightFileInfo.lastModified())
 				return false;
 		}
-		//Columns found here:https://qt.gitorious.org/qt/qt/source/9e8abb63ba4609887d988ee15ba6daee0b01380e:src/gui/dialogs/qfilesystemmodel.cpp
 
 		return QSortFilterProxyModel::lessThan(left, right);
 	}
@@ -122,11 +121,10 @@ protected:
 /**
  * @brief RsCollectionDialog::RsCollectionDialog
  * @param collectionFileName: Filename of RSCollection saved
- * @param creation: Open dialog as RsColl Creation or RsColl DownLoad
- * @param readOnly: Open dialog for RsColl as ReadOnly
+ * @param mode: Open dialog as RsColl Creation or RsColl DownLoad
  */
 RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsCollectionDialogMode mode)
-  : _mode(mode), _dirModel(0), _tree_proxyModel(0), _selectionProxy(0)
+  : _mode(mode), _dirModel(nullptr), _tree_proxyModel(nullptr), _selectionProxy(nullptr)
 {
     RsCollection::RsCollectionErrorCode err_code;
     mCollection = new RsCollection(collectionFileName,err_code);
@@ -141,11 +139,12 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsColl
 }
 
 RsCollectionDialog::RsCollectionDialog(const RsCollection& coll, RsCollectionDialogMode mode)
-  : _mode(mode), _dirModel(0), _tree_proxyModel(0), _selectionProxy(0)
+  : _mode(mode), _dirModel(nullptr), _tree_proxyModel(nullptr), _selectionProxy(nullptr)
 {
     mCollection = new RsCollection(coll);
     init(QString());
 }
+
 void RsCollectionDialog::init(const QString& collectionFileName)
 {
 	ui.setupUi(this) ;
@@ -210,11 +209,11 @@ void RsCollectionDialog::init(const QString& collectionFileName)
 	connect(ui._download_PB, SIGNAL(clicked()), this, SLOT(download()));
 	connect(ui._hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
-	// 3 Initialize List ONLY in EDIT mode to avoid Windows background scanning freezes.
+	// 3 Initialize Local System List ONLY in EDIT mode
 	if (_mode == EDIT)
 	{
 		_dirModel = new QFileSystemModel(this);
-		_dirModel->setRootPath("/");
+		_dirModel->setRootPath(QDir::homePath());
 		_dirModel->setFilter(QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot);
 		_dirLoaded = false;
 		connect(_dirModel, SIGNAL(directoryLoaded(QString)), this, SLOT(directoryLoaded(QString)));
@@ -231,9 +230,9 @@ void RsCollectionDialog::init(const QString& collectionFileName)
 	}
 	else
 	{
-		_dirModel = 0;
-		_tree_proxyModel = 0;
-		_selectionProxy = 0;
+		_dirModel = nullptr;
+		_tree_proxyModel = nullptr;
+		_selectionProxy = nullptr;
 		_dirLoaded = true;
 	}
 
@@ -316,7 +315,7 @@ void RsCollectionDialog::processSettings(bool bLoad)
 		// load settings
 
         if(_mode == EDIT){
-			// Load windows geometrie
+			// Load windows geometry
 			restoreGeometry(Settings->value("WindowGeometrie_CM").toByteArray());
 			// Load splitters state
 			ui._mainSplitter->restoreState(Settings->value("MainSplitterState_CM").toByteArray());
@@ -326,7 +325,7 @@ void RsCollectionDialog::processSettings(bool bLoad)
 			// Load file entries header configuration
 			ui._fileEntriesTW->header()->restoreState(Settings->value("FileEntriesHeader_CM").toByteArray());
 		} else {
-			// Load windows geometrie
+			// Load windows geometry
 			restoreGeometry(Settings->value("WindowGeometrie").toByteArray());
 			// Load splitters state
 			ui._mainSplitter->restoreState(Settings->value("MainSplitterState").toByteArray());
@@ -338,7 +337,7 @@ void RsCollectionDialog::processSettings(bool bLoad)
 		}
 	} else {
         if(_mode == EDIT){
-			// Save windows geometrie
+			// Save windows geometry
 			Settings->setValue("WindowGeometrie_CM",saveGeometry());
 			// Save splitters state
 			Settings->setValue("MainSplitterState_CM", ui._mainSplitter->saveState());
@@ -348,7 +347,7 @@ void RsCollectionDialog::processSettings(bool bLoad)
 			// Save file entries header configuration
 			Settings->setValue("FileEntriesHeader_CM", ui._fileEntriesTW->header()->saveState());
 		} else {
-			// Save windows geometrie
+			// Save windows geometry
 			Settings->setValue("WindowGeometrie",saveGeometry());
 			// Save splitter state
 			Settings->setValue("MainSplitterState", ui._mainSplitter->saveState());
@@ -769,26 +768,31 @@ void RsCollectionDialog::download()
                 mb.setText(tr("Incompatible filename."));
                 mb.setInformativeText(tr("This filename is not usable on your system.")+"\n"+tr("Retroshare can replace every problematic chars by '_'.")
                                       +"\n"+tr("What do you want to do?"));
-                mb.addButton(tr("Correct filename"), QMessageBox::YesRole);
-                mb.addButton(tr("Correct all"), QMessageBox::AcceptRole);
-                mb.addButton(tr("Skip this file"), QMessageBox::NoRole);
-                mb.addButton(tr("Skip all"), QMessageBox::RejectRole);
+                QAbstractButton *btnCorrect = mb.addButton(tr("Correct filename"), QMessageBox::YesRole);
+                QAbstractButton *btnCorrectAll = mb.addButton(tr("Correct all"), QMessageBox::AcceptRole);
+                QAbstractButton *btnSkip = mb.addButton(tr("Skip this file"), QMessageBox::NoRole);
+                QAbstractButton *btnSkipAll = mb.addButton(tr("Skip all"), QMessageBox::RejectRole);
                 mb.setIcon(QMessageBox::Question);
                 mb.exec();
 
-                if(mb.clickedButton() == (QAbstractButton*)mb.buttons().at(3)) // btnSkipAll
+                if(mb.clickedButton() == btnSkipAll)
                 {
                     auto_skip = true;
                     continue;
                 }
-                if(mb.clickedButton() == (QAbstractButton*)mb.buttons().at(2)) // btnSkip
+                if(mb.clickedButton() == btnSkip)
                     continue;
 
-                if(mb.clickedButton() == (QAbstractButton*)mb.buttons().at(1)) // btnCorrectAll
+                if(mb.clickedButton() == btnCorrectAll)
+                {
                     auto_correct = true;
-            }
+                }
 
-            std::cerr << "Requesting file " << corrected_name << " to directory " << path << std::endl;
+                if(mb.clickedButton() == btnCorrect)
+                {
+                    auto_correct = false; // logic placeholder
+                }
+            }
 
             rsFiles->FileRequest(corrected_name,f.hash,f.size,path,RS_FILE_REQ_ANONYMOUS_ROUTING,std::list<RsPeerId>());
         }
@@ -851,13 +855,18 @@ bool RsCollectionDialog::openNewCollection(const RsFileTree& tree)
         QMessageBox mb;
         mb.setText(tr("Save Collection File."));
         mb.setInformativeText(tr("File already exists.")+"\n"+tr("What do you want to do?"));
-        mb.addButton(tr("Overwrite"), QMessageBox::YesRole);
-        mb.addButton(tr("Cancel"), QMessageBox::ResetRole);
+        QAbstractButton *btnOwerWrite = mb.addButton(tr("Overwrite"), QMessageBox::YesRole);
+        QAbstractButton *btnCancel = mb.addButton(tr("Cancel"), QMessageBox::ResetRole);
         mb.setIcon(QMessageBox::Question);
         mb.exec();
 
-        if (mb.clickedButton()==(QAbstractButton*)mb.buttons().at(1)) // btnCancel
+        if (mb.clickedButton()==btnCancel)
             return false;
+
+        if (mb.clickedButton()==btnOwerWrite)
+        {
+            // Proceed to overwrite
+        }
     }
 
     if(!collection.save(fileName))
@@ -865,4 +874,3 @@ bool RsCollectionDialog::openNewCollection(const RsFileTree& tree)
 
     return RsCollectionDialog(fileName,EDIT).exec();
 }
-
