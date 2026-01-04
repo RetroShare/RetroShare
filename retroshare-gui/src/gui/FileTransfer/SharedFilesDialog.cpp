@@ -1,21 +1,21 @@
 /*******************************************************************************
  * retroshare-gui/src/gui/FileTransfer/SharedFilesDialog.cpp                   *
- * *
+ *                                                                             *
  * Copyright (c) 2009 Retroshare Team <retroshare.project@gmail.com>           *
- * *
+ *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
  * published by the Free Software Foundation, either version 3 of the          *
  * License, or (at your option) any later version.                             *
- * *
+ *                                                                             *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
  * GNU Affero General Public License for more details.                         *
- * *
+ *                                                                             *
  * You should have received a copy of the GNU Affero General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
- * *
+ *                                                                             *
  *******************************************************************************/
 
 #include "SharedFilesDialog.h"
@@ -1283,18 +1283,19 @@ void SharedFilesDialog::FilterItems()
 
     uint32_t found = 0 ;
 
-    if(text == "")
+    // MODIFICATION: If text is shorter than 3 characters, we reset the search 
+    // to show all files. Otherwise, the UI stays stuck on the previous results.
+    if(text.length() < 3)
     {
         model->filterItems(std::list<std::string>(), found) ;
-        // Ensure UI refresh
+        
+        // MODIFICATION: Ensure the model and its totals are updated
         model->update();
+        
         if (tree_proxyModel) tree_proxyModel->invalidate();
         if (flat_proxyModel) flat_proxyModel->invalidate();
         return ;
     }
-
-    if(text.length() < 3)
-        return ;
 
     QStringList lst = text.split(" ", QtSkipEmptyParts) ;
     std::list<std::string> keywords ;
@@ -1302,10 +1303,9 @@ void SharedFilesDialog::FilterItems()
     for(auto it(lst.begin()); it != lst.end(); ++it)
         keywords.push_back((*it).toStdString());
 
-    // Execute core search
     model->filterItems(keywords, found) ;
 
-    // MODIFICATION: Force refresh to apply FilterRole changes in the Proxy Model
+    // MODIFICATION: Refresh the model to reflect search results and updated row counts
     model->update(); 
 
     if (tree_proxyModel) tree_proxyModel->invalidate();

@@ -1489,7 +1489,7 @@ void RetroshareDirModel::filterItems(const std::list<std::string>& keywords, uin
     if(keywords.empty())
     {
         mFilteredPointers.clear();
-        // MODIFICATION: Refresh the model to show all items again
+        // MODIFICATION: Call update to refresh the view when the filter is cleared
         update();
         return ;
     }
@@ -1518,9 +1518,11 @@ void RetroshareDirModel::filterItems(const std::list<std::string>& keywords, uin
         mFilteredPointers.insert(p) ;
         ++found ;
 
-        // Climb the directory tree to mark all parents as visible for Tree View
+        // MODIFICATION: Included DIR_TYPE_ROOT in the climbing logic.
+        // In Tree View, every parent must be in mFilteredPointers to show the child.
+        // Shared folder roots are often DIR_TYPE_ROOT.
         while(det.type == DIR_TYPE_FILE || det.type == DIR_TYPE_EXTRA_FILE || 
-              det.type == DIR_TYPE_DIR || det.type == DIR_TYPE_PERSON)
+              det.type == DIR_TYPE_DIR || det.type == DIR_TYPE_PERSON || det.type == DIR_TYPE_ROOT)
         {
             p = det.parent;
             if (p == NULL) break; 
@@ -1535,7 +1537,9 @@ void RetroshareDirModel::filterItems(const std::list<std::string>& keywords, uin
         }
     }
     
-    // MODIFICATION: Restore the update call to notify the UI of search completion
+    // MODIFICATION: Restore the update call. 
+    // This triggers beginResetModel/endResetModel which notifies the view 
+    // that row counts and visibility have changed.
     update(); 
 }
 
