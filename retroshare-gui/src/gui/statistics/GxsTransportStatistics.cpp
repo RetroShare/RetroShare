@@ -457,8 +457,8 @@ void GxsTransportStatistics::loadGroups()
 {
 	mStateHelper->setLoading(GXSTRANS_GROUP_META, true);
 
-	// FIX: Use a QPointer to track 'this'. Since the window can now be closed via 
-	// the Escape key, we must ensure the object still exists before updating it.
+	// Use a QPointer to safely track 'this'. Even if the window is static,
+	// this prevents crashes if the instance is ever released during async execution.
 	QPointer<GxsTransportStatistics> self(this);
 
 	RsThread::async([self]()
@@ -478,7 +478,6 @@ void GxsTransportStatistics::loadGroups()
 			return;
 		}
 
-		// Only proceed if the widget hasn't been destroyed by the user
 		if (self) 
 		{
 			RsQThreadUtils::postToObject( [stats, self]()
@@ -487,8 +486,6 @@ void GxsTransportStatistics::loadGroups()
 				 * thread, for example to update the data model with new information
 				 * after a blocking call to RetroShare API complete */
 
-				// Final safety check: ensure the object wasn't deleted while 
-				// waiting for the GUI thread event loop.
 				if (self) 
 				{
 					// TODO: consider making mGroupStats an unique_ptr to avoid copying
@@ -502,7 +499,7 @@ void GxsTransportStatistics::loadGroups()
 		}
 		else 
 		{
-			// Clean up memory if the window was closed during background processing
+			// Clean up memory if the object was somehow released
 			delete stats;
 		}
 	});

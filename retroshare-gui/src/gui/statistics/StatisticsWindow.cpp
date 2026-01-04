@@ -98,26 +98,24 @@ void StatisticsWindow::releaseInstance()
 
 /********************************************** STATIC WINDOW *************************************/
 
-
 StatisticsWindow::StatisticsWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::StatisticsWindow)
 {
     ui->setupUi(this);
    
-    /* Automatically destroy the object when the window is closed */
-    setAttribute(Qt::WA_DeleteOnClose);
-
     Settings->loadWidgetInformation(this);
+    
+    // Ensure the window is NOT destroyed on close to preserve temporal curves
+    // and avoid async race conditions.
+    this->setAttribute(Qt::WA_DeleteOnClose, false);
     
     initStackedPage();
     connect(ui->stackPages, SIGNAL(currentChanged(int)), this, SLOT(setNewPage(int)));
     ui->stackPages->setCurrentIndex(0);
-    
     int toolSize = Settings->getToolButtonSize();
     ui->toolBar->setToolButtonStyle(Settings->getToolButtonStyle());
     ui->toolBar->setIconSize(QSize(toolSize,toolSize));
-    
     setWindowTitle("RetroShare Statistics - " + MainWindow::getInstance()->get_nameAndLocation());
 }
 
@@ -243,10 +241,10 @@ void StatisticsWindow::setNewPage(int page)
 void StatisticsWindow::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) {
-        /* This will trigger the closeEvent and, thanks to WA_DeleteOnClose, the destructor */
-        close();
+        // Just call close(), which will hide the window without destroying 
+        // the static instance or resetting statistics data.
+        this->close();
     } else {
-        /* Pass the event to the base class for default handling */
         QMainWindow::keyPressEvent(event);
     }
 }
