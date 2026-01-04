@@ -57,6 +57,8 @@ protected:
 	void toggleNotes() override;
 
 private:
+	QColor linkColor;
+
 	/** Qt Designer generated object */
 	Ui::PostedCardView *ui;
 };

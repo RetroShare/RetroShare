@@ -91,6 +91,7 @@ private:
 	RsSyntaxHighlighter *highliter;
 	bool mOnlyPlainText;
 	int mMaxBytes = -1;	//limit content size, for pasting images
+	QColor linkColor;
 };
 
 #endif // MIMETEXTEDIT_H
