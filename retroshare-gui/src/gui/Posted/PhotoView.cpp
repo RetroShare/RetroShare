@@ -51,9 +51,10 @@ PhotoView::PhotoView(QWidget *parent)
 /** Destructor */
 PhotoView::~PhotoView()
 {
+	// Note: mMovie is NOT deleted here - Qt parent-child handles cleanup
+	// (caller sets movie->setParent(this) before calling setMovie)
 	if (mMovie) {
 		mMovie->stop();
-		delete mMovie;
 	}
 	delete ui;
 }
@@ -66,10 +67,11 @@ void PhotoView::setPixmap(const QPixmap& pixmap)
 
 void PhotoView::setMovie(QMovie* movie)
 {
-	// Clean up previous movie if exists
+	// Note: Previous movie cleanup is handled by Qt parent-child mechanism
+	// Caller sets movie->setParent(this) before calling this
 	if (mMovie) {
 		mMovie->stop();
-		delete mMovie;
+		// Don't delete - Qt parent-child handles it
 	}
 	
 	mMovie = movie;
