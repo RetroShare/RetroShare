@@ -38,12 +38,18 @@ bool BoardPostImageHelper::isAnimatedImage(const uint8_t* data, uint32_t size, Q
     QImageReader reader(&buffer);
     QString detectedFormat = QString(reader.format()).toUpper();
 
-    // Check if format is GIF or WEBP
+    // Check if format is GIF or WEBP (case-insensitive)
     if (detectedFormat != "GIF" && detectedFormat != "WEBP")
         return false;
 
     // Check frame count - more than 1 frame means animation
     int frameCount = reader.imageCount();
+    
+    // For WEBP, imageCount() might return 0 if plugin doesn't support it
+    // In that case, assume it's not animated
+    if (frameCount <= 0)
+        return false;
+        
     bool isAnimated = (frameCount > 1);
 
     if (isAnimated && format)
