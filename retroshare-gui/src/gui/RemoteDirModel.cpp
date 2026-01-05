@@ -224,6 +224,11 @@ void TreeStyle_RDM::recalculateDirectoryTotals()
 // MODIFICATION D: Check if a specific node or any of its descendants have uploads
 bool TreeStyle_RDM::hasUploads(void *ref) const
 {
+    // CRITICAL FIX: Safety check for NULL pointers
+    if (ref == NULL) {
+        return false;
+    }
+
     DirDetails details;
     if (!requestDirDetails(ref, RemoteMode, details)) return false;
 
@@ -1842,9 +1847,13 @@ void TreeStyle_RDM::showEmpty(const bool value)
 	update();
 }
 
-// MODIFICATION I: Simple implementation for Flat View
 bool FlatStyle_RDM::hasUploads(void *ref) const
 {
+    // CRITICAL FIX: Safety check for NULL pointers
+    if (ref == NULL) {
+        return false;
+    }
+
     DirDetails details;
     if (!requestDirDetails(ref, RemoteMode, details)) return false;
 
