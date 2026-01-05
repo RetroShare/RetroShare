@@ -152,20 +152,18 @@ void RetroshareDirModel::treeStyle()
 
 void TreeStyle_RDM::recalculateDirectoryTotals()
 {
-    // DEBUG: Start of recalculation
-    // std::cerr << "UPLOAD_DBG: --- Starting recalculateDirectoryTotals ---" << std::endl;
-
     m_folderUploadTotals.clear();
+    m_folderFileTotals.clear();
+    m_folderSizeTotals.clear();
 
-    // Only relevant for local files. Remote files do not expose upload statistics per file in the same way here.
+    // Stats are primarily calculated for local files. 
+    // For remote files, branch stats are limited by what the core provides.
     if(RemoteMode)
         return;
 
     std::vector<void*> stack;
     // Start with NULL (Root)
     stack.push_back(NULL);
-
-    int processedFiles = 0;
 
     while(!stack.empty())
     {
@@ -175,42 +173,43 @@ void TreeStyle_RDM::recalculateDirectoryTotals()
         DirDetails details;
         if(requestDirDetails(ref, RemoteMode, details))
         {
+            // If it's a file, we propagate its stats to all ancestors
             if(details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE)
             {
                 uint64_t uploaded = rsFiles->getCumulativeUpload(details.hash);
-                if(uploaded > 0)
-                {
-                    processedFiles++;
+                uint64_t fileSize = details.size;
 
-                    // MODIFICATION C: Track uploads for Extra Files separately using a special key.
-                    // Normal files climb the directory tree, but Extra Files use a virtual root.
-                    if (details.type == DIR_TYPE_EXTRA_FILE) 
+                // Handle path climbing for normal files
+                if (details.type == DIR_TYPE_FILE) 
+                {
+                    // details.path for a file is the directory containing it.
+                    QString currentPath = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
+                    
+                    // Iterate up the directory tree to add this file's stats to all parent folders
+                    while(!currentPath.isEmpty() && currentPath != ".")
                     {
-                        m_folderUploadTotals["!!RS_EXTRA_FILES_ROOT!!"] += uploaded;
-                    } 
-                    else 
-                    {
-                        // details.path for a file is the directory containing it.
-                        QString currentPath = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
+                        m_folderUploadTotals[currentPath] += uploaded;
+                        m_folderFileTotals[currentPath] += 1;
+                        m_folderSizeTotals[currentPath] += fileSize;
                         
-                        // Iterate up the directory tree to add this file's upload total to all parent folders
-                        while(!currentPath.isEmpty() && currentPath != ".")
-                        {
-                            m_folderUploadTotals[currentPath] += uploaded;
-                            
-                            // Get parent directory using QFileInfo logic
-                            QString parent = QFileInfo(currentPath).path();
-                            
-                            // Break if we reached root or top (QFileInfo returns path itself if no parent)
-                            if(parent == currentPath || parent.isEmpty()) {
-                                 break;
-                            }
-                            currentPath = parent;
+                        // Get parent directory
+                        QString parent = QFileInfo(currentPath).path();
+                        
+                        if(parent == currentPath || parent.isEmpty()) {
+                             break;
                         }
-                    } // End of else (Normal Files)
-                } // End of if (uploaded > 0)
+                        currentPath = parent;
+                    }
+                }
+                // Special handling for Extra Files (virtual root)
+                else if (details.type == DIR_TYPE_EXTRA_FILE) 
+                {
+                    m_folderUploadTotals["!!RS_EXTRA_FILES_ROOT!!"] += uploaded;
+                    m_folderFileTotals["!!RS_EXTRA_FILES_ROOT!!"] += 1;
+                    m_folderSizeTotals["!!RS_EXTRA_FILES_ROOT!!"] += fileSize;
+                }
             }
-            // Included DIR_TYPE_PERSON to allow recursion into root "My Files" and "Temporary shared files"
+            // If it's a directory or root node, we dive into children
             else if(details.type == DIR_TYPE_DIR || details.type == DIR_TYPE_ROOT || details.type == DIR_TYPE_PERSON)
             {
                 for(const auto& child : details.children)
@@ -220,8 +219,6 @@ void TreeStyle_RDM::recalculateDirectoryTotals()
             }
         }
     }
-    // DEBUG: Summary
-    // std::cerr << "UPLOAD_DBG: --- Finished Recalc. Processed " << processedFiles << " active files. Map size: " << m_folderUploadTotals.size() << " ---" << std::endl;
 }
 
 // MODIFICATION D: Check if a specific node or any of its descendants have uploads
@@ -649,12 +646,6 @@ QVariant FlatStyle_RDM::displayRole(const DirDetails& details,int coln) const
 
 QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& details,int coln) const
 {
-	/*
-	 * Person:  name,  id, 0, 0;
-	 * File  :  name,  size, rank, (0) ts
-	 * Dir   :  name,  (0) count, (0) path, (0) ts
-	 */
-
 	if (details.type == DIR_TYPE_PERSON) /* Person */
 	{
 		switch(coln)
@@ -663,21 +654,23 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 				return (RemoteMode)?(QString::fromUtf8(rsPeers->getPeerName(details.id).c_str())):tr("My files");
 			case REMOTEDIRMODEL_COLUMN_FILENB: {
 				SharedDirStats stats ;
-
 				if(RemoteMode)
 					rsFiles->getSharedDirStatistics(details.id,stats) ;
-				else
+				else if(details.id == rsPeers->getOwnId())
 					rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
+                else
+                    return (qulonglong) m_folderFileTotals.value("!!RS_EXTRA_FILES_ROOT!!", 0);
 
 				return (qulonglong) stats.total_number_of_files;
 			}
 			case REMOTEDIRMODEL_COLUMN_SIZE: {
 				SharedDirStats stats ;
-
 				if(RemoteMode)
 					rsFiles->getSharedDirStatistics(details.id,stats) ;
-				else
+				else if(details.id == rsPeers->getOwnId())
 					rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
+                else
+                    return (qulonglong) m_folderSizeTotals.value("!!RS_EXTRA_FILES_ROOT!!", 0);
 
 				return (qulonglong) stats.total_shared_size;
 			}
@@ -716,14 +709,15 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 	}
 	else if (details.type == DIR_TYPE_DIR) /* Dir */
 	{
+        QString path = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
 		switch(coln)
 		{
 			case REMOTEDIRMODEL_COLUMN_NAME:
 				return QString::fromUtf8(details.name.c_str());
 			case REMOTEDIRMODEL_COLUMN_FILENB:
-                return (qulonglong) details.children.size();
+                return (qulonglong) m_folderFileTotals.value(path, 0);
 			case REMOTEDIRMODEL_COLUMN_SIZE:
-				return (qulonglong) 0;
+				return (qulonglong) m_folderSizeTotals.value(path, 0);
 			case REMOTEDIRMODEL_COLUMN_AGE:
 				return details.max_mtime;
 			case REMOTEDIRMODEL_COLUMN_FRIEND_ACCESS:
@@ -734,6 +728,7 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 	}
 	return QVariant();
 }
+
 QVariant FlatStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& details,int coln) const
 {
 	/*
@@ -1570,13 +1565,16 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details, int coln) const
                 else if(details.id == rsPeers->getOwnId())
                     rsFiles->getSharedDirStatistics(rsPeers->getOwnId(), stats) ;
                 else {
-                    // MODIFICATION 4: Specific handling for "Temporary shared files" node.
-                    // Return the count of children directly from the DirDetails structure.
-                    uint32_t nb = details.children.size();
+                    // Specific handling for "Temporary shared files" node (Extra files root)
+                    uint32_t nb = m_folderFileTotals.value("!!RS_EXTRA_FILES_ROOT!!", 0);
                     if(nb > 1) return QString::number(nb) + " " + tr("Files");
                     if(nb == 1) return QString::number(nb) + " " + tr("File");
                     return tr("Empty");
                 }
+                
+                if(stats.total_number_of_files > 0)
+                    return QString::number(stats.total_number_of_files) + " " + (stats.total_number_of_files > 1 ? tr("Files") : tr("File"));
+                return tr("Empty");
             }
             break;
 
@@ -1588,7 +1586,7 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details, int coln) const
                 else if(details.id == rsPeers->getOwnId())
                     rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
                 else
-                    return QString();
+                    return misc::friendlyUnit(m_folderSizeTotals.value("!!RS_EXTRA_FILES_ROOT!!", 0));
 
                 if(stats.total_shared_size > 0)
                     return misc::friendlyUnit(stats.total_shared_size) ;
@@ -1654,20 +1652,24 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details, int coln) const
     }
     else if (details.type == DIR_TYPE_DIR) /* Directory */
     {
+        QString path = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
         switch(coln)
         {
             case REMOTEDIRMODEL_COLUMN_NAME: return QString::fromUtf8(details.name.c_str());
             case REMOTEDIRMODEL_COLUMN_FILENB:
-                return QString::number(details.children.size()) + " " + (details.children.size() > 1 ? tr("Files") : tr("File"));
-            case REMOTEDIRMODEL_COLUMN_SIZE: return misc::friendlyUnit(details.size);
+            {
+                uint32_t totalFiles = m_folderFileTotals.value(path, 0);
+                return QString::number(totalFiles) + " " + (totalFiles > 1 ? tr("Files") : tr("File"));
+            }
+            case REMOTEDIRMODEL_COLUMN_SIZE: 
+                return misc::friendlyUnit(m_folderSizeTotals.value(path, 0));
             case REMOTEDIRMODEL_COLUMN_AGE: return misc::timeRelativeToNow(details.max_mtime);
             case REMOTEDIRMODEL_COLUMN_FRIEND_ACCESS: return getFlagsString(details.flags);
             case REMOTEDIRMODEL_COLUMN_WN_VISU_DIR: return getGroupsString(details.flags,details.parent_groups) ;
             case REMOTEDIRMODEL_COLUMN_UPLOADED:
             {
-                QString path = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
-                auto it = m_folderUploadTotals.find(path);
-                return (it != m_folderUploadTotals.end() && it.value() > 0) ? misc::friendlyUnit(it.value()) : "";
+                uint64_t totalUpload = m_folderUploadTotals.value(path, 0);
+                return totalUpload > 0 ? misc::friendlyUnit(totalUpload) : "";
             }
             break;
             default: return QVariant();
