@@ -37,6 +37,7 @@
 #include "util/rsdir.h"
 
 #include "gui/settings/rsharesettings.h"
+#include "BoardPostImageHelper.h"
 #include <QBuffer>
 
 #include <iostream>
