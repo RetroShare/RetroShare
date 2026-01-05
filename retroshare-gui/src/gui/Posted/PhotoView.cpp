@@ -46,12 +46,36 @@ PhotoView::PhotoView(QWidget *parent)
 /** Destructor */
 PhotoView::~PhotoView()
 {
+	if (mMovie) {
+		mMovie->stop();
+		delete mMovie;
+	}
 	delete ui;
 }
 
 void PhotoView::setPixmap(const QPixmap& pixmap) 
 {
 	ui->photoLabel->setPixmap(pixmap);
+	this->adjustSize();
+}
+
+void PhotoView::setMovie(QMovie* movie)
+{
+	// Clean up previous movie if exists
+	if (mMovie) {
+		mMovie->stop();
+		delete mMovie;
+	}
+	
+	mMovie = movie;
+	
+	if (mMovie) {
+		ui->photoLabel->setMovie(mMovie);
+		mMovie->start();
+		// Loop animation when finished
+		connect(mMovie, &QMovie::finished, mMovie, &QMovie::start);
+	}
+	
 	this->adjustSize();
 }
 
