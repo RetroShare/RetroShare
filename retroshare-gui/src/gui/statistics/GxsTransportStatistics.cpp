@@ -455,53 +455,33 @@ void GxsTransportStatistics::loadGroupStats(const RsGxsGroupId& groupId)
 
 void GxsTransportStatistics::loadGroups()
 {
-	mStateHelper->setLoading(GXSTRANS_GROUP_META, true);
+    mStateHelper->setLoading(GXSTRANS_GROUP_META, true);
 
-	// Use a QPointer to safely track 'this'. Even if the window is static,
-	// this prevents crashes if the instance is ever released during async execution.
-	QPointer<GxsTransportStatistics> self(this);
+    /* Perform the statistics retrieval in a background thread to avoid UI lag */
+    RsThread::async([this]()
+    {
+        /* Temporary storage for statistics retrieved from the GXS transport service */
+        auto stats = new std::map<RsGxsGroupId, RsGxsTransGroupStatistics>();
 
-	RsThread::async([self]()
-	{
-		// 1 - get message data from p3GxsForums
+        if(!rsGxsTrans->getGroupStatistics(*stats))
+        {
+            RS_ERR("Cannot retrieve group statistics in GxsTransportStatistics");
+            delete stats;
+            return;
+        }
 
-#ifdef DEBUG_FORUMS
-		// Original dev debug trace
-		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
-#endif
-		auto stats = new std::map<RsGxsGroupId,RsGxsTransGroupStatistics>();
+        /* Switch back to the GUI thread to update the display components */
+        RsQThreadUtils::postToObject([stats, this]()
+        {
+            /* Update the local cache and refresh the tree widgets.
+             * Since StatisticsWindow is no longer destroyed on close,
+             * 'this' is guaranteed to be valid here. */
+            mGroupStats = *stats;
+            updateContent();
+            mStateHelper->setLoading(GXSTRANS_GROUP_META, false);
 
-		if(!rsGxsTrans->getGroupStatistics(*stats))
-		{
-			RS_ERR("Cannot retrieve group statistics in GxsTransportStatistics");
-			delete stats;
-			return;
-		}
-
-		if (self) 
-		{
-			RsQThreadUtils::postToObject( [stats, self]()
-			{
-				/* Here it goes any code you want to be executed on the Qt Gui
-				 * thread, for example to update the data model with new information
-				 * after a blocking call to RetroShare API complete */
-
-				if (self) 
-				{
-					// TODO: consider making mGroupStats an unique_ptr to avoid copying
-					self->mGroupStats = *stats;
-					self->updateContent();
-					self->mStateHelper->setLoading(GXSTRANS_GROUP_META, false);
-				}
-
-				delete stats;
-			}, self.data() );
-		}
-		else 
-		{
-			// Clean up memory if the object was somehow released
-			delete stats;
-		}
-	});
+            delete stats;
+        }, this);
+    });
 }
 
