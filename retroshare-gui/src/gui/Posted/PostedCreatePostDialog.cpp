@@ -24,6 +24,8 @@
 #include <QByteArray>
 #include <QStringList>
 #include <QSignalMapper>
+#include <QImageReader>
+#include <QFileInfo>
 
 #include "PostedCreatePostDialog.h"
 #include "ui_PostedCreatePostDialog.h"
@@ -220,6 +222,24 @@ void PostedCreatePostDialog::addPicture()
 
 	// select a picture file
 	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", imagefilename)) {
+		// Check file size for animated images BEFORE loading
+		QFileInfo fileInfo(imagefilename);
+		QImageReader reader(imagefilename);
+		QString format = reader.format().toUpper();
+		int frameCount = reader.imageCount();
+		
+		// Validate animated GIF/WEBP size (194KB limit)
+		if ((format == "GIF" || format == "WEBP") && frameCount > 1) {
+			if (fileInfo.size() > 194 * 1024) {
+				QMessageBox::warning(this, tr("Image Too Large"),
+					tr("Animated images must be under 194KB. This image is %1KB.\n\n"
+					   "Please use a smaller animated image or a static image instead.")
+						.arg(fileInfo.size() / 1024));
+				imagefilename = "";
+				return;
+			}
+		}
+		
 		QImage image;
 		if (image.load(imagefilename) == false) {
 			fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", imagefilename.toLatin1().constData());

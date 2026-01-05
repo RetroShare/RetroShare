@@ -1373,6 +1373,7 @@ posted {
 		gui/Posted/PostedListWidgetWithModel.h \
 		gui/Posted/PostedPostsModel.h \
 		gui/Posted/BoardPostDisplayWidget.h \
+		gui/Posted/BoardPostImageHelper.h \
 		gui/Posted/PostedItem.h \
 		gui/Posted/PostedCardView.h \
 		gui/Posted/PostedGroupDialog.h \
@@ -1399,6 +1400,7 @@ posted {
 	SOURCES += gui/Posted/PostedDialog.cpp \
 		gui/Posted/PostedListWidgetWithModel.cpp \
 		gui/Posted/BoardPostDisplayWidget.cpp \
+		gui/Posted/BoardPostImageHelper.cpp \
 		gui/Posted/PostedPostsModel.cpp \
 		gui/feeds/PostedGroupItem.cpp \
 		gui/Posted/PostedItem.cpp \
