@@ -19,10 +19,15 @@
  *******************************************************************************/
 
 #include "PhotoView.h"
+#include "ui_PhotoView.h"
 
 #include <QMenu>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDesktopServices>
+#include <QClipboard>
+#include <QBuffer>
+#include <QMovie>
 
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/RetroShareLink.h"

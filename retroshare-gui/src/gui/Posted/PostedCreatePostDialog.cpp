@@ -238,24 +238,44 @@ void PostedCreatePostDialog::addPicture()
 				imagefilename = "";
 				return;
 			}
-		}
-		
-		QImage image;
-		if (image.load(imagefilename) == false) {
-			fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", imagefilename.toLatin1().constData());
-			imagefilename = "";
-			return;
-		}
-
-		QImage opt;
-        if (optimizeImage(image, imagebytes, opt)) {
-			ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
-			ui->stackedWidgetPicture->setCurrentIndex(IMG_PICTURE);
-			ui->removeButton->show();
+			
+			// For animated images: load raw data without optimization to preserve animation
+			QFile file(imagefilename);
+			if (file.open(QIODevice::ReadOnly)) {
+				imagebytes = file.readAll();
+				file.close();
+				
+				// Show first frame as preview
+				QImage image;
+				if (image.load(imagefilename)) {
+					ui->imageLabel->setPixmap(QPixmap::fromImage(image));
+					ui->stackedWidgetPicture->setCurrentIndex(IMG_PICTURE);
+					ui->removeButton->show();
+				}
+			} else {
+				QMessageBox::warning(this, tr("Error"), tr("Could not read animated image file."));
+				imagefilename = "";
+				return;
+			}
 		} else {
-			imagefilename = "";
-			imagebytes.clear();
-			return;
+			// For static images: use normal optimization
+			QImage image;
+			if (image.load(imagefilename) == false) {
+				fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", imagefilename.toLatin1().constData());
+				imagefilename = "";
+				return;
+			}
+
+			QImage opt;
+			if (optimizeImage(image, imagebytes, opt)) {
+				ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
+				ui->stackedWidgetPicture->setCurrentIndex(IMG_PICTURE);
+				ui->removeButton->show();
+			} else {
+				imagefilename = "";
+				imagebytes.clear();
+				return;
+			}
 		}
 	}
 

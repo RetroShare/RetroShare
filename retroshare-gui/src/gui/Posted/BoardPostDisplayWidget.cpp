@@ -37,6 +37,7 @@
 #include "gui/Identity/IdDialog.h"
 #include "gui/MainWindow.h"
 #include "util/DateTime.h"
+#include <QMovie>
 
 #include "ui_BoardPostDisplayWidget_compact.h"
 #include "ui_BoardPostDisplayWidget_card.h"
