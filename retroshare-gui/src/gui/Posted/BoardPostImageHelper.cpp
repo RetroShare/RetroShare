@@ -21,6 +21,8 @@
 #include "BoardPostImageHelper.h"
 #include <QBuffer>
 #include <QImageReader>
+#include <QMovie>
+#include <QString>
 
 bool BoardPostImageHelper::isAnimatedImage(const uint8_t* data, uint32_t size, QString* format)
 {

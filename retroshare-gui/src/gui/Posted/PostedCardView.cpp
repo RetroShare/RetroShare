@@ -29,6 +29,7 @@
 #include "gui/feeds/FeedHolder.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
+#include <QMovie>
 #include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"

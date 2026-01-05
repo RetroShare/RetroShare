@@ -20,10 +20,10 @@
 
 #pragma once
 
-#include <QMovie>
-#include <QPixmap>
-#include <QString>
 #include <cstdint>
+
+class QMovie;
+class QString;
 
 /**
  * Helper class for loading and detecting animated images in Board posts.
