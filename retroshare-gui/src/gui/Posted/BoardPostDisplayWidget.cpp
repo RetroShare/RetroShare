@@ -335,15 +335,11 @@ void BoardPostDisplayWidget_compact::setup()
             QString format;
             if (BoardPostImageHelper::isAnimatedImage(mPost.mImage.mData, mPost.mImage.mSize, &format))
             {
-                // Animated GIF/WEBP - use QMovie
-                QMovie* movie = BoardPostImageHelper::createMovieFromData(mPost.mImage.mData, mPost.mImage.mSize);
-                if (movie)
-                {
-                    ui->pictureLabel->setMovie(movie);
-                    movie->start();
-                    // Loop animation when finished
-                    connect(movie, &QMovie::finished, movie, &QMovie::start);
-                }
+                // Animated GIF/WEBP - show static first frame in compact view
+                // (compact view uses setPicture() which doesn't support QMovie)
+                QPixmap pixmap;
+                GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+                ui->pictureLabel->setPicture(pixmap);
             }
             else
             {
