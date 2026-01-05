@@ -27,6 +27,7 @@
 #include "rshare.h"
 #include "PostedItem.h"
 #include "BoardPostImageHelper.h"
+#include "BoardPostImageHelper.h"
 #include "gui/feeds/FeedHolder.h"
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
@@ -579,10 +580,15 @@ void PostedItem::fill()
 				QMovie* movie = BoardPostImageHelper::createMovieFromData(mPost.mImage.mData, mPost.mImage.mSize);
 				if (movie)
 				{
+					movie->setParent(ui->pictureLabel); // Ensure cleanup
 					ui->pictureLabel->setMovie(movie);
 					movie->start();
 					// Loop animation when finished
 					connect(movie, &QMovie::finished, movie, &QMovie::start);
+					
+					// Use first frame for thumbnail (avoid double load)
+					QPixmap firstFrame = movie->currentPixmap();
+					ui->thumbnailLabel->setPicture(firstFrame);
 				}
 			}
 			else
@@ -591,22 +597,19 @@ void PostedItem::fill()
 				QPixmap pixmap;
 				GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
 				ui->pictureLabel->setPicture(pixmap);
+				
+				// Set thumbnail
+				ui->thumbnailLabel->setPicture(pixmap);
+				
+				// Scale for pictureLabel if needed
+				if(pixmap.width() > 800){
+					QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
+					ui->pictureLabel->setPixmap(scaledpixmap);
+				}else
+					ui->pictureLabel->setPixmap(pixmap);
 			}
-
-			// Wiping data - as its been passed to thumbnail.
-
-//			QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-            QPixmap pixmap; // Re-declare pixmap for thumbnail, as the one above might be a movie.
-            GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
-            ui->thumbnailLabel->setPicture(pixmap);
 			ui->thumbnailLabel->setToolTip(tr("Click to view Picture"));
             ui->thumbnailLabel->setEnableZoom(false);
-            QPixmap scaledpixmap;
-            if(pixmap.width() > 800){
-                QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
-                ui->pictureLabel->setPixmap(scaledpixmap);
-            }else
-                ui->pictureLabel->setPixmap(pixmap);
 		}
 		else if (urlOkay && (mPost.mImage.mData == NULL))
 		{

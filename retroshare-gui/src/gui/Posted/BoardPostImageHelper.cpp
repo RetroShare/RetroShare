@@ -63,22 +63,24 @@ QMovie* BoardPostImageHelper::createMovieFromData(const uint8_t* data, uint32_t 
     if (!data || size == 0)
         return nullptr;
 
-    // Create persistent QByteArray (QMovie needs data to persist)
-    QByteArray* imageData = new QByteArray(reinterpret_cast<const char*>(data), size);
-    
-    QBuffer* buffer = new QBuffer(imageData);
-    buffer->open(QIODevice::ReadOnly);
-
+    // Create movie with automatic cleanup
     QMovie* movie = new QMovie();
+    
+    // Create persistent QByteArray on heap (QMovie needs data to persist)
+    QByteArray* imageData = new QByteArray(reinterpret_cast<const char*>(data), size);
+    QBuffer* buffer = new QBuffer(imageData, movie); // Set movie as parent
+    
+    // CRITICAL: Use lambda to delete imageData when buffer is destroyed
+    QObject::connect(buffer, &QObject::destroyed, [imageData]() {
+        delete imageData;
+    });
+    
+    buffer->open(QIODevice::ReadOnly);
     movie->setDevice(buffer);
 
-    // Set buffer and data as children of movie for automatic cleanup
-    buffer->setParent(movie);
-    
     // Verify movie is valid
     if (!movie->isValid()) {
-        delete movie;
-        delete imageData;
+        delete movie; // This will delete buffer -> trigger lambda -> delete imageData
         return nullptr;
     }
 
