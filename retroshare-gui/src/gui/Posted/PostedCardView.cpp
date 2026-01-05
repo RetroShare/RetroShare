@@ -262,6 +262,7 @@ void PostedCardView::fill()
                 QMovie* movie = BoardPostImageHelper::createMovieFromData(mPost.mImage.mData, mPost.mImage.mSize);
                 if (movie)
                 {
+                    movie->setParent(ui->pictureLabel); // Ensure cleanup
                     ui->pictureLabel->setMovie(movie);
                     movie->start();
                     // Loop animation when finished

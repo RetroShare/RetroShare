@@ -336,7 +336,7 @@ void BoardPostDisplayWidget_compact::setup()
             if (BoardPostImageHelper::isAnimatedImage(mPost.mImage.mData, mPost.mImage.mSize, &format))
             {
                 // Animated GIF/WEBP - show static first frame in compact view
-                // (compact view uses setPicture() which doesn't support QMovie)
+                // (Compact view intentionally shows static first frame for performance)
                 QPixmap pixmap;
                 GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
                 ui->pictureLabel->setPicture(pixmap);
@@ -406,8 +406,11 @@ void BoardPostDisplayWidget_compact::viewPicture()
     {
         // Animated GIF/WEBP - use QMovie in popup
         QMovie* movie = BoardPostImageHelper::createMovieFromData(mPost.mImage.mData, mPost.mImage.mSize);
-        if (movie) {
+        if (movie)
+        {
+            movie->setParent(PView); // Ensure cleanup
             PView->setMovie(movie);
+            movie->start();
         }
     }
     else
@@ -482,6 +485,7 @@ void BoardPostDisplayWidget_card::setup()
                 QMovie* movie = BoardPostImageHelper::createMovieFromData(mPost.mImage.mData, mPost.mImage.mSize);
                 if (movie)
                 {
+                    movie->setParent(ui->pictureLabel); // Ensure cleanup
                     ui->pictureLabel->setMovie(movie);
                     movie->start();
                     // Loop animation when finished

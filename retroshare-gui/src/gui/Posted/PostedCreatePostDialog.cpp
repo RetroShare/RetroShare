@@ -230,7 +230,7 @@ void PostedCreatePostDialog::addPicture()
 		
 		// Validate animated GIF/WEBP size (194KB limit)
 		if ((format == "GIF" || format == "WEBP") && frameCount > 1) {
-			if (fileInfo.size() > 194 * 1024) {
+			if (fileInfo.size() > BoardPostImageHelper::MAX_ANIMATED_SIZE) {
 				QMessageBox::warning(this, tr("Image Too Large"),
 					tr("Animated images must be under 194KB. This image is %1KB.\n\n"
 					   "Please use a smaller animated image or a static image instead.")
@@ -245,13 +245,20 @@ void PostedCreatePostDialog::addPicture()
 				imagebytes = file.readAll();
 				file.close();
 				
-				// Show first frame as preview
+				// Validate the image is actually loadable
 				QImage image;
-				if (image.load(imagefilename)) {
-					ui->imageLabel->setPixmap(QPixmap::fromImage(image));
-					ui->stackedWidgetPicture->setCurrentIndex(IMG_PICTURE);
-					ui->removeButton->show();
+				if (!image.load(imagefilename)) {
+					QMessageBox::warning(this, tr("Invalid Image"),
+						tr("The selected animated image is corrupted or invalid."));
+					imagefilename = "";
+					imagebytes.clear();
+					return;
 				}
+				
+				// Show first frame as preview
+				ui->imageLabel->setPixmap(QPixmap::fromImage(image));
+				ui->stackedWidgetPicture->setCurrentIndex(IMG_PICTURE);
+				ui->removeButton->show();
 			} else {
 				QMessageBox::warning(this, tr("Error"), tr("Could not read animated image file."));
 				imagefilename = "";
