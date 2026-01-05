@@ -588,7 +588,8 @@ void PostedItem::fill()
 					// Use first frame for thumbnail (ensure it's loaded first)
 					movie->jumpToFrame(0);
 					QPixmap firstFrame = movie->currentPixmap();
-					ui->thumbnailLabel->setPicture(firstFrame);
+					if (!firstFrame.isNull())
+						ui->thumbnailLabel->setPicture(firstFrame);
 				}
 			}
 			else
