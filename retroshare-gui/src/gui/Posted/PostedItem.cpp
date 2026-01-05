@@ -27,7 +27,6 @@
 #include "rshare.h"
 #include "PostedItem.h"
 #include "BoardPostImageHelper.h"
-#include "BoardPostImageHelper.h"
 #include "gui/feeds/FeedHolder.h"
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
@@ -586,7 +585,8 @@ void PostedItem::fill()
 					// Loop animation when finished
 					connect(movie, &QMovie::finished, movie, &QMovie::start);
 					
-					// Use first frame for thumbnail (avoid double load)
+					// Use first frame for thumbnail (ensure it's loaded first)
+					movie->jumpToFrame(0);
 					QPixmap firstFrame = movie->currentPixmap();
 					ui->thumbnailLabel->setPicture(firstFrame);
 				}
