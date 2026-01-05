@@ -218,9 +218,12 @@ class TreeStyle_RDM: public RetroshareDirModel
 		QAction *_showEmptyAct;
 		bool _showEmpty;
 
-        // Helper to calculate total upload per directory
+        // Helper to calculate total recursive statistics per directory (Files count, Size, Uploads)
         void recalculateDirectoryTotals();
+        
         QHash<QString, uint64_t> m_folderUploadTotals;
+        QHash<QString, uint32_t> m_folderFileTotals; // Total files in branch
+        QHash<QString, uint64_t> m_folderSizeTotals; // Total size of branch
 
 	protected:
 		mutable std::vector<int> _parentRow ; // used to store the real parent row for non empty child
