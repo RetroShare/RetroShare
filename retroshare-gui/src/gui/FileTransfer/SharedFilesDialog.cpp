@@ -162,8 +162,13 @@ protected:
             QModelIndex source_index = sourceModel()->index(source_row, 0, source_parent);
             void *ref = source_index.internalPointer();
 
-            // MODIFICATION F: Check if this specific node or its descendants have cumulative uploads.
-            // If the branch has 0 uploads, we reject the row (return false).
+            // CRITICAL FIX: Always check for NULL ref. During model resets or updates, 
+            // Qt might query rows that are in an intermediate or invalid state.
+            if (!ref) {
+                return false;
+            }
+
+            // Check if this specific node or its descendants have cumulative uploads.
             if (!m_dirModel->hasUploads(ref)) {
                 return false;
             }
@@ -1670,11 +1675,14 @@ void SharedFilesDialog::filterUploadedOnlyToggled(bool checked)
     if (tree_proxyModel) tree_proxyModel->setUploadedOnly(checked);
     if (flat_proxyModel) flat_proxyModel->setUploadedOnly(checked);
     
-    // Notify the views that the filter state has changed to trigger a redraw
-    if (tree_proxyModel) tree_proxyModel->invalidate();
-    if (flat_proxyModel) flat_proxyModel->invalidate();
+    // CRITICAL FIX: Instead of calling proxy->invalidate() which causes crashes during resets,
+    // we call model->update(). This triggers beginResetModel/endResetModel,
+    // which is the only safe way to notify the Proxy that everything has changed.
+    if (model) {
+        model->update();
+    }
     
-    // MODIFICATION 5: Handle Tree View specific behavior: Expand on check, Collapse on uncheck
+    // Handle Tree View specific behavior: Expand on check, Collapse on uncheck
     if(ui.viewType_CB->currentIndex() == VIEW_TYPE_TREE) {
         if (checked) {
             // Reveal all popular files found in subdirectories (including extra files)
