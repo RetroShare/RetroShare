@@ -131,6 +131,7 @@ private:
 
 const QString Image_AddNewAssotiationForFile = ":/icons/svg/options.svg";
 
+// SFDSortFilterProxyModel - Updated to avoid immediate invalidation crashes
 class SFDSortFilterProxyModel : public QSortFilterProxyModel
 {
 public:
@@ -138,55 +139,44 @@ public:
         : QSortFilterProxyModel(parent), m_uploadedOnly(false)
     {
         m_dirModel = dirModel;
-
-        // Mr.Alice: I removed this because it causes a crash for some obscur reason. Apparently when the model is changed, the proxy model cannot
-        // deal with the change by itself. Should I call something specific? I've no idea. Removing this does not seem to cause any harm either.
-        //Ghibli: set false because by default in qt5 is true and makes rs crash when sorting, all this decided by Cyril not me :D it works
-
         setDynamicSortFilter(false);
     }
 
     void setUploadedOnly(bool val) {
         m_uploadedOnly = val;
-        invalidateFilter();
+        // MODIFICATION: Removed invalidateFilter() here. 
+        // We will trigger a safe model update from the dialog instead.
     }
 
 protected:
-
-    // MODIFICATION F: Strict filtering logic for the Proxy Model.
-    // This function decides if a row should be displayed or hidden.
     virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
     {
         if (m_uploadedOnly) {
-            // Get the index in the source model to access the internal pointer (ref)
             QModelIndex source_index = sourceModel()->index(source_row, 0, source_parent);
             void *ref = source_index.internalPointer();
 
-            // CRITICAL FIX: Always check for NULL ref. During model resets or updates, 
-            // Qt might query rows that are in an intermediate or invalid state.
+            // CRITICAL FIX: Defensive check for NULL ref during model resets
             if (!ref) {
                 return false;
             }
 
-            // Check if this specific node or its descendants have cumulative uploads.
             if (!m_dirModel->hasUploads(ref)) {
                 return false;
             }
         }
-
-        // Standard logic for text search keywords
         return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
     }
 
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const
     {
+        if (!left.isValid() || !right.isValid()) return false;
+
         bool dirLeft = (m_dirModel->getType(left) == DIR_TYPE_DIR);
         bool dirRight = (m_dirModel->getType(right) == DIR_TYPE_DIR);
 
         if (dirLeft ^ dirRight) {
             return dirLeft;
         }
-
         return QSortFilterProxyModel::lessThan(left, right);
     }
 
@@ -1267,64 +1257,36 @@ void SharedFilesDialog::postModDirectories(bool local)
  * Applies text filtering to the current model.
  * Optimized to avoid recursive model resets.
  */
+// FilterItems - Updated to remove redundant invalidations
 void SharedFilesDialog::FilterItems()
 {
-#ifdef DONT_USE_SEARCH_IN_TREE_VIEW
-    if(proxyModel == tree_proxyModel)
-        return;
-#endif
-
     QString text = ui.filterPatternLineEdit->text();
-
-    if(mLastFilterText == text)
-    {
-        return ;
-    }
-
+    if(mLastFilterText == text) return ;
     mLastFilterText = text ;
 
     QCursorContextBlocker q(ui.dirTreeView) ;
     QCoreApplication::processEvents() ;
-
     uint32_t found = 0 ;
 
-    // MODIFICATION: If text is shorter than 3 characters, we reset the search 
-    // to show all files. Otherwise, the UI stays stuck on the previous results.
-    if(text.length() < 3)
-    {
+    if(text.length() < 3) {
         model->filterItems(std::list<std::string>(), found) ;
-        
-        // MODIFICATION: Ensure the model and its totals are updated
-        model->update();
-        
-        if (tree_proxyModel) tree_proxyModel->invalidate();
-        if (flat_proxyModel) flat_proxyModel->invalidate();
         return ;
     }
 
     QStringList lst = text.split(" ", QtSkipEmptyParts) ;
     std::list<std::string> keywords ;
-
     for(auto it(lst.begin()); it != lst.end(); ++it)
         keywords.push_back((*it).toStdString());
 
     model->filterItems(keywords, found) ;
 
-    // MODIFICATION: Refresh the model to reflect search results and updated row counts
-    model->update(); 
+    // Note: model->filterItems() already calls update() (reset), 
+    // so proxy invalidation is redundant and handled automatically.
+    if(found > 0) expandAll();
 
-    if (tree_proxyModel) tree_proxyModel->invalidate();
-    if (flat_proxyModel) flat_proxyModel->invalidate();
-
-    if(found > 0)
-        expandAll();
-
-    if(found == 0)
-        ui.filterPatternFrame->setToolTip(tr("No result.")) ;
-    else if(found > MAX_SEARCH_RESULTS)
-        ui.filterPatternFrame->setToolTip(tr("More than %1 results. Add more/longer search words to select less.").arg(MAX_SEARCH_RESULTS)) ;
-    else
-        ui.filterPatternFrame->setToolTip(tr("Found %1 results.").arg(found)) ;
+    if(found == 0) ui.filterPatternFrame->setToolTip(tr("No result.")) ;
+    else if(found > MAX_SEARCH_RESULTS) ui.filterPatternFrame->setToolTip(tr("More than %1 results...").arg(MAX_SEARCH_RESULTS)) ;
+    else ui.filterPatternFrame->setToolTip(tr("Found %1 results.").arg(found)) ;
 }
 
 class ChannelCompare
@@ -1664,33 +1626,26 @@ void SharedFilesDialog::startFilter()
  * Handles the "Popular files" checkbox logic.
  * Correctly manages tree expansion and returns to a clean state when unchecked.
  */
+// filterUploadedOnlyToggled - Updated to use safe resets
 void SharedFilesDialog::filterUploadedOnlyToggled(bool checked)
 {
-    /** FIX: Clear selection before filtering to avoid potential proxy index crashes */
     if (ui.dirTreeView->selectionModel()) {
         ui.dirTreeView->selectionModel()->clear();
     }
 
-    // Apply the boolean filter to the proxy models
     if (tree_proxyModel) tree_proxyModel->setUploadedOnly(checked);
     if (flat_proxyModel) flat_proxyModel->setUploadedOnly(checked);
     
-    // CRITICAL FIX: Instead of calling proxy->invalidate() which causes crashes during resets,
-    // we call model->update(). This triggers beginResetModel/endResetModel,
-    // which is the only safe way to notify the Proxy that everything has changed.
+    // CRITICAL FIX: Use model->update() instead of proxy->invalidate().
+    // model->update() triggers a full reset (beginResetModel), which forces 
+    // the Proxy to drop its dangerous mapping and rebuild it from scratch.
     if (model) {
         model->update();
     }
     
-    // Handle Tree View specific behavior: Expand on check, Collapse on uncheck
     if(ui.viewType_CB->currentIndex() == VIEW_TYPE_TREE) {
-        if (checked) {
-            // Reveal all popular files found in subdirectories (including extra files)
-            expandAll();
-        } else {
-            // Return to a clean base state showing only root directories
-            ui.dirTreeView->collapseAll();
-        }
+        if (checked) expandAll();
+        else ui.dirTreeView->collapseAll();
     }
 }
 
