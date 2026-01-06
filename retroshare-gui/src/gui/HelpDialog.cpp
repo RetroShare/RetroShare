@@ -80,11 +80,20 @@ HelpDialog::HelpDialog(QWidget *parent) :
 		ui->thanks->setHtml(in.readAll());
 	}
 
-	ui->version->setText(RsApplication::retroshareVersion(true));
+    /* [Modified] Display both GUI and Engine versions clearly */
+    QString versionText = QString("RetroShare GUI: %1\nRetroShare Engine: %2")
+                          .arg(RsApplication::retroshareVersion(true))
+                          .arg(QString::fromUtf8(RsInit::libRetroShareVersion()));
+
+	ui->version->setText(versionText);
 
 	/* Add version numbers of libretroshare */
 	std::list<RsLibraryInfo> libraries;
 	RsControl::instance()->getLibraries(libraries);
+
+    /* [Added] Insert Engine version at the top of the libraries list */
+    libraries.push_front(RsLibraryInfo("RetroShare Engine", RsInit::libRetroShareVersion()));
+
 	addLibraries(ui->libraryLayout, "libretroshare", libraries);
 
 // #ifdef RS_WEBUI
