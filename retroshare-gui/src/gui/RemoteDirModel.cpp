@@ -1,21 +1,21 @@
 /*******************************************************************************
- * gui/RemoteDirModel.cpp                                                        *
- * *
+ * gui/RemoteDirModel.cpp                                                      *
+ *                                                                             *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
- * *
+ *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
  * published by the Free Software Foundation, either version 3 of the          *
  * License, or (at your option) any later version.                             *
- * *
+ *                                                                             *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
  * GNU Affero General Public License for more details.                         *
- * *
+ *                                                                             *
  * You should have received a copy of the GNU Affero General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
- * *
+ *                                                                             *
  *******************************************************************************/
 
 #include "RemoteDirModel.h"
@@ -222,6 +222,7 @@ void TreeStyle_RDM::recalculateDirectoryTotals()
 }
 
 // MODIFICATION D: Check if a specific node or any of its descendants have uploads
+// hasUploads for TreeStyle - Defensive Check
 bool TreeStyle_RDM::hasUploads(void *ref) const
 {
     // CRITICAL FIX: Safety check for NULL pointers
@@ -232,23 +233,20 @@ bool TreeStyle_RDM::hasUploads(void *ref) const
     DirDetails details;
     if (!requestDirDetails(ref, RemoteMode, details)) return false;
 
-    // For files, check their individual cumulative upload
     if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE) {
         return rsFiles->getCumulativeUpload(details.hash) > 0;
     }
 
-    // For the Extra Files root person node
     if (details.type == DIR_TYPE_PERSON && details.id != rsPeers->getOwnId()) {
         return m_folderUploadTotals.value("!!RS_EXTRA_FILES_ROOT!!", 0) > 0;
     }
 
-    // For standard directories, check the pre-calculated totals map
     if (details.type == DIR_TYPE_DIR) {
         QString path = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
         return m_folderUploadTotals.value(path, 0) > 0;
     }
 
-    return true; // Keep "My Files" root or other root nodes visible
+    return true; 
 }
 
 void TreeStyle_RDM::update()
@@ -1847,6 +1845,7 @@ void TreeStyle_RDM::showEmpty(const bool value)
 	update();
 }
 
+// hasUploads for FlatStyle - Defensive Check
 bool FlatStyle_RDM::hasUploads(void *ref) const
 {
     // CRITICAL FIX: Safety check for NULL pointers
@@ -1857,7 +1856,6 @@ bool FlatStyle_RDM::hasUploads(void *ref) const
     DirDetails details;
     if (!requestDirDetails(ref, RemoteMode, details)) return false;
 
-    // In Flat View, we only care if the file itself has been uploaded
     if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE) {
         return rsFiles->getCumulativeUpload(details.hash) > 0;
     }
