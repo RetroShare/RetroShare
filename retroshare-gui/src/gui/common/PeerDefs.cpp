@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/PeerDefs.cpp                                                     *
+ * retroshare-gui/src/gui/common/PeerDefs.cpp                                  *
  *                                                                             *
  * Copyright (C) 2010, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

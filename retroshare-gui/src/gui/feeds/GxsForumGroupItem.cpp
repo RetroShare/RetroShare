@@ -212,9 +212,9 @@ void GxsForumGroupItem::fill()
     ui->forumlogo_label->setFixedSize(ITEM_PICTURE_FORMAT_RATIO*desired_height,desired_height);
 
     if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
-        ui->forumlogo_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
+        ui->forumlogo_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/feeds_forum.png"));
 	} else {
-        ui->forumlogo_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums-default.png"));
+        ui->forumlogo_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/feeds_forum_default.png"));
 	}
 
 	if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {

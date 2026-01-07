@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RSImageBlockWidget.cpp                                           *
+ * retroshare-gui/src/gui/common/RSImageBlockWidget.cpp                        *
  *                                                                             *
  * Copyright (C) 2013 RetroShare Team <retroshare.project@gmail.com>           *
  *                                                                             *

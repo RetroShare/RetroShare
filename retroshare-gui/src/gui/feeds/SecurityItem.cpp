@@ -99,6 +99,7 @@ SecurityItem::~SecurityItem()
 {
     rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
+
 uint64_t SecurityItem::uniqueIdentifier() const
 {
     return hash_64bits("SecurityItem " + QString::number((uint)mType).toStdString() + " " + mSslId.toStdString());
@@ -303,10 +304,6 @@ void SecurityItem::updateItem()
 		//quickmsgButton->show();
 	}
 
-	/* slow Tick  */
-	int msec_rate = 10129;
-
-	QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
 	return;
 }
 

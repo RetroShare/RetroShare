@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/GroupFlagsWidget.h                                               *
+ * retroshare-gui/src/gui/common/GroupFlagsWidget.h                            *
  *                                                                             *
  * Copyright (C) 2010, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

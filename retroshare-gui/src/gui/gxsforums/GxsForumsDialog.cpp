@@ -74,7 +74,8 @@ void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
             break;
 
         case RsForumEventCode::STATISTICS_CHANGED:
-            updateGroupStatistics(e->mForumGroupId);   // update the list when redraw less often than once every 2 mins
+	    updateDisplay(true);
+            updateGroupStatisticsReal(e->mForumGroupId);
             break;
 
         default:

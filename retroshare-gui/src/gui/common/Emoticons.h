@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/Emoticons.h                                                      *
+ * retroshare-gui/src/gui/common/Emoticons.h                                   *
  *                                                                             *
  * Copyright (C) 2010, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

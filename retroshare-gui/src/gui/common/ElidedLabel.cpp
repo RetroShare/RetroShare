@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/ElidedLabel.cpp                                                  *
+ * retroshare-gui/src/gui/common/ElidedLabel.cpp                               *
  *                                                                             *
  * Copyright (C) 2012, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

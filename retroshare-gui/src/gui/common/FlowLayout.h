@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/FlowLayout.h                                                     *
+ * retroshare-gui/src/gui/common/FlowLayout.h                                  *
  *                                                                             *
  * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/GroupSelectionBox.h                                              *
+ * retroshare-gui/src/gui/common/GroupSelectionBox.h                           *
  *                                                                             *
  * Copyright (C) 2010, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

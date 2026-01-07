@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RsBanListToolButton.h                                            *
+ * retroshare-gui/src/gui/common/RsBanListToolButton.h                         *
  *                                                                             *
  * Copyright (C) 2015, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

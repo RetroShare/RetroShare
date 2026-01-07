@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/HeaderFrame.cpp                                                  *
+ * retroshare-gui/src/gui/common/HeaderFrame.cpp                               *
  *                                                                             *
  * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

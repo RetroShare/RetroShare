@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/AvatarDialog.h                                                   *
+ * retroshare-gui/src/gui/common/AvatarDialog.h                                *
  *                                                                             *
  * Copyright (C) 2012, Robert Fernie <retroshare.project@gmail.com>            *
  *                                                                             *

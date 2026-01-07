@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/GroupDefs.h                                                      *
+ * retroshare-gui/src/gui/common/GroupDefs.h                                   *
  *                                                                             *
  * Copyright (C) 2010, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

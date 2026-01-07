@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RsEdlideLabelItemDelegate.h                                      *
+ * retroshare-gui/src/gui/common/RsEdlideLabelItemDelegate.h                   *
  *                                                                             *
  * Copyright (C) 2010, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RsCollection.h                                                   *
+ * retroshare-gui/src/gui/common/RsCollection.h                                *
  *                                                                             *
  * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

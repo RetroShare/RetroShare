@@ -184,7 +184,7 @@ void PostedGroupItem::fill()
 		GxsIdDetails::loadPixmapFromData(mGroup.mGroupImage.mData, mGroup.mGroupImage.mSize, postedImage,GxsIdDetails::ORIGINAL);
 		ui->logoLabel->setPixmap(QPixmap(postedImage));
 	} else {
-        ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png"));
+		ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/feeds_board.png"));
 	}
 
     if(mGroup.mMeta.mLastPost==0)

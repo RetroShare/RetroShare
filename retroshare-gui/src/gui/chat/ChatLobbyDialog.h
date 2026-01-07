@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/chat/ChatLobbyDialog.h                                                  *
+ * retroshare-gui/src/gui/chat/ChatLobbyDialog.h                               *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *
@@ -31,13 +31,13 @@
 // Q_DECLARE_METATYPE(RsGxsId)
 // Q_DECLARE_METATYPE(QList<RsGxsId>)
 
-class GxsIdChooser ;
+class GxsIdChooser;
 class QToolButton;
 class QWidgetAction;
 
 class ChatLobbyDialog: public ChatDialog
 {
-	Q_OBJECT 
+	Q_OBJECT
 
 	friend class ChatDialog;
 
@@ -95,7 +95,7 @@ protected slots:
 private:
 	void updateParticipantsList();
 	void initParticipantsContextMenu(QMenu* contextMnu, QList<RsGxsId> idList);
-	
+
 	void filterIds();
 
     QString getParticipantName(const RsGxsId& id) const;

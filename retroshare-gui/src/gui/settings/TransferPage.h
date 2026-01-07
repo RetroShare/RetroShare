@@ -59,7 +59,7 @@ class TransferPage: public ConfigPage
 		void toggleAutoCheckDirectories(bool);
         void toggleTrustFriendNodesWithBannedFiles(bool);
         void updateFontSize();
-
+		void clearUploadStatistics();
 		void updateAutoCheckDirectories()       ;
 		void updateAutoScanDirectoriesPeriod()  ;
 		void updateShareDownloadDirectory()     ;

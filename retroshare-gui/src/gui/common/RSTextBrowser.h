@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RSTextBrowser.h                                                  *
+ * retroshare-gui/src/gui/common/RSTextBrowser.h                               *
  *                                                                             *
  * Copyright (C) 2018 RetroShare Team <retroshare.project@gmail.com>           *
  *                                                                             *

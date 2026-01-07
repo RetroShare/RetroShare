@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/LineEditClear.cpp                                                *
+ * retroshare-gui/src/gui/common/LineEditClear.cpp                             *
  *                                                                             *
  * Copyright (C) 2012, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

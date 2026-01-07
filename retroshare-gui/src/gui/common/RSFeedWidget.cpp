@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RSFeedWidget.cpp                                                 *
+ * retroshare-gui/src/gui/common/RSFeedWidget.cpp                              *
  *                                                                             *
  * Copyright (C) 2014, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

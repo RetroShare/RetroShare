@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RSPlainTextEdit.cpp                                              *
+ * retroshare-gui/src/gui/common/RSPlainTextEdit.cpp                           *
  *                                                                             *
  * Copyright (C) 2013 RetroShare Team <retroshare.project@gmail.com>           *
  *                                                                             *

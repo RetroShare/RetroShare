@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/FeedNotify.cpp                                                   *
+ * retroshare-gui/src/gui/common/FeedNotify.cpp                                *
  *                                                                             *
  * Copyright (C) 2012, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/UserNotify.cpp                                                   *
+ * retroshare-gui/src/gui/common/UserNotify.cpp                                *
  *                                                                             *
  * Copyright (c) 2012, RetroShare Team <retroshare.project@gmail.com>          *
  *                                                                             *

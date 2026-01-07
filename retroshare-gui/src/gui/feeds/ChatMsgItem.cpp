@@ -36,6 +36,9 @@
 
 #include "gui/msgs/MessageInterface.h"
 
+#include "util/qtthreadsutils.h"
+#include "retroshare/rsevents.h"
+
 /*****
  * #define DEBUG_ITEM 1
  ****/
@@ -67,6 +70,27 @@ ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &pe
     updateItemStatic();
     updateItem();
     insertChat(message);
+
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
+    {
+        RsQThreadUtils::postToObject([=]()
+        {
+            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+            
+            if(!fe || fe->mSslId != mPeerId)
+                return;
+
+            updateItem();
+        }
+        , this );
+    }, mEventHandlerId, RsEventType::FRIEND_LIST );
+}
+
+ChatMsgItem::~ChatMsgItem()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 void ChatMsgItem::updateItemStatic()
@@ -122,11 +146,6 @@ void ChatMsgItem::updateItem()
             msgButton->setEnabled(false);
         }
     }
-    
-    /* slow Tick  */
-    int msec_rate = 10129;
-
-    QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
     return;
 }
 

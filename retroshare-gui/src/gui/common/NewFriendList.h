@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/NewFriendList.h                                                  *
+ * retroshare-gui/src/gui/common/NewFriendList.h                               *
  *                                                                             *
  * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

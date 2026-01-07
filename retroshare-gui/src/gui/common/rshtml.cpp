@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/rshtml.cpp                                                       *
+ * retroshare-gui/src/gui/common/rshtml.cpp                                    *
  *                                                                             *
  * Copyright (c) 2008, defnax                                                  *
  * Copyright (c) 2008, Matt Edman, Justin Hipple                               *

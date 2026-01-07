@@ -1401,11 +1401,11 @@ void RsFriendListModel::updateInternalData()
 
 	mTopLevel = TL;
 
-	if (TL.size()>0)
-	{
-		beginInsertRows(QModelIndex(),0,TL.size()-1);
-		endInsertRows();
-	}
+//	if (TL.size()>0)
+//	{
+//		beginInsertRows(QModelIndex(),0,TL.size()-1);
+//		endInsertRows();
+//	}
 
     endResetModel();
     postMods();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/FilesDefs.h                                                      *
+ * retroshare-gui/src/gui/common/FilesDefs.h                                   *
  *                                                                             *
  * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/MimeTextEdit.cpp                                                 *
+ * retroshare-gui/src/gui/common/MimeTextEdit.cpp                              *
  *                                                                             *
  * Copyright (C) 2012, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

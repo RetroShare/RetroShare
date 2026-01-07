@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/GroupChooser.cpp                                                 *
+ * retroshare-gui/src/gui/common/GroupChooser.cpp                              *
  *                                                                             *
  * Copyright (C) 2013, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *

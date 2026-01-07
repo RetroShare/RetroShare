@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/FriendSelectionDialog.cpp                                        *
+ * retroshare-gui/src/gui/common/FriendSelectionDialog.cpp                     *
  *                                                                             *
  * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

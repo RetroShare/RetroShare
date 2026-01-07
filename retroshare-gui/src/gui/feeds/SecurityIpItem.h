@@ -21,10 +21,11 @@
 #ifndef _SECURITYIPITEM_H
 #define _SECURITYIPITEM_H
 
-#include "retroshare/rstypes.h"
-
-#include "FeedItem.h"
 #include <stdint.h>
+
+#include "retroshare/rstypes.h"
+#include "retroshare/rsevents.h"
+#include "FeedItem.h"
 
 namespace Ui {
 class SecurityIpItem;
@@ -44,6 +45,7 @@ public:
 	void updateItemStatic();
 
     uint64_t uniqueIdentifier() const override;
+    virtual ~SecurityIpItem();
 
 protected:
 	/* FeedItem */
@@ -60,12 +62,13 @@ private slots:
 	void banIpListChanged(const QString &ipAddress);
 
 private:
-    RsFeedTypeFlags mType;
+	RsFeedTypeFlags mType;
 	RsPeerId mSslId;
 	std::string mIpAddr;
 	std::string mIpAddrReported;
 	uint32_t mResult;
 	bool mIsTest;
+	RsEventsHandlerId_t mEventHandlerId;
 
 	/** Qt Designer generated object */
 	Ui::SecurityIpItem *ui;

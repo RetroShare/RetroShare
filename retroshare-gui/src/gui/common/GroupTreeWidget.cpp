@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/GroupTreeWidget.cpp                                              *
+ * retroshare-gui/src/gui/common/GroupTreeWidget.cpp                           *
  *                                                                             *
  * Copyright (C) 2010, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

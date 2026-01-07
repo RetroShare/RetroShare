@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RSGraphWidget.cpp                                                *
+ * retroshare-gui/src/gui/common/RSGraphWidget.cpp                             *
  *                                                                             *
  * Copyright (C) 2014 RetroShare Team                                          *
  * Copyright (c) 2006-2007, crypton                                            *
@@ -44,7 +44,7 @@ static qint64 getCurrentMSecsSinceEpoch()
 {
 	timeval tv ;
 	gettimeofday(&tv,NULL) ;
-	
+
 	return (qint64)tv.tv_sec + (qint64)tv.tv_usec/1000 ;
 }
 #endif
@@ -137,12 +137,12 @@ void RSGraphSource::getDataPoints(int index,std::vector<QPointF>& pts,float filt
         return ;
 
     float last_value = it->second.empty()?0.0f:(it->second.begin()->second) ;
-    
+
     for(std::list<std::pair<qint64,float> >::const_iterator it2=it->second.begin();it2!=it->second.end();++it2)
     {
         float val = (1-filter_factor)*(*it2).second + filter_factor*last_value;
         last_value = val ;
-        
+
         pts.push_back(QPointF( (now - (*it2).first)/1000.0f, val)) ;
     }
 }
@@ -265,16 +265,16 @@ RSGraphWidget::RSGraphWidget(QWidget *parent)
 {
     _source =NULL;
   _painter = new QPainter();
-  
+
   /* Initialize graph values */
-  _maxPoints = getNumPoints();  
+  _maxPoints = getNumPoints();
   _maxValue = MINUSER_SCALE;
 
   _linewidthscale = 1.0f;
   _opacity = 0.6 ;
   _flags = 0;
   _time_scale = 5.0f ; // in pixels per second.
-  _time_filter = 1.0f ;	
+  _time_filter = 1.0f ;
   _timer = new QTimer ;
   QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(updateIfPossible())) ;
 
@@ -329,7 +329,7 @@ RSGraphWidget::resetGraph()
   updateIfPossible();
 }
 
-/** Overloads default QWidget::paintEvent. Draws the actual 
+/** Overloads default QWidget::paintEvent. Draws the actual
  * bandwidth graph. */
 void RSGraphWidget::paintEvent(QPaintEvent *)
 {
@@ -337,14 +337,14 @@ void RSGraphWidget::paintEvent(QPaintEvent *)
 
   /* Set current graph dimensions */
   _rec = this->frameRect();
-  
+
   /* Start the painter */
   _painter->begin(this);
-  
+
   /* We want antialiased lines and text */
   _painter->setRenderHint(QPainter::Antialiasing);
   _painter->setRenderHint(QPainter::TextAntialiasing);
-  
+
   /* Fill in the background */
   if (_flags & RSGRAPH_FLAGS_DARK_STYLE){
 	_painter->fillRect(_rec, QBrush(BACK_COLOR_DARK));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RSUrlHandler.h                                                   *
+ * retroshare-gui/src/gui/common/RSUrlHandler.h                                *
  *                                                                             *
  * Copyright (C) 2011 Cyril Soler     <retroshare.project.com>                 *
  *                                                                             *

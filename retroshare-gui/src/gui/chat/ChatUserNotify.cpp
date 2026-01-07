@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/chat/ChatUserNotify.cpp                                                 *
+ * retroshare-gui/src/gui/chat/ChatUserNotify.cpp                              *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *
@@ -84,6 +84,7 @@ ChatUserNotify::ChatUserNotify(QObject *parent) :
 
 ChatUserNotify::~ChatUserNotify()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
     instance = 0;
 }
 

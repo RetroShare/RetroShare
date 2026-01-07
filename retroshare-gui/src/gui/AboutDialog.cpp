@@ -29,8 +29,6 @@ AboutDialog::AboutDialog(QWidget* parent)
 #endif
 
     setupUi(this) ;
-
-    QObject::connect(widget->close_button,SIGNAL(clicked()),this,SLOT(close()));
 }
 
 

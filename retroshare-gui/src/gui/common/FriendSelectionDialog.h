@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/FriendSelectionDialog.h                                          *
+ * retroshare-gui/src/gui/common/FriendSelectionDialog.h                       *
  *                                                                             *
  * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

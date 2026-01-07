@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RSListWidgetItem.h                                               *
+ * retroshare-gui/src/gui/common/RSListWidgetItem.h                            *
  *                                                                             *
  * Copyright (C) 2012 RetroShare Team <retroshare.project@gmail.com>           *
  *                                                                             *

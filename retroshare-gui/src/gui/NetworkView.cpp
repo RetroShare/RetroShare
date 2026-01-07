@@ -62,6 +62,8 @@ NetworkView::NetworkView(QWidget *parent)
 
   _should_update = true ;
 
+  mEventHandlerId = 0;
+
   rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
   {
       RsQThreadUtils::postToObject([=](){

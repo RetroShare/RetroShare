@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/RSTreeView.h                                                     *
+ * retroshare-gui/src/gui/common/RSTreeView.h                                  *
  *                                                                             *
  * Copyright (C) 2010 RetroShare Team <retroshare.project@gmail.com>           *
  *                                                                             *

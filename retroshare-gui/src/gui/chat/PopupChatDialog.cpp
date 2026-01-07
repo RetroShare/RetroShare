@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/chat/PopupChatDialog.cpp                                                *
+ * retroshare-gui/src/gui/chat/PopupChatDialog.cpp                             *
  *                                                                             *
  * LibResAPI: API for local socket server                                      *
  *                                                                             *

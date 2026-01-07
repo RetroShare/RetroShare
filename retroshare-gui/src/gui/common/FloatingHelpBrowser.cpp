@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/FloatingHelpBrowser.cpp                                          *
+ * retroshare-gui/src/gui/common/FloatingHelpBrowser.cpp                       *
  *                                                                             *
  * Copyright (C) 2013, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

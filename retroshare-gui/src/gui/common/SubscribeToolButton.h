@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/SubscribeToolButton.h                                            *
+ * retroshare-gui/src/gui/common/SubscribeToolButton.h                         *
  *                                                                             *
  * Copyright (c) 2018, RetroShare Team <retroshare.project@gmail.com>          *
  *                                                                             *

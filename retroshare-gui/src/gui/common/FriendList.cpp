@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/common/FriendList.cpp                                                   *
+ * retroshare-gui/src/gui/common/FriendList.cpp                                *
  *                                                                             *
  * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
