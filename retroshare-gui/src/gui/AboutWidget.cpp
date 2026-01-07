@@ -217,7 +217,6 @@ void AWidget::initImages()
     image1 = QImage(width(),height(),QImage::Format_ARGB32);
     image1.fill(palette().color(QPalette::Window));
 
-    //QImage image(":/images/logo/logo_info.png");
     QPixmap image(":/images/logo/logo_splash.png");
     QPainter p(&image1);
     p.setPen(Qt::black);
@@ -226,25 +225,22 @@ void AWidget::initImages()
     font.setPointSizeF(font.pointSizeF() + 2);
     p.setFont(font);
 
-    //p.drawPixmap(QRect(10, 10, width()-10, 60), image);
-
     /* Draw RetroShare version */
+    /* [Fix] Removed space before colon to match English typography */
 #ifdef RS_ONLYHIDDENNODE
-    p.drawText(QPointF(10, 50), QString("%1 : %2 (With embedded Tor)").arg(tr("RetroShare version"), RsApplication::retroshareVersion(true)));
+    p.drawText(QPointF(10, 50), QString("%1: %2 (With embedded Tor)").arg(tr("Retroshare version"), RsApplication::retroshareVersion(true)));
 #else
-    p.drawText(QPointF(10, 50), QString("%1 : %2").arg(tr("RetroShare version"), RsApplication::retroshareVersion(true)));
+    p.drawText(QPointF(10, 50), QString("%1: %2").arg(tr("Retroshare version"), RsApplication::retroshareVersion(true)));
 #endif
 
-    /* [Added] Draw libretroshare version below the GUI version */
-    /* y=70 is used to fit nicely between RS version (50) and Qt version (90) */
-    p.drawText(QPointF(10, 70), QString("%1 : %2").arg(tr("libretroshare version"), QString::fromUtf8(RsInit::libRetroShareVersion())));
+    /* [Added] Draw libretroshare (Engine) version below the GUI version */
+    /* [Fix] Removed space before colon here too */
+    p.drawText(QPointF(10, 70), QString("%1: %2").arg(tr("Engine version"), QString::fromUtf8(RsInit::libRetroShareVersion())));
 
     /* Draw Qt's version number */
-    p.drawText(QPointF(10, 90), QString("Qt %1 : %2").arg(tr("version"), QT_VERSION_STR));
+    p.drawText(QPointF(10, 90), QString("Qt %1: %2").arg(tr("version"), QT_VERSION_STR));
 
     p.end();
-
-//    setFixedSize(image1.size());
 
     image2 = image1 ;
     mImagesReady = true ;
