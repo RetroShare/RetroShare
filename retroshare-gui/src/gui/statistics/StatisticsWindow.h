@@ -66,7 +66,8 @@ public slots:
 	
 protected:
     void changeEvent(QEvent *e);
-	void closeEvent (QCloseEvent * event);
+    void closeEvent (QCloseEvent * event);
+    void keyPressEvent(QKeyEvent *event) override;
 	
 private:
     void initStackedPage();

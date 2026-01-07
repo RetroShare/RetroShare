@@ -1153,63 +1153,57 @@ void NewFriendList::removeGroup()
 
 void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
 {
+    // 1. Store the current vertical scroll position to prevent the list from jumping
+    int scrollValue = ui->peerTreeWidget->verticalScrollBar()->value();
+
     std::set<QString> expanded_indexes;
     QString selected;
 
+    // 2. Save the current state of the tree (which groups are open and what is selected) 
     saveExpandedPathsAndSelection(expanded_indexes, selected);
 
-#ifdef DEBUG_NEW_FRIEND_LIST
-    std::cerr << "After collecting selection, selected paths is: \"" << selected.toStdString() << "\", " ;
-    std::cerr << "expanded paths are: " << std::endl;
-    for(auto path:expanded_indexes)
-        std::cerr << "        \"" << path.toStdString() << "\"" << std::endl;
-    std::cerr << "Current sort column is: " << mLastSortColumn << " and order is " << mLastSortOrder << std::endl;
-#endif
+    // 3. Clear selection and block signals to avoid UI flicker during updates 
     whileBlocking(ui->peerTreeWidget)->clearSelection();
 
-    // This is a hack to avoid crashes on windows while calling endInsertRows(). I'm not sure wether these crashes are
-    // due to a Qt bug, or a misuse of the proxy model on my side. Anyway, this solves them for good.
-    // As a side effect we need to save/restore hidden columns because setSourceModel() resets this setting.
-
-    // save hidden columns and sizes
+    // 4. Save current column visibility and widths 
+    // Detaching the model resets these settings, so we must back them up
     std::vector<bool> col_visible(RsFriendListModel::COLUMN_THREAD_NB_COLUMNS);
     std::vector<int> col_sizes(RsFriendListModel::COLUMN_THREAD_NB_COLUMNS);
 
-    for(int i=0;i<RsFriendListModel::COLUMN_THREAD_NB_COLUMNS;++i)
+    for(int i=0; i < RsFriendListModel::COLUMN_THREAD_NB_COLUMNS; ++i)
     {
         col_visible[i] = !ui->peerTreeWidget->isColumnHidden(i);
         col_sizes[i] = ui->peerTreeWidget->columnWidth(i);
     }
 
-#ifdef DEBUG_NEW_FRIEND_LIST
-    std::cerr << "Applying predicate..." << std::endl;
-#endif
+    // 5. Detach the model from the view 
+    // This "hack" prevents crashes on some platforms (like Windows) during deep data updates
     mProxyModel->setSourceModel(nullptr);
 
+    // 6. Execute the actual data update (the predicate) 
     predicate();
 
+    // 7. Reattach the model and restore expanded items/selection 
     QModelIndex selected_index;
     mProxyModel->setSourceModel(mModel);
-    restoreExpandedPathsAndSelection(expanded_indexes,selected,selected_index);
+    restoreExpandedPathsAndSelection(expanded_indexes, selected, selected_index);
 
-    // restore hidden columns
-    for(uint32_t i=0;i<RsFriendListModel::COLUMN_THREAD_NB_COLUMNS;++i)
+    // 8. Restore the previously saved column visibility and widths 
+    for(uint32_t i=0; i < RsFriendListModel::COLUMN_THREAD_NB_COLUMNS; ++i)
     {
-        ui->peerTreeWidget->setColumnHidden(i,!col_visible[i]);
-        ui->peerTreeWidget->setColumnWidth(i,col_sizes[i]);
+        ui->peerTreeWidget->setColumnHidden(i, !col_visible[i]);
+        ui->peerTreeWidget->setColumnWidth(i, col_sizes[i]);
     }
 
-    // restore sorting
-    // sortColumn(mLastSortColumn,mLastSortOrder);
-#ifdef DEBUG_NEW_FRIEND_LIST
-    std::cerr << "Sorting again with sort column: " << mLastSortColumn << " and order " << mLastSortOrder << std::endl;
-#endif
+    // 9. Re-apply the current sorting to the list 
     mProxyModel->setSortingEnabled(true);
-    mProxyModel->sort(mLastSortColumn,mLastSortOrder);
+    mProxyModel->sort(mLastSortColumn, mLastSortOrder);
     mProxyModel->setSortingEnabled(false);
 
-    if(selected_index.isValid())
-        ui->peerTreeWidget->scrollTo(selected_index);
+    // 10. CRITICAL FIX: Restore the exact scroll position
+    // We use setValue() instead of scrollTo() to ensure the view stays exactly where it was,
+    // even if a friend connects/disconnects outside of the visible area.
+    ui->peerTreeWidget->verticalScrollBar()->setValue(scrollValue);
 }
 
 void NewFriendList::sortColumn(int col,Qt::SortOrder so)
