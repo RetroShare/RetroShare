@@ -30,6 +30,7 @@
 #include "FriendListModel.h"
 #include "retroshare/rsstatus.h"
 #include "util/FontSizeHandler.h"
+#include <QScrollBar>
 
 namespace Ui {
     class NewFriendList;
