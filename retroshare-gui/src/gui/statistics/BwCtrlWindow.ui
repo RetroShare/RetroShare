@@ -79,8 +79,24 @@
        </property>
       </column>
       <column>
+      <column>
        <property name="text">
         <string>Allowed Recvd</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Reserved</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Traffic In</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Traffic Out</string>
        </property>
       </column>
      </widget>

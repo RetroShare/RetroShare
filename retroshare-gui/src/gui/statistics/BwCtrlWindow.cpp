@@ -22,8 +22,20 @@
 #include "gui/common/RSGraphWidget.h"
 #include "ui_BwCtrlWindow.h"
 #include "util/RsQtVersion.h"
+
+#include <QAbstractItemDelegate>
+#include <QBrush>
+#include <QColor>
 #include <QDateTime>
+#include <QHeaderView>
+#include <QModelIndex>
+#include <QPainter>
+#include <QString>
+#include <QStyleOptionViewItem>
 #include <QTimer>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QtGlobal>
 
 #include <algorithm>
 #include <iomanip>
@@ -39,7 +51,7 @@
 #include <QPainter>
 #include <limits>
 
-static QString formatBytes(uint64_t bytes) {
+static QString formatBytes(quint64 bytes) {
   if (bytes < 1024)
     return QString::number(bytes) + " B";
   float f = bytes / 1024.0f;
@@ -236,10 +248,19 @@ void BwCtrlWindow::updateDisplay() {
   updateBandwidth();
 }
 
+// Helper to find existing item
+QTreeWidgetItem *findItem(QTreeWidget *tree, const QString &id) {
+  for (int i = 0; i < tree->topLevelItemCount(); ++i) {
+    QTreeWidgetItem *item = tree->topLevelItem(i);
+    if (item->data(COLUMN_PEERID, Qt::DisplayRole).toString() == id)
+      return item;
+  }
+  return nullptr;
+}
+
 void BwCtrlWindow::updateBandwidth() {
   QTreeWidget *peerTreeWidget = bwTreeWidget;
-
-  peerTreeWidget->clear();
+  // peerTreeWidget->clear(); // CAUSES FREEZE/FLICKER - REMOVED
 
   RsConfigDataRates totalRates;
   std::map<RsPeerId, RsConfigDataRates> rateMap;
@@ -248,9 +269,13 @@ void BwCtrlWindow::updateBandwidth() {
   rsConfig->getTotalBandwidthRates(totalRates);
   rsConfig->getAllBandwidthRates(rateMap);
 
-  /* insert */
-  QTreeWidgetItem *item = new QTreeWidgetItem();
-  peerTreeWidget->addTopLevelItem(item);
+  /* Update Totals (First Item) */
+  QTreeWidgetItem *item = peerTreeWidget->topLevelItem(0);
+  if (!item) {
+    item = new QTreeWidgetItem();
+    peerTreeWidget->addTopLevelItem(item);
+  }
+
   peerTreeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 
   /* do Totals */
@@ -275,23 +300,14 @@ void BwCtrlWindow::updateBandwidth() {
                 std::numeric_limits<qint64>::max());
   item->setData(COLUMN_OUT_TOTAL, Qt::DisplayRole, totalRates.mTotalOut);
 
+  // Keep track of active peers to remove stale ones if needed (optional
+  // optimization) For now, let's just update existing and add new.
+
   time_t now = time(NULL);
   for (it = rateMap.begin(); it != rateMap.end(); ++it) {
-    /* find the entry */
-    QTreeWidgetItem *peer_item = NULL;
-#if 0
-		QString qpeerid = QString::fromStdString(*it);
-		int itemCount = peerTreeWidget->topLevelItemCount();
-		for (int nIndex = 0; nIndex < itemCount; ++nIndex)
-		{
-			QTreeWidgetItem *tmp_item = peerTreeWidget->topLevelItem(nIndex);
-			if (tmp_item->data(COLUMN_PEERID, Qt::DisplayRole).toString() == qpeerid)
-			{
-				peer_item = tmp_item;
-				break;
-			}
-		}
-#endif
+
+    QString qpeerid = QString::fromStdString(it->first.toStdString());
+    QTreeWidgetItem *peer_item = findItem(peerTreeWidget, qpeerid);
 
     if (!peer_item) {
       /* insert */
@@ -301,8 +317,7 @@ void BwCtrlWindow::updateBandwidth() {
 
     std::string name = rsPeers->getPeerName(it->first);
 
-    peer_item->setData(COLUMN_PEERID, Qt::DisplayRole,
-                       QString::fromStdString(it->first.toStdString()));
+    peer_item->setData(COLUMN_PEERID, Qt::DisplayRole, qpeerid);
     peer_item->setData(COLUMN_RSNAME, Qt::DisplayRole,
                        QString::fromUtf8(name.c_str()));
 

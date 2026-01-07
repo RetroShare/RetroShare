@@ -20,13 +20,15 @@
 
 #pragma once
 
-#include <QMainWindow>
+class QAbstractItemDelegate;
+class QModelIndex;
+class QPainter;
+class QString;
+class QSize;
 
-#include <QAbstractItemDelegate>
-
-#include "gui/common/RSGraphWidget.h"
+#include "../../retroshare-gui/RsAutoUpdatePage.h"
+#include "../common/RSGraphWidget.h"
 #include "ui_BwCtrlWindow.h"
-#include <retroshare-gui/RsAutoUpdatePage.h>
 
 
 // Defines for download list list columns
