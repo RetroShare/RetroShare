@@ -33,6 +33,7 @@
 #include <QTimer>
 #include <QTreeWidget>
 #include <QWheelEvent>
+#include <QPointer> // Required for thread safety check
 
 #include <retroshare/rsgxstrans.h>
 #include <retroshare/rspeers.h>
@@ -452,42 +453,35 @@ void GxsTransportStatistics::loadGroupStats(const RsGxsGroupId& groupId)
 }
 #endif
 
-
 void GxsTransportStatistics::loadGroups()
 {
-	mStateHelper->setLoading(GXSTRANS_GROUP_META, true);
+    mStateHelper->setLoading(GXSTRANS_GROUP_META, true);
 
-	RsThread::async([this]()
-	{
-        // 1 - get message data from p3GxsForums
+    /* Perform the statistics retrieval in a background thread to avoid UI lag */
+    RsThread::async([this]()
+    {
+        /* Temporary storage for statistics retrieved from the GXS transport service */
+        auto stats = new std::map<RsGxsGroupId, RsGxsTransGroupStatistics>();
 
-#ifdef DEBUG_FORUMS
-        std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
-#endif
-        auto stats = new std::map<RsGxsGroupId,RsGxsTransGroupStatistics>();
-
-		if(!rsGxsTrans->getGroupStatistics(*stats))
-		{
-			RS_ERR("Cannot retrieve group statistics in GxsTransportStatistics");
+        if(!rsGxsTrans->getGroupStatistics(*stats))
+        {
+            RS_ERR("Cannot retrieve group statistics in GxsTransportStatistics");
             delete stats;
-			return;
-		}
+            return;
+        }
 
-        RsQThreadUtils::postToObject( [stats, this]()
-		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
-
-			// TODO: consider making mGroupStats an unique_ptr to avoid copying
-			mGroupStats = *stats;
-			updateContent();
-			mStateHelper->setLoading(GXSTRANS_GROUP_META, false);
+        /* Switch back to the GUI thread to update the display components */
+        RsQThreadUtils::postToObject([stats, this]()
+        {
+            /* Update the local cache and refresh the tree widgets.
+             * Since StatisticsWindow is no longer destroyed on close,
+             * 'this' is guaranteed to be valid here. */
+            mGroupStats = *stats;
+            updateContent();
+            mStateHelper->setLoading(GXSTRANS_GROUP_META, false);
 
             delete stats;
-        }, this );
-
+        }, this);
     });
 }
-
 
