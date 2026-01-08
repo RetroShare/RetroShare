@@ -228,14 +228,14 @@ void AWidget::initImages()
     /* Draw RetroShare version */
     /* [Fix] Removed space before colon to match English typography */
 #ifdef RS_ONLYHIDDENNODE
-    p.drawText(QPointF(10, 50), QString("%1: %2 (With embedded Tor)").arg(tr("Retroshare version"), RsApplication::retroshareVersion(true)));
+    p.drawText(QPointF(10, 50), QString("%1: %2 (With embedded Tor)").arg(tr("RetroShare version"), RsApplication::retroshareVersion(true)));
 #else
-    p.drawText(QPointF(10, 50), QString("%1: %2").arg(tr("Retroshare version"), RsApplication::retroshareVersion(true)));
+    p.drawText(QPointF(10, 50), QString("%1: %2").arg(tr("RetroShare version"), RsApplication::retroshareVersion(true)));
 #endif
 
-    /* [Added] Draw libretroshare (Engine) version below the GUI version */
+    /* [Added] Draw libretroshare version below the GUI version */
     /* [Fix] Removed space before colon here too */
-    p.drawText(QPointF(10, 70), QString("%1: %2").arg(tr("Engine version"), QString::fromUtf8(RsInit::libRetroShareVersion())));
+    p.drawText(QPointF(10, 70), QString("%1: %2").arg(tr("libretroshare version"), QString::fromUtf8(RsInit::libRetroShareVersion())));
 
     /* Draw Qt's version number */
     p.drawText(QPointF(10, 90), QString("Qt %1: %2").arg(tr("version"), QT_VERSION_STR));
