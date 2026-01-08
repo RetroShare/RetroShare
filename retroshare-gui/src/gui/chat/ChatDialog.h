@@ -26,7 +26,7 @@
 #include "retroshare/rsstatus.h"
 
 #include <QWidget>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 
 #include "gui/chat/ChatWidget.h"
 

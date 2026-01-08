@@ -24,7 +24,8 @@
 #include "gui/common/AvatarDefs.h"
 
 #include <retroshare/rspeers.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
+#include <retroshare/rschats.h>
 
 //#include <QContextMenuEvent>
 #include <QMenu>
