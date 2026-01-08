@@ -71,7 +71,7 @@ AboutWidget::AboutWidget(QWidget* parent)
 void AboutWidget::installAWidget() {
     assert(tWidget == NULL);
     aWidget = new AWidget();
-    QVBoxLayout* l = (QVBoxLayout*)specialFrame->layout();
+	QHBoxLayout* l = (QHBoxLayout*)specialFrame->layout();
     l->insertWidget(0, aWidget);
     l->setStretchFactor(aWidget, 100);
     aWidget->setFocus();
@@ -87,7 +87,7 @@ void AboutWidget::installTWidget() {
     tWidget->setNextPieceLabel(npLabel);
 
     QWidget* pan = new QWidget();
-    QVBoxLayout* vl = new QVBoxLayout(pan);
+	QHBoxLayout* vl = new QHBoxLayout(pan);
     QLabel* topRecLabel = new QLabel(tr("Max score: %1").arg(tWidget->getMaxScore()));
     QLabel* scoreLabel = new QLabel(pan);
     QLabel* levelLabel = new QLabel(pan);
