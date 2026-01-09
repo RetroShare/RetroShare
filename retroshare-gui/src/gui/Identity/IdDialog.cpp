@@ -1654,7 +1654,24 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
 	/* get GPG Details from rsPeers */
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
-    ui->lineEdit_PublishTS->setText(QLocale::system().toString(DateTime::DateTimeFromTime_t(data.mMeta.mPublishTs), QLocale::ShortFormat));
+    // --- START DATE MODIFICATION ---
+    // Format the publish date according to user preferences
+    QDateTime publishDate = DateTime::DateTimeFromTime_t(data.mMeta.mPublishTs);
+    QString publishStr;
+    switch(Settings->getDateFormat()) {
+        case RshareSettings::DateFormat_ISO:
+            publishStr = publishDate.toString(Qt::ISODate).replace('T', ' ');
+            break;
+        case RshareSettings::DateFormat_Text:
+            publishStr = publishDate.toString("dd MMM yyyy HH:mm");
+            break;
+        case RshareSettings::DateFormat_System:
+        default:
+            publishStr = QLocale::system().toString(publishDate, QLocale::ShortFormat);
+    }
+    ui->lineEdit_PublishTS->setText(publishStr);
+    // --- END DATE MODIFICATION ---
+
     //ui->lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
 	ui->lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 	//ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));

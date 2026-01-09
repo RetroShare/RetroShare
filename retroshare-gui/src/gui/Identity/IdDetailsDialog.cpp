@@ -149,7 +149,23 @@ void IdDetailsDialog::loadIdentity(RsGxsIdGroup data)
     ui->autoBanIdentities_CB->setVisible(!data.mPgpId.isNull()) ;
     ui->banoption_label->setVisible(!data.mPgpId.isNull()) ;
 	
-	ui->lineEdit_Created->setText(QLocale::system().toString(DateTime::DateTimeFromTime_t(data.mMeta.mPublishTs), QLocale::ShortFormat));
+    // --- START DATE MODIFICATION ---
+    // Format the creation date according to user preferences
+    QDateTime createdDate = DateTime::DateTimeFromTime_t(data.mMeta.mPublishTs);
+    QString createdStr;
+    switch(Settings->getDateFormat()) {
+        case RshareSettings::DateFormat_ISO:
+            createdStr = createdDate.toString(Qt::ISODate).replace('T', ' ');
+            break;
+        case RshareSettings::DateFormat_Text:
+            createdStr = createdDate.toString("dd MMM yyyy HH:mm");
+            break;
+        case RshareSettings::DateFormat_System:
+        default:
+            createdStr = QLocale::system().toString(createdDate, QLocale::ShortFormat);
+    }
+	ui->lineEdit_Created->setText(createdStr);
+    // --- END DATE MODIFICATION ---
 	
 	time_t now = time(NULL) ;
 	ui->lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
