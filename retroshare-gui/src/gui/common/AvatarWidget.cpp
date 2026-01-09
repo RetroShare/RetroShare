@@ -23,7 +23,7 @@
 #include <rshare.h>
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
@@ -124,7 +124,7 @@ void AvatarWidget::mouseReleaseEvent(QMouseEvent */*event*/)
 		QByteArray newAvatar;
 		dialog.getAvatar(newAvatar);
 
-		rsMsgs->setOwnAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;	// last char 0 included.
+        rsChats->setOwnNodeAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;	// last char 0 included.
 	}
 }
 
@@ -226,7 +226,7 @@ void AvatarWidget::refreshStatus()
         {
             DistantChatPeerInfo dcpinfo ;
 
-            if(rsMsgs->getDistantChatStatus(mId.toDistantChatId(),dcpinfo))
+            if(rsChats->getDistantChatStatus(mId.toDistantChatId(),dcpinfo))
             {
                 switch (dcpinfo.status)
                 {
@@ -321,7 +321,7 @@ void AvatarWidget::refreshAvatarImage()
 
 	    DistantChatPeerInfo dcpinfo ;
 
-	    if(rsMsgs->getDistantChatStatus(mId.toDistantChatId(),dcpinfo))
+        if(rsChats->getDistantChatStatus(mId.toDistantChatId(),dcpinfo))
 	    {
 		    if(mFlag.isOwnId)
 			    AvatarDefs::getAvatarFromGxsId(dcpinfo.own_id, avatar, defaultAvatar);

@@ -24,7 +24,8 @@
 #include <QColor>
 
 #include "retroshare/rsstatus.h"
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rschats.h"
+#include "retroshare/rsmail.h"
 #include "retroshare/rspeers.h"
 
 typedef uint32_t ForumModelIndex;

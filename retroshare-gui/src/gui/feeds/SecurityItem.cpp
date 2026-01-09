@@ -35,7 +35,7 @@
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
 #include <retroshare/rspeers.h>
 
 /*****

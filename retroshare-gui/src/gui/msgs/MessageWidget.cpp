@@ -49,7 +49,7 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
 
 /* Images for context menu icons */
 #define IMAGE_DOWNLOAD         ":/icons/png/download.png"
@@ -61,6 +61,8 @@
 #define COLUMN_FILE_COUNT  3
 
 #include "gui/msgs/MessageInterface.h"
+
+using namespace Rs::Mail;
 
 class RsHtmlMsg : public RsHtml
 {
@@ -687,7 +689,7 @@ void MessageWidget::fill(const std::string &msgId)
 //		link.createMessage(ownId, "");
 //	}
 
-    if(msgInfo.from.type()==Rs::Msgs::MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)	// distant message
+    if(msgInfo.from.type()==Rs::Mail::MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)	// distant message
 	{
         tooltip_string = PeerDefs::rsidFromId(msgInfo.from.toGxsId()) ;
         link = RetroShareLink::createMessage(msgInfo.from.toGxsId(), "");

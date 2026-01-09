@@ -36,6 +36,7 @@
 
 class WikiAddDialog;
 class WikiEditDialog;
+class UserNotify;
 
 class WikiDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 {
@@ -53,6 +54,8 @@ public:
 
 public:
 	virtual void updateDisplay(bool complete);
+
+
 
 private slots:
 
@@ -73,7 +76,6 @@ private slots:
 	void unsubscribeToGroup();
 	void wikiGroupChanged(const QString &groupId);
 
-	void todo();
 	void insertWikiGroups();
 
 private:
@@ -86,6 +88,9 @@ private:
 	bool getSelectedPage(RsGxsGroupId &groupId, RsGxsMessageId &pageId, RsGxsMessageId &origPageId);
 	std::string getSelectedPage();
 	const RsGxsGroupId &getSelectedGroup();
+
+	uint32_t mEventHandlerId;
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 	// Using GroupTreeWidget.
 	void wikiSubscribe(bool subscribe);

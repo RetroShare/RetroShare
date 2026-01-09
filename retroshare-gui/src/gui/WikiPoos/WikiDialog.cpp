@@ -33,6 +33,8 @@
 #include "util/DateTime.h"
 
 #include <retroshare/rswiki.h>
+#include "util/qtthreadsutils.h"
+
 
 // These should be in retroshare/ folder.
 #include "retroshare/rsgxsflags.h"
@@ -79,60 +81,68 @@
 
 
 /** Constructor */
-WikiDialog::WikiDialog(QWidget *parent) : RsGxsUpdateBroadcastPage(rsWiki, parent)
+WikiDialog::WikiDialog(QWidget *parent) : 
+    RsGxsUpdateBroadcastPage(rsWiki, parent), 
+    mEventHandlerId(0) // Initialize handler ID
 {
-	/* Invoke the Qt Designer generated object setup routine */
-	ui.setupUi(this);
+    /* Invoke the Qt Designer generated object setup routine */
+    ui.setupUi(this);
 
-	mAddPageDialog = NULL;
-	mAddGroupDialog = NULL;
-	mEditDialog = NULL;
+    mAddPageDialog = NULL;
+    mAddGroupDialog = NULL;
+    mEditDialog = NULL;
 
-	connect( ui.toolButton_NewPage, SIGNAL(clicked()), this, SLOT(OpenOrShowAddPageDialog()));
-	connect( ui.toolButton_Edit, SIGNAL(clicked()), this, SLOT(OpenOrShowEditDialog()));
-	connect( ui.toolButton_Republish, SIGNAL(clicked()), this, SLOT(OpenOrShowRepublishDialog()));
+    connect( ui.toolButton_NewPage, SIGNAL(clicked()), this, SLOT(OpenOrShowAddPageDialog()));
+    connect( ui.toolButton_Edit, SIGNAL(clicked()), this, SLOT(OpenOrShowEditDialog()));
+    connect( ui.toolButton_Republish, SIGNAL(clicked()), this, SLOT(OpenOrShowRepublishDialog()));
 
-	// Usurped until Refresh works normally
-	connect( ui.toolButton_Delete, SIGNAL(clicked()), this, SLOT(insertWikiGroups()));
-	connect( ui.pushButton, SIGNAL(clicked()), this, SLOT(todo()));
+    connect( ui.treeWidget_Pages, SIGNAL(itemSelectionChanged()), this, SLOT(groupTreeChanged()));
 
-	connect( ui.treeWidget_Pages, SIGNAL(itemSelectionChanged()), this, SLOT(groupTreeChanged()));
+    // GroupTreeWidget.
+    connect(ui.groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupListCustomPopupMenu(QPoint)));
+    connect(ui.groupTreeWidget, SIGNAL(treeItemActivated(QString)), this, SLOT(wikiGroupChanged(QString)));
 
-	// GroupTreeWidget.
-	connect(ui.groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupListCustomPopupMenu(QPoint)));
-	connect(ui.groupTreeWidget, SIGNAL(treeItemActivated(QString)), this, SLOT(wikiGroupChanged(QString)));
+    /* setup TokenQueue */
+    mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
 
-	/* setup TokenQueue */
-	mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
+    // Set initial size of the splitter
+    ui.listSplitter->setStretchFactor(0, 0);
+    ui.listSplitter->setStretchFactor(1, 1);
 
-	// Set initial size of the splitter
-	ui.listSplitter->setStretchFactor(0, 0);
-	ui.listSplitter->setStretchFactor(1, 1);
+    /* Setup Group Tree */
+    mYourGroups = ui.groupTreeWidget->addCategoryItem(tr("My Groups"), QIcon(), true);
+    mSubscribedGroups = ui.groupTreeWidget->addCategoryItem(tr("Subscribed Groups"), QIcon(), true);
+    mPopularGroups = ui.groupTreeWidget->addCategoryItem(tr("Popular Groups"), QIcon(), false);
+    mOtherGroups = ui.groupTreeWidget->addCategoryItem(tr("Other Groups"), QIcon(), false);
+    
+    /* Add the New Group button */
+    QToolButton *newGroupButton = new QToolButton(this);
+    newGroupButton->setIcon(QIcon(":/icons/png/add.png"));
+    newGroupButton->setToolTip(tr("Create Group"));
+    connect(newGroupButton, SIGNAL(clicked()), this, SLOT(OpenOrShowAddGroupDialog()));
+    ui.groupTreeWidget->addToolButton(newGroupButton);
 
-	/* Setup Group Tree */
-	mYourGroups = ui.groupTreeWidget->addCategoryItem(tr("My Groups"), QIcon(), true);
-	mSubscribedGroups = ui.groupTreeWidget->addCategoryItem(tr("Subscribed Groups"), QIcon(), true);
-	mPopularGroups = ui.groupTreeWidget->addCategoryItem(tr("Popular Groups"), QIcon(), false);
-	mOtherGroups = ui.groupTreeWidget->addCategoryItem(tr("Other Groups"), QIcon(), false);
-	
-	/* Add the New Group button */
-	QToolButton *newGroupButton = new QToolButton(this);
-	newGroupButton->setIcon(QIcon(":/icons/png/add.png"));
-	newGroupButton->setToolTip(tr("Create Group"));
-	connect(newGroupButton, SIGNAL(clicked()), this, SLOT(OpenOrShowAddGroupDialog()));
-	ui.groupTreeWidget->addToolButton(newGroupButton);
+    // load settings
+    processSettings(true);
+    updateDisplay(true);
 
-	//QTimer *timer = new QTimer(this);
-	//timer->connect(timer, SIGNAL(timeout()), this, SLOT(insertWikiGroups()));
-	//timer->start(5000);
+    /* Get dynamic event type ID for Wiki. This avoids hardcoding IDs in rsevents.h */
+    RsEventType wikiEventType = (RsEventType)rsEvents->getDynamicEventType("GXS_WIKI");
 
-	// load settings
-	processSettings(true);
-	updateDisplay(true);
+    /* Register events handler using the dynamic type */
+    rsEvents->registerEventsHandler(
+        [this](std::shared_ptr<const RsEvent> event) {
+            RsQThreadUtils::postToObject([=]() { 
+                handleEvent_main_thread(event); 
+            }, this );
+        },
+        mEventHandlerId, wikiEventType); 
 }
 
 WikiDialog::~WikiDialog()
 {
+	rsEvents->unregisterEventsHandler(mEventHandlerId);
+
 	// save settings
 	processSettings(false);
 	
@@ -157,6 +167,7 @@ void WikiDialog::processSettings(bool load)
 
 	Settings->endGroup();
 }
+
 
 void WikiDialog::OpenOrShowAddPageDialog()
 {
@@ -722,13 +733,6 @@ void WikiDialog::GroupMetaDataToGroupItemInfo(const RsGroupMetaData &groupInfo, 
 	groupItemInfo.icon = QIcon(IMAGE_WIKI);
 
 }
-void WikiDialog::todo()
-{
-	QMessageBox::information(this, "Todo",
-							 "<b>Open points:</b><ul>"
-							 "<li>Auto update Group trees"
-							 "</ul>");
-}
 
 void WikiDialog::updateDisplay(bool complete)
 {
@@ -751,3 +755,26 @@ void WikiDialog::insertWikiGroups()
 {
 	updateDisplay(true);
 }
+
+void WikiDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    // Cast to the specific Wiki event
+    const RsGxsWikiEvent *e = dynamic_cast<const RsGxsWikiEvent*>(event.get());
+
+    if(e) {
+        std::cerr << "WikiDialog: Received event for group " << e->mWikiGroupId.toStdString() << std::endl;
+        
+        switch(e->mWikiEventCode) {
+            case RsWikiEventCode::UPDATED_COLLECTION:
+                updateDisplay(true); // Refresh global list
+                break;
+            case RsWikiEventCode::UPDATED_SNAPSHOT:
+                // Only refresh if we are currently looking at the changed group
+                if (e->mWikiGroupId == mGroupId) {
+                    wikiGroupChanged(QString::fromStdString(mGroupId.toStdString()));
+                }
+                break;
+        }
+    }
+}
+

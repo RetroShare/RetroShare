@@ -24,7 +24,7 @@
 #define CHATLOBBYUSERNOTIFY_H
 
 #include "gui/common/UserNotify.h"
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 #include <QDateTime>
 #include <QMetaType>
 

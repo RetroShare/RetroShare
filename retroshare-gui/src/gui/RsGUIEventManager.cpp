@@ -23,7 +23,8 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
+#include <retroshare/rschats.h>
 #include <retroshare/rsinit.h>
 #include <util/rsdir.h>
 #include <util/qtthreadsutils.h>
@@ -259,8 +260,8 @@ void RsGUIEventManager::async_handleIncomingEvent(std::shared_ptr<const RsEvent>
             {
                 for(auto msgid:ev1->mChangedMsgIds)
                 {
-                    Rs::Msgs::MessageInfo msgInfo;
-                    if(rsMsgs->getMessage(msgid, msgInfo))
+                    Rs::Mail::MessageInfo msgInfo;
+                    if(rsMail->getMessage(msgid, msgInfo))
                         insertToaster(new ToasterItem(new MessageToaster(msgInfo.from.toStdString(), QString::fromUtf8(msgInfo.title.c_str()), QString::fromUtf8(msgInfo.msg.c_str()))));
                 }
             }

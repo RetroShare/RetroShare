@@ -29,23 +29,6 @@
  *
  */
 
-#define USE_OLD_MAIL 	1
-
-#ifdef USE_OLD_MAIL
-
-    #include <retroshare/rsmsgs.h>
-
-    using namespace Rs::Msgs;
-
-    #define rsMail rsMsgs
-
-#else
-
-    #include <retroshare/rsmail.h>
-
-    using namespace Rs::Mail;
-
-#endif
-
+#include <retroshare/rsmail.h>
 
 #endif // MRK_MESSAGE_INTERFACE
