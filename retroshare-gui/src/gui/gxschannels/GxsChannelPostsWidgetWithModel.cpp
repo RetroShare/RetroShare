@@ -90,6 +90,20 @@ Q_DECLARE_METATYPE(ChannelPostFileInfo)
 //===                                                      ChannelPostDelegate                                                                ===//
 //===============================================================================================================================================//
 
+static QString formatDate(uint64_t seconds)
+{
+    QDateTime dt = DateTime::DateTimeFromTime_t(seconds);
+    switch(Settings->getDateFormat()) {
+        case RshareSettings::DateFormat_ISO:
+            return dt.toString(Qt::ISODate).replace('T', ' ');
+        case RshareSettings::DateFormat_Text:
+            return dt.toString("dd MMM yyyy HH:mm");
+        case RshareSettings::DateFormat_System:
+        default:
+            return QLocale::system().toString(dt, QLocale::ShortFormat);
+    }
+}
+
 int ChannelPostDelegate::cellSize(int col,const QFont& font,uint32_t parent_width) const
 {
     if(mUseGrid || col==0)
@@ -115,6 +129,7 @@ void ChannelPostDelegate::setAspectRatio(ChannelPostThumbnailView::AspectRatio r
 {
     mAspectRatio = r;
 }
+
 void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
     // prepare
@@ -227,7 +242,10 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         y += font_height;
         y += font_height/2.0;
 
-        QString info_text = QLocale::system().toString(DateTime::DateTimeFromTime_t(post.mMeta.mPublishTs), QLocale::ShortFormat);
+        // --- MODIFICATION HERE ---
+        // Was: QString info_text = QLocale::system().toString(DateTime::DateTimeFromTime_t(post.mMeta.mPublishTs), QLocale::ShortFormat);
+        QString info_text = formatDate(post.mMeta.mPublishTs);
+        // -------------------------
 
         if(post.mAttachmentCount > 0)
             info_text += ", " + QString::number(post.mAttachmentCount)+ " " +((post.mAttachmentCount>1)?tr("files"):tr("file")) + " (" + misc::friendlyUnit(qulonglong(post.mSize)) + ")" ;
@@ -318,8 +336,12 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
             break;
     case RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE: painter->drawText(option.rect,Qt::AlignRight | Qt::AlignVCenter,misc::friendlyUnit(qulonglong(file.mSize)));
             break;
-    case RsGxsChannelPostFilesModel::COLUMN_FILES_DATE: painter->drawText(option.rect,Qt::AlignLeft | Qt::AlignVCenter,QDateTime::fromMSecsSinceEpoch(file.mPublishTime*1000).toString("MM/dd/yyyy, hh:mm"));
+    
+    // --- MODIFICATION HERE ---
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_DATE: painter->drawText(option.rect,Qt::AlignLeft | Qt::AlignVCenter,formatDate(file.mPublishTime));
             break;
+    // -------------------------
+
     case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE: {
 
         GxsChannelFilesStatusWidget w(file);
@@ -329,7 +351,7 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
 
         QPixmap pixmap(w.size());
 
-                // apparently we need to do the alternate colors manually
+        // apparently we need to do the alternate colors manually
         //if(index.row() & 0x01)
         //    pixmap.fill(option.palette.alternateBase().color());
         //else
@@ -357,7 +379,11 @@ QSize ChannelPostFilesDelegate::sizeHint(const QStyleOptionViewItem& option, con
     {
     case RsGxsChannelPostFilesModel::COLUMN_FILES_NAME: return QSize(1.1*QFontMetrics_horizontalAdvance(fm, QString::fromUtf8(file.mName.c_str())),fm.height());
     case RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE: return QSize(1.1*QFontMetrics_horizontalAdvance(fm, misc::friendlyUnit(qulonglong(file.mSize))),fm.height());
-    case RsGxsChannelPostFilesModel::COLUMN_FILES_DATE: return QSize(1.1*QFontMetrics_horizontalAdvance(fm, QDateTime::fromMSecsSinceEpoch(file.mPublishTime*1000).toString("MM/dd/yyyy, hh:mm")),fm.height());
+    
+    // --- MODIFICATION HERE ---
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_DATE: return QSize(1.1*QFontMetrics_horizontalAdvance(fm, formatDate(file.mPublishTime)),fm.height());
+    // -------------------------
+
     default:
     case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE: return QSize(option.rect.width(),GxsChannelFilesStatusWidget(file).height());
     }
@@ -955,7 +981,11 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 
     ui->postName_LB->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
 
-    ui->postTime_LB->setText(QDateTime::fromMSecsSinceEpoch(post.mMeta.mPublishTs*1000).toString("MM/dd/yyyy, hh:mm"));
+    // --- MODIFICATION HERE ---
+    // Was: ui->postTime_LB->setText(QDateTime::fromMSecsSinceEpoch(post.mMeta.mPublishTs*1000).toString("MM/dd/yyyy, hh:mm"));
+    ui->postTime_LB->setText(formatDate(post.mMeta.mPublishTs));
+    // -------------------------
+    
     ui->postTime_LB->setFixedWidth(W);
 
     //ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
