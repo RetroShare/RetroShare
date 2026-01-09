@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/style/RSStyle.cpp                                                       *
+ * retroshare-gui/src/gui/style/RSStyle.cpp                                    *
  *                                                                             *
  * Copyright (c) 2010 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

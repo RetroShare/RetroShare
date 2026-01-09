@@ -48,7 +48,7 @@ GroupShareKey::GroupShareKey(QWidget *parent, const RsGxsGroupId &grpId, int grp
 	ui->keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
 	ui->keyShareList->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL);
 	ui->keyShareList->start();
-	
+
 	setTyp();
 }
 
@@ -76,14 +76,14 @@ void GroupShareKey::setTyp()
     {
         if (!rsGxsChannels)
             return;
-            
+
         ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/channels.png"));
         ui->headerFrame->setHeaderText(tr("Share channel publish permissions"));
         ui->info_Label_ShareKey->setText(tr("You can allow your friends to publish in your channel, or send the publish permissions to another Retroshare instance of yours. Select the friends which you want to be allowed to publish in this channel. Note: it is currently not possible to revoke channel publish permissions."));
     }
     else if(mGrpType == FORUM_KEY_SHARE)
     {
-        
+
         ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
         ui->headerFrame->setHeaderText(tr("Share forum admin permissions"));
         ui->info_Label_ShareKey->setText(tr("You can let your friends know about your forum by sharing it with them. Select the friends with which you want to share your forum."));
@@ -93,7 +93,7 @@ void GroupShareKey::setTyp()
     {
         if (!rsPosted)
             return;
-        
+
         ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png"));
         ui->headerFrame->setHeaderText(tr("Share board admin permissions"));
         ui->info_Label_ShareKey->setText(tr("You can allow your friends to edit the board. Select them in the list below. Note: it is not possible to revoke Board admin permissions."));

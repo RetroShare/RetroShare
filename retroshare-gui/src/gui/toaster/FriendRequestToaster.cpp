@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/toaster/FriendRequestToaster.cpp                                        *
+ * retroshare-gui/src/gui/toaster/FriendRequestToaster.cpp                     *
  *                                                                             *
  * Copyright (c) 2010 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -43,7 +43,7 @@ FriendRequestToaster::FriendRequestToaster(const RsPgpId &gpgId, const RsPeerId 
 		ui.toasterButton->setEnabled(false);
 	}
 	connect(ui.closeButton, SIGNAL(clicked()), SLOT(hide()));
-	
+
 	QString peerName = QString::fromUtf8(details.name.c_str());
 
 	/* set informations */

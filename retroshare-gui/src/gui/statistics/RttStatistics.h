@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/RttStatistics.h                                              *
+ * retroshare-gui/src/gui/statistics/RttStatistics.h                           *
  *                                                                             *
  * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

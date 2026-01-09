@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/soundstatus.cpp                                               *
+ * retroshare-gui/src/gui/statusbar/soundstatus.cpp                            *
  *                                                                             *
  * Copyright (c) 2012 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

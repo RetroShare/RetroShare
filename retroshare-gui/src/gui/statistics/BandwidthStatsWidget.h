@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/BandwidthStatsWidget.h                                       *
+ * retroshare-gui/src/gui/statistics/BandwidthStatsWidget.h                    *
  *                                                                             *
  * Copyright (c) 2014 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

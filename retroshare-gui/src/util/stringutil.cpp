@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/stringutil.cpp                                                         *
+ * retroshare-gui/src/util/stringutil.cpp                                      *
  *                                                                             *
  * Copyright (c) 2008, crypton                 <retroshare.project@gmail.com>  *
  * Copyright (c) 2008, Matt Edman, Justin Hipple                               *
@@ -105,12 +105,12 @@ string_wrap(const QString &str, int width,
   QString wrapped;
   int pos, nextsep, wordlen, n;
   int seplen = sep.length();
- 
+
   if (str.length() < width) {
     return str;
   }
 
-  pos = 0; 
+  pos = 0;
   n = width;
   while (pos < str.length()) {
     /* Get the length of a "word" */
@@ -171,7 +171,7 @@ QString
 string_unescape(const QString &str, bool *ok)
 {
   QString out;
- 
+
   /* The string must start and end with an unescaped dquote */
   if (str.length() < 2 || !str.startsWith("\"") || !str.endsWith("\"") ||
       (str.endsWith("\\\"") && !str.endsWith("\\\\\""))) {
@@ -198,17 +198,17 @@ string_parse_keyvals(const QString &str, bool *ok)
   int i, len;
   bool tmp_ok;
   QHash<QString,QString> keyvals;
-  
+
   i = 0;
   len = str.length();
   while (i < len && str[i].isSpace())
     i++; /* Skip initial whitespace */
   while (i < len) {
     QString key, val;
-    
+
     while (i < len && !str[i].isSpace() && str[i] != '=')
       key.append(str[i++]);
-      
+
     if (i < len && str[i] == '=') {
       if (++i < len && str[i] == '\"') {
         /* The value is wrapped in quotes */
@@ -222,7 +222,7 @@ string_parse_keyvals(const QString &str, bool *ok)
           } else if (str[i] == '\"') {
             i++;
             break;
-          } 
+          }
         }
         val = string_unescape(val, &tmp_ok);
         if (!tmp_ok)
@@ -266,7 +266,7 @@ string_parse_arguments(const QString &str, bool *ok)
     i++; /* Skip initial whitespace */
   while (i < len) {
     QString arg;
-    
+
     if (str[i] == '\"') {
       /* The value is wrapped in quotes */
       arg.append(str[i]);
@@ -279,7 +279,7 @@ string_parse_arguments(const QString &str, bool *ok)
         } else if (str[i] == '\"') {
           i++;
           break;
-        } 
+        }
       }
       arg = string_unescape(arg, &tmp_ok);
       if (!tmp_ok)
@@ -315,7 +315,7 @@ string_format_arguments(const QStringList &args)
   foreach (QString arg, args) {
     if (arg.contains("\"") || arg.contains("\\") || arg.contains(" "))
       out << string_escape(arg);
-    else 
+    else
       out << arg;
   }
   return out.join(" ");

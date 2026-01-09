@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/ForumPage.cpp                                                  *
+ * retroshare-gui/src/gui/settings/ForumPage.cpp                               *
  *                                                                             *
  * Copyright 2006, Crypton         <retroshare.project@gmail.com>              *
  *                                                                             *

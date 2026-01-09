@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/LogoBar.h                                                               *
+ * retroshare-gui/src/gui/LogoBar.h                                            *
  *                                                                             *
  * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -33,12 +33,12 @@ class QIcon;
 /**
  * logo bar inside the login window.
  *
- * 
- * 
- * 
- * 
  *
- * 
+ *
+ *
+ *
+ *
+ *
  */
 class LogoBar : public QFrame {
 	Q_OBJECT
@@ -69,7 +69,7 @@ private:
 	void init();
 
 
-	
+
 	RetroStyleLabel * _logoButton;
 
 

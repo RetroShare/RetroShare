@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -30,7 +30,7 @@
 #include <map>
 
 
-class PhotoDialog : public MainPage 
+class PhotoDialog : public MainPage
 {
   Q_OBJECT
 
@@ -53,7 +53,7 @@ private slots:
   void addPhotos();
 
   void checkUpdate();
-  
+
    /* handle splitter */
   void togglefileview();
 
@@ -78,7 +78,7 @@ private:
 
   /** Define the popup menus for the Context menu */
   QMenu* contextMnu;
-  
+
   QAction *rateExcellenAct;
   QAction *rateGoodAct;
   QAction *rateAverageAct;

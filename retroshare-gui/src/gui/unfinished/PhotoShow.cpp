@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -66,7 +66,7 @@ void PhotoShow::photoCustomPopupMenu( QPoint point )
 //
 //      contextMnu.clear();
 //      contextMnu.addAction(rm);
-//      contextMnu.addSeparator(); 
+//      contextMnu.addSeparator();
 //      contextMnu.exec( mevent->globalPos() );
 }
 
@@ -122,7 +122,7 @@ void PhotoShow::updatePhoto(std::string pid, std::string photoId)
 	//ui.sizeLineEdit->setText(QString::number(photoDetail.size));
 	//ui.peeridLineEdit->setText(QString::fromStdString(photoDetail.id));
 	//ui.photoidLineEdit->setText(QString::fromStdString(photoDetail.hash));
-	
+
 }
 
 void  PhotoShow::setPeerId(std::string id)

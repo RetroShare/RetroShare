@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/PulseMessage.h                                                  *
+ * retroshare-gui/src/gui/TheWire/PulseMessage.h                               *
  *                                                                             *
  * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
@@ -30,7 +30,7 @@ class PulseMessage : public QWidget, private Ui::PulseMessage
   Q_OBJECT
 
 public:
-	PulseMessage(QWidget *parent); 
+	PulseMessage(QWidget *parent);
 
 	void setup(RsWirePulseSPtr pulse);
 	void setMessage(QString msg);

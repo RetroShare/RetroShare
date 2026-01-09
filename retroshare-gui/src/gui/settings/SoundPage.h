@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/SoundPage.h                                                    *
+ * retroshare-gui/src/gui/settings/SoundPage.h                                 *
  *                                                                             *
  * Copyright (c) 2009 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/rsqtutidll.h                                                           *
+ * retroshare-gui/src/util/rsqtutidll.h                                        *
  *                                                                             *
  * Copyright (c) 2006 Crypton         <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -21,7 +21,7 @@
 #ifndef RSQTUTILDLL_H
 #define RSQTUTILDLL_H
 
-#include <util/dllexport.h>
+#include "util/dllexport.h"
 
 #ifdef RSQTUTIL_DLL
 	#ifdef BUILD_RSQTUTIL_DLL

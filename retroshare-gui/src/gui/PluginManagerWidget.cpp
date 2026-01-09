@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/PluginManagerWidget.cpp                                                 *
+ * retroshare-gui/src/gui/PluginManagerWidget.cpp                              *
  *                                                                             *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -41,7 +41,7 @@ PluginFrame::PluginFrame( QString pluginName, QWidget * parent)
                     :QFrame(parent)
 {
    plgName = pluginName;
-   
+
    // labels
    labelsLay = new QVBoxLayout() ;
    nameLabel = new QLabel();
@@ -100,37 +100,37 @@ PluginFrame::getPluginName()
 
 PluginManagerWidget::PluginManagerWidget(QWidget * parent)
                     :QFrame(parent)
-{  
-    qDebug() << "  " << "PluginManagerWidget::PluginManagerWidget here"; 
+{
+    qDebug() << "  " << "PluginManagerWidget::PluginManagerWidget here";
 
     mainLayout = new QVBoxLayout(this);
 
   //===
     installPluginLayout = new QHBoxLayout();
     installPluginButton = new QPushButton();
-    
+
     installPluginButton->setText(tr("Install New Plugin..."));
     connect( installPluginButton, SIGNAL( clicked() ),
              this               , SLOT(   installPluginButtonClicked() ) );
     installPluginLayout->addWidget(installPluginButton);
-    installPluginSpacer = new QSpacerItem(283, 20, 
+    installPluginSpacer = new QSpacerItem(283, 20,
                                   QSizePolicy::Expanding, QSizePolicy::Minimum);
     installPluginLayout->addItem(installPluginSpacer);
 
     mainLayout->addLayout( installPluginLayout );
-    
+
   //===
     pluginFramesContainer = new QFrame();
     pluginFramesLayout = new QVBoxLayout(pluginFramesContainer);
-    
+
     mainLayout->addWidget(pluginFramesContainer);
-    
+
   //===
     errorsConsole = new QTextEdit();
-    
+
     mainLayout->addWidget( errorsConsole );
-   
-    qDebug() << "  " << "PluginManagerWidget::PluginManagerWidget done"; 
+
+    qDebug() << "  " << "PluginManagerWidget::PluginManagerWidget done";
 }
 
 //=============================================================================
@@ -145,13 +145,13 @@ PluginManagerWidget::~PluginManagerWidget()
 void
 PluginManagerWidget::registerNewPlugin(QString pluginName)
 {
-    qDebug() << "  " << "PluginManagerWidget::registerNewPlugin "<< pluginName; 
+    qDebug() << "  " << "PluginManagerWidget::registerNewPlugin "<< pluginName;
 
     PluginFrame* pf = new PluginFrame(pluginName, pluginFramesContainer) ;
-    
+
     connect( pf  , SIGNAL( needToRemove(QString)),
              this, SIGNAL( removeRequested(QString) ) );
-    
+
     pluginFramesLayout->addWidget(pf);
 }
 
@@ -188,12 +188,12 @@ PluginManagerWidget::removePluginFrame(QString pluginName)
     // normally unreachable place
     QString em = tr("Widget for plugin %1 not found on plugins frame")
                     .arg( pluginName ) ;
-    acceptErrorMessage( em );    
+    acceptErrorMessage( em );
 }
 
 //=============================================================================
 
-void 
+void
 PluginManagerWidget::acceptErrorMessage(QString errorMessage)
 {
     errorsConsole->append( errorMessage );

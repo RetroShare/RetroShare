@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/TurtleRouterDialog.h                                         *
+ * retroshare-gui/src/gui/statistics/TurtleRouterDialog.h                      *
  *                                                                             *
  * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -36,16 +36,16 @@ class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialog
 	public:
 		TurtleRouterDialog(QWidget *parent = NULL) ;
 		~TurtleRouterDialog();
-		
+
 		// Cache for peer names.
         static QString getPeerName(const RsPeerId &peer_id) ;
 
 	private:
-		void updateTunnelRequests(	const std::vector<std::vector<std::basic_string<char> > >&, 
-											const std::vector<std::vector<std::basic_string<char> > >&, 
+		void updateTunnelRequests(	const std::vector<std::vector<std::basic_string<char> > >&,
+											const std::vector<std::vector<std::basic_string<char> > >&,
 											const std::vector<TurtleSearchRequestDisplayInfo >&,
 											const std::vector<TurtleTunnelRequestDisplayInfo >&) ;
-											
+
 		void processSettings(bool bLoad);
 		bool m_bProcessSettings;
 

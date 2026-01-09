@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/GxsForumMsgItem.cpp                                               *
+ * retroshare-gui/src/gui/feeds/GxsForumMsgItem.cpp                            *
  *                                                                             *
  * Copyright (c) 2014, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "retroshare/rsevents.h"
 #include "retroshare/rstor.h"
 #include "ui_TorControlWindow.h"

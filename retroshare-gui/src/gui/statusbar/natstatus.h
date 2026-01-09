@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/natstatus.h                                                   *
+ * retroshare-gui/src/gui/statusbar/natstatus.h                                *
  *                                                                             *
  * Copyright (c) 2009 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

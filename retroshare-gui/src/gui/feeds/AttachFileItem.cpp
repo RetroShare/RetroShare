@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/AttachFileItem.cpp                                                *
+ * retroshare-gui/src/gui/feeds/AttachFileItem.cpp                             *
  *                                                                             *
  * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -42,7 +42,7 @@
  * a) Addition to General Dialog (1), (2), (3)
  *   (i) (1), request Hash -> (3).
  *   (ii) (2), download complete -> (3)
- *   (iii) (3) 
+ *   (iii) (3)
  *
  * b) Message/Blog/Channel (2), (3)
  *   (i) (2), download complete -> (3)
@@ -80,7 +80,7 @@ AttachFileItem::AttachFileItem(const RsFileHash& hash, const QString& name, uint
 
 	/* all other states are possible */
 
-	if (!rsFiles) 
+	if (!rsFiles)
 	{
 		mMode = AFI_STATE_ERROR;
 	}
@@ -111,7 +111,7 @@ void AttachFileItem::Setup()
 {
   connect( cancelButton, SIGNAL( clicked( void ) ), this, SLOT( cancel ( void ) ) );
 
-  /* once off check - if remote, check if we have it 
+  /* once off check - if remote, check if we have it
    * NB: This check might be expensive - and it'll happen often!
    */
 #ifdef DEBUG_ITEM
@@ -176,7 +176,7 @@ void AttachFileItem::updateItemStatic()
 		progressBar->setFormat("%v kB");
 		mDivisor = 1000;
 	}
-	else 
+	else
 	{
 		progressBar->setRange(0, mFileSize);
 		progressBar->setFormat("%v B");
@@ -224,7 +224,7 @@ void AttachFileItem::updateItemStatic()
 			progressBar->setFormat("ERROR");
 
 			cancelButton->setEnabled(false);
-		
+
 			progressBar->setValue(0);
 			filename = tr("[ERROR])") + " " + filename;
 
@@ -474,7 +474,7 @@ void AttachFileItem::updateItem()
 			msec_rate = 2000; /* should be download rate dependent */
 			break;
 	}
-	
+
 	if (repeat)
 	{
 #ifdef DEBUG_ITEM

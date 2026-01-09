@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/AppearancePage.cpp                                             *
+ * retroshare-gui/src/gui/settings/AppearancePage.cpp                          *
  *                                                                             *
  * Copyright 2009, Retroshare Team <retroshare.project@gmail.com>              *
  *                                                                             *
@@ -165,7 +165,7 @@ void AppearancePage::updateRbtPageOnToolBar()
 {
     Settings->setPageButtonLoc(!ui.mainPageButtonType_CB->currentIndex());
     Settings->setActionButtonLoc(!ui.mainPageButtonType_CB->currentIndex());
-	
+
 	int index = ui.mainPageButtonType_CB->currentIndex();
 	if (index != 0) {
 		ui.cmboTollButtonsStyle->hide();
@@ -271,7 +271,7 @@ void AppearancePage::load()
 		index = ui.cmboStyleSheet->findData("");
 	}
 	whileBlocking(ui.cmboStyleSheet)->setCurrentIndex(index);
-	
+
 	index = ui.mainPageButtonType_CB->findData(Settings->getPageButtonLoc());
 	if (index != 0) {
         ui.cmboTollButtonsStyle->show();

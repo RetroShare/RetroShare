@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/MessengerWindow.h                                                       *
+ * retroshare-gui/src/gui/MessengerWindow.h                                    *
  *                                                                             *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *

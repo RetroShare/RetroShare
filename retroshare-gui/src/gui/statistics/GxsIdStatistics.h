@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/GxsIdStatistics.h                                            *
+ * retroshare-gui/src/gui/statistics/GxsIdStatistics.h                         *
  *                                                                             *
  * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

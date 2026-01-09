@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/BandwidthGraphWindow.h                                       *
+ * retroshare-gui/src/gui/statistics/BandwidthGraphWindow.h                    *
  *                                                                             *
  * Copyright (c) 2006-2007, crypton                                            *
  * Copyright (c) 2006, Matt Edman, Justin Hipple                               *

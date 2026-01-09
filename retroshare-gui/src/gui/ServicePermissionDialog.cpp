@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/ServicePermissionDialog.cpp                                             *
+ * retroshare-gui/src/gui/ServicePermissionDialog.cpp                          *
  *                                                                             *
  * Copyright (c) 2013 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -36,7 +36,7 @@ ServicePermissionDialog::ServicePermissionDialog() :
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
 	Settings->loadWidgetInformation(this);
-	
+
     ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/servicepermissions64.png"));
     ui->headerFrame->setHeaderText(tr("Service Permissions"));
 

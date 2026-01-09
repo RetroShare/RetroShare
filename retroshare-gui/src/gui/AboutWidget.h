@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/AboutWidget.h                                                           *
+ * retroshare-gui/src/gui/AboutWidget.h                                        *
  *                                                                             *
  * Copyright (C) 2012 Retroshare Team <retroshare.project@gmail.com>           *
  * Copyright (C) 2008 Unipro, Russia (http://ugene.unipro.ru)                  *
@@ -164,7 +164,7 @@ public:
 public slots:
     void start();
     void pause();
-    
+
 signals:
     void scoreChanged(int score);
     void levelChanged(int level);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/elastic/fft.h                                                           *
+ * retroshare-gui/src/gui/elastic/fft.h                                        *
  *                                                                             *
  * Copyright 1996-2001 Takuya OOURA   <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -43,12 +43,12 @@ function prototypes
 -------- Complex DFT (Discrete Fourier Transform) --------
     [definition]
         <case1>
-            X[k1][k2] = sum_j1=0^n1-1 sum_j2=0^n2-1 x[j1][j2] * 
-                            exp(2*pi*i*j1*k1/n1) * 
+            X[k1][k2] = sum_j1=0^n1-1 sum_j2=0^n2-1 x[j1][j2] *
+                            exp(2*pi*i*j1*k1/n1) *
                             exp(2*pi*i*j2*k2/n2), 0<=k1<n1, 0<=k2<n2
         <case2>
-            X[k1][k2] = sum_j1=0^n1-1 sum_j2=0^n2-1 x[j1][j2] * 
-                            exp(-2*pi*i*j1*k1/n1) * 
+            X[k1][k2] = sum_j1=0^n1-1 sum_j2=0^n2-1 x[j1][j2] *
+                            exp(-2*pi*i*j1*k1/n1) *
                             exp(-2*pi*i*j2*k2/n2), 0<=k1<n1, 0<=k2<n2
         (notes: sum_j=0^n-1 is a summation from j=0 to n-1)
     [usage]
@@ -66,12 +66,12 @@ function prototypes
         a[0...n1-1][0...2*n2-1]
                :input/output data (double **)
                 input data
-                    a[j1][2*j2] = Re(x[j1][j2]), 
-                    a[j1][2*j2+1] = Im(x[j1][j2]), 
+                    a[j1][2*j2] = Re(x[j1][j2]),
+                    a[j1][2*j2+1] = Im(x[j1][j2]),
                     0<=j1<n1, 0<=j2<n2
                 output data
-                    a[k1][2*k2] = Re(X[k1][k2]), 
-                    a[k1][2*k2+1] = Im(X[k1][k2]), 
+                    a[k1][2*k2] = Re(X[k1][k2]),
+                    a[k1][2*k2+1] = Im(X[k1][k2]),
                     0<=k1<n1, 0<=k2<n2
         ip[0...*]
                :work area for bit reversal (int *)
@@ -83,9 +83,9 @@ function prototypes
                 length of w >= max(n1/2, n2/2)
                 w[],ip[] are initialized if ip[0] == 0.
     [remark]
-        Inverse of 
+        Inverse of
             cdft2d(n1, 2*n2, -1, a, ip, w);
-        is 
+        is
             cdft2d(n1, 2*n2, 1, a, ip, w);
             for (j1 = 0; j1 <= n1 - 1; j1++) {
                 for (j2 = 0; j2 <= 2 * n2 - 1; j2++) {

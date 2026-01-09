@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/misc.cpp                                                               *
+ * retroshare-gui/src/util/misc.cpp                                            *
  *                                                                             *
  * Copyright (c) 2008, defnax           <retroshare.project@gmail.com>         *
  * Copyright (C) 2006  Christophe Dumez                                        *

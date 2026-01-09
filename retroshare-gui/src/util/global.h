@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/global.h                                                               *
+ * retroshare-gui/src/util/global.h                                            *
  *                                                                             *
  * Copyright (c) 2007 Crypton          <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -64,7 +64,7 @@
  *
  * @file global.h
  * @see qglobal.h from Qt4
- * 
+ *
  */
 
 //OS

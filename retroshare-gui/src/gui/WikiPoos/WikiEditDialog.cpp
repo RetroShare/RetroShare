@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/WikiPoos/WikiEditDialog.cpp                                             *
+ * retroshare-gui/src/gui/WikiPoos/WikiEditDialog.cpp                          *
  *                                                                             *
  * Copyright (C) 2012 Robert Fernie   <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -162,7 +162,7 @@ void WikiEditDialog::historySelected()
 		return;
 	}
 	QTreeWidgetItem *item = *(selected.begin());
-	
+
 	RsGxsGrpMsgIdPair newSnapshot = mThreadMsgIdPair;
 	std::string pageId = item->data(WET_DATA_COLUMN, WET_ROLE_PAGEID).toString().toStdString();
 	newSnapshot.second = RsGxsMessageId(pageId);
@@ -223,14 +223,14 @@ void WikiEditDialog::updateHistoryItem(QTreeWidgetItem *item, bool isLatest)
 	else if ((!mOldHistoryEnabled) && (!isLatest))
 	{
 		isSelectable = false;
-	}	
+	}
 
 	if (isSelectable)
 	{
 		std::cerr << "WikiEditDialog::updateHistoryItem() isSelectable";
 		std::cerr << std::endl;
 
-		item->setFlags(Qt::ItemIsSelectable | 
+		item->setFlags(Qt::ItemIsSelectable |
 			Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 
 		if (mHistoryMergeMode)
@@ -242,7 +242,7 @@ void WikiEditDialog::updateHistoryItem(QTreeWidgetItem *item, bool isLatest)
 			{
 				item->setData(WET_COL_PAGEID, Qt::CheckStateRole, Qt::Unchecked);
 			}
-			
+
 		}
 		else
 		{
@@ -719,7 +719,7 @@ void WikiEditDialog::loadBaseHistory(const uint32_t &token)
 	        std::cerr << "\tThreadId: " << page.mMeta.mThreadId;
 	        std::cerr << " ParentId: " << page.mMeta.mParentId;
 	        std::cerr << std::endl;
-		
+
 		GxsIdRSTreeWidgetItem *modItem = new GxsIdRSTreeWidgetItem(mThreadCompareRole, GxsIdDetails::ICON_TYPE_AVATAR);
         modItem->setData(WET_DATA_COLUMN, WET_ROLE_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId.toStdString()));
         modItem->setData(WET_DATA_COLUMN, WET_ROLE_PAGEID, QString::fromStdString(page.mMeta.mMsgId.toStdString()));
@@ -733,7 +733,7 @@ void WikiEditDialog::loadBaseHistory(const uint32_t &token)
 			QString sort;
 			sort = qtime.toString("yyyyMMdd_hhmmss");
 			text = qtime.toString("dd/MM/yy hh:mm");
-			
+
 			modItem->setText(WET_COL_DATE, text);
 			modItem->setData(WET_COL_DATE, WET_ROLE_SORT, sort);
 		}
@@ -797,7 +797,7 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
        	{
 		QTreeWidgetItem *item = ui.treeWidget_History->topLevelItem(nIndex);
 
-		/* index by MsgId --> ONLY For Wiki Thread Head Items... SPECIAL HACK FOR HERE! */	
+		/* index by MsgId --> ONLY For Wiki Thread Head Items... SPECIAL HACK FOR HERE! */
         RsGxsMessageId msgId ( item->data(WET_DATA_COLUMN, WET_ROLE_PAGEID).toString().toStdString() );
 		items[msgId] = item;
 	}
@@ -806,7 +806,7 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 	for(vit = snapshots.begin(); vit != snapshots.end(); ++vit)
 	{
                 RsWikiSnapshot &snapshot = *vit;
-	
+
 	        std::cerr << "Result: PageTitle: " << snapshot.mMeta.mMsgName;
 	        std::cerr << " GroupId: " << snapshot.mMeta.mGroupId;
 	        std::cerr << std::endl;
@@ -846,7 +846,7 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 			QString sort;
 			sort = qtime.toString("yyyyMMdd_hhmmss");
 			text = qtime.toString("dd/MM/yy hh:mm");
-			
+
 			modItem->setText(WET_COL_DATE, text);
 			modItem->setData(WET_COL_DATE, WET_ROLE_SORT, sort);
 		}
@@ -895,7 +895,7 @@ void WikiEditDialog::loadRequest(const TokenQueue *queue, const TokenRequest &re
 {
 	std::cerr << "WikiEditDialog::loadRequest()";
 	std::cerr << std::endl;
-		
+
 	if (queue == mWikiQueue)
 	{
 		switch(req.mUserType)

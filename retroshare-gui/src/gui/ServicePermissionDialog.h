@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/ServicePermissionDialog.h                                               *
+ * retroshare-gui/src/gui/ServicePermissionDialog.h                            *
  *                                                                             *
  * Copyright (c) 2013 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *

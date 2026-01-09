@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/PeerItem.h                                                        *
+ * retroshare-gui/src/gui/feeds/PeerItem.h                                     *
  *                                                                             *
  * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -60,7 +60,7 @@ private slots:
 	void openChat();
 
 	void updateItem();
-	
+
 
 private:
 

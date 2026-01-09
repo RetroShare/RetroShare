@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/GlobalRouterStatistics.cpp                                   *
+ * retroshare-gui/src/gui/statistics/GlobalRouterStatistics.cpp                *
  *                                                                             *
  * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

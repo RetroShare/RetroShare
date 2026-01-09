@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/SecurityItem.cpp                                                  *
+ * retroshare-gui/src/gui/feeds/SecurityItem.cpp                               *
  *                                                                             *
  * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -228,7 +228,7 @@ void SecurityItem::updateItem()
 			removeFriendButton->setEnabled(false);
 			removeFriendButton->hide();
 			peerDetailsButton->setEnabled(false);
-			
+
             if(mType == RsFeedTypeFlags::RS_FEED_ITEM_SEC_BAD_CERTIFICATE)
 			{
 				peerNameLabel->setText(tr("SSL request"));
@@ -236,7 +236,7 @@ void SecurityItem::updateItem()
 				requestLabel->hide();
 				peerDetailsButton->hide();
 			}
-			else 
+			else
 			{
 				peerNameLabel->setText(tr("An unknown peer"));
 				friendRequesttoolButton->show();
@@ -276,7 +276,7 @@ void SecurityItem::updateItem()
 
 		/* do buttons */
 		peerDetailsButton->setEnabled(true);
-		
+
 		if (details.state & RS_PEER_STATE_CONNECTED)
 		{
 			chatButton->show();

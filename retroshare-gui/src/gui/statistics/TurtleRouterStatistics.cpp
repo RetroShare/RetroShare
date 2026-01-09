@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/TurtleRouterStatistics.cpp                                   *
+ * retroshare-gui/src/gui/statistics/TurtleRouterStatistics.cpp                *
  *                                                                             *
  * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -183,17 +183,17 @@ TurtleRouterStatistics::TurtleRouterStatistics(QWidget *parent)
 	: RsAutoUpdatePage(2000,parent)
 {
 	setupUi(this) ;
-	
+
 	m_bProcessSettings = false;
 
-	_tunnel_statistics_F->setWidget( _tst_CW = new TurtleRouterStatisticsWidget() ) ; 
+	_tunnel_statistics_F->setWidget( _tst_CW = new TurtleRouterStatisticsWidget() ) ;
 	_tunnel_statistics_F->setWidgetResizable(true);
 	_tunnel_statistics_F->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	_tunnel_statistics_F->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	_tunnel_statistics_F->viewport()->setBackgroundRole(QPalette::NoRole);
 	_tunnel_statistics_F->setFrameStyle(QFrame::NoFrame);
 	_tunnel_statistics_F->setFocusPolicy(Qt::NoFocus);
-	
+
 	routertabWidget->addTab(new TurtleRouterDialog(),           QString(tr("File transfer tunnels")));
 	routertabWidget->addTab(new GxsAuthenticatedTunnelsDialog(),QString(tr("Authenticated tunnels")));
 	routertabWidget->addTab(new GxsNetTunnelsDialog(),          QString(tr("GXS sync tunnels")     ));
@@ -241,7 +241,7 @@ void TurtleRouterStatistics::processSettings(bool bLoad)
     }
 
     Settings->endGroup();
-    
+
     m_bProcessSettings = false;
 
 }
@@ -341,7 +341,7 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 	for(uint i=0;i<info.forward_probabilities.size();++i)
 		prob_string += QString::number(info.forward_probabilities[i],'g',2) + " (" + QString::number(i) + ") " ;
 
-	painter.drawText(ox+2*cellx,oy+celly,tr("TR Forward probabilities")+"\t: " + prob_string ) ; 
+	painter.drawText(ox+2*cellx,oy+celly,tr("TR Forward probabilities")+"\t: " + prob_string ) ;
 	oy += celly ;
 	oy += celly ;
 
@@ -353,7 +353,7 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 
 QString TurtleRouterStatisticsWidget::speedString(float f)
 {
-	if(f < 1.0f) 
+	if(f < 1.0f)
 		return QString("0 B/s") ;
 	if(f < 1024.0f)
 		return QString::number((int)f)+" B/s" ;

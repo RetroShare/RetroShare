@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/RetroStyleLabel.cpp                                                    *
+ * retroshare-gui/src/util/RetroStyleLabel.cpp                                 *
  *                                                                             *
  * Copyright (c) 2006-2007, crypton                                            *
  * Copyright (c) 2006, Matt Edman, Justin Hipple                               *
@@ -19,7 +19,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <util/RetroStyleLabel.h>
+#include "util/RetroStyleLabel.h"
 
 #include <QPainter>
 #include <QMouseEvent>

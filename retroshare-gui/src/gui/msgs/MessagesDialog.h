@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/MessagesDialog.h                                                        *
+ * retroshare-gui/src/gui/msgs/MessagesDialog.h                                *
  *                                                                             *
  * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
- *******************************************************************************/
+ ******************************************************************************/
 
 #ifndef _MESSAGESDIALOG_H
 #define _MESSAGESDIALOG_H
@@ -103,7 +103,7 @@ private slots:
 
   void filterChanged(const QString &text);
   void filterColumnChanged(int column);
-  
+
   void tagAboutToShow();
   void tagSet(int tagId, bool set);
   void tagRemoveAll();

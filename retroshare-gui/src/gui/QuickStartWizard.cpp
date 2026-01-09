@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/QuikStartWizard.cpp                                                     *
+ * retroshare-gui/src/gui/QuikStartWizard.cpp                                  *
  *                                                                             *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -10,7 +10,7 @@
  *                                                                             *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.                         *
  *                                                                             *
  * You should have received a copy of the GNU Affero General Public License    *
@@ -47,27 +47,27 @@ QuickStartWizard::QuickStartWizard(QWidget *parent) :
     ui.headerFrame->setHeaderText("RetroShare");
 
 	  ui.pagesWizard->setCurrentIndex(0);
-	  
+
           loadNetwork();
 	  loadShare();
 	  loadGeneral();
 
-	  
+
 //	   ui.checkBoxF2FRouting->setChecked(true) ;
 //	   ui.checkBoxF2FRouting->setEnabled(false) ;
-	  
+
 	  connect( ui.netModeComboBox, SIGNAL( activated(int) ), this, SLOT( toggleUPnP() ) );
 //	  connect( ui.checkBoxTunnelConnection, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
-	  
+
 //	  bool b = rsPeers->getAllowTunnelConnection() ;
 //    ui.checkBoxTunnelConnection->setChecked(b) ;
-    
+
     QHeaderView_setSectionResizeModeColumn(ui.shareddirList->horizontalHeader(), 0, QHeaderView::Stretch);
     QHeaderView_setSectionResizeModeColumn(ui.shareddirList->horizontalHeader(), 2, QHeaderView::Interactive);
- 
+
     ui.shareddirList->horizontalHeader()->resizeSection( 0, 360 );
     ui.shareddirList->horizontalHeader()->setStretchLastSection(false);
-	  
+
   /* Hide platform specific features */
 #ifndef Q_OS_WIN
   ui.checkBoxRunRetroshareAtSystemStartup->setVisible(false);
@@ -148,7 +148,7 @@ void QuickStartWizard::on_pushButtonConnectionNext_clicked()
 				vs_dht = RS_VS_DHT_OFF;
 				break;
 		}
-	
+
 
         RsPeerDetails detail;
         if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
@@ -159,7 +159,7 @@ void QuickStartWizard::on_pushButtonConnectionNext_clicked()
 		{
 			rsPeers->setVisState(rsPeers->getOwnId(), vs_disc, vs_dht);
 		}
-	
+
         rsConfig->SetMaxDataRates( ui.doubleSpinBoxDownloadSpeed->value(), ui.doubleSpinBoxUploadSpeed->value() );
 
         ui.pagesWizard->setCurrentIndex(2);
@@ -215,7 +215,7 @@ void QuickStartWizard::on_pushButtonSystemFinish_clicked()
 #endif
 
   saveChanges();
-  
+
   close();
 }
 
@@ -407,7 +407,7 @@ QuickStartWizard::loadGeneral()
 
   ui.checkBoxStartMinimized->setChecked(Settings->getStartMinimized());
   ui.checkBoxQuit->setChecked(Settings->value("doQuit", false).toBool());
-  
+
   ui.rbtPageOnToolBar->setChecked(Settings->getPageButtonLoc());
 	ui.rbtPageOnListItem->setChecked(!Settings->getPageButtonLoc());
 
@@ -484,7 +484,7 @@ void QuickStartWizard::loadNetwork()
 			netIndex = 3; // NONE
 		}
 	}
-	
+
 	ui.discoveryComboBox->setCurrentIndex(netIndex);
 
 	int dlrate = 0;
@@ -532,7 +532,7 @@ void QuickStartWizard::saveChanges()
 			netMode = RS_NETMODE_UPNP;
 			break;
 	}
-    
+
 	rsPeers->setNetworkMode(ownId, netMode);
 
 	/* Check if vis has changed */
@@ -558,7 +558,7 @@ void QuickStartWizard::saveChanges()
 			vs_dht = RS_VS_DHT_OFF;
 			break;
 	}
-		
+
 	if ((vs_disc != detail.vs_disc) || (vs_dht != detail.vs_dht))
 	{
 		rsPeers->setVisState(ownId, vs_disc, vs_dht);

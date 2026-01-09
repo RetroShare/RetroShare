@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/GetStartedDialog.h                                                      *
+ * retroshare-gui/src/gui/GetStartedDialog.h                                   *
  *                                                                             *
  * Copyright (C) 2011 Robert Fernie   <retroshare.project@gmail.com>           *
  *                                                                             *

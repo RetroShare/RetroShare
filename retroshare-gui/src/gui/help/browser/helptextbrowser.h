@@ -21,7 +21,7 @@
 
 /*
 ** \file helptextbrowser.h
-** \version $Id: helptextbrowser.h 2679 2008-06-10 03:07:10Z edmanm $ 
+** \version $Id: helptextbrowser.h 2679 2008-06-10 03:07:10Z edmanm $
 ** \brief Displays an HTML-based help document
 */
 

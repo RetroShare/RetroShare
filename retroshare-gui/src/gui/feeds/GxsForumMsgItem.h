@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/GxsForumMsgItem.h                                                 *
+ * retroshare-gui/src/gui/feeds/GxsForumMsgItem.h                              *
  *                                                                             *
  * Copyright (c) 2014, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -66,7 +66,7 @@ private slots:
 	void on_linkActivated(QString link);
 
 signals:
-	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);	
+	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
 
 private:
 	void setup();

@@ -37,7 +37,7 @@ void WireGroupExtra::setUp()
 	connect(ui.pushButton_masthead, SIGNAL(clicked() ), this , SLOT(addMasthead()));
 
 	int desired_height = ui.pushButton_masthead->height() + ui.removeButton->height() + ui.lineEdit_Tagline->height();
-	int desired_width =  3/1.0 * desired_height + ui.lineEdit_Tagline->width(); 
+	int desired_width =  3/1.0 * desired_height + ui.lineEdit_Tagline->width();
 
 	ui.label_masthead->setFixedSize(desired_width, desired_height);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/PluginsPage.h                                                           *
+ * retroshare-gui/src/gui/PluginsPage.h                                        *
  *                                                                             *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/HandleRichText.h                                                       *
+ * retroshare-gui/src/util/HandleRichText.h                                    *
  *                                                                             *
  * Copyright (c) 2010 Thomas Kister    <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -18,7 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <gui/common/RSTextBrowser.h>
+#include "gui/common/RSTextBrowser.h"
 
 /**
  * This file provides helper functions and functors for translating data from/to

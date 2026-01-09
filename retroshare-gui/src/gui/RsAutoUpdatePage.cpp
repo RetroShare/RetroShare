@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/RsAutoUpdatePage.cpp                                                    *
+ * retroshare-gui/src/gui/RsAutoUpdatePage.cpp                                 *
  *                                                                             *
  * Copyright (c) 2009 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *

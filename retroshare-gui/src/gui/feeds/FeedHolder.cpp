@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/FeedHolder.cpp                                                    *
+ * retroshare-gui/src/gui/feeds/FeedHolder.cpp                                 *
  *                                                                             *
  * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *

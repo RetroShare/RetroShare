@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/toaster/FriendRequestToaster.h                                          *
+ * retroshare-gui/src/gui/toaster/FriendRequestToaster.h                       *
  *                                                                             *
  * Copyright (c) 2010 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

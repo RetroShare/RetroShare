@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/discstatus.h                                                  *
+ * retroshare-gui/src/gui/statusbar/discstatus.h                               *
  *                                                                             *
  * Copyright (c) 2008 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

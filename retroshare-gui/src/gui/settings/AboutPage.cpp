@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/AboutPage.cpp                                                  *
+ * retroshare-gui/src/gui/settings/AboutPage.cpp                               *
  *                                                                             *
  * Copyright 2009, Retroshare Team <retroshare.project@gmail.com>              *
  *                                                                             *

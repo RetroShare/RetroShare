@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/PixmapMerging.h                                                        *
+ * retroshare-gui/src/util/PixmapMerging.h                                     *
  *                                                                             *
  * Copyright (c) 2012 Crypton           <retroshare.project@gmail.com>         *
  *                                                                             *
@@ -22,9 +22,9 @@
 #define PIXMAPMERGING_H
 
 #ifdef UNUSED_CODE
-#include <util/rsqtutildll.h>
+#include "util/rsqtutildll.h"
 
-#include <util/NonCopyable.h>
+#include "util/NonCopyable.h"
 
 #include <string>
 
@@ -33,7 +33,7 @@ class QPixmap;
 /**
  * Merges 2 pixmaps together.
  *
- * 
+ *
  */
 class PixmapMerging : NonCopyable {
 public:

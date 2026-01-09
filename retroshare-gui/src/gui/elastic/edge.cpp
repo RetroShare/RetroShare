@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/elastic/edge.cpp                                                        *
+ * retroshare-gui/src/gui/elastic/edge.cpp                                     *
  *                                                                             *
  * Copyright (c) 2012, RetroShare Team <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -146,7 +146,7 @@ void Edge::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 	 float sin_theta_mins_2_pi_over_3 = sin_theta_plus_2_pi_over_3 - 2 * cos_theta * sin_2_pi_over_3 ;
 
     QPointF sourceArrowP1 = sourcePoint + QPointF(  sin_theta_plus_pi_over_3 * arrowSize,   cos_theta_plus_pi_over_3 * arrowSize);
-    QPointF sourceArrowP2 = sourcePoint + QPointF(sin_theta_plus_2_pi_over_3 * arrowSize, cos_theta_plus_2_pi_over_3 * arrowSize);   
+    QPointF sourceArrowP2 = sourcePoint + QPointF(sin_theta_plus_2_pi_over_3 * arrowSize, cos_theta_plus_2_pi_over_3 * arrowSize);
 
     QPointF destArrowP1 = destPoint + QPointF(  sin_theta_mins_pi_over_3 * arrowSize,   cos_theta_mins_pi_over_3 * arrowSize);
     QPointF destArrowP2 = destPoint + QPointF(sin_theta_mins_2_pi_over_3 * arrowSize, cos_theta_mins_2_pi_over_3 * arrowSize);
@@ -157,6 +157,6 @@ void Edge::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 		painter->setBrush(Qt::black);
 	}
     painter->drawConvexPolygon(QPolygonF() << line.p1() << sourceArrowP1 << sourceArrowP2);
-    painter->drawConvexPolygon(QPolygonF() << line.p2() << destArrowP1 << destArrowP2);        
+    painter->drawConvexPolygon(QPolygonF() << line.p2() << destArrowP1 << destArrowP2);
 }
 

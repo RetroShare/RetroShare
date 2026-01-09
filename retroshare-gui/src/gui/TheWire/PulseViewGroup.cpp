@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/PulseViewGroup.cpp                                              *
+ * retroshare-gui/src/gui/TheWire/PulseViewGroup.cpp                           *
  *                                                                             *
  * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *

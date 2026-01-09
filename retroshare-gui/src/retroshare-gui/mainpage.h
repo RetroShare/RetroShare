@@ -1,5 +1,5 @@
 /*******************************************************************************
- * retroshare-gui/mainpage.h                                                   *
+ * retroshare-gui/src/retroshare-gui/mainpage.h                                *
  *                                                                             *
  * Copyright (c) 2006-2007, crypton    <retroshare.project@gmail.com>          *
  * Copyright (c) 2006, Matt Edman, Justin Hipple                               *

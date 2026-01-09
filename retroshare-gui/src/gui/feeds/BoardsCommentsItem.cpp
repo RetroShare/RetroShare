@@ -1,5 +1,5 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/Posted/BoardsCommentsItem.cpp                        *
+ * retroshare-gui/src/gui/feeds/BoardsCommentsItem.cpp                         *
  *                                                                             *
  * Copyright (C) 2020 by RetroShare Team     <retroshare.project@gmail.com>    *
  *                                                                             *
@@ -298,7 +298,7 @@ void BaseBoardsCommentsItem::readToggled(bool checked)
 
     RsThread::async( [this,checked]() {
 		RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
-        
+
         rsPosted->setCommentReadStatus(msgPair, !checked);
     });
 }
@@ -445,7 +445,7 @@ void BoardsCommentsItem::setComment(const RsGxsComment& cmt)
 	if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
 		pixmap = GxsIdDetails::makeDefaultIcon(cmt.mMeta.mAuthorId,GxsIdDetails::LARGE);
 		ui->avatarLabel->setPixmap(pixmap);
-	
+
 	emit sizeChanged(this);
 
 }
@@ -516,7 +516,7 @@ void BoardsCommentsItem::fill()
 		ui->clearButton->show();
 		ui->readAndClearButton->show();
 	}
-	
+
 	// hide read button not yet functional
 	ui->readButton->hide();
 

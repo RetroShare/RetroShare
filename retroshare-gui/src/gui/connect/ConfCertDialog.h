@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/connect/ConfCertDialog.h                                                *
+ * retroshare-gui/src/gui/connect/ConfCertDialog.h                             *
  *                                                                             *
  * Copyright (C) 2006 Crypton         <retroshare.project@gmail.com>           *
  *                                                                             *

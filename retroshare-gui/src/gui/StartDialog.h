@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/StartDialog.h                                                           *
+ * retroshare-gui/src/gui/StartDialog.h                                        *
  *                                                                             *
  * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
  *                                                                             *

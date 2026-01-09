@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -52,7 +52,7 @@ StatisticDialog::StatisticDialog(QWidget *parent)
 
   /* Initialize Sent/Receive data counters */
   reset();
-  
+
   /* Hide Bandwidth Graph Settings frame */
   showSettingsFrame(false);
 
@@ -73,7 +73,7 @@ StatisticDialog::StatisticDialog(QWidget *parent)
     ui.frmOpacity->setVisible(false);
   }
 #endif
-  
+
 #if defined(Q_WS_X11)
   ui.frmOpacity->setVisible(false);
 #endif
@@ -145,7 +145,7 @@ StatisticDialog::createActions()
 
   connect(ui.btnCancelSettings, SIGNAL(clicked()),
       this, SLOT(cancelChanges()));
-  
+
   connect(ui.sldrOpacity, SIGNAL(valueChanged(int)),
       this, SLOT(setOpacity(int)));
 }
@@ -169,7 +169,7 @@ StatisticDialog::loadSettings()
 {
   /* Set window opacity slider widget */
   ui.sldrOpacity->setValue(_settings->getBWGraphOpacity());
-  
+
 
 
   /* Set the line filter checkboxes accordingly */
@@ -182,14 +182,14 @@ StatisticDialog::loadSettings()
                                ui.chkSendRate->isChecked());
 }
 
-/** 
+/**
  Resets the log start time
 */
 void
 StatisticDialog::reset()
 {
   /* Set to current time */
-//  ui.statusbar->showMessage(tr("Since:") + " " + 
+//  ui.statusbar->showMessage(tr("Since:") + " " +
 //			    QDateTime::currentDateTime()
 //			    .toString(DATETIME_FMT));
   /* Reset the graph */
@@ -204,12 +204,12 @@ StatisticDialog::saveChanges()
 {
   /* Hide the settings frame and reset toggle button */
   showSettingsFrame(false);
-  
+
   /* Save the opacity */
   Settings->setBWGraphOpacity(ui.sldrOpacity->value());
 
 
-  
+
   /* Save the line filter values */
   Settings->setBWGraphFilter(BWGRAPH_REC, ui.chkReceiveRate->isChecked());
   Settings->setBWGraphFilter(BWGRAPH_SEND, ui.chkSendRate->isChecked());
@@ -223,10 +223,10 @@ StatisticDialog::saveChanges()
   showNormal();
 }
 
-/** 
+/**
  Simply restores the previously saved settings
 */
-void 
+void
 StatisticDialog::cancelChanges()
 {
   /* Hide the settings frame and reset toggle button */
@@ -236,7 +236,7 @@ StatisticDialog::cancelChanges()
   loadSettings();
 }
 
-/** 
+/**
  Toggles the Settings pane on and off, changes toggle button text
 */
 void
@@ -260,7 +260,7 @@ void
 StatisticDialog::setOpacity(int value)
 {
   qreal newValue = value / 100.0;
-  
+
   /* Opacity only supported by Mac and Win32 */
 #if defined(Q_WS_MAC)
   this->setWindowOpacity(newValue);

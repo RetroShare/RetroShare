@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/rsettings.cpp                                                  *
+ * retroshare-gui/src/gui/settings/rsettings.cpp                               *
  *                                                                             *
  * Copyright (c) 2008, crypton                                                 *
  * Copyright (c) 2008, Matt Edman, Justin Hipple                               *

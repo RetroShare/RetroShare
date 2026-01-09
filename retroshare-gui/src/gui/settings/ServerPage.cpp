@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/ServerPage.cpp                                                 *
+ * retroshare-gui/src/gui/settings/ServerPage.cpp                              *
  *                                                                             *
  * Copyright (c) 2006 Crypton         <retroshare.project@gmail.com>           *
  *                                                                             *

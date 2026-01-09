@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -77,7 +77,7 @@ GamesDialog::GamesDialog(QWidget *parent)
 
   /* hide the Tree +/- */
   ui.peertreeWidget -> setRootIsDecorated( false );
-  
+
     /* Set header resize modes and initial section sizes */
 //	QHeaderView * _header = ui.peertreeWidget->header () ;
 //   	_header->setResizeMode (0, QHeaderView::Custom);
@@ -92,7 +92,7 @@ GamesDialog::GamesDialog(QWidget *parent)
 //	_header->setResizeMode (9, QHeaderView::Interactive);
 //	_header->setResizeMode (10, QHeaderView::Interactive);
 //	_header->setResizeMode (11, QHeaderView::Interactive);
-//    
+//
 //	_header->resizeSection ( 0, 25 );
 //	_header->resizeSection ( 1, 100 );
 //	_header->resizeSection ( 2, 100 );
@@ -183,7 +183,7 @@ void GamesDialog::updateGameDetails()
 	{
 		/* clear and finished */
 		detailWidget->clear();
-		//detailWidget->update(); 
+		//detailWidget->update();
 		mCurrentGame = "";
 		mCurrentGameStatus = "";
 		return;
@@ -196,7 +196,7 @@ void GamesDialog::updateGameDetails()
 	QTreeWidgetItem *oldSelect = getCurrentPeer();
 	QTreeWidgetItem *newSelect = NULL;
 	std::string oldId;
-	if (mCurrentGame != gameId) 
+	if (mCurrentGame != gameId)
 		oldSelect = NULL;   /* if we've changed game -> clear select */
 
 	if (oldSelect)
@@ -226,7 +226,7 @@ void GamesDialog::updateGameDetails()
 			if ((it->second).play == true)
 				showPeer = true;
 		}
-	
+
 		/* display */
 		if (showPeer)
 		{
@@ -257,7 +257,7 @@ void GamesDialog::updateGameDetails()
 			/* add a checkItem here */
 			//item -> setText(GAME_PEER_PLAY, "Maybe");
 			item -> setText(GAME_PEER_ID, QString::fromStdString(it->second.id));
-		
+
 			if ((oldSelect) && (oldId == it->first))
 			{
 				newSelect = item;
@@ -291,7 +291,7 @@ void GamesDialog::updateGameDetails()
 			item -> setText(GAME_PEER_INTEREST, "?");
 			item -> setText(GAME_PEER_PLAY, "?");
 			item -> setText(GAME_PEER_ID, QString::fromStdString(*fit));
-		
+
 			if ((oldSelect) && (oldId == *fit))
 			{
 				newSelect = item;
@@ -330,9 +330,9 @@ void GamesDialog::gameListPopupMenu( QPoint point )
       connect( deleteAct , SIGNAL( triggered() ), this, SLOT( deleteGame() ) );
 
       contextMnu.clear();
-      contextMnu.addSeparator(); 
+      contextMnu.addSeparator();
       contextMnu.addAction(deleteAct);
-      contextMnu.addSeparator(); 
+      contextMnu.addSeparator();
       contextMnu.exec( mevent->globalPos() );
 }
 

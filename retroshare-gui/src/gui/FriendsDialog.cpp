@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/FriendsDialog.cpp                                                       *
+ * retroshare-gui/src/gui/FriendsDialog.cpp                                    *
  *                                                                             *
  * Copyright (C) 2012 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

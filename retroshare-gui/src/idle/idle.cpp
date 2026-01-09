@@ -1,5 +1,5 @@
 /*******************************************************************************
- * idle/idle.h                                                                 *
+ * retroshare-gui/src/idle/idle.cpp                                            *
  *                                                                             *
  * Copyright (C) 2003  Justin Karneges <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -118,7 +118,7 @@ int Idle::secondsIdle()
 	//else if(t > 0) {  //t is always > 0
 	//	// do nothing
 	//}
-	
+
 	// how long have we been idle?
 	int idleTime = d->startTime.secsTo(QDateTime::currentDateTime());
 	return idleTime;

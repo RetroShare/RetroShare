@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/PostedGroupItem.cpp                                               *
+ * retroshare-gui/src/gui/feeds/PostedGroupItem.cpp                            *
  *                                                                             *
  * Copyright (c) 2014, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -174,7 +174,7 @@ void PostedGroupItem::fill()
 //	ui->nameLabel->setText(groupName());
 
 	ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));
-	
+
     ui->logoLabel->setEnableZoom(false);
     int desired_height = QFontMetricsF(font()).height() * ITEM_HEIGHT_FACTOR;
     ui->logoLabel->setFixedSize(ITEM_PICTURE_FORMAT_RATIO*desired_height,desired_height);

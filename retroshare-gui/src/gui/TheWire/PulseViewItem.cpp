@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/PulseViewItem.cpp                                               *
+ * retroshare-gui/src/gui/TheWire/PulseViewItem.cpp                            *
  *                                                                             *
  * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
@@ -331,8 +331,8 @@ void PulseDataItem::showPulse()
 			{
 				QPixmap pixmap;
 				if (GxsIdDetails::loadPixmapFromData(
-						mPulse->mGroupPtr->mHeadshot.mData, 
-						mPulse->mGroupPtr->mHeadshot.mSize, 
+						mPulse->mGroupPtr->mHeadshot.mData,
+						mPulse->mGroupPtr->mHeadshot.mSize,
 						pixmap,GxsIdDetails::ORIGINAL))
 				{
 					headshotOkay = true;
@@ -344,7 +344,7 @@ void PulseDataItem::showPulse()
 			setGroupName("GroupName UNKNOWN");
 		}
 
-		if (!headshotOkay) 
+		if (!headshotOkay)
 		{
 			// default.
             QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png").scaled(50,50);

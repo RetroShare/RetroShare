@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/toaster/DownloadToaster.cpp                                             *
+ * retroshare-gui/src/gui/toaster/DownloadToaster.cpp                          *
  *                                                                             *
  * Copyright (c) 2010 Retroshare Team <retroshare.project@gmail.com>           *
  * Copyright (C) 2007 - 2010 Xesc & Technology                                 *

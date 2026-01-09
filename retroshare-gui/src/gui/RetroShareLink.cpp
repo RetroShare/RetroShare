@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/RetroshareLink.cpp                                                      *
+ * retroshare-gui/src/gui/RetroshareLink.cpp                                   *
  *                                                                             *
  * Copyright (c) 2009 Cyril Soler      <retroshare.project@gmail.com>          *
  *                                                                             *

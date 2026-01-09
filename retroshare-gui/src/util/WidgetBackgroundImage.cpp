@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/WidgetBackgroundImage.cpp                                              *
+ * retroshare-gui/src/util/WidgetBackgroundImage.cpp                           *
  *                                                                             *
  * Copyright (c) 2006 Crypton                  <retroshare.project@gmail.com>  *
  *                                                                             *

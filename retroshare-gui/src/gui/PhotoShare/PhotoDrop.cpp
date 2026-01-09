@@ -34,7 +34,7 @@ class gridIndex
 
 		gridIndex(int in_row, int in_column)
 		:row(in_row), column(in_column) { return; }
-		
+
 		bool operator<(const gridIndex &other) const
 		{
 			if (row == other.row)
@@ -43,7 +43,7 @@ class gridIndex
 			}
 			return (row < other.row);
 		}
-		
+
 		int row, column;
 };
 
@@ -73,7 +73,7 @@ PhotoItem *PhotoDrop::getSelectedPhotoItem()
 
 
 
-void PhotoDrop::resizeEvent ( QResizeEvent * event ) 
+void PhotoDrop::resizeEvent ( QResizeEvent * event )
 {
 	/* calculate the preferred number of columns for the PhotoItems */
 	reorderPhotos();
@@ -184,7 +184,7 @@ void PhotoDrop::reorderPhotos()
 		PhotoItem *item = dynamic_cast<PhotoItem *>(litem->widget());
 		if (item)
 		{
-			
+
 			int selectedRow;
 			int selectedColumn;
 			int rowSpan;
@@ -195,10 +195,10 @@ void PhotoDrop::reorderPhotos()
 			std::cerr << " layoutIdx: " << i;
 			std::cerr << " item pos(" << selectedRow << ", " << selectedColumn;
 			std::cerr << ")" << std::endl;
-			
+
 			gridIndex idx(selectedRow, selectedColumn);
 			photoItems[idx] = item;
-	
+
 		}
 		else
 		{
@@ -207,7 +207,7 @@ void PhotoDrop::reorderPhotos()
 		}
 	}
 
-	pit = photoItems.begin(); 
+	pit = photoItems.begin();
 	if (pit == photoItems.end())
 	{
 		std::cerr << "PhotoDrop::reorderPhotos() No PhotoItems.";
@@ -246,7 +246,7 @@ void PhotoDrop::reorderPhotos()
 	{
 		glayout->removeWidget(pit->second);
 	}
-	
+
 	for(pit = photoItems.begin(), i = 0; pit != photoItems.end(); ++pit, ++i)
 	{
 		int row = i / mColumns;
@@ -279,7 +279,7 @@ void PhotoDrop::moveLeft()
 		std::cerr << std::endl;
 		return;
 	}
-	
+
 	int count = alayout->count();
 	if ((!mSelected) || (count < 2))
 	{
@@ -366,7 +366,7 @@ void PhotoDrop::moveRight()
 		std::cerr << std::endl;
 		return;
 	}
-	
+
 	int count = alayout->count();
 	if ((!mSelected) || (count < 2))
 	{
@@ -448,7 +448,7 @@ void PhotoDrop::checkMoveButtons()
 		std::cerr << std::endl;
 		return;
 	}
-	
+
 	int count = alayout->count();
 	if ((!mSelected) || (count < 2))
 	{
@@ -535,7 +535,7 @@ void PhotoDrop::clearPhotos()
 	mSelected = NULL;
 }
 
-	
+
 
 
 void PhotoDrop::dragEnterEvent(QDragEnterEvent *event)
@@ -590,7 +590,7 @@ void PhotoDrop::dropEvent(QDropEvent *event)
 	if (event->mimeData()->hasUrls())
 	{
 		std::cerr << "PhotoDrop::dropEvent() Urls:" << std::endl;
-		
+
 		QList<QUrl> urls = event->mimeData()->urls();
 		QList<QUrl>::iterator uit;
 		for (uit = urls.begin(); uit != urls.end(); ++uit)
@@ -648,7 +648,7 @@ void PhotoDrop::addPhotoItem(PhotoItem *item)
 
 	mPhotos.insert(item);
 	layout()->addWidget(item);
-	
+
 	//checkMoveButtons();
 }
 

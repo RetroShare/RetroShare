@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/dhtstatus.cpp                                                 *
+ * retroshare-gui/src/gui/statusbar/dhtstatus.cpp                              *
  *                                                                             *
  * Copyright (c) 2009 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -39,17 +39,17 @@ DHTStatus::DHTStatus(QWidget *parent)
     QHBoxLayout *hbox = new QHBoxLayout();
     hbox->setContentsMargins(0, 0, 0, 0);
     hbox->setSpacing(6);
-       
+
     statusDHT = new QLabel("<strong>" + tr("DHT") + ":</strong>", this );
 	 statusDHT->setToolTip(tr("<p>Retroshare uses Bittorrent's DHT as a proxy for connexions. It does not \"store\" your IP in the DHT. \
 				                        Instead the DHT is used by your trusted nodes to reach you while processing standard DHT requests. \
 												The status bullet will turn green as soon as Retroshare gets a DHT response from one of your trusted nodes.</p>")) ;
     hbox->addWidget(statusDHT);
-    
+
     dhtstatusLabel = new QLabel( this );
     dhtstatusLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/bullet_grey_128.png"));
     hbox->addWidget(dhtstatusLabel);
-    
+
     spaceLabel = new QLabel( "|", this );
     spaceLabel->setVisible(false);
     hbox->addWidget(spaceLabel);
@@ -91,7 +91,7 @@ void DHTStatus::getDHTStatus()
 		spaceLabel->setVisible(false);
 		dhtnetworkLabel->setVisible(false);
 		dhtnetworksizeLabel->setVisible(false);
-		
+
 		dhtnetworksizeLabel->setText("");
 		dhtnetworksizeLabel->setToolTip("");
 	}
@@ -135,7 +135,7 @@ void DHTStatus::getDHTStatus()
 			spaceLabel->setVisible(false);
 			dhtnetworkLabel->setVisible(false);
 			dhtnetworksizeLabel->setVisible(false);
-			
+
 			dhtnetworksizeLabel->setText("");
 			dhtnetworksizeLabel->setToolTip("");
 		}

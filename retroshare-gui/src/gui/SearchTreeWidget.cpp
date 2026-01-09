@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/SearchTreeWidget.cpp                                                    *
+ * retroshare-gui/src/gui/SearchTreeWidget.cpp                                 *
  *                                                                             *
  * Copyright (c) 2008 Robert Fernie    <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -68,7 +68,7 @@ QMimeData * SearchTreeWidget::mimeData ( const QList<QTreeWidgetItem *> items ) 
 
 
 
-QStringList SearchTreeWidget::mimeTypes () const 
+QStringList SearchTreeWidget::mimeTypes () const
 {
 	QStringList list;
 	list.push_back("application/x-rsfilelist");

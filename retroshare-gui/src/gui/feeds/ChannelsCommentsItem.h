@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/ChannelsCommentsItem.h                                                 *
+ * retroshare-gui/src/gui/feeds/ChannelsCommentsItem.h                         *
  *                                                                             *
  * Copyright (c) 2020, Retroshare Team   <retroshare.project@gmail.com>        *
  *                                                                             *
@@ -93,7 +93,7 @@ private slots:
 	void makeDownVote();
 
 signals:
-	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);	
+	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
 
 private:
     void setup();

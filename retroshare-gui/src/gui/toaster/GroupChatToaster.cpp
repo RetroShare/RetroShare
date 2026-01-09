@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/toaster/GroupChatToaster.cpp                                            *
+ * retroshare-gui/src/gui/toaster/GroupChatToaster.cpp                         *
  *                                                                             *
  * Copyright (c) 2012 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

@@ -44,7 +44,7 @@ public:
 private slots:
 	void modifyReputation();
 	void toggleAutoBanIdentities(bool b);
-	
+
 	static QString inviteMessage();
 	void sendInvite();
 private :

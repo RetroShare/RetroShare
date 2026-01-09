@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/log.h                                                                  *
+ * retroshare-gui/src/util/log.cpp                                             *
  *                                                                             *
  * Copyright (c) 2006-2007, crypton     <retroshare.project@gmail.com>         *
  * Copyright (c) 2006, Matt Edman, Justin Hipple                               *
@@ -47,7 +47,7 @@ Log::~Log()
 QStringList
 Log::logLevels()
 {
-  return (QStringList() << "debug" << "info" << "notice" 
+  return (QStringList() << "debug" << "info" << "notice"
                         << "warn" << "error");
 }
 

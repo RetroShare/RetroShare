@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/CustomFrame.cpp                                                 *
+ * retroshare-gui/src/gui/TheWire/CustomFrame.cpp                              *
  *                                                                             *
  * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *

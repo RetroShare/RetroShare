@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/hashingstatus.h                                               *
+ * retroshare-gui/src/gui/statusbar/hashingstatus.h                            *
  *                                                                             *
  * Copyright (c) 2008 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

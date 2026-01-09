@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/NewsFeedUserNotify.h                                              *
+ * retroshare-gui/src/gui/feeds/NewsFeedUserNotify.h                           *
  *                                                                             *
  * Copyright (c) 2012, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

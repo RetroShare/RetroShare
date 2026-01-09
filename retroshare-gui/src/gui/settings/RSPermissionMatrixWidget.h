@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/RSPermissionMatrixWidget.h                                     *
+ * retroshare-gui/src/gui/settings/RSPermissionMatrixWidget.h                  *
  *                                                                             *
  * Copyright (c) 2014 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/Widget.cpp                                                             *
+ * retroshare-gui/src/util/Widget.cpp                                          *
  *                                                                             *
  * Copyright (c) 2006  Crypton                 <retroshare.project@gmail.com>  *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/GxsTransportStatistics.cpp                                   *
+ * retroshare-gui/src/gui/statistics/GxsTransportStatistics.cpp                *
  *                                                                             *
  * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -90,7 +90,7 @@ GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
     : MainPage(parent)
 {
 	setupUi(this) ;
-	
+
 	mStateHelper = new UIStateHelper(this);
 	mStateHelper->addWidget(GXSTRANS_GROUP_META, treeWidget);
 
@@ -139,14 +139,14 @@ void GxsTransportStatistics::processSettings(bool bLoad)
     }
 
     Settings->endGroup();
-    
+
     m_bProcessSettings = false;
 }
 
 void GxsTransportStatistics::CustomPopupMenu( QPoint )
 {
 	QMenu contextMnu( this );
-	
+
 	QTreeWidgetItem *item = treeWidget->currentItem();
 	if (item) {
 	contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/info16.png"), tr("View details"), this, SLOT(personDetails()));
@@ -159,7 +159,7 @@ void GxsTransportStatistics::CustomPopupMenu( QPoint )
 void GxsTransportStatistics::CustomPopupMenuGroups( QPoint )
 {
 	QMenu contextMnu( this );
-	
+
 	QTreeWidgetItem *item = groupTreeWidget->currentItem();
 	if (item) {
 	contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/info16.png"), tr("View details"), this, SLOT(showAuthorInPeople()));
@@ -230,9 +230,9 @@ void GxsTransportStatistics::updateContent()
 
     treeWidget->clear();
     //time_t now = time(NULL) ;
-    
+
     // 1 - fill the table for pending packets
-	
+
 	time_t now = time(NULL) ;
 
     groupBox->setTitle(tr("Pending data items")+": " + QString::number(transinfo.outgoing_records.size()) );
@@ -244,11 +244,11 @@ void GxsTransportStatistics::updateContent()
         //QTreeWidgetItem *item = new QTreeWidgetItem();
 		GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(NULL,GxsIdDetails::ICON_TYPE_AVATAR) ;
         treeWidget->addTopLevelItem(item);
-        
+
         RsIdentityDetails details ;
         rsIdentity->getIdDetails(rec.recipient,details);
         QString nickname = QString::fromUtf8(details.mNickname.c_str());
-        
+
         if(nickname.isEmpty())
           nickname = tr("Unknown");
 
@@ -327,16 +327,16 @@ void GxsTransportStatistics::updateContent()
             GxsIdLabel *label = new GxsIdLabel();
             label->setId(meta.mAuthorId) ;
             groupTreeWidget->setItemWidget(sitem,COL_GROUP_GRP_ID,label) ;
-			
+
 			RsIdentityDetails idDetails ;
 			rsIdentity->getIdDetails(meta.mAuthorId,idDetails);
-			
+
 			QPixmap pixmap ;
 			QDateTime qdatetime = DateTime::DateTimeFromTime_t(meta.mPublishTs);
 
 			if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
 				pixmap = GxsIdDetails::makeDefaultIcon(meta.mAuthorId,GxsIdDetails::SMALL);
-				  
+
 			sitem->setIcon(COL_GROUP_GRP_ID, QIcon(pixmap));
 
 			sitem->setData(COL_GROUP_UNIQUE_ID, Qt::DisplayRole,QString::fromStdString(meta.mMsgId.toStdString()));
@@ -355,7 +355,7 @@ void GxsTransportStatistics::personDetails()
     if (id.empty()) {
         return;
     }
-    
+
     IdDetailsDialog *dialog = new IdDetailsDialog(RsGxsGroupId(id));
     dialog->show();
 }

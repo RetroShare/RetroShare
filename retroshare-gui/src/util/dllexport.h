@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/dllexport.h                                                            *
+ * retroshare-gui/src/util/dllexport.h                                         *
  *                                                                             *
  * Copyright (c) 2007 Crypton          <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -17,11 +17,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
- 
+
 #ifndef DLLEXPORT_H
 #define DLLEXPORT_H
 
-#include <util/global.h>
+#include "util/global.h"
 
 /**
  * @file dllexport.h
@@ -50,7 +50,7 @@
  * GCC > v4.0 support library visibility attributes.
  *
  * @see http://gcc.gnu.org/wiki/Visibility
- * 
+ *
  */
 //Shared library support
 #ifdef OS_WIN32

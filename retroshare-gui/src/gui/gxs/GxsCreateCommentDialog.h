@@ -38,8 +38,8 @@ public:
     explicit GxsCreateCommentDialog(RsGxsCommentService *service, const RsGxsGrpMsgIdPair& parentId, const RsGxsMessageId& threadId, const RsGxsId& default_author=RsGxsId(),QWidget *parent = 0);
 	~GxsCreateCommentDialog();
 
-	void loadComment(const QString &msgText, const QString &msgAuthor, const RsGxsId &msgAuthorId);	
-	
+	void loadComment(const QString &msgText, const QString &msgAuthor, const RsGxsId &msgAuthorId);
+
 private slots:
 	void createComment();
 	void checkLength();

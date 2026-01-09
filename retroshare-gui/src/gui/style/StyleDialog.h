@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/style/StyleDialog.h                                                     *
+ * retroshare-gui/src/gui/style/StyleDialog.h                                  *
  *                                                                             *
  * Copyright (c) 2006 Crypton         <retroshare.project@gmail.com>           *
  *                                                                             *

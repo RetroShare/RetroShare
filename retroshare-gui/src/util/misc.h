@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/misc.h                                                                 *
+ * retroshare-gui/src/util/misc.h                                              *
  *                                                                             *
  * Copyright (c) 2008, defnax           <retroshare.project@gmail.com>         *
  * Copyright (C) 2006  Christophe Dumez                                        *
@@ -88,7 +88,7 @@ class misc : public QObject
 //       }
 //       return x;
 //     }
-// 
+//
 //     template <class T> static T fromQByteArray(const QByteArray& s) {
 //       T x;
 //       std::istringstream i((const char*)s);

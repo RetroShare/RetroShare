@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/GxsCircleItem.cpp                                                 *
+ * retroshare-gui/src/gui/feeds/GxsCircleItem.cpp                              *
  *                                                                             *
  * Copyright (c) 2014, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -70,7 +70,7 @@ void GxsCircleItem::setup()
 		idName = QString::fromUtf8(idDetails.mNickname.c_str()) + " (ID=" + QString::fromStdString(mGxsId.toStdString()) + ")" ;
 	else
 		idName = QString::fromStdString(mGxsId.toStdString()) ;
-	
+
 	QPixmap pixmap ;
 	if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
 		pixmap = GxsIdDetails::makeDefaultIcon(mGxsId,GxsIdDetails::SMALL);

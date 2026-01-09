@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/BwCtrlWindow.h                                               *
+ * retroshare-gui/src/gui/statistics/BwCtrlWindow.h                            *
  *                                                                             *
  * Copyright (c) 2012 Robert Fernie   <retroshare.project@gmail.com>           *
  *                                                                             *

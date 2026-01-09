@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/GxsForumGroupItem.h                                               *
+ * retroshare-gui/src/gui/feeds/GxsForumGroupItem.h                            *
  *                                                                             *
  * Copyright (c) 2014, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -28,7 +28,7 @@
 namespace Ui {
 class GxsForumGroupItem;
 }
- 
+
 class FeedHolder;
 
 class GxsForumGroupItem : public GxsGroupFeedItem

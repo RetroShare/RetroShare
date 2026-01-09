@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/StatisticsWindow.h                                           *
+ * retroshare-gui/src/gui/statistics/StatisticsWindow.h                        *
  *                                                                             *
  * Copyright (c) 2011 Robert Fernier  <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -63,21 +63,21 @@ public:
 
 public slots:
   void setNewPage(int page);
-	
+
 protected:
     void changeEvent(QEvent *e);
     void closeEvent (QCloseEvent * event);
     void keyPressEvent(QKeyEvent *event) override;
-	
+
 private:
     void initStackedPage();
-    
+
     Ui::StatisticsWindow *ui;
 
     static StatisticsWindow *mInstance;
-    
+
     /** Creates a new action for a Main page. */
-    QAction* createPageAction(const QIcon &icon, const QString &text, QActionGroup *group);    
+    QAction* createPageAction(const QIcon &icon, const QString &text, QActionGroup *group);
 
 };
 

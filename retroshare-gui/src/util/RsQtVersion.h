@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/RsQtVersion.h                                                         *
+ * retroshare-gui/src/util/RsQtVersion.h                                       *
  *                                                                             *
  * Copyright (C) 2013 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

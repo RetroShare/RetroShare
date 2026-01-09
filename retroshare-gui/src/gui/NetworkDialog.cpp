@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/NetworkDialog.cpp                                                       *
+ * retroshare-gui/src/gui/NetworkDialog.cpp                                    *
  *                                                                             *
  * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -60,7 +60,7 @@ NetworkDialog::NetworkDialog(QWidget */*parent*/)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
-  
+
     connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
     connect( ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
@@ -190,7 +190,7 @@ void NetworkDialog::removeSelectedKeys()
 	}
 	if(!selected.empty())
 		removeKeys(selected);
-  
+
 	updateDisplay();
 }
 

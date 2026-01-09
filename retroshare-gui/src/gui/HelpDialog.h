@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/HelpDialog.h                                                            *
+ * retroshare-gui/src/gui/HelpDialog.h                                         *
  *                                                                             *
  * Copyright (C) 2006 Crypton         <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -29,7 +29,7 @@ namespace Ui {
 class HelpDialog;
 }
 
-class HelpDialog : public QDialog 
+class HelpDialog : public QDialog
 {
 	Q_OBJECT
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/PulseAddDialog.h                                                *
+ * retroshare-gui/src/gui/TheWire/PulseAddDialog.h                             *
  *                                                                             *
  * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *

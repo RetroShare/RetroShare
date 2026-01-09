@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/NewTag.h                                                       *
+ * retroshare-gui/src/gui/settings/NewTag.h                                    *
  *                                                                             *
  * Copyright 2010, Retroshare Team <retroshare.project@gmail.com>              *
  *                                                                             *
@@ -46,7 +46,7 @@ private slots:
     void textChanged(const QString &);
 
     void setTagColor();
-  
+
 private:
     void showColor(QRgb color);
 

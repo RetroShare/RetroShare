@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/PostedPage.cpp                                                 *
+ * retroshare-gui/src/gui/settings/PostedPage.cpp                              *
  *                                                                             *
  * Copyright 2014 Retroshare Team  <retroshare.project@gmail.com>              *
  *                                                                             *

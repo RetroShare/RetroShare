@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/stringutil.h                                                           *
+ * retroshare-gui/src/util/stringutil.h                                        *
  *                                                                             *
  * Copyright (c) 2008, crypton                 <retroshare.project@gmail.com>  *
  * Copyright (c) 2008, Matt Edman, Justin Hipple                               *
@@ -50,7 +50,7 @@ bool err(QString *str, const QString &errmsg);
 /** Wraps <b>str</b> at <b>width</b> characters wide, using <b>sep</b> as the
  * word separator (" ", for example), and placing the line ending <b>le</b> at
  * the end of each line, except the last.*/
-QString string_wrap(const QString &str, int width, 
+QString string_wrap(const QString &str, int width,
                     const QString &sep, const QString &le);
 
 /** Encodes the bytes in <b>buf</b> as an uppercase hexadecimal string and

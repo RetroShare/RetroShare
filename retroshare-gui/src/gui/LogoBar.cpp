@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/LogoBar.cpp                                                             *
+ * retroshare-gui/src/gui/LogoBar.cpp                                          *
  *                                                                             *
  * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -39,7 +39,7 @@ void LogoBar::init() {
 	setFrameShape(QFrame::NoFrame);
 
 
-	
+
 	//LogoButton
 	_logoButton = new RetroStyleLabel(this);
 	_logoButton->setPixmaps(

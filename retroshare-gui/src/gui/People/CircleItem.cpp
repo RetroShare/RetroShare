@@ -81,7 +81,7 @@ void CircleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 	gradient.setColorAt(0.0f,Qt::lightGray) ;
 	gradient.setColorAt(1.0f,Qt::darkGray) ;
 	painter->setBrush(gradient);
-	
+
 	painter->setPen(Qt::NoPen);
 	painter->setBrush(Qt::lightGray);
 	painter->drawEllipse(-7, -7, 20, 20);
@@ -142,7 +142,7 @@ void CircleItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	update();
 	QGraphicsItem::mousePressEvent(event);
 }
-void CircleItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) 
+void CircleItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
 	QMenu contextMnu ;
 

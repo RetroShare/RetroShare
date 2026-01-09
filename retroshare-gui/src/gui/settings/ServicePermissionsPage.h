@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/ServicePermissionPage.h                                        *
+ * retroshare-gui/src/gui/settings/ServicePermissionPage.h                     *
  *                                                                             *
  * Copyright (c) 2014 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

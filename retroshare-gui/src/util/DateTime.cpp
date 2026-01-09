@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/DateTime.cpp                                                           *
+ * retroshare-gui/src/util/DateTime.cpp                                        *
  *                                                                             *
  * Copyright (c) 2012 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *

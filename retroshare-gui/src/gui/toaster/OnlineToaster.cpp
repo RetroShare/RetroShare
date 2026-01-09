@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/toaster/OnlineToaster.cpp                                               *
+ * retroshare-gui/src/gui/toaster/OnlineToaster.cpp                            *
  *                                                                             *
  * Copyright (C) 2007 Crypton         <retroshare.project@gmail.com>           *
  *                                                                             *

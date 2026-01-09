@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/RsFile.cpp                                                             *
+ * retroshare-gui/src/util/RsFile.cpp                                          *
  *                                                                             *
  * Copyright (c) 2014 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

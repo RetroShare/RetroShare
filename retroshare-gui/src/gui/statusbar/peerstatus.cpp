@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/peerstatus.cpp                                                *
+ * retroshare-gui/src/gui/statusbar/peerstatus.cpp                             *
  *                                                                             *
  * Copyright (c) 2008 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -30,13 +30,13 @@ PeerStatus::PeerStatus(QWidget *parent)
     QHBoxLayout *hbox = new QHBoxLayout(this);
     hbox->setContentsMargins(0, 0, 0, 0);
     hbox->setSpacing(6);
-    
+
 
     iconLabel = new QLabel( this );
     int S = QFontMetricsF(iconLabel->font()).height();
      iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/avatar_grey_128.png").scaledToHeight(S,Qt::SmoothTransformation));
     hbox->addWidget(iconLabel);
-    
+
     statusPeers = new QLabel( tr("Friends: 0/0"), this );
     hbox->addWidget(statusPeers);
 

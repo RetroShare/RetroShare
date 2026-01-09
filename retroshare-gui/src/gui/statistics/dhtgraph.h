@@ -1,5 +1,5 @@
 /*******************************************************************************
- * retroshare-gui/src/statistics/dhtgraph.h                                    *
+ * retroshare-gui/src/retroshare-gui/src/statistics/dhtgraph.h                 *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
@@ -75,7 +75,7 @@ class DhtGraph : public RSGraphWidget
 
 			resetFlags(RSGRAPH_FLAGS_LOG_SCALE_Y) ;
 			setFlags(RSGRAPH_FLAGS_PAINT_STYLE_PLAIN) ;
-			
+
 			int graphColor = Settings->valueFromGroup("BandwidthStatsWidget", "cmbGraphColor", 0).toInt();
 
 			if(graphColor==0)

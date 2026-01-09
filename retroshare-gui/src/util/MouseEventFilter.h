@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/MouseEventFilter.h                                                     *
+ * retroshare-gui/src/util/MouseEventFilter.h                                  *
  *                                                                             *
  * Copyright (c) 2006, Crypton          <retroshare.project@gmail.com>         *
  *                                                                             *
@@ -26,7 +26,7 @@
 /**
  * Catch MouseMove event.
  *
- * 
+ *
  */
 class RSQTUTIL_API MouseMoveEventFilter : public EventFilter {
 public:
@@ -42,7 +42,7 @@ private:
 /**
  * Catch MouseButtonPress event.
  *
- * 
+ *
  */
 class RSQTUTIL_API MousePressEventFilter : public EventFilter {
 public:
@@ -60,7 +60,7 @@ private:
 /**
  * Catch MouseButtonRelease event.
  *
- * 
+ *
  */
 class RSQTUTIL_API MouseReleaseEventFilter : public EventFilter {
 public:
@@ -78,7 +78,7 @@ private:
 /**
  * Catch HoverEnter event.
  *
- * 
+ *
  */
 class RSQTUTIL_API MouseHoverEnterEventFilter : public EventFilter {
 public:
@@ -94,7 +94,7 @@ private:
 /**
  * Catch HoverLeave event.
  *
- * 
+ *
  */
 class RSQTUTIL_API MouseHoverLeaveEventFilter : public EventFilter {
 public:

@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -57,7 +57,7 @@ ExampleDialog::ExampleDialog(QWidget *parent)
 
   /* hide the Tree +/- */
   ui.peertreeWidget -> setRootIsDecorated( false );
-  
+
     /* Set header resize modes and initial section sizes */
 	QHeaderView * _header = ui.peertreeWidget->header () ;
 	QHeaderView_setSectionResizeModeColumn(_header, 0, QHeaderView::Custom);
@@ -97,10 +97,10 @@ void ExampleDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 
       votedownAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Vote Down" ), this );
       connect( votedownAct , SIGNAL( triggered() ), this, SLOT( votedown() ) );
-      
+
       contextMnu.clear();
       contextMnu.addAction(voteupAct);
-      contextMnu.addSeparator(); 
+      contextMnu.addSeparator();
       contextMnu.addAction(votedownAct);
       contextMnu.exec( mevent->globalPos() );
 }
@@ -124,7 +124,7 @@ void  ExampleDialog::insertExample()
         /* remove old items ??? */
 	peerWidget->clear();
 	peerWidget->setColumnCount(12);
-	
+
 
 
         QList<QTreeWidgetItem *> items;
@@ -137,8 +137,8 @@ void  ExampleDialog::insertExample()
 		/* First 5 (1-5) Key Items */
 		/* () Status Icon */
 		item -> setText(0, "");
-		
-		/* (0) Status */		
+
+		/* (0) Status */
 		item -> setText(1, QString::fromStdString(
 						it->second.statusString));
 
@@ -164,8 +164,8 @@ void  ExampleDialog::insertExample()
 		item -> setText(8, QString::fromStdString(it->second.loc));
 		/* () Country */
 		item -> setText(9, QString::fromStdString(it->second.country));
-	
-	
+
+
 		/* Hidden ones: */
 		/* ()  RsCertId */
 		{
@@ -174,7 +174,7 @@ void  ExampleDialog::insertExample()
 			item -> setText(10, QString::fromStdString(out.str()));
 		}
 
-		/* ()  AuthCode */	
+		/* ()  AuthCode */
                 item -> setText(11, QString::fromStdString(it->second.authCode));
 
 		/* change background */
@@ -207,7 +207,7 @@ void  ExampleDialog::insertExample()
 				}
 			}
 		}
-			
+
 
 
 		/* add to the list */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/TurtleRouterStatistics.h                                     *
+ * retroshare-gui/src/gui/statistics/TurtleRouterStatistics.h                  *
  *                                                                             *
  * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -61,8 +61,8 @@ class TurtleRouterStatisticsWidget:  public QWidget
 		virtual void paintEvent(QPaintEvent *event) ;
 		virtual void resizeEvent(QResizeEvent *event);
 
-		void updateTunnelStatistics(	const std::vector<std::vector<std::basic_string<char> > >&, 
-												const std::vector<std::vector<std::basic_string<char> > >&, 
+		void updateTunnelStatistics(	const std::vector<std::vector<std::basic_string<char> > >&,
+												const std::vector<std::vector<std::basic_string<char> > >&,
 												const std::vector<TurtleSearchRequestDisplayInfo >&,
 												const std::vector<TurtleTunnelRequestDisplayInfo >&) ;
 

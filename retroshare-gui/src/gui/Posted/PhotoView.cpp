@@ -39,7 +39,7 @@ PhotoView::PhotoView(QWidget *parent)
   ui->setupUi(this);
 
   setAttribute(Qt::WA_DeleteOnClose, true);
-  
+
   connect(ui->shareButton, SIGNAL(clicked()), this, SLOT(copyMessageLink()));
 }
 
@@ -49,21 +49,21 @@ PhotoView::~PhotoView()
 	delete ui;
 }
 
-void PhotoView::setPixmap(const QPixmap& pixmap) 
+void PhotoView::setPixmap(const QPixmap& pixmap)
 {
 	ui->photoLabel->setPixmap(pixmap);
 	this->adjustSize();
 }
 
-void PhotoView::setTitle(const QString& text) 
+void PhotoView::setTitle(const QString& text)
 {
 	ui->titleLabel->setText(text);
 }
 
-void PhotoView::setName(const RsGxsId& authorID) 
+void PhotoView::setName(const RsGxsId& authorID)
 {
 	ui->nameLabel->setId(authorID);
-	
+
 	RsIdentityDetails idDetails ;
 	rsIdentity->getIdDetails(authorID,idDetails);
 
@@ -71,21 +71,21 @@ void PhotoView::setName(const RsGxsId& authorID)
 
 	if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
 			pixmap = GxsIdDetails::makeDefaultIcon(authorID,GxsIdDetails::SMALL);
-			
+
 	ui->avatarWidget->setPixmap(pixmap);
 }
 
-void PhotoView::setTime(const QString& text) 
+void PhotoView::setTime(const QString& text)
 {
 	ui->timeLabel->setText(text);
 }
 
-void PhotoView::setGroupId(const RsGxsGroupId &groupId) 
+void PhotoView::setGroupId(const RsGxsGroupId &groupId)
 {
 	mGroupId = groupId;
 }
 
-void PhotoView::setMessageId(const RsGxsMessageId& messageId) 
+void PhotoView::setMessageId(const RsGxsMessageId& messageId)
 {
 	mMessageId = messageId ;
 }

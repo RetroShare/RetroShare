@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/TokenQueue.cpp                                                         *
+ * retroshare-gui/src/util/TokenQueue.cpp                                      *
  *                                                                             *
  * Copyright (c) 2012  Robert Fernie           <retroshare.project@gmail.com>  *
  *                                                                             *

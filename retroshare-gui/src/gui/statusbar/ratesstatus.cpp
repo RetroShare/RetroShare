@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statusbar/ratestatus.cpp                                                *
+ * retroshare-gui/src/gui/statusbar/ratestatus.cpp                             *
  *                                                                             *
  * Copyright (c) 2008 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -34,12 +34,12 @@ RatesStatus::RatesStatus(QWidget *parent)
     QHBoxLayout *hbox = new QHBoxLayout(this);
     hbox->setContentsMargins(0, 0, 0, 0);
     hbox->setSpacing(6);
-    
+
     iconLabel = new QLabel( this );
     iconLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/up0down0.png"));
     // iconLabel doesn't change over time, so we didn't need a minimum size
     hbox->addWidget(iconLabel);
-    
+
     statusRates = new QLabel( tr("<strong>Down:</strong> 0.00 (kB/s) | <strong>Up:</strong> 0.00 (kB/s)")+" ", this );
 //    statusPeers->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
     hbox->addWidget(statusRates);

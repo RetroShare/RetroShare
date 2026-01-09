@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/HelpDialog.cpp                                                          *
+ * retroshare-gui/src/gui/HelpDialog.cpp                                       *
  *                                                                             *
  * Copyright (C) 2006 Crypton         <retroshare.project@gmail.com>           *
  *                                                                             *

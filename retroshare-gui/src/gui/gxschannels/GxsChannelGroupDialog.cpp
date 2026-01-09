@@ -30,7 +30,7 @@
 
 // To start with we only have open forums - with distribution controls.
 
-const uint32_t ChannelCreateEnabledFlags = ( 
+const uint32_t ChannelCreateEnabledFlags = (
 			GXS_GROUP_FLAGS_NAME        |
 			GXS_GROUP_FLAGS_ICON        |
 			GXS_GROUP_FLAGS_DESCRIPTION   |
@@ -40,7 +40,7 @@ const uint32_t ChannelCreateEnabledFlags = (
 			// GXS_GROUP_FLAGS_PERSONALSIGN  |
             // GXS_GROUP_FLAGS_COMMENTS      |  // disabled because the UI doesn't handle it yet. Better to hide it then.
 			0);
-			
+
 const uint32_t ChannelCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
 			//GXS_GROUP_DEFAULTS_DISTRIB_GROUP        |
 			//GXS_GROUP_DEFAULTS_DISTRIB_LOCAL        |
@@ -91,7 +91,7 @@ void GxsChannelGroupDialog::initUi()
 		setUiText(UITYPE_BUTTONBOX_OK,   tr("Update Channel"));
 		break;
 	}
-	
+
 	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Channel Admins"));
 	setUiText(UITYPE_CONTACTS_DOCK,      tr("Select Channel Admins"));
 }

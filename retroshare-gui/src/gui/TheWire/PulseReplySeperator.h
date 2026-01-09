@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/PulseReplySeperator.h                                           *
+ * retroshare-gui/src/gui/TheWire/PulseReplySeperator.h                        *
  *                                                                             *
  * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *

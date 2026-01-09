@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/connect/PGPKeyDialog.h                                                  *
+ * retroshare-gui/src/gui/connect/PGPKeyDialog.h                               *
  *                                                                             *
  * Copyright 2006 by Crypton              <retroshare.project@gmail.com>       *
  *                                                                             *

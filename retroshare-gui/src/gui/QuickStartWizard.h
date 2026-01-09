@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/QuikStartWizard.h                                                       *
+ * retroshare-gui/src/gui/QuikStartWizard.h                                    *
  *                                                                             *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -27,17 +27,17 @@
 #include "ui_QuickStartWizard.h"
 
 
-class QuickStartWizard : public QDialog 
+class QuickStartWizard : public QDialog
 {
     Q_OBJECT
     Q_DISABLE_COPY(QuickStartWizard)
-    
+
 public:
     explicit QuickStartWizard(QWidget *parent = 0);
     virtual ~QuickStartWizard();
-    
+
     void loadNetwork();
-    void loadShare();    
+    void loadShare();
     void loadGeneral();
 
 protected:
@@ -46,7 +46,7 @@ protected:
 
 private:
     Ui::QuickStartWizard ui;
-    
+
     bool messageBoxOk(QString);
 
 private Q_SLOTS:
@@ -67,7 +67,7 @@ private Q_SLOTS:
         void on_pushButtonConnectionExit_clicked();
         void on_pushButtonConnectionNext_clicked();
         void on_pushButtonConnectionBack_clicked();
-	
+
 	void updateFlags(bool);
 	void saveChanges();
         //void toggleUPnP();

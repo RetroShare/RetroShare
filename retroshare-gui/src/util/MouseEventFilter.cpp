@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/MouseEventFilter.cpp                                                   *
+ * retroshare-gui/src/util/MouseEventFilter.cpp                                *
  *                                                                             *
  * Copyright (c) 2006, Crypton          <retroshare.project@gmail.com>         *
  *                                                                             *

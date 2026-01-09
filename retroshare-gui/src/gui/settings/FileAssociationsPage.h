@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/FileAssociationPage.h                                          *
+ * retroshare-gui/src/gui/settings/FileAssociationPage.h                       *
  *                                                                             *
  * Copyright 2009, Retroshare Team <retroshare.project@gmail.com>              *
  * Copyright 2009, Oleksiy Bilyanskyy                                          *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/FeedItem.h                                                        *
+ * retroshare-gui/src/gui/feeds/FeedItem.h                                     *
  *                                                                             *
  * Copyright (c) 2014, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

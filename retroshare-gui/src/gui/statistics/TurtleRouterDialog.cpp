@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/TurtleRouterDialog.cpp                                       *
+ * retroshare-gui/src/gui/statistics/TurtleRouterDialog.cpp                    *
  *                                                                             *
  * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -41,7 +41,7 @@ TurtleRouterDialog::TurtleRouterDialog(QWidget *parent)
 	: RsAutoUpdatePage(2000,parent)
 {
 	setupUi(this) ;
-	
+
 	m_bProcessSettings = false;
 
 	// Init the basic setup.
@@ -91,7 +91,7 @@ void TurtleRouterDialog::processSettings(bool bLoad)
     }
 
     Settings->endGroup();
-    
+
     m_bProcessSettings = false;
 
 }
@@ -106,9 +106,9 @@ void TurtleRouterDialog::updateDisplay()
 	std::vector<TurtleTunnelRequestDisplayInfo > tunnel_reqs_info ;
 
 	rsTurtle->getInfo(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
-	
+
 	std::sort(search_reqs_info.begin(),search_reqs_info.end(),sr_Compare) ;
-	
+
 	updateTunnelRequests(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 
 }
@@ -131,8 +131,8 @@ QString TurtleRouterDialog::getPeerName(const RsPeerId& peer_id)
 	}
 }
 
-void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std::string> >& hashes_info, 
-																const std::vector<std::vector<std::string> >& tunnels_info, 
+void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std::string> >& hashes_info,
+																const std::vector<std::vector<std::string> >& tunnels_info,
 																const std::vector<TurtleSearchRequestDisplayInfo >& search_reqs_info,
 																const std::vector<TurtleTunnelRequestDisplayInfo >& tunnel_reqs_info)
 {
@@ -144,7 +144,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 	for(int i=0;i<_f2f_TW->topLevelItemCount();++i)
 	{
 		QTreeWidgetItem *taken ;
-		while( (taken = _f2f_TW->topLevelItem(i)->takeChild(0)) != NULL) 
+		while( (taken = _f2f_TW->topLevelItem(i)->takeChild(0)) != NULL)
 			delete taken ;
 	}
 
@@ -162,7 +162,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 
 		if(parent->text(0).left(14) == tr("Unknown hashes"))
 			unknown_hash_found = true ;
-		
+
 		float num = strtof(tunnels_info[i][5].c_str(), NULL);  // printFloatNumber
 		char tmp[100] ;
 		std::string units[4] = { "B/s","KB/s","MB/s","GB/s" } ;
@@ -192,7 +192,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 	for(uint i=0;i<search_reqs_info.size();++i)
 	{
 		QString str = tr("Request id: %1\t %3 secs ago\t from  %2\t %4 (%5 hits)").arg(search_reqs_info[i].request_id,0,16).arg(getPeerName(search_reqs_info[i].source_peer_id), -25).arg(search_reqs_info[i].age).arg(QString::fromUtf8(search_reqs_info[i].keywords.c_str(),search_reqs_info[i].keywords.length())).arg(QString::number(search_reqs_info[i].hits));
-		
+
 		stl.clear() ;
 		stl.push_back(str) ;
 
@@ -216,7 +216,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 			stl.push_back(QString("...")) ;
 			top_level_t_requests->addChild(new QTreeWidgetItem(stl)) ;
 
-		} 
+		}
 
 	top_level_t_requests->setText(0, tr("Tunnel requests") + " ("+QString::number(tunnel_reqs_info.size()) + ")") ;
 
@@ -235,7 +235,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 			found = true ;
 
 		for(uint j=0;j<hashes_info.size() && !found;++j)
-			if(_f2f_TW->topLevelItem(i)->text(0).toStdString() == hashes_info[j][0]) 
+			if(_f2f_TW->topLevelItem(i)->text(0).toStdString() == hashes_info[j][0])
 				found=true ;
 
 		if(!found)
@@ -244,7 +244,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 			++i ;
 	}
 }
-	
+
 QTreeWidgetItem *TurtleRouterDialog::findParentHashItem(const std::string& hash)
 {
 	static const std::string null_hash = RsFileHash().toStdString() ;
@@ -254,7 +254,7 @@ QTreeWidgetItem *TurtleRouterDialog::findParentHashItem(const std::string& hash)
 	QList<QTreeWidgetItem*> items = _f2f_TW->findItems((hash==null_hash)?tr("Unknown hashes"):QString::fromStdString(hash),Qt::MatchStartsWith) ;
 
 	if(items.empty())
-	{	
+	{
 		QStringList stl ;
 		stl.push_back((hash==null_hash)?tr("Unknown hashes"):QString::fromStdString(hash)) ;
 		QTreeWidgetItem *item = new QTreeWidgetItem(_f2f_TW,stl) ;
@@ -299,7 +299,7 @@ void TunnelStatisticsDialog::processSettings(bool bLoad)
     }
 
     Settings->endGroup();
-    
+
     m_bProcessSettings = false;
 }
 
@@ -376,26 +376,26 @@ GxsAuthenticatedTunnelsDialog::GxsAuthenticatedTunnelsDialog(QWidget *parent)
 void GxsAuthenticatedTunnelsDialog::updateDisplay()
 {
     // Request info about ongoing tunnels
-    
+
     std::vector<RsGxsTunnelService::GxsTunnelInfo> tunnel_infos ;
-    
+
     rsGxsTunnel->getTunnelsInfo(tunnel_infos) ;
-    
+
  	//    // Tunnel information
- 	//           
+ 	//
 	//    GxsTunnelId  tunnel_id ;        // GXS Id we're talking to
 	//    RsGxsId  destination_gxs_id ;   // GXS Id we're talking to
 	//    RsGxsId  source_gxs_id ;	          // GXS Id we're using to talk
 	//    uint32_t tunnel_status ;	          // active, requested, DH pending, etc.
-	//    uint32_t total_size_sent ;	          // total bytes sent through that tunnel since openned (including management). 
-	//    uint32_t total_size_received ;	  // total bytes received through that tunnel since openned (including management). 
+	//    uint32_t total_size_sent ;	          // total bytes sent through that tunnel since openned (including management).
+	//    uint32_t total_size_received ;	  // total bytes received through that tunnel since openned (including management).
 
 	//    // Data packets
 
 	//    uint32_t pending_data_packets;         // number of packets not acknowledged by other side, still on their way. Should be 0 unless something bad happens.
 	//    uint32_t total_data_packets_sent ;     // total number of data packets sent (does not include tunnel management)
 	//    uint32_t total_data_packets_received ; // total number of data packets received (does not include tunnel management)
-        
+
     // now draw the shit
 	QPixmap tmppixmap(maxWidth, maxHeight);
 	tmppixmap.fill(Qt::transparent);
@@ -416,7 +416,7 @@ void GxsAuthenticatedTunnelsDialog::updateDisplay()
 
 	painter.setPen(QColor::fromRgb(0,0,0)) ;
 	painter.drawText(ox+2*cellx,oy+celly,tr("Authenticated tunnels:")) ; oy += celly ;
-        
+
     	for(uint32_t i=0;i<tunnel_infos.size();++i)
 	{
 		// std::cerr << "Drawing into pixmap of size " << maxWidth << "x" << maxHeight << std::endl;
@@ -428,7 +428,7 @@ void GxsAuthenticatedTunnelsDialog::updateDisplay()
 		painter.drawText(ox+6*cellx,oy+celly,tr("status: %1").arg(QString::number(tunnel_infos[i].tunnel_status))) ; oy += celly ;
 		painter.drawText(ox+6*cellx,oy+celly,tr("total sent: %1 bytes").arg(QString::number(tunnel_infos[i].total_size_sent))) ; oy += celly ;
 		painter.drawText(ox+6*cellx,oy+celly,tr("total recv: %1 bytes").arg(QString::number(tunnel_infos[i].total_size_received))) ; oy += celly ;
-        
+
 		//	painter.drawLine(0,oy,maxWidth,oy) ;
 		//	oy += celly ;
 	}

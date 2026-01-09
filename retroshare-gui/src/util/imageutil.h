@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/imageutil.h                                                            *
+ * retroshare-gui/src/util/imageutil.h                                         *
  *                                                                             *
  * Copyright (c) 2010 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *

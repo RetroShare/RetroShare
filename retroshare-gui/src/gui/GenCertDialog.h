@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/GenCertDialog.h                                                         *
+ * retroshare-gui/src/gui/GenCertDialog.h                                      *
  *                                                                             *
  * Copyright (C) 2006 Crypton         <retroshare.project@gmail.com>           *
  *                                                                             *

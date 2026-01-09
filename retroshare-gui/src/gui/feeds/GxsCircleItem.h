@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/GxsCircleItem.h                                                   *
+ * retroshare-gui/src/gui/feeds/GxsCircleItem.h                                *
  *                                                                             *
  * Copyright (c) 2014, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

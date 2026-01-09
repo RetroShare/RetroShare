@@ -44,7 +44,7 @@ CircleWidget::CircleWidget(QString name/*=QString()*/
 	ui->graphicsView->setEnabled(false);
 
 	ui->graphicsView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-	
+
 	ui->graphicsView->setRenderHints( QPainter::Antialiasing | QPainter::SmoothPixmapTransform );
 
 	setIsCurrent(false);
@@ -82,7 +82,7 @@ void CircleWidget::updateData(const RsGroupMetaData& gxs_group_info
 		update();
 	//}
 
-	if(!same_RsGxsCircleDetails(_circle_details , details)) 
+	if(!same_RsGxsCircleDetails(_circle_details , details))
     {
 		_circle_details=details;
 		typedef std::set<RsGxsId>::iterator itUnknownPeers;
@@ -96,17 +96,17 @@ void CircleWidget::updateData(const RsGroupMetaData& gxs_group_info
 		}
 
 		typedef std::set<RsPgpId>::const_iterator itAllowedPeers;
-		for (itAllowedPeers it = _circle_details.mAllowedNodes.begin() ; it != _circle_details.mAllowedNodes.end() ; ++it ) 
+		for (itAllowedPeers it = _circle_details.mAllowedNodes.begin() ; it != _circle_details.mAllowedNodes.end() ; ++it )
         {
 			RsPgpId pgp_id = *it;
 			emit askForPGPIdentityWidget(pgp_id);
 
 //			std::set<RsGxsId> gxs_id_list = it->second;
 //			typedef std::set<RsGxsId>::const_iterator itGxsId;
-//			for (itGxsId curs=gxs_id_list.begin(); curs != gxs_id_list.end(); ++curs) 
+//			for (itGxsId curs=gxs_id_list.begin(); curs != gxs_id_list.end(); ++curs)
 //            		{
 //				RsGxsId gxs_id = *curs;
-//				if(!gxs_id.isNull()) 
+//				if(!gxs_id.isNull())
 //					emit askForGXSIdentityWidget(gxs_id);
 //				}
 //			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/PulseTopLevel.h                                                 *
+ * retroshare-gui/src/gui/TheWire/PulseTopLevel.h                              *
  *                                                                             *
  * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
@@ -53,7 +53,7 @@ protected:
 	virtual void setRepublishesString(QString repub) override;
 	virtual void setRepliesString(QString reply) override;
 
-	// 
+	//
 	virtual void setReferenceString(QString ref) override;
 	virtual void setPulseStatus(PulseStatus status) override;
 // PulseDataInterface ===========

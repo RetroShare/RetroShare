@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/statistics/GxsTransportStatistics.h                                     *
+ * retroshare-gui/src/gui/statistics/GxsTransportStatistics.h                  *
  *                                                                             *
  * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

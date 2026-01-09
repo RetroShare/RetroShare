@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/PluginsPage.cpp                                                *
+ * retroshare-gui/src/gui/settings/PluginsPage.cpp                             *
  *                                                                             *
  * Copyright 2006, Crypton         <retroshare.project@gmail.com>              *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/MessengerWindow.cpp                                                     *
+ * retroshare-gui/src/gui/MessengerWindow.cpp                                  *
  *                                                                             *
  * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -138,7 +138,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
     button->setIcon(QIcon(":/icons/png/filesharing.png"));
     button->setToolTip(tr("Share files for your friends"));
     connect(button, SIGNAL(clicked()), this, SLOT(openShareManager()));
-    ui.friendList->addToolButton(button);	
+    ui.friendList->addToolButton(button);
 	button->setIconSize(QSize(27, 27));
 
     // load settings
@@ -222,7 +222,7 @@ void MessengerWindow::openShareManager()
 
 /** Loads own personal status message */
 void MessengerWindow::loadmystatusmessage()
-{ 
+{
     ui.messagelineEdit->setEditText( QString::fromUtf8(rsChats->getOwnCustomStateString().c_str()));
 }
 

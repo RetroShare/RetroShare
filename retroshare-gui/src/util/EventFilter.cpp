@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/EventFilter.cpp                                                        *
+ * retroshare-gui/src/util/EventFilter.cpp                                     *
  *                                                                             *
  * Copyright (C) 2006, 2007 crypton  <retroshare.project@gmail.com>            *
  *                                                                             *

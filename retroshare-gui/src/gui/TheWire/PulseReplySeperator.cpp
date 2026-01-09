@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/PulseReplySeperator.cpp                                         *
+ * retroshare-gui/src/gui/TheWire/PulseReplySeperator.cpp                      *
  *                                                                             *
  * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *

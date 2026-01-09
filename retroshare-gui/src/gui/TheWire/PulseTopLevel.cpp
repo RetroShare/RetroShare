@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/PulseTopLevel.cpp                                               *
+ * retroshare-gui/src/gui/TheWire/PulseTopLevel.cpp                            *
  *                                                                             *
  * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
@@ -107,7 +107,7 @@ void PulseTopLevel::setRepliesString(QString reply)
 	label_extra_replies->setText(BoldString(reply));
 	label_replies->setText(reply);
 }
-	
+
 void PulseTopLevel::setPulseStatus(PulseStatus status)
 {
 	widget_replies->setVisible(true); // this is only reachable if we have ORIG so show always.
@@ -148,7 +148,7 @@ void PulseTopLevel::setReferenceString(QString ref)
 		toolButton_followParent->setVisible(false);
 	}
 }
-	
+
 void PulseTopLevel::mousePressEvent(QMouseEvent */*event*/)
 {
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/gxs/GxsFeedItem.cpp                                  *
+ * retroshare-gui/src/retroshare-gui/src/gui/gxs/GxsFeedItem.cpp               *
  *                                                                             *
  * Copyright 2012-2013 by Robert Fernie   <retroshare.project@gmail.com>       *
  *                                                                             *

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/rsutildll.h                                                            *
+ * retroshare-gui/src/util/rsutildll.h                                         *
  *                                                                             *
  * Copyright (c) 2006 Crypton         <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -17,11 +17,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
- 
+
 #ifndef RSUTILDLL_H
 #define RSUTILDLL_H
 
-#include <util/dllexport.h>
+#include "util/dllexport.h"
 
 #ifdef RSUTIL_DLL
 	#ifdef BUILD_RSUTIL_DLL

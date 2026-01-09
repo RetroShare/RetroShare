@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/RemoteDirModel.h                                                        *
+ * retroshare-gui/src/gui/RemoteDirModel.h                                     *
  *                                                                             *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -219,7 +219,7 @@ class TreeStyle_RDM: public RetroshareDirModel
 //
 class FlatStyle_RDM: public RetroshareDirModel
 {
-	Q_OBJECT 
+	Q_OBJECT
 
 	public:
 		FlatStyle_RDM(bool mode);

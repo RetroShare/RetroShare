@@ -34,7 +34,7 @@ CrashStackTrace gCrashStackTrace;
 #include <QSharedMemory>
 #include <QLocalSocket>
 
-#include <rshare.h>
+#include "rshare.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/FriendsDialog.h"
 #include "gui/GenCertDialog.h"
@@ -105,9 +105,9 @@ __declspec(dllexport) __cdecl BOOL _OPENSSL_isservice(void)
 #endif
 #endif
 
-#include <util/stringutil.h>
-#include <retroshare/rsinit.h>
-#include <retroshare/rsiface.h>
+#include "util/stringutil.h"
+#include "retroshare/rsinit.h"
+#include "retroshare/rsiface.h"
 #include "gui/RsGUIEventManager.h"
 #include <unistd.h>
 

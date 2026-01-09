@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/RSHumanReadableDelegate.h                                               *
+ * retroshare-gui/src/gui/RSHumanReadableDelegate.h                            *
  *                                                                             *
  * Copyright (c) 2010 Cyril Soler      <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -18,19 +18,19 @@
  *                                                                             *
  *******************************************************************************/
 
-/** Use this class for displaying dates and sizes in a readable format, while allowing to read the 
+/** Use this class for displaying dates and sizes in a readable format, while allowing to read the
  *  real size in the column.
  *
  *  To use:
  *
- *  	- in the QABstractItemView constructor, do a 
+ *  	- in the QABstractItemView constructor, do a
  *
  *				myView->setItemDelegateForColumn(SR_SIZE_COL,new RSHumanReadableSizeDelegate()) ;
  *
  *  	- each field must be filled with a string that allows a proper sorting based on lexicographic
  *  	 order. For Sizes, use this:
  *
- *  			myView->setText(SR_SIZE_COL, QString("%1").arg(dir.count,(int)15,(int)10));	
+ *  			myView->setText(SR_SIZE_COL, QString("%1").arg(dir.count,(int)15,(int)10));
  *
  *  Note: there's no .cpp file, because the code here is really simple.
  */
@@ -42,7 +42,7 @@
 class RSHumanReadableDelegate: public QAbstractItemDelegate
 {
 	public:
-		virtual QSize sizeHint(const QStyleOptionViewItem&, const QModelIndex&) const 
+		virtual QSize sizeHint(const QStyleOptionViewItem&, const QModelIndex&) const
 		{
 			return QSize(50,17) ;
 		}
@@ -56,28 +56,28 @@ class RSHumanReadableDelegate: public QAbstractItemDelegate
 			QPalette::ColorGroup cg = option.state & QStyle::State_Enabled ? QPalette::Normal : QPalette::Disabled;
 			QVariant value = index.data(Qt::ForegroundRole);
 
-			if(value.isValid() && qvariant_cast<QColor>(value).isValid()) 
+			if(value.isValid() && qvariant_cast<QColor>(value).isValid())
 				option.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
 
 			// select pen color
 			if(option.state & QStyle::State_Selected)
 				painter->setPen(option.palette.color(cg, QPalette::HighlightedText));
-			else 
+			else
 				painter->setPen(option.palette.color(cg, QPalette::Text));
 
-			// draw the background color 
-			if(option.showDecorationSelected && (option.state & QStyle::State_Selected)) 
+			// draw the background color
+			if(option.showDecorationSelected && (option.state & QStyle::State_Selected))
 			{
-				if(cg == QPalette::Normal && !(option.state & QStyle::State_Active)) 
+				if(cg == QPalette::Normal && !(option.state & QStyle::State_Active))
 					cg = QPalette::Inactive;
 
 				painter->fillRect(option.rect, option.palette.brush(cg, QPalette::Highlight));
-			} 
-			else 
+			}
+			else
 			{
 				value = index.data(Qt::BackgroundRole);
 
-				if(value.isValid() && qvariant_cast<QColor>(value).isValid()) 
+				if(value.isValid() && qvariant_cast<QColor>(value).isValid())
 					painter->fillRect(option.rect, qvariant_cast<QColor>(value));
 			}
 		}

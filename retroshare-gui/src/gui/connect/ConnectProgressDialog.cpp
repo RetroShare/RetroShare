@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/connect/ConnectProgressDialog.cpp                                       *
+ * retroshare-gui/src/gui/connect/ConnectProgressDialog.cpp                    *
  *                                                                             *
  * Copyright 2012-2013 by Robert Fernie <retroshare.project@gmail.com>         *
  *                                                                             *

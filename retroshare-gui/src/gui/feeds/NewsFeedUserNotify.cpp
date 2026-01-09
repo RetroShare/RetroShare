@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/NewsFeedUserNotify.cpp                                            *
+ * retroshare-gui/src/gui/feeds/NewsFeedUserNotify.cpp                         *
  *                                                                             *
  * Copyright (c) 2012, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *

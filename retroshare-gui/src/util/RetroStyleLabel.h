@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/RetroStyleLabel.h                                                      *
+ * retroshare-gui/src/util/RetroStyleLabel.h                                   *
  *                                                                             *
  * Copyright (c) 2006-2007, crypton                                            *
  * Copyright (c) 2006, Matt Edman, Justin Hipple                               *
@@ -22,7 +22,7 @@
 #ifndef RETROSTYLELABEL_H
 #define RETROSTYLELABEL_H
 
-#include <util/rsqtutildll.h>
+#include "util/rsqtutildll.h"
 
 #include <QLabel>
 #include <QPixmap>

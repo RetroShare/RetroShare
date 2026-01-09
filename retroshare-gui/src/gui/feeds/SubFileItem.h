@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/SubFileItem.h                                                     *
+ * retroshare-gui/src/gui/feeds/SubFileItem.h                                  *
  *                                                                             *
  * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *

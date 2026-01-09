@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/WebuiPage.h                                                    *
+ * retroshare-gui/src/gui/settings/WebuiPage.h                                 *
  *                                                                             *
  * Copyright (c) 2014 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

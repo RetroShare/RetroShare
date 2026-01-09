@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/feeds/MsgItem.h                                                         *
+ * retroshare-gui/src/gui/feeds/MsgItem.h                                      *
  *                                                                             *
  * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
  *                                                                             *

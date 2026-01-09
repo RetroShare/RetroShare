@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/RetroshareLink.h                                                        *
+ * retroshare-gui/src/gui/RetroshareLink.h                                     *
  *                                                                             *
  * Copyright (c) 2009 Cyril Soler      <retroshare.project@gmail.com>          *
  *                                                                             *

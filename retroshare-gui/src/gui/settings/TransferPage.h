@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/TransferPage.h                                                 *
+ * retroshare-gui/src/gui/settings/TransferPage.h                              *
  *                                                                             *
  * Copyright (c) 2010 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

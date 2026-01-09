@@ -21,7 +21,7 @@
 
 /*
 ** \file helpbrowser.h
-** \version $Id: helpbrowser.h 2362 2008-02-29 04:30:11Z edmanm $ 
+** \version $Id: helpbrowser.h 2362 2008-02-29 04:30:11Z edmanm $
 ** \brief Displays a list of help topics and content
 */
 
@@ -64,7 +64,7 @@ private slots:
   void contentsItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *prev);
   /** Called when the user selects a different item in the search tree */
   void searchItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *prev);
-   
+
 private:
   /** Returns the language in which help topics should appear, or English
    * ("en") if no translated help files exist for the current GUI language. */
@@ -105,4 +105,4 @@ private:
 };
 
 #endif
-  
+

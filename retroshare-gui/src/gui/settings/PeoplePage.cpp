@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/settings/PeoplePage.cpp                                                 *
+ * retroshare-gui/src/gui/settings/PeoplePage.cpp                              *
  *                                                                             *
  * Copyright 2006, Crypton         <retroshare.project@gmail.com>              *
  *                                                                             *

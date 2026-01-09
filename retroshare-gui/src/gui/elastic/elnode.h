@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/elastic/elnode.h                                                        *
+ * retroshare-gui/src/gui/elastic/elnode.h                                     *
  *                                                                             *
  * Copyright (c) 2012, RetroShare Team <retroshare.project@gmail.com>          *
  *                                                                             *

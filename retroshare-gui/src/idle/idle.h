@@ -1,5 +1,5 @@
 /*******************************************************************************
- * idle/idle.h                                                                 *
+ * retroshare-gui/src/idle/idle.h                                              *
  *                                                                             *
  * Copyright (C) 2003  Justin Karneges <retroshare.project@gmail.com>          *
  *                                                                             *

@@ -40,9 +40,9 @@
 
 
 // Control of Publish Signatures.
-// 
+//
 // These are now defined in rsgxsflags.h
-// 
+//
 // #define FLAG_GROUP_SIGN_PUBLISH_MASK       0x000000ff
 // #define FLAG_GROUP_SIGN_PUBLISH_ENCRYPTED  0x00000001
 // #define FLAG_GROUP_SIGN_PUBLISH_ALLSIGNED  0x00000002
@@ -69,7 +69,7 @@ GxsGroupDialog::GxsGroupDialog(uint32_t enableFlags, uint32_t defaultFlags, QWid
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
-	
+
 	init();
 }
 
@@ -120,7 +120,7 @@ void GxsGroupDialog::init()
 		ui.filtercomboBox->hide();
 		//this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
 	}
-	
+
 	/* Add filter types */
     ui.filtercomboBox->addItem(tr("All People"));
     ui.filtercomboBox->addItem(tr("My Contacts"));
@@ -136,14 +136,14 @@ void GxsGroupDialog::init()
 	ui.adminsList->setModus(FriendSelectionWidget::MODUS_CHECK);
 	ui.adminsList->setShowType(FriendSelectionWidget::SHOW_GXS);
 	ui.adminsList->start();
-	
+
 
 	/* Setup Reasonable Defaults */
 
 	ui.idChooser->loadIds(0,RsGxsId());
     ui.circleComboBox->loadCircles(RsGxsCircleId());
     ui.localComboBox->loadGroups(0, RsNodeGroupId());
-	
+
 	ui.groupDesc->setPlaceholderText(tr("Set a descriptive description here"));
 
     	ui.personal_ifnopub->hide() ;
@@ -254,7 +254,7 @@ void GxsGroupDialog::clearForm()
 
 void GxsGroupDialog::setupDefaults()
 {
-	/* Enable / Show Parts based on Flags */	
+	/* Enable / Show Parts based on Flags */
 
 	if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_MASK)
 	{
@@ -350,13 +350,13 @@ void GxsGroupDialog::setupDefaults()
 		ui.antiSpam_perms_CB->setCurrentIndex(1) ;
         else
 		ui.antiSpam_perms_CB->setCurrentIndex(0) ;
-        
+
         QString antispam_string ;
         if(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK) antispam_string += tr("Message tracking") ;
 	if(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP) antispam_string += (antispam_string.isNull()?"":" and ")+tr("PGP signature required") ;
-    
+
     	ui.antiSpamValueLabel->setText(antispam_string) ;
-        
+
 #ifndef RS_USE_CIRCLES
     ui.typeGroup->setEnabled(false);
     ui.typeGroup_3->setEnabled(false);
@@ -375,7 +375,7 @@ void GxsGroupDialog::setupVisibility()
 	ui.distribGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
 	ui.distributionLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
 	ui.distributionValueLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
-    
+
 	ui.spamProtection_GB->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ANTI_SPAM);
 	ui.antiSpamLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ANTI_SPAM);
 	ui.antiSpamValueLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ANTI_SPAM);
@@ -448,7 +448,7 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     setupReadonly();
     clearForm();
     setGroupSignFlags(mGrpMeta.mSignFlags) ;
-	
+
 	RetroShareLink link;
 
     /* setup name */
@@ -463,14 +463,14 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     else
         ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
     ui.authorValueLabel->setId(mGrpMeta.mAuthorId);
-	
+
     ui.createdline->setText(DateTime::formatLongDateTime(mGrpMeta.mPublishTs));
 
 	link = RetroShareLink::createMessage(mGrpMeta.mAuthorId, "");
 
     if(!mGrpMeta.mAuthorId.isNull())
         ui.authorValueLabel->setText(link.toHtml());
-	
+
     ui.IDline->setText(QString::fromStdString(mGrpMeta.mGroupId.toStdString()));
     ui.descriptiontextEdit->setPlainText(description);
 
@@ -678,7 +678,7 @@ void GxsGroupDialog::createGroup()
 
 	close();
 }
-	
+
 uint32_t GxsGroupDialog::getGroupSignFlags()
 {
     /* grab from the ui options -> */
@@ -693,14 +693,14 @@ uint32_t GxsGroupDialog::getGroupSignFlags()
 	    signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_NONEREQ;
     }
 
-    if (ui.personal_required->isChecked()) 
+    if (ui.personal_required->isChecked())
 	    signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED;
 
-    if (ui.personal_ifnopub->isChecked()) 
+    if (ui.personal_ifnopub->isChecked())
 	    signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN;
 
     // Author Signature.
-    switch(ui.antiSpam_perms_CB->currentIndex()) 
+    switch(ui.antiSpam_perms_CB->currentIndex())
     {
     case 0: break ;
     case 2: signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN;	// no break below, since we want *both* flags in this case.
@@ -779,7 +779,7 @@ void GxsGroupDialog::updateCircleOptions()
 		ui.circleComboBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
 		ui.circleComboBox->setVisible(true);
 	}
-	else 
+	else
 	{
 		ui.circleComboBox->setEnabled(false);
 		ui.circleComboBox->setVisible(false);
@@ -790,7 +790,7 @@ void GxsGroupDialog::updateCircleOptions()
 		ui.localComboBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
 		ui.localComboBox->setVisible(true);
 	}
-	else 
+	else
 	{
 		ui.localComboBox->setEnabled(false);
 		ui.localComboBox->setVisible(false);
@@ -845,10 +845,10 @@ void GxsGroupDialog::cancelDialog()
 	close();
 }
 
-void GxsGroupDialog::addGroupLogo() 
+void GxsGroupDialog::addGroupLogo()
 {
 	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Group Logo"), 64, 64);
-	
+
 	if (img.isNull())
 		return;
 
@@ -904,7 +904,7 @@ void GxsGroupDialog::setSelectedModerators(const std::set<RsGxsId>& ids)
 
         if(det.mNickname.empty())
 			moderatorsListString += "[Unknown]";
-		
+
 		link = RetroShareLink::createMessage(det.mId, "");
 		if (link.valid())
 				moderatorsListString += link.toHtml() + "   ";

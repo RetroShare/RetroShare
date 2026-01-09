@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/RsProtectedTimer.cpp                                                   *
+ * retroshare-gui/src/util/RsProtectedTimer.cpp                                *
  *                                                                             *
  * Copyright (c) 2013 Cyril Soler     <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -18,7 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <retroshare-gui/RsAutoUpdatePage.h>
+#include "retroshare-gui/RsAutoUpdatePage.h"
 #include <iostream>
 
 #include "RsProtectedTimer.h"

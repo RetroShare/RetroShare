@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/MessagesDialog.cpp                                                      *
+ * retroshare-gui/src/gui/msgs/MessagesDialog.cpp                              *
  *                                                                             *
  * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -190,7 +190,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     // Set initial size of the splitter
     ui.listSplitter->setStretchFactor(0, 0);
     ui.listSplitter->setStretchFactor(1, 1);
-	
+
     // Set initial size of the splitter
     ui.boxSplitter->setStretchFactor(0, 0);
     ui.boxSplitter->setStretchFactor(1, 1);
@@ -1338,13 +1338,13 @@ void MessagesDialog::updateMessageSummaryList()
             tagCount [*tagId] = nCount;
         }
 
-        if (it->msgflags & RS_MSG_STAR) 
+        if (it->msgflags & RS_MSG_STAR)
             ++starredCount;
 
-        if (it->msgflags & RS_MSG_SYSTEM) 
+        if (it->msgflags & RS_MSG_SYSTEM)
             ++systemCount;
 
-        if (it->msgflags & RS_MSG_SPAM) 
+        if (it->msgflags & RS_MSG_SPAM)
             ++spamCount;
 
         /* calculate box */

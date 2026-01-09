@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/toaster/ToasterItem.cpp                                                 *
+ * retroshare-gui/src/gui/toaster/ToasterItem.cpp                              *
  *                                                                             *
  * Copyright (C) 2015 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

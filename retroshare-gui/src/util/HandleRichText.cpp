@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/HandleRichText.cpp                                                     *
+ * retroshare-gui/src/util/HandleRichText.cpp                                  *
  *                                                                             *
  * Copyright (c) 2010 Thomas Kister    <retroshare.project@gmail.com>          *
  *                                                                             *
@@ -148,8 +148,8 @@ public:
 		};
 	}
 };
-	  
-     
+
+
 /**
   * This class is used to store information for embedding smileys into <img/> tags.
   *
@@ -572,7 +572,7 @@ static QString saveSpace(const QString text)
 
 	for(int i=0;i<savedSpaceText.length();i++){
 		QChar cursChar=savedSpaceText.at(i);
-		
+
 		if(getKeyName || (!outBrackets && keyName.isEmpty())){
 			if((cursChar==QLatin1Char(' ')) || (cursChar==QLatin1Char('>'))) {
 				getKeyName=keyName.isEmpty();
@@ -972,7 +972,7 @@ static void optimizeHtml(QDomDocument& doc
 						pair.replace(" ","");
 						if (!pair.isEmpty()) {
 							QStringList& stylesListItem = stylesList[pair];
-							
+
 							//Add the new class to this value
 							stylesListItem.push_back(className);
 						}
@@ -1186,7 +1186,7 @@ void RsHtml::optimizeHtml(QString &text, unsigned int flag /*= 0*/
 	}
 
 	QDomElement body = doc.documentElement();
-    
+
 	QHash<QString, QStringList> stylesList;
 	QHash<QString, QString> knownStyle;
 

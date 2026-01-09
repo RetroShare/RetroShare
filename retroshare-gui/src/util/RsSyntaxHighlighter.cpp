@@ -1,5 +1,5 @@
 /*******************************************************************************
- * util/RsSyntaxHighlighter.cpp                                                *
+ * retroshare-gui/src/util/RsSyntaxHighlighter.cpp                             *
  *                                                                             *
  * Copyright (c) 2014 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *

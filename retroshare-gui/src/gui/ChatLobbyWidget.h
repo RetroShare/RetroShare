@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/ChatLobbyWidget.h                                                       *
+ * retroshare-gui/src/gui/ChatLobbyWidget.h                                    *
  *                                                                             *
  * Copyright (C) 2012 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
@@ -107,7 +107,7 @@ protected slots:
 private slots:
 	void filterColumnChanged(int);
 	void filterItems(const QString &text);
-	
+
     void setShowUserCountColumn(bool show);
     void setShowTopicColumn(bool show);
 
