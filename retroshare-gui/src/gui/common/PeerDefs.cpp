@@ -20,7 +20,7 @@
 
 #include <QCoreApplication>
 #include <retroshare/rspeers.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 #include <retroshare/rsidentity.h>
 
 #include "PeerDefs.h"

@@ -23,9 +23,9 @@
 
 #include <QSettings>
 #include <retroshare/rstypes.h>
-#include <retroshare/rsmsgs.h>
 
 class RSStyle;
+class ChatId;
 
 /** Handles saving and restoring RShares's settings for peers */
 class RsharePeerSettings : public QSettings

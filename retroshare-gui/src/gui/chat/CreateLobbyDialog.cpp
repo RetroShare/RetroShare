@@ -26,7 +26,7 @@
 #include <QPushButton>
 #include <algorithm>
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rstypes.h>
 
@@ -45,7 +45,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
 	ui->headerFrame->setHeaderText(tr("Create Chat Room"));
 
     RsGxsId default_identity ;
-    rsMsgs->getDefaultIdentityForChatLobby(default_identity) ;
+    rsChats->getDefaultIdentityForChatLobby(default_identity) ;
 
     ui->idChooser_CB->loadIds(IDCHOOSER_ID_REQUIRED, default_identity);
 
@@ -149,7 +149,7 @@ void CreateLobbyDialog::createLobby()
     if(ui->pgp_signed_CB->isChecked())
         lobby_flags |= RS_CHAT_LOBBY_FLAGS_PGP_SIGNED ;
     
-    ChatLobbyId id = rsMsgs->createChatLobby(lobby_name,gxs_id, lobby_topic, shareList, lobby_flags);
+    ChatLobbyId id = rsChats->createChatLobby(lobby_name,gxs_id, lobby_topic, shareList, lobby_flags);
 
     std::cerr << "gui: Created chat room " << std::hex << id << std::dec << std::endl ;
 

@@ -31,7 +31,7 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
 #include <retroshare/rsinit.h>
 
 #include <retroshare-gui/mainpage.h>

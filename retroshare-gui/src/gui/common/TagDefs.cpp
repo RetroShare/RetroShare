@@ -21,7 +21,7 @@
 #include <QCoreApplication>
 #include <QColor>
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
 
 #include "TagDefs.h"
 

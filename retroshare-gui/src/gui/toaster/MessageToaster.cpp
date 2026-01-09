@@ -21,7 +21,7 @@
 #include "MessageToaster.h"
 #include "../MainWindow.h"
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 
@@ -43,7 +43,7 @@ MessageToaster::MessageToaster(const std::string &peerId, const QString &title, 
 	ui.textLabel->setText(message);
 	ui.textLabel->setToolTip(message);
 
-	MessageInfo mi;
+    Rs::Mail::MessageInfo mi;
 
 	if (!rsMail->getMessage(peerId, mi))
 		return;

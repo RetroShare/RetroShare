@@ -26,7 +26,7 @@
 #include "ui_PopupChatDialog.h"
 #include "ChatDialog.h"
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 
 class PopupChatDialog : public ChatDialog
 {

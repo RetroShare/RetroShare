@@ -24,7 +24,7 @@
 #include <QDialog>
 #include <QThread>
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 #include "gui/chat/ChatStyle.h"
 
 #include "ui_ImHistoryBrowser.h"

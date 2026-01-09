@@ -23,7 +23,8 @@
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rsturtle.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
+#include <retroshare/rschats.h>
 #include <QObject>
 #include <QMutex>
 #include <QPoint>
