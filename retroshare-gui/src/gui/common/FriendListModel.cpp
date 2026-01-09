@@ -35,12 +35,8 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "retroshare/rsexpr.h"
-<<<<<<< Updated upstream
 #include "retroshare/rschats.h"
-=======
-#include "retroshare/rsmsgs.h"
 #include "gui/settings/rsharesettings.h"
->>>>>>> Stashed changes
 
 //#define DEBUG_MODEL
 //#define DEBUG_MODEL_INDEX
