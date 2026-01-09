@@ -35,7 +35,12 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "retroshare/rsexpr.h"
+<<<<<<< Updated upstream
 #include "retroshare/rschats.h"
+=======
+#include "retroshare/rsmsgs.h"
+#include "gui/settings/rsharesettings.h"
+>>>>>>> Stashed changes
 
 //#define DEBUG_MODEL
 //#define DEBUG_MODEL_INDEX
@@ -669,6 +674,23 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 	std::cerr << "  Display role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": ";
 #endif
 
+    // --- START DATE MODIFICATION ---
+    // Utility lambda to format the date according to user settings
+    auto formatDate = [](const QDateTime& dt) -> QString {
+        if (!dt.isValid() || dt.toTime_t() == 0) return QString(); // Or return "Never" if preferred
+
+        switch(Settings->getDateFormat()) {
+            case RshareSettings::DateFormat_ISO:
+                return dt.toString(Qt::ISODate).replace('T', ' '); // e.g. 2026-01-09 14:30
+            case RshareSettings::DateFormat_Text:
+                return dt.toString("dd MMM yyyy HH:mm");           // e.g. 09 Jan 2026 14:30
+            case RshareSettings::DateFormat_System:
+            default:
+                return QLocale::system().toString(dt, QLocale::ShortFormat); // System default
+        }
+    };
+    // --- END DATE MODIFICATION ---
+
 	switch(e.type)
 	{
 		case ENTRY_TYPE_GROUP:
@@ -748,7 +770,10 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
                                 }
                         }
 
-                        if(col == COLUMN_THREAD_LAST_CONTACT) return QVariant(most_recent_time);
+                        // --- MODIFICATION HERE: Use formatDate() ---
+                        if(col == COLUMN_THREAD_LAST_CONTACT) return QVariant(formatDate(most_recent_time));
+                        // -------------------------------------------
+
                         if(col == COLUMN_THREAD_IP)           return QVariant(most_recent_ip);
 
                         return QVariant();
@@ -790,7 +815,10 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 						return QVariant(QString::fromUtf8(node->node_info.location.c_str()));
 				}
 
-				case COLUMN_THREAD_LAST_CONTACT:   return QVariant(DateTime::DateTimeFromTime_t(node->node_info.lastConnect).toString());
+                // --- MODIFICATION HERE: Use formatDate() ---
+				case COLUMN_THREAD_LAST_CONTACT:   return QVariant(formatDate(DateTime::DateTimeFromTime_t(node->node_info.lastConnect)));
+                // -------------------------------------------
+
 				case COLUMN_THREAD_IP:             return QVariant(  (node->node_info.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(node->node_info) : QString("---"));
 				case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(node->node_info.id.toStdString()) );
 
