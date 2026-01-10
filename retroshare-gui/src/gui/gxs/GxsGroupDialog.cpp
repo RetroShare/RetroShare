@@ -63,6 +63,22 @@
 #define GXSGROUP_LOADGROUP          2
 #define GXSGROUP_INTERNAL_LOADGROUP 3
 
+static QString formatDate(uint64_t seconds)
+{
+    QDateTime dt = DateTime::DateTimeFromTime_t(seconds);
+    switch(Settings->getDateFormat()) {
+        case RshareSettings::DateFormat_ISO:
+            return dt.toString(Qt::ISODate).replace('T', ' ');
+        case RshareSettings::DateFormat_Text:
+            // Use system long format for the "Text" preference
+            return QLocale::system().toString(dt, QLocale::LongFormat);
+        case RshareSettings::DateFormat_System:
+        default:
+            // Use system short format (equivalent to locale settings)
+            return QLocale::system().toString(dt, QLocale::ShortFormat);
+    }
+}
+
 /** Constructor */
 GxsGroupDialog::GxsGroupDialog(uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
     : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mGrpMeta(), mMode(MODE_CREATE), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
@@ -458,13 +474,18 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     ui.nameline->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
     ui.popline->setText(QString::number( mGrpMeta.mPop)) ;
     ui.postsline->setText(QString::number(mGrpMeta.mVisibleMsgCount));
+
     if(mGrpMeta.mLastPost==0)
         ui.lastpostline->setText(tr("Never"));
     else
-        ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
+        // [MODIFICATION] Replaced the old formatLongDateTime with our formatDate helper 
+        // to ensure the Group/Board detail window respects your date settings.
+        ui.lastpostline->setText(formatDate(mGrpMeta.mLastPost));
+
     ui.authorValueLabel->setId(mGrpMeta.mAuthorId);
 	
-    ui.createdline->setText(DateTime::formatLongDateTime(mGrpMeta.mPublishTs));
+    // [MODIFICATION] Applied the uniform formatDate helper to the creation date field.
+    ui.createdline->setText(formatDate(mGrpMeta.mPublishTs));
 
 	link = RetroShareLink::createMessage(mGrpMeta.mAuthorId, "");
 

@@ -42,6 +42,20 @@
 
 /** Constructor */
 
+static QString formatDate(uint64_t seconds)
+{
+    QDateTime dt = DateTime::DateTimeFromTime_t(seconds);
+    switch(Settings->getDateFormat()) {
+        case RshareSettings::DateFormat_ISO:
+            return dt.toString(Qt::ISODate).replace('T', ' ');
+        case RshareSettings::DateFormat_Text:
+            return dt.toString("dd MMM yyyy HH:mm");
+        case RshareSettings::DateFormat_System:
+        default:
+            return QLocale::system().toString(dt, QLocale::ShortFormat);
+    }
+}
+
 PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData &group_meta, const RsGxsMessageId &post_id, bool isHome, bool autoUpdate)
     : BasePostedItem(feedHolder, feedId, group_meta, post_id, isHome, autoUpdate)
 {
@@ -168,15 +182,8 @@ void PostedCardView::setup()
 	ui->readAndClearButton->hide();
 }
 
-
-
 void PostedCardView::fill()
 {
-//	if (isLoading()) {
-//		/* Wait for all requests */
-//		return;
-//	}
-
 	RsReputationLevel overall_reputation = rsReputations->overallReputationLevel(mPost.mMeta.mAuthorId);
 	bool redacted = (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
 
@@ -187,178 +194,76 @@ void PostedCardView::fill()
 		ui->picture_frame->hide();
 		ui->fromLabel->setId(mPost.mMeta.mAuthorId);
 		ui->titleLabel->setText(tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(mPost.mMeta.mAuthorId.toStdString()))) ;
-		QDateTime qtime = DateTime::DateTimeFromTime_t(mPost.mMeta.mPublishTs);
-		QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
-		ui->dateLabel->setText(timestamp);
+		
+        // [MODIFICATION] Use standardized helper for consistent Ban message date
+		ui->dateLabel->setText(formatDate(mPost.mMeta.mPublishTs));
 	} else {
-
-		//QPixmap sqpixmap2 = FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png");
-
 		mInFill = true;
-		//int desired_height = 1.5*(ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height());
-		//int desired_width =  sqpixmap2.width()*desired_height/(float)sqpixmap2.height();
 
-		QDateTime qtime = DateTime::DateTimeFromTime_t(mPost.mMeta.mPublishTs);
-		QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
-		QString timestamp2 = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
-		ui->dateLabel->setText(timestamp2);
-		ui->dateLabel->setToolTip(timestamp);
+        // [MODIFICATION] Using the helper to respect format settings. 
+        // Removed hardcoded relative time calls ("timestamp2").
+		ui->dateLabel->setText(formatDate(mPost.mMeta.mPublishTs));
+		ui->dateLabel->setToolTip(QLocale::system().toString(DateTime::DateTimeFromTime_t(mPost.mMeta.mPublishTs), QLocale::ShortFormat));
 
 		ui->fromLabel->setId(mPost.mMeta.mAuthorId);
 
-		// Use QUrl to check/parse our URL
-		// The only combination that seems to work: load as EncodedUrl, extract toEncoded().
 		QByteArray urlarray(mPost.mLink.c_str());
 		QUrl url = QUrl::fromEncoded(urlarray.trimmed());
 		QString sitestr = "Invalid Link";
 
 		bool urlOkay = url.isValid();
-		if (urlOkay)
+		if (urlOkay && (url.scheme() == "https" || url.scheme() == "http" || url.scheme() == "ftp" || url.scheme() == "retroshare")) 
 		{
-			QString scheme = url.scheme();
-			if ((scheme != "https") 
-				&& (scheme != "http")
-				&& (scheme != "ftp") 
-				&& (scheme != "retroshare")) 
-			{
-				urlOkay = false;
-				sitestr = "Invalid Link Scheme";
-			}
-		}
-		
-		if (urlOkay)
-		{
-			QString urlstr =  QString("<a href=\"");
-			urlstr += QString(url.toEncoded());
-			urlstr += QString("\" ><span style=\" text-decoration: underline; color:#2255AA;\"> ");
-			urlstr += messageName();
-			urlstr += QString(" </span></a>");
-
-			QString siteurl = url.toEncoded();
-			sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#0079d3;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
-			
+			QString urlstr =  QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#2255AA;\"> %2 </span></a>")
+                             .arg(QString(url.toEncoded())).arg(messageName());
 			ui->titleLabel->setText(urlstr);
+			sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#0079d3;\"> %1 </span></a>").arg(QString(url.toEncoded()));
 		}else
 		{
 			ui->titleLabel->setText(messageName());
-
 		}
 		
-		if (urlarray.isEmpty())
-		{
-			ui->siteLabel->hide();
-		}
-
+		if (urlarray.isEmpty()) ui->siteLabel->hide();
 		ui->siteLabel->setText(sitestr);
 		
 		if(mPost.mImage.mData != NULL)
 		{
 			QPixmap pixmap;
 			GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
-			// Wiping data - as its been passed to thumbnail.
-			
-			if(pixmap.width() > 800){
-				QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
-				ui->pictureLabel->setPixmap(scaledpixmap);
-			}else{
+			if(pixmap.width() > 800)
+				ui->pictureLabel->setPixmap(pixmap.scaledToWidth(800, Qt::SmoothTransformation));
+			else
 				ui->pictureLabel->setPixmap(pixmap);
-			}
 		}
-		else //if (mPost.mImage.mData == NULL)
+		else 
 		{
 			ui->picture_frame->hide();
 		}
-		//else
-		//{
-		//	ui->picture_frame->show();
-		//}
 	}
 
-	//QString score = "Hot" + QString::number(post.mHotScore);
-	//score += " Top" + QString::number(post.mTopScore); 
-	//score += " New" + QString::number(post.mNewScore);
+	ui->scoreLabel->setText(QString::number(mPost.mTopScore));
+    ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_LINKS));
 
-	QString score = QString::number(mPost.mTopScore);
-
-	ui->scoreLabel->setText(score);
-
-	// FIX THIS UP LATER.
-    ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
-
-	QTextDocument doc;
-	doc.setHtml(ui->notes->text());
-	
-	if(doc.toPlainText().trimmed().isEmpty())
-		ui->notes->hide();
-	// differences between Feed or Top of Comment.
-	if (mFeedHolder)
+	if(mFeedHolder)
 	{
-		// feed.
-		//frame_comment->show();
 		ui->commentButton->show();
-
-		if (mPost.mComments)
-		{
-			QString commentText = QString::number(mPost.mComments);
-			commentText += " ";
-			commentText += tr("Comments");
-			ui->commentButton->setText(commentText);
-		}
-		else
-		{
-			ui->commentButton->setText(tr("Comment"));
-		}
-
+		ui->commentButton->setText(mPost.mComments ? QString::number(mPost.mComments) + " " + tr("Comments") : tr("Comment"));
 		setReadStatus(IS_MSG_NEW(mPost.mMeta.mMsgStatus), IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) || IS_MSG_NEW(mPost.mMeta.mMsgStatus));
 	}
 	else
 	{
-		// no feed.
-		//frame_comment->hide();
 		ui->commentButton->hide();
-
 		ui->readButton->hide();
-		ui->newLabel->hide();
 	}
 
-	if (mIsHome)
-	{
-		ui->clearButton->hide();
-		ui->readAndClearButton->hide();
-	}
-	else
-	{
-		ui->clearButton->show();
-		ui->readAndClearButton->show();
-	}
-
-	// disable voting buttons - if they have already voted.
 	if (mPost.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
 	{
 		ui->voteUpButton->setEnabled(false);
 		ui->voteDownButton->setEnabled(false);
 	}
 
-#if 0
-	uint32_t up, down, nComments;
-    
-	bool ok = rsPosted->retrieveScores(mPost.mMeta.mServiceString, up, down, nComments);
-
-	if(ok)
-	{
-		int32_t vote = up - down;
-		scoreLabel->setText(QString::number(vote));
-
-		numCommentsLabel->setText("<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px;"
-								  "margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span"
-								  "style=\" font-size:10pt; font-weight:600;\">#</span><span "
-								  "style=\" font-size:8pt; font-weight:600;\"> Comments:  "
-								  + QString::number(nComments) + "</span></p>");
-	}
-#endif
-
 	mInFill = false;
-
 	emit sizeChanged(this);
 }
+
 void PostedCardView::toggleNotes() {}

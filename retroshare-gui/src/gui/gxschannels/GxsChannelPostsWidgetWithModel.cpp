@@ -97,9 +97,11 @@ static QString formatDate(uint64_t seconds)
         case RshareSettings::DateFormat_ISO:
             return dt.toString(Qt::ISODate).replace('T', ' ');
         case RshareSettings::DateFormat_Text:
-            return dt.toString("dd MMM yyyy HH:mm");
+            // Use system long format for the "Text" preference
+            return QLocale::system().toString(dt, QLocale::LongFormat);
         case RshareSettings::DateFormat_System:
         default:
+            // Use system short format (equivalent to locale settings)
             return QLocale::system().toString(dt, QLocale::ShortFormat);
     }
 }
@@ -1314,7 +1316,8 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
     if(group.mMeta.mLastPost==0)
         ui->infoLastPost->setText(tr("Never"));
     else
-        ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
+        // [MODIFICATION] Replaced formatLongDateTime with our standardized formatDate helper.
+        ui->infoLastPost->setText(formatDate(group.mMeta.mLastPost));
 
     uint32_t current_sync_time  = GxsGroupFrameDialog::checkDelay(rsGxsChannels->getSyncPeriod(group.mMeta.mGroupId))/86400 ;
 
@@ -1365,7 +1368,8 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
     else
         ui->infoAdministrator->setText("[No contact author]");
 
-    ui->infoCreated->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
+    // [MODIFICATION] Replaced formatLongDateTime with our standardized formatDate helper.
+    ui->infoCreated->setText(formatDate(group.mMeta.mPublishTs));
 
     QString distrib_string ( "[unknown]" );
 
@@ -1407,6 +1411,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 
     showPostDetails();
 }
+
 void GxsChannelPostsWidgetWithModel::showChannelFilesContextMenu(QPoint p)
 {
     QModelIndex index = ui->channelFiles_TV->indexAt(p);

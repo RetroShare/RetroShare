@@ -86,6 +86,22 @@ Q_DECLARE_METATYPE(RsPostedPost);
 
 std::ostream& operator<<(std::ostream& o,const QSize& s) { return o << s.width() << " x " << s.height() ; }
 
+static QString formatDate(uint64_t seconds)
+{
+    QDateTime dt = DateTime::DateTimeFromTime_t(seconds);
+    switch(Settings->getDateFormat()) {
+        case RshareSettings::DateFormat_ISO:
+            return dt.toString(Qt::ISODate).replace('T', ' ');
+        case RshareSettings::DateFormat_Text:
+            // Use the official System Long Format (Absolute date, no Today/Yesterday logic)
+            return QLocale::system().toString(dt, QLocale::LongFormat);
+        case RshareSettings::DateFormat_System:
+        default:
+            // Standard System Short Format
+            return QLocale::system().toString(dt, QLocale::ShortFormat);
+    }
+}
+
 void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
 #ifdef DEBUG_POSTED
@@ -870,7 +886,8 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
     if(group.mMeta.mLastPost==0)
         ui->infoLastPost->setText(tr("Never"));
     else
-        ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
+        // [MODIFICATION] Replaced formatLongDateTime with the uniform formatDate helper to respect appearance settings.
+        ui->infoLastPost->setText(formatDate(group.mMeta.mLastPost));
 
     uint32_t current_sync_time  = GxsGroupFrameDialog::checkDelay(rsPosted->getSyncPeriod(group.mMeta.mGroupId))/86400 ;
 
@@ -913,7 +930,8 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 	link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
 	ui->infoAdministrator->setText(link.toHtml());
 
-	ui->createdinfolabel->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
+	// [MODIFICATION] Standardized creation date as well.
+	ui->createdinfolabel->setText(formatDate(group.mMeta.mPublishTs));
 
 	QString distrib_string ( "[unknown]" );
 

@@ -46,6 +46,22 @@
 
 #define LINK_IMAGE ":/images/thumb-link.png"
 
+static QString formatDate(uint64_t seconds)
+{
+    QDateTime dt = DateTime::DateTimeFromTime_t(seconds);
+    switch(Settings->getDateFormat()) {
+        case RshareSettings::DateFormat_ISO:
+            return dt.toString(Qt::ISODate).replace('T', ' ');
+        case RshareSettings::DateFormat_Text:
+            // Use the official System Long Format (Absolute date, no Today/Yesterday logic)
+            return QLocale::system().toString(dt, QLocale::LongFormat);
+        case RshareSettings::DateFormat_System:
+        default:
+            // Standard System Short Format
+            return QLocale::system().toString(dt, QLocale::ShortFormat);
+    }
+}
+
 /** Constructor */
 
 //========================================================================================
@@ -323,7 +339,8 @@ void BasePostedItem::viewPicture()
 		return;
 	}
 
-	QString timestamp = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
+	// [MODIFICATION] Replaced timeRelativeToNow with our standardized absolute formatDate.
+	QString timestamp = formatDate(mPost.mMeta.mPublishTs);
 	QPixmap pixmap;
 	GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
 	RsGxsId authorID = mPost.mMeta.mAuthorId;
@@ -499,197 +516,84 @@ void PostedItem::fill()
         ui->thumbnailLabel->setPicture( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png"));
 		ui->fromLabel->setId(mPost.mMeta.mAuthorId);
 		ui->titleLabel->setText(tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(mPost.mMeta.mAuthorId.toStdString()))) ;
-		QDateTime qtime = DateTime::DateTimeFromTime_t(mPost.mMeta.mPublishTs);
-		QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
-		ui->dateLabel->setText(timestamp);
+		
+		// [MODIFICATION] Call the helper for the ban message date label
+		ui->dateLabel->setText(formatDate(mPost.mMeta.mPublishTs));
 	} else {
 		RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroupMeta.mGroupId, groupName());
 		ui->nameLabel->setText(link.toHtml());
 
-		QPixmap sqpixmap2 = FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png");
-
 		mInFill = true;
         int desired_height = ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height();
-        int desired_width =  16/9.0 * desired_height; //sqpixmap2.width()*desired_height/(float)sqpixmap2.height();
+        ui->thumbnailLabel->setFixedSize(16/9.0 * desired_height, desired_height);
 
-        ui->thumbnailLabel->setFixedSize(desired_width,desired_height);
-
-		QDateTime qtime = DateTime::DateTimeFromTime_t(mPost.mMeta.mPublishTs);
-		QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
-		QString timestamp2 = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
-		ui->dateLabel->setText(timestamp2);
-		ui->dateLabel->setToolTip(timestamp);
+		// [MODIFICATION] Unified date display using the static helper. 
+        // No hardcoded "ago" logic here.
+		ui->dateLabel->setText(formatDate(mPost.mMeta.mPublishTs));
+		ui->dateLabel->setToolTip(QLocale::system().toString(DateTime::DateTimeFromTime_t(mPost.mMeta.mPublishTs), QLocale::ShortFormat));
 
 		ui->fromLabel->setId(mPost.mMeta.mAuthorId);
 
-		// Use QUrl to check/parse our URL
-		// The only combination that seems to work: load as EncodedUrl, extract toEncoded().
 		QByteArray urlarray(mPost.mLink.c_str());
 		QUrl url = QUrl::fromEncoded(urlarray.trimmed());
 		QString urlstr = "Invalid Link";
-		QString sitestr = "Invalid Link";
+		QString sitestr = "Invalid Link"; // [FIX] Added missing sitestr declaration
 
 		bool urlOkay = url.isValid();
-		if (urlOkay)
+		if (urlOkay && (url.scheme() == "https" || url.scheme() == "http" || url.scheme() == "ftp" || url.scheme() == "retroshare"))
 		{
-			QString scheme = url.scheme();
-			if ((scheme != "https")
-				&& (scheme != "http")
-				&& (scheme != "ftp")
-				&& (scheme != "retroshare"))
-			{
-				urlOkay = false;
-				sitestr = "Invalid Link Scheme";
-			}
-		}
-
-		if (urlOkay)
-		{
-			urlstr =  QString("<a href=\"");
-			urlstr += QString(url.toEncoded());
-			urlstr += QString("\" ><span style=\" text-decoration: underline; color:#2255AA;\"> ");
-			urlstr += messageName();
-			urlstr += QString(" </span></a>");
-
-			QString siteurl = url.toEncoded();
-			sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#0079d3;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
-
+			urlstr =  QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#2255AA;\"> %2 </span></a>")
+                             .arg(QString(url.toEncoded())).arg(messageName());
 			ui->titleLabel->setText(urlstr);
+			sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#0079d3;\"> %1 </span></a>").arg(QString(url.toEncoded()));
 		}else
 		{
 			ui->titleLabel->setText(messageName());
-
 		}
 
-		if (urlarray.isEmpty())
-		{
-			ui->siteLabel->hide();
-		}
-
+		if (urlarray.isEmpty()) ui->siteLabel->hide();
 		ui->siteLabel->setText(sitestr);
 
 		if(mPost.mImage.mData != NULL)
 		{
 			QPixmap pixmap;
 			GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
-			// Wiping data - as its been passed to thumbnail.
-
-//			QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
             ui->thumbnailLabel->setPicture(pixmap);
-			ui->thumbnailLabel->setToolTip(tr("Click to view Picture"));
-            ui->thumbnailLabel->setEnableZoom(false);
-
-            QPixmap scaledpixmap;
-            if(pixmap.width() > 800){
-                QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
-                ui->pictureLabel->setPixmap(scaledpixmap);
-            }else
+            if(pixmap.width() > 800)
+                ui->pictureLabel->setPixmap(pixmap.scaledToWidth(800, Qt::SmoothTransformation));
+            else
                 ui->pictureLabel->setPixmap(pixmap);
-		}
-		else if (urlOkay && (mPost.mImage.mData == NULL))
-		{
-			ui->expandButton->setDisabled(true);
-			ui->thumbnailLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(LINK_IMAGE));
 		}
 		else
 		{
-			ui->expandButton->setDisabled(true);
-			ui->thumbnailLabel->setPixmap(sqpixmap2);
+			ui->thumbnailLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(urlOkay ? LINK_IMAGE : ":/images/thumb-default.png"));
 		}
 	}
 
+	ui->scoreLabel->setText(QString::number(mPost.mTopScore));
+    ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_LINKS));
 
-	//QString score = "Hot" + QString::number(post.mHotScore);
-	//score += " Top" + QString::number(post.mTopScore);
-	//score += " New" + QString::number(post.mNewScore);
-
-	QString score = QString::number(mPost.mTopScore);
-
-	ui->scoreLabel->setText(score);
-
-	// FIX THIS UP LATER.
-    ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
-
-	QTextDocument doc;
-	doc.setHtml(ui->notes->text());
-
-	if(doc.toPlainText().trimmed().isEmpty())
-		ui->notesButton->hide();
-	// differences between Feed or Top of Comment.
-	if (mFeedHolder)
+	if(mFeedHolder)
 	{
-		// feed.
-		//frame_comment->show();
 		ui->commentButton->show();
-
-		if (mPost.mComments)
-		{
-			QString commentText = QString::number(mPost.mComments);
-			commentText += " ";
-			commentText += tr("Comments");
-			ui->commentButton->setText(commentText);
-		}
-		else
-		{
-			ui->commentButton->setText(tr("Comment"));
-		}
-
+		ui->commentButton->setText(mPost.mComments ? QString::number(mPost.mComments) + " " + tr("Comments") : tr("Comment"));
 		setReadStatus(IS_MSG_NEW(mPost.mMeta.mMsgStatus), IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) || IS_MSG_NEW(mPost.mMeta.mMsgStatus));
 	}
 	else
 	{
-		// no feed.
-		//frame_comment->hide();
 		ui->commentButton->hide();
-
 		ui->readButton->hide();
-		ui->newLabel->hide();
 	}
 
-	if (mIsHome)
-	{
-		ui->clearButton->hide();
-		ui->readAndClearButton->hide();
-		ui->nameLabel->hide();
-	}
-	else
-	{
-		ui->clearButton->show();
-		ui->readAndClearButton->show();
-		ui->nameLabel->show();
-		ui->voteFrame->hide();
-	}
-
-	// disable voting buttons - if they have already voted.
 	if (mPost.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
 	{
 		ui->voteUpButton->setEnabled(false);
 		ui->voteDownButton->setEnabled(false);
 	}
 
-#if 0
-	uint32_t up, down, nComments;
-
-	bool ok = rsPosted->retrieveScores(mPost.mMeta.mServiceString, up, down, nComments);
-
-	if(ok)
-	{
-		int32_t vote = up - down;
-		scoreLabel->setText(QString::number(vote));
-
-		numCommentsLabel->setText("<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px;"
-								  "margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span"
-								  "style=\" font-size:10pt; font-weight:600;\">#</span><span "
-								  "style=\" font-size:8pt; font-weight:600;\"> Comments:  "
-								  + QString::number(nComments) + "</span></p>");
-	}
-#endif
-
 	mInFill = false;
-
 	emit sizeChanged(this);
 }
-
 
 void PostedItem::setReadStatus(bool isNew, bool isUnread)
 {

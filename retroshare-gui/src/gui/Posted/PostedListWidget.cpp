@@ -426,8 +426,8 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 		if(group.mMeta.mLastPost==0)
             ui->infoLastPost->setText(tr("Never"));
         else
-		
-			ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
+            // [MODIFICATION] Unified display for Board details to respect user format settings.
+			ui->infoLastPost->setText(formatDate(group.mMeta.mLastPost));
 		
 			QString formatDescription = QString::fromUtf8(group.mDescription.c_str());
 
@@ -442,7 +442,8 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 			link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
 			ui->infoAdministrator->setText(link.toHtml());
 		
-		    ui->createdinfolabel->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
+            // [MODIFICATION] Creation date also follows the new helper.
+		    ui->createdinfolabel->setText(formatDate(group.mMeta.mPublishTs));
 
 			QString distrib_string ( "[unknown]" );
             

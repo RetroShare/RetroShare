@@ -36,6 +36,7 @@
 #include "gui/Identity/IdDialog.h"
 #include "gui/MainWindow.h"
 #include "util/DateTime.h"
+#include "gui/settings/rsharesettings.h"
 
 #include "ui_BoardPostDisplayWidget_compact.h"
 #include "ui_BoardPostDisplayWidget_card.h"
@@ -61,6 +62,20 @@ BoardPostDisplayWidgetBase::BoardPostDisplayWidgetBase(const RsPostedPost& post,
 {
 }
 
+static QString formatDate(uint64_t seconds)
+{
+    QDateTime dt = DateTime::DateTimeFromTime_t(seconds);
+    switch(Settings->getDateFormat()) {
+        case RshareSettings::DateFormat_ISO:
+            return dt.toString(Qt::ISODate).replace('T', ' ');
+        case RshareSettings::DateFormat_Text:
+            // Use the official System Long Format (no "Today" logic)
+            return QLocale::system().toString(dt, QLocale::LongFormat);
+        case RshareSettings::DateFormat_System:
+        default:
+            return QLocale::system().toString(dt, QLocale::ShortFormat);
+    }
+}
 
 void BoardPostDisplayWidgetBase::setCommentsSize(int comNb)
 {
@@ -195,23 +210,24 @@ void BoardPostDisplayWidgetBase::baseSetup()
         voteDownButton()->setDisabled(true);
         fromLabel()->setId(mPost.mMeta.mAuthorId);
         titleLabel()->setText(tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(mPost.mMeta.mAuthorId.toStdString()))) ;
-        QDateTime qtime = DateTime::DateTimeFromTime_t(mPost.mMeta.mPublishTs);
-        QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
-        dateLabel()->setText(timestamp);
+        
+        // [MODIFICATION] Use the helper to respect user format settings
+        dateLabel()->setText(formatDate(mPost.mMeta.mPublishTs));
+        
         pictureLabel()->setDisabled(true);
     }
     else
     {
-        QDateTime qtime = DateTime::DateTimeFromTime_t(mPost.mMeta.mPublishTs);
-        QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
-        QString timestamp2 = misc::timeRelativeToNow(mPost.mMeta.mPublishTs) + " " + tr("ago");
-        dateLabel()->setText(timestamp);
-        dateLabel()->setToolTip(timestamp2);
+        // [MODIFICATION] Replaced old manual string "ago" and timeRelativeToNow.
+        // Now using the standardized absolute date formatter.
+        dateLabel()->setText(formatDate(mPost.mMeta.mPublishTs));
+
+        // Use a standard reference format for the tooltip
+        dateLabel()->setToolTip(QLocale::system().toString(DateTime::DateTimeFromTime_t(mPost.mMeta.mPublishTs), QLocale::ShortFormat));
 
         fromLabel()->setId(mPost.mMeta.mAuthorId);
 
         // Use QUrl to check/parse our URL
-        // The only combination that seems to work: load as EncodedUrl, extract toEncoded().
         QByteArray urlarray(mPost.mLink.c_str());
         QUrl url = QUrl::fromEncoded(urlarray.trimmed());
 
@@ -245,27 +261,16 @@ void BoardPostDisplayWidgetBase::baseSetup()
         }
     }
 
-    //QString score = "Hot" + QString::number(post.mHotScore);
-    //score += " Top" + QString::number(post.mTopScore);
-    //score += " New" + QString::number(post.mNewScore);
-
     QString score = QString::number(mPost.mTopScore);
-
     scoreLabel()->setText(score);
 
-    // FIX THIS UP LATER. Smileys are extra costly, so we only use them where really necessary
-    notes()->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
-    pictureLabel()->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
+    notes()->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_LINKS));
+    pictureLabel()->setText(notes()->text());
 
-    // feed.
-    //frame_comment->show();
     commentButton()->show();
-
     setCommentsSize(mPost.mComments);
-
     setReadStatus(IS_MSG_NEW(mPost.mMeta.mMsgStatus), IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) || IS_MSG_NEW(mPost.mMeta.mMsgStatus));
 
-    // disable voting buttons - if they have already voted.
     if (mPost.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
     {
         voteUpButton()->setEnabled(false);
@@ -273,11 +278,8 @@ void BoardPostDisplayWidgetBase::baseSetup()
     }
 
     connect(pictureLabel(), SIGNAL(clicked()), this, SLOT(viewPicture()));
-
-#ifdef TODO
-    emit sizeChanged(this);
-#endif
 }
+
 #ifdef TO_REMOVE
 void BoardPostDisplayWidgetBase::handleShareButtonClicked()
 {

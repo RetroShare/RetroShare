@@ -50,6 +50,23 @@ Q_GUI_EXPORT int qt_defaultDpi();
 #define FILTER_NAME_INDEX  0
 #define FILTER_DESC_INDEX  1
 
+static QString formatDate(uint64_t seconds)
+{
+    QDateTime dt = DateTime::DateTimeFromTime_t(seconds);
+    switch(Settings->getDateFormat()) {
+        case RshareSettings::DateFormat_ISO:
+            // Standard ISO 8601 format: YYYY-MM-DD HH:mm:ss
+            return dt.toString(Qt::ISODate).replace('T', ' ');
+        case RshareSettings::DateFormat_Text:
+            // Use the official System Long Format from locale
+            return QLocale::system().toString(dt, QLocale::LongFormat);
+        case RshareSettings::DateFormat_System:
+        default:
+            // Standard System Short Format
+            return QLocale::system().toString(dt, QLocale::ShortFormat);
+    }
+}
+
 GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 		QWidget(parent), ui(new Ui::GroupTreeWidget)
 {
@@ -434,7 +451,9 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		}
 		else
 		{
-			item->setText(GTW_COLUMN_LAST_POST, itemInfo.lastpost.toString(Qt::ISODate).replace("T"," "));
+            // [MODIFICATION] Replaced hardcoded toString(Qt::ISODate) with our formatDate helper.
+            // This ensures the "Last Post" column respects user appearance settings.
+			item->setText(GTW_COLUMN_LAST_POST, formatDate(DateTime::DateTimeToTime_t(itemInfo.lastpost)));
 			item->setData(GTW_COLUMN_LAST_POST, ROLE_SORT, (qint64) DateTime::DateTimeToTime_t(itemInfo.lastpost));
 		}
 
@@ -464,7 +483,8 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		if(itemInfo.lastpost == DateTime::DateTimeFromTime_t(0))
 			tooltip += "\n" + tr("Last Post") + ": "  + tr("Never") ;
 		else
-			tooltip += "\n" + tr("Last Post") + ": "  + DateTime::formatLongDateTime(itemInfo.lastpost) ;
+            // [MODIFICATION] Standardized tooltip date format as well
+			tooltip += "\n" + tr("Last Post") + ": "  + formatDate(DateTime::DateTimeToTime_t(itemInfo.lastpost)) ;
 		if(!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags))
 			tooltip += "\n" + tr("Subscribe to download and read messages") ;
 
