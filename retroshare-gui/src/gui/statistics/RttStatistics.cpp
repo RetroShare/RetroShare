@@ -46,19 +46,19 @@ public:
     bool operator<(const QTreeWidgetItem &other) const {
         int sortCol = treeWidget() ? treeWidget()->sortColumn() : 0;
 
-        // RTT Sort
-        if (sortCol == 1) {
-            QString txt1 = text(1);
-            QString txt2 = other.text(1);
+        if (sortCol == RttStatistics::COL_RTT) {
+            QString txt1 = text(RttStatistics::COL_RTT);
+            QString txt2 = other.text(RttStatistics::COL_RTT);
             long val1 = (txt1 == "?") ? std::numeric_limits<long>::max() : txt1.toLong();
             long val2 = (txt2 == "?") ? std::numeric_limits<long>::max() : txt2.toLong();
             return val1 < val2;
         }
-        // IP Sort
-        if (sortCol == 3) {
-            QString s1 = text(3);
-            QString s2 = other.text(3);
+
+        if (sortCol == RttStatistics::COL_IP_ADDRESS) {
+            QString s1 = text(RttStatistics::COL_IP_ADDRESS);
+            QString s2 = other.text(RttStatistics::COL_IP_ADDRESS);
             QHostAddress ip1(s1); QHostAddress ip2(s2);
+            
             bool isTorI2p1 = s1.contains(".onion") || s1.contains(".i2p");
             bool isTorI2p2 = s2.contains(".onion") || s2.contains(".i2p");
 
@@ -105,7 +105,11 @@ RttStatistics::RttStatistics(QWidget * /*parent*/)
 
 RttStatistics::~RttStatistics()
 {
-    if(m_timer) m_timer->stop();
+    if(m_timer) {
+        m_timer->stop();
+        delete m_timer; // Explicitly delete the timer as requested
+        m_timer = nullptr;
+    }
     // save settings
     processSettings(false);
 }
@@ -136,13 +140,15 @@ void RttStatistics::processSettings(bool bLoad)
 // --- Table Update Logic (O(N) Optimized) ---
 void RttStatistics::updateRttValues()
 {
-    // Only update if the rtt tab is visible and the table view is selected
+    // Only update if the RTT tab is visible and the table view is selected
     if (!isVisible() || tabWidget->currentIndex() != 1) return;
 
     std::list<RsPeerId> idList;
     if (!rsPeers) return;
     rsPeers->getOnlineList(idList);
 
+    // 1. Collect all current items into a hash map to track them.
+    // We use the Peer ID (stored in UserRole) as the key.
     QHash<QString, QTreeWidgetItem*> existingItems;
     for(int i = 0; i < treeWidget->topLevelItemCount(); ++i) {
         QTreeWidgetItem* item = treeWidget->topLevelItem(i);
@@ -154,6 +160,7 @@ void RttStatistics::updateRttValues()
         std::string peerIdStr = (*it).toStdString();
         QString qPeerId = QString::fromStdString(peerIdStr);
 
+        // Fetch RTT and peer details
         std::list<RsRttPongResult> results;
         rsRtt->getPongResults(*it, 1, results);
         int rttInMs = -1;
@@ -167,23 +174,27 @@ void RttStatistics::updateRttValues()
         QString peerName = QString::fromUtf8(details.name.c_str());
         QString ipAddress = QString::fromStdString(details.extAddr);
 
+        // 2. Take the item from the map. 
+        // This removes it from the 'existingItems' hash so it won't be deleted later.
         QTreeWidgetItem* item = existingItems.take(qPeerId);
 
         if (!item) {
+            // If the peer is new, create a new item
             item = new RttTreeItem(treeWidget);
             item->setData(0, Qt::UserRole, qPeerId);
         }
 
-        item->setText(0, peerName);
-        if (rttInMs != -1) item->setText(1, QString::number(rttInMs));
-        else item->setText(1, "?");
-        item->setText(2, qPeerId);
-        item->setText(3, ipAddress);
+        // Update the row values using the enums defined in the header
+        item->setText(COL_PEER_NAME, peerName);
+        item->setText(COL_RTT, (rttInMs != -1) ? QString::number(rttInMs) : "?");
+        item->setText(COL_NODE_ID, qPeerId);
+        item->setText(COL_IP_ADDRESS, ipAddress);
     }
 
+    // 3. Delete any items remaining in the hash map.
+    // These correspond to peers that are no longer online or have been removed.
     qDeleteAll(existingItems);
 }
-
 
 // --- Graph Source Implementation (Unchanged logic) ---
 
