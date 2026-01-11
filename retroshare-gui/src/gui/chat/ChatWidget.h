@@ -29,7 +29,7 @@
 #include "gui/common/RsButtonOnText.h"
 #include "gui/style/RSStyle.h"
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsstatus.h>
 

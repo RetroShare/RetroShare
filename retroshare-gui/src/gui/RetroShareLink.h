@@ -35,8 +35,9 @@
 //
 
 #include <retroshare/rsgxsifacetypes.h>
-#include <retroshare/rsmsgs.h>
 #include <retroshare/rstypes.h>
+#include <retroshare/rsmail.h>
+#include <retroshare/rschats.h>
 
 #include <QString>
 #include <QUrl>

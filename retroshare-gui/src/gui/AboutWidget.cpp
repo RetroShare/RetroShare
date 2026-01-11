@@ -71,7 +71,7 @@ AboutWidget::AboutWidget(QWidget* parent)
 void AboutWidget::installAWidget() {
     assert(tWidget == NULL);
     aWidget = new AWidget();
-    QVBoxLayout* l = (QVBoxLayout*)specialFrame->layout();
+	QHBoxLayout* l = (QHBoxLayout*)specialFrame->layout();
     l->insertWidget(0, aWidget);
     l->setStretchFactor(aWidget, 100);
     aWidget->setFocus();
@@ -87,7 +87,7 @@ void AboutWidget::installTWidget() {
     tWidget->setNextPieceLabel(npLabel);
 
     QWidget* pan = new QWidget();
-    QVBoxLayout* vl = new QVBoxLayout(pan);
+	QHBoxLayout* vl = new QHBoxLayout(pan);
     QLabel* topRecLabel = new QLabel(tr("Max score: %1").arg(tWidget->getMaxScore()));
     QLabel* scoreLabel = new QLabel(pan);
     QLabel* levelLabel = new QLabel(pan);
@@ -217,7 +217,6 @@ void AWidget::initImages()
     image1 = QImage(width(),height(),QImage::Format_ARGB32);
     image1.fill(palette().color(QPalette::Window));
 
-    //QImage image(":/images/logo/logo_info.png");
     QPixmap image(":/images/logo/logo_splash.png");
     QPainter p(&image1);
     p.setPen(Qt::black);
@@ -226,21 +225,22 @@ void AWidget::initImages()
     font.setPointSizeF(font.pointSizeF() + 2);
     p.setFont(font);
 
-    //p.drawPixmap(QRect(10, 10, width()-10, 60), image);
-
     /* Draw RetroShare version */
+    /* [Fix] Removed space before colon to match English typography */
 #ifdef RS_ONLYHIDDENNODE
-    p.drawText(QPointF(10, 50), QString("%1 : %2 (With embedded Tor)").arg(tr("Retroshare version"), Rshare::retroshareVersion(true)));
+    p.drawText(QPointF(10, 50), QString("%1: %2 (With embedded Tor)").arg(tr("RetroShare version"), RsApplication::retroshareVersion(true)));
 #else
-    p.drawText(QPointF(10, 50), QString("%1 : %2").arg(tr("Retroshare version"), RsApplication::retroshareVersion(true)));
+    p.drawText(QPointF(10, 50), QString("%1: %2").arg(tr("RetroShare version"), RsApplication::retroshareVersion(true)));
 #endif
 
+    /* [Added] Draw libretroshare version below the GUI version */
+    /* [Fix] Removed space before colon here too */
+    p.drawText(QPointF(10, 70), QString("%1: %2").arg(tr("libretroshare version"), QString::fromUtf8(RsInit::libRetroShareVersion())));
+
     /* Draw Qt's version number */
-    p.drawText(QPointF(10, 90), QString("Qt %1 : %2").arg(tr("version"), QT_VERSION_STR));
+    p.drawText(QPointF(10, 90), QString("Qt %1: %2").arg(tr("version"), QT_VERSION_STR));
 
     p.end();
-
-//    setFixedSize(image1.size());
 
     image2 = image1 ;
     mImagesReady = true ;
@@ -940,13 +940,17 @@ static QString addLibraries(const std::string &name, const std::list<RsLibraryIn
     return mTextEdit;
 }
 
-
 void AboutWidget::on_copy_button_clicked()
 {
 	QString verInfo;
 	QString rsVerString = "RetroShare Version: ";
     rsVerString+=RsApplication::retroshareVersion(true);
 	verInfo+=rsVerString;
+
+    /* [Added] Append libretroshare version to clipboard info */
+    verInfo+= "\nlibretroshare: ";
+    verInfo+= QString::fromUtf8(RsInit::libRetroShareVersion());
+
 #ifdef RS_ONLYHIDDENNODE
 	verInfo+=" " + tr("Only Hidden Node");
 #endif
@@ -1003,3 +1007,4 @@ void AboutWidget::on_copy_button_clicked()
 
 	QApplication::clipboard()->setText(verInfo);
 }
+

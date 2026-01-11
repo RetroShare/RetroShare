@@ -1,6 +1,7 @@
 #include <math.h>
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
+#include <retroshare/rschats.h>
 
 #include <QPainter>
 #include <QMessageBox>

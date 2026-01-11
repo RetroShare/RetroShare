@@ -20,9 +20,11 @@
 
 #include "NewTag.h"
 
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rsmail.h"
 
 #include <QColorDialog>
+
+using namespace Rs::Mail;
 
 /** Default constructor */
 NewTag::NewTag(MsgTagType &Tags, uint32_t nId /* = 0*/, QWidget *parent, Qt::WindowFlags flags)

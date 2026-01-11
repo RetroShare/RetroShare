@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include <retroshare/rstypes.h>
 #include <retroshare/rsevents.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 #include <retroshare/rsstatus.h>
 
 namespace Ui {

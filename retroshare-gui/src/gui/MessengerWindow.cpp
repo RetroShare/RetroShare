@@ -27,7 +27,7 @@
 #include "common/StatusDefs.h"
 
 #include <retroshare/rspeers.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 #include <retroshare/rsstatus.h>
 
 #include "rshare.h"
@@ -223,13 +223,13 @@ void MessengerWindow::openShareManager()
 /** Loads own personal status message */
 void MessengerWindow::loadmystatusmessage()
 { 
-    ui.messagelineEdit->setEditText( QString::fromUtf8(rsMsgs->getCustomStateString().c_str()));
+    ui.messagelineEdit->setEditText( QString::fromUtf8(rsChats->getOwnCustomStateString().c_str()));
 }
 
 /** Save own status message */
 void MessengerWindow::savestatusmessage()
 {
-    rsMsgs->setCustomStateString(ui.messagelineEdit->currentText().toUtf8().constData());
+    rsChats->setCustomStateString(ui.messagelineEdit->currentText().toUtf8().constData());
 }
 
 void MessengerWindow::updateOwnStatus(const QString &peer_id, RsStatusValue status)

@@ -28,7 +28,7 @@
 #include "util/FontSizeHandler.h"
 
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 
 #include <QAbstractButton>
 #include <QTreeWidget>

@@ -165,11 +165,11 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     getChatWidget()->addTitleBarWidget(inviteFriendsButton) ;
 
     RsGxsId current_id;
-    rsMsgs->getIdentityForChatLobby(lobbyId, current_id);
+    rsChats->getIdentityForChatLobby(lobbyId, current_id);
 
     uint32_t idChooserFlag = IDCHOOSER_ID_REQUIRED;
     ChatLobbyInfo lobbyInfo ;
-    if(rsMsgs->getChatLobbyInfo(lobbyId,lobbyInfo)) {
+    if(rsChats->getChatLobbyInfo(lobbyId,lobbyInfo)) {
         if (lobbyInfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED) {
             idChooserFlag |= IDCHOOSER_NON_ANONYMOUS;
         }
@@ -236,7 +236,7 @@ void ChatLobbyDialog::inviteFriends()
 	{
 		std::cerr << "    " << *it  << std::endl;
 
-        rsMsgs->invitePeerToLobby(mChatId.toLobbyId(),*it) ;
+        rsChats->invitePeerToLobby(mChatId.toLobbyId(),*it) ;
 	}
 }
 
@@ -388,7 +388,7 @@ void ChatLobbyDialog::init(const ChatId &/*id*/, const QString &/*title*/)
 
     QString title;
 
-    if(rsMsgs->getChatLobbyInfo(lobbyId,linfo))
+    if(rsChats->getChatLobbyInfo(lobbyId,linfo))
     {
         title = QString::fromUtf8(linfo.lobby_name.c_str());
 
@@ -403,7 +403,7 @@ void ChatLobbyDialog::init(const ChatId &/*id*/, const QString &/*title*/)
     ChatDialog::init(ChatId(lobbyId), title);
 
     RsGxsId gxs_id;
-    rsMsgs->getIdentityForChatLobby(lobbyId, gxs_id);
+    rsChats->getIdentityForChatLobby(lobbyId, gxs_id);
 
     RsIdentityDetails details ;
 
@@ -443,7 +443,7 @@ ChatLobbyDialog::~ChatLobbyDialog()
 	// check that the lobby still exists.
 	// announce leaving of lobby
 	if (mChatId.isLobbyId())
-		rsMsgs->sendLobbyStatusPeerLeaving(mChatId.toLobbyId());
+        rsChats->sendLobbyStatusPeerLeaving(mChatId.toLobbyId());
 
 	// save settings
 	processSettings(false);
@@ -494,12 +494,12 @@ void ChatLobbyDialog::processSettings(bool load)
  */
 void ChatLobbyDialog::setIdentity(const RsGxsId& gxs_id)
 {
-    rsMsgs->setIdentityForChatLobby(lobbyId, gxs_id) ;
+    rsChats->setIdentityForChatLobby(lobbyId, gxs_id) ;
 
     // get new nick name
     RsGxsId newid;
 
-    if (rsMsgs->getIdentityForChatLobby(lobbyId, newid))
+    if (rsChats->getIdentityForChatLobby(lobbyId, newid))
     {
         RsIdentityDetails details ;
         rsIdentity->getIdDetails(gxs_id,details) ;
@@ -514,7 +514,7 @@ void ChatLobbyDialog::setIdentity(const RsGxsId& gxs_id)
 void ChatLobbyDialog::changeNickname()
 {
     RsGxsId current_id;
-    rsMsgs->getIdentityForChatLobby(lobbyId, current_id);
+    rsChats->getIdentityForChatLobby(lobbyId, current_id);
 
     RsGxsId new_id ;
     ownIdChooser->getChosenId(new_id) ;
@@ -583,7 +583,7 @@ void ChatLobbyDialog::updateParticipantsList()
 {
     ChatLobbyInfo linfo;
 
-    if(rsMsgs->getChatLobbyInfo(lobbyId,linfo))
+    if(rsChats->getChatLobbyInfo(lobbyId,linfo))
     {
         ChatLobbyInfo cliInfo=linfo;
         QList<QTreeWidgetItem*>  qlOldParticipants=ui.participantsList->findItems("*",Qt::MatchWildcard,COLUMN_ID);
@@ -643,7 +643,7 @@ void ChatLobbyDialog::updateParticipantsList()
                 widgetitem->setIcon(COLUMN_ICON, bullet_green_128);
 
             RsGxsId gxs_id;
-            rsMsgs->getIdentityForChatLobby(lobbyId, gxs_id);
+            rsChats->getIdentityForChatLobby(lobbyId, gxs_id);
 
             if (RsGxsId(participant.toStdString()) == gxs_id) widgetitem->setIcon(COLUMN_ICON, bullet_blue_128);
 
@@ -739,12 +739,12 @@ void ChatLobbyDialog::distantChatParticipant()
 		return;
 
 	RsGxsId own_id;
-	rsMsgs->getIdentityForChatLobby(lobbyId, own_id);
+    rsChats->getIdentityForChatLobby(lobbyId, own_id);
 
 	DistantChatPeerId tunnel_id;
 	uint32_t error_code ;
 
-	if(! rsMsgs->initiateDistantChatConnexion(gxs_id,own_id,tunnel_id,error_code))
+    if(! rsChats->initiateDistantChatConnexion(gxs_id,own_id,tunnel_id,error_code))
 	{
 		QString error_str ;
 		switch(error_code)
@@ -791,7 +791,7 @@ void ChatLobbyDialog::muteParticipant(const RsGxsId& nickname)
     std::cerr << " Mute " << std::endl;
 
     RsGxsId gxs_id;
-    rsMsgs->getIdentityForChatLobby(lobbyId, gxs_id);
+    rsChats->getIdentityForChatLobby(lobbyId, gxs_id);
 
     if (gxs_id!=nickname)
         mutedParticipants.insert(nickname);
@@ -810,7 +810,7 @@ bool ChatLobbyDialog::isNicknameInLobby(const RsGxsId& nickname)
 {
     ChatLobbyInfo clinfo;
 
-    if(! rsMsgs->getChatLobbyInfo(lobbyId,clinfo))
+    if(! rsChats->getChatLobbyInfo(lobbyId,clinfo))
         return false ;
 
     return clinfo.gxs_ids.find(nickname) != clinfo.gxs_ids.end() ;
@@ -917,7 +917,7 @@ bool ChatLobbyDialog::canClose()
 	// check that the lobby still exists.
     /* TODO
 	ChatLobbyId lid;
-	if (!rsMsgs->isLobbyId(getPeerId(), lid)) {
+    if (!rsChats->isLobbyId(getPeerId(), lid)) {
 		return true;
 	}
     */

@@ -35,3 +35,7 @@ Thumbs.db
 /retroshare-gui/src/temp/
 /retroshare-service/src/retroshare-service
 /*.tar.?z
+
+# Build artifacts
+build/
+.vscode/

@@ -23,7 +23,8 @@
 #include "util/HandleRichText.h"
 #include <retroshare/rsidentity.h>
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
+#include <retroshare/rsmail.h>
 
 ChatLobbyToaster::ChatLobbyToaster(const ChatLobbyId &lobby_id, const RsGxsId &sender_id, const QString &message):
     QWidget(NULL), mLobbyId(lobby_id)
@@ -51,7 +52,7 @@ ChatLobbyToaster::ChatLobbyToaster(const ChatLobbyId &lobby_id, const RsGxsId &s
 	QString lobbyName = RsHtml::plainText(idd.mNickname);
 
     ChatLobbyInfo clinfo ;
-    if(rsMsgs->getChatLobbyInfo(mLobbyId,clinfo))
+    if(rsChats->getChatLobbyInfo(mLobbyId,clinfo))
             lobbyName += "@" + RsHtml::plainText(clinfo.lobby_name);
 
 	ui.toasterLabel->setText(lobbyName);

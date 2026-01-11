@@ -22,7 +22,8 @@
 
 #include "rshare.h"
 #include "rsharesettings.h"
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rschats.h"
+#include "retroshare/rsmail.h"
 
 #include "MessagePage.h"
 #include "util/misc.h"
@@ -31,6 +32,8 @@
 #include <algorithm>
 #include "NewTag.h"
 #include "util/qtthreadsutils.h"
+
+using namespace Rs::Mail;
 
 MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)

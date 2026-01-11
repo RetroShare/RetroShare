@@ -35,7 +35,7 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "retroshare/rsexpr.h"
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rschats.h"
 
 //#define DEBUG_MODEL
 //#define DEBUG_MODEL_INDEX
@@ -775,7 +775,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 						return QVariant(QString::fromStdString(node->node_info.id.toStdString()));
 
 				{
-					std::string css = rsMsgs->getCustomStateString(node->node_info.id);
+                    std::string css = rsChats->getCustomStateString(node->node_info.id);
 
 					if (mDisplayStatusString)
 						if(!css.empty())

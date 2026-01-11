@@ -23,7 +23,7 @@
 
 #include "ui_ChatLobbyToaster.h"
 
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rsmail.h"
 
 /**
  * Shows a toaster when a chat is incoming.

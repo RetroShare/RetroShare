@@ -24,7 +24,6 @@
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
-#include <retroshare/rsmsgs.h>
 
 bool pgpid_item_proxy::lessThan(const QModelIndex &left, const QModelIndex &right) const 
 {

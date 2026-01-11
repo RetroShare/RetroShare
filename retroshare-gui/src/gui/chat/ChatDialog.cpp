@@ -196,14 +196,14 @@ void ChatDialog::init(const ChatId &id, const QString &title)
 
 	uint32_t distant_peer_status ;
 
-    if(rsMsgs->getDistantChatStatus(RsGxsId(peerId),distant_peer_status))
+    if(rsChats->getDistantChatStatus(RsGxsId(peerId),distant_peer_status))
 	{
 		getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN ); // use own flags
 		return ;
 	}
 
 	ChatLobbyId lid;
-	if (rsMsgs->isLobbyId(peerId, lid)) {
+    if (rsChats->isLobbyId(peerId, lid)) {
 		getChat(peerId, (forceFocus ? (RS_CHAT_OPEN | RS_CHAT_FOCUS) : RS_CHAT_OPEN));
 	}
 
