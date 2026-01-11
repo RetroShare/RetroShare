@@ -35,9 +35,8 @@
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
-#include "gui/settings/rsharesettings.h"
 
-#include <retroshare/rsposted.h>
+#include "retroshare/rsposted.h"
 #include "retroshare/rsgxscircles.h"
 
 #define POSTED_DEFAULT_LISTING_LENGTH 10
@@ -50,6 +49,20 @@
 /* View mode */
 #define VIEW_MODE_CLASSIC  1
 #define VIEW_MODE_CARD  2
+
+static QString formatDate(uint64_t seconds)
+{
+    QDateTime dt = DateTime::DateTimeFromTime_t(seconds);
+    switch(Settings->getDateFormat()) {
+        case RshareSettings::DateFormat_ISO:
+            return dt.toString(Qt::ISODate).replace('T', ' ');
+        case RshareSettings::DateFormat_Text:
+            return QLocale::system().toString(dt, QLocale::LongFormat);
+        case RshareSettings::DateFormat_System:
+        default:
+            return QLocale::system().toString(dt, QLocale::ShortFormat);
+    }
+}
 
 /** Constructor */
 PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent)

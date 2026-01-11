@@ -93,11 +93,9 @@ static QString formatDate(uint64_t seconds)
         case RshareSettings::DateFormat_ISO:
             return dt.toString(Qt::ISODate).replace('T', ' ');
         case RshareSettings::DateFormat_Text:
-            // Use the official System Long Format (Absolute date, no Today/Yesterday logic)
             return QLocale::system().toString(dt, QLocale::LongFormat);
         case RshareSettings::DateFormat_System:
         default:
-            // Standard System Short Format
             return QLocale::system().toString(dt, QLocale::ShortFormat);
     }
 }

@@ -33,8 +33,23 @@
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxsforums.h"
 #include "retroshare/rsexpr.h"
+#include "gui/settings/rsharesettings.h"
 
 //#define DEBUG_FORUMMODEL
+
+static QString formatDate(uint64_t seconds)
+{
+    QDateTime dt = DateTime::DateTimeFromTime_t(seconds);
+    switch(Settings->getDateFormat()) {
+        case RshareSettings::DateFormat_ISO:
+            return dt.toString(Qt::ISODate).replace('T', ' ');
+        case RshareSettings::DateFormat_Text:
+            return QLocale::system().toString(dt, QLocale::LongFormat);
+        case RshareSettings::DateFormat_System:
+        default:
+            return QLocale::system().toString(dt, QLocale::ShortFormat);
+    }
+}
 
 Q_DECLARE_METATYPE(RsMsgMetaData);
 
@@ -665,15 +680,14 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
                                 else
 									return QVariant(QString::fromUtf8(fmpe.mTitle.c_str()));
 
-        case COLUMN_THREAD_READ:return QVariant();
-    	case COLUMN_THREAD_DATE:{
-        							if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING)
-                                        return QVariant(QString());
+	        case COLUMN_THREAD_READ:return QVariant();
 
-    							    QDateTime qtime = DateTime::DateTimeFromTime_t(fmpe.mPublishTs);
-
-									return QVariant(DateTime::formatDateTime(qtime));
-    							}
+		case COLUMN_THREAD_DATE: {
+		    if (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING)
+		        return QVariant(QString());
+		    rstime_t ts = (mSortMode == SORT_MODE_PUBLISH_TS) ? fmpe.mPublishTs : fmpe.mMostRecentTsInThread;
+		    return QVariant(formatDate(ts));
+		}
 
 		case COLUMN_THREAD_DISTRIBUTION:	// passthrough // handled by delegate.
 		case COLUMN_THREAD_MSGID:

@@ -40,8 +40,8 @@
 
 #include "ui_BoardPostDisplayWidget_compact.h"
 #include "ui_BoardPostDisplayWidget_card.h"
+#include "retroshare/rsposted.h"
 
-#include <retroshare/rsposted.h>
 #include <iostream>
 
 #define LINK_IMAGE ":/images/thumb-link.png"
@@ -69,7 +69,6 @@ static QString formatDate(uint64_t seconds)
         case RshareSettings::DateFormat_ISO:
             return dt.toString(Qt::ISODate).replace('T', ' ');
         case RshareSettings::DateFormat_Text:
-            // Use the official System Long Format (no "Today" logic)
             return QLocale::system().toString(dt, QLocale::LongFormat);
         case RshareSettings::DateFormat_System:
         default:

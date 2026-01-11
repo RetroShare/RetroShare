@@ -34,13 +34,11 @@
 #include "util/DateTime.h"
 
 #include "ui_PostedCardView.h"
+#include "retroshare/rsposted.h"
 
-#include <retroshare/rsposted.h>
 #include <iostream>
 
 #define LINK_IMAGE ":/images/thumb-link.png"
-
-/** Constructor */
 
 static QString formatDate(uint64_t seconds)
 {
@@ -49,12 +47,14 @@ static QString formatDate(uint64_t seconds)
         case RshareSettings::DateFormat_ISO:
             return dt.toString(Qt::ISODate).replace('T', ' ');
         case RshareSettings::DateFormat_Text:
-            return dt.toString("dd MMM yyyy HH:mm");
+            return QLocale::system().toString(dt, QLocale::LongFormat);
         case RshareSettings::DateFormat_System:
         default:
             return QLocale::system().toString(dt, QLocale::ShortFormat);
     }
 }
+
+/** Constructor */
 
 PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData &group_meta, const RsGxsMessageId &post_id, bool isHome, bool autoUpdate)
     : BasePostedItem(feedHolder, feedId, group_meta, post_id, isHome, autoUpdate)
