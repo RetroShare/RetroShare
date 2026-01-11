@@ -57,6 +57,15 @@ class RttStatistics: public MainPage, public Ui::RttStatistics
     Q_OBJECT
 
 public:
+
+    // Define column indices to avoid magic numbers
+    enum TableColumns {
+        COL_PEER_NAME = 0,
+        COL_RTT       = 1,
+        COL_NODE_ID   = 2,
+        COL_IP_ADDRESS = 3
+    };
+
     RttStatistics(QWidget *parent = NULL) ;
     ~RttStatistics();
 
