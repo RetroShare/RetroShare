@@ -38,7 +38,7 @@ class CreateGxsForumMsg : public QDialog
 	Q_OBJECT
 
 public:
-				CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId, const RsGxsMessageId &moId, const RsGxsId &posterId = RsGxsId(), const std::set<RsGxsId>& moderatorSet = std::set<RsGxsId>());
+        CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId, const RsGxsMessageId &moId, const RsGxsId &posterId = RsGxsId(),bool isModerating=false);
 	~CreateGxsForumMsg();
 
 	void newMsg(); /* cleanup */
@@ -59,7 +59,7 @@ private slots:
 
 protected:
 	void closeEvent (QCloseEvent * event);
-
+    
     void loadCircleInfo(const RsGxsGroupId& circle_id);
 private:
     void processSettings(bool load);
@@ -75,7 +75,7 @@ private:
 	bool mOrigMsgLoaded;
 	bool mForumMetaLoaded;
 	bool mForumCircleLoaded ;
-	std::set<RsGxsId> mModeratorSet; // these IDs are allowed to edit the post in addition to mPosterId
+    bool mIsModerating;			// means that the msg has a orig author Id that is not the Id of the author
 
 	RsGxsForumMsg mParentMsg;
 	RsGxsForumMsg mOrigMsg;

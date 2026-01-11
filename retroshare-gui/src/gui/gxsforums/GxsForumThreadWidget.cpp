@@ -1753,17 +1753,33 @@ void GxsForumThreadWidget::editForumMessageData(const RsGxsForumMsg& msg)
 
     std::list<RsGxsId> own_ids ;
     rsIdentity->getOwnIds(own_ids) ;
-    std::set<RsGxsId> modIds;
+
     for(auto it(own_ids.begin());it!=own_ids.end();++it)
         if(mForumGroup.mAdminList.ids.find(*it) != mForumGroup.mAdminList.ids.end())
-            modIds.insert(*it);
+        {
+            moderator_id = *it;
+            break;
+        }
 
-    CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId, msg.mMeta.mAuthorId, modIds);
+    // Check that author is in own ids, if not use the moderator id that was collected among own ids.
+    bool is_own = false ;
+    for(auto it(own_ids.begin());it!=own_ids.end() && !is_own;++it)
+        if(*it == msg.mMeta.mAuthorId)
+            is_own = true ;
 
-    cfm->insertPastedText(QString::fromUtf8(msg.mMsg.c_str())) ;
-    cfm->show();
+    if (!msg.mMeta.mAuthorId.isNull())
+    {
+        CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId, is_own?(msg.mMeta.mAuthorId):moderator_id,!is_own);
 
-    /* cfm window will destroy itself! */
+        cfm->insertPastedText(QString::fromUtf8(msg.mMsg.c_str())) ;
+        cfm->show();
+
+        /* window will destroy itself! */
+    }
+    else
+    {
+        QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to an Anonymous Author"));
+    }
 }
 void GxsForumThreadWidget::replyForumMessageData(const RsGxsForumMsg &msg)
 {
