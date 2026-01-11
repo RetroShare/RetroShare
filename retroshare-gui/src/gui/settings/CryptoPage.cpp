@@ -95,7 +95,6 @@ void CryptoPage::exportProfile()
         QMessageBox::information(this, tr("Identity not saved"), tr("Your identity was not saved. An error occurred."));
 }
 
-
 void CryptoPage::showEvent ( QShowEvent * /*event*/ )
 {
     RsPeerDetails detail;
@@ -112,8 +111,15 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         rsPeers->getShortInvite(invite,rsPeers->getOwnId(),RetroshareInviteFlags::RADIX_FORMAT | RsPeers::defaultCertificateFlags);
         ui.retroshareId_content_LB->setText(QString::fromUtf8(invite.c_str()));
 		
-        /* set retroshare version */
-        ui.version->setText(RsApplication::retroshareVersion(true));
+        /* [Modified] Show both RetroShare and libretroshare versions */
+        /* We rename the label "Software Version:" to "RetroShare version:" and add the lbretroshare line */
+        /* Using newlines (\n) allows us to display both without modifying the .ui grid layout */
+        ui.label_3->setText(tr("RetroShare version:") + "\n" + tr("libretroshare version:"));
+
+        QString versionText = RsApplication::retroshareVersion(true);
+        versionText += "\n";
+        versionText += QString::fromUtf8(RsInit::libRetroShareVersion());
+        ui.version->setText(versionText);
 
         std::list<RsPgpId> ids;
         ids.clear();
@@ -121,7 +127,6 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         int friends = ids.size();
 
         ui.friendsEdit->setText(QString::number(friends));
-		
 		
 		QString string ;
 		string = rsFiles->getPartialsDirectory().c_str();
@@ -134,7 +139,6 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
     }
 	 load() ;
 }
-
 
 CryptoPage::~CryptoPage()
 {
