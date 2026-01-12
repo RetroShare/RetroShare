@@ -166,7 +166,7 @@ private:
 
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req) override;
 
-	virtual QString settingsGroupName()  override{ return "PostedDialog"; }
+	virtual QString settingsGroupName()  override{ return "WireDialog"; }
 	virtual GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId) override;
 
 	int mGroupSet;
