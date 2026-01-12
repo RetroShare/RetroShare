@@ -180,7 +180,7 @@ void  CreateGxsForumMsg::newMsg()
 		// NOTE: mPosterId may not be our own; then GxsIdChooser will not include it.
 
 		idChooserFlags |= IDCHOOSER_NO_CREATE;
-		ui->idChooser->setIdConstraintSet(id_set);
+    ui->idChooser->intersectIdConstraintSet(id_set);
 	}
 	ui->idChooser->loadIds(idChooserFlags, mPosterId);
 
@@ -612,7 +612,7 @@ void CreateGxsForumMsg::loadCircleInfo(const RsGxsGroupId& circle_id)
             //for(std::set<RsGxsId>::const_iterator it(cg.mInvitedMembers.begin());it!=cg.mInvitedMembers.end();++it)
             //    std::cerr << "  added constraint to circle element " << *it << std::endl;
 
-            ui->idChooser->setIdConstraintSet(cg.mInvitedMembers) ;
+            ui->idChooser->intersectIdConstraintSet(cg.mInvitedMembers) ;
             ui->idChooser->setFlags(IDCHOOSER_NO_CREATE | ui->idChooser->flags()) ;	// since there's a circle involved, no ID creation can be needed
 
             RsGxsId tmpid ;

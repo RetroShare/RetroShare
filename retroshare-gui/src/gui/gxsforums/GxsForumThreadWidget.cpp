@@ -1746,19 +1746,7 @@ void GxsForumThreadWidget::editForumMessageData(const RsGxsForumMsg& msg)
         return;
     }
 
-    // Go through the list of own ids and see if one of them is a moderator
-    // TODO: offer to select which moderator ID to use if multiple IDs fit the conditions of the forum
-
-    RsGxsId moderator_id ;
-
-    std::list<RsGxsId> own_ids ;
-    rsIdentity->getOwnIds(own_ids) ;
-    std::set<RsGxsId> modIds;
-    for(auto it(own_ids.begin());it!=own_ids.end();++it)
-        if(mForumGroup.mAdminList.ids.find(*it) != mForumGroup.mAdminList.ids.end())
-            modIds.insert(*it);
-
-    CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId, msg.mMeta.mAuthorId, modIds);
+    CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId, msg.mMeta.mAuthorId, mForumGroup.mAdminList.ids);
 
     cfm->insertPastedText(QString::fromUtf8(msg.mMsg.c_str())) ;
     cfm->show();
