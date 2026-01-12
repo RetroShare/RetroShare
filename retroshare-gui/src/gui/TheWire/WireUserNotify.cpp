@@ -46,14 +46,14 @@ QIcon WireUserNotify::getMainIcon(bool hasNew)
     return hasNew ? FilesDefs::getIconFromQtResourcePath(":/icons/png/wire-notify.png") : FilesDefs::getIconFromQtResourcePath(":/icons/png/wire-circle.png");
 }
 
-//QString PostedUserNotify::getTrayMessage(bool plural)
+//QString WireUserNotify::getTrayMessage(bool plural)
 //{
-//    return plural ? tr("You have %1 new board posts") : tr("You have %1 new board post");
+//    return plural ? tr("You have %1 new wire pulse") : tr("You have %1 new wire pulse");
 //}
 
-//QString PostedUserNotify::getNotifyMessage(bool plural)
+//QString WireUserNotify::getNotifyMessage(bool plural)
 //{
-//    return plural ? tr("%1 new board post") : tr("%1 new board post");
+//    return plural ? tr("%1 new wire pulse") : tr("%1 new wire pulse");
 //}
 
 void WireUserNotify::iconClicked()

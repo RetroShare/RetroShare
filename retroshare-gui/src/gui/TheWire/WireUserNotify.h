@@ -36,6 +36,9 @@ private:
     virtual QIcon getIcon() override;
     virtual QIcon getMainIcon(bool hasNew) override;
 
+    //virtual QString getTrayMessage(bool plural) override;
+    //virtual QString getNotifyMessage(bool plural) override;
+
     virtual void iconClicked() override;
 };
 
