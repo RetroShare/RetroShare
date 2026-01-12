@@ -211,6 +211,11 @@ RsFeedTypeFlags NotifyPage::getNewsFlags()
     if (ui.notify_SecurityIp->isChecked())
         newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP;
 
+#ifdef RS_USE_WIRE
+    if (ui.notify_Wire->isChecked())
+        newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_WIRE;
+#endif
+
     return newsFlags;
 }
 
