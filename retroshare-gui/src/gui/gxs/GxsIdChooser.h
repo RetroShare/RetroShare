@@ -36,7 +36,6 @@ class RsGxsUpdateBroadcastBase;
 #define IDCHOOSER_ANON_DEFAULT  0x0002
 #define IDCHOOSER_NO_CREATE     0x0004
 #define IDCHOOSER_NON_ANONYMOUS 0x0008
-#define IDCHOOSER_NO_CONSTRAINT 0x0010
 
 class GxsIdChooser : public RSComboBox
 {
@@ -87,9 +86,10 @@ private:
 	uint32_t mFlags;
 	RsGxsId mDefaultId;
 	bool mFirstLoad;
-    uint32_t mAllowedCount ;
+	uint32_t mAllowedCount ;
 
-    std::set<RsGxsId> mConstraintIdsSet ;
+	std::set<RsGxsId> mConstraintIdsSet ;
+	bool noIdConstraint;
 //    RsGxsUpdateBroadcastBase *mBase;
 
     RsEventsHandlerId_t mEventHandlerId;

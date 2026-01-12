@@ -53,7 +53,8 @@
 /** Constructor */
 GxsIdChooser::GxsIdChooser(QWidget *parent) :
   RSComboBox(parent),
-  mFlags(IDCHOOSER_ANON_DEFAULT | IDCHOOSER_NO_CONSTRAINT)
+  mFlags(IDCHOOSER_ANON_DEFAULT),
+  noIdConstraint(true)
 {
 //	mBase = new RsGxsUpdateBroadcastBase(rsIdentity, this);
 //	connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
@@ -124,10 +125,7 @@ void GxsIdChooser::showEvent(QShowEvent *event)
 
 void GxsIdChooser::setIdConstraintSet(const std::set<RsGxsId>& s)
 {
-    if(s.empty())
-        mFlags |= IDCHOOSER_NO_CONSTRAINT;
-    else
-        mFlags &= ~IDCHOOSER_NO_CONSTRAINT;
+    noIdConstraint = s.empty();
     mConstraintIdsSet = s;
 
     updateDisplay(true);
@@ -136,16 +134,17 @@ void GxsIdChooser::setIdConstraintSet(const std::set<RsGxsId>& s)
 
 void
 GxsIdChooser::intersectIdConstraintSet(const std::set<RsGxsId>& s) {
-    if(mFlags & IDCHOOSER_NO_CONSTRAINT) {
+    if(noIdConstraint) {
         mConstraintIdsSet = s;
+        noIdConstraint = false;
     }
     else for(std::set<RsGxsId>::const_iterator i = mConstraintIdsSet.begin();
       i != mConstraintIdsSet.end();
     ) {
-      if(s.find(*i) == s.end())
-        i = mConstraintIdsSet.erase(i);
-      else
-        i++;
+        if(s.find(*i) == s.end())
+            i = mConstraintIdsSet.erase(i);
+        else
+            i++;
     }
 
     updateDisplay(true);
@@ -154,7 +153,7 @@ GxsIdChooser::intersectIdConstraintSet(const std::set<RsGxsId>& s) {
 
 void
 GxsIdChooser::unionIdConstraintSet(const std::set<RsGxsId>& s) {
-    if(mFlags & IDCHOOSER_NO_CONSTRAINT) {
+    if(noIdConstraint) {
         return;
     }
     else for(const RsGxsId& id : s) {
@@ -238,15 +237,15 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
         }
 
         if(!chooser->isInConstraintSet(details.mId)) {
-          chooser->setEntryEnabled(index,false) ;
-          #ifdef IDCHOOSER_DEBUG
-          std::cerr << "GxsIdChooser: ID not in constraint set: " << details.mId << std::endl;
-          #endif
+            chooser->setEntryEnabled(index,false) ;
+            #ifdef IDCHOOSER_DEBUG
+            std::cerr << "GxsIdChooser: ID not in constraint set: " << details.mId << std::endl;
+            #endif
         }
         else {
-          #ifdef IDCHOOSER_DEBUG
-          std::cerr << "GxsIdChooser: ID in constraint set: " << details.mId << std::endl;
-          #endif
+            #ifdef IDCHOOSER_DEBUG
+            std::cerr << "GxsIdChooser: ID in constraint set: " << details.mId << std::endl;
+            #endif
         }
 
     chooser->model()->sort(0);
@@ -281,8 +280,8 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 
 bool GxsIdChooser::isInConstraintSet(const RsGxsId& id) const
 {
-    if(mFlags & IDCHOOSER_NO_CONSTRAINT)
-      return true ;
+    if(noIdConstraint)
+        return true ;
 
     return mConstraintIdsSet.find(id) != mConstraintIdsSet.end() ;
 }
