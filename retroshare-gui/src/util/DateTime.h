@@ -18,6 +18,8 @@
  *                                                                             *
  *******************************************************************************/
 
+/* ... (header copyright) ... */
+
 #ifndef _DATETIME_H
 #define _DATETIME_H
 
@@ -30,23 +32,23 @@ class QTime;
 class DateTime
 {
 public:
-	/* format long date and time e.g. "September 30, 2012" */
+	/* Always uses the standard Qt Long Format (e.g. "Tuesday, January 13, 2026") */
 	static QString formatLongDate(time_t dateValue);
 	static QString formatLongDate(const QDate &dateValue);
 
-	/* format long date and time e.g. "September 30, 2012 01:05 PM" */
+	/* Combined format: formatLongDate + formatTime */
 	static QString formatLongDateTime(time_t datetimeValue);
 	static QString formatLongDateTime(const QDateTime &datetimeValue);
 
-	/* format date e.g. "9/30/12", "30.09.12" */
+	/* Uses Application Preferences if defined, otherwise falls back to System Short Format */
 	static QString formatDate(time_t dateValue);
 	static QString formatDate(const QDate &dateValue);
 
-	/* format time e.g. "13:05:12" */
+	/* Standard System Short Format for time */
 	static QString formatTime(time_t timeValue);
 	static QString formatTime(const QTime &timeValue);
 
-	/* format date and time (see formatDate & formatTime) */
+	/* Combined format: formatDate + formatTime */
 	static QString formatDateTime(time_t datetimeValue);
 	static QString formatDateTime(const QDateTime &datetimeValue);
 

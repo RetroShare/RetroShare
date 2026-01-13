@@ -227,7 +227,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         y += font_height;
         y += font_height/2.0;
 
-        QString info_text = QLocale::system().toString(DateTime::DateTimeFromTime_t(post.mMeta.mPublishTs), QLocale::ShortFormat);
+	QString info_text = DateTime::formatDateTime(post.mMeta.mPublishTs);
 
         if(post.mAttachmentCount > 0)
             info_text += ", " + QString::number(post.mAttachmentCount)+ " " +((post.mAttachmentCount>1)?tr("files"):tr("file")) + " (" + misc::friendlyUnit(qulonglong(post.mSize)) + ")" ;
@@ -955,7 +955,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 
     ui->postName_LB->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
 
-    ui->postTime_LB->setText(QDateTime::fromMSecsSinceEpoch(post.mMeta.mPublishTs*1000).toString("MM/dd/yyyy, hh:mm"));
+    ui->postTime_LB->setText(DateTime::formatDateTime(post.mMeta.mPublishTs));
     ui->postTime_LB->setFixedWidth(W);
 
     //ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
@@ -1284,7 +1284,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
     if(group.mMeta.mLastPost==0)
         ui->infoLastPost->setText(tr("Never"));
     else
-        ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
+        ui->infoLastPost->setText(DateTime::formatDateTime(group.mMeta.mLastPost));
 
     uint32_t current_sync_time  = GxsGroupFrameDialog::checkDelay(rsGxsChannels->getSyncPeriod(group.mMeta.mGroupId))/86400 ;
 
@@ -1335,7 +1335,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
     else
         ui->infoAdministrator->setText("[No contact author]");
 
-    ui->infoCreated->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
+    ui->infoCreated->setText(DateTime::formatDateTime(group.mMeta.mPublishTs));
 
     QString distrib_string ( "[unknown]" );
 

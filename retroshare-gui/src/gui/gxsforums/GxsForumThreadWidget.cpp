@@ -1062,7 +1062,7 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
     if(group.mMeta.mLastPost==0)
         forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Last post"),tr("Never"));
     else
-        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Last post"),DateTime::formatLongDateTime(group.mMeta.mLastPost));
+        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Last post"),DateTime::formatDateTime(group.mMeta.mLastPost));
 
     if(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
     {
@@ -1222,7 +1222,7 @@ void GxsForumThreadWidget::insertMessage()
 
         for(int i=0;i<static_cast<int>(post_versions.size());++i)
         {
-            ui->versions_CB->insertItem(i, ((i==0)?tr("(Latest) "):tr("(Old) "))+" "+DateTime::formatLongDateTime( post_versions[i].first));
+            ui->versions_CB->insertItem(i, ((i==0)?tr("(Latest) "):tr("(Old) "))+" "+DateTime::formatDateTime( post_versions[i].first));
             ui->versions_CB->setItemData(i,QString::fromStdString(post_versions[i].second.toStdString()));
 
 #ifdef DEBUG_FORUMS
@@ -1298,7 +1298,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
     // TODO enabled even when there are no new message
     ui->nextUnreadButton->setEnabled(true);
     ui->lineLeft->show();
-    ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
+    ui->time_label->setText(DateTime::formatDateTime(msg.mMeta.mPublishTs));
     ui->lineRight->show();
     ui->by_text_label->show();
     ui->by_label->setId(msg.mMeta.mAuthorId);
@@ -1627,7 +1627,7 @@ static QString buildReplyHeader(const RsMsgMetaData &meta)
     QString header = QString("<span>-----%1-----").arg(QApplication::translate("GxsForumThreadWidget", "Original Message"));
     header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("GxsForumThreadWidget", "From"), from);
 
-    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("GxsForumThreadWidget", "Sent"), DateTime::formatLongDateTime(meta.mPublishTs));
+    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("GxsForumThreadWidget", "Sent"), DateTime::formatDateTime(meta.mPublishTs));
     header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(QApplication::translate("GxsForumThreadWidget", "Subject"), QString::fromUtf8(meta.mMsgName.c_str()));
     header += "<br>";
 

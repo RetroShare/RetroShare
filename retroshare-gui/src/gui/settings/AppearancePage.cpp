@@ -47,6 +47,8 @@
 #include <QStatusBar>
 #include <QStyledItemDelegate>
 #include <QStyleFactory>
+#include <QDateTime>
+#include <QLocale>
 
 /** Constructor */
 AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
@@ -89,6 +91,16 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	foreach (QString name, styleSheets.keys()) {
 		ui.cmboStyleSheet->addItem(name, styleSheets[name]);
 	}
+
+	/* Populate Date Format combo box */
+	QDateTime now = QDateTime::currentDateTime();
+
+	ui.cmboDateFormat->addItem(tr("System Default") + " (" + QLocale::system().toString(now, QLocale::ShortFormat) + ")", RshareSettings::DateFormat_System);
+	// Remove 'T' from ISO date for nicer display
+	ui.cmboDateFormat->addItem(tr("ISO 8601") + " (" + now.toString(Qt::ISODate).replace('T', ' ') + ")", RshareSettings::DateFormat_ISO);
+	ui.cmboDateFormat->addItem(tr("Text") + " (" + now.toString("dd MMM yyyy HH:mm") + ")", RshareSettings::DateFormat_Text);
+
+	connect(ui.cmboDateFormat, SIGNAL(currentIndexChanged(int)), this, SLOT(updateDateFormat()));
 
 	connect(ui.cmboTollButtonsSize,           SIGNAL(currentIndexChanged(int)), this, SLOT(updateCmboToolButtonSize() ));
 //	connect(ui.cmboListItemSize,              SIGNAL(currentIndexChanged(int)), this, SLOT(updateCmboListItemSize()   ));
@@ -262,6 +274,15 @@ void AppearancePage::load()
 	int index = ui.cmboLanguage->findData(Settings->getLanguageCode());
 	whileBlocking(ui.cmboLanguage)->setCurrentIndex(index);
 
+	// Load Date Format
+	int dateFormat = Settings->getDateFormat();
+	int comboIndex = ui.cmboDateFormat->findData(dateFormat);
+	if (comboIndex != -1) {
+		whileBlocking(ui.cmboDateFormat)->setCurrentIndex(comboIndex);
+	} else {
+		whileBlocking(ui.cmboDateFormat)->setCurrentIndex(0);
+	}
+
 	index = ui.cmboStyle->findData(RsApplication::style().toLower());
 	whileBlocking(ui.cmboStyle)->setCurrentIndex(index);
 
@@ -371,3 +392,12 @@ void AppearancePage::updateFontSize()
 
 	RsGUIEventManager::getInstance()->notifySettingsChanged();
 }
+
+void AppearancePage::updateDateFormat()
+{
+    int format = ui.cmboDateFormat->currentData().toInt();
+    Settings->setDateFormat(format);
+
+    RsGUIEventManager::getInstance()->notifySettingsChanged();
+}
+

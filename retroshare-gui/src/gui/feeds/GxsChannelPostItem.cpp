@@ -436,7 +436,7 @@ void GxsChannelPostItem::fill()
 		fillExpandFrame();
 	}
 
-	ui->datetimelabel->setText(DateTime::formatLongDateTime(mPost.mMeta.mPublishTs));
+	ui->datetimelabel->setText(DateTime::formatDateTime(mPost.mMeta.mPublishTs));
 
 	if ( (mPost.mAttachmentCount != 0) || (mPost.mSize != 0) ) {
 		ui->filelabel->setVisible(true);

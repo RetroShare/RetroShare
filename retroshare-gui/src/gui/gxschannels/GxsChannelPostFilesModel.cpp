@@ -386,7 +386,7 @@ QVariant RsGxsChannelPostFilesModel::sortRole(const ChannelPostFileInfo& fmpe,in
     {
 	case COLUMN_FILES_NAME: return QVariant(QString::fromUtf8(fmpe.mName.c_str()));
 	case COLUMN_FILES_SIZE: return QVariant(qulonglong(fmpe.mSize));
-	case COLUMN_FILES_DATE: return QVariant(qulonglong(fmpe.mPublishTime));
+	case COLUMN_FILES_DATE: return DateTime::formatDateTime(fmpe.mPublishTime);
 	case COLUMN_FILES_FILE:
     {
         FileInfo finfo;
