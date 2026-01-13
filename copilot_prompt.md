@@ -30,14 +30,23 @@ Extend `GxsIdDetails` to support these logos:
 
 #### Friend Nodes (`gui/common/AvatarDefs.cpp`)
 - In `AvatarDefs::getAvatarFromSslId`, if `size == 0`, instead of returning a static default image, call the new `LogoGenerator` or a helper in `GxsIdDetails` using the `sslId`.
+- **New Task**: In `AvatarDefs::getAvatarFromGpgId`, if `size == 0`, use the dynamic logo generator. Pass the `gpgId` (converted to string or handled appropriately) to `makeDefaultGroupIcon` or similar, using a buddy/person icon.
 
 #### Channels (`gui/gxschannels/GxsChannelDialog.cpp`)
 - In `GxsChannelDialog::groupInfoToGroupItemInfo`, replace:
   `groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/channel.png");`
-  with a call to the dynamic generator using `channelGroupData->mGroupId`.
+  with:
+  ```cpp
+  RsGxsGroupId grpId = channelGroupData->mGroupId;
+  groupItemInfo.icon = GxsIdDetails::makeDefaultGroupIcon(RsGxsId(grpId), ":icons/png/channel.png", GxsIdDetails::ORIGINAL);
+  ```
 
 #### Boards (`gui/Posted/PostedDialog.cpp`)
-- In `PostedDialog::groupInfoToGroupItemInfo`, replace the static `:icons/png/postedlinks.png` with the dynamic generator using `postedGroupData->mGroupId`.
+- In `PostedDialog::groupInfoToGroupItemInfo`, replace the static `:icons/png/postedlinks.png` with:
+  ```cpp
+  RsGxsGroupId grpId = postedGroupData->mGroupId;
+  groupItemInfo.icon = GxsIdDetails::makeDefaultGroupIcon(RsGxsId(grpId), ":icons/png/postedlinks.png", GxsIdDetails::ORIGINAL);
+  ```
 
 #### Wiki (`gui/WikiPoos/WikiDialog.cpp`)
 - In `WikiDialog::GroupMetaDataToGroupItemInfo`, replace:
