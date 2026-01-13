@@ -447,6 +447,50 @@ const QPixmap GxsIdDetails::makeDefaultIcon(const RsGxsId& id, AvatarSize size)
     return image;
 }
 
+QPixmap GxsIdDetails::generateColoredIcon(const QString& idStr, const QString& iconPath, int size)
+{
+    // Generate a color from the ID hash
+    uint hash = qHash(idStr);
+    
+    // Use hash to determine hue (0-359), with fixed saturation and lightness for pastel look
+    int hue = hash % 360;
+    int saturation = 150;  // Mid saturation for pastel colors
+    int lightness = 180;   // Light for pastel colors
+    
+    QColor backgroundColor = QColor::fromHsl(hue, saturation, lightness);
+    
+    // Create the pixmap
+    QPixmap pixmap(size, size);
+    pixmap.fill(Qt::transparent);
+    
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    
+    // Draw colored circle
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(backgroundColor);
+    painter.drawEllipse(0, 0, size, size);
+    
+    // Load and overlay the category icon
+    QPixmap categoryIcon(iconPath);
+    if (!categoryIcon.isNull())
+    {
+        // Scale icon to ~70% of total size
+        int iconSize = static_cast<int>(size * 0.7);
+        QPixmap scaledIcon = categoryIcon.scaled(iconSize, iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        
+        // Center the icon
+        int x = (size - scaledIcon.width()) / 2;
+        int y = (size - scaledIcon.height()) / 2;
+        painter.drawPixmap(x, y, scaledIcon);
+    }
+    
+    painter.end();
+    
+    return pixmap;
+}
+
 const QPixmap GxsIdDetails::makeDefaultGroupIcon(const RsGxsId& id, const QString& iconPath, AvatarSize size)
 {
     checkCleanImagesCache();
@@ -476,44 +520,7 @@ const QPixmap GxsIdDetails::makeDefaultGroupIcon(const RsGxsId& id, const QStrin
         case LARGE:  S = 192 ; break;
     }
 
-    // Generate a color from the ID hash
-    uint hash = qHash(QString::fromStdString(id.toStdString()));
-    
-    // Use hash to determine hue (0-359), with fixed saturation and lightness for pastel look
-    int hue = hash % 360;
-    int saturation = 150;  // Mid saturation for pastel colors
-    int lightness = 180;   // Light for pastel colors
-    
-    QColor backgroundColor = QColor::fromHsl(hue, saturation, lightness);
-    
-    // Create the pixmap
-    QPixmap pixmap(S, S);
-    pixmap.fill(Qt::transparent);
-    
-    QPainter painter(&pixmap);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    
-    // Draw colored circle
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(backgroundColor);
-    painter.drawEllipse(0, 0, S, S);
-    
-    // Load and overlay the category icon
-    QPixmap categoryIcon(iconPath);
-    if (!categoryIcon.isNull())
-    {
-        // Scale icon to ~70% of total size
-        int iconSize = static_cast<int>(S * 0.7);
-        QPixmap scaledIcon = categoryIcon.scaled(iconSize, iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        
-        // Center the icon
-        int x = (S - scaledIcon.width()) / 2;
-        int y = (S - scaledIcon.height()) / 2;
-        painter.drawPixmap(x, y, scaledIcon);
-    }
-    
-    painter.end();
+    QPixmap pixmap = generateColoredIcon(QString::fromStdString(id.toStdString()), iconPath, S);
 
     it[(int)size] = std::make_pair(now, pixmap);
 
@@ -552,44 +559,7 @@ const QPixmap GxsIdDetails::makeDefaultGroupIcon(const QString& idStr, const QSt
         case LARGE:  S = 192 ; break;
     }
 
-    // Generate a color from the ID hash
-    uint hash = qHash(idStr);
-    
-    // Use hash to determine hue (0-359), with fixed saturation and lightness for pastel look
-    int hue = hash % 360;
-    int saturation = 150;  // Mid saturation for pastel colors
-    int lightness = 180;   // Light for pastel colors
-    
-    QColor backgroundColor = QColor::fromHsl(hue, saturation, lightness);
-    
-    // Create the pixmap
-    QPixmap pixmap(S, S);
-    pixmap.fill(Qt::transparent);
-    
-    QPainter painter(&pixmap);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    
-    // Draw colored circle
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(backgroundColor);
-    painter.drawEllipse(0, 0, S, S);
-    
-    // Load and overlay the category icon
-    QPixmap categoryIcon(iconPath);
-    if (!categoryIcon.isNull())
-    {
-        // Scale icon to ~70% of total size
-        int iconSize = static_cast<int>(S * 0.7);
-        QPixmap scaledIcon = categoryIcon.scaled(iconSize, iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        
-        // Center the icon
-        int x = (S - scaledIcon.width()) / 2;
-        int y = (S - scaledIcon.height()) / 2;
-        painter.drawPixmap(x, y, scaledIcon);
-    }
-    
-    painter.end();
+    QPixmap pixmap = generateColoredIcon(idStr, iconPath, S);
 
     it[(int)size] = std::make_pair(now, pixmap);
 

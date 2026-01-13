@@ -142,6 +142,7 @@ private:
 	                         qreal shapeangle, qreal angle,
 	                         quint16 size, QColor fillColor);
 	static QPixmap drawIdentIcon(QString hash, quint16 width, bool rotate);
+	static QPixmap generateColoredIcon(const QString& idStr, const QString& iconPath, int size);
 
 private slots:
 	void objectDestroyed(QObject *object);
