@@ -607,12 +607,23 @@ void CreateGxsForumMsg::loadCircleInfo(const RsGxsGroupId& circle_id)
             mForumCircleData = cg;
             mForumCircleLoaded = true;
 
-            //std::cerr << "Loaded content of circle " << cg.mMeta.mGroupId << std::endl;
+            // get set of eligible ids
+            RsGxsCircleDetails circleDetails;
+            rsGxsCircles->getCircleDetails(
+              RsGxsCircleId(cg.mMeta.mGroupId), circleDetails);
+            std::set<RsGxsId> ids;
+            uint32_t mask =
+                GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST |
+                GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED;
+            for(auto it = circleDetails.mSubscriptionFlags.begin();
+                it != circleDetails.mSubscriptionFlags.end(); it++
+            ) {
+              if((it->second & mask) == mask) {
+                ids.insert(it->first);
+              }
+            }
 
-            //for(std::set<RsGxsId>::const_iterator it(cg.mInvitedMembers.begin());it!=cg.mInvitedMembers.end();++it)
-            //    std::cerr << "  added constraint to circle element " << *it << std::endl;
-
-            ui->idChooser->intersectIdConstraintSet(cg.mInvitedMembers) ;
+            ui->idChooser->intersectIdConstraintSet(ids);
             ui->idChooser->setFlags(IDCHOOSER_NO_CREATE | ui->idChooser->flags()) ;	// since there's a circle involved, no ID creation can be needed
 
             RsGxsId tmpid ;
