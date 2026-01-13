@@ -7,3 +7,33 @@ packages = ["cowsay"]
 
 [agent]
 expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Check Project Structure"
+
+[[workflows.workflow]]
+name = "Check Project Structure"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = """
+# This is a C++ project, typically requiring a build system.
+# Since I cannot easily compile it here without a complex environment setup,
+# I will set a placeholder or a simple check command if possible.
+# However, the user just asked for a documentation file (copilot_prompt.md).
+# To satisfy the system requirement of having a workflow:
+ls -R | head -n 20
+"""
+
+[workflows.workflow.metadata]
+outputType = "console"
