@@ -447,6 +447,155 @@ const QPixmap GxsIdDetails::makeDefaultIcon(const RsGxsId& id, AvatarSize size)
     return image;
 }
 
+const QPixmap GxsIdDetails::makeDefaultGroupIcon(const RsGxsId& id, const QString& iconPath, AvatarSize size)
+{
+    checkCleanImagesCache();
+
+    time_t now = time(NULL);
+
+    if(id.isNull())
+        std::cerr << "Weird: null ID" << std::endl;
+
+    QMutexLocker lock(&mIconCacheMutex);
+    auto& it = mDefaultIconCache[id];
+
+    if(it[(int)size].second.width() > 0)
+    {
+        it[(int)size].first = now;
+        return it[(int)size].second;
+    }
+
+    int S = 0;
+
+    switch(size)
+    {
+        case SMALL:  S = 48 ; break;
+        default:
+        case MEDIUM: S = 96 ; break;
+        case ORIGINAL:
+        case LARGE:  S = 192 ; break;
+    }
+
+    // Generate a color from the ID hash
+    uint hash = qHash(QString::fromStdString(id.toStdString()));
+    
+    // Use hash to determine hue (0-359), with fixed saturation and lightness for pastel look
+    int hue = hash % 360;
+    int saturation = 150;  // Mid saturation for pastel colors
+    int lightness = 180;   // Light for pastel colors
+    
+    QColor backgroundColor = QColor::fromHsl(hue, saturation, lightness);
+    
+    // Create the pixmap
+    QPixmap pixmap(S, S);
+    pixmap.fill(Qt::transparent);
+    
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    
+    // Draw colored circle
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(backgroundColor);
+    painter.drawEllipse(0, 0, S, S);
+    
+    // Load and overlay the category icon
+    QPixmap categoryIcon(iconPath);
+    if (!categoryIcon.isNull())
+    {
+        // Scale icon to ~70% of total size
+        int iconSize = static_cast<int>(S * 0.7);
+        QPixmap scaledIcon = categoryIcon.scaled(iconSize, iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        
+        // Center the icon
+        int x = (S - scaledIcon.width()) / 2;
+        int y = (S - scaledIcon.height()) / 2;
+        painter.drawPixmap(x, y, scaledIcon);
+    }
+    
+    painter.end();
+
+    it[(int)size] = std::make_pair(now, pixmap);
+
+    return pixmap;
+}
+
+const QPixmap GxsIdDetails::makeDefaultGroupIcon(const QString& idStr, const QString& iconPath, AvatarSize size)
+{
+    checkCleanImagesCache();
+
+    time_t now = time(NULL);
+
+    // Convert QString to RsGxsId for caching purposes
+    RsGxsId id(idStr.toStdString());
+
+    if(id.isNull())
+        std::cerr << "Weird: null ID" << std::endl;
+
+    QMutexLocker lock(&mIconCacheMutex);
+    auto& it = mDefaultIconCache[id];
+
+    if(it[(int)size].second.width() > 0)
+    {
+        it[(int)size].first = now;
+        return it[(int)size].second;
+    }
+
+    int S = 0;
+
+    switch(size)
+    {
+        case SMALL:  S = 48 ; break;
+        default:
+        case MEDIUM: S = 96 ; break;
+        case ORIGINAL:
+        case LARGE:  S = 192 ; break;
+    }
+
+    // Generate a color from the ID hash
+    uint hash = qHash(idStr);
+    
+    // Use hash to determine hue (0-359), with fixed saturation and lightness for pastel look
+    int hue = hash % 360;
+    int saturation = 150;  // Mid saturation for pastel colors
+    int lightness = 180;   // Light for pastel colors
+    
+    QColor backgroundColor = QColor::fromHsl(hue, saturation, lightness);
+    
+    // Create the pixmap
+    QPixmap pixmap(S, S);
+    pixmap.fill(Qt::transparent);
+    
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    
+    // Draw colored circle
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(backgroundColor);
+    painter.drawEllipse(0, 0, S, S);
+    
+    // Load and overlay the category icon
+    QPixmap categoryIcon(iconPath);
+    if (!categoryIcon.isNull())
+    {
+        // Scale icon to ~70% of total size
+        int iconSize = static_cast<int>(S * 0.7);
+        QPixmap scaledIcon = categoryIcon.scaled(iconSize, iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        
+        // Center the icon
+        int x = (S - scaledIcon.width()) / 2;
+        int y = (S - scaledIcon.height()) / 2;
+        painter.drawPixmap(x, y, scaledIcon);
+    }
+    
+    painter.end();
+
+    it[(int)size] = std::make_pair(now, pixmap);
+
+    return pixmap;
+}
+
 void GxsIdDetails::debug_dumpImagesCache()
 {
     QMutexLocker lock(&mIconCacheMutex);

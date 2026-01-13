@@ -55,7 +55,7 @@ bool AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, cons
     rsChats->getAvatarData(RsPeerId(sslId), data, size);
     if (size == 0) {
         if (!defaultImage.isEmpty()) {
-            avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
+            avatar = GxsIdDetails::makeDefaultGroupIcon(QString::fromStdString(sslId.toStdString()), ":icons/png/person.png", GxsIdDetails::LARGE);
         }
         return false;
     }
