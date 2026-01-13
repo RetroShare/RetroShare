@@ -24,6 +24,7 @@
 #include "PostedListWidgetWithModel.h"
 #include "PostedUserNotify.h"
 #include "gui/gxs/GxsGroupShareKey.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/common/GroupTreeWidget.h"
 #include "util/misc.h"
@@ -236,7 +237,7 @@ void PostedDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupDa
 	groupItemInfo.icon        = image;
     }
     else
-    groupItemInfo.icon        = FilesDefs::getIconFromQtResourcePath(":icons/png/postedlinks.png");
+    groupItemInfo.icon        = GxsIdDetails::makeDefaultGroupIcon(RsGxsId(postedGroupData->mGroupId), ":icons/png/postedlinks.png", GxsIdDetails::ORIGINAL);
 
 	groupItemInfo.description = QString::fromUtf8(postedGroupData->mDescription.c_str());
 }

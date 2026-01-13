@@ -30,6 +30,7 @@
 #include "gui/WikiPoos/WikiEditDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/WikiGroupDialog.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "util/DateTime.h"
 
 #include <retroshare/rswiki.h>
@@ -730,7 +731,7 @@ void WikiDialog::GroupMetaDataToGroupItemInfo(const RsGroupMetaData &groupInfo, 
 	groupItemInfo.lastpost = DateTime::DateTimeFromTime_t(groupInfo.mLastPost);
 	groupItemInfo.subscribeFlags = groupInfo.mSubscribeFlags;
 
-	groupItemInfo.icon = QIcon(IMAGE_WIKI);
+	groupItemInfo.icon = GxsIdDetails::makeDefaultGroupIcon(RsGxsId(groupInfo.mGroupId), IMAGE_WIKI, GxsIdDetails::ORIGINAL);
 
 }
 
