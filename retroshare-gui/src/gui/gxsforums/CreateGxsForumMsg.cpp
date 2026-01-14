@@ -585,6 +585,21 @@ void CreateGxsForumMsg::loadCircleInfo(const RsGxsGroupId& circle_id)
 
     RsThread::async( [circle_id,this]()
     {
+        // get set of eligible ids
+        RsGxsCircleDetails circleDetails;
+        rsGxsCircles->getCircleDetails(RsGxsCircleId(circle_id), circleDetails);
+        std::set<RsGxsId> ids;
+        uint32_t mask =
+            GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST |
+            GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED;
+        for(auto it = circleDetails.mSubscriptionFlags.begin();
+            it != circleDetails.mSubscriptionFlags.end(); it++
+        ) {
+          if((it->second & mask) == mask) {
+            ids.insert(it->first);
+          }
+        }
+
         std::vector<RsGxsCircleGroup> circle_grp_v ;
         rsGxsCircles->getCirclesInfo(std::list<RsGxsGroupId>{ circle_id }, circle_grp_v);
 
@@ -602,26 +617,10 @@ void CreateGxsForumMsg::loadCircleInfo(const RsGxsGroupId& circle_id)
 
         RsGxsCircleGroup cg = circle_grp_v.front();
 
-        RsQThreadUtils::postToObject( [cg,this]()
+        RsQThreadUtils::postToObject( [cg,ids,this]()
         {
             mForumCircleData = cg;
             mForumCircleLoaded = true;
-
-            // get set of eligible ids
-            RsGxsCircleDetails circleDetails;
-            rsGxsCircles->getCircleDetails(
-              RsGxsCircleId(cg.mMeta.mGroupId), circleDetails);
-            std::set<RsGxsId> ids;
-            uint32_t mask =
-                GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST |
-                GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED;
-            for(auto it = circleDetails.mSubscriptionFlags.begin();
-                it != circleDetails.mSubscriptionFlags.end(); it++
-            ) {
-              if((it->second & mask) == mask) {
-                ids.insert(it->first);
-              }
-            }
 
             ui->idChooser->intersectIdConstraintSet(ids);
             ui->idChooser->setFlags(IDCHOOSER_NO_CREATE | ui->idChooser->flags()) ;	// since there's a circle involved, no ID creation can be needed

@@ -730,12 +730,12 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
             else
             {
                 // Go through the list of own ids and see if one of them is a moderator
-                // TODO: offer to select which moderator ID to use if multiple IDs fit the conditions of the forum
 
                 std::list<RsGxsId> own_ids ;
                 rsIdentity->getOwnIds(own_ids) ;
 
                 for(auto it(own_ids.begin());it!=own_ids.end();++it)
+                    // TODO: also make sure the ID is in the circle
                     if(mForumGroup.canEditPosts(*it))
                     {
                         contextMnu.addAction(editAct);
