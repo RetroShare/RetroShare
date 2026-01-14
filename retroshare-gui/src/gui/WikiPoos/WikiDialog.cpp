@@ -77,7 +77,7 @@
 #define IMAGE_NEWFORUM       ":/images/new_forum16.png"
 #define IMAGE_FORUMAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
-#define IMAGE_WIKI           ":/icons/png/wiki.png"
+#define IMAGE_WIKI           ":icons/wiki.png"
 #define IMAGE_EDIT           ":/icons/png/pencil-edit-button.png"
 
 
