@@ -529,41 +529,9 @@ const QPixmap GxsIdDetails::makeDefaultGroupIcon(const RsGxsId& id, const QStrin
 
 const QPixmap GxsIdDetails::makeDefaultGroupIcon(const QString& idStr, const QString& iconPath, AvatarSize size)
 {
-    checkCleanImagesCache();
-
-    time_t now = time(NULL);
-
-    // Convert QString to RsGxsId for caching purposes
+    // Delegate to the RsGxsId overload to avoid duplicating caching logic
     RsGxsId id(idStr.toStdString());
-
-    if(id.isNull())
-        std::cerr << "Weird: null ID" << std::endl;
-
-    QMutexLocker lock(&mIconCacheMutex);
-    auto& it = mDefaultIconCache[id];
-
-    if(it[(int)size].second.width() > 0)
-    {
-        it[(int)size].first = now;
-        return it[(int)size].second;
-    }
-
-    int S = 0;
-
-    switch(size)
-    {
-        case SMALL:  S = 48 ; break;
-        default:
-        case MEDIUM: S = 96 ; break;
-        case ORIGINAL:
-        case LARGE:  S = 192 ; break;
-    }
-
-    QPixmap pixmap = generateColoredIcon(idStr, iconPath, S);
-
-    it[(int)size] = std::make_pair(now, pixmap);
-
-    return pixmap;
+    return makeDefaultGroupIcon(id, iconPath, size);
 }
 
 void GxsIdDetails::debug_dumpImagesCache()
