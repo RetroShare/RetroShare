@@ -1562,8 +1562,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			case TYPE_FILE:
 			{
 				FileInfo fi1;
-				if(links.size()==1 && rsFiles->alreadyHaveFile(RsFileHash(link.hash().toStdString()), fi1)
-					&& !link.name().endsWith(RsCollection::ExtensionString))
+				if(links.size()==1 && rsFiles->alreadyHaveFile(RsFileHash(link.hash().toStdString()), fi1))
 				{
 					/* fallthrough */
 				}
@@ -1634,22 +1633,31 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					QFileInfo qinfo;
 					qinfo.setFile(QString::fromUtf8(path.c_str()));
 					if (qinfo.exists() && qinfo.isFile() && !dontOpenNextFile) {
-						QString question = "<html><body>";
-						question += QObject::tr("Warning: Retroshare is about to ask your system to open this file. ");
-						question += QObject::tr("Before you do so, please make sure that this file does not contain malicious executable code.");
-						question += "<br><br>" + cleanname + "</body></html>";
-
-						QMessageBox mb(QObject::tr("Confirmation"), question, QMessageBox::Warning, QMessageBox::Yes, QMessageBox::No, links.size()>1 ? QMessageBox::NoToAll : 0, nullptr);
-						int ret = mb.exec();
-						if(ret == QMessageBox::Yes) {
+						if(qinfo.suffix() == RsCollection::ExtensionString) {
 							++countFileOpened;
 							bFileOpened = true;
-							/* open file with a suitable application */
-							if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
-								std::cerr << "RetroShareLink::process(): can't open file " << path << std::endl;
+							if(!RsCollectionDialog::openExistingCollection(qinfo.absoluteFilePath())) {
+								std::cerr << "RetroShareLink::process(): can't open RS file collection " << path << std::endl;
 							}
-						} else if (ret == QMessageBox::NoToAll) {
-							dontOpenNextFile = true;
+						}
+						else {
+							QString question = "<html><body>";
+							question += QObject::tr("Warning: Retroshare is about to ask your system to open this file. ");
+							question += QObject::tr("Before you do so, please make sure that this file does not contain malicious executable code.");
+							question += "<br><br>" + cleanname + "</body></html>";
+
+							QMessageBox mb(QObject::tr("Confirmation"), question, QMessageBox::Warning, QMessageBox::Yes, QMessageBox::No, links.size()>1 ? QMessageBox::NoToAll : 0, nullptr);
+							int ret = mb.exec();
+							if(ret == QMessageBox::Yes) {
+								++countFileOpened;
+								bFileOpened = true;
+								/* open file with a suitable application */
+								if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+									std::cerr << "RetroShareLink::process(): can't open file " << path << std::endl;
+								}
+							} else if (ret == QMessageBox::NoToAll) {
+								dontOpenNextFile = true;
+							}
 						}
 						needNotifySuccess = false;
 					}
