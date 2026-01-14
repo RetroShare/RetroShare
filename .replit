@@ -4,3 +4,26 @@ expertMode = true
 [nix]
 channel = "stable-25_05"
 packages = ["unzip"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Check Project Structure"
+
+[[workflows.workflow]]
+name = "Check Project Structure"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "ls -R | head -n 20"
+
+[workflows.workflow.metadata]
+outputType = "console"
