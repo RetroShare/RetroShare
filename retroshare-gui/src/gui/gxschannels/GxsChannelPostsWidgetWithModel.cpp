@@ -318,8 +318,9 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
             break;
     case RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE: painter->drawText(option.rect,Qt::AlignRight | Qt::AlignVCenter,misc::friendlyUnit(qulonglong(file.mSize)));
             break;
-    case RsGxsChannelPostFilesModel::COLUMN_FILES_DATE: painter->drawText(option.rect,Qt::AlignLeft | Qt::AlignVCenter,QDateTime::fromMSecsSinceEpoch(file.mPublishTime*1000).toString("MM/dd/yyyy, hh:mm"));
-            break;
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_DATE: 
+	    painter->drawText(option.rect, Qt::AlignLeft | Qt::AlignVCenter, " " + DateTime::formatDateTime(file.mPublishTime));
+	    break;
     case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE: {
 
         GxsChannelFilesStatusWidget w(file);
@@ -357,7 +358,7 @@ QSize ChannelPostFilesDelegate::sizeHint(const QStyleOptionViewItem& option, con
     {
     case RsGxsChannelPostFilesModel::COLUMN_FILES_NAME: return QSize(1.1*QFontMetrics_horizontalAdvance(fm, QString::fromUtf8(file.mName.c_str())),fm.height());
     case RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE: return QSize(1.1*QFontMetrics_horizontalAdvance(fm, misc::friendlyUnit(qulonglong(file.mSize))),fm.height());
-    case RsGxsChannelPostFilesModel::COLUMN_FILES_DATE: return QSize(1.1*QFontMetrics_horizontalAdvance(fm, QDateTime::fromMSecsSinceEpoch(file.mPublishTime*1000).toString("MM/dd/yyyy, hh:mm")),fm.height());
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_DATE: return QSize(1.1 * QFontMetrics_horizontalAdvance(fm, DateTime::formatDateTime(file.mPublishTime)), fm.height());
     default:
     case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE: return QSize(option.rect.width(),GxsChannelFilesStatusWidget(file).height());
     }

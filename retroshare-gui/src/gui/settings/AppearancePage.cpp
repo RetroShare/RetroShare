@@ -37,6 +37,7 @@
 #include "gui/statusbar/SysTrayStatus.h"
 #include "lang/languagesupport.h"
 #include "util/misc.h"
+#include "util/DateTime.h"
 
 #include <QAbstractItemView>
 #include <QComboBox>
@@ -95,10 +96,23 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	/* Populate Date Format combo box */
 	QDateTime now = QDateTime::currentDateTime();
 
-	ui.cmboDateFormat->addItem(tr("System Default") + " (" + QLocale::system().toString(now, QLocale::ShortFormat) + ")", RshareSettings::DateFormat_System);
-	// Remove 'T' from ISO date for nicer display
-	ui.cmboDateFormat->addItem(tr("ISO 8601") + " (" + now.toString(Qt::ISODate).replace('T', ' ') + ")", RshareSettings::DateFormat_ISO);
-	ui.cmboDateFormat->addItem(tr("Text") + " (" + now.toString("dd MMM yyyy HH:mm") + ")", RshareSettings::DateFormat_Text);
+	// 1. Format Système (ShortFormat)
+	ui.cmboDateFormat->addItem(tr("System Default") + " (" + 
+	QLocale::system().toString(now.date(), QLocale::ShortFormat) + " " + 
+	QLocale::system().toString(now.time(), QLocale::ShortFormat) + ")", 
+	RshareSettings::DateFormat_System);
+
+	// 2. Format ISO (YYYY-MM-DD + HH:mm)
+	ui.cmboDateFormat->addItem(tr("ISO 8601") + " (" + 
+	now.date().toString(Qt::ISODate) + " " + 
+	now.time().toString("HH:mm") + ")", 
+	RshareSettings::DateFormat_ISO);
+
+	// 3. Format Texte (LongFormat de Qt + Heure)
+	ui.cmboDateFormat->addItem(tr("Text") + " (" + 
+	QLocale::system().toString(now.date(), QLocale::LongFormat) + " " + 
+	QLocale::system().toString(now.time(), QLocale::ShortFormat) + ")", 
+	RshareSettings::DateFormat_Text);
 
 	connect(ui.cmboDateFormat, SIGNAL(currentIndexChanged(int)), this, SLOT(updateDateFormat()));
 
@@ -397,7 +411,7 @@ void AppearancePage::updateDateFormat()
 {
     int format = ui.cmboDateFormat->currentData().toInt();
     Settings->setDateFormat(format);
-
+    DateTime::updateDateFormatCache();
     RsGUIEventManager::getInstance()->notifySettingsChanged();
 }
 

@@ -57,6 +57,17 @@ public:
 
 	/* Convert QDateTime to time_t */
 	static time_t DateTimeToTime_t(const QDateTime& dateTime);
+
+	/*
+	* Updates the internal cache for the date format.
+	* Should be called at startup and whenever settings are changed.
+	*/
+	static void updateDateFormatCache();
+
+private:
+	static int mDateFormatCache;
+	static int getDateFormat(); // Internal helper to get cached value
+
 };
 
 #endif

@@ -25,15 +25,31 @@
 #include "rshare.h"
 #include "gui/settings/rsharesettings.h"
 
-/**
+/*
  * This utility class provides standardized date and time formatting across the application.
- * * - formatDate() and formatTime(): These methods dynamically adjust the output 
+ * - formatDate() and formatTime(): These methods dynamically adjust the output 
  * based on the user's selected preference in the application settings 
- * (ISO 8601, System Short Format, or Text).
- * * - formatLongDate() and formatLongDateTime(): These methods use the standard 
- * Qt System Long Format to provide a detailed, locale-aware representation 
- * of the date, bypassing the application's specific short-date preferences.
+ * (System = Qt Short Format, ISO 8601, Text = Qt Long Format)
+ * - formatLongDate() and formatLongDateTime(): use standard Qt Long Format
  */
+
+// Initialiaze cache
+int DateTime::mDateFormatCache = -1;
+
+
+// Cache management
+void DateTime::updateDateFormatCache()
+{
+    mDateFormatCache = Settings->getDateFormat();
+}
+
+int DateTime::getDateFormat()
+{
+    if (mDateFormatCache == -1) {
+        updateDateFormatCache();
+    }
+    return mDateFormatCache;
+}
 
 // --- Date Functions ---
 
@@ -45,7 +61,7 @@ QString DateTime::formatDate(time_t dateValue)
 QString DateTime::formatDate(const QDate &dateValue)
 {
 	/* Retrieve the date format index from global settings */
-	int dateFormat = Settings->getDateFormat(); 
+	int dateFormat = getDateFormat(); 
 
 	if (dateFormat == RshareSettings::DateFormat_ISO) {
 		/* Option "ISO 8601": Returns YYYY-MM-DD */
@@ -93,7 +109,7 @@ QString DateTime::formatTime(time_t timeValue)
 
 QString DateTime::formatTime(const QTime &timeValue)
 {
-	int dateFormat = Settings->getDateFormat();
+	int dateFormat = getDateFormat();
 
 	if (dateFormat == RshareSettings::DateFormat_ISO) {
 		/* ISO standard implies 24h format (HH:mm) */

@@ -748,8 +748,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
                                 }
                         }
 
-			// Use the standardized date format from user preferences
-			if(col == COLUMN_THREAD_LAST_CONTACT) return DateTime::formatDateTime(most_recent_time);
+			if(col == COLUMN_THREAD_LAST_CONTACT) return QVariant((qulonglong)DateTime::DateTimeToTime_t(most_recent_time));
 			if(col == COLUMN_THREAD_IP)           return QVariant(most_recent_ip);
 
                         return QVariant();
@@ -791,8 +790,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 						return QVariant(QString::fromUtf8(node->node_info.location.c_str()));
 				}
 
-				// Force usage of the global DateTime formatting utility
-				case COLUMN_THREAD_LAST_CONTACT:   return DateTime::formatDateTime(node->node_info.lastConnect);
+				case COLUMN_THREAD_LAST_CONTACT:   return QVariant((qulonglong)node->node_info.lastConnect);
 				case COLUMN_THREAD_IP:             return QVariant(  (node->node_info.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(node->node_info) : QString("---"));
 				case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(node->node_info.id.toStdString()) );
 
