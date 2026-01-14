@@ -320,9 +320,15 @@ void IdEditDialog::loadExistingId(const RsGxsIdGroup& id_group)
 	{
 		ui->radioButton_Pseudo->setChecked(true);
 	}
-	// these are not editable for existing Id.
-  ui->radioButton_GpgId->setEnabled(true);
-  ui->radioButton_Pseudo->setEnabled(true);
+  // typically don't allow switching from linked to anonymous because it could
+  // lead a false sense of security
+  #ifndef ALLOW_ID_SWITCH_TO_ANONYMOUS
+  if(realid)
+  {
+    ui->radioButton_GpgId->setEnabled(false);
+    ui->radioButton_Pseudo->setEnabled(false);
+  }
+  #endif
 
 	// DOES THIS TRIGGER ALREADY???
 	// force - incase it wasn't triggered.
