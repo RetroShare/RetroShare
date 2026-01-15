@@ -453,9 +453,13 @@ IdDialog::IdDialog(QWidget *parent)
 
     mFontSizeHandler.registerFontSize(ui->idTreeWidget, 0, [this] (QAbstractItemView*, int fontSize) {
         // Set new font size on all items
-
         mIdListModel->setFontSize(fontSize);
     });
+
+	QFontMetricsF fontMetrics(ui->treeWidget_membership->font());
+	int iconHeight = fontMetrics.height() * 1.4;
+	ui->treeWidget_membership->setIconSize(QSize(iconHeight, iconHeight));
+	ui->idTreeWidget->setIconSize(QSize(iconHeight, iconHeight));
 
     mFontSizeHandler.registerFontSize(ui->treeWidget_membership, 0, [this] (QAbstractItemView*, int fontSize) {
 		// Set new font size on all items
