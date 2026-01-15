@@ -1,21 +1,21 @@
 /*******************************************************************************
  * gui/RemoteDirModel.h                                                        *
- *                                                                             *
+ * *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
- *                                                                             *
+ * *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
  * published by the Free Software Foundation, either version 3 of the          *
  * License, or (at your option) any later version.                             *
- *                                                                             *
+ * *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
  * GNU Affero General Public License for more details.                         *
- *                                                                             *
+ * *
  * You should have received a copy of the GNU Affero General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
- *                                                                             *
+ * *
  *******************************************************************************/
 
 #ifndef REMOTE_DIR_MODEL
@@ -28,6 +28,8 @@
 #include <QAction>
 #include <QIcon>
 #include <QMenu>
+#include <QHash>
+#include <QString>
 
 #include <stdint.h>
 #include <vector>
@@ -78,6 +80,9 @@ class RetroshareDirModel : public QAbstractItemModel
 		void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
 
 		bool requestDirDetails(void *ref, bool remote,DirDetails& d) const;
+
+		// MODIFICATION A: Virtual method to check if a branch has cumulative uploads
+		virtual bool hasUploads(void *ref) const = 0;
 
 		virtual void update() {}
 		virtual void updateRef(const QModelIndex&) const =0;
@@ -203,12 +208,23 @@ class TreeStyle_RDM: public RetroshareDirModel
 
 		virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
+		// MODIFICATION B: Implementation for Tree Style
+		virtual bool hasUploads(void *ref) const;
+
 	private slots:
 		void showEmpty(const bool value);
 
 	private:
 		QAction *_showEmptyAct;
 		bool _showEmpty;
+
+        // Helper to calculate total recursive statistics per directory (Files count, Size, Uploads)
+        void recalculateDirectoryTotals();
+        
+        QHash<QString, uint64_t> m_folderUploadTotals;
+        QHash<QString, uint32_t> m_folderFileTotals; // Total files in branch
+        QHash<QString, uint64_t> m_folderSizeTotals; // Total size of branch
+
 	protected:
 		mutable std::vector<int> _parentRow ; // used to store the real parent row for non empty child
 };
@@ -237,6 +253,8 @@ class FlatStyle_RDM: public RetroshareDirModel
  		//Overloaded from RetroshareDirModel
 		virtual void postMods();/* Callback from Core */
 		virtual void updateRef(const QModelIndex&) const {}
+		// MODIFICATION H: Implement hasUploads for Flat Style to fix compilation
+		virtual bool hasUploads(void *ref) const;
 		virtual QVariant displayRole(const DirDetails&,int) const ;
 		virtual QVariant sortRole(const QModelIndex&,const DirDetails&,int) const ;
 
