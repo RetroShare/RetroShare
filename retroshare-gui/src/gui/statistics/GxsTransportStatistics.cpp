@@ -303,10 +303,14 @@ void GxsTransportStatistics::updateContent()
         item->setData(COL_GROUP_PUBLISHTS,  Qt::DisplayRole,  msg_time_string) ;
 		item->setData(COL_GROUP_NUM_MSGS,  Qt::DisplayRole,  QString::number(stat.mNumMsgs) ) ;
         item->setData(COL_GROUP_GRP_ID,    Qt::DisplayRole,  QString::fromStdString(it->first.toStdString())) ;
-        item->setData(COL_GROUP_SIZE_MSGS, Qt::DisplayRole,  QString::number(stat.mTotalSizeOfMsgs)) ;
+        item->setData(COL_GROUP_SIZE_MSGS, Qt::DisplayRole,  misc::friendlyUnit(stat.mTotalSizeOfMsgs)) ;
         item->setData(COL_GROUP_SUBSCRIBED,Qt::DisplayRole,  stat.subscribed?tr("Yes"):tr("No")) ;
         item->setData(COL_GROUP_POPULARITY,Qt::DisplayRole,  QString::number(stat.popularity)) ;
         item->setData(COL_GROUP_UNIQUE_ID, Qt::DisplayRole,  QString::fromStdString(it->first.toStdString())) ;
+
+        item->setTextAlignment(COL_GROUP_NUM_MSGS, Qt::AlignCenter);
+        item->setTextAlignment(COL_GROUP_SIZE_MSGS, Qt::AlignRight);
+        item->setTextAlignment(COL_GROUP_SUBSCRIBED, Qt::AlignCenter);
 
         for(std::map<RsGxsMessageId,RsMsgMetaData>::const_iterator msgIt(stat.messages_metas.begin());msgIt!=stat.messages_metas.end();++msgIt)
         {
@@ -343,6 +347,8 @@ void GxsTransportStatistics::updateContent()
 			sitem->setData(COL_GROUP_AUTHOR_ID, Qt::DisplayRole,  QString::fromStdString(meta.mAuthorId.toStdString())) ;
 			sitem->setText(COL_GROUP_PUBLISHTS, DateTime::DateTimeFromTime_t(meta.mPublishTs).toString());
 			sitem->setData(COL_GROUP_PUBLISHTS, Qt::UserRole, qdatetime);
+
+			sitem->setTextAlignment(COL_GROUP_PUBLISHTS, Qt::AlignRight);
         }
     }
 }
