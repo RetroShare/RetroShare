@@ -157,7 +157,7 @@ void ChatMsgItem::insertChat(const std::string &message)
     std::cerr << "ChatMsgItem::insertChat(): " << msg << std::endl;
 #endif
 
-    timestampLabel->setText(DateTime::formatLongDateTime(QDateTime::currentDateTime()));
+    timestampLabel->setText(DateTime::formatDateTime(QDateTime::currentDateTime()));
 
     QString formatMsg = QString::fromUtf8(message.c_str());
 

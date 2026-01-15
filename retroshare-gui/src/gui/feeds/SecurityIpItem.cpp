@@ -131,7 +131,7 @@ void SecurityIpItem::updateItemStatic()
 	}
 
 	QDateTime currentTime = QDateTime::currentDateTime();
-	ui->timeLabel->setText(DateTime::formatLongDateTime(currentTime));
+	ui->timeLabel->setText(DateTime::formatDateTime(currentTime));
 }
 
 void SecurityIpItem::updateItem()

@@ -427,7 +427,7 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
             ui->infoLastPost->setText(tr("Never"));
         else
 		
-			ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
+			ui->infoLastPost->setText(DateTime::formatDateTime(group.mMeta.mLastPost));
 		
 			QString formatDescription = QString::fromUtf8(group.mDescription.c_str());
 
@@ -442,7 +442,7 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 			link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
 			ui->infoAdministrator->setText(link.toHtml());
 		
-		    ui->createdinfolabel->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
+		    ui->createdinfolabel->setText(DateTime::formatDateTime(group.mMeta.mPublishTs));
 
 			QString distrib_string ( "[unknown]" );
             

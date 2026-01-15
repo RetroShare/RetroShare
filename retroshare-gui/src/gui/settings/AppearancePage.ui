@@ -14,7 +14,8 @@
    <enum>Qt::NoContextMenu</enum>
   </property>
   <layout class="QGridLayout" name="AppearancePageGLayout">
-   <item row="0" column="0" colspan="2">
+
+   <item row="0" column="0">
     <widget class="QGroupBox" name="grpLanguage">
      <property name="minimumSize">
       <size>
@@ -48,19 +49,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <spacer name="grpLanguageHSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>300</width>
-          <height>16</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="1" column="1">
        <widget class="QLabel" name="labelLanguage">
         <property name="text">
@@ -68,9 +56,59 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="2">
+       <spacer name="grpLanguageHSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
      </layout>
     </widget>
    </item>
+
+   <item row="0" column="1">
+    <widget class="QGroupBox" name="grpDateFormat">
+     <property name="title">
+      <string>Date Format</string>
+     </property>
+     <layout class="QGridLayout" name="grpDateGLayout">
+      <item row="0" column="0">
+       <widget class="RSComboBox" name="cmboDateFormat">
+        <property name="minimumSize">
+         <size>
+          <width>150</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Choose the date display format</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <spacer name="grpDateHSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+
    <item row="3" column="0">
     <widget class="QGroupBox" name="grpToolBar">
      <property name="minimumSize">

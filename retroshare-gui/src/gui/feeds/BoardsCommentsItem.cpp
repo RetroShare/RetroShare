@@ -436,7 +436,7 @@ void BoardsCommentsItem::setComment(const RsGxsComment& cmt)
 	ui->commLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(cmt.mComment.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_LINKS));;
 
 	ui->nameLabel->setId(cmt.mMeta.mAuthorId);
-	ui->datetimeLabel->setText(DateTime::formatLongDateTime(cmt.mMeta.mPublishTs));
+	ui->datetimeLabel->setText(DateTime::formatDateTime(cmt.mMeta.mPublishTs));
 
 	RsIdentityDetails idDetails ;
 	rsIdentity->getIdDetails(cmt.mMeta.mAuthorId,idDetails);

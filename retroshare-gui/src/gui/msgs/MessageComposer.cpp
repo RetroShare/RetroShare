@@ -1169,7 +1169,7 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
         header += QString("<font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("Cc"), cc);
     }
 
-    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("Sent"), DateTime::formatLongDateTime(msgInfo.ts));
+    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("Sent"), DateTime::formatDateTime(msgInfo.ts));
     header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(tr("Subject"), QString::fromUtf8(msgInfo.title.c_str()));
     header += "<br>";
 

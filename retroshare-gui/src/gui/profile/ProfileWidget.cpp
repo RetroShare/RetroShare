@@ -45,7 +45,7 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WindowFlags flags)
     connect(ui.CopyCertButton,SIGNAL(clicked()), this, SLOT(copyCert()));
     connect(ui.profile_Button,SIGNAL(clicked()), this, SLOT(profilemanager()));
 
-    ui.onLineSince->setText(DateTime::formatLongDateTime(RsApplication::startupTime()));
+    ui.onLineSince->setText(DateTime::formatDateTime(RsApplication::startupTime()));
 }
 
 void ProfileWidget::showEvent ( QShowEvent * /*event*/ )

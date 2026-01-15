@@ -149,7 +149,7 @@ void IdDetailsDialog::loadIdentity(RsGxsIdGroup data)
     ui->autoBanIdentities_CB->setVisible(!data.mPgpId.isNull()) ;
     ui->banoption_label->setVisible(!data.mPgpId.isNull()) ;
 	
-	ui->lineEdit_Created->setText(QLocale::system().toString(DateTime::DateTimeFromTime_t(data.mMeta.mPublishTs), QLocale::ShortFormat));
+	ui->lineEdit_Created->setText(DateTime::formatDateTime(data.mMeta.mPublishTs));
 	
 	time_t now = time(NULL) ;
 	ui->lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
