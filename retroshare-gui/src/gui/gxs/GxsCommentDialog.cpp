@@ -180,7 +180,7 @@ void GxsCommentDialog::setCommentHeader(QWidget *header)
 
 	QDateTime qtime;
 	qtime.setTime_t(mCurrentPost.mMeta.mPublishTs);
-	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
+	QString timestamp = DateTime::formatDateTime(qtime);
 	ui->dateLabel->setText(timestamp);
 	ui->fromLabel->setText(QString::fromUtf8(mCurrentPost.mMeta.mAuthorId.c_str()));
 	ui->titleLabel->setText("<a href=" + QString::fromStdString(mCurrentPost.mLink) +

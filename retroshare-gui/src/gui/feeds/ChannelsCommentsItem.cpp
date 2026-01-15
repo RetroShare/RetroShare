@@ -366,7 +366,7 @@ void ChannelsCommentsItem::fill(bool missing_post)
 
     ui->commLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(mComment.mComment.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_LINKS));
     ui->nameLabel->setId(mComment.mMeta.mAuthorId);
-    ui->datetimeLabel->setText(DateTime::formatLongDateTime(mComment.mMeta.mPublishTs));
+    ui->datetimeLabel->setText(DateTime::formatDateTime(mComment.mMeta.mPublishTs));
 
     RsIdentityDetails idDetails ;
     rsIdentity->getIdDetails(mComment.mMeta.mAuthorId,idDetails);

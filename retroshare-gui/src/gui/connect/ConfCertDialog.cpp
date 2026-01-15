@@ -155,7 +155,7 @@ void ConfCertDialog::load()
 
 	ui.loc->setText(QString::fromUtf8(detail.location.c_str()));
 	// Dont Show a timestamp in RS calculate the day
-	ui.lastcontact->setText(DateTime::formatLongDateTime(detail.lastConnect));
+	ui.lastcontact->setText(DateTime::formatDateTime(detail.lastConnect));
 
 	/* set retroshare version */
 	std::string version;

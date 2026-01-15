@@ -109,7 +109,18 @@ public:
 		LASTDIR_BLOGS,
         LASTDIR_SOUNDS,
         LASTDIR_PLUGIN
-    };
+	};
+
+	enum DateFormat {
+        	DateFormat_System = 0,
+	        DateFormat_ISO    = 1,
+	        DateFormat_Text   = 2
+	};
+
+	/** Get the date format (0=System, 1=ISO, 2=Text) */
+	int getDateFormat();
+	/** Set the date format */
+	void setDateFormat(int format);
 
 	enum enumToasterPosition
 	{

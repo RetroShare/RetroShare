@@ -226,7 +226,7 @@ void MsgItem::updateItemStatic()
 	titleLabel->setText(title);
 	subjectLabel->setText(QString::fromUtf8(mi.title.c_str()));
 	mMsg = QString::fromUtf8(mi.msg.c_str());
-	timestampLabel->setText(DateTime::formatLongDateTime(mi.ts));
+	timestampLabel->setText(DateTime::formatDateTime(mi.ts));
 
 	if (wasExpanded() || expandFrame->isVisible()) {
 		fillExpandFrame();

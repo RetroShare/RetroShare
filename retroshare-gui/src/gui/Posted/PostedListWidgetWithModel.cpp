@@ -870,7 +870,7 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
     if(group.mMeta.mLastPost==0)
         ui->infoLastPost->setText(tr("Never"));
     else
-        ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
+        ui->infoLastPost->setText(DateTime::formatDateTime(group.mMeta.mLastPost));
 
     uint32_t current_sync_time  = GxsGroupFrameDialog::checkDelay(rsPosted->getSyncPeriod(group.mMeta.mGroupId))/86400 ;
 
@@ -913,7 +913,7 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 	link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
 	ui->infoAdministrator->setText(link.toHtml());
 
-	ui->createdinfolabel->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
+	ui->createdinfolabel->setText(DateTime::formatDateTime(group.mMeta.mPublishTs));
 
 	QString distrib_string ( "[unknown]" );
 

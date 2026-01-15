@@ -309,7 +309,7 @@ void GxsForumMsgItem::fillMessage()
     if (wasExpanded() || ui->expandFrame->isVisible())
         fillExpandFrame();
 
-    ui->timestamplabel->setText(DateTime::formatLongDateTime(mMessage.mMeta.mPublishTs));
+    ui->timestamplabel->setText(DateTime::formatDateTime(mMessage.mMeta.mPublishTs));
 
     /* header stuff */
     ui->subjectLabel->setText(msgLink.toHtml());

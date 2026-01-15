@@ -68,7 +68,7 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
     ui.retroshareId_content_LB->hide();
     ui.stackPageCertificate->hide();
 
-	ui.onlinesince->setText(DateTime::formatLongDateTime(RsApplication::startupTime()));
+	ui.onlinesince->setText(DateTime::formatDateTime(RsApplication::startupTime()));
 }
 
 #ifdef UNUSED_CODE

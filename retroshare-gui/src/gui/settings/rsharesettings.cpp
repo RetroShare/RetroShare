@@ -45,6 +45,7 @@
 
 /* Retroshare's Settings */
 #define SETTING_LANGUAGE            "LanguageCode"
+#define SETTING_DATEFORMAT          "DateFormat"
 #define SETTING_STYLE               "InterfaceStyle"
 #define SETTING_SHEETNAME           "SheetName"
 #define SETTING_PAGEBUTTONLOC       "PageButtonLocation"
@@ -131,6 +132,7 @@ void RshareSettings::initSettings()
 #endif
 
 	setDefault(SETTING_LANGUAGE, LanguageSupport::defaultLanguageCode());
+	setDefault(SETTING_DATEFORMAT, (int)DateFormat_System);
 	setDefault(SETTING_SHEETNAME, ":Standard_Light");
 
 	/* defaults here are not ideal.... but dusent matter */
@@ -1268,3 +1270,14 @@ void RshareSettings::setJsonApiAuthTokens(const QStringList& authTokens)
 	setValueToGroup("JsonApi", "authTokens", authTokens);
 }
 #endif // RS_JSONAPI
+       
+int RshareSettings::getDateFormat()
+{
+    return value(SETTING_DATEFORMAT, (int)DateFormat_System).toInt();
+}
+
+void RshareSettings::setDateFormat(int format)
+{
+    setValue(SETTING_DATEFORMAT, format);
+}
+
