@@ -22,6 +22,7 @@
 #include <QFontMetrics>
 #include <QModelIndex>
 #include <QIcon>
+#include <chrono>
 
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxschannels.h"
@@ -528,133 +529,162 @@ void RsGxsChannelPostsModel::updateSinglePost(const RsGxsChannelPost& post,std::
 
 void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>& posts)
 {
-	preMods();
+    // Start timer to measure UI thread work
+    auto startTime = std::chrono::steady_clock::now();
 
-	initEmptyHierarchy();
-	mChannelGroup = group;
+    preMods();
 
-//    createPostsArray(posts);
+    initEmptyHierarchy();
+    mChannelGroup = group;
 
     mPosts = posts;
-	std::sort(mPosts.begin(),mPosts.end());
 
-	for(uint32_t i=0;i<mPosts.size();++i)
-		mFilteredPosts.push_back(i);
+    // Sorting can be expensive on the UI thread for large amounts of data
+    std::sort(mPosts.begin(), mPosts.end());
 
-#ifdef DEBUG_CHANNEL_MODEL
-	// debug_dump();
-#endif
+    mFilteredPosts.clear();
+    for(uint32_t i=0; i<mPosts.size(); ++i)
+        mFilteredPosts.push_back(i);
 
-	if (rowCount()>0)
-	{
-		beginInsertRows(QModelIndex(),0,rowCount()-1);
-		endInsertRows();
-	}
+    if (rowCount() > 0)
+    {
+        beginInsertRows(QModelIndex(), 0, rowCount() - 1);
+        endInsertRows();
+    }
 
-	postMods();
+    postMods();
 
-	emit channelPostsLoaded();
+    auto endTime = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+
+    RsDbg() << "DEBUG [UI-MODEL]: setPosts (UI Thread sorting/reset) took: " << duration << " ms for " << mPosts.size() << " posts." << std::endl;
+
+    emit channelPostsLoaded();
 }
-
-
 
 void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 {
-	if(group_id.isNull())
-		return;
+    if(group_id.isNull())
+        return;
 
-    MainWindow::getPage(MainWindow::Channels)->setCursor(Qt::WaitCursor) ; // Maybe we should pass that widget when calling update_posts
+    // Start global timer for the loading process
+    auto totalRequestStart = std::chrono::steady_clock::now();
 
-    RsThread::async([this, group_id]()
-	{
-        // 1 - get message data from p3GxsChannels
+    RsDbg() << "DEBUG [UI-LOAD]: Starting update_posts for group: " << group_id << std::endl;
+
+    MainWindow::getPage(MainWindow::Channels)->setCursor(Qt::WaitCursor);
+
+    RsThread::async([this, group_id, totalRequestStart]()
+    {
+        auto fetchStart = std::chrono::steady_clock::now();
 
         std::list<RsGxsGroupId> channelIds;
-		std::vector<RsMsgMetaData> msg_metas;
-		std::vector<RsGxsChannelGroup> groups;
+        std::vector<RsGxsChannelGroup> groups;
 
         channelIds.push_back(group_id);
 
-		if(!rsGxsChannels->getChannelsInfo(channelIds,groups) || groups.size() != 1)
-		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel group info for channel " << group_id << std::endl;
-			return;
+        if(!rsGxsChannels->getChannelsInfo(channelIds,groups) || groups.size() != 1)
+        {
+            RsErr() << "DEBUG [UI-LOAD]: Failed to retrieve channel group info for " << group_id << std::endl;
+            return;
         }
 
         RsGxsChannelGroup group = groups[0];
 
-        std::vector<RsGxsChannelPost> *posts    = new std::vector<RsGxsChannelPost>(); // We use the heap because the arrays need to be stored accross async
-        std::vector<RsGxsComment>      comments ;
-        std::vector<RsGxsVote>         votes    ;
+        std::vector<RsGxsChannelPost> *posts = new std::vector<RsGxsChannelPost>();
+        std::vector<RsGxsComment> comments;
+        std::vector<RsGxsVote> votes;
 
-        if(!rsGxsChannels->getChannelAllContent(group_id, *posts,comments,votes))
-		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel messages for channel " << group_id << std::endl;
-			return;
-		}
-#ifdef DEBUG_CHANNEL_MODEL
-        std::cerr << "Got channel all content for channel " << group_id << std::endl;
-        std::cerr << "  posts   : " << posts->size() << std::endl;
-        std::cerr << "  comments: " << comments.size() << std::endl;
-        std::cerr << "  votes   : " << votes.size() << std::endl;
-#endif
+        // The following call is the heavy database operation
+        if(!rsGxsChannels->getChannelAllContent(group_id, *posts, comments, votes))
+        {
+            RsErr() << "DEBUG [UI-LOAD]: Failed to retrieve channel content for " << group_id << std::endl;
+            delete posts;
+            return;
+        }
 
-        // 2 - update the model in the UI thread.
+        auto fetchEnd = std::chrono::steady_clock::now();
+        auto fetchMs = std::chrono::duration_cast<std::chrono::milliseconds>(fetchEnd - fetchStart).count();
 
-        RsQThreadUtils::postToObject( [group,posts,this]()
-		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete, note that
-			 * Qt::QueuedConnection is important!
-			 */
+        RsDbg() << "DEBUG [UI-LOAD]: Backend fetch finished. Items: " << posts->size() 
+                << " posts. Time: " << fetchMs << " ms." << std::endl;
 
-            setPosts(group,*posts) ;
+        // Return to UI thread for model update
+        RsQThreadUtils::postToObject( [group, posts, this, totalRequestStart]()
+        {
+            auto uiUpdateStart = std::chrono::steady_clock::now();
+
+            setPosts(group, *posts);
+
+            auto now = std::chrono::steady_clock::now();
+            auto totalMs = std::chrono::duration_cast<std::chrono::milliseconds>(now - totalRequestStart).count();
+            auto uiDispatchMs = std::chrono::duration_cast<std::chrono::milliseconds>(now - uiUpdateStart).count();
+
+            RsDbg() << "DEBUG [UI-LOAD]: UI model update finished. Dispatch/Update time: " << uiDispatchMs << " ms." << std::endl;
+            RsDbg() << "DEBUG [UI-LOAD]: TOTAL LOADING TIME (User perceived): " << totalMs << " ms." << std::endl;
 
             delete posts;
-
-            MainWindow::getPage(MainWindow::Channels)->setCursor(Qt::ArrowCursor) ;
+            MainWindow::getPage(MainWindow::Channels)->setCursor(Qt::ArrowCursor);
 
         }, this );
-
     });
 }
 
 void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
 {
-    // No need to call preMods()/postMods() here because we're not changing the model
-    // All operations below are done async
+    // Start timer to measure how long the UI thread is occupied
+    auto startTime = std::chrono::steady_clock::now();
 
-    // 1 - copy all msg/grp id groups, so that changing the mPosts list while calling the async method will not break the work
+    RsDbg() << "DEBUG [UI-CHANNELS]: Starting setAllMsgReadStatus for " << mPosts.size() << " messages." << std::endl;
 
+    // 1 - copy all msg/grp id groups
+    // This part is done on the UI thread and can be slow if mPosts is large
     std::vector<RsGxsGrpMsgIdPair> pairs;
 
-    for(uint32_t i=0;i<mPosts.size();++i)
+    for(uint32_t i=0; i<mPosts.size(); ++i)
     {
         bool post_status = !((IS_MSG_UNREAD(mPosts[i].mMeta.mMsgStatus) || IS_MSG_NEW(mPosts[i].mMeta.mMsgStatus)));
 
         if(post_status != read_status)
-            pairs.push_back(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId));
-     }
+            pairs.push_back(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId, mPosts[i].mMeta.mMsgId));
+    }
+
+    RsDbg() << "DEBUG [UI-CHANNELS]: Found " << pairs.size() << " messages requiring status change." << std::endl;
 
     // 2 - then call the async methods
-
-    for(uint32_t i=0;i<pairs.size();++i)
-        RsThread::async([p=pairs[i], read_status]()	// use async because each markRead() waits for the token to complete in order to properly acknowledge it.
+    // We are launching N threads. The overhead of creating these threads 
+    // stays on the UI thread and contributes to the freeze.
+    for(uint32_t i=0; i<pairs.size(); ++i)
+    {
+        RsThread::async([p=pairs[i], read_status]()
         {
-            if(!rsGxsChannels->setMessageReadStatus(p,read_status))
+            if(!rsGxsChannels->setMessageReadStatus(p, read_status))
                 RsErr() << "setAllMsgReadStatus: failed to change status of msg " << p.first << " in group " << p.second << " to status " << read_status << std::endl;
         });
 
-    // 3 - update the local model data, since we don't catch the READ_STATUS_CHANGED event later, to avoid re-loading the msg.
+        if (i > 0 && i % 1000 == 0) {
+            RsDbg() << "DEBUG [UI-CHANNELS]: Launched " << i << " async threads..." << std::endl;
+        }
+    }
 
-    for(uint32_t i=0;i<mPosts.size();++i)
+    // 3 - update the local model data
+    // This is the visual update part
+    for(uint32_t i=0; i<mPosts.size(); ++i)
+    {
         if(read_status)
             mPosts[i].mMeta.mMsgStatus &= ~(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD | GXS_SERV::GXS_MSG_STATUS_GUI_NEW);
         else
             mPosts[i].mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD ;
+    }
 
-    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,mColumns-1,(void*)NULL));
+    // Calculate total time spent in this function before returning control to the UI
+    auto endTime = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+
+    RsDbg() << "DEBUG [UI-CHANNELS]: Finished setAllMsgReadStatus." << std::endl;
+    RsDbg() << "DEBUG [UI-CHANNELS]: TOTAL UI THREAD FREEZE: " << duration << " ms." << std::endl;
+
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1, mColumns-1, (void*)NULL));
 }
 
 void RsGxsChannelPostsModel::updatePostWithNewComment(const RsGxsMessageId& msg_id)
