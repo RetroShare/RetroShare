@@ -45,9 +45,9 @@ class RsVOIPItem: public RsItem
 {
 	public:
 		RsVOIPItem(uint8_t voip_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_VOIP_PLUGIN,voip_subtype)
-		{ 
+		{
 			setPriorityLevel(QOS_PRIORITY_RS_VOIP) ;
-		}	
+		}
 
 		virtual ~RsVOIPItem() {}
 		virtual void clear() {}
@@ -70,7 +70,7 @@ class RsVOIPDataItem: public RsVOIPItem
 	public:
 		RsVOIPDataItem() :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_DATA) {}
 
-		virtual ~RsVOIPDataItem() 
+		virtual ~RsVOIPDataItem()
 		{
 			free(voip_data) ;
 			voip_data = NULL ;
@@ -78,9 +78,9 @@ class RsVOIPDataItem: public RsVOIPItem
 		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 		uint32_t flags ;
-		uint32_t data_size ;
-        
-		void *voip_data ;
+		uint32_t data_size = 0;
+
+		void *voip_data = nullptr;
 };
 
 #ifdef TODO

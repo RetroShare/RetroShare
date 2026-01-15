@@ -409,7 +409,7 @@ bool JPEGVideo::encodeData(const QImage& image,uint32_t /* size_hint */,RsVOIPDa
     encoded_frame.save(&buffer,"JPEG") ;
 
     voip_chunk.data = rs_malloc(HEADER_SIZE + qb.size());
-    
+
     if(!voip_chunk.data)
         return false ;
 
@@ -431,7 +431,9 @@ bool JPEGVideo::encodeData(const QImage& image,uint32_t /* size_hint */,RsVOIPDa
 
 FFmpegVideo::FFmpegVideo()
 {
+#if LIBAVCODEC_VERSION_MAJOR < 58
     avcodec_register_all();
+#endif
     // Encoding
 
     encoding_codec = NULL ;
@@ -473,8 +475,10 @@ FFmpegVideo::FFmpegVideo()
     encoding_context->rc_max_rate = 0;
     encoding_context->rc_buffer_size = 0;
 #endif
+#if LIBAVCODEC_VERSION_MAJOR < 58
 	if (encoding_codec->capabilities & AV_CODEC_CAP_TRUNCATED)
 		encoding_context->flags |= AV_CODEC_FLAG_TRUNCATED;
+#endif
 	encoding_context->flags |= AV_CODEC_FLAG_PSNR;//Peak signal-to-noise ratio
 	encoding_context->flags |= AV_CODEC_CAP_PARAM_CHANGE;
     encoding_context->i_quant_factor = 0.769f;
@@ -507,11 +511,12 @@ FFmpegVideo::FFmpegVideo()
     //encoding_context->max_b_frames = 1;
 #if LIBAVCODEC_VERSION_MAJOR < 54
     encoding_context->pix_fmt = PIX_FMT_YUV420P; //context->pix_fmt = PIX_FMT_RGB24;
-    if (codec_id == CODEC_ID_H264) {
+    if (codec_id == CODEC_ID_H264)
 #else
     encoding_context->pix_fmt = AV_PIX_FMT_YUV420P; //context->pix_fmt = AV_PIX_FMT_RGB24;
-    if (codec_id == AV_CODEC_ID_H264) {
+    if (codec_id == AV_CODEC_ID_H264)
 #endif
+    {
         av_opt_set(encoding_context->priv_data, "preset", "slow", 0);
     }
 
@@ -569,8 +574,10 @@ FFmpegVideo::FFmpegVideo()
     decoding_context->pix_fmt = AV_PIX_FMT_YUV420P;
 #endif
 
+#if LIBAVCODEC_VERSION_MAJOR < 58
 	if(decoding_codec->capabilities & AV_CODEC_CAP_TRUNCATED)
 		decoding_context->flags |= AV_CODEC_FLAG_TRUNCATED; // we do not send complete frames
+#endif
     //we can receive truncated frames
 	decoding_context->flags2 |= AV_CODEC_FLAG2_CHUNKS;
 
@@ -686,13 +693,22 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 	if (ret > 0) {
 		got_output = ret;
 	}
-#else
+#elif LIBAVCODEC_VERSION_MAJOR < 58
 	pkt.data = NULL;    // packet data will be allocated by the encoder
 	pkt.size = 0;
 
 	//    do
 	//    {
 	int ret = avcodec_encode_video2(encoding_context, &pkt, encoding_frame_buffer, &got_output) ;
+#else
+
+  int ret = avcodec_send_frame(encoding_context, encoding_frame_buffer);
+  if(!ret || ret == AVERROR(EAGAIN))
+    ret = avcodec_receive_packet(encoding_context, &pkt);
+  if(!ret)
+    got_output = 1;
+  if(ret == AVERROR(EAGAIN))
+    ret = 0;
 #endif
 
 	if (ret < 0)
@@ -707,10 +723,10 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 	if(got_output)
 	{
 		voip_chunk.data = rs_malloc(pkt.size + HEADER_SIZE) ;
-		
+
 		if(!voip_chunk.data)
 			return false ;
-        
+
 		uint32_t flags = 0;
 
 		((unsigned char *)voip_chunk.data)[0] =  VideoProcessor::VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO       & 0xff ;
@@ -728,7 +744,11 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 		fwrite(pkt.data,1,pkt.size,encoding_debug_file) ;
 		fflush(encoding_debug_file) ;
 #endif
+#if LIBAVCODEC_VERSION_MAJOR < 58
 		av_free_packet(&pkt);
+#else
+    av_packet_unref(&pkt);
+#endif
 
 		return true ;
 	}
@@ -752,16 +772,8 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 #endif
 
 	uint32_t s = chunk.size - HEADER_SIZE ;
-#if defined(__MINGW32__)
-	unsigned char *tmp = (unsigned char*)_aligned_malloc(s + AV_INPUT_BUFFER_PADDING_SIZE, 16) ;
-#else
-#ifdef __MACH__
-	//Mac OS X appears to be 16-byte mem aligned.
-	unsigned char *tmp = (unsigned char*)malloc(s + AV_INPUT_BUFFER_PADDING_SIZE) ;
-#else //MAC
-	unsigned char *tmp = (unsigned char*)memalign(16, s + AV_INPUT_BUFFER_PADDING_SIZE) ;
-#endif //MAC
-#endif //MINGW
+  unsigned char *tmp =
+    (unsigned char *)av_malloc(s + AV_INPUT_BUFFER_PADDING_SIZE);
 	if (tmp == NULL) {
 		std::cerr << "FFmpegVideo::decodeData() Unable to allocate new buffer of size " << s << std::endl;
 		return false;
@@ -772,12 +784,33 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 	/* set end of buffer to 0 (this ensures that no overreading happens for damaged mpeg streams) */
 	memset(&tmp[s], 0, AV_INPUT_BUFFER_PADDING_SIZE) ;
 
-	decoding_buffer.size = s ;
-	decoding_buffer.data = tmp;
+  av_packet_from_data(&decoding_buffer, tmp, s);
+
 	int got_frame = 1 ;
 
-	while (decoding_buffer.size > 0 || (!decoding_buffer.data && got_frame)) {
+#if LIBAVCODEC_VERSION_MAJOR >= 58
+  int ret = avcodec_send_packet(decoding_context, &decoding_buffer);
+  if(ret && ret != AVERROR(EAGAIN)) {
+    std::cerr << "Error decoding frame! Return=" << ret << std::endl;
+    got_frame = 0;
+  }
+  else {
+    av_packet_unref(&decoding_buffer);
+  }
+#endif
+
+#if LIBAVCODEC_VERSION_MAJOR < 58
+	while (decoding_buffer.size > 0 || (!decoding_buffer.data && got_frame))
+#else
+  while (got_frame)
+#endif
+  {
+#if LIBAVCODEC_VERSION_MAJOR < 58
 		int len = avcodec_decode_video2(decoding_context,decoding_frame_buffer,&got_frame,&decoding_buffer) ;
+#else
+    int len = avcodec_receive_frame(decoding_context, decoding_frame_buffer);
+    if(len == AVERROR(EAGAIN)) break;
+#endif
 
 		if (len < 0)
 		{
@@ -785,8 +818,10 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 			return false ;
 		}
 
+#if LIBAVCODEC_VERSION_MAJOR < 58
 		decoding_buffer.data += len;
 		decoding_buffer.size -= len;
+#endif
 
 		if(got_frame)
 		{
@@ -812,9 +847,11 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 		}
 	}
 	/* flush the decoder */
+#if LIBAVCODEC_VERSION_MAJOR < 58
 	decoding_buffer.data  = NULL;
 	decoding_buffer.size  = 0;
 	//avcodec_decode_video2(decoding_context,decoding_frame_buffer,&got_frame,&decoding_buffer) ;
+#endif
 
 	return true ;
 }

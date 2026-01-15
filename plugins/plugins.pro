@@ -24,4 +24,5 @@ SUBDIRS += \
                 VOIP \
 }
 SUBDIRS += \
-		FeedReader
+		FeedReader \
+    VOIP
