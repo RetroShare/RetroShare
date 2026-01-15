@@ -408,7 +408,7 @@ QVariant RsGxsChannelPostFilesModel::displayRole(const ChannelPostFileInfo& fmpe
 	{
 	case COLUMN_FILES_NAME: return QString::fromUtf8(fmpe.mName.c_str());
 	case COLUMN_FILES_SIZE: return QString::number(fmpe.mSize);
-	case COLUMN_FILES_DATE: return QString::number(fmpe.mPublishTime);
+	case COLUMN_FILES_DATE: return QVariant(qulonglong(fmpe.mPublishTime));
 	case COLUMN_FILES_FILE: {
 		FileInfo finfo;
 		if(rsFiles->FileDetails(fmpe.mHash,RS_FILE_HINTS_DOWNLOAD,finfo))

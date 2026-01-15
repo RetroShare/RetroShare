@@ -1654,10 +1654,12 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
 	/* get GPG Details from rsPeers */
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
-    ui->lineEdit_PublishTS->setText(QLocale::system().toString(DateTime::DateTimeFromTime_t(data.mMeta.mPublishTs), QLocale::ShortFormat));
+    ui->lineEdit_PublishTS->setText(DateTime::formatDateTime(data.mMeta.mPublishTs));
+
     //ui->lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
-	ui->lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
-	//ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
+    ui->lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
+
+    //ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
     if(data.mPgpKnown)
 	    ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
     else

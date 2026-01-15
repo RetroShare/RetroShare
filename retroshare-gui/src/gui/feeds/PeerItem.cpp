@@ -132,7 +132,7 @@ void PeerItem::updateItemStatic()
 	{
 		/* set peer name */
 		peerNameLabel->setText(QString::fromUtf8(details.name.c_str()));
-		lastLabel-> setText(DateTime::formatLongDateTime(details.lastConnect));
+		lastLabel-> setText(DateTime::formatDateTime(details.lastConnect));
 
 		/* expanded Info */
 		nameLabel->setText(QString::fromUtf8(details.name.c_str()));

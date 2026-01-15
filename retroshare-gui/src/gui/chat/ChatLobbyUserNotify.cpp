@@ -303,7 +303,7 @@ void ChatLobbyUserNotify::chatLobbyNewMessage(ChatLobbyId lobby_id, QDateTime ti
 		}
 
 	if ((bGetNickName || bFoundTextToNotify || _bCountUnRead)){
-		QString strAnchor = time.toString(Qt::ISODate);
+		QString strAnchor = DateTime::formatDateTime(time);
 		MsgData msgData;
 		msgData.text=RsHtml::plainText(senderName) + ": " + msg;
 		msgData.unread=!(bGetNickName || bFoundTextToNotify);

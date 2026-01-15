@@ -461,10 +461,10 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     if(mGrpMeta.mLastPost==0)
         ui.lastpostline->setText(tr("Never"));
     else
-        ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
+        ui.lastpostline->setText(DateTime::formatDateTime(mGrpMeta.mLastPost));
     ui.authorValueLabel->setId(mGrpMeta.mAuthorId);
 	
-    ui.createdline->setText(DateTime::formatLongDateTime(mGrpMeta.mPublishTs));
+    ui.createdline->setText(DateTime::formatDateTime(mGrpMeta.mPublishTs));
 
 	link = RetroShareLink::createMessage(mGrpMeta.mAuthorId, "");
 
