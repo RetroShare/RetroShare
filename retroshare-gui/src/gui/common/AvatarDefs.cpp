@@ -28,52 +28,58 @@
 #include "AvatarDefs.h"
 #include "gui/common/FilesDefs.h"
 
-void AvatarDefs::getOwnAvatar(QPixmap &avatar, const QString& defaultImage)
+void AvatarDefs::getOwnAvatar(QPixmap &avatar, const QString &defaultImage)
 {
-	unsigned char *data = NULL;
-	int size = 0;
+    unsigned char *data = NULL;
+    int size = 0;
 
-	/* get avatar */
+    /* get avatar */
     rsChats->getOwnNodeAvatarData(data, size);
 
-	if (size == 0) {
+    if (size == 0)
+    {
         avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
-		return;
-	}
+        return;
+    }
 
-	/* load image */
-	GxsIdDetails::loadPixmapFromData(data, size, avatar,GxsIdDetails::ORIGINAL) ;
+    /* load image */
+    GxsIdDetails::loadPixmapFromData(data, size, avatar, GxsIdDetails::ORIGINAL);
 
-	free(data);
+    free(data);
 }
-bool AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, const QString& defaultImage)
+bool AvatarDefs::getAvatarFromSslId(const RsPeerId &sslId, QPixmap &avatar, const QString & /*defaultImage*/)
 {
     unsigned char *data = NULL;
     int size = 0;
 
     /* get avatar */
     rsChats->getAvatarData(RsPeerId(sslId), data, size);
-    if (size == 0) {
-        if (!defaultImage.isEmpty()) {
-            avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
-        }
+
+    if (size == 0)
+    {
+        // Generate unique colored default avatar instead of anonymous.png
+        avatar = GxsIdDetails::makeGeneratedDefaultIcon(
+            QString::fromStdString(sslId.toStdString()),
+            GxsIdDetails::GEN_ICON_FRIEND,
+            GxsIdDetails::LARGE);
         return false;
     }
 
     /* load image */
-    GxsIdDetails::loadPixmapFromData(data, size, avatar, GxsIdDetails::LARGE) ;
+    GxsIdDetails::loadPixmapFromData(data, size, avatar, GxsIdDetails::LARGE);
 
     free(data);
     return true;
 }
-bool AvatarDefs::getAvatarFromGxsId(const RsGxsId& gxsId, QPixmap &avatar, const QString& defaultImage)
+
+bool AvatarDefs::getAvatarFromGxsId(const RsGxsId &gxsId, QPixmap &avatar, const QString &defaultImage)
 {
-    //int size = 0;
+    // int size = 0;
 
     /* get avatar */
-    RsIdentityDetails details ;
+    RsIdentityDetails details;
 
-    if(!rsIdentity->getIdDetails(gxsId, details))
+    if (!rsIdentity->getIdDetails(gxsId, details))
     {
         avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
         return false;
@@ -81,43 +87,50 @@ bool AvatarDefs::getAvatarFromGxsId(const RsGxsId& gxsId, QPixmap &avatar, const
 
     /* load image */
 
-        if(details.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(details.mAvatar.mData, details.mAvatar.mSize, avatar,GxsIdDetails::LARGE))
-            avatar = GxsIdDetails::makeDefaultIcon(gxsId,GxsIdDetails::LARGE);
+    if (details.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(details.mAvatar.mData, details.mAvatar.mSize, avatar, GxsIdDetails::LARGE))
+        avatar = GxsIdDetails::makeDefaultIcon(gxsId, GxsIdDetails::LARGE);
 
-        return true;
+    return true;
 }
 
-bool AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const QString& defaultImage)
+bool AvatarDefs::getAvatarFromGpgId(const RsPgpId &gpgId, QPixmap &avatar, const QString &defaultImage)
 {
-	unsigned char *data = NULL;
-	int size = 0;
+    unsigned char *data = NULL;
+    int size = 0;
 
-    if (gpgId == rsPeers->getGPGOwnId()) {
-		/* Its me */
-        rsChats->getOwnNodeAvatarData(data,size);
-	} else {
-		/* get the first available avatar of one of the ssl ids */
+    if (gpgId == rsPeers->getGPGOwnId())
+    {
+        /* Its me */
+        rsChats->getOwnNodeAvatarData(data, size);
+    }
+    else
+    {
+        /* get the first available avatar of one of the ssl ids */
         std::list<RsPeerId> sslIds;
-        if (rsPeers->getAssociatedSSLIds(gpgId, sslIds)) {
+        if (rsPeers->getAssociatedSSLIds(gpgId, sslIds))
+        {
             std::list<RsPeerId>::iterator sslId;
-			for (sslId = sslIds.begin(); sslId != sslIds.end(); ++sslId) {
+            for (sslId = sslIds.begin(); sslId != sslIds.end(); ++sslId)
+            {
                 rsChats->getAvatarData(*sslId, data, size);
-				if (size) {
-					break;
-				}
-			}
-		}
-	}
+                if (size)
+                {
+                    break;
+                }
+            }
+        }
+    }
 
-	if (size == 0) {
+    if (size == 0)
+    {
         avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
-		return false;
-	}
+        return false;
+    }
 
-	/* load image */
-	GxsIdDetails::loadPixmapFromData(data, size, avatar);
+    /* load image */
+    GxsIdDetails::loadPixmapFromData(data, size, avatar);
 
-	free(data);
+    free(data);
 
     return true;
 }

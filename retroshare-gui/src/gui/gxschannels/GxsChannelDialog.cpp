@@ -426,7 +426,12 @@ void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *gro
 		groupItemInfo.icon = image;
 	}
 	else
-        groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/channel.png");
+      groupItemInfo.icon = GxsIdDetails::makeGeneratedDefaultIcon(
+    QString::fromStdString(groupData->mMeta.mGroupId.toStdString()),
+    GxsIdDetails::GEN_ICON_CHANNEL,
+    GxsIdDetails::ORIGINAL
+);
+
 
 	groupItemInfo.description = QString::fromUtf8(channelGroupData->mDescription.c_str());
 }
