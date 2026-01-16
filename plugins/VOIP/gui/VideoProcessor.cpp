@@ -131,7 +131,7 @@ void av_frame_free(AVFrame **frame)
 #endif // MINGW
 
 VideoProcessor::VideoProcessor()
-    :_encoded_frame_size(640,480)
+    : _encoded_out_queue(8), _encoded_frame_size(640,480)
 {
     //_lastTimeToShowFrame = time(NULL);
     _decoded_output_device = NULL ;
@@ -350,7 +350,7 @@ bool JPEGVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
     return true ;
 }
 
-bool JPEGVideo::encodeData(const QImage& image,uint32_t /* size_hint */, NetQueue<RsVOIPDataChunk, 8>& dst)
+bool JPEGVideo::encodeData(const QImage& image,uint32_t /* size_hint */, NetQueue<RsVOIPDataChunk>& dst)
 {
     // check if we make a diff image, or if we use the full frame.
 
@@ -670,7 +670,7 @@ static void frameToImage(QImage& image, const AVFrame *frame) {
   }
 }
 
-bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitrate, NetQueue<RsVOIPDataChunk, 8>& dst)
+bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitrate, NetQueue<RsVOIPDataChunk>& dst)
 {
 #if LIBAVCODEC_VERSION_MAJOR < 58
   if(dst.full()) return false;

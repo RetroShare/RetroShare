@@ -30,28 +30,33 @@ extern "C" {
 
 class QVideoOutputDevice ;
 
-template<typename T, int N>
+template<typename T>
 class NetQueue {
-  std::array<T, N> arr;
-  std::atomic<int> mhead = 0;
-  std::atomic<int> mtail = 0;
+  std::vector<T> arr;
+  const unsigned int mask;
+  std::atomic<unsigned int> mhead = 0;
+  std::atomic<unsigned int> mtail = 0;
 
 public:
-  bool full() const { return mhead - mtail == N; }
-  T& head() { return arr[mhead % N]; }
+  NetQueue(unsigned int size) : arr(size), mask(size - 1) {
+    if(size & mask) throw std::invalid_argument("size must be a power of 2");
+  }
+
+  bool full() const { return mhead - mtail == arr.size(); }
+  T& head() { return arr[mhead & mask]; }
   void push() { mhead++; }
-  bool push(const T& e) { return !full() && ((arr[mhead++ % N] = e), true); }
+  bool push(const T& e) { return !full() && ((arr[mhead++ & mask] = e), true); }
 
   bool empty() const { return mhead == mtail; }
-  T& tail() { return arr[mtail % N]; }
+  T& tail() { return arr[mtail & mask]; }
   void pop() { mtail++; }
-  bool pop(T& e) { return !empty() && ((e = arr[mtail++ % N]), true); }
+  bool pop(T& e) { return !empty() && ((e = arr[mtail++ & mask]), true); }
 };
 
 class VideoCodec
 {
 public:
-    virtual bool encodeData(const QImage& Image, uint32_t size_hint, NetQueue<RsVOIPDataChunk, 8>& dst) = 0;
+    virtual bool encodeData(const QImage& Image, uint32_t size_hint, NetQueue<RsVOIPDataChunk>& dst) = 0;
     virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) = 0;
 
 protected:
@@ -67,7 +72,7 @@ public:
     JPEGVideo() ;
 
 protected:
-    virtual bool encodeData(const QImage& Image, uint32_t target_encoding_bitrate, NetQueue<RsVOIPDataChunk, 8>& dst) ;
+    virtual bool encodeData(const QImage& Image, uint32_t target_encoding_bitrate, NetQueue<RsVOIPDataChunk>& dst) ;
     virtual bool decodeData(const RsVOIPDataChunk& chunk, QImage& image) ;
 
     static const uint32_t JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME = 0x0001 ;
@@ -91,7 +96,7 @@ public:
     ~FFmpegVideo() ;
 
 protected:
-    virtual bool encodeData(const QImage& Image, uint32_t target_encoding_bitrate, NetQueue<RsVOIPDataChunk, 8>& dst) ;
+    virtual bool encodeData(const QImage& Image, uint32_t target_encoding_bitrate, NetQueue<RsVOIPDataChunk>& dst) ;
     virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) ;
 
 private:
@@ -166,7 +171,7 @@ class VideoProcessor
 
 	protected:
 
-    NetQueue<RsVOIPDataChunk, 8> _encoded_out_queue ;
+    NetQueue<RsVOIPDataChunk> _encoded_out_queue;
         	QSize _encoded_frame_size ;
 
 // =====================================================================================
