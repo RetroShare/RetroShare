@@ -233,10 +233,14 @@ void PostedDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupDa
     {
 	QPixmap image;
 	GxsIdDetails::loadPixmapFromData(postedGroupData->mGroupImage.mData, postedGroupData->mGroupImage.mSize, image,GxsIdDetails::ORIGINAL);
-	groupItemInfo.icon        = image;
+	        = image;
     }
     else
-    groupItemInfo.icon        = FilesDefs::getIconFromQtResourcePath(":icons/png/postedlinks.png");
+         groupItemInfo.icon = GxsIdDetails::makeGeneratedDefaultIcon(
+    QString::fromStdString(groupData->mMeta.mGroupId.toStdString()),
+    GxsIdDetails::GEN_ICON_BOARD,
+    GxsIdDetails::ORIGINAL
+);
 
 	groupItemInfo.description = QString::fromUtf8(postedGroupData->mDescription.c_str());
 }
