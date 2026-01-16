@@ -28,6 +28,8 @@
 #include <QString>
 #include <QStyledItemDelegate>
 
+#include <string>
+
 #include <retroshare/rsidentity.h>
 
 class QLabel;
@@ -175,6 +177,7 @@ protected:
 
     static uint32_t mImagesAllocated;
     static std::map<RsGxsId,std::pair<time_t,QPixmap>[4] > mDefaultIconCache;
+    static std::map<std::string,std::pair<time_t,QPixmap>[4] > mDefaultGroupIconCache;
     static time_t mLastIconCacheCleaning;
 
     int mCheckTimerId;

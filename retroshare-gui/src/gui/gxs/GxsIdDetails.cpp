@@ -74,12 +74,69 @@
 uint32_t GxsIdDetails::mImagesAllocated = 0;
 time_t GxsIdDetails::mLastIconCacheCleaning = time(NULL);
 std::map<RsGxsId,std::pair<time_t,QPixmap>[4] > GxsIdDetails::mDefaultIconCache ;
+std::map<std::string,std::pair<time_t,QPixmap>[4] > GxsIdDetails::mDefaultGroupIconCache ;
 
 QMutex GxsIdDetails::mMutex;
 QMutex GxsIdDetails::mIconCacheMutex;
 
 #define ICON_CACHE_STORAGE_TIME 		  240
 #define DELAY_BETWEEN_ICON_CACHE_CLEANING 120
+
+static std::string groupIconCacheKey(const RsGxsId& id, const QString& iconPath)
+{
+    std::string key = id.toStdString();
+    key.append("|");
+    key.append(iconPath.toStdString());
+    return key;
+}
+
+template<typename CacheMap>
+static void cleanupIconCache(CacheMap& cache, time_t now, int& nb_deleted, uint32_t& size_deleted, uint32_t& total_size, const char* label)
+{
+    for(auto it(cache.begin());it!=cache.end();)
+    {
+        bool all_empty = true ;
+#ifdef DEBUG_GXSIDDETAILS
+        std::cerr << "  Examining pixmaps sizes for " << label << " " << it->first << "." << std::endl;
+#endif
+
+        for(int i=0;i<4;++i)
+            if(it->second[i].first>0)
+            {
+                if(it->second[i].first + ICON_CACHE_STORAGE_TIME < now && it->second[i].second.isDetached())
+                {
+                    int s = it->second[i].second.width()*it->second[i].second.height()*4;
+
+#ifdef DEBUG_GXSIDDETAILS
+                    std::cerr << "    Deleting pixmap " << it->first << " size " << i << " " << s << " bytes." << std::endl;
+#endif
+
+                    it->second[i].second = QPixmap();
+                    it->second[i].first = 0;
+                    ++nb_deleted;
+                    size_deleted += s;
+                }
+                else
+                {
+                    all_empty = false;
+                    total_size += it->second[i].second.width()*it->second[i].second.height()*4;
+#ifdef DEBUG_GXSIDDETAILS
+                    std::cerr << "    Keeping " << it->first << " size " << i << std::endl;
+#endif
+                }
+            }
+
+        if(all_empty)
+        {
+#ifdef DEBUG_GXSIDDETAILS
+            std::cerr << "    Deleting entry " << it->first << " because no pixmaps are stored here. " << std::endl;
+#endif
+            it = cache.erase(it);
+        }
+        else
+            ++it;
+    }
+}
 
 void ReputationItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
@@ -501,7 +558,7 @@ const QPixmap GxsIdDetails::makeDefaultGroupIcon(const RsGxsId& id, const QStrin
         std::cerr << "Weird: null ID" << std::endl;
 
     QMutexLocker lock(&mIconCacheMutex);
-    auto& it = mDefaultIconCache[id];
+    auto& it = mDefaultGroupIconCache[groupIconCacheKey(id, iconPath)];
 
     if(it[(int)size].second.width() > 0)
     {
@@ -557,6 +614,24 @@ void GxsIdDetails::debug_dumpImagesCache()
                 std::cerr << " None." << std::endl;
         }
     }
+
+    for(const auto& it:mDefaultGroupIconCache)
+    {
+        std::cerr << "  Group " << it.first << ":" << std::endl;
+
+        for(uint32_t i=0;i<4;++i)
+        {
+            std::cerr << "    Size #" << i << ": " ;
+
+            if(it.second[i].first>0)
+            {
+                int s = it.second[i].second.width()*it.second[i].second.height()*4;
+                std::cerr << " Present. Size=" << s << " bytes. Age: " << time(nullptr)-it.second[i].first << " secs. ago. Used: " << !it.second[i].second.isDetached() << std::endl;
+            }
+            else
+                std::cerr << " None." << std::endl;
+        }
+    }
 }
 
 void GxsIdDetails::checkCleanImagesCache()
@@ -576,52 +651,12 @@ void GxsIdDetails::checkCleanImagesCache()
 
         QMutexLocker lock(&mIconCacheMutex);
 
-        for(auto it(mDefaultIconCache.begin());it!=mDefaultIconCache.end();)
-        {
-            bool all_empty = true ;
-#ifdef DEBUG_GXSIDDETAILS
-            std::cerr << "  Examining pixmaps sizes for " << it->first << "." << std::endl;
-#endif
-
-            for(int i=0;i<4;++i)
-                if(it->second[i].first>0)
-                {
-                    if(it->second[i].first + ICON_CACHE_STORAGE_TIME < now && it->second[i].second.isDetached())
-                    {
-                        int s = it->second[i].second.width()*it->second[i].second.height()*4;
-
-#ifdef DEBUG_GXSIDDETAILS
-                        std::cerr << "    Deleting pixmap " << it->first << " size " << i << " " << s << " bytes." << std::endl;
-#endif
-
-                        it->second[i].second = QPixmap();
-                        it->second[i].first = 0;
-                        ++nb_deleted;
-                        size_deleted += s;
-                    }
-                    else
-                    {
-                        all_empty = false;
-                        total_size += it->second[i].second.width()*it->second[i].second.height()*4;
-#ifdef DEBUG_GXSIDDETAILS
-                        std::cerr << "    Keeking " << it->first << " size " << i << std::endl;
-#endif
-                    }
-                }
-
-            if(all_empty)
-            {
-#ifdef DEBUG_GXSIDDETAILS
-                std::cerr << "    Deleting entry " << it->first << " because no pixmaps are stored here. " << std::endl;
-#endif
-                it = mDefaultIconCache.erase(it);
-            }
-			else
-				++it;
-        }
+        cleanupIconCache(mDefaultIconCache, now, nb_deleted, size_deleted, total_size, "identity");
+        cleanupIconCache(mDefaultGroupIconCache, now, nb_deleted, size_deleted, total_size, "group");
 
         mLastIconCacheCleaning = now;
-        std::cerr << "(II) Removed " << nb_deleted << " (" << size_deleted << " bytes) unused icons. Cache contains " << mDefaultIconCache.size() << " icons (" << total_size << " bytes)"<< std::endl;
+        std::cerr << "(II) Removed " << nb_deleted << " (" << size_deleted << " bytes) unused icons. Cache contains "
+                  << (mDefaultIconCache.size() + mDefaultGroupIconCache.size()) << " icons (" << total_size << " bytes)"<< std::endl;
     }
 }
 
