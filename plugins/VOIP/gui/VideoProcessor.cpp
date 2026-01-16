@@ -156,7 +156,7 @@ VideoProcessor::~VideoProcessor()
 
     while(!_encoded_out_queue.empty())
     {
-        _encoded_out_queue.getTail().clear();
+        _encoded_out_queue.tail().clear();
         _encoded_out_queue.pop() ;
     }
 }
@@ -355,7 +355,7 @@ bool JPEGVideo::encodeData(const QImage& image,uint32_t /* size_hint */, NetQueu
     // check if we make a diff image, or if we use the full frame.
 
     if(dst.full()) return false;
-    RsVOIPDataChunk& voip_chunk = dst.getHead();
+    RsVOIPDataChunk& voip_chunk = dst.head();
 
     QImage encoded_frame ;
     bool differential_frame ;
@@ -741,7 +741,7 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
   else
 #endif
 	{
-    RsVOIPDataChunk& voip_chunk = dst.getHead();
+    RsVOIPDataChunk& voip_chunk = dst.head();
 		voip_chunk.data = rs_malloc(pkt.size + HEADER_SIZE) ;
 
     if(!voip_chunk.data) {
@@ -843,9 +843,11 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk, QImage& image)
     << image.width() << "x" << image.height() << std::endl;
 #endif
 
-  // clear out the internal buffer and drop the frames to avoid latency
+  // Clear out the internal buffer and drop the frames to avoid latency.
   // Video decoders typically only create one frame per packet, so this
   // shouldn't happen under normal circumstances.
+  // Ideally, we would render the most recent frame and discard earlier ones,
+  // but that would require copying of frames that is not worth it.
   while(!avcodec_receive_frame(decoding_context, decoding_frame_buffer)) {
     std::cerr << "warning: dropping decoded frame";
   }

@@ -33,19 +33,19 @@ class QVideoOutputDevice ;
 template<typename T, int N>
 class NetQueue {
   std::array<T, N> arr;
-  std::atomic<int> head = 0;
-  std::atomic<int> tail = 0;
+  std::atomic<int> mhead = 0;
+  std::atomic<int> mtail = 0;
 
 public:
-  bool full() const { return head - tail == N; }
-  T& getHead() { return arr[head % N]; }
-  void push() { head++; }
-  bool push(const T& e) { return !full() && ((arr[head++ % N] = e), true); }
+  bool full() const { return mhead - mtail == N; }
+  T& head() { return arr[mhead % N]; }
+  void push() { mhead++; }
+  bool push(const T& e) { return !full() && ((arr[mhead++ % N] = e), true); }
 
-  bool empty() const { return head == tail; }
-  T& getTail() { return arr[tail % N]; }
-  void pop() { tail++; }
-  bool pop(T& e) { return !empty() && ((e = arr[tail++ % N]), true); }
+  bool empty() const { return mhead == mtail; }
+  T& tail() { return arr[mtail % N]; }
+  void pop() { mtail++; }
+  bool pop(T& e) { return !empty() && ((e = arr[mtail++ % N]), true); }
 };
 
 class VideoCodec
