@@ -30,10 +30,28 @@ extern "C" {
 
 class QVideoOutputDevice ;
 
+template<typename T, int N>
+class NetQueue {
+  std::array<T, N> arr;
+  std::atomic<int> head = 0;
+  std::atomic<int> tail = 0;
+
+public:
+  bool full() const { return head - tail == N; }
+  T& getHead() { return arr[head % N]; }
+  void push() { head++; }
+  bool push(const T& e) { return !full() && ((arr[head++ % N] = e), true); }
+
+  bool empty() const { return head == tail; }
+  T& getTail() { return arr[tail % N]; }
+  void pop() { tail++; }
+  bool pop(T& e) { return !empty() && ((e = arr[tail++ % N]), true); }
+};
+
 class VideoCodec
 {
 public:
-    virtual bool encodeData(const QImage& Image, uint32_t size_hint, RsVOIPDataChunk& chunk) = 0;
+    virtual bool encodeData(const QImage& Image, uint32_t size_hint, NetQueue<RsVOIPDataChunk, 8>& dst) = 0;
     virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) = 0;
 
 protected:
@@ -49,8 +67,8 @@ public:
     JPEGVideo() ;
 
 protected:
-    virtual bool encodeData(const QImage& Image, uint32_t target_encoding_bitrate, RsVOIPDataChunk& chunk) ;
-    virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) ;
+    virtual bool encodeData(const QImage& Image, uint32_t target_encoding_bitrate, NetQueue<RsVOIPDataChunk, 8>& dst) ;
+    virtual bool decodeData(const RsVOIPDataChunk& chunk, QImage& image) ;
 
     static const uint32_t JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME = 0x0001 ;
 private:
@@ -73,7 +91,7 @@ public:
     ~FFmpegVideo() ;
 
 protected:
-    virtual bool encodeData(const QImage& Image, uint32_t target_encoding_bitrate, RsVOIPDataChunk& chunk) ;
+    virtual bool encodeData(const QImage& Image, uint32_t target_encoding_bitrate, NetQueue<RsVOIPDataChunk, 8>& dst) ;
     virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) ;
 
 private:
@@ -147,7 +165,8 @@ class VideoProcessor
         	uint32_t currentBandwidthOut() const { return _estimated_bandwidth_out ; }
 
 	protected:
-		std::list<RsVOIPDataChunk> _encoded_out_queue ;
+
+    NetQueue<RsVOIPDataChunk, 8> _encoded_out_queue ;
         	QSize _encoded_frame_size ;
 
 // =====================================================================================
@@ -169,6 +188,4 @@ class VideoProcessor
             float _estimated_bandwidth_out ;
 
             float _target_bandwidth_out ;
-
-            RsMutex vpMtx ;
 };
