@@ -26,7 +26,7 @@
 #include <QTimer>
 #include "ui_PopupChatWindow.h"
 #include <retroshare/rstypes.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 
 #include "gui/chat/ChatWidget.h"
 

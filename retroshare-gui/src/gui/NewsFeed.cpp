@@ -26,7 +26,8 @@
 #include <retroshare/rsbanlist.h>
 #include <retroshare/rsgxschannels.h>
 #include <retroshare/rsgxsforums.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
+#include <retroshare/rsmail.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsposted.h>
@@ -68,6 +69,8 @@
 /*****
  * #define NEWS_DEBUG  1
  ****/
+
+using namespace Rs::Mail;
 
 static NewsFeed* instance = nullptr;
 

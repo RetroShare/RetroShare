@@ -23,7 +23,7 @@
 #ifndef CHATUSERNOTIFY_H
 #define CHATUSERNOTIFY_H
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 #include "gui/common/UserNotify.h"
 
 // this class uses lots of global state

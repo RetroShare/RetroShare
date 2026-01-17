@@ -434,7 +434,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		}
 		else
 		{
-			item->setText(GTW_COLUMN_LAST_POST, itemInfo.lastpost.toString(Qt::ISODate).replace("T"," "));
+			item->setText(GTW_COLUMN_LAST_POST, DateTime::formatDateTime(itemInfo.lastpost));
 			item->setData(GTW_COLUMN_LAST_POST, ROLE_SORT, (qint64) DateTime::DateTimeToTime_t(itemInfo.lastpost));
 		}
 
@@ -464,7 +464,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		if(itemInfo.lastpost == DateTime::DateTimeFromTime_t(0))
 			tooltip += "\n" + tr("Last Post") + ": "  + tr("Never") ;
 		else
-			tooltip += "\n" + tr("Last Post") + ": "  + DateTime::formatLongDateTime(itemInfo.lastpost) ;
+			tooltip += "\n" + tr("Last Post") + ": "  + DateTime::formatDateTime(itemInfo.lastpost) ;
 		if(!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags))
 			tooltip += "\n" + tr("Subscribe to download and read messages") ;
 

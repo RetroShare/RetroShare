@@ -37,7 +37,7 @@
 #include "util/qtthreadsutils.h"
 #include "util/RsQtVersion.h"
 
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rschats.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsidentity.h"
 
@@ -199,7 +199,14 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
     publicLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
 	ui.lobbyTreeWidget->insertTopLevelItem(3, publicLobbyItem);
 
-	ui.lobbyTreeWidget->expandAll();
+        // expand subscribed lobbvies
+        ui.lobbyTreeWidget->expandItem(privateSubLobbyItem);
+        ui.lobbyTreeWidget->expandItem(publicSubLobbyItem);
+
+        // collapse aunsubscribed lobbies
+        ui.lobbyTreeWidget->collapseItem(privateLobbyItem);
+        ui.lobbyTreeWidget->collapseItem(publicLobbyItem);
+
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_NAME,false) ;
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_USER_COUNT,true) ;
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_TOPIC,true) ;
@@ -477,7 +484,7 @@ void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
 		_lobby_infos[id].last_typing_event = time(nullptr) ;
 
 		ChatLobbyInfo linfo ;
-		if(rsMsgs->getChatLobbyInfo(id,linfo))
+        if(rsChats->getChatLobbyInfo(id,linfo))
             _lobby_infos[id].default_icon = (linfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? FilesDefs::getIconFromQtResourcePath(IMAGE_PUBLIC):FilesDefs::getIconFromQtResourcePath(IMAGE_PRIVATE) ;
 		else
 			std::cerr << "(EE) cannot find info for room " << std::hex << id << std::dec << std::endl;
@@ -521,10 +528,10 @@ void ChatLobbyWidget::updateDisplay()
 	std::cerr << "updating chat room display!" << std::endl;
 #endif
 	std::vector<VisibleChatLobbyRecord> visibleLobbies;
-	rsMsgs->getListOfNearbyChatLobbies(visibleLobbies);
+    rsChats->getListOfNearbyChatLobbies(visibleLobbies);
 
     std::list<ChatLobbyId> lobbies;
-	rsMsgs->getChatLobbyList(lobbies);
+    rsChats->getChatLobbyList(lobbies);
 
 #ifdef CHAT_LOBBY_GUI_DEBUG
 	std::cerr << "got " << visibleLobbies.size() << " visible lobbies" << std::endl;
@@ -676,7 +683,7 @@ void ChatLobbyWidget::updateDisplay()
         // In the new model (after lobby save to disk) the auto-subscribe flag is used to automatically join lobbies that where
         // previously being used when the t software quits.
 
-		bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
+        bool autoSubscribe = rsChats->getLobbyAutoSubscribe(lobby.lobby_id);
 
 		if (autoSubscribe && subscribed && _lobby_infos.find(lobby.lobby_id) == _lobby_infos.end())
 		{
@@ -695,7 +702,7 @@ void ChatLobbyWidget::updateDisplay()
 	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) 
     {
         ChatLobbyInfo lobby ;
-        rsMsgs->getChatLobbyInfo(*lobbyIt,lobby) ;
+        rsChats->getChatLobbyInfo(*lobbyIt,lobby) ;
 
 #ifdef CHAT_LOBBY_GUI_DEBUG
 		std::cerr << "adding " << lobby.lobby_name << "topic " << lobby.lobby_topic << " #" << std::hex << lobby.lobby_id << std::dec << " private " << lobby.nick_names.size() << " peers." << std::endl;
@@ -738,7 +745,7 @@ void ChatLobbyWidget::updateDisplay()
 			item->setIcon(COLUMN_NAME, icon);
 		}
 
-		bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
+        bool autoSubscribe = rsChats->getLobbyAutoSubscribe(lobby.lobby_id);
 
         updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.gxs_ids.size(), true, autoSubscribe,lobby_flags);
 
@@ -746,7 +753,7 @@ void ChatLobbyWidget::updateDisplay()
 
         // look for chat rooms that are subscribed but not displayed as such
 
-        if(it == _lobby_infos.end() && rsMsgs->joinVisibleChatLobby(lobby.lobby_id,lobby.gxs_id))
+        if(it == _lobby_infos.end() && rsChats->joinVisibleChatLobby(lobby.lobby_id,lobby.gxs_id))
         {
             std::cerr << "Adding back ChatLobbyDialog for subscribed lobby " << std::hex << lobby.lobby_id << std::dec << std::endl;
 			ChatDialog::chatFriend(ChatId(lobby.lobby_id),true) ;
@@ -812,7 +819,7 @@ void ChatLobbyWidget::createIdentityAndSubscribe()
     if(!rsIdentity->getOwnIds(own_ids) || own_ids.empty())
         return;
 
-    if(rsMsgs->joinVisibleChatLobby(id,own_ids.front()))
+    if(rsChats->joinVisibleChatLobby(id,own_ids.front()))
         ChatDialog::chatFriend(ChatId(id),true) ;
 }
 
@@ -832,7 +839,7 @@ void ChatLobbyWidget::subscribeChatLobbyAs()
     RsGxsId gxs_id(action->data().toString().toStdString());
         //uint32_t error_code ;
 
-    if(rsMsgs->joinVisibleChatLobby(id,gxs_id))
+    if(rsChats->joinVisibleChatLobby(id,gxs_id))
         ChatDialog::chatFriend(ChatId(id),true) ;
 }
 
@@ -872,7 +879,7 @@ void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
     RsGxsId gxs_id ;
 
     std::list<RsGxsId> own_ids;
-    // not using rsMsgs->getDefaultIdentityForChatLobby(), to check if we have an identity
+    // not using rsChats->getDefaultIdentityForChatLobby(), to check if we have an identity
     // to work around the case when the identity was deleted and is invalid
     // (the chatservice does not know if a default identity was deleted)
     // only rsIdentity knows the truth at the moment!
@@ -895,7 +902,7 @@ void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
     }
     else
     {
-        rsMsgs->getDefaultIdentityForChatLobby(gxs_id);
+        rsChats->getDefaultIdentityForChatLobby(gxs_id);
         
         RsIdentityDetails idd ;
         if(!rsIdentity->getIdDetails(gxs_id,idd))
@@ -908,7 +915,7 @@ void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
         }
     }
 
-    if(rsMsgs->joinVisibleChatLobby(id,gxs_id))
+    if(rsChats->joinVisibleChatLobby(id,gxs_id))
         ChatDialog::chatFriend(ChatId(id),true) ;
 }
 
@@ -919,8 +926,8 @@ void ChatLobbyWidget::autoSubscribeLobby(QTreeWidgetItem *item)
     }
 
     ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
-    bool isAutoSubscribe = rsMsgs->getLobbyAutoSubscribe(id);
-    rsMsgs->setLobbyAutoSubscribe(id, !isAutoSubscribe);
+    bool isAutoSubscribe = rsChats->getLobbyAutoSubscribe(id);
+    rsChats->setLobbyAutoSubscribe(id, !isAutoSubscribe);
     if (!isAutoSubscribe && !item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool())
         subscribeChatLobbyAtItem(item);
 }
@@ -932,7 +939,7 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id, bool subscribed /*= false*/)
 
 	// Update information
 	std::vector<VisibleChatLobbyRecord> lobbies;
-	rsMsgs->getListOfNearbyChatLobbies(lobbies);
+    rsChats->getListOfNearbyChatLobbies(lobbies);
 
 	std::list<RsGxsId> my_ids ;
 	rsIdentity->getOwnIds(my_ids) ;
@@ -1115,9 +1122,9 @@ void ChatLobbyWidget::unsubscribeChatLobby(ChatLobbyId id)
 
 	// Unsubscribe the chat lobby
     ChatDialog::closeChat(ChatId(id));
-	rsMsgs->unsubscribeChatLobby(id);
-    bool isAutoSubscribe = rsMsgs->getLobbyAutoSubscribe(id);
-	if (isAutoSubscribe) rsMsgs->setLobbyAutoSubscribe(id, !isAutoSubscribe);
+    rsChats->unsubscribeChatLobby(id);
+    bool isAutoSubscribe = rsChats->getLobbyAutoSubscribe(id);
+    if (isAutoSubscribe) rsChats->setLobbyAutoSubscribe(id, !isAutoSubscribe);
 
 	ChatLobbyDialog *cldCW=NULL ;
 	if (NULL != (cldCW = dynamic_cast<ChatLobbyDialog *>(ui.stackedWidget->currentWidget())))
@@ -1198,13 +1205,13 @@ void ChatLobbyWidget::handleChatLobbyEvent(uint64_t lobby_id, RsChatLobbyEventCo
 void ChatLobbyWidget::readChatLobbyInvites()
 {
     std::list<ChatLobbyInvite> invites;
-    rsMsgs->getPendingChatLobbyInvites(invites);
+    rsChats->getPendingChatLobbyInvites(invites);
 
     RsGxsId default_id ;
-    rsMsgs->getDefaultIdentityForChatLobby(default_id) ;
+    rsChats->getDefaultIdentityForChatLobby(default_id) ;
 
 	std::list<ChatLobbyId> subscribed_lobbies ;
-	rsMsgs->getChatLobbyList(subscribed_lobbies) ;
+    rsChats->getChatLobbyList(subscribed_lobbies) ;
 
 	for(std::list<ChatLobbyInvite>::const_iterator it(invites.begin());it!=invites.end();++it)
 	{
@@ -1258,7 +1265,7 @@ void ChatLobbyWidget::readChatLobbyInvites()
 
         if (res == QMessageBox::No)
         {
-            rsMsgs->denyLobbyInvite((*it).lobby_id);
+            rsChats->denyLobbyInvite((*it).lobby_id);
             continue ;
         }
 
@@ -1267,11 +1274,11 @@ void ChatLobbyWidget::readChatLobbyInvites()
 
         if(chosen_id.isNull())
         {
-            rsMsgs->denyLobbyInvite((*it).lobby_id);
+            rsChats->denyLobbyInvite((*it).lobby_id);
             continue ;
         }
 
-        if(rsMsgs->acceptLobbyInvite((*it).lobby_id,chosen_id))
+        if(rsChats->acceptLobbyInvite((*it).lobby_id,chosen_id))
             ChatDialog::chatFriend(ChatId((*it).lobby_id),true);
         else
             std::cerr << "Can't join chat room with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;

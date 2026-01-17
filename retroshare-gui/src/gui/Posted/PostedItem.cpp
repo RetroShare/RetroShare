@@ -500,7 +500,7 @@ void PostedItem::fill()
 		ui->fromLabel->setId(mPost.mMeta.mAuthorId);
 		ui->titleLabel->setText(tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(mPost.mMeta.mAuthorId.toStdString()))) ;
 		QDateTime qtime = DateTime::DateTimeFromTime_t(mPost.mMeta.mPublishTs);
-		QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
+		QString timestamp = DateTime::formatDateTime(qtime);
 		ui->dateLabel->setText(timestamp);
 	} else {
 		RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroupMeta.mGroupId, groupName());
@@ -515,7 +515,7 @@ void PostedItem::fill()
         ui->thumbnailLabel->setFixedSize(desired_width,desired_height);
 
 		QDateTime qtime = DateTime::DateTimeFromTime_t(mPost.mMeta.mPublishTs);
-		QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
+		QString timestamp = DateTime::formatDateTime(qtime);
 		QString timestamp2 = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
 		ui->dateLabel->setText(timestamp2);
 		ui->dateLabel->setToolTip(timestamp);

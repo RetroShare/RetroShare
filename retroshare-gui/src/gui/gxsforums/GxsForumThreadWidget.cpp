@@ -1062,7 +1062,7 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
     if(group.mMeta.mLastPost==0)
         forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Last post"),tr("Never"));
     else
-        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Last post"),DateTime::formatLongDateTime(group.mMeta.mLastPost));
+        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Last post"),DateTime::formatDateTime(group.mMeta.mLastPost));
 
     if(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
     {
@@ -1222,7 +1222,7 @@ void GxsForumThreadWidget::insertMessage()
 
         for(int i=0;i<static_cast<int>(post_versions.size());++i)
         {
-            ui->versions_CB->insertItem(i, ((i==0)?tr("(Latest) "):tr("(Old) "))+" "+DateTime::formatLongDateTime( post_versions[i].first));
+            ui->versions_CB->insertItem(i, ((i==0)?tr("(Latest) "):tr("(Old) "))+" "+DateTime::formatDateTime( post_versions[i].first));
             ui->versions_CB->setItemData(i,QString::fromStdString(post_versions[i].second.toStdString()));
 
 #ifdef DEBUG_FORUMS
@@ -1298,7 +1298,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
     // TODO enabled even when there are no new message
     ui->nextUnreadButton->setEnabled(true);
     ui->lineLeft->show();
-    ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
+    ui->time_label->setText(DateTime::formatDateTime(msg.mMeta.mPublishTs));
     ui->lineRight->show();
     ui->by_text_label->show();
     ui->by_label->setId(msg.mMeta.mAuthorId);
@@ -1627,7 +1627,7 @@ static QString buildReplyHeader(const RsMsgMetaData &meta)
     QString header = QString("<span>-----%1-----").arg(QApplication::translate("GxsForumThreadWidget", "Original Message"));
     header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("GxsForumThreadWidget", "From"), from);
 
-    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("GxsForumThreadWidget", "Sent"), DateTime::formatLongDateTime(meta.mPublishTs));
+    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(QApplication::translate("GxsForumThreadWidget", "Sent"), DateTime::formatDateTime(meta.mPublishTs));
     header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(QApplication::translate("GxsForumThreadWidget", "Subject"), QString::fromUtf8(meta.mMsgName.c_str()));
     header += "<br>";
 
@@ -1753,33 +1753,17 @@ void GxsForumThreadWidget::editForumMessageData(const RsGxsForumMsg& msg)
 
     std::list<RsGxsId> own_ids ;
     rsIdentity->getOwnIds(own_ids) ;
-
+    std::set<RsGxsId> modIds;
     for(auto it(own_ids.begin());it!=own_ids.end();++it)
         if(mForumGroup.mAdminList.ids.find(*it) != mForumGroup.mAdminList.ids.end())
-        {
-            moderator_id = *it;
-            break;
-        }
+            modIds.insert(*it);
 
-    // Check that author is in own ids, if not use the moderator id that was collected among own ids.
-    bool is_own = false ;
-    for(auto it(own_ids.begin());it!=own_ids.end() && !is_own;++it)
-        if(*it == msg.mMeta.mAuthorId)
-            is_own = true ;
+    CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId, msg.mMeta.mAuthorId, modIds);
 
-    if (!msg.mMeta.mAuthorId.isNull())
-    {
-        CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId, is_own?(msg.mMeta.mAuthorId):moderator_id,!is_own);
+    cfm->insertPastedText(QString::fromUtf8(msg.mMsg.c_str())) ;
+    cfm->show();
 
-        cfm->insertPastedText(QString::fromUtf8(msg.mMsg.c_str())) ;
-        cfm->show();
-
-        /* window will destroy itself! */
-    }
-    else
-    {
-        QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to an Anonymous Author"));
-    }
+    /* cfm window will destroy itself! */
 }
 void GxsForumThreadWidget::replyForumMessageData(const RsGxsForumMsg &msg)
 {

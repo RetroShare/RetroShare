@@ -46,7 +46,7 @@
 #include <retroshare/rsidentity.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rshistory.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 #include <retroshare/rsplugin.h>
 
 #include <QApplication>
@@ -398,7 +398,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
         updateStatus(chatId, peerStatusInfo.status);
 
 		// initialize first custom state string
-        QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(chatId.toPeerId()).c_str());
+        QString customStateString = QString::fromUtf8(rsChats->getCustomStateString(chatId.toPeerId()).c_str());
         updatePeersCustomStateString(chatId, customStateString);
     } else if (chatType() == CHATTYPE_DISTANT){
         hist_chat_type = RS_HISTORY_TYPE_DISTANT ;
@@ -517,13 +517,13 @@ uint32_t ChatWidget::maxMessageSize()
 	case CHATTYPE_UNKNOWN:
 		break;
 	case CHATTYPE_PRIVATE:
-		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_PRIVATE);
+        maxMessageSize = rsChats->getMaxMessageSecuritySize(RS_CHAT_TYPE_PRIVATE);
 		break;
 	case CHATTYPE_LOBBY:
-		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_LOBBY);
+        maxMessageSize = rsChats->getMaxMessageSecuritySize(RS_CHAT_TYPE_LOBBY);
 		break;
 	case CHATTYPE_DISTANT:
-		maxMessageSize = rsMsgs->getMaxMessageSecuritySize(RS_CHAT_TYPE_DISTANT);
+        maxMessageSize = rsChats->getMaxMessageSecuritySize(RS_CHAT_TYPE_DISTANT);
 		break;
 	}
 	return maxMessageSize;
@@ -810,7 +810,7 @@ void ChatWidget::completeNickname(bool reverse)
 	// Find lobby we belong to
 	ChatLobbyInfo lobby;
 
-	if (! rsMsgs->getChatLobbyInfo(chatId.toLobbyId(),lobby))
+    if (! rsChats->getChatLobbyInfo(chatId.toLobbyId(),lobby))
 		return;
 
 	QTextCursor cursor = ui->chatTextEdit->textCursor();
@@ -905,7 +905,7 @@ QAbstractItemModel *ChatWidget::modelFromPeers()
     // Find lobby we belong to
     ChatLobbyInfo lobby ;
 
-    if(! rsMsgs->getChatLobbyInfo(chatId.toLobbyId(),lobby))
+    if(! rsChats->getChatLobbyInfo(chatId.toLobbyId(),lobby))
         return new QStringListModel(completer);
 
 #ifndef QT_NO_CURSOR
@@ -1102,7 +1102,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast, desiredMinimumFontSize);
 	QDateTime dtTimestamp=incoming ? sendTime : recvTime;
 	QString formatMsg = chatStyle.formatMessage(type, name, dtTimestamp, formattedMessage, formatFlag, backgroundColor);
-	QString timeStamp = dtTimestamp.toString(Qt::ISODate);
+	QString timeStamp = DateTime::formatDateTime(dtTimestamp);
 
 	//replace Date and Time anchors
 	formatMsg.replace(QString("<a name=\"date\">"),QString("<a name=\"%1\">").arg(timeStamp));
@@ -1256,7 +1256,7 @@ void ChatWidget::updateStatusTyping()
 #ifdef ONLY_FOR_LINGUIST
 		tr("is typing...");
 #endif
-		rsMsgs->sendStatusString(chatId, "is typing...");
+        rsChats->sendStatusString(chatId, "is typing...");
 		lastStatusSendTime = time(NULL) ;
 	}
 }
@@ -1322,7 +1322,7 @@ void ChatWidget::sendChat()
 #ifdef CHAT_DEBUG
 	std::cout << "ChatWidget:sendChat " << std::endl;
 #endif
-    rsMsgs->sendChat(chatId, msg);
+    rsChats->sendChat(chatId, msg);
 
 	chatWidget->clear();
 	// workaround for Qt bug - http://bugreports.qt.nokia.com/browse/QTBUG-2533
@@ -1673,7 +1673,7 @@ void ChatWidget::sendSticker()
 	if (RsHtml::makeEmbeddedImage(sticker, encodedImage, 640*480, maxMessageSize() - 200)) {		//-200 for the html stuff
 		RsHtml::optimizeHtml(encodedImage, 0);
 		std::string msg = encodedImage.toUtf8().constData();
-		rsMsgs->sendChat(chatId, msg);
+        rsChats->sendChat(chatId, msg);
 	}
 }
 
@@ -1685,7 +1685,7 @@ void ChatWidget::clearChatHistory()
 	if (chatType() == CHATTYPE_LOBBY) {
 		if (notify) notify->chatLobbyCleared(chatId.toLobbyId(),"");
 	}
-	rsMsgs->clearChatLobby(chatId);
+    rsChats->clearChatLobby(chatId);
 }
 
 void ChatWidget::deleteChatHistory()
@@ -1847,7 +1847,7 @@ void ChatWidget::updateStatus(const ChatId& cid, RsStatusValue status)
         DistantChatPeerInfo dcpinfo ;
         RsIdentityDetails details  ;
 
-        if(rsMsgs->getDistantChatStatus(chatId.toDistantChatId(),dcpinfo))
+        if(rsChats->getDistantChatStatus(chatId.toDistantChatId(),dcpinfo))
         {
             if(rsIdentity->getIdDetails(dcpinfo.to_id,details))
                 peerName = QString::fromUtf8( details.mNickname.c_str() ) ;

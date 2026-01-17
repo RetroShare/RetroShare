@@ -190,7 +190,7 @@ void PostedGroupItem::fill()
     if(mGroup.mMeta.mLastPost==0)
         ui->infoLastPost->setText(tr("Never"));
     else
-        ui->infoLastPost->setText(DateTime::formatLongDateTime(mGroup.mMeta.mLastPost));
+        ui->infoLastPost->setText(DateTime::formatDateTime(mGroup.mMeta.mLastPost));
 
 	//TODO - nice icon for subscribed group
 //	if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {

@@ -34,9 +34,11 @@
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "MessageModel.h"
 #include "retroshare/rsexpr.h"
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rsmail.h"
 
 //#define DEBUG_MESSAGE_MODEL
+
+using namespace Rs::Mail;
 
 #define IS_MESSAGE_UNREAD(flags) (flags &  (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
 
@@ -53,7 +55,7 @@ const QString RsMessageModel::FilterString("filtered");
 RsMessageModel::RsMessageModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
-    mCurrentBox = Rs::Msgs::BoxName::BOX_NONE;
+    mCurrentBox = Rs::Mail::BoxName::BOX_NONE;
     mQuickViewFilter = QUICK_VIEW_ALL;
     mFilterType = FILTER_TYPE_NONE;
     mFilterStrings.clear();
@@ -92,7 +94,7 @@ int RsMessageModel::columnCount(const QModelIndex &/*parent*/) const
     return COLUMN_THREAD_NB_COLUMNS;
 }
 
-bool RsMessageModel::getMessageData(const QModelIndex& i,Rs::Msgs::MessageInfo& fmpe) const
+bool RsMessageModel::getMessageData(const QModelIndex& i,Rs::Mail::MessageInfo& fmpe) const
 {
 	if(!i.isValid())
         return true;
@@ -103,7 +105,7 @@ bool RsMessageModel::getMessageData(const QModelIndex& i,Rs::Msgs::MessageInfo& 
 	if(!convertInternalIdToMsgIndex(ref,index) || index >= mMessages.size())
 		return false ;
 
-	return rsMsgs->getMessage(mMessages[index].msgId,fmpe);
+    return rsMail->getMessage(mMessages[index].msgId,fmpe);
 }
 
 bool RsMessageModel::hasChildren(const QModelIndex &parent) const
@@ -245,7 +247,7 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
 		return QVariant() ;
 	}
 
-	const Rs::Msgs::MsgInfoSummary& fmpe(mMessages[entry]);
+	const Rs::Mail::MsgInfoSummary& fmpe(mMessages[entry]);
 
     if(role == Qt::FontRole)
     {
@@ -288,10 +290,10 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
 	}
 }
 
-QVariant RsMessageModel::textColorRole(const Rs::Msgs::MsgInfoSummary& fmpe,int /*column*/) const
+QVariant RsMessageModel::textColorRole(const Rs::Mail::MsgInfoSummary& fmpe,int /*column*/) const
 {
-	Rs::Msgs::MsgTagType tags;
-	rsMsgs->getMessageTagTypes(tags);
+	Rs::Mail::MsgTagType tags;
+    rsMail->getMessageTagTypes(tags);
 
 	for(auto it(fmpe.msgtags.begin());it!=fmpe.msgtags.end();++it)
 		for(auto it2(tags.types.begin());it2!=tags.types.end();++it2)
@@ -301,7 +303,7 @@ QVariant RsMessageModel::textColorRole(const Rs::Msgs::MsgInfoSummary& fmpe,int 
 	return QVariant();
 }
 
-QVariant RsMessageModel::statusRole(const Rs::Msgs::MsgInfoSummary& /*fmpe*/,int /*column*/) const
+QVariant RsMessageModel::statusRole(const Rs::Mail::MsgInfoSummary& /*fmpe*/,int /*column*/) const
 {
 // 	if(column != COLUMN_THREAD_DATA)
 //        return QVariant();
@@ -309,7 +311,7 @@ QVariant RsMessageModel::statusRole(const Rs::Msgs::MsgInfoSummary& /*fmpe*/,int
     return QVariant();//fmpe.mMsgStatus);
 }
 
-bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int /*column*/) const
+bool RsMessageModel::passesFilter(const Rs::Mail::MsgInfoSummary& fmpe,int /*column*/) const
 {
 	QString s ;
 	bool passes_strings = true ;
@@ -333,8 +335,8 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int /*col
 		case FILTER_TYPE_DATE:   	s = displayRole(fmpe,COLUMN_THREAD_DATE).toString();
 			break;
 		case FILTER_TYPE_CONTENT:   {
-			Rs::Msgs::MessageInfo minfo;
-			rsMsgs->getMessage(fmpe.msgId,minfo);
+			Rs::Mail::MessageInfo minfo;
+            rsMail->getMessage(fmpe.msgId,minfo);
 			s = QTextDocument(QString::fromUtf8(minfo.msg.c_str())).toPlainText();
 		}
 			break;
@@ -343,8 +345,8 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int /*col
 
 		case FILTER_TYPE_ATTACHMENTS:
 		{
-			Rs::Msgs::MessageInfo minfo;
-			rsMsgs->getMessage(fmpe.msgId,minfo);
+			Rs::Mail::MessageInfo minfo;
+            rsMail->getMessage(fmpe.msgId,minfo);
 
 			for(auto it(minfo.files.begin());it!=minfo.files.end();++it)
 				s += QString::fromUtf8((*it).fname.c_str())+" ";
@@ -375,7 +377,7 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int /*col
     return passes_quick_view && passes_strings;
 }
 
-QVariant RsMessageModel::filterRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
+QVariant RsMessageModel::filterRole(const Rs::Mail::MsgInfoSummary& fmpe,int column) const
 {
 	if(passesFilter(fmpe,column))
 		return QVariant(FilterString);
@@ -414,7 +416,7 @@ void RsMessageModel::setFont(const QFont &font)
 	}
 }
 
-QVariant RsMessageModel::toolTipRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
+QVariant RsMessageModel::toolTipRole(const Rs::Mail::MsgInfoSummary& fmpe,int column) const
 {
     if(column == COLUMN_THREAD_AUTHOR || column == COLUMN_THREAD_TO)
 	{
@@ -443,7 +445,7 @@ QVariant RsMessageModel::toolTipRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
     return QVariant();
 }
 
-QVariant RsMessageModel::backgroundRole(const Rs::Msgs::MsgInfoSummary &/*fmpe*/, int /*column*/) const
+QVariant RsMessageModel::backgroundRole(const Rs::Mail::MsgInfoSummary &/*fmpe*/, int /*column*/) const
 {
     return QVariant();
 }
@@ -462,12 +464,12 @@ QVariant RsMessageModel::sizeHintRole(int col) const
     }
 }
 
-QVariant RsMessageModel::authorRole(const Rs::Msgs::MsgInfoSummary& /*fmpe*/,int /*column*/) const
+QVariant RsMessageModel::authorRole(const Rs::Mail::MsgInfoSummary& /*fmpe*/,int /*column*/) const
 {
     return QVariant();
 }
 
-QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
+QVariant RsMessageModel::sortRole(const Rs::Mail::MsgInfoSummary& fmpe,int column) const
 {
     switch(column)
     {
@@ -493,7 +495,7 @@ QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 	}
 }
 
-QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) const
+QVariant RsMessageModel::displayRole(const Rs::Mail::MsgInfoSummary& fmpe,int col) const
 {
     switch(col)
     {
@@ -511,11 +513,11 @@ QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
 
     case COLUMN_THREAD_TAGS:{
         // Tags
-        Rs::Msgs::MsgTagInfo tagInfo;
-        rsMsgs->getMessageTag(fmpe.msgId, tagInfo);
+        Rs::Mail::MsgTagInfo tagInfo;
+        rsMail->getMessageTag(fmpe.msgId, tagInfo);
 
-        Rs::Msgs::MsgTagType Tags;
-        rsMsgs->getMessageTagTypes(Tags);
+        Rs::Mail::MsgTagType Tags;
+        rsMail->getMessageTagTypes(Tags);
 
         QString text;
 
@@ -539,9 +541,9 @@ QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
 
         switch(mCurrentBox)
         {
-        case Rs::Msgs::BoxName::BOX_DRAFTS:	// in this case, we display the full list of destinations
-        case Rs::Msgs::BoxName::BOX_TRASH:	// in this case, we display the full list of destinations
-        case Rs::Msgs::BoxName::BOX_SENT:	// in this case, we display the full list of destinations
+        case Rs::Mail::BoxName::BOX_DRAFTS:	// in this case, we display the full list of destinations
+        case Rs::Mail::BoxName::BOX_TRASH:	// in this case, we display the full list of destinations
+        case Rs::Mail::BoxName::BOX_SENT:	// in this case, we display the full list of destinations
         {
             for(auto d:fmpe.destinations)
             {
@@ -556,9 +558,9 @@ QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
             return name;
         }
             break;
-        case Rs::Msgs::BoxName::BOX_NONE:	// in these cases, we display the actual destination
-        case Rs::Msgs::BoxName::BOX_INBOX:	// in these cases, we display the actual destination
-        case Rs::Msgs::BoxName::BOX_OUTBOX:
+        case Rs::Mail::BoxName::BOX_NONE:	// in these cases, we display the actual destination
+        case Rs::Mail::BoxName::BOX_INBOX:	// in these cases, we display the actual destination
+        case Rs::Mail::BoxName::BOX_OUTBOX:
         {
             RsGxsId id = RsGxsId(fmpe.to.toStdString());	// use "to" field, which is populated in Outbox, .
             if(id.isNull())
@@ -592,7 +594,7 @@ QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
     return QVariant("[ERROR]");
 }
 
-QVariant RsMessageModel::userRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) const
+QVariant RsMessageModel::userRole(const Rs::Mail::MsgInfoSummary& fmpe,int col) const
 {
 	switch(col)
     {
@@ -615,7 +617,7 @@ QVariant RsMessageModel::userRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) 
     }
 }
 
-QVariant RsMessageModel::decorationRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) const
+QVariant RsMessageModel::decorationRole(const Rs::Mail::MsgInfoSummary& fmpe,int col) const
 {
 	bool exist=false;
 	switch(col)
@@ -674,7 +676,7 @@ void RsMessageModel::clear()
 	emit messagesLoaded();
 }
 
-void RsMessageModel::setMessages(const std::list<Rs::Msgs::MsgInfoSummary>& msgs)
+void RsMessageModel::setMessages(const std::list<Rs::Mail::MsgInfoSummary>& msgs)
 {
 
 	clear();
@@ -700,7 +702,7 @@ void RsMessageModel::setMessages(const std::list<Rs::Msgs::MsgInfoSummary>& msgs
 	emit messagesLoaded();
 }
 
-void RsMessageModel::setCurrentBox(Rs::Msgs::BoxName bn)
+void RsMessageModel::setCurrentBox(Rs::Mail::BoxName bn)
 {
 	if(mCurrentBox != bn)
 	{
@@ -709,7 +711,7 @@ void RsMessageModel::setCurrentBox(Rs::Msgs::BoxName bn)
 	}
 }
 
-Rs::Msgs::BoxName RsMessageModel::currentBox() const
+Rs::Mail::BoxName RsMessageModel::currentBox() const
 {
     return mCurrentBox;
 }
@@ -732,9 +734,9 @@ void RsMessageModel::updateMessages()
 {
     emit messagesAboutToLoad();
 
-    std::list<Rs::Msgs::MsgInfoSummary> msgs;
+    std::list<Rs::Mail::MsgInfoSummary> msgs;
 
-    rsMsgs->getMessageSummaries(mCurrentBox,msgs);
+    rsMail->getMessageSummaries(mCurrentBox,msgs);
 	setMessages(msgs);
 
     emit messagesLoaded();
@@ -746,7 +748,7 @@ void RsMessageModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
 		return ;
 
 	preMods();
-	rsMsgs->MessageRead(i.data(MsgIdRole).toString().toStdString(),!read_status);
+    rsMail->MessageRead(i.data(MsgIdRole).toString().toStdString(),!read_status);
 
 	emit dataChanged(i,i);
 }
@@ -766,7 +768,7 @@ void RsMessageModel::setMsgsReadStatus(const QModelIndexList& mil,bool read_stat
 
 	preMods();
 	for(auto& it : list)
-		rsMsgs->MessageRead(it,!read_status);
+        rsMail->MessageRead(it,!read_status);
 
 	emit dataChanged(createIndex(start,0),createIndex(stop,RsMessageModel::columnCount()-1));
 }
@@ -777,7 +779,7 @@ void RsMessageModel::setMsgStar(const QModelIndex& i,bool star)
 		return ;
 
 	preMods();
-	rsMsgs->MessageStar(i.data(MsgIdRole).toString().toStdString(),star);
+    rsMail->MessageStar(i.data(MsgIdRole).toString().toStdString(),star);
 
 	emit dataChanged(i,i);
 }
@@ -797,7 +799,7 @@ void RsMessageModel::setMsgsStar(const QModelIndexList& mil,bool star)
 
 	preMods();
 	for(auto& it : list)
-		rsMsgs->MessageStar(it,star);
+        rsMail->MessageStar(it,star);
 
 	emit dataChanged(createIndex(start,0),createIndex(stop,RsMessageModel::columnCount()-1));
 }
@@ -808,7 +810,7 @@ void RsMessageModel::setMsgJunk(const QModelIndex& i,bool junk)
 		return ;
 
 	preMods();
-	rsMsgs->MessageJunk(i.data(MsgIdRole).toString().toStdString(),junk);
+    rsMail->MessageJunk(i.data(MsgIdRole).toString().toStdString(),junk);
 
 	emit dataChanged(i,i);
 }
@@ -828,7 +830,7 @@ void RsMessageModel::setMsgsJunk(const QModelIndexList& mil,bool junk)
 
 	preMods();
 	for(auto& it : list)
-		rsMsgs->MessageJunk(it,junk);
+        rsMail->MessageJunk(it,junk);
 
 	emit dataChanged(createIndex(start,0),createIndex(stop,RsMessageModel::columnCount()-1));
 }

@@ -80,11 +80,20 @@ HelpDialog::HelpDialog(QWidget *parent) :
 		ui->thanks->setHtml(in.readAll());
 	}
 
-	ui->version->setText(RsApplication::retroshareVersion(true));
+    /* [Modified] Display both RetroShare and libretroshare versions clearly */
+    QString versionText = QString("RetroShare: %1\nlibretroshare: %2")
+                          .arg(RsApplication::retroshareVersion(true))
+                          .arg(QString::fromUtf8(RsInit::libRetroShareVersion()));
+
+	ui->version->setText(versionText);
 
 	/* Add version numbers of libretroshare */
 	std::list<RsLibraryInfo> libraries;
 	RsControl::instance()->getLibraries(libraries);
+
+    /* [Added] Insert libretroshare version at the top of the libraries list */
+    libraries.push_front(RsLibraryInfo("libretroshare", RsInit::libRetroShareVersion()));
+
 	addLibraries(ui->libraryLayout, "libretroshare", libraries);
 
 // #ifdef RS_WEBUI

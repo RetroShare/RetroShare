@@ -24,7 +24,7 @@
 
 #include <algorithm>
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
 
 #include "TagsMenu.h"
 #include "gui/common/TagDefs.h"
@@ -41,6 +41,8 @@
 #define ACTION_TAGS_REMOVEALL 0
 #define ACTION_TAGS_TAG       1
 #define ACTION_TAGS_NEWTAG    2
+
+using namespace Rs::Mail;
 
 TagsMenu::TagsMenu(const QString &title, QWidget *parent)
 	: QMenu (title, parent)
