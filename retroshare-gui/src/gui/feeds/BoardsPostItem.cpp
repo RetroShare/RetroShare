@@ -21,10 +21,12 @@
 #include <QTimer>
 #include <QFileInfo>
 #include <QStyle>
+#include <QMovie>
 
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/Posted/PhotoView.h"
+#include "gui/Posted/BoardPostImageHelper.h"
 #include "rshare.h"
 #include "BoardsPostItem.h"
 #include "ui_BoardsPostItem.h"
@@ -419,13 +421,30 @@ void BoardsPostItem::viewPicture()
   }
 
   QString timestamp = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
-  QPixmap pixmap;
-  GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
   RsGxsId authorID = mPost.mMeta.mAuthorId;
 
   PhotoView *PView = new PhotoView(this);
 
-  PView->setPixmap(pixmap);
+  // Check if animated GIF/WEBP
+  QString format;
+  if (BoardPostImageHelper::isAnimatedImage(mPost.mImage.mData, mPost.mImage.mSize, &format))
+  {
+    // Animated image - use QMovie
+    QMovie* movie = BoardPostImageHelper::createMovieFromData(mPost.mImage.mData, mPost.mImage.mSize);
+    if (movie)
+    {
+      movie->setParent(PView); // Ensure cleanup
+      PView->setMovie(movie);
+    }
+  }
+  else
+  {
+    // Static image - use QPixmap
+    QPixmap pixmap;
+    GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap, GxsIdDetails::ORIGINAL);
+    PView->setPixmap(pixmap);
+  }
+
   PView->setTitle(messageName());
   PView->setName(authorID);
   PView->setTime(timestamp);

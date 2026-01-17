@@ -19,10 +19,15 @@
  *******************************************************************************/
 
 #include "PhotoView.h"
+#include "ui_PhotoView.h"
 
 #include <QMenu>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDesktopServices>
+#include <QClipboard>
+#include <QBuffer>
+#include <QMovie>
 
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/RetroShareLink.h"
@@ -46,12 +51,38 @@ PhotoView::PhotoView(QWidget *parent)
 /** Destructor */
 PhotoView::~PhotoView()
 {
+	// Note: mMovie is NOT deleted here - Qt parent-child handles cleanup
+	// (caller sets movie->setParent(this) before calling setMovie)
+	if (mMovie) {
+		mMovie->stop();
+	}
 	delete ui;
 }
 
 void PhotoView::setPixmap(const QPixmap& pixmap) 
 {
 	ui->photoLabel->setPixmap(pixmap);
+	this->adjustSize();
+}
+
+void PhotoView::setMovie(QMovie* movie)
+{
+	// Note: Previous movie cleanup is handled by Qt parent-child mechanism
+	// Caller sets movie->setParent(this) before calling this
+	if (mMovie) {
+		mMovie->stop();
+		// Don't delete - Qt parent-child handles it
+	}
+	
+	mMovie = movie;
+	
+	if (mMovie) {
+		ui->photoLabel->setMovie(mMovie);
+		mMovie->start();
+		// Loop animation when finished
+		connect(mMovie, &QMovie::finished, mMovie, &QMovie::start);
+	}
+	
 	this->adjustSize();
 }
 
