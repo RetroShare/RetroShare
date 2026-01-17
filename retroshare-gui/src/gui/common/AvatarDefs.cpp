@@ -55,7 +55,7 @@ bool AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, cons
     rsChats->getAvatarData(RsPeerId(sslId), data, size);
     if (size == 0) {
         if (!defaultImage.isEmpty()) {
-            avatar = GxsIdDetails::makeDefaultGroupIcon(QString::fromStdString(sslId.toStdString()), ":icons/person.png", GxsIdDetails::LARGE);
+            avatar = GxsIdDetails::makeDefaultGroupIconFromString(QString::fromStdString(sslId.toStdString()), ":icons/person.png", GxsIdDetails::LARGE);
         }
         return false;
     }
@@ -109,12 +109,12 @@ bool AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const
 		}
 	}
 
-	if (size == 0) {
+    if (size == 0) {
         if (!defaultImage.isEmpty()) {
-            avatar = GxsIdDetails::makeDefaultGroupIcon(QString::fromStdString(gpgId.toStdString()), ":icons/person.png", GxsIdDetails::LARGE);
+            avatar = GxsIdDetails::makeDefaultGroupIconFromString(QString::fromStdString(gpgId.toStdString()), ":icons/person.png", GxsIdDetails::LARGE);
         }
-		return false;
-	}
+        return false;
+    }
 
 	/* load image */
 	GxsIdDetails::loadPixmapFromData(data, size, avatar, GxsIdDetails::LARGE);

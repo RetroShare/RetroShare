@@ -71,21 +71,29 @@
 //const int kRecognTagType_Dev_Patcher     	= 4;
 //const int kRecognTagType_Dev_Developer	 	= 5;
 
-uint32_t GxsIdDetails::mImagesAllocated = 0;
-time_t GxsIdDetails::mLastIconCacheCleaning = time(NULL);
-std::map<RsGxsId,std::pair<time_t,QPixmap>[4] > GxsIdDetails::mDefaultIconCache ;
-std::map<std::string,std::pair<time_t,QPixmap>[4] > GxsIdDetails::mDefaultGroupIconCache ;
-
-QMutex GxsIdDetails::mMutex;
-QMutex GxsIdDetails::mIconCacheMutex;
-
 #define ICON_CACHE_STORAGE_TIME 		  240
 #define DELAY_BETWEEN_ICON_CACHE_CLEANING 120
 #define NUM_AVATAR_SIZES                  4  // Number of AvatarSize enum values (SMALL, MEDIUM, LARGE, ORIGINAL)
 
+uint32_t GxsIdDetails::mImagesAllocated = 0;
+time_t GxsIdDetails::mLastIconCacheCleaning = time(NULL);
+std::map<RsGxsId,std::pair<time_t,QPixmap>[NUM_AVATAR_SIZES] > GxsIdDetails::mDefaultIconCache ;
+std::map<std::string,std::pair<time_t,QPixmap>[NUM_AVATAR_SIZES] > GxsIdDetails::mDefaultGroupIconCache ;
+
+QMutex GxsIdDetails::mMutex;
+QMutex GxsIdDetails::mIconCacheMutex;
+
 static std::string groupIconCacheKey(const RsGxsGroupId& id, const QString& iconPath)
 {
     std::string key = id.toStdString();
+    key.append("|");
+    key.append(iconPath.toStdString());
+    return key;
+}
+
+static std::string groupIconCacheKeyFromString(const QString& idStr, const QString& iconPath)
+{
+    std::string key = idStr.toStdString();
     key.append("|");
     key.append(iconPath.toStdString());
     return key;
@@ -101,7 +109,7 @@ static void cleanupIconCache(CacheMap& cache, time_t now, int& nb_deleted, uint3
         std::cerr << "  Examining pixmaps sizes for " << label << " " << it->first << "." << std::endl;
 #endif
 
-        for(int i=0;i<4;++i)
+        for(int i=0;i<NUM_AVATAR_SIZES;++i)
             if(it->second[i].first>0)
             {
                 if(it->second[i].first + ICON_CACHE_STORAGE_TIME < now && it->second[i].second.isDetached())
@@ -606,6 +614,13 @@ const QPixmap GxsIdDetails::makeDefaultGroupIcon(const QString& idStr, const QSt
     return makeDefaultGroupIcon(id, iconPath, size);
 }
 
+const QPixmap GxsIdDetails::makeDefaultGroupIconFromString(const QString& idStr, const QString& iconPath, AvatarSize size)
+{
+    // Delegate to the existing QString overload so that all string-based
+    // calls share the same cache keys and entries.
+    return makeDefaultGroupIcon(idStr, iconPath, size);
+}
+
 void GxsIdDetails::debug_dumpImagesCache()
 {
     QMutexLocker lock(&mIconCacheMutex);
@@ -616,7 +631,7 @@ void GxsIdDetails::debug_dumpImagesCache()
     {
         std::cerr << "  Identity " << it.first << ":" << std::endl;
 
-        for(uint32_t i=0;i<4;++i)
+        for(uint32_t i=0;i<NUM_AVATAR_SIZES;++i)
         {
             std::cerr << "    Size #" << i << ": " ;
 
@@ -634,7 +649,7 @@ void GxsIdDetails::debug_dumpImagesCache()
     {
         std::cerr << "  Group " << it.first << ":" << std::endl;
 
-        for(uint32_t i=0;i<4;++i)
+        for(uint32_t i=0;i<NUM_AVATAR_SIZES;++i)
         {
             std::cerr << "    Size #" << i << ": " ;
 

@@ -1030,12 +1030,12 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
             if (hn && !hn->child_node_indices.empty()) {
                 // Use first child node if available
                 std::string sslIdStr = mLocations[hn->child_node_indices[0]].node_info.id.toStdString();
-                sslAvatar = GxsIdDetails::makeDefaultGroupIcon(QString::fromStdString(sslIdStr), ":icons/person.png", GxsIdDetails::LARGE);
+                sslAvatar = GxsIdDetails::makeDefaultGroupIconFromString(QString::fromStdString(sslIdStr), ":icons/person.png", GxsIdDetails::LARGE);
             }
             else if (bestNodeInformation != nullptr) {
                 // Fallback: Use the bestNodeInformation ID if no children exist
                 std::string bestSslIdStr = bestNodeInformation->node_info.id.toStdString();
-                sslAvatar = GxsIdDetails::makeDefaultGroupIcon(QString::fromStdString(bestSslIdStr), ":icons/person.png", GxsIdDetails::LARGE);
+                sslAvatar = GxsIdDetails::makeDefaultGroupIconFromString(QString::fromStdString(bestSslIdStr), ":icons/person.png", GxsIdDetails::LARGE);
             }
             else {
                 sslAvatar = FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE);
