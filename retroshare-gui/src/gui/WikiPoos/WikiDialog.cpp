@@ -731,7 +731,7 @@ void WikiDialog::GroupMetaDataToGroupItemInfo(const RsGroupMetaData &groupInfo, 
 	groupItemInfo.lastpost = DateTime::DateTimeFromTime_t(groupInfo.mLastPost);
 	groupItemInfo.subscribeFlags = groupInfo.mSubscribeFlags;
 
-	groupItemInfo.icon = GxsIdDetails::makeDefaultGroupIcon(RsGxsId(groupInfo.mGroupId), IMAGE_WIKI, GxsIdDetails::ORIGINAL);
+	groupItemInfo.icon = GxsIdDetails::makeDefaultGroupIcon(groupInfo.mGroupId, IMAGE_WIKI, GxsIdDetails::ORIGINAL);
 
 }
 

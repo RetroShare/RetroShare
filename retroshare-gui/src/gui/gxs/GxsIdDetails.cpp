@@ -81,8 +81,9 @@ QMutex GxsIdDetails::mIconCacheMutex;
 
 #define ICON_CACHE_STORAGE_TIME 		  240
 #define DELAY_BETWEEN_ICON_CACHE_CLEANING 120
+#define NUM_AVATAR_SIZES                  4  // Number of AvatarSize enum values (SMALL, MEDIUM, LARGE, ORIGINAL)
 
-static std::string groupIconCacheKey(const RsGxsId& id, const QString& iconPath)
+static std::string groupIconCacheKey(const RsGxsGroupId& id, const QString& iconPath)
 {
     std::string key = id.toStdString();
     key.append("|");
@@ -477,6 +478,13 @@ const QPixmap GxsIdDetails::makeDefaultIcon(const RsGxsId& id, AvatarSize size)
     if(id.isNull())
         std::cerr << "Weird: null ID" << std::endl;
 
+    // Bounds check to prevent array overflow
+    if((int)size >= NUM_AVATAR_SIZES || (int)size < 0)
+    {
+        std::cerr << "Warning: invalid avatar size " << (int)size << ", using MEDIUM" << std::endl;
+        size = MEDIUM;
+    }
+
     QMutexLocker lock(&mIconCacheMutex);
     auto& it = mDefaultIconCache[id];
 
@@ -548,7 +556,7 @@ QPixmap GxsIdDetails::generateColoredIcon(const QString& idStr, const QString& i
     return pixmap;
 }
 
-const QPixmap GxsIdDetails::makeDefaultGroupIcon(const RsGxsId& id, const QString& iconPath, AvatarSize size)
+const QPixmap GxsIdDetails::makeDefaultGroupIcon(const RsGxsGroupId& id, const QString& iconPath, AvatarSize size)
 {
     checkCleanImagesCache();
 
@@ -556,6 +564,13 @@ const QPixmap GxsIdDetails::makeDefaultGroupIcon(const RsGxsId& id, const QStrin
 
     if(id.isNull())
         std::cerr << "Weird: null ID" << std::endl;
+
+    // Bounds check to prevent array overflow
+    if((int)size >= NUM_AVATAR_SIZES || (int)size < 0)
+    {
+        std::cerr << "Warning: invalid avatar size " << (int)size << ", using MEDIUM" << std::endl;
+        size = MEDIUM;
+    }
 
     QMutexLocker lock(&mIconCacheMutex);
     auto& it = mDefaultGroupIconCache[groupIconCacheKey(id, iconPath)];
@@ -586,8 +601,8 @@ const QPixmap GxsIdDetails::makeDefaultGroupIcon(const RsGxsId& id, const QStrin
 
 const QPixmap GxsIdDetails::makeDefaultGroupIcon(const QString& idStr, const QString& iconPath, AvatarSize size)
 {
-    // Delegate to the RsGxsId overload to avoid duplicating caching logic
-    RsGxsId id(idStr.toStdString());
+    // Delegate to the RsGxsGroupId overload to avoid duplicating caching logic
+    RsGxsGroupId id(idStr.toStdString());
     return makeDefaultGroupIcon(id, iconPath, size);
 }
 

@@ -237,7 +237,7 @@ void PostedDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupDa
 	groupItemInfo.icon        = image;
     }
     else
-    groupItemInfo.icon        = GxsIdDetails::makeDefaultGroupIcon(RsGxsId(postedGroupData->mMeta.mGroupId), ":icons/board.png", GxsIdDetails::ORIGINAL);
+    groupItemInfo.icon        = GxsIdDetails::makeDefaultGroupIcon(postedGroupData->mMeta.mGroupId, ":icons/board.png", GxsIdDetails::ORIGINAL);
 
 	groupItemInfo.description = QString::fromUtf8(postedGroupData->mDescription.c_str());
 }
