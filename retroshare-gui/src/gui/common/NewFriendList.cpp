@@ -28,6 +28,7 @@
 
 #include "rsserver/rsaccounts.h"
 #include "retroshare/rspeers.h"
+#include "util/DateTime.h"
 
 #include "GroupDefs.h"
 #include "gui/chat/ChatDialog.h"
@@ -110,6 +111,33 @@ static std::ostream& operator<<(std::ostream& o,const QModelIndex& i)
     return o << "(" << i.row() << "," << i.column() << ")";
 }
 #endif
+
+/**
+ * Custom delegate for the Friend List to handle date formatting
+ * while maintaining elided text capabilities (truncating long text).
+ */
+class FriendListDelegate : public RSElidedItemDelegate
+{
+public:
+    using RSElidedItemDelegate::RSElidedItemDelegate;
+
+    /**
+     * Replaces the raw timestamp with a formatted date string for display.
+     * This ensures the Model can still sort numerically while the UI shows 
+     * the date according to user preferences.
+     */
+    QString displayText(const QVariant &value, const QLocale &locale) const override
+    {
+        // Check if the value is a numerical timestamp (seconds since epoch)
+        if (value.type() == QVariant::ULongLong || value.type() == QVariant::LongLong) {
+            // Format the timestamp using our utility class
+            return DateTime::formatDateTime(value.toULongLong());
+        }
+
+        // Return default elided text for other columns (Name, IP, etc.)
+        return RSElidedItemDelegate::displayText(value, locale);
+    }
+};
 
 class FriendListSortFilterProxyModel: public QSortFilterProxyModel
 {
@@ -212,7 +240,8 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 	QSortFilterProxyModel_setFilterRegularExpression(mProxyModel, RsFriendListModel::FilterString);
 
 	ui->peerTreeWidget->setModel(mProxyModel);
-	RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
+	FriendListDelegate *itemDelegate = new FriendListDelegate(this);
+	ui->peerTreeWidget->setItemDelegate(itemDelegate);
 	itemDelegate->setSpacing(QSize(W/2, H/4));
 	ui->peerTreeWidget->setItemDelegate(itemDelegate);
 	ui->peerTreeWidget->setWordWrap(false);

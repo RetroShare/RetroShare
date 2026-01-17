@@ -937,7 +937,7 @@ void FriendList::insertPeers()
 
                 /* last contact */
                 QDateTime sslLastContact = DateTime::DateTimeFromTime_t(sslDetail.lastConnect);
-                sslItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, QVariant(sslLastContact));
+		sslItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, DateTime::formatDateTime(sslDetail.lastConnect));
                 sslItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT_NAME, QVariant(sslLastContact));
                 if (sslLastContact > bestLastContact) {
                     bestLastContact = sslLastContact;
@@ -1215,7 +1215,7 @@ void FriendList::insertPeers()
             // Filter
             gpgItem->setData(COLUMN_NAME, ROLE_FILTER, gpgName);
 
-            gpgItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, showInfoAtGpgItem ? QVariant(bestLastContact) : "");
+	    gpgItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, showInfoAtGpgItem ? DateTime::formatDateTime(bestLastContact) : "");
             gpgItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT_NAME, QVariant(bestLastContact));
             gpgItem->setText(COLUMN_IP, showInfoAtGpgItem ? bestIP : "");
             gpgItem->setData(COLUMN_IP, ROLE_SORT_NAME, bestIP);

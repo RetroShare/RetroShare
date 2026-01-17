@@ -60,6 +60,7 @@ private slots:
     void switch_status_ShowSystray(bool) ;
 
     void updateLanguageCode()    ;
+    void updateDateFormat();
     void updateInterfaceStyle()  ;
     void updateSheetName()       ;
     void updateRbtPageOnToolBar();

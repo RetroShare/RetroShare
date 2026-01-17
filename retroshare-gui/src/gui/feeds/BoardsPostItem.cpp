@@ -404,7 +404,7 @@ void BoardsPostItem::fill()
 		ui->msgFrame->setVisible(doc.toPlainText().length() > 0);
 	}
 
-	ui->datetimelabel->setText(DateTime::formatLongDateTime(mPost.mMeta.mPublishTs));
+	ui->datetimelabel->setText(DateTime::formatDateTime(mPost.mMeta.mPublishTs));
 }
 
 QString BoardsPostItem::messageName()
