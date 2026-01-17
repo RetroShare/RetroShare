@@ -116,7 +116,7 @@ public:
 
     static const QPixmap makeDefaultIcon(const RsGxsId& id, AvatarSize size = MEDIUM);
     static const QPixmap makeDefaultGroupIcon(const RsGxsGroupId& id, const QString& iconPath, AvatarSize size = MEDIUM);
-    static const QPixmap makeDefaultGroupIcon(const QString& idStr, const QString& iconPath, AvatarSize size = MEDIUM);
+    static const QPixmap makeDefaultGroupIconFromString(const QString& idStr, const QString& iconPath, AvatarSize size = MEDIUM);
     /*!
      * \brief makeDefaultGroupIconFromString
      *
