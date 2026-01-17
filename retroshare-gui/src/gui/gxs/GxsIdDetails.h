@@ -136,6 +136,7 @@ public:
      *  - makeDefaultGroupIcon(const RsGxsGroupId&, const QString&, AvatarSize)
      *  - makeDefaultGroupIcon(const QString&, const QString&, AvatarSize)
      */
+    static const QPixmap makeDefaultGroupIconFromString(const QString& idStr, const QString& iconPath, AvatarSize size = MEDIUM);
 	static bool loadPixmapFromData(const unsigned char *data, size_t data_len, QPixmap& pix, AvatarSize size = MEDIUM);
     static void checkCleanImagesCache();
     static void debug_dumpImagesCache();
