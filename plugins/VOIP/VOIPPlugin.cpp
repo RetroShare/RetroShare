@@ -56,13 +56,13 @@ extern "C" {
 		return new VOIPPlugin() ;
 	}
 
-	// This symbol contains the svn revision number grabbed from the executable. 
+	// This symbol contains the svn revision number grabbed from the executable.
 	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
 	// with same revision numbers, assuming that the revision numbers are up-to-date.
 	//
 	uint32_t RETROSHARE_PLUGIN_revision = 0;
 
-	// This symbol contains the svn revision number grabbed from the executable. 
+	// This symbol contains the svn revision number grabbed from the executable.
 	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
 	// with same revision numbers, assuming that the revision numbers are up-to-date.
 	//
@@ -99,7 +99,9 @@ VOIPPlugin::VOIPPlugin()
 	Q_INIT_RESOURCE(VOIP_images);
 	Q_INIT_RESOURCE(VOIP_qss);
 
+#if LIBAVCODEC_VERSION_MAJOR < 58
 	avcodec_register_all();
+#endif
 }
 
 void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
@@ -118,7 +120,7 @@ ConfigPage *VOIPPlugin::qt_config_page() const
 QDialog *VOIPPlugin::qt_about_page() const
 {
 	static QMessageBox *about_dialog = NULL ;
-	
+
 	if(about_dialog == NULL)
 	{
 		about_dialog = new QMessageBox() ;
