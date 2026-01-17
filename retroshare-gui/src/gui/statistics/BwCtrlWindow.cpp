@@ -119,7 +119,9 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
         	painter->drawText(option.rect, Qt::AlignRight, temp);
 	        break;
 	case COLUMN_OUT_QUEUE_BYTES:
-	        qi64Value = index.data().value<qint64>();
+	case COLUMN_SESSION_IN:
+	case COLUMN_SESSION_OUT:
+		qi64Value = index.data().value<qint64>();
         	if (qi64Value >= 1024 * 1024) 
 	            temp = QString::asprintf("%.2f MB ", qi64Value / (1024.0 * 1024.0));
         	else if (qi64Value >= 1024)
@@ -244,6 +246,8 @@ void BwCtrlWindow::updateBandwidth()
         item -> setData(COLUMN_OUT_QUEUE_BYTES, Qt::DisplayRole, qint64(totalRates.mQueueOutBytes));
         item -> setData(COLUMN_DRAIN, Qt::DisplayRole, totalDrain);
 
+	item -> setData(COLUMN_SESSION_IN, Qt::DisplayRole, qint64(totalRates.mTotalIn));
+	item -> setData(COLUMN_SESSION_OUT, Qt::DisplayRole, qint64(totalRates.mTotalOut));
 
 	time_t now = time(NULL);
 	for(it = rateMap.begin(); it != rateMap.end(); ++it)
@@ -296,7 +300,10 @@ void BwCtrlWindow::updateBandwidth()
 		        // Orange background for warning levels
 		        peer_item->setBackground(COLUMN_DRAIN, QBrush(QColor("#FFA500"))); 
 		        peer_item->setForeground(COLUMN_DRAIN, QBrush(Qt::black));
-		}	
+		}
+
+		peer_item->setData(COLUMN_SESSION_IN, Qt::DisplayRole, qint64(it->second.mTotalIn));
+		peer_item->setData(COLUMN_SESSION_OUT, Qt::DisplayRole, qint64(it->second.mTotalOut));
 	}
 	// Re-enable sorting - the custom operator< will now keep Totals at index 0
 	peerTreeWidget->setSortingEnabled(true);

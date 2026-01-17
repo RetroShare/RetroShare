@@ -41,7 +41,9 @@
 #define COLUMN_OUT_QUEUE_ITEMS 9
 #define COLUMN_OUT_QUEUE_BYTES 10
 #define COLUMN_DRAIN 11
-#define COLUMN_COUNT 12
+#define COLUMN_SESSION_IN 12
+#define COLUMN_SESSION_OUT 13
+#define COLUMN_COUNT 14
 
 class QModelIndex;
 class QPainter;
