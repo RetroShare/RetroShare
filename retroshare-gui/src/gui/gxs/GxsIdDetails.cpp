@@ -71,15 +71,81 @@
 //const int kRecognTagType_Dev_Patcher     	= 4;
 //const int kRecognTagType_Dev_Developer	 	= 5;
 
+#define ICON_CACHE_STORAGE_TIME 		  240
+#define DELAY_BETWEEN_ICON_CACHE_CLEANING 120
+#define NUM_AVATAR_SIZES                  4  // Number of AvatarSize enum values (SMALL, MEDIUM, LARGE, ORIGINAL)
+
 uint32_t GxsIdDetails::mImagesAllocated = 0;
 time_t GxsIdDetails::mLastIconCacheCleaning = time(NULL);
-std::map<RsGxsId,std::pair<time_t,QPixmap>[4] > GxsIdDetails::mDefaultIconCache ;
+std::map<RsGxsId,std::pair<time_t,QPixmap>[NUM_AVATAR_SIZES] > GxsIdDetails::mDefaultIconCache ;
+std::map<std::string,std::pair<time_t,QPixmap>[NUM_AVATAR_SIZES] > GxsIdDetails::mDefaultGroupIconCache ;
 
 QMutex GxsIdDetails::mMutex;
 QMutex GxsIdDetails::mIconCacheMutex;
 
-#define ICON_CACHE_STORAGE_TIME 		  240
-#define DELAY_BETWEEN_ICON_CACHE_CLEANING 120
+static std::string groupIconCacheKey(const RsGxsGroupId& id, const QString& iconPath)
+{
+    std::string key = id.toStdString();
+    key.append("|");
+    key.append(iconPath.toStdString());
+    return key;
+}
+
+static std::string groupIconCacheKeyFromString(const QString& idStr, const QString& iconPath)
+{
+    std::string key = idStr.toStdString();
+    key.append("|");
+    key.append(iconPath.toStdString());
+    return key;
+}
+
+template<typename CacheMap>
+static void cleanupIconCache(CacheMap& cache, time_t now, int& nb_deleted, uint32_t& size_deleted, uint32_t& total_size, const char* label)
+{
+    for(auto it(cache.begin());it!=cache.end();)
+    {
+        bool all_empty = true ;
+#ifdef DEBUG_GXSIDDETAILS
+        std::cerr << "  Examining pixmaps sizes for " << label << " " << it->first << "." << std::endl;
+#endif
+
+        for(int i=0;i<NUM_AVATAR_SIZES;++i)
+            if(it->second[i].first>0)
+            {
+                if(it->second[i].first + ICON_CACHE_STORAGE_TIME < now && it->second[i].second.isDetached())
+                {
+                    int s = it->second[i].second.width()*it->second[i].second.height()*4;
+
+#ifdef DEBUG_GXSIDDETAILS
+                    std::cerr << "    Deleting pixmap " << it->first << " size " << i << " " << s << " bytes." << std::endl;
+#endif
+
+                    it->second[i].second = QPixmap();
+                    it->second[i].first = 0;
+                    ++nb_deleted;
+                    size_deleted += s;
+                }
+                else
+                {
+                    all_empty = false;
+                    total_size += it->second[i].second.width()*it->second[i].second.height()*4;
+#ifdef DEBUG_GXSIDDETAILS
+                    std::cerr << "    Keeping " << it->first << " size " << i << std::endl;
+#endif
+                }
+            }
+
+        if(all_empty)
+        {
+#ifdef DEBUG_GXSIDDETAILS
+            std::cerr << "    Deleting entry " << it->first << " because no pixmaps are stored here. " << std::endl;
+#endif
+            it = cache.erase(it);
+        }
+        else
+            ++it;
+    }
+}
 
 void ReputationItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
@@ -420,6 +486,13 @@ const QPixmap GxsIdDetails::makeDefaultIcon(const RsGxsId& id, AvatarSize size)
     if(id.isNull())
         std::cerr << "Weird: null ID" << std::endl;
 
+    // Bounds check to prevent array overflow
+    if((int)size >= NUM_AVATAR_SIZES || (int)size < 0)
+    {
+        std::cerr << "Warning: invalid avatar size " << (int)size << ", using MEDIUM" << std::endl;
+        size = MEDIUM;
+    }
+
     QMutexLocker lock(&mIconCacheMutex);
     auto& it = mDefaultIconCache[id];
 
@@ -447,6 +520,107 @@ const QPixmap GxsIdDetails::makeDefaultIcon(const RsGxsId& id, AvatarSize size)
     return image;
 }
 
+QPixmap GxsIdDetails::generateColoredIcon(const QString& idStr, const QString& iconPath, int size)
+{
+    // Generate a color from the ID hash
+    uint hash = qHash(idStr);
+    
+    // Use hash to determine hue (0-359), with fixed saturation and lightness for pastel look
+    int hue = hash % 360;
+    int saturation = 150;  // Mid saturation for pastel colors
+    int lightness = 180;   // Light for pastel colors
+    
+    QColor backgroundColor = QColor::fromHsl(hue, saturation, lightness);
+    
+    // Create the pixmap
+    QPixmap pixmap(size, size);
+    pixmap.fill(Qt::transparent);
+    
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    
+    // Draw colored circle
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(backgroundColor);
+    painter.drawEllipse(0, 0, size, size);
+    
+    // Load and overlay the category icon
+    QPixmap categoryIcon(iconPath);
+    if (!categoryIcon.isNull())
+    {
+        // Scale icon to ~70% of total size
+        int iconSize = static_cast<int>(size * 0.7);
+        QPixmap scaledIcon = categoryIcon.scaled(iconSize, iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        
+        // Center the icon
+        int x = (size - scaledIcon.width()) / 2;
+        int y = (size - scaledIcon.height()) / 2;
+        painter.drawPixmap(x, y, scaledIcon);
+    }
+    
+    painter.end();
+    
+    return pixmap;
+}
+
+const QPixmap GxsIdDetails::makeDefaultGroupIcon(const RsGxsGroupId& id, const QString& iconPath, AvatarSize size)
+{
+    checkCleanImagesCache();
+
+    time_t now = time(NULL);
+
+    if(id.isNull())
+        std::cerr << "Weird: null ID" << std::endl;
+
+    // Bounds check to prevent array overflow
+    if((int)size >= NUM_AVATAR_SIZES || (int)size < 0)
+    {
+        std::cerr << "Warning: invalid avatar size " << (int)size << ", using MEDIUM" << std::endl;
+        size = MEDIUM;
+    }
+
+    QMutexLocker lock(&mIconCacheMutex);
+    auto& it = mDefaultGroupIconCache[groupIconCacheKey(id, iconPath)];
+
+    if(it[(int)size].second.width() > 0)
+    {
+        it[(int)size].first = now;
+        return it[(int)size].second;
+    }
+
+    int S = 0;
+
+    switch(size)
+    {
+        case SMALL:  S = 48 ; break;
+        default:
+        case MEDIUM: S = 96 ; break;
+        case ORIGINAL:
+        case LARGE:  S = 192 ; break;
+    }
+
+    QPixmap pixmap = generateColoredIcon(QString::fromStdString(id.toStdString()), iconPath, S);
+
+    it[(int)size] = std::make_pair(now, pixmap);
+
+    return pixmap;
+}
+
+const QPixmap GxsIdDetails::makeDefaultGroupIcon(const QString& idStr, const QString& iconPath, AvatarSize size)
+{
+    // Delegate to the RsGxsGroupId overload to avoid duplicating caching logic
+    RsGxsGroupId id(idStr.toStdString());
+    return makeDefaultGroupIcon(id, iconPath, size);
+}
+
+const QPixmap GxsIdDetails::makeDefaultGroupIconFromString(const QString& idStr, const QString& iconPath, AvatarSize size)
+{
+    // Delegate to the existing QString overload so that all string-based
+    // calls share the same cache keys and entries.
+    return makeDefaultGroupIcon(idStr, iconPath, size);
+}
+
 void GxsIdDetails::debug_dumpImagesCache()
 {
     QMutexLocker lock(&mIconCacheMutex);
@@ -457,7 +631,25 @@ void GxsIdDetails::debug_dumpImagesCache()
     {
         std::cerr << "  Identity " << it.first << ":" << std::endl;
 
-        for(uint32_t i=0;i<4;++i)
+        for(uint32_t i=0;i<NUM_AVATAR_SIZES;++i)
+        {
+            std::cerr << "    Size #" << i << ": " ;
+
+            if(it.second[i].first>0)
+            {
+                int s = it.second[i].second.width()*it.second[i].second.height()*4;
+                std::cerr << " Present. Size=" << s << " bytes. Age: " << time(nullptr)-it.second[i].first << " secs. ago. Used: " << !it.second[i].second.isDetached() << std::endl;
+            }
+            else
+                std::cerr << " None." << std::endl;
+        }
+    }
+
+    for(const auto& it:mDefaultGroupIconCache)
+    {
+        std::cerr << "  Group " << it.first << ":" << std::endl;
+
+        for(uint32_t i=0;i<NUM_AVATAR_SIZES;++i)
         {
             std::cerr << "    Size #" << i << ": " ;
 
@@ -489,52 +681,12 @@ void GxsIdDetails::checkCleanImagesCache()
 
         QMutexLocker lock(&mIconCacheMutex);
 
-        for(auto it(mDefaultIconCache.begin());it!=mDefaultIconCache.end();)
-        {
-            bool all_empty = true ;
-#ifdef DEBUG_GXSIDDETAILS
-            std::cerr << "  Examining pixmaps sizes for " << it->first << "." << std::endl;
-#endif
-
-            for(int i=0;i<4;++i)
-                if(it->second[i].first>0)
-                {
-                    if(it->second[i].first + ICON_CACHE_STORAGE_TIME < now && it->second[i].second.isDetached())
-                    {
-                        int s = it->second[i].second.width()*it->second[i].second.height()*4;
-
-#ifdef DEBUG_GXSIDDETAILS
-                        std::cerr << "    Deleting pixmap " << it->first << " size " << i << " " << s << " bytes." << std::endl;
-#endif
-
-                        it->second[i].second = QPixmap();
-                        it->second[i].first = 0;
-                        ++nb_deleted;
-                        size_deleted += s;
-                    }
-                    else
-                    {
-                        all_empty = false;
-                        total_size += it->second[i].second.width()*it->second[i].second.height()*4;
-#ifdef DEBUG_GXSIDDETAILS
-                        std::cerr << "    Keeking " << it->first << " size " << i << std::endl;
-#endif
-                    }
-                }
-
-            if(all_empty)
-            {
-#ifdef DEBUG_GXSIDDETAILS
-                std::cerr << "    Deleting entry " << it->first << " because no pixmaps are stored here. " << std::endl;
-#endif
-                it = mDefaultIconCache.erase(it);
-            }
-			else
-				++it;
-        }
+        cleanupIconCache(mDefaultIconCache, now, nb_deleted, size_deleted, total_size, "identity");
+        cleanupIconCache(mDefaultGroupIconCache, now, nb_deleted, size_deleted, total_size, "group");
 
         mLastIconCacheCleaning = now;
-        std::cerr << "(II) Removed " << nb_deleted << " (" << size_deleted << " bytes) unused icons. Cache contains " << mDefaultIconCache.size() << " icons (" << total_size << " bytes)"<< std::endl;
+        std::cerr << "(II) Removed " << nb_deleted << " (" << size_deleted << " bytes) unused icons. Cache contains "
+                  << (mDefaultIconCache.size() + mDefaultGroupIconCache.size()) << " icons (" << total_size << " bytes)"<< std::endl;
     }
 }
 
