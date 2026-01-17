@@ -616,9 +616,46 @@ const QPixmap GxsIdDetails::makeDefaultGroupIcon(const QString& idStr, const QSt
 
 const QPixmap GxsIdDetails::makeDefaultGroupIconFromString(const QString& idStr, const QString& iconPath, AvatarSize size)
 {
-    // Delegate to the existing QString overload so that all string-based
-    // calls share the same cache keys and entries.
-    return makeDefaultGroupIcon(idStr, iconPath, size);
+    // This function is for non-GXS IDs (e.g., RsPeerId, RsPgpId) that are only
+    // available as strings. It uses a separate cache key strategy to avoid
+    // collisions with real RsGxsGroupId-based icons.
+    
+    checkCleanImagesCache();
+
+    time_t now = time(NULL);
+
+    // Bounds check to prevent array overflow
+    if((int)size >= NUM_AVATAR_SIZES || (int)size < 0)
+    {
+        std::cerr << "Warning: invalid avatar size " << (int)size << ", using MEDIUM" << std::endl;
+        size = MEDIUM;
+    }
+
+    QMutexLocker lock(&mIconCacheMutex);
+    auto& it = mDefaultGroupIconCache[groupIconCacheKeyFromString(idStr, iconPath)];
+
+    if(it[(int)size].second.width() > 0)
+    {
+        it[(int)size].first = now;
+        return it[(int)size].second;
+    }
+
+    int S = 0;
+
+    switch(size)
+    {
+        case SMALL:  S = 48 ; break;
+        default:
+        case MEDIUM: S = 96 ; break;
+        case ORIGINAL:
+        case LARGE:  S = 192 ; break;
+    }
+
+    QPixmap pixmap = generateColoredIcon(idStr, iconPath, S);
+
+    it[(int)size] = std::make_pair(now, pixmap);
+
+    return pixmap;
 }
 
 void GxsIdDetails::debug_dumpImagesCache()
