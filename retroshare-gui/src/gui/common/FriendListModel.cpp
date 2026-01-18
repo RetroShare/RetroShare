@@ -748,7 +748,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
                                 }
                         }
 
-			if(col == COLUMN_THREAD_LAST_CONTACT) return QVariant((qulonglong)most_recent_time.toTime_t());
+			if(col == COLUMN_THREAD_LAST_CONTACT) return QVariant((qulonglong)DateTime::DateTimeToTime_t(most_recent_time));
 			if(col == COLUMN_THREAD_IP)           return QVariant(most_recent_ip);
 
                         return QVariant();
