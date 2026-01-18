@@ -30,6 +30,7 @@
 #include "gui/WikiPoos/WikiEditDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/WikiGroupDialog.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "util/DateTime.h"
 
 #include <retroshare/rswiki.h>
@@ -76,7 +77,7 @@
 #define IMAGE_NEWFORUM       ":/images/new_forum16.png"
 #define IMAGE_FORUMAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
-#define IMAGE_WIKI           ":/icons/png/wiki.png"
+#define IMAGE_WIKI           ":icons/wiki.png"
 #define IMAGE_EDIT           ":/icons/png/pencil-edit-button.png"
 
 

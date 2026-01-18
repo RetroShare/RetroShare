@@ -28,6 +28,8 @@
 #include <QString>
 #include <QStyledItemDelegate>
 
+#include <string>
+
 #include <retroshare/rsidentity.h>
 
 class QLabel;
@@ -113,6 +115,27 @@ public:
     // These two methods use a cache so as to minimize the memory impact of avatars.
 
     static const QPixmap makeDefaultIcon(const RsGxsId& id, AvatarSize size = MEDIUM);
+    static const QPixmap makeDefaultGroupIcon(const RsGxsGroupId& id, const QString& iconPath, AvatarSize size = MEDIUM);
+    static const QPixmap makeDefaultGroupIcon(const QString& idStr, const QString& iconPath, AvatarSize size = MEDIUM);
+    /*!
+     * \brief makeDefaultGroupIconFromString
+     *
+     * Create a default group icon for identifiers that are not GXS group IDs
+     * (e.g. RsPeerId, RsPgpId) but are only available as strings.
+     *
+     * This overload uses a distinct cache key strategy from the
+     * makeDefaultGroupIcon(const QString&, ...) overload, to avoid collisions
+     * with icons generated for real RsGxsGroupId-based group identifiers. In
+     * particular, the full string identifier (and optionally a type-specific
+     * prefix in the implementation) is used as the cache key rather than
+     * assuming that the string encodes a GXS group ID.
+     *
+     * Use this function when you need a "group-like" icon for non-GXS ID
+     * types (such as RsPeerId or RsPgpId) and you only have a textual
+     * representation. For actual GXS group identifiers, prefer:
+     *  - makeDefaultGroupIcon(const RsGxsGroupId&, const QString&, AvatarSize)
+     *  - makeDefaultGroupIcon(const QString&, const QString&, AvatarSize)
+     */
 	static bool loadPixmapFromData(const unsigned char *data, size_t data_len, QPixmap& pix, AvatarSize size = MEDIUM);
     static void checkCleanImagesCache();
     static void debug_dumpImagesCache();
@@ -140,6 +163,7 @@ private:
 	                         qreal shapeangle, qreal angle,
 	                         quint16 size, QColor fillColor);
 	static QPixmap drawIdentIcon(QString hash, quint16 width, bool rotate);
+	static QPixmap generateColoredIcon(const QString& idStr, const QString& iconPath, int size);
 
 private slots:
 	void objectDestroyed(QObject *object);
@@ -172,6 +196,7 @@ protected:
 
     static uint32_t mImagesAllocated;
     static std::map<RsGxsId,std::pair<time_t,QPixmap>[4] > mDefaultIconCache;
+    static std::map<std::string,std::pair<time_t,QPixmap>[4] > mDefaultGroupIconCache;
     static time_t mLastIconCacheCleaning;
 
     int mCheckTimerId;
