@@ -21,8 +21,16 @@
 TEMPLATE = lib
 CONFIG *= plugin
 
-DEPENDPATH += $$PWD/../../libretroshare/src/ $$PWD/../../retroshare-gui/src/
-INCLUDEPATH += $$PWD/../../libretroshare/src/ $$PWD/../../retroshare-gui/src/
+# TODO: Why are these not added by retroshare.pri?
+DEPENDPATH += $$PWD/../../retroshare-gui/src/
+INCLUDEPATH += $$PWD/../../retroshare-gui/src/
+
+# TODO: Why can we not include use_libretroshare.pri
+DEPENDPATH += $$PWD/../../libretroshare/src/
+INCLUDEPATH += $$PWD/../../libretroshare/src/
+# rapidjson headers are required for libretroshare
+INCLUDEPATH += ../../supportlibs/rapidjson/include
+
 
 linux-* {
 	target.path = "$${RS_PLUGIN_DIR}"
