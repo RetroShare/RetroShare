@@ -85,7 +85,8 @@ QMutex GxsIdDetails::mIconCacheMutex;
 
 static std::string groupIconCacheKey(const RsGxsGroupId& id, const QString& iconPath)
 {
-    std::string key = id.toStdString();
+    std::string key = "gxs:";
+    key.append(id.toStdString());
     key.append("|");
     key.append(iconPath.toStdString());
     return key;
@@ -93,7 +94,8 @@ static std::string groupIconCacheKey(const RsGxsGroupId& id, const QString& icon
 
 static std::string groupIconCacheKeyFromString(const QString& idStr, const QString& iconPath)
 {
-    std::string key = idStr.toStdString();
+    std::string key = "str:";
+    key.append(idStr.toStdString());
     key.append("|");
     key.append(iconPath.toStdString());
     return key;
@@ -564,14 +566,11 @@ QPixmap GxsIdDetails::generateColoredIcon(const QString& idStr, const QString& i
     return pixmap;
 }
 
-const QPixmap GxsIdDetails::makeDefaultGroupIcon(const RsGxsGroupId& id, const QString& iconPath, AvatarSize size)
+const QPixmap GxsIdDetails::makeDefaultGroupIconWithCacheKey(const QString& idStr, const QString& iconPath, AvatarSize size, const std::string& cacheKey)
 {
     checkCleanImagesCache();
 
     time_t now = time(NULL);
-
-    if(id.isNull())
-        std::cerr << "Weird: null ID" << std::endl;
 
     // Bounds check to prevent array overflow
     if((int)size >= NUM_AVATAR_SIZES || (int)size < 0)
@@ -581,7 +580,7 @@ const QPixmap GxsIdDetails::makeDefaultGroupIcon(const RsGxsGroupId& id, const Q
     }
 
     QMutexLocker lock(&mIconCacheMutex);
-    auto& it = mDefaultGroupIconCache[groupIconCacheKey(id, iconPath)];
+    auto& it = mDefaultGroupIconCache[cacheKey];
 
     if(it[(int)size].second.width() > 0)
     {
@@ -600,11 +599,20 @@ const QPixmap GxsIdDetails::makeDefaultGroupIcon(const RsGxsGroupId& id, const Q
         case LARGE:  S = 192 ; break;
     }
 
-    QPixmap pixmap = generateColoredIcon(QString::fromStdString(id.toStdString()), iconPath, S);
+    QPixmap pixmap = generateColoredIcon(idStr, iconPath, S);
 
     it[(int)size] = std::make_pair(now, pixmap);
 
     return pixmap;
+}
+
+const QPixmap GxsIdDetails::makeDefaultGroupIcon(const RsGxsGroupId& id, const QString& iconPath, AvatarSize size)
+{
+    if(id.isNull())
+        std::cerr << "Weird: null ID" << std::endl;
+
+    const QString idStr = QString::fromStdString(id.toStdString());
+    return makeDefaultGroupIconWithCacheKey(idStr, iconPath, size, groupIconCacheKey(id, iconPath));
 }
 
 const QPixmap GxsIdDetails::makeDefaultGroupIcon(const QString& idStr, const QString& iconPath, AvatarSize size)
@@ -616,9 +624,7 @@ const QPixmap GxsIdDetails::makeDefaultGroupIcon(const QString& idStr, const QSt
 
 const QPixmap GxsIdDetails::makeDefaultGroupIconFromString(const QString& idStr, const QString& iconPath, AvatarSize size)
 {
-    // Delegate to the existing QString overload so that all string-based
-    // calls share the same cache keys and entries.
-    return makeDefaultGroupIcon(idStr, iconPath, size);
+    return makeDefaultGroupIconWithCacheKey(idStr, iconPath, size, groupIconCacheKeyFromString(idStr, iconPath));
 }
 
 void GxsIdDetails::debug_dumpImagesCache()
