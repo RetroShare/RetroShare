@@ -557,7 +557,7 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
     auto endTime = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
 
-    RsDbg() << "DEBUG [UI-MODEL]: setPosts (UI Thread sorting/reset) took: " << duration << " ms for " << mPosts.size() << " posts." << std::endl;
+    RsDbg() << "DEBUG [UI-MODEL]: setPosts (UI Thread sorting/reset) took: " << duration << " ms for " << mPosts.size() << " posts";
 
     emit channelPostsLoaded();
 }
@@ -570,7 +570,7 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
     // Start global timer for the loading process
     auto totalRequestStart = std::chrono::steady_clock::now();
 
-    RsDbg() << "DEBUG [UI-LOAD]: Starting update_posts for group: " << group_id << std::endl;
+    RsDbg() << "DEBUG [UI-LOAD]: Starting update_posts for group: " << group_id;
 
     MainWindow::getPage(MainWindow::Channels)->setCursor(Qt::WaitCursor);
 
@@ -607,7 +607,7 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
         auto fetchMs = std::chrono::duration_cast<std::chrono::milliseconds>(fetchEnd - fetchStart).count();
 
         RsDbg() << "DEBUG [UI-LOAD]: Backend fetch finished. Items: " << posts->size() 
-                << " posts. Time: " << fetchMs << " ms." << std::endl;
+                << " posts. Time: " << fetchMs << " ms";
 
         // Return to UI thread for model update
         RsQThreadUtils::postToObject( [group, posts, this, totalRequestStart]()
@@ -620,8 +620,8 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
             auto totalMs = std::chrono::duration_cast<std::chrono::milliseconds>(now - totalRequestStart).count();
             auto uiDispatchMs = std::chrono::duration_cast<std::chrono::milliseconds>(now - uiUpdateStart).count();
 
-            RsDbg() << "DEBUG [UI-LOAD]: UI model update finished. Dispatch/Update time: " << uiDispatchMs << " ms." << std::endl;
-            RsDbg() << "DEBUG [UI-LOAD]: TOTAL LOADING TIME (User perceived): " << totalMs << " ms." << std::endl;
+            RsDbg() << "DEBUG [UI-LOAD]: UI model update finished. Dispatch/Update time: " << uiDispatchMs << " ms";
+            RsDbg() << "DEBUG [UI-LOAD]: TOTAL LOADING TIME (User perceived): " << totalMs << " ms";
 
             delete posts;
             MainWindow::getPage(MainWindow::Channels)->setCursor(Qt::ArrowCursor);
@@ -635,7 +635,7 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
     // Start timer to measure how long the UI thread is occupied
     auto startTime = std::chrono::steady_clock::now();
 
-    RsDbg() << "DEBUG [UI-CHANNELS]: Starting setAllMsgReadStatus for " << mPosts.size() << " messages." << std::endl;
+    RsDbg() << "DEBUG [UI-CHANNELS]: Starting setAllMsgReadStatus for " << mPosts.size() << " messages";
 
     // 1 - copy all msg/grp id groups
     // This part is done on the UI thread and can be slow if mPosts is large
@@ -649,7 +649,7 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
             pairs.push_back(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId, mPosts[i].mMeta.mMsgId));
     }
 
-    RsDbg() << "DEBUG [UI-CHANNELS]: Found " << pairs.size() << " messages requiring status change." << std::endl;
+    RsDbg() << "DEBUG [UI-CHANNELS]: Found " << pairs.size() << " messages requiring status change";
 
     // 2 - then call the async methods
     // We are launching N threads. The overhead of creating these threads 
@@ -663,7 +663,7 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
         });
 
         if (i > 0 && i % 1000 == 0) {
-            RsDbg() << "DEBUG [UI-CHANNELS]: Launched " << i << " async threads..." << std::endl;
+            RsDbg() << "DEBUG [UI-CHANNELS]: Launched " << i << " async threads...";
         }
     }
 
@@ -681,8 +681,8 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
     auto endTime = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
 
-    RsDbg() << "DEBUG [UI-CHANNELS]: Finished setAllMsgReadStatus." << std::endl;
-    RsDbg() << "DEBUG [UI-CHANNELS]: TOTAL UI THREAD FREEZE: " << duration << " ms." << std::endl;
+    RsDbg() << "DEBUG [UI-CHANNELS]: Finished setAllMsgReadStatus";
+    RsDbg() << "DEBUG [UI-CHANNELS]: TOTAL UI THREAD FREEZE: " << duration << " ms";
 
     emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1, mColumns-1, (void*)NULL));
 }
