@@ -201,7 +201,7 @@ void GxsIdTreeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     // additional Qt role only to determine the number of destinations.
 
     if(dt == "")
-        ownOption.icon = FilesDefs::getIconFromQtResourcePath(":/icons/svg/people2.svg");
+        ownOption.icon = FilesDefs::getIconFromQtResourcePath(":/icons/png/people2.png");
     else if(id.isNull())
     {
         if (ownOption.icon.isNull())
