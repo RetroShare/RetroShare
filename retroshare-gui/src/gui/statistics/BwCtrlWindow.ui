@@ -80,7 +80,7 @@
       </column>
       <column>
        <property name="text">
-        <string>Drain</string>
+        <string>Drain (s)</string>
        </property>
       </column>
       <column>

@@ -209,6 +209,14 @@ void BwCtrlWindow::updateBandwidth()
 	QTreeWidget *peerTreeWidget = bwTreeWidget;
 
 	// Disable sorting while clearing and refilling to avoid UI glitches
+	QString selectedPeerId;
+	bool hasSelection = false;
+	QList<QTreeWidgetItem*> selectedList = peerTreeWidget->selectedItems();
+	if(!selectedList.isEmpty()) {
+		selectedPeerId = selectedList.first()->data(COLUMN_PEERID, Qt::DisplayRole).toString();
+		hasSelection = true;
+	}
+
 	peerTreeWidget->setSortingEnabled(false);
 	peerTreeWidget->clear();
 
@@ -307,6 +315,16 @@ void BwCtrlWindow::updateBandwidth()
 	}
 	// Re-enable sorting - the custom operator< will now keep Totals at index 0
 	peerTreeWidget->setSortingEnabled(true);
+
+	if(hasSelection) {
+		for(int i=0; i<peerTreeWidget->topLevelItemCount(); ++i) {
+			QTreeWidgetItem *item = peerTreeWidget->topLevelItem(i);
+			if(item->data(COLUMN_PEERID, Qt::DisplayRole).toString() == selectedPeerId) {
+				peerTreeWidget->setCurrentItem(item);
+				break;
+			}
+		}
+	}
 }
 
 // Persist column sizes
