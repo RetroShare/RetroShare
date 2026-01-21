@@ -1599,6 +1599,9 @@ void MainWindow::setStatus(QObject *pObject, RsStatusValue nStatus)
             setStatusObject(*it, nStatus);
         }
     }
+
+    rsConfig->setIsIdle(isIdle);
+    rsConfig->setOperatingMode(rsConfig->getOperatingMode());
 }
 
 /* new status from context menu */

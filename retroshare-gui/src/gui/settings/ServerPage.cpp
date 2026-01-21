@@ -228,6 +228,8 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
     connect(ui.totalDownloadRate,SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
     connect(ui.totalUploadRate,  SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
+    connect(ui.totalDownloadRateWhenIdle,SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
+    connect(ui.totalUploadRateWhenIdle,  SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
 
 	//Relay Tab
 	QObject::connect(ui.noFriendSpinBox,SIGNAL(valueChanged(int)),this,SLOT(updateRelayOptions()));
@@ -457,9 +459,13 @@ void ServerPage::load()
 
         int dlrate = 0;
         int ulrate = 0;
-        rsConfig->GetMaxDataRates(dlrate, ulrate);
+        int dlratewi = 0;
+        int ulratewi = 0;
+        rsConfig->getMaxDataRates(dlrate, ulrate, dlratewi, ulratewi);
         whileBlocking(ui.totalDownloadRate)->setValue(dlrate);
         whileBlocking(ui.totalUploadRate)->setValue(ulrate);
+        whileBlocking(ui.totalDownloadRateWhenIdle)->setValue(dlratewi);
+        whileBlocking(ui.totalUploadRateWhenIdle)->setValue(ulratewi);
 
         toggleUPnP();
 
@@ -1085,7 +1091,10 @@ void ServerPage::saveAddresses()
 
 void ServerPage::saveRates()
 {
-    rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
+    rsConfig->setMaxDataRates( ui.totalDownloadRate->value()
+                             , ui.totalUploadRate->value()
+                             , ui.totalDownloadRateWhenIdle->value()
+                             , ui.totalUploadRateWhenIdle->value());
 }
 
 void ServerPage::tabChanged(int page)
@@ -1171,9 +1180,13 @@ void ServerPage::loadHiddenNode()
     // Download Rates - Stay the same as before.
     int dlrate = 0;
     int ulrate = 0;
-    rsConfig->GetMaxDataRates(dlrate, ulrate);
+    int dlratewi = 0;
+    int ulratewi = 0;
+    rsConfig->getMaxDataRates(dlrate, ulrate, dlratewi, ulratewi);
     whileBlocking(ui.totalDownloadRate)->setValue(dlrate);
     whileBlocking(ui.totalUploadRate)->setValue(ulrate);
+    whileBlocking(ui.totalDownloadRateWhenIdle)->setValue(dlratewi);
+    whileBlocking(ui.totalUploadRateWhenIdle)->setValue(ulratewi);
 
     // Addresses.
     ui.localAddress->setEnabled(false);
@@ -1365,7 +1378,10 @@ void ServerPage::saveAddressesHiddenNode()
         rsPeers->setHiddenNode(ownId, hiddenAddr, hiddenPort);
     }
 
-    rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
+    rsConfig->setMaxDataRates( ui.totalDownloadRate->value()
+                             , ui.totalUploadRate->value()
+                             , ui.totalDownloadRateWhenIdle->value()
+                             , ui.totalUploadRateWhenIdle->value() );
     load();
 }
 
