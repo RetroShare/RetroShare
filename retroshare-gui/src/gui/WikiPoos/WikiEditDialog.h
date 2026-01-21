@@ -80,6 +80,9 @@ void 	loadBaseHistory(const uint32_t &token);
 void 	requestEditTreeData();
 void 	loadEditTreeData(const uint32_t &token);
 
+void 	collectCheckedItems(QTreeWidgetItem *item, QList<RsGxsMessageId> &checkedIds);
+void 	loadMergedPages(const uint32_t &token);
+
 
 
         bool mNewPage;
