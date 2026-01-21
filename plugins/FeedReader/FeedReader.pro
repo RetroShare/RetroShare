@@ -110,12 +110,6 @@ TRANSLATIONS +=  \
 			lang/FeedReader_tr.ts \
 			lang/FeedReader_zh_CN.ts
 
-# when rapidjson is mainstream on all distribs, we will not need the sources anymore
-# in the meantime, they are part of the RS directory so that it is always possible to find them
-
-INCLUDEPATH += ../../rapidjson-1.1.0
-
-
 linux-* {
 	CONFIG += link_pkgconfig
 

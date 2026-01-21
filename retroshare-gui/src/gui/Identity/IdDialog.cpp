@@ -395,7 +395,7 @@ IdDialog::IdDialog(QWidget *parent)
 	/* Set initial section sizes */
     QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
     circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QFontMetrics_horizontalAdvance(fm, "Circle name")*1.5) ;
-    ui->treeWidget_membership->setColumnWidth(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 270);
+    ui->treeWidget_membership->setColumnWidth(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 600);
 
 	/* Setup tree */
     //ui->idTreeWidget->sortByColumn(RsIdentityListModel::COLUMN_THREAD_NAME, Qt::AscendingOrder);
@@ -457,9 +457,12 @@ IdDialog::IdDialog(QWidget *parent)
     });
 
 	QFontMetricsF fontMetrics(ui->treeWidget_membership->font());
-	int iconHeight = fontMetrics.height() * 1.4;
+
+	int iconHeight = fontMetrics.height() * 1.5;
 	ui->treeWidget_membership->setIconSize(QSize(iconHeight, iconHeight));
-	ui->idTreeWidget->setIconSize(QSize(iconHeight, iconHeight));
+
+	int iconHeightId = fontMetrics.height() * 2.0;
+	ui->idTreeWidget->setIconSize(QSize(iconHeightId, iconHeightId));
 
     mFontSizeHandler.registerFontSize(ui->treeWidget_membership, 0, [this] (QAbstractItemView*, int fontSize) {
 		// Set new font size on all items
