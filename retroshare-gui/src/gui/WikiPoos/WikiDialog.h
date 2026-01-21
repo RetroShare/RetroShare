@@ -58,6 +58,7 @@ private slots:
 	void OpenOrShowRepublishDialog();
 
 	void groupTreeChanged();
+	void filterPages(const QString &text);
 
 	void newGroup();
 	void showGroupDetails();

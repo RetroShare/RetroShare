@@ -100,6 +100,9 @@ WikiDialog::WikiDialog(QWidget *parent) :
 
     connect( ui.treeWidget_Pages, SIGNAL(itemSelectionChanged()), this, SLOT(groupTreeChanged()));
 
+    // Connect search filter
+    connect( ui.lineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterPages(QString)));
+
     // GroupTreeWidget.
     connect(ui.groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupListCustomPopupMenu(QPoint)));
     connect(ui.groupTreeWidget, SIGNAL(treeItemActivated(QString)), this, SLOT(wikiGroupChanged(QString)));
@@ -335,6 +338,36 @@ void WikiDialog::clearWikiPage()
 void WikiDialog::clearGroupTree()
 {
 	ui.treeWidget_Pages->clear();
+}
+
+void WikiDialog::filterPages(const QString &text)
+{
+	std::cerr << "WikiDialog::filterPages() Filter text: " << text.toStdString() << std::endl;
+
+	// Get the filter text in lowercase for case-insensitive search
+	QString filterText = text.toLower();
+
+	// Iterate through all items in the pages tree
+	QTreeWidgetItemIterator it(ui.treeWidget_Pages);
+	while (*it)
+	{
+		QTreeWidgetItem *item = *it;
+
+		// Get the page name from the first column
+		QString pageName = item->text(WIKI_GROUP_COL_PAGENAME).toLower();
+
+		// Show/hide item based on whether it matches the filter
+		if (filterText.isEmpty() || pageName.contains(filterText))
+		{
+			item->setHidden(false);
+		}
+		else
+		{
+			item->setHidden(true);
+		}
+
+		++it;
+	}
 }
 
 #define WIKI_GROUP_COL_GROUPNAME	0
