@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QDateTime>
+#include <QMessageBox>
 
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "gui/WikiPoos/WikiEditDialog.h"
@@ -111,9 +112,66 @@ void WikiEditDialog::mergeModeToggle()
 
 void WikiEditDialog::generateMerge()
 {
-	std::cerr << "WikiEditDialog::generateMerge() TODO" << std::endl;
+	std::cerr << "WikiEditDialog::generateMerge()" << std::endl;
 
+	// Collect checked items from history tree
+	QList<QTreeWidgetItem*> checkedItems;
+	for (int i = 0; i < ui.treeWidget_History->topLevelItemCount(); ++i)
+	{
+		QTreeWidgetItem *item = ui.treeWidget_History->topLevelItem(i);
+		if (item->checkState(WET_COL_PAGEID) == Qt::Checked)
+		{
+			checkedItems.append(item);
+		}
+	}
+
+	if (checkedItems.isEmpty())
+	{
+		std::cerr << "WikiEditDialog::generateMerge() No items selected" << std::endl;
+		QMessageBox::warning(this, tr("Merge Error"), tr("Please select at least one edit to merge."));
+		return;
+	}
+
+	// Placeholder merge: currently only tracks selected edits/authors in chronological order.
+	// A future implementation could use diff/patch algorithms to actually merge page content.
+	QStringList editList;
+
+	// Sort by date (using SORT role) - using stable_sort for Qt containers
+	std::stable_sort(checkedItems.begin(), checkedItems.end(), 
+		[](const auto &a, const auto &b) {
+			return a->data(WET_COL_DATE, WET_ROLE_SORT).toString() < 
+			       b->data(WET_COL_DATE, WET_ROLE_SORT).toString();
+		});
+
+	// Build list of selected edits (author and page id) for manual merge
+	for (QTreeWidgetItem *item : checkedItems)
+	{
+		const QString pageId(item->text(WET_COL_PAGEID));
+		const QString authorId(item->text(WET_COL_AUTHORID));
+		// In a real implementation, we would fetch and merge the actual page content here.
+		// For now, we only record which authors' edits (and their page ids) are selected for manual merge.
+		editList.append(tr("%1 (page %2)").arg(authorId, pageId));
+	}
+
+	// Update the edit text with information about the selected edits
+	QString mergeNote = tr("\n\n[Edits selected for manual merge from: %1]\n"
+	                       "[Note: No automatic content merging has been performed.]")
+	                         .arg(editList.join(", "));
+	QString currentText = ui.textEdit->toPlainText();
+	
+	if (currentText.isEmpty())
+	{
+		currentText = tr("This edit marks multiple revisions for manual merge. Their content has not been automatically merged.");
+	}
+	
+	ui.textEdit->setPlainText(currentText + mergeNote);
+	mCurrentText = ui.textEdit->toPlainText();
+	
+	std::cerr << "WikiEditDialog::generateMerge() Prepared merge of " << checkedItems.size() << " edits" << std::endl;
+	QMessageBox::information(this, tr("Merge Prepared"), 
+		tr("Prepared merge of %1 edit(s). Note: Actual content merging is not yet implemented - only author attribution has been added.").arg(checkedItems.size()));
 }
+
 
 void WikiEditDialog::textChanged()
 {

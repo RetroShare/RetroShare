@@ -23,12 +23,10 @@
 
 #include <QMessageBox>
 
-#include "gui/gxs/RsGxsUpdateBroadcastPage.h"
+#include "gui/MainPage.h"
 #include "ui_WikiDialog.h"
 
 #include <retroshare/rswiki.h>
-
-#include "util/TokenQueue.h"
 
 #include <map>
 
@@ -37,8 +35,9 @@
 class WikiAddDialog;
 class WikiEditDialog;
 class UserNotify;
+class GxsCommentTreeWidget;
 
-class WikiDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
+class WikiDialog : public MainPage
 {
   Q_OBJECT
 
@@ -50,10 +49,13 @@ public:
 	virtual QString pageName() const { return tr("Wiki Pages") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	virtual UserNotify *createUserNotify(QObject *parent) override;
 
-public:
-	virtual void updateDisplay(bool complete);
+protected:
+	virtual void showEvent(QShowEvent *event) override;
+
+private slots:
+	void updateDisplay();
 
 
 
@@ -77,6 +79,12 @@ private slots:
 	void wikiGroupChanged(const QString &groupId);
 
 	void insertWikiGroups();
+	
+	// Search filter
+	void filterPages();
+	
+	// Comments (placeholder for future UI integration)
+	void loadComments(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId);
 
 private:
 
@@ -99,16 +107,10 @@ private:
 
 	void processSettings(bool load);
 
-	void requestGroupMeta();
-	void loadGroupMeta(const uint32_t &token);
-
-	void requestPages(const std::list<RsGxsGroupId> &groupIds);
-	void loadPages(const uint32_t &token);
-
-	void requestWikiPage(const  RsGxsGrpMsgIdPair &msgId);
-	void loadWikiPage(const uint32_t &token);
-
-	TokenQueue *mWikiQueue;
+	// Async data loading methods
+	void loadGroupMeta();
+	void loadPages(const RsGxsGroupId &groupId);
+	void loadWikiPage(const RsGxsGrpMsgIdPair &msgId);
 
 	WikiAddDialog *mAddPageDialog;
 	WikiAddDialog *mAddGroupDialog;
@@ -118,6 +120,9 @@ private:
 	RsGxsMessageId mPageSelected;
 	std::string mModSelected;
 
+	GxsCommentTreeWidget *mCommentTreeWidget;
+	RsGxsGroupId mCurrentGroupId;
+	RsGxsMessageId mCurrentPageId;
 
 	QTreeWidgetItem *mYourGroups;
 	QTreeWidgetItem *mSubscribedGroups;
