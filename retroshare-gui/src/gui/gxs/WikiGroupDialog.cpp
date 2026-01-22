@@ -20,8 +20,18 @@
 
 #include "WikiGroupDialog.h"
 #include "gui/common/FilesDefs.h"
+#include "gui/gxs/GxsIdChooser.h"
+#include "util/qtthreadsutils.h"
 
+#include <QHBoxLayout>
+#include <QMessageBox>
+#include <QVBoxLayout>
+
+#include <ctime>
+
+#include <retroshare/rsidentity.h>
 #include <retroshare/rswiki.h>
+#include <retroshare/rsgxsflags.h>
 #include <iostream>
 
 const uint32_t WikiCreateEnabledFlags = ( 
@@ -84,6 +94,35 @@ void WikiGroupDialog::initUi()
 
 	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Wiki Moderators"));
 	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Wiki Moderators"));
+
+	if (!mModeratorsWidget)
+	{
+		mModeratorsWidget = new QWidget(this);
+		auto *layout = new QVBoxLayout(mModeratorsWidget);
+
+		mModeratorsGroup = new QGroupBox(tr("Moderators"), mModeratorsWidget);
+		auto *groupLayout = new QVBoxLayout(mModeratorsGroup);
+
+		mModeratorsList = new QListWidget(mModeratorsGroup);
+		mModeratorsList->setToolTip(tr("List of users who can moderate this wiki"));
+		groupLayout->addWidget(mModeratorsList);
+
+		auto *buttonLayout = new QHBoxLayout();
+		mAddModeratorButton = new QPushButton(tr("Add Moderator"), mModeratorsGroup);
+		mRemoveModeratorButton = new QPushButton(tr("Remove Moderator"), mModeratorsGroup);
+		buttonLayout->addWidget(mAddModeratorButton);
+		buttonLayout->addWidget(mRemoveModeratorButton);
+		buttonLayout->addStretch();
+		groupLayout->addLayout(buttonLayout);
+
+		layout->addWidget(mModeratorsGroup);
+		injectExtraWidget(mModeratorsWidget);
+
+		connect(mAddModeratorButton, SIGNAL(clicked()), this, SLOT(addModerator()));
+		connect(mRemoveModeratorButton, SIGNAL(clicked()), this, SLOT(removeModerator()));
+	}
+
+	updateModeratorControls();
 }
 
 QPixmap WikiGroupDialog::serviceImage()
@@ -135,6 +174,10 @@ bool WikiGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mode 
 
 	const RsWikiCollection &group = *pgroup;
 	description = QString::fromUtf8(group.mDescription.c_str());
+	mCurrentGroupId = group.mMeta.mGroupId;
+	mGroupMeta = group.mMeta;
+	updateModeratorControls();
+	loadModerators(mCurrentGroupId);
 
 	return true;
 }
@@ -164,3 +207,201 @@ bool WikiGroupDialog::service_getGroupData(const RsGxsGroupId &groupId, RsGxsGen
 	return true;
 }
 
+void WikiGroupDialog::loadModerators(const RsGxsGroupId &groupId)
+{
+	if (!mModeratorsList || groupId.isNull())
+	{
+		return;
+	}
+
+	mModeratorsList->clear();
+
+	RsThread::async([this, groupId]()
+	{
+		std::list<RsGxsId> moderators;
+		if (!rsWiki->getModerators(groupId, moderators))
+		{
+			return;
+		}
+
+		RsQThreadUtils::postToObject([this, moderators]()
+		{
+			for (const auto &modId : moderators)
+			{
+				addModeratorToList(modId);
+			}
+		}, this);
+	});
+}
+
+void WikiGroupDialog::addModeratorToList(const RsGxsId &gxsId)
+{
+	if (!mModeratorsList)
+	{
+		return;
+	}
+
+	QString name = QString::fromStdString(gxsId.toStdString());
+	RsIdentityDetails details;
+	if (rsIdentity->getIdDetails(gxsId, details))
+	{
+		name = QString::fromUtf8(details.mNickname.c_str());
+	}
+
+	QListWidgetItem *item = new QListWidgetItem(name);
+	item->setData(Qt::UserRole, QString::fromStdString(gxsId.toStdString()));
+	const bool isActive = rsWiki->isActiveModerator(mCurrentGroupId, gxsId, time(nullptr));
+	if (!isActive)
+	{
+		item->setForeground(Qt::gray);
+		item->setText(name + tr(" (Inactive)"));
+	}
+
+	mModeratorsList->addItem(item);
+}
+
+void WikiGroupDialog::updateModeratorControls()
+{
+	if (!mAddModeratorButton || !mRemoveModeratorButton)
+	{
+		return;
+	}
+
+	const bool isAdmin = IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags);
+	const bool hasGroup = !mCurrentGroupId.isNull();
+	const bool enabled = isAdmin && hasGroup;
+
+	mAddModeratorButton->setEnabled(enabled);
+	mRemoveModeratorButton->setEnabled(enabled);
+
+	if (enabled)
+	{
+		/* Clear any previous tooltip when the buttons become enabled */
+		mAddModeratorButton->setToolTip(QString());
+		mRemoveModeratorButton->setToolTip(QString());
+	}
+	else
+	{
+		QString tooltip;
+
+		if (!hasGroup)
+		{
+			tooltip = tr("Moderators can be managed after the group is created.");
+		}
+		else if (!isAdmin)
+		{
+			tooltip = tr("Only group administrators can manage moderators");
+		}
+		else
+		{
+			tooltip = tr("Moderator management is not available");
+		}
+
+		mAddModeratorButton->setToolTip(tooltip);
+		mRemoveModeratorButton->setToolTip(tooltip);
+	}
+}
+
+void WikiGroupDialog::addModerator()
+{
+	if (mCurrentGroupId.isNull())
+	{
+		return;
+	}
+
+	GxsIdChooser chooser(this);
+	chooser.setWindowTitle(tr("Select Moderator"));
+
+	if (chooser.exec() != QDialog::Accepted)
+	{
+		return;
+	}
+
+	RsGxsId selectedId;
+	if (!chooser.getChosenId(selectedId))
+	{
+		return;
+	}
+
+	const RsGxsGroupId groupId = mCurrentGroupId;
+	RsThread::async([this, groupId, selectedId]()
+	{
+		const bool success = rsWiki->addModerator(groupId, selectedId);
+		RsQThreadUtils::postToObject([this, selectedId, success]()
+		{
+			if (success)
+			{
+				addModeratorToList(selectedId);
+				QMessageBox::information(this, tr("Success"),
+					tr("Moderator added successfully."));
+			}
+			else
+			{
+				QMessageBox::warning(this, tr("Error"),
+					tr("Failed to add moderator."));
+			}
+		}, this);
+	});
+}
+
+void WikiGroupDialog::removeModerator()
+{
+	if (!mModeratorsList || mCurrentGroupId.isNull())
+	{
+		return;
+	}
+
+	QListWidgetItem *item = mModeratorsList->currentItem();
+	if (!item)
+	{
+		QMessageBox::information(this, tr("Remove Moderator"),
+			tr("Please select a moderator to remove."));
+		return;
+	}
+
+	const RsGxsId modId(item->data(Qt::UserRole).toString().toStdString());
+	const RsGxsGroupId groupId = mCurrentGroupId;
+
+	const int ret = QMessageBox::question(this, tr("Remove Moderator"),
+		tr("Are you sure you want to remove this moderator?"),
+		QMessageBox::Yes | QMessageBox::No);
+
+	if (ret != QMessageBox::Yes)
+	{
+		return;
+	}
+
+	RsThread::async([this, groupId, modId]()
+	{
+		const bool success = rsWiki->removeModerator(groupId, modId);
+		RsQThreadUtils::postToObject([this, modId, success]()
+		{
+			if (success)
+			{
+				if (mModeratorsList)
+				{
+					for (int i = 0; i < mModeratorsList->count(); ++i)
+					{
+						QListWidgetItem *listItem = mModeratorsList->item(i);
+						if (!listItem)
+							continue;
+
+						const RsGxsId currentId(listItem->data(Qt::UserRole).toString().toStdString());
+						if (currentId == modId)
+						{
+							delete mModeratorsList->takeItem(i);
+							break;
+						}
+					}
+				}
+				QMessageBox::information(this, tr("Success"),
+					tr("Moderator removed successfully."));
+			}
+			else
+			{
+				QMessageBox::warning(this, tr("Error"),
+					tr("Failed to remove moderator."));
+			}
+		}, this);
+	});
+}

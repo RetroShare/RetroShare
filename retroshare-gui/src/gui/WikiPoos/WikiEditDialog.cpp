@@ -20,11 +20,17 @@
 
 #include <QDateTime>
 #include <QMessageBox>
+#include <QTreeWidgetItemIterator>
 
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "gui/WikiPoos/WikiEditDialog.h"
 #include "util/DateTime.h"
+#include "util/qtthreadsutils.h"
 
+#include <retroshare/rsidentity.h>
+#include <retroshare/rstime.h>
+
+#include <algorithm>
 #include <iostream>
 
 #define USE_PEGMMD_RENDERER	1
@@ -32,12 +38,6 @@
 #ifdef USE_PEGMMD_RENDERER
 #include "markdown_lib.h"
 #endif
-
-
-#define 	WIKIEDITDIALOG_GROUP		0x0001
-#define 	WIKIEDITDIALOG_PAGE		0x0002
-#define 	WIKIEDITDIALOG_BASEHISTORY	0x0003
-#define 	WIKIEDITDIALOG_EDITTREE		0x0004
 
 
 #define WET_COL_DATE		0
@@ -50,6 +50,8 @@
 #define WET_ROLE_PAGEID		Qt::UserRole + 1
 #define WET_ROLE_PARENTID	Qt::UserRole + 2
 #define WET_ROLE_SORT		Qt::UserRole + 3
+#define WET_ROLE_AUTHORID	Qt::UserRole + 4
+#define WET_ROLE_TIMESTAMP	Qt::UserRole + 5
 
 
 /** Constructor */
@@ -70,8 +72,6 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 	connect(ui.checkBox_Merge, SIGNAL( clicked() ), this, SLOT( mergeModeToggle() ) );
 	connect(ui.pushButton_Merge, SIGNAL( clicked() ), this, SLOT( generateMerge() ) );
 	connect(ui.treeWidget_History, SIGNAL( itemSelectionChanged() ), this, SLOT( historySelected() ) );
-
-	mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
 
 	mThreadCompareRole = new RSTreeWidgetItemCompareRole;
 	mThreadCompareRole->setRole(WET_COL_DATE, WET_ROLE_SORT);
@@ -101,7 +101,6 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 WikiEditDialog::~WikiEditDialog()
 {
 	delete (mThreadCompareRole);
-	delete(mWikiQueue);
 }
 
 void WikiEditDialog::mergeModeToggle()
@@ -114,62 +113,46 @@ void WikiEditDialog::generateMerge()
 {
 	std::cerr << "WikiEditDialog::generateMerge()" << std::endl;
 
-	// Collect checked items from history tree
-	QList<QTreeWidgetItem*> checkedItems;
-	for (int i = 0; i < ui.treeWidget_History->topLevelItemCount(); ++i)
+	std::vector<RsGxsMessageId> selectedEditIds;
+	QTreeWidgetItemIterator it(ui.treeWidget_History);
+	while (*it)
 	{
-		QTreeWidgetItem *item = ui.treeWidget_History->topLevelItem(i);
+		QTreeWidgetItem *item = *it;
 		if (item->checkState(WET_COL_PAGEID) == Qt::Checked)
 		{
-			checkedItems.append(item);
+			const QString pageId(item->data(WET_COL_PAGEID, WET_ROLE_PAGEID).toString());
+			const RsGxsMessageId msgId(pageId.toStdString());
+			if (!msgId.isNull())
+			{
+				selectedEditIds.push_back(msgId);
+			}
 		}
+		++it;
 	}
 
-	if (checkedItems.isEmpty())
+	if (selectedEditIds.empty())
 	{
 		std::cerr << "WikiEditDialog::generateMerge() No items selected" << std::endl;
 		QMessageBox::warning(this, tr("Merge Error"), tr("Please select at least one edit to merge."));
 		return;
 	}
 
-	// Placeholder merge: currently only tracks selected edits/authors in chronological order.
-	// A future implementation could use diff/patch algorithms to actually merge page content.
-	QStringList editList;
-
-	// Sort by date (using SORT role) - using stable_sort for Qt containers
-	std::stable_sort(checkedItems.begin(), checkedItems.end(), 
-		[](const auto &a, const auto &b) {
-			return a->data(WET_COL_DATE, WET_ROLE_SORT).toString() < 
-			       b->data(WET_COL_DATE, WET_ROLE_SORT).toString();
-		});
-
-	// Build list of selected edits (author and page id) for manual merge
-	for (QTreeWidgetItem *item : checkedItems)
+	RsThread::async([this, selectedEditIds]()
 	{
-		const QString pageId(item->text(WET_COL_PAGEID));
-		const QString authorId(item->text(WET_COL_AUTHORID));
-		// In a real implementation, we would fetch and merge the actual page content here.
-		// For now, we only record which authors' edits (and their page ids) are selected for manual merge.
-		editList.append(tr("%1 (page %2)").arg(authorId, pageId));
-	}
+		std::map<RsGxsMessageId, std::string> contents;
+		const bool success = rsWiki->getSnapshotsContent(selectedEditIds, contents);
+		RsQThreadUtils::postToObject([this, selectedEditIds, contents, success]()
+		{
+			if (!success || contents.empty())
+			{
+				QMessageBox::warning(this, tr("Merge Failed"),
+					tr("Could not fetch content from selected edits."));
+				return;
+			}
 
-	// Update the edit text with information about the selected edits
-	QString mergeNote = tr("\n\n[Edits selected for manual merge from: %1]\n"
-	                       "[Note: No automatic content merging has been performed.]")
-	                         .arg(editList.join(", "));
-	QString currentText = ui.textEdit->toPlainText();
-	
-	if (currentText.isEmpty())
-	{
-		currentText = tr("This edit marks multiple revisions for manual merge. Their content has not been automatically merged.");
-	}
-	
-	ui.textEdit->setPlainText(currentText + mergeNote);
-	mCurrentText = ui.textEdit->toPlainText();
-	
-	std::cerr << "WikiEditDialog::generateMerge() Prepared merge of " << checkedItems.size() << " edits" << std::endl;
-	QMessageBox::information(this, tr("Merge Prepared"), 
-		tr("Prepared merge of %1 edit(s). Note: Actual content merging is not yet implemented - only author attribution has been added.").arg(checkedItems.size()));
+			performMerge(selectedEditIds, contents);
+		}, this);
+	});
 }
 
 
@@ -435,7 +418,7 @@ void WikiEditDialog::redrawPage()
 }
 
 
-void WikiEditDialog::setGroup(RsWikiCollection &group)
+void WikiEditDialog::setGroup(const RsWikiCollection &group)
 {
 	std::cerr << "WikiEditDialog::setGroup(): " << group;
 	std::cerr << std::endl;
@@ -446,7 +429,7 @@ void WikiEditDialog::setGroup(RsWikiCollection &group)
 }
 
 
-void WikiEditDialog::setPreviousPage(RsWikiSnapshot &page)
+void WikiEditDialog::setPreviousPage(const RsWikiSnapshot &page)
 {
 	std::cerr << "WikiEditDialog::setPreviousPage(): " << page;
 	std::cerr << std::endl;
@@ -652,31 +635,60 @@ void WikiEditDialog::requestGroup(const RsGxsGroupId &groupId)
         std::cerr << "WikiEditDialog::requestGroup()";
         std::cerr << std::endl;
 
-        std::list<RsGxsGroupId> ids;
-    ids.push_back(groupId);
+	RsThread::async([this, groupId]()
+	{
+		std::list<RsGxsGroupId> ids;
+		ids.push_back(groupId);
 
-        RsTokReqOptions opts;
-        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	uint32_t token;
-        mWikiQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, WIKIEDITDIALOG_GROUP);
+		RsTokReqOptions opts;
+		opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+		uint32_t token;
+		rsWiki->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids);
+
+		RsTokenService::GxsRequestStatus status = RsTokenService::PENDING;
+		while (status == RsTokenService::PENDING)
+		{
+			rstime::rs_usleep(50 * 1000);
+			status = rsWiki->getTokenService()->requestStatus(token);
+		}
+
+		std::vector<RsWikiCollection> groups;
+		RsTokenService::GxsRequestStatus finalStatus = status;
+		if (status == RsTokenService::COMPLETE)
+		{
+			rsWiki->getCollections(token, groups);
+		}
+
+		RsQThreadUtils::postToObject([this, groups, finalStatus]()
+		{
+			if (finalStatus != RsTokenService::COMPLETE)
+			{
+				QMessageBox::warning(
+					this,
+					tr("Error loading wiki group"),
+					tr("The wiki group data could not be loaded.\n"
+					   "Please try again later.")
+				);
+				return;
+			}
+			if (groups.size() != 1)
+			{
+				std::cerr << "WikiEditDialog::loadGroup() ERROR No group data";
+				std::cerr << std::endl;
+				return;
+			}
+			loadGroup(groups.front());
+		}, this);
+	});
 }
 
-void WikiEditDialog::loadGroup(const uint32_t &token)
+void WikiEditDialog::loadGroup(const RsWikiCollection &group)
 {
         std::cerr << "WikiEditDialog::loadGroup()";
         std::cerr << std::endl;
 
-	std::vector<RsWikiCollection> groups;
-	if (rsWiki->getCollections(token, groups))
-	{
-		if (groups.size() != 1)
-		{
-        		std::cerr << "WikiEditDialog::loadGroup() ERROR No group data";
-        		std::cerr << std::endl;
-			return;
-		}
-		setGroup(groups[0]);
-	}
+	setGroup(group);
 }
 
 void WikiEditDialog::requestPage(const RsGxsGrpMsgIdPair &msgId)
@@ -684,53 +696,82 @@ void WikiEditDialog::requestPage(const RsGxsGrpMsgIdPair &msgId)
         std::cerr << "WikiEditDialog::requestPage()";
         std::cerr << std::endl;
 
-        RsTokReqOptions opts;
-        opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-
-        GxsMsgReq msgIds;
-        std::set<RsGxsMessageId> &set_msgIds = msgIds[msgId.first];
-        set_msgIds.insert(msgId.second);
-
-	uint32_t token;
-        mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIEDITDIALOG_PAGE);
 	mPageLoading = true;
+
+	RsThread::async([this, msgId]()
+	{
+		RsTokReqOptions opts;
+		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+		GxsMsgReq msgIds;
+		std::set<RsGxsMessageId> &set_msgIds = msgIds[msgId.first];
+		set_msgIds.insert(msgId.second);
+
+		uint32_t token;
+		rsWiki->getTokenService()->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds);
+
+		RsTokenService::GxsRequestStatus status = RsTokenService::PENDING;
+		while (status == RsTokenService::PENDING)
+		{
+			rstime::rs_usleep(50 * 1000);
+			status = rsWiki->getTokenService()->requestStatus(token);
+		}
+
+		std::vector<RsWikiSnapshot> snapshots;
+		RsTokenService::GxsRequestStatus finalStatus = status;
+		if (status == RsTokenService::COMPLETE)
+		{
+			rsWiki->getSnapshots(token, snapshots);
+		}
+
+		RsQThreadUtils::postToObject([this, snapshots, finalStatus]()
+		{
+			if (finalStatus != RsTokenService::COMPLETE)
+			{
+				QMessageBox::warning(
+					this,
+					tr("Error loading wiki page"),
+					tr("The wiki page data could not be loaded.\n"
+					   "Please try again later.")
+				);
+				mPageLoading = false;
+				return;
+			}
+			if (snapshots.size() != 1)
+			{
+				std::cerr << "WikiEditDialog::loadPage() ERROR No page data";
+				std::cerr << std::endl;
+				mPageLoading = false;
+				return;
+			}
+
+			loadPage(snapshots.front());
+			mPageLoading = false;
+		}, this);
+	});
 }
 
-void WikiEditDialog::loadPage(const uint32_t &token)
+void WikiEditDialog::loadPage(const RsWikiSnapshot &page)
 {
         std::cerr << "WikiEditDialog::loadPage()";
         std::cerr << std::endl;
 
-	std::vector<RsWikiSnapshot> snapshots;
+	setPreviousPage(page);
 
-	if (rsWiki->getSnapshots(token, snapshots))
+	/* request the history now */
+	mThreadMsgIdPair.first = page.mMeta.mGroupId;
+	if (page.mMeta.mThreadId.isNull())
 	{
-		if (snapshots.size() != 1)
-		{
-        		std::cerr << "WikiEditDialog::loadGroup() ERROR No group data";
-        		std::cerr << std::endl;
-			return;
-		}
-
-		RsWikiSnapshot &page = snapshots[0];
-		setPreviousPage(page);
-
-		/* request the history now */
-		mThreadMsgIdPair.first = page.mMeta.mGroupId;
-        if (page.mMeta.mThreadId.isNull())
-		{
-			mThreadMsgIdPair.second = page.mMeta.mOrigMsgId;
-		}
-		else
-		{
-			mThreadMsgIdPair.second = page.mMeta.mThreadId;
-		}
-		if (!mHistoryLoaded)
-		{
-			requestBaseHistory(mThreadMsgIdPair);
-		}
+		mThreadMsgIdPair.second = page.mMeta.mOrigMsgId;
 	}
-	mPageLoading = false;
+	else
+	{
+		mThreadMsgIdPair.second = page.mMeta.mThreadId;
+	}
+	if (!mHistoryLoaded)
+	{
+		requestBaseHistory(mThreadMsgIdPair);
+	}
 }
 
 
@@ -738,25 +779,59 @@ void WikiEditDialog::loadPage(const uint32_t &token)
 
 void WikiEditDialog::requestBaseHistory(const RsGxsGrpMsgIdPair &origMsgId)
 {
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
-	opts.mOptions = RS_TOKREQOPT_MSG_VERSIONS;
-        std::vector<RsGxsGrpMsgIdPair> msgIds;
-        msgIds.push_back(origMsgId);
-	uint32_t token;
-        mWikiQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIEDITDIALOG_BASEHISTORY);
 	ui.treeWidget_History->clear();
+
+	RsThread::async([this, origMsgId]()
+	{
+		RsTokReqOptions opts;
+		opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
+		opts.mOptions = RS_TOKREQOPT_MSG_VERSIONS;
+
+		std::vector<RsGxsGrpMsgIdPair> msgIds;
+		msgIds.push_back(origMsgId);
+
+		uint32_t token;
+		rsWiki->getTokenService()->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds);
+
+		RsTokenService::GxsRequestStatus status = RsTokenService::PENDING;
+		while (status == RsTokenService::PENDING)
+		{
+			rstime::rs_usleep(50 * 1000);
+			status = rsWiki->getTokenService()->requestStatus(token);
+		}
+
+		std::vector<RsWikiSnapshot> snapshots;
+		RsTokenService::GxsRequestStatus finalStatus = status;
+		if (status == RsTokenService::COMPLETE)
+		{
+			rsWiki->getRelatedSnapshots(token, snapshots);
+		}
+
+		RsQThreadUtils::postToObject([this, snapshots, finalStatus]()
+		{
+			if (finalStatus == RsTokenService::COMPLETE)
+			{
+				loadBaseHistory(snapshots);
+			}
+			else
+			{
+				QMessageBox::warning(
+					this,
+					tr("History loading failed"),
+					tr("Unable to load the wiki page history. "
+					   "Please check your connection and try again.") );
+			}
+		}, this);
+	});
 }
 
-void WikiEditDialog::loadBaseHistory(const uint32_t &token)
+void WikiEditDialog::loadBaseHistory(const std::vector<RsWikiSnapshot> &snapshots)
 {
 	std::cerr << "WikiEditDialog::loadBaseHistory()";
 	std::cerr << std::endl;
 
-
-	std::vector<RsWikiSnapshot> snapshots;
-	std::vector<RsWikiSnapshot>::iterator vit;
-        if (!rsWiki->getRelatedSnapshots(token, snapshots))
+	std::vector<RsWikiSnapshot>::const_iterator vit;
+        if (snapshots.empty())
 	{
 		// ERROR
 		std::cerr << "WikiEditDialog::loadBaseHistory() ERROR";
@@ -795,7 +870,9 @@ void WikiEditDialog::loadBaseHistory(const uint32_t &token)
 			modItem->setText(WET_COL_DATE, text);
 			modItem->setData(WET_COL_DATE, WET_ROLE_SORT, sort);
 		}
+		modItem->setData(WET_COL_DATE, WET_ROLE_TIMESTAMP, static_cast<qlonglong>(page.mMeta.mPublishTs));
 		modItem->setId(page.mMeta.mAuthorId, WET_COL_AUTHORID, false);
+		modItem->setData(WET_COL_AUTHORID, WET_ROLE_AUTHORID, QString::fromStdString(page.mMeta.mAuthorId.toStdString()));
         modItem->setText(WET_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId.toStdString()));
 
 		ui.treeWidget_History->addTopLevelItem(modItem);
@@ -810,27 +887,58 @@ void WikiEditDialog::requestEditTreeData() //const RsGxsGroupId &groupId)
 {
 	// SWITCH THIS TO A THREAD REQUEST - WHEN WE CAN!
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-        opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
+	const RsGxsGroupId groupId = mThreadMsgIdPair.first;
+	RsThread::async([this, groupId]()
+	{
+		RsTokReqOptions opts;
+		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+		opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
 
-	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(mThreadMsgIdPair.first);
+		std::list<RsGxsGroupId> groupIds;
+		groupIds.push_back(groupId);
 
-	uint32_t token;
-	mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, WIKIEDITDIALOG_EDITTREE);
+		uint32_t token;
+		rsWiki->getTokenService()->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
+
+		RsTokenService::GxsRequestStatus status = RsTokenService::PENDING;
+		while (status == RsTokenService::PENDING)
+		{
+			rstime::rs_usleep(50 * 1000);
+			status = rsWiki->getTokenService()->requestStatus(token);
+		}
+
+		std::vector<RsWikiSnapshot> snapshots;
+		RsTokenService::GxsRequestStatus finalStatus = status;
+		if (status == RsTokenService::COMPLETE)
+		{
+			rsWiki->getSnapshots(token, snapshots);
+		}
+
+		RsQThreadUtils::postToObject([this, snapshots, finalStatus]()
+		{
+			if (finalStatus != RsTokenService::COMPLETE)
+			{
+				QMessageBox::warning(
+					this,
+					tr("Error loading wiki history"),
+					tr("The wiki edit history could not be loaded.\n"
+					   "Please try again later.")
+				);
+				return;
+			}
+			loadEditTreeData(snapshots);
+		}, this);
+	});
 }
 
 
-void WikiEditDialog::loadEditTreeData(const uint32_t &token)
+void WikiEditDialog::loadEditTreeData(const std::vector<RsWikiSnapshot> &snapshots)
 {
 	std::cerr << "WikiEditDialog::loadEditTreeData()";
 	std::cerr << std::endl;
 
-
-	std::vector<RsWikiSnapshot> snapshots;
-	std::vector<RsWikiSnapshot>::iterator vit;
-        if (!rsWiki->getSnapshots(token, snapshots))
+	std::vector<RsWikiSnapshot>::const_iterator vit;
+        if (snapshots.empty())
 	{
 		// ERROR
 		std::cerr << "WikiEditDialog::loadEditTreeData() ERROR";
@@ -909,6 +1017,8 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 			modItem->setData(WET_COL_DATE, WET_ROLE_SORT, sort);
 		}
 		modItem->setId(snapshot.mMeta.mAuthorId, WET_COL_AUTHORID, false);
+		modItem->setData(WET_COL_AUTHORID, WET_ROLE_AUTHORID, QString::fromStdString(snapshot.mMeta.mAuthorId.toStdString()));
+		modItem->setData(WET_COL_DATE, WET_ROLE_TIMESTAMP, static_cast<qlonglong>(snapshot.mMeta.mPublishTs));
         modItem->setText(WET_COL_PAGEID, QString::fromStdString(snapshot.mMeta.mMsgId.toStdString()));
 
 		/* find the parent */
@@ -947,44 +1057,123 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 	updateHistoryStatus();
 }
 
-
-
-void WikiEditDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void WikiEditDialog::performMerge(
+		const std::vector<RsGxsMessageId> &editIds,
+		const std::map<RsGxsMessageId, std::string> &contents)
 {
-	std::cerr << "WikiEditDialog::loadRequest()";
-	std::cerr << std::endl;
-		
-	if (queue == mWikiQueue)
+	if (contents.empty())
 	{
-		switch(req.mUserType)
-		{
-			case WIKIEDITDIALOG_GROUP:
-				loadGroup(req.mToken);
-				break;
-
-			case WIKIEDITDIALOG_PAGE:
-				loadPage(req.mToken);
-				break;
-
-			case WIKIEDITDIALOG_BASEHISTORY:
-				loadBaseHistory(req.mToken);
-				break;
-
-			case WIKIEDITDIALOG_EDITTREE:
-				loadEditTreeData(req.mToken);
-				break;
-			default:
-				std::cerr << "WikiEditDialog::loadRequest() ERROR: INVALID TYPE";
-				std::cerr << std::endl;
-			break;
-		}
+		QMessageBox::warning(this, tr("Merge Failed"),
+			tr("Could not fetch content from selected edits."));
+		return;
 	}
+
+	std::vector<std::pair<RsGxsMessageId, rstime_t>> sortedEdits;
+	sortedEdits.reserve(editIds.size());
+	for (const auto &msgId : editIds)
+	{
+		sortedEdits.push_back({msgId, getEditTimestamp(msgId)});
+	}
+
+	std::sort(sortedEdits.begin(), sortedEdits.end(),
+		[](const auto &a, const auto &b)
+		{
+			return a.second < b.second;
+		});
+
+	QString mergedText = tr("<!-- MERGED CONTENT FROM MULTIPLE EDITS -->\n\n");
+
+	for (const auto &entry : sortedEdits)
+	{
+		const RsGxsMessageId &msgId = entry.first;
+		const rstime_t timestamp = entry.second;
+		const auto contentIt = contents.find(msgId);
+		if (contentIt == contents.end())
+		{
+			continue;
+		}
+
+		const QString authorName = getAuthorName(msgId);
+		const QDateTime dateTime = DateTime::DateTimeFromTime_t(timestamp);
+		const QString dateStr = dateTime.isValid() ? dateTime.toString() : tr("Unknown date");
+
+		mergedText += tr("<!-- Edit by %1 on %2 -->\n").arg(authorName, dateStr);
+		mergedText += QString::fromStdString(contentIt->second);
+		mergedText += "\n\n";
+	}
+
+	if (mPreviewMode)
+	{
+		mPreviewMode = false;
+		ui.pushButton_Preview->setText(tr("Preview"));
+		ui.pushButton_Preview->setIcon(
+			FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/search.png")));
+	}
+
+	mCurrentText = mergedText;
+	redrawPage();
+
+	std::cerr << "WikiEditDialog::performMerge() merged " << sortedEdits.size()
+	          << " edits" << std::endl;
+
+	QMessageBox::information(this, tr("Merge Complete"),
+		tr("Content from %1 edit(s) has been merged. Review and submit.")
+			.arg(sortedEdits.size()));
 }
 
+rstime_t WikiEditDialog::getEditTimestamp(const RsGxsMessageId &msgId) const
+{
+	QTreeWidgetItem *item = findHistoryItem(msgId);
+	if (!item)
+	{
+		return 0;
+	}
 
+	bool ok = false;
+	const qlonglong timestamp = item->data(WET_COL_DATE, WET_ROLE_TIMESTAMP).toLongLong(&ok);
+	return ok ? static_cast<rstime_t>(timestamp) : 0;
+}
 
+QString WikiEditDialog::getAuthorName(const RsGxsMessageId &msgId) const
+{
+	QTreeWidgetItem *item = findHistoryItem(msgId);
+	if (!item)
+	{
+		return tr("Unknown author");
+	}
 
+	const QString authorId = item->data(WET_COL_AUTHORID, WET_ROLE_AUTHORID).toString();
+	if (!authorId.isEmpty())
+	{
+		RsIdentityDetails details;
+		if (rsIdentity->getIdDetails(RsGxsId(authorId.toStdString()), details))
+		{
+			return QString::fromUtf8(details.mNickname.c_str());
+		}
+	}
 
+	const QString displayed = item->text(WET_COL_AUTHORID);
+	return displayed.isEmpty() ? tr("Unknown author") : displayed;
+}
 
+QTreeWidgetItem *WikiEditDialog::findHistoryItem(const RsGxsMessageId &msgId) const
+{
+	if (msgId.isNull())
+	{
+		return nullptr;
+	}
 
+	QTreeWidgetItemIterator it(ui.treeWidget_History);
+	while (*it)
+	{
+		QTreeWidgetItem *item = *it;
+		const QString itemId = item->data(WET_COL_PAGEID, WET_ROLE_PAGEID).toString();
+		if (itemId == QString::fromStdString(msgId.toStdString()))
+		{
+			return item;
+		}
+		++it;
+	}
 
+	return nullptr;
+}
