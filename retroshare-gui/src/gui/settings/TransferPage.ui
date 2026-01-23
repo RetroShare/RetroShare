@@ -508,11 +508,11 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Streaming &lt;/span&gt;causes the transfer to request 1MB file chunks in increasing order, facilitating preview while downloading. &lt;span style=&quot; font-weight:600;&quot;&gt;Random&lt;/span&gt; is purely random and favors swarming behavior (although not recommended on Windows systems). &lt;span style=&quot; font-weight:600;&quot;&gt;Progressive&lt;/span&gt; is a good compromise, selecting the next chunk at random within less than 50MB after the end of the partial file. That allows some randomness while preventing large empty file initialization times.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Sequential &lt;/span&gt;causes the transfer to request 1MB file chunks in increasing order. &lt;span style=&quot; font-weight:600;&quot;&gt;Progressive&lt;/span&gt; is a good compromise, selecting the next chunk at random within less than 50MB after the end of the partial file. That allows some randomness while preventing large empty file initialization times. &lt;span style=&quot; font-weight:600;&quot;&gt;Random&lt;/span&gt; is purely random and favors swarming behavior. On Windows systems, this may freeze RetroShare during the allocation of the whole file to disk. &lt;span style=&quot; font-weight:600;&quot;&gt;Streaming&lt;/span&gt; downloads chunks sequentially but prioritizes the index (usually located at the end of the file) to allow immediate preview of MP4 videos. On Windows systems, this may freeze RetroShare during the allocation of the whole file to disk.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <item>
                  <property name="text">
-                  <string>Streaming</string>
+                  <string>Sequential</string>
                  </property>
                 </item>
                 <item>
@@ -523,6 +523,11 @@ p, li { white-space: pre-wrap; }
                 <item>
                  <property name="text">
                   <string>Random</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Streaming</string>
                  </property>
                 </item>
                </widget>
