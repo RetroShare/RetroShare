@@ -164,7 +164,21 @@ BwCtrlWindow::BwCtrlWindow(QWidget *parent)
     
     QHeaderView *header = bwTreeWidget->header();
 
-    // Set Header alignments
+    // Configuration des alignements et des tooltips pour chaque colonne
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_RSNAME, tr("The name of this peer."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_PEERID, tr("The unique RetroShare Peer ID for this peer."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_IN_RATE, tr("Current real-time download speed from this peer."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_IN_MAX, tr("Maximum download speed currently allocated to this peer. This value is passed to the peer."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_IN_QUEUE_ITEMS, tr("Number of incoming data packets waiting to be processed."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_OUT_RATE, tr("Current real-time upload speed to this peer."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_OUT_MAX, tr("Maximum upload speed currently allocated to this peer."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_OUT_ALLOWED, tr("Upload limit requested by the remote peer (their own InMax)."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_OUT_QUEUE_ITEMS, tr("Number of data packets waiting to be sent to this peer."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_OUT_QUEUE_BYTES, tr("Total size of data currently buffered in the output queue."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_DRAIN, tr("Estimated time to empty the current output queue at the current speed."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_SESSION_IN, tr("Total data received during this session. For the Totals row, this includes traffic from disconnected peers."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_SESSION_OUT, tr("Total data sent during this session. For the Totals row, this includes traffic from disconnected peers."));
+
     for (int i = 0; i < COLUMN_COUNT; ++i) {
         if (i == COLUMN_RSNAME || i == COLUMN_PEERID)
             bwTreeWidget->headerItem()->setTextAlignment(i, Qt::AlignLeft | Qt::AlignVCenter);
@@ -172,7 +186,6 @@ BwCtrlWindow::BwCtrlWindow(QWidget *parent)
             bwTreeWidget->headerItem()->setTextAlignment(i, Qt::AlignRight | Qt::AlignVCenter);
     }
 
-    // Ensure the Totals row doesn't get messed up by initial sorting
     bwTreeWidget->setSortingEnabled(true);
     header->setSortIndicator(COLUMN_RSNAME, Qt::AscendingOrder);
 }
@@ -238,6 +251,7 @@ void BwCtrlWindow::updateBandwidth()
 	/* do Totals */
 	item -> setData(COLUMN_PEERID, Qt::DisplayRole, tr(""));
 	item -> setData(COLUMN_RSNAME, Qt::DisplayRole, tr("Totals"));
+	item -> setToolTip(COLUMN_RSNAME, tr("Aggregated data for active peers. Note: Total In/Out also include traffic from past peers."));
 
 	item -> setData(COLUMN_IN_RATE, Qt::DisplayRole, totalRates.mRateIn);
 	item -> setData(COLUMN_IN_MAX, Qt::DisplayRole,totalRates.mRateMaxIn);
