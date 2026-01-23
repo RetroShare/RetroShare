@@ -45,11 +45,6 @@
       </column>
       <column>
        <property name="text">
-        <string>InAllowed (kB/s)</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>InQueue items</string>
        </property>
       </column>

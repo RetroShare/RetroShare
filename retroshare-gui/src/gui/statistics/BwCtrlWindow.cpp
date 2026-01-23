@@ -98,7 +98,6 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	switch(index.column()) {
 	case COLUMN_IN_RATE:
         case COLUMN_IN_MAX:
-        case COLUMN_IN_ALLOWED:
         case COLUMN_OUT_RATE:
         case COLUMN_OUT_MAX:
         case COLUMN_OUT_ALLOWED:
@@ -242,7 +241,6 @@ void BwCtrlWindow::updateBandwidth()
 
 	item -> setData(COLUMN_IN_RATE, Qt::DisplayRole, totalRates.mRateIn);
 	item -> setData(COLUMN_IN_MAX, Qt::DisplayRole,totalRates.mRateMaxIn);
-	item -> setData(COLUMN_IN_ALLOWED, Qt::DisplayRole, QVariant());
 
 	item -> setData(COLUMN_IN_QUEUE_ITEMS, Qt::DisplayRole, totalRates.mQueueIn);
 
@@ -284,7 +282,6 @@ void BwCtrlWindow::updateBandwidth()
 
 		peer_item -> setData(COLUMN_IN_RATE, Qt::DisplayRole, it->second.mRateIn);
 		peer_item -> setData(COLUMN_IN_MAX, Qt::DisplayRole, it->second.mRateMaxIn);
-		peer_item -> setData(COLUMN_IN_ALLOWED, Qt::DisplayRole, it->second.mAllocIn);
 
 		peer_item -> setData(COLUMN_IN_QUEUE_ITEMS, Qt::DisplayRole, it->second.mQueueIn);
 
