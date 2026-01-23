@@ -28,7 +28,7 @@
 #include "util/qtthreadsutils.h"
 
 #include <retroshare/rsidentity.h>
-#include <retroshare/rstime.h>
+#include "util/rstime.h"
 
 #include <algorithm>
 #include <iostream>
@@ -841,7 +841,7 @@ void WikiEditDialog::loadBaseHistory(const std::vector<RsWikiSnapshot> &snapshot
 
 	for(vit = snapshots.begin(); vit != snapshots.end(); ++vit)
 	{
-                RsWikiSnapshot &page = *vit;
+                const RsWikiSnapshot &page = *vit;
 
 	        std::cerr << "WikiEditDialog::loadBaseHistory() TopLevel Result: PageTitle: " << page.mMeta.mMsgName;
 	        std::cerr << " GroupId: " << page.mMeta.mGroupId;
@@ -971,7 +971,7 @@ void WikiEditDialog::loadEditTreeData(const std::vector<RsWikiSnapshot> &snapsho
 
 	for(vit = snapshots.begin(); vit != snapshots.end(); ++vit)
 	{
-                RsWikiSnapshot &snapshot = *vit;
+                const RsWikiSnapshot &snapshot = *vit;
 	
 	        std::cerr << "Result: PageTitle: " << snapshot.mMeta.mMsgName;
 	        std::cerr << " GroupId: " << snapshot.mMeta.mGroupId;

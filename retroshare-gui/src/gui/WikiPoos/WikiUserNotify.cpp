@@ -20,6 +20,7 @@
 
 #include "retroshare/rswiki.h"
 #include "retroshare/rsgxsifacehelper.h"
+#include "retroshare/rsgxsifacetypes.h"
 #include "WikiUserNotify.h"
 #include "gui/common/FilesDefs.h"
 
@@ -38,31 +39,20 @@ bool WikiUserNotify::hasSetting(QString *name, QString *group)
 
 void WikiUserNotify::startUpdate()
 {
-	// Get unread message stats from wiki service
 	mNewCount = 0;
 	
 	if (mInterface)
 	{
-		// Get group statistics and count new messages
-		std::list<RsGroupMetaData> groupList;
-		mInterface->getGroupMeta(RS_TOKREQ_ANSTYPE_SUMMARY, groupList);
+		// Use the Wiki-specific statistics method
+		// This requires the getWikiStatistics() method to be implemented in libretroshare
+		// See LIBRETROSHARE_WIKI_NOTIFICATION_IMPLEMENTATION.md for implementation details
+		GxsServiceStatistic stats;
+		RsWiki* wikiService = dynamic_cast<RsWiki*>(mInterface);
 		
-		for (auto& meta : groupList)
+		if (wikiService && wikiService->getWikiStatistics(stats))
 		{
-			if (meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
-			{
-				// Count unread messages in subscribed groups
-				std::vector<RsMsgMetaData> msgList;
-				mInterface->getMsgMeta(RS_TOKREQ_ANSTYPE_SUMMARY, meta.mGroupId, msgList);
-				
-				for (auto& msg : msgList)
-				{
-					if (msg.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_UNREAD)
-					{
-						mNewCount++;
-					}
-				}
-			}
+			// Count new messages (both thread messages and child messages/comments)
+			mNewCount = stats.mNumThreadMsgsNew + stats.mNumChildMsgsNew;
 		}
 	}
 	

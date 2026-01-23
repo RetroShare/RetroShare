@@ -1185,6 +1185,7 @@ wikipoos {
     HEADERS += gui/WikiPoos/WikiDialog.h \
                gui/WikiPoos/WikiAddDialog.h \
                gui/WikiPoos/WikiEditDialog.h \
+               gui/WikiPoos/WikiUserNotify.h \
                gui/gxs/WikiGroupDialog.h \
                gui/gxs/RsGxsUpdateBroadcastBase.h \
                gui/gxs/RsGxsUpdateBroadcastWidget.h \
@@ -1193,6 +1194,7 @@ wikipoos {
     SOURCES += gui/WikiPoos/WikiDialog.cpp \
                gui/WikiPoos/WikiAddDialog.cpp \
                gui/WikiPoos/WikiEditDialog.cpp \
+               gui/WikiPoos/WikiUserNotify.cpp \
                gui/gxs/WikiGroupDialog.cpp \
                gui/gxs/RsGxsUpdateBroadcastBase.cpp \
                gui/gxs/RsGxsUpdateBroadcastWidget.cpp \

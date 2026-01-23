@@ -37,8 +37,9 @@
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 
+#include <retroshare/rsgxscommon.h>
 #include <retroshare/rswiki.h>
-#include <retroshare/rstime.h>
+#include "util/rstime.h"
 
 
 // These should be in retroshare/ folder.
@@ -99,8 +100,16 @@ WikiDialog::WikiDialog(QWidget *parent) :
 
     // Setup comment widget
     mCommentTreeWidget = new GxsCommentTreeWidget(this);
-    mCommentTreeWidget->setup(rsWiki);
-    ui.commentsContainerLayout->addWidget(mCommentTreeWidget);
+    if (RsGxsCommentService *commentService = dynamic_cast<RsGxsCommentService *>(rsWiki))
+    {
+        mCommentTreeWidget->setup(commentService);
+        ui.commentsContainerLayout->addWidget(mCommentTreeWidget);
+    }
+    else
+    {
+        delete mCommentTreeWidget;
+        mCommentTreeWidget = nullptr;
+    }
 
     connect( ui.toolButton_NewPage, SIGNAL(clicked()), this, SLOT(OpenOrShowAddPageDialog()));
     connect( ui.toolButton_Edit, SIGNAL(clicked()), this, SLOT(OpenOrShowEditDialog()));
@@ -578,8 +587,7 @@ void WikiDialog::loadWikiPage(const RsGxsGrpMsgIdPair &msgId)
 #endif
 			updateWikiPage(page);
 			
-			// Mark message as read when viewed
-			rsWiki->setMessageReadStatus(msgId, true);
+			// TODO: Wiki service does not expose read-status updates.
 		}, this);
 	});
 }
@@ -846,4 +854,3 @@ void WikiDialog::loadComments(const RsGxsGroupId &groupId, const RsGxsMessageId 
 		mCommentTreeWidget->requestComments(groupId, msgVersions, msgId);
 	}
 }
-

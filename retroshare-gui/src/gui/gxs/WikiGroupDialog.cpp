@@ -23,6 +23,8 @@
 #include "gui/gxs/GxsIdChooser.h"
 #include "util/qtthreadsutils.h"
 
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <QHBoxLayout>
 #include <QMessageBox>
 #include <QVBoxLayout>
@@ -309,16 +311,26 @@ void WikiGroupDialog::addModerator()
 		return;
 	}
 
-	GxsIdChooser chooser(this);
-	chooser.setWindowTitle(tr("Select Moderator"));
+	QDialog chooserDialog(this);
+	chooserDialog.setWindowTitle(tr("Select Moderator"));
+	QVBoxLayout *layout = new QVBoxLayout(&chooserDialog);
+	GxsIdChooser *chooser = new GxsIdChooser(&chooserDialog);
+	chooser->setFlags(IDCHOOSER_ID_REQUIRED);
+	layout->addWidget(chooser);
+	QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+		&chooserDialog);
+	connect(buttons, &QDialogButtonBox::accepted, &chooserDialog, &QDialog::accept);
+	connect(buttons, &QDialogButtonBox::rejected, &chooserDialog, &QDialog::reject);
+	layout->addWidget(buttons);
 
-	if (chooser.exec() != QDialog::Accepted)
+	if (chooserDialog.exec() != QDialog::Accepted)
 	{
 		return;
 	}
 
 	RsGxsId selectedId;
-	if (!chooser.getChosenId(selectedId))
+	const GxsIdChooser::ChosenId_Ret choice = chooser->getChosenId(selectedId);
+	if (choice != GxsIdChooser::KnowId && choice != GxsIdChooser::UnKnowId)
 	{
 		return;
 	}

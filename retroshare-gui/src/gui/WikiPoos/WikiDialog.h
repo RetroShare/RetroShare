@@ -23,7 +23,7 @@
 
 #include <QMessageBox>
 
-#include "gui/MainPage.h"
+#include "retroshare-gui/mainpage.h"
 #include "ui_WikiDialog.h"
 
 #include <retroshare/rswiki.h>
@@ -136,4 +136,3 @@ private:
 };
 
 #endif
-
