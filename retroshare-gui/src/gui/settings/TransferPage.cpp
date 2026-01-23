@@ -140,6 +140,19 @@ void TransferPage::updateFilePermDirectDL(int i)
 
 void TransferPage::load()
 {
+    // Fix persistence issue: Load saved strategy from GUI config and enforce it on rsFiles
+    Settings->beginGroup(QString("Transfer"));
+    int savedStrat = Settings->value("DefaultChunkStrategy", -1).toInt();
+    Settings->endGroup();
+
+    if (savedStrat >= 0) {
+        FileChunksInfo::ChunkStrategy s = FileChunksInfo::CHUNK_STRATEGY_SEQUENTIAL;
+        if(savedStrat == 1) s = FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE;
+        if(savedStrat == 2) s = FileChunksInfo::CHUNK_STRATEGY_RANDOM;
+        if(savedStrat == 3) s = FileChunksInfo::CHUNK_STRATEGY_STREAMING;
+        rsFiles->setDefaultChunkStrategy(s);
+    }
+
 	ui.ignoreDuplicates_CB->setEnabled(rsFiles->followSymLinks()) ;
 
     whileBlocking(ui.shareDownloadDirectoryCB)->setChecked(rsFiles->getShareDownloadDirectory());
@@ -159,9 +172,10 @@ void TransferPage::load()
 
     switch(rsFiles->defaultChunkStrategy())
     {
-    case FileChunksInfo::CHUNK_STRATEGY_STREAMING: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(0) ; break ;
+    case FileChunksInfo::CHUNK_STRATEGY_SEQUENTIAL: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(0) ; break ;
     case FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(1) ; break ;
     case FileChunksInfo::CHUNK_STRATEGY_RANDOM: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(2) ; break ;
+    case FileChunksInfo::CHUNK_STRATEGY_STREAMING: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(3) ; break ;
     }
 
 #ifdef TO_REMOVE
@@ -222,14 +236,19 @@ void TransferPage::load()
 
 void TransferPage::updateDefaultStrategy(int i)
 {
+    // Save to GUI settings
+    Settings->beginGroup(QString("Transfer"));
+    Settings->setValue("DefaultChunkStrategy", i);
+    Settings->endGroup();
+
 	switch(i)
 	{
-		case 0: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_STREAMING) ;
+		case 0: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_SEQUENTIAL) ;
 				  break ;
 
         case 2:
 #ifdef WINDOWS_SYS
-                if(QMessageBox::Yes != QMessageBox::warning(nullptr,tr("Warning"),tr("On Windows systems, randomly writing in the middle of large empty files may hang the software for several seconds. Do you want to use this option anyway (otherwise use \"progressive\")?"),QMessageBox::Yes,QMessageBox::No))
+                if(QMessageBox::Yes != QMessageBox::warning(nullptr,tr("Warning"),tr("On Windows systems, writing to the end of large empty files (Random or Streaming) may hang the software for several seconds during allocation. Do you want to use this option anyway (otherwise use \"Sequential\" or \"Progressive\")?"),QMessageBox::Yes,QMessageBox::No))
                 {
                     ui._defaultStrategy_CB->setCurrentIndex(1);
                     return;
@@ -239,6 +258,8 @@ void TransferPage::updateDefaultStrategy(int i)
                 break ;
 
 		case 1: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE) ;
+                break ;
+		case 3: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_STREAMING) ;
                 break ;
 		default: ;
 	}
