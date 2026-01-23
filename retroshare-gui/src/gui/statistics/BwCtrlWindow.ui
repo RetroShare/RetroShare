@@ -35,52 +35,57 @@
       </column>
       <column>
        <property name="text">
-        <string>In (KB/s)</string>
+        <string>In (kB/s)</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>InMax (KB/s)</string>
+        <string>InMax (kB/s)</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>InQueue</string>
+        <string>InQueue items</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>InAllocated (KB/s)</string>
+        <string>Out (kB/s)</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>Allocated Sent</string>
+        <string>OutMax (kB/s)</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>Out (KB/s)</string>
+        <string>OutAllowed (kB/s)</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>OutMax (KB/s)</string>
+        <string>OutQueue items</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>OutQueue</string>
+        <string>OutQueue bytes</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>OutAllowed (KB/s)</string>
+        <string>Drain (s)</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>Allowed Recvd</string>
+        <string>Total In</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Total Out</string>
        </property>
       </column>
      </widget>
