@@ -975,6 +975,8 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect(queueTopAct, SIGNAL(triggered()), this, SLOT(priorityQueueTop()));
 	queueBottomAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/go-bottom.png"), tr("Bottom"), this);
 	connect(queueBottomAct, SIGNAL(triggered()), this, SLOT(priorityQueueBottom()));
+	chunkSequentialAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_STREAMING), tr("Sequential"), this);
+	connect(chunkSequentialAct, SIGNAL(triggered()), this, SLOT(chunkSequential()));
 	chunkStreamingAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_STREAMING), tr("Streaming"), this);
 	connect(chunkStreamingAct, SIGNAL(triggered()), this, SLOT(chunkStreaming()));
 	prioritySlowAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITYLOW), tr("Slower"), this);
@@ -1261,9 +1263,10 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 
 	QMenu chunkMenu(tr("Chunk strategy"), this);
 	chunkMenu.setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITY));
-	chunkMenu.addAction(chunkStreamingAct);
+	chunkMenu.addAction(chunkSequentialAct);
 	chunkMenu.addAction(chunkProgressiveAct);
 	chunkMenu.addAction(chunkRandomAct);
+	chunkMenu.addAction(chunkStreamingAct);
 
 	QMenu collectionMenu(tr("Collection"), this);
 	collectionMenu.setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_LIBRARY));
@@ -2220,6 +2223,10 @@ void TransfersDialog::dlOpenFile()
 //	rsFiles->clearQueue();
 //}
 
+void TransfersDialog::chunkSequential()
+{
+	setChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_SEQUENTIAL) ;
+}
 void TransfersDialog::chunkStreaming()
 {
 	setChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_STREAMING) ;
@@ -2227,7 +2234,7 @@ void TransfersDialog::chunkStreaming()
 void TransfersDialog::chunkRandom()
 {
 #ifdef WINDOWS_SYS
-    if(QMessageBox::Yes != QMessageBox::warning(nullptr,tr("Warning"),tr("On Windows systems, writing in the middle of large empty files may hang the software for several seconds. Do you want to use this option anyway?"),QMessageBox::Yes,QMessageBox::No))
+    if(QMessageBox::Yes != QMessageBox::warning(nullptr,tr("Warning"),tr("On Windows systems, writing to the end of large empty files (Random or Streaming) may hang the software for several seconds during allocation. Do you want to use this option anyway (otherwise use \"Sequential\" or \"Progressive\")?"),QMessageBox::Yes,QMessageBox::No))
         return;
 #endif
 	setChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;

@@ -136,6 +136,7 @@ private slots:
 
     void chunkRandom();
     void chunkProgressive();
+    void chunkSequential();
     void chunkStreaming();
 
     void showDetailsDialog();
@@ -214,6 +215,7 @@ private:
     QAction *queueBottomAct;
     QAction *chunkRandomAct;
     QAction *chunkProgressiveAct;
+    QAction *chunkSequentialAct;
     QAction *chunkStreamingAct;
     QAction *detailsFileAct;
     QAction *renameFileAct;
