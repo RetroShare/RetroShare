@@ -29,6 +29,8 @@
 #include <retroshare/rspeers.h>
 #include "TurtleRouterStatistics.h"
 #include "TurtleRouterDialog.h"
+#include "GxsNetTunnelsDialog.h"
+#include "TunnelStatisticsDialog.h"
 
 #include "gui/settings/rsharesettings.h"
 
@@ -195,8 +197,8 @@ TurtleRouterStatistics::TurtleRouterStatistics(QWidget *parent)
 	_tunnel_statistics_F->setFocusPolicy(Qt::NoFocus);
 	
 	routertabWidget->addTab(new TurtleRouterDialog(),           QString(tr("File transfer tunnels")));
-	routertabWidget->addTab(new GxsAuthenticatedTunnelsDialog(),QString(tr("Authenticated tunnels")));
 	routertabWidget->addTab(new GxsNetTunnelsDialog(),          QString(tr("GXS sync tunnels")     ));
+	routertabWidget->addTab(new TunnelStatisticsDialog(),       QString(tr("Authenticated tunnels") ));
 
 	float fontHeight = QFontMetricsF(font()).height();
 	float fact = fontHeight/14.0;
