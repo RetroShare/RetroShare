@@ -124,13 +124,12 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
     RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 
     painter->fillRect( option.rect, option.palette.base().color());
-    painter->restore(); // restore clip rect? No, restores save state.
-    // Wait, original code did restore() here.
+    painter->restore(); // restore clip rect
 
     if(mUseGrid || index.column()==0)
     {
         painter->save();
-        painter->setClipRect(option.rect); // Clip to cell
+        painter->setClipRect(option.rect);
 
         // Constants from ChannelPostThumbnailView
         const float THUMBNAIL_OVERSAMPLE_FACTOR = 2.0;
@@ -138,7 +137,31 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         const float FONT_SCALE_FACTOR = 1.5;
 
         QFontMetricsF fm(option.font);
-        float font_height = fm.height();
+        float base_font_height = fm.height();
+
+        // Calculate visual scale factor
+        // Only mZoom part of the width is dynamic, but we just compare option.rect.width() 
+        // with the "internal" width that the font was designed for.
+        // Internal Width = THUMBNAIL_OVERSAMPLE_FACTOR * DEFAULT_SIZE_IN_FONT_HEIGHT * base_font_height (at zoom 1)
+        // Actually, simpler: Cell Width is defined as COLUMN_SIZE_FONT_FACTOR_W * base_font_height.
+        // Internal Widget Width is 10.0 * base_font_height.
+        // Cell Width is 6.0 * base_font_height.
+        // So the natural scale is 0.6.
+        // However, if we simply use "fit to width", we should calculate scale based on actual rect.
+        
+        float internal_width_unit = THUMBNAIL_OVERSAMPLE_FACTOR * DEFAULT_SIZE_IN_FONT_HEIGHT * base_font_height;
+        // In the original code, the widget was fixed size 'internal_width_unit'.
+        // Then pixmap was scaled to 'option.rect.width()'.
+        
+        float visual_scale = 1.0;
+        if(internal_width_unit > 0.1)
+             visual_scale = option.rect.width() / internal_width_unit;
+
+        // Apply margins (simulating layout margins)
+        // Original layout probably had ~9px margins. When scaled down by 0.6, that's ~5px.
+        // Let's use a relative margin.
+        float margin = 4.0 * mZoom; 
+        QRectF content_rect = QRectF(option.rect).adjusted(margin, margin, -margin, -margin);
 
         // Background for selected state
         if((option.state & QStyle::State_Selected))
@@ -149,22 +172,14 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         if(mAspectRatio == ChannelPostThumbnailView::ASPECT_RATIO_2_3) base_h *= 1.5;
         else if(mAspectRatio == ChannelPostThumbnailView::ASPECT_RATIO_16_9) base_h *= 0.5625; // 9/16
 
-        // Calculate expected image height based on width.
-        // The width is fixed by the column width logic in the View, passed in option.rect.
-        // But wait, sizeHint determines the size.
-        // In sizeHint, we calculated a specific aspect ratio for the CELL.
-        // Here in paint, we need to respect that.
-        // Image occupies the top part.
+        // Original logic: Image Height = Width * AspectRatio
+        // Image aspect ratio inside the "internal" widget was determined by base_h / base_w (5.0).
+        float img_logic_ratio = base_h / DEFAULT_SIZE_IN_FONT_HEIGHT;
         
-        // Let's deduce height from width based on aspect ratio logic.
-        // Image Aspect Ratio = Height / Width (in logic above base_h is height relative to base_w=5)
-        // Ratio = base_h / 5.0. 
-        // So Image Height = Image Width * (base_h / 5.0).
-        
-        float img_ratio = base_h / DEFAULT_SIZE_IN_FONT_HEIGHT;
-        float img_height = option.rect.width() * img_ratio;
+        // The image occupies the full width of the content rect (minus margins)
+        float img_height = content_rect.width() * img_logic_ratio;
 
-        QRectF img_rect(option.rect.left(), option.rect.top(), option.rect.width(), img_height);
+        QRectF img_rect(content_rect.left(), content_rect.top(), content_rect.width(), img_height);
 
         // --- 2. Draw Image ---
         QPixmap thumbnail;
@@ -182,8 +197,6 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
         if (!thumbnail.isNull()) 
         {
-            // Draw thumbnail scaled to img_rect
-            // Original code used ScaledContents(true) which stretches.
             painter->drawPixmap(img_rect.toRect(), thumbnail);
         }
 
@@ -191,14 +204,18 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         if (mUseGrid) 
         {
             float y_text = img_rect.bottom(); 
-            // Add top margin/spacing?
-            y_text += 0.5 * font_height; 
+            y_text += 0.5 * base_font_height * visual_scale; // Spacing scaled
             
-            QRectF text_rect(option.rect.left(), y_text, option.rect.width(), option.rect.height() - (y_text - option.rect.top()));
+            QRectF text_rect(content_rect.left(), y_text, content_rect.width(), content_rect.bottom() - y_text);
             
             // Setup Font
             QFont font = option.font;
-            font.setPointSizeF(FONT_SCALE_FACTOR * DEFAULT_SIZE_IN_FONT_HEIGHT / 5.0 * font.pointSizeF());
+            // Original: FONT_SCALE_FACTOR * DEFAULT_SIZE_IN_FONT_HEIGHT / 5.0 (= 1.5)
+            // But this was "internal" font. Visual font is scaled by visual_scale (0.6).
+            // So factor = 1.5 * 0.6 = 0.9.
+            
+            float font_size_factor = FONT_SCALE_FACTOR * (DEFAULT_SIZE_IN_FONT_HEIGHT / 5.0) * visual_scale;
+            font.setPointSizeF(font_size_factor * font.pointSizeF());
             
             if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus)) 
                 font.setBold(true);
@@ -208,7 +225,6 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
             QString msg = QString::fromUtf8(post.mMeta.mMsgName.c_str());
             if(msg.length() > 30) msg = msg.left(30)+"...";
             
-            // Color?
             if (option.state & QStyle::State_Selected)
                 painter->setPen(option.palette.highlightedText().color());
             else
@@ -218,30 +234,70 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         }
 
         // --- 4. Draw Overlays ---
-        // Restore standard font metrics for overlays sizing
-        // Actually overlays seem to use standard font size for scaling.
+        // Overlays in original code were drawn on the "Internal" Pixmap, then scaled down.
+        // So their size should also be scaled by visual_scale.
         
-        // Star Overlay (Top Left)
+        // Star Overlay
         if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
         {
             QPixmap star = FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE);
-            float size = mZoom * 6 * font_height; // Original scaling logic
-            QRectF overlay_rect(img_rect.left(), img_rect.top(), size, size); // Position at top left
+            // Original: size = mZoom * 6 * font_height.
+            // Wait, original code: 
+            // p.drawPixmap(..., scaled(mZoom*6*fm.height(), ...))
+            // This was applied to the "internal" pixmap (size 10 unit).
+            // 6 unit is 60% of width.
+            // Then the whole thing was scaled by visual_scale (0.6).
+            // So visual size = 0.6 * 6 = 3.6 unit ??
+            
+            // Wait, original code usage of mZoom inside paint was weird in 'paint' method:
+            // "if(mZoom != 1.0) pixmap = pixmap.scaled(mZoom*pixmap.size()...)"
+            // It scaled the result again?
+            // Actually, the previous implementation I analyzed:
+            // pixmap = pixmap.copy(...) // Crop to actual size (e.g. 10unit x Aspect)
+            // if(mZoom != 1.0) pixmap = pixmap.scaled(...) // Scale to Zoom
+            // Then draw overlays.
+            // Then drawPixmap(..., pixmap.scaled(option.rect.width()...)
+            
+            // This implies Overlays were drawn AFTER zooming but BEFORE final fit-to-width?
+            // "pixmap.scaled(option.rect.width()...)" happens at the very end.
+            // So Overlays are drawn on the intermediate pixmap.
+            
+            // Let's stick to: "How big should it be on screen?"
+            // Star on top-left.
+            // visual_scale accounts for the 0.6 shrink.
+            // mZoom accounts for zoom.
+            // Let's scale by visual_scale * mZoom.
+            
+            float overlay_base_size = 6.0 * base_font_height; 
+            float size = overlay_base_size * visual_scale; // * mZoom is implicit in visual_scale calculation (rect width)
+            
+            // Actually visual_scale = rect.width / internal_width.
+            // rect.width ALREADY includes mZoom.
+            // So visual_scale handles both the 0.6 factor AND the mZoom factor.
+            
+            // However, original code used 'mZoom' explicitly for overlay sizing:
+            // .scaled(mZoom*6*fm.height()...)
+            // IF visual_scale already includes mZoom, then:
+            // visual_scale = (Zoom * 0.6 * 10) / 10 = 0.6 * Zoom.
+            // So size = 6.0 * base * (0.6 * Zoom) = 3.6 * Zoom * base.
+            // This feels small. 
+            // Let's trust visual_scale.
+            
+            QRectF overlay_rect(img_rect.left(), img_rect.top(), size, size);
             painter->drawPixmap(overlay_rect.toRect(), star);
         }
 
-        // Comments Overlay (Top Right of Image)
+        // Comments Overlay
         if(post.mUnreadCommentCount > 0 || post.mCommentCount > 0)
         {
              QString icon_path = (post.mUnreadCommentCount > 0) ? UNREAD_COMMENT_OVERLAY_IMAGE : COMMENT_OVERLAY_IMAGE;
              QPixmap bubble = FilesDefs::getPixmapFromQtResourcePath(icon_path);
-             float size = mZoom * 3 * font_height;
              
-             // Position: Top Right.
-             // Original: QPoint(pixmap.width(), 0) + offset.
+             // Original: mZoom * 3 * fm.height()
+             float overlay_base_size = 3.0 * base_font_height;
+             float size = overlay_base_size * visual_scale;
+             
              QRectF overlay_rect(img_rect.right() - size, img_rect.top(), size, size);
-             // Maybe add small offset?
-             
              painter->drawPixmap(overlay_rect.toRect(), bubble);
         }
         
