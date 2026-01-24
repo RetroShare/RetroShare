@@ -38,6 +38,9 @@ enum class RsFeedTypeFlags: uint32_t {
     RS_FEED_TYPE_POSTED      = 0x1000,
     RS_FEED_TYPE_SECURITY_IP = 0x2000,
     RS_FEED_TYPE_CIRCLE      = 0x4000,
+#ifdef RS_USE_WIRE
+    RS_FEED_TYPE_WIRE        = 0x8000,
+#endif
 
     RS_FEED_ITEM_PEER_CONNECT            = RS_FEED_TYPE_PEER  | 0x0001,
     RS_FEED_ITEM_PEER_DISCONNECT         = RS_FEED_TYPE_PEER  | 0x0002,
