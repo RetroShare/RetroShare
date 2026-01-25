@@ -41,7 +41,7 @@ class RsIdentityListModel : public QAbstractItemModel
 
 public:
     explicit RsIdentityListModel(QObject *parent = NULL);
-    ~RsIdentityListModel(){}
+    ~RsIdentityListModel();
 
     enum Columns {
 		COLUMN_THREAD_NAME         = 0x00,
@@ -248,6 +248,12 @@ private:
 
     // List of identities for which getIdDetails() failed, to be requested again.
     mutable QTimer *mIdentityUpdateTimer;
+
+public:
+    void handleIdentityEvent(std::shared_ptr<const RsEvent> event);
+
+private:
+   RsEventsHandlerId_t mEventHandlerId = 0;
 };
 
 
