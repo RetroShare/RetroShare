@@ -44,6 +44,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "util/HandleRichText.h"
 #include "util/RsQtVersion.h"
+#include "util/qtthreadsutils.h"
 
 #include "util/rstime.h"
 #include "util/DateTime.h"
@@ -211,6 +212,9 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	getChatWidget()->addTitleBarWidget(unsubscribeButton) ;
 
 	mFontSizeHandler.registerFontSize(ui.participantsList);
+    
+    mEventHandlerId_identity = 0; // Initialize
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject([=](){ handleIdentityEvent(event); }, this); }, mEventHandlerId_identity, RsEventType::GXS_IDENTITY );
 }
 
 void ChatLobbyDialog::leaveLobby()
@@ -447,6 +451,8 @@ ChatLobbyDialog::~ChatLobbyDialog()
 
 	// save settings
 	processSettings(false);
+    
+    rsEvents->unregisterEventsHandler(mEventHandlerId_identity);
 }
 
 ChatWidget *ChatLobbyDialog::getChatWidget()
@@ -799,9 +805,36 @@ void ChatLobbyDialog::muteParticipant(const RsGxsId& nickname)
 
 void ChatLobbyDialog::unMuteParticipant(const RsGxsId& id)
 {
-    std::cerr << " UnMute " << std::endl;
     mutedParticipants.erase(id);
 }
+
+void ChatLobbyDialog::handleIdentityEvent(std::shared_ptr<const RsEvent> event)
+{
+    if(event->mType != RsEventType::GXS_IDENTITY)
+        return;
+
+    const RsGxsIdentityEvent *e = dynamic_cast<const RsGxsIdentityEvent*>(event.get());
+
+    if(!e)
+        return;
+
+    if(e->mIdentityEventCode == RsGxsIdentityEventCode::UPDATED_IDENTITY)
+    {
+        // Find if this identity is in our list
+        QList<QTreeWidgetItem*> items = ui.participantsList->findItems(QString::fromStdString(e->mIdentityId.toStdString()), Qt::MatchExactly, COLUMN_ID);
+
+        for(QTreeWidgetItem* item : items)
+        {
+             GxsIdRSTreeWidgetItem* gxsItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(item);
+             if(gxsItem)
+             {
+                 gxsItem->forceUpdate();
+             }
+        }
+    }
+}
+
+
 
 /**
  * Is this nickName already known in the lobby

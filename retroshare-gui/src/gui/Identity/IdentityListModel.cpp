@@ -35,6 +35,7 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "retroshare/rsexpr.h"
 
+#include "retroshare/rsevents.h"
 #include "IdentityListModel.h"
 
 //#define DEBUG_MODEL
@@ -57,7 +58,54 @@ RsIdentityListModel::RsIdentityListModel(QObject *parent)
 
 	mFilterStrings.clear();
     mIdentityUpdateTimer = new QTimer();
+    mIdentityUpdateTimer = new QTimer();
     connect(mIdentityUpdateTimer,SIGNAL(timeout()),this,SLOT(timerUpdate()));
+
+    mEventHandlerId = 0;
+    if(rsEvents)
+    {
+        rsEvents->registerEventsHandler([this](std::shared_ptr<const RsEvent> event){
+            handleIdentityEvent(event);
+        }, mEventHandlerId, RsEventType::GXS_IDENTITY);
+    }
+}
+
+RsIdentityListModel::~RsIdentityListModel()
+{
+    if(mEventHandlerId && rsEvents)
+        rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
+
+void RsIdentityListModel::handleIdentityEvent(std::shared_ptr<const RsEvent> event)
+{
+    if (event->mType != RsEventType::GXS_IDENTITY) return;
+
+    auto id_event = std::dynamic_pointer_cast<const RsGxsIdentityEvent>(event);
+    if (!id_event) return;
+
+    RsQThreadUtils::postToObject([this, id_event](){ 
+        if (id_event->mIdentityEventCode == RsGxsIdentityEventCode::UPDATED_IDENTITY)
+        {
+            RsGxsId id = RsGxsId(id_event->mIdentityId);
+            QModelIndex idx = getIndexOfIdentity(id);
+            if(idx.isValid())
+            {
+                EntryIndex e;
+                convertInternalIdToIndex(idx.internalId(), e);
+                
+                if(e.type == ENTRY_TYPE_IDENTITY && e.category_index < mCategories.size() && e.identity_index < mCategories[e.category_index].child_identity_indices.size())
+                {
+                    // Force refresh of details
+                    mIdentities[mCategories[e.category_index].child_identity_indices[e.identity_index]].last_update_TS = 0;
+                    emit dataChanged(idx, idx);
+                }
+            }
+        }
+        else if(id_event->mIdentityEventCode == RsGxsIdentityEventCode::NEW_IDENTITY || id_event->mIdentityEventCode == RsGxsIdentityEventCode::DELETED_IDENTITY)
+        {
+            checkInternalData(true);
+        }
+    }, this);
 }
 
 void RsIdentityListModel::timerUpdate()
@@ -880,9 +928,15 @@ int RsIdentityListModel::getCategory(const QModelIndex& i) const
 }
 void RsIdentityListModel::setIdentities(const std::list<RsGroupMetaData>& identities_meta)
 {
-    preMods();
     beginResetModel();
-    clear();
+    
+    // Clear data manually to avoid double-signaling from clear()
+    mIdentities.clear();
+    mCategories.clear();
+    mCategories.resize(3);
+    mCategories[0].category_name = tr("My own identities");
+    mCategories[1].category_name = tr("My contacts");
+    mCategories[2].category_name = tr("All");
 
     for(auto id:identities_meta)
     {
@@ -900,14 +954,7 @@ void RsIdentityListModel::setIdentities(const std::list<RsGroupMetaData>& identi
         mIdentities.push_back(idinfo);
     }
 
-    if (mCategories.size()>0)
-    {
-        beginInsertRows(QModelIndex(),0,mCategories.size()-1);
-        endInsertRows();
-    }
-
     endResetModel();
-    postMods();
 
     mLastInternalDataUpdate = time(NULL);
 
