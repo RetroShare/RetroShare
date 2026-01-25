@@ -928,15 +928,9 @@ int RsIdentityListModel::getCategory(const QModelIndex& i) const
 }
 void RsIdentityListModel::setIdentities(const std::list<RsGroupMetaData>& identities_meta)
 {
+    preMods();
     beginResetModel();
-    
-    // Clear data manually to avoid double-signaling from clear()
-    mIdentities.clear();
-    mCategories.clear();
-    mCategories.resize(3);
-    mCategories[0].category_name = tr("My own identities");
-    mCategories[1].category_name = tr("My contacts");
-    mCategories[2].category_name = tr("All");
+    clear();
 
     for(auto id:identities_meta)
     {
@@ -954,7 +948,14 @@ void RsIdentityListModel::setIdentities(const std::list<RsGroupMetaData>& identi
         mIdentities.push_back(idinfo);
     }
 
+    if (mCategories.size()>0)
+    {
+        beginInsertRows(QModelIndex(),0,mCategories.size()-1);
+        endInsertRows();
+    }
+
     endResetModel();
+    postMods();
 
     mLastInternalDataUpdate = time(NULL);
 
