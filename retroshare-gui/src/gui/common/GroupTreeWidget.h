@@ -113,6 +113,7 @@ public:
 	void fillGroupItems(QTreeWidgetItem *categoryItem, const QList<GroupItemInfo> &itemList);
 	// Set the unread count of an item
 	void setUnreadCount(QTreeWidgetItem *item, int unreadCount);
+	void setCounts(QTreeWidgetItem *item, int unreadCount, int totalCount);
 
 	bool isSearchRequestItem(QPoint &point,uint32_t& search_req_id);
 	bool isSearchRequestResult(QPoint &point, QString &group_id, uint32_t& search_req_id);
