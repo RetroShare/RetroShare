@@ -541,6 +541,18 @@ void GroupTreeWidget::setUnreadCount(QTreeWidgetItem *item, int unreadCount)
 	item->setFont(GTW_COLUMN_NAME, itFont);
 }
 
+void GroupTreeWidget::setCounts(QTreeWidgetItem *item, int unreadCount, int totalCount)
+{
+	if (item == NULL) {
+		return;
+	}
+
+	setUnreadCount(item, unreadCount);
+
+	item->setText(GTW_COLUMN_POSTS, QString::number(totalCount));
+	item->setData(GTW_COLUMN_POSTS, ROLE_SORT, totalCount);
+}
+
 QTreeWidgetItem *GroupTreeWidget::getItemFromId(const QString &id)
 {
 	if (id.isEmpty()) {
