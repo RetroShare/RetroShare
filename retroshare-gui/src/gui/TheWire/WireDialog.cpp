@@ -72,6 +72,8 @@ WireDialog::WireDialog(QWidget *parent)
 
 	connect( ui.toolButton_createAccount, SIGNAL(clicked()), this, SLOT(createGroup()));
 	connect( ui.toolButton_createPulse, SIGNAL(clicked()), this, SLOT(createPulse()));
+	connect( ui.toolButton_home, SIGNAL(clicked()), this, SLOT(showHomeFeed()));
+	connect( ui.lineEdit_searchUsers, SIGNAL(textChanged(const QString&)), this, SLOT(filterUsers(const QString&)));
 
 	connect(ui.comboBox_groupSet, SIGNAL(currentIndexChanged(int)), this, SLOT(selectGroupSet(int)));
 	connect(ui.comboBox_filterTime, SIGNAL(currentIndexChanged(int)), this, SLOT(selectFilterTime(int)));
@@ -345,6 +347,33 @@ void WireDialog::refreshGroups()
 	requestGroupData();
 }
 
+void WireDialog::showHomeFeed()
+{
+	mGroupSet = GROUP_SET_SUBSCRIBED;
+	ui.comboBox_groupSet->setCurrentIndex(GROUP_SET_SUBSCRIBED);
+	mGroupSelected = nullptr;
+	showGroups();
+}
+
+void WireDialog::filterUsers(const QString &text)
+{
+	QLayout *alayout = ui.groupsWidget->layout();
+	QString filterText = text.toLower();
+
+	for (int i = 0; i < alayout->count(); ++i)
+	{
+		QLayoutItem *item = alayout->itemAt(i);
+		QWidget *widget = item->widget();
+		WireGroupItem *groupItem = dynamic_cast<WireGroupItem *>(widget);
+
+		if (groupItem)
+		{
+			bool visible = filterText.isEmpty() || groupItem->matchesFilter(filterText);
+			groupItem->setVisible(visible);
+		}
+	}
+}
+
 void WireDialog::addGroup(QWidget *item)
 {
 	QLayout *alayout = ui.groupsWidget->layout();
@@ -592,7 +621,6 @@ void WireDialog::showGroups()
 
 	std::list<RsGxsGroupId> allGroupIds;
 
-	/* depends on the comboBox */
 	for (auto &it : mAllGroups)
 	{
 		bool add = (mGroupSet == GROUP_SET_ALL);
@@ -614,9 +642,6 @@ void WireDialog::showGroups()
 
 		if (add) {
 			addGroup(it.second);
-			// request data.
-			std::list<RsGxsGroupId> grpIds;
-			grpIds.push_back(it.second.mMeta.mGroupId);
 			allGroupIds.push_back(it.second.mMeta.mGroupId);
 		}
 	}

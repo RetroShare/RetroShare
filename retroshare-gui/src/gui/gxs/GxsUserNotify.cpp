@@ -37,7 +37,6 @@ GxsUserNotify::~GxsUserNotify() {}
 
 void GxsUserNotify::startUpdate()
 {
-    std::cout<<"inside the gxs user notify startUpdate function"<<std::endl;
 	mNewThreadMessageCount = 0;
 	mNewChildMessageCount = 0;
 

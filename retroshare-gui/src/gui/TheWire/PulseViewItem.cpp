@@ -27,6 +27,7 @@
 
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
+#include "gui/RetroShareLink.h"
 #include "util/DateTime.h"
 
 /** Constructor */
@@ -235,6 +236,30 @@ void PulseDataItem::actionRate()
 
 	if (mHolder) {
 		mHolder->PVHrate(authorId);
+	}
+}
+
+void PulseDataItem::actionCopyLink()
+{
+	std::cerr << "PulseDataItem::actionCopyLink()";
+	std::cerr << std::endl;
+
+	if (!mPulse) {
+		std::cerr << "PulseDataItem::actionCopyLink() PULSE invalid";
+		std::cerr << std::endl;
+		return;
+	}
+
+	RetroShareLink link = RetroShareLink::createGxsMessageLink(
+		RetroShareLink::TYPE_WIRE,
+		mPulse->mMeta.mGroupId,
+		mPulse->mMeta.mMsgId,
+		QString::fromStdString(mPulse->mMeta.mMsgName));
+
+	if (link.valid()) {
+		QList<RetroShareLink> urls;
+		urls.push_back(link);
+		RSLinkClipboard::copyLinks(urls);
 	}
 }
 
@@ -465,14 +490,9 @@ QString ToNumberUnits(uint32_t count)
 
 void PulseDataItem::mousePressEvent(QMouseEvent *event)
 {
-    // Check if the event is a left mouse button press
     if (event->button() == Qt::LeftButton)
     {
-        // Perform some action when the left mouse button is pressed
-        std::cout << "Left mouse button pressed on PulseViewItem!" <<std::endl;
-        // You can add your own custom code here
+        // Handle left click on pulse item
     }
-
-    // Call the base class implementation to ensure proper event handling
     QWidget::mousePressEvent(event);
 }

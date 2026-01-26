@@ -35,6 +35,7 @@ public:
 
 private slots:
 	void actionFollow();
+	void actionCopyProfileLink();
 	void editProfile();
 
 protected:

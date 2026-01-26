@@ -133,6 +133,8 @@ private slots:
 
 	void createGroup();
 	void createPulse();
+	void showHomeFeed();
+	void filterUsers(const QString &text);
 	void checkUpdate();
 	void refreshGroups();
 	void selectGroupSet(int index);

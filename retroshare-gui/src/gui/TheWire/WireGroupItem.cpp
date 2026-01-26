@@ -210,6 +210,15 @@ const QPixmap *WireGroupItem::getPixmap()
 	return NULL;
 }
 
+bool WireGroupItem::matchesFilter(const QString &filterText) const
+{
+	if (filterText.isEmpty())
+		return true;
+
+	QString groupName = QString::fromStdString(mGroup.mMeta.mGroupName).toLower();
+	return groupName.contains(filterText);
+}
+
 void WireGroupItem::editGroupDetails()
 {
 	RsGxsGroupId groupId = mGroup.mMeta.mGroupId;

@@ -114,6 +114,7 @@ private slots:
 	void actionFollow();
 	void actionFollowParent();
 	void actionRate();
+	void actionCopyLink();
 	// Action interfaces --------------------------
 
 protected:

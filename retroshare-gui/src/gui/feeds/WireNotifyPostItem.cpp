@@ -254,68 +254,43 @@ void WireNotifyPostItem::loadMessage()
 #endif
     mLoadingMessage = true;
 
-    RsThread::async([this]()
-    {
-        // 1 - get group data
+    RsGxsGroupId grpId = groupId();
+    RsGxsMessageId msgId = messageId();
 
-        std::list<RsGxsGroupId> groupIds;
-        std::list<RsWirePulseSPtr> pulses;
-//		std::vector<RsGxsComment> comments;
-//		std::vector<RsGxsVote> votes;
-        groupIds.push_back(groupId());
-        if(! rsWire->getPulsesForGroups(groupIds, pulses))
+    RsThread::async([this, grpId, msgId]()
+    {
+        RsWirePulseSPtr pPulse;
+
+        if (!rsWire->getWirePulse(grpId, msgId, pPulse))
         {
-            RsErr() << "WireNotifyPostItem::loadGroup() ERROR getting data" << std::endl;
+            RsErr() << "WireNotifyPostItem::loadMessage() ERROR getting pulse" << std::endl;
+            RsQThreadUtils::postToObject([this]()
+            {
+                mLoadingMessage = false;
+            }, this);
             return;
         }
 
-        if (pulses.size() == 1)
+        if (pPulse)
         {
 #ifdef DEBUG_ITEM
-            std::cerr << (void*)this << ": Obtained post, with msgId = " << pulses[0].mMeta.mMsgId << std::endl;
+            std::cerr << (void*)this << ": Obtained post, with msgId = " << pPulse->mMeta.mMsgId << std::endl;
 #endif
-            const RsWirePulse& pulse(*pulses.front());
+            const RsWirePulse pulse(*pPulse);
 
-            RsQThreadUtils::postToObject( [pulse,this]()
+            RsQThreadUtils::postToObject([pulse, this]()
             {
                 setPost(pulse);
                 mLoadingMessage = false;
-            }, this );
+            }, this);
         }
-//        else if(comments.size() == 1)
-//        {
-//            const RsGxsComment& cmt = comments[0];
-//#ifdef DEBUG_ITEM
-//            std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
-//#endif
-
-//            RsQThreadUtils::postToObject( [cmt,this]()
-//            {
-//                ui->newCommentLabel->show();
-//                ui->commLabel->show();
-//                ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
-
-//                //Change this item to be uploaded with thread element.
-//                setMessageId(cmt.mMeta.mThreadId);
-//                requestMessage();
-
-//                mLoadingMessage = false;
-//            }, this );
-
-//        }
-//        else
-//        {
-//#ifdef DEBUG_ITEM
-//            std::cerr << "WireNotifyPostItem::loadMessage() Wrong number of Items. Remove It.";
-//            std::cerr << std::endl;
-//#endif
-
-//            RsQThreadUtils::postToObject( [this]()
-//            {
-//                removeItem();
-//                mLoadingMessage = false;
-//            }, this );
-//        }
+        else
+        {
+            RsQThreadUtils::postToObject([this]()
+            {
+                mLoadingMessage = false;
+            }, this);
+        }
     });
 }
 
