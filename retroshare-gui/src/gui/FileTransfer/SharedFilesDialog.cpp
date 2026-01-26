@@ -143,9 +143,10 @@ public:
     }
 
     void setUploadedOnly(bool val) {
-        m_uploadedOnly = val;
-        // MODIFICATION: Removed invalidateFilter() here. 
-        // We will trigger a safe model update from the dialog instead.
+        if (m_uploadedOnly != val) {
+             m_uploadedOnly = val;
+             invalidateFilter();
+        }
     }
 
 protected:
@@ -522,6 +523,11 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
         proxyModel = flat_proxyModel ;
     }
 
+    if(uploadedOnly_CB) {
+        if(tree_proxyModel) tree_proxyModel->setUploadedOnly(uploadedOnly_CB->isChecked());
+        if(flat_proxyModel) flat_proxyModel->setUploadedOnly(uploadedOnly_CB->isChecked());
+    }
+
     showProperColumns() ;
 
     std::set<std::string> expanded_indexes,hidden_indexes,selected_indexes ;
@@ -552,6 +558,11 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
     // Force re-application of filter on the new model
     mLastFilterText.clear(); 
     FilterItems();
+
+    // MODIFICATION: Expand tree if "Uploaded Only" is active, otherwise items remain hidden in collapsed folders.
+    if(viewTypeIndex==VIEW_TYPE_TREE && uploadedOnly_CB && uploadedOnly_CB->isChecked()) {
+        expandAll();
+    }
 }
 
 void LocalSharedFilesDialog::showProperColumns()
