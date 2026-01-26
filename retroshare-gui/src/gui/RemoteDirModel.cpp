@@ -583,8 +583,13 @@ QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) 
 
 void FlatStyle_RDM::update()
 {
-	if(_needs_update)
+	// MODIFICATION: Always update to support filtering changes.
+	// Previously, this was guarded by if(_needs_update), preventing filter updates.
+// if(_needs_update)
 	{
+		// Prevent nested updates/resets which confuse the view
+		if(mUpdating) return;
+
 		preMods() ;
 		postMods() ;
 	}
@@ -1172,8 +1177,9 @@ void FlatStyle_RDM::postMods()
 {
     time_t now = time(NULL);
 
-    if(_last_update + FLAT_VIEW_MIN_DELAY_BETWEEN_UPDATES > now)
-        return ;
+    // MODIFICATION: Removed throttling because it caused stuck model state (beginReset without endReset)
+    // if(_last_update + FLAT_VIEW_MIN_DELAY_BETWEEN_UPDATES > now)
+    //    return ;
 
     if(visible())
 	{
@@ -1786,8 +1792,10 @@ void FlatStyle_RDM::updateRefs()
 		QTimer::singleShot(5000,this,SLOT(updateRefs())) ;
 		return ;
 	}
-
-    RetroshareDirModel::preMods() ;
+ 
+     // MODIFICATION: Avoid double-reset. update() already called preMods().
+     if (!mUpdating)
+        RetroshareDirModel::preMods() ;
 
 
 	uint32_t nb_treated_refs = 0 ;
@@ -1795,9 +1803,32 @@ void FlatStyle_RDM::updateRefs()
     {
         RS_STACK_MUTEX(_ref_mutex) ;
 
-        while( !_ref_stack.empty() && (_ref_entries.size() <= FLAT_VIEW_MAX_REFS_TABLE_SIZE) )
+        // MODIFICATION: instant search result display
+        // If we have a filter active, use the filtered set directly instead of crawling.
+        if (!mFilteredPointers.empty()) 
         {
-            void *ref = _ref_stack.back() ;
+            _ref_stack.clear(); // Stop any pending crawl
+            _ref_entries.clear();
+
+            for(auto it = mFilteredPointers.begin(); it != mFilteredPointers.end(); ++it)
+            {
+                void* ref = *it;
+                DirDetails details;
+                // Only add files to the flat list
+                if(requestDirDetails(ref, RemoteMode, details))
+                {
+                    if(details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE)
+                        _ref_entries.push_back(ref);
+                }
+            }
+             _needs_update = false; // We are done
+        }
+        else 
+        {
+            // Standard crawling behavior (when no filter or cleared)
+            while( !_ref_stack.empty() && (_ref_entries.size() <= FLAT_VIEW_MAX_REFS_TABLE_SIZE) )
+            {
+                void *ref = _ref_stack.back() ;
 #ifdef RDM_DEBUG
             std::cerr << "FlatStyle_RDM::postMods(): poped ref " << ref << std::endl;
 #endif
@@ -1829,7 +1860,8 @@ void FlatStyle_RDM::updateRefs()
                     std::cerr << "Not visible: suspending update"<< std::endl;
                 break ;
             }
-        }
+        } // End of standard crawling loop
+        } // End of else block
         std::cerr << "reference tab contains " << std::dec << _ref_entries.size() << " files" << std::endl;
     }
 

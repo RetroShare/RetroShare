@@ -548,6 +548,9 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
     ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal, SHARED_FILES_DIALOG_COLUMN_NAME, SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR) ;
 
 //    recursRestoreExpandedItems(ui.dirTreeView->rootIndex(),expanded_indexes);
+    
+    // Force re-application of filter on the new model
+    mLastFilterText.clear(); 
     FilterItems();
 }
 
