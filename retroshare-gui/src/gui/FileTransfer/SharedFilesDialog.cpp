@@ -145,7 +145,8 @@ public:
     void setUploadedOnly(bool val) {
         if (m_uploadedOnly != val) {
              m_uploadedOnly = val;
-             invalidateFilter();
+             // invalidateFilter(); // CRASH FIX: Do not invalidate incrementally. 
+                                  // The dialog calls model->update() which triggers a full Reset.
         }
     }
 
@@ -556,7 +557,7 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
 //    recursRestoreExpandedItems(ui.dirTreeView->rootIndex(),expanded_indexes);
     
     // Force re-application of filter on the new model
-    mLastFilterText.clear(); 
+    mLastFilterText = "FORCE_UPDATE_ON_VIEW_SWITCH"; 
     FilterItems();
 
     // MODIFICATION: Expand tree if "Uploaded Only" is active, otherwise items remain hidden in collapsed folders.
@@ -1284,6 +1285,10 @@ void SharedFilesDialog::FilterItems()
 
     if(text.length() < 3) {
         model->filterItems(std::list<std::string>(), found) ;
+        
+        // MODIFICATION: Sync proxy filter to ensure it doesn't hold stale text
+        if (proxyModel) proxyModel->setFilterFixedString(QString());
+        
         return ;
     }
 
@@ -1293,6 +1298,20 @@ void SharedFilesDialog::FilterItems()
         keywords.push_back((*it).toStdString());
 
     model->filterItems(keywords, found) ;
+
+    // MODIFICATION: Hybrid filtering.
+    // Flat View uses model->filterItems (Manual population).
+    // Tree View relies on Proxy for text filtering (Hybrid).
+    // We must sync the proxy to ensure Tree View works and doesn't hold stale data.
+    if (proxyModel) {
+        if(ui.viewType_CB->currentIndex() == VIEW_TYPE_TREE) {
+             proxyModel->setFilterFixedString(RETROSHARE_DIR_MODEL_FILTER_STRING);
+        } else {
+             // In Flat View, Model handles filtering logic (including multi-keyword).
+             // Proxy should NOT double-filter (which breaks multi-keyword).
+             proxyModel->setFilterFixedString(QString());
+        }
+    }
 
     // Note: model->filterItems() already calls update() (reset), 
     // so proxy invalidation is redundant and handled automatically.
@@ -1659,7 +1678,14 @@ void SharedFilesDialog::filterUploadedOnlyToggled(bool checked)
     
     if(ui.viewType_CB->currentIndex() == VIEW_TYPE_TREE) {
         if (checked) expandAll();
-        else ui.dirTreeView->collapseAll();
+        else {
+             // MODIFICATION: Do not collapse if we have a text filter active, otherwise results are hidden.
+             if (ui.filterPatternLineEdit->text().length() >= 3) {
+                  expandAll();
+             } else {
+                  ui.dirTreeView->collapseAll();
+             }
+        }
     }
 }
 
