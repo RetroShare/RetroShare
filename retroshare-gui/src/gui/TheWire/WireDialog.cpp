@@ -78,6 +78,8 @@ WireDialog::WireDialog(QWidget *parent)
 	connect(ui.comboBox_groupSet, SIGNAL(currentIndexChanged(int)), this, SLOT(selectGroupSet(int)));
 	connect(ui.comboBox_filterTime, SIGNAL(currentIndexChanged(int)), this, SLOT(selectFilterTime(int)));
 
+	ui.comboBox_groupSet->hide();
+
 	connect( ui.toolButton_back, SIGNAL(clicked()), this, SLOT(back()));
 	connect( ui.toolButton_forward, SIGNAL(clicked()), this, SLOT(forward()));
 	ui.toolButton_back->setEnabled(false);
@@ -394,7 +396,7 @@ bool WireDialog::setupPulseAddDialog()
 	mAddDialog->cleanup();
 
 	int idx = ui.groupChooser->currentIndex();
-	if (idx < 0) {
+	if (idx < 0 || idx >= (int)mOwnGroups.size()) {
 		std::cerr << "WireDialog::setupPulseAddDialog() ERROR GETTING AuthorId!";
 		std::cerr << std::endl;
 
@@ -402,9 +404,8 @@ bool WireDialog::setupPulseAddDialog()
 		return false;
 	}
 
-	// publishing group.
 	RsWireGroup group = mOwnGroups[idx];
-	mAddDialog->setGroup(group.mMeta.mGroupId);
+	mAddDialog->setGroup(group);
 
 	return true;
 }
@@ -791,40 +792,106 @@ void WireDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 void WireDialog::PVHreply(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
 {
 	std::cerr << "WireDialog::PVHreply() GroupId: " << groupId;
-	std::cerr << "MsgId: " << msgId;
+	std::cerr << " MsgId: " << msgId;
 	std::cerr << std::endl;
 
 	if (setupPulseAddDialog())
 	{
 		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_REPLY);
-		mAddDialog->show();
 	}
 }
 
 void WireDialog::PVHrepublish(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
 {
 	std::cerr << "WireDialog::PVHrepublish() GroupId: " << groupId;
-	std::cerr << "MsgId: " << msgId;
+	std::cerr << " MsgId: " << msgId;
 	std::cerr << std::endl;
 
-	if (setupPulseAddDialog())
-	{
-		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_REPUBLISH);
-		mAddDialog->show();
+	int idx = ui.groupChooser->currentIndex();
+	if (idx < 0 || idx >= (int)mOwnGroups.size()) {
+		std::cerr << "WireDialog::PVHrepublish() No own group selected";
+		std::cerr << std::endl;
+		QMessageBox::warning(this, tr("RetroShare"), tr("Please select your Wire account first"), QMessageBox::Ok);
+		return;
 	}
+
+	RsGxsGroupId replyWith = mOwnGroups[idx].mMeta.mGroupId;
+	setCursor(Qt::WaitCursor);
+
+	RsThread::async([this, groupId, msgId, replyWith]()
+	{
+		RsWirePulseSPtr origPulse;
+		if (!rsWire->getWirePulse(groupId, msgId, origPulse))
+		{
+			std::cerr << "WireDialog::PVHrepublish() failed to fetch original pulse";
+			std::cerr << std::endl;
+			RsQThreadUtils::postToObject([this]()
+			{
+				setCursor(Qt::ArrowCursor);
+			}, this);
+			return;
+		}
+
+		RsWirePulseSPtr pPulse(new RsWirePulse());
+		pPulse->mSentiment = origPulse->mSentiment;
+		pPulse->mPulseText = origPulse->mPulseText;
+		pPulse->mImage1 = origPulse->mImage1;
+		pPulse->mImage2 = origPulse->mImage2;
+		pPulse->mImage3 = origPulse->mImage3;
+		pPulse->mImage4 = origPulse->mImage4;
+
+		RsGxsMessageId targetMsgId = origPulse->mMeta.mOrigMsgId;
+		if (targetMsgId.isNull()) {
+			targetMsgId = msgId;
+		}
+
+		bool success = rsWire->createReplyPulse(groupId, targetMsgId, replyWith,
+			WIRE_PULSE_TYPE_REPUBLISH, pPulse);
+
+		RsQThreadUtils::postToObject([this, success]()
+		{
+			setCursor(Qt::ArrowCursor);
+			if (!success) {
+				std::cerr << "WireDialog::PVHrepublish() FAILED" << std::endl;
+			}
+		}, this);
+	});
 }
 
 void WireDialog::PVHlike(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
 {
 	std::cerr << "WireDialog::PVHlike() GroupId: " << groupId;
-	std::cerr << "MsgId: " << msgId;
+	std::cerr << " MsgId: " << msgId;
 	std::cerr << std::endl;
 
-	if (setupPulseAddDialog())
-	{
-		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_LIKE);
-		mAddDialog->show();
+	int idx = ui.groupChooser->currentIndex();
+	if (idx < 0 || idx >= (int)mOwnGroups.size()) {
+		std::cerr << "WireDialog::PVHlike() No own group selected";
+		std::cerr << std::endl;
+		QMessageBox::warning(this, tr("RetroShare"), tr("Please select your Wire account first"), QMessageBox::Ok);
+		return;
 	}
+
+	RsGxsGroupId replyWith = mOwnGroups[idx].mMeta.mGroupId;
+	setCursor(Qt::WaitCursor);
+
+	RsThread::async([this, groupId, msgId, replyWith]()
+	{
+		RsWirePulseSPtr pPulse(new RsWirePulse());
+		pPulse->mSentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
+		pPulse->mPulseText = "";
+
+		bool success = rsWire->createReplyPulse(groupId, msgId, replyWith,
+			WIRE_PULSE_TYPE_LIKE, pPulse);
+
+		RsQThreadUtils::postToObject([this, success]()
+		{
+			setCursor(Qt::ArrowCursor);
+			if (!success) {
+				std::cerr << "WireDialog::PVHlike() FAILED" << std::endl;
+			}
+		}, this);
+	});
 }
 
 void WireDialog::PVHviewGroup(const RsGxsGroupId &groupId)
@@ -1369,32 +1436,12 @@ bool WireDialog::navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msg
         return false;
     }
 
-//    if (mStateHelper->isLoading(TOKEN_TYPE_GROUP_SUMMARY)) {
-//        mNavigatePendingGroupId = groupId;
-//        mNavigatePendingMsgId = msgId;
+    if (!msgId.isNull()) {
+        requestPulseFocus(groupId, msgId);
+    } else {
+        requestGroupFocus(groupId);
+    }
 
-//        /* No information if group is available */
-//        return true;
-//    }
-
-//    QString groupIdString = QString::fromStdString(groupId.toStdString());
-//    if (ui.groupTreeWidget->activateId(groupIdString, msgId.isNull()) == NULL) {
-//        return false;
-//    }
-
-//    changedCurrentGroup(groupIdString);
-
-    /* search exisiting tab */
-//    GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId);
-//    if (!msgWidget) {
-//        return false;
-//    }
-
-//    if (msgId.isNull()) {
-//        return true;
-//    }
-
-//    return msgWidget->navigate(msgId);
     return true;
 }
 

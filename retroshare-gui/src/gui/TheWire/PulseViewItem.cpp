@@ -25,6 +25,8 @@
 
 #include "PulseViewItem.h"
 
+#include "retroshare/rsgxsflags.h"
+
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/RetroShareLink.h"
@@ -250,11 +252,16 @@ void PulseDataItem::actionCopyLink()
 		return;
 	}
 
+	std::string linkName = mPulse->mMeta.mMsgName;
+	if (linkName.empty()) {
+		linkName = mPulse->mPulseText.substr(0, 50);
+	}
+
 	RetroShareLink link = RetroShareLink::createGxsMessageLink(
 		RetroShareLink::TYPE_WIRE,
 		mPulse->mMeta.mGroupId,
 		mPulse->mMeta.mMsgId,
-		QString::fromStdString(mPulse->mMeta.mMsgName));
+		QString::fromStdString(linkName));
 
 	if (link.valid()) {
 		QList<RetroShareLink> urls;
@@ -490,9 +497,11 @@ QString ToNumberUnits(uint32_t count)
 
 void PulseDataItem::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton)
+    if (event->button() == Qt::LeftButton && IS_MSG_UNPROCESSED(mPulse->mMeta.mMsgStatus))
     {
-        // Handle left click on pulse item
+        uint32_t token;
+        RsGxsGrpMsgIdPair msgPair = std::make_pair(mPulse->mMeta.mGroupId, mPulse->mMeta.mMsgId);
+        rsWire->setMessageReadStatus(token, msgPair, true);
     }
     QWidget::mousePressEvent(event);
 }
