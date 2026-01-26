@@ -21,6 +21,8 @@
 #ifndef REMOTE_DIR_MODEL
 #define REMOTE_DIR_MODEL
 
+#define RETROSHARE_DIR_MODEL_FILTER_STRING "filtered"
+
 #include <retroshare/rstypes.h>
 #include <retroshare/rsevents.h>
 
@@ -255,7 +257,11 @@ class FlatStyle_RDM: public RetroshareDirModel
 		virtual void updateRef(const QModelIndex&) const {}
 		// MODIFICATION H: Implement hasUploads for Flat Style to fix compilation
 		virtual bool hasUploads(void *ref) const;
-		virtual QVariant displayRole(const DirDetails&,int) const ;
+		
+        // MODIFICATION: Override data() to use internal cache for Flat View
+        virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+
+        virtual QVariant displayRole(const DirDetails&,int) const ;
 		virtual QVariant sortRole(const QModelIndex&,const DirDetails&,int) const ;
 
 		//Overloaded from QAbstractItemModel
@@ -270,6 +276,15 @@ class FlatStyle_RDM: public RetroshareDirModel
 
 
 		QString computeDirectoryPath(const DirDetails& details) const ;
+
+
+        struct CachedFileDetails {
+            QString name;
+            QString sizeStr;
+            QString ageStr;
+            QString uploadStr;
+        };
+        QHash<void*, CachedFileDetails> m_cache;
 
 		mutable RsMutex _ref_mutex ;
 		std::vector<void *> _ref_entries ; // used to store the refs to display

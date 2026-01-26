@@ -57,7 +57,6 @@
 #define REMOTEDIRMODEL_COLUMN_WN_VISU_DIR   5
 #define REMOTEDIRMODEL_COLUMN_UPLOADED      6
 #define REMOTEDIRMODEL_COLUMN_COUNT         7
-#define RETROSHARE_DIR_MODEL_FILTER_STRING "filtered"
 
 static const uint32_t FLAT_VIEW_MAX_REFS_PER_SECOND       = 10000 ;
 static const size_t   FLAT_VIEW_MAX_REFS_TABLE_SIZE       = 30000 ; //
@@ -219,6 +218,7 @@ void TreeStyle_RDM::recalculateDirectoryTotals()
             }
         }
     }
+
 }
 
 // MODIFICATION D: Check if a specific node or any of its descendants have uploads
@@ -251,6 +251,7 @@ bool TreeStyle_RDM::hasUploads(void *ref) const
 
 void TreeStyle_RDM::update()
 {
+
     // Recalculate totals before notifying view update
     recalculateDirectoryTotals();
 
@@ -587,8 +588,14 @@ void FlatStyle_RDM::update()
 	// Previously, this was guarded by if(_needs_update), preventing filter updates.
 // if(_needs_update)
 	{
-		// Prevent nested updates/resets which confuse the view
-		if(mUpdating) return;
+        if(mUpdating) return;
+
+
+        
+        {
+            RS_STACK_MUTEX(_ref_mutex);
+            m_cache.clear();
+        }
 
 		preMods() ;
 		postMods() ;
@@ -626,8 +633,36 @@ QString FlatStyle_RDM::computeDirectoryPath(const DirDetails& details) const
 	return dir ;
 }
 
+QVariant FlatStyle_RDM::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid())
+        return QVariant();
+
+    if (role == Qt::DisplayRole)
+    {
+        void *ref = index.internalPointer();
+        
+        // Try Lock-less read first? No, use lock for safety matching updateRefs
+        RS_STACK_MUTEX(_ref_mutex);
+        if (m_cache.contains(ref))
+        {
+            const CachedFileDetails &cfd = m_cache[ref];
+            switch(index.column())
+            {
+                case REMOTEDIRMODEL_COLUMN_NAME: return cfd.name;
+                case REMOTEDIRMODEL_COLUMN_SIZE: return cfd.sizeStr;
+                case REMOTEDIRMODEL_COLUMN_AGE:  return cfd.ageStr;
+                case REMOTEDIRMODEL_COLUMN_UPLOADED: return cfd.uploadStr;
+            }
+        }
+    }
+
+    return RetroshareDirModel::data(index, role); 
+}
+
 QVariant FlatStyle_RDM::displayRole(const DirDetails& details,int coln) const
 {
+
 	if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE) /* File */
 		switch(coln)
 		{
@@ -1508,6 +1543,10 @@ void RetroshareDirModel::filterItems(const std::list<std::string>& keywords, uin
     if(result_list.empty())
     {
         mFilteredPointers.clear();
+        // MODIFICATION: Insert NULL to signal that we have an active filter which returned no results.
+        // updateRefs will see mFilteredPointers is not empty, enter the filtered path, encounter NULL, skip it,
+        // and resulting view will be empty (correct behavior) instead of showing all files.
+        mFilteredPointers.insert(NULL);
         update();
         return ;
     }
@@ -1800,6 +1839,7 @@ void FlatStyle_RDM::updateRefs()
 
 	uint32_t nb_treated_refs = 0 ;
 
+
     {
         RS_STACK_MUTEX(_ref_mutex) ;
 
@@ -1818,9 +1858,29 @@ void FlatStyle_RDM::updateRefs()
                 if(requestDirDetails(ref, RemoteMode, details))
                 {
                     if(details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE)
+                    {
                         _ref_entries.push_back(ref);
+                        
+                        CachedFileDetails cfd;
+                        cfd.name = QString::fromUtf8(details.name.c_str());
+                        cfd.sizeStr = misc::friendlyUnit(details.size);
+                        
+                        if(details.type == DIR_TYPE_FILE)
+                            cfd.ageStr = misc::timeRelativeToNow(details.max_mtime);
+                        else {
+                            FileInfo fi;
+                            if (rsFiles->FileDetails(details.hash, RS_FILE_HINTS_EXTRA , fi))
+                                cfd.ageStr = misc::timeRelativeToNow((rstime_t)fi.age-(30 * 3600 * 24));
+                        }
+
+                        uint64_t x = rsFiles->getCumulativeUpload(details.hash);
+                        cfd.uploadStr = x ? misc::friendlyUnit(x) : QString();
+
+                        m_cache[ref] = cfd;
+                    }
                 }
             }
+
              _needs_update = false; // We are done
         }
         else 
@@ -1839,7 +1899,26 @@ void FlatStyle_RDM::updateRefs()
             if (requestDirDetails(ref, RemoteMode,details))
             {
                 if(details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE)		// only push files, not directories nor persons.
+                {
                     _ref_entries.push_back(ref) ;
+                    
+                    CachedFileDetails cfd;
+                    cfd.name = QString::fromUtf8(details.name.c_str());
+                    cfd.sizeStr = misc::friendlyUnit(details.size);
+                    
+                    if(details.type == DIR_TYPE_FILE)
+                        cfd.ageStr = misc::timeRelativeToNow(details.max_mtime);
+                    else {
+                        FileInfo fi;
+                        if (rsFiles->FileDetails(details.hash, RS_FILE_HINTS_EXTRA , fi))
+                            cfd.ageStr = misc::timeRelativeToNow((rstime_t)fi.age-(30 * 3600 * 24));
+                    }
+
+                    uint64_t x = rsFiles->getCumulativeUpload(details.hash);
+                    cfd.uploadStr = x ? misc::friendlyUnit(x) : QString();
+
+                    m_cache[ref] = cfd;
+                }
 #ifdef RDM_DEBUG
                 std::cerr << "FlatStyle_RDM::postMods(): adding ref " << ref << std::endl;
 #endif
@@ -1854,8 +1933,9 @@ void FlatStyle_RDM::updateRefs()
 
             if(++nb_treated_refs > FLAT_VIEW_MAX_REFS_PER_SECOND) 	// we've done enough, let's give back hand to
             {															// the user and setup a timer to finish the job later.
+
                 if(visible())
-                    QTimer::singleShot(2000,this,SLOT(updateRefs())) ;
+                    QTimer::singleShot(10,this,SLOT(updateRefs())) ; // Reduced from 2000ms to 10ms for faster loading
                 else
                     std::cerr << "Not visible: suspending update"<< std::endl;
                 break ;
@@ -1865,8 +1945,12 @@ void FlatStyle_RDM::updateRefs()
         std::cerr << "reference tab contains " << std::dec << _ref_entries.size() << " files" << std::endl;
     }
 
-    if(_ref_stack.empty())
-        _needs_update = false ;
+	// The loop is finished.
+	if(_ref_stack.empty()) {
+
+		_needs_update = false ;
+    }
+
 
     RetroshareDirModel::postMods() ;
 }
