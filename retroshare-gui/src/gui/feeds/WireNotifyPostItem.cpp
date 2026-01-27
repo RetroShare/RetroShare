@@ -203,7 +203,6 @@ void WireNotifyPostItem::setup()
     ui->titleLabel->setMinimumWidth(100);
     ui->subjectLabel->setMinimumWidth(100);
     //ui->warning_label->setMinimumWidth(100);
-    ui->titleLabel->setEnabled(false);
 
     ui->feedFrame->setProperty("new", false);
     ui->feedFrame->style()->unpolish(ui->feedFrame);

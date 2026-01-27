@@ -56,6 +56,7 @@ protected:
 private slots:
     void toggle() override;
     void subscribeWire();
+    void openWireGroup();
 
 private:
     void fill();
