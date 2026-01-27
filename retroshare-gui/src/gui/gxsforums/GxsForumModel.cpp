@@ -484,7 +484,21 @@ uint32_t RsGxsForumModel::recursUpdateFilterStatus(ForumModelIndex i,int column,
 		break;
 	}
 
-	if(!strings.empty())
+	// std::cerr << "DEBUG Content Filter: " << mContentFilteringEnabled << " IDs: " << mContentFilterIds.size() << " Current: " << mPosts[i].mMsgId.toStdString() << " Match: " << (mContentFilterIds.find(mPosts[i].mMsgId) != mContentFilterIds.end()) << std::endl;
+
+	if(mContentFilteringEnabled)
+    {
+        if(mContentFilterIds.find(mPosts[i].mMsgId) != mContentFilterIds.end())
+        {
+            mPosts[i].mPostFlags |= ForumModelPostEntry::FLAG_POST_PASSES_FILTER | ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER;
+            count++;
+        }
+        else
+        {
+            mPosts[i].mPostFlags &= ~(ForumModelPostEntry::FLAG_POST_PASSES_FILTER | ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER);
+        }
+    }
+	else if(!strings.empty())
 	{
 		mPosts[i].mPostFlags &= ~(ForumModelPostEntry::FLAG_POST_PASSES_FILTER | ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER);
 
