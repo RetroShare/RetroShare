@@ -56,6 +56,7 @@ void PulseTopLevel::setup()
 	connect(toolButton_republish, SIGNAL(clicked()), this, SLOT(actionRepublish()));
 	connect(toolButton_like, SIGNAL(clicked()), this, SLOT(actionLike()));
 	connect(toolButton_view, SIGNAL(clicked()), this, SLOT(actionViewPulse()));
+	connect(toolButton_copyLink, SIGNAL(clicked()), this, SLOT(actionCopyLink()));
 }
 
 void PulseTopLevel::setRefMessage(QString /*msg*/, uint32_t /*image_count*/)

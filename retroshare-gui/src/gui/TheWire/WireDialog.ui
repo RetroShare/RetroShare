@@ -88,6 +88,20 @@
        </widget>
       </item>
       <item>
+       <widget class="QToolButton" name="toolButton_home">
+        <property name="text">
+         <string>Home</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/png/home.png</normaloff>:/icons/png/home.png</iconset>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -178,6 +192,16 @@
         </widget>
        </item>
        <item>
+        <widget class="QLineEdit" name="lineEdit_searchUsers">
+         <property name="placeholderText">
+          <string>Search...</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLabel" name="followLabel">
          <property name="font">
           <font>
@@ -224,7 +248,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="RSTabWidget" name="tabWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>3</horstretch>
@@ -431,6 +455,12 @@
    <class>RSComboBox</class>
    <extends>QComboBox</extends>
    <header>gui/common/RSComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>gui/common/RSTabWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

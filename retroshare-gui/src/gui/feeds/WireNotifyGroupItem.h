@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/WireGroupItem.h                                                 *
+ * gui/feeds/WireNotifyGroupItem.h                                                 *
  *                                                                             *
- * Copyright (c) 2020 Robert Fernie   <retroshare.project@gmail.com>           *
+ * Copyright (c) 2014, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,57 +18,57 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_WIRE_GROUP_ITEM_H
-#define MRK_WIRE_GROUP_ITEM_H
-
-#include "ui_WireGroupItem.h"
+#ifndef WIRENOTIFYGROUPITEM_H
+#define WIRENOTIFYGROUPITEM_H
 
 #include <retroshare/rswire.h>
+#include "gui/feeds/GxsGroupFeedItem.h"
 
-class WireGroupItem;
+namespace Ui {
+class WireNotifyGroupItem;
+}
 
-class WireGroupHolder
+class FeedHolder;
+
+class WireNotifyGroupItem : public GxsGroupFeedItem
 {
-public:
-	virtual ~WireGroupHolder() {}
-	virtual void subscribe(RsGxsGroupId &groupId) = 0;
-	virtual void unsubscribe(RsGxsGroupId &groupId) = 0;
-
-	virtual void notifyGroupSelection(WireGroupItem *item) = 0;
-};
-
-class WireGroupItem : public QWidget, private Ui::WireGroupItem
-{
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-	WireGroupItem(WireGroupHolder *holder, const RsWireGroup &grp);
+    /** Default Constructor */
+    WireNotifyGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate);
+    WireNotifyGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsWireGroup &group, bool isHome, bool autoUpdate);
+    ~WireNotifyGroupItem();
 
-	void removeItem();
+    bool setGroup(const RsWireGroup &group);
 
-	void setSelected(bool on);
-	bool isSelected();
-
-	const QPixmap *getPixmap();
-	RsGxsGroupId &groupId();
-	bool matchesFilter(const QString &filterText) const;
-
-private slots:
-	void show();
-	void subscribe();
-	void editGroupDetails();
+    uint64_t uniqueIdentifier() const override { return hash_64bits("WireNotifyGroupItem " + groupId().toStdString()) ; }
 
 protected:
-	void mousePressEvent(QMouseEvent *event);
+    /* FeedItem */
+    virtual void doExpand(bool open);
+
+    /* GxsGroupFeedItem */
+    virtual QString groupName();
+    virtual void loadGroup() override;
+    virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_WIRE; }
+
+private slots:
+    void toggle() override;
+    void subscribeWire();
+    void openWireGroup();
 
 private:
-	void setup();
-	void setGroupSet();
-	void setBackground(QColor color);
+    void fill();
+    void setup();
+    void addEventHandler();
 
-	WireGroupHolder *mHolder;
-	RsWireGroup mGroup;
-	bool mSelected;
+private:
+    RsWireGroup mGroup;
+
+    /** Qt Designer generated object */
+    Ui::WireNotifyGroupItem *ui;
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
-#endif
+#endif // WIRENOTIFYGROUPITEM_H

@@ -71,7 +71,9 @@ class BandwidthGraph;
 class MainPage;
 class NewsFeed;
 class UserNotify;
-
+#ifdef RS_USE_WIRE
+class WireDialog;
+#endif
 #ifdef MESSENGER_WINDOW
 class MessengerWindow;
 #endif
@@ -107,7 +109,10 @@ public:
         Posted             = 11, /** Posted links */
         People             = 12, /** People page. */
         Options            = 13, /** People page. */
-        Home               = 14  /** Home page. */
+        Home               = 14,  /** Home page. */
+#ifdef RS_USE_WIRE
+        Wire               = 15   /** Wire page. */
+#endif
     };
 
 
@@ -167,7 +172,9 @@ public:
 	 GxsChannelDialog  *gxschannelDialog ;
 	 GxsForumsDialog   *gxsforumDialog ;
 	 PostedDialog      *postedDialog;
-
+#ifdef RS_USE_WIRE
+     WireDialog        *wireDialog;
+#endif
 //    ForumsDialog      *forumsDialog;
 //    ChannelFeed       *channelFeed;
     Idle              *idle;

@@ -28,6 +28,7 @@
 
 #include "WireGroupDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/RetroShareLink.h"
 #include "gui/common/FilesDefs.h"
 #include "util/DateTime.h"
 
@@ -50,6 +51,7 @@ void PulseViewGroup::setup()
 {
     if (mGroup) {
         connect(followButton, SIGNAL(clicked()), this, SLOT(actionFollow()));
+        connect(toolButton_copyProfileLink, SIGNAL(clicked()), this, SLOT(actionCopyProfileLink()));
 
         label_groupName->setText("@" + QString::fromStdString(mGroup->mMeta.mGroupName));
         label_authorName->setText(BoldString(QString::fromStdString(mGroup->mMeta.mAuthorId.toStdString())));
@@ -110,11 +112,13 @@ void PulseViewGroup::setup()
             uint32_t replies = mGroup->mRefReplies;
             uint32_t republishes = mGroup->mRefRepublishes;
             uint32_t likes = mGroup->mRefLikes;
+            // uint32_t following = mGroup->mGroupFollowing; // TODO: field not yet in RsWireGroup
 
             label_extra_pulses->setText(BoldString(ToNumberUnits(pulses)));
             label_extra_replies->setText(BoldString(ToNumberUnits(replies)));
             label_extra_republishes->setText(BoldString(ToNumberUnits(republishes)));
             label_extra_likes->setText(BoldString(ToNumberUnits(likes)));
+            // label_extra_following->setText(BoldString(ToNumberUnits(following))); // TODO: enable when mGroupFollowing added
 
             // hide follow.
             widget_actions->setVisible(false);
@@ -153,6 +157,29 @@ void PulseViewGroup::actionFollow()
 
     if (mHolder) {
         mHolder->PVHfollow(groupId);
+    }
+}
+
+void PulseViewGroup::actionCopyProfileLink()
+{
+    std::cerr << "PulseViewGroup::actionCopyProfileLink()";
+    std::cerr << std::endl;
+
+    if (!mGroup) {
+        std::cerr << "PulseViewGroup::actionCopyProfileLink() GROUP invalid";
+        std::cerr << std::endl;
+        return;
+    }
+
+    RetroShareLink link = RetroShareLink::createGxsGroupLink(
+        RetroShareLink::TYPE_WIRE,
+        mGroup->mMeta.mGroupId,
+        QString::fromStdString(mGroup->mMeta.mGroupName));
+
+    if (link.valid()) {
+        QList<RetroShareLink> urls;
+        urls.push_back(link);
+        RSLinkClipboard::copyLinks(urls);
     }
 }
 

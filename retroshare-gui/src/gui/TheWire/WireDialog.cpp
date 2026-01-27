@@ -25,11 +25,16 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
+#include "gui/common/NotifyWidget.h"
+#include "gui/gxs/GxsStatisticsProvider.h"
+#include "gui/gxs/GxsGroupShareKey.h"
 
 #include "PulseViewGroup.h"
 #include "PulseReplySeperator.h"
+#include "WireUserNotify.h"
 
 #include "util/qtthreadsutils.h"
+#include "util/misc.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rswire.h>
@@ -55,11 +60,11 @@
 
 
 #define WIRE_TOKEN_TYPE_SUBSCRIBE_CHANGE 1
-
+#define TOKEN_TYPE_GROUP_SUMMARY    1
 
 /** Constructor */
 WireDialog::WireDialog(QWidget *parent)
-    : MainPage(parent), mGroupSet(GROUP_SET_ALL)
+    : GxsStatisticsProvider(rsWire, settingsGroupName(),parent, true), mGroupSet(GROUP_SET_ALL)
     , mAddDialog(nullptr), mGroupSelected(nullptr), mWireQueue(nullptr)
     , mHistoryIndex(-1), mEventHandlerId(0)
 {
@@ -67,9 +72,13 @@ WireDialog::WireDialog(QWidget *parent)
 
 	connect( ui.toolButton_createAccount, SIGNAL(clicked()), this, SLOT(createGroup()));
 	connect( ui.toolButton_createPulse, SIGNAL(clicked()), this, SLOT(createPulse()));
+	connect( ui.toolButton_home, SIGNAL(clicked()), this, SLOT(showHomeFeed()));
+	connect( ui.lineEdit_searchUsers, SIGNAL(textChanged(const QString&)), this, SLOT(filterUsers(const QString&)));
 
 	connect(ui.comboBox_groupSet, SIGNAL(currentIndexChanged(int)), this, SLOT(selectGroupSet(int)));
 	connect(ui.comboBox_filterTime, SIGNAL(currentIndexChanged(int)), this, SLOT(selectFilterTime(int)));
+
+	ui.comboBox_groupSet->hide();
 
 	connect( ui.toolButton_back, SIGNAL(clicked()), this, SLOT(back()));
 	connect( ui.toolButton_forward, SIGNAL(clicked()), this, SLOT(forward()));
@@ -82,6 +91,9 @@ WireDialog::WireDialog(QWidget *parent)
 
 	/* setup TokenQueue */
 	mWireQueue = new TokenQueue(rsWire->getTokenService(), this);
+	mCountChildMsgs = false;
+	mShouldUpdateGroupStatistics = false;
+	mDistSyncAllowed = true;
 
 	requestGroupData();
 
@@ -110,27 +122,50 @@ void WireDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 #endif
 
         // The following switch statements refresh the wire feed whenever there is a new event
+
+        std::cout<<"***************the wire event code is ************************* "<<std::endl;
         switch(e->mWireEventCode)
         {
+
+        case RsWireEventCode::READ_STATUS_CHANGED:
+            updateGroupStatisticsReal(e->mWireGroupId); // update the list immediately
+            std::cout<<"1"<<std::endl;
+            return;
+
+        case RsWireEventCode::STATISTICS_CHANGED:
+            std::cout<<"2"<<std::endl;
+
         case RsWireEventCode::NEW_POST:
+            std::cout<<"3"<<std::endl;
 
         case RsWireEventCode::NEW_REPLY:
+            std::cout<<"4"<<std::endl;
 
         case RsWireEventCode::NEW_LIKE:
+            std::cout<<"5"<<std::endl;
 
         case RsWireEventCode::NEW_REPUBLISH:
+            std::cout<<"6"<<std::endl;
 
         case RsWireEventCode::POST_UPDATED:
-
-        case RsWireEventCode::NEW_WIRE:
+            std::cout<<"7"<<std::endl;
 
         case RsWireEventCode::FOLLOW_STATUS_CHANGED:
+            std::cout<<"8"<<std::endl;
+
+        case RsWireEventCode::NEW_WIRE:
+            std::cout<<"9"<<std::endl;
+            updateGroupStatisticsReal(e->mWireGroupId);
+            break;
 
         default:
-            refreshGroups();
+#ifdef GXSWIRE_DEBUG
+                RsDbg() << " Unknown event occured: "<< e->mWireEventCode << std::endl;
+#endif
             break;
 
         }
+        refreshGroups();
     }
 }
 
@@ -140,11 +175,148 @@ WireDialog::~WireDialog()
 	processSettings(false);
 	
 	clearTwitterView();
-    std::cerr << "WireDialog::~WireDialog()" << std::endl;
     delete(mWireQueue);
 
     rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
+
+UserNotify *WireDialog::createUserNotify(QObject *parent)
+{
+    return new WireUserNotify(rsWire, this, parent);
+}
+
+//QString WireDialog::getHelpString() const
+//{
+//    int H = misc::getFontSizeFactor("HelpButton").height();
+
+//    QString hlp_str = tr(
+//        "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Boards</h1>"
+//        "<p>The wire service is a day to day social network service.</p>"
+//        "<p>The Wire service allows you to share your pulses, republish someone else's pulses, like "
+//        "a pulse.</p>"
+//        "<p>A pulse is like a channel or board post. It can be a image or a text or both. You can "
+//        "only see the pulses of the people you follow.</p>"
+//        "<p>Wire posts are kept for %2 days, and sync-ed over the last %3 days, unless you change this.</p>"
+//                        ).arg(  QString::number(2*H)
+//                              , QString::number(rsWire->getDefaultStoragePeriod()/86400)
+//                              , QString::number(rsWire->getDefaultSyncPeriod()/86400));
+
+//    return hlp_str ;
+//}
+
+//QString WireDialog::text(TextType type)
+//{
+//    switch (type) {
+//    case TEXT_NAME:
+//        return tr("Wire");
+//    case TEXT_NEW:
+//        return tr("Create Wire");
+
+//// Dont know what this does
+////	case TEXT_TODO:
+////		return "<b>Open points:</b><ul>"
+////		       "<li>Subreddits/tag to posts support"
+////		       "<li>Picture Support"
+////		       "<li>Navigate channel link"
+////		       "</ul>";
+
+//    case TEXT_YOUR_GROUP:
+//        return tr("My Wire");
+//    case TEXT_SUBSCRIBED_GROUP:
+//        return tr("Followed Wires");
+//    case TEXT_POPULAR_GROUP:
+//        return tr("Popular Wires");
+//    case TEXT_OTHER_GROUP:
+//        return tr("Other Wires");
+//    }
+
+//    return "";
+//}
+
+//QString WireDialog::icon(IconType type)
+//{
+//    switch (type) {
+//    case ICON_NAME:
+//        return ":/icons/png/postedlinks.png";
+//    case ICON_NEW:
+//        return ":/icons/png/add.png";
+//    case ICON_YOUR_GROUP:
+//        return "";
+//    case ICON_SUBSCRIBED_GROUP:
+//        return "";
+//    case ICON_POPULAR_GROUP:
+//        return "";
+//    case ICON_OTHER_GROUP:
+//        return "";
+//    case ICON_SEARCH:
+//        return ":/images/find.png";
+//    case ICON_DEFAULT:
+//        return ":/icons/png/posted.png";
+//    }
+
+//    return "";
+//}
+
+//bool WireDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
+//{
+//    std::vector<RsWireGroup> groups;
+
+//    // request all group infos at once
+
+//    if(! rsWire->getGroups(std::list<RsGxsGroupId>(),groups))
+//        return false;
+
+//    /* Save groups to fill icons and description */
+
+//    for (auto& group: groups)
+//       groupInfo.push_back(new RsWireGroup(group));
+
+//    return true;
+//}
+
+bool WireDialog::getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat)
+{
+    // What follows is a hack to replace the GXS group statistics by the actual count of unread messages in wire,
+    // which should take into account old post versions, discard replies and likes, etc.
+
+    RsWireStatistics s;
+    bool res = rsWire->getWireStatistics(groupId,s);
+
+    if(!res)
+        return false;
+
+    stat.mGrpId = groupId;
+    stat.mNumMsgs = s.mNumberOfPulses;
+
+    stat.mTotalSizeOfMsgs = 0;	// hopefuly unused. Required the loading of the full channel data, so not very convenient.
+    stat.mNumThreadMsgsNew = s.mNumberOfNewPulses;
+    stat.mNumThreadMsgsUnread = s.mNumberOfUnreadPulses;
+    stat.mNumChildMsgsNew = 0;
+    stat.mNumChildMsgsUnread = 0;
+
+    return true;
+}
+
+//GxsGroupDialog *WireDialog::createNewGroupDialog()
+//{
+//    return new WireGroupDialog(this);
+//}
+
+//GxsGroupDialog *WireDialog::createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
+//{
+//    return new WireGroupDialog(mode, groupId, this);
+//}
+
+//int WireDialog::shareKeyType()
+//{
+//    return GroupShareKey::NO_KEY_SHARE;
+//}
+
+//GxsMessageFrameWidget *WireDialog::createMessageFrameWidget(const RsGxsGroupId &groupId)
+//{
+//    // to do
+////	return new WireListWidgetWithModel(groupId);
+//}
 
 void WireDialog::processSettings(bool load)
 {
@@ -177,6 +349,33 @@ void WireDialog::refreshGroups()
 	requestGroupData();
 }
 
+void WireDialog::showHomeFeed()
+{
+	mGroupSet = GROUP_SET_SUBSCRIBED;
+	ui.comboBox_groupSet->setCurrentIndex(GROUP_SET_SUBSCRIBED);
+	mGroupSelected = nullptr;
+	showGroups();
+}
+
+void WireDialog::filterUsers(const QString &text)
+{
+	QLayout *alayout = ui.groupsWidget->layout();
+	QString filterText = text.toLower();
+
+	for (int i = 0; i < alayout->count(); ++i)
+	{
+		QLayoutItem *item = alayout->itemAt(i);
+		QWidget *widget = item->widget();
+		WireGroupItem *groupItem = dynamic_cast<WireGroupItem *>(widget);
+
+		if (groupItem)
+		{
+			bool visible = filterText.isEmpty() || groupItem->matchesFilter(filterText);
+			groupItem->setVisible(visible);
+		}
+	}
+}
+
 void WireDialog::addGroup(QWidget *item)
 {
 	QLayout *alayout = ui.groupsWidget->layout();
@@ -197,7 +396,7 @@ bool WireDialog::setupPulseAddDialog()
 	mAddDialog->cleanup();
 
 	int idx = ui.groupChooser->currentIndex();
-	if (idx < 0) {
+	if (idx < 0 || idx >= (int)mOwnGroups.size()) {
 		std::cerr << "WireDialog::setupPulseAddDialog() ERROR GETTING AuthorId!";
 		std::cerr << std::endl;
 
@@ -205,9 +404,8 @@ bool WireDialog::setupPulseAddDialog()
 		return false;
 	}
 
-	// publishing group.
 	RsWireGroup group = mOwnGroups[idx];
-	mAddDialog->setGroup(group.mMeta.mGroupId);
+	mAddDialog->setGroup(group);
 
 	return true;
 }
@@ -424,7 +622,6 @@ void WireDialog::showGroups()
 
 	std::list<RsGxsGroupId> allGroupIds;
 
-	/* depends on the comboBox */
 	for (auto &it : mAllGroups)
 	{
 		bool add = (mGroupSet == GROUP_SET_ALL);
@@ -446,9 +643,6 @@ void WireDialog::showGroups()
 
 		if (add) {
 			addGroup(it.second);
-			// request data.
-			std::list<RsGxsGroupId> grpIds;
-			grpIds.push_back(it.second.mMeta.mGroupId);
 			allGroupIds.push_back(it.second.mMeta.mGroupId);
 		}
 	}
@@ -475,13 +669,13 @@ bool WireDialog::loadGroupData(const uint32_t &token)
 	std::cerr << "WireDialog::loadGroupData()";
 	std::cerr << std::endl;
 
-    std::vector<RsWireGroup> groups;
-    rsWire->getGroupData(token, groups);
+	std::vector<RsWireGroup> groups;
+	rsWire->getGroupData(token, groups);
 
-    // save list of groups.
-    updateGroups(groups);
-    showGroups();
-    return true;
+	// save list of groups.
+	updateGroups(groups);
+	showGroups();
+	return true;
 }
 
 rstime_t WireDialog::getFilterTimestamp()
@@ -598,40 +792,106 @@ void WireDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 void WireDialog::PVHreply(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
 {
 	std::cerr << "WireDialog::PVHreply() GroupId: " << groupId;
-	std::cerr << "MsgId: " << msgId;
+	std::cerr << " MsgId: " << msgId;
 	std::cerr << std::endl;
 
 	if (setupPulseAddDialog())
 	{
 		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_REPLY);
-		mAddDialog->show();
 	}
 }
 
 void WireDialog::PVHrepublish(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
 {
 	std::cerr << "WireDialog::PVHrepublish() GroupId: " << groupId;
-	std::cerr << "MsgId: " << msgId;
+	std::cerr << " MsgId: " << msgId;
 	std::cerr << std::endl;
 
-	if (setupPulseAddDialog())
-	{
-		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_REPUBLISH);
-		mAddDialog->show();
+	int idx = ui.groupChooser->currentIndex();
+	if (idx < 0 || idx >= (int)mOwnGroups.size()) {
+		std::cerr << "WireDialog::PVHrepublish() No own group selected";
+		std::cerr << std::endl;
+		QMessageBox::warning(this, tr("RetroShare"), tr("Please select your Wire account first"), QMessageBox::Ok);
+		return;
 	}
+
+	RsGxsGroupId replyWith = mOwnGroups[idx].mMeta.mGroupId;
+	setCursor(Qt::WaitCursor);
+
+	RsThread::async([this, groupId, msgId, replyWith]()
+	{
+		RsWirePulseSPtr origPulse;
+		if (!rsWire->getWirePulse(groupId, msgId, origPulse))
+		{
+			std::cerr << "WireDialog::PVHrepublish() failed to fetch original pulse";
+			std::cerr << std::endl;
+			RsQThreadUtils::postToObject([this]()
+			{
+				setCursor(Qt::ArrowCursor);
+			}, this);
+			return;
+		}
+
+		RsWirePulseSPtr pPulse(new RsWirePulse());
+		pPulse->mSentiment = origPulse->mSentiment;
+		pPulse->mPulseText = origPulse->mPulseText;
+		pPulse->mImage1 = origPulse->mImage1;
+		pPulse->mImage2 = origPulse->mImage2;
+		pPulse->mImage3 = origPulse->mImage3;
+		pPulse->mImage4 = origPulse->mImage4;
+
+		RsGxsMessageId targetMsgId = origPulse->mMeta.mOrigMsgId;
+		if (targetMsgId.isNull()) {
+			targetMsgId = msgId;
+		}
+
+		bool success = rsWire->createReplyPulse(groupId, targetMsgId, replyWith,
+			WIRE_PULSE_TYPE_REPUBLISH, pPulse);
+
+		RsQThreadUtils::postToObject([this, success]()
+		{
+			setCursor(Qt::ArrowCursor);
+			if (!success) {
+				std::cerr << "WireDialog::PVHrepublish() FAILED" << std::endl;
+			}
+		}, this);
+	});
 }
 
 void WireDialog::PVHlike(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
 {
 	std::cerr << "WireDialog::PVHlike() GroupId: " << groupId;
-	std::cerr << "MsgId: " << msgId;
+	std::cerr << " MsgId: " << msgId;
 	std::cerr << std::endl;
 
-	if (setupPulseAddDialog())
-	{
-		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_LIKE);
-		mAddDialog->show();
+	int idx = ui.groupChooser->currentIndex();
+	if (idx < 0 || idx >= (int)mOwnGroups.size()) {
+		std::cerr << "WireDialog::PVHlike() No own group selected";
+		std::cerr << std::endl;
+		QMessageBox::warning(this, tr("RetroShare"), tr("Please select your Wire account first"), QMessageBox::Ok);
+		return;
 	}
+
+	RsGxsGroupId replyWith = mOwnGroups[idx].mMeta.mGroupId;
+	setCursor(Qt::WaitCursor);
+
+	RsThread::async([this, groupId, msgId, replyWith]()
+	{
+		RsWirePulseSPtr pPulse(new RsWirePulse());
+		pPulse->mSentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
+		pPulse->mPulseText = "";
+
+		bool success = rsWire->createReplyPulse(groupId, msgId, replyWith,
+			WIRE_PULSE_TYPE_LIKE, pPulse);
+
+		RsQThreadUtils::postToObject([this, success]()
+		{
+			setCursor(Qt::ArrowCursor);
+			if (!success) {
+				std::cerr << "WireDialog::PVHlike() FAILED" << std::endl;
+			}
+		}, this);
+	});
 }
 
 void WireDialog::PVHviewGroup(const RsGxsGroupId &groupId)
@@ -689,7 +949,6 @@ void WireDialog::PVHrate(const RsGxsId &authorId)
 void WireDialog::postTestTwitterView()
 {
 	clearTwitterView();
-    std::cerr << "WireDialog::postTestTwitterView()" << std::endl;
 
 	addTwitterView(new PulseTopLevel(NULL,RsWirePulseSPtr())); 
 	addTwitterView(new PulseReply(NULL,RsWirePulseSPtr()));
@@ -846,7 +1105,6 @@ void WireDialog::requestPulseFocus(const RsGxsGroupId groupId, const RsGxsMessag
 void WireDialog::showPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId msgId)
 {
 	clearTwitterView();
-    std::cerr << "WireDialog::showPulseFocus()" << std::endl;
 
 	// background thread for loading.
 	RsThread::async([this, groupId, msgId]()
@@ -876,8 +1134,6 @@ void WireDialog::showPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId
 void WireDialog::postPulseFocus(RsWirePulseSPtr pPulse)
 {
 	clearTwitterView();
-    std::cerr << "WireDialog::postPulseFocus()" << std::endl;
-
 	if (!pPulse)
 	{
 		std::cerr << "WireDialog::postPulseFocus() Invalid pulse";
@@ -950,7 +1206,7 @@ void WireDialog::requestGroupFocus(const RsGxsGroupId groupId)
 void WireDialog::showGroupFocus(const RsGxsGroupId groupId)
 {
 	clearTwitterView();
-    std::cerr << "WireDialog::showGroupFocus()" << std::endl;
+
 	// background thread for loading.
 	RsThread::async([this, groupId]()
 	{
@@ -980,6 +1236,8 @@ void WireDialog::showGroupFocus(const RsGxsGroupId groupId)
 
 void WireDialog::postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr> pulses)
 {
+    clearTwitterView();
+
 	std::cerr << "WireDialog::postGroupFocus()";
 	std::cerr << std::endl;
 
@@ -1027,7 +1285,6 @@ void WireDialog::requestGroupsPulses(const std::list<RsGxsGroupId>& groupIds)
 void WireDialog::showGroupsPulses(const std::list<RsGxsGroupId>& groupIds)
 {
 	clearTwitterView();
-    std::cerr << "WireDialog::showGroupPulses()" << std::endl;
 
 	// background thread for loading.
 	RsThread::async([this, groupIds]()
@@ -1054,6 +1311,7 @@ void WireDialog::showGroupsPulses(const std::list<RsGxsGroupId>& groupIds)
 
 void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
 {
+    clearTwitterView();
 	std::cerr << "WireDialog::postGroupsPulses()";
 	std::cerr << std::endl;
 
@@ -1077,3 +1335,167 @@ void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
 
 	}
 }
+
+void WireDialog::getServiceStatistics(GxsServiceStatistic& stats) const
+{
+    std::cout<<"inside the getServiceStatics *********"<<std::endl;
+    if(!mCachedGroupStats.empty())
+    {
+        stats = GxsServiceStatistic(); // clears everything
+
+        for(auto& it:  mCachedGroupStats)
+        {
+            const GxsGroupStatistic& s(it.second);
+
+            stats.mNumMsgs             += s.mNumMsgs;
+            stats.mNumGrps             += 1;
+            stats.mSizeOfMsgs          += s.mTotalSizeOfMsgs;
+            stats.mNumThreadMsgsNew    += s.mNumThreadMsgsNew;
+            stats.mNumThreadMsgsUnread += s.mNumThreadMsgsUnread;
+            stats.mNumChildMsgsNew     += s.mNumChildMsgsNew ;
+            stats.mNumChildMsgsUnread  += s.mNumChildMsgsUnread ;
+            std::cout<<stats.mNumMsgs  <<std::endl;
+            std::cout<<stats.mNumGrps  <<std::endl;
+            std::cout<<stats.mSizeOfMsgs  <<std::endl;
+            std::cout<<stats.mNumThreadMsgsNew  <<std::endl;
+            std::cout<<stats.mNumThreadMsgsUnread  <<std::endl;
+            std::cout<<stats.mNumChildMsgsNew  <<std::endl;
+            std::cout<<stats.mNumChildMsgsUnread   <<std::endl;
+        }
+
+        // Also save the service statistics in conf file, so that we can display it right away at start.
+
+        Settings->beginGroup(mSettingsName);
+        Settings->setValue("NumMsgs",            stats.mNumMsgs            );
+        Settings->setValue("NumGrps",            stats.mNumGrps            );
+        Settings->setValue("SizeOfMessages",     stats.mSizeOfMsgs         );
+        Settings->setValue("NumThreadMsgsNew",   stats.mNumThreadMsgsNew   );
+        Settings->setValue("NumThreadMsgsUnread",stats.mNumThreadMsgsUnread);
+        Settings->setValue("NumChildMsgsNew",    stats.mNumChildMsgsNew    );
+        Settings->setValue("NumChildMsgsUnread", stats.mNumChildMsgsUnread );
+        Settings->endGroup();
+    }
+    else	// Get statistics from settings if no cache is already present: allows to display at start.
+    {
+        Settings->beginGroup(mSettingsName);
+
+        stats.mNumMsgs             = Settings->value("NumMsgs",QVariant(0)).toInt();
+        stats.mNumGrps             = Settings->value("NumGrps",QVariant(0)).toInt();
+        stats.mSizeOfMsgs          = Settings->value("SizeOfMessages",QVariant(0)).toInt();
+        stats.mNumThreadMsgsNew    = Settings->value("NumThreadMsgsNew",QVariant(0)).toInt();
+        stats.mNumThreadMsgsUnread = Settings->value("NumThreadMsgsUnread",QVariant(0)).toInt();
+        stats.mNumChildMsgsNew     = Settings->value("NumChildMsgsNew",QVariant(0)).toInt();
+        stats.mNumChildMsgsUnread  = Settings->value("NumChildMsgsUnread",QVariant(0)).toInt();
+
+        Settings->endGroup();
+    }
+}
+
+void WireDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
+{
+    mGroupStatisticsToUpdate.insert(groupId);
+    mShouldUpdateGroupStatistics = true;
+}
+
+void WireDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
+{
+    RsThread::async([this,groupId]()
+    {
+        GxsGroupStatistic stats;
+
+        if(! getGroupStatistics(groupId, stats))
+        {
+            std::cerr << __PRETTY_FUNCTION__ << " failed to collect group statistics for group " << groupId << std::endl;
+            return;
+        }
+
+        RsQThreadUtils::postToObject( [this,stats, groupId]()
+        {
+            /* Here it goes any code you want to be executed on the Qt Gui
+             * thread, for example to update the data model with new information
+             * after a blocking call to RetroShare API complete, note that
+             * Qt::QueuedConnection is important!
+             */
+
+//            QTreeWidgetItem *item = ui.scrollAreaWidgetContents->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
+
+//            if (item)
+//                ui.scrollAreaWidgetContents->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+
+            mCachedGroupStats[groupId] = stats;
+
+            getUserNotify()->updateIcon();
+
+        }, this );
+    });
+}
+
+bool WireDialog::navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId)
+{
+    if (groupId.isNull()) {
+        return false;
+    }
+
+    if (!msgId.isNull()) {
+        requestPulseFocus(groupId, msgId);
+    } else {
+        requestGroupFocus(groupId);
+    }
+
+    return true;
+}
+
+GxsMessageFrameWidget *WireDialog::messageWidget(const RsGxsGroupId &groupId)
+{
+//    int tabCount = ui.tabWidget->count();
+
+//    for (int index = 0; index < tabCount; ++index)
+//    {
+//        GxsMessageFrameWidget *childWidget = dynamic_cast<GxsMessageFrameWidget*>(ui.tabWidget->widget(index));
+
+//        if (childWidget && childWidget->groupId() == groupId)
+//            return childWidget;
+//    }
+
+    return NULL;
+}
+
+//void GxsGroupFrameDialog::changedCurrentGroup(const QString& groupId)
+//{
+//	if (mInFill) {
+//		return;
+//	}
+
+//	if (groupId.isEmpty())
+//    {
+//        auto w = currentWidget();
+
+//        if(w)
+//			w->setGroupId(RsGxsGroupId());
+
+//		return;
+//	}
+
+//	mGroupId = RsGxsGroupId(groupId.toStdString());
+
+//	if (mGroupId.isNull())
+//		return;
+
+//	/* search exisiting tab */
+//	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId);
+
+//    // check that we have at least one tab
+
+//	if(msgWidget)
+//		ui.messageTabWidget->setCurrentWidget(msgWidget);
+//    else
+//    {
+//        if(useTabs() || ui.messageTabWidget->count()==0)
+//        {
+//			msgWidget = createMessageWidget(RsGxsGroupId(groupId.toStdString()));
+//			ui.messageTabWidget->setCurrentWidget(msgWidget);
+//		}
+//        else
+//			currentWidget()->setGroupId(mGroupId);
+//	}
+//}

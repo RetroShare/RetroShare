@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseViewGroup.h                                                *
+ * retroshare-gui/src/gui/TheWire/WireUserNotify.h                             *
  *                                                                             *
- * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ * Copyright (C) 2014 by Retroshare Team     <retroshare.project@gmail.com>    *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,34 +18,28 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_VIEW_GROUP_H
-#define MRK_PULSE_VIEW_GROUP_H
+#ifndef WIREUSERNOTIFY_H
+#define WIREUSERNOTIFY_H
 
-#include "ui_PulseViewGroup.h"
+#include "gui/gxs/GxsUserNotify.h"
 
-#include "PulseViewItem.h"
-#include <retroshare/rswire.h>
-
-class PulseViewGroup : public PulseViewItem, private Ui::PulseViewGroup
+class WireUserNotify : public GxsUserNotify
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-	PulseViewGroup(PulseViewHolder *holder, RsWireGroupSPtr group);
+    explicit WireUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsStatisticsProvider *g, QObject *parent = 0);
 
-private slots:
-	void actionFollow();
-	void actionCopyProfileLink();
-	void editProfile();
-
-protected:
-	void setup();
+    virtual bool hasSetting(QString *name, QString *group) override;
 
 private:
-	void setGroupSet();
+    virtual QIcon getIcon() override;
+    virtual QIcon getMainIcon(bool hasNew) override;
 
-protected:
-	RsWireGroupSPtr mGroup;
+    //virtual QString getTrayMessage(bool plural) override;
+    //virtual QString getNotifyMessage(bool plural) override;
+
+    virtual void iconClicked() override;
 };
 
-#endif
+#endif // WIREUSERNOTIFY_H
