@@ -1829,7 +1829,36 @@ void GxsForumThreadWidget::filterItems(const QString& text)
     int filterColumn = ui->filterLineEdit->currentFilter();
 
     uint32_t count;
-    mThreadModel->setFilter(filterColumn,lst,count) ;
+    if(filterColumn == RsGxsForumModel::COLUMN_THREAD_CONTENT)
+    {
+        std::set<RsGxsMessageId> ids;
+        std::vector<RsGxsSearchResult> results;
+
+        if(!lst.empty()) {
+#ifdef RS_DEEP_FORUMS_INDEX
+            std::cerr << "DEBUG: RS_DEEP_FORUMS_INDEX is DEFINED." << std::endl;
+#else
+            std::cerr << "DEBUG: RS_DEEP_FORUMS_INDEX is NOT DEFINED." << std::endl;
+#endif
+            rsGxsForums->localSearch(text.toStdString(), results);
+
+            std::cerr << "DEBUG Content Search: " << text.toStdString() << " returned " << results.size() << " results." << std::endl;
+
+            for(const auto& res : results) {
+                // std::cerr << "DEBUG Result: GroupId=" << res.mGroupId.toStdString() << " MsgId=" << res.mMsgId.toStdString() << std::endl;
+                if(res.mGroupId == groupId() && !res.mMsgId.isNull()) {
+                    ids.insert(res.mMsgId);
+                }
+            }
+            std::cerr << "DEBUG Content Search: Matched " << ids.size() << " messages in current group." << std::endl;
+
+        }
+        mThreadModel->setContentFilter(ids, lst, count);
+    }
+    else
+    {
+        mThreadModel->setFilter(filterColumn,lst,count) ;
+    }
 
     // We do this in order to trigger a new filtering action in the proxy model.
     QSortFilterProxyModel_setFilterRegularExpression(mThreadProxyModel, QString(RsGxsForumModel::FilterString)) ;
