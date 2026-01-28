@@ -18,6 +18,9 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <QToolButton>
+#include <QMessageBox>
+#include "ui_GxsGroupFrameDialog.h"
 #include "GxsForumsDialog.h"
 #include "GxsForumGroupDialog.h"
 #include "GxsForumThreadWidget.h"
