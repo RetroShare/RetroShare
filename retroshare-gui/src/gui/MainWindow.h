@@ -107,7 +107,8 @@ public:
         Posted             = 11, /** Posted links */
         People             = 12, /** People page. */
         Options            = 13, /** People page. */
-        Home               = 14  /** Home page. */
+        Home               = 14, /** Home page. */
+        Wiki               = 15  /** Wiki page. */
     };
 
 

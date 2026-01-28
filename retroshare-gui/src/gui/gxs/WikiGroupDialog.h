@@ -21,6 +21,10 @@
 #ifndef _WIKI_GROUP_DIALOG_H
 #define _WIKI_GROUP_DIALOG_H
 
+#include <QGroupBox>
+#include <QListWidget>
+#include <QPushButton>
+
 #include "GxsGroupDialog.h"
 #include "retroshare/rswiki.h"
 
@@ -41,10 +45,25 @@ protected:
 	virtual bool service_getGroupData(const RsGxsGroupId &groupId, RsGxsGenericGroupData *&data) override;
 
 private:
+	void loadModerators(const RsGxsGroupId &groupId);
+	void addModeratorToList(const RsGxsId &gxsId);
+	void updateModeratorControls();
 
+private slots:
+	void addModerator();
+	void removeModerator();
+
+private:
     RsWikiCollection mGrp;
+	RsGxsGroupId mCurrentGroupId;
+	RsGroupMetaData mGroupMeta;
+
+	QWidget *mModeratorsWidget = nullptr;
+	QGroupBox *mModeratorsGroup = nullptr;
+	QListWidget *mModeratorsList = nullptr;
+	QPushButton *mAddModeratorButton = nullptr;
+	QPushButton *mRemoveModeratorButton = nullptr;
 
 };
 
 #endif
-
