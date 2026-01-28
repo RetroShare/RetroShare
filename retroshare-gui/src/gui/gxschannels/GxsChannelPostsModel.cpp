@@ -40,6 +40,7 @@
 
 //#define DEBUG_CHANNEL_MODEL_DATA
 //#define DEBUG_CHANNEL_MODEL
+//#define GXSPROFILING
 
 Q_DECLARE_METATYPE(RsMsgMetaData)
 Q_DECLARE_METATYPE(RsGxsChannelPost)
@@ -529,8 +530,10 @@ void RsGxsChannelPostsModel::updateSinglePost(const RsGxsChannelPost& post,std::
 
 void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>& posts)
 {
+#ifdef GXSPROFILING
     // Start timer to measure UI thread work
     auto startTime = std::chrono::steady_clock::now();
+#endif
 
     preMods();
 
@@ -554,10 +557,12 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
 
     postMods();
 
+#ifdef GXSPROFILING
     auto endTime = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
 
-    RsDbg() << "DEBUG [UI-MODEL]: setPosts (UI Thread sorting/reset) took: " << duration << " ms for " << mPosts.size() << " posts";
+    RsDbg() << "GXSPROFILING [UI-MODEL]: setPosts (UI Thread sorting/reset) took: " << duration << " ms for " << mPosts.size() << " posts";
+#endif
 
     emit channelPostsLoaded();
 }
@@ -567,16 +572,24 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
     if(group_id.isNull())
         return;
 
+#ifdef GXSPROFILING
     // Start global timer for the loading process
     auto totalRequestStart = std::chrono::steady_clock::now();
 
-    RsDbg() << "DEBUG [UI-LOAD]: Starting update_posts for group: " << group_id;
+    RsDbg() << "GXSPROFILING [UI-LOAD]: Starting update_posts for group: " << group_id;
+#endif
 
     MainWindow::getPage(MainWindow::Channels)->setCursor(Qt::WaitCursor);
 
-    RsThread::async([this, group_id, totalRequestStart]()
+    RsThread::async([this, group_id
+#ifdef GXSPROFILING
+                     , totalRequestStart
+#endif
+                    ]()
     {
+#ifdef GXSPROFILING
         auto fetchStart = std::chrono::steady_clock::now();
+#endif
 
         std::list<RsGxsGroupId> channelIds;
         std::vector<RsGxsChannelGroup> groups;
@@ -603,25 +616,35 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
             return;
         }
 
+#ifdef GXSPROFILING
         auto fetchEnd = std::chrono::steady_clock::now();
         auto fetchMs = std::chrono::duration_cast<std::chrono::milliseconds>(fetchEnd - fetchStart).count();
 
-        RsDbg() << "DEBUG [UI-LOAD]: Backend fetch finished. Items: " << posts->size() 
+        RsDbg() << "GXSPROFILING [UI-LOAD]: Backend fetch finished. Items: " << posts->size() 
                 << " posts. Time: " << fetchMs << " ms";
+#endif
 
         // Return to UI thread for model update
-        RsQThreadUtils::postToObject( [group, posts, this, totalRequestStart]()
+        RsQThreadUtils::postToObject( [group, posts, this
+#ifdef GXSPROFILING
+                                       , totalRequestStart
+#endif
+                                      ]()
         {
+#ifdef GXSPROFILING
             auto uiUpdateStart = std::chrono::steady_clock::now();
+#endif
 
             setPosts(group, *posts);
 
+#ifdef GXSPROFILING
             auto now = std::chrono::steady_clock::now();
             auto totalMs = std::chrono::duration_cast<std::chrono::milliseconds>(now - totalRequestStart).count();
             auto uiDispatchMs = std::chrono::duration_cast<std::chrono::milliseconds>(now - uiUpdateStart).count();
 
-            RsDbg() << "DEBUG [UI-LOAD]: UI model update finished. Dispatch/Update time: " << uiDispatchMs << " ms";
-            RsDbg() << "DEBUG [UI-LOAD]: TOTAL LOADING TIME (User perceived): " << totalMs << " ms";
+            RsDbg() << "GXSPROFILING [UI-LOAD]: UI model update finished. Dispatch/Update time: " << uiDispatchMs << " ms";
+            RsDbg() << "GXSPROFILING [UI-LOAD]: TOTAL LOADING TIME (User perceived): " << totalMs << " ms";
+#endif
 
             delete posts;
             MainWindow::getPage(MainWindow::Channels)->setCursor(Qt::ArrowCursor);
@@ -632,10 +655,12 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 
 void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
 {
+#ifdef GXSPROFILING
     // Start timer to measure how long the UI thread is occupied
     auto startTime = std::chrono::steady_clock::now();
 
-    RsDbg() << "DEBUG [UI-CHANNELS]: Starting setAllMsgReadStatus for " << mPosts.size() << " messages";
+    RsDbg() << "GXSPROFILING [UI-CHANNELS]: Starting setAllMsgReadStatus for " << mPosts.size() << " messages";
+#endif
 
     // 1 - copy all msg/grp id groups
     // This part is done on the UI thread and can be slow if mPosts is large
@@ -649,7 +674,9 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
             pairs.push_back(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId, mPosts[i].mMeta.mMsgId));
     }
 
-    RsDbg() << "DEBUG [UI-CHANNELS]: Found " << pairs.size() << " messages requiring status change";
+#ifdef GXSPROFILING
+    RsDbg() << "GXSPROFILING [UI-CHANNELS]: Found " << pairs.size() << " messages requiring status change";
+#endif
 
     // 2 - then call the async methods
     // We are launching N threads. The overhead of creating these threads 
@@ -662,9 +689,11 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
                 RsErr() << "setAllMsgReadStatus: failed to change status of msg " << p.first << " in group " << p.second << " to status " << read_status << std::endl;
         });
 
+#ifdef GXSPROFILING
         if (i > 0 && i % 1000 == 0) {
-            RsDbg() << "DEBUG [UI-CHANNELS]: Launched " << i << " async threads...";
+            RsDbg() << "GXSPROFILING [UI-CHANNELS]: Launched " << i << " async threads...";
         }
+#endif
     }
 
     // 3 - update the local model data
@@ -678,11 +707,13 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
     }
 
     // Calculate total time spent in this function before returning control to the UI
+#ifdef GXSPROFILING
     auto endTime = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
 
-    RsDbg() << "DEBUG [UI-CHANNELS]: Finished setAllMsgReadStatus";
-    RsDbg() << "DEBUG [UI-CHANNELS]: TOTAL UI THREAD FREEZE: " << duration << " ms";
+    RsDbg() << "GXSPROFILING [UI-CHANNELS]: Finished setAllMsgReadStatus";
+    RsDbg() << "GXSPROFILING [UI-CHANNELS]: TOTAL UI THREAD FREEZE: " << duration << " ms";
+#endif
 
     emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1, mColumns-1, (void*)NULL));
 }
