@@ -160,6 +160,7 @@ private slots:
 
 	void filterColumnChanged(int column);
 	void filterItems(const QString &text);
+	void triggerSearch();
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
 	void expandSubtree();
@@ -215,6 +216,7 @@ private:
 	unsigned int mUnreadCount;
 	unsigned int mNewCount;
 	bool mDisplayBannedText;
+	bool mForceSearch;
 
 	/* Color definitions (for standard see default.qss) */
 	QColor mTextColorRead;
