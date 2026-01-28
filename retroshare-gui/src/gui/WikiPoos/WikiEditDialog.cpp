@@ -137,10 +137,11 @@ void WikiEditDialog::generateMerge()
 		return;
 	}
 
-	RsThread::async([this, selectedEditIds]()
+	const RsGxsGroupId groupId = mThreadMsgIdPair.first;
+	RsThread::async([this, selectedEditIds, groupId]()
 	{
 		std::map<RsGxsMessageId, std::string> contents;
-		const bool success = rsWiki->getSnapshotsContent(selectedEditIds, contents);
+		const bool success = rsWiki->getSnapshotsContent(groupId, selectedEditIds, contents);
 		RsQThreadUtils::postToObject([this, selectedEditIds, contents, success]()
 		{
 			if (!success || contents.empty())
