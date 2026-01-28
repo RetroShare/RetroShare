@@ -43,7 +43,7 @@ std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsew
 const QString RsGxsForumModel::FilterString("filtered");
 
 RsGxsForumModel::RsGxsForumModel(QObject *parent)
-    : QAbstractItemModel(parent), mUseChildTS(false),mFilteringEnabled(false),mTreeMode(TREE_MODE_TREE)
+    : QAbstractItemModel(parent), mUseChildTS(false),mFilteringEnabled(false),mContentFilteringEnabled(false),mTreeMode(TREE_MODE_TREE)
 {
     initEmptyHierarchy(mPosts);
     mFont = QApplication::font();
@@ -484,11 +484,12 @@ uint32_t RsGxsForumModel::recursUpdateFilterStatus(ForumModelIndex i,int column,
 		break;
 	}
 
-	// std::cerr << "DEBUG Content Filter: " << mContentFilteringEnabled << " IDs: " << mContentFilterIds.size() << " Current: " << mPosts[i].mMsgId.toStdString() << " Match: " << (mContentFilterIds.find(mPosts[i].mMsgId) != mContentFilterIds.end()) << std::endl;
-
 	if(mContentFilteringEnabled)
     {
-        if(mContentFilterIds.find(mPosts[i].mMsgId) != mContentFilterIds.end())
+        bool found = (mContentFilterIds.find(mPosts[i].mMsgId) != mContentFilterIds.end());
+        if (mPosts[i].mMsgId.isNull()) found = false; // dummy root
+        
+        if(found)
         {
             mPosts[i].mPostFlags |= ForumModelPostEntry::FLAG_POST_PASSES_FILTER | ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER;
             count++;
@@ -533,6 +534,10 @@ uint32_t RsGxsForumModel::recursUpdateFilterStatus(ForumModelIndex i,int column,
 void RsGxsForumModel::setFilter(int column,const QStringList& strings,uint32_t& count)
 {
     preMods();
+
+    if (column != COLUMN_THREAD_CONTENT) {
+        mContentFilteringEnabled = false;
+    }
 
     if(!strings.empty())
     {
@@ -1077,4 +1082,10 @@ void RsGxsForumModel::setAuthorOpinion(const QModelIndex& indx, RsOpinion op)
 			// notify the widgets that the data has changed.
 			emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
         }
+}
+void RsGxsForumModel::setContentFilter(const std::set<RsGxsMessageId>& ids, const QStringList& filterStrings, uint32_t& count)
+{
+    mContentFilteringEnabled = true;
+    mContentFilterIds = ids;
+    setFilter(COLUMN_THREAD_CONTENT, filterStrings, count);
 }
