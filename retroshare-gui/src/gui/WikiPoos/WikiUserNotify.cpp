@@ -51,8 +51,8 @@ void WikiUserNotify::startUpdate()
 		
 		if (wikiService && wikiService->getWikiStatistics(stats))
 		{
-			// Count new messages (both thread messages and child messages/comments)
-			mNewCount = stats.mNumThreadMsgsNew + stats.mNumChildMsgsNew;
+			// Count unread messages (both thread messages and child messages/comments)
+			mNewCount = stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread;
 		}
 	}
 	

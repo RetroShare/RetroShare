@@ -185,7 +185,7 @@ void WikiEditDialog::textReset()
 
 	mTextChanged = false;
 	ui.pushButton_Revert->setEnabled(false);
-	ui.postButton->setEnabled(false);
+	ui.postButton->setEnabled(mRepublishMode);
 	ui.label_Status->setText("Original");
 
 	// Enable Selection in Edit History.
@@ -480,6 +480,7 @@ void WikiEditDialog::setRepublishMode(RsGxsMessageId &origMsgId)
 	mRepublishMode = true;
 	mRepublishOrigId = origMsgId;
 	ui.postButton->setText(tr("Republish"));
+	ui.postButton->setEnabled(true);
 	/* No need for for REQUIRED ID */
 	ui.comboBox_IdChooser->loadIds(0, RsGxsId());
 }
