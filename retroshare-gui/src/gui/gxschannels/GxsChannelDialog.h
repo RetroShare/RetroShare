@@ -86,6 +86,11 @@ private:
     std::set<TurtleRequestId> mSearchResults;
 
     RsEventsHandlerId_t mEventHandlerId;
+
+    QTimer *mUpdateTimer;
+
+private slots:
+    void timerUpdate() { updateDisplay(true); }
 };
 
 #endif

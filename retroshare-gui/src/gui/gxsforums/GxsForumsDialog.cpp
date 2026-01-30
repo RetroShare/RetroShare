@@ -47,6 +47,9 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent) :
 	            [this](std::shared_ptr<const RsEvent> event)
 	{ RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); },
 	            mEventHandlerId, RsEventType::GXS_FORUMS );
+    mUpdateTimer = new QTimer(this);
+    mUpdateTimer->setSingleShot(true);
+    connect(mUpdateTimer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
 }
 
 void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -70,11 +73,11 @@ void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
         case RsForumEventCode::UPDATED_FORUM:       // [[fallthrough]];
         case RsForumEventCode::DELETED_FORUM:       // [[fallthrough]];
         case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
-            updateDisplay(true);
+            if(!mUpdateTimer->isActive()) mUpdateTimer->start(200);
             break;
 
         case RsForumEventCode::STATISTICS_CHANGED:
-	    updateDisplay(true);
+            if(!mUpdateTimer->isActive()) mUpdateTimer->start(200);
             updateGroupStatisticsReal(e->mForumGroupId);
             break;
 

@@ -57,6 +57,9 @@ GxsChannelDialog::GxsChannelDialog(QWidget *parent):
 	            [this](std::shared_ptr<const RsEvent> event)
 	{ RsQThreadUtils::postToObject([=]() { handleEvent_main_thread(event); }, this ); },
 	            mEventHandlerId, RsEventType::GXS_CHANNELS );
+    mUpdateTimer = new QTimer(this);
+    mUpdateTimer->setSingleShot(true);
+    connect(mUpdateTimer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
 }
 
 void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -67,7 +70,7 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
         switch(e->mChannelEventCode)
         {
         case RsChannelEventCode::STATISTICS_CHANGED:      // [[fallthrough]];
-            updateDisplay(true);                          // no breaks, on purpose!
+            if(!mUpdateTimer->isActive()) mUpdateTimer->start(200);
             Q_FALLTHROUGH();
 
         case RsChannelEventCode::NEW_MESSAGE:             // [[fallthrough]];
@@ -82,7 +85,7 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
         case RsChannelEventCode::NEW_CHANNEL:             // [[fallthrough]];
         case RsChannelEventCode::DELETED_CHANNEL:             // [[fallthrough]];
         case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:// reloads group summary (calling GxsGroupFrameDialog parent method)
-            updateDisplay(true);
+            if(!mUpdateTimer->isActive()) mUpdateTimer->start(200);
             break;
 
         default:

@@ -451,6 +451,9 @@ IdDialog::IdDialog(QWidget *parent)
     updateIdTimer.setSingleShot(true);
 	connect(&updateIdTimer, SIGNAL(timeout()), this, SLOT(updateIdList()));
 
+    updateCirclesTimer.setSingleShot(true);
+	connect(&updateCirclesTimer, SIGNAL(timeout()), this, SLOT(updateCircles()));
+
     mFontSizeHandler.registerFontSize(ui->idTreeWidget, 0, [this] (QAbstractItemView*, int fontSize) {
         // Set new font size on all items
         mIdListModel->setFontSize(fontSize);
@@ -540,7 +543,10 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		case RsGxsCircleEventCode::CACHE_DATA_UPDATED:
 
 			if (isVisible())
-                updateCircles();
+            {
+                if(!updateCirclesTimer.isActive())
+                    updateCirclesTimer.start(200);
+            }
 			else
 				needUpdateCirclesOnNextShow = true;
 		default:
@@ -1426,13 +1432,11 @@ void IdDialog::updateIdListRequest()
 {
     if(updateIdTimer.isActive())
     {
-        std::cerr << "updateIdListRequest(): restarting timer"<< std::endl;
         updateIdTimer.stop();
         updateIdTimer.start(1000);
     }
     else
     {
-        std::cerr << "updateIdListRequest(): starting timer"<< std::endl;
         updateIdTimer.start(1000);
     }
 }
