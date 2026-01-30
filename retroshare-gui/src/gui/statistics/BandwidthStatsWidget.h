@@ -42,12 +42,14 @@ protected slots:
     void toggleLogScale(bool b);
     void updateLegendType(int n);
     void updateGraphSelection(int n);
+    void updateCumulativeLabel();
 
 private:
     void processSettings(bool bLoad);
     bool m_bProcessSettings;
 
     Ui::BwStatsWidget ui;
+    QLabel *cumulativeTotalLabel;
 
     QTimer *mTimer ;
 };

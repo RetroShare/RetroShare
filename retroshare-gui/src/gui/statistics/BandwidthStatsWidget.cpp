@@ -20,8 +20,11 @@
 
 #include <QComboBox>
 #include <QTimer>
+#include <QLabel>
+#include <QVBoxLayout>
 
 #include "retroshare/rspeers.h"
+#include "retroshare/rsconfig.h"
 #include "retroshare/rsservicecontrol.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "gui/settings/rsharesettings.h"
@@ -70,8 +73,25 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
 
     mTimer = new QTimer(this) ;
     connect(mTimer, SIGNAL(timeout()), this, SLOT(updateComboBoxes())) ;
+    connect(mTimer, SIGNAL(timeout()), this, SLOT(updateCumulativeLabel())) ;
     mTimer->setSingleShot(false) ;
     mTimer->start(2000) ;
+    
+    // Create cumulative totals label
+    cumulativeTotalLabel = new QLabel(this);
+    cumulativeTotalLabel->setText(tr("Cumulative Total: ↓ 0 B  ↑ 0 B"));
+    cumulativeTotalLabel->setAlignment(Qt::AlignCenter);
+    QFont labelFont = cumulativeTotalLabel->font();
+    labelFont.setPointSize(10);
+    labelFont.setBold(true);
+    cumulativeTotalLabel->setFont(labelFont);
+    cumulativeTotalLabel->setStyleSheet("QLabel { padding: 5px; background-color: palette(window); }");
+    
+    // Insert label into layout (between graph and controls)
+    QVBoxLayout *mainLayout = qobject_cast<QVBoxLayout*>(layout());
+    if (mainLayout) {
+        mainLayout->insertWidget(1, cumulativeTotalLabel);
+    }
 
     // load settings
     processSettings(true);
@@ -287,4 +307,37 @@ void BandwidthStatsWidget::updateGraphSelection(int n)
 		ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
 	else
 		ui.bwgraph_BW->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
+}
+
+void BandwidthStatsWidget::updateCumulativeLabel()
+{
+	if(!isVisible() || !cumulativeTotalLabel)
+		return;
+	
+	if(!rsConfig)
+		return;
+	
+	// Helper lambda for formatting bytes
+	auto formatBytes = [](uint64_t bytes) -> QString {
+		const char* units[] = {"B", "KB", "MB", "GB", "TB"};
+		int unitIndex = 0;
+		double value = bytes;
+		
+		while (value >= 1024 && unitIndex < 4) {
+			value /= 1024;
+			unitIndex++;
+		}
+		
+		return QString("%1 %2").arg(value, 0, 'f', 2).arg(units[unitIndex]);
+	};
+	
+	// Get total cumulative stats
+	RsCumulativeTrafficStats totalStats;
+	if (rsConfig->getTotalCumulativeTraffic(totalStats)) {
+		cumulativeTotalLabel->setText(
+			tr("Cumulative Total: ↓ %1  ↑ %2")
+			.arg(formatBytes(totalStats.bytesIn))
+			.arg(formatBytes(totalStats.bytesOut))
+		);
+	}
 }

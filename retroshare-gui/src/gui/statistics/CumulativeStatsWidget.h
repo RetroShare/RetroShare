@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/statistics/BwCtrlWindow.h                                               *
+ * gui/statistics/CumulativeStatsWidget.h                                     *
  *                                                                             *
- * Copyright (c) 2012 Robert Fernie   <retroshare.project@gmail.com>           *
+ * Copyright (C) 2024                                                          *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,54 +18,54 @@
  *                                                                             *
  *******************************************************************************/
 
-#pragma once
-
-#include <QMainWindow>
-
-#include <QAbstractItemDelegate>
+#ifndef CUMULATIVE_STATS_WIDGET_H
+#define CUMULATIVE_STATS_WIDGET_H
 
 #include <retroshare-gui/RsAutoUpdatePage.h>
-#include "gui/common/RSGraphWidget.h"
-#include "ui_BwCtrlWindow.h"
+#include <QChartView>
+#include <QChart>
+#include <map>
+#include <string>
 
-// Defines for download list list columns
-#define COLUMN_RSNAME 0
-#define COLUMN_PEERID 1
-#define COLUMN_IN_RATE 2
-#define COLUMN_IN_MAX 3
-#define COLUMN_IN_QUEUE 4
-#define COLUMN_IN_ALLOC 5
-#define COLUMN_IN_ALLOC_SENT 6
-#define COLUMN_OUT_RATE 7
-#define COLUMN_OUT_MAX 8
-#define COLUMN_OUT_QUEUE 9
-#define COLUMN_OUT_ALLOC 10
-#define COLUMN_OUT_ALLOC_SENT 11
-#define COLUMN_ALLOWED RECVD 12
-#define COLUMN_CUMULATIVE_IN 13
-#define COLUMN_CUMULATIVE_OUT 14
-#define COLUMN_COUNT 15
+class QTreeWidget;
+class QTreeWidgetItem;
+class QTabWidget;
+class QPushButton;
 
+QT_CHARTS_USE_NAMESPACE
 
-class QModelIndex;
-class QPainter;
-class BWListDelegate ;
-
-class BwCtrlWindow : public RsAutoUpdatePage,  public Ui::BwCtrlWindow
+class CumulativeStatsWidget : public RsAutoUpdatePage
 {
     Q_OBJECT
 public:
+    CumulativeStatsWidget(QWidget *parent = nullptr);
+    virtual ~CumulativeStatsWidget();
+    virtual void updateDisplay();
 
-    BwCtrlWindow(QWidget *parent = 0);
-    ~BwCtrlWindow();
+private slots:
+    void clearStatistics();
 
-    void updateBandwidth();
+private:
+    void updatePeerStats();
+    void updateServiceStats();
+    
+    // Helper to format bytes
+    QString formatSize(uint64_t bytes);
 
-public slots:
-    virtual void updateDisplay() ;
-
-protected:
-    BWListDelegate *BWDelegate;
-    QLabel *cumulativeTotalLabel;
-
+    QTabWidget *tabWidget;
+    
+    // Peer tab
+    QTreeWidget *peerTree;
+    QChartView *peerBarChartView;
+    QChartView *peerPieChartView;
+    
+    // Service tab
+    QTreeWidget *serviceTree;
+    QChartView *serviceBarChartView;
+    QChartView *servicePieChartView;
+    
+    // Clear button
+    QPushButton *clearButton;
 };
+
+#endif // CUMULATIVE_STATS_WIDGET_H

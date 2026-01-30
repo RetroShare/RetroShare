@@ -20,7 +20,11 @@
 
 #pragma once
 
+#include <stdint.h>
 #include <QPoint>
+
+class QWidget;
+class QLabel;
 #include <retroshare/rsturtle.h>
 #include <retroshare/rstypes.h>
 
@@ -49,6 +53,7 @@ private:
     virtual void updateDisplay() ;
 
     TurtleRouterStatisticsWidget *_tst_CW ;
+    QLabel *cumulativeTotalLabel;
 } ;
 
 class TurtleRouterStatisticsWidget:  public QWidget
