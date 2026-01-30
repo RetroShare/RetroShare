@@ -35,7 +35,7 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "retroshare/rsexpr.h"
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rschats.h"
 
 //#define DEBUG_MODEL
 //#define DEBUG_MODEL_INDEX
@@ -726,30 +726,33 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
                 case COLUMN_THREAD_IP:
                 case COLUMN_THREAD_LAST_CONTACT:
                 {
-                        if(!isProfileExpanded(e))
+                        // BUG FIX: Removed 'if(!isProfileExpanded(e))' to keep the last contact and IP 
+                        // visible even when the profile is expanded (e.g. during search filtering).
+                        const HierarchicalProfileInformation *hn = getProfileInfo(e);
+
+                        if(!hn) return QVariant();
+
+                        QDateTime most_recent_time = DateTime::DateTimeFromTime_t(0);
+                        QString most_recent_ip("---");
+
+                        // We aggregate the most recent contact info from all child nodes/locations
+                        for(uint32_t i=0;i<hn->child_node_indices.size();++i)
                         {
-                                const HierarchicalProfileInformation *hn = getProfileInfo(e);
+                                const HierarchicalNodeInformation& node = mLocations[hn->child_node_indices[i]];
+                                auto node_time = DateTime::DateTimeFromTime_t(node.node_info.lastConnect);
 
-                                QDateTime most_recent_time = DateTime::DateTimeFromTime_t(0);
-                                QString most_recent_ip("---");
-
-                                for(uint32_t i=0;i<hn->child_node_indices.size();++i)
+                                if(most_recent_time < node_time)
                                 {
-                                        const HierarchicalNodeInformation& node = mLocations[hn->child_node_indices[i]];
-                                        auto node_time = DateTime::DateTimeFromTime_t(node.node_info.lastConnect);
-
-                                        if(most_recent_time < node_time)
-                                        {
-                                                most_recent_time = node_time;
-                                                most_recent_ip = (node.node_info.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(node.node_info) : QString("---");
-                                        }
+                                        most_recent_time = node_time;
+                                        most_recent_ip = (node.node_info.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(node.node_info) : QString("---");
                                 }
-
-                                if(col == COLUMN_THREAD_LAST_CONTACT) return QVariant(most_recent_time);
-                                if(col == COLUMN_THREAD_IP)           return QVariant(most_recent_ip);
                         }
 
-                }// Fall-through
+			if(col == COLUMN_THREAD_LAST_CONTACT) return QVariant((qulonglong)DateTime::DateTimeToTime_t(most_recent_time));
+			if(col == COLUMN_THREAD_IP)           return QVariant(most_recent_ip);
+
+                        return QVariant();
+                }
                 default:
                         return QVariant();
                 }
@@ -772,7 +775,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 						return QVariant(QString::fromStdString(node->node_info.id.toStdString()));
 
 				{
-					std::string css = rsMsgs->getCustomStateString(node->node_info.id);
+                    std::string css = rsChats->getCustomStateString(node->node_info.id);
 
 					if (mDisplayStatusString)
 						if(!css.empty())
@@ -787,7 +790,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 						return QVariant(QString::fromUtf8(node->node_info.location.c_str()));
 				}
 
-				case COLUMN_THREAD_LAST_CONTACT:   return QVariant(DateTime::DateTimeFromTime_t(node->node_info.lastConnect).toString());
+				case COLUMN_THREAD_LAST_CONTACT:   return QVariant((qulonglong)node->node_info.lastConnect);
 				case COLUMN_THREAD_IP:             return QVariant(  (node->node_info.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(node->node_info) : QString("---"));
 				case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(node->node_info.id.toStdString()) );
 
@@ -994,49 +997,59 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
 	}
     case ENTRY_TYPE_PROFILE:
     {
-        if(!isProfileExpanded(entry))
-		{
-			QPixmap sslAvatar;
-			bool foundAvatar = false;
-        	const HierarchicalProfileInformation *hn = getProfileInfo(entry);
-            RsStatusValue status = RsStatusValue::RS_STATUS_OFFLINE;
-			const HierarchicalNodeInformation *bestNodeInformation = NULL;
+        // BUG FIX: Removed 'if(!isProfileExpanded(entry))' to keep the icon visible 
+        // even when the profile is expanded (e.g. during search filtering).
+        
+        QPixmap sslAvatar;
+        bool foundAvatar = false;
+        const HierarchicalProfileInformation *hn = getProfileInfo(entry);
+        RsStatusValue status = RsStatusValue::RS_STATUS_OFFLINE;
+        const HierarchicalNodeInformation *bestNodeInformation = NULL;
 
-			if (mDisplayStatusIcon) {
-				bestNodeInformation = getBestNodeInformation(hn, &status);
-				if (bestNodeInformation) {
-					if (AvatarDefs::getAvatarFromSslId(RsPeerId(bestNodeInformation->node_info.id.toStdString()), sslAvatar, "")) {
-						/* Use avatar from best node */
-						foundAvatar = true;
-					}
-				}
-			}
+        if (mDisplayStatusIcon) {
+            bestNodeInformation = getBestNodeInformation(hn, &status);
+            if (bestNodeInformation) {
+                if (AvatarDefs::getAvatarFromSslId(RsPeerId(bestNodeInformation->node_info.id.toStdString()), sslAvatar, "")) {
+                    /* Use avatar from best node */
+                    foundAvatar = true;
+                }
+            }
+        }
 
-			if (!foundAvatar) {
-				/* Use first available avatar */
-				for(uint32_t i=0;i<hn->child_node_indices.size();++i) {
-					if(AvatarDefs::getAvatarFromSslId(RsPeerId(mLocations[hn->child_node_indices[i]].node_info.id.toStdString()), sslAvatar, "")) {
-						foundAvatar = true;
-						break;
-					}
-				}
-			}
+        if (!foundAvatar) {
+            /* Use first available avatar */
+            for(uint32_t i=0;i<hn->child_node_indices.size();++i) {
+                if(AvatarDefs::getAvatarFromSslId(RsPeerId(mLocations[hn->child_node_indices[i]].node_info.id.toStdString()), sslAvatar, "")) {
+                    foundAvatar = true;
+                    break;
+                }
+            }
+        }
 
-			if (!foundAvatar || sslAvatar.isNull()) {
-				sslAvatar = FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE);
-			}
+        if (!foundAvatar || sslAvatar.isNull()) {
+            if (hn && !hn->child_node_indices.empty()) {
+                // Use first child node if available
+                std::string sslIdStr = mLocations[hn->child_node_indices[0]].node_info.id.toStdString();
+                sslAvatar = GxsIdDetails::makeDefaultGroupIconFromString(QString::fromStdString(sslIdStr), ":icons/person.png", GxsIdDetails::LARGE);
+            }
+            else if (bestNodeInformation != nullptr) {
+                // Fallback: Use the bestNodeInformation ID if no children exist
+                std::string bestSslIdStr = bestNodeInformation->node_info.id.toStdString();
+                sslAvatar = GxsIdDetails::makeDefaultGroupIconFromString(QString::fromStdString(bestSslIdStr), ":icons/person.png", GxsIdDetails::LARGE);
+            }
+            else {
+                sslAvatar = FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE);
+            }
+        }
 
-			if (mDisplayStatusIcon) {
-				if (bestNodeInformation) {
-					QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(status));
-					return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
-				}
-			}
+        if (mDisplayStatusIcon) {
+            if (bestNodeInformation) {
+                QPixmap sslOverlayIcon = FilesDefs::getPixmapFromQtResourcePath(StatusDefs::imageStatus(status));
+                return QVariant(QIcon(createAvatar(sslAvatar, sslOverlayIcon)));
+            }
+        }
 
-            return QVariant(QIcon(sslAvatar));
-		}
-
-        return QVariant();
+        return QVariant(QIcon(sslAvatar));
     }
 
     case ENTRY_TYPE_NODE:
@@ -1488,4 +1501,3 @@ bool RsFriendListModel::isProfileExpanded(const EntryIndex& e) const
 
     return mExpandedProfiles.find(s) != mExpandedProfiles.end();
 }
-

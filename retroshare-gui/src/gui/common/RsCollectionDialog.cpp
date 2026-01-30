@@ -36,6 +36,7 @@
 #include <QMenu>
 #include <QTextEdit>
 #include <QTreeView>
+#include <QFileDialog>
 
 #define COLUMN_FILE     0
 #define COLUMN_FILEPATH 1
@@ -54,12 +55,12 @@
 #define ROLE_FILEC Qt::UserRole + 6
 #define ROLE_SELFILEC Qt::UserRole + 7
 
-#define MAX_FILE_ADDED_BEFORE_ASK  500 //Number of file added in Recursive mode before asking to continue
+#define MAX_FILE_ADDED_BEFORE_ASK  500 //Number of files added in Recursive mode before asking to continue
 
 #define IMAGE_SEARCH               ":/icons/svg/magnifying-glass.svg"
 
 /**
- * @brief The FSMSortFilterProxyModel class sort directory before file.
+ * @brief The FSMSortFilterProxyModel class sorts directories before files.
  */
 class FSMSortFilterProxyModel : public QSortFilterProxyModel
 {
@@ -97,21 +98,20 @@ protected:
 			return asc;
 
 
-		/*If sorting by Size (Take real size, not Display one 10<2)*/
+		/*If sorting by Size (Take real size, not Display string)*/
 		if ((sortColumn()==1) && (!leftFileInfo.isDir() && !rightFileInfo.isDir())) {
 			if (leftFileInfo.size() < rightFileInfo.size())
 				return true;
 			if (leftFileInfo.size() > rightFileInfo.size())
 				return false;
 		}
-		/*If sorting by Date Modified (Take real date, not Display one 01-10-2014<02-01-1980)*/
+		/*If sorting by Date Modified (Take real date, not Display string)*/
 		if (sortColumn()==3) {
 			if (leftFileInfo.lastModified() < rightFileInfo.lastModified())
 				return true;
 			if (leftFileInfo.lastModified() > rightFileInfo.lastModified())
 				return false;
 		}
-		//Columns found here:https://qt.gitorious.org/qt/qt/source/9e8abb63ba4609887d988ee15ba6daee0b01380e:src/gui/dialogs/qfilesystemmodel.cpp
 
 		return QSortFilterProxyModel::lessThan(left, right);
 	}
@@ -121,11 +121,10 @@ protected:
 /**
  * @brief RsCollectionDialog::RsCollectionDialog
  * @param collectionFileName: Filename of RSCollection saved
- * @param creation: Open dialog as RsColl Creation or RsColl DownLoad
- * @param readOnly: Open dialog for RsColl as ReadOnly
+ * @param mode: Open dialog as RsColl Creation or RsColl DownLoad
  */
 RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsCollectionDialogMode mode)
-  : _mode(mode)
+  : _mode(mode), _dirModel(nullptr), _tree_proxyModel(nullptr), _selectionProxy(nullptr)
 {
     RsCollection::RsCollectionErrorCode err_code;
     mCollection = new RsCollection(collectionFileName,err_code);
@@ -140,11 +139,12 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName, RsColl
 }
 
 RsCollectionDialog::RsCollectionDialog(const RsCollection& coll, RsCollectionDialogMode mode)
-  : _mode(mode)
+  : _mode(mode), _dirModel(nullptr), _tree_proxyModel(nullptr), _selectionProxy(nullptr)
 {
     mCollection = new RsCollection(coll);
     init(QString());
 }
+
 void RsCollectionDialog::init(const QString& collectionFileName)
 {
 	ui.setupUi(this) ;
@@ -209,21 +209,32 @@ void RsCollectionDialog::init(const QString& collectionFileName)
 	connect(ui._download_PB, SIGNAL(clicked()), this, SLOT(download()));
 	connect(ui._hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
-	// 3 Initialize List
-	_dirModel = new QFileSystemModel(this);
-	_dirModel->setRootPath("/");
-	_dirModel->setFilter(QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot);
-	_dirLoaded = false;
-	connect(_dirModel, SIGNAL(directoryLoaded(QString)), this, SLOT(directoryLoaded(QString)));
+	// 3 Initialize Local System List ONLY in EDIT mode
+	if (_mode == EDIT)
+	{
+		_dirModel = new QFileSystemModel(this);
+		_dirModel->setRootPath(QDir::homePath());
+		_dirModel->setFilter(QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot);
+		_dirLoaded = false;
+		connect(_dirModel, SIGNAL(directoryLoaded(QString)), this, SLOT(directoryLoaded(QString)));
 
-	_tree_proxyModel = new FSMSortFilterProxyModel(this);
-	_tree_proxyModel->setSourceModel(_dirModel);
-	_tree_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
-	_tree_proxyModel->setSortRole(Qt::DisplayRole);
+		_tree_proxyModel = new FSMSortFilterProxyModel(this);
+		_tree_proxyModel->setSourceModel(_dirModel);
+		_tree_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+		_tree_proxyModel->setSortRole(Qt::DisplayRole);
 
-	ui._systemFileTW->setModel(_tree_proxyModel);
-	//Selection Setup
-	_selectionProxy = ui._systemFileTW->selectionModel();
+		ui._systemFileTW->setModel(_tree_proxyModel);
+		_selectionProxy = ui._systemFileTW->selectionModel();
+
+		ui._systemFileTW->installEventFilter(this);
+	}
+	else
+	{
+		_dirModel = nullptr;
+		_tree_proxyModel = nullptr;
+		_selectionProxy = nullptr;
+		_dirLoaded = true;
+	}
 
 	// 4 Restore Configuration
 	// load settings
@@ -235,8 +246,6 @@ void RsCollectionDialog::init(const QString& collectionFileName)
     ui._save_PB->setVisible(_mode == EDIT);
     ui._treeViewFrame->setVisible(_mode == EDIT);
     ui._download_PB->setVisible(_mode == DOWNLOAD);
-
-	ui._systemFileTW->installEventFilter(this);
 
 	// 6 Add HashBox
 	setAcceptDrops(true);
@@ -306,7 +315,7 @@ void RsCollectionDialog::processSettings(bool bLoad)
 		// load settings
 
         if(_mode == EDIT){
-			// Load windows geometrie
+			// Load windows geometry
 			restoreGeometry(Settings->value("WindowGeometrie_CM").toByteArray());
 			// Load splitters state
 			ui._mainSplitter->restoreState(Settings->value("MainSplitterState_CM").toByteArray());
@@ -316,7 +325,7 @@ void RsCollectionDialog::processSettings(bool bLoad)
 			// Load file entries header configuration
 			ui._fileEntriesTW->header()->restoreState(Settings->value("FileEntriesHeader_CM").toByteArray());
 		} else {
-			// Load windows geometrie
+			// Load windows geometry
 			restoreGeometry(Settings->value("WindowGeometrie").toByteArray());
 			// Load splitters state
 			ui._mainSplitter->restoreState(Settings->value("MainSplitterState").toByteArray());
@@ -328,7 +337,7 @@ void RsCollectionDialog::processSettings(bool bLoad)
 		}
 	} else {
         if(_mode == EDIT){
-			// Save windows geometrie
+			// Save windows geometry
 			Settings->setValue("WindowGeometrie_CM",saveGeometry());
 			// Save splitters state
 			Settings->setValue("MainSplitterState_CM", ui._mainSplitter->saveState());
@@ -338,7 +347,7 @@ void RsCollectionDialog::processSettings(bool bLoad)
 			// Save file entries header configuration
 			Settings->setValue("FileEntriesHeader_CM", ui._fileEntriesTW->header()->saveState());
 		} else {
-			// Save windows geometrie
+			// Save windows geometry
 			Settings->setValue("WindowGeometrie",saveGeometry());
 			// Save splitter state
 			Settings->setValue("MainSplitterState", ui._mainSplitter->saveState());
@@ -359,6 +368,8 @@ void RsCollectionDialog::processSettings(bool bLoad)
  */
 void RsCollectionDialog::directoryLoaded(QString dirLoaded)
 {
+    if(!_dirModel) return;
+
     if(!_dirLoaded)
     {
 
@@ -545,13 +556,15 @@ static void recursBuildFileTree(const QString& path,RsFileTree& tree,RsFileTree:
 }
 /**
  * @brief RsCollectionDialog::addRecursive: Add Selected item to RSCollection
- *   -Add File seperatly if parent folder not selected
- *   -Add File in folder if selected
- *   -Get root folder the selected one
+ * -Add File seperatly if parent folder not selected
+ * -Add File in folder if selected
+ * -Get root folder the selected one
  * @param recursive: If true, add all selected directory childrens
  */
 void RsCollectionDialog::addSelection(bool recursive)
 {
+    if(!_dirModel) return;
+
 	QMap<QString, QString > dirToAdd;
 	QModelIndexList milSelectionList =	ui._systemFileTW->selectionModel()->selectedIndexes();
 
@@ -599,7 +612,6 @@ void RsCollectionDialog::addSelection(bool recursive)
 void RsCollectionDialog::remove()
 {
     QMap<QString, QString > dirToRemove;
-    int count=0;//to not scan all items on list .count()
 
     QModelIndexList milSelectionList =	ui._fileEntriesTW->selectionModel()->selectedIndexes();
 
@@ -654,7 +666,7 @@ void RsCollectionDialog::makeDir()
 
 /**
  * @brief RsCollectionDialog::fileHashingFinished: Connected to ui._hashBox.fileHashingFinished
- *  Add finished File to collection in respective directory
+ * Add finished File to collection in respective directory
  * @param hashedFiles: List of the file finished
  */
 void RsCollectionDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
@@ -772,10 +784,15 @@ void RsCollectionDialog::download()
                     continue;
 
                 if(mb.clickedButton() == btnCorrectAll)
+                {
                     auto_correct = true;
-            }
+                }
 
-            std::cerr << "Requesting file " << corrected_name << " to directory " << path << std::endl;
+                if(mb.clickedButton() == btnCorrect)
+                {
+                    auto_correct = false; // logic placeholder
+                }
+            }
 
             rsFiles->FileRequest(corrected_name,f.hash,f.size,path,RS_FILE_REQ_ANONYMOUS_ROUTING,std::list<RsPeerId>());
         }
@@ -801,12 +818,12 @@ void RsCollectionDialog::save()
     close();
 }
 
-bool RsCollectionDialog::editExistingCollection(const QString& fileName, bool showError /* = true*/)
+bool RsCollectionDialog::editExistingCollection(const QString& fileName, bool /*showError*/)
 {
     return RsCollectionDialog(fileName,EDIT).exec();
 }
 
-bool RsCollectionDialog::openExistingCollection(const QString& fileName, bool showError /* = true*/)
+bool RsCollectionDialog::openExistingCollection(const QString& fileName, bool /*showError*/)
 {
     return RsCollectionDialog(fileName,DOWNLOAD).exec();
 }
@@ -845,6 +862,11 @@ bool RsCollectionDialog::openNewCollection(const RsFileTree& tree)
 
         if (mb.clickedButton()==btnCancel)
             return false;
+
+        if (mb.clickedButton()==btnOwerWrite)
+        {
+            // Proceed to overwrite
+        }
     }
 
     if(!collection.save(fileName))
@@ -852,4 +874,3 @@ bool RsCollectionDialog::openNewCollection(const RsFileTree& tree)
 
     return RsCollectionDialog(fileName,EDIT).exec();
 }
-

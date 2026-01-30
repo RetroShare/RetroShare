@@ -23,11 +23,11 @@
 	url = https://github.com/RetroShare/jni.hpp.git
 [submodule "openpgpsdk"]
 	path = openpgpsdk
-	url = ../OpenPGP-SDK
+	url = https://github.com/RetroShare/OpenPGP-SDK.git
 	branch = master
 [submodule "libbitdht"]
 	path = libbitdht
-	url = ../BitDHT
+	url = https://github.com/RetroShare/BitDHT.git
 	branch = master
 [submodule "libretroshare"]
 	path = libretroshare

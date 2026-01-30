@@ -35,7 +35,7 @@
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
 #include <retroshare/rspeers.h>
 
 /*****
@@ -171,7 +171,7 @@ void SecurityItem::updateItemStatic()
 	titleLabel->setText(title);
 
 	QDateTime currentTime = QDateTime::currentDateTime();
-	timeLabel->setText(DateTime::formatLongDateTime(currentTime));
+	timeLabel->setText(DateTime::formatDateTime(currentTime));
 
 	if (mIsHome)
 	{

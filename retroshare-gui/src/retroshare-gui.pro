@@ -433,7 +433,6 @@ HEADERS +=  rshare.h \
             util/RsNetUtil.h \
             util/DateTime.h \
             util/RetroStyleLabel.h \
-            util/dllexport.h \
             util/NonCopyable.h \
             util/rsutildll.h \
             util/dllexport.h \
@@ -1181,27 +1180,31 @@ gxsphotoshare {
 	
 	
 wikipoos {
-	DEFINES += RS_USE_WIKI
-	
-	DEPENDPATH += ../../supportlibs/pegmarkdown
-	INCLUDEPATH += ../../supportlibs/pegmarkdown
-	
-	HEADERS += gui/WikiPoos/WikiDialog.h \
-		gui/WikiPoos/WikiAddDialog.h \
-		gui/WikiPoos/WikiEditDialog.h \
-		gui/gxs/WikiGroupDialog.h \
+    message(Including WikiPoos)
+    DEFINES += RS_USE_WIKI
+    INCLUDEPATH += ../../supportlibs/pegmarkdown
 
-	FORMS += gui/WikiPoos/WikiDialog.ui \
-		gui/WikiPoos/WikiAddDialog.ui \
-		gui/WikiPoos/WikiEditDialog.ui \
-	
-	SOURCES += gui/WikiPoos/WikiDialog.cpp \
-		gui/WikiPoos/WikiAddDialog.cpp \
-		gui/WikiPoos/WikiEditDialog.cpp \
-		gui/gxs/WikiGroupDialog.cpp \
+    HEADERS += gui/WikiPoos/WikiDialog.h \
+               gui/WikiPoos/WikiAddDialog.h \
+               gui/WikiPoos/WikiEditDialog.h \
+               gui/gxs/WikiGroupDialog.h \
+               gui/gxs/RsGxsUpdateBroadcastBase.h \
+               gui/gxs/RsGxsUpdateBroadcastWidget.h \
+               gui/gxs/RsGxsUpdateBroadcastPage.h
 
-	RESOURCES += gui/WikiPoos/Wiki_images.qrc
+    SOURCES += gui/WikiPoos/WikiDialog.cpp \
+               gui/WikiPoos/WikiAddDialog.cpp \
+               gui/WikiPoos/WikiEditDialog.cpp \
+               gui/gxs/WikiGroupDialog.cpp \
+               gui/gxs/RsGxsUpdateBroadcastBase.cpp \
+               gui/gxs/RsGxsUpdateBroadcastWidget.cpp \
+               gui/gxs/RsGxsUpdateBroadcastPage.cpp
 
+    FORMS += gui/WikiPoos/WikiDialog.ui \
+             gui/WikiPoos/WikiAddDialog.ui \
+             gui/WikiPoos/WikiEditDialog.ui
+
+    RESOURCES += gui/WikiPoos/Wiki_images.qrc
 }
 	
 	
@@ -1475,18 +1478,6 @@ gxsgui {
 	
 }
 
-
-wikipoos {
-	HEADERS += \
-		gui/gxs/RsGxsUpdateBroadcastBase.h \
-		gui/gxs/RsGxsUpdateBroadcastWidget.h \
-		gui/gxs/RsGxsUpdateBroadcastPage.h 
-
-	SOURCES += \
-		gui/gxs/RsGxsUpdateBroadcastBase.cpp \
-		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \
-		gui/gxs/RsGxsUpdateBroadcastPage.cpp \
-}
 
 ################################################################
 #Define qmake_info.h file so GUI can get wath was used to compil

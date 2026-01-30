@@ -30,7 +30,7 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
 #include <retroshare/rsiface.h>
 
 #include <retroshare-gui/mainpage.h>
@@ -155,7 +155,7 @@ void ConfCertDialog::load()
 
 	ui.loc->setText(QString::fromUtf8(detail.location.c_str()));
 	// Dont Show a timestamp in RS calculate the day
-	ui.lastcontact->setText(DateTime::formatLongDateTime(detail.lastConnect));
+	ui.lastcontact->setText(DateTime::formatDateTime(detail.lastConnect));
 
 	/* set retroshare version */
 	std::string version;
@@ -163,7 +163,7 @@ void ConfCertDialog::load()
 	ui.version->setText(QString::fromStdString(version));
 
 	/* Custom state string */
-	QString statustring =  QString::fromUtf8(rsMsgs->getCustomStateString(detail.id).c_str());
+    QString statustring =  QString::fromUtf8(rsChats->getCustomStateString(detail.id).c_str());
 	ui.statusmessage->setText(statustring);
 
 

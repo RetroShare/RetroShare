@@ -23,7 +23,7 @@
 
 #include <QMainWindow>
 #include <retroshare/rstypes.h>
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
 #include <retroshare/rspeers.h>
 #include "ui_MessageComposer.h"
 
@@ -172,8 +172,8 @@ private slots:
 	void checkLength();
 
 private:
-    static QString buildReplyHeader(const MessageInfo &msgInfo);
-    bool buildMessage(MessageInfo& mi);
+    static QString buildReplyHeader(const Rs::Mail::MessageInfo &msgInfo);
+    bool buildMessage(Rs::Mail::MessageInfo& mi);
 
     void processSettings(bool bLoad);
 

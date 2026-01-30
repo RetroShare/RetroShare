@@ -30,6 +30,7 @@
 #include "CreateGxsChannelMsg.h"
 #include "GxsChannelUserNotify.h"
 #include "gui/gxs/GxsGroupShareKey.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/common/GroupTreeWidget.h"
@@ -426,7 +427,7 @@ void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *gro
 		groupItemInfo.icon = image;
 	}
 	else
-        groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/channel.png");
+        groupItemInfo.icon = GxsIdDetails::makeDefaultGroupIcon(channelGroupData->mMeta.mGroupId, ":icons/channel.png", GxsIdDetails::ORIGINAL);
 
 	groupItemInfo.description = QString::fromUtf8(channelGroupData->mDescription.c_str());
 }

@@ -26,6 +26,7 @@
 #include <QDateTime>
 #include <QLabel>
 #include <QSplitter>
+#include <QSettings>
 
 #include <algorithm>
 #include <iostream>
@@ -113,68 +114,43 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 
 	switch(index.column()) {
 	case COLUMN_IN_RATE:
-		temp = QString::asprintf("%.3f ", index.data().toFloat());
-		//temp=QString::number(index.data().toFloat());
-		painter->drawText(option.rect, Qt::AlignRight, temp);
-		break;
-	case COLUMN_IN_MAX:
-		temp = QString::asprintf("%.3f ", index.data().toFloat());
-		//temp=QString::number(index.data().toFloat());
-		painter->drawText(option.rect, Qt::AlignRight, temp);
-		break;
-	case COLUMN_IN_QUEUE:
-		temp=QString::number(index.data().toInt());
-		painter->drawText(option.rect, Qt::AlignRight, temp);
-		break;
-	case COLUMN_IN_ALLOC:
-		flValue = index.data().toFloat();
-		if (flValue < std::numeric_limits<float>::max()){
-			temp = QString::asprintf("%.3f ", flValue);
+        case COLUMN_IN_MAX:
+        case COLUMN_OUT_RATE:
+        case COLUMN_OUT_MAX:
+        case COLUMN_OUT_ALLOWED:
+		{
+		QVariant d = index.data();
+		if (!d.isValid() || d.isNull()) {
+			temp = ""; // Display empty instead of 0.0
 		} else {
-			temp=strNA;
+			temp = QString::asprintf("%.1f ", d.toFloat());
 		}
-		painter->drawText(option.rect, Qt::AlignRight, temp);
+		painter->drawText(option.rect, Qt::AlignRight | Qt::AlignVCenter, temp);
+		}
 		break;
-	case COLUMN_IN_ALLOC_SENT:
+
+	case COLUMN_IN_QUEUE_ITEMS:
+	case COLUMN_OUT_QUEUE_ITEMS:
+	        temp = QString::number(index.data().toInt());
+        	painter->drawText(option.rect, Qt::AlignRight, temp);
+	        break;
+	case COLUMN_OUT_QUEUE_BYTES:
+	case COLUMN_SESSION_IN:
+	case COLUMN_SESSION_OUT:
 		qi64Value = index.data().value<qint64>();
-		if (qi64Value < std::numeric_limits<qint64>::max()){
-			temp= QString::number(qi64Value);
-		} else {
-			temp = strNA;
-		}
-		painter->drawText(option.rect, Qt::AlignRight, temp);
-		break;
-	case COLUMN_OUT_RATE:
-		temp = QString::asprintf("%.3f ", index.data().toFloat());
-		//temp=QString::number(index.data().toFloat());
-		painter->drawText(option.rect, Qt::AlignRight, temp);
-		break;
-	case COLUMN_OUT_MAX:
-		temp = QString::asprintf("%.3f ", index.data().toFloat());
-		//temp=QString::number(index.data().toFloat());
-		painter->drawText(option.rect, Qt::AlignRight, temp);
-		break;
-	case COLUMN_OUT_QUEUE:
-		temp=QString::number(index.data().toInt());
-		painter->drawText(option.rect, Qt::AlignRight, temp);
-		break;
-	case COLUMN_OUT_ALLOC:
-		flValue = index.data().toFloat();
-		if (flValue < std::numeric_limits<float>::max()){
-			temp=QString::number(flValue);
-		} else {
-			temp = strNA;
-		}
-		painter->drawText(option.rect, Qt::AlignRight, temp);
-		break;
-	case COLUMN_OUT_ALLOC_SENT:
-		qi64Value = index.data().value<qint64>();
-		if (qi64Value < std::numeric_limits<qint64>::max()){
-			temp= QString::number(qi64Value);
-		} else {
-			temp = strNA;
-		}
-		painter->drawText(option.rect, Qt::AlignRight, temp);
+        	if (qi64Value >= 1024 * 1024) 
+	            temp = QString::asprintf("%.2f MB ", qi64Value / (1024.0 * 1024.0));
+        	else if (qi64Value >= 1024)
+	            temp = QString::asprintf("%.1f KB ", qi64Value / 1024.0);
+	        else
+	            temp = QString::number(qi64Value) + " B ";
+	        painter->drawText(option.rect, Qt::AlignRight, temp);
+	        break;
+
+	case COLUMN_DRAIN:
+		// Drain time: Integer only, no decimals, no "s"
+		temp = QString::number((int)index.data().toFloat()) + " ";
+		painter->drawText(option.rect, Qt::AlignRight | Qt::AlignVCenter, temp);
 		break;
 	case COLUMN_CUMULATIVE_IN:
 	case COLUMN_CUMULATIVE_OUT:
@@ -204,17 +180,35 @@ BwCtrlWindow::BwCtrlWindow(QWidget *parent)
 : RsAutoUpdatePage(1000,parent)
 {
     setupUi(this);
-
-    BWDelegate = new BWListDelegate();
+    BWDelegate = new BWListDelegate(this);
     bwTreeWidget->setItemDelegate(BWDelegate);
     
-    //float FS = QFontMetricsF(font()).height();
-    //float fact = FS/14.0 ;
+    QHeaderView *header = bwTreeWidget->header();
 
-    /* Set header resize modes and initial section sizes Peer TreeView*/
-    QHeaderView * _header = bwTreeWidget->header () ;
-//    _header->resizeSection ( COLUMN_RSNAME, 170*fact );
-    QHeaderView_setSectionResizeMode(_header, QHeaderView::Interactive);
+    // Configuration des alignements et des tooltips pour chaque colonne
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_RSNAME, tr("The name of this peer."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_PEERID, tr("The unique RetroShare Peer ID for this peer."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_IN_RATE, tr("Current real-time download speed from this peer."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_IN_MAX, tr("Maximum download speed currently allocated to this peer. This value is passed to the peer."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_IN_QUEUE_ITEMS, tr("Number of incoming data packets waiting to be processed."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_OUT_RATE, tr("Current real-time upload speed to this peer."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_OUT_MAX, tr("Maximum upload speed currently allocated to this peer."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_OUT_ALLOWED, tr("Upload limit requested by the remote peer (their own InMax)."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_OUT_QUEUE_ITEMS, tr("Number of data packets waiting to be sent to this peer."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_OUT_QUEUE_BYTES, tr("Total size of data currently buffered in the output queue."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_DRAIN, tr("Estimated time to empty the current output queue at the current speed."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_SESSION_IN, tr("Total data received during this session. For the Totals row, this includes traffic from disconnected peers."));
+    bwTreeWidget->headerItem()->setToolTip(COLUMN_SESSION_OUT, tr("Total data sent during this session. For the Totals row, this includes traffic from disconnected peers."));
+
+    for (int i = 0; i < COLUMN_COUNT; ++i) {
+        if (i == COLUMN_RSNAME || i == COLUMN_PEERID)
+            bwTreeWidget->headerItem()->setTextAlignment(i, Qt::AlignLeft | Qt::AlignVCenter);
+        else
+            bwTreeWidget->headerItem()->setTextAlignment(i, Qt::AlignRight | Qt::AlignVCenter);
+    }
+
+    bwTreeWidget->setSortingEnabled(true);
+    header->setSortIndicator(COLUMN_RSNAME, Qt::AscendingOrder);
     
     // Create cumulative totals label
     cumulativeTotalLabel = new QLabel(this);
@@ -263,6 +257,16 @@ void BwCtrlWindow::updateBandwidth()
 {
 	QTreeWidget *peerTreeWidget = bwTreeWidget;
 
+	// Disable sorting while clearing and refilling to avoid UI glitches
+	QString selectedPeerId;
+	bool hasSelection = false;
+	QList<QTreeWidgetItem*> selectedList = peerTreeWidget->selectedItems();
+	if(!selectedList.isEmpty()) {
+		selectedPeerId = selectedList.first()->data(COLUMN_PEERID, Qt::DisplayRole).toString();
+		hasSelection = true;
+	}
+
+	peerTreeWidget->setSortingEnabled(false);
 	peerTreeWidget->clear();
 
 	RsConfigDataRates totalRates;
@@ -273,32 +277,41 @@ void BwCtrlWindow::updateBandwidth()
 	std::map<RsPeerId, RsCumulativeTrafficStats> cumulativeStats;
 	RsCumulativeTrafficStats totalCumulative;
 
-    rsConfig->getTotalBandwidthRates(totalRates);
+	rsConfig->getTotalBandwidthRates(totalRates);
 	rsConfig->getAllBandwidthRates(rateMap);
 	rsConfig->getCumulativeTrafficByPeer(cumulativeStats);
 	rsConfig->getTotalCumulativeTraffic(totalCumulative);
 
-			/* insert */
-	QTreeWidgetItem *item = new QTreeWidgetItem();
+	// some calculation
+	float totalEffectiveSpeed = std::max(totalRates.mRateOut, 1.0f);
+	float totalDrain = (float)totalRates.mQueueOutBytes / (totalEffectiveSpeed * 1024.0f);
+
+	/* insert */
+	BwCtrlWidgetItem *item = new BwCtrlWidgetItem(true); // true = isTotal
 	peerTreeWidget->addTopLevelItem(item);
 	peerTreeWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 	
 	/* do Totals */
-	item -> setData(COLUMN_PEERID, Qt::DisplayRole, tr("TOTALS"));
+	item -> setData(COLUMN_PEERID, Qt::DisplayRole, tr(""));
 	item -> setData(COLUMN_RSNAME, Qt::DisplayRole, tr("Totals"));
+	item -> setToolTip(COLUMN_RSNAME, tr("Aggregated data for active peers. Note: Total In/Out also include traffic from past peers."));
 
 	item -> setData(COLUMN_IN_RATE, Qt::DisplayRole, totalRates.mRateIn);
 	item -> setData(COLUMN_IN_MAX, Qt::DisplayRole,totalRates.mRateMaxIn);
-	item -> setData(COLUMN_IN_QUEUE, Qt::DisplayRole, totalRates.mQueueIn);
-	item -> setData(COLUMN_IN_ALLOC, Qt::DisplayRole, std::numeric_limits<float>::max());
-	item -> setData(COLUMN_IN_ALLOC_SENT, Qt::DisplayRole, std::numeric_limits<qint64>::max());
+
+	item -> setData(COLUMN_IN_QUEUE_ITEMS, Qt::DisplayRole, totalRates.mQueueIn);
 
 	item -> setData(COLUMN_OUT_RATE, Qt::DisplayRole, totalRates.mRateOut);
 	item -> setData(COLUMN_OUT_MAX, Qt::DisplayRole, totalRates.mRateMaxOut);
-	item -> setData(COLUMN_OUT_QUEUE, Qt::DisplayRole, totalRates.mQueueOut);
-	item -> setData(COLUMN_OUT_ALLOC, Qt::DisplayRole, std::numeric_limits<float>::max());
-	item -> setData(COLUMN_OUT_ALLOC_SENT, Qt::DisplayRole, std::numeric_limits<qint64>::max());
-	
+	item -> setData(COLUMN_OUT_ALLOWED, Qt::DisplayRole, QVariant());
+
+	item -> setData(COLUMN_OUT_QUEUE_ITEMS, Qt::DisplayRole, totalRates.mQueueOut);
+        item -> setData(COLUMN_OUT_QUEUE_BYTES, Qt::DisplayRole, qint64(totalRates.mQueueOutBytes));
+        item -> setData(COLUMN_DRAIN, Qt::DisplayRole, totalDrain);
+
+	item -> setData(COLUMN_SESSION_IN, Qt::DisplayRole, qint64(totalRates.mTotalIn));
+	item -> setData(COLUMN_SESSION_OUT, Qt::DisplayRole, qint64(totalRates.mTotalOut));
+
 	// Set cumulative totals
 	item -> setData(COLUMN_CUMULATIVE_IN, Qt::DisplayRole, formatBytes(totalCumulative.bytesIn));
 	item -> setData(COLUMN_CUMULATIVE_OUT, Qt::DisplayRole, formatBytes(totalCumulative.bytesOut));
@@ -316,7 +329,8 @@ void BwCtrlWindow::updateBandwidth()
 	for(it = rateMap.begin(); it != rateMap.end(); ++it)
 	{
 		/* find the entry */
-		QTreeWidgetItem *peer_item = NULL;
+		BwCtrlWidgetItem *peer_item = new BwCtrlWidgetItem(false); // false = not total
+	        peerTreeWidget->addTopLevelItem(peer_item);
 #if 0
 		QString qpeerid = QString::fromStdString(*it);
 		int itemCount = peerTreeWidget->topLevelItemCount();
@@ -331,13 +345,6 @@ void BwCtrlWindow::updateBandwidth()
 		}
 #endif
 
-		if (!peer_item)
-		{
-			/* insert */
-			peer_item = new QTreeWidgetItem();
-			peerTreeWidget->addTopLevelItem(peer_item);
-		}
-
 		std::string name = rsPeers->getPeerName(it->first);
 
 		peer_item -> setData(COLUMN_PEERID, Qt::DisplayRole, QString::fromStdString(it->first.toStdString()));
@@ -345,22 +352,29 @@ void BwCtrlWindow::updateBandwidth()
 
 		peer_item -> setData(COLUMN_IN_RATE, Qt::DisplayRole, it->second.mRateIn);
 		peer_item -> setData(COLUMN_IN_MAX, Qt::DisplayRole, it->second.mRateMaxIn);
-		peer_item -> setData(COLUMN_IN_QUEUE, Qt::DisplayRole, it->second.mQueueIn);
-		peer_item -> setData(COLUMN_IN_ALLOC, Qt::DisplayRole, it->second.mAllocIn);
-		peer_item -> setData(COLUMN_IN_ALLOC_SENT, Qt::DisplayRole, qint64(now - it->second.mAllocTs));
+
+		peer_item -> setData(COLUMN_IN_QUEUE_ITEMS, Qt::DisplayRole, it->second.mQueueIn);
 
 		peer_item -> setData(COLUMN_OUT_RATE, Qt::DisplayRole, it->second.mRateOut);
 		peer_item -> setData(COLUMN_OUT_MAX, Qt::DisplayRole, it->second.mRateMaxOut);
-		peer_item -> setData(COLUMN_OUT_QUEUE, Qt::DisplayRole, it->second.mQueueOut);
-		if (it->second.mAllowedTs != 0)
-		{
-			peer_item -> setData(COLUMN_OUT_ALLOC, Qt::DisplayRole, it->second.mAllowedOut);
-			peer_item -> setData(COLUMN_OUT_ALLOC_SENT, Qt::DisplayRole,qint64(now - it->second.mAllowedTs));
-		}
-		else
-		{
-			peer_item -> setData(COLUMN_OUT_ALLOC, Qt::DisplayRole, std::numeric_limits<float>::max());
-			peer_item -> setData(COLUMN_OUT_ALLOC_SENT, Qt::DisplayRole, std::numeric_limits<qint64>::max());
+		peer_item -> setData(COLUMN_OUT_ALLOWED, Qt::DisplayRole, it->second.mAllowedOut);
+
+                peer_item -> setData(COLUMN_OUT_QUEUE_ITEMS, Qt::DisplayRole, it->second.mQueueOut);
+                peer_item -> setData(COLUMN_OUT_QUEUE_BYTES, Qt::DisplayRole, qint64(it->second.mQueueOutBytes));
+
+		float effectiveSpeed = std::max(it->second.mRateOut, 1.0f);
+	        float drainTime = (float)it->second.mQueueOutBytes / (effectiveSpeed * 1024.0f);
+	        peer_item -> setData(COLUMN_DRAIN, Qt::DisplayRole, drainTime);
+		// Orange if >= 30, Red if >= 60
+		if (drainTime >= 60.0f) {
+        		// Red background with white text for critical congestion
+		        peer_item->setBackground(COLUMN_DRAIN, QBrush(QColor("#FF4444"))); 
+		        peer_item->setForeground(COLUMN_DRAIN, QBrush(Qt::white));
+		} 
+		else if (drainTime >= 30.0f) {
+		        // Orange background for warning levels
+		        peer_item->setBackground(COLUMN_DRAIN, QBrush(QColor("#FFA500"))); 
+		        peer_item->setForeground(COLUMN_DRAIN, QBrush(Qt::black));
 		}
 		
 		// Set cumulative data for this peer
@@ -375,73 +389,31 @@ void BwCtrlWindow::updateBandwidth()
 			peer_item -> setData(COLUMN_CUMULATIVE_OUT, Qt::DisplayRole, "0 B");
 		}
 
+		peer_item->setData(COLUMN_SESSION_IN, Qt::DisplayRole, qint64(it->second.mTotalIn));
+		peer_item->setData(COLUMN_SESSION_OUT, Qt::DisplayRole, qint64(it->second.mTotalOut));
+	}
+	// Re-enable sorting - the custom operator< will now keep Totals at index 0
+	peerTreeWidget->setSortingEnabled(true);
 
-		/* colour the columns */
-		if (it->second.mAllowedTs != 0)
-		{
-			if (it->second.mAllowedOut < it->second.mRateOut)
-			{	
-				/* RED */
-				QColor bc("#ff4444"); // red
-				peer_item -> setBackground(COLUMN_OUT_RATE,QBrush(bc));
-	
+	if(hasSelection) {
+		for(int i=0; i<peerTreeWidget->topLevelItemCount(); ++i) {
+			QTreeWidgetItem *item = peerTreeWidget->topLevelItem(i);
+			if(item->data(COLUMN_PEERID, Qt::DisplayRole).toString() == selectedPeerId) {
+				peerTreeWidget->setCurrentItem(item);
+				break;
 			}
-			else if (it->second.mAllowedOut < it->second.mRateMaxOut)
-			{
-				/* YELLOW */
-				QColor bc("#ffff66"); // yellow
-				peer_item -> setBackground(COLUMN_OUT_MAX,QBrush(bc));
-	
-			}
-			else
-			{
-				/* GREEN */
-				QColor bc("#44ff44");//bright green
-				peer_item -> setBackground(COLUMN_OUT_ALLOC,QBrush(bc));
-			}
-		}
-		else
-		{
-			/* GRAY */
-			QColor bc("#444444");// gray
-			peer_item -> setBackground(COLUMN_OUT_ALLOC,QBrush(bc));
-			peer_item -> setBackground(COLUMN_OUT_ALLOC_SENT,QBrush(bc));
-
-		}
-
-		/* queueOut */
-#define QUEUE_RED	10000
-#define QUEUE_ORANGE	2000
-#define QUEUE_YELLOW	500
-
-		if (it->second.mQueueOut > QUEUE_RED)
-		{	
-			/* RED */
-			QColor bc("#ff4444"); // red
-			peer_item -> setBackground(COLUMN_OUT_QUEUE,QBrush(bc));
-	
-		}
-		else if (it->second.mQueueOut > QUEUE_ORANGE)
-		{
-			/* ORANGE */
-			QColor bc("#ff9900"); //orange
-			peer_item -> setBackground(COLUMN_OUT_QUEUE,QBrush(bc));
-
-		}
-		else if (it->second.mQueueOut > QUEUE_YELLOW)
-		{
-			/* YELLOW */
-			QColor bc("#ffff66"); // yellow
-			peer_item -> setBackground(COLUMN_OUT_QUEUE,QBrush(bc));
-
-		}
-		else
-		{
-			/* GREEN */
-			QColor bc("#44ff44");//bright green
-			peer_item -> setBackground(COLUMN_OUT_QUEUE,QBrush(bc));
 		}
 	}
 }
 
+// Persist column sizes
+void BwCtrlWindow::showEvent(QShowEvent *) {
+    QSettings settings;
+    bwTreeWidget->header()->restoreState(settings.value("BwCtrlColumns").toByteArray());
+}
+
+void BwCtrlWindow::hideEvent(QHideEvent *) {
+    QSettings settings;
+    settings.setValue("BwCtrlColumns", bwTreeWidget->header()->saveState());
+}
 

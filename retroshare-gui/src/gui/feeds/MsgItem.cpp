@@ -32,7 +32,8 @@
 #include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
+#include <retroshare/rschats.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 
@@ -41,6 +42,8 @@
 /****
  * #define DEBUG_ITEM 1
  ****/
+
+using namespace Rs::Mail;
 
 /** Constructor */
 MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, bool isHome) :
@@ -122,6 +125,7 @@ void MsgItem::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 	case RsMailStatusEventCode::TAG_CHANGED:
 	case RsMailStatusEventCode::MESSAGE_RECEIVED_ACK:
 	case RsMailStatusEventCode::SIGNATURE_FAILED:
+    default:
 		break;
 	}
 }
@@ -222,7 +226,7 @@ void MsgItem::updateItemStatic()
 	titleLabel->setText(title);
 	subjectLabel->setText(QString::fromUtf8(mi.title.c_str()));
 	mMsg = QString::fromUtf8(mi.msg.c_str());
-	timestampLabel->setText(DateTime::formatLongDateTime(mi.ts));
+	timestampLabel->setText(DateTime::formatDateTime(mi.ts));
 
 	if (wasExpanded() || expandFrame->isVisible()) {
 		fillExpandFrame();

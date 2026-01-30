@@ -23,6 +23,7 @@
 #include <QTimer>
 #include <QDateTime>
 #include <QActionGroup>
+#include <QKeyEvent>
 
 #include <algorithm>
 #include <iostream>
@@ -75,8 +76,14 @@ void StatisticsWindow::showYourself()
         mInstance = new StatisticsWindow();
     }
 
+    /* Ensure the window is visible and restored if minimized */
+    if (mInstance->isMinimized()) {
+        mInstance->showNormal();
+    }
+
     mInstance->show();
-    mInstance->activateWindow();
+    mInstance->raise();          /* Bring to front */
+    mInstance->activateWindow(); /* Give focus */
 }
 
 StatisticsWindow* StatisticsWindow::getInstance()
@@ -93,23 +100,25 @@ void StatisticsWindow::releaseInstance()
 
 /********************************************** STATIC WINDOW *************************************/
 
-
-
 StatisticsWindow::StatisticsWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::StatisticsWindow)
 {
     ui->setupUi(this);
    
-	Settings->loadWidgetInformation(this);
-	
+    Settings->loadWidgetInformation(this);
+    
+    // Ensure the window is NOT destroyed on close to preserve temporal curves
+    // and avoid async race conditions.
+    this->setAttribute(Qt::WA_DeleteOnClose, false);
+    
     initStackedPage();
     connect(ui->stackPages, SIGNAL(currentChanged(int)), this, SLOT(setNewPage(int)));
     ui->stackPages->setCurrentIndex(0);
-	int toolSize = Settings->getToolButtonSize();
-	ui->toolBar->setToolButtonStyle(Settings->getToolButtonStyle());
-	ui->toolBar->setIconSize(QSize(toolSize,toolSize));
-	setWindowTitle("RetroShare Statistics - " + MainWindow::getInstance()->get_nameAndLocation());
+    int toolSize = Settings->getToolButtonSize();
+    ui->toolBar->setToolButtonStyle(Settings->getToolButtonStyle());
+    ui->toolBar->setIconSize(QSize(toolSize,toolSize));
+    setWindowTitle("RetroShare Statistics - " + MainWindow::getInstance()->get_nameAndLocation());
 }
 
 StatisticsWindow::~StatisticsWindow()
@@ -233,3 +242,15 @@ void StatisticsWindow::setNewPage(int page)
 		ui->stackPages->setCurrentIndex(page);
 	}
 }
+
+void StatisticsWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        // Just call close(), which will hide the window without destroying 
+        // the static instance or resetting statistics data.
+        this->close();
+    } else {
+        QMainWindow::keyPressEvent(event);
+    }
+}
+

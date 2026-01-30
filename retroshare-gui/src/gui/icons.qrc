@@ -267,6 +267,10 @@
         <file>icons/yahoo.png</file>
         <file>icons/yandex.png</file>
         <file>icons/png/markdown-mark.png</file>
+        <file>icons/board.png</file>
+        <file>icons/channel.png</file>
+        <file>icons/person.png</file>
+        <file>icons/wiki.png</file>
         <file>icons/png/channel.png</file>
         <file>icons/png/circles-black.png</file>
         <file>icons/png/circles-gray.png</file>
@@ -301,6 +305,7 @@
         <file>icons/png/options2.png</file>
         <file>icons/png/exit2.png</file>
         <file>icons/png/wiki.png</file>
+        <file>icons/png/wiki-notify.png</file>
         <file>icons/svg/addstickers.svg</file>
         <file>icons/png/addstickers.png</file>
         <file>icons/textedit/bold.png</file>

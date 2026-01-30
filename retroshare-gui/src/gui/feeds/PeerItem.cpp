@@ -31,7 +31,7 @@
 #include "util/qtthreadsutils.h"
 #include "util/DateTime.h"
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rsmail.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsrtt.h>
 
@@ -132,7 +132,7 @@ void PeerItem::updateItemStatic()
 	{
 		/* set peer name */
 		peerNameLabel->setText(QString::fromUtf8(details.name.c_str()));
-		lastLabel-> setText(DateTime::formatLongDateTime(details.lastConnect));
+		lastLabel-> setText(DateTime::formatDateTime(details.lastConnect));
 
 		/* expanded Info */
 		nameLabel->setText(QString::fromUtf8(details.name.c_str()));

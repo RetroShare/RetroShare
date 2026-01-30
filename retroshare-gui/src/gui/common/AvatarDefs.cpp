@@ -20,7 +20,7 @@
 
 #include <QPixmap>
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 #include <gui/gxs/GxsIdDetails.h>
@@ -34,7 +34,7 @@ void AvatarDefs::getOwnAvatar(QPixmap &avatar, const QString& defaultImage)
 	int size = 0;
 
 	/* get avatar */
-	rsMsgs->getOwnAvatarData(data, size);
+    rsChats->getOwnNodeAvatarData(data, size);
 
 	if (size == 0) {
         avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
@@ -52,10 +52,10 @@ bool AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, cons
     int size = 0;
 
     /* get avatar */
-    rsMsgs->getAvatarData(RsPeerId(sslId), data, size);
+    rsChats->getAvatarData(RsPeerId(sslId), data, size);
     if (size == 0) {
         if (!defaultImage.isEmpty()) {
-            avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
+            avatar = GxsIdDetails::makeDefaultGroupIconFromString(QString::fromStdString(sslId.toStdString()), ":icons/person.png", GxsIdDetails::LARGE);
         }
         return false;
     }
@@ -94,14 +94,14 @@ bool AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const
 
     if (gpgId == rsPeers->getGPGOwnId()) {
 		/* Its me */
-		rsMsgs->getOwnAvatarData(data,size);
+        rsChats->getOwnNodeAvatarData(data,size);
 	} else {
 		/* get the first available avatar of one of the ssl ids */
         std::list<RsPeerId> sslIds;
         if (rsPeers->getAssociatedSSLIds(gpgId, sslIds)) {
             std::list<RsPeerId>::iterator sslId;
 			for (sslId = sslIds.begin(); sslId != sslIds.end(); ++sslId) {
-				rsMsgs->getAvatarData(*sslId, data, size);
+                rsChats->getAvatarData(*sslId, data, size);
 				if (size) {
 					break;
 				}
@@ -109,13 +109,15 @@ bool AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const
 		}
 	}
 
-	if (size == 0) {
-        avatar = FilesDefs::getPixmapFromQtResourcePath(defaultImage);
-		return false;
-	}
+    if (size == 0) {
+        if (!defaultImage.isEmpty()) {
+            avatar = GxsIdDetails::makeDefaultGroupIconFromString(QString::fromStdString(gpgId.toStdString()), ":icons/person.png", GxsIdDetails::LARGE);
+        }
+        return false;
+    }
 
 	/* load image */
-	GxsIdDetails::loadPixmapFromData(data, size, avatar);
+	GxsIdDetails::loadPixmapFromData(data, size, avatar, GxsIdDetails::LARGE);
 
 	free(data);
 

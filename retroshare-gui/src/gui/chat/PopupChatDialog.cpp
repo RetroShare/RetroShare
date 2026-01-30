@@ -183,7 +183,7 @@ void PopupChatDialog::clearOfflineMessages()
 	manualDelete = true;
     // TODO
 #ifdef REMOVE
-	rsMsgs->clearPrivateChatQueue(false, peerId);
+    rsChats->clearPrivateChatQueue(false, peerId);
 #endif
 	manualDelete = false;
 }

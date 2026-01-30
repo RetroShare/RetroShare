@@ -227,7 +227,7 @@ void GxsChannelGroupItem::fill()
 	if(mGroup.mMeta.mLastPost==0)
 		ui->infoLastPost->setText(tr("Never"));
 	else
-		ui->infoLastPost->setText(DateTime::formatLongDateTime(mGroup.mMeta.mLastPost));
+		ui->infoLastPost->setText(DateTime::formatDateTime(mGroup.mMeta.mLastPost));
 
 	if (mIsHome)
 	{

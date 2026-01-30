@@ -147,7 +147,7 @@ void ChatLobbyUserNotify::iconClicked()
 {
     #if defined(Q_OS_DARWIN)
     std::list<ChatLobbyId> lobbies;
-    rsMsgs->getChatLobbyList(lobbies);
+    rsChats->getChatLobbyList(lobbies);
     bool doUpdate=false;
 
     for (lobby_map::iterator itCL=_listMsg.begin(); itCL!=_listMsg.end();)
@@ -160,7 +160,7 @@ void ChatLobbyUserNotify::iconClicked()
             ChatLobbyId clId = *lobbyIt;
             if (clId==itCL->first) {
                 ChatLobbyInfo clInfo;
-                if (rsMsgs->getChatLobbyInfo(clId,clInfo))
+                if (rsChats->getChatLobbyInfo(clId,clInfo))
                     strLobbyName=QString::fromUtf8(clInfo.lobby_name.c_str()) ;
                 bFound=true;
                 break;
@@ -188,7 +188,7 @@ void ChatLobbyUserNotify::iconClicked()
 	/// Tray icon Menu ///
 	QMenu* trayMenu = createMenu();
 	std::list<ChatLobbyId> lobbies;
-	rsMsgs->getChatLobbyList(lobbies);
+    rsChats->getChatLobbyList(lobbies);
 	bool doUpdate=false;
 
     for (lobby_map::iterator itCL=_listMsg.begin(); itCL!=_listMsg.end();)
@@ -202,7 +202,7 @@ void ChatLobbyUserNotify::iconClicked()
             ChatLobbyId clId = *lobbyIt;
             if (clId==itCL->first) {
                 ChatLobbyInfo clInfo;
-                if (rsMsgs->getChatLobbyInfo(clId,clInfo))
+                if (rsChats->getChatLobbyInfo(clId,clInfo))
                     strLobbyName=QString::fromUtf8(clInfo.lobby_name.c_str()) ;
                 icoLobby=(clInfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? FilesDefs::getIconFromQtResourcePath(":/images/chat_red24.png") : FilesDefs::getIconFromQtResourcePath(":/images/chat_x24.png");
                 bFound=true;
@@ -289,7 +289,7 @@ void ChatLobbyUserNotify::chatLobbyNewMessage(ChatLobbyId lobby_id, QDateTime ti
 	bool bGetNickName = false;
 	if (_bCheckForNickName) {
 		RsGxsId gxs_id;
-		rsMsgs->getIdentityForChatLobby(lobby_id,gxs_id);
+        rsChats->getIdentityForChatLobby(lobby_id,gxs_id);
 		RsIdentityDetails details ;
 		rsIdentity->getIdDetails(gxs_id,details) ;
 		bGetNickName = checkWord(msg, QString::fromUtf8(details.mNickname.c_str()));
@@ -303,7 +303,7 @@ void ChatLobbyUserNotify::chatLobbyNewMessage(ChatLobbyId lobby_id, QDateTime ti
 		}
 
 	if ((bGetNickName || bFoundTextToNotify || _bCountUnRead)){
-		QString strAnchor = time.toString(Qt::ISODate);
+		QString strAnchor = DateTime::formatDateTime(time);
 		MsgData msgData;
 		msgData.text=RsHtml::plainText(senderName) + ": " + msg;
 		msgData.unread=!(bGetNickName || bFoundTextToNotify);

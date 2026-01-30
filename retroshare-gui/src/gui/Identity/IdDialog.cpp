@@ -53,7 +53,7 @@
 #include "util/DateTime.h"
 
 #include "retroshare/rsgxsflags.h"
-#include "retroshare/rsmsgs.h"
+#include "retroshare/rschats.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsservicecontrol.h"
 
@@ -395,7 +395,7 @@ IdDialog::IdDialog(QWidget *parent)
 	/* Set initial section sizes */
     QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
     circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QFontMetrics_horizontalAdvance(fm, "Circle name")*1.5) ;
-    ui->treeWidget_membership->setColumnWidth(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 270);
+    ui->treeWidget_membership->setColumnWidth(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 600);
 
 	/* Setup tree */
     //ui->idTreeWidget->sortByColumn(RsIdentityListModel::COLUMN_THREAD_NAME, Qt::AscendingOrder);
@@ -453,9 +453,16 @@ IdDialog::IdDialog(QWidget *parent)
 
     mFontSizeHandler.registerFontSize(ui->idTreeWidget, 0, [this] (QAbstractItemView*, int fontSize) {
         // Set new font size on all items
-
         mIdListModel->setFontSize(fontSize);
     });
+
+	QFontMetricsF fontMetrics(ui->treeWidget_membership->font());
+
+	int iconHeight = fontMetrics.height() * 1.5;
+	ui->treeWidget_membership->setIconSize(QSize(iconHeight, iconHeight));
+
+	int iconHeightId = fontMetrics.height() * 2.0;
+	ui->idTreeWidget->setIconSize(QSize(iconHeightId, iconHeightId));
 
     mFontSizeHandler.registerFontSize(ui->treeWidget_membership, 0, [this] (QAbstractItemView*, int fontSize) {
 		// Set new font size on all items
@@ -1654,10 +1661,12 @@ void IdDialog::loadIdentity(RsGxsIdGroup data)
 	/* get GPG Details from rsPeers */
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
-    ui->lineEdit_PublishTS->setText(QLocale::system().toString(DateTime::DateTimeFromTime_t(data.mMeta.mPublishTs), QLocale::ShortFormat));
+    ui->lineEdit_PublishTS->setText(DateTime::formatDateTime(data.mMeta.mPublishTs));
+
     //ui->lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
-	ui->lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
-	//ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
+    ui->lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
+
+    //ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
     if(data.mPgpKnown)
 	    ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
     else
@@ -1917,7 +1926,7 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
     {
 		ChatId id = ChatId(ChatLobbyId(u.mAdditionalId));
 		ChatLobbyInfo linfo ;
-		rsMsgs->getChatLobbyInfo(ChatLobbyId(u.mAdditionalId),linfo);
+        rsChats->getChatLobbyInfo(ChatLobbyId(u.mAdditionalId),linfo);
 		RetroShareLink l = RetroShareLink::createChatRoom(id, QString::fromUtf8(linfo.lobby_name.c_str()));
 		return tr("Message in chat room %1").arg(l.toHtml()) ;
     }
@@ -2456,7 +2465,7 @@ void IdDialog::chatIdentity(const RsGxsId& toGxsId)
 	uint32_t error_code;
 	DistantChatPeerId did;
 
-	if(!rsMsgs->initiateDistantChatConnexion(toGxsId, fromGxsId, did, error_code))
+    if(!rsChats->initiateDistantChatConnexion(toGxsId, fromGxsId, did, error_code))
 		QMessageBox::information(
 		            nullptr, tr("Distant chat cannot work")
 		            , QString("%1 %2: %3")

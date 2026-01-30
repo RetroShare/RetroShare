@@ -31,7 +31,7 @@
 #include "gui/settings/rsharesettings.h"
 
 
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 #include <retroshare/rspeers.h>
 
 #include "gui/msgs/MessageInterface.h"
@@ -42,6 +42,8 @@
 /*****
  * #define DEBUG_ITEM 1
  ****/
+
+using namespace Rs::Mail;
 
 /** Constructor */
 ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, const std::string &message) :
@@ -155,7 +157,7 @@ void ChatMsgItem::insertChat(const std::string &message)
     std::cerr << "ChatMsgItem::insertChat(): " << msg << std::endl;
 #endif
 
-    timestampLabel->setText(DateTime::formatLongDateTime(QDateTime::currentDateTime()));
+    timestampLabel->setText(DateTime::formatDateTime(QDateTime::currentDateTime()));
 
     QString formatMsg = QString::fromUtf8(message.c_str());
 
