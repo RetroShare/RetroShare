@@ -248,6 +248,7 @@ private:
 
     // List of identities for which getIdDetails() failed, to be requested again.
     mutable QTimer *mIdentityUpdateTimer;
+    mutable QTimer *mThrottlingTimer;
 
 public:
     void handleIdentityEvent(std::shared_ptr<const RsEvent> event);

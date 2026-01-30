@@ -57,9 +57,24 @@ RsIdentityListModel::RsIdentityListModel(QObject *parent)
     mFontSize = QApplication::font().pointSize();
 
 	mFilterStrings.clear();
-    mIdentityUpdateTimer = new QTimer();
-    mIdentityUpdateTimer = new QTimer();
+    mIdentityUpdateTimer = new QTimer(this);
     connect(mIdentityUpdateTimer,SIGNAL(timeout()),this,SLOT(timerUpdate()));
+
+    mThrottlingTimer = new QTimer(this);
+    mThrottlingTimer->setSingleShot(true);
+    mThrottlingTimer->setInterval(200);
+
+    // Using a lambda for connection to avoid adding a new slot in header file if not strictly necessary,
+    // though the plan mentioned a slot. But wait, checkInternalData is a slot?
+    // checkInternalData is a slot! (line 200 in header from Step 11)
+    // "void checkInternalData(bool force);"
+    // However, the signal provides no arguments, but the slot expects 'bool force'.
+    // We need to use a lambda or a helper slot.
+    // Since I can't easily add a slot without recompiling/moc issues if I was compiling (I'm not),
+    // but code correctness matters.
+    // mThrottlingTimer->connect(mThrottlingTimer, &QTimer::timeout, [this](){ this->checkInternalData(true); });
+    // This requires Qt5 style connection or C++11. The file uses C++11 (lambdas in registerEventsHandler).
+    connect(mThrottlingTimer, &QTimer::timeout, [this](){ checkInternalData(true); });
 
     mEventHandlerId = 0;
     if(rsEvents)
@@ -103,7 +118,8 @@ void RsIdentityListModel::handleIdentityEvent(std::shared_ptr<const RsEvent> eve
         }
         else if(id_event->mIdentityEventCode == RsGxsIdentityEventCode::NEW_IDENTITY || id_event->mIdentityEventCode == RsGxsIdentityEventCode::DELETED_IDENTITY)
         {
-            checkInternalData(true);
+            if(!mThrottlingTimer->isActive())
+                mThrottlingTimer->start();
         }
     }, this);
 }
@@ -975,7 +991,8 @@ void RsIdentityListModel::updateIdentityList()
 
     setIdentities(ids) ;
 
-    debug_dump();
+// avoid flooding the console
+//    debug_dump();
 }
 
 
