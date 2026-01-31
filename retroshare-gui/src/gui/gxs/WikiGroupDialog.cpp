@@ -20,16 +20,20 @@
 
 #include "WikiGroupDialog.h"
 #include "gui/common/FilesDefs.h"
-#include "gui/gxs/GxsIdChooser.h"
+#include "gui/common/FriendSelectionWidget.h"
 #include "util/qtthreadsutils.h"
 
+#include <QComboBox>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QMessageBox>
 #include <QVBoxLayout>
 
 #include <ctime>
+#include <set>
+#include <vector>
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rswiki.h>
@@ -243,6 +247,21 @@ void WikiGroupDialog::addModeratorToList(const RsGxsId &gxsId)
 		return;
 	}
 
+	for (int i = 0; i < mModeratorsList->count(); ++i)
+	{
+		QListWidgetItem *existingItem = mModeratorsList->item(i);
+		if (!existingItem)
+		{
+			continue;
+		}
+
+		const RsGxsId existingId(existingItem->data(Qt::UserRole).toString().toStdString());
+		if (existingId == gxsId)
+		{
+			return;
+		}
+	}
+
 	QString name = QString::fromStdString(gxsId.toStdString());
 	RsIdentityDetails details;
 	if (rsIdentity->getIdDetails(gxsId, details))
@@ -312,11 +331,58 @@ void WikiGroupDialog::addModerator()
 	}
 
 	QDialog chooserDialog(this);
-	chooserDialog.setWindowTitle(tr("Select Moderator"));
+	chooserDialog.setWindowTitle(tr("Select Moderators"));
 	QVBoxLayout *layout = new QVBoxLayout(&chooserDialog);
-	GxsIdChooser *chooser = new GxsIdChooser(&chooserDialog);
-	chooser->setFlags(IDCHOOSER_ID_REQUIRED);
+
+	auto *filterLayout = new QHBoxLayout();
+	auto *filterLabel = new QLabel(tr("Show:"), &chooserDialog);
+	auto *filterCombo = new QComboBox(&chooserDialog);
+	filterCombo->addItem(tr("All People"));
+	filterCombo->addItem(tr("My Contacts"));
+	filterCombo->setCurrentIndex(0);
+	filterLayout->addWidget(filterLabel);
+	filterLayout->addWidget(filterCombo);
+	filterLayout->addStretch();
+	layout->addLayout(filterLayout);
+
+	FriendSelectionWidget *chooser = new FriendSelectionWidget(&chooserDialog);
+	chooser->setHeaderText(tr("Moderators:"));
+	chooser->setModus(FriendSelectionWidget::MODUS_CHECK);
+	chooser->setShowType(FriendSelectionWidget::SHOW_GXS);
+	chooser->start();
 	layout->addWidget(chooser);
+
+	connect(filterCombo, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+		[chooser](int index)
+		{
+			switch (index)
+			{
+			default:
+			case 0:
+				chooser->setShowType(FriendSelectionWidget::SHOW_GXS);
+				break;
+			case 1:
+				chooser->setShowType(FriendSelectionWidget::SHOW_CONTACTS);
+				break;
+			}
+		});
+
+	std::set<RsGxsId> existingModerators;
+	if (mModeratorsList)
+	{
+		for (int i = 0; i < mModeratorsList->count(); ++i)
+		{
+			QListWidgetItem *item = mModeratorsList->item(i);
+			if (!item)
+			{
+				continue;
+			}
+
+			existingModerators.insert(RsGxsId(item->data(Qt::UserRole).toString().toStdString()));
+		}
+	}
+	chooser->setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(existingModerators, false);
+
 	QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
 		&chooserDialog);
 	connect(buttons, &QDialogButtonBox::accepted, &chooserDialog, &QDialog::accept);
@@ -328,29 +394,64 @@ void WikiGroupDialog::addModerator()
 		return;
 	}
 
-	RsGxsId selectedId;
-	const GxsIdChooser::ChosenId_Ret choice = chooser->getChosenId(selectedId);
-	if (choice != GxsIdChooser::KnowId && choice != GxsIdChooser::UnKnowId)
+	std::set<RsGxsId> selectedIds;
+	chooser->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(selectedIds, true);
+
+	std::set<RsGxsId> newModerators;
+	for (const auto &selectedId : selectedIds)
 	{
+		if (existingModerators.find(selectedId) == existingModerators.end())
+		{
+			newModerators.insert(selectedId);
+		}
+	}
+
+	if (newModerators.empty())
+	{
+		QMessageBox::information(this, tr("Add Moderators"),
+			tr("No new moderators selected."));
 		return;
 	}
 
 	const RsGxsGroupId groupId = mCurrentGroupId;
-	RsThread::async([this, groupId, selectedId]()
+	RsThread::async([this, groupId, newModerators]()
 	{
-		const bool success = rsWiki->addModerator(groupId, selectedId);
-		RsQThreadUtils::postToObject([this, selectedId, success]()
+		std::vector<RsGxsId> addedModerators;
+		std::vector<RsGxsId> failedModerators;
+
+		for (const auto &moderatorId : newModerators)
 		{
-			if (success)
+			if (rsWiki->addModerator(groupId, moderatorId))
 			{
-				addModeratorToList(selectedId);
-				QMessageBox::information(this, tr("Success"),
-					tr("Moderator added successfully."));
+				addedModerators.push_back(moderatorId);
 			}
 			else
 			{
+				failedModerators.push_back(moderatorId);
+			}
+		}
+
+		RsQThreadUtils::postToObject([this, addedModerators, failedModerators]()
+		{
+			for (const auto &addedId : addedModerators)
+			{
+				addModeratorToList(addedId);
+			}
+
+			if (!addedModerators.empty() && failedModerators.empty())
+			{
+				QMessageBox::information(this, tr("Success"),
+					tr("Moderators added successfully."));
+			}
+			else if (addedModerators.empty())
+			{
 				QMessageBox::warning(this, tr("Error"),
-					tr("Failed to add moderator."));
+					tr("Failed to add moderators."));
+			}
+			else
+			{
+				QMessageBox::warning(this, tr("Warning"),
+					tr("Some moderators could not be added."));
 			}
 		}, this);
 	});
