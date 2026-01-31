@@ -88,6 +88,7 @@
         <string>Drain (s)</string>
        </property>
       </column>
+<<<<<<< HEAD
        <column>
         <property name="text">
          <string>Total In</string>
@@ -98,6 +99,18 @@
          <string>Total Out</string>
         </property>
        </column>
+=======
+      <column>
+       <property name="text">
+        <string>Total In</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Total Out</string>
+       </property>
+      </column>
+>>>>>>> 5dd24935c (refactor: Revert BwCtrlWindow changes based on maintainer feedback)
      </widget>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
