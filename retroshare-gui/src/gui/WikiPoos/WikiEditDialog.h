@@ -60,12 +60,14 @@ void 	historySelected();
 void 	oldHistoryChanged();
 void  	mergeModeToggle();
 void  	generateMerge();
+void    updateMergeButtonState();
 
 private:
 
 void 	updateHistoryStatus();
 void 	updateHistoryChildren(QTreeWidgetItem *item, bool isLatest);
 void 	updateHistoryItem(QTreeWidgetItem *item, bool isLatest);
+std::vector<RsGxsMessageId> collectMergeSelection() const;
 
 void    redrawPage();
 

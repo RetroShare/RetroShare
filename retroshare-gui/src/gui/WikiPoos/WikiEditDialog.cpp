@@ -32,6 +32,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <set>
 
 #define USE_PEGMMD_RENDERER	1
 
@@ -72,6 +73,7 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 	connect(ui.checkBox_Merge, SIGNAL( clicked() ), this, SLOT( mergeModeToggle() ) );
 	connect(ui.pushButton_Merge, SIGNAL( clicked() ), this, SLOT( generateMerge() ) );
 	connect(ui.treeWidget_History, SIGNAL( itemSelectionChanged() ), this, SLOT( historySelected() ) );
+	connect(ui.treeWidget_History, SIGNAL( itemChanged(QTreeWidgetItem*, int) ), this, SLOT( updateMergeButtonState() ) );
 
 	mThreadCompareRole = new RSTreeWidgetItemCompareRole;
 	mThreadCompareRole->setRole(WET_COL_DATE, WET_ROLE_SORT);
@@ -96,6 +98,7 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 	mOldHistoryEnabled = false;
 	ui.groupBox_History->hide();
 	detailsToggle();
+	updateMergeButtonState();
 }
 
 WikiEditDialog::~WikiEditDialog()
@@ -107,28 +110,14 @@ void WikiEditDialog::mergeModeToggle()
 {
 	mHistoryMergeMode = ui.checkBox_Merge->isChecked();
 	updateHistoryStatus();
+	updateMergeButtonState();
 }
 
 void WikiEditDialog::generateMerge()
 {
 	std::cerr << "WikiEditDialog::generateMerge()" << std::endl;
 
-	std::vector<RsGxsMessageId> selectedEditIds;
-	QTreeWidgetItemIterator it(ui.treeWidget_History);
-	while (*it)
-	{
-		QTreeWidgetItem *item = *it;
-		if (item->checkState(WET_COL_PAGEID) == Qt::Checked)
-		{
-			const QString pageId(item->data(WET_COL_PAGEID, WET_ROLE_PAGEID).toString());
-			const RsGxsMessageId msgId(pageId.toStdString());
-			if (!msgId.isNull())
-			{
-				selectedEditIds.push_back(msgId);
-			}
-		}
-		++it;
-	}
+	std::vector<RsGxsMessageId> selectedEditIds = collectMergeSelection();
 
 	if (selectedEditIds.empty())
 	{
@@ -156,6 +145,44 @@ void WikiEditDialog::generateMerge()
 	});
 }
 
+std::vector<RsGxsMessageId> WikiEditDialog::collectMergeSelection() const
+{
+	std::set<RsGxsMessageId> selectedEditIds;
+	bool hasChecked = false;
+	QTreeWidgetItemIterator it(ui.treeWidget_History);
+	while (*it)
+	{
+		QTreeWidgetItem *item = *it;
+		if (item->checkState(WET_COL_PAGEID) == Qt::Checked)
+		{
+			hasChecked = true;
+			const QString pageId(item->data(WET_DATA_COLUMN, WET_ROLE_PAGEID).toString());
+			const RsGxsMessageId msgId(pageId.toStdString());
+			if (!msgId.isNull())
+			{
+				selectedEditIds.insert(msgId);
+			}
+		}
+		++it;
+	}
+
+	if (!hasChecked)
+	{
+		const QList<QTreeWidgetItem *> selected = ui.treeWidget_History->selectedItems();
+		for (QTreeWidgetItem *item : selected)
+		{
+			const QString pageId(item->data(WET_DATA_COLUMN, WET_ROLE_PAGEID).toString());
+			const RsGxsMessageId msgId(pageId.toStdString());
+			if (!msgId.isNull())
+			{
+				selectedEditIds.insert(msgId);
+			}
+		}
+	}
+
+	return std::vector<RsGxsMessageId>(selectedEditIds.begin(), selectedEditIds.end());
+}
+
 
 void WikiEditDialog::textChanged()
 {
@@ -174,6 +201,7 @@ void WikiEditDialog::textChanged()
 	// Disable Selection in Edit History.
 	ui.treeWidget_History->setSelectionMode(QAbstractItemView::NoSelection);
 	updateHistoryStatus();
+	updateMergeButtonState();
 
 	// unselect anything.
 }
@@ -191,6 +219,7 @@ void WikiEditDialog::textReset()
 	// Enable Selection in Edit History.
 	ui.treeWidget_History->setSelectionMode(QAbstractItemView::SingleSelection);
 	updateHistoryStatus();
+	updateMergeButtonState();
 }
 
 void WikiEditDialog::historySelected()
@@ -212,6 +241,7 @@ void WikiEditDialog::historySelected()
 	std::cerr << "WikiEditDialog::historySelected() New PageId: " << pageId;
 	std::cerr << std::endl;
 
+	updateMergeButtonState();
 	requestPage(newSnapshot);
 }
 
@@ -237,6 +267,7 @@ void WikiEditDialog::updateHistoryStatus()
 		updateHistoryChildren(item, isLatest);
 		updateHistoryItem(item, isLatest);
 	}
+	updateMergeButtonState();
 }
 
 void WikiEditDialog::updateHistoryChildren(QTreeWidgetItem *item, bool isLatest)
@@ -299,6 +330,13 @@ void WikiEditDialog::updateHistoryItem(QTreeWidgetItem *item, bool isLatest)
 		item->setData(WET_COL_PAGEID, Qt::CheckStateRole, QVariant());
 		item->setFlags(Qt::ItemIsUserCheckable);
 	}
+}
+
+void WikiEditDialog::updateMergeButtonState()
+{
+	const bool hasSelection = !collectMergeSelection().empty();
+	const bool enabled = mHistoryMergeMode && !mTextChanged && hasSelection;
+	ui.pushButton_Merge->setEnabled(enabled);
 }
 
 void WikiEditDialog::detailsToggle()
@@ -1169,7 +1207,7 @@ QTreeWidgetItem *WikiEditDialog::findHistoryItem(const RsGxsMessageId &msgId) co
 	while (*it)
 	{
 		QTreeWidgetItem *item = *it;
-		const QString itemId = item->data(WET_COL_PAGEID, WET_ROLE_PAGEID).toString();
+		const QString itemId = item->data(WET_DATA_COLUMN, WET_ROLE_PAGEID).toString();
 		if (itemId == QString::fromStdString(msgId.toStdString()))
 		{
 			return item;
