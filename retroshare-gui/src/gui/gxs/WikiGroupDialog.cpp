@@ -154,6 +154,12 @@ bool WikiGroupDialog::service_createGroup(RsGroupMetaData &meta)
 bool WikiGroupDialog::service_updateGroup(const RsGroupMetaData &editedMeta)
 {
 	RsWikiCollection grp;
+	std::vector<RsWikiCollection> existingGroups;
+	if (rsWiki->getCollections({editedMeta.mGroupId}, existingGroups) && !existingGroups.empty())
+	{
+		grp = existingGroups.front();
+	}
+
 	grp.mMeta = editedMeta;
 	grp.mDescription = getDescription().toStdString();
 
