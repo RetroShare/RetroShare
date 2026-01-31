@@ -26,7 +26,7 @@
 #include <retroshare/rstypes.h>
 #include <retroshare/rsgxsifacetypes.h>
 
-#define AVATAR_DEFAULT_IMAGE ":/images/no_avatar_background.png"
+#define AVATAR_DEFAULT_IMAGE ":/icons/no_avatar.png"
 
 class QPixmap;
 
