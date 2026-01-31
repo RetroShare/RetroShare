@@ -24,8 +24,6 @@
 #include "util/RsQtVersion.h"
 #include <QTimer>
 #include <QDateTime>
-#include <QLabel>
-#include <QSplitter>
 #include <QSettings>
 
 #include <algorithm>
@@ -41,21 +39,6 @@
 #include <QHeaderView>
 #include <QPainter>
 #include <limits>
-
-// Helper function to format bytes with appropriate units
-static QString formatBytes(uint64_t bytes)
-{
-    const char* units[] = {"B", "KB", "MB", "GB", "TB"};
-    int unitIndex = 0;
-    double value = bytes;
-    
-    while (value >= 1024 && unitIndex < 4) {
-        value /= 1024;
-        unitIndex++;
-    }
-    
-    return QString("%1 %2").arg(value, 0, 'f', 2).arg(units[unitIndex]);
-}
 
 class BWListDelegate: public QAbstractItemDelegate
 {
@@ -152,11 +135,7 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 		temp = QString::number((int)index.data().toFloat()) + " ";
 		painter->drawText(option.rect, Qt::AlignRight | Qt::AlignVCenter, temp);
 		break;
-	case COLUMN_CUMULATIVE_IN:
-	case COLUMN_CUMULATIVE_OUT:
-		// Cumulative columns are already formatted as QString
-		painter->drawText(option.rect, Qt::AlignRight, index.data().toString());
-		break;
+
 	default:
 		painter->drawText(option.rect, Qt::AlignLeft, index.data().toString());
 	}
@@ -209,22 +188,6 @@ BwCtrlWindow::BwCtrlWindow(QWidget *parent)
 
     bwTreeWidget->setSortingEnabled(true);
     header->setSortIndicator(COLUMN_RSNAME, Qt::AscendingOrder);
-    
-    // Create cumulative totals label
-    cumulativeTotalLabel = new QLabel(this);
-    cumulativeTotalLabel->setText(tr("Cumulative: ↓ 0 B  ↑ 0 B"));
-    cumulativeTotalLabel->setAlignment(Qt::AlignCenter);
-    QFont labelFont = cumulativeTotalLabel->font();
-    labelFont.setPointSize(10);
-    labelFont.setBold(true);
-    cumulativeTotalLabel->setFont(labelFont);
-    cumulativeTotalLabel->setStyleSheet("QLabel { padding: 5px; background-color: palette(window); }");
-    
-    // Insert label into the splitter layout (between tree and graph)
-    QSplitter *mainSplitter = findChild<QSplitter*>("splitter_2");
-    if (mainSplitter && mainSplitter->count() >= 1) {
-        mainSplitter->insertWidget(1, cumulativeTotalLabel);
-    }
 }
 
 BwCtrlWindow::~BwCtrlWindow()
@@ -272,15 +235,9 @@ void BwCtrlWindow::updateBandwidth()
 	RsConfigDataRates totalRates;
 	std::map<RsPeerId, RsConfigDataRates> rateMap;
 	std::map<RsPeerId, RsConfigDataRates>::iterator it;
-	
-	// Fetch cumulative traffic stats
-	std::map<RsPeerId, RsCumulativeTrafficStats> cumulativeStats;
-	RsCumulativeTrafficStats totalCumulative;
 
 	rsConfig->getTotalBandwidthRates(totalRates);
 	rsConfig->getAllBandwidthRates(rateMap);
-	rsConfig->getCumulativeTrafficByPeer(cumulativeStats);
-	rsConfig->getTotalCumulativeTraffic(totalCumulative);
 
 	// some calculation
 	float totalEffectiveSpeed = std::max(totalRates.mRateOut, 1.0f);
@@ -311,19 +268,6 @@ void BwCtrlWindow::updateBandwidth()
 
 	item -> setData(COLUMN_SESSION_IN, Qt::DisplayRole, qint64(totalRates.mTotalIn));
 	item -> setData(COLUMN_SESSION_OUT, Qt::DisplayRole, qint64(totalRates.mTotalOut));
-
-	// Set cumulative totals
-	item -> setData(COLUMN_CUMULATIVE_IN, Qt::DisplayRole, formatBytes(totalCumulative.bytesIn));
-	item -> setData(COLUMN_CUMULATIVE_OUT, Qt::DisplayRole, formatBytes(totalCumulative.bytesOut));
-	
-	// Update cumulative totals label
-	if (cumulativeTotalLabel) {
-		cumulativeTotalLabel->setText(
-			tr("Cumulative Total: ↓ %1  ↑ %2")
-			.arg(formatBytes(totalCumulative.bytesIn))
-			.arg(formatBytes(totalCumulative.bytesOut))
-		);
-	}
 
 	time_t now = time(NULL);
 	for(it = rateMap.begin(); it != rateMap.end(); ++it)
@@ -375,18 +319,6 @@ void BwCtrlWindow::updateBandwidth()
 		        // Orange background for warning levels
 		        peer_item->setBackground(COLUMN_DRAIN, QBrush(QColor("#FFA500"))); 
 		        peer_item->setForeground(COLUMN_DRAIN, QBrush(Qt::black));
-		}
-		
-		// Set cumulative data for this peer
-		auto cumIt = cumulativeStats.find(it->first);
-		if (cumIt != cumulativeStats.end()) {
-			peer_item -> setData(COLUMN_CUMULATIVE_IN, Qt::DisplayRole, 
-			                    formatBytes(cumIt->second.bytesIn));
-			peer_item -> setData(COLUMN_CUMULATIVE_OUT, Qt::DisplayRole, 
-			                    formatBytes(cumIt->second.bytesOut));
-		} else {
-			peer_item -> setData(COLUMN_CUMULATIVE_IN, Qt::DisplayRole, "0 B");
-			peer_item -> setData(COLUMN_CUMULATIVE_OUT, Qt::DisplayRole, "0 B");
 		}
 
 		peer_item->setData(COLUMN_SESSION_IN, Qt::DisplayRole, qint64(it->second.mTotalIn));

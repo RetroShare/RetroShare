@@ -88,16 +88,6 @@
         <string>Total Out</string>
        </property>
       </column>
-       <column>
-        <property name="text">
-         <string>Total In</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Total Out</string>
-        </property>
-       </column>
      </widget>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">

@@ -42,9 +42,7 @@
 #define COLUMN_DRAIN 10
 #define COLUMN_SESSION_IN 11
 #define COLUMN_SESSION_OUT 12
-#define COLUMN_CUMULATIVE_IN 13
-#define COLUMN_CUMULATIVE_OUT 14
-#define COLUMN_COUNT 15
+#define COLUMN_COUNT 13
 
 class QModelIndex;
 class QPainter;
@@ -96,8 +94,6 @@ public slots:
 
 protected:
     BWListDelegate *BWDelegate;
-    QLabel *cumulativeTotalLabel;
-
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
 
