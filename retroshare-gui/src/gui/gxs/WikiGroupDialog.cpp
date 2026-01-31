@@ -20,6 +20,7 @@
 
 #include "WikiGroupDialog.h"
 #include "gui/common/FilesDefs.h"
+#include "gui/RetroShareLink.h"
 #include "gui/common/FriendSelectionWidget.h"
 #include "util/qtthreadsutils.h"
 
@@ -45,6 +46,7 @@ const uint32_t WikiCreateEnabledFlags = (
 			// GXS_GROUP_FLAGS_ICON         |
 			GXS_GROUP_FLAGS_DESCRIPTION     |
 			GXS_GROUP_FLAGS_DISTRIBUTION    |
+			GXS_GROUP_FLAGS_ADDADMINS       |
 			// GXS_GROUP_FLAGS_PUBLISHSIGN  |
 			GXS_GROUP_FLAGS_EXTRA           |
 			// GXS_GROUP_FLAGS_PERSONALSIGN |
@@ -100,6 +102,13 @@ void WikiGroupDialog::initUi()
 
 	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Wiki Moderators"));
 	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Wiki Moderators"));
+
+	if (ui.addAdmins_cb)
+	{
+		ui.addAdmins_cb->hide();
+		ui.adminsList->hide();
+		ui.filtercomboBox->hide();
+	}
 
 	if (!mModeratorsWidget)
 	{
@@ -238,12 +247,48 @@ void WikiGroupDialog::loadModerators(const RsGxsGroupId &groupId)
 
 		RsQThreadUtils::postToObject([this, moderators]()
 		{
+			updateModeratorsLabel(moderators);
 			for (const auto &modId : moderators)
 			{
 				addModeratorToList(modId);
 			}
 		}, this);
 	});
+}
+
+void WikiGroupDialog::updateModeratorsLabel(const std::list<RsGxsId> &moderators)
+{
+	QString moderatorsListString;
+	RsIdentityDetails det;
+	RetroShareLink link;
+
+	for (const auto &moderatorId : moderators)
+	{
+		rsIdentity->getIdDetails(moderatorId, det);
+
+		if (!moderatorsListString.isNull())
+		{
+			moderatorsListString += ", ";
+		}
+
+		if (det.mNickname.empty())
+		{
+			moderatorsListString += tr("[Unknown]");
+		}
+
+		link = RetroShareLink::createMessage(det.mId, "");
+		if (link.valid())
+		{
+			moderatorsListString += link.toHtml() + "   ";
+		}
+	}
+
+	if (moderatorsListString.isNull())
+	{
+		moderatorsListString = tr("[None]");
+	}
+
+	ui.moderatorsValueLabel->setText(moderatorsListString);
 }
 
 void WikiGroupDialog::addModeratorToList(const RsGxsId &gxsId)

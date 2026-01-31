@@ -48,6 +48,7 @@ private:
 	void loadModerators(const RsGxsGroupId &groupId);
 	void addModeratorToList(const RsGxsId &gxsId);
 	void updateModeratorControls();
+	void updateModeratorsLabel(const std::list<RsGxsId> &moderators);
 
 private slots:
 	void addModerator();

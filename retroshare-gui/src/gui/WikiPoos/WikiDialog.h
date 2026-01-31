@@ -46,7 +46,7 @@ public:
 	~WikiDialog();
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_WIKI) ; } //MainPage
-	virtual QString pageName() const { return tr("Wiki Pages") ; } //MainPage
+	virtual QString pageName() const { return tr("Wiki") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
 	virtual UserNotify *createUserNotify(QObject *parent) override;
@@ -67,6 +67,7 @@ private slots:
 	void OpenOrShowRepublishDialog();
 
 	void groupTreeChanged();
+	void pagesTreeCustomPopupMenu(QPoint point);
 
 	void newGroup();
 	void showGroupDetails();
@@ -111,6 +112,7 @@ private:
 	void loadGroupMeta();
 	void loadPages(const RsGxsGroupId &groupId);
 	void loadWikiPage(const RsGxsGrpMsgIdPair &msgId);
+	void updateModerationState(const RsGxsGroupId &groupId, int subscribeFlags);
 
 	WikiAddDialog *mAddPageDialog;
 	WikiAddDialog *mAddGroupDialog;
@@ -129,6 +131,7 @@ private:
 	QTreeWidgetItem *mPopularGroups;
 	QTreeWidgetItem *mOtherGroups;
 	RsGxsGroupId mGroupId; // From GroupTreeWidget
+	bool mCanModerate = false;
 
 	/* UI - from Designer */
 	Ui::WikiDialog ui;

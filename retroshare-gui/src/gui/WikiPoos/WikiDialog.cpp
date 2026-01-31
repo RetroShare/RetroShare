@@ -38,6 +38,7 @@
 #include "util/qtthreadsutils.h"
 
 #include <retroshare/rsgxscommon.h>
+#include <retroshare/rsidentity.h>
 #include <retroshare/rswiki.h>
 #include "util/rstime.h"
 
@@ -48,6 +49,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <ctime>
 
 #include <QTimer>
 
@@ -70,6 +72,13 @@
 #define WIKIDIALOG_WIKI_PAGE			8
 
 #define WIKIDIALOG_EDITTREE_DATA		9
+
+#define WIKI_GROUP_COL_GROUPNAME	0
+#define WIKI_GROUP_COL_GROUPID		1
+
+#define WIKI_GROUP_COL_PAGENAME		0
+#define WIKI_GROUP_COL_PAGEID		1
+#define WIKI_GROUP_COL_ORIGPAGEID	2
 
 /* Images for TreeWidget (Copied from GxsForums.cpp) */
 #define IMAGE_FOLDER         ":/images/folder16.png"
@@ -116,6 +125,8 @@ WikiDialog::WikiDialog(QWidget *parent) :
     connect( ui.toolButton_Republish, SIGNAL(clicked()), this, SLOT(OpenOrShowRepublishDialog()));
 
     connect( ui.treeWidget_Pages, SIGNAL(itemSelectionChanged()), this, SLOT(groupTreeChanged()));
+    ui.treeWidget_Pages->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui.treeWidget_Pages, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(pagesTreeCustomPopupMenu(QPoint)));
 
     // GroupTreeWidget.
     connect(ui.groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupListCustomPopupMenu(QPoint)));
@@ -188,11 +199,18 @@ void WikiDialog::processSettings(bool load)
 
 		// state of splitter
 		ui.listSplitter->restoreState(Settings->value("SplitterList").toByteArray());
+
+		const bool showPageId = Settings->value("ShowPageId", false).toBool();
+		const bool showOrigId = Settings->value("ShowOrigId", false).toBool();
+		ui.treeWidget_Pages->setColumnHidden(WIKI_GROUP_COL_PAGEID, !showPageId);
+		ui.treeWidget_Pages->setColumnHidden(WIKI_GROUP_COL_ORIGPAGEID, !showOrigId);
 	} else {
 		// save settings
 
 		// state of splitter
 		Settings->setValue("SplitterList", ui.listSplitter->saveState());
+		Settings->setValue("ShowPageId", !ui.treeWidget_Pages->isColumnHidden(WIKI_GROUP_COL_PAGEID));
+		Settings->setValue("ShowOrigId", !ui.treeWidget_Pages->isColumnHidden(WIKI_GROUP_COL_ORIGPAGEID));
 	}
 
 	Settings->endGroup();
@@ -338,6 +356,52 @@ void WikiDialog::groupTreeChanged()
 	loadWikiPage(pagepair);
 }
 
+void WikiDialog::pagesTreeCustomPopupMenu(QPoint point)
+{
+	QTreeWidgetItem *item = ui.treeWidget_Pages->itemAt(point);
+	if (item)
+	{
+		ui.treeWidget_Pages->setCurrentItem(item);
+	}
+
+	RsGxsGroupId groupId;
+	RsGxsMessageId pageId;
+	RsGxsMessageId origPageId;
+	const bool hasSelection = getSelectedPage(groupId, pageId, origPageId);
+
+	QMenu contextMenu(this);
+
+	QAction *editAction = contextMenu.addAction(QIcon(IMAGE_EDIT), tr("Edit"), this, SLOT(OpenOrShowEditDialog()));
+	editAction->setEnabled(hasSelection);
+
+	if (mCanModerate)
+	{
+		QAction *republishAction = contextMenu.addAction(QIcon(IMAGE_WIKI), tr("Republish"),
+			this, SLOT(OpenOrShowRepublishDialog()));
+		republishAction->setEnabled(hasSelection);
+	}
+
+	contextMenu.addSeparator();
+
+	QAction *showPageIdAction = contextMenu.addAction(tr("Show Page Id"));
+	showPageIdAction->setCheckable(true);
+	showPageIdAction->setChecked(!ui.treeWidget_Pages->isColumnHidden(WIKI_GROUP_COL_PAGEID));
+	connect(showPageIdAction, &QAction::toggled, this, [this](bool checked)
+	{
+		ui.treeWidget_Pages->setColumnHidden(WIKI_GROUP_COL_PAGEID, !checked);
+	});
+
+	QAction *showOrigIdAction = contextMenu.addAction(tr("Show Orig Id"));
+	showOrigIdAction->setCheckable(true);
+	showOrigIdAction->setChecked(!ui.treeWidget_Pages->isColumnHidden(WIKI_GROUP_COL_ORIGPAGEID));
+	connect(showOrigIdAction, &QAction::toggled, this, [this](bool checked)
+	{
+		ui.treeWidget_Pages->setColumnHidden(WIKI_GROUP_COL_ORIGPAGEID, !checked);
+	});
+
+	contextMenu.exec(QCursor::pos());
+}
+
 void WikiDialog::updateWikiPage(const RsWikiSnapshot &page)
 {
 #ifdef USE_PEGMMD_RENDERER
@@ -371,13 +435,6 @@ void WikiDialog::clearGroupTree()
 	ui.treeWidget_Pages->clear();
 }
 
-#define WIKI_GROUP_COL_GROUPNAME	0
-#define WIKI_GROUP_COL_GROUPID		1
-
-#define WIKI_GROUP_COL_PAGENAME		0
-#define WIKI_GROUP_COL_PAGEID		1
-#define WIKI_GROUP_COL_ORIGPAGEID	2
-
 bool WikiDialog::getSelectedPage(RsGxsGroupId &groupId, RsGxsMessageId &pageId, RsGxsMessageId &origPageId)
 {
 #ifdef WIKI_DEBUG 
@@ -405,6 +462,10 @@ bool WikiDialog::getSelectedPage(RsGxsGroupId &groupId, RsGxsMessageId &pageId, 
 
 	pageId = RsGxsMessageId(item->text(WIKI_GROUP_COL_PAGEID).toStdString());
 	origPageId = RsGxsMessageId(item->text(WIKI_GROUP_COL_ORIGPAGEID).toStdString());
+	if (origPageId.isNull())
+	{
+		origPageId = pageId;
+	}
 
 #ifdef WIKI_DEBUG 
 	std::cerr << "WikiDialog::getSelectedPage() PageId: " << pageId << std::endl;
@@ -480,7 +541,7 @@ void WikiDialog::loadPages(const RsGxsGroupId &groupId)
 		uint32_t token;
 		RsTokReqOptions opts;
 		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-		opts.mOptions = (RS_TOKREQOPT_MSG_LATEST | RS_TOKREQOPT_MSG_THREAD); // We want latest version of Thread Heads.
+		opts.mOptions = (RS_TOKREQOPT_MSG_LATEST | RS_TOKREQOPT_MSG_THREAD); // Latest thread heads.
 
 		std::list<RsGxsGroupId> groupIds;
 		groupIds.push_back(groupId);
@@ -517,14 +578,28 @@ void WikiDialog::loadPages(const RsGxsGroupId &groupId)
 			for (auto& page : snapshots)
 			{
 #ifdef WIKI_DEBUG
+				if (!page.mMeta.mParentId.isNull())
+				{
+					std::cerr << "WikiDialog::loadPages() Skipping child edit: "
+						<< page.mMeta.mMsgId << std::endl;
+				}
+#endif
+				if (!page.mMeta.mParentId.isNull())
+				{
+					continue;
+				}
+#ifdef WIKI_DEBUG
 				std::cerr << "WikiDialog::loadPages() PageId: " << page.mMeta.mMsgId
 					<< " Page: " << page.mMeta.mMsgName << std::endl;
 #endif
 
 				QTreeWidgetItem *pageItem = new QTreeWidgetItem();
 				pageItem->setText(WIKI_GROUP_COL_PAGENAME, QString::fromStdString(page.mMeta.mMsgName));
+				const RsGxsMessageId origId = page.mMeta.mOrigMsgId.isNull()
+					? page.mMeta.mMsgId
+					: page.mMeta.mOrigMsgId;
 				pageItem->setText(WIKI_GROUP_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId.toStdString()));
-				pageItem->setText(WIKI_GROUP_COL_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId.toStdString()));
+				pageItem->setText(WIKI_GROUP_COL_ORIGPAGEID, QString::fromStdString(origId.toStdString()));
 
 				ui.treeWidget_Pages->addTopLevelItem(pageItem);
 			}
@@ -629,8 +704,48 @@ void WikiDialog::wikiGroupChanged(const QString &groupId)
 	loadPages(mGroupId);
 
 	int subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId.toStdString()));
-	ui.toolButton_NewPage->setEnabled(IS_GROUP_ADMIN(subscribeFlags));
-	ui.toolButton_Republish->setEnabled(IS_GROUP_ADMIN(subscribeFlags));
+	updateModerationState(mGroupId, subscribeFlags);
+}
+
+void WikiDialog::updateModerationState(const RsGxsGroupId &groupId, int subscribeFlags)
+{
+	const bool isAdmin = IS_GROUP_ADMIN(subscribeFlags);
+	mCanModerate = isAdmin;
+	ui.toolButton_NewPage->setEnabled(mCanModerate);
+	ui.toolButton_Republish->setEnabled(mCanModerate);
+
+	if (groupId.isNull() || isAdmin)
+	{
+		return;
+	}
+
+	RsThread::async([this, groupId]()
+	{
+		std::list<RsGxsId> ownIds;
+		bool canModerate = false;
+		if (rsIdentity->getOwnIds(ownIds))
+		{
+			for (const auto &ownId : ownIds)
+			{
+				if (rsWiki->isActiveModerator(groupId, ownId, time(nullptr)))
+				{
+					canModerate = true;
+					break;
+				}
+			}
+		}
+
+		RsQThreadUtils::postToObject([this, groupId, canModerate]()
+		{
+			if (groupId != mGroupId)
+			{
+				return;
+			}
+			mCanModerate = canModerate;
+			ui.toolButton_NewPage->setEnabled(mCanModerate);
+			ui.toolButton_Republish->setEnabled(mCanModerate);
+		}, this);
+	});
 }
 
 void WikiDialog::groupListCustomPopupMenu(QPoint /*point*/)
@@ -789,6 +904,11 @@ void WikiDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
             case RsWikiEventCode::UPDATED_COLLECTION:
             case RsWikiEventCode::NEW_COLLECTION:
                 updateDisplay(); // Refresh global list
+				if (e->mWikiGroupId == mGroupId)
+				{
+					int subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId.toStdString()));
+					updateModerationState(mGroupId, subscribeFlags);
+				}
                 break;
             case RsWikiEventCode::UPDATED_SNAPSHOT:
             case RsWikiEventCode::NEW_SNAPSHOT:
@@ -800,6 +920,11 @@ void WikiDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
             case RsWikiEventCode::SUBSCRIBE_STATUS_CHANGED:
                 // Refresh group list to update subscription status
                 updateDisplay();
+				if (e->mWikiGroupId == mGroupId)
+				{
+					int subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId.toStdString()));
+					updateModerationState(mGroupId, subscribeFlags);
+				}
                 break;
             case RsWikiEventCode::NEW_COMMENT:
                 // Refresh comments if the event is for the currently displayed page
