@@ -40,6 +40,11 @@
       </column>
       <column>
        <property name="text">
+        <string>Total In</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
         <string>InMax (kB/s)</string>
        </property>
       </column>
@@ -51,6 +56,11 @@
       <column>
        <property name="text">
         <string>Out (kB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Total Out</string>
        </property>
       </column>
       <column>
@@ -76,16 +86,6 @@
       <column>
        <property name="text">
         <string>Drain (s)</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Total In</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Total Out</string>
        </property>
       </column>
      </widget>
