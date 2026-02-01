@@ -53,7 +53,6 @@ private:
     virtual void updateDisplay() ;
 
     TurtleRouterStatisticsWidget *_tst_CW ;
-    QLabel *cumulativeTotalLabel;
 } ;
 
 class TurtleRouterStatisticsWidget:  public QWidget
