@@ -29,7 +29,6 @@
 
 #include <retroshare/rsturtle.h>
 #include <retroshare/rspeers.h>
-#include <retroshare/rsconfig.h>
 #include "TurtleRouterStatistics.h"
 #include "TurtleRouterDialog.h"
 #include "GxsNetTunnelsDialog.h"
@@ -214,19 +213,6 @@ TurtleRouterStatistics::TurtleRouterStatistics(QWidget *parent)
 		frmGraph->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
 	else
 		frmGraph->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
-	
-	// Create cumulative totals label
-	cumulativeTotalLabel = new QLabel(this);
-	cumulativeTotalLabel->setText(tr("Cumulative Total: ↓ 0 B  ↑ 0 B"));
-	cumulativeTotalLabel->setAlignment(Qt::AlignCenter);
-	QFont labelFont = cumulativeTotalLabel->font();
-	labelFont.setPointSize(10);
-	labelFont.setBold(true);
-	cumulativeTotalLabel->setFont(labelFont);
-	cumulativeTotalLabel->setStyleSheet("QLabel { padding: 5px; background-color: palette(window); }");
-	
-	// Insert label into splitter (between stats area and graph)
-	splitter->insertWidget(1, cumulativeTotalLabel);
 
 	// load settings
     processSettings(true);
@@ -276,31 +262,6 @@ void TurtleRouterStatistics::updateDisplay()
 	//updateTunnelRequests(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 	_tst_CW->updateTunnelStatistics(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 	_tst_CW->update();
-	
-	// Update cumulative totals label
-	if (cumulativeTotalLabel && rsConfig) {
-		auto formatBytes = [](uint64_t bytes) -> QString {
-			const char* units[] = {"B", "KB", "MB", "GB", "TB"};
-			int unitIndex = 0;
-			double value = bytes;
-			
-			while (value >= 1024 && unitIndex < 4) {
-				value /= 1024;
-				unitIndex++;
-			}
-			
-			return QString("%1 %2").arg(value, 0, 'f', 2).arg(units[unitIndex]);
-		};
-		
-		RsCumulativeTrafficStats totalStats;
-		if (rsConfig->getTotalCumulativeTraffic(totalStats)) {
-			cumulativeTotalLabel->setText(
-				tr("Cumulative Total: ↓ %1  ↑ %2")
-				.arg(formatBytes(totalStats.bytesIn))
-				.arg(formatBytes(totalStats.bytesOut))
-			);
-		}
-	}
 }
 
 QString TurtleRouterStatistics::getPeerName(const RsPeerId &peer_id)
