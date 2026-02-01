@@ -22,7 +22,7 @@
 #define _WIKI_GROUP_DIALOG_H
 
 #include <QGroupBox>
-#include <QListWidget>
+#include <QTreeWidget>
 #include <QPushButton>
 
 #include "GxsGroupDialog.h"
@@ -61,7 +61,7 @@ private:
 
 	QWidget *mModeratorsWidget = nullptr;
 	QGroupBox *mModeratorsGroup = nullptr;
-	QListWidget *mModeratorsList = nullptr;
+	QTreeWidget *mModeratorsList = nullptr;
 	QPushButton *mAddModeratorButton = nullptr;
 	QPushButton *mRemoveModeratorButton = nullptr;
 

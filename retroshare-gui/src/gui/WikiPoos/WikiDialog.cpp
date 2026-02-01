@@ -79,6 +79,7 @@
 #define WIKI_GROUP_COL_PAGENAME		0
 #define WIKI_GROUP_COL_PAGEID		1
 #define WIKI_GROUP_COL_ORIGPAGEID	2
+#define WIKI_PAGE_ROLE_STATUS		(Qt::UserRole + 1)
 
 /* Images for TreeWidget (Copied from GxsForums.cpp) */
 #define IMAGE_FOLDER         ":/images/folder16.png"
@@ -383,6 +384,25 @@ void WikiDialog::pagesTreeCustomPopupMenu(QPoint point)
 
 	contextMenu.addSeparator();
 
+	QAction *markReadAction = contextMenu.addAction(tr("Mark as read"), this, SLOT(markPageAsRead()));
+	QAction *markUnreadAction = contextMenu.addAction(tr("Mark as unread"), this, SLOT(markPageAsUnread()));
+	markReadAction->setEnabled(hasSelection);
+	markUnreadAction->setEnabled(hasSelection);
+
+	if (hasSelection && item)
+	{
+		const QVariant statusData = item->data(WIKI_GROUP_COL_PAGENAME, WIKI_PAGE_ROLE_STATUS);
+		if (statusData.isValid())
+		{
+			const uint32_t status = statusData.toUInt();
+			const bool isUnread = IS_MSG_UNREAD(status) || IS_MSG_NEW(status);
+			markReadAction->setEnabled(isUnread);
+			markUnreadAction->setEnabled(!isUnread);
+		}
+	}
+
+	contextMenu.addSeparator();
+
 	QAction *showPageIdAction = contextMenu.addAction(tr("Show Page Id"));
 	showPageIdAction->setCheckable(true);
 	showPageIdAction->setChecked(!ui.treeWidget_Pages->isColumnHidden(WIKI_GROUP_COL_PAGEID));
@@ -400,6 +420,16 @@ void WikiDialog::pagesTreeCustomPopupMenu(QPoint point)
 	});
 
 	contextMenu.exec(QCursor::pos());
+}
+
+void WikiDialog::markPageAsRead()
+{
+	setSelectedPageReadStatus(true);
+}
+
+void WikiDialog::markPageAsUnread()
+{
+	setSelectedPageReadStatus(false);
 }
 
 void WikiDialog::updateWikiPage(const RsWikiSnapshot &page)
@@ -471,6 +501,46 @@ bool WikiDialog::getSelectedPage(RsGxsGroupId &groupId, RsGxsMessageId &pageId, 
 	std::cerr << "WikiDialog::getSelectedPage() PageId: " << pageId << std::endl;
 #endif
 	return true;
+}
+
+void WikiDialog::setSelectedPageReadStatus(bool read)
+{
+	RsGxsGroupId groupId;
+	RsGxsMessageId pageId;
+	RsGxsMessageId origPageId;
+	if (!getSelectedPage(groupId, pageId, origPageId))
+	{
+		return;
+	}
+
+	if (!rsWiki)
+	{
+		return;
+	}
+
+	uint32_t token = 0;
+	const RsGxsGrpMsgIdPair msgId(groupId, pageId);
+	rsWiki->setMessageReadStatus(token, msgId, read);
+
+	QTreeWidgetItem *item = ui.treeWidget_Pages->currentItem();
+	if (!item)
+	{
+		return;
+	}
+
+	const uint32_t mask = GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+	uint32_t status = item->data(WIKI_GROUP_COL_PAGENAME, WIKI_PAGE_ROLE_STATUS).toUInt();
+	status &= ~mask;
+	if (!read)
+	{
+		status |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+	}
+
+	item->setData(WIKI_GROUP_COL_PAGENAME, WIKI_PAGE_ROLE_STATUS, status);
+
+	QFont pageFont = item->font(WIKI_GROUP_COL_PAGENAME);
+	pageFont.setBold(!read);
+	item->setFont(WIKI_GROUP_COL_PAGENAME, pageFont);
 }
 
 const RsGxsGroupId& WikiDialog::getSelectedGroup()
@@ -600,6 +670,14 @@ void WikiDialog::loadPages(const RsGxsGroupId &groupId)
 					: page.mMeta.mOrigMsgId;
 				pageItem->setText(WIKI_GROUP_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId.toStdString()));
 				pageItem->setText(WIKI_GROUP_COL_ORIGPAGEID, QString::fromStdString(origId.toStdString()));
+				pageItem->setData(WIKI_GROUP_COL_PAGENAME, WIKI_PAGE_ROLE_STATUS,
+					static_cast<uint32_t>(page.mMeta.mMsgStatus));
+
+				QFont pageFont = pageItem->font(WIKI_GROUP_COL_PAGENAME);
+				const bool isUnread = IS_MSG_UNREAD(page.mMeta.mMsgStatus)
+					|| IS_MSG_NEW(page.mMeta.mMsgStatus);
+				pageFont.setBold(isUnread);
+				pageItem->setFont(WIKI_GROUP_COL_PAGENAME, pageFont);
 
 				ui.treeWidget_Pages->addTopLevelItem(pageItem);
 			}

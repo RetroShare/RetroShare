@@ -68,6 +68,8 @@ private slots:
 
 	void groupTreeChanged();
 	void pagesTreeCustomPopupMenu(QPoint point);
+	void markPageAsRead();
+	void markPageAsUnread();
 
 	void newGroup();
 	void showGroupDetails();
@@ -93,6 +95,7 @@ private:
 	void clearGroupTree();
 
 	void updateWikiPage(const RsWikiSnapshot &page);
+	void setSelectedPageReadStatus(bool read);
 
 	bool getSelectedPage(RsGxsGroupId &groupId, RsGxsMessageId &pageId, RsGxsMessageId &origPageId);
 	std::string getSelectedPage();

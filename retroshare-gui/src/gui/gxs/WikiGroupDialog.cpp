@@ -19,11 +19,13 @@
  *******************************************************************************/
 
 #include "WikiGroupDialog.h"
+#include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/FriendSelectionWidget.h"
 #include "util/qtthreadsutils.h"
 
+#include <QAbstractItemView>
 #include <QComboBox>
 #include <QDialog>
 #include <QDialogButtonBox>
@@ -117,8 +119,13 @@ void WikiGroupDialog::initUi()
 		mModeratorsGroup = new QGroupBox(tr("Moderators"), mModeratorsWidget);
 		auto *groupLayout = new QVBoxLayout(mModeratorsGroup);
 
-		mModeratorsList = new QListWidget(mModeratorsGroup);
+		mModeratorsList = new QTreeWidget(mModeratorsGroup);
 		mModeratorsList->setToolTip(tr("List of users who can moderate this wiki"));
+		mModeratorsList->setColumnCount(2);
+		mModeratorsList->setHeaderLabels({tr("Moderator"), tr("Id")});
+		mModeratorsList->setRootIsDecorated(false);
+		mModeratorsList->setSelectionMode(QAbstractItemView::SingleSelection);
+		mModeratorsList->setUniformRowHeights(true);
 		groupLayout->addWidget(mModeratorsList);
 
 		auto *buttonLayout = new QHBoxLayout();
@@ -297,38 +304,44 @@ void WikiGroupDialog::addModeratorToList(const RsGxsId &gxsId)
 		return;
 	}
 
-	for (int i = 0; i < mModeratorsList->count(); ++i)
+	for (int i = 0; i < mModeratorsList->topLevelItemCount(); ++i)
 	{
-		QListWidgetItem *existingItem = mModeratorsList->item(i);
+		QTreeWidgetItem *existingItem = mModeratorsList->topLevelItem(i);
 		if (!existingItem)
 		{
 			continue;
 		}
 
-		const RsGxsId existingId(existingItem->data(Qt::UserRole).toString().toStdString());
+		GxsIdRSTreeWidgetItem *gxsItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(existingItem);
+		if (!gxsItem)
+		{
+			continue;
+		}
+
+		RsGxsId existingId;
+		if (!gxsItem->getId(existingId))
+		{
+			continue;
+		}
+
 		if (existingId == gxsId)
 		{
 			return;
 		}
 	}
 
-	QString name = QString::fromStdString(gxsId.toStdString());
-	RsIdentityDetails details;
-	if (rsIdentity->getIdDetails(gxsId, details))
-	{
-		name = QString::fromUtf8(details.mNickname.c_str());
-	}
-
-	QListWidgetItem *item = new QListWidgetItem(name);
-	item->setData(Qt::UserRole, QString::fromStdString(gxsId.toStdString()));
+	auto *item = new GxsIdRSTreeWidgetItem(nullptr, GxsIdDetails::ICON_TYPE_AVATAR, true, mModeratorsList);
+	item->setId(gxsId, 0, false);
+	item->setText(1, QString::fromStdString(gxsId.toStdString()));
 	const bool isActive = rsWiki->isActiveModerator(mCurrentGroupId, gxsId, time(nullptr));
 	if (!isActive)
 	{
-		item->setForeground(Qt::gray);
-		item->setText(name + tr(" (Inactive)"));
+		item->setForeground(0, Qt::gray);
+		item->setForeground(1, Qt::gray);
+		item->setText(0, item->text(0) + tr(" (Inactive)"));
 	}
 
-	mModeratorsList->addItem(item);
+	mModeratorsList->addTopLevelItem(item);
 }
 
 void WikiGroupDialog::updateModeratorControls()
@@ -420,15 +433,25 @@ void WikiGroupDialog::addModerator()
 	std::set<RsGxsId> existingModerators;
 	if (mModeratorsList)
 	{
-		for (int i = 0; i < mModeratorsList->count(); ++i)
+		for (int i = 0; i < mModeratorsList->topLevelItemCount(); ++i)
 		{
-			QListWidgetItem *item = mModeratorsList->item(i);
+			QTreeWidgetItem *item = mModeratorsList->topLevelItem(i);
 			if (!item)
 			{
 				continue;
 			}
 
-			existingModerators.insert(RsGxsId(item->data(Qt::UserRole).toString().toStdString()));
+			GxsIdRSTreeWidgetItem *gxsItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(item);
+			if (!gxsItem)
+			{
+				continue;
+			}
+
+			RsGxsId id;
+			if (gxsItem->getId(id))
+			{
+				existingModerators.insert(id);
+			}
 		}
 	}
 	chooser->setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(existingModerators, false);
@@ -514,15 +537,22 @@ void WikiGroupDialog::removeModerator()
 		return;
 	}
 
-	QListWidgetItem *item = mModeratorsList->currentItem();
-	if (!item)
+	QTreeWidgetItem *item = mModeratorsList->currentItem();
+	GxsIdRSTreeWidgetItem *gxsItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(item);
+	if (!gxsItem)
 	{
 		QMessageBox::information(this, tr("Remove Moderator"),
 			tr("Please select a moderator to remove."));
 		return;
 	}
 
-	const RsGxsId modId(item->data(Qt::UserRole).toString().toStdString());
+	RsGxsId modId;
+	if (!gxsItem->getId(modId))
+	{
+		QMessageBox::information(this, tr("Remove Moderator"),
+			tr("Please select a moderator to remove."));
+		return;
+	}
 	const RsGxsGroupId groupId = mCurrentGroupId;
 
 	const int ret = QMessageBox::question(this, tr("Remove Moderator"),
@@ -543,16 +573,27 @@ void WikiGroupDialog::removeModerator()
 			{
 				if (mModeratorsList)
 				{
-					for (int i = 0; i < mModeratorsList->count(); ++i)
+					for (int i = 0; i < mModeratorsList->topLevelItemCount(); ++i)
 					{
-						QListWidgetItem *listItem = mModeratorsList->item(i);
+						QTreeWidgetItem *listItem = mModeratorsList->topLevelItem(i);
 						if (!listItem)
 							continue;
 
-						const RsGxsId currentId(listItem->data(Qt::UserRole).toString().toStdString());
+						GxsIdRSTreeWidgetItem *listGxsItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(listItem);
+						if (!listGxsItem)
+						{
+							continue;
+						}
+
+						RsGxsId currentId;
+						if (!listGxsItem->getId(currentId))
+						{
+							continue;
+						}
+
 						if (currentId == modId)
 						{
-							delete mModeratorsList->takeItem(i);
+							delete mModeratorsList->takeTopLevelItem(i);
 							break;
 						}
 					}
