@@ -28,13 +28,6 @@
 
 #include "ui_GxsNetTunnelsDialog.h"
 
-// Defines for download list list columns
-#define COLUMN_SERVICE           0
-#define COLUMN_GROUPID           1
-#define COLUMN_POLICY            2
-#define COLUMN_STATUS            3
-#define COLUMN_LASTCONTACT       4
-
 class QModelIndex;
 class QPainter;
 class NetTunnelsListDelegate ;

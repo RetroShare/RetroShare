@@ -40,6 +40,13 @@
 #include "util/RsQtVersion.h"
 #include "gui/settings/rsharesettings.h"
 
+// Defines for Tunnels tree columns
+#define COLUMN_SERVICE           0
+#define COLUMN_GROUPID           1
+#define COLUMN_POLICY            2
+#define COLUMN_STATUS            3
+#define COLUMN_LASTCONTACT       4
+
 class NetTunnelsListDelegate: public QAbstractItemDelegate
 {
 public:
