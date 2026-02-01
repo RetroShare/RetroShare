@@ -43,7 +43,7 @@
 #include "retroshare/rstypes.h"
 
 CumulativeStatsWidget::CumulativeStatsWidget(QWidget *parent)
-    : RsAutoUpdatePage(2000, parent)
+    : RsAutoUpdatePage(5000, parent)  // 5 seconds to reduce CPU usage
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     
@@ -61,7 +61,7 @@ CumulativeStatsWidget::CumulativeStatsWidget(QWidget *parent)
     peerBarChartView = new QChartView(new QChart());
     peerBarChartView->setRenderHint(QPainter::Antialiasing);
     peerBarChartView->chart()->setTitle("Data Transfer per Friend");
-    peerBarChartView->chart()->setAnimationOptions(QChart::SeriesAnimations);
+    peerBarChartView->chart()->setAnimationOptions(QChart::NoAnimation);
     peerBarChartView->chart()->legend()->setVisible(true);
     peerBarChartView->chart()->legend()->setAlignment(Qt::AlignBottom);
     
@@ -100,7 +100,7 @@ CumulativeStatsWidget::CumulativeStatsWidget(QWidget *parent)
     serviceBarChartView = new QChartView(new QChart());
     serviceBarChartView->setRenderHint(QPainter::Antialiasing);
     serviceBarChartView->chart()->setTitle("Data Transfer per Service");
-    serviceBarChartView->chart()->setAnimationOptions(QChart::SeriesAnimations);
+    serviceBarChartView->chart()->setAnimationOptions(QChart::NoAnimation);
     serviceBarChartView->chart()->legend()->setVisible(true);
     serviceBarChartView->chart()->legend()->setAlignment(Qt::AlignBottom);
     
@@ -155,9 +155,15 @@ void CumulativeStatsWidget::updatePeerStats()
     std::map<RsPeerId, RsCumulativeTrafficStats> stats;
     if (!rsConfig->getCumulativeTrafficByPeer(stats)) return;
     
-    // Clear existing charts
+    // Clear existing charts - remove series AND axes to prevent accumulation
     peerBarChartView->chart()->removeAllSeries();
     peerPieChartView->chart()->removeAllSeries();
+    
+    // Remove old axes (critical fix for accumulation bug)
+    for (QAbstractAxis *axis : peerBarChartView->chart()->axes()) {
+        peerBarChartView->chart()->removeAxis(axis);
+        delete axis;
+    }
     
     // Prepare data
     QBarSet *bytesInSet = new QBarSet(tr("Bytes In"));
@@ -236,9 +242,15 @@ void CumulativeStatsWidget::updateServiceStats()
     std::map<uint16_t, RsCumulativeTrafficStats> stats;
     if (!rsConfig->getCumulativeTrafficByService(stats)) return;
     
-    // Clear existing charts
+    // Clear existing charts - remove series AND axes to prevent accumulation
     serviceBarChartView->chart()->removeAllSeries();
     servicePieChartView->chart()->removeAllSeries();
+    
+    // Remove old axes (critical fix for accumulation bug)
+    for (QAbstractAxis *axis : serviceBarChartView->chart()->axes()) {
+        serviceBarChartView->chart()->removeAxis(axis);
+        delete axis;
+    }
     
     // Prepare data
     QBarSet *bytesInSet = new QBarSet(tr("Bytes In"));
