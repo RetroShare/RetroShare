@@ -27,6 +27,7 @@
 
 #include "rshare.h"
 #include "BoardPostDisplayWidget.h"
+#include "BoardPostImageHelper.h"
 #include "PhotoView.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
@@ -36,6 +37,7 @@
 #include "gui/Identity/IdDialog.h"
 #include "gui/MainWindow.h"
 #include "util/DateTime.h"
+#include <QMovie>
 
 #include "ui_BoardPostDisplayWidget_compact.h"
 #include "ui_BoardPostDisplayWidget_card.h"
@@ -330,17 +332,29 @@ void BoardPostDisplayWidget_compact::setup()
     {
         if(mPost.mImage.mData != NULL)
         {
-            QPixmap pixmap;
-            GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
-            // Wiping data - as its been passed to thumbnail.
+            QString format;
+            if (BoardPostImageHelper::isAnimatedImage(mPost.mImage.mData, mPost.mImage.mSize, &format))
+            {
+                // Animated GIF/WEBP - show static first frame in compact view
+                // (Compact view intentionally shows static first frame for performance)
+                QPixmap pixmap;
+                GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+                ui->pictureLabel->setPicture(pixmap);
+            }
+            else
+            {
+                // Static image - use QPixmap
+                QPixmap pixmap;
+                GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
 
 #ifdef DEBUG_BOARDPOSTDISPLAYWIDGET
-            std::cerr << "Got pixmap of size " << pixmap.width() << " x " << pixmap.height() << std::endl;
-            std::cerr << "Saving to pix.png" << std::endl;
-            pixmap.save("pix.png","JPG");
+                std::cerr << "Got pixmap of size " << pixmap.width() << " x " << pixmap.height() << std::endl;
+                std::cerr << "Saving to pix.png" << std::endl;
+                pixmap.save("pix.png","JPG");
 #endif
 
-            ui->pictureLabel->setPicture(pixmap);
+                ui->pictureLabel->setPicture(pixmap);
+            }
         }
         else
             ui->pictureLabel->setPicture( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png") );
@@ -382,13 +396,31 @@ void BoardPostDisplayWidget_compact::viewPicture()
         return;
 
     QString timestamp = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
-    QPixmap pixmap;
-    GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
     RsGxsId authorID = mPost.mMeta.mAuthorId;
 
     PhotoView *PView = new PhotoView();
 
-    PView->setPixmap(pixmap);
+    // Check if animated image
+    QString format;
+    if (BoardPostImageHelper::isAnimatedImage(mPost.mImage.mData, mPost.mImage.mSize, &format))
+    {
+        // Animated GIF/WEBP - use QMovie in popup
+        QMovie* movie = BoardPostImageHelper::createMovieFromData(mPost.mImage.mData, mPost.mImage.mSize);
+        if (movie)
+        {
+            movie->setParent(PView); // Ensure cleanup
+            PView->setMovie(movie);
+            movie->start();
+        }
+    }
+    else
+    {
+        // Static image - use QPixmap
+        QPixmap pixmap;
+        GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+        PView->setPixmap(pixmap);
+    }
+
     PView->setTitle(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
     PView->setName(authorID);
     PView->setTime(timestamp);
@@ -446,16 +478,33 @@ void BoardPostDisplayWidget_card::setup()
     {
 		if(mPost.mImage.mData != NULL)
 		{
-			QPixmap pixmap;
-			GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
-			// Wiping data - as its been passed to thumbnail.
+            QString format;
+            if (BoardPostImageHelper::isAnimatedImage(mPost.mImage.mData, mPost.mImage.mSize, &format))
+            {
+                // Animated GIF/WEBP - use QMovie
+                QMovie* movie = BoardPostImageHelper::createMovieFromData(mPost.mImage.mData, mPost.mImage.mSize);
+                if (movie)
+                {
+                    movie->setParent(ui->pictureLabel); // Ensure cleanup
+                    ui->pictureLabel->setMovie(movie);
+                    movie->start();
+                    // Loop animation when finished
+                    connect(movie, &QMovie::finished, movie, &QMovie::start);
+                }
+            }
+            else
+            {
+                // Static image - use QPixmap with scaling
+                QPixmap pixmap;
+                GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
 
-			if(pixmap.width() > 800){
-				QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
-				ui->pictureLabel->setPixmap(scaledpixmap);
-			}else{
-				ui->pictureLabel->setPixmap(pixmap);
-			}
+                if(pixmap.width() > 800){
+                    QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
+                    ui->pictureLabel->setPixmap(scaledpixmap);
+                }else{
+                    ui->pictureLabel->setPixmap(pixmap);
+                }
+            }
 
 			ui->pictureLabel->show();
 		}

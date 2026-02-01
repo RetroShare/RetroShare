@@ -25,9 +25,11 @@
 
 #include "rshare.h"
 #include "PostedCardView.h"
+#include "BoardPostImageHelper.h"
 #include "gui/feeds/FeedHolder.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
+#include <QMovie>
 #include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
@@ -253,16 +255,33 @@ void PostedCardView::fill()
 		
 		if(mPost.mImage.mData != NULL)
 		{
-			QPixmap pixmap;
-			GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
-			// Wiping data - as its been passed to thumbnail.
-			
-			if(pixmap.width() > 800){
-				QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
-				ui->pictureLabel->setPixmap(scaledpixmap);
-			}else{
-				ui->pictureLabel->setPixmap(pixmap);
-			}
+            QString format;
+            if (BoardPostImageHelper::isAnimatedImage(mPost.mImage.mData, mPost.mImage.mSize, &format))
+            {
+                // Animated GIF/WEBP - use QMovie
+                QMovie* movie = BoardPostImageHelper::createMovieFromData(mPost.mImage.mData, mPost.mImage.mSize);
+                if (movie)
+                {
+                    movie->setParent(ui->pictureLabel); // Ensure cleanup
+                    ui->pictureLabel->setMovie(movie);
+                    movie->start();
+                    // Loop animation when finished
+                    connect(movie, &QMovie::finished, movie, &QMovie::start);
+                }
+            }
+            else
+            {
+                // Static image - use QPixmap with scaling
+                QPixmap pixmap;
+                GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+                
+                if(pixmap.width() > 800){
+                    QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
+                    ui->pictureLabel->setPixmap(scaledpixmap);
+                }else{
+                    ui->pictureLabel->setPixmap(pixmap);
+                }
+            }
 		}
 		else //if (mPost.mImage.mData == NULL)
 		{
