@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/statistics/BandwidthStatsWidget.h                                       *
+ * gui/statistics/CumulativeStatsWidget.h                                     *
  *                                                                             *
- * Copyright (c) 2014 Retroshare Team <retroshare.project@gmail.com>           *
+ * Copyright (C) 2024                                                          *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,35 +18,54 @@
  *                                                                             *
  *******************************************************************************/
 
-#pragma once
+#ifndef CUMULATIVE_STATS_WIDGET_H
+#define CUMULATIVE_STATS_WIDGET_H
 
-#include "ui_BandwidthStatsWidget.h"
-#include "BWGraph.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
+#include <QChartView>
+#include <QChart>
+#include <map>
+#include <string>
 
-class BandwidthStatsWidget: public QWidget
+class QTreeWidget;
+class QTreeWidgetItem;
+class QTabWidget;
+class QPushButton;
+
+QT_CHARTS_USE_NAMESPACE
+
+class CumulativeStatsWidget : public RsAutoUpdatePage
 {
     Q_OBJECT
-
 public:
-    /** Default Constructor */
-    BandwidthStatsWidget(QWidget *parent) ;
-    /** Default Destructor */
-    ~BandwidthStatsWidget ();
+    CumulativeStatsWidget(QWidget *parent = nullptr);
+    virtual ~CumulativeStatsWidget();
+    virtual void updateDisplay();
 
-protected slots:
-    void updateFriendSelection(int n);
-    void updateServiceSelection(int n);
-    void updateComboBoxes() ;
-    void updateUpDownSelection(int n);
-    void updateUnitSelection(int n);
-    void toggleLogScale(bool b);
-    void updateLegendType(int n);
-    void updateGraphSelection(int n);
+private slots:
+    void clearStatistics();
 
 private:
-    void processSettings(bool bLoad);
-    bool m_bProcessSettings;
+    void updatePeerStats();
+    void updateServiceStats();
+    
+    // Helper to format bytes
+    QString formatSize(uint64_t bytes);
 
-    Ui::BwStatsWidget ui;
-    QTimer *mTimer ;
+    QTabWidget *tabWidget;
+    
+    // Peer tab
+    QTreeWidget *peerTree;
+    QChartView *peerBarChartView;
+    QChartView *peerPieChartView;
+    
+    // Service tab
+    QTreeWidget *serviceTree;
+    QChartView *serviceBarChartView;
+    QChartView *servicePieChartView;
+    
+    // Clear button
+    QPushButton *clearButton;
 };
+
+#endif // CUMULATIVE_STATS_WIDGET_H

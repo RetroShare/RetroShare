@@ -21,6 +21,8 @@
 #include <iostream>
 #include <QTimer>
 #include <QObject>
+#include <QLabel>
+#include <QVBoxLayout>
 
 #include <QPainter>
 #include <QStylePainter>

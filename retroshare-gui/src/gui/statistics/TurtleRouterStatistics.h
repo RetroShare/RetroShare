@@ -20,7 +20,11 @@
 
 #pragma once
 
+#include <stdint.h>
 #include <QPoint>
+
+class QWidget;
+class QLabel;
 #include <retroshare/rsturtle.h>
 #include <retroshare/rstypes.h>
 

@@ -72,7 +72,6 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
     connect(mTimer, SIGNAL(timeout()), this, SLOT(updateComboBoxes())) ;
     mTimer->setSingleShot(false) ;
     mTimer->start(2000) ;
-
     // load settings
     processSettings(true);
 
