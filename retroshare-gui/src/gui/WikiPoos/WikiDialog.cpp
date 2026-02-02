@@ -585,6 +585,12 @@ void WikiDialog::loadGroupMeta()
 			if (groupMeta.size() > 0)
 			{
 				insertGroupsData(groupMeta);
+				if (!mGroupId.isNull())
+				{
+					const int subscribeFlags = ui.groupTreeWidget->subscribeFlags(
+						QString::fromStdString(mGroupId.toStdString()));
+					updateModerationState(mGroupId, subscribeFlags);
+				}
 			}
 			else
 			{

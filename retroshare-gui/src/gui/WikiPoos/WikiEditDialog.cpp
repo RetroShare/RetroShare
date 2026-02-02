@@ -106,6 +106,16 @@ WikiEditDialog::~WikiEditDialog()
 	delete (mThreadCompareRole);
 }
 
+void WikiEditDialog::resetEditorState()
+{
+	ui.checkBox_Merge->setChecked(false);
+	ui.checkBox_OldHistory->setChecked(false);
+	mHistoryMergeMode = false;
+	mOldHistoryEnabled = false;
+	updateHistoryStatus();
+	updateMergeButtonState();
+}
+
 void WikiEditDialog::mergeModeToggle()
 {
 	mHistoryMergeMode = ui.checkBox_Merge->isChecked();
@@ -645,6 +655,7 @@ void WikiEditDialog::submitEdit()
 
 void WikiEditDialog::setupData(const RsGxsGroupId &groupId, const RsGxsMessageId &pageId)
 {
+	resetEditorState();
         mRepublishMode = false;
 	mHistoryLoaded = false;
     if (!groupId.isNull())

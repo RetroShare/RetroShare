@@ -90,6 +90,7 @@ void 	performMerge(
 rstime_t getEditTimestamp(const RsGxsMessageId &msgId) const;
 QString getAuthorName(const RsGxsMessageId &msgId) const;
 QTreeWidgetItem *findHistoryItem(const RsGxsMessageId &msgId) const;
+void 	resetEditorState();
 
 
         bool mNewPage;
