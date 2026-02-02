@@ -199,3 +199,9 @@ void TunnelStatisticsDialog::updateTunnels()
 
     }
 }
+
+void TunnelStatisticsDialog::hideEvent(QHideEvent *event)
+{
+    authenticatedTunnels_TW->clear();
+    QWidget::hideEvent(event);
+}

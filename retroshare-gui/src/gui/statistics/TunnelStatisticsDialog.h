@@ -53,5 +53,8 @@ private:
     bool m_bProcessSettings;
     static QString speedString(float f);
 
+protected:
+    void hideEvent(QHideEvent *event) override;
+
 } ;
 

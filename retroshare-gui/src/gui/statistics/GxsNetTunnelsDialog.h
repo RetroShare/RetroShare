@@ -53,4 +53,5 @@ private:
 
 protected:
 	NetTunnelsListDelegate *TunnelDelegate;
+	void hideEvent(QHideEvent *event) override;
 } ;

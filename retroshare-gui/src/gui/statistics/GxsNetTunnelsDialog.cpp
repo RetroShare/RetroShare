@@ -381,3 +381,9 @@ void GxsNetTunnelsDialog::updateTunnels()
         }
     }
 }
+
+void GxsNetTunnelsDialog::hideEvent(QHideEvent *event)
+{
+    groups_treeWidget->clear();
+    QWidget::hideEvent(event);
+}
