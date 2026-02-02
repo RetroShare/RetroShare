@@ -1,7 +1,7 @@
 /*******************************************************************************
  * gui/statistics/TurtleRouterDialog.h                                         *
  *                                                                             *
- * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
+ * Copyright (c) 2025 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -25,42 +25,36 @@
 
 #include <retroshare-gui/RsAutoUpdatePage.h>
 
-#include "ui_TurtleRouterDialog.h"
-#include "ui_TurtleRouterStatistics.h"
+#include "ui_TunnelStatisticsDialog.h"
 
 class QModelIndex;
 class QPainter;
-class FTTunnelsListDelegate ;
+//class FTTunnelsListDelegate ;
 
-class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialogForm
+class TunnelStatisticsDialog: public RsAutoUpdatePage, public Ui::TunnelStatisticsDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
-		TurtleRouterDialog(QWidget *parent = NULL) ;
-		~TurtleRouterDialog();
-		
-		// Cache for peer names.
-        static QString getPeerName(const RsPeerId &peer_id) ;
+public:
+    TunnelStatisticsDialog(QWidget *parent = NULL) ;
+    ~TunnelStatisticsDialog();
 
-	private:
-		void updateTunnelRequests(	const std::vector<std::vector<std::basic_string<char> > >&, 
-											const std::vector<std::vector<std::basic_string<char> > >&, 
-											const std::vector<TurtleSearchRequestDisplayInfo >&,
-											const std::vector<TurtleTunnelRequestDisplayInfo >&) ;
-											
-		void processSettings(bool bLoad);
-		bool m_bProcessSettings;
+    // Cache for peer names.
+    static QString getPeerName(const RsGxsId& gxs_id);
+    static QString getPeerName(const RsPeerId &peer_id) ;
 
-		virtual void updateDisplay() ;
-		QTreeWidgetItem *findParentHashItem(const std::string& hash) ;
+    void updateTunnels();
 
-		std::map<std::string,QTreeWidgetItem*> top_level_hashes ;
-		QTreeWidgetItem *top_level_unknown_hashes ;
-		QTreeWidgetItem *top_level_s_requests ;
-		QTreeWidgetItem *top_level_t_requests ;
+public slots:
+    virtual void updateDisplay() ;
+
+private:
+    void processSettings(bool bLoad);
+    bool m_bProcessSettings;
+    static QString speedString(float f);
 
 protected:
-	FTTunnelsListDelegate *FTTDelegate;
+    void hideEvent(QHideEvent *event) override;
 
 } ;
+
