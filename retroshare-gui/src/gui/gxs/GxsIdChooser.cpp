@@ -51,8 +51,10 @@
 //#define IDCHOOSER_DEBUG
 
 /** Constructor */
-GxsIdChooser::GxsIdChooser(QWidget *parent)
-    : RSComboBox(parent), mFlags(IDCHOOSER_ANON_DEFAULT)
+GxsIdChooser::GxsIdChooser(QWidget *parent) :
+  RSComboBox(parent),
+  mFlags(IDCHOOSER_ANON_DEFAULT),
+  noIdConstraint(true)
 {
 //	mBase = new RsGxsUpdateBroadcastBase(rsIdentity, this);
 //	connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
@@ -121,20 +123,54 @@ void GxsIdChooser::showEvent(QShowEvent *event)
 	QComboBox::showEvent(event);
 }
 
-void GxsIdChooser::setIdConstraintSet(const std::set<RsGxsId>& s) 
+void GxsIdChooser::setIdConstraintSet(const std::set<RsGxsId>& s)
 {
-    mConstraintIdsSet = s ;
-    
-	updateDisplay(true);
-	update(); // Qt flush
+    noIdConstraint = s.empty();
+    mConstraintIdsSet = s;
+
+    updateDisplay(true);
+    update(); // Qt flush
 }
+
+void
+GxsIdChooser::intersectIdConstraintSet(const std::set<RsGxsId>& s) {
+    if(noIdConstraint) {
+        mConstraintIdsSet = s;
+        noIdConstraint = false;
+    }
+    else for(std::set<RsGxsId>::const_iterator i = mConstraintIdsSet.begin();
+      i != mConstraintIdsSet.end();
+    ) {
+        if(s.find(*i) == s.end())
+            i = mConstraintIdsSet.erase(i);
+        else
+            i++;
+    }
+
+    updateDisplay(true);
+    update(); // Qt flush
+}
+
+void
+GxsIdChooser::unionIdConstraintSet(const std::set<RsGxsId>& s) {
+    if(noIdConstraint) {
+        return;
+    }
+    else for(const RsGxsId& id : s) {
+        mConstraintIdsSet.insert(id);
+    }
+
+    updateDisplay(true);
+    update(); // Qt flush
+}
+
 void GxsIdChooser::loadIds(uint32_t chooserFlags, const RsGxsId &defId)
 {
 	mFlags = chooserFlags;
 	mDefaultId = defId;
 	clear();
 	mFirstLoad = true;
-    
+
 	updateDisplay(true);
 	update(); // Qt flush
 }
@@ -182,7 +218,7 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 	case GXS_ID_DETAILS_TYPE_DONE:
 		GxsIdDetails::getIcons(details, icons, GxsIdDetails::ICON_TYPE_AVATAR);
 		break;
-        
+
 	case GXS_ID_DETAILS_TYPE_BANNED:
         icons.push_back(FilesDefs::getIconFromQtResourcePath(BANNED_ICON)) ;
 		break;
@@ -193,16 +229,25 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 	chooser->setItemIcon(index, icons.empty() ? QIcon() : icons[0]);
 
     	//std::cerr << "ID=" << details.mId << ", chooser->flags()=" << chooser->flags() << ", flags=" << details.mFlags ;
-        
+
     	if((chooser->flags() & IDCHOOSER_NON_ANONYMOUS) && !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
         {
             //std::cerr << " - disabling ID - entry = " << index << std::endl;
             chooser->setEntryEnabled(index,false) ;
         }
-        
-        if(!chooser->isInConstraintSet(details.mId))
+
+        if(!chooser->isInConstraintSet(details.mId)) {
             chooser->setEntryEnabled(index,false) ;
-        
+            #ifdef IDCHOOSER_DEBUG
+            std::cerr << "GxsIdChooser: ID not in constraint set: " << details.mId << std::endl;
+            #endif
+        }
+        else {
+            #ifdef IDCHOOSER_DEBUG
+            std::cerr << "GxsIdChooser: ID in constraint set: " << details.mId << std::endl;
+            #endif
+        }
+
     chooser->model()->sort(0);
 
 	// now restore the current item. Problem is, we cannot use the ID position because it may have changed.
@@ -233,12 +278,12 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
     chooser->blockSignals(false) ;
 }
 
-bool GxsIdChooser::isInConstraintSet(const RsGxsId& id) const 
+bool GxsIdChooser::isInConstraintSet(const RsGxsId& id) const
 {
-            if(mConstraintIdsSet.empty())	// special case: empty set means no constraint
-            	return true ;
-            
-            return mConstraintIdsSet.find(id) != mConstraintIdsSet.end() ;
+    if(noIdConstraint)
+        return true ;
+
+    return mConstraintIdsSet.find(id) != mConstraintIdsSet.end() ;
 }
 void GxsIdChooser::setEntryEnabled(int indx,bool /*enabled*/)
 {
@@ -310,8 +355,8 @@ void GxsIdChooser::loadPrivateIds()
             addItem(FilesDefs::getIconFromQtResourcePath(":/icons/png/add-identity.png"), str, id);
 			setItemData(count() - 1, QString("%1_%2").arg(TYPE_CREATE_ID).arg(str), ROLE_SORT);
 			setItemData(count() - 1, TYPE_CREATE_ID, ROLE_TYPE);
-            
-                    
+
+
 		}
         setDefaultItem();
         emit idsLoaded();
