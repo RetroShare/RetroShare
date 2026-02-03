@@ -523,10 +523,10 @@ void NewsFeed::handleWireEvent(std::shared_ptr<const RsEvent> event)
     switch(pe->mWireEventCode)
     {
     case RsWireEventCode::FOLLOW_STATUS_CHANGED:
-        addFeedItem( new WireNotifyGroupItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, false, true));
+        addFeedItem( new WireNotifyGroupItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, false, true, RsWireEventCode::FOLLOW_STATUS_CHANGED));
         break;
     case RsWireEventCode::NEW_WIRE:
-        addFeedItem( new WireNotifyGroupItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, false, true));
+        addFeedItem( new WireNotifyGroupItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, false, true, RsWireEventCode::NEW_WIRE));
         break;
     case RsWireEventCode::NEW_POST:
         addFeedItem( new WireNotifyPostItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, pe->mWireMsgId, false, true));
@@ -541,7 +541,7 @@ void NewsFeed::handleWireEvent(std::shared_ptr<const RsEvent> event)
         addFeedItem( new WireNotifyPostItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, pe->mWireMsgId, false, true));
         break;
     case RsWireEventCode::WIRE_UPDATED:
-        addFeedItem( new WireNotifyGroupItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, false, true));
+        addFeedItem( new WireNotifyGroupItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, false, true, RsWireEventCode::WIRE_UPDATED));
         break;
 //    case RsWireEventCode::POST_UPDATED:
 //        addFeedItem( new WireNotifyGroupItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, false, true));

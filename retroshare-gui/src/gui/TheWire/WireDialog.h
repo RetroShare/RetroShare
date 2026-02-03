@@ -140,6 +140,13 @@ private slots:
 	void selectGroupSet(int index);
 	void selectFilterTime(int index);
 
+	// Filter menu actions
+	void toggleSortAscending();
+	void setFilterTimeAllTime();
+	void setFilterTimeLast24Hours();
+	void setFilterTimeLast7Days();
+	void setFilterTimeLast30Days();
+
 	// history navigation.
 	void back();
 	void forward();
@@ -186,6 +193,7 @@ private:
 
 	int32_t mHistoryIndex;
 	std::vector<WireViewHistory> mHistory;
+	bool mSortAscending;
 
 	// pending navigation (for when navigate called before groups loaded)
 	RsGxsGroupId mNavigatePendingGroupId;

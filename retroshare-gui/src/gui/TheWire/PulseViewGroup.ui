@@ -222,6 +222,27 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="3" rowspan="3">
+          <widget class="QToolButton" name="toolButton_copyProfileLink">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>COPY LINK</string>
+           </property>
+           <property name="icon">
+            <iconset resource="TheWire_images.qrc">
+             <normaloff>:/images/link.svg</normaloff>:/images/link.svg</iconset>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -589,27 +610,6 @@
            </property>
            <property name="text">
             <string>FOLLOW</string>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextBesideIcon</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="toolButton_copyProfileLink">
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>COPY LINK</string>
-           </property>
-           <property name="icon">
-            <iconset resource="TheWire_images.qrc">
-             <normaloff>:/images/link.svg</normaloff>:/images/link.svg</iconset>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextBesideIcon</enum>

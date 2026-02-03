@@ -515,13 +515,25 @@ void WireNotifyPostItem::fill()
     QString title;
     QString msgText;
 
+    // Determine pulse type for display
+    QString pulseTypeStr;
+    if (mPulse.mPulseType & WIRE_PULSE_TYPE_LIKE) {
+        pulseTypeStr = tr("Like");
+    } else if (mPulse.mPulseType & WIRE_PULSE_TYPE_REPUBLISH) {
+        pulseTypeStr = tr("Republish");
+    } else if (mPulse.mPulseType & WIRE_PULSE_TYPE_REPLY) {
+        pulseTypeStr = tr("Reply");
+    } else {
+        pulseTypeStr = tr("Pulse");
+    }
+
     if (!mIsHome)
     {
         if (mCloseOnRead && !IS_MSG_NEW(mPulse.mMeta.mMsgStatus)) {
             removeItem();
         }
 
-        msgText = tr("Pulse") + ": ";
+        msgText = pulseTypeStr + ": ";
         RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_WIRE, mPulse.mMeta.mGroupId, mPulse.mMeta.mMsgId, messageName());
         msgText += msgLink.toHtml();
         ui->subjectLabel->setText(msgText);
@@ -698,7 +710,19 @@ void WireNotifyPostItem::setGroup(const RsWireGroup &group)
 
 	QString title;
 
-	title = tr("Wire Feed") + ": ";
+	// Determine pulse type for title
+	QString pulseTypeStr;
+	if (mPulse.mPulseType & WIRE_PULSE_TYPE_LIKE) {
+		pulseTypeStr = tr("New Like");
+	} else if (mPulse.mPulseType & WIRE_PULSE_TYPE_REPUBLISH) {
+		pulseTypeStr = tr("New Republish");
+	} else if (mPulse.mPulseType & WIRE_PULSE_TYPE_REPLY) {
+		pulseTypeStr = tr("New Reply");
+	} else {
+		pulseTypeStr = tr("Wire Feed");
+	}
+
+	title = pulseTypeStr + ": ";
 	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_WIRE, group.mMeta.mGroupId, groupName());
 	title += link.toHtml();
 	ui->titleLabel->setText(title);

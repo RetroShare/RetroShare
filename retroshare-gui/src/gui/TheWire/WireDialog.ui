@@ -304,6 +304,20 @@
             </widget>
            </item>
            <item>
+            <widget class="QToolButton" name="toolButton_filter">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/mail/filter24.png</normaloff>:/icons/mail/filter24.png</iconset>
+             </property>
+             <property name="popupMode">
+              <enum>QToolButton::InstantPopup</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="horizontalSpacer_3">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>

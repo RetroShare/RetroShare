@@ -34,16 +34,18 @@
  * #define DEBUG_ITEM 1
  ****/
 
-WireNotifyGroupItem::WireNotifyGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate) :
-    GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsWire, autoUpdate)
+WireNotifyGroupItem::WireNotifyGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate, RsWireEventCode eventCode) :
+    GxsGroupFeedItem(feedHolder, feedId, groupId, isHome, rsWire, autoUpdate),
+    mEventCode(eventCode)
 {
     setup();
     requestGroup();
     addEventHandler();
 }
 
-WireNotifyGroupItem::WireNotifyGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsWireGroup &group, bool isHome, bool autoUpdate) :
-    GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsWire, autoUpdate)
+WireNotifyGroupItem::WireNotifyGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsWireGroup &group, bool isHome, bool autoUpdate, RsWireEventCode eventCode) :
+    GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsWire, autoUpdate),
+    mEventCode(eventCode)
 {
     setup();
     setGroup(group);
@@ -204,14 +206,20 @@ void WireNotifyGroupItem::fill()
     else
         ui->infoLastPost->setText(DateTime::formatLongDateTime(mGroup.mMeta.mLastPost));
 
-//	if (mIsNew)
-//	{
+    // Set title based on event type
+    switch(mEventCode)
+    {
+    case RsWireEventCode::FOLLOW_STATUS_CHANGED:
+        ui->titleLabel->setText(tr("Now Following"));
+        break;
+    case RsWireEventCode::WIRE_UPDATED:
+        ui->titleLabel->setText(tr("Wire Updated"));
+        break;
+    case RsWireEventCode::NEW_WIRE:
+    default:
         ui->titleLabel->setText(tr("New Wire"));
-//	}
-//	else
-//	{
-//		ui->titleLabel->setText(tr("Updated Wire"));
-//	}
+        break;
+    }
 
     if (mIsHome)
     {

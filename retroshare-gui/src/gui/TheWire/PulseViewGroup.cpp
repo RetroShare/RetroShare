@@ -120,8 +120,8 @@ void PulseViewGroup::setup()
             label_extra_likes->setText(BoldString(ToNumberUnits(likes)));
             // label_extra_following->setText(BoldString(ToNumberUnits(following))); // TODO: enable when mGroupFollowing added
 
-            // hide follow.
-            widget_actions->setVisible(false);
+            // hide follow button but keep copy link visible.
+            followButton->setVisible(false);
         }
         else
         {
@@ -137,14 +137,17 @@ void PulseViewGroup::setGroupSet()
 {
 	if (mGroup->mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
 		editButton->show();
+		toolButton_copyProfileLink->show();
 	}
 	else if (mGroup->mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
 	{
 		editButton->hide();
+		toolButton_copyProfileLink->show();
 	}
 	else
 	{
 		editButton->hide();
+		toolButton_copyProfileLink->show();
 	}
 }
 

@@ -44,6 +44,7 @@
 
 #include <QTimer>
 #include <QMessageBox>
+#include <QMenu>
 
 /****************************************************************
  * TheWire Display Widget.
@@ -66,7 +67,7 @@
 WireDialog::WireDialog(QWidget *parent)
     : GxsStatisticsProvider(rsWire, settingsGroupName(),parent, true), mGroupSet(GROUP_SET_ALL)
     , mAddDialog(nullptr), mGroupSelected(nullptr), mWireQueue(nullptr)
-    , mHistoryIndex(-1), mEventHandlerId(0)
+    , mHistoryIndex(-1), mEventHandlerId(0), mSortAscending(false)
 {
 	ui.setupUi(this);
 
@@ -84,6 +85,21 @@ WireDialog::WireDialog(QWidget *parent)
 	connect( ui.toolButton_forward, SIGNAL(clicked()), this, SLOT(forward()));
 	ui.toolButton_back->setEnabled(false);
 	ui.toolButton_forward->setEnabled(false);
+
+	// Setup filter menu
+	QMenu *filterMenu = new QMenu(this);
+	QAction *sortAscAction = filterMenu->addAction(tr("Sort by Ascending"));
+	sortAscAction->setCheckable(true);
+	sortAscAction->setChecked(mSortAscending);
+	connect(sortAscAction, SIGNAL(triggered()), this, SLOT(toggleSortAscending()));
+
+	QMenu *filterTimeMenu = filterMenu->addMenu(tr("Filter by time"));
+	filterTimeMenu->addAction(tr("All Time"), this, SLOT(setFilterTimeAllTime()));
+	filterTimeMenu->addAction(tr("Last 24 hours"), this, SLOT(setFilterTimeLast24Hours()));
+	filterTimeMenu->addAction(tr("Last 7 days"), this, SLOT(setFilterTimeLast7Days()));
+	filterTimeMenu->addAction(tr("Last 30 days"), this, SLOT(setFilterTimeLast30Days()));
+
+	ui.toolButton_filter->setMenu(filterMenu);
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
@@ -595,6 +611,32 @@ void WireDialog::selectFilterTime(int index)
 	std::cerr << std::endl;
 
 	showSelectedGroups();
+}
+
+void WireDialog::toggleSortAscending()
+{
+	mSortAscending = !mSortAscending;
+	showSelectedGroups();
+}
+
+void WireDialog::setFilterTimeAllTime()
+{
+	ui.comboBox_filterTime->setCurrentIndex(0);
+}
+
+void WireDialog::setFilterTimeLast24Hours()
+{
+	ui.comboBox_filterTime->setCurrentIndex(1);
+}
+
+void WireDialog::setFilterTimeLast7Days()
+{
+	ui.comboBox_filterTime->setCurrentIndex(2);
+}
+
+void WireDialog::setFilterTimeLast30Days()
+{
+	ui.comboBox_filterTime->setCurrentIndex(3);
 }
 
 void WireDialog::showSelectedGroups()
