@@ -356,7 +356,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 	}
 	top_level_s_requests->setText(0, tr("Search requests") + " (" + QString::number(search_reqs_info.size()) + ")" ) ;
 
-	uint32_t limit = std::min((uint32_t)tunnel_reqs_info.size(), (uint32_t)100);
+	uint32_t limit = std::min((uint32_t)tunnel_reqs_info.size(), (uint32_t)50);
 
 	for(uint i=0;i<limit;++i)
 	{
@@ -371,7 +371,10 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 		tunnelr_item->setData(COL_REQ_TIME,  Qt::UserRole,    tunnel_reqs_info[i].age);
 	}
 
-	top_level_t_requests->setText(0, tr("Tunnel requests") + " ("+QString::number(tunnel_reqs_info.size()) + ")") ;
+	if (tunnel_reqs_info.size() > 50)
+		top_level_t_requests->setText(0, tr("Tunnel requests") + " (" + tr("last 50 received TRs out of %1").arg(tunnel_reqs_info.size()) + ")");
+	else
+		top_level_t_requests->setText(0, tr("Tunnel requests") + " (" + QString::number(tunnel_reqs_info.size()) + ")");
 
 	QTreeWidgetItem *unknown_hashs_item = findParentHashItem(RsFileHash().toStdString()) ;
 	unknown_hashs_item->setText(0,tr("Unknown hashes") + " (" + QString::number(unknown_hashs_item->childCount())+QString(")")) ;
