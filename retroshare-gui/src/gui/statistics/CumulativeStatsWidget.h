@@ -27,12 +27,21 @@
 #include <map>
 #include <string>
 
+#include <QTreeWidgetItem>
+
 class QTreeWidget;
-class QTreeWidgetItem;
 class QTabWidget;
 class QPushButton;
+class QCheckBox;
 
 QT_CHARTS_USE_NAMESPACE
+
+class StatsTreeWidgetItem : public QTreeWidgetItem
+{
+public:
+    using QTreeWidgetItem::QTreeWidgetItem;
+    bool operator<(const QTreeWidgetItem &other) const override;
+};
 
 class CumulativeStatsWidget : public RsAutoUpdatePage
 {
@@ -40,10 +49,15 @@ class CumulativeStatsWidget : public RsAutoUpdatePage
 public:
     CumulativeStatsWidget(QWidget *parent = nullptr);
     virtual ~CumulativeStatsWidget();
+
+public slots:
     virtual void updateDisplay();
 
 private slots:
     void clearStatistics();
+    void handleItemChanged(QTreeWidgetItem *item, int column);
+    void toggleAutoPeers(bool checked);
+    void toggleAutoServices(bool checked);
 
 private:
     void updatePeerStats();
@@ -66,6 +80,11 @@ private:
     
     // Clear button
     QPushButton *clearButton;
+
+    bool autoPeers;
+    bool autoServices;
+    QCheckBox *autoPeersCb;
+    QCheckBox *autoServicesCb;
 };
 
 #endif // CUMULATIVE_STATS_WIDGET_H

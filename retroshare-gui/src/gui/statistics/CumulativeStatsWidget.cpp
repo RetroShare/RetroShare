@@ -41,9 +41,29 @@
 #include "retroshare/rsconfig.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rstypes.h"
+#include "retroshare/rsservicecontrol.h"
+
+#include <QCheckBox>
+
+bool StatsTreeWidgetItem::operator<(const QTreeWidgetItem &other) const
+{
+    if (!treeWidget()) {
+        return QTreeWidgetItem::operator<(other);
+    }
+
+    int col = treeWidget()->sortColumn();
+    if (col >= 1 && col <= 3) {
+        qulonglong v1 = data(col, Qt::UserRole).toULongLong();
+        qulonglong v2 = other.data(col, Qt::UserRole).toULongLong();
+        return v1 < v2;
+    }
+    return QTreeWidgetItem::operator<(other);
+}
 
 CumulativeStatsWidget::CumulativeStatsWidget(QWidget *parent)
-    : RsAutoUpdatePage(5000, parent)  // 5 seconds to reduce CPU usage
+    : RsAutoUpdatePage(5000, parent)
+    , autoPeers(true)
+    , autoServices(true)
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     
@@ -77,15 +97,30 @@ CumulativeStatsWidget::CumulativeStatsWidget(QWidget *parent)
     friendChartSplitter->setStretchFactor(0, 3);
     friendChartSplitter->setStretchFactor(1, 2);
     
-    // Table for friends
     peerTree = new QTreeWidget();
     peerTree->setHeaderLabels(QStringList() << tr("Friend") << tr("Bytes In") << tr("Bytes Out") << tr("Total"));
     peerTree->setSortingEnabled(true);
-    peerTree->header()->setStretchLastSection(false);
-    peerTree->header()->resizeSection(0, 200);
+    peerTree->header()->setStretchLastSection(true);
+    peerTree->header()->resizeSection(0, 250);
     
-    friendsLayout->addWidget(friendChartSplitter, 3);
-    friendsLayout->addWidget(peerTree, 1);
+    connect(peerTree, &QTreeWidget::itemChanged, this, &CumulativeStatsWidget::handleItemChanged);
+
+    QSplitter *friendMainSplitter = new QSplitter(Qt::Vertical);
+    friendMainSplitter->addWidget(friendChartSplitter);
+    friendMainSplitter->addWidget(peerTree);
+    friendMainSplitter->setStretchFactor(0, 2);
+    friendMainSplitter->setStretchFactor(1, 1);
+
+    // Auto mode toggle
+    QHBoxLayout *friendControls = new QHBoxLayout();
+    autoPeersCb = new QCheckBox(tr("Auto Selection (Top 5)"));
+    autoPeersCb->setChecked(autoPeers);
+    connect(autoPeersCb, &QCheckBox::toggled, this, &CumulativeStatsWidget::toggleAutoPeers);
+    friendControls->addWidget(autoPeersCb);
+    friendControls->addStretch();
+    
+    friendsLayout->addLayout(friendControls);
+    friendsLayout->addWidget(friendMainSplitter);
     
     tabWidget->addTab(friendsTab, tr("Friends"));
     
@@ -116,15 +151,30 @@ CumulativeStatsWidget::CumulativeStatsWidget(QWidget *parent)
     serviceChartSplitter->setStretchFactor(0, 3);
     serviceChartSplitter->setStretchFactor(1, 2);
     
-    // Table for services
     serviceTree = new QTreeWidget();
     serviceTree->setHeaderLabels(QStringList() << tr("Service") << tr("Bytes In") << tr("Bytes Out") << tr("Total"));
     serviceTree->setSortingEnabled(true);
-    serviceTree->header()->setStretchLastSection(false);
-    serviceTree->header()->resizeSection(0, 200);
+    serviceTree->header()->setStretchLastSection(true);
+    serviceTree->header()->resizeSection(0, 250);
     
-    servicesLayout->addWidget(serviceChartSplitter, 3);
-    servicesLayout->addWidget(serviceTree, 1);
+    connect(serviceTree, &QTreeWidget::itemChanged, this, &CumulativeStatsWidget::handleItemChanged);
+
+    QSplitter *serviceMainSplitter = new QSplitter(Qt::Vertical);
+    serviceMainSplitter->addWidget(serviceChartSplitter);
+    serviceMainSplitter->addWidget(serviceTree);
+    serviceMainSplitter->setStretchFactor(0, 2);
+    serviceMainSplitter->setStretchFactor(1, 1);
+
+    // Auto mode toggle
+    QHBoxLayout *serviceControls = new QHBoxLayout();
+    autoServicesCb = new QCheckBox(tr("Auto Selection (Top 5)"));
+    autoServicesCb->setChecked(autoServices);
+    connect(autoServicesCb, &QCheckBox::toggled, this, &CumulativeStatsWidget::toggleAutoServices);
+    serviceControls->addWidget(autoServicesCb);
+    serviceControls->addStretch();
+
+    servicesLayout->addLayout(serviceControls);
+    servicesLayout->addWidget(serviceMainSplitter);
     
     tabWidget->addTab(servicesTab, tr("Services"));
     
@@ -142,10 +192,25 @@ CumulativeStatsWidget::~CumulativeStatsWidget()
 {
 }
 
-void CumulativeStatsWidget::updateDisplay()
+void CumulativeStatsWidget::toggleAutoPeers(bool checked)
 {
-    updatePeerStats();
-    updateServiceStats();
+    autoPeers = checked;
+    updateDisplay();
+}
+
+void CumulativeStatsWidget::toggleAutoServices(bool checked)
+{
+    autoServices = checked;
+    updateDisplay();
+}
+
+void CumulativeStatsWidget::handleItemChanged(QTreeWidgetItem *item, int column)
+{
+    Q_UNUSED(item);
+    if (column == 0 && !autoPeers && !autoServices) { // Only handle manual changes
+        // Use QueuedConnection to avoid deleting the item while the view is still processing the click event
+        QMetaObject::invokeMethod(this, "updateDisplay", Qt::QueuedConnection);
+    }
 }
 
 void CumulativeStatsWidget::updatePeerStats()
@@ -155,68 +220,123 @@ void CumulativeStatsWidget::updatePeerStats()
     std::map<RsPeerId, RsCumulativeTrafficStats> stats;
     if (!rsConfig->getCumulativeTrafficByPeer(stats)) return;
     
-    // Clear existing charts - remove series AND axes to prevent accumulation
+    // Save current checkbox states to avoid losing them
+    QMap<QString, Qt::CheckState> previousStates;
+    for (int i = 0; i < peerTree->topLevelItemCount(); ++i) {
+        QTreeWidgetItem *it = peerTree->topLevelItem(i);
+        QString peerIdStr = it->data(0, Qt::UserRole).toString();
+        previousStates[peerIdStr] = it->checkState(0);
+    }
+
+    // Clear existing charts
     peerBarChartView->chart()->removeAllSeries();
     peerPieChartView->chart()->removeAllSeries();
     
-    // Remove old axes (critical fix for accumulation bug)
+    // Remove old axes
     for (QAbstractAxis *axis : peerBarChartView->chart()->axes()) {
         peerBarChartView->chart()->removeAxis(axis);
         delete axis;
     }
     
-    // Prepare data
+    peerTree->setSortingEnabled(false);
+    peerTree->blockSignals(true);
+    peerTree->clear();
+    
+    // Convert to vector for sorting (initial display order)
+    std::vector<std::pair<RsPeerId, RsCumulativeTrafficStats>> sortedStats(stats.begin(), stats.end());
+    std::sort(sortedStats.begin(), sortedStats.end(), [](const auto& a, const auto& b) {
+        return (a.second.bytesIn + a.second.bytesOut) > (b.second.bytesIn + b.second.bytesOut);
+    });
+
     QBarSet *bytesInSet = new QBarSet(tr("Bytes In"));
     QBarSet *bytesOutSet = new QBarSet(tr("Bytes Out"));
     QStringList categories;
     QPieSeries *pieSeries = new QPieSeries();
+    pieSeries->setLabelsPosition(QPieSlice::LabelOutside);
+    pieSeries->setPieSize(0.45); // Give more room for labels to breathe
     
-    peerTree->clear();
-    
+    uint64_t totalAll = 0;
+    for (const auto& s : stats) totalAll += (s.second.bytesIn + s.second.bytesOut);
+    if (totalAll == 0) totalAll = 1;
+
     int count = 0;
-    const int maxItems = 10; // Limit to top 10 for readability
-    
-    for (const auto& kv : stats) {
-        if (count >= maxItems) break;
-        
+    int displayedCount = 0;
+    double otherIn = 0, otherOut = 0, otherTotal = 0;
+
+    for (const auto& kv : sortedStats) {
         RsPeerDetails details;
         rsPeers->getPeerDetails(kv.first, details);
         QString name = QString::fromUtf8(details.name.c_str());
-        if (name.length() > 20) name = name.left(17) + "...";
-        
-        categories << name;
-        
-        // Bar chart data (convert to MB for better scale)
-        double mbIn = kv.second.bytesIn / (1024.0 * 1024.0);
-        double mbOut = kv.second.bytesOut / (1024.0 * 1024.0);
-        *bytesInSet << mbIn;
-        *bytesOutSet << mbOut;
-        
-        // Pie chart data (total)
         uint64_t total = kv.second.bytesIn + kv.second.bytesOut;
-        if (total > 0) {
-            QPieSlice *slice = pieSeries->append(name, (double)total);
-            slice->setLabelVisible(true);
-            slice->setLabel(QString("%1: %2").arg(name).arg(formatSize(total)));
-        }
-        
-        // Tree widget
-        QTreeWidgetItem *item = new QTreeWidgetItem();
-        item->setText(0, QString::fromUtf8(details.name.c_str()));
+
+        StatsTreeWidgetItem *item = new StatsTreeWidgetItem();
+        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+        item->setText(0, name);
         item->setText(1, formatSize(kv.second.bytesIn));
         item->setText(2, formatSize(kv.second.bytesOut));
         item->setText(3, formatSize(total));
-        peerTree->addTopLevelItem(item);
         
+        QString peerIdStr = QString::fromStdString(kv.first.toStdString());
+        item->setData(0, Qt::UserRole, peerIdStr);
+        item->setData(1, Qt::UserRole, (qulonglong)kv.second.bytesIn);
+        item->setData(2, Qt::UserRole, (qulonglong)kv.second.bytesOut);
+        item->setData(3, Qt::UserRole, (qulonglong)total);
+        
+        Qt::CheckState state;
+        if (autoPeers) {
+            state = (count < 5 && total > 0) ? Qt::Checked : Qt::Unchecked;
+            item->setCheckState(0, state);
+            item->setFlags(item->flags() & ~Qt::ItemIsEnabled); // Disable interaction in auto mode
+        } else {
+            if (previousStates.contains(peerIdStr)) {
+                state = previousStates[peerIdStr];
+            } else {
+                state = (count < 5 && total > 0) ? Qt::Checked : Qt::Unchecked;
+            }
+            item->setCheckState(0, state);
+        }
+        
+        peerTree->addTopLevelItem(item);
+
+        double ratio = (double)total / (double)totalAll;
+        if (item->checkState(0) == Qt::Checked && total > 0 && ratio >= 0.02 && displayedCount < 5) {
+            QString chartName = name;
+            if (chartName.length() > 20) chartName = chartName.left(17) + "...";
+            categories << chartName;
+            *bytesInSet << (kv.second.bytesIn / (1024.0 * 1024.0));
+            *bytesOutSet << (kv.second.bytesOut / (1024.0 * 1024.0));
+            
+            QPieSlice *slice = pieSeries->append(chartName, (double)total);
+            slice->setLabelVisible(true);
+            slice->setLabelArmLengthFactor((displayedCount % 2 == 0) ? 0.1 : 0.2);
+            slice->setLabel(QString("%1<br/>%2 (%3%)").arg(chartName).arg(formatSize(total)).arg(ratio * 100.0, 0, 'f', 1));
+            displayedCount++;
+        } else if (total > 0) {
+            otherIn += (double)kv.second.bytesIn;
+            otherOut += (double)kv.second.bytesOut;
+            otherTotal += (double)total;
+        }
         count++;
     }
+
+    // Always add Others, even if 0
+    categories << tr("Others");
+    *bytesInSet << (otherIn / (1024.0 * 1024.0));
+    *bytesOutSet << (otherOut / (1024.0 * 1024.0));
+
+    QPieSlice *otherSlice = pieSeries->append(tr("Others"), otherTotal + 0.0001); // Minor offset to ensure it's "present"
+    double otherRatio = (otherTotal / (double)totalAll) * 100.0;
+    otherSlice->setLabelVisible(true);
+    otherSlice->setLabelArmLengthFactor(0.15);
+    otherSlice->setLabel(QString("%1<br/>%2 (%3%)").arg(tr("Others")).arg(formatSize((uint64_t)otherTotal)).arg(otherRatio, 0, 'f', 1));
     
+    peerTree->blockSignals(false);
+    peerTree->setSortingEnabled(true);
+
     if (!categories.isEmpty()) {
-        // Configure Bar Chart
         QBarSeries *barSeries = new QBarSeries();
         barSeries->append(bytesInSet);
         barSeries->append(bytesOutSet);
-        
         peerBarChartView->chart()->addSeries(barSeries);
         
         QBarCategoryAxis *axisX = new QBarCategoryAxis();
@@ -227,12 +347,18 @@ void CumulativeStatsWidget::updatePeerStats()
         QValueAxis *axisY = new QValueAxis();
         axisY->setTitleText("MB");
         axisY->setLabelFormat("%.1f");
+        axisY->applyNiceNumbers();
         peerBarChartView->chart()->addAxis(axisY, Qt::AlignLeft);
         barSeries->attachAxis(axisY);
         
-        // Configure Pie Chart
         peerPieChartView->chart()->addSeries(pieSeries);
     }
+}
+
+void CumulativeStatsWidget::updateDisplay()
+{
+    updatePeerStats();
+    updateServiceStats();
 }
 
 void CumulativeStatsWidget::updateServiceStats()
@@ -242,71 +368,141 @@ void CumulativeStatsWidget::updateServiceStats()
     std::map<uint16_t, RsCumulativeTrafficStats> stats;
     if (!rsConfig->getCumulativeTrafficByService(stats)) return;
     
-    // Clear existing charts - remove series AND axes to prevent accumulation
+    // Save current checkbox states
+    QMap<uint16_t, Qt::CheckState> previousStates;
+    for (int i = 0; i < serviceTree->topLevelItemCount(); ++i) {
+        QTreeWidgetItem *it = serviceTree->topLevelItem(i);
+        uint16_t serviceId = it->data(0, Qt::UserRole).toUInt();
+        previousStates[serviceId] = it->checkState(0);
+    }
+
+    // Clear existing charts
     serviceBarChartView->chart()->removeAllSeries();
     servicePieChartView->chart()->removeAllSeries();
     
-    // Remove old axes (critical fix for accumulation bug)
     for (QAbstractAxis *axis : serviceBarChartView->chart()->axes()) {
         serviceBarChartView->chart()->removeAxis(axis);
         delete axis;
     }
     
-    // Prepare data
+    serviceTree->setSortingEnabled(false);
+    serviceTree->blockSignals(true);
+    serviceTree->clear();
+    
+    // Service name mapping with fallbacks
+    QMap<uint16_t, QString> fallbackNames;
+    fallbackNames[0x0011] = tr("Discovery");
+    fallbackNames[0x0012] = tr("Chat");
+    fallbackNames[0x0013] = tr("Messages");
+    fallbackNames[0x0014] = tr("Turtle Router");
+    fallbackNames[0x0016] = tr("Heartbeat");
+    fallbackNames[0x0017] = tr("File Transfer");
+    fallbackNames[0x0019] = tr("File Database");
+    fallbackNames[0x0021] = tr("Bandwidth Control");
+    fallbackNames[0x0102] = tr("State");
+    fallbackNames[0x0211] = tr("GXS Identities");
+    fallbackNames[0x0215] = tr("GXS Forums");
+    fallbackNames[0x0216] = tr("GXS Posted");
+    fallbackNames[0x0217] = tr("GXS Channels");
+    fallbackNames[0x0218] = tr("GXS Circles");
+    fallbackNames[0x1011] = tr("Round Trip Time");
+
+    std::vector<std::pair<uint16_t, RsCumulativeTrafficStats>> sortedStats(stats.begin(), stats.end());
+    std::sort(sortedStats.begin(), sortedStats.end(), [](const auto& a, const auto& b) {
+        return (a.second.bytesIn + a.second.bytesOut) > (b.second.bytesIn + b.second.bytesOut);
+    });
+
     QBarSet *bytesInSet = new QBarSet(tr("Bytes In"));
     QBarSet *bytesOutSet = new QBarSet(tr("Bytes Out"));
     QStringList categories;
     QPieSeries *pieSeries = new QPieSeries();
-    
-    serviceTree->clear();
-   
-    // Service name mapping
-    QMap<uint16_t, QString> serviceNames;
-    serviceNames[0x0001] = "Discovery";
-    serviceNames[0x0002] = "Messages";
-    serviceNames[0x0004] = "Chat";
-    serviceNames[0x0008] = "File Transfer";
-    serviceNames[0x0010] = "GXS Channels";
-    serviceNames[0x0011] = "GXS Forums";
-    serviceNames[0x0012] = "GXS Posted";
-    serviceNames[0x0013] = "GXS Identity";
-    serviceNames[0x0014] = "Turtle Router";
-    serviceNames[0x0015] = "GXS Circles";
-    
-    for (const auto& kv : stats) {
-        QString name = serviceNames.value(kv.first, QString("Service 0x%1").arg(kv.first, 4, 16, QChar('0')));
+    pieSeries->setLabelsPosition(QPieSlice::LabelOutside);
+    pieSeries->setPieSize(0.45);
+
+    uint64_t totalAll = 0;
+    for (const auto& s : stats) totalAll += (s.second.bytesIn + s.second.bytesOut);
+    if (totalAll == 0) totalAll = 1;
+
+    int count = 0;
+    int displayedCount = 0;
+    double otherIn = 0, otherOut = 0, otherTotal = 0;
+
+    for (const auto& kv : sortedStats) {
+        // Try to get name from service control first
+        QString name = QString::fromStdString(rsServiceControl->getServiceName(RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(kv.first)));
         
-        categories << name;
-        
-        // Bar chart data (MB)
-        double mbIn = kv.second.bytesIn / (1024.0 * 1024.0);
-        double mbOut = kv.second.bytesOut / (1024.0 * 1024.0);
-        *bytesInSet << mbIn;
-        *bytesOutSet << mbOut;
-        
-        // Pie chart data
-        uint64_t total = kv.second.bytesIn + kv.second.bytesOut;
-        if (total > 0) {
-            QPieSlice *slice = pieSeries->append(name, (double)total);
-            slice->setLabelVisible(true);
-            slice->setLabel(QString("%1: %2").arg(name).arg(formatSize(total)));
+        // Fallback to manual map if empty
+        if (name.isEmpty()) {
+            name = fallbackNames.value(kv.first, QString("Service 0x%1").arg(kv.first, 4, 16, QChar('0')));
         }
-        
-        // Tree widget
-        QTreeWidgetItem *item = new QTreeWidgetItem();
+        uint64_t total = kv.second.bytesIn + kv.second.bytesOut;
+
+        StatsTreeWidgetItem *item = new StatsTreeWidgetItem();
+        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
         item->setText(0, name);
         item->setText(1, formatSize(kv.second.bytesIn));
         item->setText(2, formatSize(kv.second.bytesOut));
         item->setText(3, formatSize(total));
+        
+        uint16_t serviceId = kv.first;
+        item->setData(0, Qt::UserRole, (uint)serviceId);
+        item->setData(1, Qt::UserRole, (qulonglong)kv.second.bytesIn);
+        item->setData(2, Qt::UserRole, (qulonglong)kv.second.bytesOut);
+        item->setData(3, Qt::UserRole, (qulonglong)total);
+        
+        Qt::CheckState state;
+        if (autoServices) {
+            state = (count < 5 && total > 0) ? Qt::Checked : Qt::Unchecked;
+            item->setCheckState(0, state);
+            item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+        } else {
+            if (previousStates.contains(serviceId)) {
+                state = previousStates[serviceId];
+            } else {
+                state = (count < 5 && total > 0) ? Qt::Checked : Qt::Unchecked;
+            }
+            item->setCheckState(0, state);
+        }
+        
         serviceTree->addTopLevelItem(item);
+
+        double ratio = (double)total / (double)totalAll;
+        if (item->checkState(0) == Qt::Checked && total > 0 && ratio >= 0.02 && displayedCount < 5) {
+            categories << name;
+            *bytesInSet << (kv.second.bytesIn / (1024.0 * 1024.0));
+            *bytesOutSet << (kv.second.bytesOut / (1024.0 * 1024.0));
+            
+            QPieSlice *slice = pieSeries->append(name, (double)total);
+            slice->setLabelVisible(true);
+            slice->setLabelArmLengthFactor((displayedCount % 2 == 0) ? 0.1 : 0.2);
+            slice->setLabel(QString("%1<br/>%2 (%3%)").arg(name).arg(formatSize(total)).arg(ratio * 100.0, 0, 'f', 1));
+            displayedCount++;
+        } else if (total > 0) {
+            otherIn += (double)kv.second.bytesIn;
+            otherOut += (double)kv.second.bytesOut;
+            otherTotal += (double)total;
+        }
+        count++;
     }
-    
+
+    // Always add Others
+    categories << tr("Others");
+    *bytesInSet << (otherIn / (1024.0 * 1024.0));
+    *bytesOutSet << (otherOut / (1024.0 * 1024.0));
+
+    QPieSlice *otherSlice = pieSeries->append(tr("Others"), otherTotal + 0.0001);
+    double otherRatio = (otherTotal / (double)totalAll) * 100.0;
+    otherSlice->setLabelVisible(true);
+    otherSlice->setLabelArmLengthFactor(0.15);
+    otherSlice->setLabel(QString("%1<br/>%2 (%3%)").arg(tr("Others")).arg(formatSize((uint64_t)otherTotal)).arg(otherRatio, 0, 'f', 1));
+
+    serviceTree->blockSignals(false);
+    serviceTree->setSortingEnabled(true);
+
     if (!categories.isEmpty()) {
-        // Configure Bar Chart
         QBarSeries *barSeries = new QBarSeries();
         barSeries->append(bytesInSet);
         barSeries->append(bytesOutSet);
-        
         serviceBarChartView->chart()->addSeries(barSeries);
         
         QBarCategoryAxis *axisX = new QBarCategoryAxis();
@@ -317,10 +513,10 @@ void CumulativeStatsWidget::updateServiceStats()
         QValueAxis *axisY = new QValueAxis();
         axisY->setTitleText("MB");
         axisY->setLabelFormat("%.1f");
+        axisY->applyNiceNumbers();
         serviceBarChartView->chart()->addAxis(axisY, Qt::AlignLeft);
         barSeries->attachAxis(axisY);
         
-        // Configure Pie Chart
         servicePieChartView->chart()->addSeries(pieSeries);
     }
 }
