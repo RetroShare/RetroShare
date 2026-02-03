@@ -75,10 +75,10 @@ WireDialog::WireDialog(QWidget *parent)
 	connect( ui.toolButton_home, SIGNAL(clicked()), this, SLOT(showHomeFeed()));
 	connect( ui.lineEdit_searchUsers, SIGNAL(textChanged(const QString&)), this, SLOT(filterUsers(const QString&)));
 
+
 	connect(ui.comboBox_groupSet, SIGNAL(currentIndexChanged(int)), this, SLOT(selectGroupSet(int)));
 	connect(ui.comboBox_filterTime, SIGNAL(currentIndexChanged(int)), this, SLOT(selectFilterTime(int)));
-
-	ui.comboBox_groupSet->hide();
+	// ui.comboBox_groupSet->hide(); // <--- Re-enabled for testing as requested
 
 	connect( ui.toolButton_back, SIGNAL(clicked()), this, SLOT(back()));
 	connect( ui.toolButton_forward, SIGNAL(clicked()), this, SLOT(forward()));
@@ -675,6 +675,17 @@ bool WireDialog::loadGroupData(const uint32_t &token)
 	// save list of groups.
 	updateGroups(groups);
 	showGroups();
+
+	// check for pending navigation
+	if (!mNavigatePendingGroupId.isNull()) {
+		if (!mNavigatePendingMsgId.isNull()) {
+			requestPulseFocus(mNavigatePendingGroupId, mNavigatePendingMsgId);
+		} else {
+			requestGroupFocus(mNavigatePendingGroupId);
+		}
+		mNavigatePendingGroupId.clear();
+		mNavigatePendingMsgId.clear();
+	}
 	return true;
 }
 
@@ -1432,17 +1443,24 @@ void WireDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
 
 bool WireDialog::navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId)
 {
-    if (groupId.isNull()) {
-        return false;
-    }
+	if (groupId.isNull()) {
+		return false;
+	}
 
-    if (!msgId.isNull()) {
-        requestPulseFocus(groupId, msgId);
-    } else {
-        requestGroupFocus(groupId);
-    }
+	// if groups not loaded yet, save for later
+	if (mAllGroups.empty()) {
+		mNavigatePendingGroupId = groupId;
+		mNavigatePendingMsgId = msgId;
+		return true;
+	}
 
-    return true;
+	if (!msgId.isNull()) {
+		requestPulseFocus(groupId, msgId);
+	} else {
+		requestGroupFocus(groupId);
+	}
+
+	return true;
 }
 
 GxsMessageFrameWidget *WireDialog::messageWidget(const RsGxsGroupId &groupId)

@@ -187,6 +187,10 @@ private:
 	int32_t mHistoryIndex;
 	std::vector<WireViewHistory> mHistory;
 
+	// pending navigation (for when navigate called before groups loaded)
+	RsGxsGroupId mNavigatePendingGroupId;
+	RsGxsMessageId mNavigatePendingMsgId;
+
 	/* UI - from Designer */
 	Ui::WireDialog ui;
 

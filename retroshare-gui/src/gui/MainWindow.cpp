@@ -462,7 +462,6 @@ void MainWindow::initStackedPage()
 #endif
 
 #ifdef RS_USE_WIRE
-  WireDialog *wireDialog = NULL;
   addPage(wireDialog = new WireDialog(ui->stackPages), grp, &notify);
 #endif
 

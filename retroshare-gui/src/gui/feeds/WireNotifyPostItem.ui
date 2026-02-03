@@ -41,10 +41,10 @@
       <bool>true</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::Shape::Box</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+      <enum>QFrame::Shadow::Sunken</enum>
      </property>
      <layout class="QVBoxLayout" name="feedFrame_VL">
       <item>
@@ -68,12 +68,15 @@
             <property name="text">
              <string>TextLabel</string>
             </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
            <spacer name="verticalSpacer">
             <property name="orientation">
-             <enum>Qt::Vertical</enum>
+             <enum>Qt::Orientation::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -94,7 +97,6 @@
               <property name="font">
                <font>
                 <pointsize>12</pointsize>
-                <weight>75</weight>
                 <italic>true</italic>
                 <bold>true</bold>
                </font>
@@ -115,7 +117,6 @@
               <property name="font">
                <font>
                 <pointsize>11</pointsize>
-                <weight>75</weight>
                 <italic>true</italic>
                 <bold>true</bold>
                </font>
@@ -135,7 +136,6 @@
              <widget class="QLabel" name="datetimelabel">
               <property name="font">
                <font>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -170,7 +170,6 @@
             <property name="font">
              <font>
               <pointsize>11</pointsize>
-              <weight>75</weight>
               <italic>false</italic>
               <bold>true</bold>
              </font>
@@ -197,7 +196,7 @@
                </size>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
+               <enum>Qt::FocusPolicy::NoFocus</enum>
               </property>
               <property name="toolTip">
                <string>Toggle Message Read Status</string>
@@ -217,7 +216,6 @@
              <widget class="QLabel" name="scoreLabel">
               <property name="font">
                <font>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -249,7 +247,7 @@
             <item>
              <widget class="QPushButton" name="downloadButton">
               <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
+               <enum>Qt::FocusPolicy::NoFocus</enum>
               </property>
               <property name="text">
                <string>Download</string>
@@ -262,7 +260,7 @@
             <item>
              <widget class="QPushButton" name="playButton">
               <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
+               <enum>Qt::FocusPolicy::NoFocus</enum>
               </property>
               <property name="text">
                <string>Play</string>
@@ -282,7 +280,7 @@
                <string notr="true">fileLabel</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -295,7 +293,7 @@
                </sizepolicy>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
+               <enum>Qt::FocusPolicy::NoFocus</enum>
               </property>
               <property name="toolTip">
                <string>Unsubscribe From Wire</string>
@@ -308,7 +306,7 @@
             <item>
              <spacer name="buttons_HSpacer">
               <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+               <enum>Qt::Orientation::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -327,7 +325,7 @@
                </sizepolicy>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
+               <enum>Qt::FocusPolicy::NoFocus</enum>
               </property>
               <property name="toolTip">
                <string>Copy RetroShare Link</string>
@@ -343,7 +341,7 @@
                </sizepolicy>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
+               <enum>Qt::FocusPolicy::NoFocus</enum>
               </property>
               <property name="toolTip">
                <string>Expand</string>
@@ -363,7 +361,7 @@
                </sizepolicy>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
+               <enum>Qt::FocusPolicy::NoFocus</enum>
               </property>
               <property name="toolTip">
                <string>Set as read and remove item</string>
@@ -383,7 +381,7 @@
                </sizepolicy>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::NoFocus</enum>
+               <enum>Qt::FocusPolicy::NoFocus</enum>
               </property>
               <property name="toolTip">
                <string>Remove Item</string>
@@ -418,10 +416,10 @@
          <item>
           <widget class="QFrame" name="msgFrame">
            <property name="frameShape">
-            <enum>QFrame::Box</enum>
+            <enum>QFrame::Shape::Box</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
+            <enum>QFrame::Shadow::Sunken</enum>
            </property>
            <layout class="QVBoxLayout" name="msgFrame_VL">
             <property name="leftMargin">
@@ -457,7 +455,7 @@
                <bool>true</bool>
               </property>
               <property name="textInteractionFlags">
-               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+               <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
@@ -470,7 +468,7 @@
       <item>
        <spacer name="feedFrame_VSpacer">
         <property name="orientation">
-         <enum>Qt::Vertical</enum>
+         <enum>Qt::Orientation::Vertical</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>

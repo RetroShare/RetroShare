@@ -100,8 +100,6 @@ void WireNotifyGroupItem::setup()
     /* specific */
     connect(ui->subscribeButton, SIGNAL(clicked()), this, SLOT(subscribeWire()));
     connect(ui->copyLinkButton, SIGNAL(clicked()), this, SLOT(copyGroupLink()));
-
-    ui->nameLabel->setOpenExternalLinks(false);
     connect(ui->nameLabel, SIGNAL(linkActivated(QString)), this, SLOT(openWireGroup()));
 
     //ui->copyLinkButton->hide(); // No link type at this moment
@@ -270,10 +268,11 @@ void WireNotifyGroupItem::subscribeWire()
 
 void WireNotifyGroupItem::openWireGroup()
 {
-    MainWindow::showWindow(MainWindow::Wire);
-    WireDialog *wireDialog = dynamic_cast<WireDialog*>(MainWindow::getPage(MainWindow::Wire));
-    if (wireDialog) {
-        wireDialog->navigate(mGroup.mMeta.mGroupId, RsGxsMessageId());
-    }
-    removeItem();
+	MainWindow::showWindow(MainWindow::Wire);
+	WireDialog *wireDialog = dynamic_cast<WireDialog*>(MainWindow::getPage(MainWindow::Wire));
+	if (wireDialog)
+	{
+		wireDialog->navigate(mGroup.mMeta.mGroupId, RsGxsMessageId());
+	}
+	removeItem();
 }

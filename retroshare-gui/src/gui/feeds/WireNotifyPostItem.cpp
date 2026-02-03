@@ -242,7 +242,10 @@ void WireNotifyPostItem::expandFill(bool first)
 
 QString WireNotifyPostItem::messageName()
 {
-    return QString::fromUtf8(mPulse.mMeta.mMsgName.c_str());
+	if (!mPulse.mMeta.mMsgName.empty())
+		return QString::fromUtf8(mPulse.mMeta.mMsgName.c_str());
+
+	return tr("New Pulse");
 }
 
 void WireNotifyPostItem::loadMessage()
@@ -691,6 +694,7 @@ void WireNotifyPostItem::setGroup(const RsWireGroup &group)
 {
 	ui->groupName->setText(QString::fromStdString(group.mMeta.mGroupName));
 	ui->groupName->setToolTip(QString::fromStdString(group.mMeta.mGroupName) + "@" + QString::fromStdString(group.mMeta.mAuthorId.toStdString()));
+	ui->groupName->hide();
 
 	QString title;
 
