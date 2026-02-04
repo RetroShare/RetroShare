@@ -79,7 +79,6 @@ WireDialog::WireDialog(QWidget *parent)
 
 	connect(ui.comboBox_groupSet, SIGNAL(currentIndexChanged(int)), this, SLOT(selectGroupSet(int)));
 	connect(ui.comboBox_filterTime, SIGNAL(currentIndexChanged(int)), this, SLOT(selectFilterTime(int)));
-	// ui.comboBox_groupSet->hide(); // <--- Re-enabled for testing as requested
 
 	connect( ui.toolButton_back, SIGNAL(clicked()), this, SLOT(back()));
 	connect( ui.toolButton_forward, SIGNAL(clicked()), this, SLOT(forward()));
