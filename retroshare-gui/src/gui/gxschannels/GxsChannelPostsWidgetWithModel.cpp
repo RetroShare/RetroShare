@@ -124,79 +124,127 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
     RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 
     painter->fillRect( option.rect, option.palette.base().color());
-    painter->restore();
+    painter->restore(); // restore clip rect
 
     if(mUseGrid || index.column()==0)
     {
-        // Draw a thumbnail
+        painter->save();
+        painter->setClipRect(option.rect);
 
-        uint32_t flags = (mUseGrid)?(ChannelPostThumbnailView::FLAG_SHOW_TEXT | ChannelPostThumbnailView::FLAG_SCALE_FONT):0;
-        ChannelPostThumbnailView w(post,flags);
-        w.setBackgroundRole(QPalette::AlternateBase);
-        w.setAspectRatio(mAspectRatio);
-        w.updateGeometry();
-        w.adjustSize();
+        // Constants to match legacy ChannelPostThumbnailView Exactly
+        const float THUMBNAIL_OVERSAMPLE_FACTOR = 2.0;
+        const float DEFAULT_SIZE_IN_FONT_HEIGHT = 5.0; 
+        const float FONT_SCALE_FACTOR = 1.5;
 
-        QPixmap pixmap(w.size());
+        QFontMetricsF fm(option.font);
+        float base_font_height = fm.height();
 
-        if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
-            pixmap.fill(SelectedColor);	// I dont know how to grab the backgroud color for selected objects automatically.
-        else
-            pixmap.fill(option.palette.base().color());
+        // The "Internal Width" that master branch used to calculate aspect ratio.
+        // It's 10 * font_height + 18 pixels (for 9px margins).
+        float internal_width = 10.0 * base_font_height + 18.0;
+        float visual_scale = option.rect.width() / internal_width;
+        float unit = base_font_height * visual_scale;
 
-        w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
+        // Background for selected state
+        if((option.state & QStyle::State_Selected))
+            painter->fillRect(option.rect, SelectedColor);
 
-        // We extract from the pixmap the part of the widget that we want. Saddly enough, Qt adds some white space
-        // below the widget and there is no way to control that.
+        // --- 1. Calculate Image Rect ---
+        // Mirroring exactly the layout of the old QVBoxLayout
+        float base_h = DEFAULT_SIZE_IN_FONT_HEIGHT;
+        if(mAspectRatio == ChannelPostThumbnailView::ASPECT_RATIO_2_3) base_h *= 1.5;
+        else if(mAspectRatio == ChannelPostThumbnailView::ASPECT_RATIO_16_9) base_h *= 0.5625; // 9/16
 
-        pixmap = pixmap.copy(QRect(0,0,w.actualSize().width(),w.actualSize().height()));
+        float img_W = 10.0 * unit;
+        float img_H = THUMBNAIL_OVERSAMPLE_FACTOR * base_h * unit;
 
-//        if(index.row()==0 && index.column()==0)
-//        {
-//            QFile file("yourFile.png");
-//            file.open(QIODevice::WriteOnly);
-//            pixmap.save(&file, "JPG");
-//            file.close();
-//        }
+        // X=9px (margin). Y=9px (margin)
+        QRectF img_rect(option.rect.left() + 9.0*visual_scale, option.rect.top() + 9.0*visual_scale, img_W, img_H);
 
-        if(mZoom != 1.0)
-            pixmap = pixmap.scaled(mZoom*pixmap.size(),Qt::KeepAspectRatio,Qt::SmoothTransformation);
+        // --- 2. Draw Image ---
+        QPixmap thumbnail;
+        if (post.mThumbnail.mSize > 0)
+        {
+            if(!GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, thumbnail, GxsIdDetails::ORIGINAL))
+            {
+                 thumbnail = FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE);
+            }
+        }
+        else if (post.mMeta.mPublishTs > 0)
+        {
+            thumbnail = FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE);
+        }
 
+        if (!thumbnail.isNull()) 
+        {
+            painter->drawPixmap(img_rect.toRect(), thumbnail);
+        }
+
+        // --- 3. Draw Text (if Grid) ---
+        if (mUseGrid) 
+        {
+            // Spacing logic from QVBoxLayout + extra 0.5*fh
+            float y_text = img_rect.bottom() + (6.0 + 0.5*base_font_height)*visual_scale;
+            
+            QRectF text_rect(img_rect.left(), y_text, img_rect.width(), option.rect.bottom() - y_text);
+            
+            // Setup Font
+            QFont font = option.font;
+            float font_size_factor = FONT_SCALE_FACTOR * (DEFAULT_SIZE_IN_FONT_HEIGHT / 5.0) * visual_scale;
+            font.setPointSizeF(font_size_factor * font.pointSizeF());
+            
+            if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus)) 
+                font.setBold(true);
+            
+            painter->setFont(font);
+            
+            QString msg = QString::fromUtf8(post.mMeta.mMsgName.c_str());
+            if(msg.length() > 30) msg = msg.left(30)+"...";
+            
+            if (option.state & QStyle::State_Selected)
+                painter->setPen(option.palette.highlightedText().color());
+            else
+                painter->setPen(option.palette.text().color());
+
+            painter->drawText(text_rect, Qt::AlignTop | Qt::AlignLeft | Qt::TextWordWrap, msg);
+        }
+
+        // --- 4. Draw Overlays ---
+        // Anchored to the cell (option.rect) corners to match "Master" look
+        // while remaining within the clipping boundaries.
+        
+        // Star Overlay
         if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
         {
-            QPainter p(&pixmap);
-            QFontMetricsF fm(option.font);
-
-            p.drawPixmap(mZoom*QPoint(0.1*fm.height(),-3.4*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*6*fm.height(),mZoom*6*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+            QPixmap star = FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE);
+            // Size maintained at 6.8 units.
+            // Move it higher (-3.8 units) to ensure it tangents the top of the post.
+            float size = 6.8 * unit ; 
+            QRectF overlay_rect(option.rect.left(), option.rect.top() - 3.8*unit, size, size);
+            painter->drawPixmap(overlay_rect.toRect(), star);
         }
 
-        if(post.mUnreadCommentCount > 0)
+        // Comments Overlay (DON'T TOUCH - USER APPROVED)
+        if(post.mUnreadCommentCount > 0 || post.mCommentCount > 0)
         {
-            QPainter p(&pixmap);
-            QFontMetricsF fm(option.font);
-
-            p.drawPixmap(QPoint(pixmap.width(),0.0)+mZoom*QPoint(-2.9*fm.height(),0.4*fm.height()),
-                         FilesDefs::getPixmapFromQtResourcePath(UNREAD_COMMENT_OVERLAY_IMAGE).scaled(mZoom*3*fm.height(),mZoom*3*fm.height(),
-                                                                                              Qt::KeepAspectRatio,Qt::SmoothTransformation));
+             QString icon_path = (post.mUnreadCommentCount > 0) ? UNREAD_COMMENT_OVERLAY_IMAGE : COMMENT_OVERLAY_IMAGE;
+             QPixmap bubble = FilesDefs::getPixmapFromQtResourcePath(icon_path);
+             
+             // Tangent to TOP and RIGHT. Less flattened (3.4 / 2.8)
+             float size_w = 3.4 * unit;
+             float size_h = 2.8 * unit;
+             QRectF overlay_rect(option.rect.right() - size_w, option.rect.top(), size_w, size_h);
+             painter->drawPixmap(overlay_rect.toRect(), bubble);
         }
-        else if(post.mCommentCount > 0)
-        {
-            QPainter p(&pixmap);
-            QFontMetricsF fm(option.font);
-
-            p.drawPixmap(QPoint(pixmap.width(),0.0)+mZoom*QPoint(-2.9*fm.height(),0.4*fm.height()),
-                         FilesDefs::getPixmapFromQtResourcePath(COMMENT_OVERLAY_IMAGE).scaled(mZoom*3*fm.height(),mZoom*3*fm.height(),
-                                                                                              Qt::KeepAspectRatio,Qt::SmoothTransformation));
-        }
-
-        painter->drawPixmap(option.rect.topLeft(),
-                            pixmap.scaled(option.rect.width(),option.rect.width()*pixmap.height()/(float)pixmap.width(),
-                                          Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+        
+        painter->restore();
     }
     else
     {
         // We're drawing the text on the second column
-
+        // Ensure proper state save/restore if needed, but the original code structure handles this block separately.
+        // Original code used painter->save() inside.
+        
         uint32_t font_height = QFontMetricsF(option.font).height();
         QPoint p = option.rect.topLeft();
         float y = p.y() + font_height;
@@ -241,24 +289,49 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
 QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-    // This is the only place where we actually set the size of cells
-
     QFontMetricsF fm(option.font);
+    float font_height = fm.height();
 
     RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
-    uint32_t flags = (mUseGrid)?(ChannelPostThumbnailView::FLAG_SHOW_TEXT | ChannelPostThumbnailView::FLAG_SCALE_FONT):0;
 
-    ChannelPostThumbnailView w(post,flags);
-    w.setAspectRatio(mAspectRatio);
-    w.updateGeometry();
-    w.adjustSize();
+    const float THUMBNAIL_OVERSAMPLE_FACTOR = 2.0;
+    const float DEFAULT_SIZE_IN_FONT_HEIGHT = 5.0; 
+    const float FONT_SCALE_FACTOR = 1.5;
 
-    //std::cerr << "w.size(): " << w.width() << " x " << w.height() << ". Actual size: " << w.actualSize().width() << " x " << w.actualSize().height() << std::endl;
+    // Master Internal Geometry
+    float internal_W = 10.0 * font_height + 18.0; 
+    float base_h = DEFAULT_SIZE_IN_FONT_HEIGHT;
+    if(mAspectRatio == ChannelPostThumbnailView::ASPECT_RATIO_2_3) base_h *= 1.5;
+    else if(mAspectRatio == ChannelPostThumbnailView::ASPECT_RATIO_16_9) base_h *= 0.5625;
 
-    float aspect_ratio = w.actualSize().height()/(float)w.actualSize().width();
+    float img_H = THUMBNAIL_OVERSAMPLE_FACTOR * base_h * font_height;
+
+    float total_h = img_H + 18.0; // Image + top/bottom margins
+
+    if(mUseGrid)
+    {
+         float text_W = 10.0 * font_height; // Text is 10fh wide in internal layout
+
+         QString msg = QString::fromUtf8(post.mMeta.mMsgName.c_str());
+         if(msg.length() > 30) msg = msg.left(30)+"...";
+
+         QFont font = option.font;
+         font.setPointSizeF(FONT_SCALE_FACTOR * DEFAULT_SIZE_IN_FONT_HEIGHT / 5.0 * font.pointSizeF());
+         if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
+             font.setBold(true);
+
+         QFontMetricsF title_fm(font);
+         QRectF text_rect = title_fm.boundingRect(QRectF(0,0, text_W, 10000), Qt::TextWordWrap, msg);
+
+         total_h += text_rect.height();
+         total_h += 12.0 + 0.5 * font_height; // Spacing logic (increased to 12.0 to avoid descender clipping)
+    }
+
+    float aspect_ratio = total_h / internal_W;
 
     float cell_width  = mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height();
-    float cell_height = mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height()*aspect_ratio;
+    float cell_height = cell_width * aspect_ratio;
+
 #ifdef DEBUG_CHANNEL_POSTS_WIDGET
     RsDbg() << "SizeHint: mUseGrid=" << mUseGrid << " cell_width=" << cell_width << " cell_height=" << cell_height << " mZoom=" << mZoom ;
 #endif
