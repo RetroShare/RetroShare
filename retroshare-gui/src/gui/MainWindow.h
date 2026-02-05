@@ -168,6 +168,9 @@ public:
 	 GxsChannelDialog  *gxschannelDialog ;
 	 GxsForumsDialog   *gxsforumDialog ;
 	 PostedDialog      *postedDialog;
+#ifdef RS_USE_WIKI
+	 WikiDialog        *wikiDialog;
+#endif
 
 //    ForumsDialog      *forumsDialog;
 //    ChannelFeed       *channelFeed;
