@@ -131,7 +131,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         painter->save();
         painter->setClipRect(option.rect);
 
-        // Constants from ChannelPostThumbnailView
+        // Constants to match legacy ChannelPostThumbnailView Exactly
         const float THUMBNAIL_OVERSAMPLE_FACTOR = 2.0;
         const float DEFAULT_SIZE_IN_FONT_HEIGHT = 5.0; 
         const float FONT_SCALE_FACTOR = 1.5;
@@ -139,47 +139,27 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         QFontMetricsF fm(option.font);
         float base_font_height = fm.height();
 
-        // Calculate visual scale factor
-        // Only mZoom part of the width is dynamic, but we just compare option.rect.width() 
-        // with the "internal" width that the font was designed for.
-        // Internal Width = THUMBNAIL_OVERSAMPLE_FACTOR * DEFAULT_SIZE_IN_FONT_HEIGHT * base_font_height (at zoom 1)
-        // Actually, simpler: Cell Width is defined as COLUMN_SIZE_FONT_FACTOR_W * base_font_height.
-        // Internal Widget Width is 10.0 * base_font_height.
-        // Cell Width is 6.0 * base_font_height.
-        // So the natural scale is 0.6.
-        // However, if we simply use "fit to width", we should calculate scale based on actual rect.
-        
-        float internal_width_unit = THUMBNAIL_OVERSAMPLE_FACTOR * DEFAULT_SIZE_IN_FONT_HEIGHT * base_font_height;
-        // In the original code, the widget was fixed size 'internal_width_unit'.
-        // Then pixmap was scaled to 'option.rect.width()'.
-        
-        float visual_scale = 1.0;
-        if(internal_width_unit > 0.1)
-             visual_scale = option.rect.width() / internal_width_unit;
-
-        // Apply margins (simulating layout margins)
-        // Original layout probably had ~9px margins. When scaled down by 0.6, that's ~5px.
-        // Let's use a relative margin.
-        float margin = 4.0 * mZoom; 
-        QRectF content_rect = QRectF(option.rect).adjusted(margin, margin, -margin, -margin);
+        // The "Internal Width" that master branch used to calculate aspect ratio.
+        // It's 10 * font_height + 18 pixels (for 9px margins).
+        float internal_width = 10.0 * base_font_height + 18.0;
+        float visual_scale = option.rect.width() / internal_width;
+        float unit = base_font_height * visual_scale;
 
         // Background for selected state
         if((option.state & QStyle::State_Selected))
             painter->fillRect(option.rect, SelectedColor);
 
         // --- 1. Calculate Image Rect ---
+        // Mirroring exactly the layout of the old QVBoxLayout
         float base_h = DEFAULT_SIZE_IN_FONT_HEIGHT;
         if(mAspectRatio == ChannelPostThumbnailView::ASPECT_RATIO_2_3) base_h *= 1.5;
         else if(mAspectRatio == ChannelPostThumbnailView::ASPECT_RATIO_16_9) base_h *= 0.5625; // 9/16
 
-        // Original logic: Image Height = Width * AspectRatio
-        // Image aspect ratio inside the "internal" widget was determined by base_h / base_w (5.0).
-        float img_logic_ratio = base_h / DEFAULT_SIZE_IN_FONT_HEIGHT;
-        
-        // The image occupies the full width of the content rect (minus margins)
-        float img_height = content_rect.width() * img_logic_ratio;
+        float img_W = 10.0 * unit;
+        float img_H = THUMBNAIL_OVERSAMPLE_FACTOR * base_h * unit;
 
-        QRectF img_rect(content_rect.left(), content_rect.top(), content_rect.width(), img_height);
+        // X=9px (margin). Y=9px (margin)
+        QRectF img_rect(option.rect.left() + 9.0*visual_scale, option.rect.top() + 9.0*visual_scale, img_W, img_H);
 
         // --- 2. Draw Image ---
         QPixmap thumbnail;
@@ -203,17 +183,13 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         // --- 3. Draw Text (if Grid) ---
         if (mUseGrid) 
         {
-            float y_text = img_rect.bottom(); 
-            y_text += 0.5 * base_font_height * visual_scale; // Spacing scaled
+            // Spacing logic from QVBoxLayout + extra 0.5*fh
+            float y_text = img_rect.bottom() + (6.0 + 0.5*base_font_height)*visual_scale;
             
-            QRectF text_rect(content_rect.left(), y_text, content_rect.width(), content_rect.bottom() - y_text);
+            QRectF text_rect(img_rect.left(), y_text, img_rect.width(), option.rect.bottom() - y_text);
             
             // Setup Font
             QFont font = option.font;
-            // Original: FONT_SCALE_FACTOR * DEFAULT_SIZE_IN_FONT_HEIGHT / 5.0 (= 1.5)
-            // But this was "internal" font. Visual font is scaled by visual_scale (0.6).
-            // So factor = 1.5 * 0.6 = 0.9.
-            
             float font_size_factor = FONT_SCALE_FACTOR * (DEFAULT_SIZE_IN_FONT_HEIGHT / 5.0) * visual_scale;
             font.setPointSizeF(font_size_factor * font.pointSizeF());
             
@@ -234,70 +210,30 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
         }
 
         // --- 4. Draw Overlays ---
-        // Overlays in original code were drawn on the "Internal" Pixmap, then scaled down.
-        // So their size should also be scaled by visual_scale.
+        // Anchored to the cell (option.rect) corners to match "Master" look
+        // while remaining within the clipping boundaries.
         
         // Star Overlay
         if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
         {
             QPixmap star = FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE);
-            // Original: size = mZoom * 6 * font_height.
-            // Wait, original code: 
-            // p.drawPixmap(..., scaled(mZoom*6*fm.height(), ...))
-            // This was applied to the "internal" pixmap (size 10 unit).
-            // 6 unit is 60% of width.
-            // Then the whole thing was scaled by visual_scale (0.6).
-            // So visual size = 0.6 * 6 = 3.6 unit ??
-            
-            // Wait, original code usage of mZoom inside paint was weird in 'paint' method:
-            // "if(mZoom != 1.0) pixmap = pixmap.scaled(mZoom*pixmap.size()...)"
-            // It scaled the result again?
-            // Actually, the previous implementation I analyzed:
-            // pixmap = pixmap.copy(...) // Crop to actual size (e.g. 10unit x Aspect)
-            // if(mZoom != 1.0) pixmap = pixmap.scaled(...) // Scale to Zoom
-            // Then draw overlays.
-            // Then drawPixmap(..., pixmap.scaled(option.rect.width()...)
-            
-            // This implies Overlays were drawn AFTER zooming but BEFORE final fit-to-width?
-            // "pixmap.scaled(option.rect.width()...)" happens at the very end.
-            // So Overlays are drawn on the intermediate pixmap.
-            
-            // Let's stick to: "How big should it be on screen?"
-            // Star on top-left.
-            // visual_scale accounts for the 0.6 shrink.
-            // mZoom accounts for zoom.
-            // Let's scale by visual_scale * mZoom.
-            
-            float overlay_base_size = 6.0 * base_font_height; 
-            float size = overlay_base_size * visual_scale; // * mZoom is implicit in visual_scale calculation (rect width)
-            
-            // Actually visual_scale = rect.width / internal_width.
-            // rect.width ALREADY includes mZoom.
-            // So visual_scale handles both the 0.6 factor AND the mZoom factor.
-            
-            // However, original code used 'mZoom' explicitly for overlay sizing:
-            // .scaled(mZoom*6*fm.height()...)
-            // IF visual_scale already includes mZoom, then:
-            // visual_scale = (Zoom * 0.6 * 10) / 10 = 0.6 * Zoom.
-            // So size = 6.0 * base * (0.6 * Zoom) = 3.6 * Zoom * base.
-            // This feels small. 
-            // Let's trust visual_scale.
-            
-            QRectF overlay_rect(img_rect.left(), img_rect.top(), size, size);
+            // Size maintained at 6.8 units.
+            // Move it higher (-3.8 units) to ensure it tangents the top of the post.
+            float size = 6.8 * unit ; 
+            QRectF overlay_rect(option.rect.left(), option.rect.top() - 3.8*unit, size, size);
             painter->drawPixmap(overlay_rect.toRect(), star);
         }
 
-        // Comments Overlay
+        // Comments Overlay (DON'T TOUCH - USER APPROVED)
         if(post.mUnreadCommentCount > 0 || post.mCommentCount > 0)
         {
              QString icon_path = (post.mUnreadCommentCount > 0) ? UNREAD_COMMENT_OVERLAY_IMAGE : COMMENT_OVERLAY_IMAGE;
              QPixmap bubble = FilesDefs::getPixmapFromQtResourcePath(icon_path);
              
-             // Original: mZoom * 3 * fm.height()
-             float overlay_base_size = 3.0 * base_font_height;
-             float size = overlay_base_size * visual_scale;
-             
-             QRectF overlay_rect(img_rect.right() - size, img_rect.top(), size, size);
+             // Tangent to TOP and RIGHT. Less flattened (3.4 / 2.8)
+             float size_w = 3.4 * unit;
+             float size_h = 2.8 * unit;
+             QRectF overlay_rect(option.rect.right() - size_w, option.rect.top(), size_w, size_h);
              painter->drawPixmap(overlay_rect.toRect(), bubble);
         }
         
@@ -353,55 +289,48 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
 QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-    // This is the only place where we actually set the size of cells
-
     QFontMetricsF fm(option.font);
     float font_height = fm.height();
 
     RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 
-    // Constants from ChannelPostThumbnailView
     const float THUMBNAIL_OVERSAMPLE_FACTOR = 2.0;
     const float DEFAULT_SIZE_IN_FONT_HEIGHT = 5.0; 
     const float FONT_SCALE_FACTOR = 1.5;
 
-    // Calculate aspect ratio of the content
-    float base_w = DEFAULT_SIZE_IN_FONT_HEIGHT;
+    // Master Internal Geometry
+    float internal_W = 10.0 * font_height + 18.0; 
     float base_h = DEFAULT_SIZE_IN_FONT_HEIGHT;
-
-    // Adjust base height based on aspect ratio
     if(mAspectRatio == ChannelPostThumbnailView::ASPECT_RATIO_2_3) base_h *= 1.5;
-    else if(mAspectRatio == ChannelPostThumbnailView::ASPECT_RATIO_16_9) base_h *= 0.5625; // 9/16
+    else if(mAspectRatio == ChannelPostThumbnailView::ASPECT_RATIO_16_9) base_h *= 0.5625;
 
-    float img_W = THUMBNAIL_OVERSAMPLE_FACTOR * base_w * font_height;
     float img_H = THUMBNAIL_OVERSAMPLE_FACTOR * base_h * font_height;
 
-    float total_h = img_H;
+    float total_h = img_H + 18.0; // Image + top/bottom margins
 
     if(mUseGrid)
     {
-         // Add text size
+         float text_W = 10.0 * font_height; // Text is 10fh wide in internal layout
+
          QString msg = QString::fromUtf8(post.mMeta.mMsgName.c_str());
          if(msg.length() > 30) msg = msg.left(30)+"...";
 
-         // Font scaling logic
          QFont font = option.font;
          font.setPointSizeF(FONT_SCALE_FACTOR * DEFAULT_SIZE_IN_FONT_HEIGHT / 5.0 * font.pointSizeF());
          if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
              font.setBold(true);
 
          QFontMetricsF title_fm(font);
-         QRectF text_rect = title_fm.boundingRect(QRectF(0,0, img_W, 10000), Qt::TextWordWrap, msg);
+         QRectF text_rect = title_fm.boundingRect(QRectF(0,0, text_W, 10000), Qt::TextWordWrap, msg);
 
          total_h += text_rect.height();
-         total_h += 0.5 * font_height; // Spacing
-         total_h += 20; // Layout overhead/margins approximation
+         total_h += 12.0 + 0.5 * font_height; // Spacing logic (increased to 12.0 to avoid descender clipping)
     }
 
-    float aspect_ratio = total_h / img_W;
+    float aspect_ratio = total_h / internal_W;
 
     float cell_width  = mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height();
-    float cell_height = mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height()*aspect_ratio;
+    float cell_height = cell_width * aspect_ratio;
 
 #ifdef DEBUG_CHANNEL_POSTS_WIDGET
     RsDbg() << "SizeHint: mUseGrid=" << mUseGrid << " cell_width=" << cell_width << " cell_height=" << cell_height << " mZoom=" << mZoom ;
