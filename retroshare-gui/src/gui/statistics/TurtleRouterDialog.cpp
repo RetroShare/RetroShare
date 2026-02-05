@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QObject>
+#include <QHideEvent>
 #include <util/rsprint.h>
 #include <retroshare/rsturtle.h>
 #include <retroshare/rspeers.h>
@@ -35,15 +36,16 @@
 #include "util/RsQtVersion.h"
 #include "gui/settings/rsharesettings.h"
 
-#define COL_ID                  0
-#define COL_FROM                1
-#define COL_TIME                2
-#define COL_STRING              3
+#define COL_REQ_ID              0
+#define COL_REQ_FROM            1
+#define COL_REQ_TIME            2
+#define COL_REQ_STRING          3
 
-#define COL_TUNNELID            0
-#define COL_SPEED               1
-#define COL_LASTTRANSFER        2
-#define COL_TO                  3
+#define COL_TUN_ID              0
+#define COL_TUN_SPEED           1
+#define COL_TUN_LASTTRANSFER    2
+#define COL_TUN_FROM            3
+#define COL_TUN_TO              4
 
 static const uint MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
@@ -70,8 +72,6 @@ void FTTunnelsListDelegate::paint(QPainter * painter, const QStyleOptionViewItem
 	QStyleOptionViewItem opt = option;
 
 	QString temp ;
-	float flValue;
-	qint64 qi64Value;
 
 	// prepare
 	painter->save();
@@ -103,38 +103,13 @@ void FTTunnelsListDelegate::paint(QPainter * painter, const QStyleOptionViewItem
 	}
 
 	switch(index.column()) {
-	/*case COLUMN_SERVICE :
-		//temp = QString::asprintf("%.3f ", index.data().toFloat());
-		//temp=QString::number(index.data().toFloat());
-		painter->drawText(option.rect, Qt::AlignLeft, index.data().toString());
-		break;
+	/*
+	case COLUMN_SERVICE :
 	case COLUMN_GROUPID:
-		//temp = QString::asprintf("%.3f ", index.data().toFloat());
-		//temp=QString::number(index.data().toFloat());
-		painter->drawText(option.rect, Qt::AlignLeft, index.data().toString());
-		break;
 	case COLUMN_POLICY:
-		//temp=QString::number(index.data().toInt());
-		painter->drawText(option.rect, Qt::AlignLeft, index.data().toString());
-		break;
 	case COLUMN_STATUS:
-		/*flValue = index.data().toFloat();
-		if (flValue < std::numeric_limits<float>::max()){
-			temp = QString::asprintf("%.3f ", flValue);
-		} else {
-			temp=strNA;
-		}*/
-		/*painter->drawText(option.rect, Qt::AlignHCenter, index.data().toString());
-		break;
 	case COLUMN_LASTCONTACT:
-		/*qi64Value = index.data().value<qint64>();
-		if (qi64Value < std::numeric_limits<qint64>::max()){
-			temp= QString::number(qi64Value);
-		} else {
-			temp = strNA;
-		}*/
-		/*painter->drawText(option.rect, Qt::AlignHCenter, index.data().toString());
-		break;*/
+	*/
 	default:
 		painter->drawText(option.rect, Qt::AlignLeft, index.data().toString());
 	}
@@ -172,12 +147,12 @@ TurtleRouterDialog::TurtleRouterDialog(QWidget *parent)
 
 	stl.clear() ;
 	stl.push_back(tr("Search requests")) ;
-	top_level_s_requests = new QTreeWidgetItem(_f2f_TW,stl) ;
+	top_level_s_requests = new TurtleTreeWidgetItem(_f2f_TW,stl) ;
 	_f2f_TW->insertTopLevelItem(n++,top_level_s_requests) ;
 
 	stl.clear() ;
 	stl.push_back(tr("Tunnel requests")) ;
-	top_level_t_requests = new QTreeWidgetItem(_f2f_TW,stl) ;
+	top_level_t_requests = new TurtleTreeWidgetItem(_f2f_TW,stl) ;
 	_f2f_TW->insertTopLevelItem(n++,top_level_t_requests) ;
 
 	top_level_hashes.clear() ;
@@ -186,9 +161,9 @@ TurtleRouterDialog::TurtleRouterDialog(QWidget *parent)
 	float fact = FS/14.0 ;
 
 	QHeaderView * _header = _f2f_TW->header () ;
-	_header->resizeSection ( COL_ID, 170*fact );
+	_header->resizeSection ( COL_REQ_ID, 170*fact );
 	QHeaderView * _header2 = tunnels_treeWidget->header () ;
-	_header2->resizeSection ( COL_TUNNELID, 270*fact );
+	_header2->resizeSection ( COL_TUN_ID, 270*fact );
 
 	// load settings
     processSettings(true);
@@ -225,7 +200,18 @@ void TurtleRouterDialog::processSettings(bool bLoad)
 
 }
 
-bool sr_Compare( TurtleSearchRequestDisplayInfo m1,  TurtleSearchRequestDisplayInfo m2)  { return m1.age < m2.age; }
+void TurtleRouterDialog::hideEvent(QHideEvent *event)
+{
+	// Clear tree widgets to save memory (Cyril's recommendation)
+	_f2f_TW->clear();
+	tunnels_treeWidget->clear();
+	top_level_hashes.clear();
+
+	QWidget::hideEvent(event);
+}
+
+bool sr_Compare(const TurtleSearchRequestDisplayInfo& m1, const TurtleSearchRequestDisplayInfo& m2) { return m1.age < m2.age; }
+bool tr_Compare(const TurtleTunnelRequestDisplayInfo& m1, const TurtleTunnelRequestDisplayInfo& m2) { return m1.age < m2.age; }
 
 void TurtleRouterDialog::updateDisplay()
 {
@@ -237,6 +223,7 @@ void TurtleRouterDialog::updateDisplay()
 	rsTurtle->getInfo(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 	
 	std::sort(search_reqs_info.begin(),search_reqs_info.end(),sr_Compare) ;
+	std::sort(tunnel_reqs_info.begin(),tunnel_reqs_info.end(),tr_Compare) ;
 	
 	updateTunnelRequests(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 
@@ -265,7 +252,12 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 																const std::vector<TurtleSearchRequestDisplayInfo >& search_reqs_info,
 																const std::vector<TurtleTunnelRequestDisplayInfo >& tunnel_reqs_info)
 {
-	// now display this in the QTableWidgets
+	// Disable sorting during updates to avoid O(N^2 log N) complexity
+	bool sort_f2f = _f2f_TW->isSortingEnabled();
+	bool sort_tunnels = tunnels_treeWidget->isSortingEnabled();
+
+	_f2f_TW->setSortingEnabled(false);
+	tunnels_treeWidget->setSortingEnabled(false);
 
 	QStringList stl ;
 
@@ -309,18 +301,25 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 		int k=0 ;
 		while(num >= 800.0f && k<4)
 			num /= 1024.0f,++k;
-		sprintf(tmp,"%3.2f %s",num,units[k].c_str()) ;
 
-		QTreeWidgetItem *tunnel_item = NULL;
-		tunnel_item = new QTreeWidgetItem();
+		if (k == 0)
+			sprintf(tmp,"%d %s", (int)num, units[k].c_str());
+		else
+			sprintf(tmp,"%3.2f %s",num,units[k].c_str()) ;
 
-		tunnel_item->setData(COL_TUNNELID,       Qt::DisplayRole, QString::fromUtf8(tunnels_info[i][0].c_str()));
-		tunnel_item->setData(COL_SPEED,          Qt::DisplayRole, QString::fromStdString(tmp)) ;
-		tunnel_item->setData(COL_LASTTRANSFER,   Qt::DisplayRole, QString::fromStdString(tunnels_info[i][4]));
-		tunnel_item->setData(COL_TO,             Qt::DisplayRole, QString::fromUtf8(tunnels_info[i][2].c_str()) + " -> " + QString::fromUtf8(tunnels_info[i][1].c_str()));
+		TurtleTreeWidgetItem *tunnel_item = NULL;
+		tunnel_item = new TurtleTreeWidgetItem();
 
-		tunnel_item->setTextAlignment(COL_SPEED, Qt::AlignRight);
-		tunnel_item->setTextAlignment(COL_LASTTRANSFER, Qt::AlignCenter);
+		tunnel_item->setData(COL_TUN_ID,           Qt::DisplayRole, QString::fromUtf8(tunnels_info[i][0].c_str()));
+		tunnel_item->setData(COL_TUN_SPEED,        Qt::DisplayRole, QString::fromStdString(tmp)) ;
+		tunnel_item->setData(COL_TUN_SPEED,        Qt::UserRole,    strtof(tunnels_info[i][5].c_str(), NULL));
+		tunnel_item->setData(COL_TUN_LASTTRANSFER, Qt::DisplayRole, QString::fromStdString(tunnels_info[i][4]));
+		tunnel_item->setData(COL_TUN_LASTTRANSFER, Qt::UserRole,    (qlonglong)strtol(tunnels_info[i][4].c_str(), NULL, 0));
+		tunnel_item->setData(COL_TUN_FROM,         Qt::DisplayRole, QString::fromUtf8(tunnels_info[i][2].c_str()));
+		tunnel_item->setData(COL_TUN_TO,           Qt::DisplayRole, QString::fromUtf8(tunnels_info[i][1].c_str()));
+
+		tunnel_item->setTextAlignment(COL_TUN_SPEED, Qt::AlignRight);
+		tunnel_item->setTextAlignment(COL_TUN_LASTTRANSFER, Qt::AlignCenter);
 
 		parent->addChild(tunnel_item) ;
 
@@ -340,82 +339,96 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 	for(uint i=0;i<search_reqs_info.size();++i)
 	{
 
-		QTreeWidgetItem *sr_item = NULL;
-		sr_item = new QTreeWidgetItem();
+		TurtleTreeWidgetItem *sr_item = NULL;
+		sr_item = new TurtleTreeWidgetItem();
 		top_level_s_requests->addChild(sr_item) ;
 
-		sr_item->setData(COL_ID,      Qt::DisplayRole, QString::number(search_reqs_info[i].request_id));
-		sr_item->setData(COL_FROM,    Qt::DisplayRole, getPeerName(search_reqs_info[i].source_peer_id) ) ;
-		sr_item->setData(COL_TIME,    Qt::DisplayRole, QString::number(search_reqs_info[i].age) + " secs ago");
-		sr_item->setData(COL_STRING,  Qt::DisplayRole, QString::fromUtf8(search_reqs_info[i].keywords.c_str()) + QString::number(search_reqs_info[i].keywords.length()) + " (" + QString::number(search_reqs_info[i].hits) + " hits)");
+		sr_item->setData(COL_REQ_ID,      Qt::DisplayRole, QString::number(search_reqs_info[i].request_id, 16).rightJustified(8, '0'));
+		sr_item->setData(COL_REQ_FROM,    Qt::DisplayRole, getPeerName(search_reqs_info[i].source_peer_id) ) ;
+		sr_item->setData(COL_REQ_TIME,    Qt::DisplayRole, QString::number(search_reqs_info[i].age) + " secs ago");
+		sr_item->setData(COL_REQ_TIME,    Qt::UserRole,    search_reqs_info[i].age);
+		sr_item->setData(COL_REQ_STRING,  Qt::DisplayRole, QString::fromUtf8(search_reqs_info[i].keywords.c_str()) + " " + QString::number(search_reqs_info[i].keywords.length()) + " (" + QString::number(search_reqs_info[i].hits) + " hits)");
 
 	}
 	top_level_s_requests->setText(0, tr("Search requests") + " (" + QString::number(search_reqs_info.size()) + ")" ) ;
 
-	for(uint i=0;i<tunnel_reqs_info.size();++i)
-		if(i+MAX_TUNNEL_REQUESTS_DISPLAY >= tunnel_reqs_info.size() || i < MAX_TUNNEL_REQUESTS_DISPLAY)
-		{
-			/* find the entry */
-			QTreeWidgetItem *tunnelr_item = NULL;
-			tunnelr_item = new QTreeWidgetItem();
-			top_level_t_requests->addChild(tunnelr_item) ;
+	uint32_t limit = std::min((uint32_t)tunnel_reqs_info.size(), (uint32_t)50);
 
-			tunnelr_item->setData(COL_ID,    Qt::DisplayRole, QString::number(tunnel_reqs_info[i].request_id));
-			tunnelr_item->setData(COL_FROM,  Qt::DisplayRole, getPeerName(tunnel_reqs_info[i].source_peer_id) ) ;
-			tunnelr_item->setData(COL_TIME,  Qt::DisplayRole, QString::number(tunnel_reqs_info[i].age) + " secs ago");
-		}
-		else if(i == MAX_TUNNEL_REQUESTS_DISPLAY)
-		{
-			stl.clear() ;
-			stl.push_back(QString("...")) ;
-			top_level_t_requests->addChild(new QTreeWidgetItem(stl)) ;
+	for(uint i=0;i<limit;++i)
+	{
+		/* find the entry */
+		TurtleTreeWidgetItem *tunnelr_item = NULL;
+		tunnelr_item = new TurtleTreeWidgetItem();
+		top_level_t_requests->addChild(tunnelr_item) ;
 
-		} 
+		tunnelr_item->setData(COL_REQ_ID,    Qt::DisplayRole, QString::number(tunnel_reqs_info[i].request_id, 16).rightJustified(8, '0'));
+		tunnelr_item->setData(COL_REQ_FROM,  Qt::DisplayRole, getPeerName(tunnel_reqs_info[i].source_peer_id) ) ;
+		tunnelr_item->setData(COL_REQ_TIME,  Qt::DisplayRole, QString::number(tunnel_reqs_info[i].age) + " secs ago");
+		tunnelr_item->setData(COL_REQ_TIME,  Qt::UserRole,    tunnel_reqs_info[i].age);
+	}
 
-	top_level_t_requests->setText(0, tr("Tunnel requests") + " ("+QString::number(tunnel_reqs_info.size()) + ")") ;
+	if (tunnel_reqs_info.size() > 50)
+		top_level_t_requests->setText(0, tr("Tunnel requests") + " (" + tr("last 50 received TRs out of %1").arg(tunnel_reqs_info.size()) + ")");
+	else
+		top_level_t_requests->setText(0, tr("Tunnel requests") + " (" + QString::number(tunnel_reqs_info.size()) + ")");
 
 	QTreeWidgetItem *unknown_hashs_item = findParentHashItem(RsFileHash().toStdString()) ;
 	unknown_hashs_item->setText(0,tr("Unknown hashes") + " (" + QString::number(unknown_hashs_item->childCount())+QString(")")) ;
 
-	// Ok, this is a N2 search, but there are very few elements in the list.
-	for(int i=2;i<_f2f_TW->topLevelItemCount();)
+	// Cleanup hashes that are no longer active
+	for (auto it = top_level_hashes.begin(); it != top_level_hashes.end(); )
 	{
-		bool found = false ;
-
-		if(_f2f_TW->topLevelItem(i)->text(0).left(14) == tr("Unknown hashes") && unknown_hash_found)
-			found = true ;
-
-		if(_f2f_TW->topLevelItem(i)->childCount() > 0)	// this saves uploading hashes
-			found = true ;
-
-		for(uint j=0;j<hashes_info.size() && !found;++j)
-			if(_f2f_TW->topLevelItem(i)->text(0).toStdString() == hashes_info[j][0]) 
-				found=true ;
-
-		if(!found)
-			delete _f2f_TW->takeTopLevelItem(i) ;
+		bool found = false;
+		if (it->first == tr("Unknown hashes").toStdString())
+		{
+			if (unknown_hash_found) found = true;
+		}
+		else if (it->second->childCount() > 0)
+		{
+			found = true;
+		}
 		else
-			++i ;
+		{
+			for (uint j = 0; j < hashes_info.size(); ++j)
+				if (it->first == hashes_info[j][0])
+				{
+					found = true;
+					break;
+				}
+		}
+
+		if (!found)
+		{
+			int idx = tunnels_treeWidget->indexOfTopLevelItem(it->second);
+			if (idx != -1) delete tunnels_treeWidget->takeTopLevelItem(idx);
+			it = top_level_hashes.erase(it);
+		}
+		else
+		{
+			++it;
+		}
 	}
+
+	// Restore sorting
+	_f2f_TW->setSortingEnabled(sort_f2f);
+	tunnels_treeWidget->setSortingEnabled(sort_tunnels);
 }
 	
 QTreeWidgetItem *TurtleRouterDialog::findParentHashItem(const std::string& hash)
 {
 	static const std::string null_hash = RsFileHash().toStdString() ;
 
-	// look for the hash, and insert a new element if necessary.
-	//
-	QList<QTreeWidgetItem*> items =tunnels_treeWidget->findItems((hash==null_hash)?tr("Unknown hashes"):QString::fromStdString(hash),Qt::MatchStartsWith) ;
+	std::string key = (hash == null_hash) ? tr("Unknown hashes").toStdString() : hash;
 
-	if(items.empty())
-	{	
-		QStringList stl ;
-		stl.push_back((hash==null_hash)?tr("Unknown hashes"):QString::fromStdString(hash)) ;
-		QTreeWidgetItem *item = new QTreeWidgetItem(tunnels_treeWidget,stl) ;
-		tunnels_treeWidget->insertTopLevelItem(0,item) ;
+	auto it = top_level_hashes.find(key);
+	if (it != top_level_hashes.end())
+		return it->second;
 
-		return item ;
-	}
-	else
-		return items.front() ;
+	QStringList stl ;
+	stl.push_back(QString::fromStdString(key)) ;
+	TurtleTreeWidgetItem *item = new TurtleTreeWidgetItem(tunnels_treeWidget,stl) ;
+	tunnels_treeWidget->insertTopLevelItem(0,item) ;
+
+	top_level_hashes[key] = item;
+	return item ;
 }

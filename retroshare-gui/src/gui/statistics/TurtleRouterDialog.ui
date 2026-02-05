@@ -107,6 +107,11 @@
          </column>
          <column>
           <property name="text">
+           <string>From</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
            <string>To</string>
           </property>
          </column>
