@@ -203,16 +203,7 @@ void TurtleRouterDialog::processSettings(bool bLoad)
 void TurtleRouterDialog::hideEvent(QHideEvent *event)
 {
 	// Clear tree widgets to save memory (Cyril's recommendation)
-
-	// Clear Requests tree children
-	for(int i=0; i<_f2f_TW->topLevelItemCount(); ++i)
-	{
-		QTreeWidgetItem *item = _f2f_TW->topLevelItem(i);
-		while(item->childCount() > 0)
-			delete item->takeChild(0);
-	}
-
-	// Clear Tunnels tree (everything)
+	_f2f_TW->clear();
 	tunnels_treeWidget->clear();
 	top_level_hashes.clear();
 
