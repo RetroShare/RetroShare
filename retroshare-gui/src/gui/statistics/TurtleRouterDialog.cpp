@@ -261,7 +261,12 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 																const std::vector<TurtleSearchRequestDisplayInfo >& search_reqs_info,
 																const std::vector<TurtleTunnelRequestDisplayInfo >& tunnel_reqs_info)
 {
-	// now display this in the QTableWidgets
+	// Disable sorting during updates to avoid O(N^2 log N) complexity
+	bool sort_f2f = _f2f_TW->isSortingEnabled();
+	bool sort_tunnels = tunnels_treeWidget->isSortingEnabled();
+
+	_f2f_TW->setSortingEnabled(false);
+	tunnels_treeWidget->setSortingEnabled(false);
 
 	QStringList stl ;
 
@@ -379,45 +384,60 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 	QTreeWidgetItem *unknown_hashs_item = findParentHashItem(RsFileHash().toStdString()) ;
 	unknown_hashs_item->setText(0,tr("Unknown hashes") + " (" + QString::number(unknown_hashs_item->childCount())+QString(")")) ;
 
-	// Ok, this is a N2 search, but there are very few elements in the list.
-	for(int i=2;i<_f2f_TW->topLevelItemCount();)
+	// Cleanup hashes that are no longer active
+	for (auto it = top_level_hashes.begin(); it != top_level_hashes.end(); )
 	{
-		bool found = false ;
-
-		if(_f2f_TW->topLevelItem(i)->text(0).left(14) == tr("Unknown hashes") && unknown_hash_found)
-			found = true ;
-
-		if(_f2f_TW->topLevelItem(i)->childCount() > 0)	// this saves uploading hashes
-			found = true ;
-
-		for(uint j=0;j<hashes_info.size() && !found;++j)
-			if(_f2f_TW->topLevelItem(i)->text(0).toStdString() == hashes_info[j][0]) 
-				found=true ;
-
-		if(!found)
-			delete _f2f_TW->takeTopLevelItem(i) ;
+		bool found = false;
+		if (it->first == tr("Unknown hashes").toStdString())
+		{
+			if (unknown_hash_found) found = true;
+		}
+		else if (it->second->childCount() > 0)
+		{
+			found = true;
+		}
 		else
-			++i ;
+		{
+			for (uint j = 0; j < hashes_info.size(); ++j)
+				if (it->first == hashes_info[j][0])
+				{
+					found = true;
+					break;
+				}
+		}
+
+		if (!found)
+		{
+			int idx = tunnels_treeWidget->indexOfTopLevelItem(it->second);
+			if (idx != -1) delete tunnels_treeWidget->takeTopLevelItem(idx);
+			it = top_level_hashes.erase(it);
+		}
+		else
+		{
+			++it;
+		}
 	}
+
+	// Restore sorting
+	_f2f_TW->setSortingEnabled(sort_f2f);
+	tunnels_treeWidget->setSortingEnabled(sort_tunnels);
 }
 	
 QTreeWidgetItem *TurtleRouterDialog::findParentHashItem(const std::string& hash)
 {
 	static const std::string null_hash = RsFileHash().toStdString() ;
 
-	// look for the hash, and insert a new element if necessary.
-	//
-	QList<QTreeWidgetItem*> items =tunnels_treeWidget->findItems((hash==null_hash)?tr("Unknown hashes"):QString::fromStdString(hash),Qt::MatchStartsWith) ;
+	std::string key = (hash == null_hash) ? tr("Unknown hashes").toStdString() : hash;
 
-	if(items.empty())
-	{	
-		QStringList stl ;
-		stl.push_back((hash==null_hash)?tr("Unknown hashes"):QString::fromStdString(hash)) ;
-		QTreeWidgetItem *item = new TurtleTreeWidgetItem(tunnels_treeWidget,stl) ;
-		tunnels_treeWidget->insertTopLevelItem(0,item) ;
+	auto it = top_level_hashes.find(key);
+	if (it != top_level_hashes.end())
+		return it->second;
 
-		return item ;
-	}
-	else
-		return items.front() ;
+	QStringList stl ;
+	stl.push_back(QString::fromStdString(key)) ;
+	TurtleTreeWidgetItem *item = new TurtleTreeWidgetItem(tunnels_treeWidget,stl) ;
+	tunnels_treeWidget->insertTopLevelItem(0,item) ;
+
+	top_level_hashes[key] = item;
+	return item ;
 }

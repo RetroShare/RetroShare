@@ -40,9 +40,12 @@ public:
 
 	bool operator<(const QTreeWidgetItem &other) const override
 	{
-		int column = treeWidget()->sortColumn();
+		QTreeWidget *tw = treeWidget();
+		if (!tw) return false;
 
-		if (treeWidget()->indexOfTopLevelItem(const_cast<TurtleTreeWidgetItem*>(this)) != -1)
+		int column = tw->sortColumn();
+
+		if (!parent())
 		{
 			// Top level items are always sorted by text (or just stay where they are if they are headers)
 			return QTreeWidgetItem::operator<(other);
@@ -59,7 +62,7 @@ public:
 
 		// Specialized sorting for the "String" column in Requests tab
 		// We want complex expressions to be last.
-		if (column == 3 && treeWidget()->objectName() == "_f2f_TW")
+		if (column == 3 && tw->objectName() == "_f2f_TW")
 		{
 			QString s1 = text(column);
 			QString s2 = other.text(column);
