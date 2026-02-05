@@ -72,6 +72,10 @@ class MainPage;
 class NewsFeed;
 class UserNotify;
 
+#ifdef RS_USE_WIKI
+class WikiDialog;
+#endif
+
 #ifdef MESSENGER_WINDOW
 class MessengerWindow;
 #endif
