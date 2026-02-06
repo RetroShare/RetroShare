@@ -1082,6 +1082,12 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return true ;
 #ifdef RS_USE_WIKI
 		case Wiki:
+			if (!_instance->wikiDialog)
+			{
+				std::cerr << "Show page called for Wiki but wikiDialog is not initialized yet."
+				          << std::endl;
+				return false;
+			}
 			_instance->ui->stackPages->setCurrentPage( _instance->wikiDialog );
 			return true ;
 #endif

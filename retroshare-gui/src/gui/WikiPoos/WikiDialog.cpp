@@ -27,6 +27,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QShowEvent>
+#include <QTreeWidgetItemIterator>
 
 #include "WikiDialog.h"
 #include "WikiUserNotify.h"
@@ -189,9 +190,12 @@ void WikiDialog::showEvent(QShowEvent *event)
 {
 	MainPage::showEvent(event);
 	
-	// Load data when dialog is first shown
-	if(!event->spontaneous())
+	// Load data once when the dialog is first shown
+	if (!mInitialLoadDone)
+	{
+		mInitialLoadDone = true;
 		updateDisplay();
+	}
 }
 
 void WikiDialog::processSettings(bool load)
@@ -554,14 +558,8 @@ void WikiDialog::setSelectedPageReadStatus(bool read)
 				return;
 			}
 
-			QTreeWidgetItem *item = self->ui.treeWidget_Pages->currentItem();
+			QTreeWidgetItem *item = self->findPageItem(pageId);
 			if (!item)
-			{
-				return;
-			}
-
-			const RsGxsMessageId currentPageId(item->text(WIKI_GROUP_COL_PAGEID).toStdString());
-			if (currentPageId != pageId)
 			{
 				return;
 			}
@@ -581,6 +579,22 @@ void WikiDialog::setSelectedPageReadStatus(bool read)
 			item->setFont(WIKI_GROUP_COL_PAGENAME, pageFont);
 		}, self);
 	});
+}
+
+QTreeWidgetItem *WikiDialog::findPageItem(const RsGxsMessageId &pageId) const
+{
+	const QString pageIdText = QString::fromStdString(pageId.toStdString());
+	QTreeWidgetItemIterator it(ui.treeWidget_Pages);
+	while (*it)
+	{
+		QTreeWidgetItem *item = *it;
+		if (item->text(WIKI_GROUP_COL_PAGEID) == pageIdText)
+		{
+			return item;
+		}
+		++it;
+	}
+	return nullptr;
 }
 
 const RsGxsGroupId& WikiDialog::getSelectedGroup()

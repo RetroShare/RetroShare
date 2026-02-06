@@ -60,6 +60,7 @@ void 	historySelected();
 void 	oldHistoryChanged();
 void  	mergeModeToggle();
 void  	generateMerge();
+void    historyItemChanged(QTreeWidgetItem *item, int column);
 void    updateMergeButtonState();
 
 private:
@@ -68,6 +69,7 @@ void 	updateHistoryStatus();
 void 	updateHistoryChildren(QTreeWidgetItem *item, bool isLatest);
 void 	updateHistoryItem(QTreeWidgetItem *item, bool isLatest);
 std::vector<RsGxsMessageId> collectMergeSelection() const;
+void    rebuildMergeSelectionCount();
 
 void    redrawPage();
 
@@ -104,6 +106,7 @@ void 	resetEditorState();
         bool mRepublishMode;
 	bool mIgnoreTextChange; // when we do it programmatically.
         bool mTextChanged;
+	int mCheckedMergeCount;
 
 	QString mCurrentText;
 

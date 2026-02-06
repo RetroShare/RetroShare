@@ -36,6 +36,7 @@ class WikiAddDialog;
 class WikiEditDialog;
 class UserNotify;
 class GxsCommentTreeWidget;
+class QTreeWidgetItem;
 
 class WikiDialog : public MainPage
 {
@@ -96,6 +97,7 @@ private:
 
 	void updateWikiPage(const RsWikiSnapshot &page);
 	void setSelectedPageReadStatus(bool read);
+	QTreeWidgetItem *findPageItem(const RsGxsMessageId &pageId) const;
 
 	bool getSelectedPage(RsGxsGroupId &groupId, RsGxsMessageId &pageId, RsGxsMessageId &origPageId);
 	std::string getSelectedPage();
@@ -135,6 +137,7 @@ private:
 	QTreeWidgetItem *mOtherGroups;
 	RsGxsGroupId mGroupId; // From GroupTreeWidget
 	bool mCanModerate = false;
+	bool mInitialLoadDone = false;
 
 	/* UI - from Designer */
 	Ui::WikiDialog ui;

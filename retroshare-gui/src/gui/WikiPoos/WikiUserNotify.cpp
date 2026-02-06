@@ -36,7 +36,7 @@ WikiUserNotify::WikiUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
 
 bool WikiUserNotify::hasSetting(QString *name, QString *group)
 {
-	if (name) *name = tr("Wiki Page");
+	if (name) *name = tr("Wiki");
 	if (group) *group = "Wiki";
 
 	return true;

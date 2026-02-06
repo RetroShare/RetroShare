@@ -54,6 +54,7 @@
 #define WET_ROLE_SORT		Qt::UserRole + 3
 #define WET_ROLE_AUTHORID	Qt::UserRole + 4
 #define WET_ROLE_TIMESTAMP	Qt::UserRole + 5
+#define WET_ROLE_MERGE_CHECKED Qt::UserRole + 6
 
 
 /** Constructor */
@@ -74,7 +75,7 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 	connect(ui.checkBox_Merge, SIGNAL( clicked() ), this, SLOT( mergeModeToggle() ) );
 	connect(ui.pushButton_Merge, SIGNAL( clicked() ), this, SLOT( generateMerge() ) );
 	connect(ui.treeWidget_History, SIGNAL( itemSelectionChanged() ), this, SLOT( historySelected() ) );
-	connect(ui.treeWidget_History, SIGNAL( itemChanged(QTreeWidgetItem*, int) ), this, SLOT( updateMergeButtonState() ) );
+	connect(ui.treeWidget_History, SIGNAL( itemChanged(QTreeWidgetItem*, int) ), this, SLOT( historyItemChanged(QTreeWidgetItem*, int) ) );
 
 	mThreadCompareRole = new RSTreeWidgetItemCompareRole;
 	mThreadCompareRole->setRole(WET_COL_DATE, WET_ROLE_SORT);
@@ -86,6 +87,7 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 	mIgnoreTextChange = false;
 	mTextChanged = false;
 	mCurrentText = "";
+	mCheckedMergeCount = 0;
 
 	mHistoryLoaded = false;
 	mHistoryMergeMode = false;
@@ -278,6 +280,7 @@ void WikiEditDialog::updateHistoryStatus()
 		updateHistoryChildren(item, isLatest);
 		updateHistoryItem(item, isLatest);
 	}
+	rebuildMergeSelectionCount();
 	updateMergeButtonState();
 }
 
@@ -345,9 +348,49 @@ void WikiEditDialog::updateHistoryItem(QTreeWidgetItem *item, bool isLatest)
 
 void WikiEditDialog::updateMergeButtonState()
 {
-	const bool hasSelection = !collectMergeSelection().empty();
+	const bool hasChecked = mCheckedMergeCount > 0;
+	const bool hasSelection = hasChecked || !ui.treeWidget_History->selectedItems().empty();
 	const bool enabled = mHistoryMergeMode && !mTextChanged && hasSelection;
 	ui.pushButton_Merge->setEnabled(enabled);
+}
+
+void WikiEditDialog::historyItemChanged(QTreeWidgetItem *item, int column)
+{
+	if (!item || column != WET_COL_PAGEID)
+	{
+		updateMergeButtonState();
+		return;
+	}
+
+	const bool wasChecked = item->data(WET_DATA_COLUMN, WET_ROLE_MERGE_CHECKED).toBool();
+	const bool isChecked = (item->checkState(WET_COL_PAGEID) == Qt::Checked);
+	if (wasChecked != isChecked)
+	{
+		mCheckedMergeCount += isChecked ? 1 : -1;
+		if (mCheckedMergeCount < 0)
+		{
+			mCheckedMergeCount = 0;
+		}
+		item->setData(WET_DATA_COLUMN, WET_ROLE_MERGE_CHECKED, isChecked);
+	}
+	updateMergeButtonState();
+}
+
+void WikiEditDialog::rebuildMergeSelectionCount()
+{
+	mCheckedMergeCount = 0;
+	QTreeWidgetItemIterator it(ui.treeWidget_History);
+	while (*it)
+	{
+		QTreeWidgetItem *item = *it;
+		const bool isChecked = (item->checkState(WET_COL_PAGEID) == Qt::Checked);
+		item->setData(WET_DATA_COLUMN, WET_ROLE_MERGE_CHECKED, isChecked);
+		if (isChecked)
+		{
+			++mCheckedMergeCount;
+		}
+		++it;
+	}
 }
 
 void WikiEditDialog::detailsToggle()

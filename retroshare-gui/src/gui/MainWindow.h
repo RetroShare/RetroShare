@@ -112,7 +112,7 @@ public:
         People             = 12, /** People page. */
         Options            = 13, /** People page. */
         Home               = 14, /** Home page. */
-        Wiki               = 15  /** Wiki page. */
+        Wiki               = 15  /** Wiki. */
     };
 
 
