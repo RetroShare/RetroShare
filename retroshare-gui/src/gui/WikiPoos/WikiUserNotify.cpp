@@ -24,6 +24,10 @@
 #include "WikiTokenWaiter.h"
 #include "gui/MainWindow.h"
 #include "gui/common/FilesDefs.h"
+#include "util/qtthreadsutils.h"
+#include "util/rsthreads.h"
+
+#include <QPointer>
 
 WikiUserNotify::WikiUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
     UserNotify(parent), mInterface(ifaceImpl), mNewCount(0)
@@ -41,38 +45,48 @@ bool WikiUserNotify::hasSetting(QString *name, QString *group)
 void WikiUserNotify::startUpdate()
 {
 	mNewCount = 0;
-	
-	if (mInterface)
+
+	QPointer<WikiUserNotify> self(this);
+	RsGxsIfaceHelper *iface = mInterface;
+
+	RsThread::async([self, iface]()
 	{
-		uint32_t token = 0;
-		if (!mInterface->requestServiceStatistic(token))
+		unsigned int newCount = 0;
+		if (iface)
 		{
-			update();
-			return;
-		}
-
-		const bool ok = WikiTokenWaiter::waitForToken(
-			[this](uint32_t requestToken)
+			uint32_t token = 0;
+			if (iface->requestServiceStatistic(token))
 			{
-				return mInterface->requestStatus(requestToken);
-			},
-			token);
+				const bool ok = WikiTokenWaiter::waitForToken(
+					[iface](uint32_t requestToken)
+					{
+						return iface->requestStatus(requestToken);
+					},
+					token);
 
-		if (!ok)
-		{
-			update();
-			return;
+				if (ok)
+				{
+					GxsServiceStatistic stats;
+					if (iface->getServiceStatistic(token, stats))
+					{
+						// Count unread messages (both thread messages and child messages/comments)
+						newCount = stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread;
+					}
+				}
+			}
 		}
 
-		GxsServiceStatistic stats;
-		if (mInterface->getServiceStatistic(token, stats))
+		RsQThreadUtils::postToObject([self, newCount]()
 		{
-			// Count unread messages (both thread messages and child messages/comments)
-			mNewCount = stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread;
-		}
-	}
-	
-	update();
+			if (!self)
+			{
+				return;
+			}
+
+			self->mNewCount = newCount;
+			self->update();
+		}, self);
+	});
 }
 
 unsigned int WikiUserNotify::getNewCount()

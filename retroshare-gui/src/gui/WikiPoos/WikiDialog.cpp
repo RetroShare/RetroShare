@@ -21,7 +21,9 @@
  *
  */
 
+#include <QCursor>
 #include <QMenu>
+#include <QPointer>
 #include <QFile>
 #include <QFileInfo>
 #include <QShowEvent>
@@ -519,43 +521,66 @@ void WikiDialog::setSelectedPageReadStatus(bool read)
 		return;
 	}
 
-	uint32_t token = 0;
 	const RsGxsGrpMsgIdPair msgId(groupId, pageId);
-	rsWiki->setMessageReadStatus(token, msgId, read);
-	const bool ok = WikiTokenWaiter::waitForToken(
-		[this](uint32_t requestToken)
+	QPointer<WikiDialog> self(this);
+	RsThread::async([self, msgId, groupId, pageId, read]()
+	{
+		if (!rsWiki)
 		{
-			return rsWiki->getTokenService()->requestStatus(requestToken);
-		},
-		token);
-	if (!ok)
-	{
+			return;
+		}
+
+		uint32_t token = 0;
+		rsWiki->setMessageReadStatus(token, msgId, read);
+		const bool ok = WikiTokenWaiter::waitForToken(
+			[](uint32_t requestToken)
+			{
+				return rsWiki->getTokenService()->requestStatus(requestToken);
+			},
+			token);
+		if (!ok)
+		{
 #ifdef WIKI_DEBUG
-		std::cerr << "WikiDialog::setSelectedPageReadStatus() token request failed"
-		          << " groupId=" << groupId << " pageId=" << pageId << std::endl;
+			std::cerr << "WikiDialog::setSelectedPageReadStatus() token request failed"
+			          << " groupId=" << groupId << " pageId=" << pageId << std::endl;
 #endif
-		return;
-	}
+			return;
+		}
 
-	QTreeWidgetItem *item = ui.treeWidget_Pages->currentItem();
-	if (!item)
-	{
-		return;
-	}
+		RsQThreadUtils::postToObject([self, pageId, read]()
+		{
+			if (!self)
+			{
+				return;
+			}
 
-	const uint32_t mask = GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
-	uint32_t status = item->data(WIKI_GROUP_COL_PAGENAME, WIKI_PAGE_ROLE_STATUS).toUInt();
-	status &= ~mask;
-	if (!read)
-	{
-		status |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
-	}
+			QTreeWidgetItem *item = self->ui.treeWidget_Pages->currentItem();
+			if (!item)
+			{
+				return;
+			}
 
-	item->setData(WIKI_GROUP_COL_PAGENAME, WIKI_PAGE_ROLE_STATUS, status);
+			const RsGxsMessageId currentPageId(item->text(WIKI_GROUP_COL_PAGEID).toStdString());
+			if (currentPageId != pageId)
+			{
+				return;
+			}
 
-	QFont pageFont = item->font(WIKI_GROUP_COL_PAGENAME);
-	pageFont.setBold(!read);
-	item->setFont(WIKI_GROUP_COL_PAGENAME, pageFont);
+			const uint32_t mask = GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+			uint32_t status = item->data(WIKI_GROUP_COL_PAGENAME, WIKI_PAGE_ROLE_STATUS).toUInt();
+			status &= ~mask;
+			if (!read)
+			{
+				status |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+			}
+
+			item->setData(WIKI_GROUP_COL_PAGENAME, WIKI_PAGE_ROLE_STATUS, status);
+
+			QFont pageFont = item->font(WIKI_GROUP_COL_PAGENAME);
+			pageFont.setBold(!read);
+			item->setFont(WIKI_GROUP_COL_PAGENAME, pageFont);
+		}, self);
+	});
 }
 
 const RsGxsGroupId& WikiDialog::getSelectedGroup()
