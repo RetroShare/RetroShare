@@ -204,6 +204,9 @@ void TurtleRouterDialog::hideEvent(QHideEvent *event)
 {
 	// Clear tree widgets to save memory (Cyril's recommendation)
 	_f2f_TW->clear();
+	top_level_s_requests = nullptr;
+	top_level_t_requests = nullptr;
+
 	tunnels_treeWidget->clear();
 	top_level_hashes.clear();
 
@@ -252,6 +255,18 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 																const std::vector<TurtleSearchRequestDisplayInfo >& search_reqs_info,
 																const std::vector<TurtleTunnelRequestDisplayInfo >& tunnel_reqs_info)
 {
+	// Restore top level items if they were deleted (e.g. in hideEvent)
+	if (!top_level_s_requests)
+	{
+		QStringList stl;
+		stl.push_back(tr("Search requests"));
+		top_level_s_requests = new TurtleTreeWidgetItem(_f2f_TW, stl);
+
+		stl.clear();
+		stl.push_back(tr("Tunnel requests"));
+		top_level_t_requests = new TurtleTreeWidgetItem(_f2f_TW, stl);
+	}
+
 	// Disable sorting during updates to avoid O(N^2 log N) complexity
 	bool sort_f2f = _f2f_TW->isSortingEnabled();
 	bool sort_tunnels = tunnels_treeWidget->isSortingEnabled();
