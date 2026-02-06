@@ -143,6 +143,10 @@ void RshareSettings::initSettings()
     RsNotifyPopupFlags defNotify = (RsNotifyPopupFlags::RS_POPUP_CONNECT | RsNotifyPopupFlags::RS_POPUP_MSG);
     RsFeedTypeFlags defNewsFeed = (RsFeedTypeFlags::RS_FEED_TYPE_MSG | RsFeedTypeFlags::RS_FEED_TYPE_FILES | RsFeedTypeFlags::RS_FEED_TYPE_SECURITY | RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP | RsFeedTypeFlags::RS_FEED_TYPE_CIRCLE | RsFeedTypeFlags::RS_FEED_TYPE_CHANNEL |RsFeedTypeFlags::RS_FEED_TYPE_FORUM | RsFeedTypeFlags::RS_FEED_TYPE_POSTED);
 
+#ifdef RS_USE_WIRE
+    defNewsFeed = (defNewsFeed | RsFeedTypeFlags::RS_FEED_TYPE_WIRE);
+#endif
+	
     setDefault(SETTING_NEWSFEED_FLAGS, (int)defNewsFeed);
 	setDefault(SETTING_CHAT_FLAGS, defChat);
     setDefault(SETTING_NOTIFY_FLAGS, (int)defNotify);
@@ -1114,6 +1118,10 @@ static QString groupFrameSettingsTypeToString(GroupFrameSettings::Type type)
 		return "Channel";
 	case GroupFrameSettings::Posted:
 		return "Posted";
+#ifdef RS_USE_WIRE
+    case GroupFrameSettings::Wire:
+            return "Wire" ;
+#endif
 	}
 
 	return "";
