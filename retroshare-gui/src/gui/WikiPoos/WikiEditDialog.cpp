@@ -24,6 +24,7 @@
 
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "gui/WikiPoos/WikiEditDialog.h"
+#include "gui/WikiPoos/WikiTokenWaiter.h"
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 
@@ -697,16 +698,18 @@ void WikiEditDialog::requestGroup(const RsGxsGroupId &groupId)
 		uint32_t token;
 		rsWiki->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids);
 
-		RsTokenService::GxsRequestStatus status = RsTokenService::PENDING;
-		while (status == RsTokenService::PENDING)
-		{
-			rstime::rs_usleep(50 * 1000);
-			status = rsWiki->getTokenService()->requestStatus(token);
-		}
+		const bool ok = WikiTokenWaiter::waitForToken(
+			[this](uint32_t requestToken)
+			{
+				return rsWiki->getTokenService()->requestStatus(requestToken);
+			},
+			token);
 
 		std::vector<RsWikiCollection> groups;
-		RsTokenService::GxsRequestStatus finalStatus = status;
-		if (status == RsTokenService::COMPLETE)
+		const RsTokenService::GxsRequestStatus finalStatus = ok
+			? RsTokenService::COMPLETE
+			: RsTokenService::FAILED;
+		if (finalStatus == RsTokenService::COMPLETE)
 		{
 			rsWiki->getCollections(token, groups);
 		}
@@ -761,16 +764,18 @@ void WikiEditDialog::requestPage(const RsGxsGrpMsgIdPair &msgId)
 		uint32_t token;
 		rsWiki->getTokenService()->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds);
 
-		RsTokenService::GxsRequestStatus status = RsTokenService::PENDING;
-		while (status == RsTokenService::PENDING)
-		{
-			rstime::rs_usleep(50 * 1000);
-			status = rsWiki->getTokenService()->requestStatus(token);
-		}
+		const bool ok = WikiTokenWaiter::waitForToken(
+			[this](uint32_t requestToken)
+			{
+				return rsWiki->getTokenService()->requestStatus(requestToken);
+			},
+			token);
 
 		std::vector<RsWikiSnapshot> snapshots;
-		RsTokenService::GxsRequestStatus finalStatus = status;
-		if (status == RsTokenService::COMPLETE)
+		const RsTokenService::GxsRequestStatus finalStatus = ok
+			? RsTokenService::COMPLETE
+			: RsTokenService::FAILED;
+		if (finalStatus == RsTokenService::COMPLETE)
 		{
 			rsWiki->getSnapshots(token, snapshots);
 		}
@@ -844,16 +849,18 @@ void WikiEditDialog::requestBaseHistory(const RsGxsGrpMsgIdPair &origMsgId)
 		uint32_t token;
 		rsWiki->getTokenService()->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds);
 
-		RsTokenService::GxsRequestStatus status = RsTokenService::PENDING;
-		while (status == RsTokenService::PENDING)
-		{
-			rstime::rs_usleep(50 * 1000);
-			status = rsWiki->getTokenService()->requestStatus(token);
-		}
+		const bool ok = WikiTokenWaiter::waitForToken(
+			[this](uint32_t requestToken)
+			{
+				return rsWiki->getTokenService()->requestStatus(requestToken);
+			},
+			token);
 
 		std::vector<RsWikiSnapshot> snapshots;
-		RsTokenService::GxsRequestStatus finalStatus = status;
-		if (status == RsTokenService::COMPLETE)
+		const RsTokenService::GxsRequestStatus finalStatus = ok
+			? RsTokenService::COMPLETE
+			: RsTokenService::FAILED;
+		if (finalStatus == RsTokenService::COMPLETE)
 		{
 			rsWiki->getRelatedSnapshots(token, snapshots);
 		}
@@ -951,16 +958,18 @@ void WikiEditDialog::requestEditTreeData() //const RsGxsGroupId &groupId)
 		uint32_t token;
 		rsWiki->getTokenService()->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
 
-		RsTokenService::GxsRequestStatus status = RsTokenService::PENDING;
-		while (status == RsTokenService::PENDING)
-		{
-			rstime::rs_usleep(50 * 1000);
-			status = rsWiki->getTokenService()->requestStatus(token);
-		}
+		const bool ok = WikiTokenWaiter::waitForToken(
+			[this](uint32_t requestToken)
+			{
+				return rsWiki->getTokenService()->requestStatus(requestToken);
+			},
+			token);
 
 		std::vector<RsWikiSnapshot> snapshots;
-		RsTokenService::GxsRequestStatus finalStatus = status;
-		if (status == RsTokenService::COMPLETE)
+		const RsTokenService::GxsRequestStatus finalStatus = ok
+			? RsTokenService::COMPLETE
+			: RsTokenService::FAILED;
+		if (finalStatus == RsTokenService::COMPLETE)
 		{
 			rsWiki->getSnapshots(token, snapshots);
 		}

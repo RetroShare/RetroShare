@@ -28,6 +28,7 @@
 
 #include "WikiDialog.h"
 #include "WikiUserNotify.h"
+#include "WikiTokenWaiter.h"
 #include "gui/WikiPoos/WikiAddDialog.h"
 #include "gui/WikiPoos/WikiEditDialog.h"
 #include "gui/settings/rsharesettings.h"
@@ -521,6 +522,20 @@ void WikiDialog::setSelectedPageReadStatus(bool read)
 	uint32_t token = 0;
 	const RsGxsGrpMsgIdPair msgId(groupId, pageId);
 	rsWiki->setMessageReadStatus(token, msgId, read);
+	const bool ok = WikiTokenWaiter::waitForToken(
+		[this](uint32_t requestToken)
+		{
+			return rsWiki->getTokenService()->requestStatus(requestToken);
+		},
+		token);
+	if (!ok)
+	{
+#ifdef WIKI_DEBUG
+		std::cerr << "WikiDialog::setSelectedPageReadStatus() token request failed"
+		          << " groupId=" << groupId << " pageId=" << pageId << std::endl;
+#endif
+		return;
+	}
 
 	QTreeWidgetItem *item = ui.treeWidget_Pages->currentItem();
 	if (!item)
@@ -623,16 +638,13 @@ void WikiDialog::loadPages(const RsGxsGroupId &groupId)
 		groupIds.push_back(groupId);
 
 		rsWiki->getTokenService()->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
-		
-		// Poll for completion
-		RsTokenService::GxsRequestStatus status = RsTokenService::PENDING;
-		while (status == RsTokenService::PENDING)
-		{
-			rstime::rs_usleep(50 * 1000); // 50ms
-			status = rsWiki->getTokenService()->requestStatus(token);
-		}
-		
-		if (status != RsTokenService::COMPLETE)
+
+		if (!WikiTokenWaiter::waitForToken(
+		        [this](uint32_t requestToken)
+		        {
+			        return rsWiki->getTokenService()->requestStatus(requestToken);
+		        },
+		        token))
 		{
 			std::cerr << "WikiDialog::loadPages() Token request failed" << std::endl;
 			return;
@@ -714,16 +726,13 @@ void WikiDialog::loadWikiPage(const RsGxsGrpMsgIdPair &msgId)
 		set_msgIds.insert(msgId.second);
 		
 		rsWiki->getTokenService()->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds);
-		
-		// Poll for completion
-		RsTokenService::GxsRequestStatus status = RsTokenService::PENDING;
-		while (status == RsTokenService::PENDING)
-		{
-			rstime::rs_usleep(50 * 1000); // 50ms
-			status = rsWiki->getTokenService()->requestStatus(token);
-		}
-		
-		if (status != RsTokenService::COMPLETE)
+
+		if (!WikiTokenWaiter::waitForToken(
+		        [this](uint32_t requestToken)
+		        {
+			        return rsWiki->getTokenService()->requestStatus(requestToken);
+		        },
+		        token))
 		{
 			std::cerr << "WikiDialog::loadWikiPage() Token request failed" << std::endl;
 			return;

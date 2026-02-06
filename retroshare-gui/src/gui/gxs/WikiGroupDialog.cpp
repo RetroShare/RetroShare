@@ -278,15 +278,19 @@ void WikiGroupDialog::updateModeratorsLabel(const std::list<RsGxsId> &moderators
 			moderatorsListString += ", ";
 		}
 
-		if (det.mNickname.empty())
-		{
-			moderatorsListString += tr("[Unknown]");
-		}
+		const QString displayName = det.mNickname.empty()
+			? tr("[Unknown]")
+			: QString::fromUtf8(det.mNickname.c_str());
 
 		link = RetroShareLink::createMessage(det.mId, "");
 		if (link.valid())
 		{
-			moderatorsListString += link.toHtml() + "   ";
+			moderatorsListString += QString("<a href=\"%1\">%2</a>")
+				.arg(link.toString().toHtmlEscaped(), displayName.toHtmlEscaped());
+		}
+		else
+		{
+			moderatorsListString += displayName;
 		}
 	}
 

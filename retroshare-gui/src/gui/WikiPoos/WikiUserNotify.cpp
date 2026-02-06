@@ -18,10 +18,10 @@
  *                                                                             *
  *******************************************************************************/
 
-#include "retroshare/rswiki.h"
 #include "retroshare/rsgxsifacehelper.h"
 #include "retroshare/rsgxsifacetypes.h"
 #include "WikiUserNotify.h"
+#include "WikiTokenWaiter.h"
 #include "gui/MainWindow.h"
 #include "gui/common/FilesDefs.h"
 
@@ -44,13 +44,28 @@ void WikiUserNotify::startUpdate()
 	
 	if (mInterface)
 	{
-		// Use the Wiki-specific statistics method
-		// This requires the getWikiStatistics() method to be implemented in libretroshare
-		// See LIBRETROSHARE_WIKI_NOTIFICATION_IMPLEMENTATION.md for implementation details
+		uint32_t token = 0;
+		if (!mInterface->requestServiceStatistic(token))
+		{
+			update();
+			return;
+		}
+
+		const bool ok = WikiTokenWaiter::waitForToken(
+			[this](uint32_t requestToken)
+			{
+				return mInterface->requestStatus(requestToken);
+			},
+			token);
+
+		if (!ok)
+		{
+			update();
+			return;
+		}
+
 		GxsServiceStatistic stats;
-		RsWiki* wikiService = dynamic_cast<RsWiki*>(mInterface);
-		
-		if (wikiService && wikiService->getWikiStatistics(stats))
+		if (mInterface->getServiceStatistic(token, stats))
 		{
 			// Count unread messages (both thread messages and child messages/comments)
 			mNewCount = stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread;
