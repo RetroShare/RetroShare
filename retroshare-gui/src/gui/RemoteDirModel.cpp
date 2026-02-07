@@ -160,65 +160,65 @@ void TreeStyle_RDM::recalculateDirectoryTotals()
     if(RemoteMode)
         return;
 
-    std::vector<void*> stack;
-    // Start with NULL (Root)
-    stack.push_back(NULL);
+    // Start recursion from Root (NULL)
+    collectStatsRecursive(NULL);
+}
 
-    while(!stack.empty())
+TreeStyle_RDM::FolderStats TreeStyle_RDM::collectStatsRecursive(void* ref)
+{
+    FolderStats stats;
+    
+    // CRITICAL FIX: Safety check for NULL pointers (except for Root which can be NULL start)
+    // Actually requestDirDetails handles NULL ref for Root correctly.
+    
+    DirDetails details;
+    if(!requestDirDetails(ref, RemoteMode, details))
     {
-        void* ref = stack.back();
-        stack.pop_back();
-
-        DirDetails details;
-        if(requestDirDetails(ref, RemoteMode, details))
-        {
-            // If it's a file, we propagate its stats to all ancestors
-            if(details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE)
-            {
-                uint64_t uploaded = rsFiles->getCumulativeUpload(details.hash);
-                uint64_t fileSize = details.size;
-
-                // Handle path climbing for normal files
-                if (details.type == DIR_TYPE_FILE) 
-                {
-                    // details.path for a file is the directory containing it.
-                    QString currentPath = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
-                    
-                    // Iterate up the directory tree to add this file's stats to all parent folders
-                    while(!currentPath.isEmpty() && currentPath != ".")
-                    {
-                        m_folderUploadTotals[currentPath] += uploaded;
-                        m_folderFileTotals[currentPath] += 1;
-                        m_folderSizeTotals[currentPath] += fileSize;
-                        
-                        // Get parent directory
-                        QString parent = QFileInfo(currentPath).path();
-                        
-                        if(parent == currentPath || parent.isEmpty()) {
-                             break;
-                        }
-                        currentPath = parent;
-                    }
-                }
-                // Special handling for Extra Files (virtual root)
-                else if (details.type == DIR_TYPE_EXTRA_FILE) 
-                {
-                    m_folderUploadTotals["!!RS_EXTRA_FILES_ROOT!!"] += uploaded;
-                    m_folderFileTotals["!!RS_EXTRA_FILES_ROOT!!"] += 1;
-                    m_folderSizeTotals["!!RS_EXTRA_FILES_ROOT!!"] += fileSize;
-                }
-            }
-            // If it's a directory or root node, we dive into children
-            else if(details.type == DIR_TYPE_DIR || details.type == DIR_TYPE_ROOT || details.type == DIR_TYPE_PERSON)
-            {
-                for(const auto& child : details.children)
-                {
-                    stack.push_back(child.ref);
-                }
-            }
-        }
+        return stats;
     }
 
+    // If it's a file, we return its stats
+    if(details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE)
+    {
+        stats.size = details.size;
+        stats.count = 1;
+        stats.uploads = rsFiles->getCumulativeUpload(details.hash);
+
+        // Special handling for Extra Files (virtual root)
+        if (details.type == DIR_TYPE_EXTRA_FILE) 
+        {
+            m_folderUploadTotals["!!RS_EXTRA_FILES_ROOT!!"] += stats.uploads;
+            m_folderFileTotals["!!RS_EXTRA_FILES_ROOT!!"] += stats.count;
+            m_folderSizeTotals["!!RS_EXTRA_FILES_ROOT!!"] += stats.size;
+        }
+        
+        return stats;
+    }
+    
+    // If it's a directory or root node, we dive into children
+    if(details.type == DIR_TYPE_DIR || details.type == DIR_TYPE_ROOT || details.type == DIR_TYPE_PERSON)
+    {
+        for(const auto& child : details.children)
+        {
+            FolderStats childStats = collectStatsRecursive(child.ref);
+            
+            stats.size += childStats.size;
+            stats.count += childStats.count;
+            stats.uploads += childStats.uploads;
+        }
+
+        // If this is a real directory, store the aggregated totals
+        if(details.type == DIR_TYPE_DIR)
+        {
+            QString path = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
+            
+            m_folderUploadTotals[path] = stats.uploads;
+            m_folderFileTotals[path]   = stats.count;
+            m_folderSizeTotals[path]   = stats.size;
+        }
+    }
+    
+    return stats;
 }
 
 // MODIFICATION D: Check if a specific node or any of its descendants have uploads

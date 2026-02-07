@@ -227,6 +227,17 @@ class TreeStyle_RDM: public RetroshareDirModel
         QHash<QString, uint32_t> m_folderFileTotals; // Total files in branch
         QHash<QString, uint64_t> m_folderSizeTotals; // Total size of branch
 
+	private:
+		struct FolderStats {
+			uint64_t size;
+			uint32_t count;
+			uint64_t uploads;
+			
+			FolderStats() : size(0), count(0), uploads(0) {}
+		};
+		
+		FolderStats collectStatsRecursive(void* ref);
+
 	protected:
 		mutable std::vector<int> _parentRow ; // used to store the real parent row for non empty child
 };
