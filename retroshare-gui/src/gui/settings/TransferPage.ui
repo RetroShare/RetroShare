@@ -35,11 +35,17 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QPushButton" name="clearuploadStatsButton">
-            <property name="text">
-             <string>Clear upload statistics</string>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
-           </widget>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item row="2" column="0" colspan="2">
            <widget class="QCheckBox" name="shareDownloadDirectoryCB">
@@ -291,6 +297,65 @@
         </widget>
        </item>
        <item row="3" column="0">
+         <widget class="QGroupBox" name="uploadStatsGBox">
+          <property name="title">
+           <string>Upload Statistics</string>
+          </property>
+          <layout class="QGridLayout" name="uploadStatsGBoxLayout">
+           <item row="0" column="0">
+            <layout class="QHBoxLayout" name="uploadStatsRetentionHLayout">
+             <item>
+              <widget class="QLabel" name="uploadStatsRetentionLabel">
+               <property name="text">
+                <string>Keep upload statistics for:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="uploadStatsRetention_SB">
+               <property name="suffix">
+                <string> days (0 = forever)</string>
+               </property>
+               <property name="minimum">
+                <number>0</number>
+               </property>
+               <property name="maximum">
+                <number>3650</number>
+               </property>
+               <property name="value">
+                <number>0</number>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Upload statistics older than this number of days will be deleted. Set to 0 to keep them forever.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="clearuploadStatsButton">
+               <property name="text">
+                <string>Clear upload statistics</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="uploadStatsHorizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       <item row="4" column="0">
         <widget class="QTextEdit" name="textEdit">
          <property name="readOnly">
           <bool>true</bool>
@@ -308,7 +373,7 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="5" column="0">
         <layout class="QHBoxLayout" name="minimumFontSizeHLayout">
          <item>
           <widget class="QLabel" name="minimumFontSizeLabel">
@@ -342,7 +407,7 @@ p, li { white-space: pre-wrap; }
          </item>
         </layout>
        </item>
-       <item row="5" column="0">
+       <item row="6" column="0">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
