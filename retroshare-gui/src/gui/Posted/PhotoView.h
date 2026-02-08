@@ -43,6 +43,7 @@ public:
 
 public slots:
 	void setPixmap(const QPixmap& pixmap);
+	void setMovie(QMovie* movie);  // New: support for animated images
 	void setTitle (const QString &text);
 	void setName(const RsGxsId& authorID);
 	void setTime(const QString& text);
@@ -56,6 +57,7 @@ private slots:
 private:
 	RsGxsMessageId mMessageId;
 	RsGxsGroupId mGroupId;
+	QMovie* mMovie = nullptr;  // Track QMovie for cleanup
 
   /** Qt Designer generated object */
   Ui::PhotoView  *ui;

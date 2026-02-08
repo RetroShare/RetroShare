@@ -1,7 +1,7 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/common/AvatarDefs.h                                  *
+ * gui/statistics/GxsNetTunnelsDialog.h                                        *
  *                                                                             *
- * Copyright (C) 2012, Robert Fernie <retroshare.project@gmail.com>            *
+ * Copyright (c) 2025 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,27 +18,40 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef _AVATARDEFS_H
-#define _AVATARDEFS_H
+#pragma once
+#include <QAbstractItemDelegate>
 
-#include <string>
-#include <QString>
+#include <retroshare/rsturtle.h>
 #include <retroshare/rstypes.h>
-#include <retroshare/rsgxsifacetypes.h>
 
-#define AVATAR_DEFAULT_IMAGE ":/icons/no_avatar.png"
+#include <retroshare-gui/RsAutoUpdatePage.h>
 
-class QPixmap;
+#include "ui_GxsNetTunnelsDialog.h"
 
-class AvatarDefs
+class QModelIndex;
+class QPainter;
+class NetTunnelsListDelegate ;
+
+class GxsNetTunnelsDialog: public RsAutoUpdatePage,  public Ui::GxsNetTunnelsDialog
 {
+	Q_OBJECT
+
 public:
-    static void getOwnAvatar(QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
+	GxsNetTunnelsDialog(QWidget *parent = NULL) ;
+	~GxsNetTunnelsDialog();
 
-    static bool getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
-    static bool getAvatarFromGpgId(const RsPgpId & gpgId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
-    static bool getAvatarFromGxsId(const RsGxsId & gxsId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
-};
+	void updateTunnels();
 
-#endif
+public slots:
+	virtual void updateDisplay() ;
 
+private:
+	void processSettings(bool bLoad);
+	bool m_ProcessSettings;
+
+	QTreeWidgetItem *peers_item ;
+
+protected:
+	NetTunnelsListDelegate *TunnelDelegate;
+	void hideEvent(QHideEvent *event) override;
+} ;

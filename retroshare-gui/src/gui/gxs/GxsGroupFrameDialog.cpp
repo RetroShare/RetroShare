@@ -1156,6 +1156,8 @@ void GxsGroupFrameDialog::updateGroupSummary()
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
+
+
 void GxsGroupFrameDialog::getServiceStatistics(GxsServiceStatistic& stats) const
 {
     if(!mCachedGroupStats.empty())
@@ -1269,7 +1271,8 @@ void GxsGroupFrameDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
             QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
 
             if (item)
-                ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+                // ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+				ui->groupTreeWidget->setCounts(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread, stats.mNumMsgs);
 
             mCachedGroupStats[groupId] = stats;
 

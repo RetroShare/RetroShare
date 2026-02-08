@@ -180,7 +180,7 @@ void  CreateGxsForumMsg::newMsg()
 		// NOTE: mPosterId may not be our own; then GxsIdChooser will not include it.
 
 		idChooserFlags |= IDCHOOSER_NO_CREATE;
-		ui->idChooser->setIdConstraintSet(id_set);
+    ui->idChooser->intersectIdConstraintSet(id_set);
 	}
 	ui->idChooser->loadIds(idChooserFlags, mPosterId);
 
@@ -585,6 +585,21 @@ void CreateGxsForumMsg::loadCircleInfo(const RsGxsGroupId& circle_id)
 
     RsThread::async( [circle_id,this]()
     {
+        // get set of eligible ids
+        RsGxsCircleDetails circleDetails;
+        rsGxsCircles->getCircleDetails(RsGxsCircleId(circle_id), circleDetails);
+        std::set<RsGxsId> ids;
+        uint32_t mask =
+            GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST |
+            GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED;
+        for(auto it = circleDetails.mSubscriptionFlags.begin();
+            it != circleDetails.mSubscriptionFlags.end(); it++
+        ) {
+          if((it->second & mask) == mask) {
+            ids.insert(it->first);
+          }
+        }
+
         std::vector<RsGxsCircleGroup> circle_grp_v ;
         rsGxsCircles->getCirclesInfo(std::list<RsGxsGroupId>{ circle_id }, circle_grp_v);
 
@@ -602,17 +617,12 @@ void CreateGxsForumMsg::loadCircleInfo(const RsGxsGroupId& circle_id)
 
         RsGxsCircleGroup cg = circle_grp_v.front();
 
-        RsQThreadUtils::postToObject( [cg,this]()
+        RsQThreadUtils::postToObject( [cg,ids,this]()
         {
             mForumCircleData = cg;
             mForumCircleLoaded = true;
 
-            //std::cerr << "Loaded content of circle " << cg.mMeta.mGroupId << std::endl;
-
-            //for(std::set<RsGxsId>::const_iterator it(cg.mInvitedMembers.begin());it!=cg.mInvitedMembers.end();++it)
-            //    std::cerr << "  added constraint to circle element " << *it << std::endl;
-
-            ui->idChooser->setIdConstraintSet(cg.mInvitedMembers) ;
+            ui->idChooser->intersectIdConstraintSet(ids);
             ui->idChooser->setFlags(IDCHOOSER_NO_CREATE | ui->idChooser->flags()) ;	// since there's a circle involved, no ID creation can be needed
 
             RsGxsId tmpid ;

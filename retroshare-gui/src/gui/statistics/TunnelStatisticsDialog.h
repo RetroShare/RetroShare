@@ -1,7 +1,7 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/common/AvatarDefs.h                                  *
+ * gui/statistics/TurtleRouterDialog.h                                         *
  *                                                                             *
- * Copyright (C) 2012, Robert Fernie <retroshare.project@gmail.com>            *
+ * Copyright (c) 2025 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,27 +18,43 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef _AVATARDEFS_H
-#define _AVATARDEFS_H
+#pragma once
 
-#include <string>
-#include <QString>
+#include <retroshare/rsturtle.h>
 #include <retroshare/rstypes.h>
-#include <retroshare/rsgxsifacetypes.h>
 
-#define AVATAR_DEFAULT_IMAGE ":/icons/no_avatar.png"
+#include <retroshare-gui/RsAutoUpdatePage.h>
 
-class QPixmap;
+#include "ui_TunnelStatisticsDialog.h"
 
-class AvatarDefs
+class QModelIndex;
+class QPainter;
+//class FTTunnelsListDelegate ;
+
+class TunnelStatisticsDialog: public RsAutoUpdatePage, public Ui::TunnelStatisticsDialog
 {
+    Q_OBJECT
+
 public:
-    static void getOwnAvatar(QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
+    TunnelStatisticsDialog(QWidget *parent = NULL) ;
+    ~TunnelStatisticsDialog();
 
-    static bool getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
-    static bool getAvatarFromGpgId(const RsPgpId & gpgId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
-    static bool getAvatarFromGxsId(const RsGxsId & gxsId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
-};
+    // Cache for peer names.
+    static QString getPeerName(const RsGxsId& gxs_id);
+    static QString getPeerName(const RsPeerId &peer_id) ;
 
-#endif
+    void updateTunnels();
+
+public slots:
+    virtual void updateDisplay() ;
+
+private:
+    void processSettings(bool bLoad);
+    bool m_bProcessSettings;
+    static QString speedString(float f);
+
+protected:
+    void hideEvent(QHideEvent *event) override;
+
+} ;
 
