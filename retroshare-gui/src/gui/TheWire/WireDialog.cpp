@@ -39,12 +39,14 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rswire.h>
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 
 #include <QTimer>
 #include <QMessageBox>
 #include <QMenu>
+#include <QActionGroup>
 
 /****************************************************************
  * TheWire Display Widget.
@@ -68,6 +70,7 @@ WireDialog::WireDialog(QWidget *parent)
     : GxsStatisticsProvider(rsWire, settingsGroupName(),parent, true), mGroupSet(GROUP_SET_ALL)
     , mAddDialog(nullptr), mGroupSelected(nullptr), mWireQueue(nullptr)
     , mHistoryIndex(-1), mEventHandlerId(0), mSortAscending(false)
+    , mAccountSortType(0), mHideInactiveAccounts(false)
 {
 	ui.setupUi(this);
 
@@ -75,7 +78,6 @@ WireDialog::WireDialog(QWidget *parent)
 	connect( ui.toolButton_createPulse, SIGNAL(clicked()), this, SLOT(createPulse()));
 	connect( ui.toolButton_home, SIGNAL(clicked()), this, SLOT(showHomeFeed()));
 	connect( ui.lineEdit_searchUsers, SIGNAL(textChanged(const QString&)), this, SLOT(filterUsers(const QString&)));
-
 
 	connect(ui.comboBox_groupSet, SIGNAL(currentIndexChanged(int)), this, SLOT(selectGroupSet(int)));
 	connect(ui.comboBox_filterTime, SIGNAL(currentIndexChanged(int)), this, SLOT(selectFilterTime(int)));
@@ -92,13 +94,33 @@ WireDialog::WireDialog(QWidget *parent)
 	sortAscAction->setChecked(mSortAscending);
 	connect(sortAscAction, SIGNAL(triggered()), this, SLOT(toggleSortAscending()));
 
-	QMenu *filterTimeMenu = filterMenu->addMenu(tr("Filter by time"));
-	filterTimeMenu->addAction(tr("All Time"), this, SLOT(setFilterTimeAllTime()));
-	filterTimeMenu->addAction(tr("Last 24 hours"), this, SLOT(setFilterTimeLast24Hours()));
-	filterTimeMenu->addAction(tr("Last 7 days"), this, SLOT(setFilterTimeLast7Days()));
-	filterTimeMenu->addAction(tr("Last 30 days"), this, SLOT(setFilterTimeLast30Days()));
-
 	ui.toolButton_filter->setMenu(filterMenu);
+
+	// Setup account filter menu
+	QMenu *accountMenu = new QMenu(this);
+	QActionGroup *sortGroup = new QActionGroup(this);
+
+	QAction *sortByName = accountMenu->addAction(tr("Sort by Name"));
+	sortByName->setCheckable(true);
+	sortByName->setChecked(true);
+	sortByName->setData(0);
+	sortGroup->addAction(sortByName);
+
+	QAction *sortByActivity = accountMenu->addAction(tr("Sort by Activity"));
+	sortByActivity->setCheckable(true);
+	sortByActivity->setData(1);
+	sortGroup->addAction(sortByActivity);
+
+	accountMenu->addSeparator();
+
+	QAction *hideInactiveAction = accountMenu->addAction(tr("Hide inactive (>30d)"));
+	hideInactiveAction->setCheckable(true);
+	hideInactiveAction->setChecked(false);
+
+	connect(sortGroup, SIGNAL(triggered(QAction*)), this, SLOT(sortAccountsChanged(QAction*)));
+	connect(hideInactiveAction, SIGNAL(toggled(bool)), this, SLOT(hideInactiveChanged(bool)));
+
+	ui.toolButton_accountFilter->setMenu(accountMenu);
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
@@ -138,38 +160,21 @@ void WireDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 
         // The following switch statements refresh the wire feed whenever there is a new event
 
-        std::cout<<"***************the wire event code is ************************* "<<std::endl;
         switch(e->mWireEventCode)
         {
 
         case RsWireEventCode::READ_STATUS_CHANGED:
             updateGroupStatisticsReal(e->mWireGroupId); // update the list immediately
-            std::cout<<"1"<<std::endl;
             return;
 
         case RsWireEventCode::STATISTICS_CHANGED:
-            std::cout<<"2"<<std::endl;
-
         case RsWireEventCode::NEW_POST:
-            std::cout<<"3"<<std::endl;
-
         case RsWireEventCode::NEW_REPLY:
-            std::cout<<"4"<<std::endl;
-
         case RsWireEventCode::NEW_LIKE:
-            std::cout<<"5"<<std::endl;
-
         case RsWireEventCode::NEW_REPUBLISH:
-            std::cout<<"6"<<std::endl;
-
         case RsWireEventCode::POST_UPDATED:
-            std::cout<<"7"<<std::endl;
-
         case RsWireEventCode::FOLLOW_STATUS_CHANGED:
-            std::cout<<"8"<<std::endl;
-
         case RsWireEventCode::NEW_WIRE:
-            std::cout<<"9"<<std::endl;
             updateGroupStatisticsReal(e->mWireGroupId);
             break;
 
@@ -601,6 +606,12 @@ void WireDialog::selectGroupSet(int index)
 	if (mGroupSet < 0) {
 		mGroupSet = GROUP_SET_ALL;
 	}
+
+	// show follow label and account filter only when All is selected
+	bool showFollow = (mGroupSet == GROUP_SET_ALL);
+	ui.followLabel->setVisible(showFollow);
+	ui.toolButton_accountFilter->setVisible(showFollow);
+
 	showGroups();
 }
 
@@ -618,29 +629,20 @@ void WireDialog::toggleSortAscending()
 	showSelectedGroups();
 }
 
-void WireDialog::setFilterTimeAllTime()
+void WireDialog::sortAccountsChanged(QAction *action)
 {
-	ui.comboBox_filterTime->setCurrentIndex(0);
+	mAccountSortType = action->data().toInt();
+	showGroups();
 }
 
-void WireDialog::setFilterTimeLast24Hours()
+void WireDialog::hideInactiveChanged(bool checked)
 {
-	ui.comboBox_filterTime->setCurrentIndex(1);
-}
-
-void WireDialog::setFilterTimeLast7Days()
-{
-	ui.comboBox_filterTime->setCurrentIndex(2);
-}
-
-void WireDialog::setFilterTimeLast30Days()
-{
-	ui.comboBox_filterTime->setCurrentIndex(3);
+	mHideInactiveAccounts = checked;
+	showGroups();
 }
 
 void WireDialog::showSelectedGroups()
 {
-	ui.comboBox_filterTime->setEnabled(false);
 	if (mGroupSelected)
 	{
 		// request data.
@@ -658,10 +660,14 @@ void WireDialog::showSelectedGroups()
 
 void WireDialog::showGroups()
 {
-	ui.comboBox_filterTime->setEnabled(false);
 	deleteGroups();
 
 	std::list<RsGxsGroupId> allGroupIds;
+	std::vector<RsWireGroup> groupsToShow;
+
+	// Collect groups that match the current filter
+	rstime_t now = time(nullptr);
+	rstime_t thirtyDaysAgo = now - (30 * 24 * 60 * 60);
 
 	for (auto &it : mAllGroups)
 	{
@@ -682,10 +688,39 @@ void WireDialog::showGroups()
 			}
 		}
 
-		if (add) {
-			addGroup(it.second);
-			allGroupIds.push_back(it.second.mMeta.mGroupId);
+		// Filter inactive accounts if checkbox is checked
+		if (add && mHideInactiveAccounts) {
+			rstime_t lastPost = it.second.mMeta.mLastPost;
+			if (lastPost == 0 || lastPost < thirtyDaysAgo) {
+				add = false;
+			}
 		}
+
+		if (add) {
+			groupsToShow.push_back(it.second);
+		}
+	}
+
+	// Sort groups based on selection
+	if (mAccountSortType == 0) {
+		// Sort by name (alphabetical)
+		std::sort(groupsToShow.begin(), groupsToShow.end(),
+			[](const RsWireGroup &a, const RsWireGroup &b) {
+				return QString::fromStdString(a.mMeta.mGroupName).toLower() <
+				       QString::fromStdString(b.mMeta.mGroupName).toLower();
+			});
+	} else {
+		// Sort by activity (most recent first)
+		std::sort(groupsToShow.begin(), groupsToShow.end(),
+			[](const RsWireGroup &a, const RsWireGroup &b) {
+				return a.mMeta.mLastPost > b.mMeta.mLastPost;
+			});
+	}
+
+	// Add sorted groups to UI
+	for (auto &group : groupsToShow) {
+		addGroup(group);
+		allGroupIds.push_back(group.mMeta.mGroupId);
 	}
 
 	requestGroupsPulses(allGroupIds);
@@ -1390,7 +1425,6 @@ void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
 
 void WireDialog::getServiceStatistics(GxsServiceStatistic& stats) const
 {
-    std::cout<<"inside the getServiceStatics *********"<<std::endl;
     if(!mCachedGroupStats.empty())
     {
         stats = GxsServiceStatistic(); // clears everything
@@ -1406,13 +1440,6 @@ void WireDialog::getServiceStatistics(GxsServiceStatistic& stats) const
             stats.mNumThreadMsgsUnread += s.mNumThreadMsgsUnread;
             stats.mNumChildMsgsNew     += s.mNumChildMsgsNew ;
             stats.mNumChildMsgsUnread  += s.mNumChildMsgsUnread ;
-            std::cout<<stats.mNumMsgs  <<std::endl;
-            std::cout<<stats.mNumGrps  <<std::endl;
-            std::cout<<stats.mSizeOfMsgs  <<std::endl;
-            std::cout<<stats.mNumThreadMsgsNew  <<std::endl;
-            std::cout<<stats.mNumThreadMsgsUnread  <<std::endl;
-            std::cout<<stats.mNumChildMsgsNew  <<std::endl;
-            std::cout<<stats.mNumChildMsgsUnread   <<std::endl;
         }
 
         // Also save the service statistics in conf file, so that we can display it right away at start.

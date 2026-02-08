@@ -223,7 +223,6 @@ bool WireNotifyPostItem::setPost(const RsWirePulse &pulse, bool doFill)
 
     if (doFill) {
         fill();
-        std::cout<<"filling needs to be implemented"<<std::endl;
     }
 
 //    updateItem();
@@ -509,7 +508,6 @@ void WireNotifyPostItem::fill()
     std::cerr << std::endl;
 #endif
 
-    std::cout<<"*************************************************filling************************************"<<std::endl;
     mInFill = true;
 
     QString title;

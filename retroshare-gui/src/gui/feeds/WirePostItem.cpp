@@ -376,8 +376,6 @@ void WirePostItem::fill()
     std::cerr << std::endl;
 #endif
 
-    std::cout<<"*************************************************filling************************************"<<std::endl;
-
     QString title;
     QString msgText;
 

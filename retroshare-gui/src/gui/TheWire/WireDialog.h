@@ -142,10 +142,10 @@ private slots:
 
 	// Filter menu actions
 	void toggleSortAscending();
-	void setFilterTimeAllTime();
-	void setFilterTimeLast24Hours();
-	void setFilterTimeLast7Days();
-	void setFilterTimeLast30Days();
+
+	// Account filter slots
+	void sortAccountsChanged(QAction *action);
+	void hideInactiveChanged(bool checked);
 
 	// history navigation.
 	void back();
@@ -194,6 +194,8 @@ private:
 	int32_t mHistoryIndex;
 	std::vector<WireViewHistory> mHistory;
 	bool mSortAscending;
+	int mAccountSortType;
+	bool mHideInactiveAccounts;
 
 	// pending navigation (for when navigate called before groups loaded)
 	RsGxsGroupId mNavigatePendingGroupId;
