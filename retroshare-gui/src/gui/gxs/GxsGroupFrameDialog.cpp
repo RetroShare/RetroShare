@@ -33,6 +33,7 @@
 #include "gui/common/RSTreeWidget.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/common/UserNotify.h"
+#include "gui/RsGUIEventManager.h"
 #include "util/qtthreadsutils.h"
 #include "retroshare/rsgxsifacetypes.h"
 #include "GxsCommentDialog.h"
@@ -71,7 +72,7 @@ static const uint32_t DELAY_BETWEEN_GROUP_STATISTICS_UPDATE = 120; // do not upd
 
 /** Constructor */
 GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl,const QString& settings_name, QWidget *parent,bool allow_dist_sync)
-: GxsStatisticsProvider(ifaceImpl,settings_name,parent)
+: MainPage(parent), mSettingsName(settings_name)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui = new Ui::GxsGroupFrameDialog();
@@ -172,7 +173,7 @@ void GxsGroupFrameDialog::initUi()
 	processSettings(true);
 
 	if (groupFrameSettingsType() != GroupFrameSettings::Nothing) {
-		//connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
+		connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 		settingsChanged();
 	}
 

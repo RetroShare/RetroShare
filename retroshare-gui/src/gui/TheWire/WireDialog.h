@@ -38,6 +38,10 @@
 
 #include "util/TokenQueue.h"
 
+class UIStateHelper;
+class GxsMessageFrameWidget;
+class RsGxsIfaceHelper;
+
 #define IMAGE_WIRE              ":/icons/wire.png"
 
 //--------------------------- Classes for Wire View History
@@ -68,7 +72,7 @@ public:
 };
 //---------------------------------------------------------
 
-class WireDialog : public GxsStatisticsProvider, public TokenResponse, public WireGroupHolder, public PulseViewHolder
+class WireDialog : public MainPage, public GxsStatisticsProvider, public TokenResponse, public WireGroupHolder, public PulseViewHolder
 {
   Q_OBJECT
 
@@ -118,16 +122,16 @@ public:
 	void showGroupsPulses(const std::list<RsGxsGroupId>& groupIds);
 	void postGroupsPulses(std::list<RsWirePulseSPtr> pulses);
 
-    void getServiceStatistics(GxsServiceStatistic& stats) const ;
+    void getServiceStatistics(GxsServiceStatistic& stats) const override;
 
-    virtual bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId) override;
+    virtual bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId);
 
 protected:
 
-    bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) override;
+    bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat);
     UserNotify *createUserNotify(QObject *parent) override;
-    virtual void updateGroupStatistics(const RsGxsGroupId &groupId) override;
-    virtual void updateGroupStatisticsReal(const RsGxsGroupId &groupId) override;
+    virtual void updateGroupStatistics(const RsGxsGroupId &groupId);
+    virtual void updateGroupStatisticsReal(const RsGxsGroupId &groupId);
 
 private slots:
 
@@ -175,8 +179,7 @@ private:
 
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req) override;
 
-	virtual QString settingsGroupName()  override{ return "WireDialog"; }
-	virtual GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId) override;
+	GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId);
 
 	int mGroupSet;
 
@@ -197,9 +200,17 @@ private:
 	int mAccountSortType;
 	bool mHideInactiveAccounts;
 
-	// pending navigation (for when navigate called before groups loaded)
+	// Members for GxsStatisticsProvider interface support
+	QString mSettingsName;
+	RsGxsIfaceHelper *mInterface;
+	bool mDistSyncAllowed;
+	std::map<RsGxsGroupId,GxsGroupStatistic> mCachedGroupStats;
+	bool mShouldUpdateGroupStatistics;
+	std::set<RsGxsGroupId> mGroupStatisticsToUpdate;
+	bool mCountChildMsgs;
 	RsGxsGroupId mNavigatePendingGroupId;
 	RsGxsMessageId mNavigatePendingMsgId;
+	UIStateHelper *mStateHelper;
 
 	/* UI - from Designer */
 	Ui::WireDialog ui;

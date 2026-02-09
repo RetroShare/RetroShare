@@ -25,7 +25,6 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
-#include "gui/common/NotifyWidget.h"
 #include "gui/gxs/GxsStatisticsProvider.h"
 #include "gui/gxs/GxsGroupShareKey.h"
 
@@ -67,12 +66,17 @@
 
 /** Constructor */
 WireDialog::WireDialog(QWidget *parent)
-    : GxsStatisticsProvider(rsWire, settingsGroupName(),parent, true), mGroupSet(GROUP_SET_ALL)
+    : MainPage(parent), mGroupSet(GROUP_SET_ALL)
     , mAddDialog(nullptr), mGroupSelected(nullptr), mWireQueue(nullptr)
     , mHistoryIndex(-1), mEventHandlerId(0), mSortAscending(false)
     , mAccountSortType(0), mHideInactiveAccounts(false)
 {
 	ui.setupUi(this);
+
+	mInterface = rsWire;
+	mSettingsName = "WireDialog";
+	mDistSyncAllowed = true;
+	mStateHelper = nullptr;
 
 	connect( ui.toolButton_createAccount, SIGNAL(clicked()), this, SLOT(createGroup()));
 	connect( ui.toolButton_createPulse, SIGNAL(clicked()), this, SLOT(createPulse()));
@@ -894,55 +898,10 @@ void WireDialog::PVHrepublish(const RsGxsGroupId &groupId, const RsGxsMessageId 
 	std::cerr << " MsgId: " << msgId;
 	std::cerr << std::endl;
 
-	int idx = ui.groupChooser->currentIndex();
-	if (idx < 0 || idx >= (int)mOwnGroups.size()) {
-		std::cerr << "WireDialog::PVHrepublish() No own group selected";
-		std::cerr << std::endl;
-		QMessageBox::warning(this, tr("RetroShare"), tr("Please select your Wire account first"), QMessageBox::Ok);
-		return;
-	}
-
-	RsGxsGroupId replyWith = mOwnGroups[idx].mMeta.mGroupId;
-	setCursor(Qt::WaitCursor);
-
-	RsThread::async([this, groupId, msgId, replyWith]()
+	if (setupPulseAddDialog())
 	{
-		RsWirePulseSPtr origPulse;
-		if (!rsWire->getWirePulse(groupId, msgId, origPulse))
-		{
-			std::cerr << "WireDialog::PVHrepublish() failed to fetch original pulse";
-			std::cerr << std::endl;
-			RsQThreadUtils::postToObject([this]()
-			{
-				setCursor(Qt::ArrowCursor);
-			}, this);
-			return;
-		}
-
-		RsWirePulseSPtr pPulse(new RsWirePulse());
-		pPulse->mSentiment = origPulse->mSentiment;
-		pPulse->mPulseText = origPulse->mPulseText;
-		pPulse->mImage1 = origPulse->mImage1;
-		pPulse->mImage2 = origPulse->mImage2;
-		pPulse->mImage3 = origPulse->mImage3;
-		pPulse->mImage4 = origPulse->mImage4;
-
-		RsGxsMessageId targetMsgId = origPulse->mMeta.mOrigMsgId;
-		if (targetMsgId.isNull()) {
-			targetMsgId = msgId;
-		}
-
-		bool success = rsWire->createReplyPulse(groupId, targetMsgId, replyWith,
-			WIRE_PULSE_TYPE_REPUBLISH, pPulse);
-
-		RsQThreadUtils::postToObject([this, success]()
-		{
-			setCursor(Qt::ArrowCursor);
-			if (!success) {
-				std::cerr << "WireDialog::PVHrepublish() FAILED" << std::endl;
-			}
-		}, this);
-	});
+		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_REPUBLISH);
+	}
 }
 
 void WireDialog::PVHlike(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
@@ -951,34 +910,10 @@ void WireDialog::PVHlike(const RsGxsGroupId &groupId, const RsGxsMessageId &msgI
 	std::cerr << " MsgId: " << msgId;
 	std::cerr << std::endl;
 
-	int idx = ui.groupChooser->currentIndex();
-	if (idx < 0 || idx >= (int)mOwnGroups.size()) {
-		std::cerr << "WireDialog::PVHlike() No own group selected";
-		std::cerr << std::endl;
-		QMessageBox::warning(this, tr("RetroShare"), tr("Please select your Wire account first"), QMessageBox::Ok);
-		return;
-	}
-
-	RsGxsGroupId replyWith = mOwnGroups[idx].mMeta.mGroupId;
-	setCursor(Qt::WaitCursor);
-
-	RsThread::async([this, groupId, msgId, replyWith]()
+	if (setupPulseAddDialog())
 	{
-		RsWirePulseSPtr pPulse(new RsWirePulse());
-		pPulse->mSentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
-		pPulse->mPulseText = "";
-
-		bool success = rsWire->createReplyPulse(groupId, msgId, replyWith,
-			WIRE_PULSE_TYPE_LIKE, pPulse);
-
-		RsQThreadUtils::postToObject([this, success]()
-		{
-			setCursor(Qt::ArrowCursor);
-			if (!success) {
-				std::cerr << "WireDialog::PVHlike() FAILED" << std::endl;
-			}
-		}, this);
-	});
+		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_LIKE);
+	}
 }
 
 void WireDialog::PVHviewGroup(const RsGxsGroupId &groupId)

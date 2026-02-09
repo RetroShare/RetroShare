@@ -45,7 +45,7 @@ class UIStateHelper;
 struct RsGxsCommentService;
 class GxsCommentDialog;
 
-class GxsGroupFrameDialog : public GxsStatisticsProvider
+class GxsGroupFrameDialog : public MainPage, public GxsStatisticsProvider
 {
 	Q_OBJECT
 
@@ -75,13 +75,13 @@ public:
     GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, const QString& settings_name,QWidget *parent = 0,bool allow_dist_sync=false);
 	virtual ~GxsGroupFrameDialog();
 
-    virtual bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId) override;
+    virtual bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId);
 
 	virtual QString getHelpString() const =0;
 
 	virtual void getGroupList(std::map<RsGxsGroupId,RsGroupMetaData> &groups) ;
 
-    void getServiceStatistics(GxsServiceStatistic& stats) const ;
+    void getServiceStatistics(GxsServiceStatistic& stats) const override;
 
     static uint32_t checkDelay(uint32_t time_in_secs);
 
@@ -182,7 +182,7 @@ private:
 
 	// subscribe/unsubscribe ack.
 
-    virtual GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId) override;
+    virtual GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId);
 	GxsMessageFrameWidget *createMessageWidget(const RsGxsGroupId &groupId);
 
 	GxsCommentDialog *commentWidget(const RsGxsMessageId &msgId);
@@ -191,8 +191,22 @@ protected:
 
 	void updateSearchResults(const TurtleRequestId &sid);
 	void updateSearchResults();	// update all searches
-    virtual void updateGroupStatistics(const RsGxsGroupId &groupId) override;
-    virtual void updateGroupStatisticsReal(const RsGxsGroupId &groupId) override;
+    virtual void updateGroupStatistics(const RsGxsGroupId &groupId);
+    virtual void updateGroupStatisticsReal(const RsGxsGroupId &groupId);
+
+    // This needs to be overloaded by subclasses, possibly calling the blocking API, since it is used asynchronously.
+    virtual bool getGroupStatistics(const RsGxsGroupId& groupId, GxsGroupStatistic& stat) = 0;
+
+    QString mSettingsName;
+    RsGxsIfaceHelper *mInterface;
+    bool mDistSyncAllowed;
+    std::map<RsGxsGroupId,GxsGroupStatistic> mCachedGroupStats;
+    bool mShouldUpdateGroupStatistics;
+    std::set<RsGxsGroupId> mGroupStatisticsToUpdate;
+    bool mCountChildMsgs;
+    RsGxsGroupId mNavigatePendingGroupId;
+    RsGxsMessageId mNavigatePendingMsgId;
+    UIStateHelper *mStateHelper;
 
 private:
 	GxsMessageFrameWidget *currentWidget() const;

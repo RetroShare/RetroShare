@@ -176,7 +176,6 @@ list(
 	src/gui/common/FlowLayout.cpp 
 	src/gui/common/PictureFlow.cpp 
 	src/gui/common/ToasterNotify.cpp 
-	src/gui/common/NotifyWidget.cpp 
 
 	src/gui/style/RSStyle.cpp 
 	src/gui/style/StyleDialog.cpp 
@@ -383,7 +382,6 @@ list(
 	src/gui/common/RsCollectionDialog.ui 
 	src/gui/common/HeaderFrame.ui 
 	src/gui/common/RSFeedWidget.ui 
-	src/gui/common/NotifyWidget.ui 
 
 	src/gui/style/StyleDialog.ui 
 
@@ -643,7 +641,6 @@ list(
 	src/gui/common/FlowLayout.h 
 	src/gui/common/PictureFlow.h 
 	src/gui/common/ToasterNotify.h 
-	src/gui/common/NotifyWidget.h 
 
 	src/gui/style/RSStyle.h 
 	src/gui/style/StyleDialog.h 

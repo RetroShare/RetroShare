@@ -39,12 +39,10 @@ WireNotifyPostItem::WireNotifyPostItem(FeedHolder *feedHolder, uint32_t feedId, 
     GxsFeedItem(feedHolder, feedId, group_meta.mGroupId, messageId, isHome, rsWire, autoUpdate),
     mGroupMeta(group_meta)
 {
+    mLoadingStatus = LOADING_STATUS_NO_DATA;
     mLoadingGroup = false;
     mLoadingMessage = false;
     mLoadingComment = false;
-
-    mPulse.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
-    mPulse.mMeta.mGroupId = mGroupMeta.mGroupId;
 
 	QVector<RsGxsMessageId> v;
 	//bool self = false;
@@ -64,7 +62,7 @@ WireNotifyPostItem::WireNotifyPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 WireNotifyPostItem::WireNotifyPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId> &older_versions) :
     GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsWire, autoUpdate) // this one should be in GxsFeedItem
 {
-    mPulse.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
+    mLoadingStatus = LOADING_STATUS_NO_DATA;
 
     QVector<RsGxsMessageId> v;
     //bool self = false;
@@ -86,17 +84,27 @@ void WireNotifyPostItem::paintEvent(QPaintEvent *e)
     /* This method employs a trick to trigger a deferred loading. The post and group is requested only
      * when actually displayed on the screen. */
 
-    if(!mLoaded)
-    {
-        mLoaded = true ;
+    if(mLoadingStatus != LOADING_STATUS_FILLED && !mGroupMeta.mGroupId.isNull() && !mPulse.mMeta.mMsgId.isNull() )
+        mLoadingStatus = LOADING_STATUS_HAS_DATA;
 
-        std::set<RsGxsMessageId> older_versions;	// not so nice. We need to use std::set everywhere
-        for(auto& m:messageVersions())
-            older_versions.insert(m);
+    if(mGroupMeta.mGroupId.isNull() && !mLoadingGroup)
+        requestGroup();
 
-        fill();
+    if(mPulse.mMeta.mMsgId.isNull() && !mLoadingMessage)
         requestMessage();
-        requestComment();
+
+    switch(mLoadingStatus)
+    {
+    case LOADING_STATUS_FILLED:
+    case LOADING_STATUS_NO_DATA:
+    default:
+        break;
+
+    case LOADING_STATUS_HAS_DATA:
+        fill();
+        setGroup(mGroup);
+        mLoadingStatus = LOADING_STATUS_FILLED;
+        break;
     }
 
     GxsFeedItem::paintEvent(e) ;
@@ -104,7 +112,7 @@ void WireNotifyPostItem::paintEvent(QPaintEvent *e)
 
 WireNotifyPostItem::~WireNotifyPostItem()
 {
-    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(300);
+    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
 
     while( (mLoadingGroup || mLoadingMessage || mLoadingComment)
            && std::chrono::steady_clock::now() < timeout)
@@ -154,7 +162,6 @@ void WireNotifyPostItem::setup()
 
     mInFill = false;
     mCloseOnRead = false;
-    mLoaded = false;
 
     /* clear ui */
     ui->titleLabel->setText(tr("Loading..."));
@@ -281,8 +288,9 @@ void WireNotifyPostItem::loadMessage()
 
             RsQThreadUtils::postToObject([pulse, this]()
             {
-                setPost(pulse);
+                mPulse = pulse;
                 mLoadingMessage = false;
+                update();	// triggers paintEvent if needed
             }, this);
         }
         else
@@ -297,45 +305,7 @@ void WireNotifyPostItem::loadMessage()
 
 void WireNotifyPostItem::loadComment()
 {
-#ifdef DEBUG_ITEM
-    std::cerr << "WireNotifyPostItem::loadComment()";
-    std::cerr << std::endl;
-#endif
-//    mLoadingComment = true;
-
-//    RsThread::async([this]()
-//    {
-//        // 1 - get group data
-
-//        std::set<RsGxsMessageId> msgIds;
-
-//        for(auto MsgId: messageVersions())
-//            msgIds.insert(MsgId);
-
-//        std::vector<RsGxsChannelPost> posts;
-//        std::vector<RsGxsComment> comments;
-
-//        if(! rsGxsChannels->getChannelComments( groupId(),msgIds,comments))
-//        {
-//            RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
-//            return;
-//        }
-
-//        int comNb = comments.size();
-
-//        RsQThreadUtils::postToObject( [comNb,this]()
-//        {
-//            QString sComButText = tr("Comment");
-//            if (comNb == 1)
-//                sComButText = sComButText.append("(1)");
-//            else if(comNb > 1)
-//                sComButText = tr("Comments ").append("(%1)").arg(comNb);
-
-//            ui->commentButton->setText(sComButText);
-//            mLoadingComment = false;
-
-//        }, this );
-//    });
+    // TODO: implement Wire comment loading when Wire comments are supported
 }
 
 void WireNotifyPostItem::loadGroup()
@@ -357,6 +327,7 @@ void WireNotifyPostItem::loadGroup()
         if(!rsWire->getGroups(groupIds,groups))	// would be better to call channel Summaries for a single group
         {
             RsErr() << "WireNotifyPostItem::loadGroup() ERROR getting data" << std::endl;
+            mLoadingGroup = false;
             return;
         }
 
@@ -364,6 +335,7 @@ void WireNotifyPostItem::loadGroup()
         {
             std::cerr << "WireNotifyPostItem::loadGroup() Wrong number of Items";
             std::cerr << std::endl;
+            mLoadingGroup = false;
             return;
         }
         RsWireGroup group = groups[0];
@@ -374,9 +346,11 @@ void WireNotifyPostItem::loadGroup()
              * thread, for example to update the data model with new information
              * after a blocking call to RetroShare API complete */
 
+            mGroup = group;
             mGroupMeta = group.mMeta;
             mLoadingGroup = false;
-			setGroup(group);
+
+            update();	// triggers paintEvent if needed
 
         }, this );
     });

@@ -52,7 +52,6 @@ public:
 	bool setPost(const RsWirePulse& pulse, bool doFill = true);
 	void setGroup(const RsWireGroup &group);
 
-	bool isLoaded() const {return mLoaded;};
 	bool isUnread() const ;
 	void setReadStatus(bool isNew, bool isUnread);
 
@@ -89,7 +88,8 @@ private:
 private:
     bool mInFill;
     bool mCloseOnRead;
-    bool mLoaded;
+
+    LoadingStatus mLoadingStatus;
 
     bool mLoadingMessage;
     bool mLoadingGroup;
@@ -98,6 +98,7 @@ private:
 
     RsGroupMetaData mGroupMeta;
     RsWirePulse mPulse;
+    RsWireGroup mGroup;
 
     /** Qt Designer generated object */
     Ui::WireNotifyPostItem *ui;
