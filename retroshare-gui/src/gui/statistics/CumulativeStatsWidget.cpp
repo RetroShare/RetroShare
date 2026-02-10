@@ -262,16 +262,30 @@ void CumulativeStatsWidget::updateServiceStats()
    
     // Service name mapping
     QMap<uint16_t, QString> serviceNames;
-    serviceNames[0x0001] = "Discovery";
-    serviceNames[0x0002] = "Messages";
-    serviceNames[0x0004] = "Chat";
-    serviceNames[0x0008] = "File Transfer";
-    serviceNames[0x0010] = "GXS Channels";
-    serviceNames[0x0011] = "GXS Forums";
-    serviceNames[0x0012] = "GXS Posted";
-    serviceNames[0x0013] = "GXS Identity";
+    serviceNames[0x0011] = "Discovery";
+    serviceNames[0x0012] = "Chat";
+    serviceNames[0x0013] = "Messages";
     serviceNames[0x0014] = "Turtle Router";
-    serviceNames[0x0015] = "GXS Circles";
+    serviceNames[0x0016] = "Heartbeat";
+    serviceNames[0x0017] = "File Transfer";
+    serviceNames[0x0018] = "Global Router";
+    serviceNames[0x0019] = "File Database";
+    serviceNames[0x0020] = "Service Info";
+    serviceNames[0x0021] = "Bandwidth";
+    serviceNames[0x0101] = "Banlist";
+    serviceNames[0x0102] = "Status";
+    serviceNames[0x0028] = "GXS Tunnels";
+    serviceNames[0x0211] = "GXS Identity";
+    serviceNames[0x0213] = "GXS Wiki";
+    serviceNames[0x0214] = "GXS Wire";
+    serviceNames[0x0215] = "GXS Forums";
+    serviceNames[0x0216] = "GXS Boards";
+    serviceNames[0x0217] = "GXS Channels";
+    serviceNames[0x0218] = "GXS Circles";
+    serviceNames[0x0219] = "GXS Reputation";
+    serviceNames[0x0230] = "GXS Mails";
+    serviceNames[0x1011] = "RTT";
+    serviceNames[0x2003] = "FeedReader";
     
     for (const auto& kv : stats) {
         QString name = serviceNames.value(kv.first, QString("Service 0x%1").arg(kv.first, 4, 16, QChar('0')));
