@@ -2670,3 +2670,6 @@ StartDialog QPushButton#loadButton:hover {
 	background: transparent;
 	border-image: url(:/images/btn_blue_hover.png) 4;
 }
+
+/* AvatarWidget */
+AvatarWidget{border-width: 10px;}
