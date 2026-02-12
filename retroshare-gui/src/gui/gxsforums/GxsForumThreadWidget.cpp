@@ -404,6 +404,34 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
             if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
                 updateDisplay(true);
             break;
+
+        case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
+        {
+            if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
+            {
+                // Async update of subscription status to avoid blocking the GUI thread with waitToken
+                // Delayed by 1.5s to avoid conflict with GxsGroupFrameDialog's own update (which requests all groups)
+                // This prevents the bug where the group remains in "Popular" instead of moving to "Subscribed"
+                RsGxsGroupId grpId = mForumGroup.mMeta.mGroupId;
+                QTimer::singleShot(1500, [this, grpId](){
+                    RsThread::async([this, grpId](){
+                        std::vector<RsGxsForumGroup> forumsInfo;
+                        std::list<RsGxsGroupId> ids;
+                        ids.push_back(grpId);
+                        
+                        if(rsGxsForums->getForumsInfo(ids, forumsInfo) && !forumsInfo.empty())
+                        {
+                             RsQThreadUtils::postToObject([this, info=forumsInfo[0]](){
+                                 mForumGroup = info;
+                                 ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags));
+                                 ui->newthreadButton->setEnabled(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags));
+                             }, this);
+                        }
+                    });
+                });
+            }
+        }
+        break;
         default: break;
         }
     }

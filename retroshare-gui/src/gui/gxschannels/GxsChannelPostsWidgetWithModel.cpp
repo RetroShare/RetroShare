@@ -446,6 +446,13 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     GxsMessageFrameWidget(rsGxsChannels, parent),
     ui(new Ui::GxsChannelPostsWidgetWithModel)
 {
+    mEventHandlerId = 0;
+    // Needs to be asynced because this function is called by another thread!
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
+    }, mEventHandlerId, RsEventType::GXS_CHANNELS );
+
     /* Invoke the Qt Designer generated object setup routine */
     ui->setupUi(this);
 
@@ -570,13 +577,6 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
     setGroupId(channelId);
     mChannelPostsModel->updateChannel(channelId);
-
-    mEventHandlerId = 0;
-    // Needs to be asynced because this function is called by another thread!
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
-    {
-        RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
-    }, mEventHandlerId, RsEventType::GXS_CHANNELS );
 }
 
 void GxsChannelPostsWidgetWithModel::keyPressEvent(QKeyEvent *e)
@@ -895,6 +895,33 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
         }
         break;
 
+        case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:
+        {
+            if(e->mChannelGroupId == groupId())
+            {
+                // Async update of subscription status to avoid blocking the GUI thread with waitToken
+                // Delayed by 1.5s to avoid conflict with GxsGroupFrameDialog's own update (which requests all groups)
+                // This prevents the bug where the group remains in "Popular" instead of moving to "Subscribed"
+                RsGxsGroupId grpId = groupId();
+                QTimer::singleShot(1500, [this, grpId](){
+                    RsThread::async([this, grpId](){
+                        std::vector<RsGxsChannelGroup> channelsInfo;
+                        std::list<RsGxsGroupId> ids;
+                        ids.push_back(grpId);
+                        
+                        if(rsGxsChannels->getChannelsInfo(ids, channelsInfo) && !channelsInfo.empty())
+                        {
+                             RsQThreadUtils::postToObject([this, info=channelsInfo[0]](){
+                                 mGroup = info;
+                                 setSubscribeButtonText(info.mMeta.mGroupId, info.mMeta.mSubscribeFlags, info.mMeta.mPop);
+                             }, this);
+                        }
+                    });
+                });
+            }
+        }
+        break;
+
         case RsChannelEventCode::READ_STATUS_CHANGED: // This is already handled by setMsgReadStatus() that has been called and issued this event.
         break;
 
@@ -1125,6 +1152,12 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
     std::cerr << "Post channel load..." << std::endl;
 #endif
 
+    mGroup = mChannelPostsModel->getChannelGroup();
+    insertChannelDetails(mGroup);
+
+    emit groupDataLoaded();
+    emit groupChanged(this);
+
     if (!mNavigatePendingMsgId.isNull())
         navigate(mNavigatePendingMsgId);
 
@@ -1321,7 +1354,9 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
         ui->channelName_LB->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
 
     ui->logoLabel->setPixmap(chanImage);
-    ui->logoLabel->setFixedSize(QSize(ui->logoLabel->height()*chanImage.width()/(float)chanImage.height(),ui->logoLabel->height())); // make the logo have the same aspect ratio than the original image
+    int lh = ui->logoLabel->height();
+    if (lh <= 0) lh = 64; // Fallback if layout not yet processed
+    ui->logoLabel->setFixedSize(QSize(lh*chanImage.width()/(float)chanImage.height(),lh)); // make the logo have the same aspect ratio than the original image
 
     ui->postButton->setEnabled(bool(group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH));
 
