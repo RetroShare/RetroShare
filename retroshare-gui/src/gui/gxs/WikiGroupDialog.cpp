@@ -511,25 +511,26 @@ void WikiGroupDialog::addModerator()
 
 		RsQThreadUtils::postToObject([this, addedModerators, failedModerators]()
 		{
-			for (const auto &addedId : addedModerators)
-			{
-				addModeratorToList(addedId);
-			}
-
+			// Don't immediately update the UI here. The group update happens asynchronously
+			// in RsGenExchange, and p3wiki::notifyChanges() will send an UPDATED_COLLECTION
+			// event when the change is actually committed. The moderator list will be
+			// refreshed when you close and reopen this dialog, or automatically in WikiDialog
+			// if it's listening for the event.
+			
 			if (!addedModerators.empty() && failedModerators.empty())
 			{
 				QMessageBox::information(this, tr("Success"),
-					tr("Moderators added successfully."));
+					tr("Moderator add request submitted. Please close and reopen this dialog to see the updated list."));
 			}
 			else if (addedModerators.empty())
 			{
 				QMessageBox::warning(this, tr("Error"),
-					tr("Failed to add moderators."));
+					tr("Failed to submit moderator add requests."));
 			}
 			else
 			{
 				QMessageBox::warning(this, tr("Warning"),
-					tr("Some moderators could not be added."));
+					tr("Some moderator requests could not be submitted."));
 			}
 		}, this);
 	});
@@ -572,44 +573,23 @@ void WikiGroupDialog::removeModerator()
 	RsThread::async([this, groupId, modId]()
 	{
 		const bool success = rsWiki->removeModerator(groupId, modId);
-		RsQThreadUtils::postToObject([this, modId, success]()
+		RsQThreadUtils::postToObject([this, success]()
 		{
+			// Don't immediately update the UI here. The group update happens asynchronously
+			// in RsGenExchange, and p3wiki::notifyChanges() will send an UPDATED_COLLECTION
+			// event when the change is actually committed. The moderator list will be
+			// refreshed when you close and reopen this dialog, or automatically in WikiDialog
+			// if it's listening for the event.
+			
 			if (success)
 			{
-				if (mModeratorsList)
-				{
-					for (int i = 0; i < mModeratorsList->topLevelItemCount(); ++i)
-					{
-						QTreeWidgetItem *listItem = mModeratorsList->topLevelItem(i);
-						if (!listItem)
-							continue;
-
-						GxsIdRSTreeWidgetItem *listGxsItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(listItem);
-						if (!listGxsItem)
-						{
-							continue;
-						}
-
-						RsGxsId currentId;
-						if (!listGxsItem->getId(currentId))
-						{
-							continue;
-						}
-
-						if (currentId == modId)
-						{
-							delete mModeratorsList->takeTopLevelItem(i);
-							break;
-						}
-					}
-				}
 				QMessageBox::information(this, tr("Success"),
-					tr("Moderator removed successfully."));
+					tr("Moderator remove request submitted. Please close and reopen this dialog to see the updated list."));
 			}
 			else
 			{
 				QMessageBox::warning(this, tr("Error"),
-					tr("Failed to remove moderator."));
+					tr("Failed to submit moderator remove request."));
 			}
 		}, this);
 	});
