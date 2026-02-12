@@ -918,35 +918,12 @@ void WikiEditDialog::requestEditTreeData() //const RsGxsGroupId &groupId)
 	const RsGxsGroupId groupId = mThreadMsgIdPair.first;
 	RsThread::async([this, groupId]()
 	{
-		RsTokReqOptions opts;
-		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-		opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
-
-		std::list<RsGxsGroupId> groupIds;
-		groupIds.push_back(groupId);
-
-		uint32_t token;
-		rsWiki->getTokenService()->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
-
-		const bool ok = WikiTokenWaiter::waitForToken(
-			[this](uint32_t requestToken)
-			{
-				return rsWiki->getTokenService()->requestStatus(requestToken);
-			},
-			token);
-
 		std::vector<RsWikiSnapshot> snapshots;
-		const RsTokenService::GxsRequestStatus finalStatus = ok
-			? RsTokenService::COMPLETE
-			: RsTokenService::FAILED;
-		if (finalStatus == RsTokenService::COMPLETE)
-		{
-			rsWiki->getSnapshots(token, snapshots);
-		}
+		const bool ok = rsWiki->getSnapshots(groupId, snapshots);
 
-		RsQThreadUtils::postToObject([this, snapshots, finalStatus]()
+		RsQThreadUtils::postToObject([this, snapshots, ok]()
 		{
-			if (finalStatus != RsTokenService::COMPLETE)
+			if (!ok)
 			{
 				QMessageBox::warning(
 					this,
