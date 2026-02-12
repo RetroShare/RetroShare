@@ -46,6 +46,7 @@
 #include "gui/common/UIStateHelper.h"
 #include "util/RsQtVersion.h"
 #include "util/imageutil.h"
+#include "util/rsdebug.h"
 
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsgxscircles.h>
@@ -252,10 +253,17 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui(new Ui::GxsForumThreadWidget)
 {
     ui->setupUi(this);
+    RsDbg() << "DEEPSEARCH: GxsForumThreadWidget created for forumId=" << forumId.toStdString();
+#ifdef RS_DEEP_FORUMS_INDEX
+    RsDbg() << "DEEPSEARCH: RS_DEEP_FORUMS_INDEX IS defined in GxsForumThreadWidget";
+#else
+    RsDbg() << "DEEPSEARCH: RS_DEEP_FORUMS_INDEX IS NOT defined in GxsForumThreadWidget !!!";
+#endif
 
     //setUpdateWhenInvisible(true);
 
     //mUpdating = false;
+    mForceSearch = false;
     mUnreadCount = 0;
     mNewCount = 0;
 
@@ -304,6 +312,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     connect(ui->downloadButton, SIGNAL(clicked()), this, SLOT(downloadAllFiles()));
 
     connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
+    connect(ui->filterLineEdit, SIGNAL(returnPressed()), this, SLOT(triggerSearch()));
     connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
     connect(ui->threadedView_TB, SIGNAL(toggled(bool)), this, SLOT(toggleThreadedView(bool)));
@@ -320,6 +329,9 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->filterLineEdit->addFilter(QIcon(), tr("Title"), RsGxsForumModel::COLUMN_THREAD_TITLE, tr("Search Title"));
     ui->filterLineEdit->addFilter(QIcon(), tr("Date"), RsGxsForumModel::COLUMN_THREAD_DATE, tr("Search Date"));
     ui->filterLineEdit->addFilter(QIcon(), tr("Author"), RsGxsForumModel::COLUMN_THREAD_AUTHOR, tr("Search Author"));
+#ifdef RS_DEEP_FORUMS_INDEX
+    ui->filterLineEdit->addFilter(QIcon(), tr("Content"), RsGxsForumModel::COLUMN_THREAD_CONTENT, tr("Search Content"));
+#endif
 
     mLastViewType = -1;
 
@@ -423,8 +435,7 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
                         {
                              RsQThreadUtils::postToObject([this, info=forumsInfo[0]](){
                                  mForumGroup = info;
-                                 ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags));
-                                 ui->newthreadButton->setEnabled(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags));
+                                 updateGroupData();
                              }, this);
                         }
                     });
@@ -1844,7 +1855,9 @@ void GxsForumThreadWidget::changedViewBox(int view_mode)
 
 void GxsForumThreadWidget::filterColumnChanged(int column)
 {
-    filterItems(ui->filterLineEdit->text());
+    // Search is NEVER auto-triggered on column change.
+    // User must explicitly press 'Enter' or search button.
+    RsDbg() << "DEEPSEARCH: Filter column changed to " << column << ". Waiting for 'Enter'.";
 
     // save index
     Settings->setValueToGroup("ForumThreadWidget", "filterColumn", column);
@@ -1852,12 +1865,49 @@ void GxsForumThreadWidget::filterColumnChanged(int column)
 
 void GxsForumThreadWidget::filterItems(const QString& text)
 {
-    QStringList lst = text.split(" ",QtSkipEmptyParts) ;
+    // ALL searches (Title, Author, Content) now require 'Enter' to avoid UI freeze/flicker
+    if (!text.isEmpty() && !mForceSearch)
+    {
+        // STRICT BLOCK: No logs, no processing during typing for ALL columns.
+        return;
+    }
 
     int filterColumn = ui->filterLineEdit->currentFilter();
+    RsDbg() << "DEEPSEARCH: executing filterItems('" << text.toStdString() << "') column=" << filterColumn << " force=" << (mForceSearch?"YES":"NO");
+    QStringList lst = text.split(" ",QtSkipEmptyParts) ;
 
     uint32_t count;
-    mThreadModel->setFilter(filterColumn,lst,count) ;
+    if(filterColumn == RsGxsForumModel::COLUMN_THREAD_CONTENT && !lst.empty())
+    {
+        RsDbg() << "DEEPSEARCH: executing Content Search for '" << text.toStdString() << "'";
+        // Clear current selection to avoid "lag" when clicking results
+        mThreadId = RsGxsMessageId();
+        blankPost();
+        insertMessage(); // Will display forum description if mThreadId is null
+
+        std::set<RsGxsMessageId> ids;
+        std::vector<RsGxsSearchResult> results;
+
+#ifdef RS_DEEP_FORUMS_INDEX
+        rsGxsForums->localSearch(text.toStdString(), results);
+
+        RsDbg() << "DEEPSEARCH: Content Search returned " << results.size() << " results.";
+
+        for(const auto& res : results) {
+            if(res.mGroupId == groupId() && !res.mMsgId.isNull()) {
+                ids.insert(res.mMsgId);
+            }
+        }
+        RsDbg() << "DEEPSEARCH: Content Search matched " << ids.size() << " messages in current group (" << groupId().toStdString() << ")";
+#endif
+        mThreadModel->setContentFilter(ids, lst, count);
+    }
+    else
+    {
+        RsDbg() << "DEEPSEARCH: executing Regular Search/Clear in column " << filterColumn;
+        // Regular search or cleared search: use standard setFilter which disables content mode
+        mThreadModel->setFilter(filterColumn, lst, count);
+    }
 
     // We do this in order to trigger a new filtering action in the proxy model.
     QSortFilterProxyModel_setFilterRegularExpression(mThreadProxyModel, QString(RsGxsForumModel::FilterString)) ;
@@ -1883,7 +1933,7 @@ void GxsForumThreadWidget::filterItems(const QString& text)
         }
     }
 
-    if(count > 0)
+    if(count == 0 && !text.isEmpty())
         ui->filterLineEdit->setToolTip(tr("No result.")) ;
     else
         ui->filterLineEdit->setToolTip(tr("Found %1 results.").arg(count)) ;
@@ -2104,4 +2154,13 @@ void GxsForumThreadWidget::showAuthorInPeople(const RsGxsForumMsg& msg)
 
     MainWindow::showWindow(MainWindow::People);
     idDialog->navigate(RsGxsId(msg.mMeta.mAuthorId));
+}
+
+void GxsForumThreadWidget::triggerSearch()
+{
+    RsDbg() << "DEEPSEARCH: triggerSearch() called. Text='" << ui->filterLineEdit->text().toStdString() << "'";
+    mForceSearch = true;
+    filterItems(ui->filterLineEdit->text());
+    mForceSearch = false;
+    RsDbg() << "DEEPSEARCH: triggerSearch() finished.";
 }
