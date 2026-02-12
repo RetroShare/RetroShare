@@ -913,7 +913,7 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
                         {
                              RsQThreadUtils::postToObject([this, info=channelsInfo[0]](){
                                  mGroup = info;
-                                 setSubscribeButtonText(info.mMeta.mGroupId, info.mMeta.mSubscribeFlags, info.mMeta.mPop);
+                                 insertChannelDetails(mGroup);
                              }, this);
                         }
                     });
