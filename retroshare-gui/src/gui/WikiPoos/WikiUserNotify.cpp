@@ -20,6 +20,7 @@
 
 #include "retroshare/rsgxsifacehelper.h"
 #include "retroshare/rsgxsifacetypes.h"
+#include "retroshare/rswiki.h"
 #include "WikiUserNotify.h"
 #include "gui/MainWindow.h"
 #include "gui/common/FilesDefs.h"
