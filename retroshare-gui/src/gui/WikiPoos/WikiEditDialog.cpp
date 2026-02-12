@@ -37,6 +37,7 @@
 #define 	WIKIEDITDIALOG_PAGE		0x0002
 #define 	WIKIEDITDIALOG_BASEHISTORY	0x0003
 #define 	WIKIEDITDIALOG_EDITTREE		0x0004
+#define 	WIKIEDITDIALOG_MERGE		0x0005
 
 
 #define WET_COL_DATE		0
@@ -111,8 +112,60 @@ void WikiEditDialog::mergeModeToggle()
 
 void WikiEditDialog::generateMerge()
 {
-	std::cerr << "WikiEditDialog::generateMerge() TODO" << std::endl;
+	std::cerr << "WikiEditDialog::generateMerge()" << std::endl;
 
+	// Collect all checked items from the history tree
+	QList<RsGxsMessageId> checkedPageIds;
+
+	int count = ui.treeWidget_History->topLevelItemCount();
+	for(int i = 0; i < count; ++i)
+	{
+		QTreeWidgetItem *item = ui.treeWidget_History->topLevelItem(i);
+		collectCheckedItems(item, checkedPageIds);
+	}
+
+	if (checkedPageIds.empty())
+	{
+		std::cerr << "WikiEditDialog::generateMerge() No items checked" << std::endl;
+		return;
+	}
+
+	std::cerr << "WikiEditDialog::generateMerge() Found " << checkedPageIds.size() << " checked items" << std::endl;
+
+	// Request the snapshots for all checked items
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+	std::vector<RsGxsGrpMsgIdPair> msgIds;
+	for(auto& msgId : checkedPageIds)
+	{
+		RsGxsGrpMsgIdPair pair;
+		pair.first = mThreadMsgIdPair.first; // Group ID
+		pair.second = msgId;
+		msgIds.push_back(pair);
+	}
+
+	uint32_t token;
+	mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIEDITDIALOG_MERGE);
+}
+
+void WikiEditDialog::collectCheckedItems(QTreeWidgetItem *item, QList<RsGxsMessageId> &checkedIds)
+{
+	// Check if this item is checked
+	QVariant checkState = item->data(WET_COL_PAGEID, Qt::CheckStateRole);
+	if (checkState.isValid() && checkState.toInt() == Qt::Checked)
+	{
+		std::string pageId = item->data(WET_DATA_COLUMN, WET_ROLE_PAGEID).toString().toStdString();
+		checkedIds.append(RsGxsMessageId(pageId));
+		std::cerr << "WikiEditDialog::collectCheckedItems() Found checked item: " << pageId << std::endl;
+	}
+
+	// Recursively check children
+	int childCount = item->childCount();
+	for(int i = 0; i < childCount; ++i)
+	{
+		collectCheckedItems(item->child(i), checkedIds);
+	}
 }
 
 void WikiEditDialog::textChanged()
@@ -889,6 +942,55 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 	updateHistoryStatus();
 }
 
+void WikiEditDialog::loadMergedPages(const uint32_t &token)
+{
+	std::cerr << "WikiEditDialog::loadMergedPages()" << std::endl;
+
+	std::vector<RsWikiSnapshot> snapshots;
+	if (!rsWiki->getSnapshots(token, snapshots))
+	{
+		std::cerr << "WikiEditDialog::loadMergedPages() ERROR getting snapshots" << std::endl;
+		return;
+	}
+
+	if (snapshots.empty())
+	{
+		std::cerr << "WikiEditDialog::loadMergedPages() No snapshots to merge" << std::endl;
+		return;
+	}
+
+	std::cerr << "WikiEditDialog::loadMergedPages() Merging " << snapshots.size() << " snapshots" << std::endl;
+
+	// Sort snapshots by timestamp (oldest first)
+	std::sort(snapshots.begin(), snapshots.end(),
+		[](const RsWikiSnapshot &a, const RsWikiSnapshot &b) {
+			return a.mMeta.mPublishTs < b.mMeta.mPublishTs;
+		});
+
+	// Merge the content - simple concatenation with separators
+	QString mergedContent;
+	for(size_t i = 0; i < snapshots.size(); ++i)
+	{
+		if (i > 0)
+		{
+			mergedContent += "\n\n---\n\n"; // Separator between versions
+		}
+		mergedContent += QString::fromUtf8(snapshots[i].mPage.c_str());
+	}
+
+	// Update the text editor with merged content
+	mIgnoreTextChange = true;
+	ui.textEdit->setPlainText(mergedContent);
+	mIgnoreTextChange = false;
+
+	// Mark as changed so user can save
+	mTextChanged = true;
+	ui.pushButton_Revert->setEnabled(true);
+	ui.postButton->setEnabled(true);
+	ui.label_Status->setText("Merged");
+
+	std::cerr << "WikiEditDialog::loadMergedPages() Merge complete" << std::endl;
+}
 
 
 void WikiEditDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
@@ -915,6 +1017,11 @@ void WikiEditDialog::loadRequest(const TokenQueue *queue, const TokenRequest &re
 			case WIKIEDITDIALOG_EDITTREE:
 				loadEditTreeData(req.mToken);
 				break;
+
+			case WIKIEDITDIALOG_MERGE:
+				loadMergedPages(req.mToken);
+				break;
+
 			default:
 				std::cerr << "WikiEditDialog::loadRequest() ERROR: INVALID TYPE";
 				std::cerr << std::endl;
