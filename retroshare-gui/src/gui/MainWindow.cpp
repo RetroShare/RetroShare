@@ -457,7 +457,7 @@ void MainWindow::initStackedPage()
   addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
   #endif
 #ifdef RS_USE_WIKI
-  WikiDialog *wikiDialog = NULL;
+  wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
 #endif
 
@@ -1080,6 +1080,17 @@ void SetForegroundWindowInternal(HWND hWnd)
 		case Posted:
 			_instance->ui->stackPages->setCurrentPage( _instance->postedDialog );
 			return true ;
+#ifdef RS_USE_WIKI
+		case Wiki:
+			if (!_instance->wikiDialog)
+			{
+				std::cerr << "Show page called for Wiki but wikiDialog is not initialized yet."
+				          << std::endl;
+				return false;
+			}
+			_instance->ui->stackPages->setCurrentPage( _instance->wikiDialog );
+			return true ;
+#endif
 		 default:
 			 std::cerr << "Show page called on value that is not handled yet. Please code it! (value = " << page << ")" << std::endl;
 	 }
@@ -1162,6 +1173,10 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return _instance->gxsforumDialog;
 		case Posted:
 			return _instance->postedDialog;
+#ifdef RS_USE_WIKI
+		case Wiki:
+			return _instance->wikiDialog;
+#endif
         case Home:
             return _instance->homePage;
     }

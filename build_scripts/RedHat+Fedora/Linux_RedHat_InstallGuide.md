@@ -115,7 +115,7 @@ For `Autologin` it is required to append the config option `CONFIG+=rs_autologin
   * rs_webui:					enable Web interface
   * rs_jsonapi:					enable json api interface, required by rs_webui
   * gxsthewire:					enable Wire service (experimental)
-  * wikipoos:					enable Wiki service (experimental)
+  * wikipoos:					enable Wiki service
   * rs_use_native_dialogs:		enable native dialogs (may cause crashes with some versions of Gtk)
   * rs_deep_channels_index:		build with deep channel indexing support
   * rs_deep_files_index:		build with deep file indexing support
