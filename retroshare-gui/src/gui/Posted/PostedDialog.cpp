@@ -51,6 +51,9 @@ PostedDialog::PostedDialog(QWidget *parent):
 	            [this](std::shared_ptr<const RsEvent> event)
 	{ RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); },
 	            mEventHandlerId, RsEventType::GXS_POSTED );
+    mUpdateTimer = new QTimer(this);
+    mUpdateTimer->setSingleShot(true);
+    connect(mUpdateTimer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
 }
 
 void PostedDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -72,10 +75,11 @@ void PostedDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		case RsPostedEventCode::NEW_POSTED_GROUP:       // [[fallthrough]];
         case RsPostedEventCode::BOARD_DELETED:       // [[fallthrough]];
         case RsPostedEventCode::SUBSCRIBE_STATUS_CHANGED:   // [[fallthrough]];
-            updateDisplay(true);
+            if(!mUpdateTimer->isActive()) mUpdateTimer->start(200);
             break;
 
         case RsPostedEventCode::STATISTICS_CHANGED:
+            if(!mUpdateTimer->isActive()) mUpdateTimer->start(200);
             updateGroupStatistics(e->mPostedGroupId);
             break;
 

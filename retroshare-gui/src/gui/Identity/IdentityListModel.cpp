@@ -35,6 +35,7 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "retroshare/rsexpr.h"
 
+#include "retroshare/rsevents.h"
 #include "IdentityListModel.h"
 
 //#define DEBUG_MODEL
@@ -56,8 +57,106 @@ RsIdentityListModel::RsIdentityListModel(QObject *parent)
     mFontSize = QApplication::font().pointSize();
 
 	mFilterStrings.clear();
-    mIdentityUpdateTimer = new QTimer();
+    mIdentityUpdateTimer = new QTimer(this);
     connect(mIdentityUpdateTimer,SIGNAL(timeout()),this,SLOT(timerUpdate()));
+
+    mThrottlingTimer = new QTimer(this);
+    mThrottlingTimer->setSingleShot(true);
+    mThrottlingTimer->setInterval(200);
+
+    connect(mThrottlingTimer, &QTimer::timeout, [this](){ checkInternalData(true); });
+
+    mEventHandlerId = 0;
+    if(rsEvents)
+    {
+        rsEvents->registerEventsHandler([this](std::shared_ptr<const RsEvent> event){
+            handleIdentityEvent(event);
+        }, mEventHandlerId, RsEventType::GXS_IDENTITY);
+    }
+}
+
+RsIdentityListModel::~RsIdentityListModel()
+{
+    if(mEventHandlerId && rsEvents)
+        rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
+
+void RsIdentityListModel::handleIdentityEvent(std::shared_ptr<const RsEvent> event)
+{
+    if (event->mType != RsEventType::GXS_IDENTITY) return;
+
+    auto id_event = std::dynamic_pointer_cast<const RsGxsIdentityEvent>(event);
+    if (!id_event) return;
+
+    RsQThreadUtils::postToObject([this, id_event](){
+        if (id_event->mIdentityEventCode == RsGxsIdentityEventCode::UPDATED_IDENTITY)
+        {
+            refreshIdentityDetails(RsGxsId(id_event->mIdentityId));
+        }
+        else if(id_event->mIdentityEventCode == RsGxsIdentityEventCode::NEW_IDENTITY || id_event->mIdentityEventCode == RsGxsIdentityEventCode::DELETED_IDENTITY)
+        {
+            if(!mThrottlingTimer->isActive())
+                mThrottlingTimer->start();
+        }
+    }, this);
+}
+
+void RsIdentityListModel::refreshIdentityDetails(const RsGxsId& id)
+{
+    // Reload details from the backend for a single identity.
+
+    RsIdentityDetails det;
+    if(!rsIdentity->getIdDetails(id, det))
+        return;
+
+    // Determine the correct category for this identity.
+
+    Category new_category;
+    if(rsIdentity->isOwnId(id))
+        new_category = CATEGORY_OWN;
+    else if(rsIdentity->isARegularContact(id))
+        new_category = CATEGORY_CTS;
+    else
+        new_category = CATEGORY_ALL;
+
+    // Find the identity in the current model and check if it moved categories.
+
+    QModelIndex idx = getIndexOfIdentity(id);
+
+    if(!idx.isValid())
+    {
+        // Identity not found in the model — trigger a full reload.
+        if(!mThrottlingTimer->isActive())
+            mThrottlingTimer->start();
+        return;
+    }
+
+    EntryIndex e;
+    convertInternalIdToIndex(idx.internalId(), e);
+
+    if(e.type != ENTRY_TYPE_IDENTITY || e.category_index >= mCategories.size())
+        return;
+
+    if(e.category_index != (uint16_t)new_category)
+    {
+        // Category changed (e.g. became a contact). A full reload is needed to re-sort.
+        if(!mThrottlingTimer->isActive())
+            mThrottlingTimer->start();
+        return;
+    }
+
+    // Same category — just update the cached details in place and notify the view.
+
+    if(e.identity_index < mCategories[e.category_index].child_identity_indices.size())
+    {
+        auto& info = mIdentities[mCategories[e.category_index].child_identity_indices[e.identity_index]];
+        info.nickname = det.mNickname;
+        info.owner = det.mPgpId;
+        info.flags = det.mFlags;
+        info.last_update_TS = time(nullptr);
+
+        emit dataChanged(idx, idx);
+    }
 }
 
 void RsIdentityListModel::timerUpdate()
@@ -927,7 +1026,8 @@ void RsIdentityListModel::updateIdentityList()
 
     setIdentities(ids) ;
 
-    debug_dump();
+// avoid flooding the console
+//    debug_dump();
 }
 
 

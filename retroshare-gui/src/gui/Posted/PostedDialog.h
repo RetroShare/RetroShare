@@ -65,6 +65,11 @@ private:
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
     RsEventsHandlerId_t mEventHandlerId;
+
+    QTimer *mUpdateTimer;
+
+private slots:
+    void timerUpdate() { updateDisplay(true); }
 };
 
 #endif

@@ -41,7 +41,7 @@ class RsIdentityListModel : public QAbstractItemModel
 
 public:
     explicit RsIdentityListModel(QObject *parent = NULL);
-    ~RsIdentityListModel(){}
+    ~RsIdentityListModel();
 
     enum Columns {
 		COLUMN_THREAD_NAME         = 0x00,
@@ -134,6 +134,7 @@ public:
     QModelIndex getIndexOfCategory(Category id) const;
 
     void updateIdentityList();
+    void refreshIdentityDetails(const RsGxsId& id);
 
     int count() const { return mIdentities.size() ; }	// total number of identities
 
@@ -248,6 +249,13 @@ private:
 
     // List of identities for which getIdDetails() failed, to be requested again.
     mutable QTimer *mIdentityUpdateTimer;
+    mutable QTimer *mThrottlingTimer;
+
+public:
+    void handleIdentityEvent(std::shared_ptr<const RsEvent> event);
+
+private:
+   RsEventsHandlerId_t mEventHandlerId = 0;
 };
 
 
