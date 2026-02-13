@@ -899,28 +899,19 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
         {
             if(e->mChannelGroupId == groupId())
             {
-                // Async update of subscription status to avoid blocking the GUI thread with waitToken
-                // Delayed by 1.5s to avoid conflict with GxsGroupFrameDialog's own update (which requests all groups)
-                // This prevents the bug where the group remains in "Popular" instead of moving to "Subscribed"
-                RsGxsGroupId grpId = groupId();
-                QTimer::singleShot(1500, [this, grpId](){
-                    RsThread::async([this, grpId](){
-                        std::vector<RsGxsChannelGroup> channelsInfo;
-                        std::list<RsGxsGroupId> ids;
-                        ids.push_back(grpId);
-                        
-                        if(rsGxsChannels->getChannelsInfo(ids, channelsInfo) && !channelsInfo.empty())
-                        {
-                             RsQThreadUtils::postToObject([this, info=channelsInfo[0]](){
-                                 mGroup = info;
-                                 insertChannelDetails(mGroup);
-                             }, this);
-                        }
-                    });
-                });
+                // Toggle subscribe flag locally and refresh UI without GXS request
+                // to avoid concurrent request with parent dialog's tree rebuild
+                if(IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags))
+                    mGroup.mMeta.mSubscribeFlags &= ~GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
+                else
+                    mGroup.mMeta.mSubscribeFlags |= GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
+
+                insertChannelDetails(mGroup);
             }
         }
         break;
+
+
 
         case RsChannelEventCode::READ_STATUS_CHANGED: // This is already handled by setMsgReadStatus() that has been called and issued this event.
         break;
