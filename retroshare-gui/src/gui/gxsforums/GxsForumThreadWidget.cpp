@@ -46,7 +46,6 @@
 #include "gui/common/UIStateHelper.h"
 #include "util/RsQtVersion.h"
 #include "util/imageutil.h"
-#include "util/rsdebug.h"
 
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsgxscircles.h>
@@ -305,7 +304,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     connect(ui->downloadButton, SIGNAL(clicked()), this, SLOT(downloadAllFiles()));
 
     connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
-
     connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
     connect(ui->threadedView_TB, SIGNAL(toggled(bool)), this, SLOT(toggleThreadedView(bool)));
@@ -322,7 +320,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->filterLineEdit->addFilter(QIcon(), tr("Title"), RsGxsForumModel::COLUMN_THREAD_TITLE, tr("Search Title"));
     ui->filterLineEdit->addFilter(QIcon(), tr("Date"), RsGxsForumModel::COLUMN_THREAD_DATE, tr("Search Date"));
     ui->filterLineEdit->addFilter(QIcon(), tr("Author"), RsGxsForumModel::COLUMN_THREAD_AUTHOR, tr("Search Author"));
-
 
     mLastViewType = -1;
 
@@ -1847,7 +1844,7 @@ void GxsForumThreadWidget::filterItems(const QString& text)
     int filterColumn = ui->filterLineEdit->currentFilter();
 
     uint32_t count;
-    mThreadModel->setFilter(filterColumn, lst, count);
+    mThreadModel->setFilter(filterColumn,lst,count) ;
 
     // We do this in order to trigger a new filtering action in the proxy model.
     QSortFilterProxyModel_setFilterRegularExpression(mThreadProxyModel, QString(RsGxsForumModel::FilterString)) ;
@@ -1873,7 +1870,7 @@ void GxsForumThreadWidget::filterItems(const QString& text)
         }
     }
 
-    if(count == 0 && !text.isEmpty())
+    if(count > 0)
         ui->filterLineEdit->setToolTip(tr("No result.")) ;
     else
         ui->filterLineEdit->setToolTip(tr("Found %1 results.").arg(count)) ;
@@ -2095,4 +2092,4 @@ void GxsForumThreadWidget::showAuthorInPeople(const RsGxsForumMsg& msg)
     MainWindow::showWindow(MainWindow::People);
     idDialog->navigate(RsGxsId(msg.mMeta.mAuthorId));
 }
-
+
