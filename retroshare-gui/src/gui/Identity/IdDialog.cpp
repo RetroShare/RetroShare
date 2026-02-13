@@ -545,7 +545,7 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 			if (isVisible())
             {
                 if(!updateCirclesTimer.isActive())
-                    updateCirclesTimer.start(200);
+                    updateCirclesTimer.start(1000);
             }
 			else
 				needUpdateCirclesOnNextShow = true;
@@ -1430,15 +1430,7 @@ void IdDialog::updateSelection(const QItemSelection& /* new_sel */,const QItemSe
 
 void IdDialog::updateIdListRequest()
 {
-    if(updateIdTimer.isActive())
-    {
-        updateIdTimer.stop();
-        updateIdTimer.start(1000);
-    }
-    else
-    {
-        updateIdTimer.start(1000);
-    }
+    updateIdTimer.start(1000);
 }
 
 void IdDialog::updateIdList()

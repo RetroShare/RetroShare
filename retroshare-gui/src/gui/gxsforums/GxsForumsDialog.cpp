@@ -73,11 +73,11 @@ void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
         case RsForumEventCode::UPDATED_FORUM:       // [[fallthrough]];
         case RsForumEventCode::DELETED_FORUM:       // [[fallthrough]];
         case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
-            if(!mUpdateTimer->isActive()) mUpdateTimer->start(200);
+            if(!mUpdateTimer->isActive()) mUpdateTimer->start(1000);
             break;
 
         case RsForumEventCode::STATISTICS_CHANGED:
-            if(!mUpdateTimer->isActive()) mUpdateTimer->start(200);
+            if(!mUpdateTimer->isActive()) mUpdateTimer->start(1000);
             updateGroupStatisticsReal(e->mForumGroupId);
             break;
 

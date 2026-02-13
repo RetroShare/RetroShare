@@ -70,7 +70,6 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
         switch(e->mChannelEventCode)
         {
         case RsChannelEventCode::STATISTICS_CHANGED:      // [[fallthrough]];
-            if(!mUpdateTimer->isActive()) mUpdateTimer->start(200);
             Q_FALLTHROUGH();
 
         case RsChannelEventCode::NEW_MESSAGE:             // [[fallthrough]];
@@ -85,7 +84,7 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
         case RsChannelEventCode::NEW_CHANNEL:             // [[fallthrough]];
         case RsChannelEventCode::DELETED_CHANNEL:             // [[fallthrough]];
         case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:// reloads group summary (calling GxsGroupFrameDialog parent method)
-            if(!mUpdateTimer->isActive()) mUpdateTimer->start(200);
+            if(!mUpdateTimer->isActive()) mUpdateTimer->start(1000);
             break;
 
         default:

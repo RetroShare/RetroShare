@@ -64,16 +64,6 @@ RsIdentityListModel::RsIdentityListModel(QObject *parent)
     mThrottlingTimer->setSingleShot(true);
     mThrottlingTimer->setInterval(200);
 
-    // Using a lambda for connection to avoid adding a new slot in header file if not strictly necessary,
-    // though the plan mentioned a slot. But wait, checkInternalData is a slot?
-    // checkInternalData is a slot! (line 200 in header from Step 11)
-    // "void checkInternalData(bool force);"
-    // However, the signal provides no arguments, but the slot expects 'bool force'.
-    // We need to use a lambda or a helper slot.
-    // Since I can't easily add a slot without recompiling/moc issues if I was compiling (I'm not),
-    // but code correctness matters.
-    // mThrottlingTimer->connect(mThrottlingTimer, &QTimer::timeout, [this](){ this->checkInternalData(true); });
-    // This requires Qt5 style connection or C++11. The file uses C++11 (lambdas in registerEventsHandler).
     connect(mThrottlingTimer, &QTimer::timeout, [this](){ checkInternalData(true); });
 
     mEventHandlerId = 0;
@@ -98,23 +88,10 @@ void RsIdentityListModel::handleIdentityEvent(std::shared_ptr<const RsEvent> eve
     auto id_event = std::dynamic_pointer_cast<const RsGxsIdentityEvent>(event);
     if (!id_event) return;
 
-    RsQThreadUtils::postToObject([this, id_event](){ 
+    RsQThreadUtils::postToObject([this, id_event](){
         if (id_event->mIdentityEventCode == RsGxsIdentityEventCode::UPDATED_IDENTITY)
         {
-            RsGxsId id = RsGxsId(id_event->mIdentityId);
-            QModelIndex idx = getIndexOfIdentity(id);
-            if(idx.isValid())
-            {
-                EntryIndex e;
-                convertInternalIdToIndex(idx.internalId(), e);
-                
-                if(e.type == ENTRY_TYPE_IDENTITY && e.category_index < mCategories.size() && e.identity_index < mCategories[e.category_index].child_identity_indices.size())
-                {
-                    // Force refresh of details
-                    mIdentities[mCategories[e.category_index].child_identity_indices[e.identity_index]].last_update_TS = 0;
-                    emit dataChanged(idx, idx);
-                }
-            }
+            refreshIdentityDetails(RsGxsId(id_event->mIdentityId));
         }
         else if(id_event->mIdentityEventCode == RsGxsIdentityEventCode::NEW_IDENTITY || id_event->mIdentityEventCode == RsGxsIdentityEventCode::DELETED_IDENTITY)
         {
@@ -122,6 +99,64 @@ void RsIdentityListModel::handleIdentityEvent(std::shared_ptr<const RsEvent> eve
                 mThrottlingTimer->start();
         }
     }, this);
+}
+
+void RsIdentityListModel::refreshIdentityDetails(const RsGxsId& id)
+{
+    // Reload details from the backend for a single identity.
+
+    RsIdentityDetails det;
+    if(!rsIdentity->getIdDetails(id, det))
+        return;
+
+    // Determine the correct category for this identity.
+
+    Category new_category;
+    if(rsIdentity->isOwnId(id))
+        new_category = CATEGORY_OWN;
+    else if(rsIdentity->isARegularContact(id))
+        new_category = CATEGORY_CTS;
+    else
+        new_category = CATEGORY_ALL;
+
+    // Find the identity in the current model and check if it moved categories.
+
+    QModelIndex idx = getIndexOfIdentity(id);
+
+    if(!idx.isValid())
+    {
+        // Identity not found in the model — trigger a full reload.
+        if(!mThrottlingTimer->isActive())
+            mThrottlingTimer->start();
+        return;
+    }
+
+    EntryIndex e;
+    convertInternalIdToIndex(idx.internalId(), e);
+
+    if(e.type != ENTRY_TYPE_IDENTITY || e.category_index >= mCategories.size())
+        return;
+
+    if(e.category_index != (uint16_t)new_category)
+    {
+        // Category changed (e.g. became a contact). A full reload is needed to re-sort.
+        if(!mThrottlingTimer->isActive())
+            mThrottlingTimer->start();
+        return;
+    }
+
+    // Same category — just update the cached details in place and notify the view.
+
+    if(e.identity_index < mCategories[e.category_index].child_identity_indices.size())
+    {
+        auto& info = mIdentities[mCategories[e.category_index].child_identity_indices[e.identity_index]];
+        info.nickname = det.mNickname;
+        info.owner = det.mPgpId;
+        info.flags = det.mFlags;
+        info.last_update_TS = time(nullptr);
+
+        emit dataChanged(idx, idx);
+    }
 }
 
 void RsIdentityListModel::timerUpdate()

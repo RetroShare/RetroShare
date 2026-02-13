@@ -134,6 +134,7 @@ public:
     QModelIndex getIndexOfCategory(Category id) const;
 
     void updateIdentityList();
+    void refreshIdentityDetails(const RsGxsId& id);
 
     int count() const { return mIdentities.size() ; }	// total number of identities
 
