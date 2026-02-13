@@ -253,17 +253,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui(new Ui::GxsForumThreadWidget)
 {
     ui->setupUi(this);
-    RsDbg() << "DEEPSEARCH: GxsForumThreadWidget created for forumId=" << forumId.toStdString();
-#ifdef RS_DEEP_FORUMS_INDEX
-    RsDbg() << "DEEPSEARCH: RS_DEEP_FORUMS_INDEX IS defined in GxsForumThreadWidget";
-#else
-    RsDbg() << "DEEPSEARCH: RS_DEEP_FORUMS_INDEX IS NOT defined in GxsForumThreadWidget !!!";
-#endif
 
     //setUpdateWhenInvisible(true);
 
     //mUpdating = false;
-    mForceSearch = false;
     mUnreadCount = 0;
     mNewCount = 0;
 
@@ -312,7 +305,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     connect(ui->downloadButton, SIGNAL(clicked()), this, SLOT(downloadAllFiles()));
 
     connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
-    connect(ui->filterLineEdit, SIGNAL(returnPressed()), this, SLOT(triggerSearch()));
+
     connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
     connect(ui->threadedView_TB, SIGNAL(toggled(bool)), this, SLOT(toggleThreadedView(bool)));
@@ -329,9 +322,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->filterLineEdit->addFilter(QIcon(), tr("Title"), RsGxsForumModel::COLUMN_THREAD_TITLE, tr("Search Title"));
     ui->filterLineEdit->addFilter(QIcon(), tr("Date"), RsGxsForumModel::COLUMN_THREAD_DATE, tr("Search Date"));
     ui->filterLineEdit->addFilter(QIcon(), tr("Author"), RsGxsForumModel::COLUMN_THREAD_AUTHOR, tr("Search Author"));
-#ifdef RS_DEEP_FORUMS_INDEX
-    ui->filterLineEdit->addFilter(QIcon(), tr("Content"), RsGxsForumModel::COLUMN_THREAD_CONTENT, tr("Search Content"));
-#endif
+
 
     mLastViewType = -1;
 
@@ -418,31 +409,19 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
             break;
 
         case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
-        {
             if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
             {
-                // Async update of subscription status to avoid blocking the GUI thread with waitToken
-                // Delayed by 1.5s to avoid conflict with GxsGroupFrameDialog's own update (which requests all groups)
-                // This prevents the bug where the group remains in "Popular" instead of moving to "Subscribed"
-                RsGxsGroupId grpId = mForumGroup.mMeta.mGroupId;
-                QTimer::singleShot(1500, [this, grpId](){
-                    RsThread::async([this, grpId](){
-                        std::vector<RsGxsForumGroup> forumsInfo;
-                        std::list<RsGxsGroupId> ids;
-                        ids.push_back(grpId);
-                        
-                        if(rsGxsForums->getForumsInfo(ids, forumsInfo) && !forumsInfo.empty())
-                        {
-                             RsQThreadUtils::postToObject([this, info=forumsInfo[0]](){
-                                 mForumGroup = info;
-                                 updateGroupData();
-                             }, this);
-                        }
-                    });
-                });
+                // Toggle subscribe flag locally and refresh UI without GXS request
+                // to avoid concurrent request with parent dialog's tree rebuild
+                if(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags))
+                    mForumGroup.mMeta.mSubscribeFlags &= ~GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
+                else
+                    mForumGroup.mMeta.mSubscribeFlags |= GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
+
+                updateGroupData();
             }
-        }
-        break;
+            break;
+
         default: break;
         }
     }
@@ -1855,9 +1834,7 @@ void GxsForumThreadWidget::changedViewBox(int view_mode)
 
 void GxsForumThreadWidget::filterColumnChanged(int column)
 {
-    // Search is NEVER auto-triggered on column change.
-    // User must explicitly press 'Enter' or search button.
-    RsDbg() << "DEEPSEARCH: Filter column changed to " << column << ". Waiting for 'Enter'.";
+    filterItems(ui->filterLineEdit->text());
 
     // save index
     Settings->setValueToGroup("ForumThreadWidget", "filterColumn", column);
@@ -1865,49 +1842,12 @@ void GxsForumThreadWidget::filterColumnChanged(int column)
 
 void GxsForumThreadWidget::filterItems(const QString& text)
 {
-    // ALL searches (Title, Author, Content) now require 'Enter' to avoid UI freeze/flicker
-    if (!text.isEmpty() && !mForceSearch)
-    {
-        // STRICT BLOCK: No logs, no processing during typing for ALL columns.
-        return;
-    }
-
-    int filterColumn = ui->filterLineEdit->currentFilter();
-    RsDbg() << "DEEPSEARCH: executing filterItems('" << text.toStdString() << "') column=" << filterColumn << " force=" << (mForceSearch?"YES":"NO");
     QStringList lst = text.split(" ",QtSkipEmptyParts) ;
 
+    int filterColumn = ui->filterLineEdit->currentFilter();
+
     uint32_t count;
-    if(filterColumn == RsGxsForumModel::COLUMN_THREAD_CONTENT && !lst.empty())
-    {
-        RsDbg() << "DEEPSEARCH: executing Content Search for '" << text.toStdString() << "'";
-        // Clear current selection to avoid "lag" when clicking results
-        mThreadId = RsGxsMessageId();
-        blankPost();
-        insertMessage(); // Will display forum description if mThreadId is null
-
-        std::set<RsGxsMessageId> ids;
-        std::vector<RsGxsSearchResult> results;
-
-#ifdef RS_DEEP_FORUMS_INDEX
-        rsGxsForums->localSearch(text.toStdString(), results);
-
-        RsDbg() << "DEEPSEARCH: Content Search returned " << results.size() << " results.";
-
-        for(const auto& res : results) {
-            if(res.mGroupId == groupId() && !res.mMsgId.isNull()) {
-                ids.insert(res.mMsgId);
-            }
-        }
-        RsDbg() << "DEEPSEARCH: Content Search matched " << ids.size() << " messages in current group (" << groupId().toStdString() << ")";
-#endif
-        mThreadModel->setContentFilter(ids, lst, count);
-    }
-    else
-    {
-        RsDbg() << "DEEPSEARCH: executing Regular Search/Clear in column " << filterColumn;
-        // Regular search or cleared search: use standard setFilter which disables content mode
-        mThreadModel->setFilter(filterColumn, lst, count);
-    }
+    mThreadModel->setFilter(filterColumn, lst, count);
 
     // We do this in order to trigger a new filtering action in the proxy model.
     QSortFilterProxyModel_setFilterRegularExpression(mThreadProxyModel, QString(RsGxsForumModel::FilterString)) ;
@@ -2156,11 +2096,3 @@ void GxsForumThreadWidget::showAuthorInPeople(const RsGxsForumMsg& msg)
     idDialog->navigate(RsGxsId(msg.mMeta.mAuthorId));
 }
 
-void GxsForumThreadWidget::triggerSearch()
-{
-    RsDbg() << "DEEPSEARCH: triggerSearch() called. Text='" << ui->filterLineEdit->text().toStdString() << "'";
-    mForceSearch = true;
-    filterItems(ui->filterLineEdit->text());
-    mForceSearch = false;
-    RsDbg() << "DEEPSEARCH: triggerSearch() finished.";
-}
