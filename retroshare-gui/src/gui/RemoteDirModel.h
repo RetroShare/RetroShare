@@ -270,6 +270,7 @@ class FlatStyle_RDM: public RetroshareDirModel
 
 	protected:
  		//Overloaded from RetroshareDirModel
+		virtual void preMods();
 		virtual void postMods();/* Callback from Core */
 		virtual void updateRef(const QModelIndex&) const {}
 		// MODIFICATION H: Implement hasUploads for Flat Style to fix compilation
@@ -305,7 +306,7 @@ class FlatStyle_RDM: public RetroshareDirModel
             uint64_t uploads;
             bool hasUploads;
         };
-        QHash<void*, CachedFileDetails> m_cache;
+        std::map<void*, CachedFileDetails> m_cache;
 
 		mutable RsMutex _ref_mutex ;
 		std::vector<void *> _ref_entries ; // used to store the refs to display

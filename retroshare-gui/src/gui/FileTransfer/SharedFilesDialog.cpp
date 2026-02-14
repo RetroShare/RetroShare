@@ -57,31 +57,6 @@
 
 #include <set>
 
-/**
- * Helper class to block signals and show wait cursor during UI updates.
- * Prevents the view from reacting to model changes while we are 
- * restoring the tree state.
- */
-class QCursorContextBlocker
-{
-public:
-    QCursorContextBlocker(QWidget *w)
-        : mW(w)
-    {
-        mW->setCursor(Qt::WaitCursor);
-        mW->blockSignals(true);
-    }
-
-    ~QCursorContextBlocker()
-    {
-        mW->setCursor(Qt::ArrowCursor);
-        mW->blockSignals(false);
-    }
-
-private:
-    QWidget *mW ;
-};
-
 #define SHARED_FILES_DIALOG_COLUMN_NAME          0
 #define SHARED_FILES_DIALOG_COLUMN_FILENB        1
 #define SHARED_FILES_DIALOG_COLUMN_SIZE          2

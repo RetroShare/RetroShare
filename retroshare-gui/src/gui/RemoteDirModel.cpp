@@ -605,6 +605,15 @@ bool FlatStyle_RDM::isMaxRefsTableSize(size_t *maxSize/*=NULL*/)
 
 	return (_ref_entries.size() >= FLAT_VIEW_MAX_REFS_TABLE_SIZE);
 }
+void FlatStyle_RDM::preMods()
+{
+    {
+        RS_STACK_MUTEX(_ref_mutex);
+        m_cache.clear();
+    }
+    RetroshareDirModel::preMods();
+}
+
 QString FlatStyle_RDM::computeDirectoryPath(const DirDetails& details) const
 {
 	QString dir ;
@@ -643,7 +652,7 @@ QVariant FlatStyle_RDM::data(const QModelIndex &index, int role) const
         auto it = m_cache.find(ref);
         if (it != m_cache.end())
         {
-            const CachedFileDetails &cfd = it.value();
+            const CachedFileDetails &cfd = it->second;
             if (role == Qt::DisplayRole)
             {
                 switch(index.column())
@@ -2001,7 +2010,7 @@ bool FlatStyle_RDM::hasUploads(void *ref) const
     auto it = m_cache.find(ref);
     if (it != m_cache.end())
     {
-        return it.value().hasUploads;
+        return it->second.hasUploads;
     }
 
     // Fallback if not in cache (should be rare in steady state)
