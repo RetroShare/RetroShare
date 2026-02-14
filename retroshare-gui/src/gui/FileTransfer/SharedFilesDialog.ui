@@ -237,6 +237,16 @@ border-image: url(:/images/closepressed.png)
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="uploadedOnly_CB">
+        <property name="toolTip">
+         <string>Show only files and folders that have been successfully uploaded to other peers</string>
+        </property>
+        <property name="text">
+         <string>Popular files</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="RSComboBox" name="indicatorCBox">
         <item>
          <property name="text">

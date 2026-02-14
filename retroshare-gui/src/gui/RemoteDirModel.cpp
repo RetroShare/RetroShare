@@ -58,7 +58,7 @@
 #define REMOTEDIRMODEL_COLUMN_UPLOADED      6
 #define REMOTEDIRMODEL_COLUMN_COUNT         7
 
-static const uint32_t FLAT_VIEW_MAX_REFS_PER_SECOND       = 10000 ;
+static const uint32_t FLAT_VIEW_MAX_REFS_PER_SECOND       = 1000 ;
 static const size_t   FLAT_VIEW_MAX_REFS_TABLE_SIZE       = 30000 ; //
 static const uint32_t FLAT_VIEW_MIN_DELAY_BETWEEN_UPDATES = 120 ;	// dont rebuild ref list more than every 2 mins.
 
@@ -151,9 +151,7 @@ void RetroshareDirModel::treeStyle()
 
 void TreeStyle_RDM::recalculateDirectoryTotals()
 {
-    m_folderUploadTotals.clear();
-    m_folderFileTotals.clear();
-    m_folderSizeTotals.clear();
+    m_folderTotals.clear();
 
     // Stats are primarily calculated for local files. 
     // For remote files, branch stats are limited by what the core provides.
@@ -187,9 +185,7 @@ TreeStyle_RDM::FolderStats TreeStyle_RDM::collectStatsRecursive(void* ref)
         // Special handling for Extra Files (virtual root)
         if (details.type == DIR_TYPE_EXTRA_FILE) 
         {
-            m_folderUploadTotals["!!RS_EXTRA_FILES_ROOT!!"] += stats.uploads;
-            m_folderFileTotals["!!RS_EXTRA_FILES_ROOT!!"] += stats.count;
-            m_folderSizeTotals["!!RS_EXTRA_FILES_ROOT!!"] += stats.size;
+            m_folderTotals["!!RS_EXTRA_FILES_ROOT!!"] += stats;
         }
         
         return stats;
@@ -200,21 +196,14 @@ TreeStyle_RDM::FolderStats TreeStyle_RDM::collectStatsRecursive(void* ref)
     {
         for(const auto& child : details.children)
         {
-            FolderStats childStats = collectStatsRecursive(child.ref);
-            
-            stats.size += childStats.size;
-            stats.count += childStats.count;
-            stats.uploads += childStats.uploads;
+            stats += collectStatsRecursive(child.ref);
         }
 
         // If this is a real directory, store the aggregated totals
         if(details.type == DIR_TYPE_DIR)
         {
             QString path = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
-            
-            m_folderUploadTotals[path] = stats.uploads;
-            m_folderFileTotals[path]   = stats.count;
-            m_folderSizeTotals[path]   = stats.size;
+            m_folderTotals[path] = stats;
         }
     }
     
@@ -238,12 +227,14 @@ bool TreeStyle_RDM::hasUploads(void *ref) const
     }
 
     if (details.type == DIR_TYPE_PERSON && details.id != rsPeers->getOwnId()) {
-        return m_folderUploadTotals.value("!!RS_EXTRA_FILES_ROOT!!", 0) > 0;
+        auto it = m_folderTotals.find("!!RS_EXTRA_FILES_ROOT!!");
+        return (it != m_folderTotals.end()) ? (it->second.uploads > 0) : false;
     }
 
     if (details.type == DIR_TYPE_DIR) {
         QString path = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
-        return m_folderUploadTotals.value(path, 0) > 0;
+        auto it = m_folderTotals.find(path);
+        return (it != m_folderTotals.end()) ? (it->second.uploads > 0) : false;
     }
 
     return true; 
@@ -251,11 +242,11 @@ bool TreeStyle_RDM::hasUploads(void *ref) const
 
 void TreeStyle_RDM::update()
 {
+	preMods() ;
 
     // Recalculate totals before notifying view update
     recalculateDirectoryTotals();
 
-	preMods() ;
 	postMods() ;
 }
 void TreeStyle_RDM::updateRef(const QModelIndex& indx) const
@@ -588,14 +579,19 @@ void FlatStyle_RDM::update()
 	// Previously, this was guarded by if(_needs_update), preventing filter updates.
 // if(_needs_update)
 	{
-        if(mUpdating) return;
+        if(mUpdating)
+        {
+        }
 
 
         
-        {
-            RS_STACK_MUTEX(_ref_mutex);
-            m_cache.clear();
-        }
+        // MODIFICATION: Do NOT clear cache here. 
+        // We want hasUploads() to be fast even during the re-crawl.
+        // updateRefs will overwrite cache entries as it finds files.
+        // {
+        //    RS_STACK_MUTEX(_ref_mutex);
+        //    m_cache.clear();
+        // }
 
 		preMods() ;
 		postMods() ;
@@ -638,21 +634,35 @@ QVariant FlatStyle_RDM::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    if (role == Qt::DisplayRole)
+    if (role == Qt::DisplayRole || role == RetroshareDirModel::SortRole)
     {
         void *ref = index.internalPointer();
-        
+
         // Try Lock-less read first? No, use lock for safety matching updateRefs
         RS_STACK_MUTEX(_ref_mutex);
-        if (m_cache.contains(ref))
+        auto it = m_cache.find(ref);
+        if (it != m_cache.end())
         {
-            const CachedFileDetails &cfd = m_cache[ref];
-            switch(index.column())
+            const CachedFileDetails &cfd = it.value();
+            if (role == Qt::DisplayRole)
             {
-                case REMOTEDIRMODEL_COLUMN_NAME: return cfd.name;
-                case REMOTEDIRMODEL_COLUMN_SIZE: return cfd.sizeStr;
-                case REMOTEDIRMODEL_COLUMN_AGE:  return cfd.ageStr;
-                case REMOTEDIRMODEL_COLUMN_UPLOADED: return cfd.uploadStr;
+                switch(index.column())
+                {
+                    case REMOTEDIRMODEL_COLUMN_NAME: return cfd.name;
+                    case REMOTEDIRMODEL_COLUMN_SIZE: return cfd.sizeStr;
+                    case REMOTEDIRMODEL_COLUMN_AGE:  return cfd.ageStr;
+                    case REMOTEDIRMODEL_COLUMN_UPLOADED: return cfd.uploadStr;
+                }
+            }
+            else // SortRole
+            {
+                switch(index.column())
+                {
+                    case REMOTEDIRMODEL_COLUMN_NAME: return cfd.name;
+                    case REMOTEDIRMODEL_COLUMN_SIZE: return (qulonglong)cfd.size;
+                    case REMOTEDIRMODEL_COLUMN_AGE:  return (qulonglong)cfd.mtime;
+                    case REMOTEDIRMODEL_COLUMN_UPLOADED: return (qulonglong)cfd.uploads;
+                }
             }
         }
     }
@@ -702,7 +712,10 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 				else if(details.id == rsPeers->getOwnId())
 					rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
                 else
-                    return (qulonglong) m_folderFileTotals.value("!!RS_EXTRA_FILES_ROOT!!", 0);
+                {
+                    auto it = m_folderTotals.find("!!RS_EXTRA_FILES_ROOT!!");
+                    return (it != m_folderTotals.end()) ? (qulonglong)it->second.count : (qulonglong)0;
+                }
 
 				return (qulonglong) stats.total_number_of_files;
 			}
@@ -713,7 +726,10 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 				else if(details.id == rsPeers->getOwnId())
 					rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
                 else
-                    return (qulonglong) m_folderSizeTotals.value("!!RS_EXTRA_FILES_ROOT!!", 0);
+                {
+                    auto it = m_folderTotals.find("!!RS_EXTRA_FILES_ROOT!!");
+                    return (it != m_folderTotals.end()) ? (qulonglong)it->second.size : (qulonglong)0;
+                }
 
 				return (qulonglong) stats.total_shared_size;
 			}
@@ -758,9 +774,15 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 			case REMOTEDIRMODEL_COLUMN_NAME:
 				return QString::fromUtf8(details.name.c_str());
 			case REMOTEDIRMODEL_COLUMN_FILENB:
-                return (qulonglong) m_folderFileTotals.value(path, 0);
+            {
+                auto it = m_folderTotals.find(path);
+                return (it != m_folderTotals.end()) ? (qulonglong)it->second.count : (qulonglong)0;
+            }
 			case REMOTEDIRMODEL_COLUMN_SIZE:
-				return (qulonglong) m_folderSizeTotals.value(path, 0);
+            {
+                auto it = m_folderTotals.find(path);
+                return (it != m_folderTotals.end()) ? (qulonglong)it->second.size : (qulonglong)0;
+            }
 			case REMOTEDIRMODEL_COLUMN_AGE:
 				return details.max_mtime;
 			case REMOTEDIRMODEL_COLUMN_FRIEND_ACCESS:
@@ -1212,9 +1234,17 @@ void FlatStyle_RDM::postMods()
 {
     time_t now = time(NULL);
 
-    // MODIFICATION: Removed throttling because it caused stuck model state (beginReset without endReset)
-    // if(_last_update + FLAT_VIEW_MIN_DELAY_BETWEEN_UPDATES > now)
-    //    return ;
+    // MODIFICATION: Bypass throttle if we are in search mode (mFilteredPointers not empty)
+    // ALSO bypass if we just cleared the filter (to avoid 120s delay to show all files)
+    static bool was_filtered = false;
+    bool is_filtered = !mFilteredPointers.empty();
+    bool transition_to_unfiltered = (was_filtered && !is_filtered);
+    was_filtered = is_filtered;
+
+    if(!is_filtered && !transition_to_unfiltered && _last_update + FLAT_VIEW_MIN_DELAY_BETWEEN_UPDATES > now)
+    {
+        return ;
+    }
 
     if(visible())
 	{
@@ -1521,14 +1551,12 @@ void RetroshareDirModel::getFilePaths(const QModelIndexList &list, std::list<std
 void RetroshareDirModel::filterItems(const std::list<std::string>& keywords, uint32_t& found)
 {
     FileSearchFlags flags = RemoteMode ? RS_FILE_HINTS_REMOTE : RS_FILE_HINTS_LOCAL;
-
-    std::list<DirDetails> result_list ;
     found = 0 ;
+    std::list<DirDetails> result_list ;
 
     if(keywords.empty())
     {
         mFilteredPointers.clear();
-        // MODIFICATION: Call update to refresh the view when the filter is cleared
         update();
         return ;
     }
@@ -1580,9 +1608,6 @@ void RetroshareDirModel::filterItems(const std::list<std::string>& keywords, uin
         }
     }
     
-    // MODIFICATION: Restore the update call. 
-    // This triggers beginResetModel/endResetModel which notifies the view 
-    // that row counts and visibility have changed.
     update(); 
 }
 
@@ -1614,7 +1639,8 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details, int coln) const
                     rsFiles->getSharedDirStatistics(rsPeers->getOwnId(), stats) ;
                 else {
                     // Specific handling for "Temporary shared files" node (Extra files root)
-                    uint32_t nb = m_folderFileTotals.value("!!RS_EXTRA_FILES_ROOT!!", 0);
+                    auto it = m_folderTotals.find("!!RS_EXTRA_FILES_ROOT!!");
+                    uint32_t nb = (it != m_folderTotals.end()) ? it->second.count : 0;
                     if(nb > 1) return QString::number(nb) + " " + tr("Files");
                     if(nb == 1) return QString::number(nb) + " " + tr("File");
                     return tr("Empty");
@@ -1634,7 +1660,10 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details, int coln) const
                 else if(details.id == rsPeers->getOwnId())
                     rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
                 else
-                    return misc::friendlyUnit(m_folderSizeTotals.value("!!RS_EXTRA_FILES_ROOT!!", 0));
+                {
+                    auto it = m_folderTotals.find("!!RS_EXTRA_FILES_ROOT!!");
+                    return misc::friendlyUnit((it != m_folderTotals.end()) ? it->second.size : 0);
+                }
 
                 if(stats.total_shared_size > 0)
                     return misc::friendlyUnit(stats.total_shared_size) ;
@@ -1706,17 +1735,22 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details, int coln) const
             case REMOTEDIRMODEL_COLUMN_NAME: return QString::fromUtf8(details.name.c_str());
             case REMOTEDIRMODEL_COLUMN_FILENB:
             {
-                uint32_t totalFiles = m_folderFileTotals.value(path, 0);
+                auto it = m_folderTotals.find(path);
+                uint32_t totalFiles = (it != m_folderTotals.end()) ? it->second.count : 0;
                 return QString::number(totalFiles) + " " + (totalFiles > 1 ? tr("Files") : tr("File"));
             }
             case REMOTEDIRMODEL_COLUMN_SIZE: 
-                return misc::friendlyUnit(m_folderSizeTotals.value(path, 0));
+            {
+                auto it = m_folderTotals.find(path);
+                return misc::friendlyUnit((it != m_folderTotals.end()) ? it->second.size : 0);
+            }
             case REMOTEDIRMODEL_COLUMN_AGE: return misc::timeRelativeToNow(details.max_mtime);
             case REMOTEDIRMODEL_COLUMN_FRIEND_ACCESS: return getFlagsString(details.flags);
             case REMOTEDIRMODEL_COLUMN_WN_VISU_DIR: return getGroupsString(details.flags,details.parent_groups) ;
             case REMOTEDIRMODEL_COLUMN_UPLOADED:
             {
-                uint64_t totalUpload = m_folderUploadTotals.value(path, 0);
+                auto it = m_folderTotals.find(path);
+                uint64_t totalUpload = (it != m_folderTotals.end()) ? it->second.uploads : 0;
                 return totalUpload > 0 ? misc::friendlyUnit(totalUpload) : "";
             }
             break;
@@ -1844,49 +1878,27 @@ void FlatStyle_RDM::updateRefs()
         RS_STACK_MUTEX(_ref_mutex) ;
 
         // MODIFICATION: instant search result display
-        // If we have a filter active, use the filtered set directly instead of crawling.
-        if (!mFilteredPointers.empty()) 
+        // If we have a filter active, initialize the batch stack with the results.
+        if (!mFilteredPointers.empty() && (_ref_stack.empty() || (_ref_stack.size() == 1 && _ref_stack.front() == NULL))) 
         {
-            _ref_stack.clear(); // Stop any pending crawl
-            _ref_entries.clear();
-
+            _ref_stack.clear(); 
+            uint32_t added = 0;
             for(auto it = mFilteredPointers.begin(); it != mFilteredPointers.end(); ++it)
             {
-                void* ref = *it;
-                DirDetails details;
-                // Only add files to the flat list
-                if(requestDirDetails(ref, RemoteMode, details))
+                if (*it != NULL && *it != (void*)0x1)
                 {
-                    if(details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE)
-                    {
-                        _ref_entries.push_back(ref);
-                        
-                        CachedFileDetails cfd;
-                        cfd.name = QString::fromUtf8(details.name.c_str());
-                        cfd.sizeStr = misc::friendlyUnit(details.size);
-                        
-                        if(details.type == DIR_TYPE_FILE)
-                            cfd.ageStr = misc::timeRelativeToNow(details.max_mtime);
-                        else {
-                            FileInfo fi;
-                            if (rsFiles->FileDetails(details.hash, RS_FILE_HINTS_EXTRA , fi))
-                                cfd.ageStr = misc::timeRelativeToNow((rstime_t)fi.age-(30 * 3600 * 24));
-                        }
-
-                        uint64_t x = rsFiles->getCumulativeUpload(details.hash);
-                        cfd.uploadStr = x ? misc::friendlyUnit(x) : QString();
-
-                        m_cache[ref] = cfd;
-                    }
+                    _ref_stack.push_back(*it);
+                    added++;
                 }
             }
-
-             _needs_update = false; // We are done
         }
-        else 
-        {
-            // Standard crawling behavior (when no filter or cleared)
-            while( !_ref_stack.empty() && (_ref_entries.size() <= FLAT_VIEW_MAX_REFS_TABLE_SIZE) )
+    }
+
+    {
+        RS_STACK_MUTEX(_ref_mutex) ;
+        
+        // Standard batched behavior (handles both crawling and filtered results)
+        while( !_ref_stack.empty() && (_ref_entries.size() <= FLAT_VIEW_MAX_REFS_TABLE_SIZE) )
             {
                 void *ref = _ref_stack.back() ;
 #ifdef RDM_DEBUG
@@ -1895,6 +1907,16 @@ void FlatStyle_RDM::updateRefs()
             _ref_stack.pop_back() ;
 
             DirDetails details ;
+
+            auto it_cache = m_cache.find(ref);
+            if (it_cache != m_cache.end())
+            {
+                _ref_entries.push_back(ref);
+                // We still need to find children if it's a directory, 
+                // but only files are in m_cache. 
+                // So if it's in cache, we KNOW it's a file and has no children.
+                continue; 
+            }
 
             if (requestDirDetails(ref, RemoteMode,details))
             {
@@ -1916,14 +1938,24 @@ void FlatStyle_RDM::updateRefs()
 
                     uint64_t x = rsFiles->getCumulativeUpload(details.hash);
                     cfd.uploadStr = x ? misc::friendlyUnit(x) : QString();
+                    cfd.uploads = x;
+                    cfd.hasUploads = (x > 0);
+                    cfd.size = details.size;
+                    cfd.mtime = details.max_mtime;
 
                     m_cache[ref] = cfd;
                 }
 #ifdef RDM_DEBUG
                 std::cerr << "FlatStyle_RDM::postMods(): adding ref " << ref << std::endl;
 #endif
-                for(uint32_t i=0;i<details.children.size();++i)
-                    _ref_stack.push_back(details.children[i].ref) ;
+                // MODIFICATION: Crucial search fix.
+                // In search mode (!mFilteredPointers.empty()), we ONLY display the 
+                // files/folders found by the search engine. We do NOT crawl their 
+                // children, as that would add thousands of unrelated files.
+                if (mFilteredPointers.empty()) {
+                    for(uint32_t i=0;i<details.children.size();++i)
+                        _ref_stack.push_back(details.children[i].ref) ;
+                }
             }
 
             // Limit the size of the table to display, otherwise it becomes impossible to Qt.
@@ -1941,7 +1973,6 @@ void FlatStyle_RDM::updateRefs()
                 break ;
             }
         } // End of standard crawling loop
-        } // End of else block
         std::cerr << "reference tab contains " << std::dec << _ref_entries.size() << " files" << std::endl;
     }
 
@@ -1964,11 +1995,16 @@ void TreeStyle_RDM::showEmpty(const bool value)
 // hasUploads for FlatStyle - Defensive Check
 bool FlatStyle_RDM::hasUploads(void *ref) const
 {
-    // CRITICAL FIX: Safety check for NULL pointers
-    if (ref == NULL) {
-        return false;
+    if (ref == NULL) return false;
+
+    RS_STACK_MUTEX(_ref_mutex);
+    auto it = m_cache.find(ref);
+    if (it != m_cache.end())
+    {
+        return it.value().hasUploads;
     }
 
+    // Fallback if not in cache (should be rare in steady state)
     DirDetails details;
     if (!requestDirDetails(ref, RemoteMode, details)) return false;
 

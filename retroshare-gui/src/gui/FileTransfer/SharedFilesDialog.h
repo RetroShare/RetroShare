@@ -158,8 +158,7 @@ protected:
 
   RsEventsHandlerId_t mEventHandlerId ;
 
-  /** Checkbox to filter files with 0 upload */
-  QCheckBox *uploadedOnly_CB;
+  /** Checkbox to filter files with 0 upload - now in ui.uploadedOnly_CB */
 };
 
 class LocalSharedFilesDialog : public SharedFilesDialog

@@ -145,8 +145,7 @@ public:
     void setUploadedOnly(bool val) {
         if (m_uploadedOnly != val) {
              m_uploadedOnly = val;
-             // invalidateFilter(); // CRASH FIX: Do not invalidate incrementally. 
-                                  // The dialog calls model->update() which triggers a full Reset.
+             invalidateFilter(); 
         }
     }
 
@@ -229,7 +228,7 @@ SharedFilesDialog::~SharedFilesDialog()
  * Constructor for the base SharedFilesDialog.
  */
 SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
-  : RsAutoUpdatePage(1000,parent), model(NULL), uploadedOnly_CB(NULL)
+  : RsAutoUpdatePage(1000,parent), model(NULL)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -350,17 +349,7 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
 LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
     : SharedFilesDialog(false,parent)
 {
-    // Label updated to "Popular files"
-    uploadedOnly_CB = new QCheckBox(tr("Popular files"), this);
-    
-    // Updated tooltip to be more descriptive of the "Popularity" (upload activity)
-    uploadedOnly_CB->setToolTip(tr("Show only files and folders that have been successfully uploaded to other peers"));
-    
-    // Positioning the checkbox next to the view selector
-    int cbIndex = ui.horizontalLayout_2->indexOf(ui.viewType_CB);
-    ui.horizontalLayout_2->insertWidget(cbIndex + 1, uploadedOnly_CB);
-    
-    connect(uploadedOnly_CB, SIGNAL(toggled(bool)), this, SLOT(filterUploadedOnlyToggled(bool)));
+    connect(ui.uploadedOnly_CB, SIGNAL(toggled(bool)), this, SLOT(filterUploadedOnlyToggled(bool)));
 
     // Ensure proper columns are visible for local sharing
     ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, false) ;
@@ -400,6 +389,7 @@ RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
     //
     changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
 
+    ui.uploadedOnly_CB->hide();
     ui.addShares_PB->hide() ;
 }
 
@@ -524,9 +514,9 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
         proxyModel = flat_proxyModel ;
     }
 
-    if(uploadedOnly_CB) {
-        if(tree_proxyModel) tree_proxyModel->setUploadedOnly(uploadedOnly_CB->isChecked());
-        if(flat_proxyModel) flat_proxyModel->setUploadedOnly(uploadedOnly_CB->isChecked());
+    if(ui.uploadedOnly_CB) {
+        if(tree_proxyModel) tree_proxyModel->setUploadedOnly(ui.uploadedOnly_CB->isChecked());
+        if(flat_proxyModel) flat_proxyModel->setUploadedOnly(ui.uploadedOnly_CB->isChecked());
     }
 
     showProperColumns() ;
@@ -561,7 +551,7 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
     FilterItems();
 
     // MODIFICATION: Expand tree if "Uploaded Only" is active, otherwise items remain hidden in collapsed folders.
-    if(viewTypeIndex==VIEW_TYPE_TREE && uploadedOnly_CB && uploadedOnly_CB->isChecked()) {
+    if(viewTypeIndex==VIEW_TYPE_TREE && ui.uploadedOnly_CB && ui.uploadedOnly_CB->isChecked()) {
         expandAll();
     }
 }
@@ -1669,12 +1659,16 @@ void SharedFilesDialog::filterUploadedOnlyToggled(bool checked)
     if (tree_proxyModel) tree_proxyModel->setUploadedOnly(checked);
     if (flat_proxyModel) flat_proxyModel->setUploadedOnly(checked);
     
-    // CRITICAL FIX: Use model->update() instead of proxy->invalidate().
-    // model->update() triggers a full reset (beginResetModel), which forces 
-    // the Proxy to drop its dangerous mapping and rebuild it from scratch.
+    // CRITICAL PERFORMANCE FIX: DO NOT call model->update() here.
+    // model->update() triggers a full reset and re-crawl of the entire share hierarchy,
+    // which takes 30+ seconds for large shares.
+    // Instead, we rely on proxyModel->invalidateFilter() (called above) which 
+    // is near-instant as it uses the existing O(1) cache.
+    /*
     if (model) {
         model->update();
     }
+    */
     
     if(ui.viewType_CB->currentIndex() == VIEW_TYPE_TREE) {
         if (checked) expandAll();

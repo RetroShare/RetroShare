@@ -35,6 +35,7 @@
 
 #include <stdint.h>
 #include <vector>
+#include <map>
 
 struct DirDetails;
 
@@ -223,10 +224,6 @@ class TreeStyle_RDM: public RetroshareDirModel
         // Helper to calculate total recursive statistics per directory (Files count, Size, Uploads)
         void recalculateDirectoryTotals();
         
-        QHash<QString, uint64_t> m_folderUploadTotals;
-        QHash<QString, uint32_t> m_folderFileTotals; // Total files in branch
-        QHash<QString, uint64_t> m_folderSizeTotals; // Total size of branch
-
 	private:
 		struct FolderStats {
 			uint64_t size;
@@ -234,8 +231,17 @@ class TreeStyle_RDM: public RetroshareDirModel
 			uint64_t uploads;
 			
 			FolderStats() : size(0), count(0), uploads(0) {}
+
+			FolderStats& operator+=(const FolderStats& s) {
+				size += s.size;
+				count += s.count;
+				uploads += s.uploads;
+				return *this;
+			}
 		};
-		
+
+        std::map<QString, FolderStats> m_folderTotals; // Key: clean path, Val: recursive stats
+
 		FolderStats collectStatsRecursive(void* ref);
 
 	protected:
@@ -294,6 +300,10 @@ class FlatStyle_RDM: public RetroshareDirModel
             QString sizeStr;
             QString ageStr;
             QString uploadStr;
+            uint64_t size;
+            uint32_t mtime;
+            uint64_t uploads;
+            bool hasUploads;
         };
         QHash<void*, CachedFileDetails> m_cache;
 
