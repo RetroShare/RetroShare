@@ -217,4 +217,29 @@ private:
 
 template<class T> inline SignalsBlocker<T> whileBlocking(T *blocked) { return SignalsBlocker<T>(blocked); }
 
+/**
+ * Helper class to block signals and show wait cursor during UI updates.
+ * Prevents the view from reacting to model changes while we are 
+ * restoring the tree state.
+ */
+class QCursorContextBlocker
+{
+public:
+    QCursorContextBlocker(QWidget *w)
+        : mW(w)
+    {
+        mW->setCursor(Qt::WaitCursor);
+        mW->blockSignals(true);
+    }
+
+    ~QCursorContextBlocker()
+    {
+        mW->setCursor(Qt::ArrowCursor);
+        mW->blockSignals(false);
+    }
+
+private:
+    QWidget *mW ;
+};
+
 #endif

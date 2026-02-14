@@ -52,6 +52,8 @@
 #include <QString>
 #include <QStyledItemDelegate>
 #include <QTreeView>
+#include <QCheckBox>
+#include <QHBoxLayout>
 
 #include <set>
 
@@ -104,35 +106,59 @@
 
 const QString Image_AddNewAssotiationForFile = ":/icons/svg/options.svg";
 
+// SFDSortFilterProxyModel - Updated to avoid immediate invalidation crashes
 class SFDSortFilterProxyModel : public QSortFilterProxyModel
 {
 public:
-    SFDSortFilterProxyModel(RetroshareDirModel *dirModel, QObject *parent) : QSortFilterProxyModel(parent)
+    SFDSortFilterProxyModel(RetroshareDirModel *dirModel, QObject *parent) 
+        : QSortFilterProxyModel(parent), m_uploadedOnly(false)
     {
         m_dirModel = dirModel;
-
-        // Mr.Alice: I removed this because it causes a crash for some obscur reason. Apparently when the model is changed, the proxy model cannot
-        // deal with the change by itself. Should I call something specific? I've no idea. Removing this does not seem to cause any harm either.
-        //Ghibli: set false because by default in qt5 is true and makes rs crash when sorting, all this decided by Cyril not me :D it works
-
         setDynamicSortFilter(false);
     }
 
+    void setUploadedOnly(bool val) {
+        if (m_uploadedOnly != val) {
+             m_uploadedOnly = val;
+             invalidateFilter(); 
+        }
+    }
+
 protected:
+    virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
+    {
+        if (m_uploadedOnly) {
+            QModelIndex source_index = sourceModel()->index(source_row, 0, source_parent);
+            void *ref = source_index.internalPointer();
+
+            // CRITICAL FIX: Defensive check for NULL ref during model resets
+            if (!ref) {
+                return false;
+            }
+
+            if (!m_dirModel->hasUploads(ref)) {
+                return false;
+            }
+        }
+        return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
+    }
+
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const
     {
+        if (!left.isValid() || !right.isValid()) return false;
+
         bool dirLeft = (m_dirModel->getType(left) == DIR_TYPE_DIR);
         bool dirRight = (m_dirModel->getType(right) == DIR_TYPE_DIR);
 
         if (dirLeft ^ dirRight) {
             return dirLeft;
         }
-
         return QSortFilterProxyModel::lessThan(left, right);
     }
 
 private:
     RetroshareDirModel *m_dirModel;
+    bool m_uploadedOnly;
 };
 
 // This class allows to draw the item in the share flags column using an appropriate size
@@ -172,15 +198,15 @@ SharedFilesDialog::~SharedFilesDialog()
     delete flat_model;
     delete tree_proxyModel;
 }
-/** Constructor */
+
+/**
+ * Constructor for the base SharedFilesDialog.
+ */
 SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
   : RsAutoUpdatePage(1000,parent), model(NULL)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
-
-    //connect(notify, SIGNAL(filesPreModChanged(bool)), this, SLOT(preModDirectories(bool)));
-    //connect(notify, SIGNAL(filesPostModChanged(bool)), this, SLOT(postModDirectories(bool)));
 
     mEventHandlerId = 0;
 
@@ -214,13 +240,20 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     connect(ui.dirTreeView, SIGNAL(customContextMenuRequested(QPoint)), this,  SLOT( spawnCustomPopupMenu( QPoint ) ) );
     connect(ui.indicatorCBox, SIGNAL(currentIndexChanged(int)), this, SLOT(indicatorChanged(int)));
 
+    // Ensure the combo box items are not bold
+    QFont normalFont = ui.viewType_CB->font();
+    normalFont.setBold(false);
+    ui.viewType_CB->setFont(normalFont);
+    
+    // Reset specific items font role to ensure no bolding from UI files
+    for(int i = 0; i < ui.viewType_CB->count(); ++i) {
+        ui.viewType_CB->setItemData(i, normalFont, Qt::FontRole);
+    }
+
     tree_model = new TreeStyle_RDM(remote_mode);
     flat_model = new FlatStyle_RDM(remote_mode);
 
     connect(flat_model, SIGNAL(layoutChanged()), this, SLOT(updateDirTreeView()) );
-
-    // For filtering items we use a trick: the underlying model will use this FilterRole role to highlight selected items
-    // while the filterProxyModel will select them using the pre-chosen string "filtered".
 
     tree_proxyModel = new SFDSortFilterProxyModel(tree_model, this);
     tree_proxyModel->setSourceModel(tree_model);
@@ -242,15 +275,10 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));
     connect(ui.filterPatternLineEdit, SIGNAL(returnPressed()), this, SLOT(startFilter()));
     connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(onFilterTextEdited()));
-    //Hidden by default, shown on onFilterTextEdited
+    
     ui.filterClearButton->hide();
     ui.filterStartButton->hide();
 
-//	mFilterTimer = new RsProtectedTimer( this );
-//	mFilterTimer->setSingleShot( true ); // Ensure the timer will fire only once after it was started
-//	connect(mFilterTimer, SIGNAL(timeout()), this, SLOT(filterRegExpChanged()));
-
-    /* Set header resize modes and initial section sizes  */
     QHeaderView * header = ui.dirTreeView->header () ;
 #if QT_VERSION < QT_VERSION_CHECK(5,11,0)
     int charWidth = ui.dirTreeView->fontMetrics().width("_");
@@ -262,25 +290,22 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_FILENB       , charWidth*15 );
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_SIZE         , charWidth*10 );
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_AGE          , charWidth*6 );
-    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, charWidth*10 );
+    header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS, charWidth*4 );
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR  , charWidth*20 );
     header->resizeSection ( SHARED_FILES_DIALOG_COLUMN_UPLOADED     , charWidth*20 );
 
     header->setStretchLastSection(true);
-
-    /* Set Multi Selection */
     ui.dirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-  /* Hide platform specific features */
-  copylinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard" ), this );
-  connect( copylinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
-  copylinkhtmlAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard (HTML)" ), this );
-  connect( copylinkhtmlAct , SIGNAL( triggered() ), this, SLOT( copyLinkhtml() ) );
-  sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
-  connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
+    copylinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard" ), this );
+    connect( copylinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
+    copylinkhtmlAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard (HTML)" ), this );
+    connect( copylinkhtmlAct , SIGNAL( triggered() ), this, SLOT( copyLinkhtml() ) );
+    sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
+    connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
 
-  removeExtraFileAct = new QAction(QIcon(IMAGE_UNSHAREEXTRA), tr( "Stop sharing this file" ), this );
-  connect( removeExtraFileAct , SIGNAL( triggered() ), this, SLOT( removeExtraFile() ) );
+    removeExtraFileAct = new QAction(QIcon(IMAGE_UNSHAREEXTRA), tr( "Stop sharing this file" ), this );
+    connect( removeExtraFileAct , SIGNAL( triggered() ), this, SLOT( removeExtraFile() ) );
 
     collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this) ;
     connect(collCreateAct,SIGNAL(triggered()),this,SLOT(collCreate())) ;
@@ -292,17 +317,21 @@ SharedFilesDialog::SharedFilesDialog(bool remote_mode, QWidget *parent)
     connect(collOpenAct, SIGNAL(triggered()), this, SLOT(collOpen())) ;
 }
 
+/**
+ * Constructor for LocalSharedFilesDialog.
+ * Sets the new "Popular files" label and a more descriptive tooltip.
+ */
 LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
     : SharedFilesDialog(false,parent)
 {
-    // Hide columns after loading the settings
+    connect(ui.uploadedOnly_CB, SIGNAL(toggled(bool)), this, SLOT(filterUploadedOnlyToggled(bool)));
+
+    // Ensure proper columns are visible for local sharing
     ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, false) ;
     ui.downloadButton->hide() ;
 
-    // load settings
+    // Load user settings and apply current view
     processSettings(true);
-    // Setup the current view model.
-    //
     changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
 
     connect(ui.addShares_PB, SIGNAL(clicked()), this, SLOT(addShares())) ;
@@ -314,7 +343,6 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
     connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder())) ;
 
     ui.titleBarPixmap->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_MYFILES)) ;
-
     ui.dirTreeView->setItemDelegateForColumn(SHARED_FILES_DIALOG_COLUMN_FRIEND_ACCESS,new ShareFlagsItemDelegate()) ;
 }
 
@@ -336,6 +364,7 @@ RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
     //
     changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
 
+    ui.uploadedOnly_CB->hide();
     ui.addShares_PB->hide() ;
 }
 
@@ -460,6 +489,11 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
         proxyModel = flat_proxyModel ;
     }
 
+    if(ui.uploadedOnly_CB) {
+        if(tree_proxyModel) tree_proxyModel->setUploadedOnly(ui.uploadedOnly_CB->isChecked());
+        if(flat_proxyModel) flat_proxyModel->setUploadedOnly(ui.uploadedOnly_CB->isChecked());
+    }
+
     showProperColumns() ;
 
     std::set<std::string> expanded_indexes,hidden_indexes,selected_indexes ;
@@ -486,7 +520,15 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
     ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal, SHARED_FILES_DIALOG_COLUMN_NAME, SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR) ;
 
 //    recursRestoreExpandedItems(ui.dirTreeView->rootIndex(),expanded_indexes);
+    
+    // Force re-application of filter on the new model
+    mLastFilterText = "FORCE_UPDATE_ON_VIEW_SWITCH"; 
     FilterItems();
+
+    // MODIFICATION: Expand tree if "Uploaded Only" is active, otherwise items remain hidden in collapsed folders.
+    if(viewTypeIndex==VIEW_TYPE_TREE && ui.uploadedOnly_CB && ui.uploadedOnly_CB->isChecked()) {
+        expandAll();
+    }
 }
 
 void LocalSharedFilesDialog::showProperColumns()
@@ -513,6 +555,8 @@ void LocalSharedFilesDialog::showProperColumns()
         ui.filterPatternLineEdit->show();
 #endif
     }
+    // Column 6 must be visible for filtering to work
+    ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_UPLOADED, false);
 }
 void RemoteSharedFilesDialog::showProperColumns()
 {
@@ -1014,19 +1058,26 @@ void SharedFilesDialog::restoreExpandedPathsAndSelection(const std::set<std::str
 #ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "Restoring expanded items. " << std::endl;
 #endif
+
+    /** Use batch selection to avoid SIGSEGV in selectionModel */
+    QItemSelection batchSelection;
+
     for(int row = 0; row < ui.dirTreeView->model()->rowCount(); ++row)
     {
         std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
-        recursRestoreExpandedItems(ui.dirTreeView->model()->index(row,0),path,expanded_indexes,hidden_indexes,selected_indexes);
+        recursRestoreExpandedItems(ui.dirTreeView->model()->index(row,0),path,expanded_indexes,hidden_indexes,selected_indexes, batchSelection);
     }
-    //QItemSelection selection ;
+    
+    if(!batchSelection.isEmpty())
+        ui.dirTreeView->selectionModel()->select(batchSelection, QItemSelectionModel::Select | QItemSelectionModel::Rows);
 
     ui.dirTreeView->blockSignals(false) ;
 }
 
+// MODIFICATION 3: Update the main expand loop
 void SharedFilesDialog::expandAll()
 {
-    if(ui.dirTreeView->model() == NULL || ui.dirTreeView->model() == flat_proxyModel)	// this method causes infinite loops on flat models
+    if(ui.dirTreeView->model() == NULL || ui.dirTreeView->model() == flat_proxyModel) // this method causes infinite loops on flat models
         return ;
 
     ui.dirTreeView->blockSignals(true) ;
@@ -1034,27 +1085,37 @@ void SharedFilesDialog::expandAll()
 #ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "Restoring expanded items. " << std::endl;
 #endif
+
     for(int row = 0; row < ui.dirTreeView->model()->rowCount(); ++row)
     {
-        std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
-        recursExpandAll(ui.dirTreeView->model()->index(row,0));
+        // Call the new smart recursive function for each root node
+        recursExpandAll(ui.dirTreeView->model()->index(row, 0));
     }
 
     ui.dirTreeView->blockSignals(false) ;
-
 }
 
-void SharedFilesDialog::recursExpandAll(const QModelIndex& index)
+// MODIFICATION G: Recursive expansion that only opens folders if they have visible children
+bool SharedFilesDialog::recursExpandAll(const QModelIndex& index)
 {
-    ui.dirTreeView->setExpanded(index,true) ;
+    bool hasVisibleChild = false;
+    int childCount = ui.dirTreeView->model()->rowCount(index);
 
-    for(int row=0;row<ui.dirTreeView->model()->rowCount(index);++row)
-    {
-        QModelIndex idx(ui.dirTreeView->model()->index(row,0,index)) ;
-
-        if(ui.dirTreeView->model()->rowCount(idx) > 0)
-            recursExpandAll(idx) ;
+    // First, check all children recursively
+    for(int row = 0; row < childCount; ++row) {
+        if (recursExpandAll(ui.dirTreeView->model()->index(row, 0, index))) {
+            hasVisibleChild = true;
+        }
     }
+
+    // If this is a folder/person and it has visible children in the proxy, expand it
+    if (hasVisibleChild) {
+        ui.dirTreeView->setExpanded(index, true);
+    }
+
+    // Return true if this node is a file (leaf) or a folder with visible children
+    int type = model->getType(proxyModel->mapToSource(index));
+    return (type == DIR_TYPE_FILE || type == DIR_TYPE_EXTRA_FILE || hasVisibleChild);
 }
 
 void SharedFilesDialog::recursSaveExpandedItems(const QModelIndex& index,const std::string& path,
@@ -1102,15 +1163,17 @@ void SharedFilesDialog::recursSaveExpandedItems(const QModelIndex& index,const s
 void SharedFilesDialog::recursRestoreExpandedItems(const QModelIndex& index, const std::string &path,
                                                    const std::set<std::string>& exp,
                                                    const std::set<std::string>& hid,
-                                                   const std::set<std::string> &sel)
+                                                   const std::set<std::string> &sel,
+                                                   QItemSelection& batchSelection)
 {
     std::string local_path = path+"/"+index.data(Qt::DisplayRole).toString().toStdString();
 #ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "at index " << index.row() << ". data[1]=" << local_path << std::endl;
 #endif
 
+    /** Collect index for batch selection later */
     if(sel.find(local_path) != sel.end())
-        ui.dirTreeView->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+        batchSelection.select(index, index);
 
     // Disable hidden check as we don't use it and Qt bug: https://bugreports.qt.io/browse/QTBUG-11438
     /*bool invisible = hid.find(local_path) != hid.end();
@@ -1128,45 +1191,100 @@ void SharedFilesDialog::recursRestoreExpandedItems(const QModelIndex& index, con
 
         for(int row=0;row<ui.dirTreeView->model()->rowCount(index);++row)
 #if QT_VERSION >= QT_VERSION_CHECK(5, 8, 0)
-            recursRestoreExpandedItems(ui.dirTreeView->model()->index(row,0,index),local_path,exp,hid,sel) ;
+            recursRestoreExpandedItems(ui.dirTreeView->model()->index(row,0,index),local_path,exp,hid,sel, batchSelection) ;
 #else
-            recursRestoreExpandedItems(index.child(row,0),local_path,exp,hid,sel) ;
+            recursRestoreExpandedItems(index.child(row,0),local_path,exp,hid,sel, batchSelection) ;
 #endif
     }
 }
 
-
-void  SharedFilesDialog::postModDirectories(bool local)
+/**
+ * Handles directory updates after model changes.
+ * Fixed to prevent autocollapse by restoring state after sorting.
+ */
+void SharedFilesDialog::postModDirectories(bool local)
 {
     if (isRemote() == local)
         return;
 
-    std::set<std::string> expanded_indexes,selected_indexes,hidden_indexes;
+    std::set<std::string> expanded_indexes, selected_indexes, hidden_indexes;
 
-    saveExpandedPathsAndSelection(expanded_indexes,hidden_indexes,selected_indexes) ;
-#ifdef DEBUG_SHARED_FILES_DIALOG
-    std::cerr << "Saving expanded items. " << expanded_indexes.size() << " items found" << std::endl;
-#endif
+    // 1. Save current state
+    saveExpandedPathsAndSelection(expanded_indexes, hidden_indexes, selected_indexes) ;
 
-    /* Notify both models, only one is visible */
+    // 2. Update models
     tree_model->postMods();
     flat_model->postMods();
     ui.dirTreeView->update() ;
 
-    if (ui.filterPatternLineEdit->text().isEmpty() == false)
-        FilterItems();
-
+    // 3. Re-enable sorting BEFORE restoring expansion to stabilize the view
     ui.dirTreeView->setSortingEnabled(true);
 
-    restoreExpandedPathsAndSelection(expanded_indexes,hidden_indexes,selected_indexes) ;
+    // 4. Re-apply the text filter
+    if (ui.filterPatternLineEdit->text().isEmpty() == false) {
+        FilterItems();
+    }
 
-#ifdef DEBUG_SHARED_FILES_DIALOG
-    std::cerr << "****** updated directories! Re-enabling sorting ******" << std::endl;
-#endif
+    // 5. Finally restore expansion on a stable model
+    restoreExpandedPathsAndSelection(expanded_indexes, hidden_indexes, selected_indexes) ;
 
 #if QT_VERSION < QT_VERSION_CHECK (6, 0, 0)
     QCoreApplication::flush();
 #endif
+}
+
+/**
+ * Applies text filtering to the current model.
+ * Optimized to avoid recursive model resets.
+ */
+// FilterItems - Updated to remove redundant invalidations
+void SharedFilesDialog::FilterItems()
+{
+    QString text = ui.filterPatternLineEdit->text();
+    if(mLastFilterText == text) return ;
+    mLastFilterText = text ;
+
+    QCursorContextBlocker q(ui.dirTreeView) ;
+    QCoreApplication::processEvents() ;
+    uint32_t found = 0 ;
+
+    if(text.length() < 3) {
+        model->filterItems(std::list<std::string>(), found) ;
+        
+        // MODIFICATION: Sync proxy filter to ensure it doesn't hold stale text
+        if (proxyModel) proxyModel->setFilterFixedString(QString());
+        
+        return ;
+    }
+
+    QStringList lst = text.split(" ", QtSkipEmptyParts) ;
+    std::list<std::string> keywords ;
+    for(auto it(lst.begin()); it != lst.end(); ++it)
+        keywords.push_back((*it).toStdString());
+
+    model->filterItems(keywords, found) ;
+
+    // MODIFICATION: Hybrid filtering.
+    // Flat View uses model->filterItems (Manual population).
+    // Tree View relies on Proxy for text filtering (Hybrid).
+    // We must sync the proxy to ensure Tree View works and doesn't hold stale data.
+    if (proxyModel) {
+        if(ui.viewType_CB->currentIndex() == VIEW_TYPE_TREE) {
+             proxyModel->setFilterFixedString(RETROSHARE_DIR_MODEL_FILTER_STRING);
+        } else {
+             // In Flat View, Model handles filtering logic (including multi-keyword).
+             // Proxy should NOT double-filter (which breaks multi-keyword).
+             proxyModel->setFilterFixedString(QString());
+        }
+    }
+
+    // Note: model->filterItems() already calls update() (reset), 
+    // so proxy invalidation is redundant and handled automatically.
+    if(found > 0) expandAll();
+
+    if(found == 0) ui.filterPatternFrame->setToolTip(tr("No result.")) ;
+    else if(found > MAX_SEARCH_RESULTS) ui.filterPatternFrame->setToolTip(tr("More than %1 results...").arg(MAX_SEARCH_RESULTS)) ;
+    else ui.filterPatternFrame->setToolTip(tr("Found %1 results.").arg(found)) ;
 }
 
 class ChannelCompare
@@ -1408,7 +1526,7 @@ void SharedFilesDialog::indicatorChanged(int index)
     else
         ui.dirTreeView->sortByColumn(SHARED_FILES_DIALOG_COLUMN_NAME, Qt::AscendingOrder);
 
-    updateDisplay() ;
+    //updateDisplay() ;
 }
 
 void SharedFilesDialog::onFilterTextEdited()
@@ -1500,6 +1618,44 @@ void SharedFilesDialog::startFilter()
     lastFilterString = ui.filterPatternLineEdit->text();
 
     FilterItems();
+}
+
+/**
+ * Handles the "Popular files" checkbox logic.
+ * Correctly manages tree expansion and returns to a clean state when unchecked.
+ */
+// filterUploadedOnlyToggled - Updated to use safe resets
+void SharedFilesDialog::filterUploadedOnlyToggled(bool checked)
+{
+    if (ui.dirTreeView->selectionModel()) {
+        ui.dirTreeView->selectionModel()->clear();
+    }
+
+    if (tree_proxyModel) tree_proxyModel->setUploadedOnly(checked);
+    if (flat_proxyModel) flat_proxyModel->setUploadedOnly(checked);
+    
+    // CRITICAL PERFORMANCE FIX: DO NOT call model->update() here.
+    // model->update() triggers a full reset and re-crawl of the entire share hierarchy,
+    // which takes 30+ seconds for large shares.
+    // Instead, we rely on proxyModel->invalidateFilter() (called above) which 
+    // is near-instant as it uses the existing O(1) cache.
+    /*
+    if (model) {
+        model->update();
+    }
+    */
+    
+    if(ui.viewType_CB->currentIndex() == VIEW_TYPE_TREE) {
+        if (checked) expandAll();
+        else {
+             // MODIFICATION: Do not collapse if we have a text filter active, otherwise results are hidden.
+             if (ui.filterPatternLineEdit->text().length() >= 3) {
+                  expandAll();
+             } else {
+                  ui.dirTreeView->collapseAll();
+             }
+        }
+    }
 }
 
 void SharedFilesDialog::updateDirTreeView()
@@ -1594,90 +1750,6 @@ void SharedFilesDialog::restoreInvisibleItems()
 }
 #endif
 
-class QCursorContextBlocker
-{
-    public:
-        QCursorContextBlocker(QWidget *w)
-            : mW(w)
-        {
-            mW->setCursor(Qt::WaitCursor);
-            mW->blockSignals(true) ;
-        }
-
-        ~QCursorContextBlocker()
-        {
-            mW->setCursor(Qt::ArrowCursor);
-            mW->blockSignals(false) ;
-        }
-
-    private:
-        QWidget *mW ;
-};
-
-void SharedFilesDialog::FilterItems()
-{
-#ifdef DONT_USE_SEARCH_IN_TREE_VIEW
-    if(proxyModel == tree_proxyModel)
-        return;
-#endif
-
-    QString text = ui.filterPatternLineEdit->text();
-
-    if(mLastFilterText == text)	// do not filter again if we already did. This is an optimization
-    {
-#ifdef DEBUG_SHARED_FILES_DIALOG
-        std::cerr << "Last text is equal to text. skipping" << std::endl;
-#endif
-        return ;
-    }
-
-#ifdef DEBUG_SHARED_FILES_DIALOG
-    std::cerr << "New last text. Performing the filter on string \"" << text.toStdString() << "\"" << std::endl;
-#endif
-    mLastFilterText = text ;
-
-    QCursorContextBlocker q(ui.dirTreeView) ;
-
-    QCoreApplication::processEvents() ;
-
-    std::list<DirDetails> result_list ;
-    uint32_t found = 0 ;
-
-    if(text == "")
-    {
-        model->filterItems(std::list<std::string>(),found) ;
-        model->update() ;
-        return ;
-    }
-
-    if(text.length() < 3)
-        return ;
-
-    //FileSearchFlags flags = isRemote()?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL;
-    QStringList lst = text.split(" ",QtSkipEmptyParts) ;
-    std::list<std::string> keywords ;
-
-    for(auto it(lst.begin());it!=lst.end();++it)
-        keywords.push_back((*it).toStdString());
-
-    model->filterItems(keywords,found) ;
-    model->update() ;
-
-    if(found > 0)
-        expandAll();
-
-    if(found == 0)
-        ui.filterPatternFrame->setToolTip(tr("No result.")) ;
-    else if(found > MAX_SEARCH_RESULTS)
-        ui.filterPatternFrame->setToolTip(tr("More than %1 results. Add more/longer search words to select less.").arg(MAX_SEARCH_RESULTS)) ;
-    else
-        ui.filterPatternFrame->setToolTip(tr("Found %1 results.").arg(found)) ;
-
-#ifdef DEBUG_SHARED_FILES_DIALOG
-    std::cerr << found << " results found by search." << std::endl;
-#endif
-}
-
 void SharedFilesDialog::removeExtraFile()
 {
     std::list<DirDetails> files_info ;
@@ -1760,3 +1832,4 @@ void SharedFilesDialog::updateFontSize()
         ui.dirTreeView->setIconSize(QSize(iconHeight, iconHeight));
     }
 }
+

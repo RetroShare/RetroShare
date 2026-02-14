@@ -65,6 +65,7 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
 	QObject::connect(ui.autoCheckDirectories_CB, SIGNAL(clicked(bool)), this, SLOT(toggleAutoCheckDirectories(bool)));
 	QObject::connect(ui.minimumFontSize_SB, SIGNAL(valueChanged(int)), this, SLOT(updateFontSize())) ;
 	QObject::connect(ui.clearuploadStatsButton, SIGNAL(clicked( bool ) ), this , SLOT(clearUploadStatistics() ) );
+    QObject::connect(ui.uploadStatsRetention_SB, SIGNAL(valueChanged(int)), this, SLOT(updateUploadStatsRetention(int)));
 
 	QObject::connect(ui.autoCheckDirectories_CB,     SIGNAL(toggled(bool)),    this,SLOT(updateAutoCheckDirectories())) ;
 	QObject::connect(ui.autoCheckDirectoriesDelay_SB,SIGNAL(valueChanged(int)),this,SLOT(updateAutoScanDirectoriesPeriod())) ;
@@ -181,6 +182,8 @@ void TransferPage::load()
 			case RS_FILE_PERM_DIRECT_DL_NO:  whileBlocking(ui._filePermDirectDL_CB)->setCurrentIndex(1) ; break ;
 			default:                         whileBlocking(ui._filePermDirectDL_CB)->setCurrentIndex(2) ; break ;
 		}
+
+    whileBlocking(ui.uploadStatsRetention_SB)->setValue(rsFiles->getUploadStatsRetentionDays());
 
 	std::list<std::string> suffixes, prefixes;
 	uint32_t ignore_flags ;
@@ -341,3 +344,4 @@ void TransferPage::updateAutoCheckDirectories()       {    rsFiles->setWatchEnab
 void TransferPage::updateAutoScanDirectoriesPeriod()  {    rsFiles->setWatchPeriod(ui.autoCheckDirectoriesDelay_SB->value()); }
 void TransferPage::updateShareDownloadDirectory()     {    rsFiles->shareDownloadDirectory(ui.shareDownloadDirectoryCB->isChecked());}
 void TransferPage::updateFollowSymLinks()             {    rsFiles->setFollowSymLinks(ui.followSymLinks_CB->isChecked()); ui.ignoreDuplicates_CB->setEnabled(ui.followSymLinks_CB->isChecked());}
+void TransferPage::updateUploadStatsRetention(int days) {    rsFiles->setUploadStatsRetentionDays(days); }

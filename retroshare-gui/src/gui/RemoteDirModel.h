@@ -1,25 +1,27 @@
 /*******************************************************************************
  * gui/RemoteDirModel.h                                                        *
- *                                                                             *
+ * *
  * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
- *                                                                             *
+ * *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
  * published by the Free Software Foundation, either version 3 of the          *
  * License, or (at your option) any later version.                             *
- *                                                                             *
+ * *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
  * GNU Affero General Public License for more details.                         *
- *                                                                             *
+ * *
  * You should have received a copy of the GNU Affero General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
- *                                                                             *
+ * *
  *******************************************************************************/
 
 #ifndef REMOTE_DIR_MODEL
 #define REMOTE_DIR_MODEL
+
+#define RETROSHARE_DIR_MODEL_FILTER_STRING "filtered"
 
 #include <retroshare/rstypes.h>
 #include <retroshare/rsevents.h>
@@ -28,9 +30,12 @@
 #include <QAction>
 #include <QIcon>
 #include <QMenu>
+#include <QHash>
+#include <QString>
 
 #include <stdint.h>
 #include <vector>
+#include <map>
 
 struct DirDetails;
 
@@ -78,6 +83,9 @@ class RetroshareDirModel : public QAbstractItemModel
 		void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
 
 		bool requestDirDetails(void *ref, bool remote,DirDetails& d) const;
+
+		// MODIFICATION A: Virtual method to check if a branch has cumulative uploads
+		virtual bool hasUploads(void *ref) const = 0;
 
 		virtual void update() {}
 		virtual void updateRef(const QModelIndex&) const =0;
@@ -203,12 +211,39 @@ class TreeStyle_RDM: public RetroshareDirModel
 
 		virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
+		// MODIFICATION B: Implementation for Tree Style
+		virtual bool hasUploads(void *ref) const;
+
 	private slots:
 		void showEmpty(const bool value);
 
 	private:
 		QAction *_showEmptyAct;
 		bool _showEmpty;
+
+        // Helper to calculate total recursive statistics per directory (Files count, Size, Uploads)
+        void recalculateDirectoryTotals();
+        
+	private:
+		struct FolderStats {
+			uint64_t size;
+			uint32_t count;
+			uint64_t uploads;
+			
+			FolderStats() : size(0), count(0), uploads(0) {}
+
+			FolderStats& operator+=(const FolderStats& s) {
+				size += s.size;
+				count += s.count;
+				uploads += s.uploads;
+				return *this;
+			}
+		};
+
+        std::map<QString, FolderStats> m_folderTotals; // Key: clean path, Val: recursive stats
+
+		FolderStats collectStatsRecursive(void* ref);
+
 	protected:
 		mutable std::vector<int> _parentRow ; // used to store the real parent row for non empty child
 };
@@ -235,9 +270,16 @@ class FlatStyle_RDM: public RetroshareDirModel
 
 	protected:
  		//Overloaded from RetroshareDirModel
+		virtual void preMods();
 		virtual void postMods();/* Callback from Core */
 		virtual void updateRef(const QModelIndex&) const {}
-		virtual QVariant displayRole(const DirDetails&,int) const ;
+		// MODIFICATION H: Implement hasUploads for Flat Style to fix compilation
+		virtual bool hasUploads(void *ref) const;
+		
+        // MODIFICATION: Override data() to use internal cache for Flat View
+        virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+
+        virtual QVariant displayRole(const DirDetails&,int) const ;
 		virtual QVariant sortRole(const QModelIndex&,const DirDetails&,int) const ;
 
 		//Overloaded from QAbstractItemModel
@@ -252,6 +294,19 @@ class FlatStyle_RDM: public RetroshareDirModel
 
 
 		QString computeDirectoryPath(const DirDetails& details) const ;
+
+
+        struct CachedFileDetails {
+            QString name;
+            QString sizeStr;
+            QString ageStr;
+            QString uploadStr;
+            uint64_t size;
+            uint32_t mtime;
+            uint64_t uploads;
+            bool hasUploads;
+        };
+        std::map<void*, CachedFileDetails> m_cache;
 
 		mutable RsMutex _ref_mutex ;
 		std::vector<void *> _ref_entries ; // used to store the refs to display

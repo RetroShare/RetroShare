@@ -1,21 +1,21 @@
 /*******************************************************************************
  * retroshare-gui/src/gui/FileTransfer/SharedFilesDialog.h                     *
- *                                                                             *
+ * *
  * Copyright (c) 2009 Retroshare Team <retroshare.project@gmail.com>           *
- *                                                                             *
+ * *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
  * published by the Free Software Foundation, either version 3 of the          *
  * License, or (at your option) any later version.                             *
- *                                                                             *
+ * *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
  * GNU Affero General Public License for more details.                         *
- *                                                                             *
+ * *
  * You should have received a copy of the GNU Affero General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
- *                                                                             *
+ * *
  *******************************************************************************/
 
 #ifndef _SHAREDFILESDIALOG_H
@@ -29,9 +29,12 @@
 #include "util/RsProtectedTimer.h"
 
 #include <set>
+#include <QCheckBox>
+#include <QItemSelection>
 
 class RetroshareDirModel;
 class QSortFilterProxyModel;
+class SFDSortFilterProxyModel;
 
 class SharedFilesDialog : public RsAutoUpdatePage
 {
@@ -83,6 +86,9 @@ private slots:
   void startFilter();
 
   void updateDirTreeView();
+  
+  /** Slot for the Uploaded Only checkbox filter */
+  void filterUploadedOnlyToggled(bool checked);
 
   public slots:
   void changeCurrentViewModel(int viewTypeIndex);
@@ -94,11 +100,13 @@ protected:
   Ui::SharedFilesDialog ui;
   virtual void processSettings(bool bLoad) = 0;
 
-  void recursRestoreExpandedItems(const QModelIndex& index, const std::string& path, const std::set<std::string>& exp, const std::set<std::string>& vis, const std::set<std::string>& sel);
+  /** signature updated to support selection batching to prevent hangs/crashes */
+  void recursRestoreExpandedItems(const QModelIndex& index, const std::string& path, const std::set<std::string>& exp, const std::set<std::string>& vis, const std::set<std::string>& sel, QItemSelection& batchSelection);
   void recursSaveExpandedItems(const QModelIndex& index, const std::string &path, std::set<std::string> &exp,std::set<std::string>& vis, std::set<std::string>& sel);
   void saveExpandedPathsAndSelection(std::set<std::string>& paths,std::set<std::string>& visible_indexes, std::set<std::string>& selected_indexes) ;
   void restoreExpandedPathsAndSelection(const std::set<std::string>& paths,const std::set<std::string>& visible_indexes, const std::set<std::string>& selected_indexes) ;
-  void recursExpandAll(const QModelIndex& index);
+// MODIFICATION E: Signature change to return bool (found a child to expand)
+  bool recursExpandAll(const QModelIndex& index);
   void expandAll();
 
 protected:
@@ -136,8 +144,9 @@ protected:
   RetroshareDirModel *tree_model;
   RetroshareDirModel *flat_model;
   RetroshareDirModel *model;
-  QSortFilterProxyModel *tree_proxyModel;
-  QSortFilterProxyModel *flat_proxyModel;
+  
+  SFDSortFilterProxyModel *tree_proxyModel;
+  SFDSortFilterProxyModel *flat_proxyModel;
   QSortFilterProxyModel *proxyModel;
 
   QString currentCommand;
@@ -148,6 +157,8 @@ protected:
   RsProtectedTimer* mFilterTimer;
 
   RsEventsHandlerId_t mEventHandlerId ;
+
+  /** Checkbox to filter files with 0 upload - now in ui.uploadedOnly_CB */
 };
 
 class LocalSharedFilesDialog : public SharedFilesDialog
@@ -208,4 +219,3 @@ class RemoteSharedFilesDialog : public SharedFilesDialog
 };
 
 #endif
-
