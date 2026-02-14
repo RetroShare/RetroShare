@@ -404,6 +404,21 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
             if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
                 updateDisplay(true);
             break;
+
+        case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
+            if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
+            {
+                // Toggle subscribe flag locally and refresh UI without GXS request
+                // to avoid concurrent request with parent dialog's tree rebuild
+                if(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags))
+                    mForumGroup.mMeta.mSubscribeFlags &= ~GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
+                else
+                    mForumGroup.mMeta.mSubscribeFlags |= GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
+
+                updateGroupData();
+            }
+            break;
+
         default: break;
         }
     }
