@@ -1083,7 +1083,7 @@ void WikiEditDialog::performMerge(
 	}
 
 	std::sort(sortedEdits.begin(), sortedEdits.end(),
-		[](const auto &a, const auto &b)
+		[](const auto &a, const auto &b) -> bool
 		{
 			return a.second < b.second;
 		});

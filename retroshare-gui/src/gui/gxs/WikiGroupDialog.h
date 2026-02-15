@@ -35,6 +35,7 @@ class WikiGroupDialog : public GxsGroupDialog
 public:
 	WikiGroupDialog(QWidget *parent);
 	WikiGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent = NULL);
+	~WikiGroupDialog();
 
 protected:
 	virtual void initUi() override;
@@ -49,6 +50,7 @@ private:
 	void addModeratorToList(const RsGxsId &gxsId);
 	void updateModeratorControls();
 	void updateModeratorsLabel(const std::list<RsGxsId> &moderators);
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 private slots:
 	void addModerator();
@@ -65,6 +67,7 @@ private:
 	QPushButton *mAddModeratorButton = nullptr;
 	QPushButton *mRemoveModeratorButton = nullptr;
 
+	RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif

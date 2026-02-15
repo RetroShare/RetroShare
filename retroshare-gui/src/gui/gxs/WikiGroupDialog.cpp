@@ -76,13 +76,38 @@ uint32_t WikiEditDefaultsFlags = WikiCreateDefaultsFlags;
 uint32_t WikiEditEnabledFlags = WikiCreateEnabledFlags;
 
 WikiGroupDialog::WikiGroupDialog(QWidget *parent)
-	:GxsGroupDialog(WikiCreateEnabledFlags, WikiCreateDefaultsFlags, parent)
+	:GxsGroupDialog(WikiCreateEnabledFlags, WikiCreateDefaultsFlags, parent),
+	 mEventHandlerId(0)
 {
+	// Register for Wiki events to catch moderator changes
+	RsEventType wikiEventType = (RsEventType)rsEvents->getDynamicEventType("GXS_WIKI");
+	rsEvents->registerEventsHandler(
+		[this](std::shared_ptr<const RsEvent> event) {
+			RsQThreadUtils::postToObject([=]() { 
+				handleEvent_main_thread(event); 
+			}, this );
+		},
+		mEventHandlerId, wikiEventType);
 }
 
 WikiGroupDialog::WikiGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent)
-:GxsGroupDialog(mode, groupId, WikiEditEnabledFlags, WikiEditDefaultsFlags, parent)
+:GxsGroupDialog(mode, groupId, WikiEditEnabledFlags, WikiEditDefaultsFlags, parent),
+ mEventHandlerId(0)
 {
+	// Register for Wiki events to catch moderator changes
+	RsEventType wikiEventType = (RsEventType)rsEvents->getDynamicEventType("GXS_WIKI");
+	rsEvents->registerEventsHandler(
+		[this](std::shared_ptr<const RsEvent> event) {
+			RsQThreadUtils::postToObject([=]() { 
+				handleEvent_main_thread(event); 
+			}, this );
+		},
+		mEventHandlerId, wikiEventType);
+}
+
+WikiGroupDialog::~WikiGroupDialog()
+{
+	rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 void WikiGroupDialog::initUi()
@@ -511,23 +536,17 @@ void WikiGroupDialog::addModerator()
 
 		RsQThreadUtils::postToObject([this, addedModerators, failedModerators]()
 		{
-			// Don't immediately update the UI here. The group update happens asynchronously
-			// in RsGenExchange, and p3wiki::notifyChanges() will send an UPDATED_COLLECTION
-			// event when the change is actually committed. The moderator list will be
-			// refreshed when you close and reopen this dialog, or automatically in WikiDialog
-			// if it's listening for the event.
+			// The group update happens asynchronously in RsGenExchange, 
+			// and p3wiki::notifyChanges() will send an UPDATED_COLLECTION
+			// event when the change is actually committed. The moderator list
+			// will be automatically refreshed via handleEvent_main_thread().
 			
-			if (!addedModerators.empty() && failedModerators.empty())
-			{
-				QMessageBox::information(this, tr("Success"),
-					tr("Moderator add request submitted. Please close and reopen this dialog to see the updated list."));
-			}
-			else if (addedModerators.empty())
+			if (addedModerators.empty())
 			{
 				QMessageBox::warning(this, tr("Error"),
 					tr("Failed to submit moderator add requests."));
 			}
-			else
+			else if (!failedModerators.empty())
 			{
 				QMessageBox::warning(this, tr("Warning"),
 					tr("Some moderator requests could not be submitted."));
@@ -575,22 +594,39 @@ void WikiGroupDialog::removeModerator()
 		const bool success = rsWiki->removeModerator(groupId, modId);
 		RsQThreadUtils::postToObject([this, success]()
 		{
-			// Don't immediately update the UI here. The group update happens asynchronously
-			// in RsGenExchange, and p3wiki::notifyChanges() will send an UPDATED_COLLECTION
-			// event when the change is actually committed. The moderator list will be
-			// refreshed when you close and reopen this dialog, or automatically in WikiDialog
-			// if it's listening for the event.
+			// The group update happens asynchronously in RsGenExchange, 
+			// and p3wiki::notifyChanges() will send an UPDATED_COLLECTION
+			// event when the change is actually committed. The moderator list
+			// will be automatically refreshed via handleEvent_main_thread().
 			
-			if (success)
-			{
-				QMessageBox::information(this, tr("Success"),
-					tr("Moderator remove request submitted. Please close and reopen this dialog to see the updated list."));
-			}
-			else
+			if (!success)
 			{
 				QMessageBox::warning(this, tr("Error"),
 					tr("Failed to submit moderator remove request."));
 			}
 		}, this);
 	});
+}
+
+void WikiGroupDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+	// Cast to the specific Wiki event
+	const RsGxsWikiEvent *e = dynamic_cast<const RsGxsWikiEvent*>(event.get());
+
+	if (e)
+	{
+		// Check if the event is for the group we're currently editing
+		if (e->mWikiGroupId == mCurrentGroupId)
+		{
+			switch (e->mWikiEventCode)
+			{
+				case RsWikiEventCode::UPDATED_COLLECTION:
+					// Reload moderators when the group is updated
+					loadModerators(mCurrentGroupId);
+					break;
+				default:
+					break;
+			}
+		}
+	}
 }
