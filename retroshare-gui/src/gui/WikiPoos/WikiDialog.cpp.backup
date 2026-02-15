@@ -35,7 +35,6 @@
 
 #include <retroshare/rswiki.h>
 #include "util/qtthreadsutils.h"
-#include "util/rsthreads.h"
 
 
 // These should be in retroshare/ folder.
@@ -83,8 +82,8 @@
 
 
 /** Constructor */
-WikiDialog::WikiDialog(QWidget *parent) :
-    MainPage(parent),
+WikiDialog::WikiDialog(QWidget *parent) : 
+    RsGxsUpdateBroadcastPage(rsWiki, parent), 
     mEventHandlerId(0) // Initialize handler ID
 {
     /* Invoke the Qt Designer generated object setup routine */
@@ -100,12 +99,12 @@ WikiDialog::WikiDialog(QWidget *parent) :
 
     connect( ui.treeWidget_Pages, SIGNAL(itemSelectionChanged()), this, SLOT(groupTreeChanged()));
 
-    // Connect search filter
-    connect( ui.lineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterPages(QString)));
-
     // GroupTreeWidget.
     connect(ui.groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupListCustomPopupMenu(QPoint)));
     connect(ui.groupTreeWidget, SIGNAL(treeItemActivated(QString)), this, SLOT(wikiGroupChanged(QString)));
+
+    /* setup TokenQueue */
+    mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
 
     // Set initial size of the splitter
     ui.listSplitter->setStretchFactor(0, 0);
@@ -116,7 +115,7 @@ WikiDialog::WikiDialog(QWidget *parent) :
     mSubscribedGroups = ui.groupTreeWidget->addCategoryItem(tr("Subscribed Groups"), QIcon(), true);
     mPopularGroups = ui.groupTreeWidget->addCategoryItem(tr("Popular Groups"), QIcon(), false);
     mOtherGroups = ui.groupTreeWidget->addCategoryItem(tr("Other Groups"), QIcon(), false);
-
+    
     /* Add the New Group button */
     QToolButton *newGroupButton = new QToolButton(this);
     newGroupButton->setIcon(QIcon(":/icons/png/add.png"));
@@ -126,9 +125,7 @@ WikiDialog::WikiDialog(QWidget *parent) :
 
     // load settings
     processSettings(true);
-
-    // Load initial data
-    loadGroupMeta();
+    updateDisplay(true);
 
     /* Get dynamic event type ID for Wiki. This avoids hardcoding IDs in rsevents.h */
     RsEventType wikiEventType = (RsEventType)rsEvents->getDynamicEventType("GXS_WIKI");
@@ -136,11 +133,11 @@ WikiDialog::WikiDialog(QWidget *parent) :
     /* Register events handler using the dynamic type */
     rsEvents->registerEventsHandler(
         [this](std::shared_ptr<const RsEvent> event) {
-            RsQThreadUtils::postToObject([=]() {
-                handleEvent_main_thread(event);
+            RsQThreadUtils::postToObject([=]() { 
+                handleEvent_main_thread(event); 
             }, this );
         },
-        mEventHandlerId, wikiEventType);
+        mEventHandlerId, wikiEventType); 
 }
 
 WikiDialog::~WikiDialog()
@@ -149,6 +146,8 @@ WikiDialog::~WikiDialog()
 
 	// save settings
 	processSettings(false);
+	
+	delete(mWikiQueue);
 }
 
 void WikiDialog::processSettings(bool load)
@@ -307,7 +306,7 @@ void WikiDialog::groupTreeChanged()
 
 	RsGxsGrpMsgIdPair origPagePair = std::make_pair(groupId, origPageId);
 	RsGxsGrpMsgIdPair pagepair = std::make_pair(groupId, pageId);
-	loadWikiPage(pagepair);
+	requestWikiPage(pagepair);
 }
 
 void WikiDialog::updateWikiPage(const RsWikiSnapshot &page)
@@ -338,36 +337,6 @@ void WikiDialog::clearWikiPage()
 void WikiDialog::clearGroupTree()
 {
 	ui.treeWidget_Pages->clear();
-}
-
-void WikiDialog::filterPages(const QString &text)
-{
-	std::cerr << "WikiDialog::filterPages() Filter text: " << text.toStdString() << std::endl;
-
-	// Get the filter text in lowercase for case-insensitive search
-	QString filterText = text.toLower();
-
-	// Iterate through all items in the pages tree
-	QTreeWidgetItemIterator it(ui.treeWidget_Pages);
-	while (*it)
-	{
-		QTreeWidgetItem *item = *it;
-
-		// Get the page name from the first column
-		QString pageName = item->text(WIKI_GROUP_COL_PAGENAME).toLower();
-
-		// Show/hide item based on whether it matches the filter
-		if (filterText.isEmpty() || pageName.contains(filterText))
-		{
-			item->setHidden(false);
-		}
-		else
-		{
-			item->setHidden(true);
-		}
-
-		++it;
-	}
 }
 
 #define WIKI_GROUP_COL_GROUPNAME	0
@@ -422,146 +391,175 @@ const RsGxsGroupId& WikiDialog::getSelectedGroup()
 /************************** Request / Response *************************/
 /*** Loading Main Index ***/
 
-void WikiDialog::loadGroupMeta()
+void WikiDialog::requestGroupMeta()
 {
-	std::cerr << "WikiDialog::loadGroupMeta() - using async";
+	std::cerr << "WikiDialog::requestGroupMeta()";
 	std::cerr << std::endl;
 
-	RsThread::async([this]()
-	{
-		// 1 - get group metadata from rsWiki (backend thread)
-		std::list<RsGxsGroupId> groupIds;
-		std::vector<RsWikiCollection> groups;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
-		if(!rsWiki->getCollections(groupIds, groups))
-		{
-			std::cerr << "WikiDialog::loadGroupMeta() failed to retrieve wiki groups" << std::endl;
-			return;
-		}
-
-		// Convert to RsGroupMetaData list
-		std::list<RsGroupMetaData> *groupMeta = new std::list<RsGroupMetaData>();
-		for(const auto& group : groups)
-		{
-			RsGroupMetaData meta;
-			meta.mGroupId = group.mMeta.mGroupId;
-			meta.mGroupName = group.mMeta.mGroupName;
-			meta.mGroupFlags = group.mMeta.mGroupFlags;
-			meta.mSignFlags = group.mMeta.mSignFlags;
-			meta.mPublishTs = group.mMeta.mPublishTs;
-			meta.mAuthorId = group.mMeta.mAuthorId;
-			meta.mCircleType = group.mMeta.mCircleType;
-			meta.mCircleId = group.mMeta.mCircleId;
-			meta.mSubscribeFlags = group.mMeta.mSubscribeFlags;
-			meta.mPop = group.mMeta.mPop;
-			meta.mVisibleMsgCount = group.mMeta.mVisibleMsgCount;
-			meta.mLastPost = group.mMeta.mLastPost;
-			groupMeta->push_back(meta);
-		}
-
-		// 2 - update the UI in the main thread
-		RsQThreadUtils::postToObject([groupMeta, this]()
-		{
-			if (groupMeta->size() > 0)
-			{
-				insertGroupsData(*groupMeta);
-			}
-			else
-			{
-				std::cerr << "WikiDialog::loadGroupMeta() No groups found" << std::endl;
-			}
-			delete groupMeta;
-		}, this);
-	});
+	uint32_t token;
+	mWikiQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, WIKIDIALOG_LISTING_GROUPMETA);
 }
 
-void WikiDialog::loadPages(const std::list<RsGxsGroupId> &groupIds)
+void WikiDialog::loadGroupMeta(const uint32_t &token)
 {
-	std::cerr << "WikiDialog::loadPages() - using async";
+	std::cerr << "WikiDialog::loadGroupMeta()";
 	std::cerr << std::endl;
 
-	if(groupIds.empty())
-		return;
+	std::list<RsGroupMetaData> groupMeta;
 
-	RsThread::async([this, groupIds]()
+	if (!rsWiki->getGroupSummary(token, groupMeta))
 	{
-		// 1 - get snapshots from rsWiki (backend thread)
-		std::vector<RsWikiSnapshot> *snapshots = new std::vector<RsWikiSnapshot>();
+		std::cerr << "WikiDialog::loadGroupMeta() Error getting GroupMeta";
+		std::cerr << std::endl;
+	return;
+	}
 
-		// Get snapshots for the specified groups
-		for(const auto& groupId : groupIds)
-		{
-			std::vector<RsWikiSnapshot> groupSnapshots;
-			// Note: We need to use the token-based API here since there's no direct blocking API
-			// For now, we'll use a simplified approach
-			// TODO: Implement proper blocking API in rsWiki
-		}
+	if (groupMeta.size() > 0)
+	{
+		insertGroupsData(groupMeta);
+	}
+	else
+	{
+		std::cerr << "WikiDialog::loadGroupMeta() ERROR No Groups...";
+		std::cerr << std::endl;
+	}
+}
 
-		// 2 - update the UI in the main thread
-		RsQThreadUtils::postToObject([snapshots, this]()
-		{
-			clearGroupTree();
-			clearWikiPage();
+void WikiDialog::requestPages(const std::list<RsGxsGroupId> &groupIds)
+{
+	std::cerr << "WikiDialog::requestPages()";
+	std::cerr << std::endl;
 
-			for(auto vit = snapshots->begin(); vit != snapshots->end(); ++vit)
-			{
-				RsWikiSnapshot page = *vit;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+	opts.mOptions = (RS_TOKREQOPT_MSG_LATEST | RS_TOKREQOPT_MSG_THREAD); // We want latest version of Thread Heads.
+	uint32_t token;
+	mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, WIKIDIALOG_LISTING_PAGES);
+}
 
-				std::cerr << "WikiDialog::loadPages() PageId: " << page.mMeta.mMsgId;
-				std::cerr << " Page: " << page.mMeta.mMsgName;
-				std::cerr << std::endl;
+void WikiDialog::loadPages(const uint32_t &token)
+{
+	std::cerr << "WikiDialog::loadPages()";
+	std::cerr << std::endl;
 
-				QTreeWidgetItem *pageItem = new QTreeWidgetItem();
-				pageItem->setText(WIKI_GROUP_COL_PAGENAME, QString::fromStdString(page.mMeta.mMsgName));
-				pageItem->setText(WIKI_GROUP_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId.toStdString()));
-				pageItem->setText(WIKI_GROUP_COL_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId.toStdString()));
+	clearGroupTree();
+	clearWikiPage();
 
-				ui.treeWidget_Pages->addTopLevelItem(pageItem);
-			}
+	std::vector<RsWikiSnapshot> snapshots;
+	std::vector<RsWikiSnapshot>::iterator vit;
+	if (!rsWiki->getSnapshots(token, snapshots))
+	{
+		// ERROR
+		return;
+	}
 
-			delete snapshots;
-		}, this);
-	});
+	for(vit = snapshots.begin(); vit != snapshots.end(); ++vit)
+	{
+		RsWikiSnapshot page = *vit;
+
+		std::cerr << "WikiDialog::loadPages() PageId: " << page.mMeta.mMsgId;
+		std::cerr << " Page: " << page.mMeta.mMsgName;
+		std::cerr << std::endl;
+
+		QTreeWidgetItem *pageItem = new QTreeWidgetItem();
+		pageItem->setText(WIKI_GROUP_COL_PAGENAME, QString::fromStdString(page.mMeta.mMsgName));
+		pageItem->setText(WIKI_GROUP_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId.toStdString()));
+		pageItem->setText(WIKI_GROUP_COL_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId.toStdString()));
+
+		ui.treeWidget_Pages->addTopLevelItem(pageItem);
+	}
 }
 
 /***** Wiki *****/
 
-void WikiDialog::loadWikiPage(const RsGxsGrpMsgIdPair &msgId)
+void WikiDialog::requestWikiPage(const RsGxsGrpMsgIdPair &msgId)
 {
-	std::cerr << "WikiDialog::loadWikiPage(" << msgId.first << "," << msgId.second << ") - using async";
+	std::cerr << "WikiDialog::requestWikiPage(" << msgId.first << "," << msgId.second << ")";
 	std::cerr << std::endl;
 
-	RsThread::async([this, msgId]()
-	{
-		// 1 - get snapshot from rsWiki (backend thread)
-		std::vector<RsWikiSnapshot> snapshots;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
-		// Get the specific snapshot
-		// TODO: Need blocking API for getting specific snapshot
-		// For now, we'll need to use a workaround
+	uint32_t token;
 
-		// 2 - update the UI in the main thread
-		RsQThreadUtils::postToObject([snapshots, this]()
-		{
-			if (snapshots.size() != 1)
-			{
-				std::cerr << "WikiDialog::loadWikiPage() SIZE ERROR: " << snapshots.size();
-				std::cerr << std::endl;
-				return;
-			}
+	GxsMsgReq msgIds;
+	std::set<RsGxsMessageId> &set_msgIds = msgIds[msgId.first];
+	set_msgIds.insert(msgId.second);
 
-			RsWikiSnapshot page = snapshots[0];
-
-			std::cerr << "WikiDialog::loadWikiPage() PageId: " << page.mMeta.mMsgId;
-			std::cerr << " Page: " << page.mMeta.mMsgName;
-			std::cerr << std::endl;
-
-			updateWikiPage(page);
-		}, this);
-	});
+	mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIDIALOG_WIKI_PAGE);
 }
 
-// loadRequest() method removed - now using async loading pattern
+void WikiDialog::loadWikiPage(const uint32_t &token)
+{
+	std::cerr << "WikiDialog::loadWikiPage()";
+	std::cerr << std::endl;
+
+	// Should only have one WikiPage....
+	std::vector<RsWikiSnapshot> snapshots;
+	if (!rsWiki->getSnapshots(token, snapshots))
+	{
+		std::cerr << "WikiDialog::loadWikiPage() ERROR";
+		std::cerr << std::endl;
+
+		// ERROR
+		return;
+	}
+
+	if (snapshots.size() != 1) 
+	{
+		std::cerr << "WikiDialog::loadWikiPage() SIZE ERROR";
+		std::cerr << std::endl;
+
+		// ERROR
+		return;
+	}
+
+
+	RsWikiSnapshot page = snapshots[0];
+	
+	std::cerr << "WikiDialog::loadWikiPage() PageId: " << page.mMeta.mMsgId;
+	std::cerr << " Page: " << page.mMeta.mMsgName;
+	std::cerr << std::endl;
+
+	updateWikiPage(page);
+}
+
+void WikiDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+{
+	std::cerr << "WikiDialog::loadRequest() UserType: " << req.mUserType;
+	std::cerr << std::endl;
+	
+	if (queue == mWikiQueue)
+	{
+		/* now switch on req */
+		switch(req.mUserType)
+		{
+			case WIKIDIALOG_LISTING_GROUPMETA:
+				loadGroupMeta(req.mToken);
+				break;
+
+			case WIKIDIALOG_LISTING_PAGES:
+				loadPages(req.mToken);
+				break;
+
+			case WIKIDIALOG_WIKI_PAGE:
+				loadWikiPage(req.mToken);
+				break;
+
+#define GXSGROUP_NEWGROUPID	     1
+			case GXSGROUP_NEWGROUPID:
+				requestGroupMeta();
+				break;
+			default:
+				std::cerr << "WikiDialog::loadRequest() ERROR: INVALID TYPE";
+				std::cerr << std::endl;
+				break;
+		}
+	}
+}
 
 /************************** Group Widget Stuff *********************************/
 
@@ -599,7 +597,7 @@ void WikiDialog::wikiGroupChanged(const QString &groupId)
 
 	std::list<RsGxsGroupId> groupIds;
 	groupIds.push_back(mGroupId);
-	loadPages(groupIds);
+	requestPages(groupIds);
 
 	int subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId.toStdString()));
 	ui.toolButton_NewPage->setEnabled(IS_GROUP_ADMIN(subscribeFlags));
@@ -737,11 +735,26 @@ void WikiDialog::GroupMetaDataToGroupItemInfo(const RsGroupMetaData &groupInfo, 
 
 }
 
-// updateDisplay() method removed - now using async loading pattern
+void WikiDialog::updateDisplay(bool complete)
+{
+	if (complete || !getGrpIds().empty() || !getGrpIdsMeta().empty()) {
+		/* Update group list */
+		requestGroupMeta();
+	} else {
+		/* Update all groups of changed messages */
+		std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
+		getAllMsgIds(msgIds);
+
+		std::map<RsGxsGroupId, std::set<RsGxsMessageId> >::iterator msgIt;
+		for (msgIt = msgIds.begin(); msgIt != msgIds.end(); ++msgIt) {
+			wikiGroupChanged(QString::fromStdString(msgIt->first.toStdString()));
+		}
+	}
+}
 
 void WikiDialog::insertWikiGroups()
 {
-	loadGroupMeta();
+	updateDisplay(true);
 }
 
 void WikiDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -751,26 +764,16 @@ void WikiDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 
     if(e) {
         std::cerr << "WikiDialog: Received event for group " << e->mWikiGroupId.toStdString() << std::endl;
-
+        
         switch(e->mWikiEventCode) {
-            case RsWikiEventCode::NEW_COLLECTION:
             case RsWikiEventCode::UPDATED_COLLECTION:
-            case RsWikiEventCode::SUBSCRIBE_STATUS_CHANGED:
-                // Refresh global list for any collection changes
-                loadGroupMeta();
+                updateDisplay(true); // Refresh global list
                 break;
-
-            case RsWikiEventCode::NEW_SNAPSHOT:
             case RsWikiEventCode::UPDATED_SNAPSHOT:
                 // Only refresh if we are currently looking at the changed group
                 if (e->mWikiGroupId == mGroupId) {
                     wikiGroupChanged(QString::fromStdString(mGroupId.toStdString()));
                 }
-                break;
-
-            case RsWikiEventCode::NEW_COMMENT:
-                // TODO: Refresh comments view when implemented (Task 6)
-                std::cerr << "WikiDialog: New comment received for group " << e->mWikiGroupId.toStdString() << std::endl;
                 break;
         }
     }
