@@ -262,7 +262,6 @@ void CumulativeStatsWidget::updateServiceStats()
    
     // Service name mapping
     QMap<uint16_t, QString> serviceNames;
-    QMap<uint16_t, QString> serviceNames;
     serviceNames[0x0011] = "Discovery";
     serviceNames[0x0012] = "Chat";
     serviceNames[0x0013] = "Messages";
