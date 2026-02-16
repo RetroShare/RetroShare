@@ -49,6 +49,7 @@ public:
     enum { GRAPH_TYPE_SINGLE=0x00, GRAPH_TYPE_ALL=0x01, GRAPH_TYPE_SUM=0x02 };
     enum { UNIT_KILOBYTES=0x00, UNIT_COUNT=0x01 };
     enum { DIRECTION_DOWN=0x01,DIRECTION_UP=0x02 };	// can be combined using binary ops
+    enum { TIMING_INSTANT = 0x01,TIMING_CUMULATED=0x02 };
 
     // re-derived from RSGraphSource
 
@@ -64,6 +65,7 @@ public:
     void setSelector(int selector_type, int graph_type, const std::string& selector_client_string = std::string()) ;
     void setDirection(int dir) ;
     void setUnit(int unit) ;
+    void setTiming(int t) ;
 
     int direction() const { return _current_direction ;}
     int unit() const { return _current_unit ;}
@@ -94,6 +96,7 @@ private:
     uint16_t    _current_selected_service ;
     int         _current_unit ;
     int         _current_direction ;
+    int         _current_timing ;
 
     std::list<TrafficHistoryChunk> mTrafficHistory ;
 
@@ -111,6 +114,7 @@ class BWGraph: public RSGraphWidget
 
     void setSelector(int selector_type, int graph_type, const std::string& selector_client_string = std::string())  { _local_source->setSelector(selector_type,graph_type,selector_client_string) ; }
     void setDirection(int dir) { _local_source->setDirection(dir); }
+    void setTiming(int t) { _local_source->setTiming(t); }
     void setUnit(int unit) { _local_source->setUnit(unit) ;}
 
     int direction() const { return _local_source->direction(); }

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>900</width>
     <height>385</height>
    </rect>
   </property>
@@ -80,6 +80,11 @@
           <string>Down</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>Up+Down</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item>
@@ -129,6 +134,27 @@
         <item>
          <property name="text">
           <string>Total</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Time:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="timing_CB">
+        <item>
+         <property name="text">
+          <string>Instant</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Cumlated</string>
          </property>
         </item>
        </widget>

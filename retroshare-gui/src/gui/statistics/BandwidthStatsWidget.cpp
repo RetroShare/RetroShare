@@ -48,6 +48,7 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
     ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SUM) ;
     ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SUM) ;
     ui.bwgraph_BW->setUnit(BWGraphSource::UNIT_KILOBYTES) ;
+    ui.bwgraph_BW->setTiming(BWGraphSource::TIMING_INSTANT) ;
 
 	ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_LEGEND_CUMULATED) ;
 
@@ -60,6 +61,7 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
 
     QObject::connect(ui.friend_CB  ,SIGNAL(currentIndexChanged(int )),this, SLOT( updateFriendSelection(int ))) ;
     QObject::connect(ui.updn_CB    ,SIGNAL(currentIndexChanged(int )),this, SLOT( updateUpDownSelection(int ))) ;
+    QObject::connect(ui.timing_CB  ,SIGNAL(currentIndexChanged(int )),this, SLOT( updateTimingSelection(int ))) ;
     QObject::connect(ui.unit_CB    ,SIGNAL(currentIndexChanged(int )),this, SLOT(   updateUnitSelection(int ))) ;
     QObject::connect(ui.service_CB ,SIGNAL(currentIndexChanged(int )),this, SLOT(updateServiceSelection(int ))) ;
     QObject::connect(ui.legend_CB  ,SIGNAL(currentIndexChanged(int )),this, SLOT(      updateLegendType(int ))) ;
@@ -254,12 +256,22 @@ void BandwidthStatsWidget::updateServiceSelection(int n)
     }
 }
 
+void BandwidthStatsWidget::updateTimingSelection(int n)
+{
+    if(n==0)
+        ui.bwgraph_BW->setTiming(BWGraphSource::TIMING_INSTANT) ;
+    else
+        ui.bwgraph_BW->setTiming(BWGraphSource::TIMING_CUMULATED) ;
+}
+
 void BandwidthStatsWidget::updateUpDownSelection(int n)
 {
     if(n==0)
         ui.bwgraph_BW->setDirection(BWGraphSource::DIRECTION_UP) ;
-    else
+    else if(n==1)
         ui.bwgraph_BW->setDirection(BWGraphSource::DIRECTION_DOWN) ;
+    else
+        ui.bwgraph_BW->setDirection(BWGraphSource::DIRECTION_DOWN | BWGraphSource::DIRECTION_UP) ;
 }
 void BandwidthStatsWidget::updateUnitSelection(int n)
 {

@@ -229,7 +229,13 @@ std::string BWGraphSource::makeSubItemName(uint16_t service_id,uint8_t sub_item_
 
 void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& lst,std::map<std::string,float>& vals) const
 {
-	switch(_friend_graph_type)
+   auto select_value = [this](const RSTrafficClue& tc) -> uint64_t {
+       return  (_current_unit == UNIT_KILOBYTES)?
+                                (_current_timing==TIMING_INSTANT?tc.size:tc.cumulated_size)
+                              :(_current_timing==TIMING_INSTANT?tc.count:tc.cumulated_count) ;
+   };
+
+    switch(_friend_graph_type)
 	{
 	case GRAPH_TYPE_SINGLE:
 		switch(_service_graph_type)
@@ -244,7 +250,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 
 			for(uint32_t i=0;i<256;++i)
 				if(clue_per_sub_id[i].count > 0)
-					vals[makeSubItemName(clue_per_sub_id[i].service_id,i)] = (_current_unit == UNIT_KILOBYTES)?(clue_per_sub_id[i].size):(clue_per_sub_id[i].count) ;
+                    vals[makeSubItemName(clue_per_sub_id[i].service_id,i)] = select_value(clue_per_sub_id[i]);
 		}
 			break ;
 
@@ -257,7 +263,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 					clue_per_id[it->service_id] += *it ;
 
 			for(std::map<uint16_t,RSTrafficClue>::const_iterator it(clue_per_id.begin());it!=clue_per_id.end();++it)
-		    		vals[mServiceInfoMap[it->first].mServiceName] = (_current_unit == UNIT_KILOBYTES)?(it->second.size):(it->second.count) ;
+                    vals[mServiceInfoMap[it->first].mServiceName] = select_value(it->second);
 		}
 			break ;
 		case GRAPH_TYPE_SUM:	// single friend, sum services => one curve
@@ -269,7 +275,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 				if(it->peer_id == _current_selected_friend)
 					total += *it ;
 
-			vals[visibleFriendName(_current_selected_friend)] = (_current_unit == UNIT_KILOBYTES)?(total.size):(total.count) ;
+            vals[visibleFriendName(_current_selected_friend)] = select_value(total);
 		}
 		}
 		break ;
@@ -286,7 +292,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 					clue_per_peer_id[it->peer_id] += *it ;
 
 			for(std::map<RsPeerId,RSTrafficClue>::const_iterator it(clue_per_peer_id.begin());it!=clue_per_peer_id.end();++it)
-				vals[visibleFriendName(it->first)] = (_current_unit == UNIT_KILOBYTES)?(it->second.size):(it->second.count) ;
+                vals[visibleFriendName(it->first)] = select_value(it->second);
 		}
 			break ;
 
@@ -301,7 +307,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 				clue_per_peer_id[it->peer_id] += *it;
 
 			for(std::map<RsPeerId,RSTrafficClue>::const_iterator it(clue_per_peer_id.begin());it!=clue_per_peer_id.end();++it)
-				vals[visibleFriendName(it->first)] = (_current_unit == UNIT_KILOBYTES)?(it->second.size):(it->second.count) ;
+                vals[visibleFriendName(it->first)] = select_value(it->second);
 		}
 			break ;
 		}
@@ -323,7 +329,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 
 			for(uint32_t i=0;i<256;++i)
 				if(clue_per_sub_id[i].count > 0)
-					vals[makeSubItemName(clue_per_sub_id[i].service_id,i)] = (_current_unit == UNIT_KILOBYTES)?(clue_per_sub_id[i].size):(clue_per_sub_id[i].count) ;
+                    vals[makeSubItemName(clue_per_sub_id[i].service_id,i)] = select_value(clue_per_sub_id[i]);
 		}
 			break ;
 
@@ -335,7 +341,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 				clue_per_service[it->service_id] += *it;
 
 			for(std::map<uint16_t,RSTrafficClue>::const_iterator it(clue_per_service.begin());it!=clue_per_service.end();++it)
-				vals[mServiceInfoMap[it->first].mServiceName] = (_current_unit == UNIT_KILOBYTES)?(it->second.size):(it->second.count) ;
+                vals[mServiceInfoMap[it->first].mServiceName] = select_value(it->second);
 		}
 			break ;
 
@@ -346,7 +352,7 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 			for(std::list<RSTrafficClue>::const_iterator  it(lst.begin());it!=lst.end();++it)
 				total += *it;
 
-			vals[QString("Total").toStdString()] = (_current_unit == UNIT_KILOBYTES)?(total.size):(total.count) ;
+            vals[QString("Total").toStdString()] = select_value(total);
 		}
 			break ;
 		}
@@ -545,6 +551,15 @@ void BWGraphSource::setDirection(int dir)
     _current_direction = dir ;
 
     recomputeCurrentCurves() ;
+}
+
+void BWGraphSource::setTiming(int t)
+{
+    if(t == _current_timing)
+        return;
+
+    _current_timing = t;
+    recomputeCurrentCurves();
 }
 void BWGraphSource::recomputeCurrentCurves()
 {

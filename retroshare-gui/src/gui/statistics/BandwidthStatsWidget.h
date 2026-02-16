@@ -42,6 +42,7 @@ protected slots:
     void toggleLogScale(bool b);
     void updateLegendType(int n);
     void updateGraphSelection(int n);
+    void updateTimingSelection(int n);
 
 private:
     void processSettings(bool bLoad);
