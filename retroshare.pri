@@ -229,7 +229,7 @@ no_rs_sam3_libsam3:CONFIG -= rs_sam3_libsam3
 
 
 #Wikipoos
-CONFIG *= wikipoos
+#CONFIG *= wikipoos
 
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
@@ -536,7 +536,7 @@ versionAtLeast(CMAKE_VERSION, 3.5) {
 }
 
 gxsdistsync:DEFINES *= RS_USE_GXS_DISTANT_SYNC
-wikipoos:DEFINES *= RS_USE_WIKI
+#wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
 rs_gxs_send_all:DEFINES *= RS_GXS_SEND_ALL
 rs_service_webui_terminal_password:DEFINES *= RS_SERVICE_TERMINAL_WEBUI_PASSWORD
