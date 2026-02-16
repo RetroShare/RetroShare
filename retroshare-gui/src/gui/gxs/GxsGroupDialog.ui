@@ -115,6 +115,23 @@
             <item>
              <widget class="QLineEdit" name="groupName"/>
             </item>
+            <item>
+             <widget class="QLabel" name="countryLabel">
+              <property name="text">
+               <string>Country</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="RSComboBox" name="countryCombo">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item row="1" column="1">
@@ -593,83 +610,60 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="2">
+           <widget class="QLineEdit" name="nameline">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="0">
+           <widget class="QLabel" name="countrylineLabel">
+            <property name="text">
+             <string>Country</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <layout class="QHBoxLayout" name="country_HL">
+            <item>
+             <widget class="QLabel" name="countryFlag">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="countryline">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="3" column="0">
            <widget class="QLabel" name="poplineLabel">
             <property name="text">
              <string>Popularity</string>
             </property>
            </widget>
           </item>
-          <item row="8" column="2">
-           <widget class="QLabel" name="antiSpamValueLabel">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0">
-           <widget class="QLabel" name="antiSpamLabel">
-            <property name="text">
-             <string>Anti Spam:</string>
-            </property>
-           </widget>
-          </item>
           <item row="3" column="2">
-           <widget class="QLineEdit" name="lastpostline">
+           <widget class="QLineEdit" name="popline">
             <property name="readOnly">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="6" column="2">
-           <widget class="QLabel" name="commentsValueLabel">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-            <property name="openExternalLinks">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="commentsLabel">
-            <property name="text">
-             <string>Comments:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="10" column="2">
-           <widget class="GxsIdLabel" name="authorValueLabel">
-            <property name="text">
-             <string>GxsIdLabel</string>
-            </property>
-            <property name="openExternalLinks">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="IDlineLabel">
-            <property name="text">
-             <string>ID</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="2">
-           <widget class="QLineEdit" name="IDline">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
+          <item row="4" column="0">
            <widget class="QLabel" name="postslineLabel">
             <property name="text">
              <string>Posts</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
+          <item row="4" column="2">
            <widget class="QLineEdit" name="postsline">
             <property name="text">
              <string/>
@@ -679,7 +673,73 @@
             </property>
            </widget>
           </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="lastpostlineLabel">
+            <property name="text">
+             <string>Last Post</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="2">
+           <widget class="QLineEdit" name="lastpostline">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="createdlineLabel">
+            <property name="text">
+             <string>Created</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="2">
+           <widget class="QLineEdit" name="createdline">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="IDlineLabel">
+            <property name="text">
+             <string>ID</string>
+            </property>
+           </widget>
+          </item>
           <item row="7" column="2">
+           <widget class="QLineEdit" name="IDline">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="commentsLabel">
+            <property name="text">
+             <string>Comments:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="2">
+           <widget class="QLabel" name="commentsValueLabel">
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="0">
+           <widget class="QLabel" name="distributionLabel">
+            <property name="text">
+             <string>Distribution:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="2">
            <layout class="QHBoxLayout" name="distribution_HL">
             <item>
              <widget class="QLabel" name="distributionValueLabel">
@@ -700,55 +760,51 @@
             </item>
            </layout>
           </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="distributionLabel">
+          <item row="10" column="0">
+           <widget class="QLabel" name="antiSpamLabel">
             <property name="text">
-             <string>Distribution:</string>
+             <string>Anti Spam:</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
-           <widget class="QLineEdit" name="nameline">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QLineEdit" name="popline">
-            <property name="readOnly">
-             <bool>true</bool>
+          <item row="10" column="2">
+           <widget class="QLabel" name="antiSpamValueLabel">
+            <property name="text">
+             <string>TextLabel</string>
             </property>
            </widget>
           </item>
           <item row="11" column="0">
-           <widget class="QLabel" name="moderatorsLabel">
+           <widget class="QLabel" name="authorLabel">
             <property name="text">
-             <string>Moderators:</string>
+             <string>Author:</string>
             </property>
            </widget>
           </item>
           <item row="11" column="2">
-           <widget class="GxsIdLabel" name="moderatorsValueLabel">
+           <widget class="GxsIdLabel" name="authorValueLabel">
             <property name="text">
-             <string>TextLabel</string>
+             <string>GxsIdLabel</string>
             </property>
             <property name="openExternalLinks">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="4" column="2">
-           <widget class="QLineEdit" name="createdline">
-            <property name="readOnly">
-             <bool>true</bool>
+          <item row="12" column="0">
+           <widget class="QLabel" name="moderatorsLabel">
+            <property name="text">
+             <string>Moderators:</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="createdlineLabel">
+          <item row="12" column="2">
+           <widget class="GxsIdLabel" name="moderatorsValueLabel">
             <property name="text">
-             <string>Created</string>
+             <string>TextLabel</string>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

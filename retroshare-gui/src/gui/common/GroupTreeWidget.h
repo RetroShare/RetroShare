@@ -43,8 +43,9 @@ class RSTreeWidget;
 #define GTW_COLUMN_POPULARITY   3
 #define GTW_COLUMN_LAST_POST    4
 #define GTW_COLUMN_SEARCH_SCORE 5
-#define GTW_COLUMN_DESCRIPTION  6
-#define GTW_COLUMN_COUNT        7
+#define GTW_COLUMN_COUNTRY      6
+#define GTW_COLUMN_DESCRIPTION  7
+#define GTW_COLUMN_COUNT        8
 #define GTW_COLUMN_DATA         GTW_COLUMN_NAME
 
 namespace Ui {
@@ -63,6 +64,7 @@ public:
 	QString               id;
 	QString               name;
 	QString               description;
+	QString               countryCode;
 	int                   popularity;
 	QDateTime             lastpost;
 	QIcon                 icon;

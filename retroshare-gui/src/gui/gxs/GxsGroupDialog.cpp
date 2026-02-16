@@ -35,6 +35,7 @@
 #include <retroshare/rsgxscircles.h>
 
 #include <gui/settings/rsharesettings.h>
+#include "lang/languagesupport.h"
 
 #include <iostream>
 
@@ -145,6 +146,12 @@ void GxsGroupDialog::init()
     ui.localComboBox->loadGroups(0, RsNodeGroupId());
 	
 	ui.groupDesc->setPlaceholderText(tr("Set a descriptive description here"));
+
+	/* Add country codes */
+	ui.countryCombo->addItem(tr("None"), "");
+	foreach (QString code, LanguageSupport::languageCodes()) {
+		ui.countryCombo->addItem(FilesDefs::getIconFromQtResourcePath(":/images/flags/" + code + ".png"), code.toUpper(), code.toUpper());
+	}
 
     	ui.personal_ifnopub->hide() ;
     	ui.personal_required->hide() ;
@@ -454,8 +461,27 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     /* setup name */
     ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
 
+    /* setup country */
+    int countryIndex = ui.countryCombo->findData(QString::fromStdString(mGrpMeta.mCountryCode));
+    if (countryIndex >= 0) {
+        ui.countryCombo->setCurrentIndex(countryIndex);
+    } else {
+        ui.countryCombo->setCurrentIndex(0);
+    }
+
     /* Show Mode */
     ui.nameline->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
+    ui.countryline->setText(QString::fromStdString(mGrpMeta.mCountryCode));
+    if (!mGrpMeta.mCountryCode.empty()) {
+        QString flagPath = ":/images/flags/" + QString::fromStdString(mGrpMeta.mCountryCode).toLower() + ".png";
+        if (QFileInfo::exists(flagPath)) {
+            ui.countryFlag->setPixmap(FilesDefs::getPixmapFromQtResourcePath(flagPath));
+        } else {
+            ui.countryFlag->clear();
+        }
+    } else {
+        ui.countryFlag->clear();
+    }
     ui.popline->setText(QString::number( mGrpMeta.mPop)) ;
     ui.postsline->setText(QString::number(mGrpMeta.mVisibleMsgCount));
     if(mGrpMeta.mLastPost==0)
@@ -625,10 +651,13 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta, QString &reason
 		return false;
 	}
 
-	// Fill in the MetaData as best we can.
-	meta.mGroupName = std::string(name.toUtf8());
+		// Fill in the MetaData as best we can.
 
-	meta.mGroupFlags = flags;
+		meta.mGroupName = std::string(name.toUtf8());
+
+		meta.mCountryCode = ui.countryCombo->itemData(ui.countryCombo->currentIndex()).toString().toStdString();
+
+		meta.mGroupFlags = flags;
 	meta.mSignFlags = getGroupSignFlags();
 
 	if (!setCircleParameters(meta)){

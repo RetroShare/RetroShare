@@ -49,6 +49,7 @@ Q_GUI_EXPORT int qt_defaultDpi();
 
 #define FILTER_NAME_INDEX  0
 #define FILTER_DESC_INDEX  1
+#define FILTER_COUNTRY_INDEX 2
 
 GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 		QWidget(parent), ui(new Ui::GroupTreeWidget)
@@ -87,6 +88,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	                                                                    , {GTW_COLUMN_POPULARITY,  {ROLE_SORT}}
 	                                                                    , {GTW_COLUMN_LAST_POST,   {ROLE_SORT}}
 	                                                                    , {GTW_COLUMN_SEARCH_SCORE,{ROLE_SORT}}
+	                                                                    , {GTW_COLUMN_COUNTRY,     {ROLE_SORT}}
 	                                                                    }));
 
 	/* Initialize tree widget */
@@ -103,6 +105,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	headerItem->setText(GTW_COLUMN_POPULARITY, "");
 	headerItem->setText(GTW_COLUMN_LAST_POST, "");
 	headerItem->setText(GTW_COLUMN_SEARCH_SCORE, "");
+	headerItem->setText(GTW_COLUMN_COUNTRY, tr("Country"));
 	headerItem->setText(GTW_COLUMN_DESCRIPTION, tr("Description"));
 	headerItem->setToolTip(GTW_COLUMN_NAME, tr("Name"));
 	headerItem->setToolTip(GTW_COLUMN_UNREAD, tr("Number of Unread message"));
@@ -110,6 +113,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	headerItem->setToolTip(GTW_COLUMN_POPULARITY, tr("Popularity"));
 	headerItem->setToolTip(GTW_COLUMN_LAST_POST, tr("Last Post"));
 	headerItem->setToolTip(GTW_COLUMN_SEARCH_SCORE, tr("Search Score"));
+	headerItem->setToolTip(GTW_COLUMN_COUNTRY, tr("Country"));
 	headerItem->setToolTip(GTW_COLUMN_DESCRIPTION, tr("Description"));
 	headerItem->setIcon(GTW_COLUMN_UNREAD, FilesDefs::getIconFromQtResourcePath(":/images/message-state-header.png"));
 	headerItem->setIcon(GTW_COLUMN_POSTS, FilesDefs::getIconFromQtResourcePath(":/images/filetype-association.png"));
@@ -135,6 +139,9 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	QHeaderView_setSectionResizeModeColumn(header, GTW_COLUMN_SEARCH_SCORE, QHeaderView::Interactive);
 	header->resizeSection(GTW_COLUMN_SEARCH_SCORE, 3*W+4) ;
 	header->setSectionHidden(GTW_COLUMN_SEARCH_SCORE, true);
+	QHeaderView_setSectionResizeModeColumn(header, GTW_COLUMN_COUNTRY, QHeaderView::Interactive);
+	header->resizeSection(GTW_COLUMN_COUNTRY, 5*W+4) ;
+	header->setSectionHidden(GTW_COLUMN_COUNTRY, true);
 	QHeaderView_setSectionResizeModeColumn(header, GTW_COLUMN_DESCRIPTION, QHeaderView::Interactive);
 	header->resizeSection(GTW_COLUMN_DESCRIPTION, 40*W+4) ;
 	header->setSectionHidden(GTW_COLUMN_DESCRIPTION, true);
@@ -142,6 +149,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	/* add filter actions */
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_NAME_INDEX , tr("Search Title"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Description"), FILTER_DESC_INDEX , tr("Search Description"));
+	ui->filterLineEdit->addFilter(QIcon(), tr("Country"), FILTER_COUNTRY_INDEX , tr("Search Country"));
 	ui->filterLineEdit->setCurrentFilter(FILTER_NAME_INDEX);
 
 	ui->distantSearchLineEdit->setPlaceholderText(tr("Search entire network...")) ;
@@ -414,6 +422,15 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		item->setData(GTW_COLUMN_DATA, ROLE_NAME, itemInfo.name);
 		item->setText(GTW_COLUMN_DESCRIPTION, itemInfo.description);
 		item->setData(GTW_COLUMN_DATA, ROLE_DESCRIPTION, itemInfo.description);
+		item->setText(GTW_COLUMN_COUNTRY, itemInfo.countryCode);
+		item->setData(GTW_COLUMN_COUNTRY, ROLE_SORT, itemInfo.countryCode);
+
+		if (!itemInfo.countryCode.isEmpty()) {
+			QString flagPath = ":/images/flags/" + itemInfo.countryCode.toLower() + ".png";
+			if (QFileInfo::exists(flagPath)) {
+				item->setIcon(GTW_COLUMN_COUNTRY, FilesDefs::getIconFromQtResourcePath(flagPath));
+			}
+		}
 
 		// Add children for context strings. This happens in the search.
 		while(nullptr != item->takeChild(0));
@@ -644,6 +661,9 @@ void GroupTreeWidget::calculateScore(QTreeWidgetItem *item, const QString &filte
 				break;
 			case FILTER_DESC_INDEX:
 				scoreString = item->data(GTW_COLUMN_DATA, ROLE_DESCRIPTION).toString();
+				break;
+			case FILTER_COUNTRY_INDEX:
+				scoreString = item->data(GTW_COLUMN_DATA, ROLE_SORT).toString(); // ROLE_SORT on GTW_COLUMN_COUNTRY is the country code
 				break;
 			}
 
