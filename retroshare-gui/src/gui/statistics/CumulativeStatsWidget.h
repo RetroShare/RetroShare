@@ -32,7 +32,10 @@ class QTreeWidgetItem;
 class QTabWidget;
 class QPushButton;
 
-QT_CHARTS_USE_NAMESPACE
+namespace QtCharts {
+    class QChartView;
+    class QChart;
+}
 
 class CumulativeStatsWidget : public RsAutoUpdatePage
 {
