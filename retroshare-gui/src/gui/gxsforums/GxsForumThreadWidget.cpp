@@ -2092,4 +2092,3 @@ void GxsForumThreadWidget::showAuthorInPeople(const RsGxsForumMsg& msg)
     MainWindow::showWindow(MainWindow::People);
     idDialog->navigate(RsGxsId(msg.mMeta.mAuthorId));
 }
-
