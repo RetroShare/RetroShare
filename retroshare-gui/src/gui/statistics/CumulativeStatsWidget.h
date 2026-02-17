@@ -32,10 +32,27 @@ class QTreeWidgetItem;
 class QTabWidget;
 class QPushButton;
 
-namespace QtCharts {
-    class QChartView;
-    class QChart;
-}
+// Check if we are on Qt 6 or higher
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    #include <QtCharts/QChartView>
+    #include <QtCharts/QChart>
+    
+    // Qt 6 uses the QtCharts namespace explicitly
+    namespace QtCharts {
+        class QChartView;
+        class QChart;
+    }
+    // Create aliases
+    using QChartView = QtCharts::QChartView;
+    using QChart = QtCharts::QChart;
+#else
+    // Qt 5 branch
+    #include <QChartView>
+    #include <QChart>
+    
+    // Use the macro that Qt 5 provides for Charts
+    QT_CHARTS_USE_NAMESPACE
+#endif
 
 class CumulativeStatsWidget : public RsAutoUpdatePage
 {
