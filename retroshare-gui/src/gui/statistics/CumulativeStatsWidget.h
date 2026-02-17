@@ -42,9 +42,7 @@ class QPushButton;
         class QChartView;
         class QChart;
     }
-    // Create aliases
-    using QChartView = QtCharts::QChartView;
-    using QChart = QtCharts::QChart;
+
 #else
     // Qt 5 branch
     #include <QChartView>
