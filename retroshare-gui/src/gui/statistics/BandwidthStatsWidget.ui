@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
+    <width>1072</width>
     <height>385</height>
    </rect>
   </property>
@@ -146,7 +146,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="timing_CB">
+       <widget class="RSComboBox" name="timing_CB">
         <item>
          <property name="text">
           <string>Instant</string>
@@ -178,6 +178,13 @@
           <string>Dark</string>
          </property>
         </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="clear_PB">
+        <property name="text">
+         <string>Clear</string>
+        </property>
        </widget>
       </item>
       <item>

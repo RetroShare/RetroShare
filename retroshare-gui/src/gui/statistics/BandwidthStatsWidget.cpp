@@ -63,6 +63,7 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
     QObject::connect(ui.updn_CB    ,SIGNAL(currentIndexChanged(int )),this, SLOT( updateUpDownSelection(int ))) ;
     QObject::connect(ui.timing_CB  ,SIGNAL(currentIndexChanged(int )),this, SLOT( updateTimingSelection(int ))) ;
     QObject::connect(ui.unit_CB    ,SIGNAL(currentIndexChanged(int )),this, SLOT(   updateUnitSelection(int ))) ;
+    QObject::connect(ui.clear_PB   ,SIGNAL(            clicked(    )),this, SLOT(          clearHistory(    ))) ;
     QObject::connect(ui.service_CB ,SIGNAL(currentIndexChanged(int )),this, SLOT(updateServiceSelection(int ))) ;
     QObject::connect(ui.legend_CB  ,SIGNAL(currentIndexChanged(int )),this, SLOT(      updateLegendType(int ))) ;
     QObject::connect(ui.logScale_CB,SIGNAL(            toggled(bool)),this, SLOT(        toggleLogScale(bool))) ;
@@ -92,6 +93,10 @@ BandwidthStatsWidget::~BandwidthStatsWidget ()
     processSettings(false);
 }
 
+void BandwidthStatsWidget::clearHistory()
+{
+    ui.bwgraph_BW->clear();
+}
 void BandwidthStatsWidget::processSettings(bool bLoad)
 {
     m_bProcessSettings = true;
@@ -258,6 +263,7 @@ void BandwidthStatsWidget::updateServiceSelection(int n)
 
 void BandwidthStatsWidget::updateTimingSelection(int n)
 {
+    std::cerr << "updating timing to " << n << " !" << std::endl;
     if(n==0)
         ui.bwgraph_BW->setTiming(BWGraphSource::TIMING_INSTANT) ;
     else

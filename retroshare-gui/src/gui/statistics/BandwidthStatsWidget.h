@@ -43,6 +43,7 @@ protected slots:
     void updateLegendType(int n);
     void updateGraphSelection(int n);
     void updateTimingSelection(int n);
+    void clearHistory();
 
 private:
     void processSettings(bool bLoad);

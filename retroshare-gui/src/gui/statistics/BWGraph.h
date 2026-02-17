@@ -33,6 +33,13 @@ public:
         std::list<RSTrafficClue> out_rstcl ;
         std::list<RSTrafficClue>  in_rstcl ;
     };
+    struct CumulatedStat
+    {
+        CumulatedStat() : cumulated_size(0),cumulated_count(0) {}
+        uint64_t cumulated_size;
+        uint64_t cumulated_count;
+    };
+
     class RsServiceInfoWithNames: public RsServiceInfo
     {
     public:
@@ -75,6 +82,7 @@ public:
     const std::map<RsPeerId,std::string>& visibleFriends() const { return mVisibleFriends; }
     const std::set<uint16_t>& visibleServices() const { return mVisibleServices; }
 
+    void clear();
 protected:
     void convertTrafficClueToValues(const std::list<RSTrafficClue> &lst, std::map<std::string, float> &vals) const;
 	std::string makeSubItemName(uint16_t service_id,uint8_t sub_item_type) const;
@@ -116,6 +124,7 @@ class BWGraph: public RSGraphWidget
     void setDirection(int dir) { _local_source->setDirection(dir); }
     void setTiming(int t) { _local_source->setTiming(t); }
     void setUnit(int unit) { _local_source->setUnit(unit) ;}
+    void clear() { _local_source->clear() ; }
 
     int direction() const { return _local_source->direction(); }
 
