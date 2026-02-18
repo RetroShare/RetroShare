@@ -121,7 +121,7 @@ void BWGraphSource::update()
     if(!mTrafficHistory.empty())
     {
         add_missing_elements(thc.out_rstcl,mTrafficHistory.back().out_rstcl);
-//        add_missing_elements(thc.in_rstcl ,mTrafficHistory.back().in_rstcl);
+        add_missing_elements(thc.in_rstcl ,mTrafficHistory.back().in_rstcl);
     }
 
     std::cerr << "Traffic detail:" << std::endl;
@@ -510,39 +510,27 @@ void BWGraphSource::getValues(std::map<std::string,float>& values) const
     _total_recv += 1024 * totalRates.mRateIn * _update_period_msecs/1000.0f ;
 }
 
-QString BWGraphSource::unitName() const { return (_current_unit == UNIT_KILOBYTES)?tr("KB/s"):QString(); }
+QString BWGraphSource::unitName() const
+{
+    if(_current_timing == TIMING_CUMULATED)
+        return tr("KB");
 
-//QString BWGraphSource::displayName(int i) const
-//{
-//    int n=0;
-//    for(std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator  it = _points.begin();it!=_points.end() ;++it)
-//        if(n++ == i)
-//        {
-//            // find out what is displayed
-//
-//            if(_service_graph_type == GRAPH_TYPE_SINGLE )
-//                if(_friend_graph_type != GRAPH_TYPE_ALL)
-//		    return QString::fromStdString(it->first) ;// sub item
-//		else
-//		    return QString::fromStdString(mVisibleFriends[RsPeerId(it->first)]) ;// peer id item
-//            else
-//
-//
-//        }
-//
-//    return QString("[error]");
-//}
+    if(_current_unit == UNIT_KILOBYTES)
+        return tr("KB/s");
+
+    return QString();
+}
 
 QString BWGraphSource::displayValue(float v) const
 {
     if(_current_unit == UNIT_KILOBYTES)
     {
-	    if(v < 1000)
-		    return QString::number(v,'f',2) + " B/s" ;
-	    else if(v < 1000*1024)
-		    return QString::number(v/1024.0,'f',2) + " KB/s" ;
-	    else
-		    return QString::number(v/(1024.0*1024),'f',2) + " MB/s" ;
+        QString s = niceNumber(v);
+
+        if(_current_timing == TIMING_INSTANT)
+            return s + "/s";
+        else
+            return s ;
     }
     else if(_current_unit == UNIT_COUNT)
     {

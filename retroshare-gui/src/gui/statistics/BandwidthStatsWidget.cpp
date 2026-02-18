@@ -265,9 +265,18 @@ void BandwidthStatsWidget::updateTimingSelection(int n)
 {
     std::cerr << "updating timing to " << n << " !" << std::endl;
     if(n==0)
+    {
         ui.bwgraph_BW->setTiming(BWGraphSource::TIMING_INSTANT) ;
+        ui.unit_CB->setItemText(0,"KB/s");
+        ui.legend_CB->setEnabled(true);
+    }
     else
+    {
         ui.bwgraph_BW->setTiming(BWGraphSource::TIMING_CUMULATED) ;
+        ui.unit_CB->setItemText(0,"KB");
+        ui.legend_CB->setCurrentIndex(0);
+        ui.legend_CB->setEnabled(false);
+    }
 }
 
 void BandwidthStatsWidget::updateUpDownSelection(int n)
