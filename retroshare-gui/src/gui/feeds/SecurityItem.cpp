@@ -21,6 +21,8 @@
 #include <QDateTime>
 #include <QTimer>
 #include <QMessageBox>
+#include <QMenu>
+#include <QMouseEvent>
 
 #include "SecurityItem.h"
 #include "FeedHolder.h"
@@ -373,6 +375,7 @@ void SecurityItem::banUser()
                                   QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
         AuthSSL::instance().addNotifyDeny(mGpgId, mSslCn);
+        rsPeers->removeFriend(mGpgId);
         // Remove this item from the feed as it is now handled
         removeItem(); 
     }
