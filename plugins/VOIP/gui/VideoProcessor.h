@@ -34,11 +34,11 @@ template<typename T>
 class NetQueue {
   std::vector<T> arr;
   const unsigned int mask;
-  std::atomic<unsigned int> mhead = 0;
-  std::atomic<unsigned int> mtail = 0;
+  std::atomic<unsigned int> mhead;
+  std::atomic<unsigned int> mtail;
 
 public:
-  NetQueue(unsigned int size) : arr(size), mask(size - 1) {
+  NetQueue(unsigned int size) : arr(size), mask(size - 1), mhead(0), mtail(0) {
     if(size & mask) throw std::invalid_argument("size must be a power of 2");
   }
 

@@ -9,7 +9,7 @@ if not exist "%BuildPath%" mkdir "%BuildPath%"
 if not exist "%DeployPath%" mkdir "%DeployPath%"
 
 set QMakeCmd=
-if "%ParamQtVersion%"=="5" set QMakeCmd=qmake
+if "%ParamQtVersion%"=="5" set QMakeCmd=qmake-qt5
 if "%ParamQtVersion%"=="6" set QMakeCmd=qmake6
 if "%QMakeCmd%"=="" %cecho% error "Unknown Qt version %ParamQtVersion%." & exit /B 1
 
