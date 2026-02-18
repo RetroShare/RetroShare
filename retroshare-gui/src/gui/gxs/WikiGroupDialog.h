@@ -34,7 +34,7 @@ class WikiGroupDialog : public GxsGroupDialog
 
 public:
 	WikiGroupDialog(QWidget *parent);
-	WikiGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent = NULL);
+	WikiGroupDialog(Mode mode, const RsGxsGroupId& groupId, QWidget *parent = NULL);
 	~WikiGroupDialog();
 
 protected:

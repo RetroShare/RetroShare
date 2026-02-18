@@ -90,7 +90,7 @@ WikiGroupDialog::WikiGroupDialog(QWidget *parent)
 		mEventHandlerId, wikiEventType);
 }
 
-WikiGroupDialog::WikiGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent)
+WikiGroupDialog::WikiGroupDialog(Mode mode, const RsGxsGroupId& groupId, QWidget *parent)
 :GxsGroupDialog(mode, groupId, WikiEditEnabledFlags, WikiEditDefaultsFlags, parent),
  mEventHandlerId(0)
 {
@@ -334,35 +334,28 @@ void WikiGroupDialog::addModeratorToList(const RsGxsId &gxsId)
 		return;
 	}
 
-	for (int i = 0; i < mModeratorsList->topLevelItemCount(); ++i)
+	// Check if ID already exists by searching column 1 (which contains the ID string)
+	// Column structure: column 0 = moderator name/avatar, column 1 = GxsId string
+	QString idString = QString::fromStdString(gxsId.toStdString());
+	QList<QTreeWidgetItem*> items = mModeratorsList->findItems(idString, Qt::MatchExactly, 1);
+	
+	// Verify by checking actual IDs to ensure robustness
+	for (QTreeWidgetItem* item : items)
 	{
-		QTreeWidgetItem *existingItem = mModeratorsList->topLevelItem(i);
-		if (!existingItem)
+		GxsIdRSTreeWidgetItem *gxsItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(item);
+		if (gxsItem)
 		{
-			continue;
-		}
-
-		GxsIdRSTreeWidgetItem *gxsItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(existingItem);
-		if (!gxsItem)
-		{
-			continue;
-		}
-
-		RsGxsId existingId;
-		if (!gxsItem->getId(existingId))
-		{
-			continue;
-		}
-
-		if (existingId == gxsId)
-		{
-			return;
+			RsGxsId existingId;
+			if (gxsItem->getId(existingId) && existingId == gxsId)
+			{
+				return; // ID already in list
+			}
 		}
 	}
 
 	auto *item = new GxsIdRSTreeWidgetItem(nullptr, GxsIdDetails::ICON_TYPE_AVATAR, true, mModeratorsList);
 	item->setId(gxsId, 0, false);
-	item->setText(1, QString::fromStdString(gxsId.toStdString()));
+	item->setText(1, idString);
 	const bool isActive = rsWiki->isActiveModerator(mCurrentGroupId, gxsId, time(nullptr));
 	if (!isActive)
 	{
