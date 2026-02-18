@@ -55,6 +55,7 @@ private slots:
 
 	void friendRequest();
 	void removeFriend();
+	void banUser();
 	void peerDetails();
 	void sendMsg();
 	void openChat();
