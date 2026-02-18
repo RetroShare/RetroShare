@@ -615,8 +615,9 @@ void IdEditDialog::createId()
 
         if(!keyId.isNull())
         {
+            mGroupId = RsGxsGroupId(keyId);
             QMessageBox::information(NULL,tr("Identity creation success"),tr("Your new identity was successfuly created, its ID is %1.").arg(QString::fromStdString(keyId.toStdString())));
-            close();
+            accept();
         }
         else
 			QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create identity. Something went wrong."));

@@ -28,6 +28,7 @@
 #include "util/qtthreadsutils.h"
 
 #include <retroshare/rspeers.h>
+#include <QTimer>
 
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
@@ -238,31 +239,17 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 
         if(!chooser->isInConstraintSet(details.mId)) {
             chooser->setEntryEnabled(index,false) ;
-            #ifdef IDCHOOSER_DEBUG
-            std::cerr << "GxsIdChooser: ID not in constraint set: " << details.mId << std::endl;
-            #endif
-        }
-        else {
-            #ifdef IDCHOOSER_DEBUG
-            std::cerr << "GxsIdChooser: ID in constraint set: " << details.mId << std::endl;
-            #endif
         }
 
     chooser->model()->sort(0);
 
 	// now restore the current item. Problem is, we cannot use the ID position because it may have changed.
-#ifdef IDCHOOSER_DEBUG
-    std::cerr << "GxsIdChooser: default ID = " << chooser->defaultId() << std::endl;
-#endif
 	if(!chooser->defaultId().isNull())
 	{
 		for(int indx=0;indx<chooser->count();++indx)
 			if(RsGxsId(chooser->itemData(indx).toString().toStdString()) == chooser->defaultId())
 			{
 				chooser->setCurrentIndex(indx);
-#ifdef IDCHOOSER_DEBUG
-				std::cerr << "GxsIdChooser-003 " << (void*)chooser << " setting current index to " << indx << " because it has ID=" << chooser->defaultId() << std::endl;
-#endif
 				break;
 			}
 	}
@@ -380,9 +367,6 @@ void GxsIdChooser::setDefaultItem()
 
 	if (def >= 0) {
         whileBlocking(this)->setCurrentIndex(def);
-#ifdef IDCHOOSER_DEBUG
-        std::cerr << "GxsIdChooser-002" << (void*)this << " setting current index to " << def << std::endl;
-#endif
 	}
 }
 
@@ -394,9 +378,6 @@ bool GxsIdChooser::setChosenId(const RsGxsId &gxsId)
 	int index = findData(id);
 	if (index >= 0) {
 		setCurrentIndex(index);
-#ifdef IDCHOOSER_DEBUG
-        std::cerr << "GxsIdChooser-001" << (void*)this << " setting current index to " << index << std::endl;
-#endif
 		return true;
 	}
 	return false;
@@ -453,7 +434,13 @@ void GxsIdChooser::indexActivated(int index)
 		dlg.setupNewId(false, !(mFlags & IDCHOOSER_NON_ANONYMOUS));
 		if (dlg.exec() == QDialog::Accepted) {
 			setDefaultId(RsGxsId(dlg.groupId()));
-		}
+            // Delay refresh to ensure the new identity is correctly indexed 
+            // and processed by both the service and the GUI.
+            QTimer::singleShot(200, [this]() {
+                updateDisplay(true);
+            });
+		} else {
+        }
 	}
 }
 
