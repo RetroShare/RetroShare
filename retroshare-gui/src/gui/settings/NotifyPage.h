@@ -33,6 +33,8 @@ class UserNotify;
 class FeedNotify;
 class ToasterNotify;
 
+
+
 class UserNotifySetting
 {
 public:
@@ -81,6 +83,12 @@ public:
     /** Loads the settings for this page */
     virtual void load();
 
+protected:
+	void showEvent(QShowEvent *event) override;
+
+private:
+	void loadIgnoredUsers();
+
      virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/notify.svg") ; }
 	 virtual QString pageName() const { return tr("Notify") ; }
 	 virtual QString helpText() const ;
@@ -102,6 +110,9 @@ private slots:
 	void updateToasterMargin();
 
 	void updateToasterPosition();
+	
+	void addIgnoredUser();
+	void removeIgnoredUser();
 
 private:
     RsFeedTypeFlags getNewsFlags();
