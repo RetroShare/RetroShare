@@ -36,7 +36,9 @@
 #include "util/qtthreadsutils.h"
 
 #include <retroshare/rsmail.h>
+#include <retroshare/rsmail.h>
 #include <retroshare/rspeers.h>
+#include "pqi/authssl.h"
 
 /*****
  * #define DEBUG_ITEM 1
@@ -54,6 +56,12 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 	chatButton->hide();
 	removeFriendButton->setEnabled(false);
 	removeFriendButton->hide();
+	banButton->hide();
+    
+    QPalette pal = banButton->palette();
+    pal.setColor(QPalette::ButtonText, Qt::red);
+    banButton->setPalette(pal);
+
 	peerDetailsButton->setEnabled(false);
 	friendRequesttoolButton->hide();
 	requestLabel->hide();
@@ -68,6 +76,7 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 	//connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
 
 	connect( removeFriendButton, SIGNAL(clicked()), this, SLOT(removeFriend()));
+	connect( banButton, SIGNAL(clicked()), this, SLOT(banUser()));
 	connect( peerDetailsButton, SIGNAL(clicked()), this, SLOT(peerDetails()));
 	connect( friendRequesttoolButton, SIGNAL(clicked()), this, SLOT(friendRequest()));
 
@@ -227,6 +236,7 @@ void SecurityItem::updateItem()
 
 			removeFriendButton->setEnabled(false);
 			removeFriendButton->hide();
+			banButton->show();
 			peerDetailsButton->setEnabled(false);
 			
             if(mType == RsFeedTypeFlags::RS_FEED_ITEM_SEC_BAD_CERTIFICATE)
@@ -292,6 +302,7 @@ void SecurityItem::updateItem()
 			requestLabel->hide();
 			removeFriendButton->setEnabled(true);
 			removeFriendButton->show();
+			banButton->hide();
 		}
 		else
 		{
@@ -299,6 +310,7 @@ void SecurityItem::updateItem()
 			requestLabel->show();
 			removeFriendButton->setEnabled(false);
 			removeFriendButton->hide();
+			banButton->show();
 		}
 
 		//quickmsgButton->show();
@@ -352,6 +364,20 @@ void SecurityItem::removeFriend()
 		rsPeers->removeFriend(mGpgId);
 	}
 }
+
+void SecurityItem::banUser()
+{
+    // Confirmation dialog
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, tr("Ignore User"), tr("Are you sure you want to ignore this user? They will be added to the Ignored Users list and you will not receive further notifications from them. You can manage the list in Preferences -> Notify."),
+                                  QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        AuthSSL::instance().addNotifyDeny(mGpgId, mSslCn);
+        // Remove this item from the feed as it is now handled
+        removeItem(); 
+    }
+}
+
 void SecurityItem::friendRequest()
 {
 #ifdef DEBUG_ITEM
