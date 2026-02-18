@@ -506,6 +506,9 @@ void NotifyPage::addIgnoredUser()
         if(rsPeers && rsPeers->getGPGDetails(id, details)) name = details.name;
 
         AuthSSL::instance().addNotifyDeny(id, name);
+        if(rsPeers) {
+            rsPeers->removeFriend(id);
+        }
     }
     
     // Refresh list
