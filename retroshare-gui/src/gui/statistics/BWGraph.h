@@ -27,11 +27,26 @@
 class BWGraphSource: public RSGraphSource
 {
 public:
+    struct RSTrafficClueExt: public RSTrafficClue
+    {
+        RSTrafficClueExt() : cumulated_size(0),cumulated_count(0) {}
+        explicit RSTrafficClueExt(const RSTrafficClue& c) : RSTrafficClue(c),cumulated_size(0),cumulated_count(0) {}
+        uint64_t cumulated_size;
+        uint64_t cumulated_count;
+
+        RSTrafficClueExt& operator+=(const RSTrafficClueExt& e)
+        {
+            RSTrafficClue::operator+=(e);
+            cumulated_count += e.cumulated_count;
+            cumulated_size  += e.cumulated_size;
+            return *this;
+        }
+    };
     struct TrafficHistoryChunk
     {
         time_t time_stamp;
-        std::list<RSTrafficClue> out_rstcl ;
-        std::list<RSTrafficClue>  in_rstcl ;
+        std::list<RSTrafficClueExt> out_rstcl ;
+        std::list<RSTrafficClueExt>  in_rstcl ;
     };
     struct CumulatedStat
     {
@@ -84,7 +99,7 @@ public:
 
     void clear();
 protected:
-    void convertTrafficClueToValues(const std::list<RSTrafficClue> &lst, std::map<std::string, float> &vals) const;
+    void convertTrafficClueToValues(const std::list<RSTrafficClueExt> &lst, std::map<std::string, float> &vals) const;
 	std::string makeSubItemName(uint16_t service_id,uint8_t sub_item_type) const;
     void recomputeCurrentCurves() ;
     std::string visibleFriendName(const RsPeerId &pid) const ;
@@ -112,6 +127,37 @@ private:
     std::set<uint16_t> mVisibleServices ;
 
     mutable std::map<uint16_t,RsServiceInfoWithNames> mServiceInfoMap ;
+
+    struct CumulatedRecord {
+        uint64_t cumulated_size;
+        uint64_t cumulated_count;
+
+        CumulatedRecord() : cumulated_size(0),cumulated_count(0) {}
+    };
+    struct PeerSrvSubsrv {
+        RsPeerId peer_id;
+        uint16_t service_id;
+        uint8_t  service_sub_id;
+
+        explicit PeerSrvSubsrv(const RSTrafficClue& c) : peer_id(c.peer_id),service_id(c.service_id),service_sub_id(c.service_sub_id) {}
+
+        bool operator<(const PeerSrvSubsrv& p) const
+        {
+            if(peer_id < p.peer_id) return true;
+            if(peer_id!=p.peer_id) return false;
+
+            if(service_id < p.service_id) return true;
+            if(service_id > p.service_id) return false;
+
+            return service_sub_id<p.service_sub_id;
+        }
+    };
+
+    typedef std::map<PeerSrvSubsrv,CumulatedRecord> CumulatedTrafficMap;
+
+    CumulatedTrafficMap mCumulatedTrafficMap_Out;
+    CumulatedTrafficMap mCumulatedTrafficMap_In;
+    std::map<uint64_t,RsPeerId> mReversePeerIdMap;
 };
 
 class BWGraph: public RSGraphWidget
