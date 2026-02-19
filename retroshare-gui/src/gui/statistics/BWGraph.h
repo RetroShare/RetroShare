@@ -27,12 +27,34 @@
 class BWGraphSource: public RSGraphSource
 {
 public:
+    struct RSTrafficClueExt: public RSTrafficClue
+    {
+        RSTrafficClueExt() : cumulated_size(0),cumulated_count(0) {}
+        explicit RSTrafficClueExt(const RSTrafficClue& c) : RSTrafficClue(c),cumulated_size(0),cumulated_count(0) {}
+        uint64_t cumulated_size;
+        uint64_t cumulated_count;
+
+        RSTrafficClueExt& operator+=(const RSTrafficClueExt& e)
+        {
+            RSTrafficClue::operator+=(e);
+            cumulated_count += e.cumulated_count;
+            cumulated_size  += e.cumulated_size;
+            return *this;
+        }
+    };
     struct TrafficHistoryChunk
     {
         time_t time_stamp;
-        std::list<RSTrafficClue> out_rstcl ;
-        std::list<RSTrafficClue>  in_rstcl ;
+        std::list<RSTrafficClueExt> out_rstcl ;
+        std::list<RSTrafficClueExt>  in_rstcl ;
     };
+    struct CumulatedStat
+    {
+        CumulatedStat() : cumulated_size(0),cumulated_count(0) {}
+        uint64_t cumulated_size;
+        uint64_t cumulated_count;
+    };
+
     class RsServiceInfoWithNames: public RsServiceInfo
     {
     public:
@@ -49,6 +71,7 @@ public:
     enum { GRAPH_TYPE_SINGLE=0x00, GRAPH_TYPE_ALL=0x01, GRAPH_TYPE_SUM=0x02 };
     enum { UNIT_KILOBYTES=0x00, UNIT_COUNT=0x01 };
     enum { DIRECTION_DOWN=0x01,DIRECTION_UP=0x02 };	// can be combined using binary ops
+    enum { TIMING_INSTANT = 0x01,TIMING_CUMULATED=0x02 };
 
     // re-derived from RSGraphSource
 
@@ -64,6 +87,7 @@ public:
     void setSelector(int selector_type, int graph_type, const std::string& selector_client_string = std::string()) ;
     void setDirection(int dir) ;
     void setUnit(int unit) ;
+    void setTiming(int t) ;
 
     int direction() const { return _current_direction ;}
     int unit() const { return _current_unit ;}
@@ -73,8 +97,9 @@ public:
     const std::map<RsPeerId,std::string>& visibleFriends() const { return mVisibleFriends; }
     const std::set<uint16_t>& visibleServices() const { return mVisibleServices; }
 
+    void clear();
 protected:
-    void convertTrafficClueToValues(const std::list<RSTrafficClue> &lst, std::map<std::string, float> &vals) const;
+    void convertTrafficClueToValues(const std::list<RSTrafficClueExt> &lst, std::map<std::string, float> &vals) const;
 	std::string makeSubItemName(uint16_t service_id,uint8_t sub_item_type) const;
     void recomputeCurrentCurves() ;
     std::string visibleFriendName(const RsPeerId &pid) const ;
@@ -94,6 +119,7 @@ private:
     uint16_t    _current_selected_service ;
     int         _current_unit ;
     int         _current_direction ;
+    int         _current_timing ;
 
     std::list<TrafficHistoryChunk> mTrafficHistory ;
 
@@ -101,6 +127,37 @@ private:
     std::set<uint16_t> mVisibleServices ;
 
     mutable std::map<uint16_t,RsServiceInfoWithNames> mServiceInfoMap ;
+
+    struct CumulatedRecord {
+        uint64_t cumulated_size;
+        uint64_t cumulated_count;
+
+        CumulatedRecord() : cumulated_size(0),cumulated_count(0) {}
+    };
+    struct PeerSrvSubsrv {
+        RsPeerId peer_id;
+        uint16_t service_id;
+        uint8_t  service_sub_id;
+
+        explicit PeerSrvSubsrv(const RSTrafficClue& c) : peer_id(c.peer_id),service_id(c.service_id),service_sub_id(c.service_sub_id) {}
+
+        bool operator<(const PeerSrvSubsrv& p) const
+        {
+            if(peer_id < p.peer_id) return true;
+            if(peer_id!=p.peer_id) return false;
+
+            if(service_id < p.service_id) return true;
+            if(service_id > p.service_id) return false;
+
+            return service_sub_id<p.service_sub_id;
+        }
+    };
+
+    typedef std::map<PeerSrvSubsrv,CumulatedRecord> CumulatedTrafficMap;
+
+    CumulatedTrafficMap mCumulatedTrafficMap_Out;
+    CumulatedTrafficMap mCumulatedTrafficMap_In;
+    std::map<uint64_t,RsPeerId> mReversePeerIdMap;
 };
 
 class BWGraph: public RSGraphWidget
@@ -111,7 +168,9 @@ class BWGraph: public RSGraphWidget
 
     void setSelector(int selector_type, int graph_type, const std::string& selector_client_string = std::string())  { _local_source->setSelector(selector_type,graph_type,selector_client_string) ; }
     void setDirection(int dir) { _local_source->setDirection(dir); }
+    void setTiming(int t) { _local_source->setTiming(t); }
     void setUnit(int unit) { _local_source->setUnit(unit) ;}
+    void clear() { _local_source->clear() ; }
 
     int direction() const { return _local_source->direction(); }
 
