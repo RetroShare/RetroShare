@@ -400,6 +400,10 @@ void GxsGroupDialog::setupVisibility()
 	ui.commentsLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
 	ui.commentsValueLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
 
+	ui.countryCombo->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COUNTRY);
+	ui.countryline->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COUNTRY);
+	ui.countryFlag->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COUNTRY);
+
 	ui.extraFrame->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_EXTRA);
 }
 
@@ -461,27 +465,8 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     /* setup name */
     ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
 
-    /* setup country */
-    int countryIndex = ui.countryCombo->findData(QString::fromStdString(mGrpMeta.mCountryCode));
-    if (countryIndex >= 0) {
-        ui.countryCombo->setCurrentIndex(countryIndex);
-    } else {
-        ui.countryCombo->setCurrentIndex(0);
-    }
-
     /* Show Mode */
     ui.nameline->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
-    ui.countryline->setText(QString::fromStdString(mGrpMeta.mCountryCode));
-    if (!mGrpMeta.mCountryCode.empty()) {
-        QString flagPath = ":/images/flags/" + QString::fromStdString(mGrpMeta.mCountryCode).toLower() + ".png";
-        if (QFileInfo::exists(flagPath)) {
-            ui.countryFlag->setPixmap(FilesDefs::getPixmapFromQtResourcePath(flagPath));
-        } else {
-            ui.countryFlag->clear();
-        }
-    } else {
-        ui.countryFlag->clear();
-    }
     ui.popline->setText(QString::number( mGrpMeta.mPop)) ;
     ui.postsline->setText(QString::number(mGrpMeta.mVisibleMsgCount));
     if(mGrpMeta.mLastPost==0)
@@ -654,8 +639,6 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta, QString &reason
 		// Fill in the MetaData as best we can.
 
 		meta.mGroupName = std::string(name.toUtf8());
-
-		meta.mCountryCode = ui.countryCombo->itemData(ui.countryCombo->currentIndex()).toString().toStdString();
 
 		meta.mGroupFlags = flags;
 	meta.mSignFlags = getGroupSignFlags();

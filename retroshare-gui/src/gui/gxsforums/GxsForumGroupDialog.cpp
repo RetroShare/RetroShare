@@ -35,6 +35,7 @@ const uint32_t ForumCreateEnabledFlags = (
 			// GXS_GROUP_FLAGS_SHAREKEYS  |
 			GXS_GROUP_FLAGS_ADDADMINS     |
 			GXS_GROUP_FLAGS_ANTI_SPAM     |
+			GXS_GROUP_FLAGS_COUNTRY       |
 			// GXS_GROUP_FLAGS_PERSONALSIGN  |
 			// GXS_GROUP_FLAGS_COMMENTS      |
 			0);
@@ -106,6 +107,7 @@ bool GxsForumGroupDialog::service_createGroup(RsGroupMetaData& meta)
 	RsGxsForumGroup grp;
 	grp.mMeta = meta;
 	grp.mDescription = getDescription().toUtf8().constData();
+	grp.mCountryCode = ui.countryCombo->itemData(ui.countryCombo->currentIndex()).toString().toStdString();
 	getSelectedModerators(grp.mAdminList.ids);
 
 	if(rsGxsForums->createForum(grp))
@@ -125,6 +127,7 @@ bool GxsForumGroupDialog::service_updateGroup(const RsGroupMetaData& editedMeta)
 
 	grp.mMeta = editedMeta;
 	grp.mDescription = getDescription().toUtf8().constData();
+	grp.mCountryCode = ui.countryCombo->itemData(ui.countryCombo->currentIndex()).toString().toStdString();
 
 	getSelectedModerators(grp.mAdminList.ids);
 
@@ -149,6 +152,27 @@ bool GxsForumGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, M
 	description = QString::fromUtf8(pgroup->mDescription.c_str());
 
     // Local information. Description should be handled here.
+
+    /* setup country */
+    int countryIndex = ui.countryCombo->findData(QString::fromStdString(pgroup->mCountryCode));
+    if (countryIndex >= 0) {
+        ui.countryCombo->setCurrentIndex(countryIndex);
+    } else {
+        ui.countryCombo->setCurrentIndex(0);
+    }
+
+    /* Show Mode */
+    ui.countryline->setText(QString::fromStdString(pgroup->mCountryCode));
+    if (!pgroup->mCountryCode.empty()) {
+        QString flagPath = ":/images/flags/" + QString::fromStdString(pgroup->mCountryCode).toLower() + ".png";
+        if (QFileInfo::exists(flagPath)) {
+            ui.countryFlag->setPixmap(FilesDefs::getPixmapFromQtResourcePath(flagPath));
+        } else {
+            ui.countryFlag->clear();
+        }
+    } else {
+        ui.countryFlag->clear();
+    }
 
     setSelectedModerators(pgroup->mAdminList.ids);
     ui.adminsList->sortByChecked(true);
