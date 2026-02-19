@@ -206,6 +206,9 @@ void CumulativeStatsWidget::updatePeerStats()
         item->setText(1, formatSize(kv.second.bytesIn));
         item->setText(2, formatSize(kv.second.bytesOut));
         item->setText(3, formatSize(total));
+        item->setTextAlignment(1, Qt::AlignRight | Qt::AlignVCenter);
+        item->setTextAlignment(2, Qt::AlignRight | Qt::AlignVCenter);
+        item->setTextAlignment(3, Qt::AlignRight | Qt::AlignVCenter);
         peerTree->addTopLevelItem(item);
         
         count++;
@@ -239,10 +242,19 @@ void CumulativeStatsWidget::updateServiceStats()
 {
     if (!rsConfig) return;
     
-    std::map<uint16_t, RsCumulativeTrafficStats> stats;
-    if (!rsConfig->getCumulativeTrafficByService(stats)) return;
+    std::map<uint16_t, RsCumulativeTrafficStats> statsMap;
+    if (!rsConfig->getCumulativeTrafficByService(statsMap)) return;
     
-    // Clear existing charts - remove series AND axes to prevent accumulation
+    // Move map to a vector so we can sort it by volume
+    std::vector<std::pair<uint16_t, RsCumulativeTrafficStats>> statsVector(statsMap.begin(), statsMap.end());
+
+    // Sort by Total Traffic (Bytes In + Bytes Out) Descending
+    std::sort(statsVector.begin(), statsVector.end(), 
+        [](const std::pair<uint16_t, RsCumulativeTrafficStats>& a, const std::pair<uint16_t, RsCumulativeTrafficStats>& b) {
+            return (a.second.bytesIn + a.second.bytesOut) > (b.second.bytesIn + b.second.bytesOut);
+    });
+    
+    // Clear existing charts
     serviceBarChartView->chart()->removeAllSeries();
     servicePieChartView->chart()->removeAllSeries();
     
@@ -287,7 +299,11 @@ void CumulativeStatsWidget::updateServiceStats()
     serviceNames[0x1011] = "RTT";
     serviceNames[0x2003] = "FeedReader";
     
-    for (const auto& kv : stats) {
+    // Process only the top 10
+    int count = 0;
+    for (const auto& kv : statsVector) {
+        if (count >= 10) break;
+        
         QString name = serviceNames.value(kv.first, QString("Service 0x%1").arg(kv.first, 4, 16, QChar('0')));
         
         categories << name;
@@ -303,6 +319,14 @@ void CumulativeStatsWidget::updateServiceStats()
         if (total > 0) {
             QPieSlice *slice = pieSeries->append(name, (double)total);
             slice->setLabelVisible(true);
+        
+            // Set label to be outside the pie to avoid overlapping
+            slice->setLabelPosition(QPieSlice::LabelOutside);
+        
+            // Customize the label arm (the line pointing to the slice)
+            // A value of 0.5 means the arm length is 50% of the pie radius
+            slice->setLabelArmLengthFactor(0.25); 
+            
             slice->setLabel(QString("%1: %2").arg(name).arg(formatSize(total)));
         }
         
@@ -312,7 +336,12 @@ void CumulativeStatsWidget::updateServiceStats()
         item->setText(1, formatSize(kv.second.bytesIn));
         item->setText(2, formatSize(kv.second.bytesOut));
         item->setText(3, formatSize(total));
+        item->setTextAlignment(1, Qt::AlignRight | Qt::AlignVCenter);
+        item->setTextAlignment(2, Qt::AlignRight | Qt::AlignVCenter);
+        item->setTextAlignment(3, Qt::AlignRight | Qt::AlignVCenter);
         serviceTree->addTopLevelItem(item);
+    
+        count++;
     }
     
     if (!categories.isEmpty()) {
