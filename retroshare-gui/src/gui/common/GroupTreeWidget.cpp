@@ -34,6 +34,8 @@
 #include <QMenu>
 #include <QToolButton>
 #include <QScreen>
+#include <QGuiApplication>
+#include <QFileInfo>
 
 #include <stdint.h>
 

@@ -23,6 +23,7 @@
 
 #include<set>
 
+#include <QWidget>
 #include <QTreeWidgetItem>
 #include <QDateTime>
 #include "util/FontSizeHandler.h"

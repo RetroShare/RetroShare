@@ -25,7 +25,6 @@
 #include "GxsGroupFrameDialog.h"
 #include "ui_GxsGroupFrameDialog.h"
 #include "GxsMessageFrameWidget.h"
-#include <retroshare/rsgxsforums.h>
 
 #include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
@@ -959,12 +958,7 @@ void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *
 {
 	groupItemInfo.id = QString::fromStdString(groupInfo->mMeta.mGroupId.toStdString());
 	groupItemInfo.name = QString::fromUtf8(groupInfo->mMeta.mGroupName.c_str());
-
 	groupItemInfo.countryCode = "";
-	const RsGxsForumGroup *forumGroup = dynamic_cast<const RsGxsForumGroup*>(groupInfo);
-	if (forumGroup) {
-		groupItemInfo.countryCode = QString::fromStdString(forumGroup->mCountryCode);
-	}
 
 	groupItemInfo.popularity = groupInfo->mMeta.mPop;
 	groupItemInfo.lastpost = DateTime::DateTimeFromTime_t(groupInfo->mMeta.mLastPost);
