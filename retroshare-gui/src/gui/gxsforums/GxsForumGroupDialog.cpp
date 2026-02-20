@@ -22,6 +22,7 @@
 #include "gui/common/FilesDefs.h"
 
 #include <retroshare/rsgxsforums.h>
+#include <QFileInfo>
 #include <iostream>
 
 // To start with we only have open forums - with distribution controls.
@@ -195,6 +196,5 @@ bool GxsForumGroupDialog::service_getGroupData(const RsGxsGroupId& grpId,RsGxsGe
         return false;
 
 }
-
 
 

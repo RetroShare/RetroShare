@@ -52,7 +52,7 @@ Q_GUI_EXPORT int qt_defaultDpi();
 #define FILTER_COUNTRY_INDEX 2
 
 GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
-		QWidget(parent), ui(new Ui::GroupTreeWidget)
+		QWidget(parent), mCountryColumnEnabled(false), mCountryFilterAdded(false), ui(new Ui::GroupTreeWidget)
 {
 	ui->setupUi(this);
 
@@ -97,6 +97,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	ui->treeWidget->header()->setSortIndicator(GTW_COLUMN_NAME,Qt::AscendingOrder);
 	ui->treeWidget->enableColumnCustomize(true);
 	ui->treeWidget->setColumnCustomizable(GTW_COLUMN_NAME, false);
+	ui->treeWidget->setColumnCustomizable(GTW_COLUMN_COUNTRY, false);
 
 	QTreeWidgetItem *headerItem = ui->treeWidget->headerItem();
 	headerItem->setText(GTW_COLUMN_NAME, tr("Name"));
@@ -149,7 +150,6 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	/* add filter actions */
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_NAME_INDEX , tr("Search Title"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Description"), FILTER_DESC_INDEX , tr("Search Description"));
-	ui->filterLineEdit->addFilter(QIcon(), tr("Country"), FILTER_COUNTRY_INDEX , tr("Search Country"));
 	ui->filterLineEdit->setCurrentFilter(FILTER_NAME_INDEX);
 
 	ui->distantSearchLineEdit->setPlaceholderText(tr("Search entire network...")) ;
@@ -222,6 +222,23 @@ void GroupTreeWidget::processSettings(bool load)
 
 	ui->treeWidget->setSettingsVersion(2);//Change it when modifing column properties
 	ui->treeWidget->processSettings(load);
+
+	if (!mCountryColumnEnabled) {
+		ui->treeWidget->setColumnHidden(GTW_COLUMN_COUNTRY, true);
+	}
+}
+
+void GroupTreeWidget::setCountryColumnEnabled(bool enabled)
+{
+	mCountryColumnEnabled = enabled;
+
+	ui->treeWidget->setColumnCustomizable(GTW_COLUMN_COUNTRY, enabled);
+	ui->treeWidget->setColumnHidden(GTW_COLUMN_COUNTRY, !enabled);
+
+	if (enabled && !mCountryFilterAdded) {
+		ui->filterLineEdit->addFilter(QIcon(), tr("Country"), FILTER_COUNTRY_INDEX , tr("Search Country"));
+		mCountryFilterAdded = true;
+	}
 }
 
 void GroupTreeWidget::updateColors()

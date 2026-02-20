@@ -87,6 +87,8 @@ public:
 	GroupTreeWidget(QWidget *parent = 0);
 	~GroupTreeWidget();
 
+	void setCountryColumnEnabled(bool enabled);
+
 	// Add a tool button to the tool area
 	void addToolButton(QToolButton *toolButton);
 
@@ -168,6 +170,8 @@ private:
 	// Compare role used for each column
 	RSTreeWidgetItemCompareRole *compareRole;
 	FontSizeHandler mFontSizeHandler;
+	bool mCountryColumnEnabled;
+	bool mCountryFilterAdded;
 
 	Ui::GroupTreeWidget *ui;
 };

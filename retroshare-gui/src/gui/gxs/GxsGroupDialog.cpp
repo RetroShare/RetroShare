@@ -25,6 +25,7 @@
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 #include "GxsGroupDialog.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/RetroShareLink.h"
 #include "retroshare/rsgxsflags.h"
@@ -1020,4 +1021,3 @@ void GxsGroupDialog::loadGroup(const RsGxsGroupId& grpId)
 		}, this );
 	});
 }
-
