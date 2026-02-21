@@ -28,6 +28,7 @@
 #include <QString>
 #include <QUrl>
 #include <QtDebug>
+#include <QApplication>
 #include <QMenuBar>
 #include <QActionGroup>
 
@@ -1823,8 +1824,18 @@ void MainWindow::setCompactStatusMode(bool compact)
 
 Gui_InputDialogReturn MainWindow::guiInputDialog(const QString& windowTitle, const QString& labelText, QLineEdit::EchoMode textEchoMode, bool modal)
 {
+	QWidget *activeModal = qApp->activeModalWidget();
+	if (!activeModal) {
+		activeModal = qApp->focusWidget();
+	}
+	if (!activeModal) {
+		activeModal = qApp->activeWindow();
+	}
+	if (!activeModal) {
+		activeModal = this;
+	}
 
-	QInputDialog dialog(this);
+	QInputDialog dialog(activeModal);
 	dialog.setWindowTitle(windowTitle);
 	dialog.setLabelText(labelText);
 	dialog.setTextEchoMode(textEchoMode);
