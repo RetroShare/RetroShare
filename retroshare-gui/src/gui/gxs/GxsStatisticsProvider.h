@@ -21,58 +21,15 @@
 #ifndef GXSSTATISTICSPROVIDER_H
 #define GXSSTATISTICSPROVIDER_H
 
-#include <retroshare-gui/RsAutoUpdatePage.h>
+#include "retroshare/rsgxsifacetypes.h"
 
-#include "gui/gxs/RsGxsUpdateBroadcastPage.h"
-#include "gui/RetroShareLink.h"
-#include "gui/settings/rsharesettings.h"
-#include "util/RsUserdata.h"
+// Interface for GxsUserNotify to query service statistics.
 
-#include <inttypes.h>
-
-#include "GxsIdTreeWidgetItem.h"
-#include "GxsGroupDialog.h"
-
-class GroupTreeWidget;
-class GroupItemInfo;
-class GxsMessageFrameWidget;
-class UIStateHelper;
-struct RsGxsCommentService;
-class GxsCommentDialog;
-
-class GxsStatisticsProvider  : public MainPage
+class GxsStatisticsProvider
 {
-    Q_OBJECT
-
 public:
-    GxsStatisticsProvider(RsGxsIfaceHelper *ifaceImpl, const QString& settings_name,QWidget *parent = 0,bool allow_dist_sync=false);
-    virtual ~GxsStatisticsProvider();
-
+    virtual ~GxsStatisticsProvider() = default;
     virtual void getServiceStatistics(GxsServiceStatistic& stats) const = 0;
-    virtual bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId) = 0;
-
-protected:
-    virtual void updateGroupStatistics(const RsGxsGroupId &groupId) = 0;
-    virtual void updateGroupStatisticsReal(const RsGxsGroupId &groupId) = 0;
-
-    // This needs to be overloaded by subsclasses, possibly calling the blocking API, since it is used asynchroneously.
-    virtual bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) = 0;
-
-    virtual GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId) = 0;
-
-    QString mSettingsName;
-    RsGxsIfaceHelper *mInterface;
-    bool mDistSyncAllowed;
-    std::map<RsGxsGroupId,GxsGroupStatistic> mCachedGroupStats;
-    bool mShouldUpdateGroupStatistics;
-    std::set<RsGxsGroupId> mGroupStatisticsToUpdate;
-    bool mCountChildMsgs; // Count unread child messages?
-
-    RsGxsGroupId mNavigatePendingGroupId;
-    RsGxsMessageId mNavigatePendingMsgId;
-    UIStateHelper *mStateHelper;
-
-private:
-    virtual QString settingsGroupName() = 0;
 };
+
 #endif // GXSSTATISTICSPROVIDER_H

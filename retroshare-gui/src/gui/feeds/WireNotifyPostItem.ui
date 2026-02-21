@@ -166,27 +166,27 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="subjectLabel">
-            <property name="font">
-             <font>
-              <pointsize>11</pointsize>
-              <italic>false</italic>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string notr="true">TextLabel</string>
-            </property>
-            <property name="openExternalLinks">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
            <layout class="QHBoxLayout" name="buttonHLayout">
             <property name="spacing">
              <number>8</number>
             </property>
+            <item>
+             <widget class="QLabel" name="subjectLabel">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <italic>false</italic>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string notr="true">TextLabel</string>
+              </property>
+              <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
             <item>
              <widget class="QPushButton" name="readButton">
               <property name="maximumSize">
@@ -209,78 +209,6 @@
               </property>
               <property name="flat">
                <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="scoreLabel">
-              <property name="font">
-               <font>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>0</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="voteUpButton">
-              <property name="toolTip">
-               <string>I like this</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="voteDownButton">
-              <property name="toolTip">
-               <string>I dislike this</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="downloadButton">
-              <property name="focusPolicy">
-               <enum>Qt::FocusPolicy::NoFocus</enum>
-              </property>
-              <property name="text">
-               <string>Download</string>
-              </property>
-              <property name="autoExclusive">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="playButton">
-              <property name="focusPolicy">
-               <enum>Qt::FocusPolicy::NoFocus</enum>
-              </property>
-              <property name="text">
-               <string>Play</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="commentButton">
-              <property name="text">
-               <string>Comments</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="filelabel">
-              <property name="text">
-               <string notr="true">fileLabel</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
               </property>
              </widget>
             </item>

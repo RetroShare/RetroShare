@@ -43,15 +43,6 @@ WireNotifyGroupItem::WireNotifyGroupItem(FeedHolder *feedHolder, uint32_t feedId
     addEventHandler();
 }
 
-WireNotifyGroupItem::WireNotifyGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsWireGroup &group, bool isHome, bool autoUpdate, RsWireEventCode eventCode) :
-    GxsGroupFeedItem(feedHolder, feedId, group.mMeta.mGroupId, isHome, rsWire, autoUpdate),
-    mEventCode(eventCode)
-{
-    setup();
-    setGroup(group);
-    addEventHandler();
-}
-
 void WireNotifyGroupItem::addEventHandler()
 {
     mEventHandlerId = 0;
@@ -68,6 +59,8 @@ void WireNotifyGroupItem::addEventHandler()
             {
                 case RsWireEventCode::FOLLOW_STATUS_CHANGED:
                 case RsWireEventCode::WIRE_UPDATED:
+                    mGroup = RsWireGroup();
+                    requestGroup();
                     break;
                 default:
                     break;
@@ -137,6 +130,7 @@ void WireNotifyGroupItem::loadGroup()
         if(!rsWire->getGroups(groupIds,groups))
         {
             RsErr() << "WireNotifyGroupItem::loadGroup() ERROR getting data" << std::endl;
+            deferred_update();
             return;
         }
 
@@ -144,6 +138,7 @@ void WireNotifyGroupItem::loadGroup()
         {
             std::cerr << "WireNotifyGroupItem::loadGroup() Wrong number of Items";
             std::cerr << std::endl;
+            deferred_update();
             return;
         }
         RsWireGroup group(groups[0]);

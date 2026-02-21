@@ -18,43 +18,4 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <QMenu>
-#include <QMessageBox>
-#include <QToolButton>
-
 #include "GxsStatisticsProvider.h"
-
-#include "gui/common/UserNotify.h"
-#include "util/qtthreadsutils.h"
-#include "retroshare/rsgxsifacetypes.h"
-
-#define TOKEN_TYPE_GROUP_SUMMARY    1
-//#define TOKEN_TYPE_SUBSCRIBE_CHANGE 2
-//#define TOKEN_TYPE_CURRENTGROUP     3
-#define TOKEN_TYPE_STATISTICS       4
-
-#define MAX_COMMENT_TITLE 32
-
-static const uint32_t DELAY_BETWEEN_GROUP_STATISTICS_UPDATE = 120; // do not update group statistics more often than once every 2 mins
-
-/*
- * Transformation Notes:
- *   there are still a couple of things that the new groups differ from Old version.
- *   these will need to be addressed in the future.
- *     -> Child TS (for sorting) is not handled by GXS, this will probably have to be done in the GUI.
- *     -> Need to handle IDs properly.
- *     -> Much more to do.
- */
-
-/** Constructor */
-GxsStatisticsProvider::GxsStatisticsProvider(RsGxsIfaceHelper *ifaceImpl,const QString& settings_name, QWidget *parent,bool allow_dist_sync)
-: MainPage(parent),mSettingsName(settings_name)
-{
-    mDistSyncAllowed = allow_dist_sync;
-    mInterface = ifaceImpl;
-    mShouldUpdateGroupStatistics = false;
-}
-
-GxsStatisticsProvider::~GxsStatisticsProvider()
-{
-}

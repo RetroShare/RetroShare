@@ -23,7 +23,7 @@
 #include "gui/MainWindow.h"
 #include "gui/common/FilesDefs.h"
 
-PostedUserNotify::PostedUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent) :
+PostedUserNotify::PostedUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsStatisticsProvider *g, QObject *parent) :
     GxsUserNotify(ifaceImpl, g, parent)
 {
 }

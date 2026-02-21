@@ -1119,8 +1119,8 @@ static QString groupFrameSettingsTypeToString(GroupFrameSettings::Type type)
 	case GroupFrameSettings::Posted:
 		return "Posted";
 #ifdef RS_USE_WIRE
-    case GroupFrameSettings::Wire:
-            return "Wire" ;
+	case GroupFrameSettings::Wire:
+		return "Wire";
 #endif
 	}
 

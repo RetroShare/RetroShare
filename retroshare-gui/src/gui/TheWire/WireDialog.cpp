@@ -25,7 +25,6 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
-#include "gui/common/NotifyWidget.h"
 #include "gui/gxs/GxsStatisticsProvider.h"
 #include "gui/gxs/GxsGroupShareKey.h"
 
@@ -62,17 +61,19 @@
 // #define GROUP_SET_RECOMMENDED   (5)
 
 
-#define WIRE_TOKEN_TYPE_SUBSCRIBE_CHANGE 1
-#define TOKEN_TYPE_GROUP_SUMMARY    1
-
 /** Constructor */
 WireDialog::WireDialog(QWidget *parent)
-    : GxsStatisticsProvider(rsWire, settingsGroupName(),parent, true), mGroupSet(GROUP_SET_ALL)
-    , mAddDialog(nullptr), mGroupSelected(nullptr), mWireQueue(nullptr)
+    : MainPage(parent), mGroupSet(GROUP_SET_ALL)
+    , mAddDialog(nullptr), mGroupSelected(nullptr)
     , mHistoryIndex(-1), mEventHandlerId(0), mSortAscending(false)
     , mAccountSortType(0), mHideInactiveAccounts(false)
 {
 	ui.setupUi(this);
+
+	mInterface = rsWire;
+	mSettingsName = "WireDialog";
+	mDistSyncAllowed = true;
+	mStateHelper = nullptr;
 
 	connect( ui.toolButton_createAccount, SIGNAL(clicked()), this, SLOT(createGroup()));
 	connect( ui.toolButton_createPulse, SIGNAL(clicked()), this, SLOT(createPulse()));
@@ -126,8 +127,6 @@ WireDialog::WireDialog(QWidget *parent)
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
 	timer->start(1000);
 
-	/* setup TokenQueue */
-	mWireQueue = new TokenQueue(rsWire->getTokenService(), this);
 	mCountChildMsgs = false;
 	mShouldUpdateGroupStatistics = false;
 	mDistSyncAllowed = true;
@@ -195,7 +194,6 @@ WireDialog::~WireDialog()
 	processSettings(false);
 	
 	clearTwitterView();
-    delete(mWireQueue);
 
     rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
@@ -435,14 +433,12 @@ void WireDialog::subscribe(RsGxsGroupId &groupId)
 {
 	uint32_t token;
 	rsWire->subscribeToGroup(token, groupId, true);
-	mWireQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, WIRE_TOKEN_TYPE_SUBSCRIBE_CHANGE);
 }
 
 void WireDialog::unsubscribe(RsGxsGroupId &groupId)
 {
 	uint32_t token;
 	rsWire->subscribeToGroup(token, groupId, false);
-	mWireQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, WIRE_TOKEN_TYPE_SUBSCRIBE_CHANGE);
 }
 
 void WireDialog::notifyGroupSelection(WireGroupItem *item)
@@ -734,25 +730,12 @@ void WireDialog::requestGroupData()
 	std::cerr << "WireDialog::requestGroupData()";
 	std::cerr << std::endl;
 
-	RsTokReqOptions opts;
-	uint32_t token;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	mWireQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, 0);
-}
-
-bool WireDialog::loadGroupData(const uint32_t &token)
-{
-	std::cerr << "WireDialog::loadGroupData()";
-	std::cerr << std::endl;
-
 	std::vector<RsWireGroup> groups;
-	rsWire->getGroupData(token, groups);
+	rsWire->getGroups({}, groups);
 
-	// save list of groups.
 	updateGroups(groups);
 	showGroups();
 
-	// check for pending navigation
 	if (!mNavigatePendingGroupId.isNull()) {
 		if (!mNavigatePendingMsgId.isNull()) {
 			requestPulseFocus(mNavigatePendingGroupId, mNavigatePendingMsgId);
@@ -762,7 +745,6 @@ bool WireDialog::loadGroupData(const uint32_t &token)
 		mNavigatePendingGroupId.clear();
 		mNavigatePendingMsgId.clear();
 	}
-	return true;
 }
 
 rstime_t WireDialog::getFilterTimestamp()
@@ -787,60 +769,6 @@ rstime_t WireDialog::getFilterTimestamp()
 	}
 	return filterTimestamp;
 }
-
-void WireDialog::acknowledgeGroup(const uint32_t &token, const uint32_t &userType)
-{
-	/* reload groups */
-	std::cerr << "WireDialog::acknowledgeGroup(usertype: " << userType << ")";
-	std::cerr << std::endl;
-
-	RsGxsGroupId grpId;
-	rsWire->acknowledgeGrp(token, grpId);
-
-	refreshGroups();
-}
-
-
-/**************************** Request / Response Filling of Data ************************/
-
-void WireDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-	std::cerr << "WireDialog::loadRequest()";
-	std::cerr << std::endl;
-
-	if (queue == mWireQueue)
-	{
-		/* now switch on req */
-		switch(req.mType)
-		{
-			case TOKENREQ_GROUPINFO:
-				switch(req.mAnsType)
-				{
-					case RS_TOKREQ_ANSTYPE_DATA:
-						loadGroupData(req.mToken);
-						break;
-					case RS_TOKREQ_ANSTYPE_ACK:
-						acknowledgeGroup(req.mToken, req.mUserType);
-						break;
-					default:
-						std::cerr << "WireDialog::loadRequest() ERROR: GROUP: INVALID ANS TYPE";
-						std::cerr << std::endl;
-						break;
-				}
-				break;
-			default:
-				std::cerr << "WireDialog::loadRequest() ERROR: INVALID TYPE";
-				std::cerr << std::endl;
-				break;
-		}
-	}
-}
-
-
-/**************************** Request / Response Filling of Data ************************/
-
-
-
 
 
 /****************************************************************************************/
@@ -894,55 +822,10 @@ void WireDialog::PVHrepublish(const RsGxsGroupId &groupId, const RsGxsMessageId 
 	std::cerr << " MsgId: " << msgId;
 	std::cerr << std::endl;
 
-	int idx = ui.groupChooser->currentIndex();
-	if (idx < 0 || idx >= (int)mOwnGroups.size()) {
-		std::cerr << "WireDialog::PVHrepublish() No own group selected";
-		std::cerr << std::endl;
-		QMessageBox::warning(this, tr("RetroShare"), tr("Please select your Wire account first"), QMessageBox::Ok);
-		return;
-	}
-
-	RsGxsGroupId replyWith = mOwnGroups[idx].mMeta.mGroupId;
-	setCursor(Qt::WaitCursor);
-
-	RsThread::async([this, groupId, msgId, replyWith]()
+	if (setupPulseAddDialog())
 	{
-		RsWirePulseSPtr origPulse;
-		if (!rsWire->getWirePulse(groupId, msgId, origPulse))
-		{
-			std::cerr << "WireDialog::PVHrepublish() failed to fetch original pulse";
-			std::cerr << std::endl;
-			RsQThreadUtils::postToObject([this]()
-			{
-				setCursor(Qt::ArrowCursor);
-			}, this);
-			return;
-		}
-
-		RsWirePulseSPtr pPulse(new RsWirePulse());
-		pPulse->mSentiment = origPulse->mSentiment;
-		pPulse->mPulseText = origPulse->mPulseText;
-		pPulse->mImage1 = origPulse->mImage1;
-		pPulse->mImage2 = origPulse->mImage2;
-		pPulse->mImage3 = origPulse->mImage3;
-		pPulse->mImage4 = origPulse->mImage4;
-
-		RsGxsMessageId targetMsgId = origPulse->mMeta.mOrigMsgId;
-		if (targetMsgId.isNull()) {
-			targetMsgId = msgId;
-		}
-
-		bool success = rsWire->createReplyPulse(groupId, targetMsgId, replyWith,
-			WIRE_PULSE_TYPE_REPUBLISH, pPulse);
-
-		RsQThreadUtils::postToObject([this, success]()
-		{
-			setCursor(Qt::ArrowCursor);
-			if (!success) {
-				std::cerr << "WireDialog::PVHrepublish() FAILED" << std::endl;
-			}
-		}, this);
-	});
+		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_REPUBLISH);
+	}
 }
 
 void WireDialog::PVHlike(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
@@ -951,34 +834,10 @@ void WireDialog::PVHlike(const RsGxsGroupId &groupId, const RsGxsMessageId &msgI
 	std::cerr << " MsgId: " << msgId;
 	std::cerr << std::endl;
 
-	int idx = ui.groupChooser->currentIndex();
-	if (idx < 0 || idx >= (int)mOwnGroups.size()) {
-		std::cerr << "WireDialog::PVHlike() No own group selected";
-		std::cerr << std::endl;
-		QMessageBox::warning(this, tr("RetroShare"), tr("Please select your Wire account first"), QMessageBox::Ok);
-		return;
-	}
-
-	RsGxsGroupId replyWith = mOwnGroups[idx].mMeta.mGroupId;
-	setCursor(Qt::WaitCursor);
-
-	RsThread::async([this, groupId, msgId, replyWith]()
+	if (setupPulseAddDialog())
 	{
-		RsWirePulseSPtr pPulse(new RsWirePulse());
-		pPulse->mSentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
-		pPulse->mPulseText = "";
-
-		bool success = rsWire->createReplyPulse(groupId, msgId, replyWith,
-			WIRE_PULSE_TYPE_LIKE, pPulse);
-
-		RsQThreadUtils::postToObject([this, success]()
-		{
-			setCursor(Qt::ArrowCursor);
-			if (!success) {
-				std::cerr << "WireDialog::PVHlike() FAILED" << std::endl;
-			}
-		}, this);
-	});
+		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_LIKE);
+	}
 }
 
 void WireDialog::PVHviewGroup(const RsGxsGroupId &groupId)
@@ -1022,7 +881,6 @@ void WireDialog::PVHfollow(const RsGxsGroupId &groupId)
 
 	uint32_t token;
 	rsWire->subscribeToGroup(token, groupId, true);
-	mWireQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, WIRE_TOKEN_TYPE_SUBSCRIBE_CHANGE);
 }
 
 void WireDialog::PVHrate(const RsGxsId &authorId)

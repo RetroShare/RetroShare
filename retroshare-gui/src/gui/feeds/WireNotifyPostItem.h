@@ -38,12 +38,7 @@ class WireNotifyPostItem : public GxsFeedItem
     Q_OBJECT
 
 public:
-    // This one is used in NewFeed for incoming Wire posts. Only the group and msg ids are known at this point.
-    // It can be used for all apparences of wire posts. But in rder to merge comments from the previous versions of the post, the list of
-    // previous posts should be supplied. It's optional. If not supplied only the comments of the new version will be displayed.
-    WireNotifyPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
-    WireNotifyPostItem(FeedHolder *parent, uint32_t feedId, const RsGroupMetaData& group_meta, const RsGxsMessageId& messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
-    //WireNotifyPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsWireGroup &group, bool isHome, bool autoUpdate);
+    WireNotifyPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
 
 	virtual ~WireNotifyPostItem();
 
@@ -52,7 +47,6 @@ public:
 	bool setPost(const RsWirePulse& pulse, bool doFill = true);
 	void setGroup(const RsWireGroup &group);
 
-	bool isLoaded() const {return mLoaded;};
 	bool isUnread() const ;
 	void setReadStatus(bool isNew, bool isUnread);
 
@@ -89,7 +83,8 @@ private:
 private:
     bool mInFill;
     bool mCloseOnRead;
-    bool mLoaded;
+
+    LoadingStatus mLoadingStatus;
 
     bool mLoadingMessage;
     bool mLoadingGroup;
@@ -98,6 +93,7 @@ private:
 
     RsGroupMetaData mGroupMeta;
     RsWirePulse mPulse;
+    RsWireGroup mGroup;
 
     /** Qt Designer generated object */
     Ui::WireNotifyPostItem *ui;

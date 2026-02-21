@@ -112,13 +112,17 @@ void PulseViewGroup::setup()
             uint32_t replies = mGroup->mRefReplies;
             uint32_t republishes = mGroup->mRefRepublishes;
             uint32_t likes = mGroup->mRefLikes;
-            // uint32_t following = mGroup->mGroupFollowing; // TODO: field not yet in RsWireGroup
 
             label_extra_pulses->setText(BoldString(ToNumberUnits(pulses)));
             label_extra_replies->setText(BoldString(ToNumberUnits(replies)));
             label_extra_republishes->setText(BoldString(ToNumberUnits(republishes)));
             label_extra_likes->setText(BoldString(ToNumberUnits(likes)));
-            // label_extra_following->setText(BoldString(ToNumberUnits(following))); // TODO: enable when mGroupFollowing added
+
+            uint32_t following = mGroup->mGroupFollowing;
+            label_extra_following->setText(BoldString(ToNumberUnits(following)));
+
+            uint32_t followers = mGroup->mGroupFollowers;
+            label_extra_followers->setText(BoldString(ToNumberUnits(followers)));
 
             // hide follow button but keep copy link visible.
             followButton->setVisible(false);

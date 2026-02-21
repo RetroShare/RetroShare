@@ -623,7 +623,6 @@ HEADERS +=  rshare.h \
             gui/NetworkDialog/pgpid_item_model.h \
             gui/NetworkDialog/pgpid_item_proxy.h \
             gui/common/RsCollection.h \
-            gui/common/NotifyWidget.h \
             util/retroshareWin32.h
 
 FORMS +=    gui/StartDialog.ui \
@@ -717,7 +716,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/RsCollectionDialog.ui \
             gui/common/HeaderFrame.ui \
             gui/common/RSFeedWidget.ui \
-            gui/common/NotifyWidget.ui \
             gui/style/StyleDialog.ui \
             gui/statistics/BandwidthGraphWindow.ui \
             gui/statistics/BandwidthStatsWidget.ui \
@@ -895,7 +893,6 @@ SOURCES +=  main.cpp \
             gui/common/FlowLayout.cpp \
             gui/common/PictureFlow.cpp \
             gui/common/ToasterNotify.cpp \
-            gui/common/NotifyWidget.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/RSPermissionMatrixWidget.cpp \

@@ -37,7 +37,6 @@ class WireNotifyGroupItem : public GxsGroupFeedItem
 public:
     /** Default Constructor */
     WireNotifyGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate, RsWireEventCode eventCode = RsWireEventCode::NEW_WIRE);
-    WireNotifyGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsWireGroup &group, bool isHome, bool autoUpdate, RsWireEventCode eventCode = RsWireEventCode::NEW_WIRE);
     ~WireNotifyGroupItem();
 
     bool setGroup(const RsWireGroup &group);

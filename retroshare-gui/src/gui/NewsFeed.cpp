@@ -529,17 +529,8 @@ void NewsFeed::handleWireEvent(std::shared_ptr<const RsEvent> event)
         addFeedItem( new WireNotifyGroupItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, false, true, RsWireEventCode::NEW_WIRE));
         break;
     case RsWireEventCode::NEW_POST:
-        addFeedItem( new WireNotifyPostItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, pe->mWireMsgId, false, true));
+        addFeedItem( new WireNotifyPostItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, pe->mWireMsgId, true));
         break;
-//    case RsWireEventCode::NEW_REPLY:
-//        addFeedItem( new WireNotifyPostItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, pe->mWireMsgId, false, true));
-//        break;
-//    case RsWireEventCode::NEW_REPUBLISH:
-//        addFeedItem( new WireNotifyPostItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, pe->mWireMsgId, false, true));
-//        break;
-//    case RsWireEventCode::NEW_LIKE:
-//        addFeedItem( new WireNotifyPostItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, pe->mWireMsgId, false, true));
-//        break;
     case RsWireEventCode::WIRE_UPDATED:
         addFeedItem( new WireNotifyGroupItem(this, NEWSFEED_WIRELIST, pe->mWireGroupId, false, true, RsWireEventCode::WIRE_UPDATED));
         break;

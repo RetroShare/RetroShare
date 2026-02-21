@@ -307,6 +307,7 @@ void PulseAddDialog::setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId 
              * Qt::QueuedConnection is important!
              */
 
+            mGroup = *pGroup;
             setReplyTo(*pPulse, pPulse, pGroup->mMeta.mGroupName, replyType);
         }, this );
 

@@ -24,7 +24,6 @@
 #include <QObject>
 #include "gui/common/UserNotify.h"
 #include "gui/gxs/GxsStatisticsProvider.h"
-#include "gui/gxs/GxsGroupFrameDialog.h"
 
 class RsGxsIfaceHelper;
 class RsGxsUpdateBroadcastBase;
