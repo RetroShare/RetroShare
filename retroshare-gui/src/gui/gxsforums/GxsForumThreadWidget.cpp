@@ -1997,7 +1997,12 @@ void GxsForumThreadWidget::updateGroupData()
              * after a blocking call to RetroShare API complete */
 
                 mForumGroup = group;
-                mThreadId.clear();
+
+                // Only clear the selected thread if we actually changed forums.
+                // When refreshing the same forum (e.g. new message event),
+                // we want to keep the currently selected post visible.
+                if(group.mMeta.mGroupId != mThreadModel->currentGroupId())
+                    mThreadId.clear();
 
                 ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
                 ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
