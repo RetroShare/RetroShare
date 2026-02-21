@@ -97,7 +97,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1" colspan="6">
+          <item row="0" column="1" colspan="7">
            <layout class="QHBoxLayout" name="groupName_HL">
             <property name="spacing">
              <number>6</number>
@@ -135,6 +135,19 @@
            </widget>
           </item>
           <item row="1" column="3">
+           <spacer name="countryOwnerSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="4">
            <widget class="QLabel" name="idChooserLabel">
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The identity here can be used to send feedback.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -144,10 +157,10 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="4">
+          <item row="1" column="5">
            <widget class="GxsIdChooser" name="idChooser"/>
           </item>
-          <item row="1" column="5">
+          <item row="1" column="6">
            <widget class="QCheckBox" name="addAdmins_cb">
             <property name="toolTip">
              <string/>
@@ -161,7 +174,7 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="6">
+          <item row="1" column="7">
            <widget class="QCheckBox" name="pubKeyShare_cb">
             <property name="toolTip">
              <string>Key recipients can publish to restricted-type group and can view and publish for private-type channels</string>
@@ -580,13 +593,6 @@
            <widget class="QLabel" name="authorLabel">
             <property name="text">
              <string>Author:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="lastpostlineLabel">
-            <property name="text">
-             <string>Last Post</string>
             </property>
            </widget>
           </item>

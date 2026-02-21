@@ -401,9 +401,12 @@ void GxsGroupDialog::setupVisibility()
 	ui.commentsLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
 	ui.commentsValueLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
 
-	ui.countryCombo->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COUNTRY);
-	ui.countryline->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COUNTRY);
-	ui.countryFlag->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COUNTRY);
+	const bool showCountry = mEnabledFlags & GXS_GROUP_FLAGS_COUNTRY;
+	ui.countryLabel->setVisible(showCountry);
+	ui.countryCombo->setVisible(showCountry);
+	ui.countrylineLabel->setVisible(showCountry);
+	ui.countryline->setVisible(showCountry);
+	ui.countryFlag->setVisible(showCountry);
 
 	ui.extraFrame->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_EXTRA);
 }
