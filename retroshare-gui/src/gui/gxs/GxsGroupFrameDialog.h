@@ -221,12 +221,12 @@ private:
 	bool mShouldUpdateMessageSummaryList ; // whether we should update the counting for groups. This takes some CPU so we only do it when needed.
     std::set<RsGxsGroupId> mGroupIdsSummaryToUpdate;
 
-    // GroupStatistics update
+	// GroupStatistics update
     bool mShouldUpdateGroupStatistics;
     rstime_t mLastGroupStatisticsUpdateTs;
     std::set<RsGxsGroupId> mGroupStatisticsToUpdate;
 
-	UIStateHelper *mStateHelper;
+    UIStateHelper *mStateHelper;
 
 	/** Qt Designer generated object */
 	Ui::GxsGroupFrameDialog *ui;
