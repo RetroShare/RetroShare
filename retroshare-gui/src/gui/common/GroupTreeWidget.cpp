@@ -209,7 +209,7 @@ void GroupTreeWidget::addToolButton(QToolButton *toolButton)
 	}
 
 	toolButton->setAutoRaise(true);
-	toolButton->setIconSize(QSize(32*y/i,32*y/i));
+	toolButton->setIconSize(QSize(24*y/i,24*y/i));
 	toolButton->setFocusPolicy(Qt::NoFocus);
 
 	ui->toolBarFrame->layout()->addWidget(toolButton);
@@ -222,7 +222,7 @@ void GroupTreeWidget::processSettings(bool load)
 		return;
 	}
 
-	ui->treeWidget->setSettingsVersion(3);//Change it when modifing column properties
+	ui->treeWidget->setSettingsVersion(2);//Change it when modifing column properties
 	ui->treeWidget->processSettings(load);
 
 	if (!mCountryColumnEnabled) {
@@ -682,7 +682,7 @@ void GroupTreeWidget::calculateScore(QTreeWidgetItem *item, const QString &filte
 				scoreString = item->data(GTW_COLUMN_DATA, ROLE_DESCRIPTION).toString();
 				break;
 			case FILTER_COUNTRY_INDEX:
-				scoreString = item->data(GTW_COLUMN_COUNTRY, ROLE_SORT).toString();
+				scoreString = item->data(GTW_COLUMN_DATA, ROLE_SORT).toString(); // ROLE_SORT on GTW_COLUMN_COUNTRY is the country code
 				break;
 			}
 

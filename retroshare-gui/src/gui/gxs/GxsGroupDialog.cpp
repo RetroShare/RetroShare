@@ -20,7 +20,6 @@
 
 #include <QMessageBox>
 #include <QPushButton>
-#include <QFileInfo>
 
 #include "util/misc.h"
 #include "util/DateTime.h"
@@ -152,13 +151,8 @@ void GxsGroupDialog::init()
 	/* Add country codes */
 	ui.countryCombo->addItem(tr("None"), "");
 	foreach (QString code, LanguageSupport::languageCodes()) {
-		ui.countryCombo->addItem(
-		        FilesDefs::getIconFromQtResourcePath(":/images/flags/" + code + ".png"),
-		        code.toUpper(), code.toLower() );
+		ui.countryCombo->addItem(FilesDefs::getIconFromQtResourcePath(":/images/flags/" + code + ".png"), code.toUpper(), code.toUpper());
 	}
-	ui.countryCombo->setIconSize(QSize(32, 32));
-	ui.countryFlag->setFixedSize(32, 32);
-	ui.countryFlag->setScaledContents(true);
 
     	ui.personal_ifnopub->hide() ;
     	ui.personal_required->hide() ;
@@ -494,26 +488,7 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 	
     ui.IDline->setText(QString::fromStdString(mGrpMeta.mGroupId.toStdString()));
     ui.descriptiontextEdit->setPlainText(description);
-	const QString countryCode = QString::fromStdString(mGrpMeta.mCountryCode).toLower();
-	const int countryIndex = ui.countryCombo->findData(countryCode);
-	if(countryIndex >= 0)
-		ui.countryCombo->setCurrentIndex(countryIndex);
-	else
-		ui.countryCombo->setCurrentIndex(0);
 
-	ui.countryline->setText(countryCode.toUpper());
-	if(!countryCode.isEmpty())
-	{
-		const QString flagPath = ":/images/flags/" + countryCode + ".png";
-		if(QFileInfo::exists(flagPath))
-			ui.countryFlag->setPixmap(FilesDefs::getPixmapFromQtResourcePath(flagPath));
-		else
-			ui.countryFlag->clear();
-	}
-	else
-	{
-		ui.countryFlag->clear();
-	}
     switch (mode())
     {
     case MODE_CREATE:{
@@ -665,10 +640,11 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta, QString &reason
 		return false;
 	}
 
-	// Fill in the MetaData as best we can.
-	meta.mGroupName = std::string(name.toUtf8());
-	meta.mCountryCode = ui.countryCombo->itemData(ui.countryCombo->currentIndex()).toString().toStdString();
-	meta.mGroupFlags = flags;
+		// Fill in the MetaData as best we can.
+
+		meta.mGroupName = std::string(name.toUtf8());
+
+		meta.mGroupFlags = flags;
 	meta.mSignFlags = getGroupSignFlags();
 
 	if (!setCircleParameters(meta)){
