@@ -43,6 +43,24 @@
 #include "retroshare/rspeers.h"
 #include "retroshare/rstypes.h"
 
+class SizeSortWidgetItem : public QTreeWidgetItem {
+public:
+    using QTreeWidgetItem::QTreeWidgetItem;
+
+    // This tells the TreeWidget how to compare two items
+    bool operator<(const QTreeWidgetItem &other) const override {
+        int column = treeWidget()->sortColumn();
+        
+        // If it's a numeric column (1, 2, or 3), sort by raw data
+        if (column >= 1 && column <= 3) {
+            return data(column, Qt::UserRole).toLongLong() < other.data(column, Qt::UserRole).toLongLong();
+        }
+        
+        // Otherwise, use default string sorting (e.g., for Name column 0)
+        return QTreeWidgetItem::operator<(other);
+    }
+};
+
 CumulativeStatsWidget::CumulativeStatsWidget(QWidget *parent)
     : RsAutoUpdatePage(5000, parent)  // 5 seconds to reduce CPU usage
 {
@@ -222,11 +240,15 @@ void CumulativeStatsWidget::updatePeerStats()
         }
         
         // Tree widget
-        QTreeWidgetItem *item = new QTreeWidgetItem();
+        SizeSortWidgetItem *item = new SizeSortWidgetItem();
         item->setText(0, QString::fromUtf8(details.name.c_str()));
         item->setText(1, formatSize(kv.second.bytesIn));
+        item->setData(1, Qt::UserRole, (qlonglong)kv.second.bytesIn);
         item->setText(2, formatSize(kv.second.bytesOut));
+        item->setData(2, Qt::UserRole, (qlonglong)kv.second.bytesOut);
         item->setText(3, formatSize(total));
+        item->setData(3, Qt::UserRole, (qlonglong)total);
+
         item->setTextAlignment(1, Qt::AlignRight | Qt::AlignVCenter);
         item->setTextAlignment(2, Qt::AlignRight | Qt::AlignVCenter);
         item->setTextAlignment(3, Qt::AlignRight | Qt::AlignVCenter);
@@ -364,11 +386,15 @@ void CumulativeStatsWidget::updateServiceStats()
         }
         
         // Tree widget
-        QTreeWidgetItem *item = new QTreeWidgetItem();
+        SizeSortWidgetItem *item = new SizeSortWidgetItem();
         item->setText(0, name);
         item->setText(1, formatSize(kv.second.bytesIn));
+        item->setData(1, Qt::UserRole, (qlonglong)kv.second.bytesIn);
         item->setText(2, formatSize(kv.second.bytesOut));
+        item->setData(2, Qt::UserRole, (qlonglong)kv.second.bytesOut);
         item->setText(3, formatSize(total));
+        item->setData(3, Qt::UserRole, (qlonglong)total);
+    
         item->setTextAlignment(1, Qt::AlignRight | Qt::AlignVCenter);
         item->setTextAlignment(2, Qt::AlignRight | Qt::AlignVCenter);
         item->setTextAlignment(3, Qt::AlignRight | Qt::AlignVCenter);
