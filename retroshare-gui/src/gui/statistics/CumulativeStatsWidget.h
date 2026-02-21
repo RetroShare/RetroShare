@@ -31,6 +31,7 @@ class QTreeWidget;
 class QTreeWidgetItem;
 class QTabWidget;
 class QPushButton;
+class QComboBox;
 
 // Check if we are on Qt 6 or higher
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -62,6 +63,7 @@ public:
 
 private slots:
     void clearStatistics();
+    void updateTheme(int index);
 
 private:
     void updatePeerStats();
@@ -71,7 +73,8 @@ private:
     QString formatSize(uint64_t bytes);
 
     QTabWidget *tabWidget;
-    
+    QComboBox *themeComboBox;
+
     // Peer tab
     QTreeWidget *peerTree;
     QChartView *peerBarChartView;

@@ -20,6 +20,7 @@
 
 #include "CumulativeStatsWidget.h"
 
+#include <QComboBox>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QTabWidget>
@@ -56,6 +57,22 @@ CumulativeStatsWidget::CumulativeStatsWidget(QWidget *parent)
     
     // Charts container
     QSplitter *friendChartSplitter = new QSplitter(Qt::Horizontal);
+
+    // --- Theme Selection UI ---
+    QHBoxLayout *bottomLayout = new QHBoxLayout();
+    
+    themeComboBox = new QComboBox(this);
+    themeComboBox->addItem(tr("Light"), QChart::ChartThemeLight);
+    themeComboBox->addItem(tr("Blue Cerulean"), QChart::ChartThemeBlueCerulean);
+    themeComboBox->addItem(tr("Dark"), QChart::ChartThemeDark);
+    themeComboBox->addItem(tr("Brown Sand"), QChart::ChartThemeBrownSand);
+    themeComboBox->addItem(tr("Blue NCS"), QChart::ChartThemeBlueNcs);
+    themeComboBox->addItem(tr("High Contrast"), QChart::ChartThemeHighContrast);
+    themeComboBox->addItem(tr("Blue Icy"), QChart::ChartThemeBlueIcy);
+    themeComboBox->addItem(tr("Qt"), QChart::ChartThemeQt);
+    
+    connect(themeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &CumulativeStatsWidget::updateTheme);
     
     // Bar Chart for friends
     peerBarChartView = new QChartView(new QChart());
@@ -132,9 +149,13 @@ CumulativeStatsWidget::CumulativeStatsWidget(QWidget *parent)
     clearButton = new QPushButton(tr("Clear All Statistics"));
     connect(clearButton, &QPushButton::clicked, this, &CumulativeStatsWidget::clearStatistics);
     
+    bottomLayout->addWidget(new QLabel(tr("Chart Theme:")));
+    bottomLayout->addWidget(themeComboBox);
+    bottomLayout->addStretch();
+    bottomLayout->addWidget(clearButton);
+
     mainLayout->addWidget(tabWidget);
-    mainLayout->addWidget(clearButton);
-    
+    mainLayout->addLayout(bottomLayout);
     setLayout(mainLayout);
 }
 
@@ -405,4 +426,20 @@ void CumulativeStatsWidget::clearStatistics()
         rsConfig->clearCumulativeTraffic(true, true);
         updateDisplay();
     }
+}
+
+void CumulativeStatsWidget::updateTheme(int index)
+{
+    // Retrieve the theme enum from the item's user data
+    QChart::ChartTheme theme = static_cast<QChart::ChartTheme>(
+        themeComboBox->itemData(index).toInt()
+    );
+
+    // Apply to Peer Charts
+    peerBarChartView->chart()->setTheme(theme);
+    peerPieChartView->chart()->setTheme(theme);
+
+    // Apply to Service Charts
+    serviceBarChartView->chart()->setTheme(theme);
+    servicePieChartView->chart()->setTheme(theme);
 }
