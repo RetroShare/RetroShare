@@ -54,7 +54,7 @@ PulseAddDialog::PulseAddDialog(QWidget *parent)
 	ui.pushButton_remove->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/mail/delete.png")));
 
 	ui.frame_picture->hide();
-	ui.pushButton_picture->hide();
+	//ui.pushButton_picture->hide();
 
     // initially hiding the browse button as the attach image button is not pressed
 	//ui.frame_PictureBrowse->hide();
@@ -135,28 +135,34 @@ void PulseAddDialog::cleanup()
 		std::cerr << "PulseAddDialog::cleanup() cleaning up old replyto";
 		std::cerr << std::endl;
 		QLayout *layout = ui.widget_replyto->layout();
-		// completely delete layout and sublayouts
-		QLayoutItem * item;
-		while ((item = layout->takeAt(0)))
+		if (layout)
 		{
-			if (QWidget *widget = item->widget())
+			// completely delete layout and sublayouts
+			QLayoutItem * item;
+			while ((item = layout->takeAt(0)))
 			{
-				std::cerr << "PulseAddDialog::cleanup() removing widget";
-				std::cerr << std::endl;
-				widget->hide();
-				delete widget;
+				if (QWidget *widget = item->widget())
+				{
+					std::cerr << "PulseAddDialog::cleanup() removing widget";
+					std::cerr << std::endl;
+					widget->hide();
+					delete widget;
+				}
+				else
+				{
+					std::cerr << "PulseAddDialog::cleanup() removing item";
+					std::cerr << std::endl;
+					delete item;
+				}
 			}
-			else
-			{
-				std::cerr << "PulseAddDialog::cleanup() removing item";
-				std::cerr << std::endl;
-				delete item;
-			}
+			// then finally
+			delete layout;
 		}
-		// then finally
-		delete layout;
 		mIsReply = false;
 	}
+
+	mReplyToPulse = RsWirePulse();
+	mReplyType = 0;
 
 	ui.frame_reply->setVisible(false);
 	ui.comboBox_sentiment->setCurrentIndex(0);
@@ -260,6 +266,13 @@ void PulseAddDialog::setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId 
     if(grpId.isNull()){
         return;
     }
+
+	mIsReply = true;
+	mReplyType = replyType;
+	ui.postButton->setEnabled(false);
+	ui.postButton->setText(tr("Loading..."));
+	show();
+
 	/* fetch in the background */
 
     RsThread::async([this,grpId,msgId,replyType](){
@@ -269,12 +282,14 @@ void PulseAddDialog::setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId 
         if(!rsWire->getWireGroup(grpId,pGroup))
         {
             std::cerr << __PRETTY_FUNCTION__ << "PulseAddDialog::setRplyTo() failed to fetch group id: "  << grpId << std::endl;
+            RsQThreadUtils::postToObject([this]() { hide(); }, this);
             return;
         }
 
         if (!rsWire->getWirePulse(grpId, msgId, pPulse))
         {
             std::cerr << "PulseAddDialog::setRplyTo() failed to fetch pulse of group id: " << grpId << std::endl;
+            RsQThreadUtils::postToObject([this]() { hide(); }, this);
             return;
         }
 
@@ -292,6 +307,7 @@ void PulseAddDialog::setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId 
              * Qt::QueuedConnection is important!
              */
 
+            mGroup = *pGroup;
             setReplyTo(*pPulse, pPulse, pGroup->mMeta.mGroupName, replyType);
         }, this );
 
@@ -408,6 +424,21 @@ void PulseAddDialog::postReplyPulse()
 	std::cerr << "PulseAddDialog::postReplyPulse()";
 	std::cerr << std::endl;
 
+	if (mReplyToPulse.mMeta.mGroupId.isNull()) {
+		std::cerr << "PulseAddDialog::postReplyPulse() reply data not ready yet";
+		std::cerr << std::endl;
+		return;
+	}
+
+	if (mGroup.mMeta.mGroupId.isNull()) {
+		std::cerr << "PulseAddDialog::postReplyPulse() group not set";
+		std::cerr << std::endl;
+		return;
+	}
+
+	ui.postButton->setEnabled(false);
+	setCursor(Qt::WaitCursor);
+
     RsWirePulseSPtr pPulse(new RsWirePulse());
 
     pPulse->mSentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
@@ -440,6 +471,11 @@ void PulseAddDialog::postReplyPulse()
         {
             std::cerr << "PulseAddDialog::postReplyPulse() FAILED";
             std::cerr << std::endl;
+            RsQThreadUtils::postToObject([this]()
+            {
+                setCursor(Qt::ArrowCursor);
+                ui.postButton->setEnabled(true);
+            }, this);
             return;
         }
 
@@ -451,6 +487,7 @@ void PulseAddDialog::postReplyPulse()
              * Qt::QueuedConnection is important!
              */
 
+            setCursor(Qt::ArrowCursor);
             clearDialog();
             hide();
         }, this );

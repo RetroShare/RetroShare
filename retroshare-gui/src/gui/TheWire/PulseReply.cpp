@@ -57,6 +57,8 @@ void PulseReply::setup()
 	connect(toolButton_republish, SIGNAL(clicked()), this, SLOT(actionRepublish()));
 	connect(toolButton_like, SIGNAL(clicked()), this, SLOT(actionLike()));
 	connect(toolButton_view, SIGNAL(clicked()), this, SLOT(actionViewPulse()));
+	// hided it takes to much space
+	label_authorName->hide();
 }
 
 void PulseReply::showReplyLine(bool enable)
@@ -150,6 +152,26 @@ void PulseReply::setReferenceString(QString ref)
 
 void PulseReply::mousePressEvent(QMouseEvent *event)
 {
+    if (event->button() == Qt::LeftButton && IS_MSG_UNPROCESSED(mPulse->mMeta.mMsgStatus))
+    {
+        uint32_t token;
+        RsGxsGrpMsgIdPair msgPair = std::make_pair(mPulse->mMeta.mGroupId, mPulse->mMeta.mMsgId);
+        rsWire->setMessageReadStatus(token, msgPair, true);
+    }
+    QWidget::mousePressEvent(event);
 }
 
+
+//void WireDialog::setAllMessagesReadDo(bool read, uint32_t &token)
+//{
+//    if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(subscribeFlags())) {
+//        return;
+//    }
+
+//    foreach (RsWirePulseItem *item, mPostItems) {
+//        RsGxsGrpMsgIdPair msgPair = std::make_pair(item->groupId(), item->messageId());
+
+//        rsWire->setMessageReadStatus(token, msgPair, read);
+//    }
+//}
 

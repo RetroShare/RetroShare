@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseViewGroup.h                                                *
+ * retroshare-gui/src/gui/gxs/GxsStatisticsProvider.cpp                          *
  *                                                                             *
- * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ * Copyright 2012-2013  by Robert Fernie      <retroshare.project@gmail.com>   *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,34 +18,4 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_VIEW_GROUP_H
-#define MRK_PULSE_VIEW_GROUP_H
-
-#include "ui_PulseViewGroup.h"
-
-#include "PulseViewItem.h"
-#include <retroshare/rswire.h>
-
-class PulseViewGroup : public PulseViewItem, private Ui::PulseViewGroup
-{
-  Q_OBJECT
-
-public:
-	PulseViewGroup(PulseViewHolder *holder, RsWireGroupSPtr group);
-
-private slots:
-	void actionFollow();
-	void actionCopyProfileLink();
-	void editProfile();
-
-protected:
-	void setup();
-
-private:
-	void setGroupSet();
-
-protected:
-	RsWireGroupSPtr mGroup;
-};
-
-#endif
+#include "GxsStatisticsProvider.h"
