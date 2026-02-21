@@ -253,6 +253,12 @@ void CumulativeStatsWidget::updateServiceStats()
         [](const std::pair<uint16_t, RsCumulativeTrafficStats>& a, const std::pair<uint16_t, RsCumulativeTrafficStats>& b) {
             return (a.second.bytesIn + a.second.bytesOut) > (b.second.bytesIn + b.second.bytesOut);
     });
+
+    // --- FIX: Calculate the sum for the top 10 items first ---
+    uint64_t totalTrafficSum = 0;
+    for (int i = 0; i < std::min((int)statsVector.size(), 10); ++i) {
+        totalTrafficSum += (statsVector[i].second.bytesIn + statsVector[i].second.bytesOut);
+    }
     
     // Clear existing charts
     serviceBarChartView->chart()->removeAllSeries();
@@ -318,10 +324,16 @@ void CumulativeStatsWidget::updateServiceStats()
         uint64_t total = kv.second.bytesIn + kv.second.bytesOut;
         if (total > 0) {
             QPieSlice *slice = pieSeries->append(name, (double)total);
-            slice->setLabelVisible(true);
+            
+            // Calculate percentage to decide label visibility
+            double percentage = (totalTrafficSum > 0) ? ((double)total / totalTrafficSum) : 0;
         
-            // Set label to be outside the pie to avoid overlapping
-            slice->setLabelPosition(QPieSlice::LabelOutside);
+            if (percentage < 0.03) { // If less than 3%, hide label to reduce clutter
+                slice->setLabelVisible(false);
+            } else {
+                slice->setLabelVisible(true);
+                slice->setLabelPosition(QPieSlice::LabelOutside);
+            }
         
             // Customize the label arm (the line pointing to the slice)
             // A value of 0.5 means the arm length is 50% of the pie radius
