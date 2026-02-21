@@ -2556,3 +2556,6 @@ OpModeStatus[opMode="Minimal"] {
 [WrongValue="true"] {
 	background-color: #702020;
 }
+
+/* AvatarWidget */
+AvatarWidget{border-width: 10px;}
