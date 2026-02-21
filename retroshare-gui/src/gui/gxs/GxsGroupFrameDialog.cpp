@@ -958,7 +958,7 @@ void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *
 {
 	groupItemInfo.id = QString::fromStdString(groupInfo->mMeta.mGroupId.toStdString());
 	groupItemInfo.name = QString::fromUtf8(groupInfo->mMeta.mGroupName.c_str());
-	groupItemInfo.countryCode = "";
+	groupItemInfo.countryCode = QString::fromStdString(groupInfo->mMeta.mCountryCode);
 
 	groupItemInfo.popularity = groupInfo->mMeta.mPop;
 	groupItemInfo.lastpost = DateTime::DateTimeFromTime_t(groupInfo->mMeta.mLastPost);
