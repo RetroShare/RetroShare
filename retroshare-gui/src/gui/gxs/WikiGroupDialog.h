@@ -21,6 +21,10 @@
 #ifndef _WIKI_GROUP_DIALOG_H
 #define _WIKI_GROUP_DIALOG_H
 
+#include <QGroupBox>
+#include <QTreeWidget>
+#include <QPushButton>
+
 #include "GxsGroupDialog.h"
 #include "retroshare/rswiki.h"
 
@@ -30,7 +34,8 @@ class WikiGroupDialog : public GxsGroupDialog
 
 public:
 	WikiGroupDialog(QWidget *parent);
-	WikiGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent = NULL);
+	WikiGroupDialog(Mode mode, const RsGxsGroupId& groupId, QWidget *parent = NULL);
+	~WikiGroupDialog();
 
 protected:
 	virtual void initUi() override;
@@ -41,10 +46,28 @@ protected:
 	virtual bool service_getGroupData(const RsGxsGroupId &groupId, RsGxsGenericGroupData *&data) override;
 
 private:
+	void loadModerators(const RsGxsGroupId &groupId);
+	void addModeratorToList(const RsGxsId &gxsId);
+	void updateModeratorControls();
+	void updateModeratorsLabel(const std::list<RsGxsId> &moderators);
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
+private slots:
+	void addModerator();
+	void removeModerator();
+
+private:
     RsWikiCollection mGrp;
+	RsGxsGroupId mCurrentGroupId;
+	RsGroupMetaData mGroupMeta;
 
+	QWidget *mModeratorsWidget = nullptr;
+	QGroupBox *mModeratorsGroup = nullptr;
+	QTreeWidget *mModeratorsList = nullptr;
+	QPushButton *mAddModeratorButton = nullptr;
+	QPushButton *mRemoveModeratorButton = nullptr;
+
+	RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif
-

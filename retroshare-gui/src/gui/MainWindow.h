@@ -72,6 +72,10 @@ class MainPage;
 class NewsFeed;
 class UserNotify;
 
+#ifdef RS_USE_WIKI
+class WikiDialog;
+#endif
+
 #ifdef MESSENGER_WINDOW
 class MessengerWindow;
 #endif
@@ -107,7 +111,8 @@ public:
         Posted             = 11, /** Posted links */
         People             = 12, /** People page. */
         Options            = 13, /** People page. */
-        Home               = 14  /** Home page. */
+        Home               = 14, /** Home page. */
+        Wiki               = 15  /** Wiki. */
     };
 
 
@@ -167,6 +172,9 @@ public:
 	 GxsChannelDialog  *gxschannelDialog ;
 	 GxsForumsDialog   *gxsforumDialog ;
 	 PostedDialog      *postedDialog;
+#ifdef RS_USE_WIKI
+	 WikiDialog        *wikiDialog;
+#endif
 
 //    ForumsDialog      *forumsDialog;
 //    ChannelFeed       *channelFeed;
