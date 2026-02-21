@@ -28,6 +28,9 @@
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
 
+#include <retroshare/rsgxsforums.h>
+#include <retroshare/rsgxscircles.h>
+
 class GxsForumGroupInfoData : public RsUserdata
 {
 public:
@@ -39,7 +42,7 @@ public:
 
 /** Constructor */
 GxsForumsDialog::GxsForumsDialog(QWidget *parent) :
-    GxsGroupFrameDialog(rsGxsForums, settingsGroupName(),parent), mEventHandlerId(0)
+    GxsGroupFrameDialog(rsGxsForums, settingsGroupName(), parent, false, true), mEventHandlerId(0)
 {
 	mCountChildMsgs = true;
 
@@ -251,6 +254,7 @@ void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *grou
 	rsGxsCircles->getCircleDetails(RsGxsCircleId(groupData->mMeta.mCircleId), details) ;
 
 	groupItemInfo.description = QString::fromUtf8(forumGroupData->mDescription.c_str());
+	groupItemInfo.countryCode = QString::fromStdString(forumGroupData->mCountryCode);
 
 	if (!groupData->mMeta.mCircleId.isNull() )
 	{
@@ -260,4 +264,3 @@ void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *grou
 			groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/forums-signed.png");
 	}
 }
-

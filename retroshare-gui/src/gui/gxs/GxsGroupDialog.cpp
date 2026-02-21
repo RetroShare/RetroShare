@@ -25,6 +25,7 @@
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 #include "GxsGroupDialog.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/RetroShareLink.h"
 #include "retroshare/rsgxsflags.h"
@@ -35,6 +36,7 @@
 #include <retroshare/rsgxscircles.h>
 
 #include <gui/settings/rsharesettings.h>
+#include "lang/languagesupport.h"
 
 #include <iostream>
 
@@ -145,6 +147,12 @@ void GxsGroupDialog::init()
     ui.localComboBox->loadGroups(0, RsNodeGroupId());
 	
 	ui.groupDesc->setPlaceholderText(tr("Set a descriptive description here"));
+
+	/* Add country codes */
+	ui.countryCombo->addItem(tr("None"), "");
+	foreach (QString code, LanguageSupport::languageCodes()) {
+		ui.countryCombo->addItem(FilesDefs::getIconFromQtResourcePath(":/images/flags/" + code + ".png"), code.toUpper(), code.toUpper());
+	}
 
     	ui.personal_ifnopub->hide() ;
     	ui.personal_required->hide() ;
@@ -393,6 +401,13 @@ void GxsGroupDialog::setupVisibility()
 	ui.commentsLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
 	ui.commentsValueLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
 
+	const bool showCountry = mEnabledFlags & GXS_GROUP_FLAGS_COUNTRY;
+	ui.countryLabel->setVisible(showCountry);
+	ui.countryCombo->setVisible(showCountry);
+	ui.countrylineLabel->setVisible(showCountry);
+	ui.countryline->setVisible(showCountry);
+	ui.countryFlag->setVisible(showCountry);
+
 	ui.extraFrame->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_EXTRA);
 }
 
@@ -625,10 +640,11 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta, QString &reason
 		return false;
 	}
 
-	// Fill in the MetaData as best we can.
-	meta.mGroupName = std::string(name.toUtf8());
+		// Fill in the MetaData as best we can.
 
-	meta.mGroupFlags = flags;
+		meta.mGroupName = std::string(name.toUtf8());
+
+		meta.mGroupFlags = flags;
 	meta.mSignFlags = getGroupSignFlags();
 
 	if (!setCircleParameters(meta)){
@@ -1008,4 +1024,3 @@ void GxsGroupDialog::loadGroup(const RsGxsGroupId& grpId)
 		}, this );
 	});
 }
-

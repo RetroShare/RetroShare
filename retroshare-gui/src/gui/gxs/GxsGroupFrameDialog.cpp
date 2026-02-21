@@ -71,7 +71,7 @@ static const uint32_t DELAY_BETWEEN_GROUP_STATISTICS_UPDATE = 120; // do not upd
  */
 
 /** Constructor */
-GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl,const QString& settings_name, QWidget *parent,bool allow_dist_sync)
+GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl,const QString& settings_name, QWidget *parent,bool allow_dist_sync, bool enable_country_column)
 : MainPage(parent),mSettingsName(settings_name)
 {
 	/* Invoke the Qt Designer generated object setup routine */
@@ -107,6 +107,7 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl,const QStri
 
 	connect(ui->todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
 
+	ui->groupTreeWidget->setCountryColumnEnabled(enable_country_column);
 	ui->groupTreeWidget->setDistSearchVisible(allow_dist_sync) ;
 
     if(allow_dist_sync)
@@ -957,6 +958,8 @@ void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *
 {
 	groupItemInfo.id = QString::fromStdString(groupInfo->mMeta.mGroupId.toStdString());
 	groupItemInfo.name = QString::fromUtf8(groupInfo->mMeta.mGroupName.c_str());
+	groupItemInfo.countryCode = "";
+
 	groupItemInfo.popularity = groupInfo->mMeta.mPop;
 	groupItemInfo.lastpost = DateTime::DateTimeFromTime_t(groupInfo->mMeta.mLastPost);
 	groupItemInfo.subscribeFlags = groupInfo->mMeta.mSubscribeFlags;

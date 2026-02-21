@@ -23,6 +23,7 @@
 
 #include<set>
 
+#include <QWidget>
 #include <QTreeWidgetItem>
 #include <QDateTime>
 #include "util/FontSizeHandler.h"
@@ -43,8 +44,9 @@ class RSTreeWidget;
 #define GTW_COLUMN_POPULARITY   3
 #define GTW_COLUMN_LAST_POST    4
 #define GTW_COLUMN_SEARCH_SCORE 5
-#define GTW_COLUMN_DESCRIPTION  6
-#define GTW_COLUMN_COUNT        7
+#define GTW_COLUMN_COUNTRY      6
+#define GTW_COLUMN_DESCRIPTION  7
+#define GTW_COLUMN_COUNT        8
 #define GTW_COLUMN_DATA         GTW_COLUMN_NAME
 
 namespace Ui {
@@ -63,6 +65,7 @@ public:
 	QString               id;
 	QString               name;
 	QString               description;
+	QString               countryCode;
 	int                   popularity;
 	QDateTime             lastpost;
 	QIcon                 icon;
@@ -84,6 +87,8 @@ class GroupTreeWidget : public QWidget
 public:
 	GroupTreeWidget(QWidget *parent = 0);
 	~GroupTreeWidget();
+
+	void setCountryColumnEnabled(bool enabled);
 
 	// Add a tool button to the tool area
 	void addToolButton(QToolButton *toolButton);
@@ -166,6 +171,8 @@ private:
 	// Compare role used for each column
 	RSTreeWidgetItemCompareRole *compareRole;
 	FontSizeHandler mFontSizeHandler;
+	bool mCountryColumnEnabled;
+	bool mCountryFilterAdded;
 
 	Ui::GroupTreeWidget *ui;
 };
