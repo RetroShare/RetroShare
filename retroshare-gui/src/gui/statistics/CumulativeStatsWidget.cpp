@@ -91,6 +91,10 @@ CumulativeStatsWidget::CumulativeStatsWidget(QWidget *parent)
     
     connect(themeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &CumulativeStatsWidget::updateTheme);
+            
+    modeToggleButton = new QPushButton(tr("Show Session Stats Only"), this);
+    modeToggleButton->setCheckable(true);
+    connect(modeToggleButton, &QPushButton::toggled, this, &CumulativeStatsWidget::toggleStatsMode);
     
     // Bar Chart for friends
     peerBarChartView = new QChartView(new QChart());
@@ -170,6 +174,7 @@ CumulativeStatsWidget::CumulativeStatsWidget(QWidget *parent)
     bottomLayout->addWidget(new QLabel(tr("Chart Theme:")));
     bottomLayout->addWidget(themeComboBox);
     bottomLayout->addStretch();
+    bottomLayout->addWidget(modeToggleButton);
     bottomLayout->addWidget(clearButton);
 
     mainLayout->addWidget(tabWidget);
@@ -285,8 +290,24 @@ void CumulativeStatsWidget::updateServiceStats()
 {
     if (!rsConfig) return;
     
+    // --- ALWAYS Update Session Data in the background ---
+    std::list<RSTrafficClue> out_clues, in_clues;
+    rsConfig->getTrafficInfo(out_clues, in_clues);
+
+    for (const auto& clue : in_clues) {
+        mSessionServiceStats[clue.service_id].bytesIn += clue.size;
+    }
+    for (const auto& clue : out_clues) {
+        mSessionServiceStats[clue.service_id].bytesOut += clue.size;
+    }
+    
     std::map<uint16_t, RsCumulativeTrafficStats> statsMap;
-    if (!rsConfig->getCumulativeTrafficByService(statsMap)) return;
+
+    if (mUseSessionStats) {
+        statsMap = mSessionServiceStats;
+    } else {
+        rsConfig->getCumulativeTrafficByService(statsMap);
+    }
     
     // Move map to a vector so we can sort it by volume
     std::vector<std::pair<uint16_t, RsCumulativeTrafficStats>> statsVector(statsMap.begin(), statsMap.end());
@@ -352,6 +373,14 @@ void CumulativeStatsWidget::updateServiceStats()
     int count = 0;
     for (const auto& kv : statsVector) {
         if (count >= 10) break;
+
+        uint16_t serviceId = kv.first;
+        uint64_t currentIn = kv.second.bytesIn;
+        uint64_t currentOut = kv.second.bytesOut;
+
+        // Update the storage for the next run
+        lastKnownServiceBytesIn[serviceId] = currentIn;
+        lastKnownServiceBytesOut[serviceId] = currentOut;
         
         QString name = serviceNames.value(kv.first, QString("Service 0x%1").arg(kv.first, 4, 16, QChar('0')));
         
@@ -364,7 +393,7 @@ void CumulativeStatsWidget::updateServiceStats()
         *bytesOutSet << mbOut;
         
         // Pie chart data
-        uint64_t total = kv.second.bytesIn + kv.second.bytesOut;
+        uint64_t total = currentIn + currentOut;
         if (total > 0) {
             QPieSlice *slice = pieSeries->append(name, (double)total);
             
@@ -388,9 +417,9 @@ void CumulativeStatsWidget::updateServiceStats()
         // Tree widget
         SizeSortWidgetItem *item = new SizeSortWidgetItem();
         item->setText(0, name);
-        item->setText(1, formatSize(kv.second.bytesIn));
+        item->setText(1, formatSize(currentIn));
         item->setData(1, Qt::UserRole, (qlonglong)kv.second.bytesIn);
-        item->setText(2, formatSize(kv.second.bytesOut));
+        item->setText(2, formatSize(currentOut));
         item->setData(2, Qt::UserRole, (qlonglong)kv.second.bytesOut);
         item->setText(3, formatSize(total));
         item->setData(3, Qt::UserRole, (qlonglong)total);
@@ -468,4 +497,19 @@ void CumulativeStatsWidget::updateTheme(int index)
     // Apply to Service Charts
     serviceBarChartView->chart()->setTheme(theme);
     servicePieChartView->chart()->setTheme(theme);
+}
+
+void CumulativeStatsWidget::toggleStatsMode(bool checked)
+{
+    mUseSessionStats = checked;
+    
+    if (mUseSessionStats) {
+        modeToggleButton->setToolTip(tr("Click to view Lifetime Stats"));
+        modeToggleButton->setText(tr("Showing: Session Stats"));
+    } else {
+        modeToggleButton->setToolTip(tr("Click to view Session Stats"));
+        modeToggleButton->setText(tr("Showing: Lifetime Stats"));
+    }
+    
+    updateDisplay(); // Refresh immediately
 }

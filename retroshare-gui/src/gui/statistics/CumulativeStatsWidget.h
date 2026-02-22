@@ -21,6 +21,7 @@
 #ifndef CUMULATIVE_STATS_WIDGET_H
 #define CUMULATIVE_STATS_WIDGET_H
 
+#include <retroshare/rsconfig.h>
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include <QChartView>
 #include <QChart>
@@ -64,10 +65,20 @@ public:
 private slots:
     void clearStatistics();
     void updateTheme(int index);
+    void toggleStatsMode(bool checked);
 
 private:
     void updatePeerStats();
     void updateServiceStats();
+
+    bool mUseSessionStats; // False = Lifetime, True = Session
+    QPushButton *modeToggleButton;
+    
+    // Map for the "BWGraph" style session accumulation
+    std::map<uint16_t, RsCumulativeTrafficStats> mSessionServiceStats;
+    
+    std::map<uint16_t, uint64_t> lastKnownServiceBytesIn;
+    std::map<uint16_t, uint64_t> lastKnownServiceBytesOut;
     
     // Helper to format bytes
     QString formatSize(uint64_t bytes);
