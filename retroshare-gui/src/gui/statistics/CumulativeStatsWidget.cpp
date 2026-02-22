@@ -380,7 +380,7 @@ void CumulativeStatsWidget::updateServiceStats()
         
             // Customize the label arm (the line pointing to the slice)
             // A value of 0.5 means the arm length is 50% of the pie radius
-            slice->setLabelArmLengthFactor(0.25); 
+            //slice->setLabelArmLengthFactor(0.25); 
             
             slice->setLabel(QString("%1: %2").arg(name).arg(formatSize(total)));
         }
