@@ -72,7 +72,7 @@ static const uint32_t DELAY_BETWEEN_GROUP_STATISTICS_UPDATE = 120; // do not upd
 
 /** Constructor */
 GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl,const QString& settings_name, QWidget *parent,bool allow_dist_sync)
-: MainPage(parent),mSettingsName(settings_name)
+: MainPage(parent), mSettingsName(settings_name)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui = new Ui::GxsGroupFrameDialog();
@@ -173,7 +173,7 @@ void GxsGroupFrameDialog::initUi()
 	processSettings(true);
 
 	if (groupFrameSettingsType() != GroupFrameSettings::Nothing) {
-        connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
+		connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 		settingsChanged();
 	}
 
@@ -470,9 +470,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 			uint32_t current_store_time = checkDelay(mInterface->getStoragePeriod(mGroupId))/86400 ;
 			uint32_t current_sync_time  = checkDelay(mInterface->getSyncPeriod(mGroupId))/86400 ;
 
-#ifdef DEBUG_GROUPFRAMEDIALOG
 			std::cerr << "Got sync=" << current_sync_time << ". store=" << current_store_time << std::endl;
-#endif
 			QAction *actnn = NULL;
 
 			QMenu *ctxMenu2 = contextMnu.addMenu(tr("Synchronise posts of last...")) ;

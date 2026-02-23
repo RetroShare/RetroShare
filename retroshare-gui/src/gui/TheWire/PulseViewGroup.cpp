@@ -28,6 +28,7 @@
 
 #include "WireGroupDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/RetroShareLink.h"
 #include "gui/common/FilesDefs.h"
 #include "util/DateTime.h"
 
@@ -50,6 +51,7 @@ void PulseViewGroup::setup()
 {
     if (mGroup) {
         connect(followButton, SIGNAL(clicked()), this, SLOT(actionFollow()));
+        connect(toolButton_copyProfileLink, SIGNAL(clicked()), this, SLOT(actionCopyProfileLink()));
 
         label_groupName->setText("@" + QString::fromStdString(mGroup->mMeta.mGroupName));
         label_authorName->setText(BoldString(QString::fromStdString(mGroup->mMeta.mAuthorId.toStdString())));
@@ -116,8 +118,14 @@ void PulseViewGroup::setup()
             label_extra_republishes->setText(BoldString(ToNumberUnits(republishes)));
             label_extra_likes->setText(BoldString(ToNumberUnits(likes)));
 
-            // hide follow.
-            widget_actions->setVisible(false);
+            uint32_t following = mGroup->mGroupFollowing;
+            label_extra_following->setText(BoldString(ToNumberUnits(following)));
+
+            uint32_t followers = mGroup->mGroupFollowers;
+            label_extra_followers->setText(BoldString(ToNumberUnits(followers)));
+
+            // hide follow button but keep copy link visible.
+            followButton->setVisible(false);
         }
         else
         {
@@ -133,14 +141,17 @@ void PulseViewGroup::setGroupSet()
 {
 	if (mGroup->mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
 		editButton->show();
+		toolButton_copyProfileLink->show();
 	}
 	else if (mGroup->mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
 	{
 		editButton->hide();
+		toolButton_copyProfileLink->show();
 	}
 	else
 	{
 		editButton->hide();
+		toolButton_copyProfileLink->show();
 	}
 }
 
@@ -153,6 +164,29 @@ void PulseViewGroup::actionFollow()
 
     if (mHolder) {
         mHolder->PVHfollow(groupId);
+    }
+}
+
+void PulseViewGroup::actionCopyProfileLink()
+{
+    std::cerr << "PulseViewGroup::actionCopyProfileLink()";
+    std::cerr << std::endl;
+
+    if (!mGroup) {
+        std::cerr << "PulseViewGroup::actionCopyProfileLink() GROUP invalid";
+        std::cerr << std::endl;
+        return;
+    }
+
+    RetroShareLink link = RetroShareLink::createGxsGroupLink(
+        RetroShareLink::TYPE_WIRE,
+        mGroup->mMeta.mGroupId,
+        QString::fromStdString(mGroup->mMeta.mGroupName));
+
+    if (link.valid()) {
+        QList<RetroShareLink> urls;
+        urls.push_back(link);
+        RSLinkClipboard::copyLinks(urls);
     }
 }
 

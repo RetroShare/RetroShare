@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseViewGroup.h                                                *
+ * gui/feeds/WireNotifyGroupItem.h                                                 *
  *                                                                             *
- * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ * Copyright (c) 2014, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,34 +18,57 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_VIEW_GROUP_H
-#define MRK_PULSE_VIEW_GROUP_H
+#ifndef WIRENOTIFYGROUPITEM_H
+#define WIRENOTIFYGROUPITEM_H
 
-#include "ui_PulseViewGroup.h"
-
-#include "PulseViewItem.h"
 #include <retroshare/rswire.h>
+#include "gui/feeds/GxsGroupFeedItem.h"
 
-class PulseViewGroup : public PulseViewItem, private Ui::PulseViewGroup
+namespace Ui {
+class WireNotifyGroupItem;
+}
+
+class FeedHolder;
+
+class WireNotifyGroupItem : public GxsGroupFeedItem
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-	PulseViewGroup(PulseViewHolder *holder, RsWireGroupSPtr group);
+    /** Default Constructor */
+    WireNotifyGroupItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, bool autoUpdate, RsWireEventCode eventCode = RsWireEventCode::NEW_WIRE);
+    ~WireNotifyGroupItem();
+
+    bool setGroup(const RsWireGroup &group);
+
+    uint64_t uniqueIdentifier() const override { return hash_64bits("WireNotifyGroupItem " + groupId().toStdString()) ; }
+
+protected:
+    /* FeedItem */
+    virtual void doExpand(bool open);
+
+    /* GxsGroupFeedItem */
+    virtual QString groupName();
+    virtual void loadGroup() override;
+    virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_WIRE; }
 
 private slots:
-	void actionFollow();
-	void actionCopyProfileLink();
-	void editProfile();
-
-protected:
-	void setup();
+    void toggle() override;
+    void subscribeWire();
+    void openWireGroup();
 
 private:
-	void setGroupSet();
+    void fill();
+    void setup();
+    void addEventHandler();
 
-protected:
-	RsWireGroupSPtr mGroup;
+private:
+    RsWireGroup mGroup;
+    RsWireEventCode mEventCode;
+
+    /** Qt Designer generated object */
+    Ui::WireNotifyGroupItem *ui;
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
-#endif
+#endif // WIRENOTIFYGROUPITEM_H

@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseViewGroup.h                                                *
+ * retroshare-gui/src/gui/TheWire/WireUserNotify.cpp                           *
  *                                                                             *
- * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ * Copyright (C) 2014 by Retroshare Team     <retroshare.project@gmail.com>    *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,34 +18,45 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_VIEW_GROUP_H
-#define MRK_PULSE_VIEW_GROUP_H
+#include "retroshare/rswire.h"
+#include "WireUserNotify.h"
+#include "gui/MainWindow.h"
+#include "gui/common/FilesDefs.h"
 
-#include "ui_PulseViewGroup.h"
-
-#include "PulseViewItem.h"
-#include <retroshare/rswire.h>
-
-class PulseViewGroup : public PulseViewItem, private Ui::PulseViewGroup
+WireUserNotify::WireUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsStatisticsProvider *g, QObject *parent) :
+    GxsUserNotify(ifaceImpl, g, parent)
 {
-  Q_OBJECT
+}
 
-public:
-	PulseViewGroup(PulseViewHolder *holder, RsWireGroupSPtr group);
+bool WireUserNotify::hasSetting(QString *name, QString *group)
+{
+    if (name) *name = tr("Wire Post");
+    if (group) *group = "Wire";
 
-private slots:
-	void actionFollow();
-	void actionCopyProfileLink();
-	void editProfile();
+    return true;
+}
 
-protected:
-	void setup();
+QIcon WireUserNotify::getIcon()
+{
+    return FilesDefs::getIconFromQtResourcePath(":/icons/png/wire-circle.png");
+}
 
-private:
-	void setGroupSet();
+QIcon WireUserNotify::getMainIcon(bool hasNew)
+{
+    return hasNew ? FilesDefs::getIconFromQtResourcePath(":/icons/png/wire-notify.png") : FilesDefs::getIconFromQtResourcePath(":/icons/png/wire-circle.png");
+}
 
-protected:
-	RsWireGroupSPtr mGroup;
-};
+//QString WireUserNotify::getTrayMessage(bool plural)
+//{
+//    return plural ? tr("You have %1 new wire pulse") : tr("You have %1 new wire pulse");
+//}
 
-#endif
+//QString WireUserNotify::getNotifyMessage(bool plural)
+//{
+//    return plural ? tr("%1 new wire pulse") : tr("%1 new wire pulse");
+//}
+
+void WireUserNotify::iconClicked()
+{
+    MainWindow::showWindow(MainWindow::Wire);
+}

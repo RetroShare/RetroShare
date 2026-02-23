@@ -25,8 +25,11 @@
 
 #include "PulseViewItem.h"
 
+#include "retroshare/rsgxsflags.h"
+
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
+#include "gui/RetroShareLink.h"
 #include "util/DateTime.h"
 
 /** Constructor */
@@ -235,6 +238,35 @@ void PulseDataItem::actionRate()
 
 	if (mHolder) {
 		mHolder->PVHrate(authorId);
+	}
+}
+
+void PulseDataItem::actionCopyLink()
+{
+	std::cerr << "PulseDataItem::actionCopyLink()";
+	std::cerr << std::endl;
+
+	if (!mPulse) {
+		std::cerr << "PulseDataItem::actionCopyLink() PULSE invalid";
+		std::cerr << std::endl;
+		return;
+	}
+
+	std::string linkName = mPulse->mMeta.mMsgName;
+	if (linkName.empty()) {
+		linkName = mPulse->mPulseText.substr(0, 50);
+	}
+
+	RetroShareLink link = RetroShareLink::createGxsMessageLink(
+		RetroShareLink::TYPE_WIRE,
+		mPulse->mMeta.mGroupId,
+		mPulse->mMeta.mMsgId,
+		QString::fromStdString(linkName));
+
+	if (link.valid()) {
+		QList<RetroShareLink> urls;
+		urls.push_back(link);
+		RSLinkClipboard::copyLinks(urls);
 	}
 }
 
@@ -463,3 +495,13 @@ QString ToNumberUnits(uint32_t count)
 	return ans;
 }
 
+void PulseDataItem::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton && IS_MSG_UNPROCESSED(mPulse->mMeta.mMsgStatus))
+    {
+        uint32_t token;
+        RsGxsGrpMsgIdPair msgPair = std::make_pair(mPulse->mMeta.mGroupId, mPulse->mMeta.mMsgId);
+        rsWire->setMessageReadStatus(token, msgPair, true);
+    }
+    QWidget::mousePressEvent(event);
+}

@@ -23,7 +23,7 @@
 
 #include <QObject>
 #include "gui/common/UserNotify.h"
-#include "gui/gxs/GxsGroupFrameDialog.h"
+#include "gui/gxs/GxsStatisticsProvider.h"
 
 class RsGxsIfaceHelper;
 class RsGxsUpdateBroadcastBase;
@@ -33,7 +33,7 @@ class GxsUserNotify : public UserNotify
 	Q_OBJECT
 
 public:
-	GxsUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent = 0);
+	GxsUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsStatisticsProvider *g, QObject *parent = 0);
 	virtual ~GxsUserNotify();
 
 protected:
@@ -46,7 +46,8 @@ protected:
 	bool mCountChildMsgs; // Count new child messages?
 
 private:
-    const GxsGroupFrameDialog      *mGroupFrameDialog;
+
+    const GxsStatisticsProvider      *mGxsStatisticsProvider;
 
 	unsigned int mNewThreadMessageCount;
 	unsigned int mNewChildMessageCount;

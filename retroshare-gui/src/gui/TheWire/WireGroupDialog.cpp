@@ -34,7 +34,7 @@ const uint32_t WireCreateEnabledFlags = (
 							GXS_GROUP_FLAGS_DISTRIBUTION  |
 							// GXS_GROUP_FLAGS_PUBLISHSIGN   |
 							// GXS_GROUP_FLAGS_SHAREKEYS     |	// disabled because the UI doesn't handle it yet.
-							// GXS_GROUP_FLAGS_PERSONALSIGN  |
+							GXS_GROUP_FLAGS_PERSONALSIGN  |
 							// GXS_GROUP_FLAGS_COMMENTS      |
 							GXS_GROUP_FLAGS_EXTRA         |
 						  0);

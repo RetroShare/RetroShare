@@ -44,7 +44,7 @@ class QMainWindow;
 class GroupFrameSettings
 {
 public:
-	enum Type { Nothing, Forum, Channel, Posted };
+	enum Type { Nothing, Forum, Channel, Posted, Wire };
 
 public:
 	GroupFrameSettings()

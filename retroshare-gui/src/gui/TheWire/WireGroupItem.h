@@ -51,6 +51,7 @@ public:
 
 	const QPixmap *getPixmap();
 	RsGxsGroupId &groupId();
+	bool matchesFilter(const QString &filterText) const;
 
 private slots:
 	void show();
