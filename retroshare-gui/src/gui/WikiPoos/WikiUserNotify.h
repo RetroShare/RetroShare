@@ -1,7 +1,7 @@
 /*******************************************************************************
- * RetroShare JSON API                                                         *
+ * gui/WikiPoos/WikiUserNotify.h                                               *
  *                                                                             *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2024 RetroShare Team <contact@retroshare.cc>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -10,7 +10,7 @@
  *                                                                             *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
  * GNU Affero General Public License for more details.                         *
  *                                                                             *
  * You should have received a copy of the GNU Affero General Public License    *
@@ -18,33 +18,27 @@
  *                                                                             *
  *******************************************************************************/
 
-registerHandler( "$%apiPath%$",
-                 [](const std::shared_ptr<rb::Session> session)
+#ifndef WIKIUSERNOTIFY_H
+#define WIKIUSERNOTIFY_H
+
+#include "gui/gxs/GxsUserNotify.h"
+#include "gui/gxs/GxsGroupFrameDialog.h"
+
+class WikiUserNotify : public GxsUserNotify
 {
-	size_t reqSize = session->get_request()->get_header("Content-Length", 0);
-	session->fetch( reqSize, [](
-	                const std::shared_ptr<rb::Session> session,
-	                const rb::Bytes& body )
-	{
-		INITIALIZE_API_CALL_JSON_CONTEXT;
+	Q_OBJECT
 
-		if( !checkRsServicePtrReady(
-		            $%instanceName%$, "$%instanceName%$", cAns, session ) )
-			return;
+public:
+	explicit WikiUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent = 0);
 
-$%paramsDeclaration%$
+	virtual bool hasSetting(QString *name, QString *group) override;
 
-		// deserialize input parameters from JSON
-$%inputParamsDeserialization%$
+private:
+	virtual QIcon getIcon() override;
+	virtual QIcon getMainIcon(bool hasNew) override;
 
-		// call retroshare C++ API
-$%functionCall%$
+	virtual void iconClicked() override;
+};
 
-		// serialize out parameters and return value to JSON
-$%outputParamsSerialization%$
-
-		// return them to the API caller
-		DEFAULT_API_CALL_JSON_RETURN(rb::OK);
-	} );
-}, $%requiresAuth%$ );
+#endif // WIKIUSERNOTIFY_H
 
