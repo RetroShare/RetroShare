@@ -163,7 +163,7 @@ private:
 	void deleteGroups();
 	void showGroups();
 	void showSelectedGroups();
-	void updateGroups(std::vector<RsWireGroup> &groups);
+	void updateGroups(const std::vector<RsWireGroup> &groups);
 
 	void processSettings(bool load);
 
