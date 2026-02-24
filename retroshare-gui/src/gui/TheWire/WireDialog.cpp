@@ -431,14 +431,20 @@ bool WireDialog::setupPulseAddDialog()
 
 void WireDialog::subscribe(RsGxsGroupId &groupId)
 {
-	uint32_t token;
-	rsWire->subscribeToGroup(token, groupId, true);
+	RsThread::async([groupId]()
+	{
+		uint32_t token;
+		rsWire->subscribeToGroup(token, groupId, true);
+	});
 }
 
 void WireDialog::unsubscribe(RsGxsGroupId &groupId)
 {
-	uint32_t token;
-	rsWire->subscribeToGroup(token, groupId, false);
+	RsThread::async([groupId]()
+	{
+		uint32_t token;
+		rsWire->subscribeToGroup(token, groupId, false);
+	});
 }
 
 void WireDialog::notifyGroupSelection(WireGroupItem *item)
@@ -560,7 +566,7 @@ void WireDialog::deleteGroups()
 	}
 }
 
-void WireDialog::updateGroups(std::vector<RsWireGroup>& groups)
+void WireDialog::updateGroups(const std::vector<RsWireGroup>& groups)
 {
 	mAllGroups.clear();
 	mOwnGroups.clear();
@@ -730,21 +736,27 @@ void WireDialog::requestGroupData()
 	std::cerr << "WireDialog::requestGroupData()";
 	std::cerr << std::endl;
 
-	std::vector<RsWireGroup> groups;
-	rsWire->getGroups({}, groups);
+	RsThread::async([this]()
+	{
+		std::vector<RsWireGroup> groups;
+		rsWire->getGroups({}, groups);
 
-	updateGroups(groups);
-	showGroups();
+		RsQThreadUtils::postToObject([this, groups]()
+		{
+			updateGroups(groups);
+			showGroups();
 
-	if (!mNavigatePendingGroupId.isNull()) {
-		if (!mNavigatePendingMsgId.isNull()) {
-			requestPulseFocus(mNavigatePendingGroupId, mNavigatePendingMsgId);
-		} else {
-			requestGroupFocus(mNavigatePendingGroupId);
-		}
-		mNavigatePendingGroupId.clear();
-		mNavigatePendingMsgId.clear();
-	}
+			if (!mNavigatePendingGroupId.isNull()) {
+				if (!mNavigatePendingMsgId.isNull()) {
+					requestPulseFocus(mNavigatePendingGroupId, mNavigatePendingMsgId);
+				} else {
+					requestGroupFocus(mNavigatePendingGroupId);
+				}
+				mNavigatePendingGroupId.clear();
+				mNavigatePendingMsgId.clear();
+			}
+		}, this);
+	});
 }
 
 rstime_t WireDialog::getFilterTimestamp()
@@ -879,8 +891,11 @@ void WireDialog::PVHfollow(const RsGxsGroupId &groupId)
 	std::cerr << ")";
 	std::cerr << std::endl;
 
-	uint32_t token;
-	rsWire->subscribeToGroup(token, groupId, true);
+	RsThread::async([groupId]()
+	{
+		uint32_t token;
+		rsWire->subscribeToGroup(token, groupId, true);
+	});
 }
 
 void WireDialog::PVHrate(const RsGxsId &authorId)
