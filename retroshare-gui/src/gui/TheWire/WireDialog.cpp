@@ -553,7 +553,7 @@ void WireDialog::deleteGroups()
 			std::cerr << std::endl;
 
 			item = alayout->takeAt(i);
-			delete item->widget();
+			item->widget()->deleteLater();
 			delete item;
 		}
 		else
@@ -936,7 +936,7 @@ void WireDialog::clearTwitterView()
 			std::cerr << std::endl;
 
 			item = alayout->takeAt(i);
-			delete item->widget();
+			item->widget()->deleteLater();
 			delete item;
 		}
 		else
