@@ -46,7 +46,8 @@ public:
 protected:
 	enum Type {
 		FONT_SIZE,
-		MESSAGE_FONT_SIZE
+		MESSAGE_FONT_SIZE,
+		FORUM_FONT_SIZE
 	};
 
 	FontSizeHandlerBase(Type type);
@@ -68,6 +69,13 @@ class MessageFontSizeHandler : public FontSizeHandlerBase
 {
 public:
 	MessageFontSizeHandler() : FontSizeHandlerBase(MESSAGE_FONT_SIZE) {}
+};
+
+// Class to handle forum font size setting
+class ForumFontSizeHandler : public FontSizeHandlerBase
+{
+public:
+	ForumFontSizeHandler() : FontSizeHandlerBase(FORUM_FONT_SIZE) {}
 };
 
 #endif // FONTSIZEHANDLER
