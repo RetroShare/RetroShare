@@ -75,6 +75,11 @@ WireDialog::WireDialog(QWidget *parent)
 	mDistSyncAllowed = true;
 	mStateHelper = nullptr;
 
+	mRequestGroupDataInProgress = false;
+	mUpdateTimer = new QTimer(this);
+	mUpdateTimer->setSingleShot(true);
+	connect(mUpdateTimer, SIGNAL(timeout()), this, SLOT(refreshGroups()));
+
 	connect( ui.toolButton_createAccount, SIGNAL(clicked()), this, SLOT(createGroup()));
 	connect( ui.toolButton_createPulse, SIGNAL(clicked()), this, SLOT(createPulse()));
 	connect( ui.toolButton_home, SIGNAL(clicked()), this, SLOT(showHomeFeed()));
@@ -184,7 +189,7 @@ void WireDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
             break;
 
         }
-        refreshGroups();
+        if(!mUpdateTimer->isActive()) mUpdateTimer->start(1000);
     }
 }
 
@@ -660,7 +665,7 @@ void WireDialog::showSelectedGroups()
 	}
 }
 
-void WireDialog::showGroups()
+void WireDialog::showGroups(bool addToHistory)
 {
 	deleteGroups();
 
@@ -725,7 +730,7 @@ void WireDialog::showGroups()
 		allGroupIds.push_back(group.mMeta.mGroupId);
 	}
 
-	requestGroupsPulses(allGroupIds);
+	requestGroupsPulses(allGroupIds, addToHistory);
 }
 
 
@@ -736,6 +741,12 @@ void WireDialog::requestGroupData()
 	std::cerr << "WireDialog::requestGroupData()";
 	std::cerr << std::endl;
 
+	if (mRequestGroupDataInProgress) {
+		return;
+	}
+
+	mRequestGroupDataInProgress = true;
+
 	RsThread::async([this]()
 	{
 		std::vector<RsWireGroup> groups;
@@ -743,8 +754,9 @@ void WireDialog::requestGroupData()
 
 		RsQThreadUtils::postToObject([this, groups]()
 		{
+			mRequestGroupDataInProgress = false;
 			updateGroups(groups);
-			showGroups();
+			showGroups(false); // Background update, don't add to history
 
 			if (!mNavigatePendingGroupId.isNull()) {
 				if (!mNavigatePendingMsgId.isNull()) {
@@ -1232,17 +1244,19 @@ void WireDialog::postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr
 	}
 }
 
-void WireDialog::requestGroupsPulses(const std::list<RsGxsGroupId>& groupIds)
+void WireDialog::requestGroupsPulses(const std::list<RsGxsGroupId>& groupIds, bool addToHistory)
 {
-	WireViewHistory view;
-	view.viewType = WireViewType::GROUPS;
-	view.groupIds = groupIds;
+	if (addToHistory) {
+		WireViewHistory view;
+		view.viewType = WireViewType::GROUPS;
+		view.groupIds = groupIds;
 
-	AddToHistory(view);
-	showGroupsPulses(groupIds);
+		AddToHistory(view);
+	}
+	showGroupsPulses(groupIds, addToHistory);
 }
 
-void WireDialog::showGroupsPulses(const std::list<RsGxsGroupId>& groupIds)
+void WireDialog::showGroupsPulses(const std::list<RsGxsGroupId>& groupIds, bool addToHistory)
 {
 	clearTwitterView();
 
