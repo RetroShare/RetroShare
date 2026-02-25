@@ -564,11 +564,39 @@ void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
 	QList<HashedFile>::iterator it;
 	for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
 		HashedFile& hashedFile = *it;
+		QString ext = QFileInfo(hashedFile.filename).suffix().toUpper();
+
 		RetroShareLink link = RetroShareLink::createFile(hashedFile.filename, hashedFile.size,
 		                                                 QString::fromStdString(hashedFile.hash.toStdString()));
-		if (link.valid()) {
-			mesgString += link.toHtmlSize() + "<br>";
+
+		bool preview = false;
+		if(hashedFiles.size()==1 && (ext == "JPG" || ext == "PNG" || ext == "JPEG" || ext == "GIF" || ext == "WEBP"))
+		{
+			QString encodedImage;
+			uint32_t maxImageSize = 32000;
+			if (link.valid()){
+				if (RsHtml::makeEmbeddedImage(hashedFile.filepath, encodedImage, 320*240, maxImageSize - 200 - link.toHtmlSize().length()))
+				{	QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
+					ui.forumMessage->textCursor().insertFragment(fragment);
+					preview=true;
+				}
+			}
 		}
+		if(!preview)
+		{
+			QString image = FilesDefs::getImageFromFilename(hashedFile.filename, false);
+			if (!image.isEmpty()) {
+				mesgString += QString("<img src=\"%1\">").arg(image);
+			}
+			if (link.valid()) {
+				mesgString += link.toHtmlSize() + "<br>";
+			}
+		} else {	
+			if (link.valid()) {
+				mesgString += "<br>" + link.toHtmlSize() + "<br>";
+			}
+		}
+
 	}
 
 	if (!mesgString.isEmpty()) {
