@@ -194,6 +194,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 	gxschannelDialog=NULL;
 	gxsforumDialog=NULL;
 	postedDialog=NULL;
+#ifdef RS_USE_WIRE
+	wireDialog=NULL;
+#endif
 
     /* Invoke the Qt Designer generated QObject setup routine */
     ui->setupUi(this);

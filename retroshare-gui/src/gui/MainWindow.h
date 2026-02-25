@@ -76,6 +76,10 @@ class UserNotify;
 class WikiDialog;
 #endif
 
+#ifdef RS_USE_WIRE
+class WireDialog;
+#endif
+
 #ifdef MESSENGER_WINDOW
 class MessengerWindow;
 #endif
@@ -112,7 +116,10 @@ public:
         People             = 12, /** People page. */
         Options            = 13, /** People page. */
         Home               = 14, /** Home page. */
-        Wiki               = 15  /** Wiki. */
+        Wiki               = 15, /** Wiki. */
+#ifdef RS_USE_WIRE
+        Wire               = 16  /** Wire. */
+#endif
     };
 
 
@@ -174,6 +181,9 @@ public:
 	 PostedDialog      *postedDialog;
 #ifdef RS_USE_WIKI
 	 WikiDialog        *wikiDialog;
+#endif
+#ifdef RS_USE_WIRE
+	 WireDialog        *wireDialog;
 #endif
 
 //    ForumsDialog      *forumsDialog;
