@@ -89,13 +89,47 @@ void PopupDistantChatDialog::init(const ChatId &chat_id, const QString &/*title*
     ui.ownAvatarWidget->setId(chat_id) ;	// sets the actual Id
 
     _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_GRY_LED));
-    auto msg = tr("Remote status unknown.");
-    _status_label->setToolTip(msg);
-    getChatWidget()->updateStatusString("%1", msg, true);
-    getChatWidget()->blockSending(tr( "Can't send message immediately, "
-                      "because there is no tunnel "
-                      "available." ));
-    setPeerStatus(RsStatusValue::RS_STATUS_OFFLINE);
+
+    switch(tinfo.status)
+    {
+    case RS_DISTANT_CHAT_STATUS_CAN_TALK:
+        _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_GRN_LED));
+        {
+            auto msg = tr("End-to-end encrypted conversation established");
+            _status_label->setToolTip(msg);
+            getChatWidget()->updateStatusString("%1", msg, true);
+        }
+        getChatWidget()->unblockSending();
+        setPeerStatus(RsStatusValue::RS_STATUS_ONLINE);
+        break;
+
+    case RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED:
+    case RS_DISTANT_CHAT_STATUS_TUNNEL_DN:
+        _status_label->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_YEL_LED));
+        {
+            auto msg = tr("Tunnel is being established. Please wait...");
+            _status_label->setToolTip(msg);
+            getChatWidget()->updateStatusString("%1", msg, true);
+        }
+        getChatWidget()->blockSending(tr( "Can't send message immediately, "
+                          "because there is no tunnel "
+                          "available." ));
+        setPeerStatus(RsStatusValue::RS_STATUS_OFFLINE);
+        break;
+
+    default:
+    case RS_DISTANT_CHAT_STATUS_UNKNOWN:
+        {
+            auto msg = tr("Remote status unknown.");
+            _status_label->setToolTip(msg);
+            getChatWidget()->updateStatusString("%1", msg, true);
+        }
+        getChatWidget()->blockSending(tr( "Can't send message immediately, "
+                          "because there is no tunnel "
+                          "available." ));
+        setPeerStatus(RsStatusValue::RS_STATUS_OFFLINE);
+        break;
+    }
 }
 
 void PopupDistantChatDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> e)

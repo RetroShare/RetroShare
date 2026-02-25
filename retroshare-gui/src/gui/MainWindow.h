@@ -86,7 +86,7 @@ class ApplicationWindow;
 
 struct Gui_InputDialogReturn
 {
-	int execReturn;
+	int execReturn = 0;
 	QString textValue;
 };
 Q_DECLARE_METATYPE(Gui_InputDialogReturn);

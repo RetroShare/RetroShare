@@ -23,7 +23,7 @@
 #include "GxsForumUserNotify.h"
 #include "gui/MainWindow.h"
 
-GxsForumUserNotify::GxsForumUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent) :
+GxsForumUserNotify::GxsForumUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsStatisticsProvider *g, QObject *parent) :
     GxsUserNotify(ifaceImpl, g, parent)
 {
 	mCountChildMsgs = true;

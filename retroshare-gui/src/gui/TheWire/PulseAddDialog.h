@@ -44,6 +44,7 @@ public:
 
 	void setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, uint32_t replyType);
 	void setGroup(const RsGxsGroupId &grpId);
+	void setGroup(RsWireGroup &group);
 
 private slots:
 	void addURL();
@@ -57,8 +58,6 @@ private slots:
 	void removePictures();
 
 private:
-	// OLD VERSIONs, private now.
-	void setGroup(RsWireGroup &group);
 	void setReplyTo(const RsWirePulse &pulse, RsWirePulseSPtr pPulse, std::string &groupName, uint32_t replyType);
 
 	void postOriginalPulse();
