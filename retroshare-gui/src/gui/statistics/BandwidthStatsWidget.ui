@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1072</width>
+    <width>1158</width>
     <height>385</height>
    </rect>
   </property>
@@ -141,23 +141,22 @@
       <item>
        <widget class="QLabel" name="label_6">
         <property name="text">
-         <string>Time:</string>
+         <string>Values:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="RSComboBox" name="timing_CB">
-        <item>
-         <property name="text">
-          <string>Instant</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Cumlated</string>
-         </property>
-        </item>
+       <widget class="RSComboBox" name="timing_CB"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Data:</string>
+        </property>
        </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="data_CB"/>
       </item>
       <item>
        <widget class="QCheckBox" name="logScale_CB">

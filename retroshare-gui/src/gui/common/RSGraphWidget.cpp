@@ -32,6 +32,12 @@
 #include <QWheelEvent>
 #include <QTimer>
 
+#include <QChartView>
+#include <QChart>
+#include <QPieSeries>
+#include <QPieSlice>
+#include <QValueAxis>
+
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include "rshare.h"
 #include "RSGraphWidget.h"
@@ -259,32 +265,38 @@ void RSGraphWidget::setTimeScale(float pixels_per_second)
     _time_scale =pixels_per_second ;
 }
 
+void RSGraphWidget::setViewMode(ViewMode m)
+{
+    _viewMode = m;
+}
 /** Default contructor */
 RSGraphWidget::RSGraphWidget(QWidget *parent)
 : QFrame(parent)
 {
+    _viewMode = ViewMode::History;
+    _mousePressed = false;
     _source =NULL;
-  _painter = new QPainter();
+    _painter = new QPainter();
 
-  /* Initialize graph values */
-  _maxPoints = getNumPoints();
-  _maxValue = MINUSER_SCALE;
+    /* Initialize graph values */
+    _maxPoints = getNumPoints();
+    _maxValue = MINUSER_SCALE;
 
-  _linewidthscale = 1.0f;
-  _opacity = 0.6 ;
-  _flags = 0;
-  _time_scale = 5.0f ; // in pixels per second.
-  _time_filter = 1.0f ;
-  _timer = new QTimer ;
-  QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(updateIfPossible())) ;
+    _linewidthscale = 1.0f;
+    _opacity = 0.6 ;
+    _flags = 0;
+    _time_scale = 5.0f ; // in pixels per second.
+    _time_filter = 1.0f ;
+    _timer = new QTimer ;
+    QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(updateIfPossible())) ;
 
 
-  _y_scale = 1.0f ;
-  _timer->start(1000);
+    _y_scale = 1.0f ;
+    _timer->start(1000);
 
     float FS = QFontMetricsF(font()).height();
-  setMinimumHeight(12*FS);
-  _graph_base = FS*GRAPH_BASE;
+    setMinimumHeight(12*FS);
+    _graph_base = FS*GRAPH_BASE;
 }
 
 void RSGraphWidget::updateIfPossible()
@@ -353,14 +365,16 @@ void RSGraphWidget::paintEvent(QPaintEvent *)
   }
   _painter->drawRect(_rec);
 
-  /* Paint the scale */
-  paintScale1();
+  if(_viewMode == ViewMode::History)
+  {
+      /* Paint the scale */
+      paintScale1();
 
-  /* Plot the data */
-  paintData();
-
-  /* Paint the totals */
-  paintTotals();
+      /* Plot the data */
+      paintData();
+  }
+  else if(_viewMode == ViewMode::Slice)
+      paintTotals();
 
   // part of the scale that needs to write over the data curves.
   paintScale2();
@@ -592,9 +606,9 @@ void RSGraphWidget::paintDots(const QVector<QPointF>& points, QColor color)
 /** Paints selected total indicators on the graph. */
 void RSGraphWidget::paintTotals()
 {
+#ifdef UNUSED
     float FS = QFontMetricsF(font()).height();
     //float fact = FS/14.0 ;
-
   //int x = SCALE_WIDTH*fact + FS, y = 0;
   int rowHeight = FS;
 
@@ -602,6 +616,44 @@ void RSGraphWidget::paintTotals()
   /* On Mac, we don't need vertical spacing between the text rows. */
   rowHeight += 5;
 #endif
+#endif
+
+  auto c = new QtCharts::QChart();
+  c->legend()->setVisible(true);
+  c->legend()->setAlignment(Qt::AlignRight);
+
+  auto axisY = new QtCharts::QValueAxis();
+  axisY->setTitleText("MB");
+  axisY->setLabelFormat("%.1f");
+  c->addAxis(axisY, Qt::AlignLeft);
+
+  std::vector<float> vals,tmp_vals;
+  _source->getCumulatedValues(tmp_vals);
+
+  for(int i=0;i<_source->n_values();++i)
+      if( _masked_entries.find(_source->displayName(i).toStdString()) == _masked_entries.end() )
+          vals.push_back(tmp_vals[i]);
+
+  float total = 0.0;
+  for(auto  v:vals) total += v;
+
+  if(total != 0.0)
+      for(auto& v:vals) v/=total;
+
+  auto pieSeries = new QtCharts::QPieSeries();
+  for(uint i=0;i<vals.size();++i)
+  {
+      QtCharts::QPieSlice *slice = pieSeries->append(_source->legend(i,vals[i],false),vals[i]);
+      slice->setLabelVisible(true);
+  }
+
+  c->resize(_rec.width(),_rec.height());
+  c->addSeries(pieSeries);
+
+  QGraphicsScene scene;
+  scene.addItem(c);
+  scene.setSceneRect(0, 0, _rec.width(), _rec.height());
+  scene.render(_painter, _rec, _rec);
 }
 
 /** Returns a formatted string with the correct size suffix. */
@@ -771,5 +823,23 @@ void RSGraphWidget::paintLegend()
 
           ++j ;
       }
+}
+
+// These functions capture the cursor
+void RSGraphWidget::mousePressEvent(QMouseEvent *e)
+{
+    _mousePressed = true;
+    QFrame::mousePressEvent(e);
+}
+void RSGraphWidget::mouseMoveEvent(QMouseEvent *e)
+{
+    if(_mousePressed)
+        std::cerr << "e->x() = " << e->x() << std::endl;
+    QFrame::mouseMoveEvent(e);
+}
+void RSGraphWidget::mouseReleaseEvent(QMouseEvent *e)
+{
+    _mousePressed = false;
+    QFrame::mouseReleaseEvent(e);
 }
 

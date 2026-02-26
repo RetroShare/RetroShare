@@ -564,17 +564,17 @@ QString BWGraphSource::niceNumber(float v) const
         return QString::number(v/(1024*1024.0*1024),'f',2) + " GB";
 }
 
-void BWGraphSource::setSelector(int selector_type,int graph_type,const std::string& selector_client_string)
+void BWGraphSource::setSelector(int selector_type,int selector_value,const std::string& selector_client_string)
 {
 #ifdef BWGRAPH_DEBUG
-    std::cerr << "Setting Graph Source selector to " << selector_type << " - " << graph_type << " - " << selector_client_string << std::endl;
+    std::cerr << "Setting Graph Source selector to " << selector_type << " - " << selector_value << " - " << selector_client_string << std::endl;
 #endif
 
     bool changed = false ;
 
-    if(selector_type == SELECTOR_TYPE_FRIEND && (_friend_graph_type != graph_type || (graph_type == GRAPH_TYPE_SINGLE && selector_client_string != _current_selected_friend.toStdString())))
+    if(selector_type == SELECTOR_TYPE_FRIEND && (_friend_graph_type != selector_value || (selector_value == GRAPH_TYPE_SINGLE && selector_client_string != _current_selected_friend.toStdString())))
     {
-	    if(graph_type ==  GRAPH_TYPE_SINGLE)
+        if(selector_value ==  GRAPH_TYPE_SINGLE)
 	    {
 
 		    RsPeerId ns(selector_client_string) ;
@@ -583,7 +583,7 @@ void BWGraphSource::setSelector(int selector_type,int graph_type,const std::stri
 		    {
 			    _current_selected_friend = ns ;
 			    changed = true ;
-			    _friend_graph_type = graph_type ;
+                _friend_graph_type = selector_value ;
 		    }
 
 		    else
@@ -592,13 +592,13 @@ void BWGraphSource::setSelector(int selector_type,int graph_type,const std::stri
 	    else
 	    {
 		    changed = true ;
-		    _friend_graph_type = graph_type ;
+            _friend_graph_type = selector_value ;
 	    }
     }
     else if(selector_type == SELECTOR_TYPE_SERVICE
-                    && (_service_graph_type != graph_type || (graph_type == GRAPH_TYPE_SINGLE && selector_client_string != QString::number(_current_selected_service,16).toStdString())))
+                    && (_service_graph_type != selector_value || (selector_value == GRAPH_TYPE_SINGLE && selector_client_string != QString::number(_current_selected_service,16).toStdString())))
     {
-	    if(graph_type ==  GRAPH_TYPE_SINGLE)
+        if(selector_value ==  GRAPH_TYPE_SINGLE)
 	    {
 		    //bool ok = false ;
 		    int tmp = QString::fromStdString(selector_client_string).toInt() ;
@@ -608,7 +608,7 @@ void BWGraphSource::setSelector(int selector_type,int graph_type,const std::stri
 			    _current_selected_service = tmp ;
 
 			    changed = true ;
-			    _service_graph_type = graph_type ;
+                _service_graph_type = selector_value ;
 		    }
                     else
 			    std::cerr << "(EE) Cannot set current service to " << selector_client_string << ": unrecognized service string." << std::endl;
@@ -617,7 +617,7 @@ void BWGraphSource::setSelector(int selector_type,int graph_type,const std::stri
 	    else
 	    {
 		    changed = true ;
-		    _service_graph_type = graph_type ;
+            _service_graph_type = selector_value ;
 	    }
     }
 

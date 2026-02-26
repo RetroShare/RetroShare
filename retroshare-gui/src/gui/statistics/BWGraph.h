@@ -67,20 +67,20 @@ public:
     BWGraphSource() ;
 	virtual ~BWGraphSource() {}
 
-    enum { SELECTOR_TYPE_FRIEND=0x00, SELECTOR_TYPE_SERVICE=0x01 };
-    enum { GRAPH_TYPE_SINGLE=0x00, GRAPH_TYPE_ALL=0x01, GRAPH_TYPE_SUM=0x02 };
-    enum { UNIT_KILOBYTES=0x00, UNIT_COUNT=0x01 };
-    enum { DIRECTION_DOWN=0x01,DIRECTION_UP=0x02 };	// can be combined using binary ops
-    enum { TIMING_INSTANT = 0x01,TIMING_CUMULATED=0x02 };
+    enum { GRAPH_TYPE_SINGLE    =0x00 ,GRAPH_TYPE_ALL       =0x01 ,GRAPH_TYPE_SUM    =0x02 };
+    enum { SELECTOR_TYPE_FRIEND =0x00 ,SELECTOR_TYPE_SERVICE=0x01 };
+    enum { UNIT_KILOBYTES       =0x00 ,UNIT_COUNT           =0x01 };
+    enum { DIRECTION_DOWN       =0x01 ,DIRECTION_UP         =0x02 };	// can be combined using binary ops
+    enum { TIMING_INSTANT       =0x00 ,TIMING_CUMULATED     =0x01 };
 
     // re-derived from RSGraphSource
 
-	virtual void getCumulatedValues(std::vector<float>& vals) const;
-    virtual void getValues(std::map<std::string,float>& values) const;
-    virtual QString displayValue(float v) const;
-    virtual QString legend(int i,float v,bool show_value=true) const;
-    virtual void update();
-    QString unitName() const ;
+    virtual void getCumulatedValues(std::vector<float>& vals) const override;
+    virtual void getValues(std::map<std::string,float>& values) const override;
+    virtual QString displayValue(float v) const override;
+    virtual QString legend(int i,float v,bool show_value=true) const override;
+    virtual void update() override;
+    QString unitName() const  override;
 
     // own methdods to control what's used to create displayed info
 
@@ -89,9 +89,9 @@ public:
     void setUnit(int unit) ;
     void setTiming(int t) ;
 
-    int direction() const { return _current_direction ;}
-    int unit() const { return _current_unit ;}
-    int friendGraphType() const { return _friend_graph_type ;}
+    int direction()        const { return _current_direction ;}
+    int unit()             const { return _current_unit ;}
+    int friendGraphType()  const { return _friend_graph_type ;}
     int serviceGraphType() const { return _service_graph_type ;}
 
     const std::map<RsPeerId,std::string>& visibleFriends() const { return mVisibleFriends; }
@@ -166,10 +166,12 @@ class BWGraph: public RSGraphWidget
         BWGraph(QWidget *parent);
         ~BWGraph();
 
-    void setSelector(int selector_type, int graph_type, const std::string& selector_client_string = std::string())  { _local_source->setSelector(selector_type,graph_type,selector_client_string) ; }
+    void setSelector(int selector_type, int selector_value, const std::string& selector_client_string = std::string())  { _local_source->setSelector(selector_type,selector_value,selector_client_string) ; }
     void setDirection(int dir) { _local_source->setDirection(dir); }
     void setTiming(int t) { _local_source->setTiming(t); }
     void setUnit(int unit) { _local_source->setUnit(unit) ;}
+    void setDataSliceDelay(int d) { _data_slice_delay = d; }
+
     void clear() { _local_source->clear() ; }
 
     int direction() const { return _local_source->direction(); }
@@ -178,4 +180,7 @@ class BWGraph: public RSGraphWidget
     const std::set<uint16_t>& visibleServices() const { return _local_source->visibleServices(); }
 protected:
         BWGraphSource *_local_source ;
+        int _data_slice_delay;
+
+        bool _mouse_pressed;
 };

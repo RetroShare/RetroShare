@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QComboBox>
+#include <QMouseEvent>
 #include <QTimer>
 
 #include "retroshare/rspeers.h"
@@ -32,6 +33,7 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
 {
     ui.setupUi(this) ;
 
+    m_mousePressed = false;
     m_bProcessSettings = false;
 
     // now add one button per service
@@ -41,6 +43,12 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
 
     ui.service_CB->addItem(tr("Sum")) ;
     ui.service_CB->addItem(tr("All")) ;
+
+    ui.data_CB->addItem(tr("history (curves)")) ;
+    ui.data_CB->addItem(tr("latest (pie)")) ;
+
+    ui.timing_CB->addItem(tr("real time")) ;
+    ui.timing_CB->addItem(tr("cumulated")) ;
 
     ui.unit_CB->addItem(tr("KB/s")) ;
     ui.unit_CB->addItem(tr("Count")) ;
@@ -62,6 +70,7 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
     QObject::connect(ui.friend_CB  ,SIGNAL(currentIndexChanged(int )),this, SLOT( updateFriendSelection(int ))) ;
     QObject::connect(ui.updn_CB    ,SIGNAL(currentIndexChanged(int )),this, SLOT( updateUpDownSelection(int ))) ;
     QObject::connect(ui.timing_CB  ,SIGNAL(currentIndexChanged(int )),this, SLOT( updateTimingSelection(int ))) ;
+    QObject::connect(ui.data_CB    ,SIGNAL(currentIndexChanged(int )),this, SLOT(   updateDataSelection(int ))) ;
     QObject::connect(ui.unit_CB    ,SIGNAL(currentIndexChanged(int )),this, SLOT(   updateUnitSelection(int ))) ;
     QObject::connect(ui.clear_PB   ,SIGNAL(            clicked(    )),this, SLOT(          clearHistory(    ))) ;
     QObject::connect(ui.service_CB ,SIGNAL(currentIndexChanged(int )),this, SLOT(updateServiceSelection(int ))) ;
@@ -261,6 +270,15 @@ void BandwidthStatsWidget::updateServiceSelection(int n)
     }
 }
 
+void BandwidthStatsWidget::updateDataSelection(int n)
+{
+    std::cerr << "updating data selection to " << n << " !" << std::endl;
+    if(n==0)
+        ui.bwgraph_BW->setViewMode(RSGraphWidget::ViewMode::History) ;
+    else
+        ui.bwgraph_BW->setViewMode(RSGraphWidget::ViewMode::Slice) ;
+}
+
 void BandwidthStatsWidget::updateTimingSelection(int n)
 {
     std::cerr << "updating timing to " << n << " !" << std::endl;
@@ -315,3 +333,4 @@ void BandwidthStatsWidget::updateGraphSelection(int n)
 	else
 		ui.bwgraph_BW->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
 }
+

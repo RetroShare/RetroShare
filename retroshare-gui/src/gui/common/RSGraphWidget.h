@@ -73,6 +73,7 @@ public:
 
     virtual QString unitName() const { return "" ; }// overload to give your own unit name (KB/s, Users, etc)
 
+    // Number of curves available
     int n_values() const ;
 
     // Might be overloaded in order to show a fancy digit number with adaptive units.
@@ -155,6 +156,11 @@ public:
 		SolidLine = 0,  /**< Plot bandwidth as solid lines. */
 		AreaGraph = 1   /**< Plot bandwidth as alpha blended area graphs. */
 	};
+    enum ViewMode
+    {
+        History = 0x00,  /**< Plots the full curves with time . */
+        Slice   = 0x01,  /**< Plots a slice of the curves at some point in time. */
+    };
 
 	/** Default Constructor */
 	RSGraphWidget(QWidget *parent = 0);
@@ -166,6 +172,8 @@ public:
 	void setTimerPeriod(int miliseconds) ;				
 	void setSource(RSGraphSource *gs) ;
 	void setTimeScale(float pixels_per_second) ;
+    void setViewMode(ViewMode m) ;
+    void setSliceProportion(float f) ; // float between 0 and 1. 0 means newest 1 means oldest.
 
 	/** Add data points. */
 	//void addPoints(qreal rsDHT, qreal allDHT);
@@ -184,7 +192,7 @@ public:
 	void resetFlags(uint32_t flag) { _flags &= ~flag ; }
 protected:
 	/** Overloaded QWidget::paintEvent() */
-	void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent *event) override;
 
 //QSize QFrame::sizeHint() const;
 //	virtual QSizeF sizeHint( Qt::SizeHint which, const QSizeF & constraint = QSizeF() ) const;
@@ -192,7 +200,13 @@ protected:
 protected slots:
 	void updateIfPossible() ;
 
-	virtual void wheelEvent(QWheelEvent *e);
+    virtual void wheelEvent(QWheelEvent *e) override;
+
+protected:
+    virtual void mousePressEvent(QMouseEvent *e) override;
+    virtual void mouseMoveEvent(QMouseEvent *e) override;
+    virtual void mouseReleaseEvent(QMouseEvent *e) override;
+
 private:
 	/** Gets the width of the desktop, the max # of points. */
 	int getNumPoints();
@@ -254,5 +268,8 @@ private:
 	QTimer *_timer ;
 
 	RSGraphSource *_source ;
+
+    bool _mousePressed;
+    ViewMode _viewMode;
 };
 
