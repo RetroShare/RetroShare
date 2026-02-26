@@ -184,7 +184,7 @@
          <property name="bottomMargin">
           <number>24</number>
          </property>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <layout class="QGridLayout" name="profilGLayout">
            <item row="14" column="2">
             <widget class="RSComboBox" name="keylength_comboBox">
@@ -785,6 +785,16 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="pixmaplabel">
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -826,8 +836,8 @@
   <tabstop>importIdentity_PB</tabstop>
  </tabstops>
  <resources>
-  <include location="images.qrc"/>
   <include location="icons.qrc"/>
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>

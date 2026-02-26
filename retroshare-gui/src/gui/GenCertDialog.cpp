@@ -48,6 +48,7 @@
 
 #define IMAGE_GOOD ":/images/accepted16.png"
 #define IMAGE_BAD  ":/icons/cancel.svg"
+#define IMAGE_TOR  ":/icons/Tor-logo-2011.png"
 
 class EntropyCollectorWidget: public QTextBrowser
 {
@@ -199,6 +200,8 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 //	ui.adv_checkbox->setChecked(false);
 //	ui.adv_checkbox->setVisible(true);
 //#endif
+
+	ui.pixmaplabel->setVisible(false);
 
 	initKeyList();
     setupState();
@@ -585,6 +588,7 @@ void GenCertDialog::genPerson()
 		//ui.reuse_existing_node_CB->hide();
 		ui.name_label->hide();
 		ui.name_input->hide();
+		ui.profile_name_check_LB->hide();
 		ui.nickname_label->hide();
 		ui.nickname_input->hide();
 		ui.password2_label->hide();
@@ -604,7 +608,23 @@ void GenCertDialog::genPerson()
 		ui.keylength_label->hide();
 		ui.keylength_comboBox->hide();
 
+		ui.randomness_label_->hide();
+		ui.entropy_bar->hide();
+		ui.randomness_check_LB->hide();
+		ui.nodeType_LB->hide();
+		ui.adv_checkbox->hide();
+		ui.groupBox->hide();
+
 		setCursor(Qt::WaitCursor) ;
+
+		if(isAutoTor && RsTor::isTorAvailable())
+		{
+			ui.info_Label->setVisible(true) ;
+			ui.pixmaplabel->setVisible(true) ;
+			ui.info_Label->setAlignment(Qt::AlignCenter);
+			ui.info_Label->setText("RetroShare is starting with Tor...") ;
+			ui.pixmaplabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_TOR)) ;
+		}
 
 		QCoreApplication::processEvents();
 		QAbstractEventDispatcher* ed = QAbstractEventDispatcher::instance();
