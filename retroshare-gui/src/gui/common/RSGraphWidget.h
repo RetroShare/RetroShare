@@ -44,16 +44,20 @@
 #define RSDHT_COLOR        Qt::magenta
 #define ALLDHT_COLOR       Qt::yellow
 
-struct ZeroInitFloat
+template<typename T>
+struct t_ZeroInitVal
 {
-	ZeroInitFloat() { v=0; }
-	ZeroInitFloat(float f) { v=f; }
+    t_ZeroInitVal() { v=0; }
+    t_ZeroInitVal(T f) { v=f; }
 
-	float operator()() const { return v ; }
-	float& operator()() { return v ; }
+    T operator()() const { return v ; }
+    T& operator()() { return v ; }
 
-	float v ;
+    T& operator+=(const T& t) { v+=t.v; return *this; }
+    T v ;
 };
+typedef t_ZeroInitVal<float> ZeroInitFloat;
+typedef t_ZeroInitVal<int> ZeroInitInt;
 
 // This class provides a source value that the graph can retrieve on demand.
 // In order to use your own source, derive from RSGraphSource and overload the value() method.
@@ -85,6 +89,10 @@ public:
 
     // return the vector of cumulated values up to date
 	virtual void getCumulatedValues(std::vector<float>& vals) const;
+
+    // returns the vector of latest values with time stamp within the given ts. The returned vector
+    // always has the size of n_values(), but some of the returned values may be zero (e.g. when data is missing).
+    virtual void getSlicedValues(uint min_secs_ago,uint max_secs_ago,std::vector<float>& vals) const;
 
     // returns what to display in the legend. Derive this to show additional info.
     virtual QString legend(int i, float v, bool show_value=true) const ;

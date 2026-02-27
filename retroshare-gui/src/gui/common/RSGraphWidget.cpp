@@ -107,6 +107,48 @@ QString RSGraphSource::displayValue(float v) const
     return QString::number(v,'f',_digits) + " " + unitName() ;
 }
 
+void RSGraphSource::getSlicedValues(uint min_secs_ago,uint max_secs_ago,std::vector<float>& vals) const
+{
+    vals.clear();
+    uint64_t max_ts = max_secs_ago*1000;	// in _points the TS are w.r.t. now (in reverse) and in ms.
+    uint64_t min_ts = min_secs_ago*1000;
+
+    std::cerr << "Collecting data between ts = " << min_ts << " and " << max_ts << std::endl;
+    std::vector<std::pair<ZeroInitFloat,ZeroInitInt>> collected_vals;
+
+    for(const auto& lst:_points)
+    {
+        collected_vals.push_back(std::make_pair(0,0)); // init so that the value is mentionned in the list.
+        auto& v(collected_vals.back());
+
+        std::cerr << "  points string: \"" << lst.first << "\"" << std::endl;
+
+        for(const auto& p:lst.second)
+        {
+            if((uint64_t)p.first >= min_ts && (uint64_t)p.first <= max_ts)
+            {
+                v.first.v += p.second;
+                v.second.v++;
+
+                std::cerr << "      TS = " << p.first ;
+                std::cerr << " data \"" << lst.first << "\": Found ts = " << p.first << ": adding." << std::endl;
+            }
+        }
+    }
+
+    // now average values when multiple values have been collected.
+
+    std::cerr << "Computed values: " << collected_vals.size() << std::endl;
+
+    for(uint i=0;i<collected_vals.size();++i)
+    {
+        const auto& v(collected_vals[i]);
+
+        vals.push_back((v.second.v > 0)?(v.first.v/v.second.v):0.0);
+        std::cerr << "  \"" << displayName(i).toStdString() << "\" " << vals.back() << "  (" << v.second.v << ")" << std::endl;
+    }
+}
+
 void RSGraphSource::getCumulatedValues(std::vector<float>& vals) const
 {
     for(std::map<std::string,ZeroInitFloat>::const_iterator it = _totals.begin();it!=_totals.end();++it)
@@ -627,25 +669,17 @@ void RSGraphWidget::paintTotals()
   axisY->setLabelFormat("%.1f");
   c->addAxis(axisY, Qt::AlignLeft);
 
-  std::vector<float> vals,tmp_vals;
-  _source->getCumulatedValues(tmp_vals);
-
-  for(int i=0;i<_source->n_values();++i)
-      if( _masked_entries.find(_source->displayName(i).toStdString()) == _masked_entries.end() )
-          vals.push_back(tmp_vals[i]);
-
-  float total = 0.0;
-  for(auto  v:vals) total += v;
-
-  if(total != 0.0)
-      for(auto& v:vals) v/=total;
+  std::vector<float> vals;
+  _source->getSlicedValues(0,5,vals);
 
   auto pieSeries = new QtCharts::QPieSeries();
+
   for(uint i=0;i<vals.size();++i)
-  {
-      QtCharts::QPieSlice *slice = pieSeries->append(_source->legend(i,vals[i],false),vals[i]);
-      slice->setLabelVisible(true);
-  }
+      if( _masked_entries.find(_source->displayName(i).toStdString()) == _masked_entries.end() )
+      {
+          QtCharts::QPieSlice *slice = pieSeries->append(_source->legend(i,vals[i],false),vals[i]);
+          slice->setLabelVisible(true);
+      }
 
   c->resize(_rec.width(),_rec.height());
   c->addSeries(pieSeries);
