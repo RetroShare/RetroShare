@@ -110,30 +110,35 @@ QString RSGraphSource::displayValue(float v) const
 void RSGraphSource::getSlicedValues(uint min_secs_ago,uint max_secs_ago,std::vector<float>& vals) const
 {
     vals.clear();
-    uint64_t max_ts = max_secs_ago*1000;	// in _points the TS are w.r.t. now (in reverse) and in ms.
-    uint64_t min_ts = min_secs_ago*1000;
 
-    std::cerr << "Collecting data between ts = " << min_ts << " and " << max_ts << std::endl;
     std::vector<std::pair<ZeroInitFloat,ZeroInitInt>> collected_vals;
 
-    for(const auto& lst:_points)
+    for(auto lst_it = _points.begin();lst_it!=_points.end();++lst_it)
     {
-        collected_vals.push_back(std::make_pair(0,0)); // init so that the value is mentionned in the list.
+        collected_vals.push_back(std::make_pair(0.,0)); // init so that the value is mentionned in the list.
         auto& v(collected_vals.back());
 
-        std::cerr << "  points string: \"" << lst.first << "\"" << std::endl;
+        uint64_t max_ts = lst_it->second.back().first - min_secs_ago*1000;	// in _points the TS are w.r.t. now (in reverse) and in ms.
+        uint64_t min_ts = lst_it->second.back().first - max_secs_ago*1000;
 
-        for(const auto& p:lst.second)
+        std::cerr << "Collecting data in \"" << lst_it->first << "\" between ts = " << min_ts << " and " << max_ts << std::endl;
+
+        for(const auto& p:lst_it->second)
         {
+            std::cerr << "      TS = " << p.first ;
+            std::cerr << " data \"" << lst_it->first << "\": Found ts = " << p.first << ": value " << p.second ;
+
             if((uint64_t)p.first >= min_ts && (uint64_t)p.first <= max_ts)
             {
                 v.first.v += p.second;
                 v.second.v++;
 
-                std::cerr << "      TS = " << p.first ;
-                std::cerr << " data \"" << lst.first << "\": Found ts = " << p.first << ": adding." << std::endl;
+                std::cerr << " Kept."<< std::endl;
             }
+            else
+                std::cerr << std::endl;
         }
+        std::cerr << "  total value = " << v.first.v << "  --  " << v.second.v << std::endl;
     }
 
     // now average values when multiple values have been collected.

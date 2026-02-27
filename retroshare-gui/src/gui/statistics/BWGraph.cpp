@@ -29,7 +29,7 @@
 
 void BWGraphSource::update()
 {
-#ifdef BWGRAPH_DEBUG
+#ifndef BWGRAPH_DEBUG
     std::cerr << "Updating BW graphsource..." << std::endl;
 #endif
 
@@ -44,7 +44,7 @@ void BWGraphSource::update()
                 auto& t = tmap[PeerSrvSubsrv(c)];
                 t.cumulated_size  += c.size;
                 t.cumulated_count += c.count;
-#ifdef BWGRAPH_DEBUG
+#ifndef BWGRAPH_DEBUG
                 std::cerr << "Pushing " << c.TS << "  " << c.peer_id << "  " << c.service_id << "  " << (int)c.service_sub_id << " into cumulated map" << std::endl;
 #endif
             }
