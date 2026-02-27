@@ -81,10 +81,10 @@
           <item>
            <widget class="QPushButton" name="pushButton_Merge">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
-             <string>Merge for Republish (TODO)</string>
+             <string>Merge for Republish</string>
             </property>
            </widget>
           </item>
