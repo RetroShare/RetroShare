@@ -115,6 +115,7 @@ public:
     // This method will asynchroneously update the data
 	void updateChannel(const RsGxsGroupId& channel_group_id);
     const RsGxsGroupId& currentGroupId() const;
+    const RsGxsChannelGroup& getChannelGroup() const { return mChannelGroup; }
 
     void triggerViewUpdate(bool data_changed,bool layout_changed);
 
