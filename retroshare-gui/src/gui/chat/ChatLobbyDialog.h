@@ -28,6 +28,11 @@
 #include "PopupChatWindow.h"
 #include "util/FontSizeHandler.h"
 
+#include <QSet>
+#include <QMap>
+#include <QTimer>
+#include <retroshare/rshistory.h>
+
 // Q_DECLARE_METATYPE(RsGxsId)
 // Q_DECLARE_METATYPE(QList<RsGxsId>)
 
@@ -43,6 +48,7 @@ class ChatLobbyDialog: public ChatDialog
 
 public:
     void handleLobbyEvent(RsChatLobbyEventCode event_type, const RsGxsId& gxs_id, const QString& str);
+    void handleLobbyHistoryEvent(const RsChatLobbyEvent* ev);
 
     virtual void showDialog(RsChatFlags chatflags) override;
     virtual ChatWidget *getChatWidget() override;
@@ -57,6 +63,7 @@ public:
 
 public slots:
 	void leaveLobby() ;
+	void fetchHistory() ;
 private slots:
 	void participantsTreeWidgetCustomPopupMenu( QPoint point );
 	void textBrowserAskContextMenu(QMenu* contextMnu, QString anchorForPosition, const QPoint point);
@@ -112,6 +119,7 @@ private:
 	QToolButton *undockButton ;
 	QToolButton *inviteFriendsButton ;
 	QToolButton *unsubscribeButton ;
+	QToolButton *fetchHistoryButton ;
 
 	bool mWindowedSetted;
 	PopupChatWindow* mPCWindow;
@@ -141,6 +149,23 @@ private:
 
     RsEventsHandlerId_t mEventHandlerId_identity;
     void handleIdentityEvent(std::shared_ptr<const RsEvent> event);
+
+private slots:
+    void onHistoryProbeTimeout();
+    void onHistoryDataTimeout();
+
+private:
+    // Variables for Step 13 custom history fetching logic
+    QTimer* mHistoryProbeTimer;
+    QTimer* mHistoryDataTimer;
+    
+    bool mIsWaitingForProbes;
+    bool mIsWaitingForData;
+    uint32_t mRequestedOldestTs;
+    
+    std::set<RsPeerId> mSelectedPeersForHistory;
+    std::map<RsPeerId, uint32_t> mBufferedProbeResponses; // PeerId -> oldest available timestamp
+    std::list<HistoryMsg> mBufferedHistoryData; // All messages received during the data timeout
 };
 
 #endif
