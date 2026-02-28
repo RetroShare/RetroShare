@@ -128,8 +128,12 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
             case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_JOINED:
             case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
             case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_KEEP_ALIVE:
-
                 handleChatLobbyEvent(ev->mLobbyId,ev->mEventCode,ev->mGxsId,QString::fromUtf8(ev->mStr.c_str()));
+                break;
+
+            case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_HISTORY_PROBE_RESPONSE:
+            case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_HISTORY_DATA:
+                handleLobbyHistoryEvent(ev);
                 break;
 
             default:
@@ -1199,6 +1203,14 @@ void ChatLobbyWidget::handleChatLobbyEvent(uint64_t lobby_id, RsChatLobbyEventCo
 {
     if (ChatLobbyDialog *cld = dynamic_cast<ChatLobbyDialog*>(ChatDialog::getExistingChat(ChatId(lobby_id)))) {
         cld->handleLobbyEvent(event_type, gxs_id, str);
+    }
+}
+
+void ChatLobbyWidget::handleLobbyHistoryEvent(const RsChatLobbyEvent* ev)
+{
+    if (!ev) return;
+    if (ChatLobbyDialog *cld = dynamic_cast<ChatLobbyDialog*>(ChatDialog::getExistingChat(ChatId(ev->mLobbyId)))) {
+        cld->handleLobbyHistoryEvent(ev);
     }
 }
 

@@ -24,6 +24,13 @@
 #include <QMessageBox>
 #include <QWidgetAction>
 #include <QActionGroup>
+#include <QTimer>
+#include <QVBoxLayout>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDialogButtonBox>
+#include <QLabel>
+#include <QGroupBox>
 
 #include "ChatLobbyDialog.h"
 
@@ -48,6 +55,12 @@
 
 #include "util/rstime.h"
 #include "util/DateTime.h"
+
+#include <retroshare/rschats.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rshistory.h>
+
+#include "rshare.h"
 
 #include <time.h>
 #include <unistd.h>
@@ -203,6 +216,22 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	unsubscribeButton->setIconSize(icon_size);
 	}
 
+	fetchHistoryButton = new QToolButton;
+	fetchHistoryButton->setText(QString());
+	fetchHistoryButton->setAutoRaise(true);
+	fetchHistoryButton->setToolTip(tr("Fetch chat history from peers"));
+
+	{
+	QIcon icon ;
+	icon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/edit-clear-history.png")) ; // Using a visible icon
+	fetchHistoryButton->setIcon(icon) ;
+	fetchHistoryButton->setIconSize(icon_size);
+	}
+
+	connect(fetchHistoryButton, SIGNAL(clicked()), this , SLOT(fetchHistory()));
+
+	getChatWidget()->addTitleBarWidget(fetchHistoryButton) ;
+
 	/* Initialize splitter */
 	ui.splitter->setStretchFactor(0, 1);
 	ui.splitter->setStretchFactor(1, 0);
@@ -215,6 +244,19 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     
     mEventHandlerId_identity = 0; // Initialize
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject([=](){ handleIdentityEvent(event); }, this); }, mEventHandlerId_identity, RsEventType::GXS_IDENTITY );
+
+    // Step 13 custom fetch history timers
+    mIsWaitingForProbes = false;
+    mIsWaitingForData = false;
+    mRequestedOldestTs = 0;
+    
+    mHistoryProbeTimer = new QTimer(this);
+    mHistoryProbeTimer->setSingleShot(true);
+    connect(mHistoryProbeTimer, SIGNAL(timeout()), this, SLOT(onHistoryProbeTimeout()));
+
+    mHistoryDataTimer = new QTimer(this);
+    mHistoryDataTimer->setSingleShot(true);
+    connect(mHistoryDataTimer, SIGNAL(timeout()), this, SLOT(onHistoryDataTimeout()));
 }
 
 void ChatLobbyDialog::leaveLobby()
@@ -223,6 +265,154 @@ void ChatLobbyDialog::leaveLobby()
 
 	if (mPCWindow)
 		mPCWindow = nullptr;// Windows deleted by events just before.
+}
+
+void ChatLobbyDialog::fetchHistory()
+{
+	if (mIsWaitingForProbes || mIsWaitingForData) {
+		QMessageBox::warning(this, tr("Fetch History"), tr("A history request is already in progress. Please wait."));
+		return;
+	}
+
+	QDialog dialog(this);
+	dialog.setWindowTitle(tr("Fetch Chat History"));
+	QVBoxLayout* layout = new QVBoxLayout(&dialog);
+
+	// Duration selection
+	QGroupBox* durationGroup = new QGroupBox(tr("History Duration"), &dialog);
+	QVBoxLayout* durationLayout = new QVBoxLayout(durationGroup);
+	QComboBox* durationCombo = new QComboBox(durationGroup);
+	durationCombo->addItem(tr("Last hour"), 3600);
+	durationCombo->addItem(tr("Last 24 hours"), 86400);
+	durationCombo->addItem(tr("Last 7 days"), 7 * 86400);
+	durationCombo->addItem(tr("All available messages"), 0);
+	durationLayout->addWidget(durationCombo);
+	layout->addWidget(durationGroup);
+
+	// Source selection
+	QGroupBox* sourceGroup = new QGroupBox(tr("Information Sources"), &dialog);
+	QVBoxLayout* sourceLayout = new QVBoxLayout(sourceGroup);
+	
+	QCheckBox* cbLocal = new QCheckBox(tr("My Local Database"), sourceGroup);
+	cbLocal->setChecked(true); // Default to checking local
+	sourceLayout->addWidget(cbLocal);
+
+	QCheckBox* cbAllFriends = new QCheckBox(tr("All Connected Friends in this Room"), sourceGroup);
+	sourceLayout->addWidget(cbAllFriends);
+
+	QFrame* line = new QFrame(sourceGroup);
+	line->setFrameShape(QFrame::HLine);
+	line->setFrameShadow(QFrame::Sunken);
+	sourceLayout->addWidget(line);
+
+	// List of individual friends
+	ChatLobbyInfo info;
+	if (rsChats->getChatLobbyInfo(lobbyId, info)) {
+		QMap<QCheckBox*, RsPeerId> peerCheckboxes;
+		for (std::set<RsPeerId>::const_iterator it = info.participating_friends.begin(); it != info.participating_friends.end(); ++it) {
+			RsPeerId peerId = *it;
+			// Only list connected friends
+			if (rsPeers->isOnline(peerId)) {
+				QString peerName = QString::fromUtf8(rsPeers->getPeerName(peerId).c_str());
+				QCheckBox* cbPeer = new QCheckBox(peerName, sourceGroup);
+				peerCheckboxes.insert(cbPeer, peerId);
+				sourceLayout->addWidget(cbPeer);
+				
+				// Connect "All Friends" checkbox to individual ones to simplify selection
+				connect(cbAllFriends, SIGNAL(toggled(bool)), cbPeer, SLOT(setChecked(bool)));
+			}
+		}
+		
+		if (peerCheckboxes.isEmpty()) {
+			cbAllFriends->setEnabled(false);
+			cbAllFriends->setText(tr("All Connected Friends in this Room (None available)"));
+		}
+
+		layout->addWidget(sourceGroup);
+
+		QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+		layout->addWidget(buttonBox);
+		connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+		connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+
+		if (dialog.exec() != QDialog::Accepted) {
+			return;
+		}
+
+		// Figure out the requested timestamp
+		uint32_t current_ts = time(NULL);
+		uint32_t duration = durationCombo->currentData().toUInt();
+		mRequestedOldestTs = (duration == 0) ? 0 : (current_ts - duration);
+
+		bool doLocal = cbLocal->isChecked();
+		
+		mSelectedPeersForHistory.clear();
+		if (cbAllFriends->isChecked()) {
+			for (auto it = peerCheckboxes.begin(); it != peerCheckboxes.end(); ++it) {
+				mSelectedPeersForHistory.insert(it.value());
+			}
+		} else {
+			for (auto it = peerCheckboxes.begin(); it != peerCheckboxes.end(); ++it) {
+				if (it.key()->isChecked()) {
+					mSelectedPeersForHistory.insert(it.value());
+				}
+			}
+		}
+
+		// 1. Process Local Fetch immediately if requested
+		if (doLocal) {
+			std::list<HistoryMsg> msgs;
+			if (rsHistory->getMessages(ChatId(lobbyId), msgs, 0)) {
+				std::list<HistoryMsg> filteredMsgs;
+				for (const auto& msg : msgs) {
+					if (msg.sendTime >= mRequestedOldestTs) {
+						filteredMsgs.push_back(msg);
+					}
+				}
+
+				if (!filteredMsgs.empty()) {
+					ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- Loaded %1 local historical messages ---").arg(filteredMsgs.size()), ChatWidget::MSGTYPE_SYSTEM);
+
+					for (const auto& msg : filteredMsgs) {
+						QString authorName;
+						if (!msg.peerName.empty()) {
+							authorName = QString::fromUtf8(msg.peerName.c_str());
+						} else {
+							authorName = QString::fromStdString(msg.peerId.toStdString());
+						}
+
+						RsGxsId authorId(msg.peerId.toStdString());
+						QString messageText = QString::fromUtf8(msg.message.c_str());
+						QDateTime sendTs = QDateTime::fromTime_t(msg.sendTime);
+						QDateTime recvTs = sendTs; 
+
+						ui.chatWidget->addChatMsg(msg.incoming, authorName, authorId, sendTs, recvTs, messageText, ChatWidget::MSGTYPE_HISTORY);
+					}
+					ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- End of local historical messages ---"), ChatWidget::MSGTYPE_SYSTEM);
+				} else if (mSelectedPeersForHistory.empty()) {
+					QMessageBox::information(this, tr("Local History"), tr("No local history found for the selected period."));
+					return;
+				}
+			}
+		}
+
+		// 2. Process Network Fetch (Probes) if peers were selected
+		if (!mSelectedPeersForHistory.empty()) {
+			mIsWaitingForProbes = true;
+			mBufferedProbeResponses.clear();
+			
+			// Send the general probe request to ALL peers (the backend distributes it). 
+			// We will filter responses matching mSelectedPeersForHistory.
+			if (rsChats->requestLobbyHistory(lobbyId)) {
+				ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- Requesting history from %1 peers. Waiting 5s for responses... ---").arg(mSelectedPeersForHistory.size()), ChatWidget::MSGTYPE_SYSTEM);
+				
+				mHistoryProbeTimer->start(5000); // Wait 5 seconds for probes
+			} else {
+				mIsWaitingForProbes = false;
+				QMessageBox::warning(this, tr("Fetch History"), tr("Failed to send history probe request."));
+			}
+		}
+	}
 }
 
 void ChatLobbyDialog::inviteFriends()
@@ -943,6 +1133,120 @@ void ChatLobbyDialog::handleLobbyEvent(RsChatLobbyEventCode event_type, const Rs
     }
 
     updateParticipantsList() ;
+}
+
+void ChatLobbyDialog::handleLobbyHistoryEvent(const RsChatLobbyEvent* ev)
+{
+	if (!ev) return;
+
+	if (ev->mEventCode == RsChatLobbyEventCode::CHAT_LOBBY_EVENT_HISTORY_PROBE_RESPONSE)
+	{
+		if (mIsWaitingForProbes && mSelectedPeersForHistory.find(ev->mPeerId) != mSelectedPeersForHistory.end()) {
+			// Record the oldest available timestamp reported by this peer
+			mBufferedProbeResponses[ev->mPeerId] = ev->mTimeShift;
+		}
+	}
+	else if (ev->mEventCode == RsChatLobbyEventCode::CHAT_LOBBY_EVENT_HISTORY_DATA)
+	{
+		if (mIsWaitingForData && mSelectedPeersForHistory.find(ev->mPeerId) != mSelectedPeersForHistory.end()) {
+			// Convert received msgs to HistoryMsg and buffer them
+			for (const auto& entry : ev->mHistoryMsgs) {
+				HistoryMsg msg;
+				rsHistory->chatIdToVirtualPeerId(ChatId(lobbyId), msg.chatPeerId);
+				msg.incoming = entry.incoming;
+				msg.peerId = RsPeerId(entry.author_id);
+				msg.peerName = entry.nick;
+				msg.sendTime = entry.send_time;
+				msg.recvTime = entry.send_time;
+				msg.message = entry.message;
+				mBufferedHistoryData.push_back(msg);
+			}
+		}
+	}
+}
+
+void ChatLobbyDialog::onHistoryProbeTimeout()
+{
+	mIsWaitingForProbes = false;
+
+	if (mBufferedProbeResponses.empty()) {
+		ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- No history found from selected peers ---"), ChatWidget::MSGTYPE_SYSTEM);
+		mSelectedPeersForHistory.clear();
+		return;
+	}
+
+	ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- Received responses from %1 peers. Starting download... ---").arg(mBufferedProbeResponses.size()), ChatWidget::MSGTYPE_SYSTEM);
+
+	// Start data phase
+	mIsWaitingForData = true;
+	mBufferedHistoryData.clear();
+	
+	for (auto it = mBufferedProbeResponses.begin(); it != mBufferedProbeResponses.end(); ++it) {
+		RsPeerId peerId = it->first;
+		uint32_t peerOldestTs = it->second;
+		
+		uint32_t requestTs = mRequestedOldestTs;
+		if (requestTs < peerOldestTs && peerOldestTs != 0) {
+			requestTs = peerOldestTs;
+		}
+		
+		// Send the actual data request to this specific peer
+		rsChats->requestLobbyHistoryFromPeer(lobbyId, peerId, 5000, requestTs);
+	}
+
+	// Start the data collection timer
+	mHistoryDataTimer->start(5000);
+}
+
+void ChatLobbyDialog::onHistoryDataTimeout()
+{
+	mIsWaitingForData = false;
+	mSelectedPeersForHistory.clear();
+
+	if (mBufferedHistoryData.empty()) {
+		ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- No new historical messages could be downloaded. ---"), ChatWidget::MSGTYPE_SYSTEM);
+		return;
+	}
+
+	// 1. Sort the collected messages chronologically
+	mBufferedHistoryData.sort([](const HistoryMsg& a, const HistoryMsg& b) {
+		return a.sendTime < b.sendTime;
+	});
+
+	// 2. Deduplicate. Since we might have received the same messages from multiple peers, 
+	// we filter by (sendTime + message text).
+	std::list<HistoryMsg> uniqueMsgs;
+	std::set<std::pair<uint32_t, std::string>> seenDb;
+
+	for (const auto& msg : mBufferedHistoryData) {
+		auto key = std::make_pair(msg.sendTime, msg.message);
+		if (seenDb.find(key) == seenDb.end()) {
+			seenDb.insert(key);
+			uniqueMsgs.push_back(msg);
+		}
+	}
+
+	// 3. Display
+	ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- Downloaded and merged %1 historical messages ---").arg(uniqueMsgs.size()), ChatWidget::MSGTYPE_SYSTEM);
+
+	for (const auto& msg : uniqueMsgs)
+	{
+		QString authorName;
+		if (!msg.peerName.empty()) {
+			authorName = QString::fromUtf8(msg.peerName.c_str());
+		} else {
+			authorName = QString::fromStdString(msg.peerId.toStdString());
+		}
+
+		RsGxsId authorId(msg.peerId.toStdString());
+		QString messageText = QString::fromUtf8(msg.message.c_str());
+		QDateTime sendTs = QDateTime::fromTime_t(msg.sendTime);
+		QDateTime recvTs = sendTs; 
+
+		ui.chatWidget->addChatMsg(msg.incoming, authorName, authorId, sendTs, recvTs, messageText, ChatWidget::MSGTYPE_HISTORY);
+	}
+	
+	ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- End of historical messages ---"), ChatWidget::MSGTYPE_SYSTEM);
 }
 
 bool ChatLobbyDialog::canClose()
