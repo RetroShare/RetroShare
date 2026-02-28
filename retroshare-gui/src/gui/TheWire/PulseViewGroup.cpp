@@ -32,6 +32,8 @@
 #include "gui/common/FilesDefs.h"
 #include "util/DateTime.h"
 
+#define IMAGE_WIRE           ":icons/wire.png"
+
 Q_DECLARE_METATYPE(RsWireGroup)
 
 /** Constructor */
@@ -102,7 +104,8 @@ void PulseViewGroup::setup()
         else
         {
             // default.
-            QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(100,100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            QPixmap pixmap = GxsIdDetails::makeDefaultGroupIcon(mGroup->mMeta.mGroupId, IMAGE_WIRE, GxsIdDetails::ORIGINAL);
+            pixmap = pixmap.scaled(100,100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             label_headshot->setPixmap(pixmap);
         }
 
