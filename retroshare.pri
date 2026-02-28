@@ -37,6 +37,7 @@ no_retroshare_gui:CONFIG -= retroshare_gui
 CONFIG *= gxsthewire
 
 # Enable GXS distant syncronization
+CONFIG += rs_deep_forums_index
 CONFIG *= gxsdistsync
 
 # To enable cmark append the following
