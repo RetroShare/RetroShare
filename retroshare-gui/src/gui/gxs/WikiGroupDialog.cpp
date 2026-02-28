@@ -291,23 +291,30 @@ void WikiGroupDialog::loadModerators(const RsGxsGroupId &groupId)
 void WikiGroupDialog::updateModeratorsLabel(const std::list<RsGxsId> &moderators)
 {
 	QString moderatorsListString;
-	RsIdentityDetails det;
-	RetroShareLink link;
 
 	for (const auto &moderatorId : moderators)
 	{
-		rsIdentity->getIdDetails(moderatorId, det);
+		RsIdentityDetails det;
+		RetroShareLink link;
+
+		bool haveDetails = rsIdentity->getIdDetails(moderatorId, det);
 
 		if (!moderatorsListString.isNull())
 		{
 			moderatorsListString += ", ";
 		}
 
-		const QString displayName = det.mNickname.empty()
-			? tr("[Unknown]")
-			: QString::fromUtf8(det.mNickname.c_str());
+		QString displayName;
+		if (haveDetails && !det.mNickname.empty())
+		{
+			displayName = QString::fromUtf8(det.mNickname.c_str());
+		}
+		else
+		{
+			displayName = tr("[Unknown]");
+		}
 
-		link = RetroShareLink::createMessage(det.mId, "");
+		link = RetroShareLink::createMessage(moderatorId, "");
 		if (link.valid())
 		{
 			moderatorsListString += QString("<a href=\"%1\">%2</a>")
@@ -315,7 +322,7 @@ void WikiGroupDialog::updateModeratorsLabel(const std::list<RsGxsId> &moderators
 		}
 		else
 		{
-			moderatorsListString += displayName;
+			moderatorsListString += displayName.toHtmlEscaped();
 		}
 	}
 
@@ -353,7 +360,7 @@ void WikiGroupDialog::addModeratorToList(const RsGxsId &gxsId)
 		}
 	}
 
-	auto *item = new GxsIdRSTreeWidgetItem(nullptr, GxsIdDetails::ICON_TYPE_AVATAR, true, mModeratorsList);
+	auto *item = new GxsIdRSTreeWidgetItem(nullptr, GxsIdDetails::ICON_TYPE_AVATAR, true, nullptr);
 	item->setId(gxsId, 0, false);
 	item->setText(1, idString);
 	const bool isActive = rsWiki->isActiveModerator(mCurrentGroupId, gxsId, time(nullptr));
