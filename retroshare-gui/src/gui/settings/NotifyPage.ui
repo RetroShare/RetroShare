@@ -474,6 +474,61 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabIgnored">
+      <attribute name="title">
+       <string>Ignored Users</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="tabIgnoredVLayout">
+       <item>
+        <widget class="QTreeWidget" name="ignoredTreeWidget">
+         <property name="rootIsDecorated">
+          <bool>false</bool>
+         </property>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>PGP Id</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="ignoredButtonsLayout">
+         <item>
+          <widget class="QPushButton" name="addIgnoredButton">
+           <property name="text">
+            <string>Add</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="removeIgnoredButton">
+           <property name="text">
+            <string>Remove</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacerIgnored">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>

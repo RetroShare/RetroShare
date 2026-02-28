@@ -23,6 +23,8 @@
 #include "NewsFeed.h"
 #include "ui_NewsFeed.h"
 
+#include "pqi/authssl.h"
+
 #include <retroshare/rsbanlist.h>
 #include <retroshare/rsgxschannels.h>
 #include <retroshare/rsgxsforums.h>
@@ -476,6 +478,13 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
         return;
 
     auto& e(*pe);
+    
+    // Check if denied by AuthSSL (backend)
+    if(AuthSSL::instance().isNotifyDenied(e.mPgpId))
+    {
+        return;
+    }
+
     RsFeedTypeFlags flags = (RsFeedTypeFlags)Settings->getNewsFeedFlags();
 
     if(e.mErrorCode == RsAuthSslError::PEER_REFUSED_CONNECTION && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP)))
