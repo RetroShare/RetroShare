@@ -438,8 +438,7 @@ void WireDialog::subscribe(RsGxsGroupId &groupId)
 {
 	RsThread::async([groupId]()
 	{
-		uint32_t token;
-		rsWire->subscribeToGroup(token, groupId, true);
+		rsWire->subscribe(groupId, true);
 	});
 }
 
@@ -447,8 +446,7 @@ void WireDialog::unsubscribe(RsGxsGroupId &groupId)
 {
 	RsThread::async([groupId]()
 	{
-		uint32_t token;
-		rsWire->subscribeToGroup(token, groupId, false);
+		rsWire->subscribe(groupId, false);
 	});
 }
 
@@ -905,8 +903,7 @@ void WireDialog::PVHfollow(const RsGxsGroupId &groupId)
 
 	RsThread::async([groupId]()
 	{
-		uint32_t token;
-		rsWire->subscribeToGroup(token, groupId, true);
+		rsWire->subscribe(groupId, true);
 	});
 }
 
