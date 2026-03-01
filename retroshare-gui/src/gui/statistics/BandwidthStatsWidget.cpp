@@ -45,7 +45,7 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
     ui.service_CB->addItem(tr("All")) ;
 
     ui.data_CB->addItem(tr("history (curves)")) ;
-    ui.data_CB->addItem(tr("latest (pie)")) ;
+    ui.data_CB->addItem(tr("last 5 secs. (pie)")) ;
 
     ui.timing_CB->addItem(tr("real time")) ;
     ui.timing_CB->addItem(tr("cumulated")) ;
@@ -281,7 +281,6 @@ void BandwidthStatsWidget::updateDataSelection(int n)
 
 void BandwidthStatsWidget::updateTimingSelection(int n)
 {
-    std::cerr << "updating timing to " << n << " !" << std::endl;
     if(n==0)
     {
         ui.bwgraph_BW->setTiming(BWGraphSource::TIMING_INSTANT) ;

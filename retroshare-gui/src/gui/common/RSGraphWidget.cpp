@@ -79,6 +79,11 @@ RSGraphSource::~RSGraphSource()
 void RSGraphSource::clear()
 {
     _points.clear() ;
+#if QT_VERSION < 0x040700
+    _time_orig_msecs     = getCurrentMSecsSinceEpoch() ;
+#else
+    _time_orig_msecs     = QDateTime::currentMSecsSinceEpoch() ;
+#endif
 }
 void RSGraphSource::stop()
 {
@@ -121,36 +126,50 @@ void RSGraphSource::getSlicedValues(uint min_secs_ago,uint max_secs_ago,std::vec
         uint64_t max_ts = lst_it->second.back().first - min_secs_ago*1000;	// in _points the TS are w.r.t. now (in reverse) and in ms.
         uint64_t min_ts = lst_it->second.back().first - max_secs_ago*1000;
 
+#ifdef GRAPHWIDGET_DEBUG
         std::cerr << "Collecting data in \"" << lst_it->first << "\" between ts = " << min_ts << " and " << max_ts << std::endl;
+#endif
 
         for(const auto& p:lst_it->second)
         {
+#ifdef GRAPHWIDGET_DEBUG
             std::cerr << "      TS = " << p.first ;
             std::cerr << " data \"" << lst_it->first << "\": Found ts = " << p.first << ": value " << p.second ;
+#endif
 
             if((uint64_t)p.first >= min_ts && (uint64_t)p.first <= max_ts)
             {
                 v.first.v += p.second;
                 v.second.v++;
 
+#ifdef GRAPHWIDGET_DEBUG
                 std::cerr << " Kept."<< std::endl;
+#endif
             }
+#ifdef GRAPHWIDGET_DEBUG
             else
                 std::cerr << std::endl;
+#endif
         }
+#ifdef GRAPHWIDGET_DEBUG
         std::cerr << "  total value = " << v.first.v << "  --  " << v.second.v << std::endl;
+#endif
     }
 
     // now average values when multiple values have been collected.
 
+#ifdef GRAPHWIDGET_DEBUG
     std::cerr << "Computed values: " << collected_vals.size() << std::endl;
+#endif
 
     for(uint i=0;i<collected_vals.size();++i)
     {
         const auto& v(collected_vals[i]);
 
         vals.push_back((v.second.v > 0)?(v.first.v/v.second.v):0.0);
+#ifdef GRAPHWIDGET_DEBUG
         std::cerr << "  \"" << displayName(i).toStdString() << "\" " << vals.back() << "  (" << v.second.v << ")" << std::endl;
+#endif
     }
 }
 
@@ -335,8 +354,7 @@ RSGraphWidget::RSGraphWidget(QWidget *parent)
     _time_scale = 5.0f ; // in pixels per second.
     _time_filter = 1.0f ;
     _timer = new QTimer ;
-    QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(updateIfPossible())) ;
-
+    _slice_proportion = 0.0;
 
     _y_scale = 1.0f ;
     _timer->start(1000);
@@ -344,6 +362,8 @@ RSGraphWidget::RSGraphWidget(QWidget *parent)
     float FS = QFontMetricsF(font()).height();
     setMinimumHeight(12*FS);
     _graph_base = FS*GRAPH_BASE;
+
+    QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(updateIfPossible())) ;
 }
 
 void RSGraphWidget::updateIfPossible()
@@ -675,7 +695,17 @@ void RSGraphWidget::paintTotals()
   c->addAxis(axisY, Qt::AlignLeft);
 
   std::vector<float> vals;
-  _source->getSlicedValues(0,5,vals);
+
+  qint64 total_duration_secs = _source->totalCollectedTime()/1000.0;
+#ifdef GRAPHWIDGET_DEBUG
+  std::cerr << "Total duration secs: " << total_duration_secs << std::endl;
+#endif
+  //_source->getSlicedValues( total_duration_secs * _slice_proportion,total_duration_secs * _slice_proportion + 5,vals);
+  _source->getSlicedValues( 0,5,vals);
+
+  float max_val = 0.0f;
+  for(auto v:vals)
+      max_val = std::max(max_val,v);
 
   auto pieSeries = new QtCharts::QPieSeries();
 
@@ -683,7 +713,9 @@ void RSGraphWidget::paintTotals()
       if( _masked_entries.find(_source->displayName(i).toStdString()) == _masked_entries.end() )
       {
           QtCharts::QPieSlice *slice = pieSeries->append(_source->legend(i,vals[i],false),vals[i]);
-          slice->setLabelVisible(true);
+
+          slice->setColor( getColor(_source->displayName(i).toStdString()) );
+          slice->setLabelVisible(vals[i] > 0.05*max_val);
       }
 
   c->resize(_rec.width(),_rec.height());
@@ -874,6 +906,10 @@ void RSGraphWidget::mouseMoveEvent(QMouseEvent *e)
 {
     if(_mousePressed)
         std::cerr << "e->x() = " << e->x() << std::endl;
+
+    setSliceProportion(e->x() / (float)width());
+    updateIfPossible();
+
     QFrame::mouseMoveEvent(e);
 }
 void RSGraphWidget::mouseReleaseEvent(QMouseEvent *e)

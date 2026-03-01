@@ -29,7 +29,7 @@
 
 void BWGraphSource::update()
 {
-#ifndef BWGRAPH_DEBUG
+#ifdef BWGRAPH_DEBUG
     std::cerr << "Updating BW graphsource..." << std::endl;
 #endif
 
@@ -44,7 +44,7 @@ void BWGraphSource::update()
                 auto& t = tmap[PeerSrvSubsrv(c)];
                 t.cumulated_size  += c.size;
                 t.cumulated_count += c.count;
-#ifndef BWGRAPH_DEBUG
+#ifdef BWGRAPH_DEBUG
                 std::cerr << "Pushing " << c.TS << "  " << c.peer_id << "  " << c.service_id << "  " << (int)c.service_sub_id << " into cumulated map" << std::endl;
 #endif
             }
@@ -456,8 +456,6 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClueExt>
 				total += *it;
 
             vals[QString("Total").toStdString()] = select_value(total);
-            std::cerr << "Total is " << total << std::endl;
-            std::cerr << "Value is " << select_value(total) << std::endl;
 		}
 			break ;
 		}
@@ -648,7 +646,6 @@ void BWGraphSource::setDirection(int dir)
 
 void BWGraphSource::setTiming(int t)
 {
-    std::cerr << "BWGraphSource: updating" << std::endl;
     if(t == _current_timing)
         return;
 
@@ -657,7 +654,7 @@ void BWGraphSource::setTiming(int t)
 }
 void BWGraphSource::recomputeCurrentCurves()
 {
-#ifndef BWGRAPH_DEBUG
+#ifdef BWGRAPH_DEBUG
     std::cerr << "BWGraphSource: recomputing current curves." << std::endl;
 #endif
 
@@ -708,7 +705,6 @@ BWGraph::BWGraph(QWidget *parent) : RSGraphWidget(parent)
 {
     _local_source = new BWGraphSource() ;
 
-    std::cerr << "creaitng new BWGraph Source " << (void*)_local_source << std::endl;
     _local_source->setCollectionTimeLimit(30*60*1000) ; // 30  mins
     _local_source->setCollectionTimePeriod(1000) ;      // collect every second
     _local_source->setDigits(2) ;

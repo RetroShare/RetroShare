@@ -114,6 +114,9 @@ public:
 
     void setDigits(int d) { _digits = d ;}
 
+    // returns the total time of available data in ms
+    qint64 totalCollectedTime() const { return getTime() ; }
+
 protected slots:
     // Calls the internal source for a new data points; called by the timer. You might want to overload this
     // if the collection system needs it. Otherwise, the default method will call getValues()
@@ -181,7 +184,7 @@ public:
 	void setSource(RSGraphSource *gs) ;
 	void setTimeScale(float pixels_per_second) ;
     void setViewMode(ViewMode m) ;
-    void setSliceProportion(float f) ; // float between 0 and 1. 0 means newest 1 means oldest.
+    void setSliceProportion(float f) { _slice_proportion = std::max(0.0f,std::min(f,1.0f)); } ; // float between 0 and 1. 0 means newest 1 means oldest.
 
 	/** Add data points. */
 	//void addPoints(qreal rsDHT, qreal allDHT);
@@ -265,8 +268,9 @@ private:
 	std::set<std::string> _masked_entries ;
 
 	qreal _time_scale ; // horizontal scale in pixels per sec.
-        qreal _time_filter ; // time filter. Goes from 0 to infinity. Will be converted into 1-1/(1+f)
-        float _linewidthscale ;
+    qreal _time_filter ; // time filter. Goes from 0 to infinity. Will be converted into 1-1/(1+f)
+    float _linewidthscale ;
+    float _slice_proportion; // part of the recorded data tht is averaged for pie charts. Goes between 0 (most recent) and 1 (oldest)
 
 	/** Show the respective lines and counters. */
 	//bool _showRSDHT;
