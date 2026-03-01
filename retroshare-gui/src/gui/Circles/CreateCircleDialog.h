@@ -42,11 +42,19 @@ public:
 	void addMember(const QString &keyId, const QString &idtype, const QString &nickname);
 	void addMember(const RsGxsIdGroup &idGroup);
 	void addCircle(const RsGxsCircleDetails &cirDetails);
+	void addMember(const QString &keyId, const QString &idtype, const QString &nickname, 
+                const QIcon &icon, bool invited, bool subscrb, bool is_own_id);
 
 private slots:
 
     void addMember();
 	void removeMember();
+
+    void acceptInvite();
+    void rejectInvite();
+
+    void grantCircleMembership();
+    void revokeCircleMembership();
 
 	void updateCircleType(bool b);
 	void selectedId(QTreeWidgetItem*, QTreeWidgetItem*);
@@ -90,6 +98,12 @@ private:
 
 	RsGxsCircleGroup mCircleGroup; // for editting existing Circles.
 	bool mClearList;
+
+    bool am_I_invited; // Tracks if the current user has an invitation to this circle
+    bool am_I_pending; // Tracks if the current user's subscription is pending
+    bool am_I_circle_admin; // Track admin status
+
+    void updateMemberStatus(QTreeWidgetItem* item, bool invited, bool subscrb, bool is_own_id);
 
 	/** Qt Designer generated object */
 	Ui::CreateCircleDialog ui;

@@ -46,8 +46,13 @@
 #define CREATECIRCLEDIALOG_IDINFO     3
 
 #define RSCIRCLEID_COL_NICKNAME       0
-#define RSCIRCLEID_COL_IDTYPE         1
-#define RSCIRCLEID_COL_KEYID          2
+#define RSCIRCLEID_COL_KEYID          1
+#define RSCIRCLEID_COL_STATUS         2
+#define RSCIRCLEID_COL_IDTYPE         3
+
+#define IMAGE_INVITED              ":/icons/bullet_yellow_128.png"
+#define IMAGE_MEMBER               ":/icons/bullet_green_128.png"
+#define IMAGE_UNKNOWN              ":/icons/bullet_grey_128.png"
 
 /** Constructor */
 CreateCircleDialog::CreateCircleDialog()
@@ -355,11 +360,23 @@ void CreateCircleDialog::addMember(const QString& keyId, const QString& idtype, 
 	member->setText(RSCIRCLEID_COL_NICKNAME, nickname);
 	member->setIcon(RSCIRCLEID_COL_NICKNAME, icon);
 	member->setText(RSCIRCLEID_COL_KEYID, keyId);
-	member->setText(RSCIRCLEID_COL_IDTYPE, idtype);
+	//member->setText(RSCIRCLEID_COL_IDTYPE, idtype);
 
 	tree->addTopLevelItem(member);
 
 	updateMembership();
+}
+
+void CreateCircleDialog::addMember(const QString &keyId, const QString &idtype, 
+                                   const QString &nickname, const QIcon &icon, 
+                                   bool invited, bool subscrb, bool is_own_id)
+{
+    QTreeWidgetItem *subitem = new QTreeWidgetItem(ui.treeWidget_membership);
+    subitem->setText(RSCIRCLEID_COL_NICKNAME, nickname);
+    subitem->setIcon(RSCIRCLEID_COL_NICKNAME, icon);
+    subitem->setText(RSCIRCLEID_COL_KEYID, keyId);
+    
+    updateMemberStatus(subitem, invited, subscrb, is_own_id);
 }
 
 /** Maybe we can use RsGxsCircleGroup instead of RsGxsCircleDetails ??? (TODO)**/
@@ -949,14 +966,177 @@ void CreateCircleDialog::MembershipListCustomPopupMenu( QPoint )
 	QMenu contextMnu( this );
 
 	QTreeWidgetItem *item = ui.treeWidget_membership->currentItem();
+    
+    RsGxsId current_gxs_id(item->text(RSCIRCLEID_COL_KEYID).toStdString());
+    RsIdentityDetails idd;
+    bool is_my_own_id = rsIdentity->getIdDetails(current_gxs_id, idd);
+    
 	if (item && !mReadOnly)
 			contextMnu.addAction(QIcon(":/images/delete.png"), tr("Remove Member"), this, SLOT(removeMember()));
 
+    if (is_my_own_id && item->text(RSCIRCLEID_COL_STATUS) == tr("Invited")) {
+        contextMnu.addAction(tr("Accept Invite"), this, SLOT(acceptInvite()));
+        contextMnu.addAction(tr("Reject Invite"), this, SLOT(rejectInvite()));
+        contextMnu.addSeparator();
+    }
+    
+    if (am_I_circle_admin) 
+    {
+        RsGxsCircleDetails details;
+        if (rsGxsCircles->getCircleDetails(RsGxsCircleId(mCircleGroup.mMeta.mGroupId), details))
+        {
+            auto it = details.mSubscriptionFlags.find(current_gxs_id);
+            if (it != details.mSubscriptionFlags.end())
+            {
+                contextMnu.addSeparator();
+
+                if (it->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
+                {
+                    QAction *action = new QAction(tr("Revoke this member"), this);
+                    connect(action, &QAction::triggered, this, &CreateCircleDialog::revokeCircleMembership);
+                    contextMnu.addAction(action);
+                }
+                else
+                {
+                    QAction *action = new QAction(tr("Grant membership"), this);
+                    connect(action, &QAction::triggered, this, &CreateCircleDialog::grantCircleMembership);
+                    contextMnu.addAction(action);
+                }
+            }
+        }
+    }
+    
 	contextMnu.exec(QCursor::pos());
 }
 
 void CreateCircleDialog::updateMembership()
 {
 	ui.members_groupBox->setTitle( tr("Invited Members") + " (" + QString::number(ui.treeWidget_membership->topLevelItemCount()) + ")" );
+    
+    RsGxsCircleDetails details;
+    if (!rsGxsCircles->getCircleDetails(RsGxsCircleId(mCircleGroup.mMeta.mGroupId), details)) {
+        return;
+    }
+    
+    // Iterate through the subscription flags map found in details
+    for(auto const& [memberId, flags] : details.mSubscriptionFlags) 
+    {
+        // Find or create your tree widget item
+        QString memberIdStr = QString::fromStdString(memberId.toStdString());
+        QTreeWidgetItem* item = nullptr;
+
+        // Search for the existing item in the tree
+        for(int i = 0; i < ui.treeWidget_membership->topLevelItemCount(); ++i) {
+            if(ui.treeWidget_membership->topLevelItem(i)->text(RSCIRCLEID_COL_KEYID) == memberIdStr) {
+                item = ui.treeWidget_membership->topLevelItem(i);
+                break;
+            }
+        }
+        if(!item) continue;
+
+        // Use the flags defined in rsgxscircles.h
+        bool invited = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST);
+        bool subscrb = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED);
+        
+        // Check if this ID is one of your own
+        RsIdentityDetails idd;
+        bool is_own_id = rsIdentity->getIdDetails(memberId, idd);
+        //am_I_circle_admin = (mCircleGroup.mMeta.mAuthorId == ownId);
+
+        updateMemberStatus(item, invited, subscrb, is_own_id);
+    }
 }
 
+void CreateCircleDialog::updateMemberStatus(QTreeWidgetItem* subitem, bool invited, bool subscrb, bool is_own_id)
+{
+    QString statusText;
+    QString tooltip = tr("Status: ");
+
+    if (invited && !subscrb) {
+        // Case: Admin invited them, but they haven't accepted yet
+        statusText = tr("Invited");
+        tooltip += tr("Invited by admin");
+        subitem->setIcon(RSCIRCLEID_COL_STATUS, FilesDefs::getIconFromQtResourcePath(IMAGE_INVITED)) ;
+    } else if (!invited && subscrb) {
+        // Case: User requested to join, but Admin hasn't approved yet
+        statusText = tr("Subscription pending");
+        tooltip += tr("Subscription request pending");
+        if (is_own_id) am_I_pending = true;
+        subitem->setIcon(RSCIRCLEID_COL_STATUS, FilesDefs::getIconFromQtResourcePath(IMAGE_INVITED)) ;
+    } else if (invited && subscrb) {
+        statusText = tr("Member");
+        tooltip += tr("Full member");
+        subitem->setIcon(RSCIRCLEID_COL_STATUS, FilesDefs::getIconFromQtResourcePath(IMAGE_MEMBER)) ;
+    } else {
+        statusText = tr("Unknown");
+        tooltip += tr("unknown");
+        subitem->setIcon(RSCIRCLEID_COL_STATUS, FilesDefs::getIconFromQtResourcePath(IMAGE_UNKNOWN)) ;
+    }
+
+    subitem->setText(RSCIRCLEID_COL_STATUS, statusText);
+    subitem->setToolTip(RSCIRCLEID_COL_STATUS, tooltip);
+
+    // Apply bold font for own ID
+    QFont font = ui.treeWidget_membership->font();
+    font.setBold(is_own_id);
+    for(int i=0; i<ui.treeWidget_membership->columnCount(); ++i) {
+        subitem->setFont(i, font);
+    }
+}
+
+void CreateCircleDialog::acceptInvite()
+{
+    QTreeWidgetItem *item = ui.treeWidget_membership->currentItem();
+    if (!item) return;
+
+    RsGxsCircleId circleId(item->text(RSCIRCLEID_COL_KEYID).toStdString());
+    // Use the chosen identity from your idChooser to accept the invite
+    RsGxsId ownId;
+    if (ui.idChooser->getChosenId(ownId) == GxsIdChooser::KnowId) {
+        rsGxsCircles->requestCircleMembership(ownId, circleId); // true to subscribe
+    }
+}
+
+void CreateCircleDialog::rejectInvite()
+{
+    QTreeWidgetItem *item = ui.treeWidget_membership->currentItem();
+    if (!item) return;
+
+    RsGxsCircleId circleId(item->text(RSCIRCLEID_COL_KEYID).toStdString());
+    RsGxsId ownId;
+    if (ui.idChooser->getChosenId(ownId) == GxsIdChooser::KnowId) {
+        rsGxsCircles->cancelCircleMembership(ownId, circleId);
+    }
+}
+
+void CreateCircleDialog::grantCircleMembership()
+{
+    QTreeWidgetItem *item = ui.treeWidget_membership->currentItem();
+    if (!item) return;
+
+    RsGxsCircleId circle_id(mCircleGroup.mMeta.mGroupId);
+    RsGxsId gxs_id_to_grant(item->text(RSCIRCLEID_COL_KEYID).toStdString());
+
+    if(circle_id.isNull() || gxs_id_to_grant.isNull()) return;
+
+    RsThread::async([circle_id, gxs_id_to_grant]() {
+        rsGxsCircles->inviteIdsToCircle(std::set<RsGxsId>({ gxs_id_to_grant }), circle_id);
+    });
+}
+
+void CreateCircleDialog::revokeCircleMembership()
+{
+    QTreeWidgetItem *item = ui.treeWidget_membership->currentItem();
+    if (!item) return;
+
+    RsGxsCircleId circle_id(mCircleGroup.mMeta.mGroupId);
+    RsGxsId gxs_id_to_revoke(item->text(RSCIRCLEID_COL_KEYID).toStdString());
+
+    if(circle_id.isNull() || gxs_id_to_revoke.isNull()) return;
+
+    RsThread::async([circle_id, gxs_id_to_revoke]() {
+        std::set<RsGxsId> ids;
+        ids.insert(gxs_id_to_revoke);
+        rsGxsCircles->revokeIdsFromCircle(ids, circle_id);
+    });
+}
