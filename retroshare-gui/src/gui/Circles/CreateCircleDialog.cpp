@@ -980,6 +980,13 @@ void CreateCircleDialog::MembershipListCustomPopupMenu( QPoint )
         contextMnu.addSeparator();
     }
     
+    if (is_my_own_id && item->text(RSCIRCLEID_COL_STATUS) == tr("Subscription pending")) {
+        QAction *actionCancel = new QAction(tr("Cancel request"), this);
+        connect(actionCancel, &QAction::triggered, this, &CreateCircleDialog::rejectInvite);
+        contextMnu.addAction(actionCancel);
+        contextMnu.addSeparator();
+    }
+    
     if (am_I_circle_admin) 
     {
         RsGxsCircleDetails details;
@@ -1001,6 +1008,10 @@ void CreateCircleDialog::MembershipListCustomPopupMenu( QPoint )
                     QAction *action = new QAction(tr("Grant membership"), this);
                     connect(action, &QAction::triggered, this, &CreateCircleDialog::grantCircleMembership);
                     contextMnu.addAction(action);
+
+                    QAction *actionReject = new QAction(tr("Reject request"), this);
+                    connect(actionReject, &QAction::triggered, this, &CreateCircleDialog::revokeCircleMembership);
+                    contextMnu.addAction(actionReject);
                 }
             }
         }
@@ -1041,7 +1052,11 @@ void CreateCircleDialog::updateMembership()
         // Check if this ID is one of your own
         RsIdentityDetails idd;
         bool is_own_id = rsIdentity->getIdDetails(memberId, idd);
-        //am_I_circle_admin = (mCircleGroup.mMeta.mAuthorId == ownId);
+        
+        RsGxsId ownId;
+        if (ui.idChooser->getChosenId(ownId) == GxsIdChooser::KnowId) {
+            am_I_circle_admin = (mCircleGroup.mMeta.mAuthorId == ownId);
+        }
 
         updateMemberStatus(item, invited, subscrb, is_own_id);
     }
