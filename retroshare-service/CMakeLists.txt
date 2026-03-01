@@ -136,8 +136,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
 if(RS_RNPLIB)
 	# Add RNP build directories to linker search path
 	target_link_directories(${PROJECT_NAME} PRIVATE
-		${PROJECT_SOURCE_DIR}/../../supportlibs/librnp/Build/src/lib
-		${PROJECT_SOURCE_DIR}/../../supportlibs/librnp/Build/src/libsexpp
+		${CMAKE_CURRENT_BINARY_DIR}/supportlibs/librnp/Build/src/lib
+		${CMAKE_CURRENT_BINARY_DIR}/supportlibs/librnp/Build/src/libsexpp
 	)
 
 	# Link libraries by name, including RNP libs and dependencies first
@@ -198,7 +198,7 @@ if(RS_SERVICE_TERMINAL_LOGIN)
 endif(RS_SERVICE_TERMINAL_LOGIN)
 
 if(RS_WEBUI)
-	set(RS_WEBUI_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../webui/")
+	set(RS_WEBUI_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../retroshare-webui/")
 	if(EXISTS "${RS_WEBUI_DEVEL_DIR}/CMakeLists.txt" )
 		message(
 			STATUS
