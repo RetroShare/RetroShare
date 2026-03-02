@@ -72,6 +72,8 @@ private slots:
 private:
     void updatePeerStats();
     void updateServiceStats();
+    void processSettings(bool bLoad);
+    bool m_bProcessSettings;
 
     bool mUseSessionStats; // False = Lifetime, True = Session
     QPushButton *modeToggleButton;

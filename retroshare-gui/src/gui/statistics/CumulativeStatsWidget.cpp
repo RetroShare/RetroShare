@@ -44,6 +44,8 @@
 #include "retroshare/rspeers.h"
 #include "retroshare/rstypes.h"
 
+#include "gui/settings/rsharesettings.h"
+
 class SizeSortWidgetItem : public QTreeWidgetItem {
 public:
     using QTreeWidgetItem::QTreeWidgetItem;
@@ -66,6 +68,8 @@ CumulativeStatsWidget::CumulativeStatsWidget(QWidget *parent)
     : RsAutoUpdatePage(5000, parent)  // 5 seconds to reduce CPU usage
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    
+    m_bProcessSettings = false;
 
     // Create the Page Selector (ComboBox)
     pageSelector = new QComboBox(this);
@@ -191,10 +195,15 @@ CumulativeStatsWidget::CumulativeStatsWidget(QWidget *parent)
     mainLayout->addWidget(stackedWidget); 
     mainLayout->addLayout(bottomLayout);
     setLayout(mainLayout);
+    
+    // load settings
+    processSettings(true);
 }
 
 CumulativeStatsWidget::~CumulativeStatsWidget()
 {
+    // save settings
+    processSettings(false);
 }
 
 void CumulativeStatsWidget::updateDisplay()
@@ -511,6 +520,7 @@ void CumulativeStatsWidget::updateTheme(int index)
     // Apply to Service Charts
     serviceBarChartView->chart()->setTheme(theme);
     servicePieChartView->chart()->setTheme(theme);
+    
 }
 
 void CumulativeStatsWidget::toggleStatsMode(bool checked)
@@ -532,4 +542,25 @@ void CumulativeStatsWidget::handlePageSwitch(int index)
 {
     stackedWidget->setCurrentIndex(index);
     updateDisplay(); 
+}
+
+void CumulativeStatsWidget::processSettings(bool bLoad)
+{
+    m_bProcessSettings = true;
+
+    Settings->beginGroup(QString("CumulativeStats"));
+
+    if (bLoad) {
+        // load settings
+        // Default to 0 (Light Theme) if no setting exists
+        int index = Settings->value("ChartThemeIndex", 0).toInt();
+        themeComboBox->setCurrentIndex(index);
+    } else {
+        // save settings
+        // state of Theme combobox
+        Settings->setValue("ChartThemeIndex", themeComboBox->currentIndex());
+    }
+    
+    Settings->endGroup();
+    m_bProcessSettings = false;
 }
