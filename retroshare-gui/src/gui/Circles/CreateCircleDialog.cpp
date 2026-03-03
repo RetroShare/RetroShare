@@ -33,8 +33,8 @@
 #include "gui/common/AvatarDefs.h"
 #include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
-#include "util/misc.h"
 #include "gui/Circles/CreateCircleDialog.h"
+#include <retroshare/rsplugin.h>
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/Identity/IdEditDialog.h"
@@ -61,6 +61,11 @@ CreateCircleDialog::CreateCircleDialog()
     mIdentitiesLoading = false;
     mCircleLoading = false;
     mCloseRequested = false;
+    mEventHandlerId = 0;
+
+    rsEvents->registerEventsHandler(
+                [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); },
+                mEventHandlerId, RsEventType::GXS_CIRCLES );
 
     /* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -128,6 +133,8 @@ CreateCircleDialog::CreateCircleDialog()
 
 CreateCircleDialog::~CreateCircleDialog()
 {
+    if (mEventHandlerId != 0)
+        rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 bool CreateCircleDialog::tryClose()
@@ -660,7 +667,10 @@ void CreateCircleDialog::updateCircleGUI()
 	std::cerr << std::endl;
 #endif
 
-    whileBlocking(ui.circleName)->setText(QString::fromUtf8(mCircleGroup.mMeta.mGroupName.c_str()));
+{
+        QSignalBlocker blocker(ui.circleName);
+        ui.circleName->setText(QString::fromUtf8(mCircleGroup.mMeta.mGroupName.c_str()));
+    }
 
 	bool isExternal = true;
 #ifdef DEBUG_CREATE_CIRCLE_DIALOG 
@@ -668,9 +678,18 @@ void CreateCircleDialog::updateCircleGUI()
 	std::cerr << std::endl;
 #endif
 
-    whileBlocking(ui.radioButton_Public)->setChecked(false);
-    whileBlocking(ui.radioButton_Self)->setChecked(false);
-    whileBlocking(ui.radioButton_Restricted)->setChecked(false);
+    {
+        QSignalBlocker blocker1(ui.radioButton_Public);
+        ui.radioButton_Public->setChecked(false);
+    }
+    {
+        QSignalBlocker blocker2(ui.radioButton_Self);
+        ui.radioButton_Self->setChecked(false);
+    }
+    {
+        QSignalBlocker blocker3(ui.radioButton_Restricted);
+        ui.radioButton_Restricted->setChecked(false);
+    }
             
 	switch(mCircleGroup.mMeta.mCircleType) 
     	{
@@ -689,7 +708,10 @@ void CreateCircleDialog::updateCircleGUI()
 			std::cerr << std::endl;
 #endif
 
-            whileBlocking(ui.radioButton_Public)->setChecked(true);
+            {
+                QSignalBlocker blocker(ui.radioButton_Public);
+                ui.radioButton_Public->setChecked(true);
+            }
 			break;
 
 		case GXS_CIRCLE_TYPE_EXT_SELF:
@@ -703,11 +725,20 @@ void CreateCircleDialog::updateCircleGUI()
 #endif
 
 			if (RsGxsGroupId(mCircleGroup.mMeta.mCircleId) == mCircleGroup.mMeta.mGroupId) 
-                whileBlocking(ui.radioButton_Self)->setChecked(true);
+            {
+                QSignalBlocker blocker(ui.radioButton_Self);
+                ui.radioButton_Self->setChecked(true);
+            }
             else
-                whileBlocking(ui.radioButton_Restricted)->setChecked(true);
+            {
+                QSignalBlocker blocker(ui.radioButton_Restricted);
+                ui.radioButton_Restricted->setChecked(true);
+            }
 
-            whileBlocking(ui.circleComboBox)->loadCircles(mCircleGroup.mMeta.mCircleId);
+            {
+                QSignalBlocker blocker(ui.circleComboBox);
+                ui.circleComboBox->loadCircles(mCircleGroup.mMeta.mCircleId);
+            }
 			
 			break;
 
@@ -1154,4 +1185,36 @@ void CreateCircleDialog::revokeCircleMembership()
         ids.insert(gxs_id_to_revoke);
         rsGxsCircles->revokeIdsFromCircle(ids, circle_id);
     });
+}
+
+void CreateCircleDialog::handleEvent(std::shared_ptr<const RsEvent> event)
+{
+	RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this );
+}
+
+void CreateCircleDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    if(event->mType == RsEventType::GXS_CIRCLES)
+	{
+		const RsGxsCircleEvent *pe = dynamic_cast<const RsGxsCircleEvent*>(event.get());
+		if(!pe) return;
+
+		if(pe->mCircleId.isNull() || pe->mCircleId == RsGxsCircleId(mCircleGroup.mMeta.mGroupId))
+		{
+			// Give it a moment as NewsFeed does to make sure the cache is populated
+			RsThread::async([this]() {
+                rstime::rs_usleep(500*1000); // 0.5s
+				RsQThreadUtils::postToObject( [this]() {
+					if(!mCircleLoading && !mIsExternalCircle && !mIsExistingCircle)
+					{
+						// Still building or whatever.. just update it directly if we're loaded
+					}
+					else if(mIsExistingCircle)
+					{
+						loadCircle(RsGxsGroupId(mCircleGroup.mMeta.mGroupId));
+					}
+				}, this );
+			});
+		}
+	}
 }
