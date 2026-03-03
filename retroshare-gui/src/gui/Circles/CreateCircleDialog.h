@@ -70,6 +70,9 @@ private slots:
 	void IdListCustomPopupMenu( QPoint point );
 	void MembershipListCustomPopupMenu( QPoint point);
 
+	void handleEvent(std::shared_ptr<const RsEvent> event);
+
+
 protected:
     virtual void keyPressEvent(QKeyEvent *e) override;
     virtual void accept() override;
@@ -79,6 +82,7 @@ protected:
 private:
 
 	void updateCircleGUI();
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 	void setupForPersonalCircle();
 	void setupForExternalCircle();
@@ -107,6 +111,8 @@ private:
 
 	/** Qt Designer generated object */
 	Ui::CreateCircleDialog ui;
+
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif
