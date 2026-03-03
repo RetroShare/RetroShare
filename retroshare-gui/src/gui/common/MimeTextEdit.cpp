@@ -44,6 +44,10 @@ MimeTextEdit::MimeTextEdit(QWidget *parent)
 	mForceCompleterShowNextKeyEvent = false;
 	highliter = new RsSyntaxHighlighter(this);
 	mOnlyPlainText = false;
+
+	QColor linkColor = QColor(3, 155, 198);
+	QString sheet = QString::fromLatin1("a { text-decoration: underline; color: %1 }").arg(linkColor.name());
+	document()->setDefaultStyleSheet(sheet);
 }
 
 bool MimeTextEdit::canInsertFromMimeData(const QMimeData* source) const
