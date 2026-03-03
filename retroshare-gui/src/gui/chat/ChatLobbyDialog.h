@@ -166,6 +166,7 @@ private:
     std::set<RsPeerId> mSelectedPeersForHistory;
     std::map<RsPeerId, uint32_t> mBufferedProbeResponses; // PeerId -> oldest available timestamp
     std::list<HistoryMsg> mBufferedHistoryData; // All messages received during the data timeout
+    std::list<HistoryMsg> mBufferedLocalHistoryData; // Local history buffered for merged display
 };
 
 #endif

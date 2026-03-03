@@ -347,6 +347,7 @@ void ChatLobbyDialog::fetchHistory()
 		bool doLocal = cbLocal->isChecked();
 		
 		mSelectedPeersForHistory.clear();
+		mBufferedLocalHistoryData.clear();
 		if (cbAllFriends->isChecked()) {
 			for (auto it = peerCheckboxes.begin(); it != peerCheckboxes.end(); ++it) {
 				mSelectedPeersForHistory.insert(it.value());
@@ -359,7 +360,9 @@ void ChatLobbyDialog::fetchHistory()
 			}
 		}
 
-		// 1. Process Local Fetch immediately if requested
+		bool doNetwork = !mSelectedPeersForHistory.empty();
+
+		// 1. Process Local Fetch
 		if (doLocal) {
 			std::list<HistoryMsg> msgs;
 			if (rsHistory->getMessages(ChatId(lobbyId), msgs, 0)) {
@@ -371,25 +374,32 @@ void ChatLobbyDialog::fetchHistory()
 				}
 
 				if (!filteredMsgs.empty()) {
-					ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- Loaded %1 local historical messages ---").arg(filteredMsgs.size()), ChatWidget::MSGTYPE_SYSTEM);
+					if (doNetwork) {
+						// Buffer local messages for merged display with remote data
+						mBufferedLocalHistoryData = filteredMsgs;
+					} else {
+						// Local only: display immediately
+						ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- Loaded %1 local historical messages ---").arg(filteredMsgs.size()), ChatWidget::MSGTYPE_SYSTEM);
 
-					for (const auto& msg : filteredMsgs) {
-						QString authorName;
-						if (!msg.peerName.empty()) {
-							authorName = QString::fromUtf8(msg.peerName.c_str());
-						} else {
-							authorName = QString::fromStdString(msg.peerId.toStdString());
+						for (const auto& msg : filteredMsgs) {
+							QString authorName;
+							if (!msg.peerName.empty()) {
+								authorName = QString::fromUtf8(msg.peerName.c_str());
+							} else {
+								authorName = QString::fromStdString(msg.peerId.toStdString());
+							}
+
+							RsGxsId authorId(msg.peerId.toStdString());
+							QString messageText = QString::fromUtf8(msg.message.c_str());
+							QDateTime sendTs = QDateTime::fromTime_t(msg.sendTime);
+							QDateTime recvTs = sendTs; 
+
+							ui.chatWidget->addChatMsg(msg.incoming, authorName, authorId, sendTs, recvTs, messageText, ChatWidget::MSGTYPE_HISTORY);
 						}
-
-						RsGxsId authorId(msg.peerId.toStdString());
-						QString messageText = QString::fromUtf8(msg.message.c_str());
-						QDateTime sendTs = QDateTime::fromTime_t(msg.sendTime);
-						QDateTime recvTs = sendTs; 
-
-						ui.chatWidget->addChatMsg(msg.incoming, authorName, authorId, sendTs, recvTs, messageText, ChatWidget::MSGTYPE_HISTORY);
+						ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- End of local historical messages ---"), ChatWidget::MSGTYPE_SYSTEM);
+						return;
 					}
-					ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- End of local historical messages ---"), ChatWidget::MSGTYPE_SYSTEM);
-				} else if (mSelectedPeersForHistory.empty()) {
+				} else if (!doNetwork) {
 					QMessageBox::information(this, tr("Local History"), tr("No local history found for the selected period."));
 					return;
 				}
@@ -1170,8 +1180,15 @@ void ChatLobbyDialog::onHistoryProbeTimeout()
 	mIsWaitingForProbes = false;
 
 	if (mBufferedProbeResponses.empty()) {
-		ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- No history found from selected peers ---"), ChatWidget::MSGTYPE_SYSTEM);
-		mSelectedPeersForHistory.clear();
+		if (!mBufferedLocalHistoryData.empty()) {
+			// No peers responded, but we have local data buffered — display it now
+			mIsWaitingForData = false;
+			mBufferedHistoryData.clear();
+			onHistoryDataTimeout();
+		} else {
+			ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- No history found from selected peers ---"), ChatWidget::MSGTYPE_SYSTEM);
+			mSelectedPeersForHistory.clear();
+		}
 		return;
 	}
 
@@ -1203,22 +1220,28 @@ void ChatLobbyDialog::onHistoryDataTimeout()
 	mIsWaitingForData = false;
 	mSelectedPeersForHistory.clear();
 
-	if (mBufferedHistoryData.empty()) {
-		ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- No new historical messages could be downloaded. ---"), ChatWidget::MSGTYPE_SYSTEM);
+	// Merge local buffered history with remote data
+	std::list<HistoryMsg> allMsgs;
+	allMsgs.insert(allMsgs.end(), mBufferedLocalHistoryData.begin(), mBufferedLocalHistoryData.end());
+	allMsgs.insert(allMsgs.end(), mBufferedHistoryData.begin(), mBufferedHistoryData.end());
+	mBufferedLocalHistoryData.clear();
+
+	if (allMsgs.empty()) {
+		ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- No historical messages found. ---"), ChatWidget::MSGTYPE_SYSTEM);
 		return;
 	}
 
 	// 1. Sort the collected messages chronologically
-	mBufferedHistoryData.sort([](const HistoryMsg& a, const HistoryMsg& b) {
+	allMsgs.sort([](const HistoryMsg& a, const HistoryMsg& b) {
 		return a.sendTime < b.sendTime;
 	});
 
-	// 2. Deduplicate. Since we might have received the same messages from multiple peers, 
-	// we filter by (sendTime + message text).
+	// 2. Deduplicate by (sendTime + message text) to remove duplicates
+	// between local and remote sources, and between multiple peers.
 	std::list<HistoryMsg> uniqueMsgs;
 	std::set<std::pair<uint32_t, std::string>> seenDb;
 
-	for (const auto& msg : mBufferedHistoryData) {
+	for (const auto& msg : allMsgs) {
 		auto key = std::make_pair(msg.sendTime, msg.message);
 		if (seenDb.find(key) == seenDb.end()) {
 			seenDb.insert(key);
@@ -1226,8 +1249,8 @@ void ChatLobbyDialog::onHistoryDataTimeout()
 		}
 	}
 
-	// 3. Display
-	ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- Downloaded and merged %1 historical messages ---").arg(uniqueMsgs.size()), ChatWidget::MSGTYPE_SYSTEM);
+	// 3. Display all messages in a single unified block
+	ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- Loaded %1 historical messages (local + friends, deduplicated) ---").arg(uniqueMsgs.size()), ChatWidget::MSGTYPE_SYSTEM);
 
 	for (const auto& msg : uniqueMsgs)
 	{
