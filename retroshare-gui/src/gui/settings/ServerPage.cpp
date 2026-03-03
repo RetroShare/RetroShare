@@ -88,6 +88,8 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
+  mSamSettings.initDefault();
+
 #ifndef RS_USE_I2P_SAM3
   ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P);	// warning: the order of operation here is very important.
 #endif
