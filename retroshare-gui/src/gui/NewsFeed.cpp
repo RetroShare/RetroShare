@@ -223,9 +223,10 @@ void NewsFeed::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 
     if(event->mType == RsEventType::MAIL_STATUS && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_MSG)))
 		handleMailEvent(event);
-
+#ifdef RS_USE_WIRE
     if(event->mType == RsEventType::WIRE && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_WIRE)))
 		handleWireEvent(event);
+#endif
 
 }
 
@@ -514,6 +515,7 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 		MessageComposer::addConnectAttemptMsg(e.mPgpId, e.mSslId, QString::fromStdString(det.name + "(" + det.location + ")"));
 }
 
+#ifdef RS_USE_WIRE
 void NewsFeed::handleWireEvent(std::shared_ptr<const RsEvent> event)
 {
     const RsWireEvent *pe =
@@ -541,6 +543,7 @@ void NewsFeed::handleWireEvent(std::shared_ptr<const RsEvent> event)
     }
     sendNewsFeedChanged();
 }
+#endif
 
 
 void NewsFeed::testFeeds(RsFeedTypeFlags /*notifyFlags*/)

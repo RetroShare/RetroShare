@@ -1524,7 +1524,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				}
 			}
 			break;
-
+#ifdef RS_USE_WIRE
             case TYPE_WIRE:
             {
     #ifdef DEBUG_RSLINK
@@ -1552,6 +1552,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
                 }
             }
             break;
+#endif
 
 			case TYPE_SEARCH:
 			{
