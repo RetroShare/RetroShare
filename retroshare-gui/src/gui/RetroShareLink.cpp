@@ -33,7 +33,9 @@
 #include "FileTransfer/SearchDialog.h"
 #include "gxschannels/GxsChannelDialog.h"
 #include "gxsforums/GxsForumsDialog.h"
+#ifdef RS_USE_WIRE
 #include "TheWire/WireDialog.h"
+#endif
 #include "msgs/MessageComposer.h"
 #include "Posted/PostedDialog.h"
 #include "util/misc.h"
@@ -1527,6 +1529,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 #ifdef RS_USE_WIRE
             case TYPE_WIRE:
             {
+#ifdef RS_USE_WIRE
     #ifdef DEBUG_RSLINK
                 std::cerr << " RetroShareLink::process WireRequest : name : " << link.name().toStdString() << ". id : " << link.hash().toStdString() << ". msgId : " << link.msgId().toStdString() << std::endl;
     #endif
@@ -1550,6 +1553,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
                         wireMsgUnknown.append(link.name());
                     }
                 }
+#endif
             }
             break;
 #endif
