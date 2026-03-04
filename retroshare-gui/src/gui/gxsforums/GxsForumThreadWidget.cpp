@@ -303,6 +303,9 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     connect(ui->nextUnreadButton, SIGNAL(clicked()), this, SLOT(nextUnreadMessage()));
     connect(ui->downloadButton, SIGNAL(clicked()), this, SLOT(downloadAllFiles()));
 
+    connect(ui->zoomInButton, SIGNAL(clicked()), this, SLOT(zoom_In()));
+    connect(ui->zoomOutButton, SIGNAL(clicked()), this, SLOT(zoom_Out()));
+
     connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
     connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
@@ -384,6 +387,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     mFontSizeHandler.registerFontSize(ui->threadTreeWidget, 1.4f, [this](QAbstractItemView *view, int) {
         mThreadModel->setFont(view->font());
     });
+
+	mForumSizeHandler.registerFontSize(ui->postText);
 }
 
 void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -2077,3 +2082,14 @@ void GxsForumThreadWidget::showAuthorInPeople(const RsGxsForumMsg& msg)
     MainWindow::showWindow(MainWindow::People);
     idDialog->navigate(RsGxsId(msg.mMeta.mAuthorId));
 }
+
+void GxsForumThreadWidget::zoom_In()
+{
+	ui->postText->zoomIn(1);
+}
+
+void GxsForumThreadWidget::zoom_Out()
+{
+	ui->postText->zoomOut(1);
+}
+
