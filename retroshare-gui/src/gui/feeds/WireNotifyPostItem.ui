@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>822</width>
-    <height>175</height>
+    <width>530</width>
+    <height>273</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="WireNotifyPostItem_GL">
@@ -41,14 +41,20 @@
       <bool>true</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Shape::Box</enum>
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Shadow::Sunken</enum>
+      <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="feedFrame_VL">
       <item>
        <layout class="QHBoxLayout" name="mainTopHLayout">
+        <property name="spacing">
+         <number>9</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
         <item>
          <layout class="QVBoxLayout" name="logo_VLayout">
           <item>
@@ -76,7 +82,7 @@
           <item>
            <spacer name="verticalSpacer">
             <property name="orientation">
-             <enum>Qt::Orientation::Vertical</enum>
+             <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -97,6 +103,7 @@
               <property name="font">
                <font>
                 <pointsize>12</pointsize>
+                <weight>75</weight>
                 <italic>true</italic>
                 <bold>true</bold>
                </font>
@@ -117,6 +124,7 @@
               <property name="font">
                <font>
                 <pointsize>11</pointsize>
+                <weight>75</weight>
                 <italic>true</italic>
                 <bold>true</bold>
                </font>
@@ -133,9 +141,23 @@
              </widget>
             </item>
             <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
              <widget class="QLabel" name="datetimelabel">
               <property name="font">
                <font>
+                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -163,6 +185,9 @@
             <property name="text">
              <string>TextLabel</string>
             </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            </property>
            </widget>
           </item>
           <item>
@@ -175,6 +200,7 @@
               <property name="font">
                <font>
                 <pointsize>11</pointsize>
+                <weight>75</weight>
                 <italic>false</italic>
                 <bold>true</bold>
                </font>
@@ -196,7 +222,7 @@
                </size>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::FocusPolicy::NoFocus</enum>
+               <enum>Qt::NoFocus</enum>
               </property>
               <property name="toolTip">
                <string>Toggle Message Read Status</string>
@@ -221,7 +247,7 @@
                </sizepolicy>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::FocusPolicy::NoFocus</enum>
+               <enum>Qt::NoFocus</enum>
               </property>
               <property name="toolTip">
                <string>Unsubscribe From Wire</string>
@@ -233,9 +259,6 @@
             </item>
             <item>
              <spacer name="buttons_HSpacer">
-              <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
-              </property>
               <property name="sizeHint" stdset="0">
                <size>
                 <width>40</width>
@@ -253,7 +276,7 @@
                </sizepolicy>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::FocusPolicy::NoFocus</enum>
+               <enum>Qt::NoFocus</enum>
               </property>
               <property name="toolTip">
                <string>Copy RetroShare Link</string>
@@ -269,7 +292,7 @@
                </sizepolicy>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::FocusPolicy::NoFocus</enum>
+               <enum>Qt::NoFocus</enum>
               </property>
               <property name="toolTip">
                <string>Expand</string>
@@ -289,7 +312,7 @@
                </sizepolicy>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::FocusPolicy::NoFocus</enum>
+               <enum>Qt::NoFocus</enum>
               </property>
               <property name="toolTip">
                <string>Set as read and remove item</string>
@@ -309,7 +332,7 @@
                </sizepolicy>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::FocusPolicy::NoFocus</enum>
+               <enum>Qt::NoFocus</enum>
               </property>
               <property name="toolTip">
                <string>Remove Item</string>
@@ -344,50 +367,42 @@
          <item>
           <widget class="QFrame" name="msgFrame">
            <property name="frameShape">
-            <enum>QFrame::Shape::Box</enum>
+            <enum>QFrame::Box</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Shadow::Sunken</enum>
+            <enum>QFrame::Sunken</enum>
            </property>
-           <layout class="QVBoxLayout" name="msgFrame_VL">
-            <property name="leftMargin">
-             <number>5</number>
+           <widget class="QLabel" name="msgLabel">
+            <property name="geometry">
+             <rect>
+              <x>5</x>
+              <y>41</y>
+              <width>17</width>
+              <height>25</height>
+             </rect>
             </property>
-            <property name="topMargin">
-             <number>5</number>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="rightMargin">
-             <number>5</number>
+            <property name="wordWrap">
+             <bool>true</bool>
             </property>
-            <property name="bottomMargin">
-             <number>5</number>
+            <property name="margin">
+             <number>6</number>
             </property>
-            <item>
-             <widget class="QLabel" name="msgLabel">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-              <property name="margin">
-               <number>6</number>
-              </property>
-              <property name="indent">
-               <number>-1</number>
-              </property>
-              <property name="openExternalLinks">
-               <bool>true</bool>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
+            <property name="indent">
+             <number>-1</number>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::NoTextInteraction</set>
+            </property>
+           </widget>
           </widget>
          </item>
         </layout>
@@ -395,9 +410,6 @@
       </item>
       <item>
        <spacer name="feedFrame_VSpacer">
-        <property name="orientation">
-         <enum>Qt::Orientation::Vertical</enum>
-        </property>
         <property name="sizeHint" stdset="0">
          <size>
           <width>20</width>

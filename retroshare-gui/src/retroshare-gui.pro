@@ -117,7 +117,7 @@ CONFIG += gxscircles
 
 ## To enable unfinished services
 #CONFIG += wikipoos
-CONFIG += gxsthewire
+#CONFIG += gxsthewire
 #CONFIG += gxsphotoshare
 
 DEFINES += RS_RELEASE_VERSION

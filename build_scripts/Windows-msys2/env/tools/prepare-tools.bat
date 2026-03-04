@@ -4,8 +4,8 @@ if "%EnvRootPath%"=="" exit /B 1
 
 set CEchoUrl=https://github.com/lordmulder/cecho/releases/download/2015-10-10/cecho.2015-10-10.zip
 set CEchoInstall=cecho.2015-10-10.zip
-set SevenZipUrl=https://sourceforge.net/projects/sevenzip/files/7-Zip/18.05/7z1805.msi/download
-set SevenZipInstall=7z1805.msi
+set SevenZipUrl=https://www.7-zip.org/a/7z2600-x64.msi
+set SevenZipInstall=7z2600-x64.msi
 
 if not exist "%EnvToolsPath%\7z.exe" (
 	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"

@@ -35,6 +35,8 @@
 #include <algorithm>
 #include <iostream>
 
+#define IMAGE_WIRE           ":icons/wire.png"
+
 static QImage getCirclePhoto(const QImage original, int sizePhoto)
 {
     QImage target(sizePhoto, sizePhoto, QImage::Format_ARGB32_Premultiplied);
@@ -99,7 +101,7 @@ void WireGroupItem::setup()
 	else
 	{
 		// default.
-        QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(32,32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+		QPixmap pixmap = GxsIdDetails::makeDefaultGroupIcon(mGroup.mMeta.mGroupId, IMAGE_WIRE, GxsIdDetails::ORIGINAL);
 		label_headshot->setPixmap(pixmap);
 	}
 	
