@@ -690,9 +690,6 @@ QMAKE_CXXFLAGS *= -Wno-misleading-indentation -Wno-dangling-else
 ################################################################################
 
 linux-* {
-    QMAKE_CXXFLAGS += -fopenmp
-    LIBS += -fopenmp
-
     isEmpty(PREFIX)        : PREFIX         = "/usr"
     isEmpty(RS_BIN_DIR)    : RS_BIN_DIR     = "$${PREFIX}/bin"
     isEmpty(RS_INCLUDE_DIR): RS_INCLUDE_DIR = "$${PREFIX}/include"
@@ -749,9 +746,6 @@ android-* {
 win32:CONFIG *= libretroshare_shared
 
 win32-g++|win32-clang-g++ {
-    QMAKE_CXXFLAGS += -fopenmp
-    LIBS += -fopenmp
-
     !isEmpty(EXTERNAL_LIB_DIR) {
         message(Use pre-compiled libraries in $${EXTERNAL_LIB_DIR}.)
         PREFIX = $$system_path($$EXTERNAL_LIB_DIR)
