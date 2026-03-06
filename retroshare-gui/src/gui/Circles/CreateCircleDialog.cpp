@@ -1002,7 +1002,7 @@ void CreateCircleDialog::MembershipListCustomPopupMenu( QPoint )
     RsIdentityDetails idd;
     bool is_my_own_id = rsIdentity->getIdDetails(current_gxs_id, idd);
     
-	if (item && !mReadOnly)
+	if (item && !mReadOnly && item->text(RSCIRCLEID_COL_STATUS) == tr("Invited"))
 			contextMnu.addAction(QIcon(":/images/delete.png"), tr("Remove Member"), this, SLOT(removeMember()));
 
     if (is_my_own_id && item->text(RSCIRCLEID_COL_STATUS) == tr("Invited")) {
