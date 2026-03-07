@@ -223,8 +223,7 @@ void RttGraphSource::getValues(std::map<std::string,float>& vals) const
 
     for(std::list<RsPeerId>::const_iterator it(idList.begin());it!=idList.end();++it)
     {
-        rsRtt->getPongResults(*it, 1, results);
-        if(!results.empty()) {
+        if (rsRtt->getPongResults(*it, 1, results) > 0 && !results.empty()) {
             vals[(*it).toStdString()] = results.back().mRTT ;
         }
     }
