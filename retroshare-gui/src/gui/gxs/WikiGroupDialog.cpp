@@ -130,44 +130,38 @@ void WikiGroupDialog::initUi()
 	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Wiki Moderators"));
 	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Wiki Moderators"));
 
-	if (ui.addAdmins_cb)
-	{
-		ui.addAdmins_cb->hide();
-		ui.adminsList->hide();
-		ui.filtercomboBox->hide();
-	}
+	ui.addAdmins_cb->hide();
+	ui.adminsList->hide();
+	ui.filtercomboBox->hide();
 
-	if (!mModeratorsWidget)
-	{
-		mModeratorsWidget = new QWidget(this);
-		auto *layout = new QVBoxLayout(mModeratorsWidget);
+	mModeratorsWidget = new QWidget(this);
+	auto *layout = new QVBoxLayout(mModeratorsWidget);
 
-		mModeratorsGroup = new QGroupBox(tr("Moderators"), mModeratorsWidget);
-		auto *groupLayout = new QVBoxLayout(mModeratorsGroup);
+	mModeratorsGroup = new QGroupBox(tr("Moderators"), mModeratorsWidget);
+	auto *groupLayout = new QVBoxLayout(mModeratorsGroup);
 
-		mModeratorsList = new QTreeWidget(mModeratorsGroup);
-		mModeratorsList->setToolTip(tr("List of users who can moderate this wiki"));
-		mModeratorsList->setColumnCount(2);
-		mModeratorsList->setHeaderLabels({tr("Moderator"), tr("Id")});
-		mModeratorsList->setRootIsDecorated(false);
-		mModeratorsList->setSelectionMode(QAbstractItemView::SingleSelection);
-		mModeratorsList->setUniformRowHeights(true);
-		groupLayout->addWidget(mModeratorsList);
+	mModeratorsList = new QTreeWidget(mModeratorsGroup);
+	mModeratorsList->setToolTip(tr("List of users who can moderate this wiki"));
+	mModeratorsList->setColumnCount(2);
+	mModeratorsList->setHeaderLabels({tr("Moderator"), tr("Id")});
+	mModeratorsList->setRootIsDecorated(false);
+	mModeratorsList->setSelectionMode(QAbstractItemView::SingleSelection);
+	mModeratorsList->setUniformRowHeights(true);
+	groupLayout->addWidget(mModeratorsList);
 
-		auto *buttonLayout = new QHBoxLayout();
-		mAddModeratorButton = new QPushButton(tr("Add Moderator"), mModeratorsGroup);
-		mRemoveModeratorButton = new QPushButton(tr("Remove Moderator"), mModeratorsGroup);
-		buttonLayout->addWidget(mAddModeratorButton);
-		buttonLayout->addWidget(mRemoveModeratorButton);
-		buttonLayout->addStretch();
-		groupLayout->addLayout(buttonLayout);
+	auto *buttonLayout = new QHBoxLayout();
+	mAddModeratorButton = new QPushButton(tr("Add Moderator"), mModeratorsGroup);
+	mRemoveModeratorButton = new QPushButton(tr("Remove Moderator"), mModeratorsGroup);
+	buttonLayout->addWidget(mAddModeratorButton);
+	buttonLayout->addWidget(mRemoveModeratorButton);
+	buttonLayout->addStretch();
+	groupLayout->addLayout(buttonLayout);
 
-		layout->addWidget(mModeratorsGroup);
-		injectExtraWidget(mModeratorsWidget);
+	layout->addWidget(mModeratorsGroup);
+	injectExtraWidget(mModeratorsWidget);
 
-		connect(mAddModeratorButton, SIGNAL(clicked()), this, SLOT(addModerator()));
-		connect(mRemoveModeratorButton, SIGNAL(clicked()), this, SLOT(removeModerator()));
-	}
+	connect(mAddModeratorButton, SIGNAL(clicked()), this, SLOT(addModerator()));
+	connect(mRemoveModeratorButton, SIGNAL(clicked()), this, SLOT(removeModerator()));
 
 	updateModeratorControls();
 }
@@ -199,6 +193,12 @@ bool WikiGroupDialog::service_updateGroup(const RsGroupMetaData &editedMeta)
 	if (rsWiki->getCollections({editedMeta.mGroupId}, existingGroups) && !existingGroups.empty())
 	{
 		grp = existingGroups.front();
+	}
+	else
+	{
+		std::cerr << "WikiGroupDialog::service_updateGroup() Error: could not retrieve existing group data";
+		std::cerr << std::endl;
+		return false;
 	}
 
 	grp.mMeta = editedMeta;
@@ -345,19 +345,9 @@ void WikiGroupDialog::addModeratorToList(const RsGxsId &gxsId)
 	// Column structure: column 0 = moderator name/avatar, column 1 = GxsId string
 	QString idString = QString::fromStdString(gxsId.toStdString());
 	QList<QTreeWidgetItem*> items = mModeratorsList->findItems(idString, Qt::MatchExactly, 1);
-	
-	// Verify by checking actual IDs to ensure robustness
-	for (QTreeWidgetItem* item : items)
+	if (!items.empty())
 	{
-		GxsIdRSTreeWidgetItem *gxsItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(item);
-		if (gxsItem)
-		{
-			RsGxsId existingId;
-			if (gxsItem->getId(existingId) && existingId == gxsId)
-			{
-				return; // ID already in list
-			}
-		}
+		return; // ID already in list
 	}
 
 	auto *item = new GxsIdRSTreeWidgetItem(nullptr, GxsIdDetails::ICON_TYPE_AVATAR, true, nullptr);
