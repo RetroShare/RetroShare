@@ -277,12 +277,12 @@
              </column>
              <column>
               <property name="text">
-               <string>IDs</string>
+               <string>Status</string>
               </property>
              </column>
              <column>
               <property name="text">
-               <string>Status</string>
+               <string>IDs</string>
               </property>
              </column>
             </widget>

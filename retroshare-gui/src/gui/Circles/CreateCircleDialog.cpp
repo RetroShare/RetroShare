@@ -46,8 +46,8 @@
 #define CREATECIRCLEDIALOG_IDINFO     3
 
 #define RSCIRCLEID_COL_NICKNAME       0
-#define RSCIRCLEID_COL_KEYID          1
-#define RSCIRCLEID_COL_STATUS         2
+#define RSCIRCLEID_COL_STATUS         1
+#define RSCIRCLEID_COL_KEYID          2
 #define RSCIRCLEID_COL_IDTYPE         3
 
 #define IMAGE_INVITED              ":/icons/bullet_yellow_128.png"
@@ -88,6 +88,7 @@ CreateCircleDialog::CreateCircleDialog()
 	int fontWidth = QFontMetrics_horizontalAdvance(QFontMetricsF(ui.treeWidget_IdList->font()), "W");
 	ui.treeWidget_IdList->setColumnWidth(RSCIRCLEID_COL_NICKNAME, 17 * fontWidth);
 	ui.treeWidget_membership->setColumnWidth(RSCIRCLEID_COL_NICKNAME, 17 * fontWidth);
+	ui.treeWidget_membership->setColumnWidth(RSCIRCLEID_COL_STATUS, 17 * fontWidth);
 	
 	ui.removeButton->setEnabled(false);
 	ui.addMemberButton->setEnabled(false);
@@ -1053,8 +1054,6 @@ void CreateCircleDialog::MembershipListCustomPopupMenu( QPoint )
 
 void CreateCircleDialog::updateMembership()
 {
-	ui.members_groupBox->setTitle( tr("Invited Members") + " (" + QString::number(ui.treeWidget_membership->topLevelItemCount()) + ")" );
-    
     RsGxsCircleDetails details;
     if (!rsGxsCircles->getCircleDetails(RsGxsCircleId(mCircleGroup.mMeta.mGroupId), details)) {
         return;
@@ -1146,6 +1145,8 @@ void CreateCircleDialog::updateMemberStatus(QTreeWidgetItem* subitem, bool invit
     for(int i=0; i<ui.treeWidget_membership->columnCount(); ++i) {
         subitem->setFont(i, font);
     }
+    
+    ui.members_groupBox->setTitle( tr("Invited Members") + " (" + QString::number(ui.treeWidget_membership->topLevelItemCount()) + ")" );
 }
 
 void CreateCircleDialog::acceptInvite()
