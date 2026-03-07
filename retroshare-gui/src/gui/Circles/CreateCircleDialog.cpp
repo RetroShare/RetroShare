@@ -90,7 +90,7 @@ CreateCircleDialog::CreateCircleDialog()
 	ui.treeWidget_membership->setColumnWidth(RSCIRCLEID_COL_NICKNAME, 17 * fontWidth);
 	
 	ui.removeButton->setEnabled(false);
-	ui.addButton->setEnabled(false);
+	ui.addMemberButton->setEnabled(false);
 	ui.radioButton_ListAll->setChecked(true);
 	ui.radioButton_Public->setChecked(true) ;
 
@@ -106,7 +106,7 @@ CreateCircleDialog::CreateCircleDialog()
     ui.circleComboBox->hide();
 
     // connect up the buttons.
-    connect(ui.addButton, SIGNAL(clicked()), this, SLOT(addMember()));
+    connect(ui.addMemberButton, SIGNAL(clicked()), this, SLOT(addMember()));
     connect(ui.removeButton, SIGNAL(clicked()), this, SLOT(removeMember()));
 
     connect(ui.postButton, SIGNAL(clicked()), this, SLOT(createCircle()));
@@ -202,7 +202,7 @@ void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool
     
     ui.postButton->setText(tr("Update"));
     
-	ui.addButton->setEnabled(!readonly) ;
+	ui.addMemberButton->setEnabled(!readonly) ;
 	ui.removeButton->setEnabled(!readonly) ;
     
     if(readonly)
@@ -210,7 +210,7 @@ void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool
 		ui.postButton->hide() ;
 		ui.cancelButton->setText(tr("Close"));
 		ui.peersSelection_GB->hide() ;
-		ui.addButton->hide() ;
+		ui.addMemberButton->hide() ;
 		ui.removeButton->hide() ;
 	}
 
@@ -299,7 +299,7 @@ void CreateCircleDialog::setupForExternalCircle()
 void CreateCircleDialog::selectedId(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
 	Q_UNUSED(previous);
-	ui.addButton->setEnabled(current != NULL);
+	ui.addMemberButton->setEnabled(current != NULL);
 }
 
 void CreateCircleDialog::selectedMember(QTreeWidgetItem *current, QTreeWidgetItem *previous)
@@ -1097,6 +1097,7 @@ void CreateCircleDialog::updateMemberStatus(QTreeWidgetItem* subitem, bool invit
 {
     QString statusText;
     QString tooltip = tr("Status: ");
+    bool am_I_pending = false ;
 
     if (invited && !subscrb) {
         // Case: Admin invited them, but they haven't accepted yet
