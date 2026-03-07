@@ -23,12 +23,10 @@
 
 #include <QMessageBox>
 
-#include "gui/gxs/RsGxsUpdateBroadcastPage.h"
+#include "retroshare-gui/mainpage.h"
 #include "ui_WikiDialog.h"
 
 #include <retroshare/rswiki.h>
-
-#include "util/TokenQueue.h"
 
 #include <map>
 
@@ -37,8 +35,10 @@
 class WikiAddDialog;
 class WikiEditDialog;
 class UserNotify;
+class GxsCommentTreeWidget;
+class QTreeWidgetItem;
 
-class WikiDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
+class WikiDialog : public MainPage
 {
   Q_OBJECT
 
@@ -47,13 +47,16 @@ public:
 	~WikiDialog();
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_WIKI) ; } //MainPage
-	virtual QString pageName() const { return tr("Wiki Pages") ; } //MainPage
+	virtual QString pageName() const { return tr("Wiki") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	virtual UserNotify *createUserNotify(QObject *parent) override;
 
-public:
-	virtual void updateDisplay(bool complete);
+protected:
+	virtual void showEvent(QShowEvent *event) override;
+
+private slots:
+	void updateDisplay();
 
 
 
@@ -65,6 +68,9 @@ private slots:
 	void OpenOrShowRepublishDialog();
 
 	void groupTreeChanged();
+	void pagesTreeCustomPopupMenu(QPoint point);
+	void markPageAsRead();
+	void markPageAsUnread();
 
 	void newGroup();
 	void showGroupDetails();
@@ -77,6 +83,12 @@ private slots:
 	void wikiGroupChanged(const QString &groupId);
 
 	void insertWikiGroups();
+	
+	// Search filter
+	void filterPages();
+	
+	// Comments (placeholder for future UI integration)
+	void loadComments(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId);
 
 private:
 
@@ -84,6 +96,8 @@ private:
 	void clearGroupTree();
 
 	void updateWikiPage(const RsWikiSnapshot &page);
+	void setSelectedPageReadStatus(bool read);
+	QTreeWidgetItem *findPageItem(const RsGxsMessageId &pageId) const;
 
 	bool getSelectedPage(RsGxsGroupId &groupId, RsGxsMessageId &pageId, RsGxsMessageId &origPageId);
 	std::string getSelectedPage();
@@ -99,16 +113,11 @@ private:
 
 	void processSettings(bool load);
 
-	void requestGroupMeta();
-	void loadGroupMeta(const uint32_t &token);
-
-	void requestPages(const std::list<RsGxsGroupId> &groupIds);
-	void loadPages(const uint32_t &token);
-
-	void requestWikiPage(const  RsGxsGrpMsgIdPair &msgId);
-	void loadWikiPage(const uint32_t &token);
-
-	TokenQueue *mWikiQueue;
+	// Async data loading methods
+	void loadGroupMeta();
+	void loadPages(const RsGxsGroupId &groupId);
+	void loadWikiPage(const RsGxsGrpMsgIdPair &msgId);
+	void updateModerationState(const RsGxsGroupId &groupId, int subscribeFlags);
 
 	WikiAddDialog *mAddPageDialog;
 	WikiAddDialog *mAddGroupDialog;
@@ -118,12 +127,17 @@ private:
 	RsGxsMessageId mPageSelected;
 	std::string mModSelected;
 
+	GxsCommentTreeWidget *mCommentTreeWidget;
+	RsGxsGroupId mCurrentGroupId;
+	RsGxsMessageId mCurrentPageId;
 
 	QTreeWidgetItem *mYourGroups;
 	QTreeWidgetItem *mSubscribedGroups;
 	QTreeWidgetItem *mPopularGroups;
 	QTreeWidgetItem *mOtherGroups;
 	RsGxsGroupId mGroupId; // From GroupTreeWidget
+	bool mCanModerate = false;
+	bool mInitialLoadDone = false;
 
 	/* UI - from Designer */
 	Ui::WikiDialog ui;
@@ -131,4 +145,3 @@ private:
 };
 
 #endif
-
