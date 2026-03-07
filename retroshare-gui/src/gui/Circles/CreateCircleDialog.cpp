@@ -1074,11 +1074,28 @@ void CreateCircleDialog::updateMembership()
                 break;
             }
         }
-        if(!item) continue;
-
+        
         // Use the flags defined in rsgxscircles.h
         bool invited = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST);
         bool subscrb = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED);
+
+        if(!item) {
+            // Find or create your tree widget item
+            RsIdentityDetails gxs_details;
+            if (rsIdentity->getIdDetails(memberId, gxs_details)) {
+                QString nickname = QString::fromUtf8(gxs_details.mNickname.c_str());
+                QString idtype = tr("[Anonymous Id]");
+
+                QPixmap pixmap;
+                if(gxs_details.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(gxs_details.mAvatar.mData, gxs_details.mAvatar.mSize, pixmap, GxsIdDetails::SMALL))
+                    pixmap = GxsIdDetails::makeDefaultIcon(gxs_details.mId, GxsIdDetails::SMALL);
+
+                // Add missing item using the overloaded addMember
+                addMember(memberIdStr, idtype, nickname, QIcon(pixmap), invited, subscrb, false);
+            }
+            continue;
+        }
+
         
         // Check if this ID is one of your own
         RsIdentityDetails idd;
