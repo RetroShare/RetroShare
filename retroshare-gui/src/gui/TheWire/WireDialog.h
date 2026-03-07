@@ -24,6 +24,8 @@
 #include "retroshare-gui/mainpage.h"
 #include "ui_WireDialog.h"
 
+#include <QTimer>
+
 #include <retroshare/rswire.h>
 
 #include <map>
@@ -116,8 +118,8 @@ public:
 	void showGroupFocus(const RsGxsGroupId groupId);
 	void postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr> pulses);
 
-	void requestGroupsPulses(const std::list<RsGxsGroupId>& groupIds);
-	void showGroupsPulses(const std::list<RsGxsGroupId>& groupIds);
+	void requestGroupsPulses(const std::list<RsGxsGroupId>& groupIds, bool addToHistory = true);
+	void showGroupsPulses(const std::list<RsGxsGroupId>& groupIds, bool addToHistory = true);
 	void postGroupsPulses(std::list<RsWirePulseSPtr> pulses);
 
     void getServiceStatistics(GxsServiceStatistic& stats) const override;
@@ -161,9 +163,9 @@ private:
 	void addGroup(const RsWireGroup &group);
 
 	void deleteGroups();
-	void showGroups();
+	void showGroups(bool addToHistory = true);
 	void showSelectedGroups();
-	void updateGroups(std::vector<RsWireGroup> &groups);
+	void updateGroups(const std::vector<RsWireGroup> &groups);
 
 	void processSettings(bool load);
 
@@ -208,6 +210,8 @@ private:
 	/* UI - from Designer */
 	Ui::WireDialog ui;
 
+	QTimer *mUpdateTimer;
+	bool mRequestGroupDataInProgress;
 };
 
 #endif

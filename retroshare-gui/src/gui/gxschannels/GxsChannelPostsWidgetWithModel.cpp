@@ -446,6 +446,13 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     GxsMessageFrameWidget(rsGxsChannels, parent),
     ui(new Ui::GxsChannelPostsWidgetWithModel)
 {
+    mEventHandlerId = 0;
+    // Needs to be asynced because this function is called by another thread!
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
+    }, mEventHandlerId, RsEventType::GXS_CHANNELS );
+
     /* Invoke the Qt Designer generated object setup routine */
     ui->setupUi(this);
 
@@ -570,13 +577,6 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
     setGroupId(channelId);
     mChannelPostsModel->updateChannel(channelId);
-
-    mEventHandlerId = 0;
-    // Needs to be asynced because this function is called by another thread!
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
-    {
-        RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
-    }, mEventHandlerId, RsEventType::GXS_CHANNELS );
 }
 
 void GxsChannelPostsWidgetWithModel::keyPressEvent(QKeyEvent *e)
@@ -895,6 +895,24 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
         }
         break;
 
+        case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:
+        {
+            if(e->mChannelGroupId == groupId())
+            {
+                // Toggle subscribe flag locally and refresh UI without GXS request
+                // to avoid concurrent request with parent dialog's tree rebuild
+                if(IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags))
+                    mGroup.mMeta.mSubscribeFlags &= ~GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
+                else
+                    mGroup.mMeta.mSubscribeFlags |= GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
+
+                insertChannelDetails(mGroup);
+            }
+        }
+        break;
+
+
+
         case RsChannelEventCode::READ_STATUS_CHANGED: // This is already handled by setMsgReadStatus() that has been called and issued this event.
         break;
 
@@ -1125,6 +1143,12 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
     std::cerr << "Post channel load..." << std::endl;
 #endif
 
+    mGroup = mChannelPostsModel->getChannelGroup();
+    insertChannelDetails(mGroup);
+
+    emit groupDataLoaded();
+    emit groupChanged(this);
+
     if (!mNavigatePendingMsgId.isNull())
         navigate(mNavigatePendingMsgId);
 
@@ -1321,7 +1345,9 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
         ui->channelName_LB->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
 
     ui->logoLabel->setPixmap(chanImage);
-    ui->logoLabel->setFixedSize(QSize(ui->logoLabel->height()*chanImage.width()/(float)chanImage.height(),ui->logoLabel->height())); // make the logo have the same aspect ratio than the original image
+    int lh = ui->logoLabel->height();
+    if (lh <= 0) lh = 64; // Fallback if layout not yet processed
+    ui->logoLabel->setFixedSize(QSize(lh*chanImage.width()/(float)chanImage.height(),lh)); // make the logo have the same aspect ratio than the original image
 
     ui->postButton->setEnabled(bool(group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH));
 
