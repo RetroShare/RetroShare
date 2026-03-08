@@ -110,7 +110,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
 
     WikiDialog *wikiDialog = NULL;
     ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
-                      action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_WIKI), tr("Wiki Pages"), grp));
+                      action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_WIKI), tr("Wiki"), grp));
     mNotify.push_back(QPair<MainPage*, QAction*>(wikiDialog, action));*/
 
 // THESE HAVE TO BE CONVERTED TO VEG FORMAT

@@ -23,12 +23,15 @@
 
 #include "ui_WikiEditDialog.h"
 
+#include <map>
+#include <vector>
+
 #include <retroshare/rswiki.h>
-#include "util/TokenQueue.h"
 
 class RSTreeWidgetItemCompareRole;
+class QTreeWidgetItem;
 
-class WikiEditDialog : public QWidget, public TokenResponse
+class WikiEditDialog : public QWidget
 {
   Q_OBJECT
 
@@ -39,7 +42,6 @@ public:
 void 	setNewPage();
 
 void 	setupData(const RsGxsGroupId &groupId, const RsGxsMessageId &pageId);
-void 	loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 void 	setRepublishMode(RsGxsMessageId &origMsgId);
 
@@ -58,28 +60,39 @@ void 	historySelected();
 void 	oldHistoryChanged();
 void  	mergeModeToggle();
 void  	generateMerge();
+void    historyItemChanged(QTreeWidgetItem *item, int column);
+void    updateMergeButtonState();
 
 private:
 
 void 	updateHistoryStatus();
 void 	updateHistoryChildren(QTreeWidgetItem *item, bool isLatest);
 void 	updateHistoryItem(QTreeWidgetItem *item, bool isLatest);
+std::vector<RsGxsMessageId> collectMergeSelection() const;
+void    rebuildMergeSelectionCount();
 
 void    redrawPage();
 
-void 	setGroup(RsWikiCollection &group);
-void 	setPreviousPage(RsWikiSnapshot &page);
+void 	setGroup(const RsWikiCollection &group);
+void 	setPreviousPage(const RsWikiSnapshot &page);
 
 void 	requestPage(const RsGxsGrpMsgIdPair &msgId);
-void 	loadPage(const uint32_t &token);
+void 	loadPage(const RsWikiSnapshot &page);
 void 	requestGroup(const RsGxsGroupId &groupId);
-void 	loadGroup(const uint32_t &token);
+void 	loadGroup(const RsWikiCollection &group);
 
 void 	requestBaseHistory(const RsGxsGrpMsgIdPair &origMsgId);
-void 	loadBaseHistory(const uint32_t &token);
+void 	loadBaseHistory(const std::vector<RsWikiSnapshot> &snapshots);
 void 	requestEditTreeData();
-void 	loadEditTreeData(const uint32_t &token);
+void 	loadEditTreeData(const std::vector<RsWikiSnapshot> &snapshots);
 
+void 	performMerge(
+		const std::vector<RsGxsMessageId> &editIds,
+		const std::map<RsGxsMessageId, std::string> &contents);
+rstime_t getEditTimestamp(const RsGxsMessageId &msgId) const;
+QString getAuthorName(const RsGxsMessageId &msgId) const;
+QTreeWidgetItem *findHistoryItem(const RsGxsMessageId &msgId) const;
+void 	resetEditorState();
 
 
         bool mNewPage;
@@ -93,6 +106,7 @@ void 	loadEditTreeData(const uint32_t &token);
         bool mRepublishMode;
 	bool mIgnoreTextChange; // when we do it programmatically.
         bool mTextChanged;
+	int mCheckedMergeCount;
 
 	QString mCurrentText;
 
@@ -105,9 +119,6 @@ void 	loadEditTreeData(const uint32_t &token);
 	Ui::WikiEditDialog ui;
 
 	RSTreeWidgetItemCompareRole *mThreadCompareRole;
-
-	TokenQueue *mWikiQueue;
 };
 
 #endif
-
