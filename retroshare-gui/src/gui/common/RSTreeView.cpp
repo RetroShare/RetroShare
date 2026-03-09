@@ -122,7 +122,7 @@ void RSTreeView::keyPressEvent(QKeyEvent *e)
 {
     if (e->modifiers() == Qt::ControlModifier)
     {
-        if (e->key() == Qt::Key_Plus)
+        if (e->key() == Qt::Key_Z)
         {
             emit zoomRequested(true); // Zoom In
             e->accept();
