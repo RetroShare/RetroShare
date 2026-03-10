@@ -369,6 +369,7 @@ void CreateCircleDialog::addMember(const QString& keyId, const QString& idtype, 
 	member->setIcon(RSCIRCLEID_COL_NICKNAME, icon);
 	member->setText(RSCIRCLEID_COL_KEYID, keyId);
 	//member->setText(RSCIRCLEID_COL_IDTYPE, idtype);
+	member->setData(RSCIRCLEID_COL_STATUS, Qt::UserRole, true); // Manually added members are invited
 
 	tree->addTopLevelItem(member);
 
@@ -504,6 +505,7 @@ void CreateCircleDialog::createCircle()
     {
         QTreeWidgetItem *item = tree->topLevelItem(i);
         QString keyId = item->text(RSCIRCLEID_COL_KEYID);
+        bool is_invited = item->data(RSCIRCLEID_COL_STATUS, Qt::UserRole).toBool();
 
         /* insert into circle */
         if (mIsExternalCircle)
@@ -516,9 +518,11 @@ void CreateCircleDialog::createCircle()
                 continue ;
             }
 
-            circle.mInvitedMembers.insert(key_id_gxs) ;
+            if (is_invited) {
+                circle.mInvitedMembers.insert(key_id_gxs) ;
+            }
 #ifdef DEBUG_CREATE_CIRCLE_DIALOG 
-            std::cerr << "CreateCircleDialog::createCircle() Inserting Member: " << keyId.toStdString();
+            std::cerr << "CreateCircleDialog::createCircle() Inserting Member: " << keyId.toStdString() << " (invited: " << is_invited << ")";
             std::cerr << std::endl;
 #endif
         }
@@ -532,9 +536,11 @@ void CreateCircleDialog::createCircle()
                 continue ;
             }
 
-            circle.mLocalFriends.insert(key_id_pgp) ;
+            if (is_invited) {
+                circle.mLocalFriends.insert(key_id_pgp) ;
+            }
 #ifdef DEBUG_CREATE_CIRCLE_DIALOG 
-            std::cerr << "CreateCircleDialog::createCircle() Inserting Friend: " << keyId.toStdString();
+            std::cerr << "CreateCircleDialog::createCircle() Inserting Friend: " << keyId.toStdString() << " (invited: " << is_invited << ")";
             std::cerr << std::endl;
 #endif
         }
@@ -1138,6 +1144,7 @@ void CreateCircleDialog::updateMemberStatus(QTreeWidgetItem* subitem, bool invit
 
     subitem->setText(RSCIRCLEID_COL_STATUS, statusText);
     subitem->setToolTip(RSCIRCLEID_COL_STATUS, tooltip);
+    subitem->setData(RSCIRCLEID_COL_STATUS, Qt::UserRole, invited);
 
     // Apply bold font for own ID
     QFont font = ui.treeWidget_membership->font();
