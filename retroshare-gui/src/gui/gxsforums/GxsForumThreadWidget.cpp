@@ -1963,7 +1963,8 @@ void GxsForumThreadWidget::updateGroupData()
     // ui->threadTreeWidget->selectionModel()->reset();
     // mThreadProxyModel->clear();
 
-    setForumDescriptionLoading();
+    if(mThreadId.isNull())
+        setForumDescriptionLoading();
 
     RsThread::async([this]()
     {
