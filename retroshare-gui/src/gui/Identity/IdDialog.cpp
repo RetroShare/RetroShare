@@ -911,7 +911,7 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 
 				QPixmap pixmap ;
 
-				if(idd.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idd.mAvatar.mData, idd.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
+				if(idd.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idd.mAvatar.mData, idd.mAvatar.mSize, pixmap,GxsIdDetails::MEDIUM))
 					pixmap = GxsIdDetails::makeDefaultIcon(it->first,GxsIdDetails::MEDIUM) ;
 				
 				subitem->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, pixmap);
