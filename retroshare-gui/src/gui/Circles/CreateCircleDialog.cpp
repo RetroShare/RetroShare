@@ -999,67 +999,11 @@ void CreateCircleDialog::IdListCustomPopupMenu( QPoint )
 	contextMnu.exec(QCursor::pos());
 }
 
-void CreateCircleDialog::MembershipListCustomPopupMenu( QPoint )
-{
-	QMenu contextMnu( this );
-
-	QTreeWidgetItem *item = ui.treeWidget_membership->currentItem();
-    
-    RsGxsId current_gxs_id(item->text(RSCIRCLEID_COL_KEYID).toStdString());
-    RsIdentityDetails idd;
-    bool is_my_own_id = rsIdentity->getIdDetails(current_gxs_id, idd);
-    
-	if (item && !mReadOnly && item->text(RSCIRCLEID_COL_STATUS) == tr("Invited"))
-			contextMnu.addAction(QIcon(":/images/delete.png"), tr("Remove Member"), this, SLOT(removeMember()));
-
-    if (is_my_own_id && item->text(RSCIRCLEID_COL_STATUS) == tr("Invited")) {
-        contextMnu.addAction(tr("Accept Invite"), this, SLOT(acceptInvite()));
-        contextMnu.addAction(tr("Reject Invite"), this, SLOT(rejectInvite()));
-        contextMnu.addSeparator();
-    }
-    
-    if (is_my_own_id && item->text(RSCIRCLEID_COL_STATUS) == tr("Subscription pending")) {
-        QAction *actionCancel = new QAction(tr("Cancel request"), this);
-        connect(actionCancel, &QAction::triggered, this, &CreateCircleDialog::rejectInvite);
-        contextMnu.addAction(actionCancel);
-        contextMnu.addSeparator();
-    }
-    
-    if (am_I_circle_admin) 
-    {
-        RsGxsCircleDetails details;
-        if (rsGxsCircles->getCircleDetails(RsGxsCircleId(mCircleGroup.mMeta.mGroupId), details))
-        {
-            auto it = details.mSubscriptionFlags.find(current_gxs_id);
-            if (it != details.mSubscriptionFlags.end())
-            {
-                contextMnu.addSeparator();
-
-                if (it->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
-                {
-                    QAction *action = new QAction(tr("Revoke this member"), this);
-                    connect(action, &QAction::triggered, this, &CreateCircleDialog::revokeCircleMembership);
-                    contextMnu.addAction(action);
-                }
-                else
-                {
-                    QAction *action = new QAction(tr("Grant membership"), this);
-                    connect(action, &QAction::triggered, this, &CreateCircleDialog::grantCircleMembership);
-                    contextMnu.addAction(action);
-
-                    QAction *actionReject = new QAction(tr("Reject request"), this);
-                    connect(actionReject, &QAction::triggered, this, &CreateCircleDialog::revokeCircleMembership);
-                    contextMnu.addAction(actionReject);
-                }
-            }
-        }
-    }
-    
-	contextMnu.exec(QCursor::pos());
-}
-
 void CreateCircleDialog::updateMembership()
 {
+    am_I_invited = false;
+    am_I_pending = false;
+    
     RsGxsCircleDetails details;
     if (!rsGxsCircles->getCircleDetails(RsGxsCircleId(mCircleGroup.mMeta.mGroupId), details)) {
         return;
@@ -1080,7 +1024,7 @@ void CreateCircleDialog::updateMembership()
             }
         }
         
-        // Use the flags defined in rsgxscircles.h
+        // Map flags using correct bitmasks
         bool invited = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST);
         bool subscrb = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED);
 
@@ -1100,11 +1044,15 @@ void CreateCircleDialog::updateMembership()
             }
             continue;
         }
-
         
         // Check if this ID is one of your own
-        RsIdentityDetails idd;
-        bool is_own_id = rsIdentity->getIdDetails(memberId, idd);
+        bool is_own_id = rsIdentity->isOwnId(memberId);
+
+        // Update global flags for the Context Menu
+        if (is_own_id) {
+            if (invited && !subscrb) am_I_invited = true;
+            if (!invited && subscrb) am_I_pending = true;
+        }
         
         RsGxsId ownId;
         if (ui.idChooser->getChosenId(ownId) == GxsIdChooser::KnowId) {
@@ -1119,12 +1067,12 @@ void CreateCircleDialog::updateMemberStatus(QTreeWidgetItem* subitem, bool invit
 {
     QString statusText;
     QString tooltip = tr("Status: ");
-    bool am_I_pending = false ;
 
     if (invited && !subscrb) {
         // Case: Admin invited them, but they haven't accepted yet
         statusText = tr("Invited");
         tooltip += tr("Invited by admin");
+        if (is_own_id) am_I_invited = true;
         subitem->setIcon(RSCIRCLEID_COL_STATUS, FilesDefs::getIconFromQtResourcePath(IMAGE_INVITED)) ;
     } else if (!invited && subscrb) {
         // Case: User requested to join, but Admin hasn't approved yet
@@ -1154,6 +1102,60 @@ void CreateCircleDialog::updateMemberStatus(QTreeWidgetItem* subitem, bool invit
     }
     
     ui.members_groupBox->setTitle( tr("Invited Members") + " (" + QString::number(ui.treeWidget_membership->topLevelItemCount()) + ")" );
+}
+
+void CreateCircleDialog::MembershipListCustomPopupMenu( QPoint )
+{
+    QMenu contextMnu( this );
+
+    QTreeWidgetItem *item = ui.treeWidget_membership->currentItem();
+
+    RsGxsId current_gxs_id(item->text(RSCIRCLEID_COL_KEYID).toStdString());
+
+    if (item && !mReadOnly && item->text(RSCIRCLEID_COL_STATUS) == tr("Invited"))
+        contextMnu.addAction(QIcon(":/images/delete.png"), tr("Remove Member"), this, SLOT(removeMember()));
+
+    if (am_I_invited) {
+        contextMnu.addAction(tr("Accept Invite"), this, SLOT(acceptInvite()));
+        contextMnu.addSeparator();
+    }
+    
+    if (am_I_pending) {
+        contextMnu.addAction(tr("Reject request"), this, SLOT(rejectInvite()));
+        contextMnu.addSeparator();
+    }
+    
+    if (am_I_circle_admin) 
+    {
+        RsGxsCircleDetails details;
+        if (rsGxsCircles->getCircleDetails(RsGxsCircleId(mCircleGroup.mMeta.mGroupId), details))
+        {
+            auto it = details.mSubscriptionFlags.find(current_gxs_id);
+            if (it != details.mSubscriptionFlags.end())
+            {
+                contextMnu.addSeparator();
+
+                if (it->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
+                {
+                    QAction *action = new QAction(tr("Revoke this member"), this);
+                    connect(action, &QAction::triggered, this, &CreateCircleDialog::revokeCircleMembership);
+                    contextMnu.addAction(action);
+                }
+                else
+                {
+                    QAction *action = new QAction(tr("Grant membership"), this);
+                    connect(action, &QAction::triggered, this, &CreateCircleDialog::grantCircleMembership);
+                    contextMnu.addAction(action);
+
+                    //QAction *actionReject = new QAction(tr("Reject request"), this);
+                    //connect(actionReject, &QAction::triggered, this, &CreateCircleDialog::revokeCircleMembership);
+                    //contextMnu.addAction(actionReject);
+                }
+            }
+        }
+    }
+    
+	contextMnu.exec(QCursor::pos());
 }
 
 void CreateCircleDialog::acceptInvite()
