@@ -237,7 +237,7 @@ IdDialog::IdDialog(QWidget *parent)
     //ui->idTreeWidget->setSelectionModel(new QItemSelectionModel(mProxyModel));// useless in Qt5.
 
 	ui->treeWidget_membership->clear();
-	ui->treeWidget_membership->setItemDelegateForColumn(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,new GxsIdTreeItemDelegate());
+	//ui->treeWidget_membership->setItemDelegateForColumn(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,new GxsIdTreeItemDelegate());
 
 	/* Setup UI helper */
     mStateHelper = new UIStateHelper(this);
@@ -670,6 +670,10 @@ static QTreeWidgetItem *setChildItem(QTreeWidgetItem *item, const RsGroupMetaDat
 
 	QTreeWidgetItem *subitem = new QTreeWidgetItem();
 
+	QPixmap pixmap ;
+	pixmap = GxsIdDetails::makeColoredGroupIcon( circle_group.mGroupId, ":/icons/png/people2.png", GxsIdDetails::ORIGINAL);
+
+	subitem->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, pixmap);
 	subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(circle_group.mGroupName.c_str()));
 	subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole, QString::fromStdString(circle_group.mGroupId.toStdString()));
 	subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(circle_group.mSubscribeFlags));
@@ -899,16 +903,19 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 				subitem = new RSTreeWidgetItem(NULL);
 				subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,Qt::UserRole,QString::fromStdString(it->first.toStdString()));
 				//Icon PlaceHolder
-				subitem->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,FilesDefs::getIconFromQtResourcePath(":/icons/png/anonymous.png"));
+				//subitem->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,FilesDefs::getIconFromQtResourcePath(":/icons/png/anonymous.png"));
 
 				RsIdentityDetails idd ;
 				//bool has_id =
 				rsIdentity->getIdDetails(it->first,idd) ;
 
-				// QPixmap pixmap ;
+				QPixmap pixmap ;
 
-				// if(idd.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idd.mAvatar.mData, idd.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
-				// 	pixmap = GxsIdDetails::makeDefaultIcon(it->first,GxsIdDetails::SMALL) ;
+				if(idd.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idd.mAvatar.mData, idd.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
+					pixmap = GxsIdDetails::makeDefaultIcon(it->first,GxsIdDetails::MEDIUM) ;
+				
+				subitem->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, pixmap);
+ 				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(idd.mNickname.c_str())) ;
 
 				// if(has_id)
 				// 	subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(idd.mNickname.c_str())) ;
@@ -969,12 +976,12 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 		// The bullet colors below are for the *Membership*. This is independent from admin rights, which cannot be shown as a color.
 		// Admin/non admin is shows using Bold font.
 
-		if(am_I_in_circle)
+		/*if(am_I_in_circle)
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,FilesDefs::getIconFromQtResourcePath(IMAGE_MEMBER)) ;
 		else if(am_I_invited || am_I_pending)
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,FilesDefs::getIconFromQtResourcePath(IMAGE_INVITED)) ;
 		else
-			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,FilesDefs::getIconFromQtResourcePath(IMAGE_UNKNOWN)) ;
+			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,FilesDefs::getIconFromQtResourcePath(IMAGE_UNKNOWN)) ;*/
 	}
     ui->treeWidget_membership->setSortingEnabled(true);
 

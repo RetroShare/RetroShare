@@ -1411,3 +1411,56 @@ void GxsIdDetails::GenerateCombinedPixmap(QPixmap &pixmap, const QList<QIcon> &i
 		it->paint(&painter, iconSize * i, 0, iconSize, iconSize);
 	}
 }
+
+const QPixmap GxsIdDetails::makeColoredGroupIcon(const RsGxsGroupId& id, const QString& iconPath, AvatarSize size)
+{
+    checkCleanImagesCache(); // Maintenance task used in this class
+
+    // Correct Size Handling: Map enum to Pixels
+    int S = 0;
+    switch(size) {
+        case SMALL:    S = 48;  break;
+        case MEDIUM:   S = 96;  break;
+        case LARGE:
+        case ORIGINAL: S = 192; break;
+        default:       S = 96;  break;
+    }
+
+    // Cache Integration
+    std::string key = groupIconCacheKey(id, iconPath); // Uses existing helper
+    
+    QMutexLocker lock(&mIconCacheMutex);
+    auto& it = mDefaultGroupIconCache[key];
+
+    // Return cached version if it exists
+    if(it[(int)size].second.width() > 0) {
+        it[(int)size].first = time(NULL);
+        return it[(int)size].second;
+    }
+
+    // Calculation & Tinting Logic
+    QString idStr = QString::fromStdString(id.toStdString());
+    uint hash = qHash(idStr);
+    QColor tintColor = QColor::fromHsl(hash % 360, 200, 150); 
+
+    QPixmap sourceIcon(iconPath);
+    if (sourceIcon.isNull()) return QPixmap();
+
+    QPixmap result(S, S);
+    result.fill(Qt::transparent);
+
+    QPainter painter(&result);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    
+    // Scale and draw
+    painter.drawPixmap(result.rect(), sourceIcon.scaled(S, S, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+    // Apply color only to the icon's shape
+    painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+    painter.fillRect(result.rect(), tintColor);
+    painter.end();
+
+    // Store in cache before returning
+    it[(int)size] = std::make_pair(time(NULL), result);
+    return result;
+}
