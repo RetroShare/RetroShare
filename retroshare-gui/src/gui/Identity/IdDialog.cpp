@@ -915,7 +915,9 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 					pixmap = GxsIdDetails::makeDefaultIcon(it->first,GxsIdDetails::MEDIUM) ;
 				
 				subitem->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, pixmap);
- 				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(idd.mNickname.c_str())) ;
+
+				QString nickname = QString::fromUtf8(idd.mNickname.c_str());
+				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, nickname.isEmpty() ? tr("[Unknown]") : nickname);
 
 				// if(has_id)
 				// 	subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(idd.mNickname.c_str())) ;
