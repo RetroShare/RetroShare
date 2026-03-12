@@ -529,8 +529,8 @@ QPixmap GxsIdDetails::generateColoredIcon(const QString& idStr, const QString& i
     
     // Use hash to determine hue (0-359), with fixed saturation and lightness for pastel look
     int hue = hash % 360;
-    int saturation = 150;  // Mid saturation for pastel colors
-    int lightness = 180;   // Light for pastel colors
+    int saturation = 200;  // Consistent saturation
+    int lightness = 150;   // Consistent lightness
     
     QColor backgroundColor = QColor::fromHsl(hue, saturation, lightness);
     
@@ -1450,10 +1450,14 @@ const QPixmap GxsIdDetails::makeColoredGroupIcon(const RsGxsGroupId& id, const Q
     result.fill(Qt::transparent);
 
     QPainter painter(&result);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
     
-    // Scale and draw
-    painter.drawPixmap(result.rect(), sourceIcon.scaled(S, S, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    // Scale and draw centered to avoid distortion
+    QPixmap scaledIcon = sourceIcon.scaled(S, S, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    int x = (S - scaledIcon.width()) / 2;
+    int y = (S - scaledIcon.height()) / 2;
+    painter.drawPixmap(x, y, scaledIcon);
 
     // Apply color only to the icon's shape
     painter.setCompositionMode(QPainter::CompositionMode_SourceIn);

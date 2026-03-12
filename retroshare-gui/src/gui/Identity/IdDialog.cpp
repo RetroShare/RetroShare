@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <unistd.h>
+#include <memory>
 
 #include <QCheckBox>
 #include <QMessageBox>
@@ -602,35 +603,22 @@ void IdDialog::updateCircles()
 {
 	RsThread::async([this]()
 	{
-        // 1 - get message data from p3GxsForums
-
-#ifdef DEBUG_FORUMS
-        std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
-#endif
-
-		/* This can be big so use a smart pointer to just copy the pointer
-		 * instead of copying the whole list accross the lambdas */
-        auto circle_metas = new std::list<RsGroupMetaData>();
+		/* Use shared_ptr to avoid memory leaks if the dialog is destroyed before the callback */
+		auto circle_metas = std::make_shared<std::list<RsGroupMetaData>>();
 
 		if(!rsGxsCircles->getCirclesSummaries(*circle_metas))
 		{
 			RS_ERR("failed to retrieve circles group info list");
-            delete circle_metas;
 			return;
 		}
 
-        RsQThreadUtils::postToObject( [circle_metas, this]()
+		RsQThreadUtils::postToObject( [circle_metas, this]()
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
-
-			loadCircles(*circle_metas);
-
-            delete circle_metas;
-        }, this );
-
-    });
+			if (isVisible()) {
+				loadCircles(*circle_metas);
+			}
+		}, this );
+	});
 }
 
 static QTreeWidgetItem *setChildItem(QTreeWidgetItem *item, const RsGroupMetaData& circle_group)
@@ -671,7 +659,7 @@ static QTreeWidgetItem *setChildItem(QTreeWidgetItem *item, const RsGroupMetaDat
 	QTreeWidgetItem *subitem = new QTreeWidgetItem();
 
 	QPixmap pixmap ;
-	pixmap = GxsIdDetails::makeColoredGroupIcon( circle_group.mGroupId, ":/icons/png/people2.png", GxsIdDetails::ORIGINAL);
+	pixmap = GxsIdDetails::makeColoredGroupIcon( circle_group.mGroupId, ":/icons/png/people2.png", GxsIdDetails::MEDIUM);
 
 	subitem->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, pixmap);
 	subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(circle_group.mGroupName.c_str()));
@@ -946,7 +934,23 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 				new_sub_items.push_back(subitem);
 			}
 			else
+			{
 				subitem = item->child(subitem_index);
+
+				// Update Nickname and Icon even if it already exists
+				RsIdentityDetails idd ;
+				if (rsIdentity->getIdDetails(it->first, idd))
+				{
+					QPixmap pixmap ;
+					if(idd.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idd.mAvatar.mData, idd.mAvatar.mSize, pixmap, GxsIdDetails::MEDIUM))
+						pixmap = GxsIdDetails::makeDefaultIcon(it->first, GxsIdDetails::MEDIUM) ;
+
+					subitem->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, pixmap);
+
+					QString nickname = QString::fromUtf8(idd.mNickname.c_str());
+					subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, nickname.isEmpty() ? tr("[Unknown]") : nickname);
+				}
+			}
 
 			if(invited && !subscrb)
 			{
@@ -974,16 +978,6 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 
         // add all items
         item->addChildren(new_sub_items);
-
-		// The bullet colors below are for the *Membership*. This is independent from admin rights, which cannot be shown as a color.
-		// Admin/non admin is shows using Bold font.
-
-		/*if(am_I_in_circle)
-			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,FilesDefs::getIconFromQtResourcePath(IMAGE_MEMBER)) ;
-		else if(am_I_invited || am_I_pending)
-			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,FilesDefs::getIconFromQtResourcePath(IMAGE_INVITED)) ;
-		else
-			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,FilesDefs::getIconFromQtResourcePath(IMAGE_UNKNOWN)) ;*/
 	}
     ui->treeWidget_membership->setSortingEnabled(true);
 
