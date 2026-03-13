@@ -115,6 +115,7 @@ void ChatPage::updateFontsAndEmotes()
     Settings->setValue("Emoteicons_GroupChat", ui.checkBox_emotegroupchat->isChecked());
     Settings->setValue("EnableCustomFonts", ui.checkBox_enableCustomFonts->isChecked());
     Settings->setValue("EnableCustomFontSize", ui.checkBox_enableCustomFontSize->isChecked());
+    Settings->setValue("EnableCustomFontColor", ui.checkBox_enableCustomFontColor->isChecked());
     Settings->setValue("MinimumFontSize", ui.minimumFontSize->value());
     Settings->setValue("EnableBold", ui.checkBox_enableBold->isChecked());
     Settings->setValue("EnableItalics", ui.checkBox_enableItalics->isChecked());
@@ -237,6 +238,7 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.checkBox_emotegroupchat,       SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
 	connect(ui.checkBox_enableCustomFonts,    SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
 	connect(ui.checkBox_enableCustomFontSize, SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
+	connect(ui.checkBox_enableCustomFontColor, SIGNAL(toggled(bool)),           this, SLOT(updateFontsAndEmotes()));
 	connect(ui.minimumFontSize,               SIGNAL(valueChanged(int)),        this, SLOT(updateFontsAndEmotes()));
 	connect(ui.checkBox_enableBold,           SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
 	connect(ui.checkBox_enableItalics,        SIGNAL(toggled(bool)),            this, SLOT(updateFontsAndEmotes()));
@@ -387,6 +389,7 @@ ChatPage::load()
     whileBlocking(ui.checkBox_emotegroupchat)->setChecked(Settings->value("Emoteicons_GroupChat", true).toBool());
     whileBlocking(ui.checkBox_enableCustomFonts)->setChecked(Settings->value("EnableCustomFonts", true).toBool());
     whileBlocking(ui.checkBox_enableCustomFontSize)->setChecked(Settings->value("EnableCustomFontSize", true).toBool());
+    whileBlocking(ui.checkBox_enableCustomFontColor)->setChecked(Settings->value("EnableCustomFontColor", true).toBool());
     whileBlocking(ui.minimumFontSize)->setValue(Settings->value("MinimumFontSize", 10).toInt());
     whileBlocking(ui.checkBox_enableBold)->setChecked(Settings->value("EnableBold", true).toBool());
     whileBlocking(ui.checkBox_enableItalics)->setChecked(Settings->value("EnableItalics", true).toBool());

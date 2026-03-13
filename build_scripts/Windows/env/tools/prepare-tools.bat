@@ -4,8 +4,8 @@ if "%EnvRootPath%"=="" exit /B 1
 
 set CEchoUrl=https://github.com/lordmulder/cecho/releases/download/2015-10-10/cecho.2015-10-10.zip
 set CEchoInstall=cecho.2015-10-10.zip
-set SevenZipUrl=https://sourceforge.net/projects/sevenzip/files/7-Zip/19.00/7z1900.msi/download
-set SevenZipInstall=7z1900.msi
+set SevenZipUrl=https://www.7-zip.org/a/7z2600-x64.msi
+set SevenZipInstall=7z2600-x64.msi
 set DependsUrl=http://www.dependencywalker.com/depends22_x86.zip
 set DependsInstall=depends22_x86.zip
 set UnixToolsUrl=http://unxutils.sourceforge.net/UnxUpdates.zip

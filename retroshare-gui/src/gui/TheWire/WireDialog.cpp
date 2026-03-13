@@ -75,6 +75,11 @@ WireDialog::WireDialog(QWidget *parent)
 	mDistSyncAllowed = true;
 	mStateHelper = nullptr;
 
+	mRequestGroupDataInProgress = false;
+	mUpdateTimer = new QTimer(this);
+	mUpdateTimer->setSingleShot(true);
+	connect(mUpdateTimer, SIGNAL(timeout()), this, SLOT(refreshGroups()));
+
 	connect( ui.toolButton_createAccount, SIGNAL(clicked()), this, SLOT(createGroup()));
 	connect( ui.toolButton_createPulse, SIGNAL(clicked()), this, SLOT(createPulse()));
 	connect( ui.toolButton_home, SIGNAL(clicked()), this, SLOT(showHomeFeed()));
@@ -184,7 +189,7 @@ void WireDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
             break;
 
         }
-        refreshGroups();
+        if(!mUpdateTimer->isActive()) mUpdateTimer->start(1000);
     }
 }
 
@@ -431,14 +436,18 @@ bool WireDialog::setupPulseAddDialog()
 
 void WireDialog::subscribe(RsGxsGroupId &groupId)
 {
-	uint32_t token;
-	rsWire->subscribeToGroup(token, groupId, true);
+	RsThread::async([groupId]()
+	{
+		rsWire->subscribe(groupId, true);
+	});
 }
 
 void WireDialog::unsubscribe(RsGxsGroupId &groupId)
 {
-	uint32_t token;
-	rsWire->subscribeToGroup(token, groupId, false);
+	RsThread::async([groupId]()
+	{
+		rsWire->subscribe(groupId, false);
+	});
 }
 
 void WireDialog::notifyGroupSelection(WireGroupItem *item)
@@ -547,7 +556,7 @@ void WireDialog::deleteGroups()
 			std::cerr << std::endl;
 
 			item = alayout->takeAt(i);
-			delete item->widget();
+			item->widget()->deleteLater();
 			delete item;
 		}
 		else
@@ -560,7 +569,7 @@ void WireDialog::deleteGroups()
 	}
 }
 
-void WireDialog::updateGroups(std::vector<RsWireGroup>& groups)
+void WireDialog::updateGroups(const std::vector<RsWireGroup>& groups)
 {
 	mAllGroups.clear();
 	mOwnGroups.clear();
@@ -654,7 +663,7 @@ void WireDialog::showSelectedGroups()
 	}
 }
 
-void WireDialog::showGroups()
+void WireDialog::showGroups(bool addToHistory)
 {
 	deleteGroups();
 
@@ -719,7 +728,7 @@ void WireDialog::showGroups()
 		allGroupIds.push_back(group.mMeta.mGroupId);
 	}
 
-	requestGroupsPulses(allGroupIds);
+	requestGroupsPulses(allGroupIds, addToHistory);
 }
 
 
@@ -730,21 +739,34 @@ void WireDialog::requestGroupData()
 	std::cerr << "WireDialog::requestGroupData()";
 	std::cerr << std::endl;
 
-	std::vector<RsWireGroup> groups;
-	rsWire->getGroups({}, groups);
-
-	updateGroups(groups);
-	showGroups();
-
-	if (!mNavigatePendingGroupId.isNull()) {
-		if (!mNavigatePendingMsgId.isNull()) {
-			requestPulseFocus(mNavigatePendingGroupId, mNavigatePendingMsgId);
-		} else {
-			requestGroupFocus(mNavigatePendingGroupId);
-		}
-		mNavigatePendingGroupId.clear();
-		mNavigatePendingMsgId.clear();
+	if (mRequestGroupDataInProgress) {
+		return;
 	}
+
+	mRequestGroupDataInProgress = true;
+
+	RsThread::async([this]()
+	{
+		std::vector<RsWireGroup> groups;
+		rsWire->getGroups({}, groups);
+
+		RsQThreadUtils::postToObject([this, groups]()
+		{
+			mRequestGroupDataInProgress = false;
+			updateGroups(groups);
+			showGroups(false); // Background update, don't add to history
+
+			if (!mNavigatePendingGroupId.isNull()) {
+				if (!mNavigatePendingMsgId.isNull()) {
+					requestPulseFocus(mNavigatePendingGroupId, mNavigatePendingMsgId);
+				} else {
+					requestGroupFocus(mNavigatePendingGroupId);
+				}
+				mNavigatePendingGroupId.clear();
+				mNavigatePendingMsgId.clear();
+			}
+		}, this);
+	});
 }
 
 rstime_t WireDialog::getFilterTimestamp()
@@ -879,8 +901,10 @@ void WireDialog::PVHfollow(const RsGxsGroupId &groupId)
 	std::cerr << ")";
 	std::cerr << std::endl;
 
-	uint32_t token;
-	rsWire->subscribeToGroup(token, groupId, true);
+	RsThread::async([groupId]()
+	{
+		rsWire->subscribe(groupId, true);
+	});
 }
 
 void WireDialog::PVHrate(const RsGxsId &authorId)
@@ -921,7 +945,7 @@ void WireDialog::clearTwitterView()
 			std::cerr << std::endl;
 
 			item = alayout->takeAt(i);
-			delete item->widget();
+			item->widget()->deleteLater();
 			delete item;
 		}
 		else
@@ -1217,17 +1241,19 @@ void WireDialog::postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr
 	}
 }
 
-void WireDialog::requestGroupsPulses(const std::list<RsGxsGroupId>& groupIds)
+void WireDialog::requestGroupsPulses(const std::list<RsGxsGroupId>& groupIds, bool addToHistory)
 {
-	WireViewHistory view;
-	view.viewType = WireViewType::GROUPS;
-	view.groupIds = groupIds;
+	if (addToHistory) {
+		WireViewHistory view;
+		view.viewType = WireViewType::GROUPS;
+		view.groupIds = groupIds;
 
-	AddToHistory(view);
-	showGroupsPulses(groupIds);
+		AddToHistory(view);
+	}
+	showGroupsPulses(groupIds, addToHistory);
 }
 
-void WireDialog::showGroupsPulses(const std::list<RsGxsGroupId>& groupIds)
+void WireDialog::showGroupsPulses(const std::list<RsGxsGroupId>& groupIds, bool addToHistory)
 {
 	clearTwitterView();
 

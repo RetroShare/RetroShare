@@ -108,7 +108,9 @@ private:
 	void handleMailEvent(std::shared_ptr<const RsEvent> event);
 	void handlePostedEvent(std::shared_ptr<const RsEvent> event);
 	void handleChannelEvent(std::shared_ptr<const RsEvent> event);
+#ifdef RS_USE_WIRE
 	void handleWireEvent(std::shared_ptr<const RsEvent> event);
+#endif
 
 	void addFeedItem(FeedItem *item);
 	void addFeedItemIfUnique(FeedItem *item, bool replace);

@@ -948,7 +948,22 @@ const RsFriendListModel::HierarchicalNodeInformation *RsFriendListModel::getBest
             std::cerr << "FriendListModel: Unknown status " << (int)statusInfo.status << std::endl;
 		}
 
-		if (bestStatusIndex == 0 || statusIndex > bestStatusIndex) {
+		bool currentIsConnected = (nodeInformation.node_info.state & RS_PEER_STATE_CONNECTED) != 0;
+		bool bestIsConnected = bestNodeInformation ? (bestNodeInformation->node_info.state & RS_PEER_STATE_CONNECTED) != 0 : false;
+
+		bool isBetter = false;
+		if (bestStatusIndex == 0) {
+			isBetter = true;
+		} else if (statusIndex > bestStatusIndex) {
+			isBetter = true;
+		} else if (statusIndex == bestStatusIndex) {
+			// If statuses are equal, strongly prefer the connected node!
+			if (currentIsConnected && !bestIsConnected) {
+				isBetter = true;
+			}
+		}
+
+		if (isBetter) {
 			/* first status or better status */
 			bestStatusIndex = statusIndex;
 			bestNodeInformation = &nodeInformation;
@@ -1017,11 +1032,33 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
         }
 
         if (!foundAvatar) {
-            /* Use first available avatar */
+            /* Use first available avatar, but prefer nodes with better status/connection */
+			int bestAvatarStatus = 0;
             for(uint32_t i=0;i<hn->child_node_indices.size();++i) {
-                if(AvatarDefs::getAvatarFromSslId(RsPeerId(mLocations[hn->child_node_indices[i]].node_info.id.toStdString()), sslAvatar, "")) {
-                    foundAvatar = true;
-                    break;
+				const HierarchicalNodeInformation &nodeInfo = mLocations[hn->child_node_indices[i]];
+				QPixmap tempAvatar;
+                if(AvatarDefs::getAvatarFromSslId(RsPeerId(nodeInfo.node_info.id.toStdString()), tempAvatar, "")) {
+					StatusInfo tempStatus;
+					rsStatus->getStatus(nodeInfo.node_info.id, tempStatus);
+					bool isConnected = (nodeInfo.node_info.state & RS_PEER_STATE_CONNECTED) != 0;
+
+					int statusScore = 0;
+					switch (tempStatus.status) {
+						case RsStatusValue::RS_STATUS_OFFLINE:  statusScore = 1; break;
+						case RsStatusValue::RS_STATUS_INACTIVE: statusScore = 2; break;
+						case RsStatusValue::RS_STATUS_AWAY:     statusScore = 3; break;
+						case RsStatusValue::RS_STATUS_BUSY:     statusScore = 4; break;
+						case RsStatusValue::RS_STATUS_ONLINE:   statusScore = 5; break;
+						default: break;
+					}
+					// strongly prefer connected over disconnected
+					if (isConnected) statusScore += 10;
+
+					if (statusScore > bestAvatarStatus) {
+						bestAvatarStatus = statusScore;
+						sslAvatar = tempAvatar;
+						foundAvatar = true;
+					}
                 }
             }
         }
