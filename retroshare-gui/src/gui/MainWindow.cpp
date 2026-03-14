@@ -1521,6 +1521,7 @@ void MainWindow::loadOwnStatus()
 void MainWindow::checkAndSetIdle(int idleTime)
 {
     int maxTimeBeforeIdle = Settings->getMaxTimeBeforeIdle();
+    if (maxTimeBeforeIdle == 0) return; // 0 means never go idle
     if ((idleTime >= maxTimeBeforeIdle) && !isIdle) {
         setIdle(true);
     } else if ((idleTime < maxTimeBeforeIdle) && isIdle) {
