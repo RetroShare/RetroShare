@@ -1761,7 +1761,7 @@ void GxsForumThreadWidget::editForumMessageData(const RsGxsForumMsg& msg)
         return;
     }
 
-    CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mMsgId, msg.mMeta.mAuthorId, mForumGroup.mAdminList.ids);
+    CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), msg.mMeta.mParentId, msg.mMeta.mOrigMsgId, msg.mMeta.mAuthorId, mForumGroup.mAdminList.ids);
 
     cfm->insertPastedText(QString::fromUtf8(msg.mMsg.c_str())) ;
     cfm->show();

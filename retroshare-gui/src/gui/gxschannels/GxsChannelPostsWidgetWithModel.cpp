@@ -899,14 +899,24 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
         {
             if(e->mChannelGroupId == groupId())
             {
-                // Toggle subscribe flag locally and refresh UI without GXS request
-                // to avoid concurrent request with parent dialog's tree rebuild
-                if(IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags))
-                    mGroup.mMeta.mSubscribeFlags &= ~GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
-                else
-                    mGroup.mMeta.mSubscribeFlags |= GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
-
-                insertChannelDetails(mGroup);
+                // Fix: Fetch the actual channel status from the back-end instead of blindly toggling the local flag,
+                // which was causing the UI to flip to "Unsubscribed" after a post (since core emits this event
+                // every time group metadata like mLastPost is updated).
+                RsThread::async([this, grpId = groupId()]()
+                {
+                    std::vector<RsGxsChannelGroup> groups;
+                    if(rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>{ grpId }, groups) && !groups.empty())
+                    {
+                        RsQThreadUtils::postToObject( [this, group = groups[0]]()
+                        {
+                            if (group.mMeta.mGroupId == groupId())
+                            {
+                                mGroup = group;
+                                insertChannelDetails(mGroup);
+                            }
+                        }, this);
+                    }
+                });
             }
         }
         break;
