@@ -190,8 +190,14 @@
       </item>
       <item>
        <widget class="QSpinBox" name="idleSpinBox">
+        <property name="toolTip">
+         <string>Maximum time without keyboard or mouse activity before your status is set to &quot;Inactive&quot;. Set to 0 (Never) to disable this feature.</string>
+        </property>
         <property name="suffix">
          <string> seconds</string>
+        </property>
+        <property name="specialValueText">
+         <string>Never</string>
         </property>
         <property name="prefix">
          <string/>
