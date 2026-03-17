@@ -179,6 +179,7 @@ void ChatPage::updateHistoryParams()
     rsHistory->setSaveCount(RS_HISTORY_TYPE_LOBBY  , ui.lobbyChatSaveCount->value());
 	rsHistory->setSaveCount(RS_HISTORY_TYPE_DISTANT, ui.distantChatSaveCount->value());
 
+	rsChats->allowHistorySharing(ui.allowHistorySharing->isChecked()) ;
 }
 
 void ChatPage::updatePublicStyle()
@@ -274,6 +275,7 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.privateChatSaveCount,       SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
 	connect(ui.lobbyChatSaveCount,         SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
 	connect(ui.distantChatSaveCount,       SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
+	connect(ui.allowHistorySharing,        SIGNAL(toggled(bool)),            this, SLOT(updateHistoryParams())) ;
 
 
     connect(ui.publicStyle,                SIGNAL(currentIndexChanged(int)),   this, SLOT(updatePublicStyle())) ;
@@ -460,6 +462,8 @@ ChatPage::load()
     QStringList fontname = fontTempChat.toString().split(",");
     whileBlocking(ui.labelChatFontPreview)->setText(fontname[0]);
     whileBlocking(ui.labelChatFontPreview)->setFont(fontTempChat);
+
+	whileBlocking(ui.allowHistorySharing)->setChecked(rsChats->isHistorySharingAllowed()) ;
 
 	whileBlocking(ui.max_storage_period)->setValue(rsHistory->getMaxStorageDuration()/86400) ;//24H
 
