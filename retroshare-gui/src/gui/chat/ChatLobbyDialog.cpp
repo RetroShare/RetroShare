@@ -286,6 +286,7 @@ void ChatLobbyDialog::fetchHistory()
 	durationCombo->addItem(tr("Last 24 hours"), 86400);
 	durationCombo->addItem(tr("Last 7 days"), 7 * 86400);
 	durationCombo->addItem(tr("All available messages"), 0);
+	durationCombo->setCurrentIndex(1); // Default to 24 hours
 	durationLayout->addWidget(durationCombo);
 	layout->addWidget(durationGroup);
 
@@ -298,6 +299,7 @@ void ChatLobbyDialog::fetchHistory()
 	sourceLayout->addWidget(cbLocal);
 
 	QCheckBox* cbAllFriends = new QCheckBox(tr("All Connected Friends in this Room"), sourceGroup);
+	cbAllFriends->setChecked(true); // Default to checking all friends
 	sourceLayout->addWidget(cbAllFriends);
 
 	QFrame* line = new QFrame(sourceGroup);
