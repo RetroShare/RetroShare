@@ -44,6 +44,25 @@ void RSTreeView::wheelEvent(QWheelEvent *e)
 		QTreeView::wheelEvent(e);
 }
 
+void RSTreeView::mousePressEvent(QMouseEvent *e)
+{
+	// When right-clicking, temporarily disable editTriggers so that the click
+	// does not trigger createEditor(). This fixes the issue where right-clicking
+	// on an unselected item requires two clicks to get the context menu: the
+	// first click would trigger createEditor() but couldn't forward the right-click
+	// to the just-created widget.
+
+	if (e->button() == Qt::RightButton)
+	{
+		EditTriggers savedTriggers = editTriggers();
+		setEditTriggers(QAbstractItemView::NoEditTriggers);
+		QTreeView::mousePressEvent(e);
+		setEditTriggers(savedTriggers);
+	}
+	else
+		QTreeView::mousePressEvent(e);
+}
+
 void RSTreeView::mouseMoveEvent(QMouseEvent *e)
 {
 #ifdef DEBUG_RSTREEVIEW
