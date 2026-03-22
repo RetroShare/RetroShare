@@ -1850,13 +1850,34 @@ void GxsForumThreadWidget::filterItems(const QString& text)
     QSortFilterProxyModel_setFilterRegularExpression(mThreadProxyModel, QString(RsGxsForumModel::FilterString)) ;
 
     if(!lst.empty())
+    {
         ui->threadTreeWidget->expandAll();
+
+        if (!mThreadId.isNull())
+        {
+            QModelIndex src_index = mThreadModel->getIndexOfMessage(mThreadId);
+            QModelIndex proxy_index = mThreadProxyModel->mapFromSource(src_index);
+            if (proxy_index.isValid())
+            {
+                ui->threadTreeWidget->setCurrentIndex(proxy_index);
+                ui->threadTreeWidget->scrollTo(proxy_index);
+            }
+            else
+            {
+                blankPost();
+                mThreadId.clear();
+                mOrigThreadId.clear();
+            }
+        }
+    }
     else {
-        // currentIndex() not on the clicked message, so not this way
-        // if (!mThreadId.isNull()) {
-        // 	an_index = mThreadProxyModel->mapToSource(ui->threadTreeWidget->currentIndex());
-        // }
         ui->threadTreeWidget->collapseAll();
+
+        if (mThreadId.isNull())
+        {
+            mThreadId = mOrigThreadId = mLastSelectedPosts[groupId()];
+        }
+
         if (!mThreadId.isNull()) {
             // ...but this one
             QModelIndex an_index = mThreadModel->getIndexOfMessage(mThreadId);
