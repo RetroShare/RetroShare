@@ -107,8 +107,11 @@ private slots:
 	void IdListCustomPopupMenu( QPoint point );
     void headerContextMenuRequested(QPoint);
     void toggleColumnVisible();
+    void createCustomContextMenu(const QPoint &point);
 
 	void CircleListCustomPopupMenu(QPoint point) ;
+	void toggleColoredGroupIcons();
+
 #ifdef SUSPENDED
 	void circle_selected() ;
 #endif
@@ -184,6 +187,7 @@ private:
 	QTimer updateCirclesTimer;
 	bool needUpdateIdsOnNextShow;
 	bool needUpdateCirclesOnNextShow;
+	bool mUseColoredGroupIcons;
 
 	FontSizeHandler mFontSizeHandler;
 

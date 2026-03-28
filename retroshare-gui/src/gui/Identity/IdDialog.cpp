@@ -448,6 +448,8 @@ IdDialog::IdDialog(QWidget *parent)
     //connect(ui->treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
     connect(ui->treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CircleListCustomPopupMenu(QPoint)));
     connect(ui->autoBanIdentities_CB, SIGNAL(toggled(bool)), this, SLOT(toggleAutoBanIdentities(bool)));
+    connect(ui->treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(createCustomContextMenu(QPoint)));
+
 
     updateIdTimer.setSingleShot(true);
 	connect(&updateIdTimer, SIGNAL(timeout()), this, SLOT(updateIdList()));
@@ -658,10 +660,6 @@ static QTreeWidgetItem *setChildItem(QTreeWidgetItem *item, const RsGroupMetaDat
 
 	QTreeWidgetItem *subitem = new QTreeWidgetItem();
 
-	QPixmap pixmap ;
-	pixmap = GxsIdDetails::makeColoredGroupIcon( circle_group.mGroupId, ":/icons/png/people2.png", GxsIdDetails::MEDIUM);
-
-	subitem->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, pixmap);
 	subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(circle_group.mGroupName.c_str()));
 	subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole, QString::fromStdString(circle_group.mGroupId.toStdString()));
 	subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(circle_group.mSubscribeFlags));
@@ -978,6 +976,29 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 
         // add all items
         item->addChildren(new_sub_items);
+
+        // The bullet colors below are for the *Membership*. This is independent from admin rights, which cannot be shown as a color.
+        // Admin/non admin is shows using Bold font.
+
+        if (mUseColoredGroupIcons) 
+        {
+            if(am_I_in_circle)
+                item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, FilesDefs::getIconFromQtResourcePath(":/icons/png/circles-green.png"));
+            else if(am_I_invited || am_I_pending)
+                item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, FilesDefs::getIconFromQtResourcePath(":/icons/png/circles-notify.png"));
+            else
+                item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, FilesDefs::getIconFromQtResourcePath(":/icons/png/circles.png"));
+        }
+        else
+        {
+            if(am_I_in_circle)
+                item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, FilesDefs::getIconFromQtResourcePath(IMAGE_MEMBER));
+            else if(am_I_invited || am_I_pending)
+                item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, FilesDefs::getIconFromQtResourcePath(IMAGE_INVITED));
+            else
+                item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, FilesDefs::getIconFromQtResourcePath(IMAGE_UNKNOWN));
+        }
+
 	}
     ui->treeWidget_membership->setSortingEnabled(true);
 
@@ -1345,6 +1366,8 @@ void IdDialog::processSettings(bool load)
 
         ui->idTreeWidget->header()->restoreState(Settings->value(objectName()).toByteArray());
         ui->idTreeWidget->header()->setHidden(Settings->value(objectName()+"HiddenHeader", false).toBool());
+        
+        mUseColoredGroupIcons = Settings->value("UseColoredGroupIcons", false).toBool();
 
         // filterColumn
         //ui->filterLineEdit->setCurrentFilter(Settings->value("filterColumn", RsIdentityListModel::COLUMN_THREAD_NAME).toInt());
@@ -1370,6 +1393,8 @@ void IdDialog::processSettings(bool load)
 
         Settings->setValue(objectName(), ui->idTreeWidget->header()->saveState());
         Settings->setValue(objectName()+"HiddenHeader", ui->idTreeWidget->header()->isHidden());
+        
+        Settings->setValue("UseColoredGroupIcons", mUseColoredGroupIcons);
 
         // filterColumn
         //Settings->setValue("filterColumn", ui->filterLineEdit->currentFilter());
@@ -2793,4 +2818,27 @@ void IdDialog::sortColumn(int col,Qt::SortOrder so)
 
     mLastSortColumn = col;
     mLastSortOrder = so;
+}
+
+void IdDialog::createCustomContextMenu(const QPoint &point)
+{
+    QMenu contextMenu(tr("Options"), this);
+
+    QAction *toggleIconsAct = new QAction(tr("Use Circle Icons"), this);
+    toggleIconsAct->setCheckable(true);
+    toggleIconsAct->setChecked(mUseColoredGroupIcons);
+    connect(toggleIconsAct, SIGNAL(triggered()), this, SLOT(toggleColoredGroupIcons()));
+    
+    contextMenu.addAction(toggleIconsAct);
+    contextMenu.addSeparator();
+    
+    // ... existing menu actions ...
+    contextMenu.exec(ui->treeWidget_membership->mapToGlobal(point));
+}
+
+void IdDialog::toggleColoredGroupIcons()
+{
+    mUseColoredGroupIcons = !mUseColoredGroupIcons;
+    // Trigger a refresh of the tree to apply changes immediately
+    updateCircles();
 }
