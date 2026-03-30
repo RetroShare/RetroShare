@@ -1017,6 +1017,12 @@ void CreateCircleDialog::updateMembership()
     if (!rsGxsCircles->getCircleDetails(RsGxsCircleId(mCircleGroup.mMeta.mGroupId), details)) {
         return;
     }
+
+    // Determine admin status once, outside the loop — it doesn't depend on the iterated member
+    RsGxsId ownId;
+    if (ui.idChooser->getChosenId(ownId) == GxsIdChooser::KnowId) {
+        am_I_circle_admin = (mCircleGroup.mMeta.mAuthorId == ownId);
+    }
     
     // Iterate through the subscription flags map found in details
     for(auto const& [memberId, flags] : details.mSubscriptionFlags) 
@@ -1057,15 +1063,10 @@ void CreateCircleDialog::updateMembership()
         // Check if this ID is one of your own
         bool is_own_id = rsIdentity->isOwnId(memberId);
 
-        // Update global flags for the Context Menu
+        // Update global flags for UI display purposes
         if (is_own_id) {
             if (invited && !subscrb) am_I_invited = true;
             if (!invited && subscrb) am_I_pending = true;
-        }
-        
-        RsGxsId ownId;
-        if (ui.idChooser->getChosenId(ownId) == GxsIdChooser::KnowId) {
-            am_I_circle_admin = (mCircleGroup.mMeta.mAuthorId == ownId);
         }
 
         updateMemberStatus(item, invited, subscrb, is_own_id);
@@ -1120,52 +1121,92 @@ void CreateCircleDialog::MembershipListCustomPopupMenu( QPoint )
     QTreeWidgetItem *item = ui.treeWidget_membership->currentItem();
     if (!item) return;
 
-    RsGxsId current_gxs_id(item->text(RSCIRCLEID_COL_KEYID).toStdString());
+    RsGxsId clicked_gxs_id(item->text(RSCIRCLEID_COL_KEYID).toStdString());
+    if (clicked_gxs_id.isNull()) return;
 
-    if (!mReadOnly && item->text(RSCIRCLEID_COL_STATUS) == tr("Invited"))
-        contextMnu.addAction(QIcon(":/images/delete.png"), tr("Remove Member"), this, SLOT(removeMember()));
+    // --- Compute everything locally at click time ---
 
-    if (am_I_invited) {
-        contextMnu.addAction(tr("Accept Invite"), this, SLOT(acceptInvite()));
-        contextMnu.addSeparator();
+    // 1. Is the clicked item one of my own identities?
+    bool is_own_id = rsIdentity->isOwnId(clicked_gxs_id);
+
+    // 2. Am I the circle admin?
+    bool is_admin = false;
+    RsGxsId chosenId;
+    if (ui.idChooser->getChosenId(chosenId) == GxsIdChooser::KnowId) {
+        is_admin = (mCircleGroup.mMeta.mAuthorId == chosenId);
     }
-    
-    if (am_I_pending) {
-        contextMnu.addAction(tr("Reject request"), this, SLOT(rejectInvite()));
-        contextMnu.addSeparator();
-    }
-    
-    if (am_I_circle_admin) 
+
+    // 3. Get the subscription flags for the clicked item from the circle details
+    bool item_in_admin_list = false; // invited by admin
+    bool item_subscribed = false;    // user has subscribed
+    bool item_found_in_circle = false;
+
+    RsGxsCircleDetails details;
+    if (rsGxsCircles->getCircleDetails(RsGxsCircleId(mCircleGroup.mMeta.mGroupId), details))
     {
-        RsGxsCircleDetails details;
-        if (rsGxsCircles->getCircleDetails(RsGxsCircleId(mCircleGroup.mMeta.mGroupId), details))
+        auto it = details.mSubscriptionFlags.find(clicked_gxs_id);
+        if (it != details.mSubscriptionFlags.end())
         {
-            auto it = details.mSubscriptionFlags.find(current_gxs_id);
-            if (it != details.mSubscriptionFlags.end())
-            {
-                contextMnu.addSeparator();
-
-                if (it->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
-                {
-                    QAction *action = new QAction(tr("Revoke this member"), this);
-                    connect(action, &QAction::triggered, this, &CreateCircleDialog::revokeCircleMembership);
-                    contextMnu.addAction(action);
-                }
-                else
-                {
-                    QAction *action = new QAction(tr("Grant membership"), this);
-                    connect(action, &QAction::triggered, this, &CreateCircleDialog::grantCircleMembership);
-                    contextMnu.addAction(action);
-
-                    //QAction *actionReject = new QAction(tr("Reject request"), this);
-                    //connect(actionReject, &QAction::triggered, this, &CreateCircleDialog::revokeCircleMembership);
-                    //contextMnu.addAction(actionReject);
-                }
-            }
+            item_found_in_circle = true;
+            item_in_admin_list = (it->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST);
+            item_subscribed = (it->second & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED);
         }
     }
-    
-	contextMnu.exec(QCursor::pos());
+
+    // --- Build menu: Section 1 — Actions for my own ID ---
+
+    if (is_own_id && item_found_in_circle)
+    {
+        if (item_in_admin_list && !item_subscribed) {
+            // I was invited by admin but haven't accepted yet
+            contextMnu.addAction(tr("Accept Invite"), this, SLOT(acceptInvite()));
+        }
+        if (!item_in_admin_list && item_subscribed) {
+            // I requested to join but admin hasn't approved yet
+            contextMnu.addAction(tr("Reject request"), this, SLOT(rejectInvite()));
+        }
+    }
+
+    // --- Build menu: Section 2 — Admin actions on the clicked item ---
+
+    if (is_admin && item_found_in_circle)
+    {
+        if (contextMnu.actions().count() > 0)
+            contextMnu.addSeparator();
+
+        if (item_in_admin_list && item_subscribed) {
+            // Full member — admin can revoke
+            QAction *action = new QAction(tr("Revoke this member"), &contextMnu);
+            connect(action, &QAction::triggered, this, &CreateCircleDialog::revokeCircleMembership);
+            contextMnu.addAction(action);
+        }
+        else if (item_in_admin_list && !item_subscribed) {
+            // Invited but not yet accepted — admin can revoke the invitation
+            QAction *action = new QAction(tr("Revoke this member"), &contextMnu);
+            connect(action, &QAction::triggered, this, &CreateCircleDialog::revokeCircleMembership);
+            contextMnu.addAction(action);
+        }
+        else if (!item_in_admin_list && item_subscribed) {
+            // Pending request — admin can grant membership
+            QAction *action = new QAction(tr("Grant membership"), &contextMnu);
+            connect(action, &QAction::triggered, this, &CreateCircleDialog::grantCircleMembership);
+            contextMnu.addAction(action);
+        }
+    }
+
+    // --- Build menu: Section 3 — Edit mode: remove from tree widget ---
+    // Only for items that were manually added (invited via the editor, not yet in circle)
+    // Use Qt::UserRole data (bool) instead of comparing translated text
+
+    if (!mReadOnly && !item_found_in_circle)
+    {
+        if (contextMnu.actions().count() > 0)
+            contextMnu.addSeparator();
+        contextMnu.addAction(QIcon(":/images/delete.png"), tr("Remove Member"), this, SLOT(removeMember()));
+    }
+
+    if (contextMnu.actions().count() > 0)
+        contextMnu.exec(QCursor::pos());
 }
 
 void CreateCircleDialog::acceptInvite()
