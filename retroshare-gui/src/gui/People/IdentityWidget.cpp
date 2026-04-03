@@ -223,3 +223,12 @@ void IdentityWidget::pbAdd_clicked()
 	emit addButtonClicked();
 }
 
+uint32_t IdentityWidget::getReputation() const
+{
+    RsReputationInfo info;
+    // Use the logic to fetch reputation
+    if (rsReputations->getReputationInfo(RsGxsId(_group_info.mMeta.mGroupId), _group_info.mPgpId, info)) {
+        return info.mFriendsPositiveVotes; 
+    }
+    return 0; // Default if no info found
+}

@@ -114,6 +114,8 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	QObject::connect(pictureFlowWidgetInternal, SIGNAL(dropEventOccurs(QDropEvent*)), this, SLOT(pf_dropEventOccursInt(QDropEvent*)));
 	pictureFlowWidgetInternal->setMinimumHeight(60);
 	pictureFlowWidgetInternal->setSlideSizeRatio(4/4.0);
+    
+    connect(filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
 	QByteArray geometryExt = Settings->valueFromGroup("PeopleDialog", "SplitterExtState", QByteArray()).toByteArray();
 	if (geometryExt.isEmpty() == false) {
@@ -123,6 +125,15 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	if (geometryInt.isEmpty() == false) {
 		splitterInternal->restoreState(geometryInt);
 	}
+
+	// Create the sort menu
+	QMenu *sortMenu = new QMenu(this);
+	sortMenu->addAction(tr("Sort by Name"), this, SLOT(sortByName()));
+	sortMenu->addAction(tr("Sort by Popularity"), this, SLOT(sortByPopularity()));
+
+	// Assign the menu
+	filterButton->setMenu(sortMenu);
+	filterButton->setPopupMode(QToolButton::InstantPopup);
 
 	reloadAll();
 
@@ -146,125 +157,97 @@ void PeopleDialog::updateDisplay(bool complete)
 
 void PeopleDialog::reloadAll()
 {
-	/* Update identity list */
-	requestIdList();
-	requestCirclesList();
+    /* Update identity list */
+    requestIdList();
+    requestCirclesList();
 
-	/* grab all ids */
-	std::list<RsPgpId> friend_pgpIds;
-	std::list<RsPgpId> all_pgpIds;
-	std::list<RsPgpId>::iterator it;
+    std::list<RsPgpId> friend_pgpIds;
+    rsPeers->getGPGAcceptedList(friend_pgpIds);
 
-	std::set<RsPgpId> friend_set;
+    // 1. Collect widgets in a list for sorting
+    QList<IdentityWidget*> toSort;
 
-	rsPeers->getGPGAcceptedList(friend_pgpIds);
-	//rsPeers->getGPGAllList(all_pgpIds);
+    for(std::list<RsPgpId>::iterator it = friend_pgpIds.begin(); it != friend_pgpIds.end(); ++it) {
+        RsPeerDetails details;
+        if(rsPeers->getGPGDetails(*it, details)) {
+            std::map<RsPgpId, IdentityWidget*>::iterator itFound = _pgp_identity_widgets.find(*it);
+            
+            IdentityWidget *widget = nullptr;
+            if(itFound == _pgp_identity_widgets.end()) {
+                // Create new if not exists
+                widget = new IdentityWidget();
+                _pgp_identity_widgets[*it] = widget;
+                QObject::connect(widget, SIGNAL(addButtonClicked()), this, SLOT(iw_AddButtonClickedInt()));
+                QObject::connect(widget, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedInt(QList<FlowLayoutItem*>,bool&)));
+            } else {
+                widget = itFound->second;
+            }
 
+            widget->updateData(details);
+            toSort.append(widget);
+        }
+    }
 
-	for(it = friend_pgpIds.begin(); it != friend_pgpIds.end(); ++it) {
-		RsPeerDetails details;
-		if(rsPeers->getGPGDetails(*it, details)){
-			std::map<RsPgpId,IdentityWidget *>::iterator itFound;
-			if((itFound=_pgp_identity_widgets.find(*it)) == _pgp_identity_widgets.end()) {
-				IdentityWidget *new_item = new IdentityWidget();
-				new_item->updateData(details) ;
-				_pgp_identity_widgets[*it] = new_item ;
+    // 2. Sort alphabetically
+    std::sort(toSort.begin(), toSort.end(), [](IdentityWidget* a, IdentityWidget* b) {
+        return a->getName().compare(b->getName(), Qt::CaseInsensitive) < 0;
+    });
 
-				QObject::connect(new_item, SIGNAL(addButtonClicked()), this, SLOT(iw_AddButtonClickedInt()));
-				QObject::connect(new_item, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedInt(QList<FlowLayoutItem*>,bool&)));
-				_flowLayoutInt->addWidget(new_item);
-			} else {//if((itFound=_pgp_identity_widgets.find(gdItem.mPgpId)) == _pgp_identity_widgets.end())
-				IdentityWidget *idWidget = itFound->second;
-
-				idWidget->updateData(details) ;
-			}//else ((itFound=_pgp_identity_widgets.find(gdItem.mPgpId)) == _pgp_identity_widgets.end())
-
-		friend_set.insert(*it);
-		}//if(rsPeers->getGPGDetails(*it, details))
-	}//for(it = friend_pgpIds.begin(); it != friend_pgpIds.end(); ++it)
-
-	for(it = all_pgpIds.begin(); it != all_pgpIds.end(); ++it) {
-		if(friend_set.end() != friend_set.find(*it)) {
-			// already added as a friend.
-			continue;
-		}//if(friend_set.end() != friend_set.find(*it))
-
-		RsPeerDetails details;
-		if (rsPeers->getGPGDetails(*it, details)) {
-			std::map<RsPgpId,IdentityWidget *>::iterator itFound;
-			if((itFound=_pgp_identity_widgets.find(*it)) == _pgp_identity_widgets.end()) {
-				IdentityWidget *new_item = new IdentityWidget();
-				new_item->updateData(details) ;
-				_pgp_identity_widgets[*it] = new_item ;
-
-				QObject::connect(new_item, SIGNAL(addButtonClicked()), this, SLOT(iw_AddButtonClickedInt()));
-				QObject::connect(new_item, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedInt(QList<FlowLayoutItem*>,bool&)));
-				_flowLayoutInt->addWidget(new_item);
-			} else {//if((itFound=_pgp_identity_widgets.find(gdItem.mPgpId)) == _pgp_identity_widgets.end())
-				IdentityWidget *idWidget = itFound->second;
-
-				idWidget->updateData(details) ;
-			}//else ((itFound=_pgp_identity_widgets.find(gdItem.mPgpId)) == _pgp_identity_widgets.end())
-		}//if(rsPeers->getGPGDetails(*it, details))
-	}//for(it = all_pgpIds.begin(); it != all_pgpIds.end(); ++it)
+    // 3. Add to layout in sorted order
+    for(auto* w : toSort) {
+        _flowLayoutInt->addWidget(w);
+    }
+    
+    filterChanged(filterLineEdit->text()); 
 }
 
 void PeopleDialog::insertIdList(uint32_t token)
 {
-	std::cerr << "**** In insertIdList() ****" << std::endl;
+    std::cerr << "**** In insertIdList() ****" << std::endl;
+    std::vector<RsGxsIdGroup> gdataVector;
+    if (!rsIdentity->getGroupData(token, gdataVector)) {
+        std::cerr << "PeopleDialog::insertIdList() Error getting GroupData";
+        std::cerr << std::endl;
 
-	std::vector<RsGxsIdGroup> gdataVector;
-	std::vector<RsGxsIdGroup>::iterator gdIt;
+        return;
+    }
 
-	if (!rsIdentity->getGroupData(token, gdataVector)) {
-		std::cerr << "PeopleDialog::insertIdList() Error getting GroupData";
-		std::cerr << std::endl;
+    // Declare the list at the TOP of the function so it is available everywhere
+    QList<IdentityWidget*> toSort;
 
-		return;
-	}//if (!rsIdentity->getGroupData(token, gdataVector))
+    for (auto const& gdItem : gdataVector) {
+        RsPeerDetails details;
+        bool bGotDetail = gdItem.mPgpKnown && rsPeers->getGPGDetails(gdItem.mPgpId, details);
 
-	//RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
+        RsGxsId gxsId(gdItem.mMeta.mGroupId);
+        std::map<RsGxsId, IdentityWidget*>::iterator itFound = _gxs_identity_widgets.find(gxsId);
+        
+        IdentityWidget *widget = nullptr;
+        if(itFound == _gxs_identity_widgets.end()) {
+            widget = new IdentityWidget();
+            _gxs_identity_widgets[gxsId] = widget;
+            QObject::connect(widget, SIGNAL(addButtonClicked()), this, SLOT(iw_AddButtonClickedExt()));
+            QObject::connect(widget, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedExt(QList<FlowLayoutItem*>,bool&)));
+        } else {
+            widget = itFound->second;
+        }
 
-	/* Insert items */
-	int i=0 ;
-	for (gdIt = gdataVector.begin(); gdIt != gdataVector.end(); ++gdIt){
-		RsGxsIdGroup gdItem = (*gdIt);
-		bool bGotDetail = false;
+        if (bGotDetail) widget->updateData(gdItem, details);
+        else widget->updateData(gdItem);
 
-		RsPeerDetails details;
-		if (gdItem.mPgpKnown) {
-			bGotDetail = rsPeers->getGPGDetails(gdItem.mPgpId, details);
-		}//if (gdItem.mPgpKnown)
+        toSort.append(widget);
+    }
 
-		std::map<RsGxsId,IdentityWidget *>::iterator itFound;
-		if((itFound=_gxs_identity_widgets.find(RsGxsId(gdItem.mMeta.mGroupId))) == _gxs_identity_widgets.end()) {
-			std::cerr << "Loading data vector identity GXS ID = " << gdItem.mMeta.mGroupId << ", i="<< i << std::endl;
+    // Sort and add to layout
+    std::sort(toSort.begin(), toSort.end(), [](IdentityWidget* a, IdentityWidget* b) {
+        return a->getName().compare(b->getName(), Qt::CaseInsensitive) < 0;
+    });
 
-			IdentityWidget *new_item = new IdentityWidget();
-			if (bGotDetail) {
-				new_item->updateData(gdItem, details);
-			} else {//if (bGotDetail)
-				new_item->updateData(gdItem);
-			}//else (bGotDetail)
-			_gxs_identity_widgets[RsGxsId(gdItem.mMeta.mGroupId)] = new_item ;
+    for(auto* w : toSort) {
+        _flowLayoutExt->addWidget(w);
+    }
 
-			QObject::connect(new_item, SIGNAL(addButtonClicked()), this, SLOT(iw_AddButtonClickedExt()));
-			QObject::connect(new_item, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedExt(QList<FlowLayoutItem*>,bool&)));
-			_flowLayoutExt->addWidget(new_item);
-			++i ;
-		} else {//if((itFound=_gxs_identity_widgets.find(RsGxsId(gdItem.mMeta.mGroupId))) == _gxs_identity_widgets.end())
-
-			std::cerr << "Updating data vector identity GXS ID = " << gdItem.mMeta.mGroupId << std::endl;
-			IdentityWidget *idWidget = itFound->second;
-
-			if (bGotDetail) {
-				idWidget->updateData(gdItem, details) ;
-			} else {//if (bGotDetail)
-				idWidget->updateData(gdItem) ;
-			}//else (bGotDetail)
-
-		}//else ((itFound=_gxs_identity_widgets.find(RsGxsId(gdItem.mMeta.mGroupId))) == _gxs_identity_widgets.end()))
-	}//for (gdIt = gdataVector.begin(); gdIt != gdataVector.end(); ++gdIt)
+    filterChanged(filterLineEdit->text());
 }
 
 void PeopleDialog::insertCircles(uint32_t token)
@@ -366,6 +349,8 @@ void PeopleDialog::insertCircles(uint32_t token)
 			}
 		}
 	}
+    
+	filterChanged(filterLineEdit->text());
 }
 
 void PeopleDialog::requestIdList()
@@ -1121,3 +1106,107 @@ void PeopleDialog::populatePictureFlowInt()
 	}//for (it=_int_circles_widgets.begin(); it!=_int_circles_widgets.end(); ++it)
 	pictureFlowWidgetInternal->setSlideSizeRatio(4/4.0);
 }
+
+void PeopleDialog::filterChanged(const QString &text)
+{
+    Qt::CaseSensitivity cs = Qt::CaseInsensitive;
+
+    // Helper lambda to filter a map of widgets
+    auto filterMap = [&](auto& widgetMap) {
+        for (auto it = widgetMap.begin(); it != widgetMap.end(); ++it) {
+            QWidget* w = it->second;
+            QString name;
+            
+            // Get name based on widget type
+            if (auto* idW = qobject_cast<IdentityWidget*>(w)) name = idW->getName();
+            else if (auto* cirW = qobject_cast<CircleWidget*>(w)) name = cirW->getName();
+
+            // Toggle visibility based on search match
+            w->setVisible(name.contains(text, cs));
+        }
+    };
+
+    // Apply filtering to all maps
+    filterMap(_pgp_identity_widgets);
+    filterMap(_gxs_identity_widgets);
+    filterMap(_ext_circles_widgets);
+    filterMap(_int_circles_widgets);
+
+    // CRITICAL: Tell the layouts to recalculate positions without breaking events
+    _flowLayoutExt->update();
+    _flowLayoutInt->update();
+}
+
+void PeopleDialog::sortByName()
+{
+    clearAllSelections();
+    applySortAndFilter(true); // true for name
+}
+
+void PeopleDialog::sortByPopularity()
+{
+    clearAllSelections();
+    applySortAndFilter(false); // false for popularity
+}
+
+void PeopleDialog::applySortAndFilter(bool byName)
+{
+    clearAllSelections();
+    
+    QString filterText = filterLineEdit->text();
+    Qt::CaseSensitivity cs = Qt::CaseInsensitive;
+
+    // We process internal and external layouts separately
+    auto sortLayout = [&](FlowLayout* layout, auto& widgetMap) {
+        // 1. Collect widgets from the map
+        QList<QWidget*> list;
+        for (auto const& [id, w] : widgetMap) {
+            list << w;
+            
+            // Uncheck/Deselect the item here ---
+            w->setIsSelected(false);
+        }
+
+        // 2. Sort the list
+        std::sort(list.begin(), list.end(), [byName](QWidget* a, QWidget* b) {
+            auto* idA = qobject_cast<IdentityWidget*>(a);
+            auto* idB = qobject_cast<IdentityWidget*>(b);
+            if (!idA || !idB) return false;
+
+            if (byName) {
+                return idA->getName().compare(idB->getName(), Qt::CaseInsensitive) < 0;
+            } else {
+                // Popularity (Higher reputation first)
+                return idA->getReputation() > idB->getReputation();
+            }
+        });
+
+        // 3. Clear and Re-add to layout in sorted order
+        for (QWidget* w : list) {
+            // Apply filter while we are at it
+            QString name = qobject_cast<IdentityWidget*>(w)->getName();
+            w->setVisible(name.contains(filterText, cs));
+            
+            layout->addWidget(w); 
+        }
+    };
+
+    sortLayout(_flowLayoutInt, _pgp_identity_widgets);
+    sortLayout(_flowLayoutExt, _gxs_identity_widgets);
+}
+
+void PeopleDialog::clearAllSelections()
+{
+    // Tell every widget to visually uncheck
+    auto clearMap = [](auto& widgetMap) {
+        for (auto const& [id, w] : widgetMap) {
+            if (w) w->setIsSelected(false);
+        }
+    };
+
+    clearMap(_pgp_identity_widgets);
+    clearMap(_gxs_identity_widgets);
+    clearMap(_ext_circles_widgets);
+    clearMap(_int_circles_widgets);
+}
+
