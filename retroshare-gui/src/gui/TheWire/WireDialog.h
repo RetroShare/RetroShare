@@ -155,6 +155,8 @@ private slots:
 	void back();
 	void forward();
 
+	void updateGroupCountLabels();
+
 private:
 
 	bool setupPulseAddDialog();

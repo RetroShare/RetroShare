@@ -599,6 +599,8 @@ void WireDialog::updateGroups(const std::vector<RsWireGroup>& groups)
 			ui.groupChooser->addItem(QPixmap(pixmap),QString::fromStdString(it.mMeta.mGroupName));
 		}
 	}
+
+    updateGroupCountLabels();
 }
 
 
@@ -1391,6 +1393,29 @@ void WireDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
 
         }, this );
     });
+}
+
+void WireDialog::updateGroupCountLabels()
+{
+    int allCount = mAllGroups.size();
+    int ownCount = mOwnGroups.size();
+    
+    // Count Subscribed and Others from mAllGroups
+    int subscribedCount = 0;
+    int othersCount = 0;
+    for (auto const& [id, group] : mAllGroups) {
+        if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) {
+            subscribedCount++;
+        } else {
+            othersCount++;
+        }
+    }
+
+    // Update ComboBox Text
+    ui.comboBox_groupSet->setItemText(GROUP_SET_ALL, tr("All (%1)").arg(allCount));
+    ui.comboBox_groupSet->setItemText(GROUP_SET_OWN, tr("Yourself (%1)").arg(ownCount));
+    ui.comboBox_groupSet->setItemText(GROUP_SET_SUBSCRIBED, tr("Following (%1)").arg(subscribedCount));
+    ui.comboBox_groupSet->setItemText(GROUP_SET_OTHERS, tr("Others (%1)").arg(othersCount));
 }
 
 bool WireDialog::navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId)
