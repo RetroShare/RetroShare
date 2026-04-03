@@ -52,6 +52,28 @@
       </attribute>
       <layout class="QVBoxLayout">
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="LineEditClear" name="filterLineEdit">
+           <property name="placeholderText">
+            <string>Search...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="filterButton">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/mail/filter24.png</normaloff>:/icons/mail/filter24.png</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <widget class="QSplitter" name="splitterExternal">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -140,7 +162,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>701</width>
+             <width>98</width>
              <height>248</height>
             </rect>
            </property>
@@ -184,6 +206,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
    <class>PictureFlow</class>
    <extends>QWidget</extends>
    <header location="global">gui/common/PictureFlow.h</header>
@@ -197,7 +224,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>
