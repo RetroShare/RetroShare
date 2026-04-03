@@ -88,12 +88,16 @@ private slots:
 	void personDetails();
 	void sendInvite();
 	void addtoContacts();
-
+	void filterChanged(const QString &text);
+	void sortByName();
+	void sortByPopularity();
+	void clearAllSelections();
 
 private:
 	void reloadAll();
 	void populatePictureFlowExt();
 	void populatePictureFlowInt();
+	void applySortAndFilter(bool);
 
 	TokenQueue *mIdentityQueue;
 	TokenQueue *mCirclesQueue;
