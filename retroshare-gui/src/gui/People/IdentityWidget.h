@@ -68,6 +68,10 @@ public:
 
 signals:
 	void addButtonClicked();
+	void clicked();
+	
+protected:
+    virtual void mousePressEvent(QMouseEvent *event) override;
 
 private slots:
 	void pbAdd_clicked();

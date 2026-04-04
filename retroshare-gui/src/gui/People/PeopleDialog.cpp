@@ -30,6 +30,7 @@
 #include "gui/Identity/IdDialog.h"
 #include "gui/MainWindow.h"
 #include "gui/common/FilesDefs.h"
+#include "util/DateTime.h"
 
 #include "retroshare/rspeers.h"
 #include "retroshare/rsidentity.h"
@@ -40,6 +41,7 @@
 #include "retroshare/rsids.h"
 
 #include <iostream>
+#include <QDateTime>
 #include <QMenu>
 #include <QMessageBox>
 
@@ -66,11 +68,9 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	//mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
 	//connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
 
-	
 	tabWidget->removeTab(1);
-	//hide circle flow widget not functional yet
-	pictureFlowWidgetExternal->hide();
-	widgetExternal->hide();
+	//hide circle flow widget not functional more
+	switchButton->hide(); //disable this, to enable the circles flow widget
 
 	//need erase QtCreator Layout first(for Win)
 	delete idExternal->layout();
@@ -116,6 +116,8 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	pictureFlowWidgetInternal->setSlideSizeRatio(4/4.0);
     
     connect(filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
+	connect(inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
+	connect(switchButton, SIGNAL(clicked()), this, SLOT(toggleStackedPage()));
 
 	QByteArray geometryExt = Settings->valueFromGroup("PeopleDialog", "SplitterExtState", QByteArray()).toByteArray();
 	if (geometryExt.isEmpty() == false) {
@@ -153,6 +155,24 @@ void PeopleDialog::updateDisplay(bool complete)
 {
 	Q_UNUSED(complete);
 	reloadAll();
+}
+
+static QString getHumanReadableDuration(uint32_t seconds)
+{
+    if(seconds < 60)
+        return QString(QObject::tr("%1 seconds ago")).arg(seconds) ;
+    else if(seconds < 120)
+        return QString(QObject::tr("%1 minute ago")).arg(seconds/60) ;
+    else if(seconds < 3600)
+        return QString(QObject::tr("%1 minutes ago")).arg(seconds/60) ;
+    else if(seconds < 7200)
+        return QString(QObject::tr("%1 hour ago")).arg(seconds/3600) ;
+    else if(seconds < 24*3600)
+        return QString(QObject::tr("%1 hours ago")).arg(seconds/3600) ;
+    else if(seconds < 2*24*3600)
+        return QString(QObject::tr("%1 day ago")).arg(seconds/86400) ;
+    else
+        return QString(QObject::tr("%1 days ago")).arg(seconds/86400) ;
 }
 
 void PeopleDialog::reloadAll()
@@ -228,6 +248,8 @@ void PeopleDialog::insertIdList(uint32_t token)
             _gxs_identity_widgets[gxsId] = widget;
             QObject::connect(widget, SIGNAL(addButtonClicked()), this, SLOT(iw_AddButtonClickedExt()));
             QObject::connect(widget, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedExt(QList<FlowLayoutItem*>,bool&)));
+            connect(widget, SIGNAL(clicked()), this, SLOT(onIdentitySelected()));
+			//connect(widget, SIGNAL(widgetSelected(IdentityWidget*)), this, SLOT(onIdentitySelected(IdentityWidget*)));
         } else {
             widget = itFound->second;
         }
@@ -1140,12 +1162,14 @@ void PeopleDialog::filterChanged(const QString &text)
 void PeopleDialog::sortByName()
 {
     clearAllSelections();
+	clearPerson();
     applySortAndFilter(true); // true for name
 }
 
 void PeopleDialog::sortByPopularity()
 {
     clearAllSelections();
+	clearPerson();
     applySortAndFilter(false); // false for popularity
 }
 
@@ -1210,3 +1234,189 @@ void PeopleDialog::clearAllSelections()
     clearMap(_int_circles_widgets);
 }
 
+void PeopleDialog::loadIdentityLabels(const RsGxsIdGroup& data)
+{
+    RsPgpId ownPgpId = rsPeers->getGPGOwnId();
+
+    lineEdit_PublishTS->setText(DateTime::formatDateTime(data.mMeta.mPublishTs));
+    lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
+
+    if(data.mPgpKnown)
+        lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
+    else
+        lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()) + tr(" [unverified]"));
+
+    // Update Visibility for GPG specific items
+    bool hasPgp = !data.mPgpId.isNull();
+    autoBanIdentities_CB->setVisible(hasPgp);
+    //banoption_label->setVisible(hasPgp);
+    lineEdit_GpgId->setVisible(hasPgp);
+    label_GpgId->setVisible(hasPgp);
+
+    time_t now = time(NULL);
+    lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS));
+    headerTextLabel_Person->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
+
+    // Avatar Loading
+    QPixmap pixmap;
+    if(data.mImage.mSize == 0 || !GxsIdDetails::loadPixmapFromData(data.mImage.mData, data.mImage.mSize, pixmap, GxsIdDetails::LARGE))
+        pixmap = GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId), GxsIdDetails::LARGE);
+
+    avatarLabel->setPixmap(pixmap.scaled(64, 64, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+	if (data.mPgpKnown)
+	{
+		RsPeerDetails details;
+		rsPeers->getGPGDetails(data.mPgpId, details);
+		lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
+	}
+	else
+	{
+		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
+			lineEdit_GpgName->setText(tr("[Unknown node]"));
+		else
+			lineEdit_GpgName->setText(tr("Anonymous Id"));
+	}
+
+	if(data.mPgpId.isNull())
+	{
+		lineEdit_GpgId->hide() ;
+		label_GpgId->hide() ;
+	}
+	else
+	{
+		lineEdit_GpgId->show() ;
+		label_GpgId->show() ;
+	}
+
+    if(data.mPgpKnown)
+    {
+		lineEdit_GpgName->show() ;
+		label_GpgName->show() ;
+    }
+    else
+    {
+		lineEdit_GpgName->hide() ;
+		label_GpgName->hide() ;
+    }
+
+    // Type and Node logic
+
+    bool isLinkedToOwnPgpId = (data.mPgpKnown && (data.mPgpId == ownPgpId)) ;
+    bool isOwnId = (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
+
+    if(isOwnId)
+        if (isLinkedToOwnPgpId)
+            lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node")) ;
+        else
+            if (data.mMeta.mGroupFlags & (GXS_SERV::FLAG_PRIVACY_PRIVATE | RSGXSID_GROUPFLAG_REALID))
+                lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node but not yet validated")) ;
+            else
+                lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
+    else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
+    {
+        if (data.mPgpKnown)
+            if (rsPeers->isGPGAccepted(data.mPgpId))
+                lineEdit_Type->setText(tr("Linked to a friend Retroshare node")) ;
+            else
+                lineEdit_Type->setText(tr("Linked to a known Retroshare node")) ;
+        else
+            lineEdit_Type->setText(tr("Linked to unknown Retroshare node")) ;
+    }
+    else
+    {
+        lineEdit_Type->setText(tr("Anonymous identity")) ;
+    }
+
+	/* now fill in the reputation information */
+
+	RsReputationInfo info;
+    rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),data.mPgpId,info) ;
+
+    QString frep_string ;
+    if(info.mFriendsPositiveVotes > 0) frep_string += QString::number(info.mFriendsPositiveVotes) + tr(" positive ") ;
+    if(info.mFriendsNegativeVotes > 0) frep_string += QString::number(info.mFriendsNegativeVotes) + tr(" negative ") ;
+
+    if(info.mFriendsPositiveVotes==0 && info.mFriendsNegativeVotes==0)
+        frep_string = tr("No votes from friends") ;
+
+    neighborNodesOpinion_TF->setText(frep_string) ;
+
+    label_positive->setText(QString::number(info.mFriendsPositiveVotes));
+    label_negative->setText(QString::number(info.mFriendsNegativeVotes));
+
+	switch(info.mOverallReputationLevel)
+	{
+	case RsReputationLevel::LOCALLY_POSITIVE:
+		overallOpinion_TF->setText(tr("Positive")); break;
+	case RsReputationLevel::LOCALLY_NEGATIVE:
+		overallOpinion_TF->setText(tr("Negative (Banned by you)")); break;
+	case RsReputationLevel::REMOTELY_POSITIVE:
+		overallOpinion_TF->setText(tr("Positive (according to your friends)"));
+		break;
+	case RsReputationLevel::REMOTELY_NEGATIVE:
+		overallOpinion_TF->setText(tr("Negative (according to your friends)"));
+		break;
+	case RsReputationLevel::NEUTRAL: // fallthrough
+	default:
+		overallOpinion_TF->setText(tr("Neutral")) ; break ;
+	}
+
+	switch(info.mOwnOpinion)
+	{
+    case RsOpinion::NEGATIVE: ownOpinion_CB->setCurrentIndex(0); break;
+    case RsOpinion::NEUTRAL : ownOpinion_CB->setCurrentIndex(1); break;
+    case RsOpinion::POSITIVE: ownOpinion_CB->setCurrentIndex(2); break;
+	default:
+		std::cerr << "Unexpected value in own opinion: "
+		          << static_cast<uint32_t>(info.mOwnOpinion) << std::endl;
+		break;
+	}
+
+    // Toggle Edit/Invite buttons
+    editButton->setVisible(isOwnId);
+    inviteButton->setVisible(!isOwnId);
+}
+
+void PeopleDialog::onIdentitySelected()
+{
+    // Determine which widget sent the signal
+    IdentityWidget* widget = qobject_cast<IdentityWidget*>(sender());
+    if (widget) {
+        // Load the labels using the data from the clicked widget
+        this->loadIdentityLabels(widget->groupInfo());
+        
+        // Optional: Visually select it
+        clearAllSelections();
+        widget->setIsSelected(true);
+    }
+}
+
+void PeopleDialog::clearPerson()
+{
+	headerTextLabel_Person->setText(tr("People"));
+	avatarLabel->clear();
+	avatarLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/people.png"));
+
+	lineEdit_GpgId->clear();
+	lineEdit_KeyId->clear();
+	lineEdit_Type->clear();
+	lineEdit_GpgName->clear();
+	lineEdit_PublishTS->clear();
+	lineEdit_LastUsed->clear();
+	neighborNodesOpinion_TF->clear();
+	overallOpinion_TF->clear();
+	label_positive->clear();
+	label_negative->clear();
+	ownOpinion_CB->setCurrentIndex(1);
+	autoBanIdentities_CB->setChecked(false);
+}
+
+void PeopleDialog::toggleStackedPage()
+{
+    if (widgetExternal->currentIndex() == 0) {
+        widgetExternal->setCurrentIndex(1);
+    } else {
+        widgetExternal->setCurrentIndex(0);
+    }
+}

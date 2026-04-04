@@ -209,8 +209,8 @@ void IdentityWidget::setIsSelected(bool value)
 void IdentityWidget::setIsCurrent(bool value)
 {
 	m_isCurrent=value;
-	ui->labelKeyId->setVisible(value);
-	ui->labelGXSId->setVisible(value && (_haveGXSId && _havePGPDetail));
+	ui->labelKeyId->setVisible(false); // disabled by default
+	ui->labelGXSId->setVisible(false); // disable by default
 	ui->labelPositive->setVisible(value);
 	ui->labelNegative->setVisible(value);
 	ui->label_PosIcon_2->setVisible(value);
@@ -231,4 +231,13 @@ uint32_t IdentityWidget::getReputation() const
         return info.mFriendsPositiveVotes; 
     }
     return 0; // Default if no info found
+}
+
+void IdentityWidget::mousePressEvent(QMouseEvent *event)
+{
+    // Emit our new signal
+    emit clicked();
+    
+    // Call base class implementation so selection/dragging still works
+    FlowLayoutItem::mousePressEvent(event);
 }
