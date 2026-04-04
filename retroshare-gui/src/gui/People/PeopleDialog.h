@@ -92,12 +92,16 @@ private slots:
 	void sortByName();
 	void sortByPopularity();
 	void clearAllSelections();
-
+	void onIdentitySelected(); 
+	void clearPerson();
+	void toggleStackedPage(); 
+	
 private:
 	void reloadAll();
 	void populatePictureFlowExt();
 	void populatePictureFlowInt();
 	void applySortAndFilter(bool);
+	void loadIdentityLabels(const RsGxsIdGroup& data);
 
 	TokenQueue *mIdentityQueue;
 	TokenQueue *mCirclesQueue;
