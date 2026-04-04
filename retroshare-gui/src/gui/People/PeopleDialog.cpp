@@ -118,6 +118,7 @@ PeopleDialog::PeopleDialog(QWidget *parent)
     connect(filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 	connect(inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 	connect(switchButton, SIGNAL(clicked()), this, SLOT(toggleStackedPage()));
+	connect(ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
 
 	QByteArray geometryExt = Settings->valueFromGroup("PeopleDialog", "SplitterExtState", QByteArray()).toByteArray();
 	if (geometryExt.isEmpty() == false) {
@@ -1328,6 +1329,8 @@ void PeopleDialog::loadIdentityLabels(const RsGxsIdGroup& data)
         lineEdit_Type->setText(tr("Anonymous identity")) ;
     }
 
+    autoBanIdentities_CB->setChecked(rsReputations->isNodeBanned(data.mPgpId));
+
 	/* now fill in the reputation information */
 
 	RsReputationInfo info;
@@ -1419,4 +1422,24 @@ void PeopleDialog::toggleStackedPage()
     } else {
         widgetExternal->setCurrentIndex(0);
     }
+}
+
+void PeopleDialog::modifyReputation()
+{
+	RsGxsId id(lineEdit_KeyId->text().toStdString());
+
+	RsOpinion op;
+
+	switch(ownOpinion_CB->currentIndex())
+	{
+	case 0: op = RsOpinion::NEGATIVE; break;
+	case 1: op = RsOpinion::NEUTRAL ; break;
+	case 2: op = RsOpinion::POSITIVE; break;
+	default:
+		std::cerr << "Wrong value from opinion combobox. Bug??" << std::endl;
+		return;
+	}
+	rsReputations->setOwnOpinion(id,op);
+
+	return;
 }

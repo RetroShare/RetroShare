@@ -95,7 +95,8 @@ private slots:
 	void onIdentitySelected(); 
 	void clearPerson();
 	void toggleStackedPage(); 
-	
+	void modifyReputation();
+
 private:
 	void reloadAll();
 	void populatePictureFlowExt();
