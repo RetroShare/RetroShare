@@ -645,18 +645,23 @@ void PeopleDialog::sendMessage()
 
 void PeopleDialog::sendInvite()
 {
-	QAction *action =
-	    qobject_cast<QAction *>(QObject::sender());
-	if (action) {
-		QString data = action->data().toString();
+    RsGxsId gxs_id;
 
-   	RsGxsId gxs_id = RsGxsId(data.toStdString());;
-    
-    MessageComposer::sendInvite(gxs_id,false);
+    // Check if triggered by a Context Menu Action
+    QAction *action = qobject_cast<QAction *>(QObject::sender());
+    if (action) {
+        QString data = action->data().toString();
+        gxs_id = RsGxsId(data.toStdString());
+    } 
+    // Otherwise, check if it was the UI Button
+    else {
+        gxs_id = mCurrentSelectedId;
+    }
 
-	}
-    
-
+    // Execute the invite if the ID is valid
+    if (!gxs_id.isNull()) {
+        MessageComposer::sendInvite(gxs_id, false);
+    }
 }
 
 void PeopleDialog::addtoContacts()
@@ -1383,13 +1388,13 @@ void PeopleDialog::loadIdentityLabels(const RsGxsIdGroup& data)
 
 void PeopleDialog::onIdentitySelected()
 {
-    // Determine which widget sent the signal
     IdentityWidget* widget = qobject_cast<IdentityWidget*>(sender());
     if (widget) {
-        // Load the labels using the data from the clicked widget
+        // Save the ID for the Invite Button to use later
+        mCurrentSelectedId = RsGxsId(widget->groupInfo().mMeta.mGroupId);
+        // Load the labels
         this->loadIdentityLabels(widget->groupInfo());
         
-        // Optional: Visually select it
         clearAllSelections();
         widget->setIsSelected(true);
     }
@@ -1443,3 +1448,4 @@ void PeopleDialog::modifyReputation()
 
 	return;
 }
+

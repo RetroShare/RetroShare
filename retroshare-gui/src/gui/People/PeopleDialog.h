@@ -107,6 +107,7 @@ private:
 	TokenQueue *mIdentityQueue;
 	TokenQueue *mCirclesQueue;
 	//RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
+	RsGxsId mCurrentSelectedId; // Store the ID of the person currently clicked
 
 	FlowLayout *_flowLayoutExt;
 	std::map<RsGxsId,IdentityWidget *> _gxs_identity_widgets ;
