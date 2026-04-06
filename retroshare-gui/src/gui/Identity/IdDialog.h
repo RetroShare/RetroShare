@@ -109,6 +109,7 @@ private slots:
     void toggleColumnVisible();
 
 	void CircleListCustomPopupMenu(QPoint point) ;
+
 #ifdef SUSPENDED
 	void circle_selected() ;
 #endif
