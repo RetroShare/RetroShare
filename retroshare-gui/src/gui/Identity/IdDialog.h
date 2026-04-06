@@ -55,6 +55,7 @@ public:
 	virtual QString helpText() const override { return ""; } //MainPage
 
 	void navigate(const RsGxsId& gxs_id) ; // shows the info about this particular ID
+	void navigateToCircle(const RsGxsId& circleId) ; // navigates to this circle
 protected:
 	virtual void updateDisplay(bool complete);
 
@@ -97,6 +98,7 @@ private slots:
     void chatIdentity(const RsGxsId& toGxsId);
     void sendMsg();
 	void copyRetroshareLink();
+	void copyRetroshareCircleLink();
 	void on_closeInfoFrameButton_Invite_clicked();
 
     void updateSelection(const QItemSelection &new_sel, const QItemSelection &old_sel);
