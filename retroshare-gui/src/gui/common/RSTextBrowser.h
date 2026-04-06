@@ -78,6 +78,7 @@ private slots:
 protected:
 	void paintEvent(QPaintEvent *event);
 	virtual void contextMenuEvent(QContextMenuEvent *event);
+	virtual void keyPressEvent(QKeyEvent *e) override;
 
 private:
 	// Hide method from QTextBrowser

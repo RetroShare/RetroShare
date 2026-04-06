@@ -24,6 +24,7 @@
 
 #include <QPainter>
 #include <QResizeEvent>
+#include <QKeyEvent>
 
 //#define DEBUG_RSTREEVIEW
 
@@ -116,3 +117,25 @@ void RSTreeView::paintEvent(QPaintEvent *event)
 		painter.drawText(QRect(QPoint(), vieportWidget->size()), Qt::AlignHCenter | Qt::AlignVCenter | Qt::TextWordWrap, placeholderText);
 	}
 };
+
+void RSTreeView::keyPressEvent(QKeyEvent *e)
+{
+    if (e->modifiers() == Qt::ControlModifier)
+    {
+        if (e->key() == Qt::Key_Z)
+        {
+            emit zoomRequested(true); // Zoom In
+            e->accept();
+            return;
+        }
+        else if (e->key() == Qt::Key_Minus)
+        {
+            emit zoomRequested(false); // Zoom Out
+            e->accept();
+            return;
+        }
+    }
+    
+    // Fallback to default QTreeView keyboard navigation (arrows, etc.)
+    QTreeView::keyPressEvent(e);
+}
