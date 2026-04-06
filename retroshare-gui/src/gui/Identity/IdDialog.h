@@ -185,7 +185,6 @@ private:
 	QTimer updateCirclesTimer;
 	bool needUpdateIdsOnNextShow;
 	bool needUpdateCirclesOnNextShow;
-	bool mUseColoredGroupIcons;
 
 	FontSizeHandler mFontSizeHandler;
 
