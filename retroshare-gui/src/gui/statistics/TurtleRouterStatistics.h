@@ -68,6 +68,7 @@ class TurtleRouterStatisticsWidget:  public QWidget
 
 	private:
 		static QString speedString(float f) ;
+		static QString dataSizeString(uint64_t bytes) ;
 
 		QPixmap pixmap ;
 		int maxWidth,maxHeight ;
