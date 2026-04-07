@@ -223,6 +223,7 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 
             QObject::connect(btn, SIGNAL(clicked()), parent, slotAddMethod);
             QObject::connect(btn, &QPushButton::clicked, [code]() { Emoticons::addRecentSmiley(code); });
+            QObject::connect(btn, &QPushButton::clicked, [smTab]() { Emoticons::lastTabIndex = smTab->currentIndex(); });
             QObject::connect(btn, SIGNAL(clicked()), smWidget, SLOT(close()));
         }
         smTab->addTab(recentGrpWidget, FilesDefs::getIconFromQtResourcePath(":/icons/png/history-clock-blue.png"), "");
@@ -265,7 +266,8 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
             QObject::connect(btn, SIGNAL(clicked()), parent, slotAddMethod);
             // Capture the 'key' (code) to update history when clicked
             QObject::connect(btn, &QPushButton::clicked, [key]() { Emoticons::addRecentSmiley(key); });
-            QObject::connect(btn, SIGNAL(clicked()), smWidget, SLOT(close()));
+            QObject::connect(btn, &QPushButton::clicked, [smTab]() { Emoticons::lastTabIndex = smTab->currentIndex(); });
+            QObject::connect(btn, SIGNAL(clicked()), smWidget, SLOT(close()));            
         }
     }
 
@@ -280,6 +282,11 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
             btn->setVisible(match);
         }
     });
+    
+    // RESTORE LAST TAB INDEX
+    if (lastTabIndex >= 0 && lastTabIndex < smTab->count()) {
+        smTab->setCurrentIndex(lastTabIndex);
+    }
 
 	//Get left up pos of button
 	QPoint butTopLeft = button->mapToGlobal(QPoint(0,0));
@@ -524,12 +531,13 @@ void Emoticons::loadToolTips(QWidget *container)
 }
 
 QStringList Emoticons::recentSmileys;
+int Emoticons::lastTabIndex = 0; // Initialize to 0 (the first tab)
 
 void Emoticons::addRecentSmiley(const QString& code)
 {
     recentSmileys.removeAll(code);
     recentSmileys.prepend(code);
-    while(recentSmileys.size() > 20) {
+    while(recentSmileys.size() > 90) {
         recentSmileys.removeLast();
     }
 }
