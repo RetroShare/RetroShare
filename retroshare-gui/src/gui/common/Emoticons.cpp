@@ -192,10 +192,16 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
     if (!recentSmileys.isEmpty()) {
         QWidget *recentGrpWidget = new QWidget();
         QGridLayout *recentLayout = new QGridLayout(recentGrpWidget);
-        recentLayout->setContentsMargins(0, 0, 0, 0);
-        recentLayout->setSpacing(0);
+        recentLayout->setContentsMargins(2, 2, 2, 2);
+        recentLayout->setSpacing(2);
+        recentLayout->setRowStretch(0, 1);
 
-        int rLin = 0, rCol = 0;
+        int maxCols = 10;
+        int totalItems = recentSmileys.size();
+        // Calculate total rows needed (e.g., 12 items / 10 cols = 2 rows)
+        int totalRows = (totalItems + maxCols - 1) / maxCols; 
+
+        int i = 0;
         for (const QString &code : recentSmileys) {
             // Find which file matches this code by searching all groups
             QString filePath;
@@ -209,23 +215,36 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
             if (filePath.isEmpty()) continue;
 
             QPushButton *btn = new QPushButton("");
+            // CRITICAL: Set Focus Policy so keyboard navigation works
+            btn->setFocusPolicy(Qt::StrongFocus);
             btn->setIconSize(QSize(buttonWidth, buttonHeight));
             btn->setFixedSize(QSize(buttonWidth, buttonHeight));
             btn->setIcon(FilesDefs::getIconFromQtResourcePath(filePath));
             btn->setToolTip(code);
             btn->setFlat(true);
-            btn->setStyleSheet("QPushButton:hover {border: 3px solid #0099cc; border-radius: 3px;}");
+            btn->setAutoDefault(true); // This is key for the Enter key to trigger a click
+            btn->setStyleSheet("QPushButton:focus { border: 2px solid #ffaa00; background: rgba(255,170,0,0.2); }"
+                               "QPushButton:hover { border: 2px solid #0099cc; }");
 
-            recentLayout->addWidget(btn, rCol, rLin);
+            // CALCULATE POSITION: 
+            // We fill from the last row upwards
+            int currentRow = (totalItems - 1 - i) / maxCols;
+            int currentCol = i % maxCols;
+            
+            // This places the first item (most recent) at the bottom-left
+            recentLayout->addWidget(btn, (totalRows - 1) - currentRow, currentCol);
             allButtons.append(btn);
 
-            if (++rLin >= 10) { rLin = 0; ++rCol; }
-
             QObject::connect(btn, SIGNAL(clicked()), parent, slotAddMethod);
-            QObject::connect(btn, &QPushButton::clicked, [code]() { Emoticons::addRecentSmiley(code); });
-            QObject::connect(btn, &QPushButton::clicked, [smTab]() { Emoticons::lastTabIndex = smTab->currentIndex(); });
+            QObject::connect(btn, &QPushButton::clicked, [code, smTab]() { 
+                Emoticons::addRecentSmiley(code); 
+                Emoticons::lastTabIndex = smTab->currentIndex();
+            });
             QObject::connect(btn, SIGNAL(clicked()), smWidget, SLOT(close()));
+            
+            i++;
         }
+    
         smTab->addTab(recentGrpWidget, FilesDefs::getIconFromQtResourcePath(":/icons/png/history-clock-blue.png"), "");
     }
 
@@ -251,13 +270,15 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
         QVector<QString> ordered = Smileys.value(groupName).first;
         for(const QString &key : ordered) {
             QPushButton *btn = new QPushButton("");
+            btn->setFocusPolicy(Qt::StrongFocus);
             btn->setIconSize(QSize(buttonWidth, buttonHeight));
             btn->setFixedSize(QSize(buttonWidth, buttonHeight));
             btn->setIcon(FilesDefs::getIconFromQtResourcePath(group.value(key)));
             btn->setToolTip(key);
-            btn->setStyleSheet("QPushButton:hover {border: 3px solid #0099cc; border-radius: 3px;}");
             btn->setFlat(true);
-            
+            btn->setAutoDefault(true); // This is key for the Enter key to trigger a click
+            btn->setStyleSheet("QPushButton:focus { border: 2px solid #ffaa00; background: rgba(255,170,0,0.2); }"
+                           "QPushButton:hover { border: 2px solid #0099cc; }");            
             tabGLayout->addWidget(btn, col, lin);
             allButtons.append(btn);
 
