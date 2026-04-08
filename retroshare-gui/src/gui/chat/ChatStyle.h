@@ -83,7 +83,7 @@ public:
     bool setStylePath(const QString &stylePath, const QString &styleVariant);
     bool setStyleFromSettings(enumStyleType styleType);
 
-    QString formatMessage(enumFormatMessage type, const QString &name, const QDateTime &timestamp, const QString &message, unsigned int flag = 0, const QColor &backgroundColor = Qt::white);
+    QString formatMessage(enumFormatMessage type, const QString &name, const QString &gxsid, const QDateTime &timestamp, const QString &message, unsigned int flag = 0, const QColor &backgroundColor = Qt::white);
 
     static bool getAvailableStyles(enumStyleType styleType, QList<ChatStyleInfo> &styles);
     static bool getAvailableVariants(const QString &stylePath, QStringList &variants);
