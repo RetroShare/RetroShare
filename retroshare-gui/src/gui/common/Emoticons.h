@@ -41,6 +41,7 @@ private:
     static void refreshStickerTabs(QVector<QString>& stickerTabs, QString foldername);
     static void refreshStickerTabs(QVector<QString>& stickerTabs);
     static QStringList recentSmileys; 
+    static int lastTabIndex; 
 };
 
 #endif

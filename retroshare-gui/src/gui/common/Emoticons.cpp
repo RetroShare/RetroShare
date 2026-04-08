@@ -49,6 +49,8 @@ static QStringList filters;
 static QStringList stickerFolders;
 static QHash<QString, QString> tooltipcache;
 static QHash<QString, QPixmap> iconcache;
+QStringList Emoticons::recentSmileys;
+int Emoticons::lastTabIndex = 0; // Initialize to 0 (the first tab)
 
 void Emoticons::load()
 {
@@ -550,9 +552,6 @@ void Emoticons::loadToolTips(QWidget *container)
 	}
 	QApplication::restoreOverrideCursor();
 }
-
-QStringList Emoticons::recentSmileys;
-int Emoticons::lastTabIndex = 0; // Initialize to 0 (the first tab)
 
 void Emoticons::addRecentSmiley(const QString& code)
 {
