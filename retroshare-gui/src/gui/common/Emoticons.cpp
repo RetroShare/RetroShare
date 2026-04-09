@@ -180,11 +180,13 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
     smWidget->setWindowTitle("Emoticons");
 
     QVBoxLayout *mainLayout = new QVBoxLayout(smWidget);
-    mainLayout->setContentsMargins(2, 2, 2, 2);
-    mainLayout->setSpacing(2);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
 
     QTabWidget *smTab = new QTabWidget();
     smTab->setTabPosition(QTabWidget::South);
+    smTab->setMaximumWidth(590);
+    smTab->setMinimumHeight(560);
     mainLayout->addWidget(smTab);
 
     QList<QPushButton*> allButtons;
@@ -195,8 +197,8 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
     if (!recentSmileys.isEmpty()) {
         QWidget *recentGrpWidget = new QWidget();
         QGridLayout *recentLayout = new QGridLayout(recentGrpWidget);
-        recentLayout->setContentsMargins(2, 2, 2, 2);
-        recentLayout->setSpacing(2);
+        recentLayout->setContentsMargins(0, 0, 0, 0);
+        recentLayout->setSpacing(0);
         recentLayout->setRowStretch(0, 1);
 
         int maxCols = 10;
@@ -275,6 +277,8 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
         scrollArea->setWidget(tabGrpWidget);
 
         QGridLayout *tabGLayout = new QGridLayout(tabGrpWidget);
+        tabGLayout->setContentsMargins(0,0,0,0);
+        tabGLayout->setSpacing(2);
 
         int lin = 0, col = 0;
         int countPerLine = (int)sqrt((double)group.size()) + 1;
