@@ -26,6 +26,7 @@
 #include <QIcon>
 #include <QPushButton>
 #include <QTabWidget>
+#include <QScrollArea>
 #include <QWidget>
 #include <QMessageBox>
 #include <QDir>
@@ -256,15 +257,24 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
     {
         QString groupName = grp.next();
         QHash<QString, QString> group = Smileys.value(groupName).second;
-        QWidget *tabGrpWidget = new QWidget();
 
-        smTab->addTab(tabGrpWidget, groupName.right(4).toLower() == ".png" ? 
+        // Create the Scroll Area
+        QScrollArea *scrollArea = new QScrollArea();
+        scrollArea->setWidgetResizable(true);
+        scrollArea->setFrameShape(QFrame::NoFrame);
+        scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // Usually only vertical is needed
+
+        // Create the container widget that will hold the grid
+        QWidget *tabGrpWidget = new QWidget();
+        
+        // Add the scroll area to the tab instead of the raw widget
+        smTab->addTab(scrollArea, groupName.right(4).toLower() == ".png" ? 
                       FilesDefs::getIconFromQtResourcePath(groupName) : QIcon(), 
                       groupName.right(4).toLower() == ".png" ? "" : groupName);
 
+        scrollArea->setWidget(tabGrpWidget);
+
         QGridLayout *tabGLayout = new QGridLayout(tabGrpWidget);
-        tabGLayout->setContentsMargins(0, 0, 0, 0);
-        tabGLayout->setSpacing(0);
 
         int lin = 0, col = 0;
         int countPerLine = (int)sqrt((double)group.size()) + 1;
