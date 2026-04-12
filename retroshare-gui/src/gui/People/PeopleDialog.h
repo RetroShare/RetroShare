@@ -26,6 +26,7 @@
 
 #include "gui/People/CircleWidget.h"
 #include "gui/People/IdentityWidget.h"
+#include "gui/Identity/UsageStatistics.h"
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 #include "util/TokenQueue.h"
 
@@ -95,6 +96,7 @@ private slots:
 	void onIdentitySelected(); 
 	void clearPerson();
 	void toggleStackedPage(); 
+    void toggledetailsStackedPage();
 	void modifyReputation();
 
 private:
@@ -108,6 +110,7 @@ private:
 	TokenQueue *mCirclesQueue;
 	//RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
 	RsGxsId mCurrentSelectedId; // Store the ID of the person currently clicked
+    QWidget *UsagePage;
 
 	FlowLayout *_flowLayoutExt;
 	std::map<RsGxsId,IdentityWidget *> _gxs_identity_widgets ;
