@@ -533,7 +533,14 @@ void WireDialog::addGroup(const RsWireGroup &group)
 	std::cerr << "WireDialog::addGroup() GroupId : " << group.mMeta.mGroupId;
 	std::cerr << std::endl;
 
-	addGroup(new WireGroupItem(this, group));
+	WireGroupItem *item = new WireGroupItem(this, group);
+
+	// Apply cached unread count so the badge is correct from the moment the item appears
+	auto sit = mCachedGroupStats.find(group.mMeta.mGroupId);
+	if (sit != mCachedGroupStats.end())
+		item->setUnreadCount(sit->second.mNumThreadMsgsUnread);
+
+	addGroup(item);
 }
 
 void WireDialog::deleteGroups()
@@ -578,6 +585,12 @@ void WireDialog::updateGroups(const std::vector<RsWireGroup>& groups)
 	for(auto &it : groups) {
 		// save list of all groups.
 		mAllGroups[it.mMeta.mGroupId] = it;
+        
+        if (it.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) {
+            mOwnGroups.push_back(it);
+        }
+        
+        addGroup(it);
 
 		if (it.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 		{
@@ -1382,12 +1395,12 @@ void WireDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
              * Qt::QueuedConnection is important!
              */
 
-//            QTreeWidgetItem *item = ui.scrollAreaWidgetContents->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
-
-//            if (item)
-//                ui.scrollAreaWidgetContents->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
-
             mCachedGroupStats[groupId] = stats;
+
+            // Update the unread count badge on the matching WireGroupItem
+            WireGroupItem *groupItem = findGroupItemWidget(groupId);
+            if (groupItem)
+                groupItem->setUnreadCount(stats.mNumThreadMsgsUnread);
 
             getUserNotify()->updateIcon();
 
@@ -1455,6 +1468,20 @@ GxsMessageFrameWidget *WireDialog::messageWidget(const RsGxsGroupId &groupId)
     return NULL;
 }
 
+WireGroupItem *WireDialog::findGroupItemWidget(const RsGxsGroupId &groupId)
+{
+    QLayout *alayout = ui.groupsWidget->layout();
+    for (int i = 0; i < alayout->count(); ++i)
+    {
+        QLayoutItem *item = alayout->itemAt(i);
+        if (!item) continue;
+        WireGroupItem *groupItem = dynamic_cast<WireGroupItem *>(item->widget());
+        if (groupItem && groupItem->groupId() == groupId)
+            return groupItem;
+    }
+    return nullptr;
+}
+
 //void GxsGroupFrameDialog::changedCurrentGroup(const QString& groupId)
 //{
 //	if (mInFill) {
@@ -1494,3 +1521,31 @@ GxsMessageFrameWidget *WireDialog::messageWidget(const RsGxsGroupId &groupId)
 //			currentWidget()->setGroupId(mGroupId);
 //	}
 //}
+
+void WireDialog::markGroupAsRead(const RsGxsGroupId &groupId)
+{
+    // Fetch all message summaries in the background and mark each as read.
+    RsThread::async([this, groupId]()
+    {
+        std::vector<RsMsgMetaData> summaries;
+        if (!rsWire->getContentSummaries(groupId, summaries))
+        {
+            std::cerr << "WireDialog::markGroupAsRead() failed to get summaries for group "
+                      << groupId << std::endl;
+            return;
+        }
+
+        for (auto &meta : summaries)
+        {
+            uint32_t token;
+            RsGxsGrpMsgIdPair msgIdPair(groupId, meta.mMsgId);
+            rsWire->setMessageReadStatus(token, msgIdPair, true);
+        }
+
+        // Refresh statistics and notify icon from the GUI thread.
+        RsQThreadUtils::postToObject([this, groupId]()
+        {
+            updateGroupStatisticsReal(groupId);
+        }, this);
+    });
+}

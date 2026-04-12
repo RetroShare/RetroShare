@@ -125,6 +125,8 @@ public:
     void getServiceStatistics(GxsServiceStatistic& stats) const override;
 
     virtual bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId);
+    
+    virtual void markGroupAsRead(const RsGxsGroupId &groupId) override;
 
 protected:
 
@@ -132,6 +134,7 @@ protected:
     UserNotify *createUserNotify(QObject *parent) override;
     virtual void updateGroupStatistics(const RsGxsGroupId &groupId);
     virtual void updateGroupStatisticsReal(const RsGxsGroupId &groupId);
+    std::map<RsGxsGroupId, GxsGroupStatistic> mGroupStats;
 
 private slots:
 
@@ -178,6 +181,7 @@ private:
 	void requestGroupData();
 
 	GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId);
+	WireGroupItem *findGroupItemWidget(const RsGxsGroupId &groupId);
 
 	int mGroupSet;
 
