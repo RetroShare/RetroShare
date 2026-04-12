@@ -35,6 +35,8 @@
 #include <iostream>
 #include <cmath>
 
+#define IMAGE_WIRE           ":icons/wire.png"
+
 WireNotifyPostItem::WireNotifyPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool autoUpdate, const std::set<RsGxsMessageId> &older_versions) :
     GxsFeedItem(feedHolder, feedId, groupId, messageId, false, rsWire, autoUpdate)
 {
@@ -330,7 +332,7 @@ void WireNotifyPostItem::doExpand(bool open)
         ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
         ui->expandButton->setToolTip(tr("Hide"));
 
-//        readToggled(false);
+        readToggled(false);
     }
     else
     {
@@ -475,7 +477,7 @@ void WireNotifyPostItem::setGroup(const RsWireGroup &group)
 	else
 	{
 		// default.
-		QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png");
+		QPixmap pixmap = GxsIdDetails::makeDefaultGroupIcon(group.mMeta.mGroupId, IMAGE_WIRE, GxsIdDetails::ORIGINAL);
 		ui->logoLabel->setPixmap(pixmap);
 	}
 
@@ -503,9 +505,7 @@ void WireNotifyPostItem::readToggled(bool /*checked*/)
 
 	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
 
-	//rsWire->setMessageReadStatus(msgPair, isUnread());
-
-	//setReadStatus(false, checked); // Updated by events
+	rsWire->setMessageReadStatus(msgPair, isUnread());
 }
 
 void WireNotifyPostItem::on_linkActivated(QString link)

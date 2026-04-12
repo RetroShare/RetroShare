@@ -1524,7 +1524,9 @@ WireGroupItem *WireDialog::findGroupItemWidget(const RsGxsGroupId &groupId)
 
 void WireDialog::markGroupAsRead(const RsGxsGroupId &groupId)
 {
-    // Fetch all message summaries in the background and mark each as read.
+    // Fetch all message summaries in the background and mark each as read
+    // using the blocking API — DB write is complete before each call returns,
+    // so the event arrives after the data is committed.
     RsThread::async([this, groupId]()
     {
         std::vector<RsMsgMetaData> summaries;
@@ -1537,15 +1539,11 @@ void WireDialog::markGroupAsRead(const RsGxsGroupId &groupId)
 
         for (auto &meta : summaries)
         {
-            uint32_t token;
             RsGxsGrpMsgIdPair msgIdPair(groupId, meta.mMsgId);
-            rsWire->setMessageReadStatus(token, msgIdPair, true);
+            rsWire->setMessageReadStatus(msgIdPair, true);
         }
 
-        // Refresh statistics and notify icon from the GUI thread.
-        RsQThreadUtils::postToObject([this, groupId]()
-        {
-            updateGroupStatisticsReal(groupId);
-        }, this);
+        // Stats will be refreshed automatically via the READ_STATUS_CHANGED events
+        // fired by setMessageReadStatus for each message.
     });
 }
