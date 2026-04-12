@@ -72,6 +72,9 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	//hide circle flow widget not functional more
 	switchButton->hide(); //disable this, to enable the circles flow widget
 
+    UsagePage = new UsageStatistics(this); 
+    detailsStackedWidget->addWidget(UsagePage);
+
 	//need erase QtCreator Layout first(for Win)
 	delete idExternal->layout();
 	delete idInternal->layout();
@@ -118,6 +121,7 @@ PeopleDialog::PeopleDialog(QWidget *parent)
     connect(filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 	connect(inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 	connect(switchButton, SIGNAL(clicked()), this, SLOT(toggleStackedPage()));
+	connect(statsButton, SIGNAL(clicked()), this, SLOT(toggledetailsStackedPage()));
 	connect(ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
 
 	QByteArray geometryExt = Settings->valueFromGroup("PeopleDialog", "SplitterExtState", QByteArray()).toByteArray();
@@ -1395,6 +1399,14 @@ void PeopleDialog::onIdentitySelected()
         // Load the labels
         this->loadIdentityLabels(widget->groupInfo());
         
+        // Update the Usage Statistics page
+        UsageStatistics* usageWidget = qobject_cast<UsageStatistics*>(UsagePage);
+        
+        if (usageWidget) {
+            // This triggers the internal getIdDetails() call in UsageStatistics
+            usageWidget->setUsageData(widget->groupInfo());
+        }
+        
         clearAllSelections();
         widget->setIsSelected(true);
     }
@@ -1426,6 +1438,15 @@ void PeopleDialog::toggleStackedPage()
         widgetExternal->setCurrentIndex(1);
     } else {
         widgetExternal->setCurrentIndex(0);
+    }
+}
+
+void PeopleDialog::toggledetailsStackedPage()
+{
+    if (detailsStackedWidget->currentIndex() == 0) {
+        detailsStackedWidget->setCurrentIndex(1);
+    } else {
+        detailsStackedWidget->setCurrentIndex(0);
     }
 }
 
