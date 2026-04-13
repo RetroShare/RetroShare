@@ -455,21 +455,42 @@ class PostSorter
 {
 public:
 
-    PostSorter(RsPostedPostsModel::SortingStrategy s) : mSortingStrategy(s) {}
+	PostSorter(
+			RsPostedPostsModel::SortingStrategy s,
+			const std::set<RsGxsMessageId>& pinnedPosts ):
+		mSortingStrategy(s), mPinnedPosts(pinnedPosts) {}
 
 	bool operator()(const RsPostedPost& p1,const RsPostedPost& p2) const
 	{
+		const RsGxsMessageId p1StickyKey = p1.mMeta.mMsgId;
+		const RsGxsMessageId p2StickyKey = p2.mMeta.mMsgId;
+
+		const bool p1Pinned = (mPinnedPosts.find(p1StickyKey) != mPinnedPosts.end());
+		const bool p2Pinned = (mPinnedPosts.find(p2StickyKey) != mPinnedPosts.end());
+
+		if(p1Pinned != p2Pinned)
+			return p1Pinned;
+
         switch(mSortingStrategy)
         {
-        default:
-        case RsPostedPostsModel::SORT_NEW_SCORE   :  return p1.mNewScore > p2.mNewScore;
-        case RsPostedPostsModel::SORT_TOP_SCORE   :  return p1.mTopScore > p2.mTopScore;
-        case RsPostedPostsModel::SORT_HOT_SCORE   :  return p1.mHotScore > p2.mHotScore;
+		default:
+		case RsPostedPostsModel::SORT_NEW_SCORE:
+			if(p1.mNewScore != p2.mNewScore) return p1.mNewScore > p2.mNewScore;
+			break;
+		case RsPostedPostsModel::SORT_TOP_SCORE:
+			if(p1.mTopScore != p2.mTopScore) return p1.mTopScore > p2.mTopScore;
+			break;
+		case RsPostedPostsModel::SORT_HOT_SCORE:
+			if(p1.mHotScore != p2.mHotScore) return p1.mHotScore > p2.mHotScore;
+			break;
         }
+
+		return p1.mMeta.mPublishTs > p2.mMeta.mPublishTs;
 	}
 
 private:
     RsPostedPostsModel::SortingStrategy mSortingStrategy;
+	const std::set<RsGxsMessageId>& mPinnedPosts;
 };
 
 Qt::ItemFlags RsPostedPostsModel::flags(const QModelIndex& index) const
@@ -485,8 +506,20 @@ void RsPostedPostsModel::setSortingStrategy(RsPostedPostsModel::SortingStrategy 
     preMods();
 
     mSortingStrategy = s;
-    std::sort(mPosts.begin(),mPosts.end(), PostSorter(s));
+    std::sort(mPosts.begin(),mPosts.end(), PostSorter(s,mPinnedPosts));
 
+	postMods();
+}
+
+void RsPostedPostsModel::setPinnedPosts(
+        const std::set<RsGxsMessageId>& pinnedPosts )
+{
+	if(mPinnedPosts == pinnedPosts)
+		return;
+
+	preMods();
+	mPinnedPosts = pinnedPosts;
+	std::sort(mPosts.begin(),mPosts.end(), PostSorter(mSortingStrategy,mPinnedPosts));
 	postMods();
 }
 
@@ -539,7 +572,7 @@ void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPost
 
 	createPostsArray(posts);
 
-	std::sort(mPosts.begin(),mPosts.end(), PostSorter(mSortingStrategy));
+	std::sort(mPosts.begin(),mPosts.end(), PostSorter(mSortingStrategy,mPinnedPosts));
 
 	uint32_t tmpval;
 	setFilter(QStringList(),tmpval);
