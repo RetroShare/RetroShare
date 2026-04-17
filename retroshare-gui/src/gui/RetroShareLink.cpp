@@ -23,6 +23,7 @@
 #include "ChatLobbyWidget.h"
 #include "MainWindow.h"
 #include "HomePage.h"
+#include "Identity/IdDialog.h"
 #include "chat/ChatDialog.h"
 #include "common/PeerDefs.h"
 #include "common/RsCollectionDialog.h"
@@ -77,7 +78,8 @@
 #define HOST_IDENTITY    "identity"
 #define HOST_FILE_TREE   "collection"
 #define HOST_CHAT_ROOM   "chat_room"
-#define HOST_REGEXP      "file|person|forum|channel|wire|search|message|certificate|extra|private_chat|public_msg|posted|identity|collection|chat_room"
+#define HOST_CIRCLE      "circle"
+#define HOST_REGEXP      "file|person|forum|channel|wire|search|message|certificate|extra|private_chat|public_msg|posted|identity|collection|chat_room|circle"
 #define HOST_WIRE        "wire"
 
 #define FILE_NAME       "name"
@@ -140,6 +142,9 @@
 
 #define CHAT_ROOM_NAME "name"
 #define CHAT_ROOM_ID   "id"
+
+#define CIRCLE_NAME    "name"
+#define CIRCLE_ID      "id"
 
 RetroShareLink::RetroShareLink(const QUrl& url)
 {
@@ -439,6 +444,18 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		return;
 	}
 
+	if (url.host() == HOST_CIRCLE) {
+		_type = TYPE_CIRCLES;
+		_name = decodedQueryItemValue(urlQuery, CIRCLE_NAME);
+		_hash = urlQuery.queryItemValue(CIRCLE_ID);
+
+#ifdef DEBUG_RSLINK
+		std::cerr << "Got a circle link!!" << std::endl;
+#endif
+		check() ;
+		return;
+	}
+
 	// bad link
 
 #ifdef DEBUG_RSLINK
@@ -732,6 +749,21 @@ RetroShareLink RetroShareLink::createChatRoom(const ChatId &chatId, const QStrin
 	return link;
 }
 
+RetroShareLink RetroShareLink::createCircle(const RsGxsCircleId& circleId, const QString& name)
+{
+	RetroShareLink link;
+	link.clear();
+
+	link._name = name;
+	link._hash = QString::fromStdString(circleId.toStdString());
+
+	link._type = TYPE_CIRCLES;
+
+	link.check();
+
+	return link;
+}
+
 void RetroShareLink::clear()
 {
 	_valid = false ;
@@ -889,6 +921,17 @@ void RetroShareLink::check()
 			if(_hash.isEmpty())
 				_valid = false;
 		break;
+
+		case TYPE_CIRCLES:
+			if(_size != 0)
+				_valid = false;
+
+			if(_name.isEmpty())
+				_valid = false;
+
+			if(_hash.isEmpty())
+				_valid = false;
+		break;
 	}
 
 	if (!_valid) {
@@ -960,6 +1003,9 @@ QString RetroShareLink::title() const
 		return QObject::tr("Click to browse/download this file collection");
 
 		case TYPE_CHAT_ROOM:
+		return _name ;
+
+		case TYPE_CIRCLES:
 		return _name ;
 	}
 
@@ -1104,6 +1150,14 @@ QString RetroShareLink::toString() const
 			url.setHost(HOST_CHAT_ROOM);
 			urlQuery.addQueryItem(CHAT_ROOM_NAME, encodeItem(_name));
 			urlQuery.addQueryItem(CHAT_ROOM_ID, _hash);
+
+		break;
+
+		case TYPE_CIRCLES:
+			url.setScheme(RSLINK_SCHEME);
+			url.setHost(HOST_CIRCLE);
+			urlQuery.addQueryItem(CIRCLE_NAME, encodeItem(_name));
+			urlQuery.addQueryItem(CIRCLE_ID, _hash);
 
 		break;
 
@@ -1363,6 +1417,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				case TYPE_IDENTITY:
 				case TYPE_FILE_TREE:
 				case TYPE_CHAT_ROOM:
+				case TYPE_CIRCLES:
 					// no need to ask
 				break;
 
@@ -1400,6 +1455,9 @@ static void processList(const QStringList &list, const QString &textSingular, co
 	QStringList channelMsgFound;
 	QStringList channelUnknown;
 	QStringList channelMsgUnknown;
+
+	// circle
+	QStringList circleFound;
 
     // wire
     QStringList wireFound;
@@ -1817,6 +1875,23 @@ static void processList(const QStringList &list, const QString &textSingular, co
             RsCollectionDialog::downloadFiles(RsCollection(*ft));
             break;
 		}
+
+			case TYPE_CIRCLES:
+			{
+#ifdef DEBUG_RSLINK
+				std::cerr << " RetroShareLink::process CircleRequest : name : " << link.name().toStdString() << ". id : " << link.hash().toStdString() << std::endl;
+#endif
+				MainWindow::showWindow(MainWindow::People);
+				IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
+
+				if (!idDialog) {
+					return false;
+				}
+
+				idDialog->navigateToCircle(RsGxsId(link.hash().toStdString()));
+				circleFound.append(link.name());
+			}
+			break;
 
 			case TYPE_CHAT_ROOM:
 			{
