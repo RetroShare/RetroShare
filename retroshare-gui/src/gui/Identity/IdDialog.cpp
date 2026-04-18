@@ -1922,11 +1922,11 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
     case RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION:
     case RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE:             // Identities are stamped regularly by crawling the set of messages for all groups. That helps keepign the useful identities in hand.
     {
+        // Retrieve the title (returns empty QString if not found)
         QString title = getMessageTitle(service_type, u.mGrpId, u.mMsgId);
-        bool titleFound = !title.isEmpty();
 
         // Label for the link (Title or "Message")
-        QString label = titleFound ? title : tr("Message");
+        QString label = !title.isEmpty() ? title : tr("Message");
 
         // Create the Link
         RetroShareLink l;
