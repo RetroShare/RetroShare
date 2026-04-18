@@ -148,6 +148,8 @@ private:
 	void showIdEdit(uint32_t token);
 
 	void clearPerson();
+	QString getGroupName(uint32_t service_type, const RsGxsGroupId& groupId) const;
+    QString getMessageTitle(uint32_t service_type, const RsGxsGroupId& groupId, const RsGxsMessageId& msgId) const;
 
 private:
 	UIStateHelper *mStateHelper;
