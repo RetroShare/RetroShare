@@ -23,6 +23,8 @@
 
 #include "ui_PhotoView.h"
 
+#include <retroshare/rsposted.h>
+
 #include <QDialog>
 
 namespace Ui {
@@ -50,14 +52,21 @@ public slots:
 	void setGroupId(const RsGxsGroupId &groupId);
 	void setMessageId(const RsGxsMessageId& messageId);
 	void setGroupNameString(const QString& name);
+	void setPosts(const QList<RsPostedPost>& posts, int currentIndex);
 
 private slots:
 	void copyMessageLink();
+	void goToPrevious();
+	void goToNext();
+	void updateDisplay();
 
 private:
 	RsGxsMessageId mMessageId;
 	RsGxsGroupId mGroupId;
 	QMovie* mMovie = nullptr;  // Track QMovie for cleanup
+	
+	QList<RsPostedPost> mPosts;
+	int mCurrentIndex = 0;
 
   /** Qt Designer generated object */
   Ui::PhotoView  *ui;
