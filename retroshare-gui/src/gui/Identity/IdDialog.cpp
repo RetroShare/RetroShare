@@ -60,6 +60,7 @@
 #include "retroshare/rsgxschannels.h"
 #include "retroshare/rsgxsforums.h"
 #include "retroshare/rsposted.h"
+#include <retroshare/rswire.h>
 
 #include <iostream>
 #include <algorithm>
@@ -1888,6 +1889,7 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
 	case RsServiceType::GXS_TRANS: return tr("GxsMail author ");
 
 	case RsServiceType::GXSCIRCLE: service_name = tr("GxsCircles");  service_type = RetroShareLink::TYPE_CIRCLES; break ;
+	case RsServiceType::WIRE: service_name = tr("Wire");  service_type = RetroShareLink::TYPE_WIRE; break ;
 
     default:
         service_name = tr("Unknown (service=")+QString::number((int)u.mServiceId,16)+")"; service_type = RetroShareLink::TYPE_UNKNOWN ;
@@ -2051,6 +2053,13 @@ QString IdDialog::getGroupName(uint32_t service_type, const RsGxsGroupId& groupI
         RsGxsCircleDetails det;
         if (rsGxsCircles->getCircleDetails(RsGxsCircleId(groupId), det)) {
             QString name = QString::fromUtf8(det.mCircleName.c_str());
+            if (!name.isEmpty()) return name;
+        }
+    }
+    else if (service_type == RetroShareLink::TYPE_WIRE && rsWire) {
+        RsWireGroupSPtr group; // Shared pointer for the result
+        if (rsWire->getWireGroup(groupId, group) && group) {
+            QString name = QString::fromUtf8(group->mMeta.mGroupName.c_str());
             if (!name.isEmpty()) return name;
         }
     }
