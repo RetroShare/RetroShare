@@ -32,6 +32,12 @@
 #include <QWheelEvent>
 #include <QTimer>
 
+#include <QChartView>
+#include <QChart>
+#include <QPieSeries>
+#include <QPieSlice>
+#include <QValueAxis>
+
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include "rshare.h"
 #include "RSGraphWidget.h"
@@ -73,6 +79,11 @@ RSGraphSource::~RSGraphSource()
 void RSGraphSource::clear()
 {
     _points.clear() ;
+#if QT_VERSION < 0x040700
+    _time_orig_msecs     = getCurrentMSecsSinceEpoch() ;
+#else
+    _time_orig_msecs     = QDateTime::currentMSecsSinceEpoch() ;
+#endif
 }
 void RSGraphSource::stop()
 {
@@ -99,6 +110,67 @@ QString RSGraphSource::displayName(int i) const
 QString RSGraphSource::displayValue(float v) const
 {
     return QString::number(v,'f',_digits) + " " + unitName() ;
+}
+
+void RSGraphSource::getSlicedValues(uint min_secs_ago,uint max_secs_ago,std::vector<float>& vals) const
+{
+    vals.clear();
+
+    std::vector<std::pair<ZeroInitFloat,ZeroInitInt>> collected_vals;
+
+    for(auto lst_it = _points.begin();lst_it!=_points.end();++lst_it)
+    {
+        collected_vals.push_back(std::make_pair(0.,0)); // init so that the value is mentionned in the list.
+        auto& v(collected_vals.back());
+
+        uint64_t max_ts = lst_it->second.back().first - min_secs_ago*1000;	// in _points the TS are w.r.t. now (in reverse) and in ms.
+        uint64_t min_ts = lst_it->second.back().first - max_secs_ago*1000;
+
+#ifdef GRAPHWIDGET_DEBUG
+        std::cerr << "Collecting data in \"" << lst_it->first << "\" between ts = " << min_ts << " and " << max_ts << std::endl;
+#endif
+
+        for(const auto& p:lst_it->second)
+        {
+#ifdef GRAPHWIDGET_DEBUG
+            std::cerr << "      TS = " << p.first ;
+            std::cerr << " data \"" << lst_it->first << "\": Found ts = " << p.first << ": value " << p.second ;
+#endif
+
+            if((uint64_t)p.first >= min_ts && (uint64_t)p.first <= max_ts)
+            {
+                v.first.v += p.second;
+                v.second.v++;
+
+#ifdef GRAPHWIDGET_DEBUG
+                std::cerr << " Kept."<< std::endl;
+#endif
+            }
+#ifdef GRAPHWIDGET_DEBUG
+            else
+                std::cerr << std::endl;
+#endif
+        }
+#ifdef GRAPHWIDGET_DEBUG
+        std::cerr << "  total value = " << v.first.v << "  --  " << v.second.v << std::endl;
+#endif
+    }
+
+    // now average values when multiple values have been collected.
+
+#ifdef GRAPHWIDGET_DEBUG
+    std::cerr << "Computed values: " << collected_vals.size() << std::endl;
+#endif
+
+    for(uint i=0;i<collected_vals.size();++i)
+    {
+        const auto& v(collected_vals[i]);
+
+        vals.push_back((v.second.v > 0)?(v.first.v/v.second.v):0.0);
+#ifdef GRAPHWIDGET_DEBUG
+        std::cerr << "  \"" << displayName(i).toStdString() << "\" " << vals.back() << "  (" << v.second.v << ")" << std::endl;
+#endif
+    }
 }
 
 void RSGraphSource::getCumulatedValues(std::vector<float>& vals) const
@@ -259,32 +331,39 @@ void RSGraphWidget::setTimeScale(float pixels_per_second)
     _time_scale =pixels_per_second ;
 }
 
+void RSGraphWidget::setViewMode(ViewMode m)
+{
+    _viewMode = m;
+}
 /** Default contructor */
 RSGraphWidget::RSGraphWidget(QWidget *parent)
 : QFrame(parent)
 {
+    _viewMode = ViewMode::History;
+    _mousePressed = false;
     _source =NULL;
-  _painter = new QPainter();
+    _painter = new QPainter();
 
-  /* Initialize graph values */
-  _maxPoints = getNumPoints();
-  _maxValue = MINUSER_SCALE;
+    /* Initialize graph values */
+    _maxPoints = getNumPoints();
+    _maxValue = MINUSER_SCALE;
 
-  _linewidthscale = 1.0f;
-  _opacity = 0.6 ;
-  _flags = 0;
-  _time_scale = 5.0f ; // in pixels per second.
-  _time_filter = 1.0f ;
-  _timer = new QTimer ;
-  QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(updateIfPossible())) ;
+    _linewidthscale = 1.0f;
+    _opacity = 0.6 ;
+    _flags = 0;
+    _time_scale = 5.0f ; // in pixels per second.
+    _time_filter = 1.0f ;
+    _timer = new QTimer ;
+    _slice_proportion = 0.0;
 
-
-  _y_scale = 1.0f ;
-  _timer->start(1000);
+    _y_scale = 1.0f ;
+    _timer->start(1000);
 
     float FS = QFontMetricsF(font()).height();
-  setMinimumHeight(12*FS);
-  _graph_base = FS*GRAPH_BASE;
+    setMinimumHeight(12*FS);
+    _graph_base = FS*GRAPH_BASE;
+
+    QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(updateIfPossible())) ;
 }
 
 void RSGraphWidget::updateIfPossible()
@@ -353,14 +432,16 @@ void RSGraphWidget::paintEvent(QPaintEvent *)
   }
   _painter->drawRect(_rec);
 
-  /* Paint the scale */
-  paintScale1();
+  if(_viewMode == ViewMode::History)
+  {
+      /* Paint the scale */
+      paintScale1();
 
-  /* Plot the data */
-  paintData();
-
-  /* Paint the totals */
-  paintTotals();
+      /* Plot the data */
+      paintData();
+  }
+  else if(_viewMode == ViewMode::Slice)
+      paintTotals();
 
   // part of the scale that needs to write over the data curves.
   paintScale2();
@@ -592,9 +673,9 @@ void RSGraphWidget::paintDots(const QVector<QPointF>& points, QColor color)
 /** Paints selected total indicators on the graph. */
 void RSGraphWidget::paintTotals()
 {
+#ifdef UNUSED
     float FS = QFontMetricsF(font()).height();
     //float fact = FS/14.0 ;
-
   //int x = SCALE_WIDTH*fact + FS, y = 0;
   int rowHeight = FS;
 
@@ -602,6 +683,48 @@ void RSGraphWidget::paintTotals()
   /* On Mac, we don't need vertical spacing between the text rows. */
   rowHeight += 5;
 #endif
+#endif
+
+  auto c = new QtCharts::QChart();
+  c->legend()->setVisible(true);
+  c->legend()->setAlignment(Qt::AlignRight);
+
+  auto axisY = new QtCharts::QValueAxis();
+  axisY->setTitleText("MB");
+  axisY->setLabelFormat("%.1f");
+  c->addAxis(axisY, Qt::AlignLeft);
+
+  std::vector<float> vals;
+
+  qint64 total_duration_secs = _source->totalCollectedTime()/1000.0;
+#ifdef GRAPHWIDGET_DEBUG
+  std::cerr << "Total duration secs: " << total_duration_secs << std::endl;
+#endif
+  //_source->getSlicedValues( total_duration_secs * _slice_proportion,total_duration_secs * _slice_proportion + 5,vals);
+  _source->getSlicedValues( 0,5,vals);
+
+  float max_val = 0.0f;
+  for(auto v:vals)
+      max_val = std::max(max_val,v);
+
+  auto pieSeries = new QtCharts::QPieSeries();
+
+  for(uint i=0;i<vals.size();++i)
+      if( _masked_entries.find(_source->displayName(i).toStdString()) == _masked_entries.end() )
+      {
+          QtCharts::QPieSlice *slice = pieSeries->append(_source->legend(i,vals[i],false),vals[i]);
+
+          slice->setColor( getColor(_source->displayName(i).toStdString()) );
+          slice->setLabelVisible(vals[i] > 0.05*max_val);
+      }
+
+  c->resize(_rec.width(),_rec.height());
+  c->addSeries(pieSeries);
+
+  QGraphicsScene scene;
+  scene.addItem(c);
+  scene.setSceneRect(0, 0, _rec.width(), _rec.height());
+  scene.render(_painter, _rec, _rec);
 }
 
 /** Returns a formatted string with the correct size suffix. */
@@ -771,5 +894,27 @@ void RSGraphWidget::paintLegend()
 
           ++j ;
       }
+}
+
+// These functions capture the cursor
+void RSGraphWidget::mousePressEvent(QMouseEvent *e)
+{
+    _mousePressed = true;
+    QFrame::mousePressEvent(e);
+}
+void RSGraphWidget::mouseMoveEvent(QMouseEvent *e)
+{
+    if(_mousePressed)
+        std::cerr << "e->x() = " << e->x() << std::endl;
+
+    setSliceProportion(e->x() / (float)width());
+    updateIfPossible();
+
+    QFrame::mouseMoveEvent(e);
+}
+void RSGraphWidget::mouseReleaseEvent(QMouseEvent *e)
+{
+    _mousePressed = false;
+    QFrame::mouseReleaseEvent(e);
 }
 
