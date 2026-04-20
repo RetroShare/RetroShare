@@ -24,6 +24,7 @@
 
 #include <QModelIndex>
 #include <QColor>
+#include <set>
 
 // This class holds the actual hierarchy of posts, represented by identifiers
 // It is responsible for auto-updating when necessary and holds a mutex to allow the Model to
@@ -157,6 +158,7 @@ public:
     void setAllMsgReadStatus(bool read);
     void setMsgReadStatus(const QModelIndex &i, bool read_status);
     void setFilter(const QStringList &strings, uint32_t &count) ;
+    void setPinnedPosts(const std::set<RsGxsMessageId>& pinnedPosts);
 	void setSortingStrategy(SortingStrategy s);
 	void setPostsInterval(int start,int nb_posts);
     void setPostsDefaultInterval(int size);
@@ -248,6 +250,7 @@ private:
     uint32_t mDisplayedStartIndex;
     uint32_t mDisplayedNbPosts;
     uint32_t mDefaultDisplayedNbPosts;
+    std::set<RsGxsMessageId> mPinnedPosts;
     SortingStrategy mSortingStrategy;
 
 	RsEventsHandlerId_t mEventHandlerId ;

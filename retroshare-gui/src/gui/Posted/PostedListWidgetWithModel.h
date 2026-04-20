@@ -22,6 +22,7 @@
 #define _POSTED_LISTWIDGETWITHMODEL_H
 
 #include <map>
+#include <set>
 
 #include <QStyledItemDelegate>
 
@@ -151,22 +152,25 @@ private slots:
     void nextPosts();
     void prevPosts();
 	void filterItems(QString s);
+    void toggleStickyPost();
 	void updateShowLabel();
 
 public slots:
 	void handlePostsTreeSizeChange(QSize size);
     void voteMsg(RsGxsGrpMsgIdPair msg,bool up_or_down);
     void markCurrentPostAsRead();
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 private:
 	void processSettings(bool load);
 	int viewMode();
 
 	void insertBoardDetails(const RsPostedGroup &group);
-	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+    bool canModerateBoard() const;
 
 private:
     RsPostedGroup mGroup;
+    std::set<RsGxsMessageId> mPinnedPosts;
     RsEventsHandlerId_t mEventHandlerId ;
 
     RsPostedPostsModel *mPostedPostsModel;
