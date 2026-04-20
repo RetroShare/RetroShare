@@ -1545,5 +1545,7 @@ void WireDialog::markGroupAsRead(const RsGxsGroupId &groupId)
 
         // Stats will be refreshed automatically via the READ_STATUS_CHANGED events
         // fired by setMessageReadStatus for each message.
+
+        requestGroupData();
     });
 }

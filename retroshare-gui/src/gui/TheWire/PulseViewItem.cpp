@@ -32,6 +32,8 @@
 #include "gui/RetroShareLink.h"
 #include "util/DateTime.h"
 
+#define IMAGE_WIRE           ":icons/wire.png"
+
 /** Constructor */
 
 PulseViewItem::PulseViewItem(PulseViewHolder *holder)
@@ -41,7 +43,7 @@ PulseViewItem::PulseViewItem(PulseViewHolder *holder)
 
 
 PulseDataItem::PulseDataItem(PulseViewHolder *holder, RsWirePulseSPtr pulse)
-:PulseViewItem(holder), mPulse(pulse)
+:PulseViewItem(holder), mPulse(pulse), mInFill(false)
 {
 }
 
@@ -281,6 +283,8 @@ void PulseDataItem::showPulse()
 		std::cerr << std::endl;
 		return;
 	}
+	
+	mInFill = true; // IMPORTANT: This stops the readToggled signal from firing
 
 	/* 3 Modes:
 	 * ORIGINAL
@@ -305,7 +309,7 @@ void PulseDataItem::showPulse()
 						pixmap,GxsIdDetails::ORIGINAL))
 				{
 					headshotOkay = true;
-					pixmap = pixmap.scaled(50,50);
+					pixmap = pixmap.scaled(50,50,Qt::KeepAspectRatio,Qt::SmoothTransformation);
 					setHeadshot(pixmap);
 				}
 			}
@@ -368,7 +372,7 @@ void PulseDataItem::showPulse()
 						pixmap,GxsIdDetails::ORIGINAL))
 				{
 					headshotOkay = true;
-					pixmap = pixmap.scaled(50,50);
+					pixmap = pixmap.scaled(50,50,Qt::KeepAspectRatio,Qt::SmoothTransformation);
 					setHeadshot(pixmap);
 				}
 			}
@@ -379,8 +383,9 @@ void PulseDataItem::showPulse()
 		if (!headshotOkay) 
 		{
 			// default.
-            QPixmap pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/png/posted.png").scaled(50,50);
-			setHeadshot(pixmap); // QPixmap(":/icons/png/posted.png"));
+			QPixmap pixmap = GxsIdDetails::makeDefaultGroupIcon(mPulse->mMeta.mGroupId, IMAGE_WIRE, GxsIdDetails::ORIGINAL);
+			pixmap = pixmap.scaled(50,50, Qt::KeepAspectRatio,Qt::SmoothTransformation);
+			setHeadshot(pixmap); 
 		}
 
 		setAuthor(mPulse->mMeta.mAuthorId.toStdString());
@@ -416,6 +421,17 @@ void PulseDataItem::showPulse()
 			setReference(0, mPulse->mRefGroupId, mPulse->mRefGroupName);
 		}
 	}
+	
+	if (mPulse)
+    {
+        bool isNew = IS_MSG_NEW(mPulse->mMeta.mMsgStatus);
+        bool isUnread = IS_MSG_UNREAD(mPulse->mMeta.mMsgStatus);
+
+        // Explicitly set the UI state here
+        setReadStatus(isNew, isUnread || isNew);
+    }
+	
+	mInFill = false; // Re-enable signals for user interaction
 }
 
 void PulseDataItem::setGroupName(std::string name)

@@ -34,6 +34,10 @@ public:
 	PulseReply(PulseViewHolder *holder, RsWirePulseSPtr pulse);
 
 	void showReplyLine(bool enable);
+	bool isUnread() const ;
+
+protected slots:
+	void readToggled(bool checked); 
 
 protected:
 	void setup();
@@ -58,6 +62,8 @@ protected:
 	virtual void setReferenceString(QString ref) override;
 	virtual void setPulseStatus(PulseStatus status) override;
 // PulseDataInterface ===========
+
+	virtual void setReadStatus(bool isNew, bool isUnread) override;
 
 	void mousePressEvent(QMouseEvent *event);
 };
