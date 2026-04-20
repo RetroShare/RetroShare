@@ -33,12 +33,15 @@ public:
     static void showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above);
     static void showStickerWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above);
     static QString importedStickerPath();
+    static void addRecentSmiley(const QString& code); 
 
 private:
     static void loadToolTips(QWidget *container);
     static void loadSmiley();
     static void refreshStickerTabs(QVector<QString>& stickerTabs, QString foldername);
     static void refreshStickerTabs(QVector<QString>& stickerTabs);
+    static QStringList recentSmileys; 
+    static int lastTabIndex; 
 };
 
 #endif
