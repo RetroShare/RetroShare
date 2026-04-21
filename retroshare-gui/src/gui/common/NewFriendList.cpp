@@ -1574,7 +1574,7 @@ bool NewFriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &
             while (!pgpID.isNull()) {
                 // add pgp id to group
                 RsPgpId rsPgpId(pgpID.attribute("id").toStdString());
-                if(rsPgpID.isNull() || !rsPeers->assignPeerToGroup(groupId, rsPgpId, true)) {
+                if(!rsPeers->assignPeerToGroup(groupId, rsPgpId, true)) {
                     errorGroups = true;
                     std::cerr << "FriendList::importFriendlist(): failed to add '" << rsPeers->getGPGName(rsPgpId) << "'' to group '" << groupName << "'" << std::endl;
                 }
