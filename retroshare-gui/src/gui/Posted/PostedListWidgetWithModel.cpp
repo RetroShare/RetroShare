@@ -72,7 +72,7 @@ static const int POSTED_TABS_POSTS  = 1;
 // for the image, so it's important that the height is a bit larger so as to leave some room for the text.
 //
 //
-#define IMAGE_COPYLINK     ":/images/copyrslink.png"
+#define IMAGE_COPYLINK     ":icons/png/copy.png"
 #define IMAGE_AUTHOR       ":/images/user/personal64.png"
 #define IMAGE_COPYHTTP     ":/images/emblem-web.png"
 
@@ -357,12 +357,9 @@ void PostedListWidgetWithModel::postContextMenu(const QPoint& point)
 
     menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR), tr("Show author in People tab"), this, SLOT(showAuthorInPeople()))->setData(index);
 
-#ifdef TODO
-    // This feature is not implemented yet in libretroshare.
-
     if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
-        menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
-#endif
+        menu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/pencil-edit-button.png"), tr("Edit"), this, SLOT(editPost()));
+
 
     menu.exec(QCursor::pos());
 }
@@ -528,16 +525,24 @@ void PostedListWidgetWithModel::copyMessageLink()
     }
 }
 
-#ifdef TODO
 void PostedListWidgetWithModel::editPost()
 {
-    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+	QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
 	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
 
-	CreatePostedMsg *msgDialog = new CreatePostedMsg(post.mMeta.mGroupId,post.mMeta.mMsgId);
-    msgDialog->show();
+	RsGxsId author_id;
+	ui->idChooser->getChosenId(author_id);
+
+	if(!rsIdentity->isOwnId(author_id))
+	{
+		QString errorMessage = QString(tr("Attempt to edit a board post with an author that is not a own ID"));
+		QMessageBox::warning(this, "RetroShare", errorMessage, QMessageBox::Ok, QMessageBox::Ok);
+		return;
+	}
+
+	PostedCreatePostDialog *msgDialog = new PostedCreatePostDialog(rsPosted, groupId(),author_id, post.mMeta.mMsgId);
+	msgDialog->show();
 }
-#endif
 
 void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
