@@ -76,7 +76,8 @@ class RetroShareLink
 			TYPE_IDENTITY      = 0x0c,
 			TYPE_FILE_TREE     = 0x0d,
 			TYPE_CHAT_ROOM     = 0x0e,
-			TYPE_WIRE          = 0x0f
+			TYPE_WIRE          = 0x0f,
+			TYPE_CIRCLES        = 0x10
 		};
 
 	public:
@@ -98,6 +99,7 @@ class RetroShareLink
 		static RetroShareLink createIdentity(const RsGxsId& gxs_id,const QString& name,const QString& radix_data) ;
 		static RetroShareLink createFileTree(const QString& name, uint64_t size,uint32_t count,const QString& radix_data);
 		static RetroShareLink createChatRoom(const ChatId &chatId, const QString& name);
+		static RetroShareLink createCircle(const RsGxsCircleId& circleId, const QString& name);
 
 		bool valid() const { return _valid; }
 		enumType type() const {return _type; }
