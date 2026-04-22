@@ -346,7 +346,7 @@ void ChannelsCommentsItem::fill(bool missing_post)
     }
 
     RetroShareLink grplink = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_CHANNEL, mGroupMeta.mGroupId, groupName());
-    RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
+    RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, mComment.mMeta.mMsgId, messageName());
 
     if(missing_post)
         ui->subjectLabel->setText("[" + QObject::tr("Missing channel post")+"]");
