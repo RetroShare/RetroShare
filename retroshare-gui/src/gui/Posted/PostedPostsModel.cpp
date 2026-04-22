@@ -486,6 +486,7 @@ void RsPostedPostsModel::setSortingStrategy(RsPostedPostsModel::SortingStrategy 
 
     mSortingStrategy = s;
     std::sort(mPosts.begin(),mPosts.end(), PostSorter(s));
+    std::stable_partition(mPosts.begin(),mPosts.end(),[this](const RsPostedPost& p){ return mPostedGroup.mPinnedPosts.count(p.mMeta.mMsgId) > 0; });
 
 	postMods();
 }
@@ -540,6 +541,7 @@ void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPost
 	createPostsArray(posts);
 
 	std::sort(mPosts.begin(),mPosts.end(), PostSorter(mSortingStrategy));
+    std::stable_partition(mPosts.begin(),mPosts.end(),[this](const RsPostedPost& p){ return mPostedGroup.mPinnedPosts.count(p.mMeta.mMsgId) > 0; });
 
 	uint32_t tmpval;
 	setFilter(QStringList(),tmpval);

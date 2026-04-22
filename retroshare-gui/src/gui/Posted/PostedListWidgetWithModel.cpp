@@ -364,6 +364,9 @@ void PostedListWidgetWithModel::postContextMenu(const QPoint& point)
         menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
 #endif
 
+   if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
+        menu.addAction(QIcon(":/images/pin.png"), tr("Pin to top"), this, SLOT(pinPost()))->setData(index);
+
     menu.exec(QCursor::pos());
 }
 
@@ -526,6 +529,19 @@ void PostedListWidgetWithModel::copyMessageLink()
     {
         QMessageBox::critical(NULL,tr("Link creation error"),tr("Link could not be created: ")+e.what());
     }
+}
+void PostedListWidgetWithModel::pinPost()
+{
+    QModelIndex index = qobject_cast<QAction*>(QObject::sender())->data().toModelIndex();
+    if(!index.isValid())
+        return;
+
+    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>();
+    if(post.mMeta.mMsgId.isNull())
+        return;
+
+    bool currently_pinned = mGroup.mPinnedPosts.count(post.mMeta.mMsgId) > 0;
+    rsPosted->pinPost(groupId(), post.mMeta.mMsgId, !currently_pinned);
 }
 
 #ifdef TODO
