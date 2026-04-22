@@ -106,13 +106,13 @@ WireDialog::WireDialog(QWidget *parent)
 	QMenu *accountMenu = new QMenu(this);
 	QActionGroup *sortGroup = new QActionGroup(this);
 
-	QAction *sortByName = accountMenu->addAction(tr("Sort by Name"));
+	sortByName = accountMenu->addAction(tr("Sort by Name"));
 	sortByName->setCheckable(true);
 	sortByName->setChecked(true);
 	sortByName->setData(0);
 	sortGroup->addAction(sortByName);
 
-	QAction *sortByActivity = accountMenu->addAction(tr("Sort by Activity"));
+	sortByActivity = accountMenu->addAction(tr("Sort by Activity"));
 	sortByActivity->setCheckable(true);
 	sortByActivity->setData(1);
 	sortGroup->addAction(sortByActivity);
@@ -354,6 +354,10 @@ void WireDialog::processSettings(bool load)
 		// state of filter combobox
 		int index = Settings->value("ShowGroup", 0).toInt();
 		ui.comboBox_groupSet->setCurrentIndex(index);
+
+		// state of sort filter
+		sortByActivity->setChecked(Settings->value("sortByActivity", true).toBool());
+		sortByName->setChecked(Settings->value("SortByName", true).toBool());
 	} else {
 		// save settings
 
@@ -362,6 +366,10 @@ void WireDialog::processSettings(bool load)
 
 		// state of splitter
 		Settings->setValue("SplitterWire", ui.splitter->saveState());
+
+		// state of sort filter
+		Settings->setValue("SortByActivity", sortByActivity->isChecked());
+		Settings->setValue("SortByName", sortByName->isChecked());
 	}
 
 	Settings->endGroup();

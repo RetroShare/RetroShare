@@ -213,6 +213,8 @@ private:
 	RsGxsMessageId mNavigatePendingMsgId;
 	UIStateHelper *mStateHelper;
 
+	QAction *sortByActivity, *sortByName;
+
 	/* UI - from Designer */
 	Ui::WireDialog ui;
 
