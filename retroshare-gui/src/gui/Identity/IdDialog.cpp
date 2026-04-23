@@ -1166,6 +1166,8 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
             is_circle = true ;
 
 	    contextMnu.addSeparator() ;
+	    contextMnu.addAction(QIcon(""), tr("Copy retroshare link"), this, SLOT(copyRetroshareCircleLink()));
+	    contextMnu.addSeparator() ;
     }
     else
     {
@@ -2064,6 +2066,7 @@ void IdDialog::navigate(const RsGxsId& gxs_id)
     }
     ui->idTreeWidget->scrollTo(proxy_indx);//May change if model reloaded
     ui->idTreeWidget->setFocus();
+    ui->rightTabWidget->setCurrentWidget(ui->personTab);
 
     // This has to be done manually because for some reason the proxy model doesn't work with the selection model
     // No signal is emitted when calling setCurrentIndex() above.
@@ -2416,6 +2419,47 @@ void IdDialog::copyRetroshareLink()
 
 		}, this );
 	});
+}
+
+void IdDialog::copyRetroshareCircleLink()
+{
+    RsGxsCircleId circle_id ;
+    QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
+
+    if(!getItemCircleId(item,circle_id))
+        return ;
+
+    RsGxsId item_id(item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString());
+    if(item_id != RsGxsId(circle_id)) return; // not holding a circle item
+
+    RsGxsCircleDetails details;
+    if(rsGxsCircles->getCircleDetails(circle_id, details)) {
+        QList<RetroShareLink> urls ;
+
+        RetroShareLink link = RetroShareLink::createCircle(circle_id, QString::fromUtf8(details.mCircleName.c_str())) ;
+        urls.push_back(link);
+
+        RSLinkClipboard::copyLinks(urls) ;
+
+        QMessageBox::information(NULL,tr("information"),tr("This circle link was copied to your clipboard.")) ;
+    }
+}
+
+void IdDialog::navigateToCircle(const RsGxsId& circleId)
+{
+    ui->rightTabWidget->setCurrentWidget(ui->circleTab);
+
+    QString searchId = QString::fromStdString(circleId.toStdString());
+    
+    QTreeWidgetItemIterator it(ui->treeWidget_membership);
+    while (*it) {
+        if ((*it)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID, Qt::UserRole).toString() == searchId) {
+            ui->treeWidget_membership->setCurrentItem(*it);
+            ui->treeWidget_membership->scrollToItem(*it);
+            break;
+        }
+        ++it;
+    }
 }
 
 void IdDialog::chatIdentityItem(const QModelIndex& indx)
