@@ -30,6 +30,7 @@
 
 #include "IdDialog.h"
 #include "ui_IdDialog.h"
+#include "BannedIdentitiesDialog.h"
 #include "IdEditDialog.h"
 #include "IdentityListModel.h"
 
@@ -385,9 +386,18 @@ IdDialog::IdDialog(QWidget *parent)
     QAction *CreateCircleAction = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/circles.png"),tr("Create new circle"), this);
 	connect(CreateCircleAction, SIGNAL(triggered()), this, SLOT(createExternalCircle()));
 
+	QAction *ShowBannedIdentitiesAction = new QAction(
+	            FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-down.png"),
+	            tr("Show banned identities"), this );
+	connect(
+	            ShowBannedIdentitiesAction, SIGNAL(triggered()),
+	            this, SLOT(openBannedIdentitiesDialog()) );
+
 	QMenu *menu = new QMenu();
 	menu->addAction(CreateIDAction);
 	menu->addAction(CreateCircleAction);
+	menu->addSeparator();
+	menu->addAction(ShowBannedIdentitiesAction);
 	ui->toolButton_New->setMenu(menu);
 
     QFontMetricsF fm(ui->idTreeWidget->font()) ;
@@ -1031,6 +1041,13 @@ void IdDialog::createExternalCircle()
 	dlg.editNewId(true);
 	dlg.exec();
 }
+
+void IdDialog::openBannedIdentitiesDialog()
+{
+	BannedIdentitiesDialog dlg(this);
+	dlg.exec();
+}
+
 void IdDialog::showEditExistingCircle()
 {
     RsGxsCircleId id ;

@@ -1267,6 +1267,7 @@ gxsthewire {
 identities {
 	
 	HEADERS +=  \
+		gui/Identity/BannedIdentitiesDialog.h \
 		gui/Identity/IdDialog.h \
 		gui/Identity/IdentityListModel.h \
 		gui/Identity/IdEditDialog.h \
@@ -1277,6 +1278,7 @@ identities {
 		gui/Identity/IdDetailsDialog.ui \
 
 	SOURCES +=  \
+		gui/Identity/BannedIdentitiesDialog.cpp \
 		gui/Identity/IdDialog.cpp \
 		gui/Identity/IdentityListModel.cpp \
 		gui/Identity/IdEditDialog.cpp \
