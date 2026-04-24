@@ -633,6 +633,15 @@ void ChatLobbyDialog::updateParticipantsList()
                 widgetitem->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
             }
 
+            // Mark contacts in bold
+            RsIdentityDetails detail;
+            bool isContact = rsIdentity->getIdDetails(it2->first, detail)
+                    && (detail.mFlags & RS_IDENTITY_FLAGS_IS_A_CONTACT);
+
+            QFont nameFont = widgetitem->font(COLUMN_NAME);
+            nameFont.setBold(isContact);
+            widgetitem->setFont(COLUMN_NAME, nameFont);
+
             time_t tLastAct=widgetitem->text(COLUMN_ACTIVITY).toInt();
             time_t now = time(NULL);
 
