@@ -42,6 +42,8 @@ public:
 	/** Default Destructor */
 	~PhotoView();
 
+signals:
+    void postChanged(const RsGxsMessageId& msgId);
 
 public slots:
 	void setPixmap(const QPixmap& pixmap);

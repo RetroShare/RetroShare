@@ -191,6 +191,9 @@ void PhotoView::updateDisplay()
 
     const RsPostedPost& post = mPosts[mCurrentIndex];
 
+    // Emit the signal with the current message ID
+    emit postChanged(post.mMeta.mMsgId);
+
     QString timestamp = misc::timeRelativeToNow(post.mMeta.mPublishTs);
 
     // Set Title, ID, and Time using existing methods

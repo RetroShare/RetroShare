@@ -1035,7 +1035,19 @@ void PostedListWidgetWithModel::handleViewGallery(const RsGxsMessageId& startMsg
 
     PhotoView *pv = new PhotoView(this);
     pv->setAttribute(Qt::WA_DeleteOnClose); // Clean up memory on close
+    
+    // CONNECTION: When the gallery shows a post, mark it read
+    connect(pv, &PhotoView::postChanged, [this](const RsGxsMessageId& msgId) {
+        // Combine Group ID and Message ID into the required pair
+        RsGxsGrpMsgIdPair idPair(mGroup.mMeta.mGroupId, msgId);
+        
+        // Call with the correct pair type
+        rsPosted->setPostReadStatus(idPair, true);
+    });
+
     pv->setPosts(postsWithImages, startIndex);
     pv->show();
 
+    // Mark the current item as read immediately in the UI list
+    this->markCurrentPostAsRead();
 }

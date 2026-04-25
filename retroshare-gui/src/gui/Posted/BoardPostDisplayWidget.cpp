@@ -393,6 +393,7 @@ void BoardPostDisplayWidget_compact::setup()
 void BoardPostDisplayWidget_compact::viewPicture() {
     // PostedListWidgetWithModel catches to show the PhotoView with the full list.
     emit showGalleryRequest(mPost.mMeta.mMsgId);
+    emit thumbnailOpenned(); // Keep this for legacy compatibility
 }
 
 QToolButton    *BoardPostDisplayWidget_compact::voteUpButton()   { return ui->voteUpButton; }
