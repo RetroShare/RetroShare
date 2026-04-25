@@ -29,8 +29,11 @@
 #include <QBuffer>
 #include <QMovie>
 
+#include "BoardPostImageHelper.h"
+
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/RetroShareLink.h"
+#include "util/misc.h"
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsposted.h>
@@ -45,7 +48,14 @@ PhotoView::PhotoView(QWidget *parent)
 
   setAttribute(Qt::WA_DeleteOnClose, true);
   
+  // Hide navigation buttons by default
+  ui->prevButton->hide();
+  ui->nextButton->hide();
+  
   connect(ui->shareButton, SIGNAL(clicked()), this, SLOT(copyMessageLink()));
+  connect(ui->prevButton, &QToolButton::clicked, this, &PhotoView::goToPrevious);
+  connect(ui->nextButton, &QToolButton::clicked, this, &PhotoView::goToNext);
+
 }
 
 /** Destructor */
@@ -62,7 +72,10 @@ PhotoView::~PhotoView()
 void PhotoView::setPixmap(const QPixmap& pixmap) 
 {
 	ui->photoLabel->setPixmap(pixmap);
-	this->adjustSize();
+	
+	if (mPosts.size() <= 1){
+		this->adjustSize();
+	}
 }
 
 void PhotoView::setMovie(QMovie* movie)
@@ -136,4 +149,82 @@ void PhotoView::copyMessageLink()
 void PhotoView::setGroupNameString(const QString& name)
 {
 	ui->nameLabel->setText("@" + name);
+}
+
+void PhotoView::setPosts(const QList<RsPostedPost>& posts, int currentIndex)
+{
+    mPosts = posts;
+    mCurrentIndex = currentIndex;
+    
+    if (mPosts.size() > 1) {
+        // Apply constraints only when multiple photos exist
+        this->resize(800, 600);
+    }
+
+    // Show buttons only if there is more than one post to navigate
+    bool showNavigation = (mPosts.size() > 1);
+    ui->prevButton->setVisible(showNavigation);
+    ui->nextButton->setVisible(showNavigation);
+
+    updateDisplay();
+}
+
+void PhotoView::goToPrevious()
+{
+    if (mCurrentIndex > 0) {
+        mCurrentIndex--;
+        updateDisplay();
+    }
+}
+
+void PhotoView::goToNext()
+{
+    if (mCurrentIndex < mPosts.size() - 1){
+        mCurrentIndex++;
+        updateDisplay();
+    }
+}
+
+void PhotoView::updateDisplay()
+{
+    if (mCurrentIndex < 0 || mCurrentIndex >= mPosts.size()) return;
+
+    const RsPostedPost& post = mPosts[mCurrentIndex];
+
+    // Emit the signal with the current message ID
+    emit postChanged(post.mMeta.mMsgId);
+
+    QString timestamp = misc::timeRelativeToNow(post.mMeta.mPublishTs);
+
+    // Set Title, ID, and Time using existing methods
+    setTitle(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
+    setName(post.mMeta.mAuthorId);
+    setTime(timestamp);
+    setGroupId(post.mMeta.mGroupId);
+    setMessageId(post.mMeta.mMsgId);
+
+    // Check if animated image
+    QString format;
+    if (BoardPostImageHelper::isAnimatedImage(post.mImage.mData, post.mImage.mSize, &format))
+    {
+        // Animated GIF/WEBP - use QMovie in popup
+        QMovie* movie = BoardPostImageHelper::createMovieFromData(post.mImage.mData, post.mImage.mSize);
+        if (movie)
+        {
+            movie->setParent(this); // Ensure cleanup
+            setMovie(movie);
+            movie->start();
+        }
+    }
+    else
+    {
+        // Static image - use QPixmap
+        QPixmap pixmap;
+        GxsIdDetails::loadPixmapFromData(post.mImage.mData, post.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+        setPixmap(pixmap);
+    }
+    
+    // Enable/Disable buttons based on bounds
+    ui->prevButton->setEnabled(mCurrentIndex > 0);
+    ui->nextButton->setEnabled(mCurrentIndex < mPosts.size() - 1);
 }

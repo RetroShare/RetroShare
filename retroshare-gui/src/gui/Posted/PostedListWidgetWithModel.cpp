@@ -41,6 +41,7 @@
 #include "gui/feeds/SubFileItem.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/RetroShareLink.h"
+#include "PhotoView.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
@@ -217,10 +218,19 @@ QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 	RS_DBG("Title:", post.mMeta.mMsgName.c_str());
 #endif
 
-	if(mDisplayMode==BoardPostDisplayWidget_compact::DISPLAY_MODE_COMPACT)
-		w = new BoardPostDisplayWidget_compact(post,displayFlags(post.mMeta.mMsgId),parent);
-	else
-		w = new BoardPostDisplayWidget_card(post,displayFlags(post.mMeta.mMsgId),parent);
+	if(mDisplayMode==BoardPostDisplayWidget_compact::DISPLAY_MODE_COMPACT){
+		BoardPostDisplayWidget_compact *compactWidget = new BoardPostDisplayWidget_compact(post, displayFlags(post.mMeta.mMsgId), parent);
+
+		w = compactWidget;
+		// Connect to the specific class that has the signal
+		QObject::connect(compactWidget, SIGNAL(showGalleryRequest(RsGxsMessageId)), 
+						 mPostListWidget, SLOT(handleViewGallery(RsGxsMessageId)));
+	}else{
+		BoardPostDisplayWidget_card *cardWidget = new BoardPostDisplayWidget_card(post, displayFlags(post.mMeta.mMsgId), parent);
+		QObject::connect(cardWidget, SIGNAL(showGalleryRequest(RsGxsMessageId)), 
+						 mPostListWidget, SLOT(handleViewGallery(RsGxsMessageId)));
+		w = cardWidget;
+	}
 
     QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(voteMsg(RsGxsGrpMsgIdPair,bool)));
 	QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(expandItem(RsGxsMessageId,bool)));
@@ -1002,3 +1012,42 @@ void PostedListWidgetWithModel::voteMsg(RsGxsGrpMsgIdPair msg,bool up_or_down)
         updateDisplay(true);
 }
 
+void PostedListWidgetWithModel::handleViewGallery(const RsGxsMessageId& startMsgId) 
+{
+    std::cerr << "Gallery slot triggered for msg:";
+    std::cerr << std::endl;
+
+    QList<RsPostedPost> postsWithImages;
+    int startIndex = 0;
+
+    // Use the model to find all posts with images
+    for(int i = 0; i < mPostedPostsModel->rowCount(); ++i) {
+        QModelIndex idx = mPostedPostsModel->index(i, 0);
+        RsPostedPost post = idx.data(Qt::UserRole).value<RsPostedPost>();
+        
+        if (post.mImage.mSize > 0) {
+            postsWithImages.append(post);
+            if (post.mMeta.mMsgId == startMsgId) {
+                startIndex = postsWithImages.size() - 1;
+            }
+        }
+    }
+
+    PhotoView *pv = new PhotoView(this);
+    pv->setAttribute(Qt::WA_DeleteOnClose); // Clean up memory on close
+    
+    // CONNECTION: When the gallery shows a post, mark it read
+    connect(pv, &PhotoView::postChanged, [this](const RsGxsMessageId& msgId) {
+        // Combine Group ID and Message ID into the required pair
+        RsGxsGrpMsgIdPair idPair(mGroup.mMeta.mGroupId, msgId);
+        
+        // Call with the correct pair type
+        rsPosted->setPostReadStatus(idPair, true);
+    });
+
+    pv->setPosts(postsWithImages, startIndex);
+    pv->show();
+
+    // Mark the current item as read immediately in the UI list
+    this->markCurrentPostAsRead();
+}

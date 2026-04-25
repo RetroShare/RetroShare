@@ -390,46 +390,10 @@ void BoardPostDisplayWidget_compact::setup()
 #endif
 }
 
-void BoardPostDisplayWidget_compact::viewPicture()
-{
-    if(mPost.mImage.mData == NULL)
-        return;
-
-    QString timestamp = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
-    RsGxsId authorID = mPost.mMeta.mAuthorId;
-
-    PhotoView *PView = new PhotoView();
-
-    // Check if animated image
-    QString format;
-    if (BoardPostImageHelper::isAnimatedImage(mPost.mImage.mData, mPost.mImage.mSize, &format))
-    {
-        // Animated GIF/WEBP - use QMovie in popup
-        QMovie* movie = BoardPostImageHelper::createMovieFromData(mPost.mImage.mData, mPost.mImage.mSize);
-        if (movie)
-        {
-            movie->setParent(PView); // Ensure cleanup
-            PView->setMovie(movie);
-            movie->start();
-        }
-    }
-    else
-    {
-        // Static image - use QPixmap
-        QPixmap pixmap;
-        GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
-        PView->setPixmap(pixmap);
-    }
-
-    PView->setTitle(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
-    PView->setName(authorID);
-    PView->setTime(timestamp);
-    PView->setGroupId(mPost.mMeta.mGroupId);
-    PView->setMessageId(mPost.mMeta.mMsgId);
-
-    PView->show();
-
-    emit thumbnailOpenned();
+void BoardPostDisplayWidget_compact::viewPicture() {
+    // PostedListWidgetWithModel catches to show the PhotoView with the full list.
+    emit showGalleryRequest(mPost.mMeta.mMsgId);
+    emit thumbnailOpenned(); // Keep this for legacy compatibility
 }
 
 QToolButton    *BoardPostDisplayWidget_compact::voteUpButton()   { return ui->voteUpButton; }
