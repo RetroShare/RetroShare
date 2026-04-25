@@ -22,8 +22,10 @@
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QBuffer>
+#include <QStyle>
 
 #include "PulseReply.h"
+#include "gui/common/FilesDefs.h"
 
 #include <algorithm>
 #include <iostream>
@@ -45,6 +47,11 @@ PulseReply::PulseReply(PulseViewHolder *holder, RsWirePulseSPtr pulse)
 	widget_prefix->setVisible(false);
 }
 
+bool PulseReply::isUnread() const
+{
+	return IS_MSG_UNREAD(mPulse->mMeta.mMsgStatus) ;
+}
+
 void PulseReply::setup()
 {
 	// connect(pushButton_tmpViewGroup, SIGNAL(clicked()), this, SLOT(actionViewGroup()));
@@ -57,6 +64,8 @@ void PulseReply::setup()
 	connect(toolButton_republish, SIGNAL(clicked()), this, SLOT(actionRepublish()));
 	connect(toolButton_like, SIGNAL(clicked()), this, SLOT(actionLike()));
 	connect(toolButton_view, SIGNAL(clicked()), this, SLOT(actionViewPulse()));
+	connect(readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool))); 
+
 	// hided it takes to much space
 	label_authorName->hide();
 }
@@ -161,17 +170,43 @@ void PulseReply::mousePressEvent(QMouseEvent *event)
     QWidget::mousePressEvent(event);
 }
 
+void PulseReply::readToggled(bool checked)
+{
+    if (mInFill){
+        return;
+    }
 
-//void WireDialog::setAllMessagesReadDo(bool read, uint32_t &token)
-//{
-//    if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(subscribeFlags())) {
-//        return;
-//    }
+    RsGxsGrpMsgIdPair msgPair = std::make_pair(mPulse->mMeta.mGroupId, mPulse->mMeta.mMsgId);
+        
+    // Use the wire service to update the backend
+    rsWire->setMessageReadStatus(msgPair, isUnread()); 
+}
 
-//    foreach (RsWirePulseItem *item, mPostItems) {
-//        RsGxsGrpMsgIdPair msgPair = std::make_pair(item->groupId(), item->messageId());
+void PulseReply::setReadStatus(bool isNew, bool isUnread)
+{
+	if (isNew)
+		mPulse->mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_NEW;
+	else
+		mPulse->mMeta.mMsgStatus &= ~GXS_SERV::GXS_MSG_STATUS_GUI_NEW;
 
-//        rsWire->setMessageReadStatus(token, msgPair, read);
-//    }
-//}
+	// Update the Read Button Icon and State
+	if (isUnread)
+	{
+		mPulse->mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+		readButton->setChecked(true);
+		readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
+	}
+	else
+	{
+		mPulse->mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+		readButton->setChecked(false);
+		readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
+	}
 
+	// Update the New Label
+	newLabel->setVisible(isNew);
+
+	feedFrame->setProperty("new", isNew);
+	feedFrame->style()->unpolish(feedFrame);
+	feedFrame->style()->polish(feedFrame);
+}
