@@ -317,6 +317,7 @@ void ChatLobbyDialog::fetchHistory()
 			if (rsPeers->isOnline(peerId)) {
 				QString peerName = QString::fromUtf8(rsPeers->getPeerName(peerId).c_str());
 				QCheckBox* cbPeer = new QCheckBox(peerName, sourceGroup);
+				cbPeer->setChecked(cbAllFriends->isChecked());
 				peerCheckboxes.insert(cbPeer, peerId);
 				sourceLayout->addWidget(cbPeer);
 				
