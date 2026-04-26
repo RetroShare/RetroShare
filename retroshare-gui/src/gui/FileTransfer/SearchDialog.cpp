@@ -288,6 +288,7 @@ void SearchDialog::processSettings(bool bLoad)
     m_bProcessSettings = true;
 
     QHeaderView *pHeader = ui.searchSummaryWidget->header () ;
+    QHeaderView *pResultHeader = ui.searchResultWidget->header () ;
 
     Settings->beginGroup(QString("SearchDialog"));
 
@@ -296,6 +297,9 @@ void SearchDialog::processSettings(bool bLoad)
 
         // state of SearchSummary tree
         pHeader->restoreState(Settings->value("SearchSummaryTree").toByteArray());
+
+        // state of SearchResult tree
+        pResultHeader->restoreState(Settings->value("SearchResultTree").toByteArray());
 
         // state of splitter
         ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
@@ -307,6 +311,9 @@ void SearchDialog::processSettings(bool bLoad)
 
         // state of SearchSummary tree
         Settings->setValue("SearchSummaryTree", pHeader->saveState());
+
+        // state of SearchResult tree
+        Settings->setValue("SearchResultTree", pResultHeader->saveState());
 
         // state of splitter
         Settings->setValue("Splitter", ui.splitter->saveState());
