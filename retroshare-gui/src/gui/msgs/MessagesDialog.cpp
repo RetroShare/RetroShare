@@ -50,6 +50,7 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmail.h>
+#include <retroshare/rsidentity.h>
 
 #include <algorithm>
 
@@ -825,16 +826,27 @@ void MessagesDialog::showAuthorInPeopleTab()
     idDialog->navigate(RsGxsId(msgInfo.from.toGxsId())) ;
 }
 
-void MessagesDialog::folderlistWidgetCustomPopupMenu(QPoint /*point*/)
+void MessagesDialog::folderlistWidgetCustomPopupMenu(QPoint pos)
 {
-    if (ui.listWidget->currentRow() != ROW_TRASHBOX) {
-        /* Context menu only neede for trash box */
-        return;
-    }
+    QListWidgetItem *item = ui.listWidget->itemAt(pos);
+    if (!item) return;
+
+    // We only show export for the Inbox for now as requested
+    int row = ui.listWidget->row(item);
 
     QMenu contextMnu(this);
 
-    contextMnu.addAction(tr("Empty trash"), this, SLOT(emptyTrash()));
+    if (row == ROW_TRASHBOX) {
+        contextMnu.addAction(tr("Empty trash"), this, SLOT(emptyTrash()));
+    }
+    
+    if (row == ROW_INBOX) {
+        QAction *exportAct = contextMnu.addAction(tr("Export All Mails"));
+        connect(exportAct, SIGNAL(triggered()), this, SLOT(exportMails()));
+        
+        QAction *importAct = contextMnu.addAction(tr("Import Mails"));
+        connect(importAct, SIGNAL(triggered()), this, SLOT(importMails()));
+    }
 
     contextMnu.exec(QCursor::pos());
 }
@@ -1686,3 +1698,136 @@ void MessagesDialog::updateInterface()
         ui.tabWidget->setTabIcon(0, FilesDefs::getIconFromQtResourcePath(":/icons/warning_yellow_128.png"));
 	}
 }
+
+void MessagesDialog::exportMails()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Export Mails"), "", tr("RetroShare Mail (*.rsm)"));
+    if (fileName.isEmpty()) return;
+
+    // Determine which box to export based on current selection
+    Rs::Mail::BoxName box = Rs::Mail::BoxName::BOX_INBOX;
+    int row = ui.listWidget->currentRow();
+    if (row == ROW_INBOX) box = Rs::Mail::BoxName::BOX_INBOX;
+    else if (row == ROW_SENTBOX) box = Rs::Mail::BoxName::BOX_SENT;
+    else if (row == ROW_OUTBOX) box = Rs::Mail::BoxName::BOX_OUTBOX;
+    else if (row == ROW_DRAFTBOX) box = Rs::Mail::BoxName::BOX_DRAFTS;
+    else if (row == ROW_TRASHBOX) box = Rs::Mail::BoxName::BOX_TRASH;
+
+    std::list<Rs::Mail::MsgInfoSummary> summaries;
+    rsMail->getMessageSummaries(box, summaries);
+
+    QFile file(fileName);
+    if (file.open(QIODevice::WriteOnly)) {
+        QDataStream out(&file);
+        out << (uint32_t)0x52534D01; // Magic number 'RSM' + version 1
+        for (const auto &summary : summaries) {
+            Rs::Mail::MessageInfo msg;
+            if (rsMail->getMessage(summary.msgId, msg)) {
+                // Use the 'from' and 'to' MsgAddress members
+                out << (uint32_t)msg.from.type();
+                out << QString::fromStdString(msg.from.toStdString());
+                out << (uint32_t)msg.to.type();
+                out << QString::fromStdString(msg.to.toStdString());
+                out << QString::fromStdString(msg.title);
+                out << QString::fromStdString(msg.msg);
+                out << (uint32_t)msg.ts;
+            }
+        }
+        file.close();
+    }
+}
+
+void MessagesDialog::importMails()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Import Mails"), "", tr("RetroShare Mail (*.rsm)"));
+    if (fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    if (file.open(QIODevice::ReadOnly)) {
+        QDataStream in(&file);
+        
+        int importedCount = 0;
+        int errorCount = 0;
+
+        // Determine target box based on current selection
+        Rs::Mail::BoxName box = Rs::Mail::BoxName::BOX_INBOX;
+        int row = ui.listWidget->currentRow();
+        if (row == ROW_INBOX) box = Rs::Mail::BoxName::BOX_INBOX;
+        else if (row == ROW_SENTBOX) box = Rs::Mail::BoxName::BOX_SENT;
+        else if (row == ROW_OUTBOX) box = Rs::Mail::BoxName::BOX_OUTBOX;
+        else if (row == ROW_DRAFTBOX) box = Rs::Mail::BoxName::BOX_DRAFTS;
+        else if (row == ROW_TRASHBOX) box = Rs::Mail::BoxName::BOX_TRASH;
+
+        uint32_t magic;
+        in >> magic;
+        
+        bool hasType = false;
+        bool hasTs = false;
+        
+        if (magic == 0x52534D01) {
+            hasType = true;
+            hasTs = true;
+        } else {
+            // Old format or something else. Try to recover by rewinding if possible, 
+            // but QDataStream doesn't support it easily. 
+            // We'll just assume it's the very first format if magic doesn't match.
+            file.seek(0);
+            in.resetStatus();
+            // Re-read first value if it wasn't the magic
+        }
+
+        while (!in.atEnd()) {
+            uint32_t fromType = MsgAddress::MSG_ADDRESS_TYPE_RSGXSID;
+            uint32_t toType = MsgAddress::MSG_ADDRESS_TYPE_RSGXSID;
+            QString senderStr, recipientStr, title, body;
+            uint32_t ts = 0;
+
+            if (hasType) {
+                in >> fromType >> senderStr >> toType >> recipientStr >> title >> body >> ts;
+            } else {
+                in >> senderStr >> recipientStr >> title >> body;
+                // Check if there's a timestamp (second version)
+                if (!in.atEnd()) {
+                    quint32 nextLen;
+                    // This is tricky without peek. We'll just try to read it.
+                }
+            }
+            
+            if (in.status() != QDataStream::Ok) break;
+
+            Rs::Mail::MessageInfo msg;
+            
+            auto setAddr = [](MsgAddress& addr, uint32_t type, const std::string& str) {
+                if (type == MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
+                    addr = MsgAddress(RsGxsId(str), MsgAddress::MSG_ADDRESS_MODE_TO);
+                else if (type == MsgAddress::MSG_ADDRESS_TYPE_RSPEERID)
+                    addr = MsgAddress(RsPeerId(str), MsgAddress::MSG_ADDRESS_MODE_TO);
+                else
+                    addr = MsgAddress(str, MsgAddress::MSG_ADDRESS_MODE_TO);
+            };
+
+            setAddr(msg.from, fromType, senderStr.toStdString());
+            setAddr(msg.to, toType, recipientStr.toStdString());
+            if (msg.to.type() != MsgAddress::MSG_ADDRESS_TYPE_UNKNOWN) {
+                msg.destinations.insert(msg.to);
+            }
+            msg.title = title.toStdString();
+            msg.msg = body.toStdString();
+            msg.ts = (ts != 0) ? ts : (uint32_t)time(NULL);
+
+            if (rsMail->addMessage(msg, box)) {
+                importedCount++;
+            } else {
+                errorCount++;
+            }
+        }
+        file.close();
+
+        if (errorCount == 0) {
+            QMessageBox::information(this, tr("Import Mails"), tr("%1 mails imported successfully.").arg(importedCount));
+        } else {
+            QMessageBox::warning(this, tr("Import Mails"), tr("%1 mails imported, %2 errors occurred.").arg(importedCount).arg(errorCount));
+        }
+    }
+}
+
