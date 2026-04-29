@@ -784,11 +784,17 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 				return QString::fromUtf8(details.name.c_str());
 			case REMOTEDIRMODEL_COLUMN_FILENB:
             {
+                if (RemoteMode)
+                    return (qulonglong)details.count;
+
                 auto it = m_folderTotals.find(path);
                 return (it != m_folderTotals.end()) ? (qulonglong)it->second.count : (qulonglong)0;
             }
 			case REMOTEDIRMODEL_COLUMN_SIZE:
             {
+                if (RemoteMode)
+                    return (qulonglong)details.size;
+
                 auto it = m_folderTotals.find(path);
                 return (it != m_folderTotals.end()) ? (qulonglong)it->second.size : (qulonglong)0;
             }
@@ -1744,12 +1750,18 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details, int coln) const
             case REMOTEDIRMODEL_COLUMN_NAME: return QString::fromUtf8(details.name.c_str());
             case REMOTEDIRMODEL_COLUMN_FILENB:
             {
+                if (RemoteMode) {
+                    return QString::number(details.count) + " " + (details.count > 1 ? tr("Files") : tr("File"));
+                }
                 auto it = m_folderTotals.find(path);
                 uint32_t totalFiles = (it != m_folderTotals.end()) ? it->second.count : 0;
                 return QString::number(totalFiles) + " " + (totalFiles > 1 ? tr("Files") : tr("File"));
             }
             case REMOTEDIRMODEL_COLUMN_SIZE: 
             {
+                if (RemoteMode)
+                    return misc::friendlyUnit(details.size);
+
                 auto it = m_folderTotals.find(path);
                 return misc::friendlyUnit((it != m_folderTotals.end()) ? it->second.size : 0);
             }
