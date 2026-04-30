@@ -455,10 +455,17 @@ class PostSorter
 {
 public:
 
-    PostSorter(RsPostedPostsModel::SortingStrategy s) : mSortingStrategy(s) {}
+    PostSorter(RsPostedPostsModel::SortingStrategy s, const std::set<RsGxsMessageId>& pinnedPosts)
+        : mSortingStrategy(s), mPinnedPosts(pinnedPosts) {}
 
 	bool operator()(const RsPostedPost& p1,const RsPostedPost& p2) const
 	{
+        bool p1_pinned = mPinnedPosts.count(p1.mMeta.mMsgId) > 0;
+        bool p2_pinned = mPinnedPosts.count(p2.mMeta.mMsgId) > 0;
+
+        if(p1_pinned != p2_pinned)
+            return p1_pinned;
+
         switch(mSortingStrategy)
         {
         default:
@@ -470,6 +477,7 @@ public:
 
 private:
     RsPostedPostsModel::SortingStrategy mSortingStrategy;
+    const std::set<RsGxsMessageId>& mPinnedPosts;
 };
 
 Qt::ItemFlags RsPostedPostsModel::flags(const QModelIndex& index) const
@@ -485,7 +493,7 @@ void RsPostedPostsModel::setSortingStrategy(RsPostedPostsModel::SortingStrategy 
     preMods();
 
     mSortingStrategy = s;
-    std::sort(mPosts.begin(),mPosts.end(), PostSorter(s));
+    std::sort(mPosts.begin(),mPosts.end(), PostSorter(s, mPostedGroup.mPinnedPosts.ids));
 
 	postMods();
 }
@@ -539,7 +547,7 @@ void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPost
 
 	createPostsArray(posts);
 
-	std::sort(mPosts.begin(),mPosts.end(), PostSorter(mSortingStrategy));
+	std::sort(mPosts.begin(),mPosts.end(), PostSorter(mSortingStrategy, mPostedGroup.mPinnedPosts.ids));
 
 	uint32_t tmpval;
 	setFilter(QStringList(),tmpval);

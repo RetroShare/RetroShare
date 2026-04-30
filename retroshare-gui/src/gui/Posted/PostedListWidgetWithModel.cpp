@@ -357,12 +357,16 @@ void PostedListWidgetWithModel::postContextMenu(const QPoint& point)
 
     menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR), tr("Show author in People tab"), this, SLOT(showAuthorInPeople()))->setData(index);
 
-#ifdef TODO
-    // This feature is not implemented yet in libretroshare.
+    if(IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags))
+        menu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/pencil-edit-button.png"), tr("Edit"), this, SLOT(editPost()))->setData(index);
 
-    if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
-        menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
-#endif
+    if(IS_GROUP_ADMIN(mGroup.mMeta.mSubscribeFlags))
+    {
+        bool is_pinned = mGroup.mPinnedPosts.ids.find(post.mMeta.mMsgId) != mGroup.mPinnedPosts.ids.end();
+        menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/pin32.png"),
+                       is_pinned ? tr("Un-pin this post") : tr("Pin this post"),
+                       this, SLOT(togglePinPost()))->setData(index);
+    }
 
     menu.exec(QCursor::pos());
 }
@@ -830,6 +834,47 @@ std::cerr << "Chosing default ID " << author_id<< std::endl;
 	/* window will destroy itself! */
 }
 
+void PostedListWidgetWithModel::editPost()
+{
+    QModelIndex index = qobject_cast<QAction*>(QObject::sender())->data().toModelIndex();
+
+    if(!index.isValid())
+        return;
+
+    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>();
+
+    PostedCreatePostDialog *msgDialog = new PostedCreatePostDialog(
+                rsPosted, groupId(), post.mMeta.mAuthorId );
+    msgDialog->setTitle(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
+    msgDialog->setNotes(QString::fromUtf8(post.mNotes.c_str()));
+    msgDialog->setLink(QString::fromUtf8(post.mLink.c_str()));
+    msgDialog->setOrigPostId(post.mMeta.mMsgId);
+    msgDialog->show();
+
+    /* window will destroy itself! */
+}
+
+void PostedListWidgetWithModel::togglePinPost()
+{
+    QModelIndex index = qobject_cast<QAction*>(QObject::sender())->data().toModelIndex();
+
+    if(!index.isValid())
+        return;
+
+    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>();
+
+    if(mGroup.mPinnedPosts.ids.find(post.mMeta.mMsgId) == mGroup.mPinnedPosts.ids.end())
+        mGroup.mPinnedPosts.ids.insert(post.mMeta.mMsgId);
+    else
+        mGroup.mPinnedPosts.ids.erase(post.mMeta.mMsgId);
+
+    RsPostedGroup updatedGroup = mGroup;
+    RsThread::async([updatedGroup]() mutable
+    {
+        rsPosted->editBoard(updatedGroup);
+    });
+}
+
 void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 {
     // save selection if needed
@@ -1001,4 +1046,3 @@ void PostedListWidgetWithModel::voteMsg(RsGxsGrpMsgIdPair msg,bool up_or_down)
     else
         updateDisplay(true);
 }
-

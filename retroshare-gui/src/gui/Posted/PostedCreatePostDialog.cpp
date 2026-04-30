@@ -18,7 +18,6 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <QBuffer>
 #include <QClipboard>
 #include <QMessageBox>
 #include <QByteArray>
@@ -38,12 +37,12 @@
 
 #include "gui/settings/rsharesettings.h"
 #include "BoardPostImageHelper.h"
-#include <QBuffer>
 
 #include <iostream>
 #include <gui/RetroShareLink.h>
 #include <util/imageutil.h>
 #include "gui/common/FilesDefs.h"
+#include "util/rsurl.h"
 
 /* View Page */
 #define VIEW_POST   0
@@ -136,6 +135,13 @@ void PostedCreatePostDialog::processSettings(bool load)
 	Settings->endGroup();
 }
 
+void PostedCreatePostDialog::setOrigPostId(const RsGxsMessageId& origPostId)
+{
+	mOrigPostId = origPostId;
+	if(!origPostId.isNull())
+		ui->headerFrame->setHeaderText(tr("Edit Post"));
+}
+
 void PostedCreatePostDialog::createPost()
 {
 	if(ui->titleEdit->text().isEmpty()) {
@@ -160,46 +166,46 @@ void PostedCreatePostDialog::createPost()
 		return;
 	}//switch (ui->idChooser->getChosenId(authorId))
 
-	RsPostedPost post;
-	post.mMeta.mGroupId = mGrpId;
-	post.mLink = std::string(ui->linkEdit->text().toUtf8());
-	
-	if(!ui->RichTextEditWidget->toPlainText().trimmed().isEmpty()) {
-		QString text;
-		text = ui->RichTextEditWidget->toHtml();
-		post.mNotes = std::string(text.toUtf8());
-	}
+	std::string title = std::string(ui->titleEdit->text().toUtf8());
+	std::string link  = std::string(ui->linkEdit->text().toUtf8());
+	std::string notes;
 
-	post.mMeta.mAuthorId = authorId;
-	post.mMeta.mMsgName = std::string(ui->titleEdit->text().toUtf8());
-	
+	if(!ui->RichTextEditWidget->toPlainText().trimmed().isEmpty())
+		notes = std::string(ui->RichTextEditWidget->toHtml().toUtf8());
+
+	RsGxsImage image;
 	if(imagebytes.size() > 0)
-	{
-		// send posted image
-		post.mImage.copy((uint8_t *) imagebytes.data(), imagebytes.size());
-	}	
+		image.copy((uint8_t *) imagebytes.data(), imagebytes.size());
 
-	int msgsize = post.mLink.length() + post.mMeta.mMsgName.length() + post.mNotes.length() + imagebytes.size();
+	int msgsize = link.length() + title.length() + notes.length() + imagebytes.size();
 	if(msgsize > MAXMESSAGESIZE) {
 		QString errormessage = QString(tr("Message is too large.<br />actual size: %1 bytes, maximum size: %2 bytes.")).arg(msgsize).arg(MAXMESSAGESIZE);
 		QMessageBox::warning(this, "RetroShare", errormessage, QMessageBox::Ok, QMessageBox::Ok);
 		return;
 	}
 
-    RsThread::async([this,post]()
-    {
-        RsGxsMessageId post_id;
+	RsGxsGroupId boardId = mGrpId;
+	RsGxsMessageId origPostId = mOrigPostId;
 
-        bool res = rsPosted->createPost(post,post_id);
+	RsThread::async([this, boardId, title, link, notes, authorId, image, origPostId]()
+	{
+		RsGxsMessageId post_id;
+		std::string error_message;
 
-        RsQThreadUtils::postToObject( [res,this]()
-        {
-            if(!res)
-                QMessageBox::information(nullptr,tr("Error while creating post"),tr("An error occurred while creating the post."));
+		bool res = rsPosted->createPostV2(boardId, title, RsUrl(link), notes, authorId, image, post_id, error_message, origPostId);
 
-            accept();
-        }, this );
-    });
+		RsQThreadUtils::postToObject( [res, error_message, this]()
+		{
+			if(!res)
+			{
+				QMessageBox::warning(nullptr, tr("Error while saving post"),
+				                     QString("%1\n\n%2").arg(tr("An error occurred while saving the post."),
+				                                            QString::fromStdString(error_message)));
+				return;
+			}
+			accept();
+		}, this );
+	});
 }
 
 void PostedCreatePostDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
