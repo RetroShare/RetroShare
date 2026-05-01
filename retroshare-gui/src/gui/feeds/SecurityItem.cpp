@@ -150,13 +150,17 @@ void SecurityItem::updateItemStatic()
         case RsFeedTypeFlags::RS_FEED_ITEM_SEC_BAD_CERTIFICATE:
 			{
 			RsPeerDetails details ;
-            if(rsPeers->getGPGDetails(mGpgId, details))
-                title = tr("Missing/Damaged SSL certificate for key")+" " + QString::fromStdString(mGpgId.toStdString()) ;
-			else
-				title = tr("Missing/Damaged certificate. Not a real Retroshare user.");
-			requestLabel->hide();
+			if(rsPeers->getGPGDetails(mGpgId, details)){
+				title = tr("Connection attempt from")+" " + QString::fromStdString(mGpgId.toStdString())+" " + tr("Not a Retroshare user.");
+				requestLabel->hide();
+				friendRequesttoolButton->hide();
+			} else {
+				title = tr("Connection attempt from")+" " + QString::fromStdString(mGpgId.toStdString())+" " + tr("Not a Retroshare user.");
+				requestLabel->hide();
+				friendRequesttoolButton->hide();
 			}
 			avatar->setDefaultAvatar(":icons/ssl.png");
+			}
 			break;
         case RsFeedTypeFlags::RS_FEED_ITEM_SEC_INTERNAL_ERROR:
 			title = tr("Certificate caused an internal error.");
@@ -295,8 +299,17 @@ void SecurityItem::updateItem()
 		}
 		else
 		{
-			friendRequesttoolButton->show();
-			requestLabel->show();
+			// Only show the friend request button if it's NOT a bad certificate case
+			if(mType != RsFeedTypeFlags::RS_FEED_ITEM_SEC_BAD_CERTIFICATE) 
+			{
+				friendRequesttoolButton->show();
+				requestLabel->show();
+			}
+			else 
+			{
+				friendRequesttoolButton->hide();
+				requestLabel->hide();
+			}
 			removeFriendButton->setEnabled(false);
 			removeFriendButton->hide();
 		}
