@@ -154,11 +154,12 @@ void BoardPostDisplayWidgetBase::baseSetup()
 {
     // show/hide things based on the view type
 
-    if(!(mDisplayFlags & SHOW_COMMENTS))
-        commentButton()->setChecked(false);
-    else
-        commentButton()->setChecked(true);
-
+    if (mDisplayFlags & RsPostedPostsModel::SHOW_PINNED)
+    {
+        // 确保使用正确图标路径，这里假设存在 :images/pin.png，如果不存在请告诉我
+        titleLabel()->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/pin.png").scaled(16,16,Qt::KeepAspectRatio,Qt::SmoothTransformation));
+    }
+    
     /* clear ui */
     titleLabel()->setText(tr("Loading"));
     dateLabel()->clear();

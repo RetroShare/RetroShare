@@ -147,8 +147,10 @@ private slots:
 	void settingsChanged();
 	void postPostLoad();
 	void copyMessageLink();
-    void copyHttpLink();
-    void nextPosts();
+    void editPost();
+    void togglePin();
+	void copyHttpLink();
+void nextPosts();
     void prevPosts();
 	void filterItems(QString s);
 	void updateShowLabel();
