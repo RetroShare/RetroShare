@@ -46,6 +46,14 @@ RsPostedPostsModel::RsPostedPostsModel(int default_chunk_size, QObject *parent)
     : QAbstractItemModel(parent), mTreeMode(TREE_MODE_PLAIN)
 {
     mDefaultDisplayedNbPosts = default_chunk_size;
+    
+    // Load pinned posts from settings
+    Settings->beginGroup("Posted");
+    QStringList pinnedList = Settings->value("PinnedPosts").toStringList();
+    for (const QString& id : pinnedList) {
+        mPinnedPosts.insert(id.toStdString());
+    }
+    Settings->endGroup();
 
     initEmptyHierarchy();
 
@@ -455,10 +463,16 @@ class PostSorter
 {
 public:
 
-    PostSorter(RsPostedPostsModel::SortingStrategy s) : mSortingStrategy(s) {}
+    PostSorter(RsPostedPostsModel::SortingStrategy s, const std::set<std::string>& pinned) 
+        : mSortingStrategy(s), mPinnedPosts(pinned) {}
 
 	bool operator()(const RsPostedPost& p1,const RsPostedPost& p2) const
 	{
+        bool p1_pinned = mPinnedPosts.find(p1.mMeta.mMsgId.toStdString()) != mPinnedPosts.end();
+        bool p2_pinned = mPinnedPosts.find(p2.mMeta.mMsgId.toStdString()) != mPinnedPosts.end();
+
+        if (p1_pinned != p2_pinned) return p1_pinned;
+
         switch(mSortingStrategy)
         {
         default:
@@ -470,6 +484,7 @@ public:
 
 private:
     RsPostedPostsModel::SortingStrategy mSortingStrategy;
+    const std::set<std::string>& mPinnedPosts;
 };
 
 Qt::ItemFlags RsPostedPostsModel::flags(const QModelIndex& index) const
@@ -485,9 +500,34 @@ void RsPostedPostsModel::setSortingStrategy(RsPostedPostsModel::SortingStrategy 
     preMods();
 
     mSortingStrategy = s;
-    std::sort(mPosts.begin(),mPosts.end(), PostSorter(s));
+    std::sort(mPosts.begin(),mPosts.end(), PostSorter(s, mPinnedPosts));
 
 	postMods();
+}
+
+void RsPostedPostsModel::togglePinnedPost(const RsGxsMessageId& msgId)
+{
+    std::string idStr = msgId.toStdString();
+    if (mPinnedPosts.count(idStr))
+        mPinnedPosts.erase(idStr);
+    else
+        mPinnedPosts.insert(idStr);
+    
+    // Trigger resort
+    setSortingStrategy(mSortingStrategy);
+
+    // Persist
+    Settings->beginGroup("Posted");
+    QStringList pinnedList;
+    for (const auto& id : mPinnedPosts) pinnedList << QString::fromStdString(id);
+    Settings->setValue("PinnedPosts", pinnedList);
+    Settings->endGroup();
+}
+
+void RsPostedPostsModel::setPinnedPosts(const std::set<std::string>& pinned)
+{
+    mPinnedPosts = pinned;
+    setSortingStrategy(mSortingStrategy);
 }
 
 void RsPostedPostsModel::setPostsInterval(int start,int nb_posts)

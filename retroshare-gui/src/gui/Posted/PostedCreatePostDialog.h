@@ -38,7 +38,7 @@ public:
 	 * @param tokenQ parent callee token
 	 * @param posted
 	 */
-    explicit PostedCreatePostDialog(RsPosted* posted, const RsGxsGroupId& grpId, const RsGxsId& default_author=RsGxsId(),QWidget *parent = 0);
+    explicit PostedCreatePostDialog(RsPosted* posted, const RsGxsGroupId& grpId, const RsGxsId& default_author=RsGxsId(), const RsGxsMessageId& msgId=RsGxsMessageId(), QWidget *parent = 0);
 	~PostedCreatePostDialog();
 
 	void setTitle(const QString& title);
@@ -70,6 +70,9 @@ private:
 	RsGxsGroupId mGrpId;
 
 	Ui::PostedCreatePostDialog *ui;
+
+    void setPostId(const RsGxsMessageId& msgId) { mMsgId = msgId; }
+    RsGxsMessageId mMsgId;
 };
 
 #endif // POSTEDCREATEPOSTDIALOG_H

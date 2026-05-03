@@ -357,12 +357,11 @@ void PostedListWidgetWithModel::postContextMenu(const QPoint& point)
 
     menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR), tr("Show author in People tab"), this, SLOT(showAuthorInPeople()))->setData(index);
 
-#ifdef TODO
-    // This feature is not implemented yet in libretroshare.
-
     if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
         menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
-#endif
+
+    bool pinned = mPostedPostsModel->isPinned(post.mMeta.mMsgId);
+    menu.addAction(pinned ? tr("Unpin") : tr("Pin"), this, SLOT(togglePin()))->setData(index);
 
     menu.exec(QCursor::pos());
 }
@@ -470,30 +469,23 @@ void PostedListWidgetWithModel::showAuthorInPeople()
     MainWindow::showWindow(MainWindow::People);
     idDialog->navigate(RsGxsId(post.mMeta.mAuthorId));
 }
-void PostedListWidgetWithModel::copyHttpLink()
+void PostedListWidgetWithModel::editPost()
 {
-    try
-    {
-        if (groupId().isNull())
-            throw std::runtime_error("No channel currently selected!");
+    QModelIndex index = qobject_cast<QAction*>(QObject::sender())->data().toModelIndex();
 
-        QModelIndex index = qobject_cast<QAction*>(QObject::sender())->data().toModelIndex();
+    if(!index.isValid())
+        return;
 
-        if(!index.isValid())
-            throw std::runtime_error("No post under mouse!");
+    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
 
-        RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
+    PostedCreatePostDialog *dlg = new PostedCreatePostDialog(rsPosted, mGrpId, post.mMeta.mAuthorId, post.mMeta.mMsgId, this);
+    // dlg->setPostId(post.mMeta.mMsgId); // 之前我们在构造函数直接传了，不需要这行了
+    dlg->setTitle(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
+    dlg->setNotes(QString::fromUtf8(post.mNotes.c_str()));
+    dlg->setLink(QString::fromUtf8(post.mLink.c_str()));
 
-        if(post.mMeta.mMsgId.isNull())
-            throw std::runtime_error("Post has empty MsgId!");
-
-        QApplication::clipboard()->setText(QString::fromStdString(post.mLink)) ;
-        QMessageBox::information(NULL,tr("information"),tr("The Retrohare link was copied to your clipboard.")) ;
-    }
-    catch(std::exception& e)
-    {
-        QMessageBox::critical(NULL,tr("Link creation error"),tr("Link could not be created: ")+e.what());
-    }
+    dlg->exec();
+    delete dlg;
 }
 void PostedListWidgetWithModel::copyMessageLink()
 {
