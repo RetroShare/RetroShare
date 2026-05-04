@@ -82,6 +82,7 @@
 
 #ifdef RS_USE_CIRCLES
 #include "gui/People/PeopleDialog.h"
+#include "FriendRequests/FriendRequestsPage.h"
 #endif
 #include "idle/idle.h"
 
@@ -459,6 +460,16 @@ void MainWindow::initStackedPage()
   #ifdef RS_USE_NEW_PEOPLE_DIALOG
   PeopleDialog *peopleDialog = NULL;
   addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
+  #endif
+
+  #ifdef RS_USE_FRIEND_REQUESTS_PAGE
+  mFriendRequestsPage = new FriendRequestsPage(this);
+  connect(mFriendRequestsPage, &FriendRequestsPage::pendingCountChanged,
+          this,                &MainWindow::updateFriendRequestBadge);
+  mFriendRequestsAction = addPage(
+          mFriendRequestsPage,
+          QIcon(":/images/friend_request.png"),
+          tr("Friend Requests"));
   #endif
 #ifdef RS_USE_WIKI
   wikiDialog = NULL;
@@ -1848,6 +1859,15 @@ void MainWindow::setCompactStatusMode(bool compact)
 	hashingstatus->setCompactMode(compact);
 	ratesstatus->setCompactMode(compact);
 	//opModeStatus: TODO Show only ???
+}
+
+void MainWindow::updateFriendRequestBadge(int count)
+{
+	if (!mFriendRequestsAction) return;
+	QString label = tr("Friend Requests");
+	if (count > 0)
+		label += QString(" (%1)").arg(count);
+	mFriendRequestsAction->setText(label);
 }
 
 Gui_InputDialogReturn MainWindow::guiInputDialog(const QString& windowTitle, const QString& labelText, QLineEdit::EchoMode textEchoMode, bool modal)

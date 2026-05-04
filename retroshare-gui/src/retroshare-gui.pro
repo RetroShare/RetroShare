@@ -1304,6 +1304,8 @@ gxscircles {
 	HEADERS += gui/People/PeopleDialog.h
 	HEADERS += gui/People/CircleWidget.h
 	HEADERS += gui/People/IdentityWidget.h
+	HEADERS += gui/FriendRequests/FriendRequestsPage.h
+	SOURCES += gui/FriendRequests/FriendRequestsPage.cpp
 
 	FORMS   += gui/People/PeopleDialog.ui 
 	FORMS   += gui/People/CircleWidget.ui
