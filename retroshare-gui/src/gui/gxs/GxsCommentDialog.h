@@ -44,8 +44,13 @@ public:
 	RsGxsGroupId groupId() { return mGrpId; }
 	RsGxsMessageId messageId() { return mMostRecentMsgId; }
 
+	// YouTube style methods
+	void setUseYouTubeStyle(bool useYouTubeStyle) { mUseYouTubeStyle = useYouTubeStyle; }
+	void loadYouTubeStyleComments(const std::vector<RsGxsComment> &comments);
+
 public slots:
     void refresh();
+	void loadYouTubeStyle();
 
 private slots:
     void idChooserReady();
@@ -58,10 +63,13 @@ signals:
 
 private:
     void init(const RsGxsId &default_author);
+	void setupYouTubeStyleWidget();
 
 	RsGxsGroupId   mGrpId;
 	RsGxsMessageId mMostRecentMsgId;
 	std::set<RsGxsMessageId> mMsgVersions;
+	bool mUseYouTubeStyle;
+	YouTubeStyleCommentWidget *mYouTubeStyleWidget;
 
 	/* UI - from Designer */
 	Ui::GxsCommentDialog *ui;

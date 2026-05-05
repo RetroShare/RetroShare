@@ -20,6 +20,7 @@
 
 #include "gui/gxs/GxsCommentDialog.h"
 #include "gui/gxs/GxsCommentTreeWidget.h"
+#include "gui/gxs/YouTubeStyleCommentWidget.h"
 #include "ui_GxsCommentDialog.h"
 
 #include <iostream>
@@ -33,7 +34,7 @@
 
 /** Constructor */
 GxsCommentDialog::GxsCommentDialog(QWidget *parent, const RsGxsId &default_author, RsGxsCommentService *comment_service)
-	: QWidget(parent), ui(new Ui::GxsCommentDialog)
+	: QWidget(parent), ui(new Ui::GxsCommentDialog), mUseYouTubeStyle(false), mYouTubeStyleWidget(nullptr)
 {
 	/* Invoke the Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
@@ -75,7 +76,7 @@ void GxsCommentDialog::setGxsService(RsGxsCommentService *comment_service)
 }
 
 GxsCommentDialog::GxsCommentDialog(QWidget *parent,const RsGxsId &default_author)
-	: QWidget(parent), ui(new Ui::GxsCommentDialog)
+	: QWidget(parent), ui(new Ui::GxsCommentDialog), mUseYouTubeStyle(false), mYouTubeStyleWidget(nullptr)
 {
 	/* Invoke the Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
@@ -91,6 +92,9 @@ GxsCommentDialog::~GxsCommentDialog()
 void GxsCommentDialog::commentClear()
 {
     ui->treeWidget->clear();
+    if (mYouTubeStyleWidget) {
+        mYouTubeStyleWidget->clearComments();
+    }
     mGrpId.clear();
     mMostRecentMsgId.clear();
     mMsgVersions.clear();
@@ -198,19 +202,75 @@ void GxsCommentDialog::setCommentHeader(QWidget *header)
 
 void GxsCommentDialog::sortComments(int i)
 {
-
 	switch(i)
 	{
 	default:
 	case 0:
-		ui->treeWidget->sortByColumn(4, Qt::DescendingOrder); 
+		if (mUseYouTubeStyle && mYouTubeStyleWidget) {
+			mYouTubeStyleWidget->sortComments(0);
+		} else {
+			ui->treeWidget->sortByColumn(4, Qt::DescendingOrder);
+		}
 		break;
 	case 1:
-		ui->treeWidget->sortByColumn(2, Qt::DescendingOrder); 
+		if (mUseYouTubeStyle && mYouTubeStyleWidget) {
+			mYouTubeStyleWidget->sortComments(1);
+		} else {
+			ui->treeWidget->sortByColumn(2, Qt::DescendingOrder);
+		}
 		break;
 	case 2:
-		ui->treeWidget->sortByColumn(3, Qt::DescendingOrder); 
+		if (mUseYouTubeStyle && mYouTubeStyleWidget) {
+			mYouTubeStyleWidget->sortComments(2);
+		} else {
+			ui->treeWidget->sortByColumn(3, Qt::DescendingOrder);
+		}
 		break;
 	}
+}
 
+void GxsCommentDialog::setupYouTubeStyleWidget()
+{
+	if (mYouTubeStyleWidget) {
+		return; // Already set up
+	}
+
+	mYouTubeStyleWidget = new YouTubeStyleCommentWidget(ui->treeWidget->parent());
+	mYouTubeStyleWidget->setCommentService(mCommentService);
+
+	// Hide tree widget and show YouTube style widget
+	// This is done by replacing the tree widget in the layout
+	QGridLayout *layout = qobject_cast<QGridLayout*>(ui->treeWidget->parent()->layout());
+	if (layout) {
+		int row, col, rowSpan, colSpan;
+		layout->getItemPosition(layout->indexOf(ui->treeWidget), &row, &col, &rowSpan, &colSpan);
+		layout->removeWidget(ui->treeWidget);
+		ui->treeWidget->hide();
+		layout->addWidget(mYouTubeStyleWidget, row, col, rowSpan, colSpan);
+		mYouTubeStyleWidget->show();
+	}
+}
+
+void GxsCommentDialog::loadYouTubeStyleComments(const std::vector<RsGxsComment> &comments)
+{
+	if (!mYouTubeStyleWidget) {
+		setupYouTubeStyleWidget();
+	}
+
+	mYouTubeStyleWidget->clearComments();
+
+	for (const auto &comment : comments) {
+		mYouTubeStyleWidget->addComment(comment, comment.mMeta.mParentId);
+	}
+}
+
+void GxsCommentDialog::loadYouTubeStyle()
+{
+	mUseYouTubeStyle = true;
+	setupYouTubeStyleWidget();
+
+	// Load existing comments from tree widget to YouTube style widget
+	if (mYouTubeStyleWidget) {
+		mYouTubeStyleWidget->loadCommentsForPost(mGrpId, mMostRecentMsgId);
+	}
 }

@@ -39,7 +39,12 @@ public:
     static bool getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
     static bool getAvatarFromGpgId(const RsPgpId & gpgId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
     static bool getAvatarFromGxsId(const RsGxsId & gxsId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
+
+    // Disk cache methods for persistent avatars
+    static QString getAvatarCacheDir();
+    static bool loadAvatarFromDiskCache(const RsPeerId& sslId, QPixmap &avatar);
+    static bool saveAvatarToDiskCache(const RsPeerId& sslId, const QPixmap &avatar);
+    static void cleanupAvatarDiskCache();
 };
 
 #endif
-
