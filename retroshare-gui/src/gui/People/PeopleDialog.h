@@ -112,6 +112,7 @@ private:
 	QString mSearchFilter;
 	int mSortMethod;
 
+	void setIdentitiesViewMode(int mode);
 
 	TokenQueue *mIdentityQueue;
 	TokenQueue *mCirclesQueue;

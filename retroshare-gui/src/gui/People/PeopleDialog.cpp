@@ -1158,6 +1158,7 @@ void PeopleDialog::setViewMode(int mode)
 {
 	mCurrentViewMode = mode;
 	Settings->setValueToGroup("PeopleDialog", "ViewMode", mode);
+	setIdentitiesViewMode(mode);
 }
 
 void PeopleDialog::filterIdentities()
@@ -1186,4 +1187,40 @@ void PeopleDialog::filterIdentities()
 void PeopleDialog::sortIdentities()
 {
 	// Placeholder for sorting implementation
+}
+
+void PeopleDialog::setIdentitiesViewMode(int mode)
+{
+	// Apply thumbnail/list mode to all identity widgets
+	// This changes the visual presentation of each IdentityWidget
+
+	if (mode == VIEW_MODE_THUMBNAIL) {
+		// In thumbnail mode, minimize labels and show compact view
+		std::map<RsGxsId,IdentityWidget *>::iterator itExt;
+		for (itExt = _gxs_identity_widgets.begin(); itExt != _gxs_identity_widgets.end(); ++itExt) {
+			IdentityWidget *widget = itExt->second;
+			widget->setMinimumSize(QSize(80, 80));
+			widget->setMaximumSize(QSize(80, 80));
+		}
+		std::map<RsPgpId,IdentityWidget *>::iterator itInt;
+		for (itInt = _pgp_identity_widgets.begin(); itInt != _pgp_identity_widgets.end(); ++itInt) {
+			IdentityWidget *widget = itInt->second;
+			widget->setMinimumSize(QSize(80, 80));
+			widget->setMaximumSize(QSize(80, 80));
+		}
+	} else {
+		// List mode - restore normal size
+		std::map<RsGxsId,IdentityWidget *>::iterator itExt;
+		for (itExt = _gxs_identity_widgets.begin(); itExt != _gxs_identity_widgets.end(); ++itExt) {
+			IdentityWidget *widget = itExt->second;
+			widget->setMinimumSize(QSize(100, 150));
+			widget->setMaximumSize(QSize(100, 150));
+		}
+		std::map<RsPgpId,IdentityWidget *>::iterator itInt;
+		for (itInt = _pgp_identity_widgets.begin(); itInt != _pgp_identity_widgets.end(); ++itInt) {
+			IdentityWidget *widget = itInt->second;
+			widget->setMinimumSize(QSize(100, 150));
+			widget->setMaximumSize(QSize(100, 150));
+		}
+	}
 }
