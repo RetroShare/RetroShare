@@ -26,6 +26,8 @@
 #include <QScrollArea>
 #include <QMap>
 
+#include <set>
+
 #include <retroshare/rsgxscommon.h>
 
 namespace Ui {
@@ -55,7 +57,7 @@ public:
 	void commentReply(const RsGxsMessageId &parentId);
 
 public slots:
-	void loadCommentsForPost(const RsGxsGroupId &groupId, const RsGxsMessageId &postId);
+	void loadCommentsForPost(const RsGxsGroupId &groupId, const std::set<RsGxsMessageId> &msgVersions, const RsGxsMessageId &mostRecentMsgId);
 	void sortComments(int sortMethod);
 
 private:

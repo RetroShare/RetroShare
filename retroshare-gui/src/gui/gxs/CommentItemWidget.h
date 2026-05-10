@@ -63,7 +63,7 @@ public:
 	void replyClicked(const RsGxsMessageId &msgId);
 	void authorClicked(const RsGxsId &authorId);
 
-public slots:
+private slots:
 	void on_upvoteButton_clicked();
 	void on_downvoteButton_clicked();
 	void on_replyButton_clicked();

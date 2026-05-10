@@ -20,54 +20,6 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="GxsCommentDialogGLayout">
-   <item row="1" column="0">
-    <widget class="GxsCommentTreeWidget" name="treeWidget">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="sortingEnabled">
-      <bool>true</bool>
-     </property>
-     <column>
-      <property name="text">
-       <string>Comment</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Author</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Date</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Score</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>UpVotes</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>DownVotes</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>OwnVote</string>
-      </property>
-     </column>
-    </widget>
-   </item>
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="toolBarHLayout">
      <item>
@@ -146,6 +98,19 @@
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="youTubeStyleButton">
+       <property name="text">
+        <string>YouTube Style</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextOnly</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="toolBarHSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -176,6 +141,81 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QStackedWidget" name="commentStackedWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <widget class="QWidget" name="classicPage">
+      <layout class="QVBoxLayout" name="classicPageLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="GxsCommentTreeWidget" name="treeWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <column>
+          <property name="text">
+           <string>Comment</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Author</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Date</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Score</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>UpVotes</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>DownVotes</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>OwnVote</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="youTubePage"/>
+    </widget>
    </item>
   </layout>
  </widget>

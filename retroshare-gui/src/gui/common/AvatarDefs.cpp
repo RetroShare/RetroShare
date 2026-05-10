@@ -19,9 +19,11 @@
  *******************************************************************************/
 
 #include <QDateTime>
+#include <QFileInfo>
 #include <QPixmap>
 #include <QDir>
 #include <QFile>
+#include <thread>
 
 #include <retroshare/rschats.h>
 #include <retroshare/rspeers.h>
@@ -32,6 +34,7 @@
 #include "gui/common/FilesDefs.h"
 
 #define AVATAR_CACHE_DIR "avatars"
+#define AVATAR_CACHE_STALENESS_SECS 600
 
 QString AvatarDefs::getAvatarCacheDir()
 {
@@ -115,38 +118,45 @@ bool AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, cons
     unsigned char *data = NULL;
     int size = 0;
 
-    // First try to load from disk cache
     if (loadAvatarFromDiskCache(sslId, avatar)) {
-        // Got from cache, now check if network has newer version
-        rsChats->getAvatarData(RsPeerId(sslId), data, size);
-        if (size > 0) {
-            // Network has a newer avatar, update cache
-            QPixmap networkAvatar;
-            GxsIdDetails::loadPixmapFromData(data, size, networkAvatar, GxsIdDetails::LARGE);
-            saveAvatarToDiskCache(sslId, networkAvatar);
-            avatar = networkAvatar;
-            free(data);
+        QString filePath = getAvatarCacheDir() + QString::fromStdString(sslId.toStdString()) + ".png";
+        qint64 ageSecs = QFileInfo(filePath).lastModified().secsTo(QDateTime::currentDateTime());
+        if (ageSecs <= AVATAR_CACHE_STALENESS_SECS)
             return true;
-        }
-        // No network avatar, use cached one
+
+        // Cache is stale — refresh in background by writing raw bytes directly to disk.
+        // QPixmap must not be used off the main thread, so we write the raw avatar data
+        // returned by the network layer straight to a temp file and rename atomically.
+        std::thread([sslId, filePath]() {
+            unsigned char *bgData = nullptr;
+            int bgSize = 0;
+            rsChats->getAvatarData(sslId, bgData, bgSize);
+            if (bgSize > 0) {
+                QString tmp = filePath + ".tmp";
+                QFile f(tmp);
+                if (f.open(QIODevice::WriteOnly)) {
+                    f.write(reinterpret_cast<const char *>(bgData), bgSize);
+                    f.close();
+                    QFile::rename(tmp, filePath);
+                }
+                free(bgData);
+            }
+        }).detach();
+
         return true;
     }
 
-    /* get avatar from network */
-    rsChats->getAvatarData(RsPeerId(sslId), data, size);
+    /* No cache — fetch synchronously on first load */
+    rsChats->getAvatarData(sslId, data, size);
     if (size == 0) {
-        if (!defaultImage.isEmpty()) {
-            avatar = GxsIdDetails::makeDefaultGroupIconFromString(QString::fromStdString(sslId.toStdString()), ":icons/person.png", GxsIdDetails::LARGE);
-        }
+        if (!defaultImage.isEmpty())
+            avatar = GxsIdDetails::makeDefaultGroupIconFromString(
+                    QString::fromStdString(sslId.toStdString()), ":icons/person.png", GxsIdDetails::LARGE);
         return false;
     }
 
-    /* load image */
-    GxsIdDetails::loadPixmapFromData(data, size, avatar, GxsIdDetails::LARGE) ;
-
-    // Save to disk cache for persistence
+    GxsIdDetails::loadPixmapFromData(data, size, avatar, GxsIdDetails::LARGE);
     saveAvatarToDiskCache(sslId, avatar);
-
     free(data);
     return true;
 }

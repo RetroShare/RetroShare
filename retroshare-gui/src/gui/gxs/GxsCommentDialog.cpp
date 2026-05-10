@@ -29,6 +29,8 @@
 #include <QTimer>
 #include <QMessageBox>
 #include <QDateTime>
+#include <QToolButton>
+#include <QVBoxLayout>
 
 //#define DEBUG_COMMENT_DIALOG 1
 
@@ -61,7 +63,8 @@ void GxsCommentDialog::init(const RsGxsId& default_author)
 	
 	connect(ui->commentButton, SIGNAL(clicked()), ui->treeWidget, SLOT(makeComment()));
 	connect(ui->sortBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sortComments(int)));
-	
+	connect(ui->youTubeStyleButton, &QToolButton::toggled, this, &GxsCommentDialog::onYouTubeStyleToggled);
+
 	// default sort method "HOT".
 	ui->treeWidget->sortByColumn(4, Qt::DescendingOrder);
 	
@@ -232,47 +235,52 @@ void GxsCommentDialog::sortComments(int i)
 
 void GxsCommentDialog::setupYouTubeStyleWidget()
 {
-	if (mYouTubeStyleWidget) {
-		return; // Already set up
-	}
+	if (mYouTubeStyleWidget)
+		return;
 
-	QWidget *parentWidget = qobject_cast<QWidget*>(ui->treeWidget->parent());
-	mYouTubeStyleWidget = new YouTubeStyleCommentWidget(parentWidget);
+	mYouTubeStyleWidget = new YouTubeStyleCommentWidget(ui->youTubePage);
 	mYouTubeStyleWidget->setCommentService(mCommentService);
 
-	// Hide tree widget and show YouTube style widget
-	// This is done by replacing the tree widget in the layout
-	QGridLayout *layout = parentWidget ? qobject_cast<QGridLayout*>(parentWidget->layout()) : nullptr;
-	if (layout) {
-		int row, col, rowSpan, colSpan;
-		layout->getItemPosition(layout->indexOf(ui->treeWidget), &row, &col, &rowSpan, &colSpan);
-		layout->removeWidget(ui->treeWidget);
-		ui->treeWidget->hide();
-		layout->addWidget(mYouTubeStyleWidget, row, col, rowSpan, colSpan);
-		mYouTubeStyleWidget->show();
-	}
+	QVBoxLayout *pageLayout = new QVBoxLayout(ui->youTubePage);
+	pageLayout->setContentsMargins(0, 0, 0, 0);
+	pageLayout->addWidget(mYouTubeStyleWidget);
 }
 
 void GxsCommentDialog::loadYouTubeStyleComments(const std::vector<RsGxsComment> &comments)
 {
-	if (!mYouTubeStyleWidget) {
+	if (!mYouTubeStyleWidget)
 		setupYouTubeStyleWidget();
-	}
+
+	mUseYouTubeStyle = true;
+	ui->youTubeStyleButton->setChecked(true);
+	ui->commentStackedWidget->setCurrentWidget(ui->youTubePage);
 
 	mYouTubeStyleWidget->clearComments();
-
-	for (const auto &comment : comments) {
+	for (const auto &comment : comments)
 		mYouTubeStyleWidget->addComment(comment, comment.mMeta.mParentId);
-	}
 }
 
 void GxsCommentDialog::loadYouTubeStyle()
 {
 	mUseYouTubeStyle = true;
+	ui->youTubeStyleButton->setChecked(true);
 	setupYouTubeStyleWidget();
+	ui->commentStackedWidget->setCurrentWidget(ui->youTubePage);
 
-	// Load existing comments from tree widget to YouTube style widget
-	if (mYouTubeStyleWidget) {
-		mYouTubeStyleWidget->loadCommentsForPost(mGrpId, mMostRecentMsgId);
+	if (mYouTubeStyleWidget)
+		mYouTubeStyleWidget->loadCommentsForPost(mGrpId, mMsgVersions, mMostRecentMsgId);
+}
+
+void GxsCommentDialog::onYouTubeStyleToggled(bool checked)
+{
+	if (checked) {
+		mUseYouTubeStyle = true;
+		setupYouTubeStyleWidget();
+		ui->commentStackedWidget->setCurrentWidget(ui->youTubePage);
+		if (mYouTubeStyleWidget)
+			mYouTubeStyleWidget->loadCommentsForPost(mGrpId, mMsgVersions, mMostRecentMsgId);
+	} else {
+		mUseYouTubeStyle = false;
+		ui->commentStackedWidget->setCurrentWidget(ui->classicPage);
 	}
 }

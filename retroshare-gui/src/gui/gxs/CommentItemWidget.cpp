@@ -62,7 +62,8 @@ void CommentItemWidget::setupStyle()
 
 void CommentItemWidget::setAuthorName(const QString &name)
 {
-	ui->authorLabel->setText(QString("<a href=\"author:%1\" style=\"color: #3ea6ff;\">%2</a>").arg(name, name));
+	ui->authorLabel->setText(QString("<a href=\"author:%1\" style=\"color: #3ea6ff;\">%2</a>")
+	        .arg(QString::fromStdString(mAuthorId.toStdString()), name));
 }
 
 void CommentItemWidget::setAuthorAvatar(const QPixmap &avatar)

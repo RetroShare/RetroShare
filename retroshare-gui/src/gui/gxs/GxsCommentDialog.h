@@ -59,6 +59,7 @@ private slots:
 	void voterSelectionChanged( int index );
 	void sortComments(int);
     void notifyCommentsLoaded(int n);
+	void onYouTubeStyleToggled(bool checked);
 
 signals:
     void commentsLoaded(int);

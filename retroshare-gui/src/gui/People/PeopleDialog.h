@@ -24,6 +24,7 @@
 
 #include <retroshare/rsidentity.h>
 
+#include <QButtonGroup>
 #include "gui/People/CircleWidget.h"
 #include "gui/People/IdentityWidget.h"
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
@@ -111,6 +112,7 @@ private:
 	int mCurrentViewMode;
 	QString mSearchFilter;
 	int mSortMethod;
+	QButtonGroup *mViewModeGroup;
 
 	void setIdentitiesViewMode(int mode);
 

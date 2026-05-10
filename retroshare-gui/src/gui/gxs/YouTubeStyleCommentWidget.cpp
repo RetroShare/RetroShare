@@ -36,12 +36,10 @@ YouTubeStyleCommentWidget::YouTubeStyleCommentWidget(QWidget *parent)
 {
 	ui->setupUi(this);
 
-	// Get the container layout from the scroll area
-	QWidget *scrollAreaWidget = ui->commentsScrollArea->widget();
-	mCommentsLayout = new QVBoxLayout(scrollAreaWidget);
+	// Reuse the layout already defined in the .ui file — creating a second one
+	// would silently replace it and lose the trailing spacer.
+	mCommentsLayout = qobject_cast<QVBoxLayout*>(ui->commentsScrollArea->widget()->layout());
 	mCommentsLayout->setSpacing(8);
-	mCommentsLayout->setContentsMargins(0, 0, 0, 0);
-	mCommentsLayout->addStretch(); // Add stretch at the end to push items to top
 }
 
 YouTubeStyleCommentWidget::~YouTubeStyleCommentWidget()
@@ -103,11 +101,15 @@ void YouTubeStyleCommentWidget::addComment(const RsGxsComment &comment, const Rs
 		// Insert after parent in layout
 		CommentItemWidget *parentWidget = mCommentWidgets.value(parentId, nullptr);
 		if (parentWidget) {
-			// Find position after parent and insert
 			int parentIndex = mCommentsLayout->indexOf(parentWidget);
 			if (parentIndex >= 0) {
 				mCommentsLayout->insertWidget(parentIndex + 1, itemWidget);
+			} else {
+				mCommentsLayout->insertWidget(mCommentsLayout->count() - 1, itemWidget);
 			}
+		} else {
+			// Parent not yet in layout (orphaned reply) — insert at top level
+			mCommentsLayout->insertWidget(mCommentsLayout->count() - 1, itemWidget);
 		}
 	}
 }
@@ -120,10 +122,10 @@ void YouTubeStyleCommentWidget::insertCommentIntoTree(CommentItemWidget *widget,
 	// For YouTube style, replies could be collapsed/expanded
 }
 
-void YouTubeStyleCommentWidget::loadCommentsForPost(const RsGxsGroupId &groupId, const RsGxsMessageId &postId)
+void YouTubeStyleCommentWidget::loadCommentsForPost(const RsGxsGroupId &groupId, const std::set<RsGxsMessageId> &msgVersions, const RsGxsMessageId &mostRecentMsgId)
 {
 	mCurrentGroupId = groupId;
-	mCurrentPostId = postId;
+	mCurrentPostId = mostRecentMsgId;
 
 	clearComments();
 
@@ -132,39 +134,29 @@ void YouTubeStyleCommentWidget::loadCommentsForPost(const RsGxsGroupId &groupId,
 		return;
 	}
 
-	RsThread::async([this, groupId, postId]()
+	RsThread::async([this, groupId, msgVersions]()
 	{
 		std::vector<RsGxsComment> comments;
-		std::set<RsGxsMessageId> msgIds;
-		msgIds.insert(postId);
 
-		if (!mCommentService->getRelatedComments(groupId, msgIds, comments)) {
+		if (!mCommentService->getRelatedComments(groupId, msgVersions, comments)) {
 			std::cerr << "YouTubeStyleCommentWidget: failed to get comments" << std::endl;
 			return;
 		}
 
-		RsQThreadUtils::postToObject([this, comments]()
+		RsQThreadUtils::postToObject([this, comments, msgVersions]()
 		{
 			clearComments();
-			mRepliesMap.clear();
 
-			// First pass: collect all replies
+			// First pass: top-level comments — parent is one of the post's own message IDs
 			for (const auto &comment : comments) {
-				if (!comment.mMeta.mParentId.isNull()) {
-					mRepliesMap[comment.mMeta.mParentId].append(comment.mMeta.mMsgId);
-				}
-			}
-
-			// Second pass: add top-level comments
-			for (const auto &comment : comments) {
-				if (comment.mMeta.mParentId.isNull()) {
+				if (msgVersions.count(comment.mMeta.mParentId)) {
 					addComment(comment, RsGxsMessageId());
 				}
 			}
 
-			// Third pass: add replies after their parents
+			// Second pass: replies — parent is another comment, not the post itself
 			for (const auto &comment : comments) {
-				if (!comment.mMeta.mParentId.isNull()) {
+				if (!msgVersions.count(comment.mMeta.mParentId)) {
 					addComment(comment, comment.mMeta.mParentId);
 				}
 			}

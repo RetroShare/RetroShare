@@ -40,6 +40,7 @@
 #include "retroshare/rsids.h"
 
 #include <iostream>
+#include <QButtonGroup>
 #include <QMenu>
 #include <QMessageBox>
 
@@ -124,11 +125,15 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 		splitterInternal->restoreState(geometryInt);
 	}
 
-	reloadAll();
-
 	mCurrentViewMode = VIEW_MODE_LIST;
 	mSearchFilter.clear();
 	mSortMethod = 0;
+
+	mViewModeGroup = new QButtonGroup(this);
+	mViewModeGroup->addButton(listViewButton);
+	mViewModeGroup->addButton(thumbnailViewButton);
+
+	reloadAll();
 
 }
 
@@ -1128,18 +1133,14 @@ void PeopleDialog::populatePictureFlowInt()
 
 void PeopleDialog::on_listViewButton_toggled(bool checked)
 {
-	if (checked) {
-		thumbnailViewButton->setChecked(false);
+	if (checked)
 		setViewMode(VIEW_MODE_LIST);
-	}
 }
 
 void PeopleDialog::on_thumbnailViewButton_toggled(bool checked)
 {
-	if (checked) {
-		listViewButton->setChecked(false);
+	if (checked)
 		setViewMode(VIEW_MODE_THUMBNAIL);
-	}
 }
 
 void PeopleDialog::on_searchPeopleLineEdit_textChanged(const QString &text)
@@ -1166,21 +1167,15 @@ void PeopleDialog::filterIdentities()
 	std::map<RsGxsId,IdentityWidget *>::iterator itExt;
 	for (itExt = _gxs_identity_widgets.begin(); itExt != _gxs_identity_widgets.end(); ++itExt) {
 		IdentityWidget *widget = itExt->second;
-		if (mSearchFilter.isEmpty()) {
-			widget->setVisible(true);
-		} else {
-			widget->setVisible(true);
-		}
+		widget->setVisible(mSearchFilter.isEmpty() ||
+		                   widget->nickname().contains(mSearchFilter, Qt::CaseInsensitive));
 	}
 
 	std::map<RsPgpId,IdentityWidget *>::iterator itInt;
 	for (itInt = _pgp_identity_widgets.begin(); itInt != _pgp_identity_widgets.end(); ++itInt) {
 		IdentityWidget *widget = itInt->second;
-		if (mSearchFilter.isEmpty()) {
-			widget->setVisible(true);
-		} else {
-			widget->setVisible(true);
-		}
+		widget->setVisible(mSearchFilter.isEmpty() ||
+		                   widget->nickname().contains(mSearchFilter, Qt::CaseInsensitive));
 	}
 }
 
