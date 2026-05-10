@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include "CommentItemWidget.h"
+#include "ui_CommentItemWidget.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -27,11 +28,6 @@
 #include <QPixmap>
 #include <QIcon>
 #include <QDebug>
-#include <retroshare/rsgxs.h>
-
-namespace Ui {
-class CommentItemWidget;
-}
 
 CommentItemWidget::CommentItemWidget(QWidget *parent)
 	: QWidget(parent), ui(new Ui::CommentItemWidget), mLevel(0), mUpvoteActive(false), mDownvoteActive(false)
@@ -45,10 +41,18 @@ CommentItemWidget::~CommentItemWidget()
 	delete ui;
 }
 
+void CommentItemWidget::setMsgId(const RsGxsMessageId &id)
+{
+	mMsgId = id;
+}
+
+void CommentItemWidget::setAuthorId(const RsGxsId &id)
+{
+	mAuthorId = id;
+}
+
 void CommentItemWidget::setupStyle()
 {
-	// Set indentation based on reply level
-	int leftMargin = 6 + (mLevel * 24);
 	setStyleSheet(QString("QWidget#CommentItemWidget { background-color: transparent; }"));
 
 	// Style the upvote/downvote buttons
@@ -126,25 +130,23 @@ void CommentItemWidget::setLevel(int level)
 
 void CommentItemWidget::on_upvoteButton_clicked()
 {
-	// Toggle upvote state
 	setUpvote(!mUpvoteActive);
+	emit upvoteClicked(mMsgId);
 }
 
 void CommentItemWidget::on_downvoteButton_clicked()
 {
-	// Toggle downvote state
 	setDownvote(!mDownvoteActive);
+	emit downvoteClicked(mMsgId);
 }
 
 void CommentItemWidget::on_replyButton_clicked()
 {
-	// Emit reply signal
+	emit replyClicked(mMsgId);
 }
 
 void CommentItemWidget::on_authorLabel_linkActivated(const QString &link)
 {
-	if (link.startsWith("author:")) {
-		QString authorName = link.mid(7);
-		emit authorClicked(RsGxsId(authorName.toStdString().c_str()));
-	}
+	Q_UNUSED(link);
+	emit authorClicked(mAuthorId);
 }

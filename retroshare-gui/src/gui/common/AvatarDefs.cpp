@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <QDateTime>
 #include <QPixmap>
 #include <QDir>
 #include <QFile>

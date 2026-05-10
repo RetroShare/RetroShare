@@ -31,10 +31,6 @@
 
 #include "ui_YouTubeStyleCommentWidget.h"
 
-namespace Ui {
-class YouTubeStyleCommentWidget;
-}
-
 YouTubeStyleCommentWidget::YouTubeStyleCommentWidget(QWidget *parent)
 	: QWidget(parent), ui(new Ui::YouTubeStyleCommentWidget), mCommentService(nullptr)
 {
@@ -78,11 +74,13 @@ void YouTubeStyleCommentWidget::addComment(const RsGxsComment &comment, const Rs
 	CommentItemWidget *itemWidget = new CommentItemWidget();
 
 	// Set comment data
-	itemWidget->setAuthorName(QString::fromUtf8(comment.mMeta.mAuthorId.c_str()));
-	itemWidget->setCommentText(QString::fromUtf8(comment.mContent.c_str()));
-	itemWidget->setDateTime(util::DateTime::formatDateTime(comment.mMeta.mPublishTs));
+	itemWidget->setMsgId(comment.mMeta.mMsgId);
+	itemWidget->setAuthorId(comment.mMeta.mAuthorId);
+	itemWidget->setAuthorName(QString::fromStdString(comment.mMeta.mAuthorId.toStdString()));
+	itemWidget->setCommentText(QString::fromStdString(comment.mComment));
+	itemWidget->setDateTime(DateTime::formatDateTime(comment.mMeta.mPublishTs));
 
-	int score = comment.mMeta.mUpvotes - comment.mMeta.mDownvotes;
+	int score = 0;
 	itemWidget->setScore(score);
 
 	// Set indentation based on reply level
@@ -178,4 +176,9 @@ void YouTubeStyleCommentWidget::sortComments(int sortMethod)
 {
 	// Sorting placeholder - would need to collect, sort, and re-add all comments
 	Q_UNUSED(sortMethod);
+}
+
+void YouTubeStyleCommentWidget::expandReply(const RsGxsMessageId &commentId)
+{
+	Q_UNUSED(commentId);
 }

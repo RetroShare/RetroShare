@@ -26,7 +26,7 @@
 #include <QScrollArea>
 #include <QMap>
 
-#include "ui_YouTubeStyleCommentWidget.h"
+#include <retroshare/rsgxscommon.h>
 
 namespace Ui {
 class YouTubeStyleCommentWidget;
@@ -56,7 +56,6 @@ public:
 
 public slots:
 	void loadCommentsForPost(const RsGxsGroupId &groupId, const RsGxsMessageId &postId);
-	void sortComments(int sortMethod);
 	void sortComments(int sortMethod);
 
 private:

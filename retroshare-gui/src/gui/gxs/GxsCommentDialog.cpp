@@ -34,7 +34,7 @@
 
 /** Constructor */
 GxsCommentDialog::GxsCommentDialog(QWidget *parent, const RsGxsId &default_author, RsGxsCommentService *comment_service)
-	: QWidget(parent), ui(new Ui::GxsCommentDialog), mUseYouTubeStyle(false), mYouTubeStyleWidget(nullptr)
+	: QWidget(parent), ui(new Ui::GxsCommentDialog), mUseYouTubeStyle(false), mYouTubeStyleWidget(nullptr), mCommentService(nullptr)
 {
 	/* Invoke the Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
@@ -72,11 +72,12 @@ void GxsCommentDialog::init(const RsGxsId& default_author)
 
 void GxsCommentDialog::setGxsService(RsGxsCommentService *comment_service)
 {
+	mCommentService = comment_service;
     ui->treeWidget->setup(comment_service);
 }
 
 GxsCommentDialog::GxsCommentDialog(QWidget *parent,const RsGxsId &default_author)
-	: QWidget(parent), ui(new Ui::GxsCommentDialog), mUseYouTubeStyle(false), mYouTubeStyleWidget(nullptr)
+	: QWidget(parent), ui(new Ui::GxsCommentDialog), mUseYouTubeStyle(false), mYouTubeStyleWidget(nullptr), mCommentService(nullptr)
 {
 	/* Invoke the Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
@@ -235,12 +236,13 @@ void GxsCommentDialog::setupYouTubeStyleWidget()
 		return; // Already set up
 	}
 
-	mYouTubeStyleWidget = new YouTubeStyleCommentWidget(ui->treeWidget->parent());
+	QWidget *parentWidget = qobject_cast<QWidget*>(ui->treeWidget->parent());
+	mYouTubeStyleWidget = new YouTubeStyleCommentWidget(parentWidget);
 	mYouTubeStyleWidget->setCommentService(mCommentService);
 
 	// Hide tree widget and show YouTube style widget
 	// This is done by replacing the tree widget in the layout
-	QGridLayout *layout = qobject_cast<QGridLayout*>(ui->treeWidget->parent()->layout());
+	QGridLayout *layout = parentWidget ? qobject_cast<QGridLayout*>(parentWidget->layout()) : nullptr;
 	if (layout) {
 		int row, col, rowSpan, colSpan;
 		layout->getItemPosition(layout->indexOf(ui->treeWidget), &row, &col, &rowSpan, &colSpan);

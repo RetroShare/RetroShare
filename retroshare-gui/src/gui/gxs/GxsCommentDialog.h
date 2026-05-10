@@ -23,6 +23,8 @@
 
 #include "gui/gxs/GxsCommentContainer.h"
 
+class YouTubeStyleCommentWidget;
+
 namespace Ui {
 class GxsCommentDialog;
 }
@@ -70,6 +72,7 @@ private:
 	std::set<RsGxsMessageId> mMsgVersions;
 	bool mUseYouTubeStyle;
 	YouTubeStyleCommentWidget *mYouTubeStyleWidget;
+	RsGxsCommentService *mCommentService;
 
 	/* UI - from Designer */
 	Ui::GxsCommentDialog *ui;

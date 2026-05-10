@@ -29,7 +29,7 @@
 #include <QGridLayout>
 #include <QFrame>
 
-#include "ui_CommentItemWidget.h"
+#include <retroshare/rsgxscommon.h>
 
 namespace Ui {
 class CommentItemWidget;
@@ -43,6 +43,8 @@ public:
 	explicit CommentItemWidget(QWidget *parent = nullptr);
 	~CommentItemWidget();
 
+	void setMsgId(const RsGxsMessageId &id);
+	void setAuthorId(const RsGxsId &id);
 	void setAuthorName(const QString &name);
 	void setAuthorAvatar(const QPixmap &avatar);
 	void setCommentText(const QString &text);
@@ -75,6 +77,8 @@ private:
 	int mLevel;
 	bool mUpvoteActive;
 	bool mDownvoteActive;
+	RsGxsMessageId mMsgId;
+	RsGxsId mAuthorId;
 };
 
 #endif // COMMENT_ITEM_WIDGET_H
