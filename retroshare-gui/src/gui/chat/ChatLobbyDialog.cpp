@@ -891,12 +891,14 @@ void ChatLobbyDialog::handleLobbyEvent(RsChatLobbyEventCode event_type, const Rs
     {
     case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_LEFT:
         qsParticipant=gxs_id;
-        ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the room.").arg(RsHtml::plainText(name)), ChatWidget::MSGTYPE_SYSTEM);
+        if (!(Settings->getChatLobbyFlags() & RS_CHATLOBBY_HIDE_JOIN_LEAVE))
+            ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the room.").arg(RsHtml::plainText(name)), ChatWidget::MSGTYPE_SYSTEM);
         emit peerLeft(id()) ;
         break;
     case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_JOINED:
         qsParticipant=gxs_id;
-        ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the room.").arg(RsHtml::plainText(name)), ChatWidget::MSGTYPE_SYSTEM);
+        if (!(Settings->getChatLobbyFlags() & RS_CHATLOBBY_HIDE_JOIN_LEAVE))
+            ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the room.").arg(RsHtml::plainText(name)), ChatWidget::MSGTYPE_SYSTEM);
         emit peerJoined(id()) ;
         break;
     case RsChatLobbyEventCode::CHAT_LOBBY_EVENT_PEER_STATUS:
