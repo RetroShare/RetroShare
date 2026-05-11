@@ -33,6 +33,7 @@
 #include "rsettings.h"
 
 #define RS_CHATLOBBY_BLINK              0x00000001
+#define RS_CHATLOBBY_HIDE_JOIN_LEAVE    0x00000002
 
 #define STATUSBAR_DISC  0x00000001
 
