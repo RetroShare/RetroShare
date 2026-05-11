@@ -25,9 +25,13 @@
 #include <QLayout>
 #include <QPropertyAnimation>
 #include <QToolButton>
+#include <QDesktopWidget>
+#include <QMessageBox>
+
 //VOIP
 #include <gui/audiodevicehelper.h>
 #include "interface/rsVOIP.h"
+#include "services/RsTurtleVOIPBridge.h"
 #include "VOIPChatWidgetHolder.h"
 #include "VideoProcessor.h"
 #include "QVideoDevice.h"
@@ -567,17 +571,23 @@ void VOIPChatWidgetHolder::toggleAudioCaptureFS()
 
 void VOIPChatWidgetHolder::toggleAudioCapture()
 {
+    RsPeerId targetId = getEffectivePeerId();
+    if (targetId.isNull()) {
+        audioCaptureToggleButton->setChecked(false); // Reset button
+        return;
+    }
+
 	if (audioCaptureToggleButton->isChecked()) {
 		if (recAudioRingTime == -1) {
 			if (sendAudioRingTime == -1) {
 				sendAudioRingTime = 0;
 				timerAudioRingTimeOut();
-				rsVOIP->sendVoipRinging(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_AUDIO_DATA);
+				rsVOIP->sendVoipRinging(targetId, RS_VOIP_FLAGS_AUDIO_DATA);
 				return; //Start Audio when accept received
 			}
 		}
 		if (recAudioRingTime != -1)
-			rsVOIP->sendVoipAcceptCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_AUDIO_DATA);
+			rsVOIP->sendVoipAcceptCall(targetId, RS_VOIP_FLAGS_AUDIO_DATA);
 		recAudioRingTime = -1; //Stop ringing
 
 		//activate buttons
@@ -632,7 +642,7 @@ void VOIPChatWidgetHolder::toggleAudioCapture()
 				mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
 				                        , tr("Outgoing Audio Call stopped."), ChatWidget::MSGTYPE_SYSTEM);
 
-			rsVOIP->sendVoipHangUpCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_AUDIO_DATA);
+			rsVOIP->sendVoipHangUpCall(targetId, RS_VOIP_FLAGS_AUDIO_DATA);
 		}
 
 		sendAudioRingTime = -1;
@@ -658,18 +668,24 @@ void VOIPChatWidgetHolder::toggleVideoCaptureFS()
 
 void VOIPChatWidgetHolder::toggleVideoCapture()
 {
+    RsPeerId targetId = getEffectivePeerId();
+    if (targetId.isNull()) {
+        videoCaptureToggleButton->setChecked(false); // Reset
+        return;
+    }
+
 	if (videoCaptureToggleButton->isChecked()) 
 	{
 		if (recVideoRingTime == -1) {
 			if (sendVideoRingTime == -1) {
 				sendVideoRingTime = 0;
 				timerVideoRingTimeOut();
-				rsVOIP->sendVoipRinging(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_VIDEO_DATA);
+				rsVOIP->sendVoipRinging(targetId, RS_VOIP_FLAGS_VIDEO_DATA);
 				return; //Start Video when accept received
 			}
 		}
 		if (recVideoRingTime != -1)
-			rsVOIP->sendVoipAcceptCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_VIDEO_DATA);
+			rsVOIP->sendVoipAcceptCall(targetId, RS_VOIP_FLAGS_VIDEO_DATA);
 		recVideoRingTime = -1; //Stop ringing
 
 		//activate buttons
@@ -717,7 +733,7 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 				mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
 				                        , tr("Video call stopped"), ChatWidget::MSGTYPE_SYSTEM);
 
-			rsVOIP->sendVoipHangUpCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_VIDEO_DATA);
+			rsVOIP->sendVoipHangUpCall(targetId, RS_VOIP_FLAGS_VIDEO_DATA);
 		}
 
 		sendVideoRingTime = -1;
@@ -1179,4 +1195,25 @@ void VOIPChatWidgetHolder::timerVideoRingTimeOut()
 		pbVideoRing->setToolTip("");
 		videoCaptureToggleButton->setGraphicsEffect(0);
 	}
+}
+
+RsPeerId VOIPChatWidgetHolder::getEffectivePeerId()
+{
+    ChatId cid = mChatWidget->getChatId();
+    if (!cid.isDistantChatId()) {
+        return cid.toPeerId();
+    }
+    
+    if (rsTurtleBridge == NULL) {
+        return RsPeerId();
+    }
+    
+    RsPeerId virtualId = rsTurtleBridge->getOrCreateTunnelForChat(cid);
+    if (virtualId.isNull()) {
+        QMessageBox::information(mChatWidget, tr("Appel Anonyme"), 
+            tr("Recherche du tunnel anonyme en cours.\nLe réseau explore actuellement une route sécurisée.\n\nVeuillez réessayer de cliquer sur Appeler dans quelques secondes."));
+        return RsPeerId();
+    }
+    
+    return virtualId;
 }

@@ -89,6 +89,7 @@ private slots:
 	void timerVideoRingTimeOut();
 
 private:
+	RsPeerId getEffectivePeerId();
 	void deleteButtonMap(int flags = RS_VOIP_FLAGS_AUDIO_DATA | RS_VOIP_FLAGS_VIDEO_DATA);
 	void addNewVideoButtonMap(const RsPeerId &peer_id);
 	void addNewAudioButtonMap(const RsPeerId &peer_id);

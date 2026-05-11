@@ -40,6 +40,11 @@
 
 #include <speex/speex.h>
 
+#include "services/RsTurtleVOIPBridge.h"
+#include "turtle/p3turtle.h"
+
+RsTurtleVOIPBridge *rsTurtleBridge = NULL;
+
 #define IMAGE_VOIP ":/images/talking_on.svg"
 
 static void *inited = new VOIPPlugin() ;
@@ -83,6 +88,9 @@ VOIPPlugin::VOIPPlugin()
 	mVOIP = NULL ;
 	mPlugInHandler = NULL;
 	mPeers = NULL;
+	mTurtle = NULL;
+	mIdentity = NULL;
+	mTurtleBridge = NULL;
 	config_page = NULL ;
 	mIcon = NULL ;
 	mVOIPToasterNotify = NULL ;
@@ -107,6 +115,9 @@ VOIPPlugin::VOIPPlugin()
 void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 {
     mPeers = interfaces.mPeers;
+    mTurtle = interfaces.mTurtle;
+    mIdentity = interfaces.mIdentity;
+    mChats = interfaces.mChats;
 }
 
 ConfigPage *VOIPPlugin::qt_config_page() const
@@ -145,10 +156,10 @@ ChatWidgetHolder *VOIPPlugin::qt_get_chat_widget_holder(ChatWidget *chatWidget) 
 {
 	switch (chatWidget->chatType()) {
 	case ChatWidget::CHATTYPE_PRIVATE:
+	case ChatWidget::CHATTYPE_DISTANT:
 		return new VOIPChatWidgetHolder(chatWidget, mVOIPNotify);
 	case ChatWidget::CHATTYPE_UNKNOWN:
 	case ChatWidget::CHATTYPE_LOBBY:
-	case ChatWidget::CHATTYPE_DISTANT:
 		break;
 	}
 
@@ -158,7 +169,17 @@ ChatWidgetHolder *VOIPPlugin::qt_get_chat_widget_holder(ChatWidget *chatWidget) 
 p3Service *VOIPPlugin::p3_service() const
 {
 	if(mVOIP == NULL)
+	{
 		rsVOIP = mVOIP = new p3VOIP(mPlugInHandler,mVOIPNotify) ; // , 3600 * 24 * 30 * 6); // 6 Months
+		mTurtleBridge = new RsTurtleVOIPBridge(mVOIP, mIdentity, mChats);
+		rsTurtleBridge = mTurtleBridge; // Global binding for UI access
+		mVOIP->setTurtleBridge(mTurtleBridge); // Hook backward pointer for outbound routing
+
+		if (mTurtle)
+		{
+			mTurtleBridge->connectToTurtleRouter(dynamic_cast<p3turtle*>(mTurtle));
+		}
+	}
 
 	return mVOIP ;
 }
