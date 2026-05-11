@@ -38,6 +38,7 @@
 #include "util/HandleRichText.h"
 #include "gui/chat/ChatUserNotify.h"//For BradCast
 #include "util/DateTime.h"
+#include "util/rsdebug.h"
 #include "util/imageutil.h"
 #include "util/qtthreadsutils.h"
 #include "gui/im_history/ImHistoryBrowser.h"
@@ -57,7 +58,11 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QStringListModel>
+#include <QAbstractTextDocumentLayout>
 #include <QTextCodec>
+#include <QTextDocument>
+#include <QTextBlock>
+#include <QTextFragment>
 #include <QTextDocumentFragment>
 #include <QTextStream>
 #include <QTimer>
@@ -158,6 +163,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 	connect(ui->attachPictureButton, SIGNAL(clicked()), this, SLOT(addExtraPicture()));
 	connect(ui->addFileButton, SIGNAL(clicked()), this , SLOT(addExtraFile()));
 	connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendChat()));
+	connect(ui->textBrowser->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(checkVisibleAnchors()), Qt::QueuedConnection);
 
 	connect(ui->actionSaveChatHistory, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
 	connect(ui->actionClearChatHistory, SIGNAL(triggered()), this, SLOT(clearChatHistory()));
@@ -578,39 +584,6 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 			}
 		}
 
-		if (notify && chatType() == CHATTYPE_LOBBY) {
-			if ((event->type() == QEvent::KeyPress)
-			    || (event->type() == QEvent::MouseMove)
-			    || (event->type() == QEvent::Enter)
-			    || (event->type() == QEvent::Leave)
-			    || (event->type() == QEvent::Wheel)
-			    || (event->type() == QEvent::ToolTip) ) {
-
-				QTextCursor cursor = ui->textBrowser->cursorForPosition(QPoint(0, 0));
-				QPoint bottom_right(ui->textBrowser->viewport()->width() - 1, ui->textBrowser->viewport()->height() - 1);
-				int end_pos = ui->textBrowser->cursorForPosition(bottom_right).position();
-				cursor.setPosition(end_pos, QTextCursor::KeepAnchor);
-				if ((cursor.position() != lastUpdateCursorPos || cursor.selectionEnd() != lastUpdateCursorEnd) &&
-				   !cursor.selectedText().isEmpty()) {
-					lastUpdateCursorPos = cursor.position();
-					lastUpdateCursorEnd = cursor.selectionEnd();
-					QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
-					rx.setMinimal(true);
-					QString sel=cursor.selection().toHtml();
-					QStringList anchors;
-					int pos=0;
-					while ((pos = rx.indexIn(sel,pos)) != -1) {
-						anchors << rx.cap(1);
-						pos += rx.matchedLength();
-					}
-					if (!anchors.isEmpty()){
-						for (QStringList::iterator it=anchors.begin();it!=anchors.end();++it) {
-							notify->chatLobbyCleared(chatId.toLobbyId(), *it);
-						}
-					}
-				}
-			}
-		}
 	}
 
     if (obj == ui->textBrowser) {
@@ -793,6 +766,67 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 	return QWidget::eventFilter(obj, event);
 }
 
+void ChatWidget::checkVisibleAnchors()
+{
+	RsDbg() << "CHATCOUNT: Scroll Event Fired. ActiveWindow=" << isActive() << " ScrollValue=" << ui->textBrowser->verticalScrollBar()->value() << std::endl;
+	if (notify && chatType() == CHATTYPE_LOBBY && isActive()) {
+		QTextDocument *doc = ui->textBrowser->document();
+		if (!doc || doc->isEmpty()) return;
+		
+		// RACE CONDITION SHIELD: If layout engine is not initialized or reports zero height, 
+		// everything will erroneously appear to fit on screen. Force abort and wait for next cycle.
+		qreal totalH = doc->documentLayout()->documentSize().height();
+		if (totalH <= 0) return;
+
+		int viewH = ui->textBrowser->viewport()->height();
+		int vScroll = ui->textBrowser->verticalScrollBar()->value();
+		QStringList visibleAnchors;
+
+		QRegExp rx("<a name=\"(.*)\"", Qt::CaseSensitive, QRegExp::RegExp2);
+		rx.setMinimal(true);
+
+		for (QTextBlock block = doc->begin(); block.isValid(); block = block.next()) {
+			// Acquire absolute document geometry coordinates, 100% race-free and stable!
+			QRectF blockRect = doc->documentLayout()->blockBoundingRect(block);
+			
+			// Project raw document coordinates into physical visual viewport coordinates
+			qreal vTop = blockRect.top() - vScroll;
+			qreal vBottom = blockRect.bottom() - vScroll;
+			
+			if (vTop > viewH) {
+				break; // Block is physically below visible horizon. Halt search!
+			}
+			
+			if (vBottom < 0) {
+				continue; // Block is physically above visible horizon. Skip!
+			}
+			
+			// THIS BLOCK IS PHYSICALLY VISIBLE! Extract anchor using PROVEN Regex parser!
+			QTextCursor bCursor(block);
+			bCursor.select(QTextCursor::BlockUnderCursor);
+			QString blockHtml = bCursor.selection().toHtml();
+
+			int pos = 0;
+			while ((pos = rx.indexIn(blockHtml, pos)) != -1) {
+				QString name = rx.cap(1);
+				if (!name.isEmpty()) {
+					visibleAnchors << name;
+				}
+				pos += rx.matchedLength();
+			}
+		}
+		
+		visibleAnchors.removeDuplicates();
+		
+		if (!visibleAnchors.isEmpty()){
+			RsDbg() << "CHATCOUNT: Success! Found " << visibleAnchors.size() << " visible anchors in the active viewport." << std::endl;
+			for (const QString &anchor : visibleAnchors) {
+				notify->chatLobbyCleared(chatId.toLobbyId(), anchor);
+			}
+		}
+	}
+}
+
 /**
  * @brief Utility function for completeNickname.
  */
@@ -964,6 +998,7 @@ void ChatWidget::showEvent(QShowEvent */*event*/)
 		QScrollBar *scrollbar2 = ui->textBrowser->verticalScrollBar();
 		scrollbar2->setValue(scrollbar2->maximum());
 	}
+	QTimer::singleShot(0, this, SLOT(checkVisibleAnchors()));
 }
 
 void ChatWidget::resizeEvent(QResizeEvent */*event*/)
@@ -976,6 +1011,7 @@ void ChatWidget::resizeEvent(QResizeEvent */*event*/)
 	// Workaround: now the scroll position is correct calculated
 	QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
 	scrollbar->setValue(scrollbar->maximum());
+	QTimer::singleShot(0, this, SLOT(checkVisibleAnchors()));
 }
 
 void ChatWidget::addToParent(QWidget *newParent)
@@ -1105,7 +1141,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast, desiredMinimumFontSize);
 	QDateTime dtTimestamp=incoming ? sendTime : recvTime;
 	QString formatMsg = chatStyle.formatMessage(type, name, dtTimestamp, formattedMessage, formatFlag, backgroundColor);
-	QString timeStamp = DateTime::formatDateTime(dtTimestamp);
+	QString timeStamp = DateTime::formatDate(dtTimestamp.date()) + " " + dtTimestamp.time().toString("HH:mm:ss");
 
 	//replace Date and Time anchors
 	formatMsg.replace(QString("<a name=\"date\">"),QString("<a name=\"%1\">").arg(timeStamp));

@@ -28,6 +28,7 @@
 
 #include "gui/ChatLobbyWidget.h"
 #include "gui/MainWindow.h"
+#include "util/rsdebug.h"
 #include "gui/SoundManager.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/DateTime.h"
@@ -140,7 +141,7 @@ QString ChatLobbyUserNotify::getTrayMessage(bool plural)
 
 QString ChatLobbyUserNotify::getNotifyMessage(bool plural)
 {
-	return plural ? tr("%1 mentions") : tr("%1 mention");
+	return plural ? tr("%1 messages") : tr("%1 message");
 }
 
 void ChatLobbyUserNotify::iconClicked()
@@ -303,12 +304,13 @@ void ChatLobbyUserNotify::chatLobbyNewMessage(ChatLobbyId lobby_id, QDateTime ti
 		}
 
 	if ((bGetNickName || bFoundTextToNotify || _bCountUnRead)){
-		QString strAnchor = DateTime::formatDateTime(time);
+		QString strAnchor = DateTime::formatDate(time.date()) + " " + time.time().toString("HH:mm:ss");
 		MsgData msgData;
 		msgData.text=RsHtml::plainText(senderName) + ": " + msg;
 		msgData.unread=!(bGetNickName || bFoundTextToNotify);
 
 		_listMsg[lobby_id][strAnchor]=msgData;
+		RsDbg() << "CHATCOUNT: Incrementing count for lobby=" << lobby_id << " author='" << senderName.toStdString() << "' anchor='" << strAnchor.toStdString() << "' count=" << _listMsg[lobby_id].size() << std::endl;
 		emit countChanged(lobby_id, _listMsg[lobby_id].size());
 		updateIcon();
 		SoundManager::play(SOUND_NEW_LOBBY_MESSAGE);
@@ -339,12 +341,22 @@ void ChatLobbyUserNotify::chatLobbyCleared(ChatLobbyId lobby_id, QString anchor,
 	lobby_map::iterator itCL=_listMsg.find(lobby_id);
 	if (itCL!=_listMsg.end()) {
 		if (!anchor.isEmpty()) {
+			RsDbg() << "CHATCOUNT: Received clear request for anchor='" << anchor.toStdString() << "' from lobby=" << lobby_id << std::endl;
 			msg_map::iterator itMsg=itCL->second.find(anchor);
 			if (itMsg!=itCL->second.end()) {
 				MsgData msgData = itMsg->second;
 				if(!onlyUnread || msgData.unread) {
 					itCL->second.erase(itMsg);
+					RsDbg() << "CHATCOUNT: Successfully erased anchor from map. New count=" << itCL->second.size() << std::endl;
 					changed=true;
+				}
+			} else {
+				// Help debug non-cleared messages by revealing that the search key did not match stored keys.
+				// We skip printing for non-date anchors like "PERSONID:" to avoid spam.
+				if (!anchor.startsWith("PERSONID:")) {
+					RsDbg() << "CHATCOUNT: Failed to find anchor='" << anchor.toStdString() << "' in list. List keys: ";
+					for(auto const& item : itCL->second) RsDbg() << "'" << item.first.toStdString() << "', ";
+					RsDbg() << std::endl;
 				}
 			}
 			count = itCL->second.size();
