@@ -30,7 +30,8 @@
 #include <retroshare/rstypes.h>
 
 class RsVOIP ;
-extern RsVOIP *rsVOIP;
+extern class RsVOIP *rsVOIP;
+extern class RsTurtleVOIPBridge *rsTurtleBridge;
  
 static const uint32_t CONFIG_TYPE_VOIP_PLUGIN 		= 0xe001 ;
 
