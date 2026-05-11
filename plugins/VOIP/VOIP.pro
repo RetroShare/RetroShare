@@ -91,12 +91,14 @@ SOURCES = VOIPPlugin.cpp               \
           gui/VOIPGUIHandler.cpp       \
           gui/VOIPNotify.cpp           \
           gui/VOIPToasterItem.cpp      \
-          gui/VOIPToasterNotify.cpp
+          gui/VOIPToasterNotify.cpp    \
+          services/RsTurtleVOIPBridge.cpp
 
 HEADERS = VOIPPlugin.h                 \
           gui/VOIPConfigPanel.h \
           services/p3VOIP.h            \
           services/rsVOIPItems.h       \
+          services/RsTurtleVOIPBridge.h \
           gui/AudioStats.h             \
           gui/AudioWizard.h            \
           gui/SpeexProcessor.h         \

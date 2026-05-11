@@ -22,6 +22,7 @@
 #include "retroshare/rsiface.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
+#include "RsTurtleVOIPBridge.h"
 #include "pqi/p3linkmgr.h"
 #include <serialiser/rsserial.h>
 #include <rsitems/rsconfigitems.h>
@@ -112,7 +113,7 @@ static double convert64bitsToTs(uint64_t bits)
 }
 
 p3VOIP::p3VOIP(RsPluginHandler *handler,VOIPNotify *notifier)
-     : RsPQIService(RS_SERVICE_TYPE_VOIP_PLUGIN,0,handler), mVOIPMtx("p3VOIP"), mServiceControl(handler->getServiceControl()) , mNotify(notifier)
+     : RsPQIService(RS_SERVICE_TYPE_VOIP_PLUGIN,0,handler), mVOIPMtx("p3VOIP"), mServiceControl(handler->getServiceControl()) , mNotify(notifier), mBridge(NULL)
 {
 	addSerialType(new RsVOIPSerialiser());
 
@@ -811,3 +812,30 @@ RsSerialiser *p3VOIP::setupSerialiser()
 
 
 
+
+int p3VOIP::sendItem(RsItem* item)
+{
+    if (mBridge && mBridge->isVirtualPeer(item->PeerId()))
+    {
+        // Step 6: Intercept outbound traffic directed at a virtual peer
+        // 1. Serialise using standard serialiser available in base class
+        uint32_t size = rsSerialiser->size(item);
+        if (size > 0)
+        {
+            void* buf = malloc(size);
+            if (buf && rsSerialiser->serialise(item, buf, &size))
+            {
+                // 2. Hand over serialized content to the Turtle bridge!
+                mBridge->sendRawDataViaTunnel(item->PeerId(), buf, size);
+            }
+            // Clean up buffer memory since bridge has copied it or taken ownership
+            free(buf);
+        }
+        
+        delete item; // Item successfully consumed (or dropped on fail)
+        return 1;
+    }
+    
+    // Fallback: Standard routing via P2P PQI layer
+    return p3FastService::sendItem(item);
+}
