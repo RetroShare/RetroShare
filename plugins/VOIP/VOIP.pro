@@ -49,7 +49,7 @@ linux-* {
 	PKGCONFIG += libavcodec libavutil
 	PKGCONFIG += speex speexdsp
 } else {
-	LIBS += -lspeex -lspeexdsp -lavcodec -lavutil
+	LIBS += -lspeex -lspeexdsp -lavcodec -lavutil -lcrypto
 
 	win32:isEmpty(QMAKE_SH) {
 		# MinGW
