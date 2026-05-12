@@ -157,17 +157,13 @@ RsPeerId RsTurtleVOIPBridge::getOrCreateTunnelForChat(const ChatId& chatId)
     return RsPeerId(); 
 }
 
-bool RsTurtleVOIPBridge::handleTunnelRequest(const RsFileHash& hash, const RsPeerId& peer_id)
+bool RsTurtleVOIPBridge::handleTunnelRequest(const RsFileHash& hash, const RsPeerId& /*peer_id*/)
 {
-    RsDbg() << "DISTANT_VOIP: TRACE - TunnelRequest received from relay " << peer_id.toStdString() << " looking for hash: " << hash.toStdString();
-
     const uint8_t* bytes = hash.toByteArray();
     uint8_t candidate_bytes[16];
     for(int i=0; i<16; ++i) candidate_bytes[i] = bytes[4 + i] ^ VOIP_HASH_MAGIC_XOR;
     RsGxsId target = RsGxsId::fromBufferUnsafe(candidate_bytes);
     
-    RsDbg() << "DISTANT_VOIP: Decrypted Target from probe: " << target.toStdString();
-
     if (mIdentity && mIdentity->isOwnId(target)) {
          RsDbg() << "DISTANT_VOIP: [INCOMING MATCH!] Accepting incoming anonymous call tunnel request.";
          return true;
