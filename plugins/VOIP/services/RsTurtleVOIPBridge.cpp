@@ -207,6 +207,13 @@ void RsTurtleVOIPBridge::removeVirtualPeer(const TurtleFileHash& hash, const Tur
     RsStackMutex lock(mMutex);
     RsDbg() << "DISTANT_VOIP: removeVirtualPeer triggered for VP=" << virtual_peer_id.toStdString() << ", Hash=" << hash.toStdString();
     
+    // ALWAYS release persistent monitor lock on Router whenever a VOIP tunnel is dropped,
+    // to prevent the router from performing infinite automatic re-probes in the background!
+    if (mTurtleRouter) {
+        mTurtleRouter->stopMonitoringTunnels(hash);
+        RsDbg() << "DISTANT_VOIP: Explicitly terminated background persistent search for Hash " << hash.toStdString();
+    }
+
     std::map<TurtleVirtualPeerId, VOIPTunnelState>::iterator it = mActiveTunnels.find(virtual_peer_id);
     if (it != mActiveTunnels.end()) {
         cleanupTunnelState(it->second);
@@ -312,3 +319,28 @@ ChatId RsTurtleVOIPBridge::resolveVirtualToDistantChat(const RsPeerId& virtual_i
     }
     return ChatId(); // Not Set
 }
+
+void RsTurtleVOIPBridge::cancelSearchForChat(const ChatId& chatId)
+{
+    if (!chatId.isDistantChatId() || mChats == NULL) return;
+
+    DistantChatPeerInfo info;
+    if (!mChats->getDistantChatStatus(chatId.toDistantChatId(), info)) return;
+
+    RsStackMutex lock(mMutex);
+    
+    // Look up if there is an active probe pending for this contact
+    std::map<RsGxsId, RsFileHash>::iterator it = mPendingProbes.find(info.to_id);
+    if (it != mPendingProbes.end()) {
+        RsFileHash activeHash = it->second;
+        RsDbg() << "DISTANT_VOIP: MANUAL ABORT detected. Cancelling active search for " << activeHash.toStdString();
+        
+        if (mTurtleRouter) {
+            mTurtleRouter->stopMonitoringTunnels(activeHash);
+            RsDbg() << "DISTANT_VOIP: Successfully released manual abort monitor lock on Router.";
+        }
+        
+        mPendingProbes.erase(it);
+    }
+}
+
