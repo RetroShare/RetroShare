@@ -20,6 +20,7 @@
 
 #include "util/rsdir.h"
 #include "retroshare/rsiface.h"
+#include <util/rsdebug.h>
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
 #include "RsTurtleVOIPBridge.h"
@@ -817,22 +818,44 @@ int p3VOIP::sendItem(RsItem* item)
 {
     if (mBridge && mBridge->isVirtualPeer(item->PeerId()))
     {
-        // Step 6: Intercept outbound traffic directed at a virtual peer
-        // 1. Serialise using standard serialiser available in base class
-        uint32_t size = rsSerialiser->size(item);
-        if (size > 0)
+        RsDbg() << "DISTANT_VOIP: Intercepted OUTBOUND Item in p3VOIP::sendItem override! Preparing encapsulated envelope...";
+        
+        // Step 9: Resolve DistantChatPeerId for this tunnel
+        ChatId targetChat = mBridge->resolveVirtualToDistantChat(item->PeerId());
+        DistantChatPeerId rawId = targetChat.toDistantChatId();
+        uint32_t headerSize = sizeof(DistantChatPeerId);
+
+        // 1. Serialise standard payload
+        uint32_t itemSize = rsSerialiser->size(item);
+        if (itemSize > 0)
         {
-            void* buf = malloc(size);
-            if (buf && rsSerialiser->serialise(item, buf, &size))
-            {
-                // 2. Hand over serialized content to the Turtle bridge!
-                mBridge->sendRawDataViaTunnel(item->PeerId(), buf, size);
+            // Allocate combined buffer [Header + Payload]
+            uint32_t totalSize = headerSize + itemSize;
+            void* buf = malloc(totalSize);
+            
+            if (buf) {
+                // A. Prepend Header
+                memcpy(buf, &rawId, headerSize);
+                
+                // B. Serialize payload into remainder of buffer
+                uint8_t* payloadPtr = ((uint8_t*)buf) + headerSize;
+                uint32_t remainingSize = itemSize;
+                
+                if (rsSerialiser->serialise(item, payloadPtr, &remainingSize))
+                {
+                    RsDbg() << "DISTANT_VOIP: [ENVELOPE READY] Encapsulated ChatId " << rawId.toStdString() << ". Total Size=" << totalSize << " bytes. Pushing to tunnel.";
+                    // 2. Hand over combined buffer to the bridge
+                    mBridge->sendRawDataViaTunnel(item->PeerId(), buf, totalSize);
+                } else {
+                    RsDbg() << "DISTANT_VOIP: CRITICAL ERROR - Serialisation into wrapper buffer failed!";
+                }
+                free(buf);
             }
-            // Clean up buffer memory since bridge has copied it or taken ownership
-            free(buf);
+        } else {
+            RsDbg() << "DISTANT_VOIP: Warning - Item has zero size, dropping.";
         }
         
-        delete item; // Item successfully consumed (or dropped on fail)
+        delete item;
         return 1;
     }
     
