@@ -21,6 +21,7 @@
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsversion.h>
 #include <retroshare/rsinit.h>
+#include <util/rsdebug.h>
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include <QTranslator>
 #include <QApplication>
@@ -118,6 +119,20 @@ void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
     mTurtle = interfaces.mTurtle;
     mIdentity = interfaces.mIdentity;
     mChats = interfaces.mChats;
+
+    // FAILSAFE: If bridge was instantiated early without dependencies,
+    // forcefully inject them now that they arrived!
+    if (mTurtleBridge != NULL) {
+        RsDbg() << "DISTANT_VOIP: Hot-plugging dynamic Chat & Identity interfaces into existing Bridge!";
+        mTurtleBridge->setChatService(mChats);
+        mTurtleBridge->setIdentity(mIdentity);
+
+        // If Turtle arrived late, connect the bridge to router NOW!
+        if (mTurtle != NULL) {
+            RsDbg() << "DISTANT_VOIP: Connecting bridge to late-arrived Turtle Router!";
+            mTurtleBridge->connectToTurtleRouter(dynamic_cast<p3turtle*>(mTurtle));
+        }
+    }
 }
 
 ConfigPage *VOIPPlugin::qt_config_page() const

@@ -5,6 +5,7 @@
  *******************************************************************************/
 
 #include "RsTurtleVOIPBridge.h"
+#include <retroshare/rschats.h>
 #include "services/p3VOIP.h"
 #include "turtle/p3turtle.h"
 #include "turtle/rsturtleitem.h"
@@ -20,11 +21,13 @@
 RsTurtleVOIPBridge::RsTurtleVOIPBridge(p3VOIP *voip_service, RsIdentity* ident, RsChats* chats)
     : mVOIP(voip_service), mTurtleRouter(NULL), mIdentity(ident), mChats(chats), mMutex("RsTurtleVOIPBridge")
 {
+    RsDbg() << "DISTANT_VOIP: RsTurtleVOIPBridge Instance Created.";
 }
 
 RsTurtleVOIPBridge::~RsTurtleVOIPBridge()
 {
     RsStackMutex lock(mMutex);
+    RsDbg() << "DISTANT_VOIP: Destructor cleaning up " << mActiveTunnels.size() << " active tunnels.";
     for(std::map<TurtleVirtualPeerId, VOIPTunnelState>::iterator it = mActiveTunnels.begin(); it != mActiveTunnels.end(); ++it) {
         cleanupTunnelState(it->second);
     }
@@ -49,7 +52,10 @@ bool RsTurtleVOIPBridge::initDHSessionKey(DH *& dh)
     static const std::string dh_prime_2048_hex = "B3B86A844550486C7EA459FA468D3A8EFD71139593FE1C658BBEFA9B2FC0AD2628242C2CDC2F91F5B220ED29AAC271192A7374DFA28CDDCA70252F342D0821273940344A7A6A3CB70C7897A39864309F6CAC5C7EA18020EF882693CA2C12BB211B7BA8367D5A7C7252A5B5E840C9E8F081469EBA0B98BCC3F593A4D9C4D5DF539362084F1B9581316C1F80FDAD452FD56DBC6B8ED0775F596F7BB22A3FE2B4753764221528D33DB4140DE58083DB660E3E105123FC963BFF108AC3A268B7380FFA72005A1515C371287C5706FFA6062C9AC73A9B1A6AC842C2764CDACFC85556607E86611FDF486C222E4896CDF6908F239E177ACC641FCBFF72A758D1C10CBB" ;
     if(dh != NULL) { DH_free(dh); dh = NULL; }
     dh = DH_new();
-    if(!dh) return false;
+    if(!dh) {
+        RsDbg() << "DISTANT_VOIP: Failed to allocate OpenSSL DH object!";
+        return false;
+    }
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     BN_hex2bn(&dh->p,dh_prime_2048_hex.c_str()) ; BN_hex2bn(&dh->g,"5") ;
@@ -60,54 +66,57 @@ bool RsTurtleVOIPBridge::initDHSessionKey(DH *& dh)
 #endif
 
     int codes = 0 ;
-    if(!DH_check(dh, &codes) || codes != 0) return false ;
-    if(!DH_generate_key(dh)) return false ;
+    if(!DH_check(dh, &codes) || codes != 0) {
+        RsDbg() << "DISTANT_VOIP: OpenSSL DH parameter check failed! Code=" << codes;
+        return false ;
+    }
+    if(!DH_generate_key(dh)) {
+        RsDbg() << "DISTANT_VOIP: OpenSSL DH key generation failed!";
+        return false ;
+    }
+    
+    RsDbg() << "DISTANT_VOIP: DH Local Keypair successfully built.";
     return true ;
 }
 
 void RsTurtleVOIPBridge::connectToTurtleRouter(p3turtle *pt)
 {
+    if (mTurtleRouter != NULL) return; // Already active
+
     mTurtleRouter = pt;
     if (mTurtleRouter) {
         mTurtleRouter->registerTunnelService(this);
         RsDbg() << "DISTANT_VOIP: Registered successfully to Turtle Router.";
-        triggerTestTunnelRequest();
-
-        RsDbg() << "DISTANT_VOIP: [MOCK] Starting validation cycle...";
-        uint8_t dummyVp[16]; memset(dummyVp, 0x99, 16);
-        TurtleVirtualPeerId mockId = TurtleVirtualPeerId::fromBufferUnsafe(dummyVp);
-        TurtleFileHash mockHash = TurtleFileHash::random();
-        addVirtualPeer(mockHash, mockId, RsTurtleGenericTunnelItem::DIRECTION_SERVER);
-        
-        RsDbg() << "DISTANT_VOIP: [MOCK] Simulating VOIP-To-Turtle pipe link...";
-        RsTurtleGenericFastDataItem *mockItem = new RsTurtleGenericFastDataItem();
-        const char* dummyFlow = "MOCK_VOIP_DATA"; 
-        mockItem->data_size = strlen(dummyFlow) + 1;
-        mockItem->data_bytes = malloc(mockItem->data_size);
-        memcpy(mockItem->data_bytes, dummyFlow, mockItem->data_size);
-        
-        receiveTurtleData(mockItem, mockHash, mockId, RsTurtleGenericTunnelItem::DIRECTION_CLIENT);
-        
-        delete mockItem; 
-        removeVirtualPeer(mockHash, mockId);
-        RsDbg() << "DISTANT_VOIP: [MOCK] All Stage validation complete.";
+    } else {
+        RsDbg() << "DISTANT_VOIP: ERROR - connectToTurtleRouter passed NULL!";
     }
 }
 
 RsPeerId RsTurtleVOIPBridge::getOrCreateTunnelForChat(const ChatId& chatId)
 {
+    RsDbg() << "DISTANT_VOIP: getOrCreateTunnelForChat triggered for chatId=" << chatId.toStdString();
+
+    // ULTIMATE FALLBACK: If local pointer failed, capture the central global handle!
+    if (mChats == NULL) {
+        RsDbg() << "DISTANT_VOIP: Wire pointer is NULL. Attempting emergency bind to GLOBAL rsChats...";
+        mChats = rsChats; 
+    }
+
     if (!chatId.isDistantChatId() || mChats == NULL) {
+        RsDbg() << "DISTANT_VOIP: Rejecting request. isDistant=" << (chatId.isDistantChatId()?"yes":"no") << ", mChatsReady=" << (mChats!=NULL?"yes":"no");
         return RsPeerId();
     }
     
     DistantChatPeerInfo info;
     if (!mChats->getDistantChatStatus(chatId.toDistantChatId(), info)) {
-        RsDbg() << "DISTANT_VOIP: Could not resolve distant chat info for tunnel probe.";
+        RsDbg() << "DISTANT_VOIP: FAILED to resolve distant chat state from mChats singleton.";
         return RsPeerId();
     }
     
+    RsDbg() << "DISTANT_VOIP: Resolved target identity: " << info.to_id.toStdString();
+
     RsStackMutex lock(mMutex);
-    // Search for active tunnel for this target GXS ID
+    // 1. Check existing active tunnels
     for(std::map<TurtleVirtualPeerId, VOIPTunnelState>::iterator it = mActiveTunnels.begin(); it != mActiveTunnels.end(); ++it) {
         const uint8_t* b = it->second.hash.toByteArray();
         uint8_t cand[16];
@@ -115,31 +124,52 @@ RsPeerId RsTurtleVOIPBridge::getOrCreateTunnelForChat(const ChatId& chatId)
         RsGxsId tunnelTarget = RsGxsId::fromBufferUnsafe(cand);
         
         if (tunnelTarget == info.to_id) {
-            RsDbg() << "DISTANT_VOIP: Reusing existing active tunnel " << it->first.toStdString() << " for contact " << info.to_id.toStdString();
+            RsDbg() << "DISTANT_VOIP: MATCH FOUND! Reusing active virtual peer: " << it->first.toStdString();
+            
+            // DIRECT ASSIGNMENT to bypass deadlock: mutex is ALREADY LOCKED by line 118!
+            mVirtualToDistantMap[it->first] = chatId.toDistantChatId();
+            
             return it->first; 
         }
     }
     
-    // No active tunnel found, probe for one
+    // 2. Check if search probe is ALREADY registered
+    std::map<RsGxsId, RsFileHash>::iterator fit = mPendingProbes.find(info.to_id);
+    if (fit != mPendingProbes.end()) {
+        RsDbg() << "DISTANT_VOIP: Turtle monitor ALREADY ACTIVE. Still searching for: " << fit->second.toStdString();
+        return RsPeerId(); // Still busy searching
+    }
+
+    // 3. Trigger NEW monitor request
     RsFileHash targetHash = makeVoipFakeHash(info.to_id);
-    RsDbg() << "DISTANT_VOIP: Requesting on-the-fly anonymous tunnel for contact " << info.to_id.toStdString();
+    RsDbg() << "DISTANT_VOIP: No active probe found. ISSUING NEW MONITOR REQUEST to Turtle router.";
+    RsDbg() << "DISTANT_VOIP: New Computed Fake Hash = " << targetHash.toStdString();
+    
+    mPendingProbes[info.to_id] = targetHash;
     
     if (mTurtleRouter) {
         mTurtleRouter->monitorTunnels(targetHash, this, false);
+        RsDbg() << "DISTANT_VOIP: monitorTunnels() invocation DONE. Now waiting for addVirtualPeer callback from Router...";
+    } else {
+        RsDbg() << "DISTANT_VOIP: CRITICAL ERROR - mTurtleRouter is NULL. Cannot probe!";
     }
     
-    return RsPeerId(); // Hand back null to UI to denote search is running
+    return RsPeerId(); 
 }
 
-bool RsTurtleVOIPBridge::handleTunnelRequest(const RsFileHash& hash, const RsPeerId& /*peer_id*/)
+bool RsTurtleVOIPBridge::handleTunnelRequest(const RsFileHash& hash, const RsPeerId& peer_id)
 {
+    RsDbg() << "DISTANT_VOIP: TRACE - TunnelRequest received from relay " << peer_id.toStdString() << " looking for hash: " << hash.toStdString();
+
     const uint8_t* bytes = hash.toByteArray();
     uint8_t candidate_bytes[16];
     for(int i=0; i<16; ++i) candidate_bytes[i] = bytes[4 + i] ^ VOIP_HASH_MAGIC_XOR;
     RsGxsId target = RsGxsId::fromBufferUnsafe(candidate_bytes);
     
+    RsDbg() << "DISTANT_VOIP: Decrypted Target from probe: " << target.toStdString();
+
     if (mIdentity && mIdentity->isOwnId(target)) {
-         RsDbg() << "DISTANT_VOIP: Accepted incoming VOIP tunnel request.";
+         RsDbg() << "DISTANT_VOIP: [INCOMING MATCH!] Accepting incoming anonymous call tunnel request.";
          return true;
     }
     return false;
@@ -148,43 +178,94 @@ bool RsTurtleVOIPBridge::handleTunnelRequest(const RsFileHash& hash, const RsPee
 void RsTurtleVOIPBridge::addVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& virtual_peer_id, RsTurtleGenericTunnelItem::Direction dir)
 {
     RsStackMutex lock(mMutex);
+    RsDbg() << "DISTANT_VOIP: [!!! SUCCESS !!!] addVirtualPeer triggered by Router! VirtualPeer=" << virtual_peer_id.toStdString();
+    RsDbg() << "DISTANT_VOIP: Hash used by Router: " << hash.toStdString() << ", Direction=" << (int)dir;
+
     VOIPTunnelState state;
     state.hash = hash;
     state.direction = dir;
     state.creationTime = time(NULL);
-    initDHSessionKey(state.dhObj);
+    bool cryptoReady = initDHSessionKey(state.dhObj);
     
+    RsDbg() << "DISTANT_VOIP: Tunnel context creation: " << (cryptoReady ? "CRYPTO OK" : "CRYPTO FAILED");
+
     mActiveTunnels[virtual_peer_id] = state;
-    RsDbg() << "DISTANT_VOIP: Tunnel established! Virtual Peer: " << virtual_peer_id.toStdString();
+
+    // Cleanup pending probe for this identity
+    const uint8_t* b = hash.toByteArray();
+    uint8_t cand[16];
+    for(int i=0; i<16; ++i) cand[i] = b[4+i] ^ VOIP_HASH_MAGIC_XOR;
+    RsGxsId resolvedId = RsGxsId::fromBufferUnsafe(cand);
+    
+    std::map<RsGxsId, RsFileHash>::iterator it = mPendingProbes.find(resolvedId);
+    if (it != mPendingProbes.end()) {
+        RsDbg() << "DISTANT_VOIP: Successfully cleared pending probe registry for contact " << resolvedId.toStdString();
+        mPendingProbes.erase(it);
+    }
+    
+    RsDbg() << "DISTANT_VOIP: TUNNEL FULLY OPERATIONAL & REGISTERED.";
 }
 
-void RsTurtleVOIPBridge::removeVirtualPeer(const TurtleFileHash& /*hash*/, const TurtleVirtualPeerId& virtual_peer_id)
+void RsTurtleVOIPBridge::removeVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& virtual_peer_id)
 {
     RsStackMutex lock(mMutex);
+    RsDbg() << "DISTANT_VOIP: removeVirtualPeer triggered for VP=" << virtual_peer_id.toStdString() << ", Hash=" << hash.toStdString();
+    
     std::map<TurtleVirtualPeerId, VOIPTunnelState>::iterator it = mActiveTunnels.find(virtual_peer_id);
     if (it != mActiveTunnels.end()) {
         cleanupTunnelState(it->second);
         mActiveTunnels.erase(it);
-        RsDbg() << "DISTANT_VOIP: Tunnel closed!";
+        RsDbg() << "DISTANT_VOIP: Tunnel context destroyed. Registry cleared.";
+    } else {
+        RsDbg() << "DISTANT_VOIP: WARNING - removeVirtualPeer called but VP not in registry!";
     }
 }
 
 void RsTurtleVOIPBridge::receiveTurtleData(const RsTurtleGenericTunnelItem * item, const RsFileHash& /*hash*/, const RsPeerId& virtual_peer_id, RsTurtleGenericTunnelItem::Direction /*direction*/)
 {
+    RsDbg() << "DISTANT_VOIP: TRACE - receiveTurtleData triggered! Raw inbound packet detected from virtual peer " << virtual_peer_id.toStdString();
     const RsTurtleGenericFastDataItem* dataItem = dynamic_cast<const RsTurtleGenericFastDataItem*>(item);
-    if (!dataItem) return;
+    if (!dataItem) {
+        RsDbg() << "DISTANT_VOIP: Dropping incoming turtle item. Not a FastDataItem instance.";
+        return;
+    }
 
-    if (mVOIP == NULL || dataItem->data_size == 0 || dataItem->data_bytes == NULL) return;
+    if (mVOIP == NULL || dataItem->data_size == 0 || dataItem->data_bytes == NULL) {
+        RsDbg() << "DISTANT_VOIP: Warning - Packet body is empty or VOIP service is detached. DataSize=" << dataItem->data_size;
+        return;
+    }
+
+    uint32_t headerSize = sizeof(DistantChatPeerId);
+    if (dataItem->data_size <= headerSize) {
+        RsDbg() << "DISTANT_VOIP: Packet is too small to contain identity wrapper. Size=" << dataItem->data_size;
+        return;
+    }
+
+    // 1. Peel off identity header
+    DistantChatPeerId incomingId;
+    memcpy(&incomingId, dataItem->data_bytes, headerSize);
+    
+    // 2. Register mapping dynamically for incoming channel
+    RsDbg() << "DISTANT_VOIP: Peeling envelope. Found incoming mapped chat ID: " << incomingId.toStdString();
+    registerVirtualToDistantMapping(virtual_peer_id, incomingId);
+
+    // 3. Prepare remainder of payload for standard deserialization
+    uint8_t* payloadStart = ((uint8_t*)dataItem->data_bytes) + headerSize;
+    uint32_t remainingSize = dataItem->data_size - headerSize;
 
     RsSerialiser* serializer = mVOIP->getSerialiser();
     if (serializer != NULL) {
-        uint32_t actualSize = dataItem->data_size;
-        RsItem* decodedItem = serializer->deserialise(dataItem->data_bytes, &actualSize);
+        RsItem* decodedItem = serializer->deserialise(payloadStart, &remainingSize);
         
         if (decodedItem != NULL) {
+            RsDbg() << "DISTANT_VOIP: [INBOUND SUCCESS] Envelope opened! Payload deserialized! Size=" << remainingSize << ". Forwarding to Engine...";
             decodedItem->PeerId(virtual_peer_id);
             mVOIP->recvItem(decodedItem);
+        } else {
+            RsDbg() << "DISTANT_VOIP: [CRITICAL ERROR] Payload deserialisation FAILED! Corrupted stream.";
         }
+    } else {
+        RsDbg() << "DISTANT_VOIP: Major failure - Bridge could not obtain valid Serialiser handle!";
     }
 }
 
@@ -216,8 +297,22 @@ RsFileHash RsTurtleVOIPBridge::makeVoipFakeHash(const RsGxsId& destination)
 
 void RsTurtleVOIPBridge::triggerTestTunnelRequest()
 {
-    uint8_t dummy[16]; memset(dummy, 0x77, 16);
-    RsGxsId testDest = RsGxsId::fromBufferUnsafe(dummy);
-    RsFileHash fakeHash = makeVoipFakeHash(testDest);
-    if (mTurtleRouter) { mTurtleRouter->monitorTunnels(fakeHash, this, false); }
+    // User instructed to trace live flows, so suppressing initial mock test.
+}
+
+void RsTurtleVOIPBridge::registerVirtualToDistantMapping(const RsPeerId& virtual_id, const DistantChatPeerId& chat_id)
+{
+    RsStackMutex lock(mMutex);
+    mVirtualToDistantMap[virtual_id] = chat_id;
+    RsDbg() << "DISTANT_VOIP: BINDING REGISTERED: Virtual " << virtual_id.toStdString() << " maps to DistantChat " << chat_id.toStdString();
+}
+
+ChatId RsTurtleVOIPBridge::resolveVirtualToDistantChat(const RsPeerId& virtual_id)
+{
+    RsStackMutex lock(mMutex);
+    std::map<RsPeerId, DistantChatPeerId>::const_iterator it = mVirtualToDistantMap.find(virtual_id);
+    if (it != mVirtualToDistantMap.end()) {
+        return ChatId(it->second);
+    }
+    return ChatId(); // Not Set
 }

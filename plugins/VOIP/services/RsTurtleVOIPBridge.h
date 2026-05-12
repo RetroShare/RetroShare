@@ -14,12 +14,12 @@
 #include "util/rsdebug.h"
 
 #include "util/rsthreads.h"
+#include <retroshare/rschats.h>
 #include <map>
 #include <time.h>
 
 #include <openssl/dh.h>
 #include <string>
-#include <retroshare/rschats.h>
 
 class p3VOIP;
 class p3turtle;
@@ -29,6 +29,13 @@ class RsTurtleVOIPBridge : public RsTurtleClientService
 public:
     // Step 7 GUI API
     RsPeerId getOrCreateTunnelForChat(const ChatId& chatId);
+    void setChatService(class RsChats* chats) { mChats = chats; }
+    void setIdentity(class RsIdentity* ident) { mIdentity = ident; }
+
+    // Step 9 GUI Recv Fix: Mapping back VirtualPeer to real Distant Chat
+    ChatId resolveVirtualToDistantChat(const RsPeerId& virtual_id);
+    void registerVirtualToDistantMapping(const RsPeerId& virtual_id, const DistantChatPeerId& chat_id);
+    
     struct VOIPTunnelState {
         TurtleFileHash hash;
         RsTurtleGenericTunnelItem::Direction direction;
@@ -77,6 +84,8 @@ private:
 
     mutable RsMutex mMutex;
     std::map<TurtleVirtualPeerId, VOIPTunnelState> mActiveTunnels;
+    std::map<RsGxsId, RsFileHash> mPendingProbes;
+    std::map<RsPeerId, DistantChatPeerId> mVirtualToDistantMap;
 };
 
 #endif // RSTURTLEVOIPBRIDGE_H
