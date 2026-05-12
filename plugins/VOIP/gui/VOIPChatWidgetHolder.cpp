@@ -342,6 +342,7 @@ VOIPChatWidgetHolder::~VOIPChatWidgetHolder()
 	delete(timerAudioRing);
 	timerVideoRing->stop();
 	delete(timerVideoRing);
+    mTunnelWaitTimer->stop();
 }
 
 void VOIPChatWidgetHolder::deleteButtonMap(int flags)
@@ -634,6 +635,9 @@ void VOIPChatWidgetHolder::toggleAudioCapture()
 	} else {
         // Abort condition
         mTunnelWaitTimer->stop();
+        if (rsTurtleBridge) {
+             rsTurtleBridge->cancelSearchForChat(mChatWidget->getChatId());
+        }
 		//desactivate buttons
 		audioListenToggleButton->setEnabled(false);
 		audioListenToggleButton->setChecked(false);
@@ -731,6 +735,9 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 	} else {
         // Abort condition
         mTunnelWaitTimer->stop();
+        if (rsTurtleBridge) {
+             rsTurtleBridge->cancelSearchForChat(mChatWidget->getChatId());
+        }
 		//desactivate buttons
 		hideChatTextToggleButton->setEnabled(false);
 		hideChatTextToggleButton->setChecked(false);
