@@ -30,6 +30,7 @@
 
 //VOIP
 #include <gui/audiodevicehelper.h>
+#include <util/rsdebug.h>
 #include "interface/rsVOIP.h"
 #include "services/RsTurtleVOIPBridge.h"
 #include "VOIPChatWidgetHolder.h"
@@ -319,6 +320,11 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	connect(timerVideoRing, SIGNAL(timeout()), this, SLOT(timerVideoRingTimeOut()));
 
 	lastTimePlayOccurs = time(NULL);
+    
+    mTunnelWaitTimer = new QTimer(this);
+    mTunnelWaitTimer->setInterval(1000);
+    mTunnelWaitTimer->setSingleShot(false);
+    connect(mTunnelWaitTimer, SIGNAL(timeout()), this, SLOT(checkTunnelAndAutoCall()));
 }
 
 VOIPChatWidgetHolder::~VOIPChatWidgetHolder()
@@ -571,13 +577,21 @@ void VOIPChatWidgetHolder::toggleAudioCaptureFS()
 
 void VOIPChatWidgetHolder::toggleAudioCapture()
 {
-    RsPeerId targetId = getEffectivePeerId();
-    if (targetId.isNull()) {
-        audioCaptureToggleButton->setChecked(false); // Reset button
-        return;
-    }
-
+    RsDbg() << "DISTANT_VOIP: >>> EVENT DETECTED: User just clicked TOGGLE AUDIO button! Checking button checkState...";
 	if (audioCaptureToggleButton->isChecked()) {
+        RsDbg() << "DISTANT_VOIP: Button IS CHECKED. Proceeding to resolution logic...";
+        RsPeerId targetId = getEffectivePeerId(true); // Explicitly prompt only on call start
+        if (targetId.isNull()) {
+            RsDbg() << "DISTANT_VOIP: Resolution returned NULL. [AUTO-CALL ACTIVATED] Leaving button pushed and starting Background Watcher.";
+            mTunnelWaitTimer->start(); // Start background poller
+            return; // Do NOT reset button. Let it visually wait.
+        }
+        
+        // Success! Turn off auto-poller just in case it triggered this.
+        mTunnelWaitTimer->stop();
+
+        RsDbg() << "DISTANT_VOIP: Resolution succeeded. TargetId=" << targetId.toStdString() << ". Initializing Audio stack...";
+
 		if (recAudioRingTime == -1) {
 			if (sendAudioRingTime == -1) {
 				sendAudioRingTime = 0;
@@ -619,6 +633,8 @@ void VOIPChatWidgetHolder::toggleAudioCapture()
 
 		deleteButtonMap(RS_VOIP_FLAGS_AUDIO_DATA);
 	} else {
+        // Abort condition
+        mTunnelWaitTimer->stop();
 		//desactivate buttons
 		audioListenToggleButton->setEnabled(false);
 		audioListenToggleButton->setChecked(false);
@@ -642,6 +658,7 @@ void VOIPChatWidgetHolder::toggleAudioCapture()
 				mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
 				                        , tr("Outgoing Audio Call stopped."), ChatWidget::MSGTYPE_SYSTEM);
 
+			RsPeerId targetId = getEffectivePeerId(false); // Quiet resolution for hangup
 			rsVOIP->sendVoipHangUpCall(targetId, RS_VOIP_FLAGS_AUDIO_DATA);
 		}
 
@@ -668,14 +685,19 @@ void VOIPChatWidgetHolder::toggleVideoCaptureFS()
 
 void VOIPChatWidgetHolder::toggleVideoCapture()
 {
-    RsPeerId targetId = getEffectivePeerId();
-    if (targetId.isNull()) {
-        videoCaptureToggleButton->setChecked(false); // Reset
-        return;
-    }
-
+    RsDbg() << "DISTANT_VOIP: >>> EVENT DETECTED: User just clicked TOGGLE VIDEO button! Checking checkState...";
 	if (videoCaptureToggleButton->isChecked()) 
 	{
+        RsDbg() << "DISTANT_VOIP: Button IS CHECKED. Proceeding to resolution logic...";
+        RsPeerId targetId = getEffectivePeerId(true); // Prompt only on outgoing video
+        if (targetId.isNull()) {
+            RsDbg() << "DISTANT_VOIP: Resolution returned NULL. [AUTO-CALL ACTIVATED] Starting Background Watcher for Camera activation.";
+            mTunnelWaitTimer->start();
+            return; // Wait silently
+        }
+        mTunnelWaitTimer->stop();
+        RsDbg() << "DISTANT_VOIP: Resolution succeeded. TargetId=" << targetId.toStdString() << ". Initializing Camera...";
+
 		if (recVideoRingTime == -1) {
 			if (sendVideoRingTime == -1) {
 				sendVideoRingTime = 0;
@@ -707,6 +729,8 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 
 		deleteButtonMap(RS_VOIP_FLAGS_VIDEO_DATA);
 	} else {
+        // Abort condition
+        mTunnelWaitTimer->stop();
 		//desactivate buttons
 		hideChatTextToggleButton->setEnabled(false);
 		hideChatTextToggleButton->setChecked(false);
@@ -733,6 +757,7 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 				mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
 				                        , tr("Video call stopped"), ChatWidget::MSGTYPE_SYSTEM);
 
+			RsPeerId targetId = getEffectivePeerId(false); // Quiet resolution
 			rsVOIP->sendVoipHangUpCall(targetId, RS_VOIP_FLAGS_VIDEO_DATA);
 		}
 
@@ -1197,23 +1222,53 @@ void VOIPChatWidgetHolder::timerVideoRingTimeOut()
 	}
 }
 
-RsPeerId VOIPChatWidgetHolder::getEffectivePeerId()
+RsPeerId VOIPChatWidgetHolder::getEffectivePeerId(bool /*allowPopup*/)
 {
     ChatId cid = mChatWidget->getChatId();
+    RsDbg() << "DISTANT_VOIP: [VOIPChatWidgetHolder] ENTER getEffectivePeerId() called for chatId=" << cid.toStdString();
+
     if (!cid.isDistantChatId()) {
+        RsDbg() << "DISTANT_VOIP: This is a DIRECT CHAT. Standard PeerId=" << cid.toPeerId().toStdString();
         return cid.toPeerId();
     }
     
+    RsDbg() << "DISTANT_VOIP: This is a DISTANT ANONYMOUS CHAT. Preparing to query Turtle Bridge...";
+
     if (rsTurtleBridge == NULL) {
+        RsDbg() << "DISTANT_VOIP: CRITICAL ERROR! Global rsTurtleBridge pointer is NULL! Cannot tunnel!";
         return RsPeerId();
     }
     
-    RsPeerId virtualId = rsTurtleBridge->getOrCreateTunnelForChat(cid);
-    if (virtualId.isNull()) {
-        QMessageBox::information(mChatWidget, tr("Appel Anonyme"), 
-            tr("Recherche du tunnel anonyme en cours.\nLe réseau explore actuellement une route sécurisée.\n\nVeuillez réessayer de cliquer sur Appeler dans quelques secondes."));
-        return RsPeerId();
+    RsDbg() << "DISTANT_VOIP: Handing over resolution to rsTurtleBridge->getOrCreateTunnelForChat()...";
+    RsPeerId res = rsTurtleBridge->getOrCreateTunnelForChat(cid);
+    
+    if (res.isNull()) {
+        RsDbg() << "DISTANT_VOIP: The Bridge returned NULL (Tunnel is not ready or currently searching).";
+    } else {
+        RsDbg() << "DISTANT_VOIP: The Bridge SUCCEEDED! Got VirtualPeerId=" << res.toStdString();
     }
     
-    return virtualId;
+    return res;
+}
+
+void VOIPChatWidgetHolder::checkTunnelAndAutoCall()
+{
+    RsDbg() << "DISTANT_VOIP: Auto-Poller Tick. Checking if background tunnel search completed...";
+    RsPeerId checkId = getEffectivePeerId(false); // Silently poll
+    
+    if (!checkId.isNull()) {
+        RsDbg() << "DISTANT_VOIP: [!!! AUTO-POLLER SUCCESS !!!] Tunnel found! Re-triggering Call Logic Automatically NOW.";
+        mTunnelWaitTimer->stop();
+        
+        // Re-trigger call execution directly. 
+        // The button is already checked, so it will execute the TRUE branch smoothly.
+        if (audioCaptureToggleButton->isChecked()) {
+            toggleAudioCapture();
+        }
+        if (videoCaptureToggleButton->isChecked()) {
+            toggleVideoCapture();
+        }
+    } else {
+        RsDbg() << "DISTANT_VOIP: Auto-Poller still waiting for background route... Retrying next second.";
+    }
 }
