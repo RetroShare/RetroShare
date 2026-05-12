@@ -29,6 +29,7 @@ class RsTurtleVOIPBridge : public RsTurtleClientService
 public:
     // Step 7 GUI API
     RsPeerId getOrCreateTunnelForChat(const ChatId& chatId);
+    void cancelSearchForChat(const ChatId& chatId);
     void setChatService(class RsChats* chats) { mChats = chats; }
     void setIdentity(class RsIdentity* ident) { mIdentity = ident; }
 
