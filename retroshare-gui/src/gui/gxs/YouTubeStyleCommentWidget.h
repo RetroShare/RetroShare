@@ -50,6 +50,8 @@ public:
 
 	// Set the comment service for loading comments
 	void setCommentService(RsGxsCommentService *service);
+	void setVoterId(const RsGxsId &id);
+	void updateReplyCountButtons();
 
  signals:
 	void commentUpvote(const RsGxsGrpMsgIdPair &msgId, bool up);
@@ -60,19 +62,28 @@ public slots:
 	void loadCommentsForPost(const RsGxsGroupId &groupId, const std::set<RsGxsMessageId> &msgVersions, const RsGxsMessageId &mostRecentMsgId);
 	void sortComments(int sortMethod);
 
+private slots:
+	void onViewRepliesToggled(const RsGxsMessageId &msgId, bool show);
+	void onCommentSelected(const RsGxsMessageId &msgId);
+
 private:
-	void insertCommentIntoTree(CommentItemWidget *widget, const RsGxsMessageId &parentId);
-	void expandReply(const RsGxsMessageId &commentId);
+	void doVote(const RsGxsMessageId &commentMsgId, bool up);
 
 	Ui::YouTubeStyleCommentWidget *ui;
 
 	QVBoxLayout *mCommentsLayout;
 	QMap<RsGxsMessageId, CommentItemWidget *> mCommentWidgets;
 	QMap<RsGxsMessageId, QList<RsGxsMessageId> > mRepliesMap;
+	QMap<RsGxsMessageId, double> mScoreMap;
+	QMap<RsGxsMessageId, rstime_t> mTimestampMap;
 
 	RsGxsCommentService *mCommentService;
 	RsGxsGroupId mCurrentGroupId;
 	RsGxsMessageId mCurrentPostId;
+	RsGxsMessageId mLatestMsgId;
+	std::set<RsGxsMessageId> mMsgVersions;
+	RsGxsId mVoterId;
+	CommentItemWidget *mSelectedWidget;
 };
 
 #endif // YOUTUBE_STYLE_COMMENT_WIDGET_H

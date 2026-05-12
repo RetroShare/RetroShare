@@ -60,6 +60,7 @@ private slots:
 	void sortComments(int);
     void notifyCommentsLoaded(int n);
 	void onYouTubeStyleToggled(bool checked);
+	void onYouTubeCommentReply(const RsGxsMessageId &parentId);
 
 signals:
     void commentsLoaded(int);
@@ -71,12 +72,13 @@ private:
 	RsGxsGroupId   mGrpId;
 	RsGxsMessageId mMostRecentMsgId;
 	std::set<RsGxsMessageId> mMsgVersions;
-	bool mUseYouTubeStyle;
-	YouTubeStyleCommentWidget *mYouTubeStyleWidget;
-	RsGxsCommentService *mCommentService;
 
 	/* UI - from Designer */
 	Ui::GxsCommentDialog *ui;
+
+	bool mUseYouTubeStyle;
+	YouTubeStyleCommentWidget *mYouTubeStyleWidget;
+	RsGxsCommentService *mCommentService;
 };
 
 #endif

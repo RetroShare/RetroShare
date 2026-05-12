@@ -40,7 +40,6 @@
 #include "retroshare/rsids.h"
 
 #include <iostream>
-#include <QButtonGroup>
 #include <QMenu>
 #include <QMessageBox>
 
@@ -124,14 +123,6 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	if (geometryInt.isEmpty() == false) {
 		splitterInternal->restoreState(geometryInt);
 	}
-
-	mCurrentViewMode = VIEW_MODE_LIST;
-	mSearchFilter.clear();
-	mSortMethod = 0;
-
-	mViewModeGroup = new QButtonGroup(this);
-	mViewModeGroup->addButton(listViewButton);
-	mViewModeGroup->addButton(thumbnailViewButton);
 
 	reloadAll();
 
@@ -1129,93 +1120,4 @@ void PeopleDialog::populatePictureFlowInt()
 		pictureFlowWidgetInternal->addSlide( pixmap );
 	}//for (it=_int_circles_widgets.begin(); it!=_int_circles_widgets.end(); ++it)
 	pictureFlowWidgetInternal->setSlideSizeRatio(4/4.0);
-}
-
-void PeopleDialog::on_listViewButton_toggled(bool checked)
-{
-	if (checked)
-		setViewMode(VIEW_MODE_LIST);
-}
-
-void PeopleDialog::on_thumbnailViewButton_toggled(bool checked)
-{
-	if (checked)
-		setViewMode(VIEW_MODE_THUMBNAIL);
-}
-
-void PeopleDialog::on_searchPeopleLineEdit_textChanged(const QString &text)
-{
-	mSearchFilter = text;
-	filterIdentities();
-}
-
-void PeopleDialog::on_sortPeopleComboBox_currentIndexChanged(int index)
-{
-	mSortMethod = index;
-	sortIdentities();
-}
-
-void PeopleDialog::setViewMode(int mode)
-{
-	mCurrentViewMode = mode;
-	Settings->setValueToGroup("PeopleDialog", "ViewMode", mode);
-	setIdentitiesViewMode(mode);
-}
-
-void PeopleDialog::filterIdentities()
-{
-	std::map<RsGxsId,IdentityWidget *>::iterator itExt;
-	for (itExt = _gxs_identity_widgets.begin(); itExt != _gxs_identity_widgets.end(); ++itExt) {
-		IdentityWidget *widget = itExt->second;
-		widget->setVisible(mSearchFilter.isEmpty() ||
-		                   widget->nickname().contains(mSearchFilter, Qt::CaseInsensitive));
-	}
-
-	std::map<RsPgpId,IdentityWidget *>::iterator itInt;
-	for (itInt = _pgp_identity_widgets.begin(); itInt != _pgp_identity_widgets.end(); ++itInt) {
-		IdentityWidget *widget = itInt->second;
-		widget->setVisible(mSearchFilter.isEmpty() ||
-		                   widget->nickname().contains(mSearchFilter, Qt::CaseInsensitive));
-	}
-}
-
-void PeopleDialog::sortIdentities()
-{
-	// Placeholder for sorting implementation
-}
-
-void PeopleDialog::setIdentitiesViewMode(int mode)
-{
-	// Apply thumbnail/list mode to all identity widgets
-	// This changes the visual presentation of each IdentityWidget
-
-	if (mode == VIEW_MODE_THUMBNAIL) {
-		// In thumbnail mode, minimize labels and show compact view
-		std::map<RsGxsId,IdentityWidget *>::iterator itExt;
-		for (itExt = _gxs_identity_widgets.begin(); itExt != _gxs_identity_widgets.end(); ++itExt) {
-			IdentityWidget *widget = itExt->second;
-			widget->setMinimumSize(QSize(80, 80));
-			widget->setMaximumSize(QSize(80, 80));
-		}
-		std::map<RsPgpId,IdentityWidget *>::iterator itInt;
-		for (itInt = _pgp_identity_widgets.begin(); itInt != _pgp_identity_widgets.end(); ++itInt) {
-			IdentityWidget *widget = itInt->second;
-			widget->setMinimumSize(QSize(80, 80));
-			widget->setMaximumSize(QSize(80, 80));
-		}
-	} else {
-		// List mode - restore normal size
-		std::map<RsGxsId,IdentityWidget *>::iterator itExt;
-		for (itExt = _gxs_identity_widgets.begin(); itExt != _gxs_identity_widgets.end(); ++itExt) {
-			IdentityWidget *widget = itExt->second;
-			widget->setMinimumSize(QSize(100, 150));
-			widget->setMaximumSize(QSize(100, 150));
-		}
-		std::map<RsPgpId,IdentityWidget *>::iterator itInt;
-		for (itInt = _pgp_identity_widgets.begin(); itInt != _pgp_identity_widgets.end(); ++itInt) {
-			IdentityWidget *widget = itInt->second;
-			widget->setMinimumSize(QSize(100, 150));
-			widget->setMaximumSize(QSize(100, 150));
-		}
-	}
 }

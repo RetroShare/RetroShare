@@ -28,12 +28,25 @@
 #include <QPixmap>
 #include <QIcon>
 #include <QDebug>
+#include <QMouseEvent>
 
 CommentItemWidget::CommentItemWidget(QWidget *parent)
-	: QWidget(parent), ui(new Ui::CommentItemWidget), mLevel(0), mUpvoteActive(false), mDownvoteActive(false)
+	: QWidget(parent), ui(new Ui::CommentItemWidget), mViewRepliesButton(nullptr),
+	  mLevel(0), mUpvoteActive(false), mDownvoteActive(false), mSelected(false), mRepliesExpanded(false), mReplyCount(0)
 {
 	ui->setupUi(this);
 	setupStyle();
+
+	mViewRepliesButton = new QPushButton(this);
+	mViewRepliesButton->setFlat(true);
+	mViewRepliesButton->setStyleSheet("QPushButton { color: #3ea6ff; font-weight: bold; text-align: left; border: none; padding: 2px 0px; }");
+	mViewRepliesButton->hide();
+	connect(mViewRepliesButton, &QPushButton::clicked, this, &CommentItemWidget::on_viewRepliesButton_clicked);
+
+	// Insert the view-replies button into the content layout, below the actions row
+	QVBoxLayout *contentLay = qobject_cast<QVBoxLayout*>(ui->contentLayout);
+	if (contentLay)
+		contentLay->addWidget(mViewRepliesButton);
 }
 
 CommentItemWidget::~CommentItemWidget()
@@ -62,17 +75,20 @@ void CommentItemWidget::setupStyle()
 
 void CommentItemWidget::setAuthorName(const QString &name)
 {
+	mAuthorName = name;
 	ui->authorLabel->setText(QString("<a href=\"author:%1\" style=\"color: #3ea6ff;\">%2</a>")
 	        .arg(QString::fromStdString(mAuthorId.toStdString()), name));
 }
 
 void CommentItemWidget::setAuthorAvatar(const QPixmap &avatar)
 {
-	ui->avatarLabel->setPixmap(avatar.scaled(40, 40, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+	if (!avatar.isNull())
+		ui->avatarLabel->setPixmap(avatar);  // scaledContents=true handles fitting to 40x40
 }
 
 void CommentItemWidget::setCommentText(const QString &text)
 {
+	mCommentText = text;
 	ui->commentTextLabel->setText(text);
 }
 
@@ -150,4 +166,41 @@ void CommentItemWidget::on_authorLabel_linkActivated(const QString &link)
 {
 	Q_UNUSED(link);
 	emit authorClicked(mAuthorId);
+}
+
+void CommentItemWidget::setViewRepliesCount(int count)
+{
+	mReplyCount = count;
+	if (count <= 0) {
+		mViewRepliesButton->hide();
+		return;
+	}
+	mRepliesExpanded = false;
+	mViewRepliesButton->setText(tr("▶ View %1 repl%2").arg(count).arg(count == 1 ? "y" : "ies"));
+	mViewRepliesButton->show();
+}
+
+void CommentItemWidget::on_viewRepliesButton_clicked()
+{
+	mRepliesExpanded = !mRepliesExpanded;
+	if (mRepliesExpanded)
+		mViewRepliesButton->setText(tr("▼ Hide %1 repl%2").arg(mReplyCount).arg(mReplyCount == 1 ? "y" : "ies"));
+	else
+		mViewRepliesButton->setText(tr("▶ View %1 repl%2").arg(mReplyCount).arg(mReplyCount == 1 ? "y" : "ies"));
+	emit viewRepliesToggled(mMsgId, mRepliesExpanded);
+}
+
+void CommentItemWidget::setSelected(bool selected)
+{
+	mSelected = selected;
+	if (selected)
+		setStyleSheet("QWidget#CommentItemWidget { background-color: #e8f0fe; border-left: 3px solid #3ea6ff; }");
+	else
+		setStyleSheet("QWidget#CommentItemWidget { background-color: transparent; }");
+}
+
+void CommentItemWidget::mousePressEvent(QMouseEvent *event)
+{
+	QWidget::mousePressEvent(event);
+	emit commentSelected(mMsgId);
 }

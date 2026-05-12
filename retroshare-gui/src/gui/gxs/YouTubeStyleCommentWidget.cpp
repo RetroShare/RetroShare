@@ -20,19 +20,71 @@
 
 #include "YouTubeStyleCommentWidget.h"
 #include "CommentItemWidget.h"
+#include "GxsIdDetails.h"
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 
 #include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QScrollArea>
+#include <QMessageBox>
 #include <QDebug>
+
+#include <algorithm>
 
 #include "ui_YouTubeStyleCommentWidget.h"
 
+// Issue 1 (avatar) + Issue 3 (nickname):
+// - Only update the author name once we have a definitive result (DONE/FAILED),
+//   not during LOADING — avoids the raw-ID-prefix "Loading... XXXXX" flash.
+// - Always set an avatar for every terminal state so the label is never blank.
+static void fillCommentItemWidgetCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/)
+{
+	CommentItemWidget *item = dynamic_cast<CommentItemWidget*>(object);
+	if (!item)
+		return;
+
+	switch (type) {
+	case GXS_ID_DETAILS_TYPE_DONE:
+		// getName() uses details.mNickname — the actual display name.
+		item->setAuthorName(GxsIdDetails::getNameForType(type, details));
+		{
+			QPixmap avatar;
+			if (details.mAvatar.mSize > 0 && GxsIdDetails::loadPixmapFromData(details.mAvatar.mData, details.mAvatar.mSize, avatar))
+				item->setAuthorAvatar(avatar);
+			else
+				item->setAuthorAvatar(GxsIdDetails::makeDefaultIcon(details.mId));
+		}
+		break;
+
+	case GXS_ID_DETAILS_TYPE_LOADING:
+		// Set generated default avatar so the slot is never blank while loading.
+		// Leave the name empty — no raw ID prefix shown.
+		if (!details.mId.isNull())
+			item->setAuthorAvatar(GxsIdDetails::makeDefaultIcon(details.mId));
+		break;
+
+	case GXS_ID_DETAILS_TYPE_FAILED:
+		// Identity not available; show truncated ID as fallback, keep default icon.
+		if (!details.mId.isNull()) {
+			item->setAuthorName(QString::fromStdString(details.mId.toStdString().substr(0, 10)) + QStringLiteral("…"));
+			item->setAuthorAvatar(GxsIdDetails::makeDefaultIcon(details.mId));
+		}
+		break;
+
+	case GXS_ID_DETAILS_TYPE_BANNED:
+		item->setAuthorName(QObject::tr("[Banned]"));
+		if (!details.mId.isNull())
+			item->setAuthorAvatar(GxsIdDetails::makeDefaultIcon(details.mId));
+		break;
+
+	case GXS_ID_DETAILS_TYPE_EMPTY:
+	default:
+		break;
+	}
+}
+
 YouTubeStyleCommentWidget::YouTubeStyleCommentWidget(QWidget *parent)
-	: QWidget(parent), ui(new Ui::YouTubeStyleCommentWidget), mCommentService(nullptr)
+	: QWidget(parent), ui(new Ui::YouTubeStyleCommentWidget), mCommentService(nullptr),
+	  mSelectedWidget(nullptr)
 {
 	ui->setupUi(this);
 
@@ -52,9 +104,26 @@ void YouTubeStyleCommentWidget::setCommentService(RsGxsCommentService *service)
 	mCommentService = service;
 }
 
+void YouTubeStyleCommentWidget::setVoterId(const RsGxsId &id)
+{
+	mVoterId = id;
+}
+
+void YouTubeStyleCommentWidget::updateReplyCountButtons()
+{
+	for (auto it = mRepliesMap.begin(); it != mRepliesMap.end(); ++it) {
+		CommentItemWidget *parent = mCommentWidgets.value(it.key(), nullptr);
+		if (parent)
+			parent->setViewRepliesCount(it.value().size());
+	}
+}
+
 void YouTubeStyleCommentWidget::clearComments()
 {
-	// Remove all comment widgets except the stretch
+	// Zero before deleting to avoid a dangling pointer if Qt emits signals during destruction
+	mSelectedWidget = nullptr;
+
+	// Remove all comment widgets except the trailing stretch spacer
 	while (mCommentsLayout->count() > 1) {
 		QLayoutItem *item = mCommentsLayout->takeAt(0);
 		if (item && item->widget()) {
@@ -64,68 +133,82 @@ void YouTubeStyleCommentWidget::clearComments()
 	}
 	mCommentWidgets.clear();
 	mRepliesMap.clear();
+	mScoreMap.clear();
+	mTimestampMap.clear();
 }
 
 void YouTubeStyleCommentWidget::addComment(const RsGxsComment &comment, const RsGxsMessageId &parentId)
 {
-	// Create comment item widget
 	CommentItemWidget *itemWidget = new CommentItemWidget();
 
-	// Set comment data
 	itemWidget->setMsgId(comment.mMeta.mMsgId);
 	itemWidget->setAuthorId(comment.mMeta.mAuthorId);
-	itemWidget->setAuthorName(QString::fromStdString(comment.mMeta.mAuthorId.toStdString()));
 	itemWidget->setCommentText(QString::fromStdString(comment.mComment));
 	itemWidget->setDateTime(DateTime::formatDateTime(comment.mMeta.mPublishTs));
+	itemWidget->setScore(static_cast<int>(comment.mScore));
 
-	int score = 0;
-	itemWidget->setScore(score);
+	mScoreMap[comment.mMeta.mMsgId] = comment.mScore;
+	mTimestampMap[comment.mMeta.mMsgId] = comment.mMeta.mPublishTs;
 
-	// Set indentation based on reply level
-	int level = 0;
-	if (!parentId.isNull()) {
-		level = 1; // Replies are indented
-		// Could be extended for multi-level nesting
-	}
+	int level = parentId.isNull() ? 0 : 1;
 	itemWidget->setLevel(level);
 
-	// Store widget reference
+	// Issue 4: replies start hidden; the parent's "View X replies" button reveals them
+	if (level > 0)
+		itemWidget->hide();
+
 	mCommentWidgets[comment.mMeta.mMsgId] = itemWidget;
 
+	// Issue 2: vote buttons wired to doVote() which calls the comment service directly,
+	// mirroring GxsCommentTreeWidget::vote()
+	connect(itemWidget, &CommentItemWidget::upvoteClicked, this, [this](const RsGxsMessageId &msgId) {
+		doVote(msgId, true);
+	});
+	connect(itemWidget, &CommentItemWidget::downvoteClicked, this, [this](const RsGxsMessageId &msgId) {
+		doVote(msgId, false);
+	});
+	// Issue 2: reply button propagates up to GxsCommentDialog via signal
+	connect(itemWidget, &CommentItemWidget::replyClicked, this, &YouTubeStyleCommentWidget::commentReply);
+
+	// Issue 4: collapse/expand toggle for reply threads
+	connect(itemWidget, &CommentItemWidget::viewRepliesToggled,
+	        this, &YouTubeStyleCommentWidget::onViewRepliesToggled);
+
+	// Issue 5: click-to-select within the list
+	connect(itemWidget, &CommentItemWidget::commentSelected,
+	        this, &YouTubeStyleCommentWidget::onCommentSelected);
+
+	// Issue 1 + 3: async identity resolution fills name and avatar
+	GxsIdDetails::process(comment.mMeta.mAuthorId, fillCommentItemWidgetCallback, itemWidget);
+
 	if (parentId.isNull()) {
-		// Top-level comment - insert before the stretch
 		mCommentsLayout->insertWidget(mCommentsLayout->count() - 1, itemWidget);
 	} else {
-		// Reply - add to parent's replies list
 		mRepliesMap[parentId].append(comment.mMeta.mMsgId);
-		// Insert after parent in layout
 		CommentItemWidget *parentWidget = mCommentWidgets.value(parentId, nullptr);
 		if (parentWidget) {
-			int parentIndex = mCommentsLayout->indexOf(parentWidget);
-			if (parentIndex >= 0) {
-				mCommentsLayout->insertWidget(parentIndex + 1, itemWidget);
-			} else {
-				mCommentsLayout->insertWidget(mCommentsLayout->count() - 1, itemWidget);
+			int insertPos = mCommentsLayout->indexOf(parentWidget) + 1;
+			// Skip past any replies already placed after this parent
+			while (insertPos < mCommentsLayout->count() - 1) {
+				CommentItemWidget *ciw = qobject_cast<CommentItemWidget*>(mCommentsLayout->itemAt(insertPos)->widget());
+				if (ciw && ciw->getLevel() > 0)
+					++insertPos;
+				else
+					break;
 			}
+			mCommentsLayout->insertWidget(insertPos, itemWidget);
 		} else {
-			// Parent not yet in layout (orphaned reply) — insert at top level
 			mCommentsLayout->insertWidget(mCommentsLayout->count() - 1, itemWidget);
 		}
 	}
 }
 
-void YouTubeStyleCommentWidget::insertCommentIntoTree(CommentItemWidget *widget, const RsGxsMessageId &parentId)
-{
-	Q_UNUSED(widget);
-	Q_UNUSED(parentId);
-	// This is where nested reply handling would be implemented
-	// For YouTube style, replies could be collapsed/expanded
-}
-
 void YouTubeStyleCommentWidget::loadCommentsForPost(const RsGxsGroupId &groupId, const std::set<RsGxsMessageId> &msgVersions, const RsGxsMessageId &mostRecentMsgId)
 {
 	mCurrentGroupId = groupId;
-	mCurrentPostId = mostRecentMsgId;
+	mCurrentPostId  = mostRecentMsgId;
+	mLatestMsgId    = mostRecentMsgId;
+	mMsgVersions    = msgVersions;
 
 	clearComments();
 
@@ -160,17 +243,108 @@ void YouTubeStyleCommentWidget::loadCommentsForPost(const RsGxsGroupId &groupId,
 					addComment(comment, comment.mMeta.mParentId);
 				}
 			}
+
+			// Issue 4: stamp each top-level comment with its reply count
+			updateReplyCountButtons();
 		}, this);
 	});
 }
 
 void YouTubeStyleCommentWidget::sortComments(int sortMethod)
 {
-	// Sorting placeholder - would need to collect, sort, and re-add all comments
-	Q_UNUSED(sortMethod);
+	// Collect top-level CommentItemWidget pointers
+	QList<CommentItemWidget *> topLevel;
+	for (auto it = mCommentWidgets.begin(); it != mCommentWidgets.end(); ++it) {
+		if (it.value()->getLevel() == 0)
+			topLevel.append(it.value());
+	}
+
+	if (topLevel.isEmpty())
+		return;
+
+	std::sort(topLevel.begin(), topLevel.end(), [&](CommentItemWidget *a, CommentItemWidget *b) {
+		const RsGxsMessageId aId = a->getMsgId();
+		const RsGxsMessageId bId = b->getMsgId();
+		if (sortMethod == 1) // New: timestamp descending
+			return mTimestampMap.value(aId, 0) > mTimestampMap.value(bId, 0);
+		if (sortMethod == 2) // Top: score ascending
+			return mScoreMap.value(aId, 0.0) < mScoreMap.value(bId, 0.0);
+		// Hot (0, default): score descending
+		return mScoreMap.value(aId, 0.0) > mScoreMap.value(bId, 0.0);
+	});
+
+	// Detach all comment widgets from the layout without deleting them;
+	// delete the QLayoutItem* wrapper (required by Qt), not the widget itself.
+	while (mCommentsLayout->count() > 1)
+		delete mCommentsLayout->takeAt(0);
+
+	// Re-insert: each top-level widget followed immediately by its replies
+	for (CommentItemWidget *parent : topLevel) {
+		mCommentsLayout->insertWidget(mCommentsLayout->count() - 1, parent);
+		for (const RsGxsMessageId &replyId : mRepliesMap.value(parent->getMsgId())) {
+			CommentItemWidget *reply = mCommentWidgets.value(replyId, nullptr);
+			if (reply)
+				mCommentsLayout->insertWidget(mCommentsLayout->count() - 1, reply);
+		}
+	}
 }
 
-void YouTubeStyleCommentWidget::expandReply(const RsGxsMessageId &commentId)
+// Issue 2: perform a vote via the comment service, mirroring GxsCommentTreeWidget::vote()
+void YouTubeStyleCommentWidget::doVote(const RsGxsMessageId &commentMsgId, bool up)
 {
-	Q_UNUSED(commentId);
+	if (!mCommentService) {
+		qDebug() << "YouTubeStyleCommentWidget::doVote: no comment service";
+		return;
+	}
+	if (mVoterId.isNull()) {
+		QMessageBox::warning(this, tr("Cannot vote"), tr("Please select an identity to vote with."));
+		return;
+	}
+
+	RsGxsGroupId groupId             = mCurrentGroupId;
+	RsGxsMessageId threadId          = mLatestMsgId;
+	RsGxsId voterId                  = mVoterId;
+	std::set<RsGxsMessageId> versions = mMsgVersions;
+
+	RsThread::async([this, groupId, threadId, commentMsgId, voterId, up, versions]()
+	{
+		std::string error_string;
+		RsGxsMessageId vote_id;
+		RsGxsVoteType tvote = up ? RsGxsVoteType::UP : RsGxsVoteType::DOWN;
+
+		bool res = mCommentService->voteForComment(groupId, threadId, commentMsgId, voterId, tvote, vote_id, error_string);
+
+		RsQThreadUtils::postToObject([this, res, error_string, groupId, versions, threadId]()
+		{
+			if (res)
+				loadCommentsForPost(groupId, versions, threadId);
+			else
+				QMessageBox::critical(nullptr, tr("Cannot vote"),
+				    tr("Error while voting: ") + QString::fromStdString(error_string));
+		}, this);
+	});
+}
+
+// Issue 4: show or hide the reply widgets when the "View X replies" button is toggled
+void YouTubeStyleCommentWidget::onViewRepliesToggled(const RsGxsMessageId &msgId, bool show)
+{
+	for (const RsGxsMessageId &replyId : mRepliesMap.value(msgId)) {
+		CommentItemWidget *reply = mCommentWidgets.value(replyId, nullptr);
+		if (reply)
+			reply->setVisible(show);
+	}
+}
+
+// Issue 5: track the selected comment widget, deselecting the previous one
+void YouTubeStyleCommentWidget::onCommentSelected(const RsGxsMessageId &msgId)
+{
+	if (mSelectedWidget) {
+		mSelectedWidget->setSelected(false);
+		mSelectedWidget = nullptr;
+	}
+	CommentItemWidget *w = mCommentWidgets.value(msgId, nullptr);
+	if (w) {
+		w->setSelected(true);
+		mSelectedWidget = w;
+	}
 }

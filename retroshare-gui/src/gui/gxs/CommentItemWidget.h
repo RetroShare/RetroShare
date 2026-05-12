@@ -28,6 +28,7 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QFrame>
+#include <QMouseEvent>
 
 #include <retroshare/rsgxscommon.h>
 
@@ -44,6 +45,7 @@ public:
 	~CommentItemWidget();
 
 	void setMsgId(const RsGxsMessageId &id);
+	RsGxsMessageId getMsgId() const { return mMsgId; }
 	void setAuthorId(const RsGxsId &id);
 	void setAuthorName(const QString &name);
 	void setAuthorAvatar(const QPixmap &avatar);
@@ -54,31 +56,47 @@ public:
 	void setDownvote(bool downvoted);
 	void setReplyCount(int count);
 	void setLevel(int level);
+	void setViewRepliesCount(int count);
+	void setSelected(bool selected);
 
 	int getLevel() const { return mLevel; }
+	QString getCommentText() const { return mCommentText; }
+	QString getAuthorName() const { return mAuthorName; }
 
  signals:
 	void upvoteClicked(const RsGxsMessageId &msgId);
 	void downvoteClicked(const RsGxsMessageId &msgId);
 	void replyClicked(const RsGxsMessageId &msgId);
 	void authorClicked(const RsGxsId &authorId);
+	void viewRepliesToggled(const RsGxsMessageId &msgId, bool show);
+	void commentSelected(const RsGxsMessageId &msgId);
+
+protected:
+	void mousePressEvent(QMouseEvent *event) override;
 
 private slots:
 	void on_upvoteButton_clicked();
 	void on_downvoteButton_clicked();
 	void on_replyButton_clicked();
 	void on_authorLabel_linkActivated(const QString &link);
+	void on_viewRepliesButton_clicked();
 
 private:
 	void setupStyle();
 
 	Ui::CommentItemWidget *ui;
 
+	QPushButton *mViewRepliesButton;
 	int mLevel;
 	bool mUpvoteActive;
 	bool mDownvoteActive;
+	bool mSelected;
+	bool mRepliesExpanded;
 	RsGxsMessageId mMsgId;
 	RsGxsId mAuthorId;
+	QString mCommentText;
+	QString mAuthorName;
+	int mReplyCount;
 };
 
 #endif // COMMENT_ITEM_WIDGET_H

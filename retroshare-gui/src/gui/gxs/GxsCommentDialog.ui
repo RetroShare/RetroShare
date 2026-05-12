@@ -98,15 +98,29 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="youTubeStyleButton">
-       <property name="text">
-        <string>YouTube Style</string>
+      <widget class="QToolButton" name="viewModeButton">
+       <property name="toolTip">
+        <string>Toggle view: threaded (classic) / flat (YouTube-style)</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../icons.qrc">
+         <normaloff>:/icons/svg/threaded-view.svg</normaloff>:/icons/svg/threaded-view.svg
+         <normalon>:/icons/svg/flat-view.svg</normalon>:/icons/svg/flat-view.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
        <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextOnly</enum>
+        <enum>Qt::ToolButtonIconOnly</enum>
        </property>
       </widget>
      </item>
