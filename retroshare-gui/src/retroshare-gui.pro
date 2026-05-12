@@ -387,6 +387,7 @@ HEADERS +=  rshare.h \
             gui/AboutWidget.h \
             gui/NetworkView.h \
             gui/FriendsDialog.h \
+            gui/FriendRequestsDialog.h \
             gui/ServicePermissionDialog.h \
             gui/RemoteDirModel.h \
             gui/RetroShareLink.h \
@@ -763,6 +764,7 @@ SOURCES +=  main.cpp \
             gui/MainWindow.cpp \
             gui/NetworkView.cpp \
             gui/FriendsDialog.cpp \
+            gui/FriendRequestsDialog.cpp \
             gui/ServicePermissionDialog.cpp \
             gui/RemoteDirModel.cpp \
             gui/RsAutoUpdatePage.cpp \
