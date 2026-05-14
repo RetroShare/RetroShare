@@ -401,9 +401,14 @@ void p3VOIP::handleData(RsVOIPDataItem *item)
 
 	if(it == mPeerInfo.end())
 	{
-		std::cerr << "Peer unknown to VOIP process. Dropping data" << std::endl;
-		delete item ;
-		return ;
+		// RsDbg() << "Peer unknown to VOIP process. Dropping data" << std::endl;
+        // DISTANT_VOIP FIX: Register dynamic peers (tunnels) on the fly
+        it = mPeerInfo.insert(std::make_pair(item->PeerId(), VOIPPeerInfo())).first;
+        it->second.initialisePeerInfo(item->PeerId());
+        
+        #ifdef DEBUG_VOIP
+        std::cerr << "DISTANT_VOIP: Registered new dynamic peer in p3VOIP engine: " << item->PeerId() << std::endl;
+        #endif
 	}
 	it->second.incoming_queue.push_back(item) ;	// be careful with the delete action!
 

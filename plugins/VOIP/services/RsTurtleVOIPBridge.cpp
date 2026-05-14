@@ -120,7 +120,7 @@ RsPeerId RsTurtleVOIPBridge::getOrCreateTunnelForChat(const ChatId& chatId)
     for(std::map<TurtleVirtualPeerId, VOIPTunnelState>::iterator it = mActiveTunnels.begin(); it != mActiveTunnels.end(); ++it) {
         const uint8_t* b = it->second.hash.toByteArray();
         uint8_t cand[16];
-        for(int i=0; i<16; ++i) cand[i] = b[4+i] ^ VOIP_HASH_MAGIC_XOR;
+        for(int i=0; i<16; ++i) cand[i] = b[i] ^ VOIP_HASH_MAGIC_XOR;
         RsGxsId tunnelTarget = RsGxsId::fromBufferUnsafe(cand);
         
         if (tunnelTarget == info.to_id) {
@@ -161,7 +161,7 @@ bool RsTurtleVOIPBridge::handleTunnelRequest(const RsFileHash& hash, const RsPee
 {
     const uint8_t* bytes = hash.toByteArray();
     uint8_t candidate_bytes[16];
-    for(int i=0; i<16; ++i) candidate_bytes[i] = bytes[4 + i] ^ VOIP_HASH_MAGIC_XOR;
+    for(int i=0; i<16; ++i) candidate_bytes[i] = bytes[i] ^ VOIP_HASH_MAGIC_XOR;
     RsGxsId target = RsGxsId::fromBufferUnsafe(candidate_bytes);
     
     if (mIdentity && mIdentity->isOwnId(target)) {
@@ -190,7 +190,7 @@ void RsTurtleVOIPBridge::addVirtualPeer(const TurtleFileHash& hash, const Turtle
     // Cleanup pending probe for this identity
     const uint8_t* b = hash.toByteArray();
     uint8_t cand[16];
-    for(int i=0; i<16; ++i) cand[i] = b[4+i] ^ VOIP_HASH_MAGIC_XOR;
+    for(int i=0; i<16; ++i) cand[i] = b[i] ^ VOIP_HASH_MAGIC_XOR;
     RsGxsId resolvedId = RsGxsId::fromBufferUnsafe(cand);
     
     std::map<RsGxsId, RsFileHash>::iterator it = mPendingProbes.find(resolvedId);
@@ -292,9 +292,17 @@ void RsTurtleVOIPBridge::sendRawDataViaTunnel(const RsPeerId& virtual_peer_id, v
 
 RsFileHash RsTurtleVOIPBridge::makeVoipFakeHash(const RsGxsId& destination)
 {
-    uint8_t bytes[20]; RsRandom::random_bytes(&bytes[0], 4); 
+    uint8_t bytes[20]; 
     const uint8_t* gxs_bytes = destination.toByteArray();
-    for(int i=0; i<16; ++i) bytes[4 + i] = gxs_bytes[i] ^ VOIP_HASH_MAGIC_XOR;
+    
+    // DISTANT_VOIP FIX: Shift the GxsId to the beginning of the hash (0-15)
+    // to avoid overlapping with p3gxstunnel's expected layout (4-19).
+    // This prevents "Cannot find tunnel id" error spam in logs.
+    for(int i=0; i<16; ++i) bytes[i] = gxs_bytes[i] ^ VOIP_HASH_MAGIC_XOR;
+    
+    // Random bytes at the end (16-19)
+    RsRandom::random_bytes(&bytes[16], 4); 
+
     return RsFileHash::fromBufferUnsafe(bytes);
 }
 
