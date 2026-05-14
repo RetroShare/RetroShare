@@ -978,20 +978,28 @@ void VOIPChatWidgetHolder::addAudioData(const RsPeerId &peer_id, QByteArray* arr
 void VOIPChatWidgetHolder::sendVideoData()
 {
 	RsVOIPDataChunk chunk ;
+    RsPeerId targetId = getEffectivePeerId(false);
+
+    if (targetId.isNull())
+        return;
 
 	while(inputVideoDevice && inputVideoDevice->getNextEncodedPacket(chunk))
-		rsVOIP->sendVoipData(mChatWidget->getChatId().toPeerId(),chunk) ;
+		rsVOIP->sendVoipData(targetId,chunk) ;
 }
 
 void VOIPChatWidgetHolder::sendAudioData()
 {
+    RsPeerId targetId = getEffectivePeerId(false);
+    if (targetId.isNull())
+        return;
+
     while(inputAudioProcessor && inputAudioProcessor->hasPendingPackets()) {
         QByteArray qbarray = inputAudioProcessor->getNetworkPacket();
         RsVOIPDataChunk chunk;
         chunk.size = qbarray.size();
         chunk.data = (void*)qbarray.constData();
         chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_AUDIO ;
-        rsVOIP->sendVoipData(mChatWidget->getChatId().toPeerId(),chunk);
+        rsVOIP->sendVoipData(targetId,chunk);
     }
 }
 
