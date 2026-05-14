@@ -23,12 +23,14 @@
 #include <QLabel>
 #include <QCamera>
 #include <QCameraInfo>
+#include <QVideoProbe>
 #include "interface/rsVOIP.h"
 
 #include "gui/VideoProcessor.h"
 
 class VideoEncoder ;
 class QCameraImageCapture;
+class QVideoProbe;
 
 // Responsible from displaying the video. The source of the video is
 // a VideoDecoder object, which uses a codec.
@@ -89,6 +91,7 @@ class QVideoInputDevice: public QObject
         QString currentCameraDescriptionString() const { return _capture_device_info.deviceName(); }
 protected slots:
         void grabFrame(int id, QVideoFrame f) ;
+        void handleProbedFrame(const QVideoFrame& f) ;
         void errorHandling(CameraStatus status,QCamera::Error error);
 
 	signals:
@@ -100,6 +103,7 @@ protected slots:
 		QTimer *_timer ;
         QCamera *_capture_device;
         QCameraImageCapture *_image_capture;
+        QVideoProbe *_video_probe;
         QCameraInfo _capture_device_info;
 
 		QVideoOutputDevice *_echo_output_device ;
