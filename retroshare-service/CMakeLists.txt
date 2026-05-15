@@ -9,6 +9,7 @@ set(RS_SERVICE_SOURCES src/retroshare-service.cc)
 
 # --- Executable ---
 add_executable(retroshare-service ${RS_SERVICE_SOURCES})
+target_compile_definitions(retroshare-service PRIVATE RS_RELEASE_VERSION="${RS_VERSION}")
 
 # --- Linkage ---
 # Linked to the retroshare library target defined in libretroshare/

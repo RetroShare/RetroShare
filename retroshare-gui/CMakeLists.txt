@@ -94,7 +94,7 @@ target_include_directories(retroshare-gui PRIVATE
 
 # --- Compile Definitions ---
 target_compile_definitions(retroshare-gui PRIVATE 
-    RS_RELEASE_VERSION 
+    RS_RELEASE_VERSION="${RS_VERSION}" 
     TARGET="retroshare"
 )
 
