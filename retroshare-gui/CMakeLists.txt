@@ -67,7 +67,10 @@ add_executable(retroshare-gui
     ${RS_GUI_RESOURCES}
 )
 
-set_target_properties(retroshare-gui PROPERTIES OUTPUT_NAME retroshare)
+set_target_properties(retroshare-gui PROPERTIES 
+    OUTPUT_NAME retroshare 
+    AUTOUIC_SEARCH_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/src/gui/gxs;${CMAKE_CURRENT_SOURCE_DIR}/src/gui/common;${CMAKE_CURRENT_SOURCE_DIR}/src/gui/settings;${CMAKE_CURRENT_SOURCE_DIR}/src/gui/chat;${CMAKE_CURRENT_SOURCE_DIR}/src/gui/msgs"
+)
 
 # --- Linkage ---
 target_link_libraries(retroshare-gui PRIVATE retroshare ${RS_LINK_LIBRARIES})
