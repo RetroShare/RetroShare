@@ -217,7 +217,8 @@ PluginManager::pluginWidget(QString pluginName)
         QString em = tr("Error: no plugin with name '%1' found")
                         .arg(pluginName);
         emit errorAppeared( em );
-    }      
+    }
+    return 0;
 }
 
 //=============================================================================

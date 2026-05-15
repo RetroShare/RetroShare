@@ -42,6 +42,8 @@
 #include "PluginsPage.h"
 #include "PluginManager.h"
 
+namespace gui {
+
 //============================================================================== 
 
 PluginsPage::PluginsPage(QWidget *parent )
@@ -95,5 +97,6 @@ PluginsPage::pluginRegistered(QString pluginName)
 
     pluginTabs->addTab( pw , pluginName );
 }
+} // namespace gui
 
 //==============================================================================
