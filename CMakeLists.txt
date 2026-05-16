@@ -4,8 +4,13 @@ project(RetroShare)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Global silence for deprecated warnings during migration
+add_compile_options(-Wno-deprecated-declarations -Wno-cpp)
+
 # --- Versioning ---
 find_package(Git REQUIRED)
+
+# 1. Get Root Version
 execute_process(
     COMMAND ${GIT_EXECUTABLE} describe --tags --always --dirty
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -13,6 +18,41 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 message(STATUS "RetroShare Version: ${RS_VERSION}")
+
+# Parse Root Version (similar to libretroshare's logic but for root)
+set(V_GIT_DESCRIBE_REGEXP "^v([0-9]+).([0-9]+).([0-9]+)(.*)$")
+if(RS_VERSION MATCHES "${V_GIT_DESCRIBE_REGEXP}")
+    string(REGEX REPLACE "${V_GIT_DESCRIBE_REGEXP}" "\\1;\\2;\\3;\\4" V_GIT_DESCRIBE_LIST ${RS_VERSION})
+    list(GET V_GIT_DESCRIBE_LIST 0 MAJOR_V)
+    list(GET V_GIT_DESCRIBE_LIST 1 MINOR_V)
+    list(GET V_GIT_DESCRIBE_LIST 2 MINI_V)
+    list(GET V_GIT_DESCRIBE_LIST 3 EXTRA_V)
+    
+    set(RS_MAJOR_VERSION "${MAJOR_V}" CACHE STRING "Major version" FORCE)
+    set(RS_MINOR_VERSION "${MINOR_V}" CACHE STRING "Minor version" FORCE)
+    set(RS_MINI_VERSION  "${MINI_V}"  CACHE STRING "Mini version"  FORCE)
+    set(RS_EXTRA_VERSION "${EXTRA_V}" CACHE STRING "Extra version" FORCE)
+else()
+    # Fallback if tag format is different
+    set(RS_MAJOR_VERSION "0" CACHE STRING "Major version" FORCE)
+    set(RS_MINOR_VERSION "6" CACHE STRING "Minor version" FORCE)
+    set(RS_MINI_VERSION  "7" CACHE STRING "Mini version"  FORCE)
+    set(RS_EXTRA_VERSION "a-unknown" CACHE STRING "Extra version" FORCE)
+endif()
+
+# 2. Get LibRetroShare Version (for RS_LIB_VERSION_HASH)
+execute_process(
+    COMMAND ${GIT_EXECUTABLE} describe --tags --always --dirty
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/libretroshare"
+    OUTPUT_VARIABLE RS_LIB_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+)
+if(NOT RS_LIB_VERSION)
+    set(RS_LIB_VERSION "[version not available]")
+endif()
+message(STATUS "libretroshare Version: ${RS_LIB_VERSION}")
+
 
 # --- Options (Ported from retroshare.pri) ---
 option(RS_LIBRETROSHARE_STATIC "Build RetroShare static library" ON)
@@ -84,6 +124,10 @@ endif()
 # 1. Support libs (Librnp, etc.)
 if(RS_RNPLIB)
     add_subdirectory(supportlibs/librnp EXCLUDE_FROM_ALL)
+endif()
+
+if(RS_USE_I2P_SAM3)
+    add_subdirectory(supportlibs/libsam3 EXCLUDE_FROM_ALL)
 endif()
 
 if(RS_JSON_API)

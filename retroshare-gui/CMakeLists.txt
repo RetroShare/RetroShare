@@ -99,6 +99,7 @@ target_compile_definitions(retroshare-gui PRIVATE
     RS_MINOR_VERSION=${RS_MINOR_VERSION}
     RS_MINI_VERSION=${RS_MINI_VERSION}
     RS_EXTRA_VERSION="${RS_EXTRA_VERSION}"
+    RS_LIB_VERSION_HASH="${RS_LIB_VERSION}"
     TARGET="retroshare"
 )
 
