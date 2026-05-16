@@ -92,6 +92,10 @@ target_include_directories(retroshare-gui PRIVATE
     ${CMAKE_BINARY_DIR}
 )
 
+if(RS_JSON_API)
+    target_include_directories(retroshare-gui PRIVATE ${CMAKE_SOURCE_DIR}/supportlibs/restbed/source/)
+endif()
+
 # --- Compile Definitions ---
 target_compile_definitions(retroshare-gui PRIVATE 
     RS_RELEASE_VERSION="${RS_VERSION}" 

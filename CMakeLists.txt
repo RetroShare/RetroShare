@@ -130,6 +130,10 @@ if(RS_USE_I2P_SAM3)
     add_subdirectory(supportlibs/libsam3 EXCLUDE_FROM_ALL)
 endif()
 
+if(RS_BROADCAST_DISCOVERY)
+    add_subdirectory(supportlibs/udp-discovery-cpp EXCLUDE_FROM_ALL)
+endif()
+
 if(RS_JSON_API)
     # Disable restbed tests/examples and build as static library
     set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
