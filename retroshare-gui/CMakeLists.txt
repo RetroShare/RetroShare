@@ -105,6 +105,7 @@ target_compile_definitions(retroshare-gui PRIVATE
     RS_EXTRA_VERSION="${RS_EXTRA_VERSION}"
     RS_LIB_VERSION_HASH="${RS_LIB_VERSION}"
     TARGET="retroshare"
+    RS_DIRECT_CHAT
 )
 
 
