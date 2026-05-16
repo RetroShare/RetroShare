@@ -95,8 +95,13 @@ target_include_directories(retroshare-gui PRIVATE
 # --- Compile Definitions ---
 target_compile_definitions(retroshare-gui PRIVATE 
     RS_RELEASE_VERSION="${RS_VERSION}" 
+    RS_MAJOR_VERSION=${RS_MAJOR_VERSION}
+    RS_MINOR_VERSION=${RS_MINOR_VERSION}
+    RS_MINI_VERSION=${RS_MINI_VERSION}
+    RS_EXTRA_VERSION="${RS_EXTRA_VERSION}"
     TARGET="retroshare"
 )
+
 
 if(UNIX AND NOT APPLE)
     find_package(PkgConfig REQUIRED)
