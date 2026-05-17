@@ -129,7 +129,8 @@ if(RS_RNPLIB)
 endif()
 
 if(RS_USE_I2P_SAM3)
-    add_subdirectory(supportlibs/libsam3 EXCLUDE_FROM_ALL)
+    add_library(sam3 STATIC supportlibs/libsam3/src/libsam3/libsam3.c)
+    target_include_directories(sam3 PUBLIC supportlibs/libsam3/src/libsam3)
 endif()
 
 if(RS_BROADCAST_DISCOVERY)
