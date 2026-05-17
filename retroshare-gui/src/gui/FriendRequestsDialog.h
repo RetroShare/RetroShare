@@ -82,6 +82,8 @@ private:
 	void handleAuthSslEvent(std::shared_ptr<const RsEvent> event);
 	void handleFriendListEvent(std::shared_ptr<const RsEvent> event);
 	void addSecurityItem(const AttemptEntry &entry);
+	bool shouldIgnoreRequest(const AttemptEntry &entry) const;
+	QString requestKey(const AttemptEntry &entry) const;
 	void updateCount();
 
 	RSFeedWidget *mFeedWidget;
