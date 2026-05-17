@@ -3,6 +3,7 @@ project(RetroShare)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Global silence for deprecated warnings during migration
 add_compile_options(-Wno-deprecated-declarations -Wno-cpp)
@@ -77,7 +78,8 @@ option(RS_GXSIDENTITIES "Enable GXS identities in GUI" ON)
 option(RS_BROADCAST_DISCOVERY "Enable broadcast discovery" ON)
 option(RS_GUI "Build RetroShare GUI" ON)
 option(RS_SERVICE "Build RetroShare Service" ON)
-option(RS_PLUGINS "Enable plugins support" OFF)
+option(RS_FRIENDSERVER "Build RetroShare FriendServer" OFF)
+option(RS_PLUGINS "Enable plugins support" ON)
 option(RS_WARN_DEPRECATED "Show deprecated warnings" OFF)
 
 option(RS_MESSENGER "Enable Messenger Window" ON)
@@ -160,4 +162,8 @@ endif()
 
 if(RS_PLUGINS)
     add_subdirectory(plugins)
+endif()
+
+if(RS_FRIENDSERVER)
+    add_subdirectory(retroshare-friendserver)
 endif()
