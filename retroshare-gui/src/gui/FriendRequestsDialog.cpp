@@ -71,7 +71,6 @@ FriendRequestsDialog::FriendRequestsDialog(QWidget *parent)
 	/* Feed widget */
 	mFeedWidget = new RSFeedWidget(this);
 	mFeedWidget->setPlaceholderText(tr("No friend requests"));
-	mFeedWidget->enableRemove(true);
 	mFeedWidget->setSortRole(FEED_TREEWIDGET_SORTROLE, Qt::DescendingOrder);
 	vLayout->addWidget(mFeedWidget);
 
@@ -102,6 +101,55 @@ FriendRequestsDialog::~FriendRequestsDialog()
 	rsEvents->unregisterEventsHandler(mFriendEventHandlerId);
 }
 
+QString FriendRequestsDialog::requestKey(const AttemptEntry &entry) const
+{
+	return entry.pgpId.isEmpty() ? entry.sslId : entry.pgpId;
+}
+
+bool FriendRequestsDialog::shouldIgnoreRequest(const AttemptEntry &entry) const
+{
+	if (!rsPeers)
+		return true;
+
+	RsPgpId pgpId(entry.pgpId.toStdString());
+	RsPeerId sslId(entry.sslId.toStdString());
+
+	if (!entry.pgpId.isEmpty())
+	{
+		if (pgpId == rsPeers->getGPGOwnId() || rsPeers->isPgpFriend(pgpId))
+			return true;
+
+		RsPeerDetails gpgDetails;
+		if (rsPeers->getGPGDetails(pgpId, gpgDetails) && gpgDetails.accept_connection)
+			return true;
+	}
+
+	if (!entry.sslId.isEmpty())
+	{
+		if (sslId == rsPeers->getOwnId() || rsPeers->isFriend(sslId))
+			return true;
+
+		std::list<RsPeerId> ownSslIds;
+		if (rsPeers->getAssociatedSSLIds(rsPeers->getGPGOwnId(), ownSslIds))
+		{
+			for (const RsPeerId &ownSslId : ownSslIds)
+				if (sslId == ownSslId)
+					return true;
+		}
+
+		RsPeerDetails sslDetails;
+		if (rsPeers->getPeerDetails(sslId, sslDetails))
+		{
+			if (sslDetails.id == rsPeers->getOwnId() ||
+			    sslDetails.gpg_id == rsPeers->getGPGOwnId() ||
+			    sslDetails.accept_connection)
+				return true;
+		}
+	}
+
+	return false;
+}
+
 void FriendRequestsDialog::loadStoredRequests()
 {
 	Settings->beginGroup("FriendRequests");
@@ -112,6 +160,7 @@ void FriendRequestsDialog::loadStoredRequests()
 	for (const QString &s : rejected)
 		mRejectedPeers.insert(s);
 
+	bool changedStored = false;
 	for (const QVariant &v : list)
 	{
 		QVariantMap map = v.toMap();
@@ -123,13 +172,18 @@ void FriendRequestsDialog::loadStoredRequests()
 		entry.timestamp = map["timestamp"].toLongLong();
 
 		/* Ignore if rejected */
-		QString rejKey = entry.pgpId.isEmpty() ? entry.sslId : entry.pgpId;
-		if (mRejectedPeers.contains(rejKey))
+		if (mRejectedPeers.contains(requestKey(entry)))
+		{
+			changedStored = true;
 			continue;
+		}
 
-		/* Ignore if already a friend */
-		if (!entry.pgpId.isEmpty() && rsPeers && rsPeers->isPgpFriend(RsPgpId(entry.pgpId.toStdString())))
+		/* Ignore own locations and accepted peers that became stale while stored */
+		if (shouldIgnoreRequest(entry))
+		{
+			changedStored = true;
 			continue;
+		}
 
 		/* Ensure no duplicates */
 		if (!mStoredAttempts.contains(entry))
@@ -137,6 +191,8 @@ void FriendRequestsDialog::loadStoredRequests()
 			mStoredAttempts.append(entry);
 			addSecurityItem(entry);
 		}
+		else
+			changedStored = true;
 	}
 
 	/* Scan PGP keyring for non-friend peers who have signed us */
@@ -152,7 +208,7 @@ void FriendRequestsDialog::loadStoredRequests()
 			if (!rsPeers->getGPGDetails(pgpId, details))
 				continue;
 
-			if (!details.hasSignedMe || details.accept_connection)
+			if (pgpId == rsPeers->getGPGOwnId() || !details.hasSignedMe || details.accept_connection)
 				continue;
 
 			QString pgpStr = QString::fromStdString(pgpId.toStdString());
@@ -170,6 +226,9 @@ void FriendRequestsDialog::loadStoredRequests()
 				sslId = sslIds.front();
 			entry.sslId = QString::fromStdString(sslId.toStdString());
 
+			if (shouldIgnoreRequest(entry))
+				continue;
+
 			if (!mStoredAttempts.contains(entry))
 			{
 				mStoredAttempts.append(entry);
@@ -178,9 +237,11 @@ void FriendRequestsDialog::loadStoredRequests()
 			}
 		}
 
-		if (addedNew)
+		if (addedNew || changedStored)
 			saveStoredRequests();
 	}
+	else if (changedStored)
+		saveStoredRequests();
 
 	updateCount();
 }
@@ -217,19 +278,15 @@ void FriendRequestsDialog::handleAuthSslEvent(std::shared_ptr<const RsEvent> eve
 		QString pgpStr = QString::fromStdString(pe->mPgpId.toStdString());
 		QString sslStr = QString::fromStdString(pe->mSslId.toStdString());
 
-		QString rejKey = pgpStr.isEmpty() ? sslStr : pgpStr;
-		if (mRejectedPeers.contains(rejKey))
-			return;
-
-		if (!pgpStr.isEmpty() && rsPeers && rsPeers->isPgpFriend(pe->mPgpId))
-			return;
-
 		AttemptEntry entry;
 		entry.pgpId = pgpStr;
 		entry.sslId = sslStr;
 		entry.sslCn = QString::fromUtf8(pe->mSslCn.c_str());
 		entry.locator = QString::fromStdString(pe->mLocator.toString());
 		entry.timestamp = QDateTime::currentDateTime().toMSecsSinceEpoch();
+
+		if (mRejectedPeers.contains(requestKey(entry)) || shouldIgnoreRequest(entry))
+			return;
 
 		int idx = mStoredAttempts.indexOf(entry);
 		if (idx >= 0)
@@ -267,7 +324,7 @@ void FriendRequestsDialog::handleFriendListEvent(std::shared_ptr<const RsEvent> 
 		for (auto it = mItemMap.begin(); it != mItemMap.end(); ++it)
 		{
 			const AttemptEntry &entry = it.value();
-			if (!entry.pgpId.isEmpty() && rsPeers->isPgpFriend(RsPgpId(entry.pgpId.toStdString())))
+			if (shouldIgnoreRequest(entry))
 			{
 				itemsToRemove.append(it.key());
 				mStoredAttempts.removeAll(entry);
@@ -317,7 +374,7 @@ void FriendRequestsDialog::clearAll()
 {
 	for (const AttemptEntry &entry : mStoredAttempts)
 	{
-		QString rejKey = entry.pgpId.isEmpty() ? entry.sslId : entry.pgpId;
+		QString rejKey = requestKey(entry);
 		if (!rejKey.isEmpty())
 			mRejectedPeers.insert(rejKey);
 	}
@@ -358,7 +415,7 @@ void FriendRequestsDialog::deleteFeedItem(FeedItem *item, uint32_t /*type*/)
 	if (mItemMap.contains(item))
 	{
 		AttemptEntry entry = mItemMap.value(item);
-		QString rejKey = entry.pgpId.isEmpty() ? entry.sslId : entry.pgpId;
+		QString rejKey = requestKey(entry);
 		if (!rejKey.isEmpty())
 		{
 			mRejectedPeers.insert(rejKey);

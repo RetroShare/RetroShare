@@ -138,12 +138,8 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
 
     connect(friendRequestsDialog, SIGNAL(requestCountChanged(int)), this, SLOT(updateFriendRequestsTabCount(int)));
 
-    ui.tabWidget->hideCloseButton(0);
-    ui.tabWidget->hideCloseButton(1);
-    ui.tabWidget->hideCloseButton(2);
-    ui.tabWidget->hideCloseButton(3);
-    ui.tabWidget->hideCloseButton(4);
-    ui.tabWidget->hideCloseButton(5);
+    for (int i = 0; i < ui.tabWidget->count(); ++i)
+        ui.tabWidget->hideCloseButton(i);
 
     /* Set initial size the splitter */
     ui.splitter->setStretchFactor(0, 0);
