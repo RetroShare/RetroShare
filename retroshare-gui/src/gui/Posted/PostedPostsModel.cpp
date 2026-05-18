@@ -459,6 +459,9 @@ public:
 
 	bool operator()(const RsPostedPost& p1,const RsPostedPost& p2) const
 	{
+		if(p1.mPinned != p2.mPinned)
+			return p1.mPinned;
+
         switch(mSortingStrategy)
         {
         default:
@@ -719,14 +722,16 @@ void RsPostedPostsModel::createPostsArray(std::vector<RsPostedPost>& posts)
 
     mPosts.clear();
 
-    for (std::vector<RsPostedPost>::const_reverse_iterator it = posts.rbegin(); it != posts.rend(); ++it)
+	for (std::vector<RsPostedPost>::const_reverse_iterator it = posts.rbegin(); it != posts.rend(); ++it)
     {
         if(!(*it).mMeta.mMsgId.isNull())
 		{
 #ifdef DEBUG_CHANNEL_MODEL
             std::cerr << " adding post \"" << (*it).mMeta.mMsgName << "\"" << std::endl;
 #endif
-			mPosts.push_back(*it);
+			RsPostedPost post(*it);
+			post.mPinned = mPostedGroup.mPinnedPosts.ids.find(post.mMeta.mMsgId) != mPostedGroup.mPinnedPosts.ids.end();
+			mPosts.push_back(post);
 		}
 #ifdef DEBUG_CHANNEL_MODEL
         else
