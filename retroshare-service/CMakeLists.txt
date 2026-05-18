@@ -144,7 +144,7 @@ if(RS_RNPLIB)
 	target_link_libraries(${PROJECT_NAME} PRIVATE
 		rnp             # Link by name
 		sexpp
-		botan-3
+		botan-2
 		json-c
 		bz2
 		z

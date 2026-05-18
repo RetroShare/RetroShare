@@ -17,7 +17,7 @@
 ################################################################################
 
 cmake_minimum_required (VERSION 3.18.0)
-project(retroshare-gui VERSION 0.6.6 LANGUAGES CXX)
+project(retroshare-gui VERSION 0.6.6 LANGUAGES CXX C)
 
 include(CMakeDependentOption)
 
@@ -33,10 +33,7 @@ option(
 	 just for development purposes, not suitable for library usage"
 	 ON )
 
-option(
-	RS_JSON_API
-	"Use restbed to expose libretroshare as JSON API via HTTP"
-	OFF )
+set(RS_JSON_API ON CACHE BOOL "Use restbed to expose libretroshare as JSON API via HTTP" FORCE)
 
 option(
 	RS_SERVICE_DESKTOP
@@ -53,6 +50,8 @@ option( RS_GXSCHANNELS "Enable GXS channels in GUI" ON )
 option( RS_GXSFORUMS   "Enable GXS forums in GUI"   ON )
 option( RS_GXSPOSTED   "Enable GXS posted in GUI"   ON )
 option( RS_GXSCIRCLES  "Enable GXS circles in GUI"  ON )
+set(RS_GXSIDENTITIES ON CACHE BOOL "Enable GXS identities in GUI" FORCE)
+set(RS_IDLE ON CACHE BOOL "Enable Idle support" FORCE)
 
 cmake_dependent_option(
 	RS_SERVICE_TERMINAL_WEBUI_PASSWORD
@@ -70,30 +69,26 @@ cmake_dependent_option(
 
 ################################ QT FILES #######################################
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package( Qt6 COMPONENTS Core         REQUIRED)
-find_package( Qt6 COMPONENTS Widgets      REQUIRED)
-find_package( Qt6 COMPONENTS Xml          REQUIRED)
-find_package( Qt6 COMPONENTS Network      REQUIRED)
-find_package( Qt6 COMPONENTS Multimedia   REQUIRED)
-find_package( Qt6 COMPONENTS PrintSupport REQUIRED)
+find_package( Qt5 COMPONENTS Core         REQUIRED)
+find_package( Qt5 COMPONENTS Widgets      REQUIRED)
+find_package( Qt5 COMPONENTS Xml          REQUIRED)
+find_package( Qt5 COMPONENTS Network      REQUIRED)
+find_package( Qt5 COMPONENTS Multimedia   REQUIRED)
+find_package( Qt5 COMPONENTS PrintSupport REQUIRED)
+if(UNIX AND NOT APPLE)
+	find_package( Qt5 COMPONENTS X11Extras REQUIRED )
+endif()
 
-list( APPEND RS_LINK_LIBRARIES Qt6::Multimedia Qt6::Widgets Qt6::Xml Qt6::Network Qt6::PrintSupport)
-if (NOT Qt6_FOUND)
-	find_package( Qt5 COMPONENTS Core         REQUIRED)
-	find_package( Qt5 COMPONENTS Widgets      REQUIRED)
-	find_package( Qt5 COMPONENTS Xml          REQUIRED)
-	find_package( Qt5 COMPONENTS Network      REQUIRED)
-	find_package( Qt5 COMPONENTS Multimedia   REQUIRED)
-	find_package( Qt5 COMPONENTS PrintSupport REQUIRED)
-
-	list( APPEND RS_LINK_LIBRARIES Qt5::Multimedia Qt5::Widgets Qt5::Xml Qt5::Network Qt5::PrintSupport)
+list( APPEND RS_LINK_LIBRARIES Qt5::Multimedia Qt5::Widgets Qt5::Xml Qt5::Network Qt5::PrintSupport)
+if(UNIX AND NOT APPLE)
+	list( APPEND RS_LINK_LIBRARIES Qt5::X11Extras )
 endif()
 
 ################################################################################
@@ -106,7 +101,7 @@ find_package(Git REQUIRED)
 ################################################################################
 
 if(RS_DEVELOPMENT_BUILD)
-	set(CMAKE_VERBOSE_MAKEFILE ON)
+	set(CMAKE_VERBOSE_MAKEFILE OFF)
 	set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 endif(RS_DEVELOPMENT_BUILD)
 
@@ -114,12 +109,18 @@ endif(RS_DEVELOPMENT_BUILD)
 
 include(src/CMakeLists.txt)
 
+link_directories(
+	"${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/librnp/Build/src/lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/librnp/Build/src/libsexpp"
+)
+
 qt_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
 if (NOT Qt6_FOUND)
 	qt5_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
 endif()
 
-add_executable(${PROJECT_NAME} ${RS_GUI_SOURCES} ${RS_UI_HEADERS} ${RS_GUI_QTRESOURCES})
+add_executable(${PROJECT_NAME} ${RS_GUI_SOURCES} ${RS_IMPLEMENTATION_HEADERS} ${RS_UI_HEADERS} ${RS_GUI_QTRESOURCES})
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "retroshare")
 install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
 
 include_directories( ${CMAKE_BINARY_DIR} )
@@ -201,6 +202,10 @@ if(RS_JSON_API)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC RS_JSONAPI)
 endif(RS_JSON_API)
 
+if(RS_WEBUI)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_WEBUI)
+endif(RS_WEBUI)
+
 ################################# CMark ########################################
 
 if(RS_GUI_CMARK)
@@ -224,19 +229,18 @@ endif(RS_GUI_CMARK)
 ################################# LibSam v3 ####################################
 
 set(SAM3_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/libsam3/")
-if(EXISTS "${SAM3_DEVEL_DIR}/.git" )
-	message( STATUS "libsam3 submodule found at ${SAM3_DEVEL_DIR} using it" )
-	add_subdirectory( "${SAM3_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libsam3" )
+if(EXISTS "${SAM3_DEVEL_DIR}" )
+	message( STATUS "libsam3 found at ${SAM3_DEVEL_DIR}, defining target sam3" )
+	add_library(sam3 STATIC
+		"${SAM3_DEVEL_DIR}/src/libsam3/libsam3.c"
+		"${SAM3_DEVEL_DIR}/src/libsam3a/libsam3a.c"
+	)
+	target_include_directories(sam3 PUBLIC 
+		"${SAM3_DEVEL_DIR}/src/libsam3"
+		"${SAM3_DEVEL_DIR}/src/libsam3a"
+	)
 else()
-	FetchContent_Declare(
-		libsam3
-		GIT_REPOSITORY "https://github.com/i2p/libsam3.git"
-		GIT_TAG "origin/master"
-		GIT_SHALLOW TRUE
-		GIT_PROGRESS TRUE
-		TIMEOUT 10
-		)
-	FetchContent_MakeAvailable(libsam3)
+	message( WARNING "libsam3 not found!" )
 endif()
 
 ################################################################################
@@ -305,7 +309,7 @@ if(UNIX)
 
 	target_compile_definitions(${PROJECT_NAME} PRIVATE HAVE_XSS)
 	target_compile_definitions(${PROJECT_NAME} PRIVATE _FILE_OFFSET_BITS=64)
-	target_link_options(${PROJECT_NAME} PRIVATE LINKER:-rdynamic)
+	target_link_options(${PROJECT_NAME} PRIVATE -rdynamic)
 endif(UNIX)
 
 if(RS_SANITIZE)
@@ -496,10 +500,12 @@ set( CMAKE_CXX_FLAGS "-Wno-deprecated-declarations" )
 target_compile_definitions(${PROJECT_NAME} PUBLIC  RS_NO_WARN_DEPRECATED )
 target_compile_definitions(${PROJECT_NAME} PRIVATE RS_RELEASE_VERSION )
 target_compile_definitions(${PROJECT_NAME} PRIVATE TARGET=\"retroshare\")
+target_compile_definitions(${PROJECT_NAME} PRIVATE RS_DIRECT_CHAT)
 
 if(RS_GXS_CIRCLES)
 	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_USE_CIRCLES )
 endif(RS_GXS_CIRCLES)
 
-#add_dependencies(${PROJECT_NAME} libretroshare)
+target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
+target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--no-as-needed z bz2 json-c botan-2 -Wl,--as-needed)
 
