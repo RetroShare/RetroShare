@@ -110,23 +110,25 @@ endif(RS_DEVELOPMENT_BUILD)
 
 ################################################################################
 
-set(LIBRETROSHARE_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libretroshare/")
-if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/CMakeLists.txt" )
-	message(
-		STATUS
-		"libretroshare source found at ${LIBRETROSHARE_DEVEL_DIR} using it" )
-	add_subdirectory(
-		"${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libretroshare" )
-else()
-	FetchContent_Declare(
-		libretroshare
-		GIT_REPOSITORY "https://github.com/RetroShare/libretroshare.git"
-		GIT_TAG "origin/master"
-		GIT_SHALLOW TRUE
-		GIT_PROGRESS TRUE
-		TIMEOUT 10
-	)
-	FetchContent_MakeAvailable(libretroshare)
+if(NOT TARGET retroshare)
+	set(LIBRETROSHARE_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libretroshare/")
+	if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/CMakeLists.txt" )
+		message(
+			STATUS
+			"libretroshare source found at ${LIBRETROSHARE_DEVEL_DIR} using it" )
+		add_subdirectory(
+			"${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libretroshare" )
+	else()
+		FetchContent_Declare(
+			libretroshare
+			GIT_REPOSITORY "https://github.com/RetroShare/libretroshare.git"
+			GIT_TAG "origin/master"
+			GIT_SHALLOW TRUE
+			GIT_PROGRESS TRUE
+			TIMEOUT 10
+		)
+		FetchContent_MakeAvailable(libretroshare)
+	endif()
 endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
@@ -134,17 +136,19 @@ target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
 ################################################################################
 
 if(RS_RNPLIB)
+	find_library(BOTAN_LIBRARY NAMES botan botan-3 botan-2 libbotan-3 libbotan-2 REQUIRED)
+
 	# Add RNP build directories to linker search path
 	target_link_directories(${PROJECT_NAME} PRIVATE
-		${CMAKE_CURRENT_BINARY_DIR}/supportlibs/librnp/Build/src/lib
-		${CMAKE_CURRENT_BINARY_DIR}/supportlibs/librnp/Build/src/libsexpp
+		${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/librnp/Build/src/lib
+		${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/librnp/Build/src/libsexpp
 	)
 
 	# Link libraries by name, including RNP libs and dependencies first
 	target_link_libraries(${PROJECT_NAME} PRIVATE
 		rnp             # Link by name
 		sexpp
-		botan-2
+		${BOTAN_LIBRARY}
 		json-c
 		bz2
 		z
@@ -160,8 +164,11 @@ endif(RS_RNPLIB)
 #     ${JSONC_INCLUDE_DIRS}
 # )
 
-# Link only libretroshare, it should handle its own dependencies now
 target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
+
+if(WIN32)
+	target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32 winmm iphlpapi mswsock)
+endif()
 
 ################################################################################
 

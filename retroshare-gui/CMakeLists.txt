@@ -36,6 +36,11 @@ option(
 set(RS_JSON_API ON CACHE BOOL "Use restbed to expose libretroshare as JSON API via HTTP" FORCE)
 
 option(
+	RS_USE_NATIVE_DIALOGS
+	"Enable native dialogs (replaces CONFIG+=rs_use_native_dialogs)"
+	OFF )
+
+option(
 	RS_SERVICE_DESKTOP
 	"Install icons and shortcuts for desktop environements"
 	OFF )
@@ -123,7 +128,11 @@ add_executable(${PROJECT_NAME} ${RS_GUI_SOURCES} ${RS_IMPLEMENTATION_HEADERS} ${
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "retroshare")
 install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
 
-include_directories( ${CMAKE_BINARY_DIR} )
+if(RS_USE_NATIVE_DIALOGS)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_NATIVEDIALOGS)
+endif()
+
+include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 
 ################################################################################
 
@@ -133,23 +142,25 @@ endif(RS_DEVELOPMENT_BUILD)
 
 ################################################################################
 
-set(LIBRETROSHARE_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libretroshare/")
-if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/.git" )
-	message(
-		STATUS
-		"libretroshare submodule found at ${LIBRETROSHARE_DEVEL_DIR} using it" )
-	add_subdirectory(
-		"${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libretroshare" )
-else()
-	FetchContent_Declare(
-		libretroshare
-		GIT_REPOSITORY "https://gitlab.com/RetroShare/libretroshare.git"
-		GIT_TAG "origin/master"
-		GIT_SHALLOW TRUE
-		GIT_PROGRESS TRUE
-		TIMEOUT 10
-	)
-	FetchContent_MakeAvailable(libretroshare)
+if(NOT TARGET retroshare)
+	set(LIBRETROSHARE_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libretroshare/")
+	if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/.git" )
+		message(
+			STATUS
+			"libretroshare submodule found at ${LIBRETROSHARE_DEVEL_DIR} using it" )
+		add_subdirectory(
+			"${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libretroshare" )
+	else()
+		FetchContent_Declare(
+			libretroshare
+			GIT_REPOSITORY "https://gitlab.com/RetroShare/libretroshare.git"
+			GIT_TAG "origin/master"
+			GIT_SHALLOW TRUE
+			GIT_PROGRESS TRUE
+			TIMEOUT 10
+		)
+		FetchContent_MakeAvailable(libretroshare)
+	endif()
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${LIBRETROSHARE_DEVEL_DIR}/src/)
@@ -506,6 +517,8 @@ if(RS_GXS_CIRCLES)
 	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_USE_CIRCLES )
 endif(RS_GXS_CIRCLES)
 
+find_library(BOTAN_LIBRARY NAMES botan botan-3 botan-2 libbotan-3 libbotan-2 REQUIRED)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
-target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--no-as-needed z bz2 json-c botan-2 -Wl,--as-needed)
+target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--no-as-needed z bz2 json-c ${BOTAN_LIBRARY} -Wl,--as-needed)
 
