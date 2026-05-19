@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.18)
 project(VOIPPlugin)
 
 # --- Dependencies ---
-find_package(Qt5 COMPONENTS Multimedia REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets Multimedia Xml Network REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(AVCODEC REQUIRED libavcodec)
 pkg_check_modules(AVUTIL REQUIRED libavutil)
@@ -85,13 +85,11 @@ add_library(VOIP MODULE
 set_target_properties(VOIP PROPERTIES
     PREFIX "lib"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins"
     AUTOUIC_SEARCH_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/gui"
 )
 
 # --- Links ---
-if(WIN32)
-    target_link_libraries(VOIP PRIVATE retroshare)
-endif()
 
 target_link_libraries(VOIP PRIVATE
     Qt5::Core
@@ -104,6 +102,9 @@ target_link_libraries(VOIP PRIVATE
     ${SPEEX_LIBRARIES}
     ${SPEEXDSP_LIBRARIES}
 )
+
+target_compile_options(VOIP PRIVATE "-Wno-deprecated-declarations")
+target_compile_definitions(VOIP PRIVATE RS_NO_WARN_DEPRECATED)
 
 if(RS_DEVELOPMENT_BUILD)
     target_compile_options(VOIP PRIVATE "-g" "-O0")

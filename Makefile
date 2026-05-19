@@ -6,6 +6,7 @@
 RS_RNPLIB            ?= ON
 RS_JSON_API          ?= ON
 RS_WEBUI             ?= ON
+RS_PLUGINS           ?= OFF
 RS_DEVELOPMENT_BUILD ?= OFF
 CMAKE_BUILD_TYPE     ?= 
 
@@ -35,6 +36,7 @@ all: rnp
 		-DRS_RNPLIB=$(RS_RNPLIB) \
 		-DRS_JSON_API=$(RS_JSON_API) \
 		-DRS_WEBUI=$(RS_WEBUI) \
+		-DRS_PLUGINS=$(RS_PLUGINS) \
 		-DRS_GUI=ON \
 		-DRS_SERVICE=ON \
 		-DRS_FRIENDSERVER=ON \
@@ -53,6 +55,7 @@ libretroshare: rnp
 		-DRS_RNPLIB=$(RS_RNPLIB) \
 		-DRS_JSON_API=$(RS_JSON_API) \
 		-DRS_WEBUI=$(RS_WEBUI) \
+		-DRS_PLUGINS=$(RS_PLUGINS) \
 		-DRS_GUI=OFF \
 		-DRS_SERVICE=OFF \
 		-DRS_FRIENDSERVER=OFF \
@@ -66,6 +69,7 @@ retroshare-service: rnp
 		-DRS_RNPLIB=$(RS_RNPLIB) \
 		-DRS_JSON_API=$(RS_JSON_API) \
 		-DRS_WEBUI=$(RS_WEBUI) \
+		-DRS_PLUGINS=$(RS_PLUGINS) \
 		-DRS_GUI=OFF \
 		-DRS_SERVICE=ON \
 		-DRS_FRIENDSERVER=OFF \
@@ -79,6 +83,7 @@ retroshare-friendserver: rnp
 		-DRS_RNPLIB=$(RS_RNPLIB) \
 		-DRS_JSON_API=$(RS_JSON_API) \
 		-DRS_WEBUI=$(RS_WEBUI) \
+		-DRS_PLUGINS=$(RS_PLUGINS) \
 		-DRS_GUI=OFF \
 		-DRS_SERVICE=OFF \
 		-DRS_FRIENDSERVER=ON \
@@ -92,6 +97,7 @@ retroshare-gui: rnp
 		-DRS_RNPLIB=$(RS_RNPLIB) \
 		-DRS_JSON_API=$(RS_JSON_API) \
 		-DRS_WEBUI=$(RS_WEBUI) \
+		-DRS_PLUGINS=$(RS_PLUGINS) \
 		-DRS_GUI=ON \
 		-DRS_SERVICE=OFF \
 		-DRS_FRIENDSERVER=OFF \

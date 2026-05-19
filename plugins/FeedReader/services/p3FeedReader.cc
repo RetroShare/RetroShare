@@ -2599,13 +2599,13 @@ bool p3FeedReader::updatePostedGroup(const RsPostedGroup &postedGroup, const std
 	return true;
 }
 
-bool p3FeedReader::waitForToken(RsGxsIfaceHelper *interface, uint32_t token)
+bool p3FeedReader::waitForToken(RsGxsIfaceHelper *helper, uint32_t token)
 {
-	if (!interface) {
+	if (!helper) {
 		return false;
 	}
 
-	RsTokenService *service = interface->getTokenService();
+	RsTokenService *service = helper->getTokenService();
 	int count = MAX_REQUEST_AGE * 2;
 
 	while (!mStopped) {

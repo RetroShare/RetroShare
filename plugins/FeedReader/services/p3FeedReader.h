@@ -106,7 +106,7 @@ public:
 	bool updateForumGroup(const RsGxsForumGroup &forumGroup, const std::string &groupName, const std::string &groupDescription);
 	bool getPostedGroup(const RsGxsGroupId &groupId, RsPostedGroup &postedGroup);
 	bool updatePostedGroup(const RsPostedGroup &postedGroup, const std::string &groupName, const std::string &groupDescription);
-	bool waitForToken(RsGxsIfaceHelper *interface, uint32_t token);
+	bool waitForToken(RsGxsIfaceHelper *helper, uint32_t token);
 	bool optimizeImage(FeedReaderOptimizeImageTask::Type type, const std::vector<unsigned char> &image, const std::string &mimeType, std::vector<unsigned char> &resultImage, std::string &resultMimeType);
 
 protected:

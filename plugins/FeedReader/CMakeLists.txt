@@ -2,11 +2,12 @@
 cmake_minimum_required(VERSION 3.18)
 project(FeedReaderPlugin)
 
+find_package(Qt5 COMPONENTS Core Widgets Xml Network REQUIRED)
+
 # --- Dependencies ---
 find_package(CURL REQUIRED)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(LIBXML2 REQUIRED libxml-2.0)
-pkg_check_modules(LIBXSLT REQUIRED libxslt)
+find_package(LibXml2 REQUIRED)
+find_package(LibXslt REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -88,6 +89,7 @@ add_library(FeedReader MODULE
 set_target_properties(FeedReader PROPERTIES
     PREFIX "lib"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins"
     AUTOUIC_SEARCH_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/gui"
 )
 
@@ -102,9 +104,12 @@ target_link_libraries(FeedReader PRIVATE
     Qt5::Xml
     Qt5::Network
     CURL::libcurl
-    ${LIBXML2_LIBRARIES}
-    ${LIBXSLT_LIBRARIES}
+    LibXml2::LibXml2
+    LibXslt::LibXslt
 )
+
+target_compile_options(FeedReader PRIVATE "-Wno-deprecated-declarations")
+target_compile_definitions(FeedReader PRIVATE RS_NO_WARN_DEPRECATED)
 
 if(RS_DEVELOPMENT_BUILD)
     target_compile_options(FeedReader PRIVATE "-g" "-O0")
@@ -121,8 +126,6 @@ target_include_directories(FeedReader PRIVATE
     ${CMAKE_SOURCE_DIR}/retroshare-gui/src
     ${CMAKE_SOURCE_DIR}/retroshare-gui/src/gui
     ${CMAKE_SOURCE_DIR}/supportlibs/rapidjson/include
-    ${LIBXML2_INCLUDE_DIRS}
-    ${LIBXSLT_INCLUDE_DIRS}
 )
 
 # --- Installation ---
