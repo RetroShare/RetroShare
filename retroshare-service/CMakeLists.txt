@@ -206,6 +206,7 @@ endif(RS_SERVICE_TERMINAL_LOGIN)
 
 if(RS_WEBUI)
 	set(RS_WEBUI_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../retroshare-webui/")
+	get_filename_component(RS_WEBUI_DEVEL_DIR "${RS_WEBUI_DEVEL_DIR}" ABSOLUTE)
 	if(EXISTS "${RS_WEBUI_DEVEL_DIR}/CMakeLists.txt" )
 		message(
 			STATUS
