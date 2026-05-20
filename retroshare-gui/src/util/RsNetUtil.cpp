@@ -47,14 +47,14 @@ bool RsNetUtil::parseAddrFromQString(const QString& s, struct sockaddr_storage& 
 	uint32_t s2 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ; if(it ==lst.end()) return false ;
 	uint32_t s3 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ; if(it ==lst.end()) return false ;
 
-	QStringList lst2 = (*it).split("/") ;
+	QStringList lstSlash = (*it).split("/") ;
 
-	it = lst2.begin();
+	it = lstSlash.begin();
 
 	uint32_t s4 ;
 	s4 = (*it).toInt(&ok) ; ++it ; if(!ok) return false ;
 
-	if(it != lst2.end())
+	if(it != lstSlash.end())
 	{
 		uint32_t x = (*it).toInt(&ok) ; if(!ok) return false ;
 		if(x%8 != 0)

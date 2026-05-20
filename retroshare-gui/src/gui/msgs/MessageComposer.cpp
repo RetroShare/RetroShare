@@ -267,24 +267,24 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     actionAlignJustify->setShortcut(Qt::CTRL + Qt::Key_J);
     actionAlignJustify->setCheckable(true);
     
-    QActionGroup *grp2 = new QActionGroup(this);
-    connect(grp2, SIGNAL(triggered(QAction*)), this, SLOT(textStyle(QAction*)));
+    QActionGroup *grpStyle = new QActionGroup(this);
+    connect(grpStyle, SIGNAL(triggered(QAction*)), this, SLOT(textStyle(QAction*)));
     
-    actionDisc = new QAction(QIcon(""), tr("Bullet list (disc)"), grp2);
+    actionDisc = new QAction(QIcon(""), tr("Bullet list (disc)"), grpStyle);
     actionDisc->setCheckable(true);
-    actionCircle = new QAction(QIcon(""), tr("Bullet list (circle)"), grp2);
+    actionCircle = new QAction(QIcon(""), tr("Bullet list (circle)"), grpStyle);
     actionCircle->setCheckable(true);
-    actionSquare = new QAction(QIcon(""), tr("Bullet list (square)"), grp2);
+    actionSquare = new QAction(QIcon(""), tr("Bullet list (square)"), grpStyle);
     actionSquare->setCheckable(true);
-    actionDecimal= new QAction(QIcon(""), tr("Ordered list (decimal)"), grp2);
+    actionDecimal= new QAction(QIcon(""), tr("Ordered list (decimal)"), grpStyle);
     actionDecimal->setCheckable(true);
-    actionLowerAlpha = new QAction(QIcon(""), tr("Ordered list (alpha lower)"), grp2);
+    actionLowerAlpha = new QAction(QIcon(""), tr("Ordered list (alpha lower)"), grpStyle);
     actionLowerAlpha->setCheckable(true);
-    actionUpperAlpha = new QAction(QIcon(""), tr("Ordered list (alpha upper)"), grp2);
+    actionUpperAlpha = new QAction(QIcon(""), tr("Ordered list (alpha upper)"), grpStyle);
     actionUpperAlpha->setCheckable(true);
-    actionLowerRoman = new QAction(QIcon(""), tr("Ordered list (roman lower)"), grp2);
+    actionLowerRoman = new QAction(QIcon(""), tr("Ordered list (roman lower)"), grpStyle);
     actionLowerRoman->setCheckable(true);
-    actionUpperRoman = new QAction(QIcon(""), tr("Ordered list (roman upper)"), grp2);
+    actionUpperRoman = new QAction(QIcon(""), tr("Ordered list (roman upper)"), grpStyle);
     actionUpperRoman->setCheckable(true);
 
     setupFormatActions();
