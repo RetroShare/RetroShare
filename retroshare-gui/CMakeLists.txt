@@ -531,6 +531,12 @@ endif(RS_GXS_CIRCLES)
 
 find_library(BOTAN_LIBRARY NAMES botan botan-3 botan-2 libbotan-3 libbotan-2 REQUIRED)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
-target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--no-as-needed z bz2 json-c ${BOTAN_LIBRARY} -Wl,--as-needed)
+if(WIN32)
+    # Robust resolution including RNP and sexpp inside the link group for Windows MinGW
+    target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--start-group retroshare rnp sexpp z bz2 json-c ${BOTAN_LIBRARY} -Wl,--end-group)
+else()
+    # Default behavior for Linux
+    target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
+    target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--no-as-needed z bz2 json-c ${BOTAN_LIBRARY} -Wl,--as-needed)
+endif()
 
