@@ -22,7 +22,7 @@ jobs:
     - name: run apt update
       run: sudo apt-get update
     - name: apt install
-      run: sudo apt-get install g++ cmake qt6-base-dev qt6-multimedia-dev libasio-dev libbz2-dev libjson-c-dev libssl-dev libsqlcipher-dev libupnp-dev libxss-dev rapidjson-dev libbotan-2-dev doxygen qt6-5compat-dev libqt6core5compat6-dev libsecret-1-dev libxml2-dev libxslt1-dev libcurl4-openssl-dev
+      run: sudo apt-get install g++ cmake qt6-base-dev qt6-multimedia-dev libasio-dev libbz2-dev libjson-c-dev libssl-dev libsqlcipher-dev libupnp-dev libxss-dev rapidjson-dev libbotan-2-dev doxygen qt6-5compat-dev libqt6core5compat6-dev libsecret-1-dev libxml2-dev libxslt1-dev libcurl4-openssl-dev libavcodec-dev libspeex-dev libspeexdsp-dev libqt5multimedia5-plugins
     - name: print working directory
       run: pwd && ls -la
     - name: qmake
