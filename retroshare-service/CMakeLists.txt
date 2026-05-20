@@ -225,6 +225,18 @@ if(RS_WEBUI)
 		FetchContent_MakeAvailable(webui)
 	endif()
 
+	# If the target is not defined (e.g. on Windows where the submodule CMakeLists skips it),
+	# define it here to trigger the WebUI compilation via shell execution under MSYS2/MinGW.
+	if(NOT TARGET retroshare-webui)
+		add_custom_target(
+			retroshare-webui ALL
+			COMMAND sh ./build.sh
+			WORKING_DIRECTORY "${RS_WEBUI_DEVEL_DIR}/webui-src/make-src"
+			COMMENT "Compiling RetroShare WebUI (Windows)"
+			SOURCES "${RS_WEBUI_DEVEL_DIR}/webui-src"
+		)
+	endif()
+
 	add_dependencies(${PROJECT_NAME} retroshare-webui)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC RS_WEBUI)
 endif(RS_WEBUI)
