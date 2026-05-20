@@ -131,39 +131,7 @@ if(NOT TARGET retroshare)
 	endif()
 endif()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
-
-################################################################################
-
-if(RS_RNPLIB)
-	find_library(BOTAN_LIBRARY NAMES botan botan-3 botan-2 libbotan-3 libbotan-2 REQUIRED)
-
-	# Add RNP build directories to linker search path
-	target_link_directories(${PROJECT_NAME} PRIVATE
-		${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/librnp/Build/src/lib
-		${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/librnp/Build/src/libsexpp
-	)
-
-	# Link libraries by name, including RNP libs and dependencies first
-	target_link_libraries(${PROJECT_NAME} PRIVATE
-		rnp             # Link by name
-		sexpp
-		${BOTAN_LIBRARY}
-		json-c
-		bz2
-		z
-		retroshare
-	)
-endif(RS_RNPLIB)
-
-################################################################################
-
-# Add include directories from found packages
-# target_include_directories(${PROJECT_NAME} PRIVATE
-#     ${Botan_INCLUDE_DIRS}
-#     ${JSONC_INCLUDE_DIRS}
-# )
-
+# Link libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
 
 if(WIN32)
