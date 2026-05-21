@@ -192,6 +192,7 @@ if(RS_WEBUI)
 			TIMEOUT 10
 		)
 		FetchContent_MakeAvailable(webui)
+		set(RS_WEBUI_DEVEL_DIR "${webui_SOURCE_DIR}")
 	endif()
 
 	add_dependencies(${PROJECT_NAME} retroshare-webui)
