@@ -55,6 +55,7 @@ option( RS_GXSCHANNELS "Enable GXS channels in GUI" ON )
 option( RS_GXSFORUMS   "Enable GXS forums in GUI"   ON )
 option( RS_GXSPOSTED   "Enable GXS posted in GUI"   ON )
 option( RS_GXSCIRCLES  "Enable GXS circles in GUI"  ON )
+option( RS_GUI_CMARK    "Enable CommonMark support in GUI"  OFF )
 set(RS_GXSIDENTITIES ON CACHE BOOL "Enable GXS identities in GUI" FORCE)
 set(RS_IDLE ON CACHE BOOL "Enable Idle support" FORCE)
 
@@ -114,11 +115,6 @@ endif(RS_DEVELOPMENT_BUILD)
 
 include(src/CMakeLists.txt)
 
-link_directories(
-	"${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/librnp/Build/src/lib"
-	"${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/librnp/Build/src/libsexpp"
-)
-
 qt_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
 if (NOT Qt6_FOUND)
 	qt5_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
@@ -140,11 +136,16 @@ add_executable(${PROJECT_NAME} ${RS_GUI_SOURCES} ${RS_IMPLEMENTATION_HEADERS} ${
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "retroshare")
 install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
 
+target_link_directories(${PROJECT_NAME} PRIVATE
+	"${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/librnp/Build/src/lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/librnp/Build/src/libsexpp"
+)
+
 if(RS_USE_NATIVE_DIALOGS)
 	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_NATIVEDIALOGS)
 endif()
 
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 ################################################################################
 
@@ -236,6 +237,7 @@ if(RS_GUI_CMARK)
 	if(EXISTS "${CMARK_DEVEL_DIR}/CMakeLists.txt" )
 		message( STATUS "cmark submodule found at ${CMARK_DEVEL_DIR} using it" )
 		add_subdirectory( "${CMARK_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/cmark" )
+		set(CMARK_INCLUDE_DIR "${CMARK_DEVEL_DIR}/src")
 	else()
 		FetchContent_Declare(
 			cmark
@@ -246,7 +248,12 @@ if(RS_GUI_CMARK)
 			TIMEOUT 10
 			)
 		FetchContent_MakeAvailable(cmark)
+		set(CMARK_INCLUDE_DIR "${cmark_SOURCE_DIR}/src")
 	endif()
+
+	target_compile_definitions(${PROJECT_NAME} PRIVATE USE_CMARK)
+	target_link_libraries(${PROJECT_NAME} PRIVATE libcmark_static)
+	target_include_directories(${PROJECT_NAME} PRIVATE "${CMARK_INCLUDE_DIR}")
 endif(RS_GUI_CMARK)
 
 ################################# LibSam v3 ####################################
