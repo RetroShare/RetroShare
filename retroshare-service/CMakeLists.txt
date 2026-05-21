@@ -10,10 +10,7 @@ project(retroshare-service)
 
 include(CMakeDependentOption)
 
-if(APPLE)
-  include_directories("/usr/local/include") 
-  LINK_DIRECTORIES("/usr/local/lib")
-endif()
+
 
 set(
 	RS_BIN_INSTALL_DIR
@@ -97,6 +94,11 @@ list(
 	src/retroshare-service.cc )
 
 add_executable(${PROJECT_NAME} ${RS_SERVICE_SOURCES})
+
+if(APPLE)
+	target_include_directories(${PROJECT_NAME} PRIVATE "/usr/local/include")
+	target_link_directories(${PROJECT_NAME} PRIVATE "/usr/local/lib")
+endif()
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 

@@ -156,8 +156,8 @@ endif(RS_DEVELOPMENT_BUILD)
 ################################################################################
 
 if(NOT TARGET retroshare)
-	set(LIBRETROSHARE_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libretroshare/")
-	if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/.git" )
+	get_filename_component(LIBRETROSHARE_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libretroshare/" ABSOLUTE)
+	if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/CMakeLists.txt" )
 		message(
 			STATUS
 			"libretroshare submodule found at ${LIBRETROSHARE_DEVEL_DIR} using it" )
@@ -173,7 +173,10 @@ if(NOT TARGET retroshare)
 			TIMEOUT 10
 		)
 		FetchContent_MakeAvailable(libretroshare)
+		set(LIBRETROSHARE_DEVEL_DIR "${libretroshare_SOURCE_DIR}")
 	endif()
+else()
+	get_target_property(LIBRETROSHARE_DEVEL_DIR retroshare SOURCE_DIR)
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${LIBRETROSHARE_DEVEL_DIR}/src/)
