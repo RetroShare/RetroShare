@@ -91,6 +91,9 @@ set_target_properties(VOIP PROPERTIES
 target_compile_definitions(VOIP PRIVATE __STDC_CONSTANT_MACROS)
 
 # --- Links ---
+if(WIN32)
+    target_link_libraries(VOIP PRIVATE retroshare retroshare-gui)
+endif()
 
 target_link_libraries(VOIP PRIVATE
     Qt5::Core
