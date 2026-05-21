@@ -146,6 +146,7 @@ if(RS_USE_NATIVE_DIALOGS)
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
 ################################################################################
 
@@ -527,7 +528,6 @@ endif(RS_SANITIZE)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${RS_LINK_LIBRARIES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
 target_compile_options(${PROJECT_NAME} PRIVATE -Wno-deprecated-declarations)
 target_compile_definitions(${PROJECT_NAME} PUBLIC  RS_NO_WARN_DEPRECATED )
