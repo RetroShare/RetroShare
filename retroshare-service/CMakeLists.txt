@@ -30,7 +30,7 @@ option(
 option(
 	RS_RNPLIB
 	"Enable use RNP lib for PGP"
-	OFF )
+	ON )
 
 option(
 	RS_JSON_API

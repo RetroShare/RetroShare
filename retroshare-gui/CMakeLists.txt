@@ -233,9 +233,9 @@ endif(RS_WEBUI)
 
 if(RS_GUI_CMARK)
 	set(CMARK_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/cmark/")
-	if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/.git" )
-		message( STATUS "cmark submodule found at ${LIBRETROSHARE_DEVEL_DIR} using it" )
-		add_subdirectory( "${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/cmark" )
+	if(EXISTS "${CMARK_DEVEL_DIR}/CMakeLists.txt" )
+		message( STATUS "cmark submodule found at ${CMARK_DEVEL_DIR} using it" )
+		add_subdirectory( "${CMARK_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/cmark" )
 	else()
 		FetchContent_Declare(
 			cmark
@@ -519,7 +519,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${RS_LINK_LIBRARIES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 
-set( CMAKE_CXX_FLAGS "-Wno-deprecated-declarations" )
+target_compile_options(${PROJECT_NAME} PRIVATE -Wno-deprecated-declarations)
 target_compile_definitions(${PROJECT_NAME} PUBLIC  RS_NO_WARN_DEPRECATED )
 target_compile_definitions(${PROJECT_NAME} PRIVATE RS_RELEASE_VERSION )
 target_compile_definitions(${PROJECT_NAME} PRIVATE TARGET=\"retroshare\")
