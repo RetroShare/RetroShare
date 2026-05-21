@@ -193,6 +193,7 @@ if(RS_WEBUI)
 			TIMEOUT 10
 		)
 		FetchContent_MakeAvailable(webui)
+		set(RS_WEBUI_DEVEL_DIR "${webui_SOURCE_DIR}")
 	endif()
 
 	# If the target is not defined (e.g. on Windows where the submodule CMakeLists skips it),

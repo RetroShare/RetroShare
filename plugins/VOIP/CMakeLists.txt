@@ -15,7 +15,6 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 # --- Definitions ---
-add_definitions(-D__STDC_CONSTANT_MACROS)
 
 # --- Sources ---
 set(VOIP_SOURCES
@@ -88,6 +87,8 @@ set_target_properties(VOIP PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins"
     AUTOUIC_SEARCH_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/gui"
 )
+
+target_compile_definitions(VOIP PRIVATE __STDC_CONSTANT_MACROS)
 
 # --- Links ---
 
