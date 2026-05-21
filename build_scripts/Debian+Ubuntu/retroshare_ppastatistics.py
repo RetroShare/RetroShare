@@ -25,7 +25,7 @@ for PPA in ppas:
 			archive = owner.getPPAByName(name=PPA)
 	
 			for individualarchive in archive.getPublishedBinaries(status='Published',distro_arch_series=desired_dist_and_arch):
-				print PPA + "\t" + arch + "\t" + individualarchive.binary_package_version + "\t" + str(individualarchive.getDownloadCount())
+				print(f"{PPA}\t{arch}\t{individualarchive.binary_package_version}\t{individualarchive.getDownloadCount()}")
 				total += individualarchive.getDownloadCount()
 	
 print "Total downloads: " + str(total)
