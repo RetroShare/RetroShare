@@ -133,11 +133,11 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/include/qmake_info.h"
 )
 
 add_executable(${PROJECT_NAME} ${RS_GUI_SOURCES} ${RS_IMPLEMENTATION_HEADERS} ${RS_UI_HEADERS} ${RS_GUI_QTRESOURCES})
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "retroshare")
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_NAME "retroshare")
 set_target_properties(${PROJECT_NAME} PROPERTIES ENABLE_EXPORTS TRUE)
 if(WIN32)
 	set_target_properties(${PROJECT_NAME} PROPERTIES
-		WINDOWS_EXPORT_ALL_SYMBOLS TRUE
+		ARCHIVE_OUTPUT_NAME "retroshare-gui"
 	)
 	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 		target_link_options(${PROJECT_NAME} PRIVATE "-Wl,--export-all-symbols" "-Wl,--exclude-libs,ALL")
