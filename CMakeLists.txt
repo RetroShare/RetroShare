@@ -3,7 +3,11 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 cmake_minimum_required(VERSION 3.5.0)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 project(retroshare-monorepo)
+
+# Global setting to allow executables to export symbols for plugin/module linking
+set(CMAKE_ENABLE_EXPORTS ON)
 
 # Configuration Options
 option(RS_GUI "Build RetroShare GUI" ON)
@@ -23,6 +27,10 @@ if(WIN32)
 			-Wno-error=int-conversion
 			-Wno-error=implicit-function-declaration
 		)
+		# GCC 15 on MinGW fails to fold COMDAT weak symbols correctly, and 
+		# WINDOWS_EXPORT_ALL_SYMBOLS duplicates static lib symbols in import libraries.
+		# Allow multiple definitions to bypass these linker errors safely.
+		add_link_options("-Wl,--allow-multiple-definition")
 	endif()
 endif()
 
