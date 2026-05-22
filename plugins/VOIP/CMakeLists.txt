@@ -89,6 +89,9 @@ set_target_properties(VOIP PROPERTIES
 )
 
 target_compile_definitions(VOIP PRIVATE __STDC_CONSTANT_MACROS)
+if(WIN32)
+    target_compile_definitions(VOIP PRIVATE WINDOWS_SYS)
+endif()
 
 # --- Links ---
 if(WIN32)

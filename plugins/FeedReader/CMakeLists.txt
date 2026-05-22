@@ -96,6 +96,7 @@ set_target_properties(FeedReader PROPERTIES
 # --- Links ---
 if(WIN32)
     target_link_libraries(FeedReader PRIVATE retroshare retroshare-gui)
+    target_compile_definitions(FeedReader PRIVATE WINDOWS_SYS)
 endif()
 
 target_link_libraries(FeedReader PRIVATE
