@@ -27,10 +27,6 @@ if(WIN32)
 			-Wno-error=int-conversion
 			-Wno-error=implicit-function-declaration
 		)
-		# GCC 15 on MinGW fails to fold COMDAT weak symbols correctly, and 
-		# WINDOWS_EXPORT_ALL_SYMBOLS duplicates static lib symbols in import libraries.
-		# Allow multiple definitions to bypass these linker errors safely.
-		add_link_options("-Wl,--allow-multiple-definition")
 	endif()
 endif()
 
