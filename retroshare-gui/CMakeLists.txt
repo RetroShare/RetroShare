@@ -140,7 +140,7 @@ if(WIN32)
 		ARCHIVE_OUTPUT_NAME "retroshare-gui"
 	)
 	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-		target_link_options(${PROJECT_NAME} PRIVATE "-Wl,--export-all-symbols" "-Wl,--exclude-libs,ALL")
+		target_link_options(${PROJECT_NAME} PRIVATE "-Wl,--export-all-symbols" "-Wl,--exclude-libs,libretroshare.a:libbitdht.a:librnp.a:libsexpp.a")
 	endif()
 endif()
 install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
