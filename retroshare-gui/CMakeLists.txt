@@ -73,6 +73,11 @@ cmake_dependent_option(
 	"RS_JSON_API"
 	ON )
 
+option(
+	RS_PLUGINS
+	"Build RetroShare Plugins"
+	OFF )
+
 ################################ QT FILES #######################################
 
 set(CMAKE_CXX_STANDARD 17)
@@ -559,3 +564,10 @@ else()
     target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--no-as-needed z bz2 json-c ${BOTAN_LIBRARY} -Wl,--as-needed)
 endif()
 
+if(RS_PLUGINS AND CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+	set(PLUGINS_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../plugins/")
+	if(EXISTS "${PLUGINS_DEVEL_DIR}/CMakeLists.txt")
+		message(STATUS "plugins source found at ${PLUGINS_DEVEL_DIR} using it")
+		add_subdirectory("${PLUGINS_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/plugins")
+	endif()
+endif()
