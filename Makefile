@@ -13,17 +13,24 @@ CMAKE_BUILD_TYPE     ?=
 # Global CMake flags (forces policy compatibility for old submodules like libbitdht)
 CMAKE_FLAGS ?= -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
+# Detect Windows MSYS2 / MinGW environment to force Makefile generation
+ifeq ($(OS),Windows_NT)
+    CMAKE_GEN ?= -G "MSYS Makefiles"
+else
+    CMAKE_GEN ?=
+endif
+
 # Dynamically detect number of CPUs (defaults to 4 if not found)
 NPROC ?= $(shell nproc 2>/dev/null || echo 4)
 
 # Global build directory at the root
-BUILD_DIR = Build
+BUILD_DIR = Build-cmake
 
 .PHONY: all clean rnp libretroshare retroshare-service retroshare-friendserver retroshare-gui
 
 all: rnp
 	@echo ">>> Compiling all functional RetroShare modules..."
-	cmake -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) \
+	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) \
 		-DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
 		-DRS_RNPLIB=$(RS_RNPLIB) \
 		-DRS_JSON_API=$(RS_JSON_API) \
@@ -36,12 +43,12 @@ all: rnp
 
 rnp:
 	@echo ">>> Step 1: Compiling RNP..."
-	cmake -B supportlibs/librnp/Build -S supportlibs/librnp $(CMAKE_FLAGS) -DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) -DCRYPTO_BACKEND=botan -DBUILD_TESTING=off
+	cmake $(CMAKE_GEN) -B supportlibs/librnp/Build -S supportlibs/librnp $(CMAKE_FLAGS) -DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) -DCRYPTO_BACKEND=botan -DBUILD_TESTING=off
 	cmake --build supportlibs/librnp/Build -j $(NPROC)
 
 libretroshare: rnp
 	@echo ">>> Step 2: Compiling libretroshare..."
-	cmake -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) \
+	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) \
 		-DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
 		-DRS_RNPLIB=$(RS_RNPLIB) \
 		-DRS_JSON_API=$(RS_JSON_API) \
@@ -54,7 +61,7 @@ libretroshare: rnp
 
 retroshare-service: rnp
 	@echo ">>> Step 3: Compiling retroshare-service..."
-	cmake -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) \
+	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) \
 		-DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
 		-DRS_RNPLIB=$(RS_RNPLIB) \
 		-DRS_JSON_API=$(RS_JSON_API) \
@@ -67,7 +74,7 @@ retroshare-service: rnp
 
 retroshare-friendserver: rnp
 	@echo ">>> Step 4: Compiling retroshare-friendserver..."
-	cmake -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) \
+	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) \
 		-DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
 		-DRS_RNPLIB=$(RS_RNPLIB) \
 		-DRS_JSON_API=$(RS_JSON_API) \
@@ -80,7 +87,7 @@ retroshare-friendserver: rnp
 
 retroshare-gui: rnp
 	@echo ">>> Step 5: Compiling retroshare-gui (UI)..."
-	cmake -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) \
+	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) \
 		-DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
 		-DRS_RNPLIB=$(RS_RNPLIB) \
 		-DRS_JSON_API=$(RS_JSON_API) \
