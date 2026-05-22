@@ -28,5 +28,5 @@ for PPA in ppas:
 				print(f"{PPA}\t{arch}\t{individualarchive.binary_package_version}\t{individualarchive.getDownloadCount()}")
 				total += individualarchive.getDownloadCount()
 	
-print "Total downloads: " + str(total)
+print("Total downloads: " + str(total) + "\n")
 
