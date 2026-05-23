@@ -161,6 +161,9 @@ private slots:
 	void filterColumnChanged(int column);
 	void filterItems(const QString &text);
 
+	void zoom_In();
+	void zoom_Out();
+
 #if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
 	void expandSubtree();
 #endif
@@ -236,6 +239,7 @@ private:
     QList<RsGxsMessageId> mSavedExpandedMessages;
 
     FontSizeHandler mFontSizeHandler;
+    ForumFontSizeHandler mForumSizeHandler;
 
     Ui::GxsForumThreadWidget *ui;
     RsEventsHandlerId_t mEventHandlerId;
