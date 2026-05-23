@@ -141,7 +141,16 @@ if(WIN32)
 	list(APPEND RS_GUI_SOURCES src/gui/images/retroshare_win.rc)
 endif()
 
-add_executable(${PROJECT_NAME} ${RS_GUI_SOURCES} ${RS_IMPLEMENTATION_HEADERS} ${RS_UI_HEADERS} ${RS_GUI_QTRESOURCES})
+set(GUI_TYPE "")
+if(WIN32)
+	# Hide the console window on Windows for production builds (Release), 
+	# but keep it visible for Debug and Development builds to view stdout/stderr logs.
+	if(NOT RS_DEVELOPMENT_BUILD AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+		set(GUI_TYPE WIN32)
+	endif()
+endif()
+
+add_executable(${PROJECT_NAME} ${GUI_TYPE} ${RS_GUI_SOURCES} ${RS_IMPLEMENTATION_HEADERS} ${RS_UI_HEADERS} ${RS_GUI_QTRESOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_NAME "retroshare")
 set_target_properties(${PROJECT_NAME} PROPERTIES ENABLE_EXPORTS TRUE)
 if(WIN32)
