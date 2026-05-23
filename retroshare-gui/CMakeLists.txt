@@ -137,6 +137,10 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/include/qmake_info.h"
 	"#endif // INFO_H\n"
 )
 
+if(WIN32)
+	list(APPEND RS_GUI_SOURCES src/gui/images/retroshare_win.rc)
+endif()
+
 add_executable(${PROJECT_NAME} ${RS_GUI_SOURCES} ${RS_IMPLEMENTATION_HEADERS} ${RS_UI_HEADERS} ${RS_GUI_QTRESOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_NAME "retroshare")
 set_target_properties(${PROJECT_NAME} PROPERTIES ENABLE_EXPORTS TRUE)
