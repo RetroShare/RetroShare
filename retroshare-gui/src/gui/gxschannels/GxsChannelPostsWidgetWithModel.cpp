@@ -1604,6 +1604,31 @@ bool GxsChannelPostsWidgetWithModel::navigate(const RsGxsMessageId& msgId)
 
     if(!index.isValid())
     {
+        // Maybe it's a comment?
+        std::vector<RsGxsChannelPost> posts;
+        std::vector<RsGxsComment> comments;
+        std::vector<RsGxsVote> votes;
+        std::set<RsGxsMessageId> msgs = {msgId};
+
+        if (rsGxsChannels->getChannelContent(mGroup.mMeta.mGroupId, msgs, posts, comments, votes) && comments.size() == 1)
+        {
+            RsGxsMessageId postId = comments[0].mMeta.mThreadId;
+            index = mChannelPostsModel->getIndexOfMessage(postId);
+
+            if (index.isValid())
+            {
+                ui->postsTree->selectionModel()->setCurrentIndex(index,QItemSelectionModel::ClearAndSelect);
+                ui->postsTree->scrollTo(index);
+                ui->postsTree->setFocus();
+
+                ui->channel_TW->setCurrentIndex(CHANNEL_TABS_POSTS);
+                ui->details_TW->setCurrentIndex(2); // Comments tab
+
+                mNavigatePendingMsgId.clear();
+                return true;
+            }
+        }
+
         std::cerr << "(EE) Cannot navigate to msg " << msgId << " in channel " << mGroup.mMeta.mGroupId << ": index unknown. Setting mNavigatePendingMsgId." << std::endl;
 
         mNavigatePendingMsgId = msgId;    // not found. That means the forum may not be loaded yet. So we keep that post in mind, for after loading.
