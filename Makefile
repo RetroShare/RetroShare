@@ -65,7 +65,7 @@ NPROC ?= $(shell nproc 2>/dev/null || echo 4)
 # Global build directory at the root
 BUILD_DIR = Build-cmake
 
-.PHONY: all clean rnp libretroshare retroshare-service retroshare-friendserver retroshare-gui
+.PHONY: all clean rnp libretroshare retroshare-service retroshare-friendserver retroshare-gui help
 
 all: rnp
 	@echo ">>> Compiling all functional RetroShare modules..."
@@ -146,3 +146,31 @@ clean:
 	@echo "Cleaning up all build directories..."
 	rm -rf supportlibs/librnp/Build
 	rm -rf $(BUILD_DIR)
+
+help:
+	@echo "=============================================================================="
+	@echo "          RETROSHARE ORCHESTRATOR HELP & OPTIONS"
+	@echo "=============================================================================="
+	@echo "Usage:"
+	@echo "  make <target> [OPTION=value]"
+	@echo ""
+	@echo "Available targets:"
+	@echo "  all                      Compile all RetroShare modules (default)"
+	@echo "  rnp                      Compile RNP cryptography library"
+	@echo "  libretroshare            Compile libretroshare core library"
+	@echo "  retroshare-service       Compile retroshare-service (headless daemon)"
+	@echo "  retroshare-friendserver  Compile retroshare-friendserver"
+	@echo "  retroshare-gui           Compile retroshare-gui (graphical user interface)"
+	@echo "  clean                    Clean all build directories"
+	@echo "  help                     Show this help message"
+	@echo ""
+	@echo "Available build options (use OPTION=ON/OFF or value):"
+	@echo "  RS_RNPLIB             Use RNP library for PGP (ON/OFF, default: ON)"
+	@echo "  RS_JSON_API           Enable HTTP JSON API service (ON/OFF, default: ON)"
+	@echo "  RS_WEBUI              Deploy RetroShare Web UI assets (ON/OFF, default: ON)"
+	@echo "  RS_PLUGINS            Build RetroShare plugins (ON/OFF, default: OFF)"
+	@echo "  RS_FORUM_DEEP_INDEX   Xapian/FTS5 forum full text search (ON/OFF, default: OFF)"
+	@echo "  RS_DEVELOPMENT_BUILD  Disable optimisations for fast builds (ON/OFF, default: OFF)"
+	@echo "  CMAKE_BUILD_TYPE      CMake build type (Debug/Release/RelWithDebInfo/MinSizeRel)"
+	@echo "  NPROC                 Number of build threads (default: detected CPUs)"
+	@echo "=============================================================================="
