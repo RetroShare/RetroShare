@@ -26,9 +26,12 @@
 #include <QIcon>
 #include <QPushButton>
 #include <QTabWidget>
+#include <QScrollArea>
 #include <QWidget>
 #include <QMessageBox>
 #include <QDir>
+#include <QLineEdit>
+#include <QVBoxLayout>
 
 #include <iostream>
 #include <math.h>
@@ -47,6 +50,8 @@ static QStringList filters;
 static QStringList stickerFolders;
 static QHash<QString, QString> tooltipcache;
 static QHash<QString, QPixmap> iconcache;
+QStringList Emoticons::recentSmileys;
+int Emoticons::lastTabIndex = 0; // Initialize to 0 (the first tab)
 
 void Emoticons::load()
 {
@@ -170,91 +175,155 @@ void Emoticons::loadSmiley()
 
 void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above)
 {
-	QWidget *smWidget = new QWidget(parent, Qt::Popup) ;
-	smWidget->setAttribute(Qt::WA_DeleteOnClose) ;
-	smWidget->setWindowTitle("Emoticons") ;
+    QWidget *smWidget = new QWidget(parent, Qt::Popup);
+    smWidget->setAttribute(Qt::WA_DeleteOnClose);
+    smWidget->setWindowTitle("Emoticons");
 
-	//QTabWidget::setTabBarAutoHide(true) is from QT5.4, no way to hide TabBar before.
-	bool bOnlyOneGroup = (Smileys.count() == 1);
+    QVBoxLayout *mainLayout = new QVBoxLayout(smWidget);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
 
-	QTabWidget *smTab = NULL;
-	if (! bOnlyOneGroup)
-	{
-		smTab =  new QTabWidget(smWidget);
-		QGridLayout *smGLayout = new QGridLayout(smWidget);
-		smGLayout->setContentsMargins(0,0,0,0);
-		smGLayout->addWidget(smTab);
-	}
+    QTabWidget *smTab = new QTabWidget();
+    smTab->setTabPosition(QTabWidget::South);
+    smTab->setMaximumWidth(590);
+    smTab->setMinimumHeight(560);
+    mainLayout->addWidget(smTab);
 
-	const int buttonWidth = QFontMetricsF(smWidget->font()).height()*2.6;
-	const int buttonHeight = QFontMetricsF(smWidget->font()).height()*2.6;
-	int maxRowCount = 0;
-	int maxCountPerLine = 0;
+    QList<QPushButton*> allButtons;
+    const int buttonWidth = QFontMetricsF(smWidget->font()).height() * 2.6;
+    const int buttonHeight = QFontMetricsF(smWidget->font()).height() * 2.6;
 
-	QVectorIterator<QString> grp(grpOrdered);
-	while(grp.hasNext())
-	{
-		QString groupName = grp.next();
-		QHash<QString,QString> group = Smileys.value(groupName).second;
+    // RECENT TAB (Static first tab)
+    if (!recentSmileys.isEmpty()) {
+        QWidget *recentGrpWidget = new QWidget();
+        QGridLayout *recentLayout = new QGridLayout(recentGrpWidget);
+        recentLayout->setContentsMargins(0, 0, 0, 0);
+        recentLayout->setSpacing(0);
+        recentLayout->setRowStretch(0, 1);
 
-		QWidget *tabGrpWidget = NULL;
-		if (! bOnlyOneGroup)
-		{
-			tabGrpWidget = new QWidget(smTab);
+        int maxCols = 10;
+        int totalItems = recentSmileys.size();
+        // Calculate total rows needed (e.g., 12 items / 10 cols = 2 rows)
+        int totalRows = (totalItems + maxCols - 1) / maxCols; 
 
-			// (Cyril) Never use an absolute size. It needs to be scaled to the actual font size on the screen.
-			//
-			QFontMetricsF fm(parent->font()) ;
-			QSize size(28*fm.height()/14.0,28*fm.height()/14.0);
-			smTab->setIconSize(size);
-			smTab->setMinimumWidth(400);
-			smTab->setTabPosition(QTabWidget::South);
-			smTab->setStyleSheet(QString("QTabBar::tab { height: %1px; width: %1px; padding: 0px; margin: 0px;}").arg(size.width()*1.1));
+        int i = 0;
+        for (const QString &code : recentSmileys) {
+            // Find which file matches this code by searching all groups
+            QString filePath;
+            for (auto it = Smileys.begin(); it != Smileys.end(); ++it) {
+                if (it.value().second.contains(code)) {
+                    filePath = it.value().second.value(code);
+                    break;
+                }
+            }
 
-			if (groupName.right(4).toLower() == ".png")
-                smTab->addTab( tabGrpWidget, FilesDefs::getIconFromQtResourcePath(groupName), "");
-			else
-				smTab->addTab( tabGrpWidget, groupName);
-		} else {
-			tabGrpWidget = smWidget;
-		}
+            if (filePath.isEmpty()) continue;
 
-		QGridLayout *tabGLayout = new QGridLayout(tabGrpWidget);
-		tabGLayout->setContentsMargins(0,0,0,0);
-		tabGLayout->setSpacing(0);
+            QPushButton *btn = new QPushButton("");
+            // CRITICAL: Set Focus Policy so keyboard navigation works
+            btn->setFocusPolicy(Qt::StrongFocus);
+            btn->setIconSize(QSize(buttonWidth, buttonHeight));
+            btn->setFixedSize(QSize(buttonWidth, buttonHeight));
+            btn->setIcon(FilesDefs::getIconFromQtResourcePath(filePath));
+            btn->setToolTip(code);
+            btn->setFlat(true);
+            btn->setAutoDefault(true); // This is key for the Enter key to trigger a click
+            btn->setStyleSheet("QPushButton:focus { border: 2px solid #ffaa00; background: rgba(255,170,0,0.2); }"
+                               "QPushButton:hover { border: 2px solid #0099cc; }");
 
-		int rowCount = (int)sqrt((double)group.size());
-		int countPerLine = (group.size()/rowCount) + ((group.size() % rowCount) ? 1 : 0);
-		maxRowCount = qMax(maxRowCount, rowCount);
-		maxCountPerLine = qMax(maxCountPerLine, countPerLine);
+            // CALCULATE POSITION: 
+            // We fill from the last row upwards
+            int currentRow = (totalItems - 1 - i) / maxCols;
+            int currentCol = i % maxCols;
+            
+            // This places the first item (most recent) at the bottom-left
+            recentLayout->addWidget(btn, (totalRows - 1) - currentRow, currentCol);
+            allButtons.append(btn);
 
-		int lin = 0;
-		int col = 0;
-		QVector<QString> ordered = Smileys.value(groupName).first;
-		QVectorIterator<QString> it(ordered);
-		while(it.hasNext())
-		{
+            QObject::connect(btn, SIGNAL(clicked()), parent, slotAddMethod);
+            QObject::connect(btn, &QPushButton::clicked, [code, smTab]() { 
+                Emoticons::addRecentSmiley(code); 
+                Emoticons::lastTabIndex = smTab->currentIndex();
+            });
+            QObject::connect(btn, SIGNAL(clicked()), smWidget, SLOT(close()));
+            
+            i++;
+        }
+    
+        smTab->addTab(recentGrpWidget, FilesDefs::getIconFromQtResourcePath(":/icons/png/history-clock-blue.png"), "");
+    }
 
-			QString key = it.next();
-			QPushButton *button = new QPushButton("", tabGrpWidget);
-			button->setIconSize(QSize(buttonWidth, buttonHeight));
-			button->setFixedSize(QSize(buttonWidth, buttonHeight));
-            button->setIcon(FilesDefs::getIconFromQtResourcePath(group.value(key)));
-			button->setToolTip(key);
-			button->setStyleSheet("QPushButton:hover {border: 3px solid #0099cc; border-radius: 3px;}");
-			button->setFlat(true);
-			tabGLayout->addWidget(button,col,lin);
-			++lin;
-			if(lin >= countPerLine)
-			{
-				lin = 0;
-				++col;
-			}
-			QObject::connect(button, SIGNAL(clicked()), parent, slotAddMethod);
-			QObject::connect(button, SIGNAL(clicked()), smWidget, SLOT(close()));
-		}
+    // STANDARD TABS
+    QVectorIterator<QString> grp(grpOrdered);
+    while(grp.hasNext())
+    {
+        QString groupName = grp.next();
+        QHash<QString, QString> group = Smileys.value(groupName).second;
 
-	}
+        // Create the Scroll Area
+        QScrollArea *scrollArea = new QScrollArea();
+        scrollArea->setWidgetResizable(true);
+        scrollArea->setFrameShape(QFrame::NoFrame);
+        scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // Usually only vertical is needed
+
+        // Create the container widget that will hold the grid
+        QWidget *tabGrpWidget = new QWidget();
+        
+        // Add the scroll area to the tab instead of the raw widget
+        smTab->addTab(scrollArea, groupName.right(4).toLower() == ".png" ? 
+                      FilesDefs::getIconFromQtResourcePath(groupName) : QIcon(), 
+                      groupName.right(4).toLower() == ".png" ? "" : groupName);
+
+        scrollArea->setWidget(tabGrpWidget);
+
+        QGridLayout *tabGLayout = new QGridLayout(tabGrpWidget);
+        tabGLayout->setContentsMargins(0,0,0,0);
+        tabGLayout->setSpacing(2);
+
+        int lin = 0, col = 0;
+        int countPerLine = (int)sqrt((double)group.size()) + 1;
+
+        QVector<QString> ordered = Smileys.value(groupName).first;
+        for(const QString &key : ordered) {
+            QPushButton *btn = new QPushButton("");
+            btn->setFocusPolicy(Qt::StrongFocus);
+            btn->setIconSize(QSize(buttonWidth, buttonHeight));
+            btn->setFixedSize(QSize(buttonWidth, buttonHeight));
+            btn->setIcon(FilesDefs::getIconFromQtResourcePath(group.value(key)));
+            btn->setToolTip(key);
+            btn->setFlat(true);
+            btn->setAutoDefault(true); // This is key for the Enter key to trigger a click
+            btn->setStyleSheet("QPushButton:focus { border: 2px solid #ffaa00; background: rgba(255,170,0,0.2); }"
+                           "QPushButton:hover { border: 2px solid #0099cc; }");            
+            tabGLayout->addWidget(btn, col, lin);
+            allButtons.append(btn);
+
+            if(++lin >= countPerLine) { lin = 0; ++col; }
+
+            QObject::connect(btn, SIGNAL(clicked()), parent, slotAddMethod);
+            // Capture the 'key' (code) to update history when clicked
+            QObject::connect(btn, &QPushButton::clicked, [key]() { Emoticons::addRecentSmiley(key); });
+            QObject::connect(btn, &QPushButton::clicked, [smTab]() { Emoticons::lastTabIndex = smTab->currentIndex(); });
+            QObject::connect(btn, SIGNAL(clicked()), smWidget, SLOT(close()));            
+        }
+    }
+
+    // SEARCH FEATURE
+    QLineEdit *searchEdit = new QLineEdit();
+    searchEdit->setPlaceholderText("Search emoticons...");
+    mainLayout->addWidget(searchEdit);
+
+    QObject::connect(searchEdit, &QLineEdit::textChanged, [allButtons](const QString &text) {
+        for(QPushButton *btn : allButtons) {
+            bool match = btn->toolTip().contains(text, Qt::CaseInsensitive);
+            btn->setVisible(match);
+        }
+    });
+    
+    // RESTORE LAST TAB INDEX
+    if (lastTabIndex >= 0 && lastTabIndex < smTab->count()) {
+        smTab->setCurrentIndex(lastTabIndex);
+    }
 
 	//Get left up pos of button
 	QPoint butTopLeft = button->mapToGlobal(QPoint(0,0));
@@ -289,6 +358,7 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 		y = 0; //Place widget top at screen top
 
 	smWidget->move(x, y) ;
+    searchEdit->setFocus();
 	smWidget->show() ;
 }
 
@@ -496,3 +566,13 @@ void Emoticons::loadToolTips(QWidget *container)
 	}
 	QApplication::restoreOverrideCursor();
 }
+
+void Emoticons::addRecentSmiley(const QString& code)
+{
+    recentSmileys.removeAll(code);
+    recentSmileys.prepend(code);
+    while(recentSmileys.size() > 90) {
+        recentSmileys.removeLast();
+    }
+}
+
