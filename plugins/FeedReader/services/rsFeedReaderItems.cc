@@ -284,8 +284,10 @@ std::ostream &RsFeedReaderMsg::print(std::ostream &out, uint16_t /*indent*/)
 	return out;
 }
 
-uint32_t RsFeedReaderSerialiser::sizeMsg(RsFeedReaderMsg *item)
+void RsFeedReaderSerialiser::correctMsgSize(RsFeedReaderMsg *item)
 {
+	if (!item) return;
+
 	uint32_t s = 8; /* header */
 	s += 2; /* version */
 	s += GetTlvStringSize(item->msgId);
@@ -326,23 +328,26 @@ uint32_t RsFeedReaderSerialiser::sizeMsg(RsFeedReaderMsg *item)
 					}
 				}
 			}
-			/* Re-calculate the size after modification */
-			s = 8;
-			s += 2;
-			s += GetTlvStringSize(item->msgId);
-			s += sizeof(uint32_t);
-			s += GetTlvStringSize(item->title);
-			s += GetTlvStringSize(item->link);
-			s += GetTlvStringSize(item->author);
-			s += GetTlvStringSize(item->description);
-			s += GetTlvStringSize(item->descriptionTransformed);
-			s += sizeof(uint32_t);
-			s += sizeof(uint32_t);
-			s += GetTlvStringSize(item->attachmentLink);
-			s += GetTlvStringSize(item->attachment);
-			s += GetTlvStringSize(item->attachmentMimeType);
 		}
 	}
+}
+
+uint32_t RsFeedReaderSerialiser::sizeMsg(RsFeedReaderMsg *item)
+{
+	uint32_t s = 8; /* header */
+	s += 2; /* version */
+	s += GetTlvStringSize(item->msgId);
+	s += sizeof(uint32_t);
+	s += GetTlvStringSize(item->title);
+	s += GetTlvStringSize(item->link);
+	s += GetTlvStringSize(item->author);
+	s += GetTlvStringSize(item->description);
+	s += GetTlvStringSize(item->descriptionTransformed);
+	s += sizeof(uint32_t); /* pubDate */
+	s += sizeof(uint32_t); /* flag */
+	s += GetTlvStringSize(item->attachmentLink);
+	s += GetTlvStringSize(item->attachment);
+	s += GetTlvStringSize(item->attachmentMimeType);
 
 	return s;
 }
