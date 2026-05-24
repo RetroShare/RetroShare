@@ -1273,16 +1273,19 @@ identities {
 		gui/Identity/IdentityListModel.h \
 		gui/Identity/IdEditDialog.h \
 		gui/Identity/IdDetailsDialog.h \
+		gui/Identity/UsageStatistics.h \
 	
 	FORMS += gui/Identity/IdDialog.ui \
 		gui/Identity/IdEditDialog.ui \
 		gui/Identity/IdDetailsDialog.ui \
+		gui/Identity/UsageStatistics.ui \
 
 	SOURCES +=  \
 		gui/Identity/IdDialog.cpp \
 		gui/Identity/IdentityListModel.cpp \
 		gui/Identity/IdEditDialog.cpp \
 		gui/Identity/IdDetailsDialog.cpp \
+		gui/Identity/UsageStatistics.cpp \
 	
 }
 	
