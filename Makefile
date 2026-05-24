@@ -7,8 +7,47 @@ RS_RNPLIB            ?= ON
 RS_JSON_API          ?= ON
 RS_WEBUI             ?= ON
 RS_PLUGINS           ?= OFF
+RS_FORUM_DEEP_INDEX  ?= OFF
 RS_DEVELOPMENT_BUILD ?= OFF
 CMAKE_BUILD_TYPE     ?=
+
+# ==============================================================================
+# Options validation (stops immediately if any option is invalid)
+# ==============================================================================
+VALID_OPTIONS := ON OFF
+VALID_BUILD_TYPES := Debug Release RelWithDebInfo MinSizeRel
+
+define VALIDATE_OPTION
+  ifeq ($$(filter $$($(1)),$$(VALID_OPTIONS)),)
+    $$(error Invalid option value for $(1): '$$($(1))'. Valid values are: $$(VALID_OPTIONS))
+  endif
+endef
+
+# Validate ON/OFF options
+$(eval $(call VALIDATE_OPTION,RS_RNPLIB))
+$(eval $(call VALIDATE_OPTION,RS_JSON_API))
+$(eval $(call VALIDATE_OPTION,RS_WEBUI))
+$(eval $(call VALIDATE_OPTION,RS_PLUGINS))
+$(eval $(call VALIDATE_OPTION,RS_FORUM_DEEP_INDEX))
+$(eval $(call VALIDATE_OPTION,RS_DEVELOPMENT_BUILD))
+
+# Specific validation for CMAKE_BUILD_TYPE (if not empty)
+ifneq ($(CMAKE_BUILD_TYPE),)
+  ifeq ($(filter $(CMAKE_BUILD_TYPE),$(VALID_BUILD_TYPES)),)
+    $(error Invalid option value for CMAKE_BUILD_TYPE: '$(CMAKE_BUILD_TYPE)'. Valid values are: $(VALID_BUILD_TYPES) (or leave empty))
+  endif
+endif
+
+# Unrecognized command line variable protection
+ALLOWED_VARS := RS_RNPLIB RS_JSON_API RS_WEBUI RS_PLUGINS RS_FORUM_DEEP_INDEX RS_DEVELOPMENT_BUILD CMAKE_BUILD_TYPE CMAKE_GEN CMAKE_FLAGS NPROC
+
+$(foreach var,$(.VARIABLES),\
+  $(if $(filter command line,$(origin $(var))),\
+    $(if $(filter $(var),$(ALLOWED_VARS)),,\
+      $(error Unrecognized command line variable: '$(var)'. Allowed variables are: $(ALLOWED_VARS))\
+    )\
+  )\
+)
 
 # Global CMake flags (forces policy compatibility for old submodules like libbitdht)
 CMAKE_FLAGS ?= -DCMAKE_POLICY_VERSION_MINIMUM=3.5
@@ -36,6 +75,7 @@ all: rnp
 		-DRS_JSON_API=$(RS_JSON_API) \
 		-DRS_WEBUI=$(RS_WEBUI) \
 		-DRS_PLUGINS=$(RS_PLUGINS) \
+		-DRS_FORUM_DEEP_INDEX=$(RS_FORUM_DEEP_INDEX) \
 		-DRS_GUI=ON \
 		-DRS_SERVICE=ON \
 		-DRS_FRIENDSERVER=ON
@@ -54,6 +94,7 @@ libretroshare: rnp
 		-DRS_JSON_API=$(RS_JSON_API) \
 		-DRS_WEBUI=$(RS_WEBUI) \
 		-DRS_PLUGINS=$(RS_PLUGINS) \
+		-DRS_FORUM_DEEP_INDEX=$(RS_FORUM_DEEP_INDEX) \
 		-DRS_GUI=OFF \
 		-DRS_SERVICE=OFF \
 		-DRS_FRIENDSERVER=OFF
@@ -67,6 +108,7 @@ retroshare-service: rnp
 		-DRS_JSON_API=$(RS_JSON_API) \
 		-DRS_WEBUI=$(RS_WEBUI) \
 		-DRS_PLUGINS=$(RS_PLUGINS) \
+		-DRS_FORUM_DEEP_INDEX=$(RS_FORUM_DEEP_INDEX) \
 		-DRS_GUI=OFF \
 		-DRS_SERVICE=ON \
 		-DRS_FRIENDSERVER=OFF
@@ -80,6 +122,7 @@ retroshare-friendserver: rnp
 		-DRS_JSON_API=$(RS_JSON_API) \
 		-DRS_WEBUI=$(RS_WEBUI) \
 		-DRS_PLUGINS=$(RS_PLUGINS) \
+		-DRS_FORUM_DEEP_INDEX=$(RS_FORUM_DEEP_INDEX) \
 		-DRS_GUI=OFF \
 		-DRS_SERVICE=OFF \
 		-DRS_FRIENDSERVER=ON
@@ -93,6 +136,7 @@ retroshare-gui: rnp
 		-DRS_JSON_API=$(RS_JSON_API) \
 		-DRS_WEBUI=$(RS_WEBUI) \
 		-DRS_PLUGINS=$(RS_PLUGINS) \
+		-DRS_FORUM_DEEP_INDEX=$(RS_FORUM_DEEP_INDEX) \
 		-DRS_GUI=ON \
 		-DRS_SERVICE=OFF \
 		-DRS_FRIENDSERVER=OFF
