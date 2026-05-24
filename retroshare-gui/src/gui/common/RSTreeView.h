@@ -54,6 +54,7 @@ protected:
 	virtual void wheelEvent(QWheelEvent *e) override; // overriding so as to manage zoom
 	virtual void resizeEvent(QResizeEvent *e) override;
 	virtual void paintEvent(QPaintEvent *event) override;
+	virtual void keyPressEvent(QKeyEvent *e) override;
 
 	QString placeholderText;
 	bool autoSelect;
