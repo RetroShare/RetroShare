@@ -108,8 +108,11 @@ private slots:
     void headerContextMenuRequested(QPoint);
     void toggleColumnVisible();
 
-	void CircleListCustomPopupMenu(QPoint point) ;
-
+	void CircleListCustomPopupMenu(QPoint point);
+    
+    void exportIdentity();
+    void importIdentity();
+    
 #ifdef SUSPENDED
 	void circle_selected() ;
 #endif
@@ -146,6 +149,10 @@ private:
 	void showIdEdit(uint32_t token);
 
 	void clearPerson();
+    
+	bool importExportIdentityFileDialog(QString &fileName, bool import);
+    bool exportContacts(const QString &fileName);
+    bool importContacts(const QString &fileName);
 
 private:
 	UIStateHelper *mStateHelper;

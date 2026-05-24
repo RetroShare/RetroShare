@@ -28,6 +28,7 @@
 #include <QWidgetAction>
 #include <QStyledItemDelegate>
 #include <QPainter>
+#include <QtXml>
 
 #include "IdDialog.h"
 #include "ui_IdDialog.h"
@@ -2364,6 +2365,14 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
         contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT),tr("Edit identity"),this,SLOT(editIdentity())) ;
         contextMenu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/cancel.svg"),tr("Delete identity"),this,SLOT(removeIdentity())) ;
     }
+    
+    contextMenu.addSeparator();
+    
+    if(n_is_not_a_contact == 0)
+    {
+        contextMenu.addAction(tr("Export Contacts"), this, SLOT(exportIdentity()));
+        contextMenu.addAction(tr("Import Contacts"), this, SLOT(importIdentity()));
+    }
 
     //contextMenu = ui->idTreeWidget->createStandardContextMenu(contextMenu);
 
@@ -2802,3 +2811,121 @@ void IdDialog::sortColumn(int col,Qt::SortOrder so)
     mLastSortOrder = so;
 }
 
+void IdDialog::exportIdentity()
+{
+    QString fileName;
+    if (importExportIdentityFileDialog(fileName, false)) {
+        exportContacts(fileName);
+    }
+}
+
+void IdDialog::importIdentity()
+{
+    QString fileName;
+    if (importExportIdentityFileDialog(fileName, true)) {
+        importContacts(fileName);
+    }
+}
+
+bool IdDialog::exportContacts(const QString &fileName)
+{
+    QDomDocument doc("ContactListWithGroups");
+    QDomElement root = doc.createElement("root");
+    doc.appendChild(root);
+
+    QDomElement ownGroup = doc.createElement("group");
+    ownGroup.setAttribute("name", "own");
+    root.appendChild(ownGroup);
+
+    QDomElement contactGroup = doc.createElement("group");
+    contactGroup.setAttribute("name", "contacts");
+    root.appendChild(contactGroup);
+
+    // Get all identity summaries
+    std::list<RsGroupMetaData> summaries;
+    if (!rsIdentity->getIdentitiesSummaries(summaries)) return false;
+
+    for (const RsGroupMetaData& meta : summaries) {
+        RsGxsId id(meta.mGroupId);
+        RsIdentityDetails details;
+
+        // Check if it's an OWN ID or a regular CONTACT
+        if (rsIdentity->getIdDetails(id, details)) {
+            bool isOwn = (details.mFlags & RS_IDENTITY_FLAGS_IS_OWN_ID);
+            bool isContact = rsIdentity->isARegularContact(id);
+
+            if (isOwn || isContact) {
+                std::string radix_string;
+                // Serialize the identity signature data
+                if (rsIdentity->serialiseIdentityToMemory(id, radix_string)) {
+                    QDomElement idElem = doc.createElement("identity");
+                    idElem.setAttribute("name", QString::fromUtf8(meta.mGroupName.c_str()));
+                    idElem.setAttribute("data", QString::fromStdString(radix_string));
+                    
+                    // Attach to the correct group in XML
+                    if (isOwn) {
+                        ownGroup.appendChild(idElem);
+                    } else if (isContact) {
+                        contactGroup.appendChild(idElem);
+                    }
+                }
+            }
+        }
+    }
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) return false;
+    QTextStream out(&file);
+    out << doc.toString();
+    file.close();
+    return true;
+}
+
+bool IdDialog::importContacts(const QString &fileName)
+{
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return false;
+
+    QDomDocument doc;
+    if (!doc.setContent(&file)) return false;
+
+    QDomElement root = doc.documentElement();
+    QDomNode groupNode = root.firstChild();
+
+    while (!groupNode.isNull()) {
+        QDomElement groupElem = groupNode.toElement();
+        QString groupName = groupElem.attribute("name");
+
+        QDomNode idNode = groupElem.firstChild();
+        while (!idNode.isNull()) {
+            QDomElement idElem = idNode.toElement();
+            if (idElem.tagName() == "identity") {
+                QString data = idElem.attribute("data");
+                RsGxsId id;
+                
+                if (rsIdentity->deserialiseIdentityFromMemory(data.toStdString(), &id)) {
+                    // If it's a contact group, ensure it appears in the Contacts tree
+                    if (groupName == "contacts") {
+                        rsIdentity->setAsRegularContact(id, true);
+                    }
+                    // For "own" group, deserialise already adds it to your identity list
+                }
+            }
+            idNode = idNode.nextSibling();
+        }
+        groupNode = groupNode.nextSibling();
+    }
+    return true;
+}
+
+bool IdDialog::importExportIdentityFileDialog(QString &fileName, bool import)
+{
+    if (import) {
+        fileName = QFileDialog::getOpenFileName(this, tr("Import Contacts"), 
+                   QDir::homePath(), tr("ContactsList XML (*.xml);;All Files (*)"));
+    } else {
+        fileName = QFileDialog::getSaveFileName(this, tr("Export Contacts"), 
+                   QDir::homePath(), tr("ContactsList XML (*.xml);;All Files (*)"));
+    }
+    return !fileName.isEmpty();
+}
