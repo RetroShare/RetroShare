@@ -90,6 +90,7 @@ private slots:
 	void filterToggled(const bool &value);
 
 	void addIdentity();
+	void openBannedIdentitiesDialog();
 	void removeIdentity();
 	void editIdentity();
 	void chatIdentity();
