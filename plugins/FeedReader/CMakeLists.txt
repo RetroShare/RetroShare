@@ -94,6 +94,8 @@ set_target_properties(FeedReader PROPERTIES
 )
 
 # --- Links ---
+find_package(OpenSSL REQUIRED)
+
 if(WIN32)
     target_link_libraries(FeedReader PRIVATE retroshare retroshare-gui)
     target_compile_definitions(FeedReader PRIVATE WINDOWS_SYS)
@@ -107,6 +109,8 @@ target_link_libraries(FeedReader PRIVATE
     CURL::libcurl
     LibXml2::LibXml2
     LibXslt::LibXslt
+    OpenSSL::SSL
+    OpenSSL::Crypto
 )
 
 target_compile_options(FeedReader PRIVATE "-Wno-deprecated-declarations")

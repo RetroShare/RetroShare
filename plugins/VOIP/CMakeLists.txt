@@ -94,6 +94,8 @@ if(WIN32)
 endif()
 
 # --- Links ---
+find_package(OpenSSL REQUIRED)
+
 if(WIN32)
     target_link_libraries(VOIP PRIVATE retroshare retroshare-gui)
 endif()
@@ -108,6 +110,8 @@ target_link_libraries(VOIP PRIVATE
     ${AVUTIL_LIBRARIES}
     ${SPEEX_LIBRARIES}
     ${SPEEXDSP_LIBRARIES}
+    OpenSSL::SSL
+    OpenSSL::Crypto
 )
 
 target_compile_options(VOIP PRIVATE "-Wno-deprecated-declarations")
