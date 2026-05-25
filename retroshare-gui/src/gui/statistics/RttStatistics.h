@@ -18,9 +18,16 @@
  *                                                                             *
  *******************************************************************************/
 
+/*******************************************************************************
+ * gui/statistics/RttStatistics.h                                              *
+ *******************************************************************************/
+
 #pragma once
 
 #include <QPoint>
+#include <QTimer>
+#include <QTreeWidget>
+#include <QHeaderView>
 #include <retroshare/rsrtt.h>
 #include <retroshare-gui/RsAutoUpdatePage.h>
 
@@ -47,17 +54,28 @@ public:
 
 class RttStatistics: public MainPage, public Ui::RttStatistics
 {
+    Q_OBJECT
+
 public:
+
+    // Define column indices to avoid magic numbers
+    enum TableColumns {
+        COL_PEER_NAME = 0,
+        COL_RTT       = 1,
+        COL_NODE_ID   = 2,
+        COL_IP_ADDRESS = 3
+    };
+
     RttStatistics(QWidget *parent = NULL) ;
     ~RttStatistics();
+
+private slots:
+    void updateRttValues(); // Slot for table update
 
 private:
     void processSettings(bool bLoad);
     bool m_bProcessSettings;
 
     RttStatisticsGraph *_tst_CW ;
+    QTimer *m_timer; // Timer for the table
 } ;
-
-
-
-
