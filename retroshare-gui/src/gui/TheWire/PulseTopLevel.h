@@ -32,7 +32,7 @@ class PulseTopLevel : public PulseDataItem, private Ui::PulseTopLevel
 
 public:
 	PulseTopLevel(PulseViewHolder *holder, RsWirePulseSPtr pulse);
-
+	bool isUnread() const ;
 
 protected:
 	void setup();
@@ -57,6 +57,9 @@ protected:
 	virtual void setReferenceString(QString ref) override;
 	virtual void setPulseStatus(PulseStatus status) override;
 // PulseDataInterface ===========
+
+	virtual void setReadStatus(bool isNew, bool isUnread) override;
+	void readToggled(bool checked); 
 
 protected:
 	void mousePressEvent(QMouseEvent *event);
