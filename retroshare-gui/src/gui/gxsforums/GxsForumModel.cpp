@@ -877,10 +877,9 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 
     // also emit dataChanged() for parents since they need to re-draw
 
-    for(QModelIndex j = i.parent(); j.isValid(); j=j.parent())
+    for(QModelIndex j = i.parent(); j.isValid(); j = j.parent())
     {
-        emit dataChanged(j,j);
-        j = j.parent();
+        emit dataChanged(j, j.sibling(j.row(), COLUMN_THREAD_NB_COLUMNS - 1));
     }
 }
 
@@ -917,7 +916,7 @@ void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,
         convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
         QModelIndex itemIndex = (mTreeMode == TREE_MODE_FLAT)?createIndex(i - 1, 0, ref):createIndex(mPosts[i].prow,0,ref);
-        emit dataChanged(itemIndex, itemIndex);
+        emit dataChanged(itemIndex, itemIndex.sibling(itemIndex.row(), COLUMN_THREAD_NB_COLUMNS - 1));
 	}
 
 	if(!with_children)

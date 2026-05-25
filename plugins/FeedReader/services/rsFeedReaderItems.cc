@@ -284,6 +284,54 @@ std::ostream &RsFeedReaderMsg::print(std::ostream &out, uint16_t /*indent*/)
 	return out;
 }
 
+void RsFeedReaderSerialiser::correctMsgSize(RsFeedReaderMsg *item)
+{
+	if (!item) return;
+
+	uint32_t s = 8; /* header */
+	s += 2; /* version */
+	s += GetTlvStringSize(item->msgId);
+	s += sizeof(uint32_t);
+	s += GetTlvStringSize(item->title);
+	s += GetTlvStringSize(item->link);
+	s += GetTlvStringSize(item->author);
+	s += GetTlvStringSize(item->description);
+	s += GetTlvStringSize(item->descriptionTransformed);
+	s += sizeof(uint32_t); /* pubDate */
+	s += sizeof(uint32_t); /* flag */
+	s += GetTlvStringSize(item->attachmentLink);
+	s += GetTlvStringSize(item->attachment);
+	s += GetTlvStringSize(item->attachmentMimeType);
+
+	uint32_t sizeLimit = RsSerialiser::MAX_SERIAL_SIZE - 2000;
+	if (s > sizeLimit) {
+		uint32_t baseSize = s - GetTlvStringSize(item->description) - GetTlvStringSize(item->descriptionTransformed);
+		if (baseSize < sizeLimit) {
+			uint32_t allowedTextSize = sizeLimit - baseSize;
+			std::string warning = "<p style='color: #d9534f; font-weight: bold; font-size: 1.1em;'>[Warning: This message has been truncated by RetroShare because its size exceeded the 256 KB safety limit.]</p><br/>";
+			uint32_t neededSpace = warning.size() + 100;
+			if (item->descriptionTransformed.empty()) {
+				if (item->description.size() > allowedTextSize) {
+					if (allowedTextSize > neededSpace) {
+						item->description = warning + item->description.substr(0, allowedTextSize - neededSpace) + "... [TRUNCATED]";
+					} else {
+						item->description = item->description.substr(0, allowedTextSize - 100) + "... [TRUNCATED]";
+					}
+				}
+			} else {
+				item->description.clear();
+				if (item->descriptionTransformed.size() > allowedTextSize) {
+					if (allowedTextSize > neededSpace) {
+						item->descriptionTransformed = warning + item->descriptionTransformed.substr(0, allowedTextSize - neededSpace) + "... [TRUNCATED]";
+					} else {
+						item->descriptionTransformed = item->descriptionTransformed.substr(0, allowedTextSize - 100) + "... [TRUNCATED]";
+					}
+				}
+			}
+		}
+	}
+}
+
 uint32_t RsFeedReaderSerialiser::sizeMsg(RsFeedReaderMsg *item)
 {
 	uint32_t s = 8; /* header */
@@ -362,7 +410,9 @@ RsFeedReaderMsg *RsFeedReaderSerialiser::deserialiseMsg(void *data, uint32_t *pk
 	}
 
 	if (*pktsize < rssize)    /* check size */
+	{
 		return NULL; /* not enough data */
+	}
 
 	/* set the packet length */
 	*pktsize = rssize;
