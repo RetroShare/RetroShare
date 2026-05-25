@@ -327,6 +327,10 @@ bool XMLWrapper::getChildText(xmlNodePtr node, const char *childName, std::strin
 		return nodeDump(div, text, true);
 	}
 
+	if (child->children->type != XML_TEXT_NODE) {
+		return false;
+	}
+
 	return getContent(child, text, false);
 }
 
