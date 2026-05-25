@@ -575,7 +575,7 @@ void RsPostedPostsModel::update_posts(const RsGxsGroupId& group_id)
 
 		if(!rsPosted->getBoardsInfo(groupIds,groups) || groups.size() != 1)
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel group info for channel " << group_id << std::endl;
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve board group info for board " << group_id << std::endl;
 			return;
         }
 
