@@ -31,6 +31,7 @@ class NetworkView;
 class IdDialog;
 class CirclesDialog;
 class FriendServerControl;
+class FriendRequestsDialog;
 
 class FriendsDialog : public MainPage
 {
@@ -66,6 +67,7 @@ public:
 	 NetworkDialog *networkDialog ;
 	 NetworkView *networkView ;
      FriendServerControl *friendServerControl ;
+	 FriendRequestsDialog *friendRequestsDialog ;
 
 	 IdDialog *idDialog;
 	 
@@ -79,6 +81,7 @@ private slots:
     void loadmypersonalstatus();
 
     void clearChatNotify();
+    void updateFriendRequestsTabCount(int count);
 
     //void newsFeedChanged(int count);
 
