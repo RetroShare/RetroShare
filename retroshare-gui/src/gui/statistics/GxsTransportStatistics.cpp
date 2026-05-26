@@ -54,6 +54,7 @@
 #include "gui/Identity/IdDialog.h"
 #include "gui/MainWindow.h"
 #include "gui/common/FilesDefs.h"
+#include "gui/RsGUIEventManager.h"
 #include "util/DateTime.h"
 
 #define COL_PENDING_ID                  0
@@ -87,7 +88,7 @@
 //#define DEBUG_GXSTRANS_STATS 1
 
 GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
-    : MainPage(parent)
+    : RsAutoUpdatePage(4000,parent)
 {
 	setupUi(this) ;
 	
@@ -96,6 +97,7 @@ GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
 
 	m_bProcessSettings = false;
     mLastGroupReqTS = 0 ;
+    mLastDateFormat = Settings->getDateFormat();
 
 	/* Set header resize modes and initial section sizes Uploads TreeView*/
 	QHeaderView_setSectionResizeMode(treeWidget->header(), QHeaderView::ResizeToContents);
@@ -107,9 +109,11 @@ GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
 	treeWidget->setColumnHidden(COL_PENDING_DESTINATION_ID,true);
 	groupTreeWidget->setColumnHidden(COL_GROUP_AUTHOR_ID,true);
 
+	connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
+
 	// load settings
 	processSettings(true);
-	updateDisplay(true);
+	updateDisplay();
 }
 
 GxsTransportStatistics::~GxsTransportStatistics()
@@ -169,7 +173,7 @@ void GxsTransportStatistics::CustomPopupMenuGroups( QPoint )
 	contextMnu.exec(QCursor::pos());
 }
 
-void GxsTransportStatistics::updateDisplay(bool)
+void GxsTransportStatistics::updateDisplay()
 {
 	time_t now = time(NULL) ;
 #ifdef DEBUG_GXSTRANS_STATS
@@ -179,6 +183,15 @@ void GxsTransportStatistics::updateDisplay(bool)
 	loadGroups();
 
 	mLastGroupReqTS = now ;
+}
+
+void GxsTransportStatistics::settingsChanged()
+{
+	int currentFormat = Settings->getDateFormat();
+	if (currentFormat != mLastDateFormat) {
+		mLastDateFormat = currentFormat;
+		updateDisplay();
+	}
 }
 
 QString GxsTransportStatistics::getPeerName(const RsPeerId &peer_id)
@@ -257,7 +270,7 @@ void GxsTransportStatistics::updateContent()
         item -> setData(COL_PENDING_DATASTATUS,   Qt::DisplayRole, getStatusString(rec.status));
         item -> setData(COL_PENDING_DATASIZE,     Qt::DisplayRole, misc::friendlyUnit(rec.data_size));
         item -> setData(COL_PENDING_DATAHASH,     Qt::DisplayRole, QString::fromStdString(rec.data_hash.toStdString()));
-		item -> setData(COL_PENDING_SEND,         Qt::DisplayRole, DateTime::DateTimeFromTime_t(rec.send_TS).toString());
+		item -> setData(COL_PENDING_SEND,         Qt::DisplayRole, DateTime::formatDateTime(rec.send_TS));
         item -> setData(COL_PENDING_GROUP_ID,     Qt::DisplayRole, QString::fromStdString(rec.group_id.toStdString()));
 		item -> setData(COL_PENDING_DESTINATION_ID,  Qt::DisplayRole, QString::fromStdString(rec.recipient.toStdString()));
 		item -> setData(COL_PENDING_SENDTIME,        Qt::DisplayRole, QString::number(now - rec.send_TS));
@@ -298,7 +311,7 @@ void GxsTransportStatistics::updateContent()
         groupTreeWidget->addTopLevelItem(item);
 		item->setExpanded(openned_groups.find(it->first) != openned_groups.end());
 
-		QString msg_time_string = (stat.last_publish_TS>0)?QString("(Last msg: %1)").arg(DateTime::DateTimeFromTime_t((uint)stat.last_publish_TS).toString()):"" ;
+		QString msg_time_string = (stat.last_publish_TS>0)?QString("(Last msg: %1)").arg(DateTime::formatDateTime((uint)stat.last_publish_TS)):"" ;
 
         item->setData(COL_GROUP_PUBLISHTS,  Qt::DisplayRole,  msg_time_string) ;
 		item->setData(COL_GROUP_NUM_MSGS,  Qt::DisplayRole,  QString::number(stat.mNumMsgs) ) ;
@@ -345,7 +358,7 @@ void GxsTransportStatistics::updateContent()
 
 			sitem->setData(COL_GROUP_UNIQUE_ID, Qt::DisplayRole,QString::fromStdString(meta.mMsgId.toStdString()));
 			sitem->setData(COL_GROUP_AUTHOR_ID, Qt::DisplayRole,  QString::fromStdString(meta.mAuthorId.toStdString())) ;
-			sitem->setText(COL_GROUP_PUBLISHTS, DateTime::DateTimeFromTime_t(meta.mPublishTs).toString());
+			sitem->setText(COL_GROUP_PUBLISHTS, DateTime::formatDateTime(meta.mPublishTs));
 			sitem->setData(COL_GROUP_PUBLISHTS, Qt::UserRole, qdatetime);
 
 			sitem->setTextAlignment(COL_GROUP_PUBLISHTS, Qt::AlignRight);

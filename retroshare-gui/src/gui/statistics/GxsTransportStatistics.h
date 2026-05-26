@@ -36,7 +36,7 @@
 class GxsTransportStatisticsWidget ;
 class UIStateHelper;
 
-class GxsTransportStatistics: public MainPage, public Ui::GxsTransportStatistics
+class GxsTransportStatistics: public RsAutoUpdatePage, public Ui::GxsTransportStatistics
 {
 	Q_OBJECT
 
@@ -56,13 +56,15 @@ private slots:
 
 	void personDetails();
 	void showAuthorInPeople();
+	void settingsChanged();
 
 private:
-	void updateDisplay(bool complete) ;
+	void updateDisplay() ;
 	void loadGroups();
 
 	void processSettings(bool bLoad);
 	bool m_bProcessSettings;
+	int mLastDateFormat;
 
 	GxsTransportStatisticsWidget *_tst_CW ;
 	UIStateHelper *mStateHelper;
