@@ -20,8 +20,10 @@
 
 #include "util/rsdir.h"
 #include "retroshare/rsiface.h"
+#include <util/rsdebug.h>
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
+#include "RsTurtleVOIPBridge.h"
 #include "pqi/p3linkmgr.h"
 #include <serialiser/rsserial.h>
 #include <rsitems/rsconfigitems.h>
@@ -112,7 +114,7 @@ static double convert64bitsToTs(uint64_t bits)
 }
 
 p3VOIP::p3VOIP(RsPluginHandler *handler,VOIPNotify *notifier)
-     : RsPQIService(RS_SERVICE_TYPE_VOIP_PLUGIN,0,handler), mVOIPMtx("p3VOIP"), mServiceControl(handler->getServiceControl()) , mNotify(notifier)
+     : RsPQIService(RS_SERVICE_TYPE_VOIP_PLUGIN,0,handler), mVOIPMtx("p3VOIP"), mServiceControl(handler->getServiceControl()) , mNotify(notifier), mBridge(NULL)
 {
 	addSerialType(new RsVOIPSerialiser());
 
@@ -399,9 +401,14 @@ void p3VOIP::handleData(RsVOIPDataItem *item)
 
 	if(it == mPeerInfo.end())
 	{
-		std::cerr << "Peer unknown to VOIP process. Dropping data" << std::endl;
-		delete item ;
-		return ;
+		// RsDbg() << "Peer unknown to VOIP process. Dropping data" << std::endl;
+        // DISTANT_VOIP FIX: Register dynamic peers (tunnels) on the fly
+        it = mPeerInfo.insert(std::make_pair(item->PeerId(), VOIPPeerInfo())).first;
+        it->second.initialisePeerInfo(item->PeerId());
+        
+        #ifdef DEBUG_VOIP
+        std::cerr << "DISTANT_VOIP: Registered new dynamic peer in p3VOIP engine: " << item->PeerId() << std::endl;
+        #endif
 	}
 	it->second.incoming_queue.push_back(item) ;	// be careful with the delete action!
 
@@ -811,3 +818,52 @@ RsSerialiser *p3VOIP::setupSerialiser()
 
 
 
+
+int p3VOIP::sendItem(RsItem* item)
+{
+    if (mBridge && mBridge->isVirtualPeer(item->PeerId()))
+    {
+        RsDbg() << "DISTANT_VOIP: Intercepted OUTBOUND Item in p3VOIP::sendItem override! Preparing encapsulated envelope...";
+        
+        // Step 9: Resolve DistantChatPeerId for this tunnel
+        ChatId targetChat = mBridge->resolveVirtualToDistantChat(item->PeerId());
+        DistantChatPeerId rawId = targetChat.toDistantChatId();
+        uint32_t headerSize = sizeof(DistantChatPeerId);
+
+        // 1. Serialise standard payload
+        uint32_t itemSize = rsSerialiser->size(item);
+        if (itemSize > 0)
+        {
+            // Allocate combined buffer [Header + Payload]
+            uint32_t totalSize = headerSize + itemSize;
+            void* buf = malloc(totalSize);
+            
+            if (buf) {
+                // A. Prepend Header
+                memcpy(buf, &rawId, headerSize);
+                
+                // B. Serialize payload into remainder of buffer
+                uint8_t* payloadPtr = ((uint8_t*)buf) + headerSize;
+                uint32_t remainingSize = itemSize;
+                
+                if (rsSerialiser->serialise(item, payloadPtr, &remainingSize))
+                {
+                    RsDbg() << "DISTANT_VOIP: [ENVELOPE READY] Encapsulated ChatId " << rawId.toStdString() << ". Total Size=" << totalSize << " bytes. Pushing to tunnel.";
+                    // 2. Hand over combined buffer to the bridge
+                    mBridge->sendRawDataViaTunnel(item->PeerId(), buf, totalSize);
+                } else {
+                    RsDbg() << "DISTANT_VOIP: CRITICAL ERROR - Serialisation into wrapper buffer failed!";
+                }
+                free(buf);
+            }
+        } else {
+            RsDbg() << "DISTANT_VOIP: Warning - Item has zero size, dropping.";
+        }
+        
+        delete item;
+        return 1;
+    }
+    
+    // Fallback: Standard routing via P2P PQI layer
+    return p3FastService::sendItem(item);
+}
