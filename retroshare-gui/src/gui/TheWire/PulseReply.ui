@@ -38,7 +38,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QFrame" name="plainFrame">
+    <widget class="QFrame" name="feedFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -522,6 +522,42 @@
           </spacer>
          </item>
          <item>
+          <widget class="QToolButton" name="readButton">
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Toggle Message Read Status</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/message-state-unread.png</normaloff>:/images/message-state-unread.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="newLabel">
+           <property name="text">
+            <string>New</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QLabel" name="label_date">
            <property name="font">
             <font>
@@ -700,6 +736,7 @@
  </customwidgets>
  <resources>
   <include location="TheWire_images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>
