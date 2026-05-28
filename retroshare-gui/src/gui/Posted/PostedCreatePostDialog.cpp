@@ -55,9 +55,10 @@
 
 const int MAXMESSAGESIZE = 199000;
 
-PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGroupId& grpId, const RsGxsId& default_author, QWidget *parent):
+PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGroupId& grpId, const RsGxsId& default_author, const RsGxsMessageId& msgId, QWidget *parent):
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
 	mPosted(posted), mGrpId(grpId),
+    mMsgId(msgId),
 	ui(new Ui::PostedCreatePostDialog)
 {
 	ui->setupUi(this);
@@ -69,7 +70,7 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 	connect(ui->RichTextEditWidget, SIGNAL(textSizeOk(bool)),ui->postButton, SLOT(setEnabled(bool)));
 
 	ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/postedlinks.png"));
-	ui->headerFrame->setHeaderText(tr("Create a new Post"));
+	ui->headerFrame->setHeaderText(!mMsgId.isNull() ? tr("Edit Post") : tr("Create a new Post"));
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
@@ -190,7 +191,14 @@ void PostedCreatePostDialog::createPost()
     {
         RsGxsMessageId post_id;
 
-        bool res = rsPosted->createPost(post,post_id);
+        bool res;
+        if (mMsgId.isNull()) {
+            res = rsPosted->createPost(post, post_id);
+        } else {
+            // Edit flow
+            std::string err;
+            res = rsPosted->createPostV2(mGrpId, post.mMeta.mMsgName, post.mLink, post.mNotes, post.mMeta.mAuthorId, post.mImage, post_id, err);
+        }
 
         RsQThreadUtils::postToObject( [res,this]()
         {

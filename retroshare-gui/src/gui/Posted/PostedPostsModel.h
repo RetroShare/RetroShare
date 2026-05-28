@@ -158,6 +158,9 @@ public:
     void setMsgReadStatus(const QModelIndex &i, bool read_status);
     void setFilter(const QStringList &strings, uint32_t &count) ;
 	void setSortingStrategy(SortingStrategy s);
+    void togglePinnedPost(const RsGxsMessageId& msgId);
+    void setPinnedPosts(const std::set<std::string>& pinned);
+    bool isPinned(const RsGxsMessageId& msgId) const { return mPinnedPosts.count(msgId.toStdString()); }
 	void setPostsInterval(int start,int nb_posts);
     void setPostsDefaultInterval(int size);
 
@@ -194,6 +197,7 @@ public:
 #ifdef TODO
 	QVariant decorationRole(const RsPostedPost& fmpe, int col) const;
 	QVariant pinnedRole    (const RsPostedPost& fmpe, int col) const;
+    static const uint8_t SHOW_PINNED = 0x80;
 	QVariant missingRole   (const RsPostedPost& fmpe, int col) const;
 	QVariant statusRole    (const RsPostedPost& fmpe, int col) const;
 	QVariant authorRole    (const RsPostedPost& fmpe, int col) const;
@@ -244,6 +248,7 @@ private:
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
     std::vector<RsPostedPost> mPosts ;
+    std::set<std::string> mPinnedPosts;
     std::vector<int> mFilteredPosts;
     uint32_t mDisplayedStartIndex;
     uint32_t mDisplayedNbPosts;
