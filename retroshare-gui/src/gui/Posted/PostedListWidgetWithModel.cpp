@@ -75,6 +75,7 @@ static const int POSTED_TABS_POSTS  = 1;
 #define IMAGE_COPYLINK     ":/images/copyrslink.png"
 #define IMAGE_AUTHOR       ":/images/user/personal64.png"
 #define IMAGE_COPYHTTP     ":/images/emblem-web.png"
+#define IMAGE_PIN          ":/images/pin32.png"
 
 Q_DECLARE_METATYPE(RsPostedPost);
 
@@ -357,6 +358,18 @@ void PostedListWidgetWithModel::postContextMenu(const QPoint& point)
 
     menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR), tr("Show author in People tab"), this, SLOT(showAuthorInPeople()))->setData(index);
 
+    if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
+    {
+        QAction *pinAction = nullptr;
+
+        if(post.mPinned)
+            pinAction = menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PIN), tr("Unpin post"), this, SLOT(unpinPost()));
+        else
+            pinAction = menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PIN), tr("Pin post"), this, SLOT(pinPost()));
+
+        pinAction->setData(index);
+    }
+
 #ifdef TODO
     // This feature is not implemented yet in libretroshare.
 
@@ -526,6 +539,69 @@ void PostedListWidgetWithModel::copyMessageLink()
     {
         QMessageBox::critical(NULL,tr("Link creation error"),tr("Link could not be created: ")+e.what());
     }
+}
+
+void PostedListWidgetWithModel::pinPost()
+{
+	setPostPinnedFromSender(true);
+}
+
+void PostedListWidgetWithModel::unpinPost()
+{
+	setPostPinnedFromSender(false);
+}
+
+void PostedListWidgetWithModel::setPostPinnedFromSender(bool pinned)
+{
+	try
+	{
+		if(groupId().isNull())
+			throw std::runtime_error("No board currently selected!");
+
+		QAction *action = qobject_cast<QAction*>(QObject::sender());
+
+		if(!action)
+			throw std::runtime_error("No action sender for selected post!");
+
+		QModelIndex index = action->data().toModelIndex();
+
+		if(!index.isValid())
+			throw std::runtime_error("No post under mouse!");
+
+		RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>();
+
+		if(post.mMeta.mMsgId.isNull())
+			throw std::runtime_error("Post has empty MsgId!");
+
+		RsGxsGroupId boardId = groupId();
+		RsGxsMessageId postId = post.mMeta.mMsgId;
+
+		RsThread::async([this, boardId, postId, pinned]()
+		{
+			std::string errorMessage;
+			bool ok = rsPosted->setPostPinned(boardId, postId, pinned, errorMessage);
+
+			RsQThreadUtils::postToObject([this, ok, errorMessage]()
+			{
+				if(!ok)
+				{
+					QMessageBox::critical(
+					            this, tr("Could not update pinned post"),
+					            tr("Error occurred while updating pinned post: ")
+					            + QString::fromStdString(errorMessage));
+					return;
+				}
+
+				updateDisplay(true);
+			}, this);
+		});
+	}
+	catch(std::exception& e)
+	{
+		QMessageBox::critical(
+		            this, tr("Could not update pinned post"),
+		            tr("Error occurred while updating pinned post: ") + e.what());
+	}
 }
 
 #ifdef TODO

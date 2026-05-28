@@ -148,6 +148,8 @@ private slots:
 	void postPostLoad();
 	void copyMessageLink();
     void copyHttpLink();
+	void pinPost();
+	void unpinPost();
     void nextPosts();
     void prevPosts();
 	void filterItems(QString s);
@@ -164,6 +166,7 @@ private:
 
 	void insertBoardDetails(const RsPostedGroup &group);
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+	void setPostPinnedFromSender(bool pinned);
 
 private:
     RsPostedGroup mGroup;
