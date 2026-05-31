@@ -33,7 +33,7 @@ option(
 	 just for development purposes, not suitable for library usage"
 	 ON )
 
-set(RS_JSON_API ON CACHE BOOL "Use restbed to expose libretroshare as JSON API via HTTP" FORCE)
+option(RS_JSON_API "Use restbed to expose libretroshare as JSON API via HTTP" ON)
 
 option(
 	RS_USE_NATIVE_DIALOGS
