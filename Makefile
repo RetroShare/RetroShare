@@ -9,7 +9,7 @@ RS_WEBUI             ?= ON
 RS_PLUGINS           ?= OFF
 RS_FORUM_DEEP_INDEX  ?= OFF
 RS_DEVELOPMENT_BUILD ?= OFF
-CMAKE_BUILD_TYPE     ?=
+CMAKE_BUILD_TYPE     ?= RelWithDebInfo
 
 # ==============================================================================
 # Options validation (stops immediately if any option is invalid)
@@ -78,17 +78,31 @@ endif
 # Global build directory at the root
 BUILD_DIR = Build-cmake
 
-.PHONY: all clean rnp libretroshare retroshare-service retroshare-friendserver retroshare-gui help
+# Common CMake options shared by all targets (DRY factorization)
+RS_CMAKE_COMMON = \
+	-DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
+	-DRS_RNPLIB=$(RS_RNPLIB) \
+	-DRS_PLUGINS=$(RS_PLUGINS) \
+	-DRS_FORUM_DEEP_INDEX=$(RS_FORUM_DEEP_INDEX) \
+	-DRS_DEVELOPMENT_BUILD=$(RS_DEVELOPMENT_BUILD)
+
+.PHONY: all clean rnp libretroshare retroshare-service retroshare-friendserver retroshare-gui configure show-config help
+
+configure: rnp
+	@echo ">>> Configuring RetroShare (CMake only, no compilation)..."
+	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) $(RS_CMAKE_COMMON) \
+		-DRS_JSON_API=$(RS_JSON_API) \
+		-DRS_WEBUI=$(RS_WEBUI) \
+		-DRS_GUI=ON \
+		-DRS_SERVICE=ON \
+		-DRS_FRIENDSERVER=ON
+	@echo ">>> Configuration complete. Run 'make all' to compile."
 
 all: rnp
 	@echo ">>> Compiling all functional RetroShare modules..."
-	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) \
-		-DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
-		-DRS_RNPLIB=$(RS_RNPLIB) \
+	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) $(RS_CMAKE_COMMON) \
 		-DRS_JSON_API=$(RS_JSON_API) \
 		-DRS_WEBUI=$(RS_WEBUI) \
-		-DRS_PLUGINS=$(RS_PLUGINS) \
-		-DRS_FORUM_DEEP_INDEX=$(RS_FORUM_DEEP_INDEX) \
 		-DRS_GUI=ON \
 		-DRS_SERVICE=ON \
 		-DRS_FRIENDSERVER=ON
@@ -101,13 +115,9 @@ rnp:
 
 libretroshare: rnp
 	@echo ">>> Step 2: Compiling libretroshare..."
-	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) \
-		-DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
-		-DRS_RNPLIB=$(RS_RNPLIB) \
+	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) $(RS_CMAKE_COMMON) \
 		-DRS_JSON_API=$(RS_JSON_API) \
 		-DRS_WEBUI=$(RS_WEBUI) \
-		-DRS_PLUGINS=$(RS_PLUGINS) \
-		-DRS_FORUM_DEEP_INDEX=$(RS_FORUM_DEEP_INDEX) \
 		-DRS_GUI=OFF \
 		-DRS_SERVICE=OFF \
 		-DRS_FRIENDSERVER=OFF
@@ -115,13 +125,9 @@ libretroshare: rnp
 
 retroshare-service: rnp
 	@echo ">>> Step 3: Compiling retroshare-service..."
-	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) \
-		-DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
-		-DRS_RNPLIB=$(RS_RNPLIB) \
+	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) $(RS_CMAKE_COMMON) \
 		-DRS_JSON_API=$(RS_JSON_API) \
 		-DRS_WEBUI=$(RS_WEBUI) \
-		-DRS_PLUGINS=$(RS_PLUGINS) \
-		-DRS_FORUM_DEEP_INDEX=$(RS_FORUM_DEEP_INDEX) \
 		-DRS_GUI=OFF \
 		-DRS_SERVICE=ON \
 		-DRS_FRIENDSERVER=OFF
@@ -129,13 +135,9 @@ retroshare-service: rnp
 
 retroshare-friendserver: rnp
 	@echo ">>> Step 4: Compiling retroshare-friendserver..."
-	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) \
-		-DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
-		-DRS_RNPLIB=$(RS_RNPLIB) \
-		-DRS_JSON_API=$(RS_JSON_API) \
-		-DRS_WEBUI=$(RS_WEBUI) \
-		-DRS_PLUGINS=$(RS_PLUGINS) \
-		-DRS_FORUM_DEEP_INDEX=$(RS_FORUM_DEEP_INDEX) \
+	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) $(RS_CMAKE_COMMON) \
+		-DRS_JSON_API=OFF \
+		-DRS_WEBUI=OFF \
 		-DRS_GUI=OFF \
 		-DRS_SERVICE=OFF \
 		-DRS_FRIENDSERVER=ON
@@ -143,13 +145,9 @@ retroshare-friendserver: rnp
 
 retroshare-gui: rnp
 	@echo ">>> Step 5: Compiling retroshare-gui (UI)..."
-	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) \
-		-DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
-		-DRS_RNPLIB=$(RS_RNPLIB) \
+	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) $(RS_CMAKE_COMMON) \
 		-DRS_JSON_API=$(RS_JSON_API) \
 		-DRS_WEBUI=$(RS_WEBUI) \
-		-DRS_PLUGINS=$(RS_PLUGINS) \
-		-DRS_FORUM_DEEP_INDEX=$(RS_FORUM_DEEP_INDEX) \
 		-DRS_GUI=ON \
 		-DRS_SERVICE=OFF \
 		-DRS_FRIENDSERVER=OFF
@@ -159,6 +157,44 @@ clean:
 	@echo "Cleaning up all build directories..."
 	rm -rf supportlibs/librnp/Build
 	rm -rf $(BUILD_DIR)
+
+# Helper macro to dynamically detect the status of configuration options:
+# 1. First checks if overridden via command line
+# 2. Then checks if configured inside CMakeCache.txt
+# 3. Otherwise falls back to the Makefile default
+define GET_VAR_STATUS
+$(shell \
+	if [ "$(origin $(1))" = "command line" ]; then \
+		echo "$($(1)) (command line override)"; \
+	elif [ -f $(BUILD_DIR)/CMakeCache.txt ] && grep -q -E "^$(1):" $(BUILD_DIR)/CMakeCache.txt; then \
+		val=$$(grep -E "^$(1):" $(BUILD_DIR)/CMakeCache.txt | head -n1 | cut -d= -f2); \
+		if [ "$$val" = "$($(1))" ]; then \
+			echo "$$val (default)"; \
+		else \
+			echo "$$val (configured)"; \
+		fi; \
+	else \
+		echo "$($(1)) (default)"; \
+	fi \
+)
+endef
+
+show-config:
+	@echo "=============================================================================="
+	@echo "          CURRENT BUILD CONFIGURATION"
+	@echo "=============================================================================="
+	@echo "  CMAKE_BUILD_TYPE      = $(call GET_VAR_STATUS,CMAKE_BUILD_TYPE)"
+	@echo "  RS_RNPLIB             = $(call GET_VAR_STATUS,RS_RNPLIB)"
+	@echo "  RS_JSON_API           = $(call GET_VAR_STATUS,RS_JSON_API)"
+	@echo "  RS_WEBUI              = $(call GET_VAR_STATUS,RS_WEBUI)"
+	@echo "  RS_PLUGINS            = $(call GET_VAR_STATUS,RS_PLUGINS)"
+	@echo "  RS_FORUM_DEEP_INDEX   = $(call GET_VAR_STATUS,RS_FORUM_DEEP_INDEX)"
+	@echo "  RS_DEVELOPMENT_BUILD  = $(call GET_VAR_STATUS,RS_DEVELOPMENT_BUILD)"
+	@echo "  NPROC                 = $(NPROC)"
+	@echo "  BUILD_DIR             = $(BUILD_DIR)"
+	@echo '  CMAKE_GEN             = $(CMAKE_GEN)'
+	@echo '  CMAKE_FLAGS           = $(CMAKE_FLAGS)'
+	@echo "=============================================================================="
 
 help:
 	@echo "=============================================================================="
@@ -174,6 +210,8 @@ help:
 	@echo "  retroshare-service       Compile retroshare-service (headless daemon)"
 	@echo "  retroshare-friendserver  Compile retroshare-friendserver"
 	@echo "  retroshare-gui           Compile retroshare-gui (graphical user interface)"
+	@echo "  configure                Compile RNP and run CMake configuration"
+	@echo "  show-config              Display current build configuration"
 	@echo "  clean                    Clean all build directories"
 	@echo "  help                     Show this help message"
 	@echo ""
