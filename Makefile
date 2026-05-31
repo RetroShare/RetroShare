@@ -52,8 +52,21 @@ $(foreach var,$(.VARIABLES),\
 # Global CMake flags (forces policy compatibility for old submodules like libbitdht)
 CMAKE_FLAGS ?= -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
-# Global CMake flags (forces policy compatibility for old submodules like libbitdht)
-CMAKE_FLAGS ?= -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+# Detect macOS to automatically inject Homebrew and Qt5 paths
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+    # Dynamically find Homebrew root path (works on both Intel and Apple Silicon)
+    BREW_ROOT := $(shell brew --prefix 2>/dev/null)
+    ifneq ($(BREW_ROOT),)
+        # Prioritize Qt5 prefix path over Homebrew root to bypass Homebrew's Qt5 symlink bug
+        CMAKE_FLAGS += -DCMAKE_PREFIX_PATH="$(shell brew --prefix qt@5 2>/dev/null);$(BREW_ROOT)"
+    endif
+    # Dynamically detect number of CPUs on macOS
+    NPROC ?= $(shell sysctl -n hw.ncpu 2>/dev/null || echo 4)
+else
+    # Dynamically detect number of CPUs on Linux (defaults to 4 if not found)
+    NPROC ?= $(shell nproc 2>/dev/null || echo 4)
+endif
 
 # Detect Windows MSYS2 / MinGW environment to force Makefile generation
 ifeq ($(OS),Windows_NT)
@@ -61,9 +74,6 @@ ifeq ($(OS),Windows_NT)
 else
     CMAKE_GEN ?=
 endif
-
-# Dynamically detect number of CPUs (defaults to 4 if not found)
-NPROC ?= $(shell nproc 2>/dev/null || echo 4)
 
 # Global build directory at the root
 BUILD_DIR = Build-cmake
