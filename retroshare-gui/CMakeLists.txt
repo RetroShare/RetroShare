@@ -138,7 +138,10 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/include/qmake_info.h"
 )
 
 if(WIN32)
-	list(APPEND RS_GUI_SOURCES src/gui/images/retroshare_win.rc)
+    list(APPEND RS_GUI_SOURCES src/gui/images/retroshare_win.rc)
+elseif(APPLE)
+    list(APPEND RS_GUI_SOURCES src/gui/common/MacDockIconHandler.mm)
+    set_source_files_properties(src/gui/common/MacDockIconHandler.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
 endif()
 
 set(GUI_TYPE "")
@@ -356,19 +359,23 @@ endif()
 if(UNIX)
 	find_package(PkgConfig REQUIRED)
 
-	pkg_check_modules(X11 REQUIRED x11)
-	pkg_check_modules(XSCRNSAVER REQUIRED xscrnsaver)
+	if(NOT APPLE)
+		pkg_check_modules(REQUIRED x11)
+		pkg_check_modules(X11 REQUIRED x11)
+		pkg_check_modules(XSCRNSAVER REQUIRED xscrnsaver)
 
-	list( APPEND RS_LINK_LIBRARIES ${X11_LIBRARIES} )
-	list( APPEND RS_LINK_LIBRARIES ${XSCRNSAVER_LIBRARIES} )
+		list( APPEND RS_LINK_LIBRARIES ${X11_LIBRARIES} )
+		list( APPEND RS_LINK_LIBRARIES ${XSCRNSAVER_LIBRARIES} )
 
-	target_include_directories(${PROJECT_NAME} PRIVATE ${X11_INCLUDE_DIRS})
-	target_compile_options(${PROJECT_NAME} PRIVATE ${X11_CFLAGS_OTHER})
+		target_include_directories(${PROJECT_NAME} PRIVATE ${X11_INCLUDE_DIRS})
+		target_compile_options(${PROJECT_NAME} PRIVATE ${X11_CFLAGS_OTHER})
 
-	target_include_directories(retroshare-gui PRIVATE ${XSCRNSAVER_INCLUDE_DIRS})
-	target_compile_options(retroshare-gui PRIVATE ${XSCRNSAVER_CFLAGS_OTHER})
+		target_include_directories(retroshare-gui PRIVATE ${XSCRNSAVER_INCLUDE_DIRS})
+		target_compile_options(retroshare-gui PRIVATE ${XSCRNSAVER_CFLAGS_OTHER})
 
-	target_compile_definitions(${PROJECT_NAME} PRIVATE HAVE_XSS)
+		target_compile_definitions(${PROJECT_NAME} PRIVATE HAVE_XSS)
+	endif()
+
 	target_compile_definitions(${PROJECT_NAME} PRIVATE _FILE_OFFSET_BITS=64)
 	target_link_options(${PROJECT_NAME} PRIVATE -rdynamic)
 endif(UNIX)
@@ -571,6 +578,9 @@ find_library(BOTAN_LIBRARY NAMES botan botan-3 botan-2 libbotan-3 libbotan-2 REQ
 if(WIN32)
     # Robust resolution including RNP and sexpp inside the link group for Windows MinGW
     target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--start-group retroshare rnp sexpp z bz2 json-c ${BOTAN_LIBRARY} -Wl,--end-group)
+elseif(APPLE)
+    # macOS specific behavior: skip Linux-specific linker flags
+    target_link_libraries(${PROJECT_NAME} PRIVATE retroshare z bz2 json-c ${BOTAN_LIBRARY})
 else()
     # Default behavior for Linux
     target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
