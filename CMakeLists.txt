@@ -6,6 +6,17 @@ cmake_minimum_required(VERSION 3.5.0)
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 project(retroshare-monorepo)
 
+# Force C++17 globally for all targets (including plugins)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(APPLE)
+	# On macOS, allow undefined symbols in shared modules/libraries at link time
+	# because they will be resolved at runtime by the host executable (retroshare-gui)
+	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -undefined dynamic_lookup")
+	set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -undefined dynamic_lookup")
+endif()
+
 # Global setting to allow executables to export symbols for plugin/module linking
 set(CMAKE_ENABLE_EXPORTS ON)
 
