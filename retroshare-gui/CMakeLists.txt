@@ -292,19 +292,8 @@ endif(RS_GUI_CMARK)
 
 ################################# LibSam v3 ####################################
 
-set(SAM3_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/libsam3/")
-if(EXISTS "${SAM3_DEVEL_DIR}" )
-	message( STATUS "libsam3 found at ${SAM3_DEVEL_DIR}, defining target sam3" )
-	add_library(sam3 STATIC
-		"${SAM3_DEVEL_DIR}/src/libsam3/libsam3.c"
-		"${SAM3_DEVEL_DIR}/src/libsam3a/libsam3a.c"
-	)
-	target_include_directories(sam3 PUBLIC 
-		"${SAM3_DEVEL_DIR}/src/libsam3"
-		"${SAM3_DEVEL_DIR}/src/libsam3a"
-	)
-else()
-	message( WARNING "libsam3 not found!" )
+if(RS_USE_I2P_SAM3)
+	target_link_libraries(${PROJECT_NAME} PRIVATE sam3)
 endif()
 
 ################################################################################

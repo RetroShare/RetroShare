@@ -13,6 +13,7 @@ CACHE_RS_PLUGINS           := $(call GET_CACHE_VAL,RS_PLUGINS)
 CACHE_RS_FORUM_DEEP_INDEX  := $(call GET_CACHE_VAL,RS_FORUM_DEEP_INDEX)
 CACHE_RS_DEVELOPMENT_BUILD := $(call GET_CACHE_VAL,RS_DEVELOPMENT_BUILD)
 CACHE_CMAKE_BUILD_TYPE     := $(call GET_CACHE_VAL,CMAKE_BUILD_TYPE)
+CACHE_RS_USE_I2P_SAM3      := $(call GET_CACHE_VAL,RS_USE_I2P_SAM3)
 
 RS_RNPLIB            ?= $(if $(CACHE_RS_RNPLIB),$(CACHE_RS_RNPLIB),ON)
 RS_JSON_API          ?= $(if $(CACHE_RS_JSON_API),$(CACHE_RS_JSON_API),ON)
@@ -21,6 +22,7 @@ RS_PLUGINS           ?= $(if $(CACHE_RS_PLUGINS),$(CACHE_RS_PLUGINS),OFF)
 RS_FORUM_DEEP_INDEX  ?= $(if $(CACHE_RS_FORUM_DEEP_INDEX),$(CACHE_RS_FORUM_DEEP_INDEX),OFF)
 RS_DEVELOPMENT_BUILD ?= $(if $(CACHE_RS_DEVELOPMENT_BUILD),$(CACHE_RS_DEVELOPMENT_BUILD),OFF)
 CMAKE_BUILD_TYPE     ?= $(if $(CACHE_CMAKE_BUILD_TYPE),$(CACHE_CMAKE_BUILD_TYPE),RelWithDebInfo)
+RS_USE_I2P_SAM3      ?= $(if $(CACHE_RS_USE_I2P_SAM3),$(CACHE_RS_USE_I2P_SAM3),ON)
 
 # ==============================================================================
 # Options validation (stops immediately if any option is invalid)
@@ -41,6 +43,7 @@ $(eval $(call VALIDATE_OPTION,RS_WEBUI))
 $(eval $(call VALIDATE_OPTION,RS_PLUGINS))
 $(eval $(call VALIDATE_OPTION,RS_FORUM_DEEP_INDEX))
 $(eval $(call VALIDATE_OPTION,RS_DEVELOPMENT_BUILD))
+$(eval $(call VALIDATE_OPTION,RS_USE_I2P_SAM3))
 
 # Specific validation for CMAKE_BUILD_TYPE (if not empty)
 ifneq ($(CMAKE_BUILD_TYPE),)
@@ -50,7 +53,7 @@ ifneq ($(CMAKE_BUILD_TYPE),)
 endif
 
 # Unrecognized command line variable protection
-ALLOWED_VARS := RS_RNPLIB RS_JSON_API RS_WEBUI RS_PLUGINS RS_FORUM_DEEP_INDEX RS_DEVELOPMENT_BUILD CMAKE_BUILD_TYPE CMAKE_GEN CMAKE_FLAGS NPROC
+ALLOWED_VARS := RS_RNPLIB RS_JSON_API RS_WEBUI RS_PLUGINS RS_FORUM_DEEP_INDEX RS_DEVELOPMENT_BUILD CMAKE_BUILD_TYPE RS_USE_I2P_SAM3 CMAKE_GEN CMAKE_FLAGS NPROC
 
 $(foreach var,$(.VARIABLES),\
   $(if $(filter command line,$(origin $(var))),\
@@ -95,7 +98,8 @@ RS_CMAKE_COMMON = \
 	-DRS_RNPLIB=$(RS_RNPLIB) \
 	-DRS_PLUGINS=$(RS_PLUGINS) \
 	-DRS_FORUM_DEEP_INDEX=$(RS_FORUM_DEEP_INDEX) \
-	-DRS_DEVELOPMENT_BUILD=$(RS_DEVELOPMENT_BUILD)
+	-DRS_DEVELOPMENT_BUILD=$(RS_DEVELOPMENT_BUILD) \
+	-DRS_USE_I2P_SAM3=$(RS_USE_I2P_SAM3)
 
 .PHONY: all clean rnp libretroshare retroshare-service retroshare-friendserver retroshare-gui configure show-config help
 
@@ -205,6 +209,7 @@ show-config:
 	@echo "  RS_PLUGINS            = $(call GET_VAR_STATUS,RS_PLUGINS)"
 	@echo "  RS_FORUM_DEEP_INDEX   = $(call GET_VAR_STATUS,RS_FORUM_DEEP_INDEX)"
 	@echo "  RS_DEVELOPMENT_BUILD  = $(call GET_VAR_STATUS,RS_DEVELOPMENT_BUILD)"
+	@echo "  RS_USE_I2P_SAM3       = $(call GET_VAR_STATUS,RS_USE_I2P_SAM3)"
 	@echo "  NPROC                 = $(NPROC)"
 	@echo "  BUILD_DIR             = $(BUILD_DIR)"
 	@echo '  CMAKE_GEN             = $(CMAKE_GEN)'
@@ -237,6 +242,7 @@ help:
 	@echo "  RS_PLUGINS            Build RetroShare plugins (ON/OFF, default: OFF)"
 	@echo "  RS_FORUM_DEEP_INDEX   Xapian/FTS5 forum full text search (ON/OFF, default: OFF)"
 	@echo "  RS_DEVELOPMENT_BUILD  Disable optimisations for fast builds (ON/OFF, default: OFF)"
+	@echo "  RS_USE_I2P_SAM3       Enable I2P SAMv3 support (ON/OFF, default: ON)"
 	@echo "  CMAKE_BUILD_TYPE      CMake build type (Debug/Release/RelWithDebInfo/MinSizeRel)"
 	@echo "  NPROC                 Number of build threads (default: detected CPUs)"
 	@echo "=============================================================================="

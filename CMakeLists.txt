@@ -6,17 +6,6 @@ cmake_minimum_required(VERSION 3.5.0)
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 project(retroshare-monorepo)
 
-# Force C++17 globally for all targets (including plugins)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-if(APPLE)
-	# On macOS, allow undefined symbols in shared modules/libraries at link time
-	# because they will be resolved at runtime by the host executable (retroshare-gui)
-	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -undefined dynamic_lookup")
-	set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -undefined dynamic_lookup")
-endif()
-
 # Global setting to allow executables to export symbols for plugin/module linking
 set(CMAKE_ENABLE_EXPORTS ON)
 
@@ -25,6 +14,24 @@ option(RS_GUI "Build RetroShare GUI" ON)
 option(RS_SERVICE "Build RetroShare Service" ON)
 option(RS_FRIENDSERVER "Build RetroShare Friendserver" ON)
 option(RS_PLUGINS "Build RetroShare Plugins" OFF)
+option(RS_USE_I2P_SAM3 "Enable I2P SAMv3 support" ON)
+
+if(RS_USE_I2P_SAM3)
+	add_definitions(-DRS_USE_I2P_SAM3 -DRS_USE_I2P_SAM3_LIBSAM3)
+	
+	set(SAM3_DEVEL_DIR "${CMAKE_SOURCE_DIR}/supportlibs/libsam3")
+	if(EXISTS "${SAM3_DEVEL_DIR}")
+		message(STATUS "libsam3 found at ${SAM3_DEVEL_DIR}, defining target sam3 globally")
+		add_library(sam3 STATIC
+			"${SAM3_DEVEL_DIR}/src/libsam3/libsam3.c"
+			"${SAM3_DEVEL_DIR}/src/libsam3a/libsam3a.c"
+		)
+		target_include_directories(sam3 PUBLIC 
+			"${SAM3_DEVEL_DIR}/src/libsam3"
+			"${SAM3_DEVEL_DIR}/src/libsam3a"
+		)
+	endif()
+endif()
 
 # Global configurations for Windows builds
 if(WIN32)
