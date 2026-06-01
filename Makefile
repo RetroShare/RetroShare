@@ -2,14 +2,25 @@
 # RetroShare Clean Workspace Orchestrator Makefile
 # ==============================================================================
 
-# Default build options
-RS_RNPLIB            ?= ON
-RS_JSON_API          ?= ON
-RS_WEBUI             ?= ON
-RS_PLUGINS           ?= OFF
-RS_FORUM_DEEP_INDEX  ?= OFF
-RS_DEVELOPMENT_BUILD ?= OFF
-CMAKE_BUILD_TYPE     ?= RelWithDebInfo
+# Default build options (uses cached values from Build-cmake/CMakeCache.txt if present)
+CACHE_FILE := Build-cmake/CMakeCache.txt
+GET_CACHE_VAL = $(shell [ -f $(CACHE_FILE) ] && grep -E "^$(1):" $(CACHE_FILE) | head -n1 | cut -d= -f2)
+
+CACHE_RS_RNPLIB            := $(call GET_CACHE_VAL,RS_RNPLIB)
+CACHE_RS_JSON_API          := $(call GET_CACHE_VAL,RS_JSON_API)
+CACHE_RS_WEBUI             := $(call GET_CACHE_VAL,RS_WEBUI)
+CACHE_RS_PLUGINS           := $(call GET_CACHE_VAL,RS_PLUGINS)
+CACHE_RS_FORUM_DEEP_INDEX  := $(call GET_CACHE_VAL,RS_FORUM_DEEP_INDEX)
+CACHE_RS_DEVELOPMENT_BUILD := $(call GET_CACHE_VAL,RS_DEVELOPMENT_BUILD)
+CACHE_CMAKE_BUILD_TYPE     := $(call GET_CACHE_VAL,CMAKE_BUILD_TYPE)
+
+RS_RNPLIB            ?= $(if $(CACHE_RS_RNPLIB),$(CACHE_RS_RNPLIB),ON)
+RS_JSON_API          ?= $(if $(CACHE_RS_JSON_API),$(CACHE_RS_JSON_API),ON)
+RS_WEBUI             ?= $(if $(CACHE_RS_WEBUI),$(CACHE_RS_WEBUI),ON)
+RS_PLUGINS           ?= $(if $(CACHE_RS_PLUGINS),$(CACHE_RS_PLUGINS),OFF)
+RS_FORUM_DEEP_INDEX  ?= $(if $(CACHE_RS_FORUM_DEEP_INDEX),$(CACHE_RS_FORUM_DEEP_INDEX),OFF)
+RS_DEVELOPMENT_BUILD ?= $(if $(CACHE_RS_DEVELOPMENT_BUILD),$(CACHE_RS_DEVELOPMENT_BUILD),OFF)
+CMAKE_BUILD_TYPE     ?= $(if $(CACHE_CMAKE_BUILD_TYPE),$(CACHE_CMAKE_BUILD_TYPE),RelWithDebInfo)
 
 # ==============================================================================
 # Options validation (stops immediately if any option is invalid)
@@ -152,6 +163,10 @@ retroshare-gui: rnp
 		-DRS_SERVICE=OFF \
 		-DRS_FRIENDSERVER=OFF
 	cmake --build $(BUILD_DIR) -j $(NPROC) --target retroshare-gui
+	@if [ "$(RS_PLUGINS)" = "ON" ]; then \
+		echo ">>> Step 5b: Compiling GUI plugins (FeedReader, VOIP)..."; \
+		cmake --build $(BUILD_DIR) -j $(NPROC) --target FeedReader --target VOIP; \
+	fi
 
 clean:
 	@echo "Cleaning up all build directories..."
