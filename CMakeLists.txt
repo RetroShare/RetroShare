@@ -41,6 +41,9 @@ if(RS_USE_I2P_SAM3)
 			"${SAM3_DEVEL_DIR}/src/libsam3"
 			"${SAM3_DEVEL_DIR}/src/libsam3a"
 		)
+		if(WIN32)
+			target_link_libraries(sam3 PUBLIC ws2_32)
+		endif()
 	endif()
 endif()
 
@@ -48,6 +51,10 @@ endif()
 if(WIN32)
 	# Force Unicode mappings globally for all Windows targets (fixes MoveFileEx in libbitdht)
 	add_definitions(-DUNICODE -D_UNICODE)
+
+	# Allow multiple definitions for plugins linking to static libraries exported by retroshare-gui
+	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--allow-multiple-definition")
+	set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--allow-multiple-definition")
 
 	# Downgrade strict GCC 15 errors to warnings for old submodules
 	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
