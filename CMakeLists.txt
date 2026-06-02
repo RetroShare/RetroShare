@@ -6,6 +6,10 @@ cmake_minimum_required(VERSION 3.5.0)
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 project(retroshare-monorepo)
 
+# Default to Release build type if not specified
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
+endif()
 # Force C++17 globally for all targets (including plugins)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
