@@ -43,13 +43,7 @@ else
     GIT_SUFFIX="-${DATE_STR}"
 fi
 
-QT_VERSION=""
-if command -v qmake &> /dev/null; then
-    QT_VERSION=$(qmake -query QT_VERSION 2>/dev/null)
-fi
-if [[ ! "$QT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    QT_VERSION="UnknownQt"
-fi
+QT_VERSION="UnknownQt"
 
 MACVERSION=$(sw_vers -productVersion 2>/dev/null || echo "UnknownOS")
 ARCH=$(uname -m)
@@ -93,8 +87,15 @@ done
 # Copie des plugins
 echo ">>> Copying RetroShare plugins..."
 if [ -d "$BUILD_DIR/plugins" ]; then
-    find "$BUILD_DIR/plugins" \( -name "*.dylib" -o -name "*.so" \) -exec cp {} "$APP_MACOS/extensions6/" \; 2>/dev/null || true
-    echo "  Plugins copied to $APP_MACOS/extensions6/."
+    mkdir -p "$APP_RESOURCES/extensions6"
+    for plugin in $(find "$BUILD_DIR/plugins" -type f \( -name "*.dylib" -o -name "*.so" \)); do
+        filename=$(basename "$plugin")
+        # RetroShare sur macOS refuse de charger les plugins s'ils ne finissent pas par .dylib !
+        newname="${filename%.*}.dylib"
+        cp "$plugin" "$APP_RESOURCES/$newname"
+        cp "$plugin" "$APP_RESOURCES/extensions6/$newname"
+    done
+    echo "  Plugins copied and renamed to .dylib in $APP_RESOURCES/ and $APP_RESOURCES/extensions6/."
 else
     echo "  INFO: Plugins directory not found. Skipping plugins."
 fi
@@ -137,8 +138,30 @@ fi
 # 7. Déploiement Qt via macdeployqt
 echo ">>> Running macdeployqt..."
 if command -v macdeployqt &> /dev/null; then
+    # Forcer la copie des plugins d'images (SVG, etc.) au cas où macdeployqt les oublie
+    MACDEPLOY_BIN=$(command -v macdeployqt)
+    QT_BASE=$(dirname "$(dirname "$MACDEPLOY_BIN")")
+    QT_PLUGINS_DIR="$QT_BASE/share/qt/plugins"
+    if [ ! -d "$QT_PLUGINS_DIR" ]; then
+        QT_PLUGINS_DIR="$QT_BASE/plugins"
+    fi
+
+    if [ -d "$QT_PLUGINS_DIR/imageformats" ]; then
+        echo ">>> Forcing copy of Qt imageformats plugins (SVG support) from $QT_PLUGINS_DIR..."
+        mkdir -p "$TARGET_APP/Contents/PlugIns/imageformats"
+        cp "$QT_PLUGINS_DIR/imageformats/"*.dylib "$TARGET_APP/Contents/PlugIns/imageformats/" 2>/dev/null || true
+    fi
+
+    # Par défaut macdeployqt ignore les fichiers .so, il faut le forcer avec -executable
+    EXTRA_EXECS=""
+    for plugin in "$TARGET_APP"/Contents/Resources/*.so "$TARGET_APP"/Contents/Resources/*.dylib "$TARGET_APP"/Contents/Resources/extensions6/*.so "$TARGET_APP"/Contents/Resources/extensions6/*.dylib "$TARGET_APP"/Contents/PlugIns/imageformats/*.dylib; do
+        if [ -f "$plugin" ]; then
+            EXTRA_EXECS="$EXTRA_EXECS -executable=$plugin"
+        fi
+    done
+    
     # macdeployqt copie les frameworks et ajuste les rpaths
-    macdeployqt "$TARGET_APP" -always-overwrite
+    macdeployqt "$TARGET_APP" -always-overwrite $EXTRA_EXECS
     
     echo ">>> Ad-hoc code signing (required for Apple Silicon)..."
     if command -v codesign &> /dev/null; then
