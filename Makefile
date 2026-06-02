@@ -101,6 +101,11 @@ RS_CMAKE_COMMON = \
 	-DRS_DEVELOPMENT_BUILD=$(RS_DEVELOPMENT_BUILD) \
 	-DRS_USE_I2P_SAM3=$(RS_USE_I2P_SAM3)
 
+ifeq ($(OS),Windows_NT)
+    # Force DLL build on Windows to prevent static linking multiple definition issues
+    RS_CMAKE_COMMON += -DRS_LIBRETROSHARE_STATIC=OFF -DRS_LIBRETROSHARE_SHARED=ON
+endif
+
 .PHONY: all clean rnp libretroshare retroshare-service retroshare-friendserver retroshare-gui configure show-config help
 
 configure: rnp

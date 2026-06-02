@@ -52,9 +52,7 @@ if(WIN32)
 	# Force Unicode mappings globally for all Windows targets (fixes MoveFileEx in libbitdht)
 	add_definitions(-DUNICODE -D_UNICODE)
 
-	# Allow multiple definitions for plugins linking to static libraries exported by retroshare-gui
-	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--allow-multiple-definition")
-	set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--allow-multiple-definition")
+	# Remove multiple definitions hack for plugins linking to static libraries exported by retroshare-gui
 
 	# Downgrade strict GCC 15 errors to warnings for old submodules
 	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
