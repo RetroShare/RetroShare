@@ -140,8 +140,9 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/include/qmake_info.h"
 if(WIN32)
     list(APPEND RS_GUI_SOURCES src/gui/images/retroshare_win.rc)
 elseif(APPLE)
-    list(APPEND RS_GUI_SOURCES src/gui/common/MacDockIconHandler.mm)
+    list(APPEND RS_GUI_SOURCES src/gui/common/MacDockIconHandler.mm src/rsMacIcon.icns)
     set_source_files_properties(src/gui/common/MacDockIconHandler.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
+    set_source_files_properties(src/rsMacIcon.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 endif()
 
 set(GUI_TYPE "")
@@ -151,11 +152,20 @@ if(WIN32)
 	if(NOT RS_DEVELOPMENT_BUILD AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
 		set(GUI_TYPE WIN32)
 	endif()
+elseif(APPLE)
+	set(GUI_TYPE MACOSX_BUNDLE)
 endif()
 
 add_executable(${PROJECT_NAME} ${GUI_TYPE} ${RS_GUI_SOURCES} ${RS_IMPLEMENTATION_HEADERS} ${RS_UI_HEADERS} ${RS_GUI_QTRESOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_NAME "retroshare")
 set_target_properties(${PROJECT_NAME} PROPERTIES ENABLE_EXPORTS TRUE)
+
+if(APPLE)
+	set_target_properties(${PROJECT_NAME} PROPERTIES
+		MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist"
+	)
+endif()
+
 if(WIN32)
 	set_target_properties(${PROJECT_NAME} PROPERTIES
 		ARCHIVE_OUTPUT_NAME "retroshare-gui"

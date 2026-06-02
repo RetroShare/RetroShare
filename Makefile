@@ -73,7 +73,7 @@ ifeq ($(UNAME_S),Darwin)
     BREW_ROOT := $(shell brew --prefix 2>/dev/null)
     ifneq ($(BREW_ROOT),)
         # Prioritize Qt5 prefix path over Homebrew root to bypass Homebrew's Qt5 symlink bug
-        CMAKE_FLAGS += -DCMAKE_PREFIX_PATH="$(shell brew --prefix qt@5 2>/dev/null);$(BREW_ROOT)"
+        override CMAKE_FLAGS += -DCMAKE_PREFIX_PATH="$(shell brew --prefix qt@5 2>/dev/null);$(BREW_ROOT)"
     endif
     # Dynamically detect number of CPUs on macOS
     NPROC ?= $(shell sysctl -n hw.ncpu 2>/dev/null || echo 4)
