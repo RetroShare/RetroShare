@@ -106,9 +106,9 @@ ifeq ($(OS),Windows_NT)
     RS_CMAKE_COMMON += -DRS_LIBRETROSHARE_STATIC=OFF -DRS_LIBRETROSHARE_SHARED=ON
 endif
 
-.PHONY: all clean rnp libretroshare retroshare-service retroshare-friendserver retroshare-gui configure show-config help
+.PHONY: all clean libretroshare retroshare-service retroshare-friendserver retroshare-gui configure show-config help
 
-configure: rnp
+configure:
 	@echo ">>> Configuring RetroShare (CMake only, no compilation)..."
 	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) $(RS_CMAKE_COMMON) \
 		-DRS_JSON_API=$(RS_JSON_API) \
@@ -118,7 +118,7 @@ configure: rnp
 		-DRS_FRIENDSERVER=ON
 	@echo ">>> Configuration complete. Run 'make all' to compile."
 
-all: rnp
+all:
 	@echo ">>> Compiling all functional RetroShare modules..."
 	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) $(RS_CMAKE_COMMON) \
 		-DRS_JSON_API=$(RS_JSON_API) \
@@ -128,12 +128,7 @@ all: rnp
 		-DRS_FRIENDSERVER=ON
 	cmake --build $(BUILD_DIR) -j $(NPROC)
 
-rnp:
-	@echo ">>> Step 1: Compiling RNP..."
-	cmake $(CMAKE_GEN) -B supportlibs/librnp/Build -S supportlibs/librnp $(CMAKE_FLAGS) -DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) -DCRYPTO_BACKEND=botan -DBUILD_TESTING=off
-	cmake --build supportlibs/librnp/Build -j $(NPROC)
-
-libretroshare: rnp
+libretroshare:
 	@echo ">>> Step 2: Compiling libretroshare..."
 	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) $(RS_CMAKE_COMMON) \
 		-DRS_JSON_API=$(RS_JSON_API) \
@@ -143,7 +138,7 @@ libretroshare: rnp
 		-DRS_FRIENDSERVER=OFF
 	cmake --build $(BUILD_DIR) -j $(NPROC) --target retroshare
 
-retroshare-service: rnp
+retroshare-service:
 	@echo ">>> Step 3: Compiling retroshare-service..."
 	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) $(RS_CMAKE_COMMON) \
 		-DRS_JSON_API=$(RS_JSON_API) \
@@ -153,7 +148,7 @@ retroshare-service: rnp
 		-DRS_FRIENDSERVER=OFF
 	cmake --build $(BUILD_DIR) -j $(NPROC) --target retroshare-service
 
-retroshare-friendserver: rnp
+retroshare-friendserver:
 	@echo ">>> Step 4: Compiling retroshare-friendserver..."
 	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) $(RS_CMAKE_COMMON) \
 		-DRS_JSON_API=OFF \
@@ -163,7 +158,7 @@ retroshare-friendserver: rnp
 		-DRS_FRIENDSERVER=ON
 	cmake --build $(BUILD_DIR) -j $(NPROC) --target retroshare-friendserver
 
-retroshare-gui: rnp
+retroshare-gui:
 	@echo ">>> Step 5: Compiling retroshare-gui (UI)..."
 	cmake $(CMAKE_GEN) -B $(BUILD_DIR) -S . $(CMAKE_FLAGS) $(RS_CMAKE_COMMON) \
 		-DRS_JSON_API=$(RS_JSON_API) \
@@ -178,8 +173,7 @@ retroshare-gui: rnp
 	fi
 
 clean:
-	@echo "Cleaning up all build directories..."
-	rm -rf supportlibs/librnp/Build
+	@echo ">>> Cleaning build artifacts..."
 	rm -rf $(BUILD_DIR)
 
 # Helper macro to dynamically detect the status of configuration options:

@@ -6,7 +6,6 @@ set -e
 # Clean build directories if the "clean" argument is passed
 if [ "$1" == "clean" ]; then
     echo "=== Cleaning build directories ==="
-    rm -rf supportlibs/librnp/Build
     rm -rf libretroshare/Build
     rm -rf retroshare-service/Build
     rm -rf retroshare-friendserver/Build
@@ -24,43 +23,35 @@ fi
 
 echo "=== Starting RetroShare Compilation ==="
 
-# 1. Compile librnp (cryptography submodule)
-echo ">>> Step 1: Compiling librnp..."
-mkdir -p supportlibs/librnp/Build && cd supportlibs/librnp/Build
-cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 ..
-make -j${NPROC}
-cd ../../..
-
-# 2. Compile libretroshare (core library)
-echo ">>> Step 2: Compiling libretroshare..."
+# 1. Compile libretroshare (core library) and librnp automatically
+echo ">>> Step 1: Compiling libretroshare..."
 mkdir -p libretroshare/Build && cd libretroshare/Build
-cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 ..
-make -j${NPROC}
+cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DRS_LIBRETROSHARE_STATIC=OFF -DRS_LIBRETROSHARE_SHARED=ON ..
+cmake --build . -j${NPROC}
 cd ../..
 
-# 3. Compile retroshare-service (headless daemon)
-echo ">>> Step 3: Compiling retroshare-service..."
+# 2. Compile retroshare-service (headless daemon)
+echo ">>> Step 2: Compiling retroshare-service..."
 mkdir -p retroshare-service/Build && cd retroshare-service/Build
 cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 ..
-make -j${NPROC}
+cmake --build . -j${NPROC}
 cd ../..
 
-# 4. Compile retroshare-friendserver
-echo ">>> Step 4: Compiling retroshare-friendserver..."
+# 3. Compile retroshare-friendserver
+echo ">>> Step 3: Compiling retroshare-friendserver..."
 mkdir -p retroshare-friendserver/Build && cd retroshare-friendserver/Build
 cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 ..
-make -j${NPROC}
+cmake --build . -j${NPROC}
 cd ../..
 
-# 5. Compile retroshare-gui (graphical user interface)
-echo ">>> Step 5: Compiling retroshare-gui..."
+# 4. Compile retroshare-gui (graphical user interface)
+echo ">>> Step 4: Compiling retroshare-gui..."
 mkdir -p retroshare-gui/Build && cd retroshare-gui/Build
 cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
       -DCMAKE_PREFIX_PATH="${QT_PREFIX}" \
-      -DRetroShare_DIR=../../libretroshare/Build \
       -DENABLE_GUI=ON \
       -DENABLE_QT_TRANSLATIONS=ON ..
-make -j${NPROC}
+cmake --build . -j${NPROC}
 cd ../..
 
 echo "=== Compilation Successfully Completed! ==="

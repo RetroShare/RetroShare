@@ -182,10 +182,6 @@ if(WIN32)
 endif()
 install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
 
-target_link_directories(${PROJECT_NAME} PRIVATE
-	"${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/librnp/Build/src/lib"
-	"${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/librnp/Build/src/libsexpp"
-)
 
 if(RS_USE_NATIVE_DIALOGS)
 	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_NATIVEDIALOGS)
@@ -582,7 +578,7 @@ find_library(BOTAN_LIBRARY NAMES botan botan-3 botan-2 libbotan-3 libbotan-2 REQ
 
 if(WIN32)
     # Robust resolution including RNP and sexpp inside the link group for Windows MinGW
-    target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--start-group retroshare rnp sexpp z bz2 json-c ${BOTAN_LIBRARY} -Wl,--end-group)
+    target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--start-group retroshare librnp sexpp z bz2 json-c ${BOTAN_LIBRARY} -Wl,--end-group)
 elseif(APPLE)
     # macOS specific behavior: skip Linux-specific linker flags
     target_link_libraries(${PROJECT_NAME} PRIVATE retroshare z bz2 json-c ${BOTAN_LIBRARY})
