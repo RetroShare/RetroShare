@@ -21,6 +21,7 @@
 #include "gui/msgs/CalendarWidget.h"
 #include "gui/msgs/EventDialog.h"
 #include "gui/msgs/CalendarPropertiesDialog.h"
+#include <QPainter>
 #include <QVBoxLayout>
 #include <QMenu>
 #include <QHBoxLayout>
@@ -62,6 +63,14 @@ void CalendarWidget::buildUi() {
     mWeekTable = ui.weekTable;
     mMonthTable = ui.monthTable;
 
+    // Create and insert calendar week label dynamically
+    mCwLabel = new QLabel(this);
+    mCwLabel->setObjectName("cwLabel");
+    mCwLabel->setStyleSheet("font-weight: bold; font-size: 14px; margin-right: 15px;");
+    int btnIndex = ui.topControlLayout->indexOf(ui.dayViewBtn);
+    if (btnIndex == -1) btnIndex = 6;
+    ui.topControlLayout->insertWidget(btnIndex, mCwLabel);
+
     // Sidebar Calendar configs
     mSidebarCalendar->setSelectedDate(mSelectedDate);
 
@@ -73,7 +82,6 @@ void CalendarWidget::buildUi() {
     mEventTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     mEventTable->setSelectionMode(QAbstractItemView::SingleSelection);
     mEventTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    mEventTable->setMaximumHeight(120);
     connect(mEventTable, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(onEventSelected(int,int)));
 
     // Stacked widget pages setup
@@ -89,7 +97,7 @@ void CalendarWidget::buildUi() {
 
     // 2. Week Table
     mWeekTable->setColumnCount(7);
-    mWeekTable->setHorizontalHeaderLabels({tr("Mon"), tr("Tue"), tr("Wed"), tr("Thu"), tr("Fri"), tr("Sat"), tr("Sun")});
+    mWeekTable->setHorizontalHeaderLabels({tr("Monday"), tr("Tuesday"), tr("Wednesday"), tr("Thursday"), tr("Friday"), tr("Saturday"), tr("Sunday")});
     mWeekTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     mWeekTable->verticalHeader()->setVisible(false);
     mWeekTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -97,11 +105,13 @@ void CalendarWidget::buildUi() {
 
     // 3. Month Table
     mMonthTable->setColumnCount(7);
-    mMonthTable->setHorizontalHeaderLabels({tr("Mon"), tr("Tue"), tr("Wed"), tr("Thu"), tr("Fri"), tr("Sat"), tr("Sun")});
+    mMonthTable->setHorizontalHeaderLabels({tr("Monday"), tr("Tuesday"), tr("Wednesday"), tr("Thursday"), tr("Friday"), tr("Saturday"), tr("Sunday")});
     mMonthTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     mMonthTable->verticalHeader()->setVisible(false);
     mMonthTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    mMonthTable->setItemDelegate(new MonthCalendarDelegate(this));
     connect(mMonthTable, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(onEventSelected(int,int)));
+    connect(mMonthTable, SIGNAL(cellClicked(int,int)), this, SLOT(onMonthCellClicked(int,int)));
 
     mViewStack->setCurrentIndex(mCurrentViewMode);
 
@@ -174,9 +184,11 @@ void CalendarWidget::refreshData() {
 void CalendarWidget::updateViews() {
     mCellEventMap.clear();
 
-    // 1. Update the Period Label
+    // 1. Update the Period Label and CW Label
     if (mCurrentViewMode == 0) { // Day View
         mPeriodLabel->setText(mSelectedDate.toString("dd MMMM yyyy"));
+        int cw = mSelectedDate.weekNumber();
+        mCwLabel->setText(QString("CW: %1").arg(cw));
     } else if (mCurrentViewMode == 1) { // Week View
         QDate monday = mSelectedDate.addDays(-(mSelectedDate.dayOfWeek() - 1));
         QDate sunday = monday.addDays(6);
@@ -185,8 +197,23 @@ void CalendarWidget::updateViews() {
         } else {
             mPeriodLabel->setText(monday.toString("dd MMM") + " - " + sunday.toString("dd MMM") + " " + sunday.toString("yyyy"));
         }
+        int cw = monday.weekNumber();
+        mCwLabel->setText(QString("CW: %1").arg(cw));
     } else { // Month View
         mPeriodLabel->setText(mSelectedDate.toString("MMMM yyyy"));
+        QDate firstOfMonth(mSelectedDate.year(), mSelectedDate.month(), 1);
+        int startDayOfWeek = firstOfMonth.dayOfWeek();
+        QDate startDate = firstOfMonth.addDays(-(startDayOfWeek - 1));
+        int daysInMonth = mSelectedDate.daysInMonth();
+        int remainingDays = daysInMonth - (8 - startDayOfWeek);
+        int rowsNeeded = 1 + (remainingDays + 6) / 7;
+        int firstWeek = startDate.weekNumber();
+        int lastWeek = startDate.addDays((rowsNeeded - 1) * 7).weekNumber();
+        if (firstWeek == lastWeek) {
+            mCwLabel->setText(QString("CW: %1").arg(firstWeek));
+        } else {
+            mCwLabel->setText(QString("CWs: %1-%2").arg(firstWeek).arg(lastWeek));
+        }
     }
 
     // 2. Load and Filter Active Events
@@ -328,12 +355,18 @@ void CalendarWidget::updateWeekView() {
 }
 
 void CalendarWidget::updateMonthView() {
-    mMonthTable->setRowCount(6); // A month calendar grid needs up to 6 rows
+    mMonthTable->clearContents();
 
     // Find first day of the month
     QDate firstOfMonth(mSelectedDate.year(), mSelectedDate.month(), 1);
     int startDayOfWeek = firstOfMonth.dayOfWeek(); // 1=Mon, 7=Sun
     QDate startDate = firstOfMonth.addDays(-(startDayOfWeek - 1));
+
+    int daysInMonth = mSelectedDate.daysInMonth();
+    int remainingDays = daysInMonth - (8 - startDayOfWeek);
+    int rowsNeeded = 1 + (remainingDays + 6) / 7;
+
+    mMonthTable->setRowCount(rowsNeeded);
 
     const auto& events = CalendarData::instance()->getEvents();
     
@@ -343,13 +376,17 @@ void CalendarWidget::updateMonthView() {
         if (item->checkState() == Qt::Checked) enabledCalIds.append(item->data(Qt::UserRole).toString());
     }
 
-    for (int row = 0; row < 6; ++row) {
+    for (int row = 0; row < rowsNeeded; ++row) {
         for (int col = 0; col < 7; ++col) {
             QDate date = startDate.addDays(row * 7 + col);
             
             // Build cell contents: "Date \n Event1 \n Event2..."
             QStringList cellLines;
-            cellLines << QString::number(date.day());
+            if (date.day() == 1 || date.day() == date.daysInMonth()) {
+                cellLines << date.toString("d MMM");
+            } else {
+                cellLines << QString::number(date.day());
+            }
 
             QString matchedEventId = "";
             for (const auto& ev : events) {
@@ -361,11 +398,12 @@ void CalendarWidget::updateMonthView() {
             }
 
             QTableWidgetItem* cellItem = new QTableWidgetItem(cellLines.join("\n"));
+            cellItem->setData(Qt::UserRole + 1, date); // Store the QDate
+            
             if (date.month() != mSelectedDate.month()) {
                 cellItem->setForeground(QBrush(Qt::gray));
             }
             if (!matchedEventId.isEmpty()) {
-                cellItem->setBackground(QBrush(QColor("#eef5fc")));
                 mCellEventMap[QString("2_%1_%2").arg(row).arg(col)] = matchedEventId;
             }
             mMonthTable->setItem(row, col, cellItem);
@@ -373,8 +411,8 @@ void CalendarWidget::updateMonthView() {
     }
 
     // Set row heights to expand nicely in the month grid
-    for (int row = 0; row < 6; ++row) {
-        mMonthTable->setRowHeight(row, 60);
+    for (int row = 0; row < rowsNeeded; ++row) {
+        mMonthTable->setRowHeight(row, 80);
     }
 }
 
@@ -546,4 +584,116 @@ void CalendarWidget::onCalendarContextMenu(const QPoint& pos) {
             refreshData();
         }
     }
+}
+
+void CalendarWidget::onMonthCellClicked(int row, int col) {
+    QTableWidgetItem* item = mMonthTable->item(row, col);
+    if (item) {
+        QDate date = item->data(Qt::UserRole + 1).toDate();
+        if (date.isValid()) {
+            mSelectedDate = date;
+            mSidebarCalendar->blockSignals(true);
+            mSidebarCalendar->setSelectedDate(date);
+            mSidebarCalendar->blockSignals(false);
+            updateViews();
+        }
+    }
+}
+
+MonthCalendarDelegate::MonthCalendarDelegate(CalendarWidget* parent)
+    : QStyledItemDelegate(parent), mCalendarWidget(parent) {}
+
+void MonthCalendarDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
+    painter->save();
+    painter->setRenderHint(QPainter::Antialiasing);
+
+    QDate cellDate = index.data(Qt::UserRole + 1).toDate();
+    bool isSelected = (cellDate.isValid() && cellDate == mCalendarWidget->selectedDate());
+
+    // Draw background
+    QColor bgColor;
+    if (isSelected) {
+        bgColor = QColor("#eff6ff"); // Light blue highlight for selected day
+    } else if (cellDate.isValid() && cellDate.month() != mCalendarWidget->selectedDate().month()) {
+        bgColor = QColor("#f8fafc"); // Slate-50 for days outside the current month
+    } else if (index.column() == 5 || index.column() == 6) {
+        bgColor = QColor("#f1f5f9"); // Slate-100 for weekends
+    } else {
+        bgColor = QColor("#ffffff"); // White for standard weekdays
+    }
+    painter->fillRect(option.rect, bgColor);
+
+    // Draw cell border
+    if (isSelected) {
+        painter->setPen(QPen(QColor("#3b82f6"), 2));
+        painter->drawRect(option.rect.adjusted(1, 1, -1, -1));
+    } else {
+        painter->setPen(QPen(QColor("#e2e8f0"), 1));
+        painter->drawRect(option.rect);
+    }
+
+    // Get item text
+    QString text = index.data(Qt::DisplayRole).toString();
+    QStringList lines = text.split('\n');
+    if (!lines.isEmpty()) {
+        QString dayStr = lines.first();
+
+        // 1. Draw day number in top right
+        QFont dayFont = option.font;
+        dayFont.setBold(true);
+        painter->setFont(dayFont);
+        
+        if (cellDate.isValid() && cellDate.month() != mCalendarWidget->selectedDate().month()) {
+            painter->setPen(QColor("#94a3b8")); // Muted grey for other month days
+        } else if (isSelected) {
+            painter->setPen(QColor("#2563eb")); // Darker blue for selected day number
+        } else {
+            painter->setPen(QColor("#1e293b")); // Slate-800 for standard days
+        }
+        
+        QRect dayRect = option.rect.adjusted(5, 5, -8, -5);
+        painter->drawText(dayRect, Qt::AlignTop | Qt::AlignRight, dayStr);
+
+        // 2. Draw Week Badge if it's the first column
+        if (index.column() == 0 && cellDate.isValid()) {
+            int weekNum = cellDate.weekNumber();
+            QString weekStr = QString("W %1").arg(weekNum);
+
+            QRect badgeRect(option.rect.left() + 6, option.rect.top() + 5, 38, 16);
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(QColor("#e2e8f0")); // Slate-200
+            painter->drawRoundedRect(badgeRect, 8, 8);
+
+            QFont badgeFont = option.font;
+            badgeFont.setPointSize(badgeFont.pointSize() - 2);
+            badgeFont.setBold(true);
+            painter->setFont(badgeFont);
+            painter->setPen(QColor("#475569")); // Slate-600
+            painter->drawText(badgeRect, Qt::AlignCenter, weekStr);
+        }
+
+        // 3. Draw events list below
+        int yOffset = option.rect.top() + 26;
+        QFont eventFont = option.font;
+        eventFont.setPointSize(eventFont.pointSize() - 1);
+        painter->setFont(eventFont);
+
+        for (int i = 1; i < lines.size(); ++i) {
+            if (yOffset + 18 > option.rect.bottom()) break; // Out of bounds
+
+            QString eventTitle = lines[i];
+            QRect eventRect(option.rect.left() + 6, yOffset, option.rect.width() - 12, 16);
+
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(QColor("#e0f2fe")); // Light blue event background
+            painter->drawRoundedRect(eventRect, 3, 3);
+
+            painter->setPen(QColor("#0369a1")); // Blue text for events
+            painter->drawText(eventRect.adjusted(4, 0, -4, 0), Qt::AlignVCenter | Qt::AlignLeft, eventTitle);
+
+            yOffset += 19;
+        }
+    }
+
+    painter->restore();
 }
