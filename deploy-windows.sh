@@ -5,7 +5,17 @@
 # ==============================================================================
 set -e
 
+# Toujours travailler depuis la racine du dépôt (emplacement du script),
+# sinon les chemins relatifs (retroshare-gui/src, libbitdht, ...) sont muets
+# et produisent un paquet incomplet sans la moindre erreur.
+cd "$(dirname "$0")" || exit 1
+
 BUILD_DIR="Build-cmake"
+
+# Préfixe de l'environnement MSYS2 utilisé pour la compilation
+# (mingw64 / ucrt64 / clang64). Indispensable pour retrouver le runtime
+# compilateur et les plugins Qt quel que soit l'environnement employé.
+MINGW_PREFIX="${MSYSTEM_PREFIX:-/mingw64}"
 
 # 1. Vérifications initiales du dossier de build
 if [ ! -d "$BUILD_DIR" ]; then
@@ -75,7 +85,9 @@ echo "  Deploy Directory:    ${DEPLOY_DIR}"
 
 # Nettoyage des anciennes générations de déploiement
 echo ">>> Cleaning up previous deployment directories..."
-rm -rf "${BUILD_DIR}/RetroShare-"*"-Windows-Portable-"*
+# Ne supprimer que les anciens RÉPERTOIRES de déploiement, pas les archives
+# .7z / .zip produites lors des runs précédents (qui matchent le même motif).
+find "$BUILD_DIR" -maxdepth 1 -type d -name "RetroShare-*-Windows-Portable*" -exec rm -rf {} + 2>/dev/null || true
 mkdir -p "$DEPLOY_DIR"
 
 # 3. Création de l'arborescence complète attendue par RetroShare
@@ -95,7 +107,7 @@ touch "$DEPLOY_DIR/portable"
 # 5. Copie des exécutables et DLL générées par la compilation
 echo ">>> Copying compiled binaries..."
 for exe in retroshare.exe retroshare-service.exe retroshare-friendserver.exe; do
-    found_exe=$(find "$BUILD_DIR" -name "$exe" | head -n 1)
+    found_exe=$(find "$BUILD_DIR" -path "$DEPLOY_DIR" -prune -o -name "$exe" -print | head -n 1)
     if [ -n "$found_exe" ]; then
         echo "  Found and copying: $found_exe"
         cp "$found_exe" "$DEPLOY_DIR/"
@@ -105,16 +117,20 @@ for exe in retroshare.exe retroshare-service.exe retroshare-friendserver.exe; do
 done
 
 echo ">>> Copying local build libraries (DLLs)..."
-# Recherche et copie des DLL compilées en interne dans le projet (RNP, CMark, RetroShare)
-find "$BUILD_DIR" -name "libcmark.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
-find "$BUILD_DIR" -name "*retroshare.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
+# Recherche et copie des DLL compilées en interne dans le projet (RNP, CMark, RetroShare, Restbed)
+# NB: on élague "$DEPLOY_DIR" (situé sous "$BUILD_DIR") pour éviter de re-trouver
+# les DLL déjà copiées et de déployer par erreur une variante stale.
+find "$BUILD_DIR" -path "$DEPLOY_DIR" -prune -o -name "libcmark.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
+find "$BUILD_DIR" -path "$DEPLOY_DIR" -prune -o -name "*retroshare.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
+find "$BUILD_DIR" -path "$DEPLOY_DIR" -prune -o -name "*restbed*.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
 if [ -d "supportlibs/librnp/Build" ]; then
     find "supportlibs/librnp/Build" -name "librnp.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
 fi
+find "$BUILD_DIR" -path "$DEPLOY_DIR" -prune -o -name "librnp.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
 
 echo ">>> Copying RetroShare plugins..."
 if [ -d "$BUILD_DIR/plugins" ]; then
-    find "$BUILD_DIR/plugins" -name "*.dll" -exec cp {} "$DEPLOY_DIR/Data/extensions6/" \;
+    find "$BUILD_DIR/plugins" -name "*.dll" -exec cp {} "$DEPLOY_DIR/Data/extensions6/" \; 2>/dev/null || true
     echo "  Plugins copied to Data/extensions6."
 else
     echo "  WARNING: Plugins directory not found. Skipping plugins."
@@ -153,11 +169,11 @@ if [ -d "retroshare-gui/src/translations" ]; then
 fi
 
 # Copie des traductions Qt de l'environnement MSYS2 MinGW64
-QT_TRANS_DIR="/mingw64/share/qt5/translations"
+QT_TRANS_DIR="$MINGW_PREFIX/share/qt5/translations"
 if [ -d "$QT_TRANS_DIR" ]; then
     cp "$QT_TRANS_DIR"/qt_*.qm "$DEPLOY_DIR/translations/" 2>/dev/null || true
 fi
-QT6_TRANS_DIR="/mingw64/share/qt6/translations"
+QT6_TRANS_DIR="$MINGW_PREFIX/share/qt6/translations"
 if [ -d "$QT6_TRANS_DIR" ]; then
     cp "$QT6_TRANS_DIR"/qt_*.qm "$DEPLOY_DIR/translations/" 2>/dev/null || true
     cp "$QT6_TRANS_DIR"/qtbase_*.qm "$DEPLOY_DIR/translations/" 2>/dev/null || true
@@ -187,10 +203,10 @@ if [ ! -d "$DEPLOY_DIR/platforms" ] || [ ! -f "$DEPLOY_DIR/platforms/qwindows.dl
     mkdir -p "$DEPLOY_DIR/platforms"
     COPIED_PLATFORMS=false
     for path in \
-        "/mingw64/share/qt6/plugins/platforms/qwindows.dll" \
-        "/mingw64/share/qt5/plugins/platforms/qwindows.dll" \
-        "/mingw64/lib/qt6/plugins/platforms/qwindows.dll" \
-        "/mingw64/lib/qt5/plugins/platforms/qwindows.dll"; do
+        "$MINGW_PREFIX/share/qt6/plugins/platforms/qwindows.dll" \
+        "$MINGW_PREFIX/share/qt5/plugins/platforms/qwindows.dll" \
+        "$MINGW_PREFIX/lib/qt6/plugins/platforms/qwindows.dll" \
+        "$MINGW_PREFIX/lib/qt5/plugins/platforms/qwindows.dll"; do
         if [ -f "$path" ]; then
             echo "  Found platforms plugin at: $path"
             cp "$path" "$DEPLOY_DIR/platforms/"
@@ -207,10 +223,10 @@ if [ ! -d "$DEPLOY_DIR/styles" ] || [ ! -f "$DEPLOY_DIR/styles/qwindowsvistastyl
     echo ">>> Manual fallback: Copying Qt 'styles' directory (qwindowsvistastyle.dll)..."
     mkdir -p "$DEPLOY_DIR/styles"
     for path in \
-        "/mingw64/share/qt6/plugins/styles/qwindowsvistastyle.dll" \
-        "/mingw64/share/qt5/plugins/styles/qwindowsvistastyle.dll" \
-        "/mingw64/lib/qt6/plugins/styles/qwindowsvistastyle.dll" \
-        "/mingw64/lib/qt5/plugins/styles/qwindowsvistastyle.dll"; do
+        "$MINGW_PREFIX/share/qt6/plugins/styles/qwindowsvistastyle.dll" \
+        "$MINGW_PREFIX/share/qt5/plugins/styles/qwindowsvistastyle.dll" \
+        "$MINGW_PREFIX/lib/qt6/plugins/styles/qwindowsvistastyle.dll" \
+        "$MINGW_PREFIX/lib/qt5/plugins/styles/qwindowsvistastyle.dll"; do
         if [ -f "$path" ]; then
             echo "  Found styles plugin at: $path"
             cp "$path" "$DEPLOY_DIR/styles/"
@@ -223,13 +239,13 @@ echo ">>> Deploying Qt 'imageformats' directory (essential for SVG/ICO icons)...
 mkdir -p "$DEPLOY_DIR/imageformats"
 COPIED_IMAGEFORMATS=false
 for path in \
-    "/mingw64/share/qt6/plugins/imageformats" \
-    "/mingw64/share/qt5/plugins/imageformats" \
-    "/mingw64/lib/qt6/plugins/imageformats" \
-    "/mingw64/lib/qt5/plugins/imageformats"; do
+    "$MINGW_PREFIX/share/qt6/plugins/imageformats" \
+    "$MINGW_PREFIX/share/qt5/plugins/imageformats" \
+    "$MINGW_PREFIX/lib/qt6/plugins/imageformats" \
+    "$MINGW_PREFIX/lib/qt5/plugins/imageformats"; do
     if [ -d "$path" ]; then
         echo "  Found imageformats plugin directory at: $path"
-        cp -r "$path"/* "$DEPLOY_DIR/imageformats/"
+        cp -r "$path"/* "$DEPLOY_DIR/imageformats/" 2>/dev/null || true
         COPIED_IMAGEFORMATS=true
         break
     fi
@@ -242,22 +258,30 @@ fi
 # 9. Résolution dynamique des dépendances MinGW (ldd)
 echo ">>> Resolving system and 3rd party DLL dependencies using ldd..."
 TEMP_DEPENDENCY_LIST=$(mktemp)
+trap 'rm -f "$TEMP_DEPENDENCY_LIST"' EXIT
 
-# Scanner tous les exe et dll présents dans le dossier de déploiement
-find "$DEPLOY_DIR" -name "*.exe" -o -name "*.dll" | while read -r binary; do
-    ldd "$binary" | grep -i "/mingw64/bin" | awk '{print $3}' >> "$TEMP_DEPENDENCY_LIST"
-done
-
-# Trier, dédoublonner et copier les DLL uniques trouvées dans MinGW/bin
-sort -u "$TEMP_DEPENDENCY_LIST" | while read -r dll_path; do
-    if [ -f "$dll_path" ]; then
-        dll_name=$(basename "$dll_path")
-        # Ne pas écraser les DLL déjà présentes (Qt ou compilées localement)
-        if [ ! -f "$DEPLOY_DIR/$dll_name" ]; then
-            echo "  Deploying dependency: $dll_name"
-            cp "$dll_path" "$DEPLOY_DIR/"
-        fi
+PREV_COUNT=0
+while true; do
+    # Scanner tous les exe et dll présents dans le dossier de déploiement
+    find "$DEPLOY_DIR" \( -name "*.exe" -o -name "*.dll" \) -exec ldd {} \; 2>/dev/null \
+        | grep -i "$MINGW_PREFIX/bin" | awk '{print $3}' | sort -u > "$TEMP_DEPENDENCY_LIST"
+    
+    CURR_COUNT=$(wc -l < "$TEMP_DEPENDENCY_LIST")
+    if [ "$CURR_COUNT" -eq "$PREV_COUNT" ]; then
+        break
     fi
+    PREV_COUNT=$CURR_COUNT
+
+    while read -r dll_path; do
+        if [ -f "$dll_path" ]; then
+            dll_name=$(basename "$dll_path")
+            # Ne pas écraser les DLL déjà présentes (Qt ou compilées localement)
+            if [ ! -f "$DEPLOY_DIR/$dll_name" ]; then
+                echo "  Deploying dependency: $dll_name"
+                cp "$dll_path" "$DEPLOY_DIR/"
+            fi
+        fi
+    done < "$TEMP_DEPENDENCY_LIST"
 done
 rm -f "$TEMP_DEPENDENCY_LIST"
 
@@ -283,6 +307,8 @@ else
             "$DEPLOY_DIR"/retroshare.dll \
             "$DEPLOY_DIR"/libretroshare.dll \
             "$DEPLOY_DIR"/libcmark.dll \
+            "$DEPLOY_DIR"/librestbed-shared.dll \
+            "$DEPLOY_DIR"/librestbed.dll \
             "$DEPLOY_DIR"/librnp.dll; do
             if [ -f "$binary" ]; then
                 echo "  Stripping: $(basename "$binary")"
@@ -305,7 +331,7 @@ fi
 echo ">>> Deploying WebUI static assets..."
 if [ -d "retroshare-webui/src" ]; then
     mkdir -p "$DEPLOY_DIR/webui"
-    cp -r retroshare-webui/src/* "$DEPLOY_DIR/webui/"
+    cp -r retroshare-webui/src/* "$DEPLOY_DIR/webui/" 2>/dev/null || true
     echo "  WebUI copied to deployment folder."
 else
     echo "  WebUI source folder not found. Skipping WebUI packaging."
@@ -313,24 +339,25 @@ fi
 
 # 11. Création de l'archive finale (7z en priorité, zip en fallback)
 echo ">>> Packaging final compressed archive..."
-cd "$BUILD_DIR"
+(
+    cd "$BUILD_DIR" || exit 1
 
-if command -v 7z &> /dev/null; then
-    echo "  Using 7z for ultra high compression..."
-    7z a -t7z -mx=9 "${ARCHIVE_BASE}.7z" "${ARCHIVE_BASE}"
-    echo "================================================================================"
-    echo "SUCCESS: Standalone package created at: ${BUILD_DIR}/${ARCHIVE_BASE}.7z"
-    echo "================================================================================"
-elif command -v zip &> /dev/null; then
-    echo "  7z not found. Falling back to standard zip..."
-    zip -r "${ARCHIVE_BASE}.zip" "${ARCHIVE_BASE}"
-    echo "================================================================================"
-    echo "SUCCESS: Standalone package created at: ${BUILD_DIR}/${ARCHIVE_BASE}.zip"
-    echo "================================================================================"
-else
-    echo "================================================================================"
-    echo "SUCCESS: Folder generated at: ${DEPLOY_DIR}"
-    echo "NOTE: Neither '7z' nor 'zip' commands were found. Archive creation skipped."
-    echo "================================================================================"
-fi
-cd ..
+    if command -v 7z &> /dev/null; then
+        echo "  Using 7z for ultra high compression..."
+        7z a -t7z -mx=9 "${ARCHIVE_BASE}.7z" "${ARCHIVE_BASE}"
+        echo "================================================================================"
+        echo "SUCCESS: Standalone package created at: ${BUILD_DIR}/${ARCHIVE_BASE}.7z"
+        echo "================================================================================"
+    elif command -v zip &> /dev/null; then
+        echo "  7z not found. Falling back to standard zip..."
+        zip -r "${ARCHIVE_BASE}.zip" "${ARCHIVE_BASE}"
+        echo "================================================================================"
+        echo "SUCCESS: Standalone package created at: ${BUILD_DIR}/${ARCHIVE_BASE}.zip"
+        echo "================================================================================"
+    else
+        echo "================================================================================"
+        echo "SUCCESS: Folder generated at: ${DEPLOY_DIR}"
+        echo "NOTE: Neither '7z' nor 'zip' commands were found. Archive creation skipped."
+        echo "================================================================================"
+    fi
+)
