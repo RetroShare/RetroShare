@@ -21,6 +21,8 @@
 #include "gui/msgs/CalendarData.h"
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsgxscalendar.h>
+#include <util/qtthreadsutils.h>
 #include <QSettings>
 #include <QDir>
 #include <QUuid>
@@ -34,12 +36,24 @@ CalendarData* CalendarData::instance() {
     return mInstance;
 }
 
-CalendarData::CalendarData() {
+CalendarData::CalendarData() : QObject(), mEventHandlerId(0) {
     loadData();
+
+    if (rsEvents && rsGxsCalendar) {
+        rsEvents->registerEventsHandler(
+            [this](std::shared_ptr<const RsEvent> event) {
+                RsQThreadUtils::postToObject([=]() { handleGxsEvent(event); }, this);
+            },
+            mEventHandlerId, RsEventType::GXS_CALENDAR
+        );
+    }
 }
 
 CalendarData::~CalendarData() {
     saveData();
+    if (rsEvents && mEventHandlerId != 0) {
+        rsEvents->unregisterEventsHandler(mEventHandlerId);
+    }
 }
 
 void CalendarData::loadData() {
@@ -78,7 +92,7 @@ void CalendarData::loadData() {
         defaultCal.isPublic = false;
         defaultCal.owner = "local";
         defaultCal.showReminders = true;
-        defaultCal.email = "defnator <defnator@gmail.com>";
+        defaultCal.email = "retroshare <retroshare@GXSID>";
         defaultCal.onNetwork = false;
         mCalendars.append(defaultCal);
 
@@ -89,7 +103,7 @@ void CalendarData::loadData() {
         testCal.isPublic = true;
         testCal.owner = "local";
         testCal.showReminders = true;
-        testCal.email = "defnator <defnator@gmail.com>";
+        testCal.email = "retroshare <retroshare@GXSID>";
         testCal.onNetwork = true;
         mCalendars.append(testCal);
     }
@@ -225,6 +239,11 @@ void CalendarData::updateCalendar(const CalendarInfo& cal) {
 void CalendarData::removeCalendar(const QString& id) {
     for (int i = 0; i < mCalendars.size(); ++i) {
         if (mCalendars[i].id == id) {
+            // Unsubscribe from GXS if network calendar
+            if (mCalendars[i].onNetwork && rsGxsCalendar) {
+                std::string errMsg;
+                rsGxsCalendar->subscribeToCalendar(RsGxsGroupId(id.toStdString()), false, errMsg);
+            }
             mCalendars.removeAt(i);
             break;
         }
@@ -242,6 +261,7 @@ void CalendarData::removeCalendar(const QString& id) {
 void CalendarData::addEvent(const CalendarEvent& ev) {
     mEvents.append(ev);
     saveData();
+    publishCalendarUpdates(ev.calendarId);
 }
 
 void CalendarData::updateEvent(const CalendarEvent& ev) {
@@ -252,21 +272,28 @@ void CalendarData::updateEvent(const CalendarEvent& ev) {
         }
     }
     saveData();
+    publishCalendarUpdates(ev.calendarId);
 }
 
 void CalendarData::removeEvent(const QString& id) {
+    QString calId;
     for (int i = 0; i < mEvents.size(); ++i) {
         if (mEvents[i].id == id) {
+            calId = mEvents[i].calendarId;
             mEvents.removeAt(i);
             break;
         }
     }
     saveData();
+    if (!calId.isEmpty()) {
+        publishCalendarUpdates(calId);
+    }
 }
 
 void CalendarData::addTask(const CalendarTask& task) {
     mTasks.append(task);
     saveData();
+    publishCalendarUpdates(task.calendarId);
 }
 
 void CalendarData::updateTask(const CalendarTask& task) {
@@ -277,16 +304,22 @@ void CalendarData::updateTask(const CalendarTask& task) {
         }
     }
     saveData();
+    publishCalendarUpdates(task.calendarId);
 }
 
 void CalendarData::removeTask(const QString& id) {
+    QString calId;
     for (int i = 0; i < mTasks.size(); ++i) {
         if (mTasks[i].id == id) {
+            calId = mTasks[i].calendarId;
             mTasks.removeAt(i);
             break;
         }
     }
     saveData();
+    if (!calId.isEmpty()) {
+        publishCalendarUpdates(calId);
+    }
 }
 
 QMap<QString, QString> CalendarData::getContacts() {
@@ -314,4 +347,470 @@ QMap<QString, QString> CalendarData::getContacts() {
     }
 
     return contacts;
+}
+
+static RsGxsId getGxsIdFromEmail(const QString& email) {
+    int idx = email.lastIndexOf('@');
+    int endIdx = email.lastIndexOf('>');
+    if (idx != -1 && endIdx != -1 && endIdx > idx) {
+        std::string gxsIdStr = email.mid(idx + 1, endIdx - idx - 1).toStdString();
+        return RsGxsId(gxsIdStr);
+    }
+    return RsGxsId();
+}
+
+QString CalendarData::exportCalendarToIcs(const QString& calId) const {
+    QString icsContent = "BEGIN:VCALENDAR\r\n"
+                         "VERSION:2.0\r\n"
+                         "PRODID:-//RetroShare//Calendar//EN\r\n";
+
+    for (const auto& ev : mEvents) {
+        if (ev.calendarId != calId) continue;
+
+        icsContent += "BEGIN:VEVENT\r\n";
+        icsContent += QString("UID:%1\r\n").arg(ev.id);
+        icsContent += QString("SUMMARY:%1\r\n").arg(ev.title);
+        
+        if (!ev.description.isEmpty()) {
+            QString desc = ev.description;
+            desc.replace("\n", "\\n").replace("\r", "");
+            icsContent += QString("DESCRIPTION:%1\r\n").arg(desc);
+        }
+        
+        if (!ev.location.isEmpty()) {
+            icsContent += QString("LOCATION:%1\r\n").arg(ev.location);
+        }
+        
+        if (!ev.category.isEmpty()) {
+            icsContent += QString("CATEGORIES:%1\r\n").arg(ev.category);
+        }
+
+        if (ev.allDay) {
+            icsContent += QString("DTSTART;VALUE=DATE:%1\r\n").arg(ev.start.toString("yyyyMMdd"));
+            icsContent += QString("DTEND;VALUE=DATE:%1\r\n").arg(ev.end.toString("yyyyMMdd"));
+        } else {
+            icsContent += QString("DTSTART:%1\r\n").arg(ev.start.toUTC().toString("yyyyMMdd'T'HHmmss'Z'"));
+            icsContent += QString("DTEND:%1\r\n").arg(ev.end.toUTC().toString("yyyyMMdd'T'HHmmss'Z'"));
+        }
+
+        icsContent += "END:VEVENT\r\n";
+    }
+
+    for (const auto& t : mTasks) {
+        if (t.calendarId != calId) continue;
+
+        icsContent += "BEGIN:VTODO\r\n";
+        icsContent += QString("UID:%1\r\n").arg(t.id);
+        icsContent += QString("SUMMARY:%1\r\n").arg(t.title);
+
+        if (!t.description.isEmpty()) {
+            QString desc = t.description;
+            desc.replace("\n", "\\n").replace("\r", "");
+            icsContent += QString("DESCRIPTION:%1\r\n").arg(desc);
+        }
+
+        if (!t.location.isEmpty()) {
+            icsContent += QString("LOCATION:%1\r\n").arg(t.location);
+        }
+
+        if (!t.category.isEmpty()) {
+            icsContent += QString("CATEGORIES:%1\r\n").arg(t.category);
+        }
+
+        if (t.hasStart) {
+            icsContent += QString("DTSTART:%1\r\n").arg(t.start.toUTC().toString("yyyyMMdd'T'HHmmss'Z'"));
+        }
+
+        if (t.hasDue) {
+            icsContent += QString("DUE:%1\r\n").arg(t.due.toUTC().toString("yyyyMMdd'T'HHmmss'Z'"));
+        }
+
+        if (!t.status.isEmpty()) {
+            icsContent += QString("STATUS:%1\r\n").arg(t.status);
+        }
+
+        icsContent += QString("PERCENT-COMPLETE:%1\r\n").arg(t.percentComplete);
+        icsContent += QString("COMPLETED:%1\r\n").arg(t.completed ? "TRUE" : "FALSE");
+
+        icsContent += "END:VTODO\r\n";
+    }
+
+    icsContent += "END:VCALENDAR\r\n";
+    return icsContent;
+}
+
+void CalendarData::importCalendarFromIcs(const QString& calId, const QString& icsData) {
+    auto evIt = mEvents.begin();
+    while (evIt != mEvents.end()) {
+        if (evIt->calendarId == calId) {
+            evIt = mEvents.erase(evIt);
+        } else {
+            ++evIt;
+        }
+    }
+
+    auto tIt = mTasks.begin();
+    while (tIt != mTasks.end()) {
+        if (tIt->calendarId == calId) {
+            tIt = mTasks.erase(tIt);
+        } else {
+            ++tIt;
+        }
+    }
+
+    QStringList rawLines = icsData.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+    QStringList lines;
+    for (int i = 0; i < rawLines.size(); ++i) {
+        QString line = rawLines[i];
+        while (i + 1 < rawLines.size() && (rawLines[i + 1].startsWith(" ") || rawLines[i + 1].startsWith("\t"))) {
+            line += rawLines[i + 1].mid(1);
+            i++;
+        }
+        lines.append(line);
+    }
+
+    auto parseIcsDateTime = [](const QString& val) -> QDateTime {
+        QDateTime dt;
+        if (val.endsWith('Z')) {
+            dt = QDateTime::fromString(val, "yyyyMMdd'T'HHmmss'Z'");
+            dt.setTimeSpec(Qt::UTC);
+            dt = dt.toLocalTime();
+        } else {
+            dt = QDateTime::fromString(val, "yyyyMMdd'T'HHmmss");
+            dt.setTimeSpec(Qt::LocalTime);
+        }
+        return dt;
+    };
+
+    bool inEvent = false;
+    bool inTask = false;
+    CalendarEvent currentEvent;
+    CalendarTask currentTask;
+
+    for (const QString& line : lines) {
+        QString trimmedLine = line.trimmed();
+        if (trimmedLine.isEmpty()) continue;
+
+        if (trimmedLine.startsWith("BEGIN:VEVENT", Qt::CaseInsensitive)) {
+            inEvent = true;
+            currentEvent = CalendarEvent();
+            currentEvent.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+            currentEvent.calendarId = calId;
+            currentEvent.allDay = false;
+            currentEvent.isPublic = true;
+        } else if (trimmedLine.startsWith("END:VEVENT", Qt::CaseInsensitive)) {
+            if (inEvent) {
+                if (!currentEvent.start.isValid()) currentEvent.start = QDateTime::currentDateTime();
+                if (!currentEvent.end.isValid()) currentEvent.end = currentEvent.start.addSecs(3600);
+                mEvents.append(currentEvent);
+                inEvent = false;
+            }
+        } else if (trimmedLine.startsWith("BEGIN:VTODO", Qt::CaseInsensitive)) {
+            inTask = true;
+            currentTask = CalendarTask();
+            currentTask.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+            currentTask.calendarId = calId;
+            currentTask.hasStart = false;
+            currentTask.hasDue = false;
+            currentTask.completed = false;
+            currentTask.percentComplete = 0;
+        } else if (trimmedLine.startsWith("END:VTODO", Qt::CaseInsensitive)) {
+            if (inTask) {
+                mTasks.append(currentTask);
+                inTask = false;
+            }
+        } else if (inEvent) {
+            int colonIdx = trimmedLine.indexOf(':');
+            int semiIdx = trimmedLine.indexOf(';');
+            int splitIdx = -1;
+
+            if (colonIdx != -1 && semiIdx != -1) splitIdx = qMin(colonIdx, semiIdx);
+            else if (colonIdx != -1) splitIdx = colonIdx;
+            else if (semiIdx != -1) splitIdx = semiIdx;
+
+            if (splitIdx != -1) {
+                QString key = trimmedLine.left(splitIdx).trimmed();
+                QString val = trimmedLine.mid(colonIdx + 1).trimmed();
+
+                if (key.compare("UID", Qt::CaseInsensitive) == 0) {
+                    currentEvent.id = val;
+                } else if (key.compare("SUMMARY", Qt::CaseInsensitive) == 0) {
+                    currentEvent.title = val;
+                } else if (key.compare("LOCATION", Qt::CaseInsensitive) == 0) {
+                    currentEvent.location = val;
+                } else if (key.compare("CATEGORIES", Qt::CaseInsensitive) == 0) {
+                    currentEvent.category = val;
+                } else if (key.compare("DESCRIPTION", Qt::CaseInsensitive) == 0) {
+                    currentEvent.description = val.replace("\\n", "\n").replace("\\r", "").replace("\\,", ",");
+                } else if (key.startsWith("DTSTART", Qt::CaseInsensitive)) {
+                    if (trimmedLine.contains("VALUE=DATE", Qt::CaseInsensitive)) {
+                        currentEvent.allDay = true;
+                        currentEvent.start = QDateTime(QDate::fromString(val, "yyyyMMdd"), QTime(0, 0));
+                    } else {
+                        currentEvent.start = parseIcsDateTime(val);
+                    }
+                } else if (key.startsWith("DTEND", Qt::CaseInsensitive)) {
+                    if (trimmedLine.contains("VALUE=DATE", Qt::CaseInsensitive)) {
+                        currentEvent.allDay = true;
+                        currentEvent.end = QDateTime(QDate::fromString(val, "yyyyMMdd"), QTime(0, 0));
+                    } else {
+                        currentEvent.end = parseIcsDateTime(val);
+                    }
+                }
+            }
+        } else if (inTask) {
+            int colonIdx = trimmedLine.indexOf(':');
+            int semiIdx = trimmedLine.indexOf(';');
+            int splitIdx = -1;
+
+            if (colonIdx != -1 && semiIdx != -1) splitIdx = qMin(colonIdx, semiIdx);
+            else if (colonIdx != -1) splitIdx = colonIdx;
+            else if (semiIdx != -1) splitIdx = semiIdx;
+
+            if (splitIdx != -1) {
+                QString key = trimmedLine.left(splitIdx).trimmed();
+                QString val = trimmedLine.mid(colonIdx + 1).trimmed();
+
+                if (key.compare("UID", Qt::CaseInsensitive) == 0) {
+                    currentTask.id = val;
+                } else if (key.compare("SUMMARY", Qt::CaseInsensitive) == 0) {
+                    currentTask.title = val;
+                } else if (key.compare("LOCATION", Qt::CaseInsensitive) == 0) {
+                    currentTask.location = val;
+                } else if (key.compare("CATEGORIES", Qt::CaseInsensitive) == 0) {
+                    currentTask.category = val;
+                } else if (key.compare("DESCRIPTION", Qt::CaseInsensitive) == 0) {
+                    currentTask.description = val.replace("\\n", "\n").replace("\\r", "").replace("\\,", ",");
+                } else if (key.startsWith("DTSTART", Qt::CaseInsensitive)) {
+                    currentTask.hasStart = true;
+                    currentTask.start = parseIcsDateTime(val);
+                } else if (key.startsWith("DUE", Qt::CaseInsensitive)) {
+                    currentTask.hasDue = true;
+                    currentTask.due = parseIcsDateTime(val);
+                } else if (key.compare("STATUS", Qt::CaseInsensitive) == 0) {
+                    currentTask.status = val;
+                } else if (key.compare("PERCENT-COMPLETE", Qt::CaseInsensitive) == 0) {
+                    currentTask.percentComplete = val.toInt();
+                } else if (key.compare("COMPLETED", Qt::CaseInsensitive) == 0) {
+                    currentTask.completed = (val.compare("TRUE", Qt::CaseInsensitive) == 0);
+                }
+            }
+        }
+    }
+}
+
+void CalendarData::migrateCalendarData(const QString& oldId, const QString& newId) {
+    for (auto& ev : mEvents) {
+        if (ev.calendarId == oldId) {
+            ev.calendarId = newId;
+        }
+    }
+    for (auto& t : mTasks) {
+        if (t.calendarId == oldId) {
+            t.calendarId = newId;
+        }
+    }
+}
+
+void CalendarData::publishCalendarUpdates(const QString& calId) {
+    if (!rsGxsCalendar) return;
+
+    CalendarInfo cal;
+    bool found = false;
+    for (const auto& c : mCalendars) {
+        if (c.id == calId) {
+            cal = c;
+            found = true;
+            break;
+        }
+    }
+    if (!found || !cal.onNetwork) return;
+
+    RsGxsId authorId = getGxsIdFromEmail(cal.email);
+    RsGxsGroupId groupId(calId.toStdString());
+    QString ics = exportCalendarToIcs(calId);
+    RsGxsMessageId msgId;
+    std::string errMsg;
+    rsGxsCalendar->publishCalendarIcs(groupId, ics.toStdString(), authorId, msgId, errMsg);
+}
+
+bool CalendarData::publishCalendar(const QString& oldId, const QString& email, QString& newIdOut) {
+    if (!rsGxsCalendar) return false;
+
+    // Find local calendar
+    int calIdx = -1;
+    for (int i = 0; i < mCalendars.size(); ++i) {
+        if (mCalendars[i].id == oldId) {
+            calIdx = i;
+            break;
+        }
+    }
+    if (calIdx == -1) return false;
+
+    CalendarInfo& cal = mCalendars[calIdx];
+    if (cal.onNetwork) return false; // Already on network
+
+    // Extract GXS ID from email
+    RsGxsId authorId = getGxsIdFromEmail(email);
+
+    RsGxsGroupId groupId;
+    std::string errMsg;
+    if (!rsGxsCalendar->createCalendar(cal.name.toStdString(), "RetroShare Calendar", authorId, groupId, errMsg)) {
+        return false;
+    }
+
+    QString newId = QString::fromStdString(groupId.toStdString());
+    newIdOut = newId;
+
+    // Migrate events and tasks
+    migrateCalendarData(oldId, newId);
+
+    // Update calendar info
+    cal.id = newId;
+    cal.onNetwork = true;
+    cal.isPublic = true;
+    cal.email = email;
+    cal.owner = "local";
+
+    saveData();
+
+    // Subscribe and publish initial ICS
+    rsGxsCalendar->subscribeToCalendar(groupId, true, errMsg);
+    publishCalendarUpdates(newId);
+
+    emit calendarDataChanged();
+    return true;
+}
+
+bool CalendarData::subscribeToCalendar(const QString& id, bool subscribe, const QString& name) {
+    if (!rsGxsCalendar) return false;
+
+    RsGxsGroupId groupId(id.toStdString());
+    std::string errMsg;
+    if (!rsGxsCalendar->subscribeToCalendar(groupId, subscribe, errMsg)) {
+        return false;
+    }
+
+    if (subscribe) {
+        // Find if it's already in mCalendars
+        bool found = false;
+        for (const auto& c : mCalendars) {
+            if (c.id == id) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            CalendarInfo localCal;
+            localCal.id = id;
+            localCal.name = name.isEmpty() ? tr("Shared Calendar") : name;
+            localCal.color = QColor("#4a90e2");
+            localCal.isPublic = true;
+            localCal.onNetwork = true;
+            localCal.showReminders = true;
+            localCal.owner = "network";
+            mCalendars.append(localCal);
+            saveData();
+        }
+        emit calendarDataChanged();
+        // Trigger sync to fetch contents
+        syncWithGxs();
+    } else {
+        // Remove from local list
+        for (int i = 0; i < mCalendars.size(); ++i) {
+            if (mCalendars[i].id == id) {
+                mCalendars.removeAt(i);
+                break;
+            }
+        }
+        // Remove associated events and tasks
+        mEvents.erase(std::remove_if(mEvents.begin(), mEvents.end(),
+            [&id](const CalendarEvent& ev) { return ev.calendarId == id; }), mEvents.end());
+        mTasks.erase(std::remove_if(mTasks.begin(), mTasks.end(),
+            [&id](const CalendarTask& t) { return t.calendarId == id; }), mTasks.end());
+
+        saveData();
+        emit calendarDataChanged();
+    }
+    return true;
+}
+
+void CalendarData::syncWithGxs() {
+    if (!rsGxsCalendar) return;
+
+    std::list<RsGroupMetaData> calendars;
+    if (rsGxsCalendar->getCalendarsSummaries(calendars)) {
+        bool changed = false;
+        for (const auto& meta : calendars) {
+            bool isSubscribed = (meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
+            if (isSubscribed) {
+                QString calId = QString::fromStdString(meta.mGroupId.toStdString());
+                
+                bool found = false;
+                CalendarInfo localCal;
+                for (auto& c : mCalendars) {
+                    if (c.id == calId) {
+                        localCal = c;
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    localCal.id = calId;
+                    localCal.name = QString::fromUtf8(meta.mGroupName.c_str());
+                    localCal.color = QColor("#4a90e2");
+                    localCal.isPublic = true;
+                    localCal.onNetwork = true;
+                    localCal.showReminders = true;
+                    localCal.owner = "network";
+                    mCalendars.append(localCal);
+                    changed = true;
+                }
+
+                std::vector<RsGxsCalendarMessage> messages;
+                if (rsGxsCalendar->getCalendarContent(meta.mGroupId, messages)) {
+                    if (!messages.empty()) {
+                        uint32_t latestTime = 0;
+                        size_t latestIdx = 0;
+                        for (size_t i = 0; i < messages.size(); ++i) {
+                            if (messages[i].mMeta.mPublishTs > latestTime) {
+                                latestTime = messages[i].mMeta.mPublishTs;
+                                latestIdx = i;
+                            }
+                        }
+                        QString msgIdStr = QString::fromStdString(messages[latestIdx].mMeta.mMsgId.toStdString());
+                        if (!mLastMsgIds.contains(calId) || mLastMsgIds[calId] != msgIdStr) {
+                            importCalendarFromIcs(calId, QString::fromStdString(messages[latestIdx].mIcsData));
+                            mLastMsgIds[calId] = msgIdStr;
+                            changed = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (changed) {
+            saveData();
+            emit calendarDataChanged();
+        }
+    }
+}
+
+void CalendarData::handleGxsEvent(std::shared_ptr<const RsEvent> event) {
+    const RsGxsCalendarEvent *e = dynamic_cast<const RsGxsCalendarEvent*>(event.get());
+    if (e) {
+        switch (e->mCalendarEventCode) {
+            case RsCalendarEventCode::NEW_CALENDAR:
+            case RsCalendarEventCode::UPDATED_CALENDAR:
+                syncWithGxs();
+            case RsCalendarEventCode::NEW_EVENT:
+            case RsCalendarEventCode::UPDATED_EVENT:
+            case RsCalendarEventCode::SUBSCRIBE_STATUS_CHANGED:
+                syncWithGxs();
+                break;
+            default:
+                break;
+        }
+    }
 }

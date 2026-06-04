@@ -27,6 +27,7 @@
 #include "ui_TasksWidget.h"
 
 class QListWidgetItem;
+class QComboBox;
 
 class TasksWidget : public QWidget {
     Q_OBJECT
@@ -45,18 +46,26 @@ private slots:
     void onCalendarSelectionChanged(QListWidgetItem* item);
     void onSearchChanged(const QString& text);
     void onCalendarContextMenu(const QPoint& pos);
+    void onCalendarViewModeChanged(int index);
 
 private:
     void buildUi();
     void updateTaskList();
+    void exportCalendar(const QString& calId, const QString& calName);
 
     int mCurrentFilterMode; // 0=All, 1=Active, 2=Completed, 3=Overdue
     QString mSearchText;
+    int mCalendarListMode; // 0=My Calendars, 1=Shared Calendars
+    bool mInitialLoadDone;
+
+protected:
+    void showEvent(QShowEvent* event) override;
 
     // UI elements (loaded from UI file, kept as pointers for compatibility)
     QCalendarWidget* mSidebarCalendar;
     QListWidget* mFilterList;
     QListWidget* mCalendarList;
+    QComboBox* mCalendarViewCombo;
 
     QLineEdit* mQuickTaskEdit;
     QLineEdit* mSearchEdit;

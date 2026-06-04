@@ -21,7 +21,10 @@
 #include "gui/msgs/CalendarWidget.h"
 #include "gui/msgs/EventDialog.h"
 #include "gui/msgs/CalendarPropertiesDialog.h"
+#include <retroshare/rsidentity.h>
+#include <retroshare/rsgxscalendar.h>
 #include <QPainter>
+#include <QComboBox>
 #include <QFileDialog>
 #include <QFile>
 #include <QFileInfo>
@@ -44,16 +47,27 @@
 #include <QColorDialog>
 #include <QMessageBox>
 #include <QDateTime>
+#include <QShowEvent>
 #include <QUuid>
 
 CalendarWidget::CalendarWidget(QWidget* parent)
-    : QWidget(parent), mSelectedDate(QDate::currentDate()), mCurrentViewMode(2) // Default to Month View
+    : QWidget(parent), mSelectedDate(QDate::currentDate()), mCurrentViewMode(2), mCalendarListMode(0), mCalendarViewCombo(nullptr), mInitialLoadDone(false)
 {
     buildUi();
     refreshData();
+
+    connect(CalendarData::instance(), SIGNAL(calendarDataChanged()), this, SLOT(refreshData()));
 }
 
 CalendarWidget::~CalendarWidget() {}
+
+void CalendarWidget::showEvent(QShowEvent* event) {
+    QWidget::showEvent(event);
+    if (!mInitialLoadDone) {
+        mInitialLoadDone = true;
+        CalendarData::instance()->syncWithGxs();
+    }
+}
 
 void CalendarWidget::buildUi() {
     ui.setupUi(this);
@@ -76,6 +90,19 @@ void CalendarWidget::buildUi() {
     int btnIndex = ui.topControlLayout->indexOf(ui.dayViewBtn);
     if (btnIndex == -1) btnIndex = 6;
     ui.topControlLayout->insertWidget(btnIndex, mCwLabel);
+
+    // Hide calendarsLabel
+    ui.calendarsLabel->hide();
+
+    // Create and insert calendarViewCombo dynamically
+    mCalendarViewCombo = new QComboBox(this);
+    mCalendarViewCombo->setObjectName("calendarViewCombo");
+    mCalendarViewCombo->addItems({tr("My Calendars"), tr("Shared Calendars")});
+    mCalendarViewCombo->setStyleSheet("font-weight: bold; font-size: 13px; margin-bottom: 4px;");
+
+    int labelIndex = ui.sidebarLayout->indexOf(ui.calendarsLabel);
+    if (labelIndex == -1) labelIndex = 2; // Default fallback position
+    ui.sidebarLayout->insertWidget(labelIndex, mCalendarViewCombo);
 
     // Sidebar Calendar configs
     mSidebarCalendar->setSelectedDate(mSelectedDate);
@@ -131,6 +158,7 @@ void CalendarWidget::buildUi() {
     connect(mCalendarList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(onCalendarSelectionChanged(QListWidgetItem*)));
     connect(mCalendarList, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCalendarContextMenu(const QPoint&)));
     connect(ui.newCalBtn, SIGNAL(clicked()), this, SLOT(onNewCalendar()));
+    connect(mCalendarViewCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(onCalendarViewModeChanged(int)));
 
     // Connect top control signals
     connect(ui.prevBtn, SIGNAL(clicked()), this, SLOT(onPrevPeriod()));
@@ -154,35 +182,63 @@ void CalendarWidget::buildUi() {
 }
 
 void CalendarWidget::refreshData() {
-    // Save current check states
-    QMap<QString, Qt::CheckState> checkedStates;
-    for (int i = 0; i < mCalendarList->count(); ++i) {
-        QListWidgetItem* item = mCalendarList->item(i);
-        checkedStates[item->data(Qt::UserRole).toString()] = item->checkState();
-    }
-
-    // Populate Calendar selection list
-    mCalendarList->blockSignals(true);
-    mCalendarList->clear();
-    const auto& cals = CalendarData::instance()->getCalendars();
-    for (const auto& cal : cals) {
-        QListWidgetItem* item = new QListWidgetItem(cal.name, mCalendarList);
-        item->setData(Qt::UserRole, cal.id);
-        item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-        
-        // Render colored bullet point icon
-        QPixmap pix(12, 12);
-        pix.fill(cal.color);
-        item->setIcon(QIcon(pix));
-
-        // Restore checked state
-        if (checkedStates.contains(cal.id)) {
-            item->setCheckState(checkedStates[cal.id]);
-        } else {
-            item->setCheckState(Qt::Checked);
+    if (mCalendarListMode == 0) {
+        // Save current check states
+        QMap<QString, Qt::CheckState> checkedStates;
+        for (int i = 0; i < mCalendarList->count(); ++i) {
+            QListWidgetItem* item = mCalendarList->item(i);
+            checkedStates[item->data(Qt::UserRole).toString()] = item->checkState();
         }
+
+        // Populate Calendar selection list
+        mCalendarList->blockSignals(true);
+        mCalendarList->clear();
+        const auto& cals = CalendarData::instance()->getCalendars();
+        for (const auto& cal : cals) {
+            QListWidgetItem* item = new QListWidgetItem(cal.name, mCalendarList);
+            item->setData(Qt::UserRole, cal.id);
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+            
+            // Render colored bullet point icon
+            QPixmap pix(12, 12);
+            pix.fill(cal.color);
+            item->setIcon(QIcon(pix));
+
+            // Restore checked state
+            if (checkedStates.contains(cal.id)) {
+                item->setCheckState(checkedStates[cal.id]);
+            } else {
+                item->setCheckState(Qt::Checked);
+            }
+        }
+        mCalendarList->blockSignals(false);
+    } else {
+        // Shared Calendars mode
+        mCalendarList->blockSignals(true);
+        mCalendarList->clear();
+        if (rsGxsCalendar) {
+            std::list<RsGroupMetaData> calendars;
+            if (rsGxsCalendar->getCalendarsSummaries(calendars)) {
+                for (const auto& meta : calendars) {
+                    QString calId = QString::fromStdString(meta.mGroupId.toStdString());
+                    QString calName = QString::fromUtf8(meta.mGroupName.c_str());
+                    bool isSubscribed = (meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
+
+                    QListWidgetItem* item = new QListWidgetItem(calName, mCalendarList);
+                    item->setData(Qt::UserRole, calId);
+                    item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+
+                    // Render blue bullet for subscribed, grey for unsubscribed
+                    QPixmap pix(12, 12);
+                    pix.fill(isSubscribed ? QColor("#4a90e2") : Qt::gray);
+                    item->setIcon(QIcon(pix));
+
+                    item->setCheckState(isSubscribed ? Qt::Checked : Qt::Unchecked);
+                }
+            }
+        }
+        mCalendarList->blockSignals(false);
     }
-    mCalendarList->blockSignals(false);
 
     updateViews();
 }
@@ -524,8 +580,16 @@ void CalendarWidget::onEventSelected(int row, int col) {
     }
 }
 
-void CalendarWidget::onCalendarSelectionChanged(QListWidgetItem* /*item*/) {
-    updateViews();
+void CalendarWidget::onCalendarSelectionChanged(QListWidgetItem* item) {
+    if (mCalendarListMode == 1) {
+        if (item) {
+            QString calId = item->data(Qt::UserRole).toString();
+            bool subscribe = (item->checkState() == Qt::Checked);
+            CalendarData::instance()->subscribeToCalendar(calId, subscribe, item->text());
+        }
+    } else {
+        updateViews();
+    }
 }
 
 void CalendarWidget::onSearchChanged(const QString& text) {
@@ -541,6 +605,16 @@ void CalendarWidget::onCalendarContextMenu(const QPoint& pos) {
     QString calName = item->text();
     bool isChecked = item->checkState() == Qt::Checked;
 
+    if (mCalendarListMode == 1) {
+        QMenu menu(this);
+        QAction* subAct = menu.addAction(isChecked ? tr("Unsubscribe") : tr("Subscribe"));
+        QAction* selectedAct = menu.exec(mCalendarList->mapToGlobal(pos));
+        if (selectedAct == subAct) {
+            item->setCheckState(isChecked ? Qt::Unchecked : Qt::Checked);
+        }
+        return;
+    }
+
     QMenu menu(this);
 
     QAction* toggleAct = menu.addAction(isChecked ? tr("Hide %1").arg(calName) : tr("Show %1").arg(calName));
@@ -551,7 +625,6 @@ void CalendarWidget::onCalendarContextMenu(const QPoint& pos) {
     QAction* deleteAct = menu.addAction(tr("Delete Calendar..."));
     menu.addSeparator();
     QAction* exportAct = menu.addAction(tr("Export Calendar..."));
-    QAction* publishAct = menu.addAction(tr("Publish Calendar..."));
     menu.addSeparator();
     QAction* propertiesAct = menu.addAction(tr("Properties"));
 
@@ -586,8 +659,6 @@ void CalendarWidget::onCalendarContextMenu(const QPoint& pos) {
         }
     } else if (selectedAct == exportAct) {
         exportCalendar(calId, calName);
-    } else if (selectedAct == publishAct) {
-        QMessageBox::information(this, tr("Publish Calendar"), tr("Calendar '%1' published successfully!").arg(calName));
     } else if (selectedAct == propertiesAct) {
         CalendarPropertiesDialog dlg(calId, this);
         if (dlg.exec() == QDialog::Accepted) {
@@ -940,4 +1011,12 @@ void MonthCalendarDelegate::paint(QPainter* painter, const QStyleOptionViewItem&
     }
 
     painter->restore();
+}
+
+void CalendarWidget::onCalendarViewModeChanged(int index) {
+    mCalendarListMode = index;
+    if (index == 0) {
+        CalendarData::instance()->syncWithGxs();
+    }
+    refreshData();
 }
