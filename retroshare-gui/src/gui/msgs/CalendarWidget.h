@@ -18,16 +18,29 @@
  *                                                                             *
  *******************************************************************************/
 
+
 #ifndef CALENDARWIDGET_H
 #define CALENDARWIDGET_H
 
 #include <QWidget>
 #include <QDate>
 #include <QMap>
+#include <QStyledItemDelegate>
 #include "gui/msgs/CalendarData.h"
 #include "ui_CalendarWidget.h"
 
 class QListWidgetItem;
+class QLabel;
+class CalendarWidget;
+
+class MonthCalendarDelegate : public QStyledItemDelegate {
+    Q_OBJECT
+public:
+    explicit MonthCalendarDelegate(CalendarWidget* parent);
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+private:
+    CalendarWidget* mCalendarWidget;
+};
 
 class CalendarWidget : public QWidget {
     Q_OBJECT
@@ -36,6 +49,7 @@ public:
     ~CalendarWidget();
 
     void refreshData();
+    QDate selectedDate() const { return mSelectedDate; }
 
 private slots:
     void onNewEvent();
@@ -49,6 +63,7 @@ private slots:
     void onCalendarSelectionChanged(QListWidgetItem* item);
     void onSearchChanged(const QString& text);
     void onCalendarContextMenu(const QPoint& pos);
+    void onMonthCellClicked(int row, int col);
 
 private:
     void buildUi();
@@ -67,6 +82,7 @@ private:
     QListWidget* mCalendarList;
     
     QLabel* mPeriodLabel;
+    QLabel* mCwLabel;
     QLineEdit* mSearchEdit;
     
     QTableWidget* mEventTable; // Upcoming events list at top

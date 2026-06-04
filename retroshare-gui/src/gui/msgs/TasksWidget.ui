@@ -35,12 +35,6 @@
       <number>1</number>
      </property>
      <widget class="QWidget" name="sidebar" native="true">
-      <property name="maximumSize">
-       <size>
-        <width>280</width>
-        <height>16777215</height>
-       </size>
-      </property>
       <layout class="QVBoxLayout" name="sidebarLayout">
        <property name="spacing">
         <number>12</number>
