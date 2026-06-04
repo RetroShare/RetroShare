@@ -215,7 +215,6 @@ void TasksWidget::onQuickTaskAdded() {
     
     // Choose the first enabled calendar
     QString calId = "personal";
-    const auto& cals = CalendarData::instance()->getCalendars();
     for (int i = 0; i < mCalendarList->count(); ++i) {
         QListWidgetItem* item = mCalendarList->item(i);
         if (item->checkState() == Qt::Checked) {

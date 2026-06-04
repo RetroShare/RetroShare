@@ -72,6 +72,8 @@ private:
     void updateWeekView();
     void updateMonthView();
     void updateEventList();
+    void exportCalendar(const QString& calId, const QString& calName);
+    void importCalendar();
 
     QDate mSelectedDate;
     int mCurrentViewMode; // 0=Day, 1=Week, 2=Month
