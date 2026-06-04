@@ -39,6 +39,7 @@ public:
     ~CalendarPropertiesDialog();
 
     CalendarInfo getCalendarInfo() const;
+    bool isImportMode() const;
 
 private slots:
     void onNext();
@@ -62,6 +63,7 @@ private:
     // Page 1 widgets
     QRadioButton* mRadioComputer;
     QRadioButton* mRadioNetwork;
+    QRadioButton* mRadioImport;
 
     // Page 2 widgets
     QLineEdit* mNameEdit;

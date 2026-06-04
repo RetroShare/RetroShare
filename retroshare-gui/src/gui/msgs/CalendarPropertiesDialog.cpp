@@ -114,6 +114,10 @@ void CalendarPropertiesDialog::setupUi() {
     mRadioNetwork->setStyleSheet("font-size: 13px; font-weight: bold; padding: 5px;");
     page1Layout->addWidget(mRadioNetwork);
 
+    mRadioImport = new QRadioButton(tr("Import a calendar from an iCalendar (.ics) file"), mPage1);
+    mRadioImport->setStyleSheet("font-size: 13px; font-weight: bold; padding: 5px;");
+    page1Layout->addWidget(mRadioImport);
+
     page1Layout->addStretch();
     mStackedWidget->addWidget(mPage1);
 
@@ -211,6 +215,10 @@ void CalendarPropertiesDialog::loadIdentities() {
 }
 
 void CalendarPropertiesDialog::onNext() {
+    if (mRadioImport && mRadioImport->isChecked()) {
+        accept();
+        return;
+    }
     mStackedWidget->setCurrentWidget(mPage2);
     mBackBtn->show();
     mCreateOrSaveBtn->show();
@@ -261,4 +269,8 @@ CalendarInfo CalendarPropertiesDialog::getCalendarInfo() const {
     info.email = mEmailCombo->currentText();
     info.owner = "local";
     return info;
+}
+
+bool CalendarPropertiesDialog::isImportMode() const {
+    return mRadioImport && mRadioImport->isChecked();
 }

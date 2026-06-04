@@ -22,6 +22,12 @@
 #include "gui/msgs/EventDialog.h"
 #include "gui/msgs/CalendarPropertiesDialog.h"
 #include <QPainter>
+#include <QFileDialog>
+#include <QFile>
+#include <QFileInfo>
+#include <QTextStream>
+#include <QDir>
+#include <QRegExp>
 #include <QVBoxLayout>
 #include <QMenu>
 #include <QHBoxLayout>
@@ -469,7 +475,11 @@ void CalendarWidget::onNewEvent() {
 void CalendarWidget::onNewCalendar() {
     CalendarPropertiesDialog dlg("", this);
     if (dlg.exec() == QDialog::Accepted) {
-        refreshData();
+        if (dlg.isImportMode()) {
+            importCalendar();
+        } else {
+            refreshData();
+        }
     }
 }
 
@@ -575,7 +585,7 @@ void CalendarWidget::onCalendarContextMenu(const QPoint& pos) {
             refreshData();
         }
     } else if (selectedAct == exportAct) {
-        QMessageBox::information(this, tr("Export Calendar"), tr("Calendar '%1' exported successfully!").arg(calName));
+        exportCalendar(calId, calName);
     } else if (selectedAct == publishAct) {
         QMessageBox::information(this, tr("Publish Calendar"), tr("Calendar '%1' published successfully!").arg(calName));
     } else if (selectedAct == propertiesAct) {
@@ -584,6 +594,240 @@ void CalendarWidget::onCalendarContextMenu(const QPoint& pos) {
             refreshData();
         }
     }
+}
+
+void CalendarWidget::exportCalendar(const QString& calId, const QString& calName) {
+    QString icsContent = "BEGIN:VCALENDAR\r\n"
+                         "VERSION:2.0\r\n"
+                         "PRODID:-//RetroShare//Calendar//EN\r\n";
+
+    const auto& events = CalendarData::instance()->getEvents();
+    for (const auto& ev : events) {
+        if (ev.calendarId != calId) continue;
+
+        icsContent += "BEGIN:VEVENT\r\n";
+        icsContent += QString("UID:%1\r\n").arg(ev.id);
+        icsContent += QString("SUMMARY:%1\r\n").arg(ev.title);
+        
+        if (!ev.description.isEmpty()) {
+            QString desc = ev.description;
+            desc.replace("\n", "\\n").replace("\r", "");
+            icsContent += QString("DESCRIPTION:%1\r\n").arg(desc);
+        }
+        
+        if (!ev.location.isEmpty()) {
+            icsContent += QString("LOCATION:%1\r\n").arg(ev.location);
+        }
+        
+        if (!ev.category.isEmpty()) {
+            icsContent += QString("CATEGORIES:%1\r\n").arg(ev.category);
+        }
+
+        if (ev.allDay) {
+            icsContent += QString("DTSTART;VALUE=DATE:%1\r\n").arg(ev.start.toString("yyyyMMdd"));
+            icsContent += QString("DTEND;VALUE=DATE:%1\r\n").arg(ev.end.toString("yyyyMMdd"));
+        } else {
+            icsContent += QString("DTSTART:%1\r\n").arg(ev.start.toUTC().toString("yyyyMMdd'T'HHmmss'Z'"));
+            icsContent += QString("DTEND:%1\r\n").arg(ev.end.toUTC().toString("yyyyMMdd'T'HHmmss'Z'"));
+        }
+
+        icsContent += "END:VEVENT\r\n";
+    }
+    icsContent += "END:VCALENDAR\r\n";
+
+    QString defaultFileName = QString("%1.ics").arg(calName);
+    defaultFileName.replace(QRegExp("[\\\\/:*?\"<>|]"), "_");
+
+    QString selectedFilter;
+    QString filePath = QFileDialog::getSaveFileName(
+        this,
+        tr("Export Calendar"),
+        defaultFileName,
+        tr("iCalendar files (*.ics);;All Files (*)"),
+        &selectedFilter
+    );
+
+    if (!filePath.isEmpty()) {
+        QFile file(filePath);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QMessageBox::critical(
+                this,
+                tr("Export Error"),
+                tr("Could not open file %1 for writing.").arg(filePath)
+            );
+        } else {
+            QTextStream out(&file);
+            out.setCodec("UTF-8");
+            out << icsContent;
+            file.close();
+
+            QMessageBox::information(
+                this,
+                tr("Export Calendar"),
+                tr("Calendar '%1' exported successfully to %2!").arg(calName).arg(QDir::toNativeSeparators(filePath))
+            );
+        }
+    }
+}
+
+void CalendarWidget::importCalendar() {
+    QString filePath = QFileDialog::getOpenFileName(
+        this,
+        tr("Import Calendar"),
+        "",
+        tr("iCalendar files (*.ics);;All Files (*)")
+    );
+
+    if (filePath.isEmpty()) return;
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::critical(
+            this,
+            tr("Import Error"),
+            tr("Could not open file %1 for reading.").arg(filePath)
+        );
+        return;
+    }
+
+    QTextStream in(&file);
+    in.setCodec("UTF-8");
+
+    QStringList rawLines;
+    while (!in.atEnd()) {
+        rawLines.append(in.readLine());
+    }
+    file.close();
+
+    // iCalendar line unfolding (RFC 5545)
+    QStringList lines;
+    for (int i = 0; i < rawLines.size(); ++i) {
+        QString line = rawLines[i];
+        while (i + 1 < rawLines.size() && (rawLines[i + 1].startsWith(" ") || rawLines[i + 1].startsWith("\t"))) {
+            line += rawLines[i + 1].mid(1);
+            i++;
+        }
+        lines.append(line);
+    }
+
+    QString calendarName = QFileInfo(filePath).baseName();
+    QList<CalendarEvent> importedEvents;
+
+    auto parseIcsDateTime = [](const QString& val) -> QDateTime {
+        QDateTime dt;
+        if (val.endsWith('Z')) {
+            dt = QDateTime::fromString(val, "yyyyMMdd'T'HHmmss'Z'");
+            dt.setTimeSpec(Qt::UTC);
+            dt = dt.toLocalTime();
+        } else {
+            dt = QDateTime::fromString(val, "yyyyMMdd'T'HHmmss");
+            dt.setTimeSpec(Qt::LocalTime);
+        }
+        return dt;
+    };
+
+    bool inEvent = false;
+    CalendarEvent currentEvent;
+
+    for (const QString& line : lines) {
+        QString trimmedLine = line.trimmed();
+        if (trimmedLine.isEmpty()) continue;
+
+        if (trimmedLine.startsWith("X-WR-CALNAME:", Qt::CaseInsensitive)) {
+            QString nameVal = trimmedLine.mid(13).trimmed();
+            if (!nameVal.isEmpty()) calendarName = nameVal;
+        } else if (trimmedLine.startsWith("BEGIN:VEVENT", Qt::CaseInsensitive)) {
+            inEvent = true;
+            currentEvent = CalendarEvent();
+            currentEvent.id = QUuid::createUuid().toString();
+            currentEvent.allDay = false;
+            currentEvent.isPublic = false;
+        } else if (trimmedLine.startsWith("END:VEVENT", Qt::CaseInsensitive)) {
+            if (inEvent) {
+                // Validate dates
+                if (!currentEvent.start.isValid()) {
+                    currentEvent.start = QDateTime::currentDateTime();
+                }
+                if (!currentEvent.end.isValid()) {
+                    currentEvent.end = currentEvent.start.addSecs(3600);
+                }
+                importedEvents.append(currentEvent);
+                inEvent = false;
+            }
+        } else if (inEvent) {
+            int colonIdx = trimmedLine.indexOf(':');
+            int semiIdx = trimmedLine.indexOf(';');
+            int splitIdx = -1;
+
+            if (colonIdx != -1 && semiIdx != -1) {
+                splitIdx = qMin(colonIdx, semiIdx);
+            } else if (colonIdx != -1) {
+                splitIdx = colonIdx;
+            } else if (semiIdx != -1) {
+                splitIdx = semiIdx;
+            }
+
+            if (splitIdx != -1) {
+                QString key = trimmedLine.left(splitIdx).trimmed();
+                QString val = trimmedLine.mid(colonIdx + 1).trimmed();
+
+                if (key.compare("UID", Qt::CaseInsensitive) == 0) {
+                    currentEvent.id = val;
+                } else if (key.compare("SUMMARY", Qt::CaseInsensitive) == 0) {
+                    currentEvent.title = val;
+                } else if (key.compare("LOCATION", Qt::CaseInsensitive) == 0) {
+                    currentEvent.location = val;
+                } else if (key.compare("CATEGORIES", Qt::CaseInsensitive) == 0) {
+                    currentEvent.category = val;
+                } else if (key.compare("DESCRIPTION", Qt::CaseInsensitive) == 0) {
+                    QString desc = val;
+                    desc.replace("\\n", "\n").replace("\\r", "").replace("\\,", ",");
+                    currentEvent.description = desc;
+                } else if (key.startsWith("DTSTART", Qt::CaseInsensitive)) {
+                    if (trimmedLine.contains("VALUE=DATE", Qt::CaseInsensitive)) {
+                        currentEvent.allDay = true;
+                        currentEvent.start = QDateTime(QDate::fromString(val, "yyyyMMdd"), QTime(0, 0));
+                    } else {
+                        currentEvent.start = parseIcsDateTime(val);
+                    }
+                } else if (key.startsWith("DTEND", Qt::CaseInsensitive)) {
+                    if (trimmedLine.contains("VALUE=DATE", Qt::CaseInsensitive)) {
+                        currentEvent.allDay = true;
+                        currentEvent.end = QDateTime(QDate::fromString(val, "yyyyMMdd"), QTime(0, 0));
+                    } else {
+                        currentEvent.end = parseIcsDateTime(val);
+                    }
+                }
+            }
+        }
+    }
+
+    // Create the calendar info
+    CalendarInfo cal;
+    cal.id = QUuid::createUuid().toString();
+    cal.name = calendarName;
+    cal.color = QColor("#4a90e2");
+    cal.isPublic = false;
+    cal.owner = "local";
+    cal.showReminders = true;
+    cal.email = "";
+    cal.onNetwork = false;
+
+    CalendarData::instance()->addCalendar(cal);
+
+    // Add all events to CalendarData
+    for (auto& ev : importedEvents) {
+        ev.calendarId = cal.id;
+        CalendarData::instance()->addEvent(ev);
+    }
+
+    QMessageBox::information(
+        this,
+        tr("Import Calendar"),
+        tr("Successfully imported calendar '%1' with %2 events!").arg(calendarName).arg(importedEvents.size())
+    );
+
+    refreshData();
 }
 
 void CalendarWidget::onMonthCellClicked(int row, int col) {
