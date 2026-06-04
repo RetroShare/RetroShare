@@ -31,6 +31,7 @@
 
 class QListWidgetItem;
 class QLabel;
+class QComboBox;
 class CalendarWidget;
 
 class MonthCalendarDelegate : public QStyledItemDelegate {
@@ -64,6 +65,7 @@ private slots:
     void onSearchChanged(const QString& text);
     void onCalendarContextMenu(const QPoint& pos);
     void onMonthCellClicked(int row, int col);
+    void onCalendarViewModeChanged(int index);
 
 private:
     void buildUi();
@@ -78,10 +80,16 @@ private:
     QDate mSelectedDate;
     int mCurrentViewMode; // 0=Day, 1=Week, 2=Month
     QString mSearchText;
+    int mCalendarListMode; // 0=My Calendars, 1=Shared Calendars
+    bool mInitialLoadDone;
+
+protected:
+    void showEvent(QShowEvent* event) override;
 
     // UI elements (now loaded from UI file but kept as pointers for compatibility)
     QCalendarWidget* mSidebarCalendar;
     QListWidget* mCalendarList;
+    QComboBox* mCalendarViewCombo;
     
     QLabel* mPeriodLabel;
     QLabel* mCwLabel;

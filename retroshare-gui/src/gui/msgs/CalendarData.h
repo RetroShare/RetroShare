@@ -27,6 +27,9 @@
 #include <QMap>
 #include <QColor>
 #include <QStringList>
+#include <QObject>
+#include <memory>
+#include <retroshare/rsevents.h>
 
 struct CalendarInfo {
     QString id;
@@ -73,7 +76,8 @@ struct CalendarTask {
     bool completed;
 };
 
-class CalendarData {
+class CalendarData : public QObject {
+    Q_OBJECT
 public:
     static CalendarData* instance();
 
@@ -99,15 +103,33 @@ public:
     // Helpers
     static QMap<QString, QString> getContacts(); // map PGP ID -> Name
 
+    QString exportCalendarToIcs(const QString& calId) const;
+    void importCalendarFromIcs(const QString& calId, const QString& icsData);
+    void migrateCalendarData(const QString& oldId, const QString& newId);
+    void publishCalendarUpdates(const QString& calId);
+    bool publishCalendar(const QString& oldId, const QString& email, QString& newIdOut);
+    bool subscribeToCalendar(const QString& id, bool subscribe, const QString& name = "");
+
+signals:
+    void calendarDataChanged();
+
+public slots:
+    void syncWithGxs();
+
+private slots:
+    void handleGxsEvent(std::shared_ptr<const RsEvent> event);
+
 private:
     CalendarData();
-    ~CalendarData();
+    ~CalendarData() override;
 
     QList<CalendarInfo> mCalendars;
     QList<CalendarEvent> mEvents;
     QList<CalendarTask> mTasks;
+    QMap<QString, QString> mLastMsgIds;
 
     static CalendarData* mInstance;
+    uint32_t mEventHandlerId;
 };
 
 #endif // CALENDARDATA_H

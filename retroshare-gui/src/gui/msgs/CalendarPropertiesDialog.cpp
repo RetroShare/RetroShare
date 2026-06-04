@@ -34,6 +34,7 @@
 #include <QUuid>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
+#include <retroshare/rsgxscalendar.h>
 
 CalendarPropertiesDialog::CalendarPropertiesDialog(const QString& calId, QWidget* parent)
     : QDialog(parent), mCalId(calId), mEditMode(!calId.isEmpty()), mSelectedColor(QColor("#4a90e2"))
@@ -249,10 +250,42 @@ void CalendarPropertiesDialog::onAccept() {
 
     CalendarInfo info = getCalendarInfo();
 
-    if (mEditMode) {
-        CalendarData::instance()->updateCalendar(info);
+    if (info.onNetwork && rsGxsCalendar) {
+        // Extract GXS ID from email
+        RsGxsId authorId;
+        int idx = info.email.lastIndexOf('@');
+        int endIdx = info.email.lastIndexOf('>');
+        if (idx != -1 && endIdx != -1 && endIdx > idx) {
+            std::string gxsIdStr = info.email.mid(idx + 1, endIdx - idx - 1).toStdString();
+            authorId = RsGxsId(gxsIdStr);
+        }
+
+        std::string errMsg;
+        if (mEditMode) {
+            RsGxsGroupId groupId(info.id.toStdString());
+            if (rsGxsCalendar->updateCalendar(groupId, info.name.toStdString(), "RetroShare Calendar", authorId, errMsg)) {
+                CalendarData::instance()->updateCalendar(info);
+            } else {
+                QMessageBox::critical(this, tr("GXS Error"), tr("Failed to update network calendar: %1").arg(QString::fromStdString(errMsg)));
+                return;
+            }
+        } else {
+            RsGxsGroupId groupId;
+            if (rsGxsCalendar->createCalendar(info.name.toStdString(), "RetroShare Calendar", authorId, groupId, errMsg)) {
+                info.id = QString::fromStdString(groupId.toStdString());
+                rsGxsCalendar->subscribeToCalendar(groupId, true, errMsg);
+                CalendarData::instance()->addCalendar(info);
+            } else {
+                QMessageBox::critical(this, tr("GXS Error"), tr("Failed to create network calendar: %1").arg(QString::fromStdString(errMsg)));
+                return;
+            }
+        }
     } else {
-        CalendarData::instance()->addCalendar(info);
+        if (mEditMode) {
+            CalendarData::instance()->updateCalendar(info);
+        } else {
+            CalendarData::instance()->addCalendar(info);
+        }
     }
 
     accept();
