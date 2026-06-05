@@ -473,10 +473,9 @@ void FriendRequestsPage::refresh()
 void FriendRequestsPage::onAccept(const QString& sslId)
 {
     if (!rsFriendRequest) return;
-    // [FIX audit-7] RsPeerId constructed from the same toStdString() hex
-    // representation stored in SslIdRole. The round-trip is stable.
-    RsPeerId id;
-    id.fromStdString(sslId.toStdString());
+    // RsPeerId constructed from the same toStdString() hex representation
+    // stored in SslIdRole. The round-trip is stable.
+    RsPeerId id(sslId.toStdString());
     rsFriendRequest->acceptRequest(id);
     refresh();
 }
@@ -484,8 +483,7 @@ void FriendRequestsPage::onAccept(const QString& sslId)
 void FriendRequestsPage::onReject(const QString& sslId)
 {
     if (!rsFriendRequest) return;
-    RsPeerId id;
-    id.fromStdString(sslId.toStdString());
+    RsPeerId id(sslId.toStdString());
     rsFriendRequest->rejectRequest(id);
     refresh();
 }
