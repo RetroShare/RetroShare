@@ -94,9 +94,16 @@ set_target_properties(FeedReader PROPERTIES
 )
 
 # --- Links ---
+# OpenSSL is a direct dependency: services/p3FeedReaderThread.cc includes
+# <openssl/evp.h> and uses the EVP API directly (not only through libretroshare).
 find_package(OpenSSL REQUIRED)
 
 if(WIN32)
+    # On Windows a shared module (plugin DLL) must resolve every symbol at link
+    # time (no undefined symbols allowed in a PE/DLL), so the plugin has to link
+    # explicitly against the libraries that provide them. On ELF platforms
+    # (Linux) the loader resolves these symbols from the hosting retroshare-gui
+    # process at load time, so this explicit link is only needed on Windows.
     target_link_libraries(FeedReader PRIVATE retroshare retroshare-gui)
     target_compile_definitions(FeedReader PRIVATE WINDOWS_SYS)
 endif()

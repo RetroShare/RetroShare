@@ -218,7 +218,7 @@ PluginManager::pluginWidget(QString pluginName)
                         .arg(pluginName);
         emit errorAppeared( em );
     }
-    return 0;
+    return 0; // pluginWidget() returns QWidget*: every path must return (else -Werror=return-type)
 }
 
 //=============================================================================

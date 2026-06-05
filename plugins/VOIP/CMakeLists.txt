@@ -88,18 +88,25 @@ set_target_properties(VOIP PROPERTIES
     AUTOUIC_SEARCH_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/gui"
 )
 
+# FFmpeg/libav headers (libavcodec/libavutil, included by gui/VideoProcessor.*)
+# use the C99 fixed-width constant macros (INT64_C, UINT64_C, ...). In a C++
+# translation unit these are only exposed by <stdint.h> when
+# __STDC_CONSTANT_MACROS is defined before it is included, so it must be defined
+# for the whole target to compile the libav headers.
 target_compile_definitions(VOIP PRIVATE __STDC_CONSTANT_MACROS)
 if(WIN32)
     target_compile_definitions(VOIP PRIVATE WINDOWS_SYS)
 endif()
 
 # --- Links ---
-find_package(OpenSSL REQUIRED)
-
 if(WIN32)
+    # See FeedReader/CMakeLists.txt: on Windows a plugin DLL must resolve every
+    # symbol at link time; on Linux they are resolved from the host process.
     target_link_libraries(VOIP PRIVATE retroshare retroshare-gui)
 endif()
 
+# NOTE: VOIP makes no direct use of OpenSSL (it relies on libretroshare for any
+# cryptography), so it does not find_package/link OpenSSL itself.
 target_link_libraries(VOIP PRIVATE
     Qt5::Core
     Qt5::Widgets
@@ -110,8 +117,6 @@ target_link_libraries(VOIP PRIVATE
     ${AVUTIL_LIBRARIES}
     ${SPEEX_LIBRARIES}
     ${SPEEXDSP_LIBRARIES}
-    OpenSSL::SSL
-    OpenSSL::Crypto
 )
 
 target_compile_options(VOIP PRIVATE "-Wno-deprecated-declarations")

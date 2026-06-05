@@ -23,8 +23,10 @@ option(
 	"Enable use RNP lib for PGP"
 	ON )
 
-find_package(ZLIB REQUIRED)
-find_package(BZip2 REQUIRED)
+# NOTE: ZLIB, BZip2 and OpenSSL are NOT direct dependencies of the friendserver.
+# They are only used through libretroshare and are propagated transitively by the
+# "retroshare" target's link interface, so they are intentionally not searched or
+# linked here.
 find_package(Git REQUIRED)
 
 if(RS_DEVELOPMENT_BUILD)
@@ -44,7 +46,12 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wno-deprecated-declarations)
 
 
-# Find libretroshare
+# Find libretroshare.
+# The "retroshare" target may already exist when the friendserver is configured
+# as part of the top-level RetroShare build (libretroshare added once via
+# add_subdirectory). Guarding with NOT TARGET avoids adding the same subdirectory
+# twice (which is a hard CMake error). When built standalone the target does not
+# exist yet, so we add the local checkout or fetch libretroshare here.
 if(NOT TARGET retroshare)
 	set(LIBRETROSHARE_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libretroshare/")
 	if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/CMakeLists.txt" )
@@ -69,12 +76,17 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 	"${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
-# Link libraries
-find_package(OpenSSL REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE retroshare OpenSSL::SSL OpenSSL::Crypto)
+# Link libraries.
+# OpenSSL is intentionally not linked here (no direct use); it is provided
+# transitively by libretroshare through the "retroshare" target.
+target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
 
 if(WIN32)
-	target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32 winmm iphlpapi mswsock)
+	# The friendserver uses the Winsock API directly (src/network.cc:
+	# socket/bind/listen/accept/setsockopt/...), so it links ws2_32 explicitly
+	# ("link what you use"). winmm and iphlpapi are already exported PUBLIC by
+	# libretroshare, and mswsock is not used here, so none of those are linked.
+	target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32)
 endif()
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})

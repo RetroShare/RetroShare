@@ -2604,6 +2604,9 @@ bool p3FeedReader::updatePostedGroup(const RsPostedGroup &postedGroup, const std
 	return true;
 }
 
+// NOTE: the parameter must NOT be named "interface": on Windows <objbase.h>
+// (pulled in transitively by <windows.h>) defines "interface" as a macro, which
+// breaks compilation of this plugin in the cross-platform build. Renamed to "helper".
 bool p3FeedReader::waitForToken(RsGxsIfaceHelper *helper, uint32_t token)
 {
 	if (!helper) {
