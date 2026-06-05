@@ -13,7 +13,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleExecutable</key>
-	<string>retroshare</string>
+	<string>retroshare-gui</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.retroshare</string>
 	<key>NSHighResolutionCapable</key>
