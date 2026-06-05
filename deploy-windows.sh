@@ -2,6 +2,16 @@
 # ==============================================================================
 # RetroShare Windows Portability & Deployment Packaging Script
 # Designed for MSYS2 MinGW64 Shell environment
+# ------------------------------------------------------------------------------
+# Why this is more than a one-liner: windeployqt IS the standard tool and does the
+# heavy lifting (bundling Qt DLLs/plugins). The extra steps around it handle MSYS2
+# /MinGW + RetroShare specifics that windeployqt does not reliably cover:
+#   - Manual fallback copy of the Qt 'platforms'/'styles'/'imageformats' plugins,
+#     which windeployqt sometimes misses under MSYS2.
+#   - Recursive ldd-based resolution of MinGW runtime DLLs (compiler runtime,
+#     3rd-party libs) into the portable folder.
+#   - RetroShare's portable layout (Data/extensions6 for plugins, qss/stylesheets/
+#     sounds/translations) and the 'portable' marker file.
 # ==============================================================================
 set -e
 
@@ -106,7 +116,7 @@ touch "$DEPLOY_DIR/portable"
 
 # 5. Copie des exécutables et DLL générées par la compilation
 echo ">>> Copying compiled binaries..."
-for exe in retroshare.exe retroshare-service.exe retroshare-friendserver.exe; do
+for exe in retroshare-gui.exe retroshare-service.exe retroshare-friendserver.exe; do
     found_exe=$(find "$BUILD_DIR" -path "$DEPLOY_DIR" -prune -o -name "$exe" -print | head -n 1)
     if [ -n "$found_exe" ]; then
         echo "  Found and copying: $found_exe"
@@ -180,16 +190,16 @@ if [ -d "$QT6_TRANS_DIR" ]; then
 fi
 
 # 8. Déploiement des dépendances Qt via windeployqt
-if [ -f "$DEPLOY_DIR/retroshare.exe" ]; then
+if [ -f "$DEPLOY_DIR/retroshare-gui.exe" ]; then
     if [ -n "$WINDEPLOYQT_CMD" ]; then
-        echo ">>> Running $WINDEPLOYQT_CMD on retroshare.exe..."
+        echo ">>> Running $WINDEPLOYQT_CMD on retroshare-gui.exe..."
         # Convert path to Windows-style for the native windeployqt tool if cygpath is available
         if command -v cygpath &> /dev/null; then
-            WIN_EXE_PATH=$(cygpath -w "$DEPLOY_DIR/retroshare.exe")
+            WIN_EXE_PATH=$(cygpath -w "$DEPLOY_DIR/retroshare-gui.exe")
             echo "  Using Windows path: $WIN_EXE_PATH"
             "$WINDEPLOYQT_CMD" --no-compiler-runtime "$WIN_EXE_PATH" || true
         else
-            "$WINDEPLOYQT_CMD" --no-compiler-runtime "$DEPLOY_DIR/retroshare.exe" || true
+            "$WINDEPLOYQT_CMD" --no-compiler-runtime "$DEPLOY_DIR/retroshare-gui.exe" || true
         fi
     else
         echo "  WARNING: windeployqt tool not found in PATH! Make sure Qt package is installed."
@@ -301,7 +311,7 @@ else
     if command -v strip &> /dev/null; then
         # Strip main executables and core DLLs
         for binary in \
-            "$DEPLOY_DIR"/retroshare.exe \
+            "$DEPLOY_DIR"/retroshare-gui.exe \
             "$DEPLOY_DIR"/retroshare-service.exe \
             "$DEPLOY_DIR"/retroshare-friendserver.exe \
             "$DEPLOY_DIR"/retroshare.dll \

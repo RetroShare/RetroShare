@@ -31,9 +31,14 @@ option(RS_FRIENDSERVER "Build RetroShare Friendserver" ON)
 option(RS_PLUGINS "Build RetroShare Plugins" OFF)
 option(RS_USE_I2P_SAM3 "Enable I2P SAMv3 support" ON)
 
+# The "sam3" target is defined once here, at the top level, because it is linked
+# by more than one subproject: libretroshare AND retroshare-gui (which uses libsam3
+# directly in gui/settings/ServerPage.cpp). Defining it once avoids a duplicate
+# target definition when the whole tree is configured together. If libretroshare is
+# reworked to export sam3 as a target, this top-level definition could be dropped.
 if(RS_USE_I2P_SAM3)
 	add_definitions(-DRS_USE_I2P_SAM3 -DRS_USE_I2P_SAM3_LIBSAM3)
-	
+
 	set(SAM3_DEVEL_DIR "${CMAKE_SOURCE_DIR}/supportlibs/libsam3")
 	if(EXISTS "${SAM3_DEVEL_DIR}")
 		message(STATUS "libsam3 found at ${SAM3_DEVEL_DIR}, defining target sam3 globally")
@@ -51,22 +56,10 @@ if(RS_USE_I2P_SAM3)
 	endif()
 endif()
 
-# Global configurations for Windows builds
-if(WIN32)
-	# Force Unicode mappings globally for all Windows targets (fixes MoveFileEx in libbitdht)
-	add_definitions(-DUNICODE -D_UNICODE)
-
-	# Remove multiple definitions hack for plugins linking to static libraries exported by retroshare-gui
-
-	# Downgrade strict GCC 15 errors to warnings for old submodules
-	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-		add_compile_options(
-			-Wno-error=incompatible-pointer-types
-			-Wno-error=int-conversion
-			-Wno-error=implicit-function-declaration
-		)
-	endif()
-endif()
+# NOTE: Windows-specific workarounds that used to live here as global
+# add_definitions()/add_compile_options() have been moved to the specific targets
+# that need them (see the per-target block after the add_subdirectory() calls
+# below), so they no longer leak into every target in the tree.
 
 # 1. First add the core library (libretroshare)
 add_subdirectory(libretroshare)
@@ -85,4 +78,32 @@ endif()
 
 if(RS_FRIENDSERVER)
 	add_subdirectory(retroshare-friendserver)
+endif()
+
+# ---------------------------------------------------------------------------
+# Per-target Windows fixups (applied to the specific targets that need them,
+# rather than globally, per review feedback). These run after the subdirectories
+# so the targets already exist.
+# ---------------------------------------------------------------------------
+if(WIN32)
+	# libbitdht needs the wide-char Windows API (e.g. MoveFileExW). libretroshare
+	# already sets UNICODE/_UNICODE PUBLIC for itself and its consumers, but
+	# libbitdht is a dependency (not a consumer) so it needs its own definition.
+	if(TARGET bitdht)
+		target_compile_definitions(bitdht PRIVATE UNICODE _UNICODE)
+	endif()
+
+	# Legacy C submodules trip strict GCC >= 15 diagnostics that are now errors by
+	# default; downgrade them to warnings only for those targets. Add other legacy
+	# targets here if a future toolchain flags them.
+	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+		foreach(legacy_target sam3 bitdht miniupnpc udp-discovery)
+			if(TARGET ${legacy_target})
+				target_compile_options(${legacy_target} PRIVATE
+					-Wno-error=incompatible-pointer-types
+					-Wno-error=int-conversion
+					-Wno-error=implicit-function-declaration )
+			endif()
+		endforeach()
+	endif()
 endif()

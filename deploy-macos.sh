@@ -2,6 +2,15 @@
 # ==============================================================================
 # RetroShare macOS Portability & Deployment Packaging Script
 # Designed for macOS environment with CMake
+# ------------------------------------------------------------------------------
+# Why this is more than a one-liner: macdeployqt IS the standard tool and does the
+# heavy lifting (bundling Qt frameworks, fixing rpaths). The extra steps around it
+# handle RetroShare specifics that macdeployqt does not cover:
+#   - RetroShare refuses to load plugins on macOS unless they end in ".dylib",
+#     so built plugins are copied/renamed accordingly.
+#   - macdeployqt skips .so plugins, so each plugin is passed via -executable=.
+#   - Qt imageformats (SVG) are force-copied (macdeployqt sometimes misses them).
+#   - Ad-hoc codesign is mandatory on Apple Silicon, otherwise the app won't run.
 # ==============================================================================
 set -e
 
@@ -15,10 +24,10 @@ if [ ! -d "$BUILD_DIR" ]; then
 fi
 
 # On cherche l'application compilée, mais on exclut les dossiers de déploiement précédents
-APP_BUNDLE=$(find "$BUILD_DIR" -maxdepth 3 -type d -name "retroshare.app" ! -path "*/RetroShare-*" | head -n 1)
+APP_BUNDLE=$(find "$BUILD_DIR" -maxdepth 3 -type d -name "retroshare-gui.app" ! -path "*/RetroShare-*" | head -n 1)
 
 if [ -z "$APP_BUNDLE" ]; then
-    echo "ERROR: retroshare.app not found in $BUILD_DIR. Please compile the GUI first."
+    echo "ERROR: retroshare-gui.app not found in $BUILD_DIR. Please compile the GUI first."
     exit 1
 fi
 
@@ -59,7 +68,7 @@ rm -rf "${BUILD_DIR}/RetroShare-"*"-macOS-"*
 mkdir -p "$DEPLOY_DIR"
 
 # 3. Copie de l'application dans notre dossier de déploiement
-echo ">>> Copying retroshare.app..."
+echo ">>> Copying retroshare-gui.app..."
 cp -R "$APP_BUNDLE" "$DEPLOY_DIR/"
 TARGET_APP="$DEPLOY_DIR/$(basename "$APP_BUNDLE")"
 

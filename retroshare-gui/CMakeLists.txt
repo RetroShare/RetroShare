@@ -35,6 +35,12 @@ option(
 
 option(RS_JSON_API "Use restbed to expose libretroshare as JSON API via HTTP" ON)
 
+# Mirrors the option of the same name in libretroshare/CMakeLists.txt.
+option(
+	RS_WARN_DEPRECATED
+	"Print warnings about deprecated RetroShare components usage during build"
+	OFF )
+
 option(
 	RS_USE_NATIVE_DIALOGS
 	"Use the operating system native file/font/directory dialogs. When OFF, Qt's \
@@ -174,7 +180,9 @@ elseif(APPLE)
 endif()
 
 add_executable(${PROJECT_NAME} ${GUI_TYPE} ${RS_GUI_SOURCES} ${RS_IMPLEMENTATION_HEADERS} ${RS_UI_HEADERS} ${RS_GUI_QTRESOURCES})
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_NAME "retroshare")
+# The GUI executable is named "retroshare-gui" on all platforms (it was
+# historically just "retroshare"; renamed for clarity vs retroshare-service).
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_NAME "retroshare-gui")
 set_target_properties(${PROJECT_NAME} PROPERTIES ENABLE_EXPORTS TRUE)
 
 if(APPLE)
@@ -315,6 +323,9 @@ endif(RS_GUI_CMARK)
 
 ################################# LibSam v3 ####################################
 
+# sam3 is used directly by the GUI (gui/settings/ServerPage.cpp includes
+# <libsam3.h> and calls sam3CloseConnection()), so it is linked here too, not
+# only inside libretroshare.
 if(RS_USE_I2P_SAM3)
 	target_link_libraries(${PROJECT_NAME} PRIVATE sam3)
 endif()
@@ -372,6 +383,10 @@ if(UNIX)
 	find_package(PkgConfig REQUIRED)
 
 	if(NOT APPLE)
+		# X11 + XScreenSaver are used directly by the GUI for idle detection
+		# (src/idle/idle_platform.cpp, guarded by HAVE_XSS). NOTE: the XScreenSaver
+		# extension only works under X11/XWayland, not native Wayland; modernising
+		# idle detection for Wayland is a separate effort.
 		pkg_check_modules(REQUIRED x11)
 		pkg_check_modules(X11 REQUIRED x11)
 		pkg_check_modules(XSCRNSAVER REQUIRED xscrnsaver)
@@ -388,6 +403,9 @@ if(UNIX)
 		target_compile_definitions(${PROJECT_NAME} PRIVATE HAVE_XSS)
 	endif()
 
+	# Large File Support for 32-bit builds (64-bit off_t). No-op on 64-bit
+	# platforms; kept because the GUI does perform some direct file I/O and this
+	# keeps it consistent with libretroshare.
 	target_compile_definitions(${PROJECT_NAME} PRIVATE _FILE_OFFSET_BITS=64)
 	target_link_options(${PROJECT_NAME} PRIVATE -rdynamic)
 endif(UNIX)
@@ -575,9 +593,16 @@ endif(RS_SANITIZE)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${RS_LINK_LIBRARIES})
 
 
-target_compile_options(${PROJECT_NAME} PRIVATE -Wno-deprecated-declarations)
-target_compile_definitions(${PROJECT_NAME} PUBLIC  RS_NO_WARN_DEPRECATED )
+# Controlled by an option, like in libretroshare/CMakeLists.txt: silence the
+# deprecation warnings unless the developer explicitly asks to see them.
+if(NOT RS_WARN_DEPRECATED)
+	target_compile_options(${PROJECT_NAME} PRIVATE -Wno-deprecated -Wno-deprecated-declarations)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC RS_NO_WARN_DEPRECATED)
+endif(NOT RS_WARN_DEPRECATED)
 target_compile_definitions(${PROJECT_NAME} PRIVATE RS_RELEASE_VERSION )
+# NOTE: TARGET is NOT the executable name: it is the single-instance IPC socket
+# name used in main.cpp / rshare.cpp (connectToServer(TARGET)). Kept as
+# "retroshare" so the single-instance lock/socket name stays unchanged.
 target_compile_definitions(${PROJECT_NAME} PRIVATE TARGET=\"retroshare\")
 target_compile_definitions(${PROJECT_NAME} PRIVATE RS_DIRECT_CHAT)
 
@@ -587,6 +612,11 @@ if(RS_GXSCIRCLES)
 	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_USE_CIRCLES )
 endif(RS_GXSCIRCLES)
 
+# NOTE: the GUI does NOT use botan, json-c, z or bz2 directly (it uses rapidjson
+# for JSON). They are transitive dependencies of librnp (PGP), pulled in here only
+# because the statically-linked librnp does not propagate them. Ideally librnp
+# (or libretroshare) should export these as link-interface deps so consumers don't
+# have to repeat them; that belongs to libretroshare and is left as a follow-up.
 find_library(BOTAN_LIBRARY NAMES botan botan-3 botan-2 libbotan-3 libbotan-2 REQUIRED)
 
 if(WIN32)
