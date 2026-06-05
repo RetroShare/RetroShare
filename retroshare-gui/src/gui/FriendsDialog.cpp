@@ -45,6 +45,7 @@
 #include "FriendsDialog.h"
 #include "NetworkView.h"
 #include "NetworkDialog.h"
+#include "gui/FriendRequests/FriendRequestsPage.h"
 #include "gui/common/NewFriendList.h"
 #ifdef RS_EMBEDED_FRIEND_SERVER
 #include "gui/FriendServerControl.h"
@@ -55,6 +56,7 @@
 //#define IMAGE_NEWSFEED_NEW       ":/images/message-state-new.png"
 #define IMAGE_NETWORK2          ":/icons/png/netgraph2.png"
 #define IMAGE_PEERS         	":/icons/png/digital-key.png"
+#define IMAGE_FRIENDREQUESTS    ":/images/friend_request.png"
 #define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
 
 /******
@@ -132,6 +134,16 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
 #endif
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Network graph"));
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
+    ui.tabWidget->addTab(friendRequestsPage = new FriendRequestsPage(),QIcon(IMAGE_FRIENDREQUESTS), tr("Friend Requests"));
+    ui.tabWidget->hideCloseButton(ui.tabWidget->indexOf(friendRequestsPage));
+    connect(friendRequestsPage, &FriendRequestsPage::pendingCountChanged, this,
+            [this](int count) {
+                int idx = ui.tabWidget->indexOf(friendRequestsPage);
+                if (idx < 0) return;
+                QString label = tr("Friend Requests");
+                if (count > 0) label += QString(" (%1)").arg(count);
+                ui.tabWidget->setTabText(idx, label);
+            });
 
     ui.tabWidget->hideCloseButton(0);
     ui.tabWidget->hideCloseButton(1);

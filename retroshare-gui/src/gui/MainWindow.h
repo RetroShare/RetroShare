@@ -31,7 +31,6 @@
 #include "gui/common/rwindow.h"
 #include "gui/common/RSComboBox.h"
 #include "util/FontSizeHandler.h"
-#include "FriendRequests/FriendRequestsPage.h"
 
 namespace Ui {
 class MainWindow;
@@ -180,8 +179,6 @@ public:
 	 GxsChannelDialog  *gxschannelDialog ;
 	 GxsForumsDialog   *gxsforumDialog ;
 	 PostedDialog      *postedDialog;
-	 FriendRequestsPage *mFriendRequestsPage = nullptr;
-	 QAction            *mFriendRequestsAction = nullptr;
 #ifdef RS_USE_WIKI
 	 WikiDialog        *wikiDialog;
 #endif
@@ -283,7 +280,6 @@ private slots:
     void updateMenu();
     void updateStatus();
     void updateFriends();
-    void updateFriendRequestBadge(int count);
 
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();

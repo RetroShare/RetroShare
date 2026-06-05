@@ -90,11 +90,12 @@ private:
  * Drop-in QWidget panel showing all pending friend requests.
  * Place it inside the main window's tab bar or as a docked panel.
  *
- * Usage:
- *   auto* page = new FriendRequestsPage(parentWidget);
- *   // connect badge signal to the tab label:
- *   connect(page, &FriendRequestsPage::pendingCountChanged,
- *           this,  &MainWindow::updateFriendRequestBadge);
+ * Usage (added as a sub-tab of the Network tab, see FriendsDialog):
+ *   ui.tabWidget->addTab(friendRequestsPage = new FriendRequestsPage(),
+ *                        QIcon(IMAGE_FRIENDREQUESTS), tr("Friend Requests"));
+ *   // reflect the pending count in the tab label:
+ *   connect(friendRequestsPage, &FriendRequestsPage::pendingCountChanged,
+ *           this, [this](int count){ ... ui.tabWidget->setTabText(idx, ...); });
  */
 class FriendRequestsPage : public QWidget
 {

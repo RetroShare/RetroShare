@@ -31,6 +31,7 @@ class NetworkView;
 class IdDialog;
 class CirclesDialog;
 class FriendServerControl;
+class FriendRequestsPage;
 
 class FriendsDialog : public MainPage
 {
@@ -66,6 +67,7 @@ public:
 	 NetworkDialog *networkDialog ;
 	 NetworkView *networkView ;
      FriendServerControl *friendServerControl ;
+     FriendRequestsPage *friendRequestsPage ;
 
 	 IdDialog *idDialog;
 	 
