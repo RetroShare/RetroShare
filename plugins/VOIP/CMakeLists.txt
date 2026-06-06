@@ -59,6 +59,19 @@ if(APPLE AND QT_VERSION_MAJOR EQUAL 6)
     list(APPEND VOIP_SOURCES gui/MacCameraPermission.mm gui/MacCameraCapture.mm)
 endif()
 
+# RsTurtleVOIPBridge (anonymous / distant VOIP over turtle tunnels) calls OpenSSL
+# Diffie-Hellman (DH_*, BN_*) directly to build the session key, so when it is
+# compiled in the plugin must link libcrypto itself (on Windows every symbol of
+# the plugin DLL has to be resolved at link time, otherwise: "undefined reference
+# to DH_free/DH_new/..."). It is added conditionally so the build still works on
+# a tree without the bridge.
+set(VOIP_USES_OPENSSL FALSE)
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/services/RsTurtleVOIPBridge.cpp")
+    list(APPEND VOIP_SOURCES services/RsTurtleVOIPBridge.cpp)
+    find_package(OpenSSL REQUIRED)
+    set(VOIP_USES_OPENSSL TRUE)
+endif()
+
 set(VOIP_FORMS
     gui/AudioStats.ui
     gui/AudioWizard.ui
@@ -129,8 +142,11 @@ if(WIN32)
     target_link_libraries(VOIP PRIVATE retroshare retroshare-gui)
 endif()
 
-# NOTE: VOIP makes no direct use of OpenSSL (it relies on libretroshare for any
-# cryptography), so it does not find_package/link OpenSSL itself.
+# NOTE: the base VOIP plugin makes no direct use of OpenSSL (it relies on
+# libretroshare for any cryptography). The optional RsTurtleVOIPBridge is the
+# exception: it calls OpenSSL DH directly, so we link OpenSSL::Crypto only when
+# that source is compiled in (see VOIP_USES_OPENSSL above). The base plugin
+# therefore stays OpenSSL-free.
 target_link_libraries(VOIP PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Widgets
@@ -151,6 +167,10 @@ if(APPLE AND QT_VERSION_MAJOR EQUAL 6)
     target_link_libraries(VOIP PRIVATE
         "-framework AVFoundation" "-framework Foundation"
         "-framework CoreVideo" "-framework CoreMedia")
+endif()
+
+if(VOIP_USES_OPENSSL)
+    target_link_libraries(VOIP PRIVATE OpenSSL::Crypto)
 endif()
 
 target_compile_options(VOIP PRIVATE "-Wno-deprecated-declarations")
