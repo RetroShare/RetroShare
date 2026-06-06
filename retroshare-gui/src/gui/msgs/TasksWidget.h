@@ -44,9 +44,10 @@ private slots:
     void onTaskClicked(int row, int col);
     void onFilterSelected(QListWidgetItem* item);
     void onCalendarSelectionChanged(QListWidgetItem* item);
+    void onSharedCalendarSelectionChanged(QListWidgetItem* item);
     void onSearchChanged(const QString& text);
     void onCalendarContextMenu(const QPoint& pos);
-    void onCalendarViewModeChanged(int index);
+    void onSharedCalendarContextMenu(const QPoint& pos);
 
 private:
     void buildUi();
@@ -65,7 +66,7 @@ protected:
     QCalendarWidget* mSidebarCalendar;
     QListWidget* mFilterList;
     QListWidget* mCalendarList;
-    QComboBox* mCalendarViewCombo;
+    QListWidget* mSharedCalendarList;
 
     QLineEdit* mQuickTaskEdit;
     QLineEdit* mSearchEdit;

@@ -716,7 +716,7 @@ bool CalendarData::subscribeToCalendar(const QString& id, bool subscribe, const 
         }
         emit calendarDataChanged();
         // Trigger sync to fetch contents
-        syncWithGxs();
+        updateCalendars();
     } else {
         // Remove from local list
         for (int i = 0; i < mCalendars.size(); ++i) {
@@ -737,7 +737,7 @@ bool CalendarData::subscribeToCalendar(const QString& id, bool subscribe, const 
     return true;
 }
 
-void CalendarData::syncWithGxs() {
+void CalendarData::updateCalendars() {
     if (!rsGxsCalendar) return;
 
     std::list<RsGroupMetaData> calendars;
@@ -805,11 +805,11 @@ void CalendarData::handleGxsEvent(std::shared_ptr<const RsEvent> event) {
         switch (e->mCalendarEventCode) {
             case RsCalendarEventCode::NEW_CALENDAR:
             case RsCalendarEventCode::UPDATED_CALENDAR:
-                syncWithGxs();
+                updateCalendars();
             case RsCalendarEventCode::NEW_EVENT:
             case RsCalendarEventCode::UPDATED_EVENT:
             case RsCalendarEventCode::SUBSCRIBE_STATUS_CHANGED:
-                syncWithGxs();
+                updateCalendars();
                 break;
             default:
                 break;

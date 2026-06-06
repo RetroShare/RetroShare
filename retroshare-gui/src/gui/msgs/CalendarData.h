@@ -114,7 +114,7 @@ signals:
     void calendarDataChanged();
 
 public slots:
-    void syncWithGxs();
+    void updateCalendars();
 
 private slots:
     void handleGxsEvent(std::shared_ptr<const RsEvent> event);

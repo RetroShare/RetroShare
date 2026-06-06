@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>833</width>
     <height>600</height>
    </rect>
   </property>
@@ -80,12 +80,29 @@
           <string notr="true">font-weight: bold; font-size: 14px;</string>
          </property>
          <property name="text">
-          <string>Calendars</string>
+          <string>My Calendars</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QListWidget" name="calendarList">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="sharedCalendarsLabel">
+         <property name="styleSheet">
+          <string notr="true">font-weight: bold; font-size: 14px; margin-top: 10px;</string>
+         </property>
+         <property name="text">
+          <string>Shared Calendars</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="sharedCalendarList">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -199,17 +216,17 @@
        <item>
         <widget class="QSplitter" name="splitter_2">
          <property name="orientation">
-          <enum>Qt::Orientation::Vertical</enum>
+          <enum>Qt::Vertical</enum>
          </property>
          <widget class="QTableWidget" name="eventTable">
           <property name="editTriggers">
-           <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+           <set>QAbstractItemView::NoEditTriggers</set>
           </property>
           <property name="selectionMode">
-           <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+           <enum>QAbstractItemView::NoSelection</enum>
           </property>
           <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+           <enum>QAbstractItemView::SelectItems</enum>
           </property>
          </widget>
          <widget class="QStackedWidget" name="viewStack">
@@ -233,7 +250,7 @@
             <item>
              <widget class="QTableWidget" name="dayTable">
               <property name="editTriggers">
-               <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+               <set>QAbstractItemView::NoEditTriggers</set>
               </property>
              </widget>
             </item>
@@ -259,7 +276,7 @@
             <item>
              <widget class="QTableWidget" name="weekTable">
               <property name="editTriggers">
-               <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+               <set>QAbstractItemView::NoEditTriggers</set>
               </property>
              </widget>
             </item>
@@ -285,7 +302,7 @@
             <item>
              <widget class="QTableWidget" name="monthTable">
               <property name="editTriggers">
-               <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+               <set>QAbstractItemView::NoEditTriggers</set>
               </property>
              </widget>
             </item>
