@@ -57,7 +57,20 @@ else
     GIT_SUFFIX="-${DATE_STR}"
 fi
 
-QT_VERSION="UnknownQt"
+# Detect the Qt version for the archive name (qmake reports it). Homebrew's qt@5
+# is keg-only so its qmake is usually not in PATH; fall back to it, then to a
+# generic label if nothing is found.
+QT_VERSION=""
+if command -v qmake &> /dev/null; then
+    QT_VERSION=$(qmake -query QT_VERSION 2>/dev/null)
+fi
+if [[ ! "$QT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    QT5_QMAKE="$(brew --prefix qt@5 2>/dev/null)/bin/qmake"
+    [ -x "$QT5_QMAKE" ] && QT_VERSION=$("$QT5_QMAKE" -query QT_VERSION 2>/dev/null)
+fi
+if [[ ! "$QT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    QT_VERSION="UnknownQt"
+fi
 
 MACVERSION=$(sw_vers -productVersion 2>/dev/null || echo "UnknownOS")
 ARCH=$(uname -m)
