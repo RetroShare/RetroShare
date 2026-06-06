@@ -40,11 +40,13 @@ CalendarData::CalendarData() : QObject(), mEventHandlerId(0) {
     loadData();
 
     if (rsEvents && rsGxsCalendar) {
+        RsEventType calendarEventType = (RsEventType)rsEvents->getDynamicEventType("GXS_CALENDAR");
+
         rsEvents->registerEventsHandler(
             [this](std::shared_ptr<const RsEvent> event) {
                 RsQThreadUtils::postToObject([=]() { handleGxsEvent(event); }, this);
             },
-            mEventHandlerId, RsEventType::GXS_CALENDAR
+            mEventHandlerId, calendarEventType
         );
     }
 }
