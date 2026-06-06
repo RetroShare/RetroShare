@@ -2553,7 +2553,7 @@ void IdDialog::copyRetroshareCircleLink()
     if(!getItemCircleId(item,circle_id))
         return ;
 
-    RsGxsGroupId item_id(item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString());
+    RsGxsCircleId item_id(item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString());
     if(item_id != RsGxsCircleId(circle_id)) return; // not holding a circle item
 
     RsGxsCircleDetails details;
@@ -2569,7 +2569,7 @@ void IdDialog::copyRetroshareCircleLink()
     }
 }
 
-void IdDialog::navigateToCircle(const RsGxsGroupId& circleId)
+void IdDialog::navigateToCircle(const RsGxsCircleId& circleId)
 {
     ui->rightTabWidget->setCurrentWidget(ui->circleTab);
 

@@ -1888,7 +1888,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					return false;
 				}
 
-				idDialog->navigateToCircle(RsGxsGroupId(link.hash().toStdString()));
+				idDialog->navigateToCircle(RsGxsCircleId(link.hash().toStdString()));
 				circleFound.append(link.name());
 			}
 			break;
