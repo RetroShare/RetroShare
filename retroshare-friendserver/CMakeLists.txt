@@ -77,9 +77,13 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 # Link libraries.
-# OpenSSL is intentionally not linked here (no direct use); it is provided
-# transitively by libretroshare through the "retroshare" target.
-target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
+# OpenSSL must be linked here: friendserver.cc includes libretroshare public
+# headers whose inline functions call the OpenSSL EVP API (e.g. EVP_DigestUpdate),
+# so those symbols end up referenced in this target's objects. libretroshare links
+# OpenSSL PRIVATE (and is built shared on Windows), so it does NOT propagate those
+# symbols to consumers, hence the friendserver has to link OpenSSL itself.
+find_package(OpenSSL REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE retroshare OpenSSL::SSL OpenSSL::Crypto)
 
 if(WIN32)
 	# The friendserver uses the Winsock API directly (src/network.cc:
