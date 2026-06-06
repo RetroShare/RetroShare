@@ -196,7 +196,13 @@ if(WIN32)
 		ARCHIVE_OUTPUT_NAME "retroshare-gui"
 	)
 	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-		target_link_options(${PROJECT_NAME} PRIVATE "-Wl,--export-all-symbols" "-Wl,--exclude-libs,libretroshare.a:libbitdht.a:librnp.a:libsexpp.a")
+		# Exclude static libs from the re-exported symbol set. This matters for the
+		# Ninja generator on Windows: there the GUI otherwise re-exports the symbols
+		# of these static libs, and plugins that also link the same lib (e.g.
+		# libsam3.a in FeedReader) then fail with "multiple definition" at link time.
+		# The MSYS Makefiles generator does not hit this, but excluding them keeps
+		# Ninja builds working too.
+		target_link_options(${PROJECT_NAME} PRIVATE "-Wl,--export-all-symbols" "-Wl,--exclude-libs,libretroshare.a:libbitdht.a:librnp.a:libsexpp.a:libsam3.a")
 	endif()
 endif()
 install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
