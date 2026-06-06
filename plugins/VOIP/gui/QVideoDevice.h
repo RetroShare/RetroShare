@@ -33,16 +33,57 @@
 #  include <QElapsedTimer>
 #else
 #  include <QCameraInfo>
+#  include <QAbstractVideoSurface>
 #endif
 
 #include "gui/VideoProcessor.h"
 
 class VideoEncoder ;
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-class QCameraImageCapture;
-#endif
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && defined(Q_OS_MACOS)
 class MacCameraCapture ;
+#endif
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+// Qt5 only: Qt6 removed QAbstractVideoSurface; there the camera feeds a
+// QVideoSink through a QMediaCaptureSession instead (see QVideoDevice.cpp).
+// Minimal video surface used as the camera viewfinder to grab live frames.
+// We use a viewfinder surface rather than QVideoProbe because, on the macOS
+// AVFoundation backend, QVideoProbe::setSource() reports success but never
+// delivers a single frame (camera LED turns on, but no image). A viewfinder
+// surface reliably receives every frame on all platforms.
+class RsCameraVideoSurface: public QAbstractVideoSurface
+{
+    Q_OBJECT
+
+    public:
+        explicit RsCameraVideoSurface(QObject *parent = nullptr) : QAbstractVideoSurface(parent) {}
+
+        QList<QVideoFrame::PixelFormat> supportedPixelFormats(
+                QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const override
+        {
+            Q_UNUSED(handleType);
+            // Advertise the formats the camera backends commonly produce; grabFrame()
+            // converts whatever we get (frame.image() + manual fallbacks).
+            return QList<QVideoFrame::PixelFormat>()
+                << QVideoFrame::Format_RGB32   << QVideoFrame::Format_ARGB32
+                << QVideoFrame::Format_BGRA32  << QVideoFrame::Format_RGB24
+                << QVideoFrame::Format_NV12    << QVideoFrame::Format_NV21
+                << QVideoFrame::Format_YUYV    << QVideoFrame::Format_UYVY
+                << QVideoFrame::Format_YUV420P << QVideoFrame::Format_Jpeg;
+        }
+
+        bool present(const QVideoFrame &frame) override
+        {
+            // present() may run on the capture thread (AVFoundation queue); emit a
+            // signal so the frame is marshalled to the GUI thread (queued connection).
+            if(frame.isValid())
+                emit frameAvailable(QVideoFrame(frame));
+            return true;
+        }
+
+    signals:
+        void frameAvailable(const QVideoFrame& frame);
+};
 #endif
 
 // Responsible from displaying the video. The source of the video is
@@ -60,12 +101,11 @@ class QVideoOutputDevice: public QLabel
 // Responsible for grabbing the video from the webcam and sending it to the 
 // VideoEncoder object.
 //
-// Qt5 grabs still images from the camera on a timer (QCameraImageCapture).
-// Qt6 removed that capture-to-buffer API, so there the camera feeds a
-// QVideoSink through a QMediaCaptureSession and we sample its frames at the
-// same period as the Qt5 timer. On macOS with Qt6 that pipeline delivers no
-// frames at all, so the camera is driven straight from AVFoundation instead
-// (see MacCameraCapture).
+// Qt5 grabs live frames through a viewfinder surface. Qt6 removed that API, so
+// there the camera feeds a QVideoSink through a QMediaCaptureSession. On macOS
+// with Qt6 that pipeline delivers no frames at all, so the camera is driven
+// straight from AVFoundation instead (see MacCameraCapture). Qt6 frames are
+// sampled at a fixed grab period.
 //
 class QVideoInputDevice: public QObject
 {
@@ -114,11 +154,8 @@ class QVideoInputDevice: public QObject
         QString currentCameraDescriptionString() const { return _capture_device_info.deviceName(); }
 #endif
 protected slots:
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        void handleSinkFrame(const QVideoFrame& f) ;
-#else
         void grabFrame(int id, QVideoFrame f) ;
-#endif
+        void handleSurfaceFrame(const QVideoFrame& f) ;
         void errorHandling(CameraStatus status,QCamera::Error error);
 
 	signals:
@@ -126,8 +163,8 @@ protected slots:
         void cameraCaptureInfo(CameraStatus status,QCamera::Error qt_cam_err_code);
 
 	private:
-        // Common tail of the capture path: encode the image and echo it locally.
-        void processImage(const QImage& image) ;
+        // Common tail of every capture path: encode the image and echo it locally.
+        void deliverImage(const QImage& image) ;
 
 		VideoProcessor *_video_processor ;
         QCamera *_capture_device;
@@ -153,8 +190,7 @@ protected slots:
         MacCameraCapture *_mac_capture ;
 #  endif
 #else
-		QTimer *_timer ;
-        QCameraImageCapture *_image_capture;
+        RsCameraVideoSurface *_video_surface;
         QCameraInfo _capture_device_info;
 #endif
 
