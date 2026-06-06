@@ -14,7 +14,12 @@
 # ==============================================================================
 set -e
 
-BUILD_DIR="Build-cmake"
+# Always operate from the repository root, regardless of where this script lives
+# (it resides under build_scripts/OSX/). All paths below are relative to the root.
+cd "$(dirname "$0")/../.." || exit 1
+
+# Build directory (override with: BUILD_DIR=mydir ./build_scripts/OSX/deploy-macos.sh)
+BUILD_DIR="${BUILD_DIR:-Build-cmake}"
 APP_NAME="RetroShare"
 
 # 1. Vérifications initiales du dossier de build

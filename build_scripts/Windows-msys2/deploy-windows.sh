@@ -15,12 +15,13 @@
 # ==============================================================================
 set -e
 
-# Toujours travailler depuis la racine du dépôt (emplacement du script),
-# sinon les chemins relatifs (retroshare-gui/src, libbitdht, ...) sont muets
-# et produisent un paquet incomplet sans la moindre erreur.
-cd "$(dirname "$0")" || exit 1
+# Toujours travailler depuis la racine du dépôt (ce script vit sous
+# build_scripts/Windows-msys2/), sinon les chemins relatifs (retroshare-gui/src,
+# libbitdht, ...) sont muets et produisent un paquet incomplet sans erreur.
+cd "$(dirname "$0")/../.." || exit 1
 
-BUILD_DIR="Build-cmake"
+# Build directory (override with: BUILD_DIR=mydir ./build_scripts/Windows-msys2/deploy-windows.sh)
+BUILD_DIR="${BUILD_DIR:-Build-cmake}"
 
 # Préfixe de l'environnement MSYS2 utilisé pour la compilation
 # (mingw64 / ucrt64 / clang64). Indispensable pour retrouver le runtime
