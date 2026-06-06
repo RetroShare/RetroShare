@@ -2553,8 +2553,8 @@ void IdDialog::copyRetroshareCircleLink()
     if(!getItemCircleId(item,circle_id))
         return ;
 
-    RsGxsId item_id(item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString());
-    if(item_id != RsGxsId(circle_id)) return; // not holding a circle item
+    RsGxsGroupId item_id(item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString());
+    if(item_id != RsGxsCircleId(circle_id)) return; // not holding a circle item
 
     RsGxsCircleDetails details;
     if(rsGxsCircles->getCircleDetails(circle_id, details)) {
