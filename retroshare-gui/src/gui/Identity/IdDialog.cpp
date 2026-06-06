@@ -60,7 +60,9 @@
 #include "retroshare/rsgxschannels.h"
 #include "retroshare/rsgxsforums.h"
 #include "retroshare/rsposted.h"
+#ifdef RS_USE_WIRE
 #include <retroshare/rswire.h>
+#endif
 
 #include <iostream>
 #include <algorithm>
@@ -1889,7 +1891,9 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
 	case RsServiceType::GXS_TRANS: return tr("GxsMail author ");
 
 	case RsServiceType::GXSCIRCLE: service_name = tr("GxsCircles");  service_type = RetroShareLink::TYPE_CIRCLES; break ;
+#ifdef RS_USE_WIRE
 	case RsServiceType::WIRE: service_name = tr("Wire");  service_type = RetroShareLink::TYPE_WIRE; break ;
+#endif
 
     default:
         service_name = tr("Unknown (service=")+QString::number((int)u.mServiceId,16)+")"; service_type = RetroShareLink::TYPE_UNKNOWN ;
@@ -2013,7 +2017,7 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
                 return tr("Membership verification in circle (ID=%1).").arg(l.toHtml());
             }
         }
-
+        break;
     }
 
 #warning TODO! csoler 2017-01-03: Add the different strings and translations here.
@@ -2056,6 +2060,7 @@ QString IdDialog::getGroupName(uint32_t service_type, const RsGxsGroupId& groupI
             if (!name.isEmpty()) return name;
         }
     }
+#ifdef RS_USE_WIRE
     else if (service_type == RetroShareLink::TYPE_WIRE && rsWire) {
         RsWireGroupSPtr group; // Shared pointer for the result
         if (rsWire->getWireGroup(groupId, group) && group) {
@@ -2063,6 +2068,7 @@ QString IdDialog::getGroupName(uint32_t service_type, const RsGxsGroupId& groupI
             if (!name.isEmpty()) return name;
         }
     }
+#endif
 
     // Returns the raw ID string as the label
     return QString::fromStdString(groupId.toStdString());
@@ -2563,18 +2569,20 @@ void IdDialog::copyRetroshareCircleLink()
     }
 }
 
-void IdDialog::navigateToCircle(const RsGxsId& circleId)
+void IdDialog::navigateToCircle(const RsGxsGroupId& circleId)
 {
     ui->rightTabWidget->setCurrentWidget(ui->circleTab);
 
-    QString searchId = QString::fromStdString(circleId.toStdString());
-    
     QTreeWidgetItemIterator it(ui->treeWidget_membership);
     while (*it) {
-        if ((*it)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID, Qt::UserRole).toString() == searchId) {
-            ui->treeWidget_membership->setCurrentItem(*it);
-            ui->treeWidget_membership->scrollToItem(*it);
-            break;
+        RsGxsCircleId item_circle_id;
+        if (getItemCircleId(*it, item_circle_id)) {
+            RsGxsCircleId item_id((*it)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID, Qt::UserRole).toString().toStdString());
+            if (item_id == item_circle_id && item_id == RsGxsCircleId(circleId)) {
+                ui->treeWidget_membership->setCurrentItem(*it);
+                ui->treeWidget_membership->scrollToItem(*it);
+                break;
+            }
         }
         ++it;
     }

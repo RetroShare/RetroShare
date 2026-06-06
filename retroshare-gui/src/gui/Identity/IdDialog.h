@@ -55,7 +55,7 @@ public:
 	virtual QString helpText() const override { return ""; } //MainPage
 
 	void navigate(const RsGxsId& gxs_id) ; // shows the info about this particular ID
-	void navigateToCircle(const RsGxsId& circleId) ; // navigates to this circle
+	void navigateToCircle(const RsGxsGroupId& circleId) ; // navigates to this circle
 protected:
 	virtual void updateDisplay(bool complete);
 
