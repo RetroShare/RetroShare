@@ -18,13 +18,11 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <QTimer>
 #include <QPainter>
 #include <QImageReader>
 #include <QBuffer>
 #include <QCamera>
 #include <QCameraInfo>
-#include <QCameraImageCapture>
 #include <util/rsdebug.h>
 #include "QVideoDevice.h"
 #include "VideoProcessor.h"
@@ -34,52 +32,37 @@
 QVideoInputDevice::QVideoInputDevice(QWidget *parent)
   :QObject(parent)
 {
-	_timer = NULL ;
 	_capture_device = NULL ;
 	_video_processor = NULL ;
 	_echo_output_device = NULL ;
-	_image_capture = NULL;
-    _video_probe = NULL;
+    _video_surface = NULL;
 }
 
 QVideoInputDevice::~QVideoInputDevice()
 {
-    stop() ;
+    stop() ;             // releases _capture_device and _video_surface
     _video_processor = NULL ;
-
-    delete _video_probe;
-    delete _image_capture;
-    delete _capture_device;
-    delete _timer;
 }
 
 bool QVideoInputDevice::stopped() const
 {
-    return _timer == NULL ;
+    return _capture_device == NULL ;
 }
 
 void QVideoInputDevice::stop()
 {
     _capture_device_info = QCameraInfo();
 
-	if(_timer != NULL)
-	{
-        if (_capture_device) _capture_device->stop();
-		_timer->stop() ;
-		delete _timer ;
-		_timer = NULL ;
-	}
 	if(_capture_device != NULL)
 	{
-		// the camera will be deinitialized automatically in VideoCapture destructor
-        delete _video_probe;
-        delete _image_capture ;
-        delete _capture_device ;
-
-        _video_probe = NULL;
-		_capture_device = NULL ;
-        _image_capture = NULL ;
+        _capture_device->stop() ;
+        delete _capture_device ;     // detaches and releases the viewfinder surface
+        _capture_device = NULL ;
     }
+    // Delete the surface only after the camera that referenced it is gone.
+    delete _video_surface ;
+    _video_surface = NULL ;
+
     if(_echo_output_device != NULL)
         _echo_output_device->showFrameOff() ;
 }
@@ -129,15 +112,17 @@ void QVideoInputDevice::start(const QString& description)
         return;
     }
 
-    _video_probe = new QVideoProbe(this);
-    if (_video_probe->setSource(_capture_device)) {
-        RsDbg() << "DISTANT_VOIP: Video Probe successfully attached to camera.";
-        QObject::connect(_video_probe, SIGNAL(videoFrameProbed(QVideoFrame)), this, SLOT(handleProbedFrame(QVideoFrame)));
-    } else {
-        RsDbg() << "DISTANT_VOIP: [WARNING] Video Probe could NOT be attached. Falling back to StillImage capture.";
-    }
-
     _capture_device->setCaptureMode(QCamera::CaptureVideo);
+
+    // Grab frames through a viewfinder surface. This works on every backend,
+    // unlike QVideoProbe which attaches but never delivers frames on macOS
+    // (AVFoundation) -> camera LED on, but no image.
+    _video_surface = new RsCameraVideoSurface(this);
+    QObject::connect(_video_surface,SIGNAL(frameAvailable(QVideoFrame)),this,SLOT(handleSurfaceFrame(QVideoFrame)));
+    _capture_device->setViewfinder(_video_surface);
+    RsDbg() << "DISTANT_VOIP: Viewfinder surface attached to camera.";
+
+    QObject::connect(this,SIGNAL(cameraCaptureInfo(CameraStatus,QCamera::Error)),this,SLOT(errorHandling(CameraStatus,QCamera::Error)));
 
     if(_capture_device->error() == QCamera::NoError)
     {
@@ -145,24 +130,11 @@ void QVideoInputDevice::start(const QString& description)
         emit cameraCaptureInfo(CAMERA_IS_READY,QCamera::NoError);
     }
 
-    _image_capture = new QCameraImageCapture(_capture_device);
-    _image_capture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
-    QObject::connect(_image_capture,SIGNAL(imageAvailable(int,QVideoFrame)),this,SLOT(grabFrame(int,QVideoFrame)));
-    QObject::connect(this,SIGNAL(cameraCaptureInfo(CameraStatus,QCamera::Error)),this,SLOT(errorHandling(CameraStatus,QCamera::Error)));
-
-    // Fallback timer only if probe failed
-    if (!_video_probe->isActive()) {
-        _timer = new QTimer ;
-        QObject::connect(_timer,SIGNAL(timeout()),_image_capture,SLOT(capture())) ;
-        RsDbg() << "DISTANT_VOIP: Starting fallback capture timer (100ms)...";
-        _timer->start(100) ;
-    }
-
     RsDbg() << "DISTANT_VOIP: Finalizing camera start(). LED should turn on now.";
     _capture_device->start();
 }
 
-void QVideoInputDevice::handleProbedFrame(const QVideoFrame& f)
+void QVideoInputDevice::handleSurfaceFrame(const QVideoFrame& f)
 {
     static int p_id = 0;
     grabFrame(p_id++, f);
