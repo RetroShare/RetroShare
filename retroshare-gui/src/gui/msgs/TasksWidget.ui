@@ -93,12 +93,29 @@
           <string notr="true">font-weight: bold; font-size: 14px;</string>
          </property>
          <property name="text">
-          <string>Calendars</string>
+          <string>My Calendars</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QListWidget" name="calendarList">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="sharedCalendarsLabel">
+         <property name="styleSheet">
+          <string notr="true">font-weight: bold; font-size: 14px; margin-top: 10px;</string>
+         </property>
+         <property name="text">
+          <string>Shared Calendars</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="sharedCalendarList">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>

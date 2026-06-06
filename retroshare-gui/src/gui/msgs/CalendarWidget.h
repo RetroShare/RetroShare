@@ -62,10 +62,12 @@ private slots:
     void onDateSelected(const QDate& date);
     void onEventSelected(int row, int col);
     void onCalendarSelectionChanged(QListWidgetItem* item);
+    void onSharedCalendarSelectionChanged(QListWidgetItem* item);
     void onSearchChanged(const QString& text);
     void onCalendarContextMenu(const QPoint& pos);
+    void onSharedCalendarContextMenu(const QPoint& pos);
+    void onEventTableContextMenu(const QPoint& pos);
     void onMonthCellClicked(int row, int col);
-    void onCalendarViewModeChanged(int index);
 
 private:
     void buildUi();
@@ -89,7 +91,7 @@ protected:
     // UI elements (now loaded from UI file but kept as pointers for compatibility)
     QCalendarWidget* mSidebarCalendar;
     QListWidget* mCalendarList;
-    QComboBox* mCalendarViewCombo;
+    QListWidget* mSharedCalendarList;
     
     QLabel* mPeriodLabel;
     QLabel* mCwLabel;

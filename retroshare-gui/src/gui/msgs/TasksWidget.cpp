@@ -48,7 +48,7 @@
 #include <QUuid>
 
 TasksWidget::TasksWidget(QWidget* parent)
-    : QWidget(parent), mCurrentFilterMode(0), mCalendarListMode(0), mCalendarViewCombo(nullptr), mInitialLoadDone(false)
+    : QWidget(parent), mCurrentFilterMode(0), mInitialLoadDone(false)
 {
     buildUi();
     refreshData();
@@ -62,7 +62,7 @@ void TasksWidget::showEvent(QShowEvent* event) {
     QWidget::showEvent(event);
     if (!mInitialLoadDone) {
         mInitialLoadDone = true;
-        CalendarData::instance()->syncWithGxs();
+        CalendarData::instance()->updateCalendars();
     }
 }
 
@@ -73,6 +73,7 @@ void TasksWidget::buildUi() {
     mSidebarCalendar = ui.sidebarCalendar;
     mFilterList = ui.filterList;
     mCalendarList = ui.calendarList;
+    mSharedCalendarList = ui.sharedCalendarList;
     mQuickTaskEdit = ui.quickTaskEdit;
     mSearchEdit = ui.searchEdit;
     mTaskTable = ui.taskTable;
@@ -99,19 +100,6 @@ void TasksWidget::buildUi() {
     mTaskTable->setSelectionMode(QAbstractItemView::SingleSelection);
     mTaskTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    // Hide calendarsLabel
-    ui.calendarsLabel->hide();
-
-    // Create and insert calendarViewCombo dynamically
-    mCalendarViewCombo = new QComboBox(this);
-    mCalendarViewCombo->setObjectName("calendarViewCombo");
-    mCalendarViewCombo->addItems({tr("My Calendars"), tr("Shared Calendars")});
-    mCalendarViewCombo->setStyleSheet("font-weight: bold; font-size: 13px; margin-bottom: 4px;");
-
-    int labelIndex = ui.sidebarLayout->indexOf(ui.calendarsLabel);
-    if (labelIndex == -1) labelIndex = 4; // Default fallback position
-    ui.sidebarLayout->insertWidget(labelIndex, mCalendarViewCombo);
-
     // Splitter configuration
     ui.splitter->setStretchFactor(0, 0);
     ui.splitter->setStretchFactor(1, 1);
@@ -121,15 +109,19 @@ void TasksWidget::buildUi() {
     connect(mFilterList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(onFilterSelected(QListWidgetItem*)));
     connect(mCalendarList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(onCalendarSelectionChanged(QListWidgetItem*)));
     connect(mCalendarList, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onCalendarContextMenu(const QPoint&)));
+    connect(mSharedCalendarList, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(onSharedCalendarSelectionChanged(QListWidgetItem*)));
+    connect(mSharedCalendarList, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onSharedCalendarContextMenu(const QPoint&)));
     connect(mQuickTaskEdit, SIGNAL(returnPressed()), this, SLOT(onQuickTaskAdded()));
     connect(mSearchEdit, SIGNAL(textChanged(const QString&)), this, SLOT(onSearchChanged(const QString&)));
     connect(mTaskTable, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(onTaskDoubleClicked(int,int)));
     connect(mTaskTable, SIGNAL(cellClicked(int,int)), this, SLOT(onTaskClicked(int,int)));
-    connect(mCalendarViewCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(onCalendarViewModeChanged(int)));
 }
 
 void TasksWidget::refreshData() {
-    if (mCalendarListMode == 0) {
+    const auto& cals = CalendarData::instance()->getCalendars();
+
+    // 1. Populate My Calendars (owned by us, i.e. owner == "local")
+    {
         // Save current check states
         QMap<QString, Qt::CheckState> checkedStates;
         for (int i = 0; i < mCalendarList->count(); ++i) {
@@ -137,11 +129,11 @@ void TasksWidget::refreshData() {
             checkedStates[item->data(Qt::UserRole).toString()] = item->checkState();
         }
 
-        // Populate Calendar selection list
         mCalendarList->blockSignals(true);
         mCalendarList->clear();
-        const auto& cals = CalendarData::instance()->getCalendars();
         for (const auto& cal : cals) {
+            if (cal.owner != "local") continue;
+
             QListWidgetItem* item = new QListWidgetItem(cal.name, mCalendarList);
             item->setData(Qt::UserRole, cal.id);
             item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
@@ -158,19 +150,39 @@ void TasksWidget::refreshData() {
             }
         }
         mCalendarList->blockSignals(false);
-    } else {
-        // Shared Calendars mode
-        mCalendarList->blockSignals(true);
-        mCalendarList->clear();
+    }
+
+    // 2. Populate Shared Calendars (not owned by us)
+    {
+        // Save current check states
+        QMap<QString, Qt::CheckState> sharedCheckedStates;
+        for (int i = 0; i < mSharedCalendarList->count(); ++i) {
+            QListWidgetItem* item = mSharedCalendarList->item(i);
+            sharedCheckedStates[item->data(Qt::UserRole).toString()] = item->checkState();
+        }
+
+        mSharedCalendarList->blockSignals(true);
+        mSharedCalendarList->clear();
         if (rsGxsCalendar) {
             std::list<RsGroupMetaData> calendars;
             if (rsGxsCalendar->getCalendarsSummaries(calendars)) {
                 for (const auto& meta : calendars) {
                     QString calId = QString::fromStdString(meta.mGroupId.toStdString());
+
+                    // Filter out calendars owned by us
+                    bool ownedByUs = false;
+                    for (const auto& c : cals) {
+                        if (c.id == calId && c.owner == "local") {
+                            ownedByUs = true;
+                            break;
+                        }
+                    }
+                    if (ownedByUs) continue;
+
                     QString calName = QString::fromUtf8(meta.mGroupName.c_str());
                     bool isSubscribed = (meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
 
-                    QListWidgetItem* item = new QListWidgetItem(calName, mCalendarList);
+                    QListWidgetItem* item = new QListWidgetItem(calName, mSharedCalendarList);
                     item->setData(Qt::UserRole, calId);
                     item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
 
@@ -179,11 +191,17 @@ void TasksWidget::refreshData() {
                     pix.fill(isSubscribed ? QColor("#4a90e2") : Qt::gray);
                     item->setIcon(QIcon(pix));
 
-                    item->setCheckState(isSubscribed ? Qt::Checked : Qt::Unchecked);
+                    // Restore checked state if we have a saved state,
+                    // otherwise default to Checked if subscribed, Unchecked if unsubscribed
+                    if (sharedCheckedStates.contains(calId)) {
+                        item->setCheckState(sharedCheckedStates[calId]);
+                    } else {
+                        item->setCheckState(isSubscribed ? Qt::Checked : Qt::Unchecked);
+                    }
                 }
             }
         }
-        mCalendarList->blockSignals(false);
+        mSharedCalendarList->blockSignals(false);
     }
 
     updateTaskList();
@@ -198,6 +216,12 @@ void TasksWidget::updateTaskList() {
     QStringList enabledCalIds;
     for (int i = 0; i < mCalendarList->count(); ++i) {
         QListWidgetItem* item = mCalendarList->item(i);
+        if (item->checkState() == Qt::Checked) {
+            enabledCalIds.append(item->data(Qt::UserRole).toString());
+        }
+    }
+    for (int i = 0; i < mSharedCalendarList->count(); ++i) {
+        QListWidgetItem* item = mSharedCalendarList->item(i);
         if (item->checkState() == Qt::Checked) {
             enabledCalIds.append(item->data(Qt::UserRole).toString());
         }
@@ -345,15 +369,11 @@ void TasksWidget::onFilterSelected(QListWidgetItem* item) {
 }
 
 void TasksWidget::onCalendarSelectionChanged(QListWidgetItem* item) {
-    if (mCalendarListMode == 1) {
-        if (item) {
-            QString calId = item->data(Qt::UserRole).toString();
-            bool subscribe = (item->checkState() == Qt::Checked);
-            CalendarData::instance()->subscribeToCalendar(calId, subscribe, item->text());
-        }
-    } else {
-        updateTaskList();
-    }
+    updateTaskList();
+}
+
+void TasksWidget::onSharedCalendarSelectionChanged(QListWidgetItem* item) {
+    updateTaskList();
 }
 
 void TasksWidget::onSearchChanged(const QString& text) {
@@ -369,24 +389,29 @@ void TasksWidget::onCalendarContextMenu(const QPoint& pos) {
     QString calName = item->text();
     bool isChecked = item->checkState() == Qt::Checked;
 
-    if (mCalendarListMode == 1) {
-        QMenu menu(this);
-        QAction* subAct = menu.addAction(isChecked ? tr("Unsubscribe") : tr("Subscribe"));
-        QAction* selectedAct = menu.exec(mCalendarList->mapToGlobal(pos));
-        if (selectedAct == subAct) {
-            item->setCheckState(isChecked ? Qt::Unchecked : Qt::Checked);
-        }
-        return;
-    }
-
     QMenu menu(this);
 
     QAction* toggleAct = menu.addAction(isChecked ? tr("Hide %1").arg(calName) : tr("Show %1").arg(calName));
     QAction* showOnlyAct = menu.addAction(tr("Show Only %1").arg(calName));
     QAction* showAllAct = menu.addAction(tr("Show All Calendars"));
-    menu.addSeparator();
-    QAction* newAct = menu.addAction(tr("New Calendar..."));
-    QAction* deleteAct = menu.addAction(tr("Delete Calendar..."));
+
+    // Check if selected calendar is a shared/network calendar
+    bool isSharedCal = false;
+    const auto& cals = CalendarData::instance()->getCalendars();
+    for (const auto& c : cals) {
+        if (c.id == calId) {
+            isSharedCal = (c.owner != "local");
+            break;
+        }
+    }
+
+    QAction* newAct = nullptr;
+    QAction* deleteAct = nullptr;
+    if (!isSharedCal) {
+        menu.addSeparator();
+        newAct = menu.addAction(tr("New Calendar..."));
+        deleteAct = menu.addAction(tr("Delete Calendar..."));
+    }
     menu.addSeparator();
     QAction* exportAct = menu.addAction(tr("Export Calendar..."));
     menu.addSeparator();
@@ -399,11 +424,16 @@ void TasksWidget::onCalendarContextMenu(const QPoint& pos) {
         item->setCheckState(isChecked ? Qt::Unchecked : Qt::Checked);
     } else if (selectedAct == showOnlyAct) {
         mCalendarList->blockSignals(true);
+        mSharedCalendarList->blockSignals(true);
         for (int i = 0; i < mCalendarList->count(); ++i) {
             QListWidgetItem* it = mCalendarList->item(i);
             it->setCheckState(it == item ? Qt::Checked : Qt::Unchecked);
         }
+        for (int i = 0; i < mSharedCalendarList->count(); ++i) {
+            mSharedCalendarList->item(i)->setCheckState(Qt::Unchecked);
+        }
         mCalendarList->blockSignals(false);
+        mSharedCalendarList->blockSignals(false);
         updateTaskList();
     } else if (selectedAct == showAllAct) {
         mCalendarList->blockSignals(true);
@@ -431,6 +461,30 @@ void TasksWidget::onCalendarContextMenu(const QPoint& pos) {
         if (dlg.exec() == QDialog::Accepted) {
             refreshData();
         }
+    }
+}
+
+void TasksWidget::onSharedCalendarContextMenu(const QPoint& pos) {
+    QListWidgetItem* item = mSharedCalendarList->itemAt(pos);
+    if (!item) return;
+
+    QString calId = item->data(Qt::UserRole).toString();
+    QString calName = item->text();
+
+    bool isSubscribed = false;
+    const auto& cals = CalendarData::instance()->getCalendars();
+    for (const auto& c : cals) {
+        if (c.id == calId) {
+            isSubscribed = true;
+            break;
+        }
+    }
+
+    QMenu menu(this);
+    QAction* subAct = menu.addAction(isSubscribed ? tr("Unsubscribe") : tr("Subscribe"));
+    QAction* selectedAct = menu.exec(mSharedCalendarList->mapToGlobal(pos));
+    if (selectedAct == subAct) {
+        CalendarData::instance()->subscribeToCalendar(calId, !isSubscribed, calName);
     }
 }
 
@@ -470,12 +524,4 @@ void TasksWidget::exportCalendar(const QString& calId, const QString& calName) {
             );
         }
     }
-}
-
-void TasksWidget::onCalendarViewModeChanged(int index) {
-    mCalendarListMode = index;
-    if (index == 0) {
-        CalendarData::instance()->syncWithGxs();
-    }
-    refreshData();
 }
