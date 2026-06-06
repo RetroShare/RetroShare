@@ -118,6 +118,18 @@ if(WIN32)
     target_link_libraries(VOIP PRIVATE retroshare retroshare-gui)
 endif()
 
+# pkg-config gives the FFmpeg/speex libs by name only (avcodec, avutil, ...);
+# their directory must be added explicitly or the linker won't find them when
+# they live outside the default search path (e.g. Homebrew /opt/homebrew/... on
+# macOS -> "ld: library 'avcodec' not found"). Harmless on Linux/Windows where
+# these dirs are already on the default path.
+target_link_directories(VOIP PRIVATE
+    ${AVCODEC_LIBRARY_DIRS}
+    ${AVUTIL_LIBRARY_DIRS}
+    ${SPEEX_LIBRARY_DIRS}
+    ${SPEEXDSP_LIBRARY_DIRS}
+)
+
 # NOTE: the base VOIP plugin makes no direct use of OpenSSL (it relies on
 # libretroshare for any cryptography). The optional RsTurtleVOIPBridge is the
 # exception: it calls OpenSSL DH directly, so we link OpenSSL::Crypto only when
