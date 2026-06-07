@@ -31,6 +31,13 @@ class QLineEdit;
 class QPushButton;
 class QCheckBox;
 class QComboBox;
+class GxsIdChooser;
+class GxsCircleChooser;
+class GroupChooser;
+class QGroupBox;
+class QPlainTextEdit;
+class QLabel;
+class QFormLayout;
 
 class CalendarPropertiesDialog : public QDialog {
     Q_OBJECT
@@ -46,11 +53,12 @@ private slots:
     void onBack();
     void onSelectColor();
     void onAccept();
+    void updateCircleOptions();
 
 private:
     void setupUi();
-    void loadIdentities();
     void updateColorButton();
+    void updatePage2Layout();
 
     QString mCalId;
     bool mEditMode;
@@ -66,10 +74,20 @@ private:
     QRadioButton* mRadioImport;
 
     // Page 2 widgets
+    QFormLayout* mFormLayout;
     QLineEdit* mNameEdit;
     QPushButton* mColorBtn;
-    QCheckBox* mRemindersCheckBox;
-    QComboBox* mEmailCombo;
+
+    // GXS network calendar widgets
+    GxsIdChooser* mIdChooser;
+    QGroupBox* mDistribGroupBox;
+    QRadioButton* mRadioPublic;
+    QRadioButton* mRadioCircle;
+    QRadioButton* mRadioNodeGroup;
+    GxsCircleChooser* mCircleCombo;
+    GroupChooser* mLocalCombo;
+    QLabel* mDescLabel;
+    QPlainTextEdit* mDescEdit;
 
     // Buttons
     QPushButton* mNextBtn;

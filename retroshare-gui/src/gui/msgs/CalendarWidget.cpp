@@ -237,15 +237,25 @@ void CalendarWidget::refreshData() {
                     if (ownedByUs) continue;
 
                     QString calName = QString::fromUtf8(meta.mGroupName.c_str());
-                    bool isSubscribed = (meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
 
                     QListWidgetItem* item = new QListWidgetItem(calName, mSharedCalendarList);
                     item->setData(Qt::UserRole, calId);
                     item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
 
-                    // Render blue bullet for subscribed, grey for unsubscribed
-                    QPixmap pix(12, 12);
-                    pix.fill(isSubscribed ? QColor("#4a90e2") : Qt::gray);
+                    // Find if it has a saved local color and check subscription status locally
+                    bool isSubscribedLocal = false;
+                    QColor calColor = QColor("#4a90e2");
+                    for (const auto& c : cals) {
+                        if (c.id == calId) {
+                            isSubscribedLocal = true;
+                            calColor = c.color;
+                            break;
+                        }
+                    }
+
+                    // Render custom color bullet for subscribed, grey for unsubscribed
+                    QPixmap pix(16, 16);
+                    pix.fill(isSubscribedLocal ? calColor : Qt::gray);
                     item->setIcon(QIcon(pix));
 
                     // Restore checked state if we have a saved state,
@@ -253,7 +263,7 @@ void CalendarWidget::refreshData() {
                     if (sharedCheckedStates.contains(calId)) {
                         item->setCheckState(sharedCheckedStates[calId]);
                     } else {
-                        item->setCheckState(isSubscribed ? Qt::Checked : Qt::Unchecked);
+                        item->setCheckState(isSubscribedLocal ? Qt::Checked : Qt::Unchecked);
                     }
                 }
             }
@@ -367,12 +377,43 @@ void CalendarWidget::updateEventList() {
     }
 }
 
+static QColor blendColors(const QColor& color1, const QColor& color2, qreal ratio) {
+    int r = color1.red() * ratio + color2.red() * (1.0 - ratio);
+    int g = color1.green() * ratio + color2.green() * (1.0 - ratio);
+    int b = color1.blue() * ratio + color2.blue() * (1.0 - ratio);
+    return QColor(r, g, b);
+}
+
+static void styleEventItem(QTableWidgetItem* item, const QColor& eventColor, const QColor& baseBg) {
+    bool isDark = (baseBg.value() < 128);
+    QColor bgCol;
+    QColor fgCol;
+    if (isDark) {
+        bgCol = blendColors(eventColor, baseBg, 0.25);
+        fgCol = eventColor.lighter(130);
+    } else {
+        bgCol = blendColors(eventColor, baseBg, 0.15);
+        fgCol = eventColor.darker(140);
+    }
+    item->setBackground(QBrush(bgCol));
+    item->setForeground(QBrush(fgCol));
+    QFont font = item->font();
+    font.setBold(true);
+    item->setFont(font);
+}
+
 void CalendarWidget::updateDayView() {
     mDayTable->setRowCount(0);
     mDayTable->setRowCount(24);
 
     // List of events for the selected day
     const auto& events = CalendarData::instance()->getEvents();
+    const auto& cals = CalendarData::instance()->getCalendars();
+
+    QMap<QString, QColor> calColors;
+    for (const auto& cal : cals) {
+        calColors[cal.id] = cal.color;
+    }
 
     QStringList enabledCalIds;
     for (int i = 0; i < mCalendarList->count(); ++i) {
@@ -383,6 +424,8 @@ void CalendarWidget::updateDayView() {
         QListWidgetItem* item = mSharedCalendarList->item(i);
         if (item->checkState() == Qt::Checked) enabledCalIds.append(item->data(Qt::UserRole).toString());
     }
+
+    QColor baseBg = mDayTable->palette().color(QPalette::Base);
 
     for (int hour = 0; hour < 24; ++hour) {
         QString timeText = QString("%1:00").arg(hour, 2, 10, QChar('0'));
@@ -402,7 +445,17 @@ void CalendarWidget::updateDayView() {
         QTableWidgetItem* evCell = new QTableWidgetItem(matchedEvents.join(", "));
         if (!lastEventId.isEmpty()) {
             mCellEventMap[QString("0_%1_%2").arg(hour).arg(1)] = lastEventId;
-            evCell->setBackground(QBrush(QColor("#eef5fc")));
+
+            QColor eventColor("#4a90e2"); // default fallback
+            for (const auto& ev : events) {
+                if (ev.id == lastEventId) {
+                    if (calColors.contains(ev.calendarId)) {
+                        eventColor = calColors[ev.calendarId];
+                    }
+                    break;
+                }
+            }
+            styleEventItem(evCell, eventColor, baseBg);
         }
         mDayTable->setItem(hour, 1, evCell);
     }
@@ -423,6 +476,12 @@ void CalendarWidget::updateWeekView() {
     mWeekTable->setHorizontalHeaderLabels(headers);
 
     const auto& events = CalendarData::instance()->getEvents();
+    const auto& cals = CalendarData::instance()->getCalendars();
+
+    QMap<QString, QColor> calColors;
+    for (const auto& cal : cals) {
+        calColors[cal.id] = cal.color;
+    }
 
     QStringList enabledCalIds;
     for (int i = 0; i < mCalendarList->count(); ++i) {
@@ -434,6 +493,8 @@ void CalendarWidget::updateWeekView() {
         if (item->checkState() == Qt::Checked) enabledCalIds.append(item->data(Qt::UserRole).toString());
     }
 
+    QColor baseBg = mWeekTable->palette().color(QPalette::Base);
+
     // Populate week cells
     for (int dayIdx = 0; dayIdx < 7; ++dayIdx) {
         QDate date = monday.addDays(dayIdx);
@@ -443,7 +504,13 @@ void CalendarWidget::updateWeekView() {
             if (ev.start.date() == date) {
                 if (rowIdx >= mWeekTable->rowCount()) mWeekTable->insertRow(rowIdx);
                 QTableWidgetItem* cellItem = new QTableWidgetItem(ev.title);
-                cellItem->setBackground(QBrush(QColor("#eef5fc")));
+
+                QColor eventColor("#4a90e2"); // default fallback
+                if (calColors.contains(ev.calendarId)) {
+                    eventColor = calColors[ev.calendarId];
+                }
+                styleEventItem(cellItem, eventColor, baseBg);
+
                 mWeekTable->setItem(rowIdx, dayIdx, cellItem);
                 mCellEventMap[QString("1_%1_%2").arg(rowIdx).arg(dayIdx)] = ev.id;
                 rowIdx++;
@@ -490,17 +557,20 @@ void CalendarWidget::updateMonthView() {
                 cellLines << QString::number(date.day());
             }
 
+            QStringList eventCalIds;
             QString matchedEventId = "";
             for (const auto& ev : events) {
                 if (!enabledCalIds.contains(ev.calendarId)) continue;
                 if (ev.start.date() == date) {
                     cellLines << ev.title;
+                    eventCalIds << ev.calendarId;
                     matchedEventId = ev.id;
                 }
             }
 
             QTableWidgetItem* cellItem = new QTableWidgetItem(cellLines.join("\n"));
             cellItem->setData(Qt::UserRole + 1, date); // Store the QDate
+            cellItem->setData(Qt::UserRole + 2, eventCalIds); // Store list of calendar IDs
             
             if (date.month() != mSelectedDate.month()) {
                 cellItem->setForeground(QBrush(Qt::gray));
@@ -765,9 +835,22 @@ void CalendarWidget::onSharedCalendarContextMenu(const QPoint& pos) {
 
     QMenu menu(this);
     QAction* subAct = menu.addAction(isSubscribed ? tr("Unsubscribe") : tr("Subscribe"));
+    QAction* propertiesAct = nullptr;
+    if (isSubscribed) {
+        menu.addSeparator();
+        propertiesAct = menu.addAction(tr("Properties"));
+    }
+
     QAction* selectedAct = menu.exec(mSharedCalendarList->mapToGlobal(pos));
+    if (!selectedAct) return;
+
     if (selectedAct == subAct) {
         CalendarData::instance()->subscribeToCalendar(calId, !isSubscribed, calName);
+    } else if (propertiesAct && selectedAct == propertiesAct) {
+        CalendarPropertiesDialog dlg(calId, this);
+        if (dlg.exec() == QDialog::Accepted) {
+            refreshData();
+        }
     }
 }
 
@@ -1047,6 +1130,11 @@ void CalendarWidget::importCalendar() {
     cal.showReminders = true;
     cal.email = "";
     cal.onNetwork = false;
+    cal.circleType = 1;
+    cal.circleId = "";
+    cal.internalCircle = "";
+    cal.groupFlags = 4;
+    cal.description = "";
 
     CalendarData::instance()->addCalendar(cal);
 
@@ -1089,16 +1177,31 @@ void MonthCalendarDelegate::paint(QPainter* painter, const QStyleOptionViewItem&
     QDate cellDate = index.data(Qt::UserRole + 1).toDate();
     bool isSelected = (cellDate.isValid() && cellDate == mCalendarWidget->selectedDate());
 
+    QColor baseBg = mCalendarWidget->palette().color(QPalette::Base);
+    bool isDark = (baseBg.value() < 128);
+
     // Draw background
     QColor bgColor;
-    if (isSelected) {
-        bgColor = QColor("#eff6ff"); // Light blue highlight for selected day
-    } else if (cellDate.isValid() && cellDate.month() != mCalendarWidget->selectedDate().month()) {
-        bgColor = QColor("#f8fafc"); // Slate-50 for days outside the current month
-    } else if (index.column() == 5 || index.column() == 6) {
-        bgColor = QColor("#f1f5f9"); // Slate-100 for weekends
+    if (isDark) {
+        if (isSelected) {
+            bgColor = QColor("#1e3a8a"); // Dark blue highlight
+        } else if (cellDate.isValid() && cellDate.month() != mCalendarWidget->selectedDate().month()) {
+            bgColor = QColor("#0f172a"); // Very dark slate for days outside month
+        } else if (index.column() == 5 || index.column() == 6) {
+            bgColor = QColor("#1e293b"); // Dark slate for weekends
+        } else {
+            bgColor = QColor("#111827"); // Dark background for weekdays
+        }
     } else {
-        bgColor = QColor("#ffffff"); // White for standard weekdays
+        if (isSelected) {
+            bgColor = QColor("#eff6ff"); // Light blue highlight for selected day
+        } else if (cellDate.isValid() && cellDate.month() != mCalendarWidget->selectedDate().month()) {
+            bgColor = QColor("#f8fafc"); // Slate-50 for days outside the current month
+        } else if (index.column() == 5 || index.column() == 6) {
+            bgColor = QColor("#f1f5f9"); // Slate-100 for weekends
+        } else {
+            bgColor = QColor("#ffffff"); // White for standard weekdays
+        }
     }
     painter->fillRect(option.rect, bgColor);
 
@@ -1107,7 +1210,7 @@ void MonthCalendarDelegate::paint(QPainter* painter, const QStyleOptionViewItem&
         painter->setPen(QPen(QColor("#3b82f6"), 2));
         painter->drawRect(option.rect.adjusted(1, 1, -1, -1));
     } else {
-        painter->setPen(QPen(QColor("#e2e8f0"), 1));
+        painter->setPen(QPen(isDark ? QColor("#334155") : QColor("#e2e8f0"), 1));
         painter->drawRect(option.rect);
     }
 
@@ -1123,11 +1226,11 @@ void MonthCalendarDelegate::paint(QPainter* painter, const QStyleOptionViewItem&
         painter->setFont(dayFont);
         
         if (cellDate.isValid() && cellDate.month() != mCalendarWidget->selectedDate().month()) {
-            painter->setPen(QColor("#94a3b8")); // Muted grey for other month days
+            painter->setPen(isDark ? QColor("#475569") : QColor("#94a3b8")); // Muted grey for other month days
         } else if (isSelected) {
-            painter->setPen(QColor("#2563eb")); // Darker blue for selected day number
+            painter->setPen(isDark ? QColor("#60a5fa") : QColor("#2563eb")); // Blue for selected day number
         } else {
-            painter->setPen(QColor("#1e293b")); // Slate-800 for standard days
+            painter->setPen(isDark ? QColor("#f1f5f9") : QColor("#1e293b")); // Light/slate-800 for standard days
         }
         
         QRect dayRect = option.rect.adjusted(5, 5, -8, -5);
@@ -1140,14 +1243,14 @@ void MonthCalendarDelegate::paint(QPainter* painter, const QStyleOptionViewItem&
 
             QRect badgeRect(option.rect.left() + 6, option.rect.top() + 5, 38, 16);
             painter->setPen(Qt::NoPen);
-            painter->setBrush(QColor("#e2e8f0")); // Slate-200
+            painter->setBrush(isDark ? QColor("#334155") : QColor("#e2e8f0")); // Slate badge background
             painter->drawRoundedRect(badgeRect, 8, 8);
 
             QFont badgeFont = option.font;
             badgeFont.setPointSize(badgeFont.pointSize() - 2);
             badgeFont.setBold(true);
             painter->setFont(badgeFont);
-            painter->setPen(QColor("#475569")); // Slate-600
+            painter->setPen(isDark ? QColor("#cbd5e1") : QColor("#475569")); // Badge text
             painter->drawText(badgeRect, Qt::AlignCenter, weekStr);
         }
 
@@ -1157,17 +1260,42 @@ void MonthCalendarDelegate::paint(QPainter* painter, const QStyleOptionViewItem&
         eventFont.setPointSize(eventFont.pointSize() - 1);
         painter->setFont(eventFont);
 
+        QStringList eventCalIds = index.data(Qt::UserRole + 2).toStringList();
+
         for (int i = 1; i < lines.size(); ++i) {
             if (yOffset + 18 > option.rect.bottom()) break; // Out of bounds
 
             QString eventTitle = lines[i];
             QRect eventRect(option.rect.left() + 6, yOffset, option.rect.width() - 12, 16);
 
+            // Find event calendar color
+            QColor eventColor("#4a90e2"); // default fallback
+            if (i - 1 < eventCalIds.size()) {
+                QString calId = eventCalIds[i - 1];
+                const auto& cals = CalendarData::instance()->getCalendars();
+                for (const auto& c : cals) {
+                    if (c.id == calId) {
+                        eventColor = c.color;
+                        break;
+                    }
+                }
+            }
+
+            QColor bgCol;
+            QColor fgCol;
+            if (isDark) {
+                bgCol = blendColors(eventColor, bgColor, 0.25);
+                fgCol = eventColor.lighter(130);
+            } else {
+                bgCol = blendColors(eventColor, bgColor, 0.15);
+                fgCol = eventColor.darker(140);
+            }
+
             painter->setPen(Qt::NoPen);
-            painter->setBrush(QColor("#e0f2fe")); // Light blue event background
+            painter->setBrush(bgCol);
             painter->drawRoundedRect(eventRect, 3, 3);
 
-            painter->setPen(QColor("#0369a1")); // Blue text for events
+            painter->setPen(fgCol);
             painter->drawText(eventRect.adjusted(4, 0, -4, 0), Qt::AlignVCenter | Qt::AlignLeft, eventTitle);
 
             yOffset += 19;
