@@ -43,6 +43,7 @@
 
 #include "services/RsTurtleVOIPBridge.h"
 #include "turtle/p3turtle.h"
+#include <retroshare/rsgxstunnel.h>   // global rsGxsTunnel (encrypted distant VOIP transport)
 
 RsTurtleVOIPBridge *rsTurtleBridge = NULL;
 
@@ -127,10 +128,10 @@ void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
         mTurtleBridge->setChatService(mChats);
         mTurtleBridge->setIdentity(mIdentity);
 
-        // If Turtle arrived late, connect the bridge to router NOW!
-        if (mTurtle != NULL) {
-            RsDbg() << "DISTANT_VOIP: Connecting bridge to late-arrived Turtle Router!";
-            mTurtleBridge->connectToTurtleRouter(dynamic_cast<p3turtle*>(mTurtle));
+        // Connect the bridge to the GXS tunnel service (encrypted E2E transport).
+        if (rsGxsTunnel != NULL) {
+            RsDbg() << "DISTANT_VOIP: Connecting bridge to GXS tunnel service!";
+            mTurtleBridge->connectToGxsTunnelService(rsGxsTunnel);
         }
     }
 }
@@ -190,9 +191,10 @@ p3Service *VOIPPlugin::p3_service() const
 		rsTurtleBridge = mTurtleBridge; // Global binding for UI access
 		mVOIP->setTurtleBridge(mTurtleBridge); // Hook backward pointer for outbound routing
 
-		if (mTurtle)
+		// Connect to the GXS tunnel service for encrypted distant (gxsid<->gxsid) VOIP.
+		if (rsGxsTunnel)
 		{
-			mTurtleBridge->connectToTurtleRouter(dynamic_cast<p3turtle*>(mTurtle));
+			mTurtleBridge->connectToGxsTunnelService(rsGxsTunnel);
 		}
 	}
 

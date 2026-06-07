@@ -35,17 +35,13 @@ set(VOIP_SOURCES
     gui/VOIPToasterNotify.cpp
 )
 
-# RsTurtleVOIPBridge (anonymous / distant VOIP over turtle tunnels) calls OpenSSL
-# Diffie-Hellman (DH_*, BN_*) directly to build the session key, so when it is
-# compiled in the plugin must link libcrypto itself (on Windows every symbol of
-# the plugin DLL has to be resolved at link time, otherwise: "undefined reference
-# to DH_free/DH_new/..."). It is added conditionally so the build still works on
-# a tree without the bridge.
-set(VOIP_USES_OPENSSL FALSE)
+# RsTurtleVOIPBridge implements distant (gxsid<->gxsid) VOIP. It is now a client
+# of p3GxsTunnelService (libretroshare) for the encrypted E2E transport and no
+# longer uses OpenSSL directly, so no extra crypto link is required. It is still
+# added conditionally so the plugin builds on a tree without the bridge (e.g.
+# master).
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/services/RsTurtleVOIPBridge.cpp")
     list(APPEND VOIP_SOURCES services/RsTurtleVOIPBridge.cpp)
-    find_package(OpenSSL REQUIRED)
-    set(VOIP_USES_OPENSSL TRUE)
 endif()
 
 set(VOIP_FORMS
@@ -130,11 +126,9 @@ target_link_directories(VOIP PRIVATE
     ${SPEEXDSP_LIBRARY_DIRS}
 )
 
-# NOTE: the base VOIP plugin makes no direct use of OpenSSL (it relies on
-# libretroshare for any cryptography). The optional RsTurtleVOIPBridge is the
-# exception: it calls OpenSSL DH directly, so we link OpenSSL::Crypto only when
-# that source is compiled in (see VOIP_USES_OPENSSL above). The base plugin
-# therefore stays OpenSSL-free.
+# NOTE: the VOIP plugin makes no direct use of OpenSSL. All cryptography for
+# distant VOIP is delegated to libretroshare's p3GxsTunnelService, so the plugin
+# stays OpenSSL-free.
 target_link_libraries(VOIP PRIVATE
     Qt5::Core
     Qt5::Widgets
@@ -146,10 +140,6 @@ target_link_libraries(VOIP PRIVATE
     ${SPEEX_LIBRARIES}
     ${SPEEXDSP_LIBRARIES}
 )
-
-if(VOIP_USES_OPENSSL)
-    target_link_libraries(VOIP PRIVATE OpenSSL::Crypto)
-endif()
 
 target_compile_options(VOIP PRIVATE "-Wno-deprecated-declarations")
 target_compile_definitions(VOIP PRIVATE RS_NO_WARN_DEPRECATED)
