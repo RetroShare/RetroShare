@@ -460,6 +460,7 @@ void MainWindow::initStackedPage()
   PeopleDialog *peopleDialog = NULL;
   addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
   #endif
+
 #ifdef RS_USE_WIKI
   wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
