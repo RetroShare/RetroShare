@@ -47,7 +47,9 @@ private slots:
 
 
 private:
-	QString createUsageString(const RsIdentityUsage& u) const;
+    QString createUsageString(const RsIdentityUsage& u) const;
+    QString getGroupName(uint32_t service_type, const RsGxsGroupId& groupId) const;
+    QString getMessageTitle(uint32_t service_type, const RsGxsGroupId& groupId, const RsGxsMessageId& msgId) const;
 
 	/* UI -  Designer */
 	Ui::UsageStatistics *ui;

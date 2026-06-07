@@ -36,6 +36,9 @@
 #include "retroshare/rsgxschannels.h"
 #include "retroshare/rsgxsforums.h"
 #include "retroshare/rsposted.h"
+#ifdef RS_USE_WIRE
+#include "retroshare/rswire.h"
+#endif
 
 #include <iostream>
 #include <algorithm>
@@ -92,8 +95,9 @@ QString UsageStatistics::createUsageString(const RsIdentityUsage& u) const
 	case RsServiceType::GXS_TRANS: return tr("GxsMail author ");
 
 	case RsServiceType::GXSCIRCLE: service_name = tr("GxsCircles");  service_type = RetroShareLink::TYPE_CIRCLES; break ;
-	//case RsServiceType::TYPE_WIRE: service_name = tr("Wire");  service_type = RetroShareLink::TYPE_WIRE; break ;
-
+#ifdef RS_USE_WIRE
+	case RsServiceType::WIRE: service_name = tr("Wire");  service_type = RetroShareLink::TYPE_WIRE; break ;
+#endif
     default:
         service_name = tr("Unknown (service=")+QString::number((int)u.mServiceId,16)+")"; service_type = RetroShareLink::TYPE_UNKNOWN ;
     }
@@ -110,100 +114,18 @@ QString UsageStatistics::createUsageString(const RsIdentityUsage& u) const
         	return tr("Creation of author signature in service %1").arg(service_name);
     case RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_CREATION:    // most common use case. Messages are signed by authors in e.g. forums.
     {
-        RetroShareLink l;
-        QString groupName;
-        bool groupFound = false;
+        QString label = getGroupName(service_type, u.mGrpId);
+        RetroShareLink l = RetroShareLink::createGxsGroupLink(service_type, u.mGrpId, label);
 
-        // Prepare the list containing the single Group ID for the lookup
-        std::list<RsGxsGroupId> groupIds;
-        groupIds.push_back(u.mGrpId);
-
-        // Fetch the Group Name from the appropriate service
-        if (service_type == RetroShareLink::TYPE_CHANNEL && rsGxsChannels) {
-            std::vector<RsGxsChannelGroup> groups;
-            if (rsGxsChannels->getChannelsInfo(groupIds, groups) && !groups.empty()) {
-                groupName = QString::fromUtf8(groups[0].mMeta.mGroupName.c_str());
-                groupFound = !groupName.isEmpty();
-            }
-        } 
-        else if (service_type == RetroShareLink::TYPE_FORUM && rsGxsForums) {
-            std::vector<RsGxsForumGroup> groups;
-            if (rsGxsForums->getForumsInfo(groupIds, groups) && !groups.empty()) {
-                groupName = QString::fromUtf8(groups[0].mMeta.mGroupName.c_str());
-                groupFound = !groupName.isEmpty();
-            }
-        }
-        else if (service_type == RetroShareLink::TYPE_POSTED && rsPosted) {
-            std::vector<RsPostedGroup> groups;
-            if (rsPosted->getBoardsInfo(groupIds, groups) && !groups.empty()) {
-                groupName = QString::fromUtf8(groups[0].mMeta.mGroupName.c_str());
-                groupFound = !groupName.isEmpty();
-            }
-        }
-
-        // Prepare the label: 
-        QString label;
-        if (groupFound) {
-            label = groupName;
-        } else {
-            label = QString::fromStdString(u.mGrpId.toStdString());
-        }
-
-        // Create the GXS Group Link
-        l = RetroShareLink::createGxsGroupLink(service_type, u.mGrpId, label);
-
-        // Return the formatted string
         return tr("Message signature creation in group %1 of service %2").arg(l.toHtml(), service_name);
     }
     case RsIdentityUsage::GROUP_AUTHOR_KEEP_ALIVE:               // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
     case RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION:
     {
-        RetroShareLink l;
-        QString groupName;
-        bool groupFound = false;
+        // label is either the Name or the ID string (from helper)
+        QString label = getGroupName(service_type, u.mGrpId);
+        RetroShareLink l = RetroShareLink::createGxsGroupLink(service_type, u.mGrpId, label);
 
-        // Prepare a list containing the single Group ID we want to look up
-        std::list<RsGxsGroupId> groupIds;
-        groupIds.push_back(u.mGrpId);
-
-        // Fetch the Group Name from the appropriate service
-        if (service_type == RetroShareLink::TYPE_CHANNEL && rsGxsChannels) {
-            std::vector<RsGxsChannelGroup> groups;
-            // API requires std::list input and std::vector output
-            if (rsGxsChannels->getChannelsInfo(groupIds, groups) && !groups.empty()) {
-                groupName = QString::fromUtf8(groups[0].mMeta.mGroupName.c_str());
-                groupFound = !groupName.isEmpty();
-            }
-        }
-        else if (service_type == RetroShareLink::TYPE_FORUM && rsGxsForums) {
-            std::vector<RsGxsForumGroup> groups;
-            // Forums API requires a list of IDs and a vector for results
-            if (rsGxsForums->getForumsInfo(groupIds, groups) && !groups.empty()) {
-                groupName = QString::fromUtf8(groups[0].mMeta.mGroupName.c_str());
-                groupFound = !groupName.isEmpty();
-            }
-        }
-        else if (service_type == RetroShareLink::TYPE_POSTED && rsPosted) {
-            std::vector<RsPostedGroup> groups;
-            // Posted/Boards API requires a list of IDs and a vector for results
-            if (rsPosted->getBoardsInfo(groupIds, groups) && !groups.empty()) {
-                groupName = QString::fromUtf8(groups[0].mMeta.mGroupName.c_str());
-                groupFound = !groupName.isEmpty();
-            }
-        }
-
-        QString label;
-        if (groupFound) {
-            label = groupName;
-        } else {
-            // If not found, we use the raw ID string as the original code did
-            label = QString::fromStdString(u.mGrpId.toStdString());
-        }
-
-        // Create the GXS Group Link
-        l = RetroShareLink::createGxsGroupLink(service_type, u.mGrpId, label);
-
-        // Return the final formatted string
         return tr("Group author for group %1 in service %2").arg(l.toHtml(), service_name);
     }
     case RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION:
@@ -326,30 +248,29 @@ QString UsageStatistics::createUsageString(const RsIdentityUsage& u) const
     {
         RetroShareLink l;
         RsGxsCircleDetails det;
-        bool circleFound = false;
 
         // Try to fetch circle details to get the name
-        if (rsGxsCircles && rsGxsCircles->getCircleDetails(RsGxsCircleId(u.mGrpId), det)) {
-            circleFound = true;
-        }
+        if (rsGxsCircles->getCircleDetails(RsGxsCircleId(u.mGrpId), det)) {
+        
+            // Prepare the label: 
+            QString label;
+            if (!det.mCircleName.empty()) {
+                label = QString::fromUtf8(det.mCircleName.c_str()) ;
+            } else {
+                label = QString::fromStdString(u.mGrpId.toStdString());
+            }
+            
+            // Create the RetroShareLink for the circle
+            l = RetroShareLink::createCircle(RsGxsCircleId(u.mGrpId), label);
 
-        // Prepare the label: 
-        QString label;
-        if (circleFound && !det.mCircleName.empty()) {
-            label = QString::fromUtf8(det.mCircleName.c_str()) ;
-        } else {
-            label = QString::fromStdString(u.mGrpId.toStdString());
+            // Return the formatted string with the clickable link
+            if (!det.mCircleName.empty()) {
+                return tr("Membership verification in circle %1.").arg(l.toHtml());
+            } else {
+                return tr("Membership verification in circle (ID=%1).").arg(l.toHtml());
+            }
         }
-
-        // Create the RetroShareLink for the circle
-        l = RetroShareLink::createCircle(RsGxsCircleId(u.mGrpId), label);
-
-        // Return the formatted string with the clickable link
-        if (circleFound) {
-            return tr("Membership verification in circle %1.").arg(l.toHtml());
-        } else {
-            return tr("Membership verification in circle (ID=%1).").arg(l.toHtml());
-        }
+        break;
     }
 
 #warning TODO! csoler 2017-01-03: Add the different strings and translations here.
@@ -377,4 +298,88 @@ void UsageStatistics::setUsageData(RsGxsIdGroup data)
         usage_txt = tr("<b>[No record in current session]</b>");
 
     ui->usageStatistics_TB->setText(usage_txt);
+}
+
+QString UsageStatistics::getGroupName(uint32_t service_type, const RsGxsGroupId& groupId) const
+{
+    std::list<RsGxsGroupId> groupIds;
+    groupIds.push_back(groupId);
+
+    if (service_type == RetroShareLink::TYPE_CHANNEL && rsGxsChannels) {
+        std::vector<RsGxsChannelGroup> groups;
+        if (rsGxsChannels->getChannelsInfo(groupIds, groups) && !groups.empty()) {
+            QString name = QString::fromUtf8(groups[0].mMeta.mGroupName.c_str());
+            if (!name.isEmpty()) return name;
+        }
+    } 
+    else if (service_type == RetroShareLink::TYPE_FORUM && rsGxsForums) {
+        std::vector<RsGxsForumGroup> groups;
+        if (rsGxsForums->getForumsInfo(groupIds, groups) && !groups.empty()) {
+            QString name = QString::fromUtf8(groups[0].mMeta.mGroupName.c_str());
+            if (!name.isEmpty()) return name;
+        }
+    }
+    else if (service_type == RetroShareLink::TYPE_POSTED && rsPosted) {
+        std::vector<RsPostedGroup> groups;
+        if (rsPosted->getBoardsInfo(groupIds, groups) && !groups.empty()) {
+            QString name = QString::fromUtf8(groups[0].mMeta.mGroupName.c_str());
+            if (!name.isEmpty()) return name;
+        }
+    }
+    else if (service_type == RetroShareLink::TYPE_CIRCLES && rsGxsCircles) {
+        RsGxsCircleDetails det;
+        if (rsGxsCircles->getCircleDetails(RsGxsCircleId(groupId), det)) {
+            QString name = QString::fromUtf8(det.mCircleName.c_str());
+            if (!name.isEmpty()) return name;
+        }
+    }
+#ifdef RS_USE_WIRE
+    else if (service_type == RetroShareLink::TYPE_WIRE && rsWire) {
+        RsWireGroupSPtr group; // Shared pointer for the result
+        if (rsWire->getWireGroup(groupId, group) && group) {
+            QString name = QString::fromUtf8(group->mMeta.mGroupName.c_str());
+            if (!name.isEmpty()) return name;
+        }
+    }
+#endif
+
+    // Returns the raw ID string as the label
+    return QString::fromStdString(groupId.toStdString());
+}
+
+QString UsageStatistics::getMessageTitle(uint32_t service_type, const RsGxsGroupId& groupId, const RsGxsMessageId& msgId) const
+{
+    std::set<RsGxsMessageId> msgIds;
+    msgIds.insert(msgId);
+
+    if (service_type == RetroShareLink::TYPE_CHANNEL && rsGxsChannels) {
+        std::vector<RsGxsChannelPost> posts;
+        std::vector<RsGxsComment> cmts; 
+        std::vector<RsGxsVote> vots;    
+        if (rsGxsChannels->getChannelContent(groupId, msgIds, posts, cmts, vots) && !posts.empty()) {
+            return QString::fromUtf8(posts[0].mMeta.mMsgName.c_str());
+        }
+    } 
+    else if (service_type == RetroShareLink::TYPE_FORUM && rsGxsForums) {
+        std::vector<RsGxsForumMsg> msgs;
+        if (rsGxsForums->getForumContent(groupId, msgIds, msgs) && !msgs.empty()) {
+            return QString::fromUtf8(msgs[0].mMeta.mMsgName.c_str());
+        }
+    }
+    else if (service_type == RetroShareLink::TYPE_POSTED && rsPosted) {
+        std::vector<RsPostedPost> posts;
+        std::vector<RsGxsComment> cmts;
+        std::vector<RsGxsVote> vots;
+        if (rsPosted->getBoardContent(groupId, msgIds, posts, cmts, vots) && !posts.empty()) {
+            return QString::fromUtf8(posts[0].mMeta.mMsgName.c_str());
+        }
+    }
+    else if (service_type == RetroShareLink::TYPE_CIRCLES && rsGxsCircles) {
+        RsGxsCircleDetails det;
+        if (rsGxsCircles->getCircleDetails(RsGxsCircleId(groupId), det)) {
+            return QString::fromUtf8(det.mCircleName.c_str());
+        }
+    }
+
+    return QString(); // Return empty if not found
 }
