@@ -141,7 +141,7 @@ VideoProcessor::VideoProcessor()
 
     _estimated_bandwidth_in = 0 ;
     _estimated_bandwidth_out = 0 ;
-    _target_bandwidth_out = 30*1024 ;	// 30 KB/s
+    _target_bandwidth_out = 128*1024 ;	// 128 KB/s (~1 Mbps after the x8 in FFmpegVideo::encodeData). Raise/lower for quality vs bandwidth.
 
     _total_encoded_size_in = 0 ;
     _total_encoded_size_out = 0 ;
@@ -447,7 +447,11 @@ FFmpegVideo::FFmpegVideo()
     if (!encoding_context) throw std::runtime_error("AV: Could not allocate video codec encoding context");
 
     /* put sample parameters */
-    encoding_context->bit_rate = 10*1024 ; // default bitrate is 30KB/s
+    // Set a real default bitrate BEFORE avcodec_open2 (changing bit_rate after the
+    // codec is opened is unreliable for MPEG4). ~1 Mbps, matching the default
+    // _target_bandwidth_out (128 KB/s x8). The per-frame value in encodeData() then
+    // tracks the bandwidth-feedback target.
+    encoding_context->bit_rate = 1024*1024 ;
     encoding_context->bit_rate_tolerance = encoding_context->bit_rate ;
 
 #ifdef USE_VARIABLE_BITRATE
@@ -602,7 +606,7 @@ FFmpegVideo::~FFmpegVideo()
     av_frame_free(&decoding_frame_buffer);
 }
 
-#define MAX_FFMPEG_ENCODING_BITRATE 81920
+#define MAX_FFMPEG_ENCODING_BITRATE (256*1024)	// bytes/s ceiling (~2 Mbps after the x8 in encodeData)
 
 static void imageToFrame(AVFrame *frame, const QImage& image) {
   QImage input;
@@ -685,9 +689,12 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
         std::cerr << "Max encodign bitrate eexceeded. Capping to " << MAX_FFMPEG_ENCODING_BITRATE << std::endl;
         target_encoding_bitrate = MAX_FFMPEG_ENCODING_BITRATE ;
     }
-	//encoding_context->bit_rate = target_encoding_bitrate;
-	encoding_context->rc_max_rate = target_encoding_bitrate;
-	//encoding_context->bit_rate_tolerance = target_encoding_bitrate;
+	// _target_bandwidth_out is in BYTES/s; ffmpeg bit_rate/rc_max_rate want BITS/s -> x8.
+	// (Previously bit_rate was left commented + the x8 missing, so the encoder was
+	//  stuck around 10-30 kbps regardless of available bandwidth.)
+	encoding_context->bit_rate           = target_encoding_bitrate * 8;
+	encoding_context->rc_max_rate        = target_encoding_bitrate * 8;
+	encoding_context->bit_rate_tolerance = target_encoding_bitrate * 8;
 
   imageToFrame(encoding_frame_buffer, image);
 
