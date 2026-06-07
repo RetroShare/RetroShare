@@ -40,6 +40,12 @@ struct CalendarInfo {
     bool showReminders;
     QString email;
     bool onNetwork;
+
+    uint32_t circleType;
+    QString circleId;
+    QString internalCircle;
+    uint32_t groupFlags;
+    QString description;
 };
 
 struct CalendarEvent {

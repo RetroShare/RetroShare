@@ -22,6 +22,7 @@
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsgxscalendar.h>
+#include <retroshare/rsgxscircles.h>
 #include <util/qtthreadsutils.h>
 #include <QSettings>
 #include <QDir>
@@ -81,6 +82,11 @@ void CalendarData::loadData() {
         cal.showReminders = settings.value("showReminders", true).toBool();
         cal.email = settings.value("email", "").toString();
         cal.onNetwork = settings.value("onNetwork", false).toBool();
+        cal.circleType = settings.value("circleType", 1).toUInt();
+        cal.circleId = settings.value("circleId", "").toString();
+        cal.internalCircle = settings.value("internalCircle", "").toString();
+        cal.groupFlags = settings.value("groupFlags", 4).toUInt(); // Default FLAG_PRIVACY_PUBLIC (4)
+        cal.description = settings.value("description", "").toString();
         mCalendars.append(cal);
     }
     settings.endArray();
@@ -175,6 +181,11 @@ void CalendarData::saveData() {
         settings.setValue("showReminders", mCalendars[i].showReminders);
         settings.setValue("email", mCalendars[i].email);
         settings.setValue("onNetwork", mCalendars[i].onNetwork);
+        settings.setValue("circleType", mCalendars[i].circleType);
+        settings.setValue("circleId", mCalendars[i].circleId);
+        settings.setValue("internalCircle", mCalendars[i].internalCircle);
+        settings.setValue("groupFlags", mCalendars[i].groupFlags);
+        settings.setValue("description", mCalendars[i].description);
     }
     settings.endArray();
 
@@ -657,7 +668,7 @@ bool CalendarData::publishCalendar(const QString& oldId, const QString& email, Q
 
     RsGxsGroupId groupId;
     std::string errMsg;
-    if (!rsGxsCalendar->createCalendar(cal.name.toStdString(), "RetroShare Calendar", authorId, groupId, errMsg)) {
+    if (!rsGxsCalendar->createCalendar(cal.name.toStdString(), "RetroShare Calendar", authorId, cal.circleType, RsGxsCircleId(cal.circleId.toStdString()), RsGxsCircleId(cal.internalCircle.toStdString()), cal.groupFlags, groupId, errMsg)) {
         return false;
     }
 
@@ -711,6 +722,11 @@ bool CalendarData::subscribeToCalendar(const QString& id, bool subscribe, const 
             localCal.onNetwork = true;
             localCal.showReminders = true;
             localCal.owner = "network";
+            localCal.circleType = 1;
+            localCal.circleId = "";
+            localCal.internalCircle = "";
+            localCal.groupFlags = 4;
+            localCal.description = "";
             mCalendars.append(localCal);
             saveData();
         }
@@ -766,8 +782,21 @@ void CalendarData::updateCalendars() {
                     localCal.onNetwork = true;
                     localCal.showReminders = true;
                     localCal.owner = "network";
+                    localCal.circleType = meta.mCircleType;
+                    localCal.circleId = QString::fromStdString(meta.mCircleId.toStdString());
+                    localCal.internalCircle = QString::fromStdString(meta.mInternalCircle.toStdString());
+                    localCal.groupFlags = meta.mGroupFlags;
+                    localCal.description = "";
                     mCalendars.append(localCal);
                     changed = true;
+                } else {
+                    QString remoteName = QString::fromUtf8(meta.mGroupName.c_str());
+                    for (auto& c : mCalendars) {
+                        if (c.id == calId && c.name != remoteName) {
+                            c.name = remoteName;
+                            changed = true;
+                        }
+                    }
                 }
 
                 std::vector<RsGxsCalendarMessage> messages;
@@ -805,7 +834,6 @@ void CalendarData::handleGxsEvent(std::shared_ptr<const RsEvent> event) {
         switch (e->mCalendarEventCode) {
             case RsCalendarEventCode::NEW_CALENDAR:
             case RsCalendarEventCode::UPDATED_CALENDAR:
-                updateCalendars();
             case RsCalendarEventCode::NEW_EVENT:
             case RsCalendarEventCode::UPDATED_EVENT:
             case RsCalendarEventCode::SUBSCRIBE_STATUS_CHANGED:
