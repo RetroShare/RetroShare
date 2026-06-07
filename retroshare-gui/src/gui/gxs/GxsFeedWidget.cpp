@@ -19,7 +19,7 @@
  *******************************************************************************/
 
 #include "GxsFeedWidget.h"
-#include "gui/gxs/GxsFeedItem.h"
+#include "gui/feeds/GxsFeedItem.h"
 
 #define PAIR(groupId,messageId) QPair<RsGxsGroupId, RsGxsMessageId>(groupId, messageId)
 
