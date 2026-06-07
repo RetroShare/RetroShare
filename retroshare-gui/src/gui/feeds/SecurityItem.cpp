@@ -102,7 +102,7 @@ SecurityItem::~SecurityItem()
 
 uint64_t SecurityItem::uniqueIdentifier() const
 {
-    return hash_64bits("SecurityItem " + QString::number((uint)mType).toStdString() + " " + mIP + mSslId.toStdString());
+    return hash_64bits("SecurityItem " + QString::number((uint)mType).toStdString() + " " + mIP + " " + mSslId.toStdString());
 }
 
 void SecurityItem::updateItemStatic()
