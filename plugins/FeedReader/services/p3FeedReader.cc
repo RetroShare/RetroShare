@@ -1314,6 +1314,7 @@ bool p3FeedReader::retransformMsg(uint32_t feedId, const std::string &msgId)
 		std::string errorString;
 		std::string descriptionTransformed = mi->descriptionTransformed;
 		if (p3FeedReaderThread::processTransformation(*fi, mi, errorString) == RS_FEED_ERRORSTATE_OK) {
+			RsFeedReaderSerialiser::correctMsgSize(mi);
 			if (mi->descriptionTransformed != descriptionTransformed) {
 				msgChanged = true;
 			}
@@ -1609,8 +1610,11 @@ bool p3FeedReader::saveList(bool &cleanup, std::list<RsItem *> &saveData)
 			RsFeedReaderMsg *msg = it2->second;
 
 			if (cleanup) {
-				saveData.push_back(new RsFeedReaderMsg(*msg));
+				RsFeedReaderMsg *clonedMsg = new RsFeedReaderMsg(*msg);
+				RsFeedReaderSerialiser::correctMsgSize(clonedMsg);
+				saveData.push_back(clonedMsg);
 			} else {
+				RsFeedReaderSerialiser::correctMsgSize(msg);
 				saveData.push_back(msg);
 			}
 		}
@@ -2125,6 +2129,7 @@ void p3FeedReader::onProcessSuccess_addMsgs(uint32_t feedId, std::list<RsFeedRea
 					miNew->flag = RS_FEEDMSG_FLAG_NEW;
 					addedMsgs.push_back(miNew->msgId);
 				}
+				RsFeedReaderSerialiser::correctMsgSize(miNew);
 				fi->msgs[miNew->msgId] = miNew;
 				newMsgIt = msgs.erase(newMsgIt);
 

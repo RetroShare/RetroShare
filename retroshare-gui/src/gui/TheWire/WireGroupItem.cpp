@@ -77,7 +77,11 @@ RsGxsGroupId &WireGroupItem::groupId()
 
 void WireGroupItem::setup()
 {
-	label_groupName->setText(QString::fromStdString(mGroup.mMeta.mGroupName));
+	// Initialize cached members from group data
+	mGroupId = mGroup.mMeta.mGroupId;
+	mGroupName = QString::fromStdString(mGroup.mMeta.mGroupName);
+
+	label_groupName->setText(mGroupName);
 	label_authorId->setId(mGroup.mMeta.mAuthorId);
 	frame_details->setVisible(false);
 
@@ -119,6 +123,7 @@ void WireGroupItem::setup()
 	connect(toolButton_show, SIGNAL(clicked()), this, SLOT(show()));
 	connect(toolButton_subscribe, SIGNAL(clicked()), this, SLOT(subscribe()));
 	connect(editButton, SIGNAL(clicked()), this, SLOT(editGroupDetails()));
+	toolButton_readAll->hide(); // hidden until we know there are unread messages
 	setGroupSet();
 }
 
@@ -233,4 +238,22 @@ void WireGroupItem::editGroupDetails()
 
 	WireGroupDialog wireEdit(GxsGroupDialog::MODE_EDIT, groupId, this);
 	wireEdit.exec ();
+}
+
+void WireGroupItem::setUnreadCount(uint32_t count)
+{
+    if (count > 0) {
+        // Make text bold and show count
+        label_groupName->setText(QString("<b>%1 (%2)</b>").arg(mGroupName).arg(count));
+        toolButton_readAll->show();
+    } else {
+        // Regular text
+        label_groupName->setText(mGroupName);
+        toolButton_readAll->hide();
+    }
+}
+
+void WireGroupItem::on_toolButton_readAll_clicked()
+{
+    mHolder->markGroupAsRead(mGroup.mMeta.mGroupId);
 }

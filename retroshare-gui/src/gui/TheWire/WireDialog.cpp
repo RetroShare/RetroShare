@@ -106,13 +106,13 @@ WireDialog::WireDialog(QWidget *parent)
 	QMenu *accountMenu = new QMenu(this);
 	QActionGroup *sortGroup = new QActionGroup(this);
 
-	QAction *sortByName = accountMenu->addAction(tr("Sort by Name"));
+	sortByName = accountMenu->addAction(tr("Sort by Name"));
 	sortByName->setCheckable(true);
 	sortByName->setChecked(true);
 	sortByName->setData(0);
 	sortGroup->addAction(sortByName);
 
-	QAction *sortByActivity = accountMenu->addAction(tr("Sort by Activity"));
+	sortByActivity = accountMenu->addAction(tr("Sort by Activity"));
 	sortByActivity->setCheckable(true);
 	sortByActivity->setData(1);
 	sortGroup->addAction(sortByActivity);
@@ -354,6 +354,10 @@ void WireDialog::processSettings(bool load)
 		// state of filter combobox
 		int index = Settings->value("ShowGroup", 0).toInt();
 		ui.comboBox_groupSet->setCurrentIndex(index);
+
+		// state of sort filter
+		sortByActivity->setChecked(Settings->value("sortByActivity", true).toBool());
+		sortByName->setChecked(Settings->value("SortByName", true).toBool());
 	} else {
 		// save settings
 
@@ -362,6 +366,10 @@ void WireDialog::processSettings(bool load)
 
 		// state of splitter
 		Settings->setValue("SplitterWire", ui.splitter->saveState());
+
+		// state of sort filter
+		Settings->setValue("SortByActivity", sortByActivity->isChecked());
+		Settings->setValue("SortByName", sortByName->isChecked());
 	}
 
 	Settings->endGroup();
@@ -533,7 +541,14 @@ void WireDialog::addGroup(const RsWireGroup &group)
 	std::cerr << "WireDialog::addGroup() GroupId : " << group.mMeta.mGroupId;
 	std::cerr << std::endl;
 
-	addGroup(new WireGroupItem(this, group));
+	WireGroupItem *item = new WireGroupItem(this, group);
+
+	// Apply cached unread count so the badge is correct from the moment the item appears
+	auto sit = mCachedGroupStats.find(group.mMeta.mGroupId);
+	if (sit != mCachedGroupStats.end())
+		item->setUnreadCount(sit->second.mNumThreadMsgsUnread);
+
+	addGroup(item);
 }
 
 void WireDialog::deleteGroups()
@@ -578,6 +593,12 @@ void WireDialog::updateGroups(const std::vector<RsWireGroup>& groups)
 	for(auto &it : groups) {
 		// save list of all groups.
 		mAllGroups[it.mMeta.mGroupId] = it;
+        
+        if (it.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) {
+            mOwnGroups.push_back(it);
+        }
+        
+        addGroup(it);
 
 		if (it.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 		{
@@ -599,6 +620,8 @@ void WireDialog::updateGroups(const std::vector<RsWireGroup>& groups)
 			ui.groupChooser->addItem(QPixmap(pixmap),QString::fromStdString(it.mMeta.mGroupName));
 		}
 	}
+
+    updateGroupCountLabels();
 }
 
 
@@ -1380,17 +1403,40 @@ void WireDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
              * Qt::QueuedConnection is important!
              */
 
-//            QTreeWidgetItem *item = ui.scrollAreaWidgetContents->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
-
-//            if (item)
-//                ui.scrollAreaWidgetContents->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
-
             mCachedGroupStats[groupId] = stats;
+
+            // Update the unread count badge on the matching WireGroupItem
+            WireGroupItem *groupItem = findGroupItemWidget(groupId);
+            if (groupItem)
+                groupItem->setUnreadCount(stats.mNumThreadMsgsUnread);
 
             getUserNotify()->updateIcon();
 
         }, this );
     });
+}
+
+void WireDialog::updateGroupCountLabels()
+{
+    int allCount = mAllGroups.size();
+    int ownCount = mOwnGroups.size();
+    
+    // Count Subscribed and Others from mAllGroups
+    int subscribedCount = 0;
+    int othersCount = 0;
+    for (auto const& [id, group] : mAllGroups) {
+        if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) {
+            subscribedCount++;
+        } else {
+            othersCount++;
+        }
+    }
+
+    // Update ComboBox Text
+    ui.comboBox_groupSet->setItemText(GROUP_SET_ALL, tr("All (%1)").arg(allCount));
+    ui.comboBox_groupSet->setItemText(GROUP_SET_OWN, tr("Yourself (%1)").arg(ownCount));
+    ui.comboBox_groupSet->setItemText(GROUP_SET_SUBSCRIBED, tr("Following (%1)").arg(subscribedCount));
+    ui.comboBox_groupSet->setItemText(GROUP_SET_OTHERS, tr("Others (%1)").arg(othersCount));
 }
 
 bool WireDialog::navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId)
@@ -1428,6 +1474,20 @@ GxsMessageFrameWidget *WireDialog::messageWidget(const RsGxsGroupId &groupId)
 //    }
 
     return NULL;
+}
+
+WireGroupItem *WireDialog::findGroupItemWidget(const RsGxsGroupId &groupId)
+{
+    QLayout *alayout = ui.groupsWidget->layout();
+    for (int i = 0; i < alayout->count(); ++i)
+    {
+        QLayoutItem *item = alayout->itemAt(i);
+        if (!item) continue;
+        WireGroupItem *groupItem = dynamic_cast<WireGroupItem *>(item->widget());
+        if (groupItem && groupItem->groupId() == groupId)
+            return groupItem;
+    }
+    return nullptr;
 }
 
 //void GxsGroupFrameDialog::changedCurrentGroup(const QString& groupId)
@@ -1469,3 +1529,31 @@ GxsMessageFrameWidget *WireDialog::messageWidget(const RsGxsGroupId &groupId)
 //			currentWidget()->setGroupId(mGroupId);
 //	}
 //}
+
+void WireDialog::markGroupAsRead(const RsGxsGroupId &groupId)
+{
+    // Fetch all message summaries in the background and mark each as read
+    // using the blocking API — DB write is complete before each call returns,
+    // so the event arrives after the data is committed.
+    RsThread::async([this, groupId]()
+    {
+        std::vector<RsMsgMetaData> summaries;
+        if (!rsWire->getContentSummaries(groupId, summaries))
+        {
+            std::cerr << "WireDialog::markGroupAsRead() failed to get summaries for group "
+                      << groupId << std::endl;
+            return;
+        }
+
+        for (auto &meta : summaries)
+        {
+            RsGxsGrpMsgIdPair msgIdPair(groupId, meta.mMsgId);
+            rsWire->setMessageReadStatus(msgIdPair, true);
+        }
+
+        // Stats will be refreshed automatically via the READ_STATUS_CHANGED events
+        // fired by setMessageReadStatus for each message.
+
+        requestGroupData();
+    });
+}

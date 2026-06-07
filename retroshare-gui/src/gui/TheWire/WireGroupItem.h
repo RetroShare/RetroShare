@@ -35,6 +35,7 @@ public:
 	virtual void unsubscribe(RsGxsGroupId &groupId) = 0;
 
 	virtual void notifyGroupSelection(WireGroupItem *item) = 0;
+    virtual void markGroupAsRead(const RsGxsGroupId &groupId) = 0;
 };
 
 class WireGroupItem : public QWidget, private Ui::WireGroupItem
@@ -52,11 +53,13 @@ public:
 	const QPixmap *getPixmap();
 	RsGxsGroupId &groupId();
 	bool matchesFilter(const QString &filterText) const;
+    void setUnreadCount(uint32_t count);
 
 private slots:
 	void show();
 	void subscribe();
 	void editGroupDetails();
+    void on_toolButton_readAll_clicked();
 
 protected:
 	void mousePressEvent(QMouseEvent *event);
@@ -66,6 +69,8 @@ private:
 	void setGroupSet();
 	void setBackground(QColor color);
 
+	RsGxsGroupId mGroupId;
+	QString mGroupName;
 	WireGroupHolder *mHolder;
 	RsWireGroup mGroup;
 	bool mSelected;

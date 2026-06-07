@@ -686,6 +686,9 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="TheWire_images.qrc"/>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

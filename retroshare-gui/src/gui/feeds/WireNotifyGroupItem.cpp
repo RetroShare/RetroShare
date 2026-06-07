@@ -30,6 +30,8 @@
 #include "gui/TheWire/WireDialog.h"
 #include "util/DateTime.h"
 
+#define IMAGE_WIRE           ":icons/wire.png"
+
 /****
  * #define DEBUG_ITEM 1
  ****/
@@ -180,7 +182,9 @@ void WireNotifyGroupItem::fill()
         GxsIdDetails::loadPixmapFromData(mGroup.mHeadshot.mData, mGroup.mHeadshot.mSize, wireImage,GxsIdDetails::ORIGINAL);
         ui->logoLabel->setPixmap(QPixmap(wireImage));
     } else {
-        ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png"));
+        // default.
+        QPixmap pixmap = GxsIdDetails::makeDefaultGroupIcon(mGroup.mMeta.mGroupId, IMAGE_WIRE, GxsIdDetails::ORIGINAL);
+        ui->logoLabel->setPixmap(pixmap);
     }
 
     //TODO - nice icon for subscribed group

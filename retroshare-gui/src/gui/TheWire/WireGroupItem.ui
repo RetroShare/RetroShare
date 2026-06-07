@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>292</width>
+    <width>302</width>
     <height>115</height>
    </rect>
   </property>
@@ -152,6 +152,20 @@
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QToolButton" name="toolButton_readAll">
+           <property name="toolTip">
+            <string>Mark all as read all</string>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/png/correct.png</normaloff>:/icons/png/correct.png</iconset>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QToolButton" name="toolButton_subscribe">
