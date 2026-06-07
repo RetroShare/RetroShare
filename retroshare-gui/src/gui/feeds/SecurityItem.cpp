@@ -102,7 +102,7 @@ SecurityItem::~SecurityItem()
 
 uint64_t SecurityItem::uniqueIdentifier() const
 {
-    return hash_64bits("SecurityItem " + QString::number((uint)mType).toStdString() + " " + mSslId.toStdString());
+    return hash_64bits("SecurityItem " + QString::number((uint)mType).toStdString() + " " + mIP + mSslId.toStdString());
 }
 
 void SecurityItem::updateItemStatic()
@@ -154,10 +154,20 @@ void SecurityItem::updateItemStatic()
 				title = tr("Connection attempt from")+" " + QString::fromStdString(mGpgId.toStdString())+" " + tr("Not a Retroshare user.");
 				requestLabel->hide();
 				friendRequesttoolButton->hide();
+				idLabel->hide();
+				nameLabel->hide();
+				locLabel->hide();
+				statusLabel->hide();
+				trustLabel->hide();
 			} else {
 				title = tr("Connection attempt from")+" " + QString::fromStdString(mGpgId.toStdString())+" " + tr("Not a Retroshare user.");
 				requestLabel->hide();
 				friendRequesttoolButton->hide();
+				idLabel->hide();
+				nameLabel->hide();
+				locLabel->hide();
+				statusLabel->hide();
+				trustLabel->hide();
 			}
 			avatar->setDefaultAvatar(":icons/ssl.png");
 			}
