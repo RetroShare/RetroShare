@@ -522,7 +522,10 @@ void QVideoInputDevice::deliverImage(const QImage& image)
         emit networkPacketReady() ;
     }
     if(_echo_output_device != NULL)
-        _echo_output_device->showFrame(image) ;
+        // Self-view is mirrored (horizontal flip), like every mainstream video
+        // app, so it feels natural. The frame sent to the peer (processImage
+        // above) stays un-mirrored, so the remote sees us the right way round.
+        _echo_output_device->showFrame(image.mirrored(true, false)) ;
 }
 
 bool QVideoInputDevice::getNextEncodedPacket(RsVOIPDataChunk& chunk)
