@@ -62,36 +62,64 @@ RsPeerId RsTurtleVOIPBridge::getOrCreateTunnelForChat(const ChatId& chatId)
     }
     RsDbg() << "DISTANT_VOIP: Resolved target identity: " << info.to_id.toStdString();
 
-    RsStackMutex lock(mMutex);
-
-    // 1. Existing tunnel to this destination?
-    std::map<RsGxsId, RsGxsTunnelId>::iterator it = mTunnelByDest.find(info.to_id);
-    if (it != mTunnelByDest.end()) {
-        RsGxsTunnelId tid = it->second;
-        if (mReadyTunnels.find(tid) != mReadyTunnels.end()) {
-            RsPeerId vp = RsPeerId(tid);
-            mVirtualToDistantMap[vp] = chatId.toDistantChatId();   // keep GUI mapping fresh
-            RsDbg() << "DISTANT_VOIP: Reusing ready tunnel, virtual peer=" << vp.toStdString();
-            return vp;
-        }
-        RsDbg() << "DISTANT_VOIP: Tunnel still being established. Waiting for CAN_TALK...";
-        return RsPeerId();
-    }
-
-    // 2. Request a new secured tunnel (gxstunnel does DH + AES + auth + turtle plumbing).
+    // 1. Do we already track a tunnel for this destination?
     RsGxsTunnelId tunnel_id;
-    uint32_t error_code = 0;
-    if (mGxsTunnels->requestSecuredTunnel(info.to_id, info.own_id, tunnel_id, VOIP_GXS_TUNNEL_SERVICE_ID, error_code)) {
-        mTunnelByDest[info.to_id] = tunnel_id;
-        // pre-register the chat mapping so resolveVirtualToDistantChat works as soon as data flows
-        mVirtualToDistantMap[RsPeerId(tunnel_id)] = chatId.toDistantChatId();
-        RsDbg() << "DISTANT_VOIP: Requested secured tunnel " << tunnel_id.toStdString()
-                << " to " << info.to_id.toStdString() << ". Waiting for CAN_TALK...";
-    } else {
-        RsDbg() << "DISTANT_VOIP: requestSecuredTunnel FAILED, error_code=" << error_code;
+    bool have_tunnel = false;
+    {
+        RsStackMutex lock(mMutex);
+        std::map<RsGxsId, RsGxsTunnelId>::iterator it = mTunnelByDest.find(info.to_id);
+        if (it != mTunnelByDest.end()) { tunnel_id = it->second; have_tunnel = true; }
     }
 
-    return RsPeerId(); // not ready yet; GUI auto-poller retries
+    // 2. If not, ask for a secured tunnel. NOTE: the gxs tunnel id is derived only
+    //    from the (from,to) GXS id pair, NOT from the service id. So if a distant
+    //    *chat* tunnel to the same identity already exists, gxstunnel reuses it and
+    //    requestSecuredTunnel returns that same id WITHOUT (re)firing CAN_TALK to us
+    //    -- which is exactly why relying on notifyTunnelStatus alone failed. We
+    //    therefore also poll the live tunnel status below. (No bridge mutex held
+    //    across gxstunnel calls, to avoid any lock-order inversion.)
+    if (!have_tunnel) {
+        uint32_t error_code = 0;
+        if (!mGxsTunnels->requestSecuredTunnel(info.to_id, info.own_id, tunnel_id, VOIP_GXS_TUNNEL_SERVICE_ID, error_code)) {
+            RsDbg() << "DISTANT_VOIP: requestSecuredTunnel FAILED, error_code=" << error_code;
+            return RsPeerId();
+        }
+        RsStackMutex lock(mMutex);
+        mTunnelByDest[info.to_id] = tunnel_id;
+        RsDbg() << "DISTANT_VOIP: Requested secured tunnel " << tunnel_id.toStdString()
+                << " to " << info.to_id.toStdString();
+    }
+
+    // 3. Is the tunnel usable? Either we got notifyTunnelStatus(CAN_TALK) (fresh
+    //    tunnel we created), or - for a tunnel shared with distant chat that is
+    //    already up - we never get that notification, so poll the live status.
+    bool ready = false;
+    {
+        RsStackMutex lock(mMutex);
+        ready = (mReadyTunnels.find(tunnel_id) != mReadyTunnels.end());
+    }
+    if (!ready) {
+        RsGxsTunnelService::GxsTunnelInfo gti;
+        if (mGxsTunnels->getTunnelInfo(tunnel_id, gti)
+            && gti.tunnel_status == RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_CAN_TALK) {
+            RsStackMutex lock(mMutex);
+            mReadyTunnels.insert(tunnel_id);
+            ready = true;
+            RsDbg() << "DISTANT_VOIP: Tunnel already CAN_TALK (polled): " << tunnel_id.toStdString();
+        }
+    }
+
+    // 4. Ready -> hand back the virtual peer id and (re)register the chat mapping.
+    if (ready) {
+        RsStackMutex lock(mMutex);
+        RsPeerId vp = RsPeerId(tunnel_id);
+        mVirtualToDistantMap[vp] = chatId.toDistantChatId();
+        RsDbg() << "DISTANT_VOIP: Tunnel ready, virtual peer=" << vp.toStdString();
+        return vp;
+    }
+
+    RsDbg() << "DISTANT_VOIP: Tunnel not ready yet (still establishing). Auto-poller will retry.";
+    return RsPeerId(); // GUI auto-poller retries
 }
 
 void RsTurtleVOIPBridge::cancelSearchForChat(const ChatId& chatId)
