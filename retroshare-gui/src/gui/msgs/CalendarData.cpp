@@ -823,8 +823,11 @@ void CalendarData::updateCalendars() {
 
         if (changed) {
             saveData();
-            emit calendarDataChanged();
         }
+        // Always emit so the UI refreshes the shared calendar list
+        // from GXS group metadata (getCalendarsSummaries), even when
+        // local calendar data didn't change.
+        emit calendarDataChanged();
     }
 }
 
