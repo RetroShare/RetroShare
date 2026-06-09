@@ -62,6 +62,7 @@ struct CalendarEvent {
     QString description;
     QStringList attendees; // PGP IDs of contacts
     bool isPublic;
+    QStringList attachments;
 };
 
 struct CalendarTask {
@@ -80,6 +81,7 @@ struct CalendarTask {
     QString reminder;
     QString description;
     bool completed;
+    QStringList attachments;
 };
 
 class CalendarData : public QObject {

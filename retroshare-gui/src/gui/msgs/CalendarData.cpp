@@ -123,6 +123,7 @@ void CalendarData::loadData() {
         ev.description = settings.value("description").toString();
         ev.attendees = settings.value("attendees").toStringList();
         ev.isPublic = settings.value("isPublic").toBool();
+        ev.attachments = settings.value("attachments").toStringList();
         mEvents.append(ev);
     }
     settings.endArray();
@@ -147,6 +148,7 @@ void CalendarData::loadData() {
         task.reminder = settings.value("reminder").toString();
         task.description = settings.value("description").toString();
         task.completed = settings.value("completed").toBool();
+        task.attachments = settings.value("attachments").toStringList();
         mTasks.append(task);
     }
     settings.endArray();
@@ -195,6 +197,7 @@ void CalendarData::saveData() {
         settings.setValue("description", mEvents[i].description);
         settings.setValue("attendees", mEvents[i].attendees);
         settings.setValue("isPublic", mEvents[i].isPublic);
+        settings.setValue("attachments", mEvents[i].attachments);
     }
     settings.endArray();
 
@@ -217,6 +220,7 @@ void CalendarData::saveData() {
         settings.setValue("reminder", mTasks[i].reminder);
         settings.setValue("description", mTasks[i].description);
         settings.setValue("completed", mTasks[i].completed);
+        settings.setValue("attachments", mTasks[i].attachments);
     }
     settings.endArray();
 
@@ -398,6 +402,10 @@ QString CalendarData::exportCalendarToIcs(const QString& calId) const {
             icsContent += QString("DTEND:%1\r\n").arg(ev.end.toUTC().toString("yyyyMMdd'T'HHmmss'Z'"));
         }
 
+        for (const auto& att : ev.attachments) {
+            icsContent += QString("ATTACH:%1\r\n").arg(att);
+        }
+
         icsContent += "END:VEVENT\r\n";
     }
 
@@ -436,6 +444,10 @@ QString CalendarData::exportCalendarToIcs(const QString& calId) const {
 
         icsContent += QString("PERCENT-COMPLETE:%1\r\n").arg(t.percentComplete);
         icsContent += QString("COMPLETED:%1\r\n").arg(t.completed ? "TRUE" : "FALSE");
+
+        for (const auto& att : t.attachments) {
+            icsContent += QString("ATTACH:%1\r\n").arg(att);
+        }
 
         icsContent += "END:VTODO\r\n";
     }
@@ -561,6 +573,8 @@ void CalendarData::importCalendarFromIcs(const QString& calId, const QString& ic
                     } else {
                         currentEvent.end = parseIcsDateTime(val);
                     }
+                } else if (key.compare("ATTACH", Qt::CaseInsensitive) == 0) {
+                    currentEvent.attachments.append(val);
                 }
             }
         } else if (inTask) {
@@ -598,6 +612,8 @@ void CalendarData::importCalendarFromIcs(const QString& calId, const QString& ic
                     currentTask.percentComplete = val.toInt();
                 } else if (key.compare("COMPLETED", Qt::CaseInsensitive) == 0) {
                     currentTask.completed = (val.compare("TRUE", Qt::CaseInsensitive) == 0);
+                } else if (key.compare("ATTACH", Qt::CaseInsensitive) == 0) {
+                    currentTask.attachments.append(val);
                 }
             }
         }

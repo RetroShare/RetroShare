@@ -104,6 +104,7 @@ void CalendarWidget::buildUi() {
     mEventTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     mEventTable->setSelectionMode(QAbstractItemView::SingleSelection);
     mEventTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    mEventTable->setSortingEnabled(true);
     connect(mEventTable, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(onEventSelected(int,int)));
     mEventTable->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(mEventTable, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(onEventTableContextMenu(const QPoint&)));
@@ -333,6 +334,7 @@ void CalendarWidget::updateViews() {
 }
 
 void CalendarWidget::updateEventList() {
+    mEventTable->setSortingEnabled(false);
     mEventTable->setRowCount(0);
 
     const auto& events = CalendarData::instance()->getEvents();
@@ -384,6 +386,7 @@ void CalendarWidget::updateEventList() {
         mEventTable->setItem(row, 4, new QTableWidgetItem(calName));
         row++;
     }
+    mEventTable->setSortingEnabled(true);
 }
 
 static QColor blendColors(const QColor& color1, const QColor& color2, qreal ratio) {
@@ -706,9 +709,7 @@ void CalendarWidget::onEventSelected(int row, int col) {
             }
         }
 
-        if (!canEdit) return;
-
-        EventDialog dlg(eventId, QDateTime::currentDateTime(), this);
+        EventDialog dlg(eventId, QDateTime::currentDateTime(), this, !canEdit);
         if (dlg.exec() == QDialog::Accepted) {
             refreshData();
         }
@@ -911,12 +912,18 @@ void CalendarWidget::onEventTableContextMenu(const QPoint& pos) {
     }
 
     QMenu menu(this);
+    QAction* viewAct = menu.addAction(tr("View Event"));
     QAction* editAct = menu.addAction(tr("Edit Event"));
     editAct->setEnabled(canEdit);
 
     QAction* selectedAct = menu.exec(mEventTable->viewport()->mapToGlobal(pos));
-    if (selectedAct == editAct && canEdit) {
-        EventDialog dlg(eventId, QDateTime::currentDateTime(), this);
+    if (selectedAct == viewAct) {
+        EventDialog dlg(eventId, QDateTime::currentDateTime(), this, !canEdit);
+        if (dlg.exec() == QDialog::Accepted) {
+            refreshData();
+        }
+    } else if (selectedAct == editAct && canEdit) {
+        EventDialog dlg(eventId, QDateTime::currentDateTime(), this, false);
         if (dlg.exec() == QDialog::Accepted) {
             refreshData();
         }

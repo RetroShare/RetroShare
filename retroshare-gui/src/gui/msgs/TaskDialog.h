@@ -11,6 +11,7 @@ class QDateTimeEdit;
 class QTextEdit;
 class QSpinBox;
 class QListWidget;
+class QPushButton;
 
 class TaskDialog : public QDialog {
     Q_OBJECT
@@ -44,6 +45,7 @@ private:
     QComboBox* mReminderCombo;
     QTextEdit* mDescriptionEdit;
     QListWidget* mAttachmentsList;
+    QPushButton* mAddAttachBtn;
 };
 
 #endif // TASKDIALOG_H
