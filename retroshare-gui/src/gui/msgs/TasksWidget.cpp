@@ -154,11 +154,14 @@ void TasksWidget::refreshData() {
 
     // 2. Populate Shared Calendars (not owned by us)
     {
-        // Save current check states
+        // Save current check states and subscription states
         QMap<QString, Qt::CheckState> sharedCheckedStates;
+        QMap<QString, bool> sharedSubscribedStates;
         for (int i = 0; i < mSharedCalendarList->count(); ++i) {
             QListWidgetItem* item = mSharedCalendarList->item(i);
-            sharedCheckedStates[item->data(Qt::UserRole).toString()] = item->checkState();
+            QString calId = item->data(Qt::UserRole).toString();
+            sharedCheckedStates[calId] = item->checkState();
+            sharedSubscribedStates[calId] = item->data(Qt::UserRole + 1).toBool();
         }
 
         mSharedCalendarList->blockSignals(true);
@@ -180,7 +183,15 @@ void TasksWidget::refreshData() {
                     if (ownedByUs) continue;
 
                     QString calName = QString::fromUtf8(meta.mGroupName.c_str());
-                    bool isSubscribed = (meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
+
+                    // Check subscription status locally (immediate)
+                    bool isSubscribedLocal = false;
+                    for (const auto& c : cals) {
+                        if (c.id == calId) {
+                            isSubscribedLocal = true;
+                            break;
+                        }
+                    }
 
                     QListWidgetItem* item = new QListWidgetItem(calName, mSharedCalendarList);
                     item->setData(Qt::UserRole, calId);
@@ -188,15 +199,21 @@ void TasksWidget::refreshData() {
 
                     // Render blue bullet for subscribed, grey for unsubscribed
                     QPixmap pix(12, 12);
-                    pix.fill(isSubscribed ? QColor("#4a90e2") : Qt::gray);
+                    pix.fill(isSubscribedLocal ? QColor("#4a90e2") : Qt::gray);
                     item->setIcon(QIcon(pix));
+                    item->setData(Qt::UserRole + 1, isSubscribedLocal);
 
-                    // Restore checked state if we have a saved state,
-                    // otherwise default to Checked if subscribed, Unchecked if unsubscribed
+                    // Restore checked state if we have a saved state and subscription status did not change.
+                    // If subscription state changed, set checked state based on new subscription status.
                     if (sharedCheckedStates.contains(calId)) {
-                        item->setCheckState(sharedCheckedStates[calId]);
+                        bool wasSubscribed = sharedSubscribedStates.value(calId, false);
+                        if (wasSubscribed != isSubscribedLocal) {
+                            item->setCheckState(isSubscribedLocal ? Qt::Checked : Qt::Unchecked);
+                        } else {
+                            item->setCheckState(sharedCheckedStates[calId]);
+                        }
                     } else {
-                        item->setCheckState(isSubscribed ? Qt::Checked : Qt::Unchecked);
+                        item->setCheckState(isSubscribedLocal ? Qt::Checked : Qt::Unchecked);
                     }
                 }
             }

@@ -49,8 +49,10 @@ public:
     CalendarWidget(QWidget* parent = nullptr);
     ~CalendarWidget();
 
-    void refreshData();
     QDate selectedDate() const { return mSelectedDate; }
+
+public slots:
+    void refreshData();
 
 private slots:
     void onNewEvent();

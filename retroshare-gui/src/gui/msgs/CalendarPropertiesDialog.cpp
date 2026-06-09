@@ -102,6 +102,19 @@ CalendarPropertiesDialog::CalendarPropertiesDialog(const QString& calId, QWidget
             mLocalCombo->loadGroups(0, ngi);
 
             updateCircleOptions();
+
+            // Disable distribution and description controls for non-admin users
+            // owner == "local" means the current user created (and administers) this calendar
+            bool isAdmin = (existingCal.owner == "local");
+            if (existingCal.onNetwork && !isAdmin) {
+                mIdChooser->setEnabled(false);
+                mRadioPublic->setEnabled(false);
+                mRadioCircle->setEnabled(false);
+                mRadioNodeGroup->setEnabled(false);
+                mDescEdit->setReadOnly(true);
+                mDescEdit->setEnabled(false);
+                mNameEdit->setEnabled(false);
+            }
         }
         updateColorButton();
         mStackedWidget->setCurrentWidget(mPage2);
@@ -182,7 +195,7 @@ void CalendarPropertiesDialog::setupUi() {
     page2Layout->addLayout(mFormLayout);
 
     // Message Distribution group box
-    mDistribGroupBox = new QGroupBox(tr("Message Distribution"), mPage2);
+    mDistribGroupBox = new QGroupBox(tr("Calendar Distribution"), mPage2);
     QVBoxLayout* distribLayout = new QVBoxLayout(mDistribGroupBox);
     distribLayout->setContentsMargins(10, 10, 10, 10);
     distribLayout->setSpacing(8);
