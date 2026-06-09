@@ -17,7 +17,7 @@ class EventDialog : public QDialog {
 public:
     // Pass eventId to edit existing event, or empty string to create a new one.
     // If creating a new one, startInfo can specify the default start time.
-    EventDialog(const QString& eventId = "", const QDateTime& startInfo = QDateTime::currentDateTime(), QWidget* parent = nullptr);
+    EventDialog(const QString& eventId = "", const QDateTime& startInfo = QDateTime::currentDateTime(), QWidget* parent = nullptr, bool readOnly = false);
     ~EventDialog();
 
 private slots:
@@ -25,13 +25,21 @@ private slots:
     void onDelete();
     void onAllDayToggled(bool checked);
     void onInviteAttendees();
+    void onEditClicked();
 
 private:
     void loadEvent();
     void buildUi();
+    void updateModeUi();
 
     QString mEventId;
     QDateTime mDefaultStart;
+    bool mReadOnly;
+
+    QWidget* mActionWidget;
+    QPushButton* mSaveBtn;
+    QPushButton* mInviteBtn;
+    QPushButton* mDeleteBtn;
 
     QComboBox* mCalendarCombo;
     QLineEdit* mTitleEdit;
@@ -44,7 +52,13 @@ private:
     QComboBox* mReminderCombo;
     QTextEdit* mDescriptionEdit;
     QListWidget* mAttendeesList;
+
     QListWidget* mAttachmentsList;
+    QPushButton* mAddAttachBtn;
+
+    QWidget* mBottomButtonsWidget;
+    QPushButton* mEditBtn;
+    QPushButton* mCloseBtn;
 
     QCheckBox* mNotifyCheck;
     QCheckBox* mSeparateCheck;

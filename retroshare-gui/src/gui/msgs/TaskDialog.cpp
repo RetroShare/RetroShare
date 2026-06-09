@@ -16,6 +16,11 @@
 #include <QFileDialog>
 #include <QListWidget>
 #include <QFileInfo>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QMenu>
+#include <QDir>
+#include "gui/RetroShareLink.h"
 
 TaskDialog::TaskDialog(const QString& taskId, QWidget* parent)
     : QDialog(parent), mTaskId(taskId)
@@ -129,15 +134,114 @@ void TaskDialog::buildUi() {
     QWidget* attachTab = new QWidget(this);
     QVBoxLayout* attachLayout = new QVBoxLayout(attachTab);
     mAttachmentsList = new QListWidget(this);
-    attachLayout->addWidget(mAttachmentsList);
-    QPushButton* addAttachBtn = new QPushButton(tr("Attach File..."), this);
-    connect(addAttachBtn, &QPushButton::clicked, [this]() {
-        QString file = QFileDialog::getOpenFileName(this, tr("Select File"));
-        if (!file.isEmpty()) {
-            mAttachmentsList->addItem(QFileInfo(file).fileName());
+    mAttachmentsList->setContextMenuPolicy(Qt::CustomContextMenu);
+    
+    connect(mAttachmentsList, &QListWidget::customContextMenuRequested, [this](const QPoint& pos) {
+        QListWidgetItem* item = mAttachmentsList->itemAt(pos);
+        if (!item) return;
+
+        QMenu menu(this);
+        QAction* downloadAction = menu.addAction(QIcon(":/icons/png/download.png"), tr("Download"));
+        QAction* downloadAllAction = menu.addAction(QIcon(":/icons/mail/downloadall.png"), tr("Download all"));
+        QAction* removeAction = menu.addAction(QIcon(":/icons/mail/delete.png"), tr("Remove Attachment"));
+
+        QAction* selectedAction = menu.exec(mAttachmentsList->mapToGlobal(pos));
+        if (selectedAction == downloadAction) {
+            QString att = item->data(Qt::UserRole).toString();
+            if (!att.isEmpty()) {
+                RetroShareLink link(att);
+                if (link.valid() && (link.type() == RetroShareLink::TYPE_FILE || link.type() == RetroShareLink::TYPE_FILE_TREE)) {
+                    QList<RetroShareLink> links;
+                    links.append(link);
+                    RetroShareLink::process(links);
+                } else if (QFileInfo::exists(att)) {
+                    QString targetPath = QFileDialog::getSaveFileName(this, tr("Save Attachment As"), QFileInfo(att).fileName());
+                    if (!targetPath.isEmpty()) {
+                        if (QFile::exists(targetPath)) {
+                            QFile::remove(targetPath);
+                        }
+                        if (!QFile::copy(att, targetPath)) {
+                            QMessageBox::warning(this, tr("Download Failed"), tr("Could not save the file to %1").arg(targetPath));
+                        }
+                    }
+                } else {
+                    QUrl url(att);
+                    if (!url.scheme().isEmpty()) {
+                        QDesktopServices::openUrl(url);
+                    }
+                }
+            }
+        } else if (selectedAction == downloadAllAction) {
+            QList<RetroShareLink> rsLinks;
+            QStringList localFiles;
+            for (int i = 0; i < mAttachmentsList->count(); ++i) {
+                QString att = mAttachmentsList->item(i)->data(Qt::UserRole).toString();
+                if (att.isEmpty()) continue;
+                RetroShareLink link(att);
+                if (link.valid() && (link.type() == RetroShareLink::TYPE_FILE || link.type() == RetroShareLink::TYPE_FILE_TREE)) {
+                    rsLinks.append(link);
+                } else if (QFileInfo::exists(att)) {
+                    localFiles.append(att);
+                } else {
+                    QUrl url(att);
+                    if (!url.scheme().isEmpty()) {
+                        QDesktopServices::openUrl(url);
+                    }
+                }
+            }
+            if (!rsLinks.isEmpty()) {
+                RetroShareLink::process(rsLinks);
+            }
+            if (!localFiles.isEmpty()) {
+                QString targetDir = QFileDialog::getExistingDirectory(this, tr("Select Directory to Save Attachments"));
+                if (!targetDir.isEmpty()) {
+                    bool success = true;
+                    QStringList failedFiles;
+                    for (const QString& file : localFiles) {
+                        QFileInfo fi(file);
+                        QString targetPath = QDir(targetDir).filePath(fi.fileName());
+                        if (QFile::exists(targetPath)) {
+                            QFile::remove(targetPath);
+                        }
+                        if (!QFile::copy(file, targetPath)) {
+                            success = false;
+                            failedFiles.append(fi.fileName());
+                        }
+                    }
+                    if (!success) {
+                        QMessageBox::warning(this, tr("Download Failed"), tr("Could not save the following files: %1").arg(failedFiles.join(", ")));
+                    }
+                }
+            }
+        } else if (selectedAction == removeAction) {
+            delete mAttachmentsList->takeItem(mAttachmentsList->row(item));
         }
     });
-    attachLayout->addWidget(addAttachBtn);
+
+    connect(mAttachmentsList, &QListWidget::itemDoubleClicked, [](QListWidgetItem* item) {
+        QString pathOrUrl = item->data(Qt::UserRole).toString();
+        if (!pathOrUrl.isEmpty()) {
+            QUrl url(pathOrUrl);
+            if (url.scheme().isEmpty()) {
+                url = QUrl::fromLocalFile(pathOrUrl);
+            }
+            QDesktopServices::openUrl(url);
+        }
+    });
+
+    attachLayout->addWidget(mAttachmentsList);
+    mAddAttachBtn = new QPushButton(tr("Attach File..."), this);
+    connect(mAddAttachBtn, &QPushButton::clicked, [this]() {
+        QStringList files = QFileDialog::getOpenFileNames(this, tr("Select File(s)"));
+        for (const QString& file : files) {
+            if (!file.isEmpty()) {
+                QListWidgetItem* item = new QListWidgetItem(QFileInfo(file).fileName(), mAttachmentsList);
+                item->setData(Qt::UserRole, file);
+                item->setToolTip(file);
+            }
+        }
+    });
+    attachLayout->addWidget(mAddAttachBtn);
     tabWidget->addTab(attachTab, tr("Attachments"));
 
     mainLayout->addWidget(tabWidget);
@@ -169,6 +273,14 @@ void TaskDialog::loadTask() {
             mRepeatCombo->setCurrentText(t.repeat);
             mReminderCombo->setCurrentText(t.reminder);
             mDescriptionEdit->setPlainText(t.description);
+
+            // Load attachments
+            mAttachmentsList->clear();
+            for (const auto& att : t.attachments) {
+                QListWidgetItem* item = new QListWidgetItem(QFileInfo(att).fileName(), mAttachmentsList);
+                item->setData(Qt::UserRole, att);
+                item->setToolTip(att);
+            }
             break;
         }
     }
@@ -207,6 +319,11 @@ void TaskDialog::onSaveAndClose() {
 
     if (t.completed && t.percentComplete < 100) {
         t.percentComplete = 100;
+    }
+
+    // Get attachments
+    for (int i = 0; i < mAttachmentsList->count(); ++i) {
+        t.attachments.append(mAttachmentsList->item(i)->data(Qt::UserRole).toString());
     }
 
     if (mTaskId.isEmpty()) {
