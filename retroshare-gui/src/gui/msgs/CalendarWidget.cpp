@@ -195,7 +195,7 @@ void CalendarWidget::refreshData() {
             item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
             
             // Render colored bullet point icon
-            QPixmap pix(12, 12);
+            QPixmap pix(16, 16);
             pix.fill(cal.color);
             item->setIcon(QIcon(pix));
 
@@ -211,11 +211,14 @@ void CalendarWidget::refreshData() {
 
     // 2. Populate Shared Calendars (not owned by us)
     {
-        // Save current check states
+        // Save current check states and subscription states
         QMap<QString, Qt::CheckState> sharedCheckedStates;
+        QMap<QString, bool> sharedSubscribedStates;
         for (int i = 0; i < mSharedCalendarList->count(); ++i) {
             QListWidgetItem* item = mSharedCalendarList->item(i);
-            sharedCheckedStates[item->data(Qt::UserRole).toString()] = item->checkState();
+            QString calId = item->data(Qt::UserRole).toString();
+            sharedCheckedStates[calId] = item->checkState();
+            sharedSubscribedStates[calId] = item->data(Qt::UserRole + 1).toBool();
         }
 
         mSharedCalendarList->blockSignals(true);
@@ -257,11 +260,17 @@ void CalendarWidget::refreshData() {
                     QPixmap pix(16, 16);
                     pix.fill(isSubscribedLocal ? calColor : Qt::gray);
                     item->setIcon(QIcon(pix));
+                    item->setData(Qt::UserRole + 1, isSubscribedLocal);
 
-                    // Restore checked state if we have a saved state,
-                    // otherwise default to Checked if subscribed, Unchecked if unsubscribed
+                    // Restore checked state if we have a saved state and subscription status did not change.
+                    // If subscription state changed, set checked state based on new subscription status.
                     if (sharedCheckedStates.contains(calId)) {
-                        item->setCheckState(sharedCheckedStates[calId]);
+                        bool wasSubscribed = sharedSubscribedStates.value(calId, false);
+                        if (wasSubscribed != isSubscribedLocal) {
+                            item->setCheckState(isSubscribedLocal ? Qt::Checked : Qt::Unchecked);
+                        } else {
+                            item->setCheckState(sharedCheckedStates[calId]);
+                        }
                     } else {
                         item->setCheckState(isSubscribedLocal ? Qt::Checked : Qt::Unchecked);
                     }

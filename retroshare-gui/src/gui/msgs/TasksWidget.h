@@ -35,6 +35,7 @@ public:
     TasksWidget(QWidget* parent = nullptr);
     ~TasksWidget();
 
+public slots:
     void refreshData();
 
 private slots:

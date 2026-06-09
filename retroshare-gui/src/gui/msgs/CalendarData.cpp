@@ -95,7 +95,7 @@ void CalendarData::loadData() {
     if (mCalendars.isEmpty()) {
         CalendarInfo defaultCal;
         defaultCal.id = "personal";
-        defaultCal.name = "Privat";
+        defaultCal.name = "Private";
         defaultCal.color = QColor("#4a90e2");
         defaultCal.isPublic = false;
         defaultCal.owner = "local";
@@ -103,17 +103,6 @@ void CalendarData::loadData() {
         defaultCal.email = "retroshare <retroshare@GXSID>";
         defaultCal.onNetwork = false;
         mCalendars.append(defaultCal);
-
-        CalendarInfo testCal;
-        testCal.id = "test";
-        testCal.name = "test";
-        testCal.color = QColor("#50e3c2");
-        testCal.isPublic = true;
-        testCal.owner = "local";
-        testCal.showReminders = true;
-        testCal.email = "retroshare <retroshare@GXSID>";
-        testCal.onNetwork = true;
-        mCalendars.append(testCal);
     }
 
     // Load Events
@@ -237,6 +226,7 @@ void CalendarData::saveData() {
 void CalendarData::addCalendar(const CalendarInfo& cal) {
     mCalendars.append(cal);
     saveData();
+    emit calendarDataChanged();
 }
 
 void CalendarData::updateCalendar(const CalendarInfo& cal) {
@@ -247,6 +237,7 @@ void CalendarData::updateCalendar(const CalendarInfo& cal) {
         }
     }
     saveData();
+    emit calendarDataChanged();
 }
 
 void CalendarData::removeCalendar(const QString& id) {
@@ -269,6 +260,7 @@ void CalendarData::removeCalendar(const QString& id) {
         [&id](const CalendarTask& t) { return t.calendarId == id; }), mTasks.end());
 
     saveData();
+    emit calendarDataChanged();
 }
 
 void CalendarData::addEvent(const CalendarEvent& ev) {
@@ -823,6 +815,7 @@ void CalendarData::updateCalendars() {
 
         if (changed) {
             saveData();
+            emit calendarDataChanged();
         }
         // Always emit so the UI refreshes the shared calendar list
         // from GXS group metadata (getCalendarsSummaries), even when
@@ -837,6 +830,8 @@ void CalendarData::handleGxsEvent(std::shared_ptr<const RsEvent> event) {
         switch (e->mCalendarEventCode) {
             case RsCalendarEventCode::NEW_CALENDAR:
             case RsCalendarEventCode::UPDATED_CALENDAR:
+                updateCalendars();
+                break;
             case RsCalendarEventCode::NEW_EVENT:
             case RsCalendarEventCode::UPDATED_EVENT:
             case RsCalendarEventCode::SUBSCRIBE_STATUS_CHANGED:
