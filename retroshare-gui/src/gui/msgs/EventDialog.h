@@ -10,6 +10,7 @@ class QCheckBox;
 class QDateTimeEdit;
 class QTextEdit;
 class QListWidget;
+class QTreeWidget;
 class QTabWidget;
 
 class EventDialog : public QDialog {
@@ -31,6 +32,7 @@ private:
     void loadEvent();
     void buildUi();
     void updateModeUi();
+    void sendInvite(const CalendarEvent& ev, const QStringList& invitedNames);
 
     QString mEventId;
     QDateTime mDefaultStart;
@@ -51,7 +53,7 @@ private:
     QComboBox* mRepeatCombo;
     QComboBox* mReminderCombo;
     QTextEdit* mDescriptionEdit;
-    QListWidget* mAttendeesList;
+    QTreeWidget* mAttendeesList;
 
     QListWidget* mAttachmentsList;
     QPushButton* mAddAttachBtn;

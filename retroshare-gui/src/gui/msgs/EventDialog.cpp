@@ -11,6 +11,10 @@
 #include <QDateTimeEdit>
 #include <QTextEdit>
 #include <QListWidget>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include "gui/gxs/GxsIdTreeWidgetItem.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include <QPushButton>
 #include <QTabWidget>
 #include <QMessageBox>
@@ -24,6 +28,65 @@
 #include "gui/RetroShareLink.h"
 #include "gui/common/FriendSelectionWidget.h"
 #include <QDialogButtonBox>
+#include <retroshare/rsidentity.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rsmail.h>
+#include "gui/common/PeerDefs.h"
+#include <QCoreApplication>
+#include "gui/common/AvatarDefs.h"
+#include <QPixmap>
+#include <QIcon>
+
+namespace {
+QString getContactName(const QString& idStr) {
+    std::string str = idStr.toStdString();
+    if (str.length() == 16) {
+        RsPgpId pgpId(str);
+        QString name;
+        PeerDefs::rsidFromId(pgpId, &name);
+        return name;
+    } else if (str.length() == 32) {
+        RsGxsId gxsId(str);
+        RsIdentityDetails details;
+        if (rsIdentity && rsIdentity->getIdDetails(gxsId, details)) {
+            return QString::fromUtf8(details.mNickname.c_str());
+        }
+        RsPeerId peerId(str);
+        std::string peerName = rsPeers ? rsPeers->getPeerName(peerId) : "";
+        if (!peerName.empty()) {
+            return QString::fromUtf8(peerName.c_str());
+        }
+        QString name;
+        PeerDefs::rsidFromId(peerId, &name);
+        if (name != QCoreApplication::translate("PeerDefs", "Unknown")) {
+            return name;
+        }
+        PeerDefs::rsidFromId(gxsId, &name);
+        return name;
+    }
+    return idStr;
+}
+
+QIcon getContactAvatar(const QString& idStr) {
+    std::string str = idStr.toStdString();
+    QPixmap pixmap;
+    if (str.length() == 16) {
+        AvatarDefs::getAvatarFromGpgId(RsPgpId(str), pixmap);
+    } else if (str.length() == 32) {
+        RsGxsId gxsId(str);
+        RsIdentityDetails details;
+        if (rsIdentity && rsIdentity->getIdDetails(gxsId, details)) {
+            AvatarDefs::getAvatarFromGxsId(gxsId, pixmap);
+        } else {
+            AvatarDefs::getAvatarFromSslId(RsPeerId(str), pixmap);
+        }
+    }
+    if (pixmap.isNull()) {
+        pixmap = QPixmap(AVATAR_DEFAULT_IMAGE_SQUARE);
+    }
+    return QIcon(pixmap);
+}
+}
 
 EventDialog::EventDialog(const QString& eventId, const QDateTime& startInfo, QWidget* parent, bool readOnly)
     : QDialog(parent), mEventId(eventId), mDefaultStart(startInfo), mReadOnly(readOnly)
@@ -122,7 +185,10 @@ void EventDialog::buildUi() {
     tabWidget->addTab(mDescriptionEdit, tr("Description"));
 
     // Attendees Tab
-    mAttendeesList = new QListWidget(this);
+    mAttendeesList = new QTreeWidget(this);
+    mAttendeesList->setHeaderHidden(true);
+    mAttendeesList->setIconSize(QSize(32, 32));
+    mAttendeesList->setRootIsDecorated(false);
     tabWidget->addTab(mAttendeesList, tr("Attendees"));
 
     // Attachments Tab
@@ -302,13 +368,42 @@ void EventDialog::loadEvent() {
 
             // Set attendees
             mAttendeesList->clear();
-            QMap<QString, QString> contacts = CalendarData::getContacts();
             for (const auto& contactId : ev.attendees) {
-                QString name = contacts.value(contactId, contactId);
-                QListWidgetItem* item = new QListWidgetItem(name, mAttendeesList);
-                item->setData(Qt::UserRole, contactId);
-                item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-                item->setCheckState(Qt::Checked);
+                if (contactId.length() == 16) {
+                    QString name = getContactName(contactId);
+                    QTreeWidgetItem* item = new QTreeWidgetItem(mAttendeesList);
+                    item->setIcon(0, getContactAvatar(contactId));
+                    item->setText(0, name);
+                    item->setData(0, Qt::UserRole, contactId);
+                    item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+                    item->setCheckState(0, Qt::Checked);
+                } else if (contactId.length() == 32) {
+                    RsGxsId gxsId(contactId.toStdString());
+                    RsPeerId peerId(contactId.toStdString());
+                    bool isSsl = false;
+                    if (rsPeers) {
+                        std::string peerName = rsPeers->getPeerName(peerId);
+                        if (!peerName.empty() || rsPeers->isFriend(peerId)) {
+                            isSsl = true;
+                        }
+                    }
+                    if (isSsl) {
+                        QString name = getContactName(contactId);
+                        QTreeWidgetItem* item = new QTreeWidgetItem(mAttendeesList);
+                        item->setIcon(0, getContactAvatar(contactId));
+                        item->setText(0, name);
+                        item->setData(0, Qt::UserRole, contactId);
+                        item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+                        item->setCheckState(0, Qt::Checked);
+                    } else {
+                        // Treat as GXS ID
+                        GxsIdRSTreeWidgetItem* item = new GxsIdRSTreeWidgetItem(nullptr, GxsIdDetails::ICON_TYPE_AVATAR, true, mAttendeesList);
+                        item->setData(0, Qt::UserRole, contactId);
+                        item->setId(gxsId, 0, true);
+                        item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+                        item->setCheckState(0, Qt::Checked);
+                    }
+                }
             }
 
             // Load attachments
@@ -336,6 +431,7 @@ void EventDialog::onAllDayToggled(bool checked) {
 void EventDialog::onInviteAttendees() {
     QDialog dialog(this);
     dialog.setWindowTitle(tr("Invite Attendees"));
+    dialog.resize(this->width(), 500);
     QVBoxLayout* layout = new QVBoxLayout(&dialog);
 
     QComboBox* filterCombo = new QComboBox(&dialog);
@@ -348,7 +444,7 @@ void EventDialog::onInviteAttendees() {
 
     FriendSelectionWidget* friendsWidget = new FriendSelectionWidget(&dialog);
     friendsWidget->setHeaderText(tr("Select contacts to invite:"));
-    friendsWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
+    friendsWidget->setModus(FriendSelectionWidget::MODUS_CHECK);
     friendsWidget->setShowType(FriendSelectionWidget::SHOW_GXS);
     friendsWidget->start();
 
@@ -370,14 +466,35 @@ void EventDialog::onInviteAttendees() {
     });
 
     // Pre-select current attendees
-    std::set<std::string> psids;
-    for (int i = 0; i < mAttendeesList->count(); ++i) {
-        QListWidgetItem* item = mAttendeesList->item(i);
-        if (item->checkState() == Qt::Checked) {
-            psids.insert(item->data(Qt::UserRole).toString().toStdString());
+    std::set<std::string> psidsGpg;
+    std::set<std::string> psidsGxs;
+    std::set<std::string> psidsSsl;
+    for (int i = 0; i < mAttendeesList->topLevelItemCount(); ++i) {
+        QTreeWidgetItem* item = mAttendeesList->topLevelItem(i);
+        if (item->checkState(0) == Qt::Checked) {
+            std::string idStr = item->data(0, Qt::UserRole).toString().toStdString();
+            if (idStr.length() == 16) {
+                psidsGpg.insert(idStr);
+            } else if (idStr.length() == 32) {
+                RsPeerId peerId(idStr);
+                bool isSsl = false;
+                if (rsPeers) {
+                    std::string peerName = rsPeers->getPeerName(peerId);
+                    if (!peerName.empty() || rsPeers->isFriend(peerId)) {
+                        isSsl = true;
+                    }
+                }
+                if (isSsl) {
+                    psidsSsl.insert(idStr);
+                } else {
+                    psidsGxs.insert(idStr);
+                }
+            }
         }
     }
-    friendsWidget->setSelectedIdsFromString(FriendSelectionWidget::IDTYPE_GPG, psids, false);
+    friendsWidget->setSelectedIdsFromString(FriendSelectionWidget::IDTYPE_GPG, psidsGpg, false);
+    friendsWidget->setSelectedIdsFromString(FriendSelectionWidget::IDTYPE_GXS, psidsGxs, false);
+    friendsWidget->setSelectedIdsFromString(FriendSelectionWidget::IDTYPE_SSL, psidsSsl, false);
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
     connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
@@ -387,20 +504,68 @@ void EventDialog::onInviteAttendees() {
     layout->addWidget(friendsWidget);
     layout->addWidget(buttonBox);
 
-    if (dialog.exec() == QDialog::Accepted) {
-        std::set<RsPgpId> selected;
-        friendsWidget->selectedIds<RsPgpId, FriendSelectionWidget::IDTYPE_GPG>(selected, false);
+    while (dialog.exec() == QDialog::Accepted) {
+        std::set<RsPgpId> selectedGpg;
+        friendsWidget->selectedIds<RsPgpId, FriendSelectionWidget::IDTYPE_GPG>(selectedGpg, false);
+
+        std::set<RsGxsId> selectedGxs;
+        friendsWidget->selectedIds<RsGxsId, FriendSelectionWidget::IDTYPE_GXS>(selectedGxs, false);
+
+        std::set<RsPeerId> selectedSsl;
+        friendsWidget->selectedIds<RsPeerId, FriendSelectionWidget::IDTYPE_SSL>(selectedSsl, false);
+
+        int totalCount = 0;
+        for (const auto& id : selectedGpg) {
+            if (QString::fromStdString(id.toStdString()) != "0000000000000000") totalCount++;
+        }
+        for (const auto& id : selectedGxs) {
+            if (QString::fromStdString(id.toStdString()) != "00000000000000000000000000000000") totalCount++;
+        }
+        for (const auto& id : selectedSsl) {
+            if (QString::fromStdString(id.toStdString()) != "00000000000000000000000000000000") totalCount++;
+        }
+
+        if (totalCount > 20) {
+            QMessageBox::warning(this, tr("Limit Exceeded"), tr("You can select a maximum of 20 attendees. Currently selected: %1").arg(totalCount));
+            continue;
+        }
 
         mAttendeesList->clear();
-        QMap<QString, QString> contacts = CalendarData::getContacts();
-        for (const auto& pgpId : selected) {
+
+        for (const auto& pgpId : selectedGpg) {
             QString pgpIdStr = QString::fromStdString(pgpId.toStdString());
-            QString name = contacts.value(pgpIdStr, pgpIdStr);
-            QListWidgetItem* item = new QListWidgetItem(name, mAttendeesList);
-            item->setData(Qt::UserRole, pgpIdStr);
+            if (pgpIdStr == "0000000000000000") continue;
+            QString name = getContactName(pgpIdStr);
+            QTreeWidgetItem* item = new QTreeWidgetItem(mAttendeesList);
+            item->setIcon(0, getContactAvatar(pgpIdStr));
+            item->setText(0, name);
+            item->setData(0, Qt::UserRole, pgpIdStr);
             item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-            item->setCheckState(Qt::Checked);
+            item->setCheckState(0, Qt::Checked);
         }
+
+        for (const auto& gxsId : selectedGxs) {
+            QString gxsIdStr = QString::fromStdString(gxsId.toStdString());
+            if (gxsIdStr == "00000000000000000000000000000000") continue;
+            GxsIdRSTreeWidgetItem* item = new GxsIdRSTreeWidgetItem(nullptr, GxsIdDetails::ICON_TYPE_AVATAR, true, mAttendeesList);
+            item->setData(0, Qt::UserRole, gxsIdStr);
+            item->setId(gxsId, 0, true);
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+            item->setCheckState(0, Qt::Checked);
+        }
+
+        for (const auto& sslId : selectedSsl) {
+            QString sslIdStr = QString::fromStdString(sslId.toStdString());
+            if (sslIdStr == "00000000000000000000000000000000") continue;
+            QString name = getContactName(sslIdStr);
+            QTreeWidgetItem* item = new QTreeWidgetItem(mAttendeesList);
+            item->setIcon(0, getContactAvatar(sslIdStr));
+            item->setText(0, name);
+            item->setData(0, Qt::UserRole, sslIdStr);
+            item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+            item->setCheckState(0, Qt::Checked);
+        }
+        break;
     }
 
     // Switch to attendees tab
@@ -432,12 +597,17 @@ void EventDialog::onSaveAndClose() {
 
     // Get checked attendees
     QStringList invitedNames;
-    for (int i = 0; i < mAttendeesList->count(); ++i) {
-        QListWidgetItem* item = mAttendeesList->item(i);
-        if (item->checkState() == Qt::Checked) {
-            ev.attendees.append(item->data(Qt::UserRole).toString());
-            invitedNames.append(item->text());
+    for (int i = 0; i < mAttendeesList->topLevelItemCount(); ++i) {
+        QTreeWidgetItem* item = mAttendeesList->topLevelItem(i);
+        if (item->checkState(0) == Qt::Checked) {
+            ev.attendees.append(item->data(0, Qt::UserRole).toString());
+            invitedNames.append(item->text(0));
         }
+    }
+
+    if (ev.attendees.size() > 20) {
+        QMessageBox::warning(this, tr("Limit Exceeded"), tr("You can select a maximum of 20 attendees. Please uncheck some."));
+        return;
     }
 
     // Get attachments
@@ -451,10 +621,9 @@ void EventDialog::onSaveAndClose() {
         CalendarData::instance()->updateEvent(ev);
     }
 
-    // Mock invitation mailing
+    // Send actual invitations
     if (mNotifyCheck->isChecked() && !invitedNames.isEmpty()) {
-        QMessageBox::information(this, tr("Invitations Sent"),
-                                 tr("Invitations successfully sent to: %1").arg(invitedNames.join(", ")));
+        sendInvite(ev, invitedNames);
     }
 
     accept();
@@ -541,4 +710,84 @@ void EventDialog::updateModeUi() {
     mNotifyCheck->setEnabled(!mReadOnly);
     mSeparateCheck->setEnabled(!mReadOnly);
     mDisallowCheck->setEnabled(!mReadOnly);
+}
+
+void EventDialog::sendInvite(const CalendarEvent& ev, const QStringList& invitedNames) {
+    bool at_least_one_gxsid = false;
+    std::set<Rs::Mail::MsgAddress> destinations;
+
+    for (const auto& contactId : ev.attendees) {
+        std::string idStr = contactId.toStdString();
+        if (idStr.length() == 16) {
+            RsPgpId pgpId(idStr);
+            std::list<RsPeerId> sslIds;
+            if (rsPeers) {
+                rsPeers->getAssociatedSSLIds(pgpId, sslIds);
+                for (const auto& sslId : sslIds) {
+                    destinations.insert(Rs::Mail::MsgAddress(sslId, Rs::Mail::MsgAddress::AddressMode::MSG_ADDRESS_MODE_TO));
+                }
+            }
+        } else if (idStr.length() == 32) {
+            RsPeerId peerId(idStr);
+            bool isSsl = false;
+            if (rsPeers) {
+                std::string peerName = rsPeers->getPeerName(peerId);
+                if (!peerName.empty() || rsPeers->isFriend(peerId)) {
+                    isSsl = true;
+                }
+            }
+            if (isSsl) {
+                destinations.insert(Rs::Mail::MsgAddress(peerId, Rs::Mail::MsgAddress::AddressMode::MSG_ADDRESS_MODE_TO));
+            } else {
+                destinations.insert(Rs::Mail::MsgAddress(RsGxsId(idStr), Rs::Mail::MsgAddress::AddressMode::MSG_ADDRESS_MODE_TO));
+                at_least_one_gxsid = true;
+            }
+        }
+    }
+
+    if (destinations.empty()) {
+        return;
+    }
+
+    Rs::Mail::MessageInfo mi;
+    mi.destinations = destinations;
+    mi.title = (tr("Invitation: %1").arg(ev.title)).toUtf8().constData();
+
+    // Construct invitation HTML message body
+    QString body;
+    body += "<h3>" + tr("You are invited to a calendar event:") + "</h3>";
+    body += "<table>";
+    body += "<tr><td><b>" + tr("Title:") + "</b></td><td>" + ev.title + "</td></tr>";
+    if (!ev.location.isEmpty()) {
+        body += "<tr><td><b>" + tr("Location:") + "</b></td><td>" + ev.location + "</td></tr>";
+    }
+    body += "<tr><td><b>" + tr("Time:") + "</b></td><td>" + ev.start.toString("yyyy-MM-dd hh:mm") + " - " + ev.end.toString("yyyy-MM-dd hh:mm") + "</td></tr>";
+    if (!ev.description.isEmpty()) {
+        body += "<tr><td><b>" + tr("Description:") + "</b></td><td>" + QString(ev.description).replace("\n", "<br>") + "</td></tr>";
+    }
+    body += "</table>";
+    mi.msg = body.toUtf8().constData();
+
+    if (!at_least_one_gxsid) {
+        if (rsPeers) {
+            mi.from = Rs::Mail::MsgAddress(rsPeers->getOwnId(), Rs::Mail::MsgAddress::AddressMode::MSG_ADDRESS_MODE_TO);
+        }
+    } else {
+        std::list<RsGxsId> own_ids;
+        if (rsIdentity) {
+            rsIdentity->getOwnIds(own_ids);
+        }
+        if (own_ids.empty()) {
+            QMessageBox::warning(this, tr("RetroShare"), tr("Please create an identity to sign distant messages, or remove GXS contacts from the attendee list."), QMessageBox::Ok);
+            return;
+        }
+        mi.from = Rs::Mail::MsgAddress(own_ids.front(), Rs::Mail::MsgAddress::AddressMode::MSG_ADDRESS_MODE_TO);
+    }
+
+    if (rsMail && rsMail->MessageSend(mi)) {
+        QMessageBox::information(this, tr("Invitations Sent"),
+                                 tr("Invitations successfully sent to: %1").arg(invitedNames.join(", ")));
+    } else {
+        QMessageBox::warning(this, tr("Sending Failed"), tr("Failed to send invitations."));
+    }
 }
