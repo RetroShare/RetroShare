@@ -52,8 +52,11 @@ public:
 
 	virtual UserNotify *createUserNotify(QObject *parent) override;
 
+	bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId &pageId);
+
 protected:
 	virtual void showEvent(QShowEvent *event) override;
+	virtual void paintEvent(QPaintEvent *pe) override;
 
 private slots:
 	void updateDisplay();
@@ -90,6 +93,12 @@ private slots:
 	// Comments (placeholder for future UI integration)
 	void loadComments(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId);
 
+	void copyWikiGroupLink();
+	void copyWikiPageLink();
+
+	void markGroupAsRead();
+	void markGroupAsUnread();
+
 private:
 
 	void clearWikiPage();
@@ -98,6 +107,10 @@ private:
 	void updateWikiPage(const RsWikiSnapshot &page);
 	void setSelectedPageReadStatus(bool read);
 	QTreeWidgetItem *findPageItem(const RsGxsMessageId &pageId) const;
+
+	void markAllGroupMessagesRead(bool read);
+	void updateGroupStatistics(const RsGxsGroupId &groupId);
+	void updateGroupStatisticsReal(const RsGxsGroupId &groupId);
 
 	bool getSelectedPage(RsGxsGroupId &groupId, RsGxsMessageId &pageId, RsGxsMessageId &origPageId);
 	std::string getSelectedPage();
@@ -138,6 +151,12 @@ private:
 	RsGxsGroupId mGroupId; // From GroupTreeWidget
 	bool mCanModerate = false;
 	bool mInitialLoadDone = false;
+	RsGxsMessageId mNavigatePendingPageId;
+
+	std::set<RsGxsGroupId> mGroupStatisticsToUpdate;
+	bool mShouldUpdateGroupStatistics = false;
+	rstime_t mLastGroupStatisticsUpdateTs = 0;
+	std::map<RsGxsGroupId, GxsGroupStatistic> mCachedGroupStats;
 
 	/* UI - from Designer */
 	Ui::WikiDialog ui;
