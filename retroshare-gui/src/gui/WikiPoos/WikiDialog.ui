@@ -46,7 +46,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>240</width>
+            <width>302</width>
             <height>510</height>
            </rect>
           </property>
@@ -315,7 +315,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>511</width>
+            <width>449</width>
             <height>480</height>
            </rect>
           </property>
@@ -366,7 +366,11 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QTextBrowser" name="textBrowser"/>
+                <widget class="QTextBrowser" name="textBrowser">
+                 <property name="openExternalLinks">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>

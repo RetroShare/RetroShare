@@ -39,6 +39,9 @@
 #endif
 #include "msgs/MessageComposer.h"
 #include "Posted/PostedDialog.h"
+#ifdef RS_USE_WIKI
+#include "WikiPoos/WikiDialog.h"
+#endif
 #include "util/misc.h"
 
 #include <retroshare/rsfiles.h>
@@ -79,9 +82,10 @@
 #define HOST_FILE_TREE   "collection"
 #define HOST_CHAT_ROOM   "chat_room"
 #define HOST_CIRCLE      "circle"
-#define HOST_REGEXP      "file|person|forum|channel|wire|search|message|certificate|extra|private_chat|public_msg|posted|identity|collection|chat_room|circle"
+#define HOST_REGEXP      "file|person|forum|channel|wire|search|message|certificate|extra|private_chat|public_msg|posted|identity|collection|chat_room|circle|wiki"
 #define HOST_WIRE        "wire"
 
+#define HOST_WIKI        "wiki"
 #define FILE_NAME       "name"
 #define FILE_SIZE       "size"
 #define FILE_HASH       "hash"
@@ -101,6 +105,10 @@
 #define WIRE_NAME    "name"
 #define WIRE_ID      "id"
 #define WIRE_MSGID   "msgid"
+
+#define WIKI_NAME    "name"
+#define WIKI_ID      "id"
+#define WIKI_MSGID   "msgid"
 
 #define SEARCH_KEYWORDS "keywords"
 
@@ -310,6 +318,19 @@ void RetroShareLink::fromUrl(const QUrl& url)
 
 #ifdef DEBUG_RSLINK
         std::cerr << "Got a wire link!!" << std::endl;
+#endif
+        check();
+        return;
+    }
+
+    if (url.host() == HOST_WIKI) {
+        _type = TYPE_WIKI;
+        _name = decodedQueryItemValue(urlQuery, WIKI_NAME);
+        _hash = urlQuery.queryItemValue(WIKI_ID);
+        _msgId = urlQuery.queryItemValue(WIKI_MSGID);
+
+#ifdef DEBUG_RSLINK
+        std::cerr << "Got a wiki link!!" << std::endl;
 #endif
         check();
         return;
@@ -857,6 +878,17 @@ void RetroShareLink::check()
                 _valid = false;
         break;
 
+        case TYPE_WIKI:
+            if(_size != 0)
+                _valid = false;
+
+            if(_name.isEmpty())
+                _valid = false;
+
+            if(_hash.isEmpty())
+                _valid = false;
+        break;
+
 		case TYPE_SEARCH:
 			if(_size != 0)
 				_valid = false;
@@ -963,6 +995,8 @@ QString RetroShareLink::title() const
 			return QString("Channel id: %1").arg(hash());
 		case TYPE_WIRE:
 			return QString("Wire id: %1").arg(hash());
+		case TYPE_WIKI:
+			return QString("Wiki id: %1").arg(hash());
 		case TYPE_SEARCH:
 			return QString("Search files");
 
@@ -1168,6 +1202,17 @@ QString RetroShareLink::toString() const
             urlQuery.addQueryItem(WIRE_ID, _hash);
             if (!_msgId.isEmpty()) {
                 urlQuery.addQueryItem(WIRE_MSGID, _msgId);
+            }
+
+        break;
+
+        case TYPE_WIKI:
+            url.setScheme(RSLINK_SCHEME);
+            url.setHost(HOST_WIKI);
+            urlQuery.addQueryItem(WIKI_NAME, encodeItem(_name));
+            urlQuery.addQueryItem(WIKI_ID, _hash);
+            if (!_msgId.isEmpty()) {
+                urlQuery.addQueryItem(WIKI_MSGID, _msgId);
             }
 
         break;
@@ -1418,6 +1463,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				case TYPE_FILE_TREE:
 				case TYPE_CHAT_ROOM:
 				case TYPE_CIRCLES:
+				case TYPE_WIKI:
 					// no need to ask
 				break;
 
@@ -1487,12 +1533,18 @@ static void processList(const QStringList &list, const QString &textSingular, co
 	QStringList chatroomFound;
 	QStringList chatroomUnknown;
 
+	// wiki
+	QStringList wikiFound;
+	QStringList wikiMsgFound;
+	QStringList wikiUnknown;
+	QStringList wikiMsgUnknown;
+
 	// for summary at end
 	QList<QStringList*> processedList;
 	QList<QStringList*> errorList;
 
-	processedList << &fileAdded << &personAdded << &forumFound << &channelFound << &wireFound << &searchStarted << &messageStarted << &postedFound << &chatroomFound;
-	errorList << &fileExist << &personExist << &personFailed << &personNotFound << &forumUnknown << &forumMsgUnknown << &channelUnknown << &channelMsgUnknown << &wireUnknown << &wireMsgUnknown << &messageReceipientNotAccepted << &messageReceipientUnknown << &postedUnknown << &postedMsgUnknown << &chatroomUnknown;
+	processedList << &fileAdded << &personAdded << &forumFound << &channelFound << &wireFound << &searchStarted << &messageStarted << &postedFound << &chatroomFound << &wikiFound;
+	errorList << &fileExist << &personExist << &personFailed << &personNotFound << &forumUnknown << &forumMsgUnknown << &channelUnknown << &channelMsgUnknown << &wireUnknown << &wireMsgUnknown << &messageReceipientNotAccepted << &messageReceipientUnknown << &postedUnknown << &postedMsgUnknown << &chatroomUnknown << &wikiUnknown << &wikiMsgUnknown;
 	// not needed: forumFound, channelFound, wireFound, messageStarted
 
 	// we want to merge all single file links into one collection
@@ -1933,6 +1985,36 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			}
 			break;
 
+#ifdef RS_USE_WIKI
+			case TYPE_WIKI:
+			{
+#ifdef DEBUG_RSLINK
+				std::cerr << " RetroShareLink::process WikiRequest : name : " << link.name().toStdString() << ". id : " << link.hash().toStdString() << ". msgId : " << link.msgId().toStdString() << std::endl;
+#endif
+
+				MainWindow::showWindow(MainWindow::Wiki);
+				WikiDialog *wikiDialog = dynamic_cast<WikiDialog*>(MainWindow::getPage(MainWindow::Wiki));
+				if (!wikiDialog) {
+					return false;
+				}
+
+				if (wikiDialog->navigate(RsGxsGroupId(link.id().toStdString()), RsGxsMessageId(link.msgId().toStdString()))) {
+					if (link.msgId().isEmpty()) {
+						wikiFound.append(link.name());
+					} else {
+						wikiMsgFound.append(link.name());
+					}
+				} else {
+					if (link.msgId().isEmpty()) {
+						wikiUnknown.append(link.name());
+					} else {
+						wikiMsgUnknown.append(link.name());
+					}
+				}
+			}
+			break;
+#endif
+
 			default:
 				std::cerr << " RetroShareLink::process unknown type: " << link.type() << std::endl;
 				++countUnknown;
@@ -2046,6 +2128,16 @@ static void processList(const QStringList &list, const QString &textSingular, co
 		}
 		if (!postedMsgUnknown.isEmpty()) {
 			processList(postedMsgUnknown, QObject::tr("Posted message not found"), QObject::tr("Posted messages not found"), result);
+		}
+	}
+
+	// wiki
+	if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+		if (!wikiUnknown.isEmpty()) {
+			processList(wikiUnknown, QObject::tr("Wiki not found"), QObject::tr("Wikis not found"), result);
+		}
+		if (!wikiMsgUnknown.isEmpty()) {
+			processList(wikiMsgUnknown, QObject::tr("Wiki page not found"), QObject::tr("Wiki pages not found"), result);
 		}
 	}
 
