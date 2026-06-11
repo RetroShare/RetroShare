@@ -38,6 +38,7 @@
 #include "gui/gxs/WikiGroupDialog.h"
 #include "gui/gxs/GxsCommentTreeWidget.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/RSTreeWidget.h"
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 
@@ -176,6 +177,8 @@ WikiDialog::WikiDialog(QWidget *parent) :
             }, this );
         },
         mEventHandlerId, wikiEventType); 
+    
+    mFontSizeHandler.registerFontSize(ui.groupTreeWidget->treeWidget(), 1.2f);
 }
 
 WikiDialog::~WikiDialog()
@@ -1015,6 +1018,8 @@ void WikiDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 #endif
         
         switch(e->mWikiEventCode) {
+            case RsWikiEventCode::UNKNOWN:
+                break;
             case RsWikiEventCode::UPDATED_COLLECTION:
             case RsWikiEventCode::NEW_COLLECTION:
                 updateDisplay(); // Refresh global list
