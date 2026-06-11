@@ -158,6 +158,8 @@ private:
 	rstime_t mLastGroupStatisticsUpdateTs = 0;
 	std::map<RsGxsGroupId, GxsGroupStatistic> mCachedGroupStats;
 
+	FontSizeHandler mFontSizeHandler;
+
 	/* UI - from Designer */
 	Ui::WikiDialog ui;
 
