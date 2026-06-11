@@ -17,7 +17,7 @@
    <enum>Qt::LeftToRight</enum>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0" colspan="2">
+   <item row="0" column="1" colspan="2">
     <widget class="QLabel" name="titleLabel">
      <property name="font">
       <font>
@@ -35,7 +35,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item row="1" column="1" colspan="2">
     <widget class="QFrame" name="plainFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -56,6 +56,16 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
+      <item row="0" column="1">
+       <widget class="AspectRatioPixmapLabel" name="photoLabel">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="2">
        <spacer name="horizontalSpacer_3">
         <property name="orientation">
@@ -82,20 +92,21 @@
         </property>
        </spacer>
       </item>
-      <item row="0" column="1">
-       <widget class="AspectRatioPixmapLabel" name="photoLabel">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="1" column="0">
+    <widget class="QToolButton" name="prevButton">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Previuos&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../icons.qrc">
+       <normaloff>:/icons/png/arrow-left.png</normaloff>:/icons/png/arrow-left.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="label">
@@ -201,6 +212,20 @@
      </item>
     </layout>
    </item>
+   <item row="1" column="3">
+    <widget class="QToolButton" name="nextButton">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Next&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="text">
+      <string>&gt;</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../icons.qrc">
+       <normaloff>:/icons/png/arrow-right.png</normaloff>:/icons/png/arrow-right.png</iconset>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -222,6 +247,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../icons.qrc"/>
   <include location="Posted_images.qrc"/>
  </resources>
  <connections/>
