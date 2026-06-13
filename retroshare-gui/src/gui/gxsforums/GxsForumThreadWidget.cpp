@@ -1930,6 +1930,21 @@ void GxsForumThreadWidget::postForumLoading()
 		ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
 		ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
 
+		// Restoring the selection above does not necessarily refresh the post panel: the
+		// currentChanged() signal it triggers is filtered out by changedSelection() when the
+		// previous index is invalid (which is the case right after a model reset) and mThreadId
+		// is still set. So if the displayed post got a new version in the meantime (typically
+		// after editing it), force a refresh here. Otherwise the edited content would only show
+		// up after navigating to another post and back. Comparing against mOrigThreadId (the most
+		// recent version the row used to point at) leaves an explicit old-version selection in the
+		// versions combo untouched when the post itself did not change.
+		ForumModelPostEntry fmpe;
+		if( mThreadModel->getPostData(source_index,fmpe) && !fmpe.mMsgId.isNull() && fmpe.mMsgId != mOrigThreadId )
+		{
+			mThreadId = mOrigThreadId = fmpe.mMsgId;
+			mLastSelectedPosts[groupId()] = fmpe.mMsgId;
+			insertMessage();
+		}
 	}
 	else
 	{
