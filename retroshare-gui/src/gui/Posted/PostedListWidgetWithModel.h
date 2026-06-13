@@ -143,6 +143,8 @@ private slots:
     void switchDisplayMode();
     void updateGroupData();
 	void createMsg();
+	void editPost();
+	void togglePinPost();
 	void subscribeGroup(bool subscribe);
 	void settingsChanged();
 	void postPostLoad();

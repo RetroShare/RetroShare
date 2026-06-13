@@ -45,6 +45,9 @@ public:
 	void setNotes(const QString& notes);
 	void setLink(const QString& link);
 
+	/** Set the original post ID to enable edit mode. Must be called before show(). */
+	void setOrigPostId(const RsGxsMessageId& origPostId);
+
 	static bool optimizeImage(const QImage &image, QByteArray &imagebytes, QImage &imageOpt);
 
 private:
@@ -68,6 +71,7 @@ private:
 	QString mNotes;
 	RsPosted* mPosted;
 	RsGxsGroupId mGrpId;
+	RsGxsMessageId mOrigPostId;
 
 	Ui::PostedCreatePostDialog *ui;
 };
