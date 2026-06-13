@@ -23,7 +23,7 @@ list(
 	src/main.cpp 
 	src/rshare.cpp 
 
-	src/gui/notifyqt.cpp 
+	src/gui/RsGUIEventManager.cpp 
 	src/gui/AboutDialog.cpp 
 	src/gui/AboutWidget.cpp 
 	src/gui/QuickStartWizard.cpp 
@@ -90,6 +90,7 @@ list(
 	src/util/RichTextEdit.cpp 
 	src/util/ClickableLabel.cpp 
 	src/util/AspectRatioPixmapLabel.cpp 
+	src/util/FontSizeHandler.cpp 
 
 	src/gui/profile/ProfileWidget.cpp 
 	src/gui/profile/StatusMessage.cpp 
@@ -126,6 +127,7 @@ list(
 	src/gui/common/ElidedLabel.cpp 
 	src/gui/common/vmessagebox.cpp 
 	src/gui/common/RsCollectionDialog.cpp 
+	src/gui/common/RsCollectionModel.cpp 
 	src/gui/common/RsCollection.cpp 
 	src/gui/common/RsUrlHandler.cpp 
 	src/gui/common/rwindow.cpp 
@@ -265,6 +267,8 @@ list(
 	src/gui/statistics/StatisticsWindow.cpp 
 	src/gui/statistics/BwCtrlWindow.cpp 
 	src/gui/statistics/RttStatistics.cpp 
+	src/gui/statistics/GxsNetTunnelsDialog.cpp 
+	src/gui/statistics/TunnelStatisticsDialog.cpp 
 	src/gui/statistics/BWGraph.cpp 
 
 	src/util/RsSyntaxHighlighter.cpp 
@@ -396,6 +400,8 @@ list(
 	src/gui/statistics/StatisticsWindow.ui 
 	src/gui/statistics/BwCtrlWindow.ui 
 	src/gui/statistics/RttStatistics.ui 
+	src/gui/statistics/GxsNetTunnelsDialog.ui 
+	src/gui/statistics/TunnelStatisticsDialog.ui 
 
 	src/util/RichTextEdit.ui
 	)
@@ -404,11 +410,6 @@ list(
 	APPEND RS_IMPLEMENTATION_HEADERS
 
 	src/TorControl/TorControlWindow.h
-
-	src/chat/distantchat.h
-	src/chat/distributedchat.h
-	src/chat/p3chatservice.h
-	src/chat/rschatitems.h 
 
 	src/rshare.h 
 	src/retroshare-gui/configpage.h 
@@ -419,7 +420,7 @@ list(
 	src/control/eventtype.h 
 
 	src/gui/QuickStartWizard.h 
-	src/gui/notifyqt.h 
+	src/gui/RsGUIEventManager.h 
 	src/gui/GetStartedDialog.h 
 	src/gui/StartDialog.h 
 	src/gui/HomePage.h
@@ -439,8 +440,6 @@ list(
 	src/gui/SearchTreeWidget.h 
 	src/gui/ShareManager.h 
 	src/gui/NewsFeed.h 
-	src/gui/ShareDialog.h 
-	src/gui/SFListDelegate.h 
 	src/gui/SoundManager.h 
 	src/gui/HelpDialog.h 
 	src/gui/LogoBar.h 
@@ -476,6 +475,8 @@ list(
 	src/gui/statistics/BwCtrlWindow.h 
 	src/gui/statistics/BWGraph.h 
 	src/gui/statistics/RttStatistics.h 
+	src/gui/statistics/GxsNetTunnelsDialog.h 
+	src/gui/statistics/TunnelStatisticsDialog.h 
 
 	src/gui/plugins/PluginInterface.h 
 
@@ -500,7 +501,6 @@ list(
 	src/util/dllexport.h 
 	src/util/global.h 
 	src/util/rsqtutildll.h 
-	src/util/Interface.h 
 	src/util/PixmapMerging.h 
 	src/util/MouseEventFilter.h 
 	src/util/EventFilter.h 
@@ -511,6 +511,7 @@ list(
 	src/util/log.h 
 	src/util/misc.h 
 	src/util/HandleRichText.h 
+	src/util/FontSizeHandler.h 
 	src/util/ObjectPainter.h 
 	src/util/RsQtVersion.h 
 	src/util/RsFile.h 
@@ -592,8 +593,8 @@ list(
 	src/gui/common/RSGraphWidget.h 
 	src/gui/common/ElidedLabel.h 
 	src/gui/common/vmessagebox.h 
-	src/gui/common/RsUrlHandler.h 
 	src/gui/common/RsCollectionDialog.h 
+	src/gui/common/RsCollectionModel.h 
 	src/gui/common/rwindow.h 
 	src/gui/common/rshtml.h 
 	src/gui/common/AvatarDefs.h 
@@ -714,8 +715,7 @@ if(RS_WEBUI)
 
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
-		src/jsonapi/p3webui.h 
-		src/gui/settings/WebuiPage.h 
+		src/gui/settings/WebuiPage.h
 	)
 
 	list(
@@ -1050,6 +1050,7 @@ if(RS_GXSIDENTITIES)
 		src/gui/Identity/IdDialog.h 
 		src/gui/Identity/IdEditDialog.h 
 		src/gui/Identity/IdDetailsDialog.h 
+		src/gui/Identity/IdentityListModel.h 
 		)
 
 	list(
@@ -1064,6 +1065,7 @@ if(RS_GXSIDENTITIES)
 		src/gui/Identity/IdDialog.cpp 
 		src/gui/Identity/IdEditDialog.cpp 
 		src/gui/Identity/IdDetailsDialog.cpp 
+		src/gui/Identity/IdentityListModel.cpp 
 		)
 endif(RS_GXSIDENTITIES)
 	
@@ -1113,8 +1115,8 @@ if(RS_GXSGUI)
 		src/gui/gxs/GxsGroupFrameDialog.h 
 		src/gui/gxs/GxsMessageFrameWidget.h 
 		src/gui/gxs/GxsMessageFramePostWidget.h 
-		src/gui/gxs/GxsGroupFeedItem.h 
-		src/gui/gxs/GxsFeedItem.h 
+		src/gui/feeds/GxsGroupFeedItem.h 
+		src/gui/feeds/GxsFeedItem.h 
 		src/gui/gxs/GxsGroupShareKey.h 
 		src/gui/gxs/GxsUserNotify.h 
 		src/gui/gxs/GxsFeedWidget.h 
@@ -1150,8 +1152,8 @@ if(RS_GXSGUI)
 		src/gui/gxs/GxsGroupFrameDialog.cpp 
 		src/gui/gxs/GxsMessageFrameWidget.cpp 
 		src/gui/gxs/GxsMessageFramePostWidget.cpp 
-		src/gui/gxs/GxsGroupFeedItem.cpp 
-		src/gui/gxs/GxsFeedItem.cpp 
+		src/gui/feeds/GxsGroupFeedItem.cpp 
+		src/gui/feeds/GxsFeedItem.cpp 
 		src/gui/gxs/GxsUserNotify.cpp 
 		src/gui/gxs/GxsFeedWidget.cpp 
 		src/util/TokenQueue.cpp 
@@ -1250,6 +1252,8 @@ if(RS_GXSPOSTED)
 		src/gui/Posted/PostedCreatePostDialog.h 
 		src/gui/Posted/PhotoView.h 
 		src/gui/Posted/PostedUserNotify.h
+		src/gui/feeds/BoardsPostItem.h
+		src/gui/Posted/BoardPostImageHelper.h
 		)
 
 	list(
@@ -1262,6 +1266,7 @@ if(RS_GXSPOSTED)
 		src/gui/Posted/PostedCardView.ui 
 		src/gui/Posted/PostedCreatePostDialog.ui 
 		src/gui/Posted/PhotoView.ui 
+		src/gui/feeds/BoardsPostItem.ui
 		)
 	
 	list(
@@ -1277,6 +1282,8 @@ if(RS_GXSPOSTED)
 		src/gui/Posted/PostedCreatePostDialog.cpp 
 		src/gui/Posted/PhotoView.cpp 
 		src/gui/Posted/PostedUserNotify.cpp
+		src/gui/feeds/BoardsPostItem.cpp
+		src/gui/Posted/BoardPostImageHelper.cpp
 		)
 
 	list(
