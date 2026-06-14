@@ -1,1 +1,0 @@
-../../../../../../../libretroshare/src/rs_android/org/retroshare/service/AssetHelper.java
