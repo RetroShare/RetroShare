@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Copyright (C) 2021  Gioacchino Mazzurco <gio@eigenlab.org>
-# Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU Affero General Public License as published by the
