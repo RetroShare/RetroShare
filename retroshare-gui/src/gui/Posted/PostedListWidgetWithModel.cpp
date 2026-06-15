@@ -24,6 +24,7 @@
 #include <QPainter>
 #include <QClipboard>
 #include <QMessageBox>
+#include <QStringList>
 
 #include "retroshare/rsgxscircles.h"
 
@@ -77,6 +78,63 @@ static const int POSTED_TABS_POSTS  = 1;
 #define IMAGE_COPYHTTP     ":/images/emblem-web.png"
 
 Q_DECLARE_METATYPE(RsPostedPost);
+namespace
+{
+static const char* POSTED_PINNED_SERVICE_KEY = "posted:pinned=";
+
+std::set<RsGxsMessageId> parsePinnedPostsFromServiceString(
+        const std::string& serviceString )
+{
+	std::set<RsGxsMessageId> pinnedPosts;
+	const QString key = QString::fromLatin1(POSTED_PINNED_SERVICE_KEY);
+	const QStringList lines = QString::fromStdString(serviceString).split(
+		    '\n', Qt::SkipEmptyParts );
+
+	for(const QString& lineRaw : lines)
+	{
+		const QString line = lineRaw.trimmed();
+		if(!line.startsWith(key, Qt::CaseSensitive))
+			continue;
+
+		const QStringList tokens = line.mid(key.size()).split(
+			    ',', Qt::SkipEmptyParts );
+
+		for(const QString& token : tokens)
+		{
+			const RsGxsMessageId msgId(token.trimmed().toStdString());
+			if(!msgId.isNull()) pinnedPosts.insert(msgId);
+		}
+	}
+
+	return pinnedPosts;
+}
+
+std::string encodePinnedPostsInServiceString(
+        const std::string& serviceString,
+        const std::set<RsGxsMessageId>& pinnedPosts )
+{
+	const QString key = QString::fromLatin1(POSTED_PINNED_SERVICE_KEY);
+	const QStringList lines = QString::fromStdString(serviceString).split(
+		    '\n', Qt::KeepEmptyParts );
+
+	QStringList filteredLines;
+	for(const QString& lineRaw : lines)
+		if(!lineRaw.trimmed().startsWith(key, Qt::CaseSensitive))
+			filteredLines.push_back(lineRaw);
+
+	if(!pinnedPosts.empty())
+	{
+		QStringList encodedIds;
+		for(const RsGxsMessageId& id : pinnedPosts)
+			encodedIds.push_back(QString::fromStdString(id.toStdString()));
+
+		filteredLines.push_back(key + encodedIds.join(','));
+	}
+
+	return filteredLines.join('\n').toStdString();
+}
+} // namespace
+
 
 // Delegate used to paint into the table of thumbnails
 
@@ -364,6 +422,16 @@ void PostedListWidgetWithModel::postContextMenu(const QPoint& point)
         menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
 #endif
 
+	if(canModerateBoard())
+	{
+		const RsGxsMessageId stickyKey = post.mMeta.mMsgId;
+		const bool isPinned = (mPinnedPosts.find(stickyKey) != mPinnedPosts.end());
+
+		menu.addAction(
+					isPinned ? tr("Unsticky post") : tr("Sticky post"),
+					this, SLOT(toggleStickyPost()))->setData(index);
+	}
+
     menu.exec(QCursor::pos());
 }
 
@@ -604,6 +672,8 @@ void PostedListWidgetWithModel::updateGroupData()
             bool group_changed = (groups[0].mMeta.mGroupId!=mGroup.mMeta.mGroupId);
 
             mGroup = groups[0];
+			mPinnedPosts = parsePinnedPostsFromServiceString(mGroup.mMeta.mServiceString);
+			mPostedPostsModel->setPinnedPosts(mPinnedPosts);
 			mPostedPostsModel->updateBoard(groupId());
 
             insertBoardDetails(mGroup);
@@ -1002,3 +1072,67 @@ void PostedListWidgetWithModel::voteMsg(RsGxsGrpMsgIdPair msg,bool up_or_down)
         updateDisplay(true);
 }
 
+
+void PostedListWidgetWithModel::toggleStickyPost()
+{
+if(!canModerateBoard())
+{
+QMessageBox::warning(
+this, tr("Permission denied"),
+tr("Only the board admin can sticky posts."));
+return;
+}
+
+QModelIndex index;
+if(auto *action = qobject_cast<QAction*>(QObject::sender()))
+index = action->data().toModelIndex();
+
+if(!index.isValid())
+index = ui->postsTree->selectionModel()->currentIndex();
+
+if(!index.isValid())
+return;
+
+RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>();
+if(post.mMeta.mMsgId.isNull())
+return;
+
+const RsGxsMessageId stickyKey = post.mMeta.mMsgId;
+
+auto newPinnedPosts = mPinnedPosts;
+if(newPinnedPosts.find(stickyKey) == newPinnedPosts.end())
+newPinnedPosts.insert(stickyKey);
+else
+newPinnedPosts.erase(stickyKey);
+
+RsPostedGroup editedGroup = mGroup;
+editedGroup.mMeta.mPublishTs = time(NULL);
+editedGroup.mMeta.mServiceString = encodePinnedPostsInServiceString(
+editedGroup.mMeta.mServiceString, newPinnedPosts );
+
+RsThread::async([this,editedGroup,newPinnedPosts]()
+{
+RsPostedGroup updatedGroup = editedGroup;
+const bool ok = rsPosted->editBoard(updatedGroup);
+
+RsQThreadUtils::postToObject([this,ok,newPinnedPosts,updatedGroup]()
+{
+if(!ok)
+{
+QMessageBox::critical(
+this, tr("Sticky update failed"),
+tr("Failed to update sticky posts for this board."));
+return;
+}
+
+mGroup = updatedGroup;
+mPinnedPosts = newPinnedPosts;
+mPostedPostsModel->setPinnedPosts(mPinnedPosts);
+}, this);
+});
+}
+
+bool PostedListWidgetWithModel::canModerateBoard() const
+{
+return IS_GROUP_ADMIN(mGroup.mMeta.mSubscribeFlags);
+}
