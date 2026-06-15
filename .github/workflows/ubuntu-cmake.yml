@@ -55,6 +55,7 @@ jobs:
         libssl-dev zlib1g-dev libbz2-dev libbotan-2-dev libjson-c-dev
         libasio-dev libsqlcipher-dev libxapian-dev
         libspeex-dev libspeexdsp-dev libminiupnpc-dev
+        libavcodec-dev libavutil-dev
         libx11-dev libxss-dev
         libxml2-dev libxslt1-dev libcurl4-openssl-dev
         doxygen python3
