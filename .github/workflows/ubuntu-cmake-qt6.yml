@@ -1,4 +1,4 @@
-# Ubuntu CMake CI for the RetroShare monorepo built against Qt6.
+# Ubuntu CMake CI for the RetroShare super-project built against Qt6.
 #
 # This is the Qt6 counterpart of ubuntu-cmake.yml (which builds against Qt5).
 # It exercises the version-agnostic Qt detection added to

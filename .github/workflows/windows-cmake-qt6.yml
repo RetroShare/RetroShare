@@ -1,4 +1,4 @@
-# Windows (MSYS2 / UCRT64) CMake CI for the RetroShare monorepo built against Qt6.
+# Windows (MSYS2 / UCRT64) CMake CI for the RetroShare super-project built against Qt6.
 #
 # Qt6 counterpart of windows-cmake.yml. Same whole-tree build and flags, but the
 # UCRT64 toolchain installs the qt6-* packages (incl. qt6-5compat for the

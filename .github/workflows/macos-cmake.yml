@@ -1,4 +1,4 @@
-# macOS CMake CI for the RetroShare monorepo (root super-project).
+# macOS CMake CI for the RetroShare super-project (root aggregate build).
 #
 # CMake counterpart of the legacy qmake ci-macOS.yml. Unlike that one (which
 # disables service/friendserver/sam3/rnp), this builds the WHOLE tree with the

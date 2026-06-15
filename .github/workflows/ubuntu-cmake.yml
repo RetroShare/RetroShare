@@ -1,4 +1,4 @@
-# Ubuntu CMake CI for the RetroShare monorepo (root super-project).
+# Ubuntu CMake CI for the RetroShare super-project (root aggregate build).
 #
 # This is the CMake counterpart of the legacy qmake workflows
 # (ubuntu-qt5_c-cpp.yml / ubuntu-qt6_c-cpp.yml). It builds the WHOLE tree from

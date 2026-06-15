@@ -1,4 +1,4 @@
-# macOS CMake CI for the RetroShare monorepo built against Qt6.
+# macOS CMake CI for the RetroShare super-project built against Qt6.
 #
 # Qt6 counterpart of macos-cmake.yml. Same whole-tree build and Homebrew flag
 # harvesting, but installs the `qt` formula (Qt6, which bundles qt5compat, svg,

@@ -1,4 +1,4 @@
-# Windows (MSYS2 / UCRT64) CMake CI for the RetroShare monorepo.
+# Windows (MSYS2 / UCRT64) CMake CI for the RetroShare super-project.
 #
 # CMake counterpart of the legacy qmake ci-ucrt64.yml. Unlike that one (GUI-only,
 # sam3 disabled, mingw32-make), this builds the WHOLE tree with the same feature
