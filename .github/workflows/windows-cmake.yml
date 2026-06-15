@@ -64,7 +64,6 @@ jobs:
             mingw-w64-ucrt-x86_64-openssl
             mingw-w64-ucrt-x86_64-libbotan
             mingw-w64-ucrt-x86_64-sqlcipher
-            mingw-w64-ucrt-x86_64-xapian-core
             mingw-w64-ucrt-x86_64-miniupnpc
             mingw-w64-ucrt-x86_64-json-c
             mingw-w64-ucrt-x86_64-rapidjson
@@ -99,7 +98,7 @@ jobs:
           -DRS_LIBRETROSHARE_STATIC=OFF -DRS_LIBRETROSHARE_SHARED=ON
           -DRS_RNPLIB=ON -DRS_JSON_API=ON -DRS_WEBUI=ON
           -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON
-          -DRS_PLUGINS=ON -DRS_FORUM_DEEP_INDEX=ON
+          -DRS_PLUGINS=ON -DRS_FORUM_DEEP_INDEX=OFF
           -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON
           -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON
 

@@ -56,7 +56,7 @@ jobs:
     - name: Install Homebrew dependencies
       run: >
         brew install
-        qt@5 openssl@3 botan@2 sqlcipher xapian miniupnpc
+        qt@5 openssl@3 botan@2 sqlcipher miniupnpc
         json-c asio speex speexdsp ffmpeg
         libxml2 libxslt bzip2 zlib rapidjson doxygen
 
@@ -78,7 +78,7 @@ jobs:
           -DQt5_DIR="$QT5/lib/cmake/Qt5" \
           -DOPENSSL_ROOT_DIR="$(brew --prefix openssl@3)" \
           -DRS_RNPLIB=ON -DRS_JSON_API=ON -DRS_WEBUI=ON \
-          -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON -DRS_PLUGINS=ON -DRS_FORUM_DEEP_INDEX=ON \
+          -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON -DRS_PLUGINS=ON -DRS_FORUM_DEEP_INDEX=OFF \
           -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON \
           -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON \
           -DCMAKE_C_FLAGS="$IFLAGS" -DCMAKE_CXX_FLAGS="$IFLAGS" \
