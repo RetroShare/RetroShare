@@ -104,6 +104,8 @@ signals:
 //    void shareButtonClicked();
 //    void copylinkClicked();
 
+    void showGalleryRequest(const RsGxsMessageId& msgId);
+
 protected:
 	RsPostedPost mPost;
     uint8_t      mDisplayFlags;
@@ -112,6 +114,9 @@ protected:
 class BoardPostDisplayWidget_compact : public BoardPostDisplayWidgetBase
 {
     Q_OBJECT
+
+signals:
+    void showGalleryRequest(const RsGxsMessageId& msgId);
 
 public:
     BoardPostDisplayWidget_compact(const RsPostedPost& post, uint8_t display_flags, QWidget *parent);
