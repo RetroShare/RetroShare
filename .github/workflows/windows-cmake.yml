@@ -50,10 +50,10 @@ jobs:
           install: >-
             base-devel
             git
-            doxygen
             perl
             ruby
             mingw-w64-ucrt-x86_64-toolchain
+            mingw-w64-ucrt-x86_64-doxygen
             mingw-w64-ucrt-x86_64-cmake
             mingw-w64-ucrt-x86_64-ninja
             mingw-w64-ucrt-x86_64-python
