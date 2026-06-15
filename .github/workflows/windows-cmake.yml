@@ -102,7 +102,7 @@ jobs:
           -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON
           -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON
           -DCMAKE_C_FLAGS="-include string.h -include stdint.h"
-          -DCMAKE_CXX_FLAGS="-include cstring -include cstdint"
+          -DCMAKE_CXX_FLAGS="-include cstring -include cstdint -Wno-template-body"
 
       - name: CMake build
         run: cmake --build Build-cmake -j3
