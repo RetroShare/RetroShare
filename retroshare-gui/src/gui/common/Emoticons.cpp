@@ -295,6 +295,10 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
             btn->setAutoDefault(true); // This is key for the Enter key to trigger a click
             btn->setStyleSheet("QPushButton:focus { border: 2px solid #ffaa00; background: rgba(255,170,0,0.2); }"
                            "QPushButton:hover { border: 2px solid #0099cc; }");            
+            auto sp = btn->sizePolicy();
+            sp.setRetainSizeWhenHidden(true);
+            btn->setSizePolicy(sp);
+
             tabGLayout->addWidget(btn, col, lin);
             allButtons.append(btn);
 
@@ -317,6 +321,7 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
         for(QPushButton *btn : allButtons) {
             bool match = btn->toolTip().contains(text, Qt::CaseInsensitive);
             btn->setVisible(match);
+            btn->setEnabled(match);
         }
     });
     
