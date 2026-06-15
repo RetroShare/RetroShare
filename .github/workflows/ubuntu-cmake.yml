@@ -22,13 +22,17 @@ on:
     paths-ignore:
     - '**/*.md'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Ubuntu 22.04 / Qt5 / CMake
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     # NOTE: no --remote here (on purpose) so the pinned, CMake-enabled commits
     # are checked out. librnp needs --recursive for its nested src/libsexpp.
@@ -66,7 +70,7 @@ jobs:
     # Mirrors the validated local Linux build command.
     - name: CMake configure
       run: >
-        cmake -B Build-cmake -S .
+        cmake -G Ninja -B Build-cmake -S .
         -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         -DCMAKE_BUILD_TYPE=Release
         -DRS_RNPLIB=ON -DRS_JSON_API=ON -DRS_WEBUI=ON

@@ -36,7 +36,7 @@ jobs:
         shell: bash
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       with:
         persist-credentials: false
 
@@ -56,7 +56,7 @@ jobs:
     - name: Install Homebrew dependencies
       run: >
         brew install
-        qt@5 openssl@3 botan@2 sqlcipher miniupnpc
+        ninja qt@5 openssl@3 botan@2 sqlcipher miniupnpc
         json-c asio speex speexdsp ffmpeg
         libxml2 libxslt bzip2 zlib rapidjson doxygen
 
@@ -72,7 +72,7 @@ jobs:
         # qt@5 first so find_package(Qt5) picks the keg-only (correct) config, not a
         # broken Qt5 config that may sit directly under the Homebrew prefix.
         PREFIX="$QT5;$HB";      for d in "$HB"/opt/*;          do PREFIX="$PREFIX;$d"; done
-        cmake -B Build-cmake -S . \
+        cmake -G Ninja -B Build-cmake -S . \
           -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release \
           -DCMAKE_PREFIX_PATH="$PREFIX" \
           -DQt5_DIR="$QT5/lib/cmake/Qt5" \
