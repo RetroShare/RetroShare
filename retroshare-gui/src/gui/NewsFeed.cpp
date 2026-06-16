@@ -52,6 +52,7 @@
 #include "feeds/SecurityIpItem.h"
 #include "feeds/WireNotifyGroupItem.h"
 #include "feeds/WireNotifyPostItem.h"
+#include "feeds/TLSItem.h"
 
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
@@ -203,7 +204,7 @@ void NewsFeed::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
     RsFeedTypeFlags flags = (RsFeedTypeFlags)Settings->getNewsFeedFlags();
 
-    if(event->mType == RsEventType::AUTHSSL_CONNECTION_AUTENTICATION && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_SECURITY)))
+    if(event->mType == RsEventType::AUTHSSL_CONNECTION_AUTENTICATION && (!!(flags & (RsFeedTypeFlags::RS_FEED_TYPE_SECURITY | RsFeedTypeFlags::RS_FEED_TYPE_TLS_ATTEMPT))))
 		handleSecurityEvent(event);
 
     if(event->mType == RsEventType::FRIEND_LIST && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_PEER)))
@@ -478,6 +479,32 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 
     auto& e(*pe);
     RsFeedTypeFlags flags = (RsFeedTypeFlags)Settings->getNewsFeedFlags();
+
+    // 1 - treat the case of unknown PeerID
+
+    if(e.mSslId.isNull())
+    {
+//        if(!(flags & RsFeedTypeFlags::RS_FEED_TYPE_TLS_ATTEMPT))
+//            return;
+
+        auto item = new TLSItem(this,NEWSFEED_TLSLIST);
+        FeedItem *feedItem = ui->feedWidget->findFeedItem(item->uniqueIdentifier());
+
+        if(feedItem)
+        {
+            dynamic_cast<TLSItem*>(feedItem)->addIPEntry(e.mLocator.host()+":"+std::to_string(e.mLocator.port()));
+            delete item;
+        }
+        else
+        {
+            item->addIPEntry(e.mLocator.host()+":"+std::to_string(e.mLocator.port()));
+            addFeedItem(item);
+        }
+
+        return;
+    }
+
+    // 2 - if the peer Id is known, use the dedicated item.
 
     if(e.mErrorCode == RsAuthSslError::PEER_REFUSED_CONNECTION && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP)))
 	{
