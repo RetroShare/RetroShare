@@ -77,8 +77,6 @@ static const int POSTED_TABS_POSTS  = 1;
 #define IMAGE_AUTHOR       ":/images/user/personal64.png"
 #define IMAGE_COPYHTTP     ":/images/emblem-web.png"
 
-Q_DECLARE_METATYPE(RsPostedPost);
-
 // Delegate used to paint into the table of thumbnails
 
 //===================================================================================================================================

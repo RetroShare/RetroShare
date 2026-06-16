@@ -36,7 +36,6 @@
 //#define DEBUG_CHANNEL_MODEL
 
 Q_DECLARE_METATYPE(RsMsgMetaData)
-Q_DECLARE_METATYPE(RsPostedPost)
 
 const uint32_t RsPostedPostsModel::DEFAULT_DISPLAYED_NB_POSTS = 10;
 
