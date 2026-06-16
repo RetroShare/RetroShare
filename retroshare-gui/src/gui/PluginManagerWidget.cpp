@@ -20,6 +20,8 @@
 
 #include "PluginManagerWidget.h"
 #include "gui/settings/rsharesettings.h"
+#include "util/misc.h"
+
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -160,9 +162,10 @@ PluginManagerWidget::registerNewPlugin(QString pluginName)
 void
 PluginManagerWidget::installPluginButtonClicked()
 {
-    QString fileName = misc::getOpenFileName(this, RshareSettings::LASTDIR_PLUGIN, tr("Open Plugin to install"), "./", tr("Plugins (*.so *.dll)"));
-
-    if (!fileName.isNull())
+    // misc::getOpenFileName returns bool and yields the path through an out-param
+    // (see util/misc.h); the previous call used an obsolete QString-returning form.
+    QString fileName;
+    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_PLUGIN, tr("Open Plugin to install"), tr("Plugins (*.so *.dll)"), fileName))
        emit installPluginRequested(fileName);
 }
 

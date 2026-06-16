@@ -1,0 +1,83 @@
+# Ubuntu CMake CI for the RetroShare monorepo (root super-project).
+#
+# This is the CMake counterpart of the legacy qmake workflows
+# (ubuntu-qt5_c-cpp.yml / ubuntu-qt6_c-cpp.yml). It builds the WHOLE tree from
+# the top-level CMakeLists.txt: libretroshare + retroshare-gui + service +
+# friendserver + plugins, with the JSON API / WebUI enabled.
+#
+# Key difference vs the qmake CI: submodules are initialised WITHOUT --remote, so
+# libretroshare stays on the commit pinned by this super-project (a CMake-enabled
+# commit that lives on master). Using --remote would move it to the latest upstream
+# tip and could pull a non-CMake state, breaking the build.
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: Ubuntu CMake C/C++ CI
+
+on:
+  push:
+    paths-ignore:
+    - '**/*.md'
+  pull_request:
+    paths-ignore:
+    - '**/*.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Ubuntu 22.04 / Qt5 / CMake
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v5
+
+    # NOTE: no --remote here (on purpose) so the pinned, CMake-enabled commits
+    # are checked out. librnp needs --recursive for its nested src/libsexpp.
+    - name: Init submodules (pinned commits)
+      run: |
+        git submodule update --init \
+          libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/
+        git submodule update --init --recursive \
+          supportlibs/librnp
+        git submodule update --init \
+          supportlibs/restbed supportlibs/libsam3 \
+          supportlibs/udp-discovery-cpp supportlibs/rapidjson
+        git --no-pager -C libretroshare log --max-count 1 --oneline
+
+    - name: apt update
+      run: sudo apt-get update
+
+    - name: apt install build dependencies
+      run: >
+        sudo apt-get install -y
+        build-essential g++ cmake ninja-build pkg-config git
+        qtbase5-dev qtbase5-dev-tools qtmultimedia5-dev libqt5svg5-dev
+        libqt5x11extras5-dev qttools5-dev qttools5-dev-tools
+        libssl-dev zlib1g-dev libbz2-dev libbotan-2-dev libjson-c-dev
+        libasio-dev libsqlcipher-dev
+        libspeex-dev libspeexdsp-dev libminiupnpc-dev
+        libavcodec-dev libavutil-dev
+        libx11-dev libxss-dev
+        libxml2-dev libxslt1-dev libcurl4-openssl-dev
+        doxygen python3
+
+    - name: print working directory
+      run: pwd && ls -la
+
+    # Mirrors the validated local Linux build command.
+    - name: CMake configure
+      run: >
+        cmake -G Ninja -B Build-cmake -S .
+        -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+        -DCMAKE_BUILD_TYPE=Release
+        -DRS_RNPLIB=ON -DRS_JSON_API=ON -DRS_WEBUI=ON
+        -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON
+        -DRS_PLUGINS=ON -DRS_FORUM_DEEP_INDEX=OFF
+        -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON
+        -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON
+
+    - name: CMake build
+      run: cmake --build Build-cmake -j$(nproc)
