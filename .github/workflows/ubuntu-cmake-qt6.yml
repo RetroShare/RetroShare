@@ -1,18 +1,20 @@
-# Ubuntu CMake CI for the RetroShare super-project (root aggregate build).
+# Ubuntu CMake CI for the RetroShare super-project built against Qt6.
 #
-# This is the CMake counterpart of the legacy qmake workflows
-# (ubuntu-qt5_c-cpp.yml / ubuntu-qt6_c-cpp.yml). It builds the WHOLE tree from
-# the top-level CMakeLists.txt: libretroshare + retroshare-gui + service +
-# friendserver + plugins, with the JSON API / WebUI enabled.
+# This is the Qt6 counterpart of ubuntu-cmake.yml (which builds against Qt5).
+# It exercises the version-agnostic Qt detection added to
+# retroshare-gui/CMakeLists.txt (find_package(QT NAMES Qt6 Qt5 ...)).
 #
-# Key difference vs the qmake CI: submodules are initialised WITHOUT --remote, so
-# libretroshare stays on the commit pinned by this super-project (a CMake-enabled
-# commit that lives on master). Using --remote would move it to the latest upstream
-# tip and could pull a non-CMake state, breaking the build.
+# Scope note: plugins are built OFF here. The VOIP plugin still uses the Qt5-era
+# QtMultimedia API (QAudioInput/QAudioOutput/QCameraInfo, removed/redesigned in
+# Qt6) and FeedReader's CMake still hardcodes Qt5; both are out of scope for the
+# Qt6 GUI migration and are intentionally excluded until ported.
+#
+# As in ubuntu-cmake.yml, submodules are initialised WITHOUT --remote so the
+# pinned, CMake-enabled commits are used.
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-name: Ubuntu CMake C/C++ CI
+name: Ubuntu CMake C/C++ CI (Qt6)
 
 on:
   push:
@@ -28,8 +30,8 @@ concurrency:
 
 jobs:
   build:
-    name: Ubuntu 22.04 / Qt5 / CMake
-    runs-on: ubuntu-22.04
+    name: Ubuntu 24.04 / Qt6 / CMake
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@v5
@@ -54,8 +56,8 @@ jobs:
       run: >
         sudo apt-get install -y
         build-essential g++ cmake ninja-build pkg-config git
-        qtbase5-dev qtbase5-dev-tools qtmultimedia5-dev libqt5svg5-dev
-        libqt5x11extras5-dev qttools5-dev qttools5-dev-tools
+        qt6-base-dev qt6-base-dev-tools qt6-multimedia-dev libqt6svg6-dev
+        qt6-5compat-dev libqt6core5compat6-dev qt6-tools-dev qt6-tools-dev-tools
         libssl-dev zlib1g-dev libbz2-dev libbotan-2-dev libjson-c-dev
         libasio-dev libsqlcipher-dev
         libspeex-dev libspeexdsp-dev libminiupnpc-dev
@@ -67,7 +69,8 @@ jobs:
     - name: print working directory
       run: pwd && ls -la
 
-    # Mirrors the validated local Linux build command.
+    # Mirrors ubuntu-cmake.yml but selects Qt6 (qmake6 / Qt6 cmake config are the
+    # only Qt available on the runner) and keeps plugins OFF (see scope note).
     - name: CMake configure
       run: >
         cmake -G Ninja -B Build-cmake -S .
@@ -75,7 +78,7 @@ jobs:
         -DCMAKE_BUILD_TYPE=Release
         -DRS_RNPLIB=ON -DRS_JSON_API=ON -DRS_WEBUI=ON
         -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON
-        -DRS_PLUGINS=ON -DRS_FORUM_DEEP_INDEX=OFF
+        -DRS_PLUGINS=OFF -DRS_FORUM_DEEP_INDEX=OFF
         -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON
         -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON
 

@@ -1,17 +1,16 @@
-# Windows (MSYS2 / UCRT64) CMake CI for the RetroShare super-project.
+# Windows (MSYS2 / UCRT64) CMake CI for the RetroShare super-project built against Qt6.
 #
-# CMake counterpart of the legacy qmake ci-ucrt64.yml. Unlike that one (GUI-only,
-# sam3 disabled, mingw32-make), this builds the WHOLE tree with the same feature
-# set as the Linux/macOS CMake CIs, using Ninja and the user's validated local
-# Windows command (shared libretroshare).
+# Qt6 counterpart of windows-cmake.yml. Same whole-tree build and flags, but the
+# UCRT64 toolchain installs the qt6-* packages (incl. qt6-5compat for the
+# Core5Compat module my version-agnostic CMake requires) and plugins are OFF
+# (VOIP still uses the Qt5-era QtMultimedia API; out of scope for this migration).
 #
-# Submodules are initialised WITHOUT --remote (identical to ubuntu-cmake.yml) so
-# libretroshare stays on its pinned, CMake-enabled commit. On WIN32 libretroshare
-# pulls restbed via FetchContent, so the restbed submodule is unused there.
+# Submodules are initialised WITHOUT --remote so libretroshare stays on its
+# pinned, CMake-enabled commit.
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-name: Windows UCRT64 CMake C/C++ CI
+name: Windows UCRT64 CMake C/C++ CI (Qt6)
 
 on:
   push:
@@ -30,7 +29,7 @@ permissions:
 
 jobs:
   build:
-    name: Windows UCRT64 / Qt5 / CMake
+    name: Windows UCRT64 / Qt6 / CMake
     runs-on: windows-latest
     defaults:
       run:
@@ -57,10 +56,11 @@ jobs:
             mingw-w64-ucrt-x86_64-cmake
             mingw-w64-ucrt-x86_64-ninja
             mingw-w64-ucrt-x86_64-python
-            mingw-w64-ucrt-x86_64-qt5-base
-            mingw-w64-ucrt-x86_64-qt5-multimedia
-            mingw-w64-ucrt-x86_64-qt5-svg
-            mingw-w64-ucrt-x86_64-qt5-tools
+            mingw-w64-ucrt-x86_64-qt6-base
+            mingw-w64-ucrt-x86_64-qt6-multimedia
+            mingw-w64-ucrt-x86_64-qt6-svg
+            mingw-w64-ucrt-x86_64-qt6-5compat
+            mingw-w64-ucrt-x86_64-qt6-tools
             mingw-w64-ucrt-x86_64-openssl
             mingw-w64-ucrt-x86_64-libbotan
             mingw-w64-ucrt-x86_64-sqlcipher
@@ -89,7 +89,8 @@ jobs:
             supportlibs/udp-discovery-cpp supportlibs/rapidjson
           git --no-pager -C libretroshare log --max-count 1 --oneline
 
-      # Mirrors the validated local Windows command (Ninja, shared libretroshare).
+      # Mirrors windows-cmake.yml (Ninja, shared libretroshare) but with Qt6 and
+      # plugins OFF.
       - name: CMake configure
         run: >
           cmake -G Ninja -B Build-cmake -S .
@@ -98,7 +99,7 @@ jobs:
           -DRS_LIBRETROSHARE_STATIC=OFF -DRS_LIBRETROSHARE_SHARED=ON
           -DRS_RNPLIB=ON -DRS_JSON_API=ON -DRS_WEBUI=ON
           -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON
-          -DRS_PLUGINS=ON -DRS_FORUM_DEEP_INDEX=OFF
+          -DRS_PLUGINS=OFF -DRS_FORUM_DEEP_INDEX=OFF
           -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON
           -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON
           -DCMAKE_C_FLAGS="-include string.h -include stdint.h"

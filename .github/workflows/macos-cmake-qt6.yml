@@ -1,16 +1,16 @@
-# macOS CMake CI for the RetroShare super-project (root aggregate build).
+# macOS CMake CI for the RetroShare super-project built against Qt6.
 #
-# CMake counterpart of the legacy qmake ci-macOS.yml. Unlike that one (which
-# disables service/friendserver/sam3/rnp), this builds the WHOLE tree with the
-# same feature set as the Linux CMake CI, using the user's validated local macOS
-# command (Homebrew -I/-L flag harvesting).
+# Qt6 counterpart of macos-cmake.yml. Same whole-tree build and Homebrew flag
+# harvesting, but installs the `qt` formula (Qt6, which bundles qt5compat, svg,
+# multimedia and tools) instead of qt@5, and builds with plugins OFF (VOIP still
+# uses the Qt5-era QtMultimedia API; out of scope for this migration).
 #
-# Submodules are initialised WITHOUT --remote (identical to ubuntu-cmake.yml) so
-# libretroshare stays on its pinned, CMake-enabled commit.
+# Submodules are initialised WITHOUT --remote so libretroshare stays on its
+# pinned, CMake-enabled commit.
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-name: macOS CMake C/C++ CI
+name: macOS CMake C/C++ CI (Qt6)
 
 on:
   push:
@@ -29,7 +29,7 @@ permissions:
 
 jobs:
   build:
-    name: macOS 14 / Qt5 / CMake
+    name: macOS 14 / Qt6 / CMake
     runs-on: macos-14
     defaults:
       run:
@@ -56,29 +56,28 @@ jobs:
     - name: Install Homebrew dependencies
       run: >
         brew install
-        ninja qt@5 openssl@3 botan@2 sqlcipher miniupnpc
+        ninja qt openssl@3 botan@2 sqlcipher miniupnpc
         json-c asio speex speexdsp ffmpeg
         libxml2 libxslt bzip2 zlib rapidjson doxygen
 
     # Mirrors the validated local macOS command: harvest every Homebrew opt/*
     # include/lib dir into the compiler/linker flags, and additionally expose them
-    # to find_package() via CMAKE_PREFIX_PATH (needed for keg-only qt@5, botan@2…).
+    # to find_package() via CMAKE_PREFIX_PATH (needed for keg-only botan@2…).
     - name: CMake configure
       run: |
         HB="$(brew --prefix)"
-        QT5="$(brew --prefix qt@5)"
+        QT6="$(brew --prefix qt)"
         IFLAGS="-I$HB/include"; for d in "$HB"/opt/*/include; do IFLAGS="$IFLAGS -I$d"; done
         LFLAGS="-L$HB/lib";     for d in "$HB"/opt/*/lib;     do LFLAGS="$LFLAGS -L$d"; done
-        # qt@5 first so find_package(Qt5) picks the keg-only (correct) config, not a
-        # broken Qt5 config that may sit directly under the Homebrew prefix.
-        PREFIX="$QT5;$HB";      for d in "$HB"/opt/*;          do PREFIX="$PREFIX;$d"; done
+        # qt (Qt6) first so find_package(QT NAMES Qt6 Qt5) resolves to this config.
+        PREFIX="$QT6;$HB";      for d in "$HB"/opt/*;          do PREFIX="$PREFIX;$d"; done
         cmake -G Ninja -B Build-cmake -S . \
           -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release \
           -DCMAKE_PREFIX_PATH="$PREFIX" \
-          -DQt5_DIR="$QT5/lib/cmake/Qt5" \
+          -DQt6_DIR="$QT6/lib/cmake/Qt6" \
           -DOPENSSL_ROOT_DIR="$(brew --prefix openssl@3)" \
           -DRS_RNPLIB=ON -DRS_JSON_API=ON -DRS_WEBUI=ON \
-          -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON -DRS_PLUGINS=ON -DRS_FORUM_DEEP_INDEX=OFF \
+          -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON -DRS_PLUGINS=OFF -DRS_FORUM_DEEP_INDEX=OFF \
           -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON \
           -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON \
           -DCMAKE_C_FLAGS="$IFLAGS" -DCMAKE_CXX_FLAGS="$IFLAGS" \

@@ -98,24 +98,35 @@ set(CMAKE_AUTORCC ON)
 # Enabling AUTOUIC as well would process the same forms a second time.
 set(CMAKE_AUTOUIC OFF)
 
-find_package( Qt5 COMPONENTS Core         REQUIRED)
-find_package( Qt5 COMPONENTS Widgets      REQUIRED)
-find_package( Qt5 COMPONENTS Xml          REQUIRED)
-find_package( Qt5 COMPONENTS Network      REQUIRED)
-find_package( Qt5 COMPONENTS Multimedia   REQUIRED)
-find_package( Qt5 COMPONENTS PrintSupport REQUIRED)
-if(APPLE)
-	find_package( Qt5 COMPONENTS Svg REQUIRED)
+# Detect Qt6 first, fall back to Qt5. All Qt usage below is version-agnostic via
+# the ${QT_VERSION_MAJOR} variable so the same tree builds against both.
+find_package( QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+find_package( Qt${QT_VERSION_MAJOR} COMPONENTS
+	Core Widgets Xml Network Multimedia PrintSupport REQUIRED)
+if(QT_VERSION_MAJOR EQUAL 6)
+	# Provides QRegExp and other Qt5-era APIs still used by the GUI.
+	find_package( Qt6 COMPONENTS Core5Compat REQUIRED)
 endif()
-if(UNIX AND NOT APPLE)
+if(APPLE)
+	find_package( Qt${QT_VERSION_MAJOR} COMPONENTS Svg REQUIRED)
+endif()
+if(UNIX AND NOT APPLE AND QT_VERSION_MAJOR EQUAL 5)
+	# QtX11Extras does not exist in Qt6: idle_platform.cpp uses QNativeInterface
+	# (QX11Application) there instead, and X11/Xss are linked directly below.
 	find_package( Qt5 COMPONENTS X11Extras REQUIRED )
 endif()
 
-list( APPEND RS_LINK_LIBRARIES Qt5::Multimedia Qt5::Widgets Qt5::Xml Qt5::Network Qt5::PrintSupport)
-if(APPLE)
-	list( APPEND RS_LINK_LIBRARIES Qt5::Svg )
+list( APPEND RS_LINK_LIBRARIES
+	Qt${QT_VERSION_MAJOR}::Multimedia Qt${QT_VERSION_MAJOR}::Widgets
+	Qt${QT_VERSION_MAJOR}::Xml Qt${QT_VERSION_MAJOR}::Network
+	Qt${QT_VERSION_MAJOR}::PrintSupport)
+if(QT_VERSION_MAJOR EQUAL 6)
+	list( APPEND RS_LINK_LIBRARIES Qt6::Core5Compat )
 endif()
-if(UNIX AND NOT APPLE)
+if(APPLE)
+	list( APPEND RS_LINK_LIBRARIES Qt${QT_VERSION_MAJOR}::Svg )
+endif()
+if(UNIX AND NOT APPLE AND QT_VERSION_MAJOR EQUAL 5)
 	list( APPEND RS_LINK_LIBRARIES Qt5::X11Extras )
 endif()
 
@@ -137,10 +148,9 @@ endif(RS_DEVELOPMENT_BUILD)
 
 include(src/CMakeLists.txt)
 
+# Versionless command, available for both Qt5 (>=5.15) and Qt6. Called once to
+# avoid generating duplicate ui_*.h rules.
 qt_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
-if (NOT Qt6_FOUND)
-	qt5_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
-endif()
 
 # Compatibility shim: src/gui/AboutWidget.cpp unconditionally does
 # #include "include/qmake_info.h" and prints Rs_qmake_DEFINES / Rs_qmake_CONFIG in

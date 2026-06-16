@@ -1,10 +1,10 @@
-# CMakeLists.txt for RetroShare Monorepo Build
+# CMakeLists.txt for the RetroShare super-project (root aggregate build)
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 cmake_minimum_required(VERSION 3.5.0)
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
-project(retroshare-monorepo)
+project(retroshare-superproject)
 
 # Default to Release build type if not specified
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)

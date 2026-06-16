@@ -30,8 +30,12 @@
 
 #include "gui/chat/ChatWidget.h"
 
+// Qt5 only (see GxsGroupFeedItem.h): Qt6 auto-registers these types and an
+// explicit specialization clashes with AUTOMOC's single-TU build.
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
 Q_DECLARE_METATYPE(RsGxsId)
 Q_DECLARE_METATYPE(QList<RsGxsId>)
+#endif
 
 class ChatDialog;
 
