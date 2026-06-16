@@ -48,14 +48,14 @@ cmake_dependent_option(
 	"Enable settin Web UI password via terminal in retroshare-service"
 	OFF
 	"RS_WEBUI"
-	ON )
+	OFF )
 
 cmake_dependent_option(
 	RS_WEBUI
 	"Install RetroShare Web UI"
 	OFF
 	"RS_JSON_API"
-	ON )
+	OFF )
 
 ################################################################################
 
