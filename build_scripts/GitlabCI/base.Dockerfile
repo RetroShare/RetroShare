@@ -12,7 +12,7 @@
 ## To run the container
 # docker run -it -p 127.0.0.1:9092:9092 "${CI_REGISTRY_IMAGE}" retroshare-service --jsonApiPort 9092 --jsonApiBindAddress 0.0.0.0
 
-FROM ubuntu:22.04
+FROM ubuntu:26.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV APT_UNAT="--assume-yes --quiet"
@@ -26,7 +26,7 @@ RUN apt-get update $APT_UNAT && \
 		libsqlite3-dev libsqlcipher-dev \
 		pkg-config libz-dev \
 		libxapian-dev doxygen rapidjson-dev \
-		git cmake curl python3
+		git cmake curl python3 libasio-dev libjson-c-dev libbotan-3-dev
 
 ## Avoid git cloning spuriously failing with
 #  server certificate verification failed. CAfile: none CRLfile: none
@@ -48,11 +48,7 @@ RUN git clone $REPO_DEPTH $REPO_URL -b $REPO_BRANCH && \
 	git fetch --tags && \
 	git submodule update --init \
 		libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/ \
-		supportlibs/restbed/ && \
-	cd supportlibs/restbed/ && \
-	git submodule update --init \
-		dependency/asio/ dependency/kashmir/ && \
-	cd ../../../
+		supportlibs/restbed/
 
 RUN \
 	mkdir RetroShare-build && cd RetroShare-build && \
