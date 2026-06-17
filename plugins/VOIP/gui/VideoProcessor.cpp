@@ -31,6 +31,7 @@
 #include <QImage>
 
 #include "util/rsmemory.h"
+#include "util/rsdebug.h"
 
 #include "VideoProcessor.h"
 #include "QVideoDevice.h"
@@ -148,6 +149,9 @@ VideoProcessor::VideoProcessor()
 
     _last_bw_estimate_in_TS = time(NULL) ;
     _last_bw_estimate_out_TS = time(NULL) ;
+
+    RsDbg() << "X264VBR VideoProcessor ctor: current_codec=" << _encoding_current_codec
+            << " target_bandwidth_out=" << (uint32_t)_target_bandwidth_out << " B/s";
 }
 
 VideoProcessor::~VideoProcessor()
@@ -295,6 +299,8 @@ void VideoProcessor::setMaximumBandwidth(uint32_t bytes_per_sec)
 {
     std::cerr << "Video Encoder: maximum frame rate is set to " << bytes_per_sec << " Bps" << std::endl;
     _target_bandwidth_out = bytes_per_sec ;
+
+    RsDbg() << "X264VBR setMaximumBandwidth: target_bandwidth_out=" << bytes_per_sec << " B/s";
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -441,6 +447,9 @@ FFmpegVideo::FFmpegVideo()
     if (!encoding_codec) std::cerr << "AV codec not found for codec id " << std::endl;
     if (!encoding_codec) throw std::runtime_error("AV codec not found for codec id ") ;
 
+    RsDbg() << "X264VBR FFmpegVideo ctor: requested codec_id=" << (int)codec_id
+            << " encoder found=" << (encoding_codec->name ? encoding_codec->name : "?");
+
     encoding_context = avcodec_alloc_context3(encoding_codec);
 
     if (!encoding_context) std::cerr << "AV: Could not allocate video codec encoding context" << std::endl;
@@ -517,6 +526,13 @@ FFmpegVideo::FFmpegVideo()
         std::cerr << "AV: Could not open codec context. Something's wrong." << std::endl;
         throw std::runtime_error( "AV: Could not open codec context. Something's wrong.");
     }
+
+    RsDbg() << "X264VBR FFmpegVideo ctor: codec opened name=" << (encoding_codec->name ? encoding_codec->name : "?")
+            << " " << encoding_context->width << "x" << encoding_context->height
+            << " bit_rate=" << (int)encoding_context->bit_rate
+            << " rc_max_rate=" << (int)encoding_context->rc_max_rate
+            << " gop_size=" << encoding_context->gop_size
+            << " time_base=" << encoding_context->time_base.num << "/" << encoding_context->time_base.den;
 
 #if (LIBAVCODEC_VERSION_MAJOR < 57) | (LIBAVCODEC_VERSION_MAJOR == 57 && LIBAVCODEC_VERSION_MINOR <3 )
     encoding_frame_buffer = avcodec_alloc_frame() ;//(AVFrame*)malloc(sizeof(AVFrame)) ;
@@ -696,6 +712,10 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 	encoding_context->rc_max_rate        = target_encoding_bitrate * 8;
 	encoding_context->bit_rate_tolerance = target_encoding_bitrate * 8;
 
+	RsDbg() << "X264VBR encodeData: frame=" << (uint32_t)encoding_frame_count
+	        << " target=" << target_encoding_bitrate << " B/s -> bit_rate="
+	        << (int)encoding_context->bit_rate << " bits/s";
+
   imageToFrame(encoding_frame_buffer, image);
 
 	encoding_frame_buffer->pts = encoding_frame_count++;
@@ -768,6 +788,9 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 
 		voip_chunk.size = pkt.size + HEADER_SIZE;
 		voip_chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
+
+		RsDbg() << "X264VBR encodeData: produced packet pkt.size=" << pkt.size
+		        << " B (chunk=" << voip_chunk.size << " B)";
 
     dst.push();
 
