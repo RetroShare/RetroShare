@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/feeds/SecurityItem.h                                                    *
+ * gui/feeds/TLSItem.h                                                         *
  *                                                                             *
- * Copyright (c) 2008, Robert Fernie   <retroshare.project@gmail.com>          *
+ * Copyright (c) 2026, Retroshare Team <retroshare.project@gmail.com>          *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
