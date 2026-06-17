@@ -65,6 +65,11 @@ jobs:
           git submodule update --init --remote libbitdht/ libretroshare/ retroshare-webui/
           git submodule update --init supportlibs/librnp supportlibs/rapidjson supportlibs/restbed
 
+      - name: Workaround librnp strlen build regression
+        run: |
+          FILE="supportlibs/librnp/src/lib/crypto/mem.cpp"
+          grep -q '#include <cstring>' "$FILE" || sed -i '/#include <cstdio>/a #include <cstring>' "$FILE"
+
       - name: Build
         run: |
           qmake6 . -r -spec win32-g++ "CONFIG+=release" "CONFIG+=rs_autologin" "CONFIG+=no_rs_sam3" "CONFIG+=no_rs_sam3_libsam3"
