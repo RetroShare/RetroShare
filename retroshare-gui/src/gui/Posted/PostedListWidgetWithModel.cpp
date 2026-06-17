@@ -53,6 +53,7 @@
 #include "PostedListWidgetWithModel.h"
 #include "PostedPostsModel.h"
 #include "BoardPostDisplayWidget.h"
+#include "PostedItem.h" // for Q_DECLARE_METATYPE(RsPostedPost)
 
 #include <algorithm>
 
