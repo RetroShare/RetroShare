@@ -436,13 +436,24 @@ FFmpegVideo::FFmpegVideo()
     //AVCodecID codec_id = AV_CODEC_ID_H264 ;
     //AVCodecID codec_id = AV_CODEC_ID_MPEG2VIDEO;
 #if LIBAVCODEC_VERSION_MAJOR < 54
+    // Ancient ffmpeg: keep MPEG4 (no libx264 path here).
     CodecID codec_id = CODEC_ID_MPEG4;
-#else
-    AVCodecID codec_id = AV_CODEC_ID_MPEG4;
-#endif
-
-    /* find the video encoder */
     encoding_codec = avcodec_find_encoder(codec_id);
+#else
+    // X264VBR step 1: prefer H264 via libx264, but fall back to MPEG4 if the
+    // ffmpeg build has no x264 encoder (e.g. built without --enable-libx264).
+    // This way we never crash on an x264-less build; we just keep the old codec.
+    AVCodecID codec_id = AV_CODEC_ID_H264;
+    encoding_codec = avcodec_find_encoder_by_name("libx264");    // explicit GPL x264
+    if(!encoding_codec)
+        encoding_codec = avcodec_find_encoder(AV_CODEC_ID_H264); // any H264 encoder
+    if(!encoding_codec)
+    {
+        RsDbg() << "X264VBR no H264/libx264 encoder available, falling back to MPEG4";
+        codec_id = AV_CODEC_ID_MPEG4;
+        encoding_codec = avcodec_find_encoder(codec_id);
+    }
+#endif
 
     if (!encoding_codec) std::cerr << "AV codec not found for codec id " << std::endl;
     if (!encoding_codec) throw std::runtime_error("AV codec not found for codec id ") ;
@@ -517,7 +528,12 @@ FFmpegVideo::FFmpegVideo()
     if (codec_id == AV_CODEC_ID_H264)
 #endif
     {
-        av_opt_set(encoding_context->priv_data, "preset", "slow", 0);
+        // X264VBR step 1: real-time tuning. 'slow' was unusable for live video.
+        // veryfast keeps CPU sane; zerolatency kills B-frames + lookahead so
+        // frames don't buffer (critical for latency over the tunnel).
+        av_opt_set(encoding_context->priv_data, "preset", "veryfast", 0);
+        av_opt_set(encoding_context->priv_data, "tune", "zerolatency", 0);
+        RsDbg() << "X264VBR FFmpegVideo ctor: x264 preset=veryfast tune=zerolatency";
     }
 
     /* open it */
