@@ -474,18 +474,21 @@ FFmpegVideo::FFmpegVideo()
     encoding_context->bit_rate = 1024*1024 ;
     encoding_context->bit_rate_tolerance = encoding_context->bit_rate ;
 
-#ifdef USE_VARIABLE_BITRATE
+    // X264VBR step 2: enable VBV (constrained variable bitrate) BEFORE open.
+    // x264 only honours runtime VBV changes (x264_encoder_reconfig) if VBV was
+    // already ON at init, so we must seed rc_max_rate + rc_buffer_size here;
+    // encodeData() then tracks the bandwidth-feedback target live.
+    //   rc_min_rate=0    -> may drop below target on static scenes (the "variable" part)
+    //   rc_max_rate      -> hard VBV ceiling (the "constrained" part)
+    //   rc_buffer_size   -> ~1 s of ceiling; smaller = tighter cap/less burst, bigger = smoother quality
     encoding_context->rc_min_rate = 0;
-    encoding_context->rc_max_rate = 10*1024;//encoding_context->bit_rate;
-    encoding_context->rc_buffer_size = 10*1024*1024;
-    encoding_context->rc_initial_buffer_occupancy = (int) ( 0.9 * encoding_context->rc_buffer_size);
-    encoding_context->rc_max_available_vbv_use = 1.0;
-    encoding_context->rc_min_vbv_overflow_use = 0.0;
-#else
-    encoding_context->rc_min_rate = 0;
-    encoding_context->rc_max_rate = 0;
-    encoding_context->rc_buffer_size = 0;
-#endif
+    encoding_context->rc_max_rate = encoding_context->bit_rate;
+    encoding_context->rc_buffer_size = encoding_context->bit_rate;
+    encoding_context->rc_initial_buffer_occupancy = (int)(0.9 * encoding_context->rc_buffer_size);
+
+    RsDbg() << "X264VBR FFmpegVideo ctor: VBV enabled bit_rate=" << (int)encoding_context->bit_rate
+            << " rc_max_rate=" << (int)encoding_context->rc_max_rate
+            << " rc_buffer_size=" << (int)encoding_context->rc_buffer_size;
 #if LIBAVCODEC_VERSION_MAJOR < 58
 	if (encoding_codec->capabilities & AV_CODEC_CAP_TRUNCATED)
 		encoding_context->flags |= AV_CODEC_FLAG_TRUNCATED;
@@ -721,16 +724,20 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
         std::cerr << "Max encodign bitrate eexceeded. Capping to " << MAX_FFMPEG_ENCODING_BITRATE << std::endl;
         target_encoding_bitrate = MAX_FFMPEG_ENCODING_BITRATE ;
     }
-	// _target_bandwidth_out is in BYTES/s; ffmpeg bit_rate/rc_max_rate want BITS/s -> x8.
-	// (Previously bit_rate was left commented + the x8 missing, so the encoder was
-	//  stuck around 10-30 kbps regardless of available bandwidth.)
-	encoding_context->bit_rate           = target_encoding_bitrate * 8;
-	encoding_context->rc_max_rate        = target_encoding_bitrate * 8;
-	encoding_context->bit_rate_tolerance = target_encoding_bitrate * 8;
+	// X264VBR step 2: drive the VBV-constrained ABR live from the bandwidth
+	// feedback. _target_bandwidth_out is BYTES/s; x264 wants BITS/s -> x8.
+	// libx264 picks these up via x264_encoder_reconfig (only because VBV was
+	// enabled at init in the ctor). bit_rate==rc_max_rate keeps a tight ceiling;
+	// rc_buffer_size ~1 s smooths bursts without adding frame delay (zerolatency).
+	int target_bits = (int)(target_encoding_bitrate * 8);
+	encoding_context->bit_rate           = target_bits;
+	encoding_context->rc_max_rate        = target_bits;
+	encoding_context->rc_buffer_size     = target_bits;
+	encoding_context->bit_rate_tolerance = target_bits;
 
 	RsDbg() << "X264VBR encodeData: frame=" << (uint32_t)encoding_frame_count
-	        << " target=" << target_encoding_bitrate << " B/s -> bit_rate="
-	        << (int)encoding_context->bit_rate << " bits/s";
+	        << " target=" << target_encoding_bitrate << " B/s -> VBV bit_rate=rc_max_rate="
+	        << target_bits << " buf=" << (int)encoding_context->rc_buffer_size << " bits";
 
   imageToFrame(encoding_frame_buffer, image);
 
