@@ -152,6 +152,7 @@ private slots:
     void prevPosts();
 	void filterItems(QString s);
 	void updateShowLabel();
+	void handleViewGallery(const RsGxsMessageId& startMsgId);
 
 public slots:
 	void handlePostsTreeSizeChange(QSize size);

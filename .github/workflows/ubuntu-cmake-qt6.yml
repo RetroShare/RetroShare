@@ -1,0 +1,86 @@
+# Ubuntu CMake CI for the RetroShare super-project built against Qt6.
+#
+# This is the Qt6 counterpart of ubuntu-cmake.yml (which builds against Qt5).
+# It exercises the version-agnostic Qt detection added to
+# retroshare-gui/CMakeLists.txt (find_package(QT NAMES Qt6 Qt5 ...)).
+#
+# Scope note: plugins are built OFF here. The VOIP plugin still uses the Qt5-era
+# QtMultimedia API (QAudioInput/QAudioOutput/QCameraInfo, removed/redesigned in
+# Qt6) and FeedReader's CMake still hardcodes Qt5; both are out of scope for the
+# Qt6 GUI migration and are intentionally excluded until ported.
+#
+# As in ubuntu-cmake.yml, submodules are initialised WITHOUT --remote so the
+# pinned, CMake-enabled commits are used.
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: Ubuntu CMake C/C++ CI (Qt6)
+
+on:
+  push:
+    paths-ignore:
+    - '**/*.md'
+  pull_request:
+    paths-ignore:
+    - '**/*.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Ubuntu 24.04 / Qt6 / CMake
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v5
+
+    # NOTE: no --remote here (on purpose) so the pinned, CMake-enabled commits
+    # are checked out. librnp needs --recursive for its nested src/libsexpp.
+    - name: Init submodules (pinned commits)
+      run: |
+        git submodule update --init \
+          libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/
+        git submodule update --init --recursive \
+          supportlibs/librnp
+        git submodule update --init \
+          supportlibs/restbed supportlibs/libsam3 \
+          supportlibs/udp-discovery-cpp supportlibs/rapidjson
+        git --no-pager -C libretroshare log --max-count 1 --oneline
+
+    - name: apt update
+      run: sudo apt-get update
+
+    - name: apt install build dependencies
+      run: >
+        sudo apt-get install -y
+        build-essential g++ cmake ninja-build pkg-config git
+        qt6-base-dev qt6-base-dev-tools qt6-multimedia-dev libqt6svg6-dev
+        qt6-5compat-dev libqt6core5compat6-dev qt6-tools-dev qt6-tools-dev-tools
+        libssl-dev zlib1g-dev libbz2-dev libbotan-2-dev libjson-c-dev
+        libasio-dev libsqlcipher-dev
+        libspeex-dev libspeexdsp-dev libminiupnpc-dev
+        libavcodec-dev libavutil-dev
+        libx11-dev libxss-dev
+        libxml2-dev libxslt1-dev libcurl4-openssl-dev
+        doxygen python3
+
+    - name: print working directory
+      run: pwd && ls -la
+
+    # Mirrors ubuntu-cmake.yml but selects Qt6 (qmake6 / Qt6 cmake config are the
+    # only Qt available on the runner) and keeps plugins OFF (see scope note).
+    - name: CMake configure
+      run: >
+        cmake -G Ninja -B Build-cmake -S .
+        -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+        -DCMAKE_BUILD_TYPE=Release
+        -DRS_RNPLIB=ON -DRS_JSON_API=ON -DRS_WEBUI=ON
+        -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON
+        -DRS_PLUGINS=OFF -DRS_FORUM_DEEP_INDEX=OFF
+        -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON
+        -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON
+
+    - name: CMake build
+      run: cmake --build Build-cmake -j$(nproc)

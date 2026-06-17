@@ -3,13 +3,15 @@ FROM registry.gitlab.com/retroshare/retroshare:base
 RUN apt-get update -y && apt-get upgrade -y
 
 ARG REPO_URL=https://github.com/RetroShare/RetroShare.git
-ARG REPO_BRANCH=master
+ARG REPO_REF=master
 RUN \
 	cd RetroShare && git remote add testing $REPO_URL && \
-	git fetch --tags testing $REPO_BRANCH && \
-	git reset --hard testing/$REPO_BRANCH && \
+	git fetch --tags testing $REPO_REF && \
+	git checkout --force FETCH_HEAD && \
+	git submodule deinit -f --all && \
 	git submodule update --init \
-		libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/ && \
+		libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/ \
+		supportlibs/restbed/ && \
 	git --no-pager log --max-count 1
 RUN \
 	mkdir RetroShare-build && cd RetroShare-build && \

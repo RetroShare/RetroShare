@@ -26,25 +26,7 @@ TARGET = retroshare-service
 
 SOURCES += retroshare-service.cc
 
-################################# Linux ##########################################
-
-android-* {
-    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
-
-    DISTFILES += android/AndroidManifest.xml \
-        android/res/drawable/retroshare_128x128.png \
-        android/res/drawable/retroshare_retroshare_48x48.png \
-        android/gradle/wrapper/gradle-wrapper.jar \
-        android/gradlew \
-        android/res/values/libs.xml \
-        android/build.gradle \
-        android/gradle/wrapper/gradle-wrapper.properties \
-        android/gradlew.bat
-
-    SOURCES -= retroshare-service.cc
-    SOURCES += retroshare-service-android.cc
-}
-
+################################# Linux ########################################
 
 appimage {
     icon_files.path = "$${PREFIX}/share/icons/hicolor/scalable/"
@@ -62,7 +44,7 @@ unix {
     INSTALLS += target
 }
 
-################################# MacOSX ##########################################
+################################# MacOSX #######################################
 
 macx {
 	# ENABLE THIS OPTION FOR Univeral Binary BUILD.
@@ -95,7 +77,7 @@ macx {
 	INCLUDEPATH += . $$INC_DIR
 }
 
-################################# Windows ##########################################
+################################# Windows ######################################
 
 win32-g++|win32-clang-g++ {
 	CONFIG += console
@@ -139,6 +121,3 @@ win32-g++|win32-clang-g++ {
 	
 	RC_FILE = retroshare-service_win.rc
 }
-
-################################### COMMON stuff ##################################
-
