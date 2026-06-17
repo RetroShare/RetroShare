@@ -484,8 +484,8 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 
     if(e.mSslId.isNull())
     {
-//        if(!(flags & RsFeedTypeFlags::RS_FEED_TYPE_TLS_ATTEMPT))
-//            return;
+        if(!(flags & RsFeedTypeFlags::RS_FEED_TYPE_TLS_ATTEMPT))
+            return;
 
         auto item = new TLSItem(this,NEWSFEED_TLSLIST);
         FeedItem *feedItem = ui->feedWidget->findFeedItem(item->uniqueIdentifier());

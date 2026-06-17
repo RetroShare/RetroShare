@@ -122,6 +122,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QCheckBox" name="notify_TlsAttempt">
+              <property name="text">
+               <string>Non-Retroshare connections</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <layout class="QVBoxLayout" name="feedLayout"/>
             </item>
            </layout>
