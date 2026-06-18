@@ -130,6 +130,7 @@ p3VOIP::p3VOIP(RsPluginHandler *handler,VOIPNotify *notifier)
         _min_loudness = 4702;
         _noise_suppress = -45;
         _echo_cancel = true;
+        _video_max_bandwidth = 131072;	// 128 KB/s default (matches VideoProcessor)
 
 }
 RsServiceInfo p3VOIP::getServiceInfo()
@@ -729,6 +730,11 @@ void p3VOIP::setVoipEchoCancel(bool b)
 	_echo_cancel = b ;
 	IndicateConfigChanged() ;
 }
+void p3VOIP::setVoipVideoMaximumBandwidth(int b)
+{
+	_video_max_bandwidth = b ;
+	IndicateConfigChanged() ;
+}
 
 RsTlvKeyValue p3VOIP::push_int_value(const std::string& key,int value)
 {
@@ -761,6 +767,7 @@ bool p3VOIP::saveList(bool& cleanup, std::list<RsItem*>& lst)
 	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_NOISE_SUP",_noise_suppress)) ;
 	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_MIN_LOUDN",_min_loudness)) ;
 	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_ECHO_CNCL",_echo_cancel)) ;
+	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_VID_MAXBW",_video_max_bandwidth)) ;
 
 	lst.push_back(vitem) ;
 
@@ -792,6 +799,8 @@ bool p3VOIP::loadList(std::list<RsItem*>& load)
 					_min_loudness = pop_int_value(kit->value) ;
 				else if(kit->key == "P3VOIP_CONFIG_ECHO_CNCL")
 					_echo_cancel = pop_int_value(kit->value) ;
+				else if(kit->key == "P3VOIP_CONFIG_VID_MAXBW")
+					_video_max_bandwidth = pop_int_value(kit->value) ;
 		}
 		delete vitem ;
 	}
