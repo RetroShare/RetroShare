@@ -189,6 +189,8 @@ void VOIPConfigPanel::updateAvailableBW(double r)
 {
     std::cerr << "Setting max bandwidth to " << r << " KB/s" << std::endl;
     videoProcessor->setMaximumBandwidth((uint32_t)(r*1024)) ;
+    // X264VBR: persist the user cap (bytes/s) so real calls reuse it.
+    rsVOIP->setVoipVideoMaximumBandwidth((int)(r*1024)) ;
 }
 
 void VOIPConfigPanel::togglePreview(bool b)
@@ -277,6 +279,9 @@ void VOIPConfigPanel::loadSettings()
     ui.qsAmp->setValue(20000 - rsVOIP->getVoipiMinLoudness());
     on_qsAmp_valueChanged(20000 - rsVOIP->getVoipiMinLoudness());
 
+    // X264VBR: max video bitrate is stored in bytes/s; the spinbox is in KB/s.
+    ui.availableBW_SB->setValue(rsVOIP->getVoipVideoMaximumBandwidth() / 1024.0);
+
     loaded = true;
 }
 
@@ -292,6 +297,7 @@ bool VOIPConfigPanel::save(QString &/*errmsg*/)
     /*s.uiDoublePush = qsDoublePush->value() * 1000;*/
     rsVOIP->setVoipATransmit(static_cast<RsVOIP::enumAudioTransmit>(ui.qcbTransmit->currentIndex() ));
     rsVOIP->setVoipEchoCancel(ui.qcbEchoCancel->isChecked());
+    rsVOIP->setVoipVideoMaximumBandwidth((int)(ui.availableBW_SB->value()*1024));
 
     return true;
 }

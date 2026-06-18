@@ -178,6 +178,12 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	inputVideoDevice = new QVideoInputDevice(mChatWidget) ; // not started yet ;-)
 	videoProcessor = new VideoProcessor ;
 
+	// X264VBR: apply the user-chosen max video bitrate (set in the VOIP config
+	// panel, bytes/s) to this call's encoder from the start, so the call honours
+	// the user's cap. The peer's measured-bandwidth echo (setAcceptedBandwidth)
+	// is the old self-limiting path and is intentionally not relied upon here.
+	videoProcessor->setMaximumBandwidth(rsVOIP->getVoipVideoMaximumBandwidth()) ;
+
 	// Make a widget with two video devices, one for echo, and one for the talking peer.
 	videoWidget = new QWidget(mChatWidget) ;
 	videoWidget->setLayout(new QVBoxLayout()) ;
