@@ -118,6 +118,8 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		virtual void setVoipiMinLoudness(int) ;
 		virtual bool getVoipEchoCancel() const 	 { return _echo_cancel ; }
 		virtual void setVoipEchoCancel(bool) ;
+		virtual int  getVoipVideoMaximumBandwidth() const { return _video_max_bandwidth ; }
+		virtual void setVoipVideoMaximumBandwidth(int) ;
 
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
@@ -176,4 +178,5 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		int _min_loudness ;
 		int _noise_suppress ;
 		bool _echo_cancel ;
+		int _video_max_bandwidth ;	// user cap for video encoding, bytes/s
 };
