@@ -144,7 +144,12 @@ void VOIPConfigPanel::showEvent(QShowEvent *)
     videoProcessor = new VideoProcessor() ;
     videoProcessor->setDisplayTarget(NULL) ;
 
-    videoProcessor->setMaximumBandwidth(ui.availableBW_SB->value()) ;
+    // X264VBR: the spinbox is in KB/s but setMaximumBandwidth wants bytes/s.
+    // The missing x1024 here meant that on re-entry (the panel is reused, so the
+    // spinbox already holds its value and loadSettings' setValue fires no
+    // valueChanged -> updateAvailableBW is not called), the preview encoder was
+    // capped at a few bytes/s and the graph collapsed to a few KB/s.
+    videoProcessor->setMaximumBandwidth((uint32_t)(ui.availableBW_SB->value()*1024)) ;
 
     videoInput->setVideoProcessor(videoProcessor) ;
 
