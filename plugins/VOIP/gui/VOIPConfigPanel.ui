@@ -109,7 +109,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Display encoded (and then decoded) frame, to check the codec's quality. If not selected, the image above only shows the frame that is grabbed from your camera.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Checked:&lt;/b&gt; shows the encoded-then-decoded video — i.e. what your correspondent actually receives — so you can judge the codec quality at the current bitrate.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Unchecked:&lt;/b&gt; shows the raw frame grabbed from your camera (your local, mirrored self-view).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
            <string>preview</string>
