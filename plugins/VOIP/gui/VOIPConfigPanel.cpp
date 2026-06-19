@@ -40,7 +40,7 @@ public:
     
     void setVideoInput(const QVideoInputDevice *vid) { video_input = vid ; }
     
-     virtual QString displayName(int) const { return tr("Required bandwidth") ;}
+     virtual QString displayName(int) const { return tr("Encoded video bitrate (out)") ;}
     
     virtual QString displayValue(float v) const
     {
