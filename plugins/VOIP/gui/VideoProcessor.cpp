@@ -467,27 +467,22 @@ FFmpegVideo::FFmpegVideo()
     if (!encoding_context) throw std::runtime_error("AV: Could not allocate video codec encoding context");
 
     /* put sample parameters */
-    // Set a real default bitrate BEFORE avcodec_open2 (changing bit_rate after the
-    // codec is opened is unreliable for MPEG4). ~1 Mbps, matching the default
-    // _target_bandwidth_out (128 KB/s x8). The per-frame value in encodeData() then
-    // tracks the bandwidth-feedback target.
-    encoding_context->bit_rate = 1024*1024 ;
-    encoding_context->bit_rate_tolerance = encoding_context->bit_rate ;
-
-    // X264VBR step 2: enable VBV (constrained variable bitrate) BEFORE open.
-    // x264 only honours runtime VBV changes (x264_encoder_reconfig) if VBV was
-    // already ON at init, so we must seed rc_max_rate + rc_buffer_size here;
-    // encodeData() then tracks the bandwidth-feedback target live.
-    //   rc_min_rate=0    -> may drop below target on static scenes (the "variable" part)
-    //   rc_max_rate      -> hard VBV ceiling (the "constrained" part)
-    //   rc_buffer_size   -> ~1 s of ceiling; smaller = tighter cap/less burst, bigger = smoother quality
+    // X264VBR step 4: rate control. Default below = ABR targeting the cap (used by
+    // the MPEG4 fallback). For x264 it is switched to *capped CRF* in the H264
+    // block below (constant quality, variable bitrate bounded by the VBV ceiling).
+    // The VBV ceiling (rc_max_rate/rc_buffer_size) is seeded here (~1 Mbps default
+    // = _target_bandwidth_out 128 KB/s x8) and tracked live in encodeData; it MUST
+    // be ON before avcodec_open2 for x264 to allow runtime reconfig.
+    encoding_uses_crf = false ;
+    const int initial_cap = 1024*1024 ;	// bits/s VBV ceiling, overwritten per-frame
+    encoding_context->bit_rate = initial_cap ;
+    encoding_context->bit_rate_tolerance = initial_cap ;
     encoding_context->rc_min_rate = 0;
-    encoding_context->rc_max_rate = encoding_context->bit_rate;
-    encoding_context->rc_buffer_size = encoding_context->bit_rate;
-    encoding_context->rc_initial_buffer_occupancy = (int)(0.9 * encoding_context->rc_buffer_size);
+    encoding_context->rc_max_rate = initial_cap;
+    encoding_context->rc_buffer_size = initial_cap;
+    encoding_context->rc_initial_buffer_occupancy = (int)(0.9 * initial_cap);
 
-    RsDbg() << "X264VBR FFmpegVideo ctor: VBV enabled bit_rate=" << (int)encoding_context->bit_rate
-            << " rc_max_rate=" << (int)encoding_context->rc_max_rate
+    RsDbg() << "X264VBR FFmpegVideo ctor: VBV seeded rc_max_rate=" << (int)encoding_context->rc_max_rate
             << " rc_buffer_size=" << (int)encoding_context->rc_buffer_size;
 #if LIBAVCODEC_VERSION_MAJOR < 58
 	if (encoding_codec->capabilities & AV_CODEC_CAP_TRUNCATED)
@@ -536,7 +531,15 @@ FFmpegVideo::FFmpegVideo()
         // frames don't buffer (critical for latency over the tunnel).
         av_opt_set(encoding_context->priv_data, "preset", "veryfast", 0);
         av_opt_set(encoding_context->priv_data, "tune", "zerolatency", 0);
-        RsDbg() << "X264VBR FFmpegVideo ctor: x264 preset=veryfast tune=zerolatency";
+        // X264VBR step 4: capped CRF = constant quality, variable bitrate bounded
+        // by the VBV ceiling (the user's max). crf needs bit_rate=0 (otherwise x264
+        // does ABR and fills to the target regardless of scene complexity); the
+        // rc_max_rate/rc_buffer_size seeded above (and tracked live in encodeData)
+        // bound the peak. On a static scene the bitrate now drops on its own.
+        av_opt_set_double(encoding_context->priv_data, "crf", 23.0, 0);
+        encoding_context->bit_rate = 0;
+        encoding_uses_crf = true;
+        RsDbg() << "X264VBR FFmpegVideo ctor: x264 preset=veryfast tune=zerolatency crf=23 (capped CRF)";
     }
 
     /* open it */
@@ -724,19 +727,31 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
         std::cerr << "Max encodign bitrate eexceeded. Capping to " << MAX_FFMPEG_ENCODING_BITRATE << std::endl;
         target_encoding_bitrate = MAX_FFMPEG_ENCODING_BITRATE ;
     }
-	// X264VBR step 2: drive the VBV-constrained ABR live from the bandwidth
-	// feedback. _target_bandwidth_out is BYTES/s; x264 wants BITS/s -> x8.
-	// libx264 picks these up via x264_encoder_reconfig (only because VBV was
-	// enabled at init in the ctor). bit_rate==rc_max_rate keeps a tight ceiling;
-	// rc_buffer_size ~1 s smooths bursts without adding frame delay (zerolatency).
+	// X264VBR step 4: drive the rate control live from the bandwidth feedback.
+	// _target_bandwidth_out is BYTES/s; x264 wants BITS/s -> x8. libx264 picks
+	// these up via x264_encoder_reconfig (VBV was enabled at init in the ctor).
 	int target_bits = (int)(target_encoding_bitrate * 8);
-	encoding_context->bit_rate           = target_bits;
-	encoding_context->rc_max_rate        = target_bits;
-	encoding_context->rc_buffer_size     = target_bits;
-	encoding_context->bit_rate_tolerance = target_bits;
+	if(encoding_uses_crf)
+	{
+		// capped CRF: the user's value is only the VBV ceiling. Quality is fixed
+		// (crf), so the bitrate floats below the cap on simple scenes. bit_rate
+		// MUST stay 0 or x264 reverts to ABR (filling the target).
+		encoding_context->bit_rate       = 0;
+		encoding_context->rc_max_rate    = target_bits;
+		encoding_context->rc_buffer_size = target_bits;
+	}
+	else
+	{
+		// MPEG4 fallback: ABR targeting the cap.
+		encoding_context->bit_rate           = target_bits;
+		encoding_context->rc_max_rate        = target_bits;
+		encoding_context->rc_buffer_size     = target_bits;
+		encoding_context->bit_rate_tolerance = target_bits;
+	}
 
 	RsDbg() << "X264VBR encodeData: frame=" << (uint32_t)encoding_frame_count
-	        << " target=" << target_encoding_bitrate << " B/s -> VBV bit_rate=rc_max_rate="
+	        << " target=" << target_encoding_bitrate << " B/s -> "
+	        << (encoding_uses_crf ? "CRF cap" : "ABR") << " rc_max_rate="
 	        << target_bits << " buf=" << (int)encoding_context->rc_buffer_size << " bits";
 
   imageToFrame(encoding_frame_buffer, image);
