@@ -189,7 +189,85 @@ if command -v macdeployqt &> /dev/null; then
     
     # macdeployqt copie les frameworks et ajuste les rpaths
     macdeployqt "$TARGET_APP" -always-overwrite $EXTRA_EXECS
-    
+
+    # --------------------------------------------------------------------------
+    # Embarquer les dépendances Homebrew *transitives* tierces oubliées par
+    # macdeployqt (chaîne ffmpeg : libavcodec -> libswresample, etc.).
+    #
+    # macdeployqt copie les dépendances DIRECTES de chaque plugin (ex: VOIP ->
+    # libavcodec, libavutil, libspeex) mais ne récurse PAS dedans : libavcodec
+    # garde une référence absolue vers /opt/homebrew/.../libswresample.6.dylib.
+    # Sur le Mac de build ce fichier existe (Homebrew) donc le bundle "marche" ;
+    # sur un Mac vierge il manque et le plugin ne se charge pas.
+    #
+    # PÉRIMÈTRE VOLONTAIREMENT ÉTROIT : on ne traite QUE les dylibs tierces plates
+    # de Frameworks/ et les plugins RetroShare de Resources/. On NE touche PAS à
+    # Qt : ni les .framework (binaire sans extension), ni Contents/PlugIns/. Qt est
+    # déjà géré par macdeployqt, et le ratisser ici recopierait tout Qt en vrac.
+    # On réécrit les références vers @executable_path/../Frameworks, qui pointe sur
+    # Contents/Frameworks pour TOUT binaire du bundle (exe, plugins, libs).
+    # --------------------------------------------------------------------------
+    echo ">>> Bundling transitive third-party (ffmpeg) dependencies missed by macdeployqt..."
+    FRAMEWORKS_DIR="$TARGET_APP/Contents/Frameworks"
+    mkdir -p "$FRAMEWORKS_DIR"
+
+    # Mach-O à rendre autonomes : dylibs tierces plates de Frameworks/ (ffmpeg,
+    # speex, openssl...) + plugins RetroShare de Resources/. Pas de PlugIns/ ni de
+    # .framework Qt (leur binaire n'a pas d'extension .dylib, donc jamais listé).
+    list_macho() {
+        {
+            find "$FRAMEWORKS_DIR" -maxdepth 1 -type f -name "*.dylib"
+            find "$TARGET_APP/Contents/Resources" -maxdepth 2 -type f -name "*.dylib"
+        } | sort -u
+    }
+    # Dépendances Homebrew/MacPorts d'un Mach-O, EN EXCLUANT son propre install id
+    # (1re ligne d'otool -L = LC_ID_DYLIB, ce n'est pas une dépendance) et tout Qt.
+    homebrew_deps() {
+        local id
+        id=$(otool -D "$1" 2>/dev/null | sed -n '2p')
+        otool -L "$1" 2>/dev/null | awk 'NR>1{print $1}' \
+            | grep -E '^(/opt/homebrew|/usr/local|/opt/local)/' \
+            | grep -vE '/[Qq]t@?[0-9]*/' \
+            | grep -vxF "${id:-@@none@@}" \
+            || true
+    }
+
+    # 1) Rapatrier les libs manquantes jusqu'à ce qu'aucune nouvelle n'apparaisse.
+    changed=1
+    while [ "$changed" -eq 1 ]; do
+        changed=0
+        while IFS= read -r macho; do
+            for dep in $(homebrew_deps "$macho"); do
+                base=$(basename "$dep")
+                if [ ! -f "$FRAMEWORKS_DIR/$base" ]; then
+                    echo "    + bundling $base (needed by $(basename "$macho"))"
+                    cp -L "$dep" "$FRAMEWORKS_DIR/$base"
+                    chmod u+w "$FRAMEWORKS_DIR/$base"
+                    install_name_tool -id "@rpath/$base" "$FRAMEWORKS_DIR/$base" 2>/dev/null
+                    changed=1
+                fi
+            done
+        done < <(list_macho)
+    done
+
+    # 2) Réécrire toute référence Homebrew restante pour pointer dans le bundle.
+    while IFS= read -r macho; do
+        for dep in $(homebrew_deps "$macho"); do
+            install_name_tool -change "$dep" \
+                "@executable_path/../Frameworks/$(basename "$dep")" "$macho" 2>/dev/null
+        done
+    done < <(list_macho)
+
+    # 3) Vérification : il ne doit plus rester AUCUNE référence tierce non embarquée.
+    LEAKS=$(while IFS= read -r m; do homebrew_deps "$m"; done < <(list_macho) | sort -u)
+    if [ -n "$LEAKS" ]; then
+        echo "  WARNING: residual non-bundled references remain (bundle NOT self-contained):"
+        echo "$LEAKS" | sed 's/^/    /'
+    else
+        echo "  OK: third-party libs self-contained (no /opt/homebrew or /usr/local references left)."
+    fi
+
+
     echo ">>> Ad-hoc code signing (required for Apple Silicon)..."
     if command -v codesign &> /dev/null; then
         # On signe d'abord toutes les bibliothèques, plugins (.so/.dylib) et frameworks individuellement
