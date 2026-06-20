@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QDateTime>
+#include <QRegExp>
 #include <QMenu>
 #include <QSignalMapper>
 #include <QPainter>
