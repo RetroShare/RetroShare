@@ -994,7 +994,7 @@ static void recursPrintModel(const std::vector<ForumModelPostEntry>& entries,For
     const ForumModelPostEntry& e(entries[index]);
 
 	QDateTime qtime;
-	qtime.setTime_t(e.mPublishTs);
+	qtime.setSecsSinceEpoch(e.mPublishTs);
 
     std::cerr << std::string(depth*2,' ') << index << " : " << e.mAuthorId.toStdString() << " "
               << QString("%1").arg((uint32_t)e.mPostFlags,8,16,QChar('0')).toStdString() << " "
@@ -1024,7 +1024,7 @@ void RsGxsForumModel::debug_dump()
 			std::cerr << " " << e.mChildren[j] ;
 
 		QDateTime qtime;
-		qtime.setTime_t(e.mPublishTs);
+		qtime.setSecsSinceEpoch(e.mPublishTs);
 
         std::cerr << " (" << e.mParent << ")";
 		std::cerr << " " << qtime.toString().toStdString() << " \"" << e.mTitle << "\"" << std::endl;
