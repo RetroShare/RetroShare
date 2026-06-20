@@ -394,7 +394,7 @@ void ChatLobbyDialog::fetchHistory()
 
 							RsGxsId authorId(msg.peerId.toStdString());
 							QString messageText = QString::fromUtf8(msg.message.c_str());
-							QDateTime sendTs = QDateTime::fromTime_t(msg.sendTime);
+							QDateTime sendTs = QDateTime::fromSecsSinceEpoch(msg.sendTime);
 							QDateTime recvTs = sendTs; 
 
 							ui.chatWidget->addChatMsg(msg.incoming, authorName, authorId, sendTs, recvTs, messageText, ChatWidget::MSGTYPE_HISTORY);
@@ -1268,7 +1268,7 @@ void ChatLobbyDialog::onHistoryDataTimeout()
 
 		RsGxsId authorId(msg.peerId.toStdString());
 		QString messageText = QString::fromUtf8(msg.message.c_str());
-		QDateTime sendTs = QDateTime::fromTime_t(msg.sendTime);
+		QDateTime sendTs = QDateTime::fromSecsSinceEpoch(msg.sendTime);
 		QDateTime recvTs = sendTs; 
 
 		ui.chatWidget->addChatMsg(msg.incoming, authorName, authorId, sendTs, recvTs, messageText, ChatWidget::MSGTYPE_HISTORY);
