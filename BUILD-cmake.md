@@ -159,9 +159,13 @@ brew install ninja qt openssl@3 botan@2 sqlcipher miniupnpc \
 Build — **Qt5** (harvest Homebrew include/lib dirs; point find_package(Qt5) at keg-only qt@5):
 ```bash
 HB="$(brew --prefix)"; QT5="$(brew --prefix qt@5)"
-IFLAGS="-I$HB/include"; for d in "$HB"/opt/*/include; do IFLAGS="$IFLAGS -I$d"; done
-LFLAGS="-L$HB/lib";     for d in "$HB"/opt/*/lib;     do LFLAGS="$LFLAGS -L$d"; done
-PREFIX="$QT5;$HB";      for d in "$HB"/opt/*;          do PREFIX="$PREFIX;$d"; done
+IFLAGS="-I$HB/include"; LFLAGS="-L$HB/lib"; PREFIX="$QT5;$HB"
+for d in "$HB"/opt/*; do
+  case "${d##*/}" in qt*) continue;; esac      # skip every Qt keg — Qt5 comes via Qt5_DIR (prevents mixing Qt5/Qt6 headers)
+  [ -d "$d/include" ] && IFLAGS="$IFLAGS -I$d/include"
+  [ -d "$d/lib" ]     && LFLAGS="$LFLAGS -L$d/lib"
+  PREFIX="$PREFIX;$d"
+done
 
 rm -rf Build-cmake
 cmake -G Ninja -B Build-cmake -S . \
@@ -184,9 +188,13 @@ cmake --build Build-cmake -j$(sysctl -n hw.ncpu)
 Build — **Qt6** (use the `qt` prefix + `Qt6_DIR`; plugins OFF):
 ```bash
 HB="$(brew --prefix)"; QT6="$(brew --prefix qt)"
-IFLAGS="-I$HB/include"; for d in "$HB"/opt/*/include; do IFLAGS="$IFLAGS -I$d"; done
-LFLAGS="-L$HB/lib";     for d in "$HB"/opt/*/lib;     do LFLAGS="$LFLAGS -L$d"; done
-PREFIX="$QT6;$HB";      for d in "$HB"/opt/*;          do PREFIX="$PREFIX;$d"; done
+IFLAGS="-I$HB/include"; LFLAGS="-L$HB/lib"; PREFIX="$QT6;$HB"
+for d in "$HB"/opt/*; do
+  case "${d##*/}" in qt*) continue;; esac      # skip every Qt keg — Qt6 comes via Qt6_DIR (prevents mixing Qt5/Qt6 headers)
+  [ -d "$d/include" ] && IFLAGS="$IFLAGS -I$d/include"
+  [ -d "$d/lib" ]     && LFLAGS="$LFLAGS -L$d/lib"
+  PREFIX="$PREFIX;$d"
+done
 
 rm -rf Build-cmake
 cmake -G Ninja -B Build-cmake -S . \
