@@ -141,7 +141,7 @@ brew install ninja qt openssl@3 botan@2 sqlcipher miniupnpc \
 > qt@5 is (force-)linked. Run `brew unlink qt@5` first, then re-run
 > `brew install qt`:
 > ```bash
-> brew unlink qt@5     # returns qt@5 to keg-only — does NOT delete it
+> brew unlink qt@5
 > brew install qt
 > ```
 > Both Qt versions then coexist: the Qt6 build finds Qt6 via `Qt6_DIR`, and the
@@ -156,12 +156,16 @@ brew install ninja qt openssl@3 botan@2 sqlcipher miniupnpc \
 > only, via `NO_DEFAULT_PATH`). To build against Botan 3 instead, point it at
 > `$(brew --prefix botan)` — RNP then detects v3 and links `libbotan-3`.
 
+> The harvest loop in both macOS commands skips every `qt*` keg on purpose: Qt is
+> provided via `Qt6_DIR` / `Qt5_DIR`, and pulling a second Qt's headers off
+> `/opt/homebrew/opt/qt*` would mix Qt5/Qt6 and break the build.
+
 Build — **Qt5** (harvest Homebrew include/lib dirs; point find_package(Qt5) at keg-only qt@5):
 ```bash
 HB="$(brew --prefix)"; QT5="$(brew --prefix qt@5)"
 IFLAGS="-I$HB/include"; LFLAGS="-L$HB/lib"; PREFIX="$QT5;$HB"
 for d in "$HB"/opt/*; do
-  case "${d##*/}" in qt*) continue;; esac      # skip every Qt keg — Qt5 comes via Qt5_DIR (prevents mixing Qt5/Qt6 headers)
+  case "${d##*/}" in qt*) continue;; esac
   [ -d "$d/include" ] && IFLAGS="$IFLAGS -I$d/include"
   [ -d "$d/lib" ]     && LFLAGS="$LFLAGS -L$d/lib"
   PREFIX="$PREFIX;$d"
@@ -190,7 +194,7 @@ Build — **Qt6** (use the `qt` prefix + `Qt6_DIR`; plugins OFF):
 HB="$(brew --prefix)"; QT6="$(brew --prefix qt)"
 IFLAGS="-I$HB/include"; LFLAGS="-L$HB/lib"; PREFIX="$QT6;$HB"
 for d in "$HB"/opt/*; do
-  case "${d##*/}" in qt*) continue;; esac      # skip every Qt keg — Qt6 comes via Qt6_DIR (prevents mixing Qt5/Qt6 headers)
+  case "${d##*/}" in qt*) continue;; esac
   [ -d "$d/include" ] && IFLAGS="$IFLAGS -I$d/include"
   [ -d "$d/lib" ]     && LFLAGS="$LFLAGS -L$d/lib"
   PREFIX="$PREFIX;$d"
