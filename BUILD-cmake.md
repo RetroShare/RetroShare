@@ -221,6 +221,11 @@ cmake --build Build-cmake -j$(sysctl -n hw.ncpu)
 
 ## Windows (MSYS2 — UCRT64 shell)
 
+> The build commands use `-j$(nproc)` (all cores; `nproc` is available in MSYS2).
+> MinGW C++ compilation is RAM-hungry (RNP/rapidjson can use ~1.5 GB per job), so
+> on a low-memory machine lower it manually, e.g. `-j4` — that's why it used to be
+> hard-capped at `-j3`.
+
 Dependencies — common + **Qt5** (use the UCRT64 doxygen, not the base MSYS one —
 it mishandles `D:/` paths):
 ```bash
@@ -264,7 +269,7 @@ cmake -G Ninja -B Build-cmake -S . \
   -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON \
   -DCMAKE_C_FLAGS="-include string.h -include stdint.h" \
   -DCMAKE_CXX_FLAGS="-include cstring -include cstdint -Wno-template-body"
-cmake --build Build-cmake -j3
+cmake --build Build-cmake -j$(nproc)
 ```
 
 Build — **Qt6** (auto-selected once the qt6 packages are installed; plugins OFF):
@@ -279,5 +284,5 @@ cmake -G Ninja -B Build-cmake -S . \
   -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON \
   -DCMAKE_C_FLAGS="-include string.h -include stdint.h" \
   -DCMAKE_CXX_FLAGS="-include cstring -include cstdint -Wno-template-body"
-cmake --build Build-cmake -j3
+cmake --build Build-cmake -j$(nproc)
 ```
