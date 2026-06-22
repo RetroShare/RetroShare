@@ -23,6 +23,8 @@
 
 #include "gui/gxs/GxsCommentContainer.h"
 
+class FlatViewCommentWidget;
+
 namespace Ui {
 class GxsCommentDialog;
 }
@@ -44,20 +46,28 @@ public:
 	RsGxsGroupId groupId() { return mGrpId; }
 	RsGxsMessageId messageId() { return mMostRecentMsgId; }
 
+	// Flat view methods
+	void setUseFlatView(bool useFlatView) { mUseFlatView = useFlatView; }
+	void loadFlatViewComments(const std::vector<RsGxsComment> &comments);
+
 public slots:
     void refresh();
+	void loadFlatView();
 
 private slots:
     void idChooserReady();
 	void voterSelectionChanged( int index );
 	void sortComments(int);
     void notifyCommentsLoaded(int n);
+	void onFlatViewToggled(bool checked);
+	void onFlatViewCommentReply(const RsGxsMessageId &parentId);
 
 signals:
     void commentsLoaded(int);
 
 private:
     void init(const RsGxsId &default_author);
+	void setupFlatViewWidget();
 
 	RsGxsGroupId   mGrpId;
 	RsGxsMessageId mMostRecentMsgId;
@@ -65,6 +75,10 @@ private:
 
 	/* UI - from Designer */
 	Ui::GxsCommentDialog *ui;
+
+	bool mUseFlatView;
+	FlatViewCommentWidget *mFlatViewWidget;
+	RsGxsCommentService *mCommentService;
 };
 
 #endif
