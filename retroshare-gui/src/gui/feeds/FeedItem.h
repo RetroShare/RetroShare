@@ -31,6 +31,7 @@ enum class RsFeedTypeFlags: uint32_t {
     RS_FEED_TYPE_PEER        = 0x0010,
     RS_FEED_TYPE_CHANNEL     = 0x0020,
     RS_FEED_TYPE_FORUM       = 0x0040,
+    RS_FEED_TYPE_TLS_ATTEMPT = 0x0080,
     RS_FEED_TYPE_CHAT        = 0x0100,
     RS_FEED_TYPE_MSG         = 0x0200,
     RS_FEED_TYPE_FILES       = 0x0400,

@@ -249,6 +249,7 @@ list(
 	src/gui/feeds/ChatMsgItem.cpp 
 	src/gui/feeds/SubFileItem.cpp 
 	src/gui/feeds/AttachFileItem.cpp 
+	src/gui/feeds/TLSItem.cpp 
 	src/gui/feeds/SecurityItem.cpp 
 	src/gui/feeds/SecurityIpItem.cpp 
 	src/gui/feeds/NewsFeedUserNotify.cpp 
@@ -370,6 +371,7 @@ list(
 	src/gui/feeds/ChatMsgItem.ui 
 	src/gui/feeds/SubFileItem.ui 
 	src/gui/feeds/AttachFileItem.ui 
+	src/gui/feeds/TLSItem.ui 
 	src/gui/feeds/SecurityItem.ui 
 	src/gui/feeds/SecurityIpItem.ui 
 
@@ -680,6 +682,7 @@ list(
 	src/gui/feeds/ChatMsgItem.h 
 	src/gui/feeds/SubFileItem.h 
 	src/gui/feeds/AttachFileItem.h 
+	src/gui/feeds/TLSItem.h 
 	src/gui/feeds/SecurityItem.h 
 	src/gui/feeds/SecurityIpItem.h 
 	src/gui/feeds/NewsFeedUserNotify.h 
