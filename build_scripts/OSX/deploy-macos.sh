@@ -164,31 +164,51 @@ fi
 
 # 7. Déploiement Qt via macdeployqt
 echo ">>> Running macdeployqt..."
-if command -v macdeployqt &> /dev/null; then
-    # Forcer la copie des plugins d'images (SVG, etc.) au cas où macdeployqt les oublie
-    MACDEPLOY_BIN=$(command -v macdeployqt)
-    QT_BASE=$(dirname "$(dirname "$MACDEPLOY_BIN")")
-    QT_PLUGINS_DIR="$QT_BASE/share/qt/plugins"
-    if [ ! -d "$QT_PLUGINS_DIR" ]; then
-        QT_PLUGINS_DIR="$QT_BASE/plugins"
-    fi
+# Use the SAME Qt the app was built against — NOT whatever macdeployqt happens to
+# be first in PATH. With both qt (Qt6) and qt@5 installed, PATH often points at
+# qt@5, which copies Qt5 plugins into a Qt6 app; the Qt5 cocoa plugin then can't
+# load ("Could not find the Qt platform plugin cocoa"). Detect the major version
+# from the app's QtCore link and pick the matching keg + its macdeployqt/plugins.
+if otool -L "$TARGET_APP/Contents/MacOS/retroshare-gui" 2>/dev/null | grep -q "QtCore.framework/Versions/5"; then
+    QT_PREFIX="$(brew --prefix qt@5 2>/dev/null)"
+else
+    QT_PREFIX="$(brew --prefix qt 2>/dev/null)"
+fi
+MACDEPLOY_BIN="$QT_PREFIX/bin/macdeployqt"
+[ -x "$MACDEPLOY_BIN" ] || MACDEPLOY_BIN="$(command -v macdeployqt)"
+QT_PLUGINS_DIR="$QT_PREFIX/share/qt/plugins"
+[ -d "$QT_PLUGINS_DIR" ] || QT_PLUGINS_DIR="$QT_PREFIX/plugins"
 
-    if [ -d "$QT_PLUGINS_DIR/imageformats" ]; then
-        echo ">>> Forcing copy of Qt imageformats plugins (SVG support) from $QT_PLUGINS_DIR..."
-        mkdir -p "$TARGET_APP/Contents/PlugIns/imageformats"
-        cp "$QT_PLUGINS_DIR/imageformats/"*.dylib "$TARGET_APP/Contents/PlugIns/imageformats/" 2>/dev/null || true
-    fi
+if [ -x "$MACDEPLOY_BIN" ]; then
+    echo ">>> Using Qt toolchain: $QT_PREFIX (macdeployqt: $MACDEPLOY_BIN)"
+
+    # Force-copy the essential Qt plugin categories. Without "platforms" (the
+    # mandatory cocoa plugin) the app aborts at launch with "Could not find the Qt
+    # platform plugin cocoa" — macdeployqt has been seen to skip it here. styles/tls
+    # are needed for native look and HTTPS; imageformats = SVG icons.
+    echo ">>> Forcing copy of essential Qt plugins from $QT_PLUGINS_DIR..."
+    for cat in platforms styles imageformats iconengines tls networkinformation; do
+        if [ -d "$QT_PLUGINS_DIR/$cat" ]; then
+            mkdir -p "$TARGET_APP/Contents/PlugIns/$cat"
+            cp "$QT_PLUGINS_DIR/$cat/"*.dylib "$TARGET_APP/Contents/PlugIns/$cat/" 2>/dev/null || true
+            echo "    + $cat"
+        fi
+    done
+
+    # Tell Qt where the bundled plugins live (macdeployqt normally writes this).
+    mkdir -p "$TARGET_APP/Contents/Resources"
+    [ -f "$TARGET_APP/Contents/Resources/qt.conf" ] || printf '[Paths]\nPlugins = PlugIns\n' > "$TARGET_APP/Contents/Resources/qt.conf"
 
     # Par défaut macdeployqt ignore les fichiers .so, il faut le forcer avec -executable
     EXTRA_EXECS=""
-    for plugin in "$TARGET_APP"/Contents/Resources/*.so "$TARGET_APP"/Contents/Resources/*.dylib "$TARGET_APP"/Contents/Resources/extensions6/*.so "$TARGET_APP"/Contents/Resources/extensions6/*.dylib "$TARGET_APP"/Contents/PlugIns/imageformats/*.dylib; do
+    for plugin in "$TARGET_APP"/Contents/Resources/*.so "$TARGET_APP"/Contents/Resources/*.dylib "$TARGET_APP"/Contents/Resources/extensions6/*.so "$TARGET_APP"/Contents/Resources/extensions6/*.dylib "$TARGET_APP"/Contents/PlugIns/*/*.dylib; do
         if [ -f "$plugin" ]; then
             EXTRA_EXECS="$EXTRA_EXECS -executable=$plugin"
         fi
     done
     
     # macdeployqt copie les frameworks et ajuste les rpaths
-    macdeployqt "$TARGET_APP" -always-overwrite $EXTRA_EXECS
+    "$MACDEPLOY_BIN" "$TARGET_APP" -always-overwrite $EXTRA_EXECS
 
     # --------------------------------------------------------------------------
     # Embarquer les dépendances Homebrew *transitives* tierces oubliées par
