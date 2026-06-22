@@ -1448,6 +1448,8 @@ gxsgui {
 		gui/gxs/GxsCommentTreeWidget.h \
 		gui/gxs/GxsCommentContainer.h \
 		gui/gxs/GxsCommentDialog.h \
+		gui/gxs/CommentItemWidget.h \
+		gui/gxs/FlatViewCommentWidget.h \
 		gui/gxs/GxsCreateCommentDialog.h \
 		gui/gxs/GxsGroupFrameDialog.h \
 		gui/gxs/GxsMessageFrameWidget.h \
@@ -1463,6 +1465,8 @@ gxsgui {
 	FORMS += gui/gxs/GxsGroupDialog.ui \
 		gui/gxs/GxsCommentContainer.ui \
 		gui/gxs/GxsCommentDialog.ui \
+		gui/gxs/CommentItemWidget.ui \
+		gui/gxs/FlatViewCommentWidget.ui \
 		gui/gxs/GxsCreateCommentDialog.ui \
 		gui/gxs/GxsGroupFrameDialog.ui\
 		gui/gxs/GxsGroupShareKey.ui 
@@ -1480,6 +1484,8 @@ gxsgui {
 		gui/gxs/GxsCommentTreeWidget.cpp \
 		gui/gxs/GxsCommentContainer.cpp \
 		gui/gxs/GxsCommentDialog.cpp \
+		gui/gxs/CommentItemWidget.cpp \
+		gui/gxs/FlatViewCommentWidget.cpp \
 		gui/gxs/GxsCreateCommentDialog.cpp \
 		gui/gxs/GxsGroupFrameDialog.cpp \
 		gui/gxs/GxsMessageFrameWidget.cpp \
