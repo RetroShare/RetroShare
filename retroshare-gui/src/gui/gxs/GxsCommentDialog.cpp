@@ -74,6 +74,8 @@ void GxsCommentDialog::init(const RsGxsId& default_author)
 	int S = QFontMetricsF(font()).height() ;
 	
 	ui->sortBox->setIconSize(QSize(S*1.5,S*1.5));
+	ui->commentButton->setIconSize(QSize(S*1.5,S*1.5));
+	ui->viewModeButton->setIconSize(QSize(S*1.5,S*1.5));
 }
 
 void GxsCommentDialog::setGxsService(RsGxsCommentService *comment_service)
