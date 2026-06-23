@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * retroshare-gui/src/gui/msgs/EventDialog.cpp                                 *
+ *                                                                             *
+ * Copyright (C) 2026 by Retroshare Team     <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include "gui/msgs/EventDialog.h"
 #include <retroshare/rsgxscalendar.h>
 #include "retroshare/rsgxsflags.h"
@@ -317,12 +337,6 @@ void EventDialog::buildUi() {
     mNotifyCheck = new QCheckBox(tr("Notify attendees"), this);
     mNotifyCheck->setChecked(true);
     bottomCheckLayout->addWidget(mNotifyCheck);
-
-    mSeparateCheck = new QCheckBox(tr("Separate invitation per attendee"), this);
-    bottomCheckLayout->addWidget(mSeparateCheck);
-
-    mDisallowCheck = new QCheckBox(tr("Disallow counter"), this);
-    bottomCheckLayout->addWidget(mDisallowCheck);
 
     mainLayout->addLayout(bottomCheckLayout);
 
@@ -708,8 +722,6 @@ void EventDialog::updateModeUi() {
     mAddAttachBtn->setVisible(!mReadOnly);
     
     mNotifyCheck->setEnabled(!mReadOnly);
-    mSeparateCheck->setEnabled(!mReadOnly);
-    mDisallowCheck->setEnabled(!mReadOnly);
 }
 
 void EventDialog::sendInvite(const CalendarEvent& ev, const QStringList& invitedNames) {
