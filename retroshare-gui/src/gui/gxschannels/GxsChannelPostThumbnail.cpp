@@ -352,6 +352,10 @@ void ZoomableLabel::setPicture(const QPixmap& pix)
     reset();
     updateView();
 }
+void ZoomableLabel::setPixmap(const QPixmap& pix)
+{
+    setPicture(pix);
+}
 void ZoomableLabel::resizeEvent(QResizeEvent *e)
 {
     QLabel::resizeEvent(e);

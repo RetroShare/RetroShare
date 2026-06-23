@@ -43,6 +43,7 @@ public:
     ZoomableLabel(QWidget *parent): QLabel(parent),mUseStyleSheet(true),mZoomFactor(1.0),mCenterX(0.0),mCenterY(0.0),mZoomEnabled(true),mClearEnabled(false) {}
 
     void setPicture(const QPixmap& pix);
+    void setPixmap(const QPixmap& pix);
     void setEnableZoom(bool b) { mZoomEnabled = b; }
     void setEnableClear(bool b) { mClearEnabled = b; }
     void reset();
