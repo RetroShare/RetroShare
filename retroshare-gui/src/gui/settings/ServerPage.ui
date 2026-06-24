@@ -90,7 +90,7 @@
               </font>
              </property>
              <property name="text">
-              <string>Download limit (KB/s) </string>
+              <string>Download limit when active (KB/s) </string>
              </property>
             </widget>
            </item>
@@ -103,7 +103,33 @@
               </font>
              </property>
              <property name="text">
-              <string>Upload limit (KB/s) </string>
+              <string>Upload limit when active (KB/s) </string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_totalDownloadRateWhenIdle">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Download limit when idle (KB/s) </string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_totalUploadRateWhenIdle">
+             <property name="font">
+              <font>
+               <weight>50</weight>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Upload limit when idle (KB/s) </string>
              </property>
             </widget>
            </item>
@@ -116,6 +142,31 @@
            </property>
            <item row="5" column="0">
             <widget class="QSpinBox" name="totalDownloadRate">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This download limit covers the whole application. However, in some situations, such as when transfering many small files at once, the estimated bandwidth becomes unreliable and the total value reported by Retroshare might exceed that limit. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="suffix">
+              <string>kB/s</string>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>100000</number>
+             </property>
+             <property name="value">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QSpinBox" name="totalDownloadRateWhenIdle">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -361,6 +412,34 @@
              </property>
             </widget>
            </item>
+           <item row="8" column="0">
+            <widget class="QSpinBox" name="totalUploadRateWhenIdle">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The upload limit covers the entire software. Too small an upload limit might eventually block low priority services (forums, channels). A minimum recommended value is 50KB/s. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="suffix">
+              <string>kB/s</string>
+             </property>
+             <property name="prefix">
+              <string/>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>100000</number>
+             </property>
+             <property name="value">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
            <item row="1" column="3">
             <layout class="QGridLayout" name="gLayout_upnp">
              <property name="leftMargin">
@@ -451,7 +530,7 @@
              </item>
             </layout>
            </item>
-           <item row="5" column="1" rowspan="2" colspan="3">
+           <item row="5" column="1" rowspan="4" colspan="3">
             <widget class="QLabel" name="info_warningBandwidth">
              <property name="palette">
               <palette>
