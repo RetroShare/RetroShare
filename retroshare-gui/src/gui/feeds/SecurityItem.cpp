@@ -102,7 +102,7 @@ SecurityItem::~SecurityItem()
 
 uint64_t SecurityItem::uniqueIdentifier() const
 {
-    return hash_64bits("SecurityItem " + QString::number((uint)mType).toStdString() + " " + mIP + " " + mSslId.toStdString());
+    return hash_64bits("SecurityItem " + QString::number((uint)mType).toStdString()) ;
 }
 
 void SecurityItem::updateItemStatic()
@@ -148,29 +148,15 @@ void SecurityItem::updateItemStatic()
 			requestLabel->show();
 			break;
         case RsFeedTypeFlags::RS_FEED_ITEM_SEC_BAD_CERTIFICATE:
-			{
-			RsPeerDetails details ;
-			if(rsPeers->getGPGDetails(mGpgId, details)){
-				title = tr("Connection attempt from")+" " + QString::fromStdString(mGpgId.toStdString())+" " + tr("Not a Retroshare user.");
-				requestLabel->hide();
-				friendRequesttoolButton->hide();
-				idLabel->hide();
-				nameLabel->hide();
-				locLabel->hide();
-				statusLabel->hide();
-				trustLabel->hide();
-			} else {
-				title = tr("Connection attempt from")+" " + QString::fromStdString(mGpgId.toStdString())+" " + tr("Not a Retroshare user.");
-				requestLabel->hide();
-				friendRequesttoolButton->hide();
-				idLabel->hide();
-				nameLabel->hide();
-				locLabel->hide();
-				statusLabel->hide();
-				trustLabel->hide();
-			}
+            title = tr("Connection attempt from")+" " + QString::fromStdString(mGpgId.toStdString())+" " + tr("Not a Retroshare user.");
+            requestLabel->hide();
+            friendRequesttoolButton->hide();
+            idLabel->hide();
+            nameLabel->hide();
+            locLabel->hide();
+            statusLabel->hide();
+            trustLabel->hide();
 			avatar->setDefaultAvatar(":icons/ssl.png");
-			}
 			break;
         case RsFeedTypeFlags::RS_FEED_ITEM_SEC_INTERNAL_ERROR:
 			title = tr("Certificate caused an internal error.");

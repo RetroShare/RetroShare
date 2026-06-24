@@ -477,6 +477,8 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
     if(!pe)
         return;
 
+    std::cerr << "handling a SSL connection event: code = " << (int)pe->mErrorCode << std::endl;
+
     auto& e(*pe);
     RsFeedTypeFlags flags = (RsFeedTypeFlags)Settings->getNewsFeedFlags();
 
@@ -513,8 +515,13 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 
     if(e.mErrorCode == RsAuthSslError::PEER_REFUSED_CONNECTION)
 	{
+        std::cerr << "flag is connection remotely closed." << std::endl;
+
         if(!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_CONNECTION_REFUSED_REMOTELY))
+        {
+            std::cerr << "Adding feed item for distant peer not being a friend" << std::endl;
             addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_HELLO, false), true );
+        }
 
         return;
 	}
