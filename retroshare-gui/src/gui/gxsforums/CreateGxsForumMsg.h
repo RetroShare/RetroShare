@@ -26,6 +26,7 @@
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsgxscircles.h>
 #include "gui/common/HashBox.h"
+#include "util/FontSizeHandler.h"
 
 namespace Ui {
 	class CreateGxsForumMsg;
@@ -83,6 +84,8 @@ private:
 	RsGxsCircleGroup mForumCircleData ;
 
 	UIStateHelper *mStateHelper;
+
+	MessageFontSizeHandler mForumFontSizeHandler;
 
 	/** Qt Designer generated object */
 	Ui::CreateGxsForumMsg *ui;

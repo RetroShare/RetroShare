@@ -18,9 +18,12 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <QFontDatabase>
+
 #include "ForumPage.h"
 #include "util/misc.h"
 #include "rsharesettings.h"
+#include "gui/notifyqt.h"
 
 ForumPage::ForumPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
@@ -37,6 +40,14 @@ ForumPage::ForumPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.loadEmoticons      , SIGNAL(toggled(bool)), this, SLOT(   updateLoadEmoticons()	 ));
 	connect(ui.minimumFontSize    , SIGNAL(valueChanged(int)), this, SLOT(updateFonts()));
 	connect(ui.minimumContrast    , SIGNAL(valueChanged(int)), this, SLOT(updateFonts()));
+
+    // Font size
+    QFontDatabase db;
+    foreach(int size, db.standardSizes()) {
+        ui.minFontSize->addItem(QString::number(size), size);
+    }
+
+	connect(ui.minFontSize,       SIGNAL(activated(QString)),     this, SLOT(updateFonts())) ;
 
     ui.groupFrameSettingsWidget->setType(GroupFrameSettings::Forum) ;
 }
@@ -61,6 +72,8 @@ void ForumPage::load()
 	whileBlocking(ui.minimumFontSize)->setValue(Settings->value("MinimumFontSize", 10).toInt());
 	whileBlocking(ui.minimumContrast)->setValue(Settings->value("MinimumContrast", 4.5).toDouble());
 	Settings->endGroup();
+	whileBlocking(ui.minFontSize)->setCurrentIndex(ui.minFontSize->findData(Settings->getForumFontSize()));
+
 
 	ui.groupFrameSettingsWidget->loadSettings(GroupFrameSettings::Forum);
 }
@@ -71,4 +84,7 @@ void ForumPage::updateFonts()
 	Settings->setValue("MinimumFontSize", ui.minimumFontSize->value());
 	Settings->setValue("MinimumContrast", ui.minimumContrast->value());
 	Settings->endGroup();
+	Settings->setForumFontSize(ui.minFontSize->currentData().toInt());
+
+	NotifyQt::getInstance()->notifySettingsChanged();
 }
