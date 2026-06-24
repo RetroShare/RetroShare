@@ -57,19 +57,31 @@ else
     GIT_SUFFIX="-${DATE_STR}"
 fi
 
-# Detect the Qt version for the archive name (qmake reports it). Homebrew's qt@5
-# is keg-only so its qmake is usually not in PATH; fall back to it, then to a
-# generic label if nothing is found.
+# Detect the Qt version for the archive name from the ACTUAL built binary, NOT
+# from whichever qmake is first in PATH. With both qt (Qt6) and qt@5 installed,
+# `qmake` resolves to one of them regardless of what the app was built against,
+# mislabelling the archive (a Qt6 build packaged as "Qt-5..."). Read the QtCore
+# the app links - the same signal used for plugin bundling further below - and
+# query the matching Homebrew keg's qmake.
+GUI_BIN="$APP_BUNDLE/Contents/MacOS/retroshare-gui"
+if otool -L "$GUI_BIN" 2>/dev/null | grep -q "QtCore.framework/Versions/5"; then
+    QT_MAJOR=5
+    QMAKE_BIN="$(brew --prefix qt@5 2>/dev/null)/bin/qmake"
+else
+    QT_MAJOR=6
+    QMAKE_BIN="$(brew --prefix qt 2>/dev/null)/bin/qmake"
+fi
+echo "  Qt major linked by the app (otool): Qt${QT_MAJOR}"
+
 QT_VERSION=""
-if command -v qmake &> /dev/null; then
-    QT_VERSION=$(qmake -query QT_VERSION 2>/dev/null)
+[ -x "$QMAKE_BIN" ] || QMAKE_BIN="$(command -v qmake)"
+if [ -x "$QMAKE_BIN" ]; then
+    v=$("$QMAKE_BIN" -query QT_VERSION 2>/dev/null)
+    [[ "$v" == "${QT_MAJOR}."* ]] && QT_VERSION="$v"
 fi
+# Fallback: at least keep the major version right even if qmake is unavailable.
 if [[ ! "$QT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    QT5_QMAKE="$(brew --prefix qt@5 2>/dev/null)/bin/qmake"
-    [ -x "$QT5_QMAKE" ] && QT_VERSION=$("$QT5_QMAKE" -query QT_VERSION 2>/dev/null)
-fi
-if [[ ! "$QT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    QT_VERSION="UnknownQt"
+    QT_VERSION="${QT_MAJOR}.x"
 fi
 
 MACVERSION=$(sw_vers -productVersion 2>/dev/null || echo "UnknownOS")
