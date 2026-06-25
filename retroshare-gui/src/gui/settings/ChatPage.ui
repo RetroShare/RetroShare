@@ -1242,6 +1242,13 @@
             </item>
            </layout>
           </item>
+          <item>
+           <widget class="QCheckBox" name="allowHistorySharing">
+            <property name="text">
+             <string>Allow friends to retrieve my chat history</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
