@@ -22,6 +22,8 @@
 
 #include <QWheelEvent>
 #include <QDateTime>
+#include <QPainter>
+#include <QLinearGradient>
 
 #include "gui/common/FilesDefs.h"
 #include "gui/gxschannels/GxsChannelPostThumbnail.h"

@@ -206,7 +206,7 @@ void GxsChannelGroupItem::fill()
 
         ui->logoLabel->setPicture(chanImage);
 	} else {
-        ui->logoLabel->setPicture(FilesDefs::getPixmapFromQtResourcePath(":/icons/feeds_channel.png"));
+        ui->logoLabel->setPicture(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/channels.png"));
 	}
 
 	if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {
