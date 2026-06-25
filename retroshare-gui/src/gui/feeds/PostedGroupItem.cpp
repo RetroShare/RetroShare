@@ -182,9 +182,9 @@ void PostedGroupItem::fill()
     if (mGroup.mGroupImage.mData != NULL) {
 		QPixmap postedImage;
 		GxsIdDetails::loadPixmapFromData(mGroup.mGroupImage.mData, mGroup.mGroupImage.mSize, postedImage,GxsIdDetails::ORIGINAL);
-		ui->logoLabel->setPixmap(QPixmap(postedImage));
+		ui->logoLabel->setPicture(QPixmap(postedImage));
 	} else {
-		ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/feeds_board.png"));
+		ui->logoLabel->setPicture(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/postedlinks.png"));
 	}
 
     if(mGroup.mMeta.mLastPost==0)
