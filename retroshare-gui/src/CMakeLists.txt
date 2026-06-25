@@ -115,6 +115,12 @@ list(
 	src/gui/connect/FriendRecommendDialog.cpp 
 
 	src/gui/msgs/MessagesDialog.cpp 
+	src/gui/msgs/CalendarData.cpp
+	src/gui/msgs/CalendarWidget.cpp
+	src/gui/msgs/TasksWidget.cpp
+	src/gui/msgs/CalendarPropertiesDialog.cpp
+	src/gui/msgs/EventDialog.cpp
+	src/gui/msgs/TaskDialog.cpp
 	src/gui/msgs/MessageComposer.cpp 
 	src/gui/msgs/MessageWidget.cpp 
 	src/gui/msgs/MessageWindow.cpp 
@@ -330,6 +336,8 @@ list(
 	src/gui/msgs/MessageComposer.ui 
 	src/gui/msgs/MessageWindow.ui
 	src/gui/msgs/MessageWidget.ui
+	src/gui/msgs/CalendarWidget.ui
+	src/gui/msgs/TasksWidget.ui
 
 	src/gui/settings/settingsw.ui 
 	src/gui/settings/GeneralPage.ui 
@@ -543,6 +551,12 @@ list(
 	src/gui/connect/FriendRecommendDialog.h 
 
 	src/gui/msgs/MessagesDialog.h 
+	src/gui/msgs/CalendarData.h
+	src/gui/msgs/CalendarWidget.h
+	src/gui/msgs/TasksWidget.h
+	src/gui/msgs/CalendarPropertiesDialog.h
+	src/gui/msgs/EventDialog.h
+	src/gui/msgs/TaskDialog.h
 	src/gui/msgs/MessageInterface.h 
 	src/gui/msgs/MessageComposer.h 
 	src/gui/msgs/MessageWindow.h 

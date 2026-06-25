@@ -36,6 +36,8 @@ class MessageWidget;
 class QTreeWidgetItem;
 class RsMessageModel;
 class MessageSortFilterProxyModel ;
+class CalendarWidget;
+class TasksWidget;
 
 class MessagesDialog : public MainPage
 {
@@ -110,6 +112,8 @@ private slots:
 
   void tabChanged(int tab);
   void tabCloseRequested(int tab);
+  void showCalendarTab();
+  void showTasksTab();
 
 private:
     void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
@@ -152,6 +156,8 @@ private:
   //RSTreeWidgetItemCompareRole *mMessageCompareRole;
 
   MessageWidget *msgWidget;
+  CalendarWidget *mCalendarWidget;
+  TasksWidget *mTasksWidget;
   RsMessageModel *mMessageModel;
   MessageSortFilterProxyModel *mMessageProxyModel;
 
