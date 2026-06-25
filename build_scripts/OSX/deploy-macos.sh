@@ -22,13 +22,13 @@ cd "$(dirname "$0")/../.." || exit 1
 BUILD_DIR="${BUILD_DIR:-Build-cmake}"
 APP_NAME="RetroShare"
 
-# 1. Vérifications initiales du dossier de build
+# 1. Initial checks on the build directory
 if [ ! -d "$BUILD_DIR" ]; then
     echo "ERROR: Build directory '$BUILD_DIR' not found. Please compile the project first!"
     exit 1
 fi
 
-# On cherche l'application compilée, mais on exclut les dossiers de déploiement précédents
+# Find the compiled app, excluding previous deployment directories
 APP_BUNDLE=$(find "$BUILD_DIR" -maxdepth 3 -type d -name "retroshare-gui.app" ! -path "*/RetroShare-*" | head -n 1)
 
 if [ -z "$APP_BUNDLE" ]; then
@@ -40,7 +40,7 @@ echo "==========================================================================
 echo "          RETROSHARE MACOS DEPLOYMENT GENERATOR"
 echo "================================================================================"
 
-# 2. Détermination dynamique des variables de version
+# 2. Dynamically determine the version variables
 echo ">>> Extracting versioning info from Git and environment..."
 
 DATE_STR=$(date +%Y%m%d)
@@ -57,19 +57,31 @@ else
     GIT_SUFFIX="-${DATE_STR}"
 fi
 
-# Detect the Qt version for the archive name (qmake reports it). Homebrew's qt@5
-# is keg-only so its qmake is usually not in PATH; fall back to it, then to a
-# generic label if nothing is found.
+# Detect the Qt version for the archive name from the ACTUAL built binary, NOT
+# from whichever qmake is first in PATH. With both qt (Qt6) and qt@5 installed,
+# `qmake` resolves to one of them regardless of what the app was built against,
+# mislabelling the archive (a Qt6 build packaged as "Qt-5..."). Read the QtCore
+# the app links - the same signal used for plugin bundling further below - and
+# query the matching Homebrew keg's qmake.
+GUI_BIN="$APP_BUNDLE/Contents/MacOS/retroshare-gui"
+if otool -L "$GUI_BIN" 2>/dev/null | grep -q "QtCore.framework/Versions/5"; then
+    QT_MAJOR=5
+    QMAKE_BIN="$(brew --prefix qt@5 2>/dev/null)/bin/qmake"
+else
+    QT_MAJOR=6
+    QMAKE_BIN="$(brew --prefix qt 2>/dev/null)/bin/qmake"
+fi
+echo "  Qt major linked by the app (otool): Qt${QT_MAJOR}"
+
 QT_VERSION=""
-if command -v qmake &> /dev/null; then
-    QT_VERSION=$(qmake -query QT_VERSION 2>/dev/null)
+[ -x "$QMAKE_BIN" ] || QMAKE_BIN="$(command -v qmake)"
+if [ -x "$QMAKE_BIN" ]; then
+    v=$("$QMAKE_BIN" -query QT_VERSION 2>/dev/null)
+    [[ "$v" == "${QT_MAJOR}."* ]] && QT_VERSION="$v"
 fi
+# Fallback: at least keep the major version right even if qmake is unavailable.
 if [[ ! "$QT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    QT5_QMAKE="$(brew --prefix qt@5 2>/dev/null)/bin/qmake"
-    [ -x "$QT5_QMAKE" ] && QT_VERSION=$("$QT5_QMAKE" -query QT_VERSION 2>/dev/null)
-fi
-if [[ ! "$QT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    QT_VERSION="UnknownQt"
+    QT_VERSION="${QT_MAJOR}.x"
 fi
 
 MACVERSION=$(sw_vers -productVersion 2>/dev/null || echo "UnknownOS")
@@ -85,7 +97,7 @@ echo ">>> Cleaning up previous deployment directories..."
 rm -rf "${BUILD_DIR}/RetroShare-"*"-macOS-"*
 mkdir -p "$DEPLOY_DIR"
 
-# 3. Copie de l'application dans notre dossier de déploiement
+# 3. Copy the app into our deployment directory
 echo ">>> Copying retroshare-gui.app..."
 cp -R "$APP_BUNDLE" "$DEPLOY_DIR/"
 TARGET_APP="$DEPLOY_DIR/$(basename "$APP_BUNDLE")"
@@ -99,7 +111,7 @@ mkdir -p "$APP_RESOURCES/sounds"
 mkdir -p "$APP_RESOURCES/translations"
 mkdir -p "$APP_RESOURCES/webui"
 
-# 4. Copie des exécutables annexes (service, friendserver) s'ils existent (non-bloquant)
+# 4. Copy the extra executables (service, friendserver) if present (non-blocking)
 echo ">>> Copying additional executables if they exist..."
 for exe in retroshare-service retroshare-friendserver; do
     found_exe=$(find "$BUILD_DIR" -type f -name "$exe" -perm -0111 | grep -v "CMakeFiles" | head -n 1)
@@ -111,13 +123,13 @@ for exe in retroshare-service retroshare-friendserver; do
     fi
 done
 
-# Copie des plugins
+# Copy the plugins
 echo ">>> Copying RetroShare plugins..."
 if [ -d "$BUILD_DIR/plugins" ]; then
     mkdir -p "$APP_RESOURCES/extensions6"
     for plugin in $(find "$BUILD_DIR/plugins" -type f \( -name "*.dylib" -o -name "*.so" \)); do
         filename=$(basename "$plugin")
-        # RetroShare sur macOS refuse de charger les plugins s'ils ne finissent pas par .dylib !
+        # RetroShare on macOS refuses to load plugins unless they end in .dylib!
         newname="${filename%.*}.dylib"
         cp "$plugin" "$APP_RESOURCES/$newname"
         cp "$plugin" "$APP_RESOURCES/extensions6/$newname"
@@ -127,7 +139,7 @@ else
     echo "  INFO: Plugins directory not found. Skipping plugins."
 fi
 
-# 5. Copie des ressources statiques
+# 5. Copy the static assets
 echo ">>> Copying RetroShare static assets..."
 
 if [ -d "retroshare-gui/src/sounds" ]; then
@@ -148,7 +160,7 @@ if [ -d "retroshare-webui/src" ]; then
     echo "  WebUI copied to app resources."
 fi
 
-# 6. Mise à jour du Info.plist
+# 6. Update Info.plist
 echo ">>> Updating Info.plist..."
 PLIST_PATH="$TARGET_APP/Contents/Info.plist"
 if command -v /usr/libexec/PlistBuddy &> /dev/null; then
@@ -162,40 +174,138 @@ else
     echo "  WARNING: PlistBuddy not found, skipping Info.plist update."
 fi
 
-# 7. Déploiement Qt via macdeployqt
+# 7. Qt deployment via macdeployqt
 echo ">>> Running macdeployqt..."
-if command -v macdeployqt &> /dev/null; then
-    # Forcer la copie des plugins d'images (SVG, etc.) au cas où macdeployqt les oublie
-    MACDEPLOY_BIN=$(command -v macdeployqt)
-    QT_BASE=$(dirname "$(dirname "$MACDEPLOY_BIN")")
-    QT_PLUGINS_DIR="$QT_BASE/share/qt/plugins"
-    if [ ! -d "$QT_PLUGINS_DIR" ]; then
-        QT_PLUGINS_DIR="$QT_BASE/plugins"
-    fi
+# Use the SAME Qt the app was built against — NOT whatever macdeployqt happens to
+# be first in PATH. With both qt (Qt6) and qt@5 installed, PATH often points at
+# qt@5, which copies Qt5 plugins into a Qt6 app; the Qt5 cocoa plugin then can't
+# load ("Could not find the Qt platform plugin cocoa"). Detect the major version
+# from the app's QtCore link and pick the matching keg + its macdeployqt/plugins.
+if otool -L "$TARGET_APP/Contents/MacOS/retroshare-gui" 2>/dev/null | grep -q "QtCore.framework/Versions/5"; then
+    QT_PREFIX="$(brew --prefix qt@5 2>/dev/null)"
+else
+    QT_PREFIX="$(brew --prefix qt 2>/dev/null)"
+fi
+MACDEPLOY_BIN="$QT_PREFIX/bin/macdeployqt"
+[ -x "$MACDEPLOY_BIN" ] || MACDEPLOY_BIN="$(command -v macdeployqt)"
+QT_PLUGINS_DIR="$QT_PREFIX/share/qt/plugins"
+[ -d "$QT_PLUGINS_DIR" ] || QT_PLUGINS_DIR="$QT_PREFIX/plugins"
 
-    if [ -d "$QT_PLUGINS_DIR/imageformats" ]; then
-        echo ">>> Forcing copy of Qt imageformats plugins (SVG support) from $QT_PLUGINS_DIR..."
-        mkdir -p "$TARGET_APP/Contents/PlugIns/imageformats"
-        cp "$QT_PLUGINS_DIR/imageformats/"*.dylib "$TARGET_APP/Contents/PlugIns/imageformats/" 2>/dev/null || true
-    fi
+if [ -x "$MACDEPLOY_BIN" ]; then
+    echo ">>> Using Qt toolchain: $QT_PREFIX (macdeployqt: $MACDEPLOY_BIN)"
 
-    # Par défaut macdeployqt ignore les fichiers .so, il faut le forcer avec -executable
+    # Force-copy the essential Qt plugin categories. Without "platforms" (the
+    # mandatory cocoa plugin) the app aborts at launch with "Could not find the Qt
+    # platform plugin cocoa" — macdeployqt has been seen to skip it here. styles/tls
+    # are needed for native look and HTTPS; imageformats = SVG icons.
+    echo ">>> Forcing copy of essential Qt plugins from $QT_PLUGINS_DIR..."
+    for cat in platforms styles imageformats iconengines tls networkinformation; do
+        if [ -d "$QT_PLUGINS_DIR/$cat" ]; then
+            mkdir -p "$TARGET_APP/Contents/PlugIns/$cat"
+            cp "$QT_PLUGINS_DIR/$cat/"*.dylib "$TARGET_APP/Contents/PlugIns/$cat/" 2>/dev/null || true
+            echo "    + $cat"
+        fi
+    done
+
+    # Tell Qt where the bundled plugins live (macdeployqt normally writes this).
+    mkdir -p "$TARGET_APP/Contents/Resources"
+    [ -f "$TARGET_APP/Contents/Resources/qt.conf" ] || printf '[Paths]\nPlugins = PlugIns\n' > "$TARGET_APP/Contents/Resources/qt.conf"
+
+    # By default macdeployqt ignores .so files; force them with -executable
     EXTRA_EXECS=""
-    for plugin in "$TARGET_APP"/Contents/Resources/*.so "$TARGET_APP"/Contents/Resources/*.dylib "$TARGET_APP"/Contents/Resources/extensions6/*.so "$TARGET_APP"/Contents/Resources/extensions6/*.dylib "$TARGET_APP"/Contents/PlugIns/imageformats/*.dylib; do
+    for plugin in "$TARGET_APP"/Contents/Resources/*.so "$TARGET_APP"/Contents/Resources/*.dylib "$TARGET_APP"/Contents/Resources/extensions6/*.so "$TARGET_APP"/Contents/Resources/extensions6/*.dylib "$TARGET_APP"/Contents/PlugIns/*/*.dylib; do
         if [ -f "$plugin" ]; then
             EXTRA_EXECS="$EXTRA_EXECS -executable=$plugin"
         fi
     done
     
-    # macdeployqt copie les frameworks et ajuste les rpaths
-    macdeployqt "$TARGET_APP" -always-overwrite $EXTRA_EXECS
-    
+    # macdeployqt copies the frameworks and fixes the rpaths
+    "$MACDEPLOY_BIN" "$TARGET_APP" -always-overwrite $EXTRA_EXECS
+
+    # --------------------------------------------------------------------------
+    # Bundle the transitive third-party Homebrew dependencies that macdeployqt
+    # misses (the ffmpeg chain: libavcodec -> libswresample, etc.).
+    #
+    # macdeployqt copies each plugin's DIRECT dependencies (e.g. VOIP ->
+    # libavcodec, libavutil, libspeex) but does NOT recurse into them: libavcodec
+    # keeps an absolute reference to /opt/homebrew/.../libswresample.6.dylib.
+    # On the build Mac that file exists (Homebrew) so the bundle "works"; on a
+    # clean Mac it is missing and the plugin fails to load.
+    #
+    # DELIBERATELY NARROW SCOPE: only the flat third-party dylibs in Frameworks/
+    # and the RetroShare plugins in Resources/ are processed. Qt is NOT touched:
+    # neither the .frameworks (binary with no extension) nor Contents/PlugIns/ —
+    # Qt is already handled by macdeployqt, and sweeping it here would re-copy all
+    # of Qt in bulk. References are rewritten to @executable_path/../Frameworks,
+    # which points to Contents/Frameworks for ANY binary in the bundle.
+    # --------------------------------------------------------------------------
+    echo ">>> Bundling transitive third-party (ffmpeg) dependencies missed by macdeployqt..."
+    FRAMEWORKS_DIR="$TARGET_APP/Contents/Frameworks"
+    mkdir -p "$FRAMEWORKS_DIR"
+
+    # Mach-O files to make self-contained: flat third-party dylibs in Frameworks/
+    # (ffmpeg, speex, openssl...) + RetroShare plugins in Resources/. No PlugIns/
+    # and no Qt .frameworks (their binary has no .dylib extension, so never listed).
+    list_macho() {
+        {
+            find "$FRAMEWORKS_DIR" -maxdepth 1 -type f -name "*.dylib"
+            find "$TARGET_APP/Contents/Resources" -maxdepth 2 -type f -name "*.dylib"
+        } | sort -u
+    }
+    # Homebrew/MacPorts dependencies of a Mach-O, EXCLUDING its own install id
+    # (first line of otool -L = LC_ID_DYLIB, not a dependency) and all of Qt.
+    homebrew_deps() {
+        local id
+        id=$(otool -D "$1" 2>/dev/null | sed -n '2p')
+        otool -L "$1" 2>/dev/null | awk 'NR>1{print $1}' \
+            | grep -E '^(/opt/homebrew|/usr/local|/opt/local)/' \
+            | grep -vE '/[Qq]t@?[0-9]*/' \
+            | grep -vxF "${id:-@@none@@}" \
+            || true
+    }
+
+    # 1) Pull in the missing libs until no new one appears.
+    changed=1
+    while [ "$changed" -eq 1 ]; do
+        changed=0
+        while IFS= read -r macho; do
+            for dep in $(homebrew_deps "$macho"); do
+                base=$(basename "$dep")
+                if [ ! -f "$FRAMEWORKS_DIR/$base" ]; then
+                    echo "    + bundling $base (needed by $(basename "$macho"))"
+                    cp -L "$dep" "$FRAMEWORKS_DIR/$base"
+                    chmod u+w "$FRAMEWORKS_DIR/$base"
+                    install_name_tool -id "@rpath/$base" "$FRAMEWORKS_DIR/$base" 2>/dev/null
+                    changed=1
+                fi
+            done
+        done < <(list_macho)
+    done
+
+    # 2) Rewrite every remaining Homebrew reference to point inside the bundle.
+    while IFS= read -r macho; do
+        for dep in $(homebrew_deps "$macho"); do
+            install_name_tool -change "$dep" \
+                "@executable_path/../Frameworks/$(basename "$dep")" "$macho" 2>/dev/null
+        done
+    done < <(list_macho)
+
+    # 3) Verify: NO non-bundled third-party reference must remain.
+    LEAKS=$(while IFS= read -r m; do homebrew_deps "$m"; done < <(list_macho) | sort -u)
+    if [ -n "$LEAKS" ]; then
+        echo "  WARNING: residual non-bundled references remain (bundle NOT self-contained):"
+        echo "$LEAKS" | sed 's/^/    /'
+    else
+        echo "  OK: third-party libs self-contained (no /opt/homebrew or /usr/local references left)."
+    fi
+
+
     echo ">>> Ad-hoc code signing (required for Apple Silicon)..."
     if command -v codesign &> /dev/null; then
-        # On signe d'abord toutes les bibliothèques, plugins (.so/.dylib) et frameworks individuellement
+        # First sign every library, plugin (.so/.dylib) and framework individually
         find "$TARGET_APP" -type f \( -name "*.dylib" -o -name "*.so" \) -exec codesign --force --sign - {} \; 2>/dev/null || true
         find "$TARGET_APP" -type d -name "*.framework" -exec codesign --force --sign - {} \; 2>/dev/null || true
-        # Puis on signe l'application entière
+        # Then sign the whole application
         codesign --force --deep --sign - "$TARGET_APP"
     fi
 
