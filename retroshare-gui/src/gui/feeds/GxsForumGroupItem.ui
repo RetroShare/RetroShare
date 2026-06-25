@@ -135,7 +135,7 @@
       <item>
        <layout class="QGridLayout" name="top_GL">
         <item row="0" column="0" rowspan="3">
-         <widget class="ZoomableLabel" name="forumlogo_label">
+         <widget class="GroupFeedLogoLabel" name="forumlogo_label">
           <property name="minimumSize">
            <size>
             <width>70</width>
@@ -421,7 +421,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZoomableLabel</class>
+   <class>GroupFeedLogoLabel</class>
    <extends>QLabel</extends>
    <header>gui/gxschannels/GxsChannelPostThumbnail.h</header>
   </customwidget>

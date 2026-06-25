@@ -25,6 +25,10 @@
 #include <QWidget>
 #include <QLabel>
 #include <QLayout>
+#include <QPainter>
+#include <QLinearGradient>
+#include <QPen>
+#include <QPaintEvent>
 
 #include "retroshare/rsgxschannels.h"
 #include "retroshare/rsidentity.h"
@@ -83,6 +87,76 @@ protected:
     bool  mMoving;
     bool  mZoomEnabled;
     bool  mClearEnabled;
+};
+
+class GroupFeedLogoLabel: public QLabel
+{
+    Q_OBJECT
+
+public:
+    GroupFeedLogoLabel(QWidget *parent = nullptr) : QLabel(parent), mHovered(false) {}
+
+    void setPicture(const QPixmap& pix) {
+        mImage = pix;
+        update();
+    }
+
+    void setEnableZoom(bool) {}
+
+protected:
+#if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
+    void enterEvent(QEnterEvent *event) override {
+        mHovered = true;
+        update();
+        QLabel::enterEvent(event);
+    }
+#else
+    void enterEvent(QEvent *event) override {
+        mHovered = true;
+        update();
+        QLabel::enterEvent(event);
+    }
+#endif
+
+    void leaveEvent(QEvent *event) override {
+        mHovered = false;
+        update();
+        QLabel::leaveEvent(event);
+    }
+
+    void paintEvent(QPaintEvent *event) override {
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.setRenderHint(QPainter::SmoothPixmapTransform);
+
+        // Draw silver/grey gradient background
+        QLinearGradient gradient(0, 0, 0, height());
+        gradient.setColorAt(0, QColor(220, 220, 220)); // silver
+        gradient.setColorAt(1, QColor(170, 170, 170)); // grey
+        painter.fillRect(rect(), gradient);
+
+        if (!mImage.isNull()) {
+            QPixmap scaled = mImage.scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            int x = (width() - scaled.width()) / 2;
+            int y = (height() - scaled.height()) / 2;
+            painter.drawPixmap(x, y, scaled);
+        }
+
+        // Draw rounded border
+        QPen pen;
+        pen.setWidth(2);
+        if (mHovered) {
+            pen.setColor(QColor(3, 155, 213)); // #039bd5
+        } else {
+            pen.setColor(QColor(204, 204, 204)); // #CCCCCC
+        }
+        painter.setPen(pen);
+        painter.drawRoundedRect(rect().adjusted(1, 1, -1, -1), 3, 3);
+    }
+
+private:
+    QPixmap mImage;
+    bool mHovered;
 };
 
 // Class to paint the thumbnails with title
