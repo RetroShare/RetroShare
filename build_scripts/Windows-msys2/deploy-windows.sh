@@ -15,20 +15,20 @@
 # ==============================================================================
 set -e
 
-# Toujours travailler depuis la racine du dépôt (ce script vit sous
-# build_scripts/Windows-msys2/), sinon les chemins relatifs (retroshare-gui/src,
-# libbitdht, ...) sont muets et produisent un paquet incomplet sans erreur.
+# Always operate from the repository root (this script lives under
+# build_scripts/Windows-msys2/); otherwise the relative paths (retroshare-gui/src,
+# libbitdht, ...) resolve to nothing and silently produce an incomplete package.
 cd "$(dirname "$0")/../.." || exit 1
 
 # Build directory (override with: BUILD_DIR=mydir ./build_scripts/Windows-msys2/deploy-windows.sh)
 BUILD_DIR="${BUILD_DIR:-Build-cmake}"
 
-# Préfixe de l'environnement MSYS2 utilisé pour la compilation
-# (mingw64 / ucrt64 / clang64). Indispensable pour retrouver le runtime
-# compilateur et les plugins Qt quel que soit l'environnement employé.
+# Prefix of the MSYS2 environment used for the build
+# (mingw64 / ucrt64 / clang64). Required to locate the compiler runtime
+# and the Qt plugins whatever environment is used.
 MINGW_PREFIX="${MSYSTEM_PREFIX:-/mingw64}"
 
-# 1. Vérifications initiales du dossier de build
+# 1. Initial checks on the build directory
 if [ ! -d "$BUILD_DIR" ]; then
     echo "ERROR: Build directory '$BUILD_DIR' not found. Please compile the project first!"
     exit 1
@@ -38,84 +38,132 @@ echo "==========================================================================
 echo "          RETROSHARE WINDOWS DEPLOYMENT GENERATOR"
 echo "================================================================================"
 
-# 2. Détermination dynamique des variables de version (inspiré de qmake)
+# 2. Dynamically determine the version variables (inspired by qmake)
 echo ">>> Extracting versioning info from Git and environment..."
 
-# Date au format YYYYMMDD
+# Date in YYYYMMDD format
 DATE_STR=$(date +%Y%m%d)
 
-# Récupération du describe de Git (ex: v0.6.7.2-892-g5341b777d-dirty)
+# Get the Git describe (e.g. v0.6.7.2-892-g5341b777d-dirty)
 GIT_DESC=$(git describe --tags --always --dirty 2>/dev/null || echo "0.6.7-unknown")
-CLEAN_DESC=${GIT_DESC#v} # Enlève le 'v' initial
+CLEAN_DESC=${GIT_DESC#v} # Strip the leading 'v'
 
-# Valeurs par défaut
+# Default values
 VERSION="$CLEAN_DESC"
 GIT_SUFFIX=""
 
 if [[ "$CLEAN_DESC" == *-* ]]; then
-    # Format: tag-commits-hash[-dirty] (ex: 0.6.7.2-892-g5341b777d-dirty)
+    # Format: tag-commits-hash[-dirty] (e.g. 0.6.7.2-892-g5341b777d-dirty)
     VERSION=$(echo "$CLEAN_DESC" | cut -d'-' -f1)
     COMMIT_INFO=$(echo "$CLEAN_DESC" | cut -d'-' -f2-)
     GIT_SUFFIX="-${DATE_STR}-${COMMIT_INFO}"
 else
-    # Si on est pile sur un tag
+    # Exactly on a tag
     GIT_SUFFIX="-${DATE_STR}"
 fi
 
-# Recherche de l'exécutable windeployqt adéquat
+# ------------------------------------------------------------------------------
+# Detect the MAJOR Qt version actually used by the build. We extract it from the
+# compiled binary's imports (objdump), NOT from whichever qmake happens to be
+# first in PATH: on an MSYS2 install where Qt5 AND Qt6 coexist, `qmake` may point
+# to Qt6 while the binary is linked against Qt5 (or vice versa). If deployment is
+# not locked to the right version, windeployqt and the fallback plugins
+# (platforms/qwindows.dll...) are taken from the wrong Qt, causing the
+# "no Qt platform plugin could be initialized" crash at startup.
+# ------------------------------------------------------------------------------
+QT_MAJOR=""
+GUI_EXE_SRC=$(find "$BUILD_DIR" -path '*Portable*' -prune -o -name "retroshare-gui.exe" -print 2>/dev/null | head -n 1)
+if [ -n "$GUI_EXE_SRC" ] && command -v objdump &> /dev/null; then
+    if objdump -p "$GUI_EXE_SRC" 2>/dev/null | grep -qiE 'Qt6(Core|Gui|Widgets)\.dll'; then
+        QT_MAJOR=6
+    elif objdump -p "$GUI_EXE_SRC" 2>/dev/null | grep -qiE 'Qt5(Core|Gui|Widgets)\.dll'; then
+        QT_MAJOR=5
+    fi
+fi
+if [ -z "$QT_MAJOR" ]; then
+    echo "  WARNING: Could not detect the Qt major version from the binary; defaulting to 6."
+    QT_MAJOR=6
+fi
+echo "  Qt major version linked by the build: Qt${QT_MAJOR}"
+
+# Find the windeployqt matching THIS major version. We validate the version
+# returned by --version: the bare `windeployqt` may belong to the other Qt on a
+# mixed install.
+if [ "$QT_MAJOR" = "6" ]; then
+    WINDEPLOYQT_CANDIDATES="windeployqt6 windeployqt-qt6 windeployqt"
+else
+    WINDEPLOYQT_CANDIDATES="windeployqt-qt5 windeployqt"
+fi
 WINDEPLOYQT_CMD=""
-for cmd in windeployqt windeployqt-qt5 windeployqt-qt6; do
+for cmd in $WINDEPLOYQT_CANDIDATES; do
     if command -v "$cmd" &> /dev/null; then
-        WINDEPLOYQT_CMD="$cmd"
-        break
+        cand_ver=$("$cmd" --version 2>/dev/null | grep -o -E '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+        if [[ "$cand_ver" == "${QT_MAJOR}."* ]]; then
+            WINDEPLOYQT_CMD="$cmd"
+            break
+        fi
     fi
 done
 
-# Détection de la version de Qt
+# Detect the full Qt version via the qmake of the RIGHT major version.
 QT_VERSION=""
-if command -v qmake &> /dev/null; then
-    QT_VERSION=$(qmake -query QT_VERSION 2>/dev/null)
+if [ "$QT_MAJOR" = "6" ]; then
+    QMAKE_CANDIDATES="qmake6 qmake-qt6 qmake"
+else
+    QMAKE_CANDIDATES="qmake-qt5 qmake"
 fi
+for q in $QMAKE_CANDIDATES; do
+    if command -v "$q" &> /dev/null; then
+        v=$("$q" -query QT_VERSION 2>/dev/null)
+        if [[ "$v" == "${QT_MAJOR}."* ]]; then
+            QT_VERSION="$v"
+            break
+        fi
+    fi
+done
 
-# Si qmake n'a pas donné de version propre, on cherche avec windeployqt
+# If qmake returned nothing, fall back to windeployqt (already filtered by version).
 if [[ ! "$QT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && [ -n "$WINDEPLOYQT_CMD" ]; then
     QT_VERSION=$("$WINDEPLOYQT_CMD" --version 2>/dev/null | grep -o -E '[0-9]+\.[0-9]+\.[0-9]+' | head -n 1 || echo "")
 fi
 
-# Valeur de secours si rien n'a été détecté ou si la version est invalide
+# Fallback value consistent with the detected major version.
 if [[ ! "$QT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    QT_VERSION="5.15.18"
+    if [ "$QT_MAJOR" = "6" ]; then QT_VERSION="6.0.0"; else QT_VERSION="5.15.18"; fi
 fi
 
-# Nom de base de l'archive finale
-ARCHIVE_BASE="RetroShare-${VERSION}-Windows-Portable${GIT_SUFFIX}-Qt-${QT_VERSION}-mingw64-msys2"
+# Base name of the final archive. The environment tag reflects the MSYS2 shell
+# actually used (ucrt64 / mingw64 / clang64) instead of a hard-coded 'mingw64'
+# that lied on UCRT64/CLANG64 builds.
+ENV_TAG=$(echo "${MSYSTEM:-mingw64}" | tr '[:upper:]' '[:lower:]')
+ARCHIVE_BASE="RetroShare-${VERSION}-Windows-Portable${GIT_SUFFIX}-Qt-${QT_VERSION}-${ENV_TAG}-msys2"
 DEPLOY_DIR="${BUILD_DIR}/${ARCHIVE_BASE}"
 
 echo "  Target Package Name: ${ARCHIVE_BASE}"
 echo "  Deploy Directory:    ${DEPLOY_DIR}"
 
-# Nettoyage des anciennes générations de déploiement
+# Clean up previous deployment generations
 echo ">>> Cleaning up previous deployment directories..."
-# Ne supprimer que les anciens RÉPERTOIRES de déploiement, pas les archives
-# .7z / .zip produites lors des runs précédents (qui matchent le même motif).
+# Only remove old deployment DIRECTORIES, not the .7z / .zip archives produced
+# by previous runs (which match the same pattern).
 find "$BUILD_DIR" -maxdepth 1 -type d -name "RetroShare-*-Windows-Portable*" -exec rm -rf {} + 2>/dev/null || true
 mkdir -p "$DEPLOY_DIR"
 
-# 3. Création de l'arborescence complète attendue par RetroShare
+# 3. Create the full directory tree expected by RetroShare
 echo ">>> Creating target directory layout..."
-mkdir -p "$DEPLOY_DIR/Data/extensions6" # Répertoire pour les plugins de RetroShare
-mkdir -p "$DEPLOY_DIR/qss"               # Feuilles de style de l'interface
-mkdir -p "$DEPLOY_DIR/stylesheets"       # Feuilles de style de la messagerie
-mkdir -p "$DEPLOY_DIR/sounds"            # Sons système de l'interface
-mkdir -p "$DEPLOY_DIR/translations"      # Fichiers de traductions (RetroShare + Qt)
-mkdir -p "$DEPLOY_DIR/license"           # Fichiers de licences
-mkdir -p "$DEPLOY_DIR/log"               # Dossier de logs de fonctionnement
+mkdir -p "$DEPLOY_DIR/Data/extensions6" # Directory for RetroShare plugins
+mkdir -p "$DEPLOY_DIR/qss"               # UI stylesheets
+mkdir -p "$DEPLOY_DIR/stylesheets"       # Chat stylesheets
+mkdir -p "$DEPLOY_DIR/sounds"            # UI system sounds
+mkdir -p "$DEPLOY_DIR/translations"      # Translation files (RetroShare + Qt)
+mkdir -p "$DEPLOY_DIR/license"           # License files
+mkdir -p "$DEPLOY_DIR/log"               # Runtime log directory
 
-# 4. Création du fichier témoin 'portable'
+# 4. Create the 'portable' marker file
 echo ">>> Creating 'portable' mode indicator file..."
 touch "$DEPLOY_DIR/portable"
 
-# 5. Copie des exécutables et DLL générées par la compilation
+# 5. Copy the executables and DLLs produced by the build
 echo ">>> Copying compiled binaries..."
 for exe in retroshare-gui.exe retroshare-service.exe retroshare-friendserver.exe; do
     found_exe=$(find "$BUILD_DIR" -path "$DEPLOY_DIR" -prune -o -name "$exe" -print | head -n 1)
@@ -128,9 +176,9 @@ for exe in retroshare-gui.exe retroshare-service.exe retroshare-friendserver.exe
 done
 
 echo ">>> Copying local build libraries (DLLs)..."
-# Recherche et copie des DLL compilées en interne dans le projet (RNP, CMark, RetroShare, Restbed)
-# NB: on élague "$DEPLOY_DIR" (situé sous "$BUILD_DIR") pour éviter de re-trouver
-# les DLL déjà copiées et de déployer par erreur une variante stale.
+# Find and copy the DLLs built internally by the project (RNP, CMark, RetroShare, Restbed)
+# NB: we prune "$DEPLOY_DIR" (located under "$BUILD_DIR") to avoid re-finding the
+# DLLs already copied and mistakenly deploying a stale variant.
 find "$BUILD_DIR" -path "$DEPLOY_DIR" -prune -o -name "libcmark.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
 find "$BUILD_DIR" -path "$DEPLOY_DIR" -prune -o -name "*retroshare.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
 find "$BUILD_DIR" -path "$DEPLOY_DIR" -prune -o -name "*restbed*.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
@@ -147,7 +195,7 @@ else
     echo "  WARNING: Plugins directory not found. Skipping plugins."
 fi
 
-# 6. Copie des ressources statiques de RetroShare (QSS, sons, etc.)
+# 6. Copy RetroShare's static assets (QSS, sounds, etc.)
 echo ">>> Copying RetroShare static assets..."
 
 if [ -d "retroshare-gui/src/qss" ]; then
@@ -156,7 +204,7 @@ fi
 
 if [ -d "retroshare-gui/src/gui/qss/chat" ]; then
     cp -r retroshare-gui/src/gui/qss/chat/* "$DEPLOY_DIR/stylesheets/" 2>/dev/null || true
-    # Supprime les répertoires inutiles d'après le pack.bat historique
+    # Remove the useless directories, following the historical pack.bat
     rm -rf "$DEPLOY_DIR/stylesheets/compact" "$DEPLOY_DIR/stylesheets/standard"
 fi
 
@@ -173,24 +221,26 @@ if [ -f "libbitdht/src/bitdht/bdboot.txt" ]; then
     echo "  Copied bdboot.txt"
 fi
 
-# 7. Copie des fichiers de traduction
+# 7. Copy the translation files
 echo ">>> Copying translations (RetroShare + Qt system)..."
 if [ -d "retroshare-gui/src/translations" ]; then
     find "retroshare-gui/src/translations" -name "*.qm" -exec cp {} "$DEPLOY_DIR/translations/" \; 2>/dev/null || true
 fi
 
-# Copie des traductions Qt de l'environnement MSYS2 MinGW64
-QT_TRANS_DIR="$MINGW_PREFIX/share/qt5/translations"
-if [ -d "$QT_TRANS_DIR" ]; then
-    cp "$QT_TRANS_DIR"/qt_*.qm "$DEPLOY_DIR/translations/" 2>/dev/null || true
-fi
-QT6_TRANS_DIR="$MINGW_PREFIX/share/qt6/translations"
-if [ -d "$QT6_TRANS_DIR" ]; then
-    cp "$QT6_TRANS_DIR"/qt_*.qm "$DEPLOY_DIR/translations/" 2>/dev/null || true
-    cp "$QT6_TRANS_DIR"/qtbase_*.qm "$DEPLOY_DIR/translations/" 2>/dev/null || true
-fi
+# Qt translations of the RIGHT major version only (do not mix Qt5 and Qt6 .qm
+# files in the same package).
+for tdir in \
+    "$MINGW_PREFIX/share/qt${QT_MAJOR}/translations" \
+    "$MINGW_PREFIX/lib/qt${QT_MAJOR}/translations" \
+    "$MINGW_PREFIX/qt${QT_MAJOR}/translations"; do
+    if [ -d "$tdir" ]; then
+        cp "$tdir"/qt_*.qm "$DEPLOY_DIR/translations/" 2>/dev/null || true
+        cp "$tdir"/qtbase_*.qm "$DEPLOY_DIR/translations/" 2>/dev/null || true
+        break
+    fi
+done
 
-# 8. Déploiement des dépendances Qt via windeployqt
+# 8. Deploy the Qt dependencies via windeployqt
 if [ -f "$DEPLOY_DIR/retroshare-gui.exe" ]; then
     if [ -n "$WINDEPLOYQT_CMD" ]; then
         echo ">>> Running $WINDEPLOYQT_CMD on retroshare-gui.exe..."
@@ -207,76 +257,70 @@ if [ -f "$DEPLOY_DIR/retroshare-gui.exe" ]; then
     fi
 fi
 
-# Fallback manuel pour les plugins Qt essentiels (comme 'platforms' et 'styles')
-# Indispensable si windeployqt a échoué ou n'était pas présent.
+# Manual fallback for the essential Qt plugins (such as 'platforms' and 'styles').
+# Required if windeployqt failed or was not present.
+# NB: every fallback plugin below is taken EXCLUSIVELY from the directory of the
+# detected major version (qt${QT_MAJOR}). Mixing a Qt6 qwindows.dll with Qt5*.dll
+# (or vice versa) causes the "no Qt platform plugin could be initialized" crash.
+QT_PLUGIN_DIRS=( \
+    "$MINGW_PREFIX/share/qt${QT_MAJOR}/plugins" \
+    "$MINGW_PREFIX/lib/qt${QT_MAJOR}/plugins" \
+    "$MINGW_PREFIX/qt${QT_MAJOR}/plugins" )
+
 if [ ! -d "$DEPLOY_DIR/platforms" ] || [ ! -f "$DEPLOY_DIR/platforms/qwindows.dll" ]; then
-    echo ">>> Manual fallback: Copying Qt 'platforms' directory (qwindows.dll)..."
+    echo ">>> Manual fallback: Copying Qt${QT_MAJOR} 'platforms' plugin (qwindows.dll)..."
     mkdir -p "$DEPLOY_DIR/platforms"
     COPIED_PLATFORMS=false
-    for path in \
-        "$MINGW_PREFIX/share/qt6/plugins/platforms/qwindows.dll" \
-        "$MINGW_PREFIX/share/qt5/plugins/platforms/qwindows.dll" \
-        "$MINGW_PREFIX/lib/qt6/plugins/platforms/qwindows.dll" \
-        "$MINGW_PREFIX/lib/qt5/plugins/platforms/qwindows.dll"; do
-        if [ -f "$path" ]; then
-            echo "  Found platforms plugin at: $path"
-            cp "$path" "$DEPLOY_DIR/platforms/"
+    for base in "${QT_PLUGIN_DIRS[@]}"; do
+        if [ -f "$base/platforms/qwindows.dll" ]; then
+            echo "  Found platforms plugin at: $base/platforms/qwindows.dll"
+            cp "$base/platforms/qwindows.dll" "$DEPLOY_DIR/platforms/"
             COPIED_PLATFORMS=true
             break
         fi
     done
     if [ "$COPIED_PLATFORMS" = false ]; then
-        echo "  WARNING: Could not find qwindows.dll in standard MSYS2 paths!"
+        echo "  WARNING: Could not find Qt${QT_MAJOR} qwindows.dll in standard MSYS2 paths!"
     fi
 fi
 
-if [ ! -d "$DEPLOY_DIR/styles" ] || [ ! -f "$DEPLOY_DIR/styles/qwindowsvistastyle.dll" ]; then
-    echo ">>> Manual fallback: Copying Qt 'styles' directory (qwindowsvistastyle.dll)..."
-    mkdir -p "$DEPLOY_DIR/styles"
-    for path in \
-        "$MINGW_PREFIX/share/qt6/plugins/styles/qwindowsvistastyle.dll" \
-        "$MINGW_PREFIX/share/qt5/plugins/styles/qwindowsvistastyle.dll" \
-        "$MINGW_PREFIX/lib/qt6/plugins/styles/qwindowsvistastyle.dll" \
-        "$MINGW_PREFIX/lib/qt5/plugins/styles/qwindowsvistastyle.dll"; do
-        if [ -f "$path" ]; then
-            echo "  Found styles plugin at: $path"
-            cp "$path" "$DEPLOY_DIR/styles/"
-            break
-        fi
-    done
-fi
+echo ">>> Deploying Qt${QT_MAJOR} 'styles' plugins..."
+mkdir -p "$DEPLOY_DIR/styles"
+for base in "${QT_PLUGIN_DIRS[@]}"; do
+    if [ -d "$base/styles" ]; then
+        echo "  Found styles plugin directory at: $base/styles"
+        cp -r "$base/styles"/* "$DEPLOY_DIR/styles/" 2>/dev/null || true
+        break
+    fi
+done
 
-echo ">>> Deploying Qt 'imageformats' directory (essential for SVG/ICO icons)..."
+echo ">>> Deploying Qt${QT_MAJOR} 'imageformats' plugins (essential for SVG/ICO icons)..."
 mkdir -p "$DEPLOY_DIR/imageformats"
 COPIED_IMAGEFORMATS=false
-for path in \
-    "$MINGW_PREFIX/share/qt6/plugins/imageformats" \
-    "$MINGW_PREFIX/share/qt5/plugins/imageformats" \
-    "$MINGW_PREFIX/lib/qt6/plugins/imageformats" \
-    "$MINGW_PREFIX/lib/qt5/plugins/imageformats"; do
-    if [ -d "$path" ]; then
-        echo "  Found imageformats plugin directory at: $path"
-        cp -r "$path"/* "$DEPLOY_DIR/imageformats/" 2>/dev/null || true
+for base in "${QT_PLUGIN_DIRS[@]}"; do
+    if [ -d "$base/imageformats" ]; then
+        echo "  Found imageformats plugin directory at: $base/imageformats"
+        cp -r "$base/imageformats"/* "$DEPLOY_DIR/imageformats/" 2>/dev/null || true
         COPIED_IMAGEFORMATS=true
         break
     fi
 done
 if [ "$COPIED_IMAGEFORMATS" = false ]; then
-    echo "  WARNING: Could not find imageformats directory in standard MSYS2 paths!"
+    echo "  WARNING: Could not find Qt${QT_MAJOR} imageformats directory in standard MSYS2 paths!"
 fi
 
 
-# 9. Résolution dynamique des dépendances MinGW (ldd)
+# 9. Dynamically resolve MinGW dependencies (ldd)
 echo ">>> Resolving system and 3rd party DLL dependencies using ldd..."
 TEMP_DEPENDENCY_LIST=$(mktemp)
 trap 'rm -f "$TEMP_DEPENDENCY_LIST"' EXIT
 
 PREV_COUNT=0
 while true; do
-    # Scanner tous les exe et dll présents dans le dossier de déploiement
+    # Scan every exe and dll present in the deployment folder
     find "$DEPLOY_DIR" \( -name "*.exe" -o -name "*.dll" \) -exec ldd {} \; 2>/dev/null \
         | grep -i "$MINGW_PREFIX/bin" | awk '{print $3}' | sort -u > "$TEMP_DEPENDENCY_LIST"
-    
+
     CURR_COUNT=$(wc -l < "$TEMP_DEPENDENCY_LIST")
     if [ "$CURR_COUNT" -eq "$PREV_COUNT" ]; then
         break
@@ -286,7 +330,7 @@ while true; do
     while read -r dll_path; do
         if [ -f "$dll_path" ]; then
             dll_name=$(basename "$dll_path")
-            # Ne pas écraser les DLL déjà présentes (Qt ou compilées localement)
+            # Do not overwrite DLLs already present (Qt or locally built)
             if [ ! -f "$DEPLOY_DIR/$dll_name" ]; then
                 echo "  Deploying dependency: $dll_name"
                 cp "$dll_path" "$DEPLOY_DIR/"
@@ -338,7 +382,7 @@ else
     fi
 fi
 
-# 10. Déploiement de la WebUI (si présente)
+# 10. Deploy the WebUI (if present)
 echo ">>> Deploying WebUI static assets..."
 if [ -d "retroshare-webui/src" ]; then
     mkdir -p "$DEPLOY_DIR/webui"
@@ -348,7 +392,7 @@ else
     echo "  WebUI source folder not found. Skipping WebUI packaging."
 fi
 
-# 11. Création de l'archive finale (7z en priorité, zip en fallback)
+# 11. Create the final archive (7z preferred, zip as fallback)
 echo ">>> Packaging final compressed archive..."
 (
     cd "$BUILD_DIR" || exit 1
