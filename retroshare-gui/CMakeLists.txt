@@ -102,7 +102,7 @@ set(CMAKE_AUTOUIC OFF)
 # the ${QT_VERSION_MAJOR} variable so the same tree builds against both.
 find_package( QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package( Qt${QT_VERSION_MAJOR} COMPONENTS
-	Core Widgets Xml Network Multimedia PrintSupport REQUIRED)
+	Core Widgets Xml Network Multimedia PrintSupport Charts REQUIRED)
 if(QT_VERSION_MAJOR EQUAL 6)
 	# Provides QRegExp and other Qt5-era APIs still used by the GUI.
 	find_package( Qt6 COMPONENTS Core5Compat REQUIRED)
@@ -119,7 +119,7 @@ endif()
 list( APPEND RS_LINK_LIBRARIES
 	Qt${QT_VERSION_MAJOR}::Multimedia Qt${QT_VERSION_MAJOR}::Widgets
 	Qt${QT_VERSION_MAJOR}::Xml Qt${QT_VERSION_MAJOR}::Network
-	Qt${QT_VERSION_MAJOR}::PrintSupport)
+	Qt${QT_VERSION_MAJOR}::PrintSupport Qt${QT_VERSION_MAJOR}::Charts)
 if(QT_VERSION_MAJOR EQUAL 6)
 	list( APPEND RS_LINK_LIBRARIES Qt6::Core5Compat )
 endif()

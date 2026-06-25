@@ -19,7 +19,7 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = app
-QT     += network xml 
+QT     += network xml charts
 CONFIG += qt gui uic qrc resources idle 
 CONFIG += console
 TARGET = retroshare
@@ -421,6 +421,7 @@ HEADERS +=  rshare.h \
             gui/statistics/GxsNetTunnelsDialog.h \
             gui/statistics/StatisticsWindow.h \
             gui/statistics/BwCtrlWindow.h \
+            gui/statistics/CumulativeStatsWidget.h \
             gui/statistics/RttStatistics.h \
             gui/statistics/TunnelStatisticsDialog.h \
             gui/FileTransfer/TransferUserNotify.h \
@@ -984,6 +985,7 @@ SOURCES +=  main.cpp \
             gui/statistics/GxsNetTunnelsDialog.cpp \
             gui/statistics/StatisticsWindow.cpp \
             gui/statistics/BwCtrlWindow.cpp \
+            gui/statistics/CumulativeStatsWidget.cpp \
             gui/statistics/RttStatistics.cpp \
             gui/statistics/TunnelStatisticsDialog.cpp \
             gui/statistics/BWGraph.cpp \
