@@ -37,6 +37,7 @@ list(
 	src/gui/MainWindow.cpp 
 	src/gui/NetworkView.cpp 
 	src/gui/FriendsDialog.cpp 
+	src/gui/FriendRequestsDialog.cpp 
 	src/gui/ServicePermissionDialog.cpp 
 	src/gui/RemoteDirModel.cpp 
 	src/gui/RsAutoUpdatePage.cpp 
@@ -436,6 +437,7 @@ list(
 	src/gui/AboutWidget.h 
 	src/gui/NetworkView.h 
 	src/gui/FriendsDialog.h 
+	src/gui/FriendRequestsDialog.h 
 	src/gui/ServicePermissionDialog.h 
 	src/gui/RemoteDirModel.h 
 	src/gui/RetroShareLink.h 
