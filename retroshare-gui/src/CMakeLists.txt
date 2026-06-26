@@ -267,6 +267,7 @@ list(
 	src/gui/statistics/GxsTransportStatistics.cpp 
 	src/gui/statistics/StatisticsWindow.cpp 
 	src/gui/statistics/BwCtrlWindow.cpp 
+	src/gui/statistics/CumulativeStatsWidget.cpp 
 	src/gui/statistics/RttStatistics.cpp 
 	src/gui/statistics/GxsNetTunnelsDialog.cpp 
 	src/gui/statistics/TunnelStatisticsDialog.cpp 
@@ -475,6 +476,7 @@ list(
 	src/gui/statistics/GxsTransportStatistics.h 
 	src/gui/statistics/StatisticsWindow.h 
 	src/gui/statistics/BwCtrlWindow.h 
+	src/gui/statistics/CumulativeStatsWidget.h 
 	src/gui/statistics/BWGraph.h 
 	src/gui/statistics/RttStatistics.h 
 	src/gui/statistics/GxsNetTunnelsDialog.h 
