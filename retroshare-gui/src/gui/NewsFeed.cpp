@@ -204,7 +204,7 @@ void NewsFeed::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
     RsFeedTypeFlags flags = (RsFeedTypeFlags)Settings->getNewsFeedFlags();
 
-    if(event->mType == RsEventType::AUTHSSL_CONNECTION_AUTENTICATION && (!!(flags & (RsFeedTypeFlags::RS_FEED_TYPE_SECURITY | RsFeedTypeFlags::RS_FEED_TYPE_TLS_ATTEMPT))))
+    if(event->mType == RsEventType::AUTHSSL_CONNECTION_AUTENTICATION)
 		handleSecurityEvent(event);
 
     if(event->mType == RsEventType::FRIEND_LIST && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_PEER)))
@@ -477,6 +477,8 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
     if(!pe)
         return;
 
+    std::cerr << "handling a SSL connection event: code = " << (int)pe->mErrorCode << std::endl;
+
     auto& e(*pe);
     RsFeedTypeFlags flags = (RsFeedTypeFlags)Settings->getNewsFeedFlags();
 
@@ -504,14 +506,27 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
         return;
     }
 
+    RsPeerDetails det;
+    rsPeers->getPeerDetails(e.mSslId,det) || rsPeers->getGPGDetails(e.mPgpId,det);
+
     // 2 - if the peer Id is known, use the dedicated item.
 
-    if(e.mErrorCode == RsAuthSslError::PEER_REFUSED_CONNECTION && (!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP)))
+    // 2.1 - peer connection attempt has been refused (remotely)
+
+    if(e.mErrorCode == RsAuthSslError::PEER_REFUSED_CONNECTION)
 	{
-		addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_HELLO, false), true );
-		return;
+        std::cerr << "flag is connection remotely closed." << std::endl;
+
+        if(!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_CONNECTION_REFUSED_REMOTELY))
+        {
+            std::cerr << "Adding feed item for distant peer not being a friend" << std::endl;
+            addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_HELLO, false), true );
+        }
+
+        return;
 	}
 	
+    // 2.1 - peer connection attempt failed for other reasons.
 
     RsFeedTypeFlags FeedItemType(RsFeedTypeFlags::RS_FEED_TYPE_NONE);
 
@@ -533,13 +548,11 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 		return; // display nothing
 	}
 
-    RsPeerDetails det;
-	rsPeers->getPeerDetails(e.mSslId,det) || rsPeers->getGPGDetails(e.mPgpId,det);
+    if(!!(flags & RsFeedTypeFlags::RS_FEED_TYPE_SECURITY))
+        addFeedItemIfUnique(new SecurityItem(this, NEWSFEED_SECLIST, e.mPgpId, e.mSslId, det.location, e.mLocator.toString(), FeedItemType, false), true );
 
-	addFeedItemIfUnique(new SecurityItem(this, NEWSFEED_SECLIST, e.mPgpId, e.mSslId, det.location, e.mLocator.toString(), FeedItemType, false), true );
-
-    if (Settings->getMessageFlags() & RshareSettings::RS_MESSAGE_CONNECT_ATTEMPT)
-		MessageComposer::addConnectAttemptMsg(e.mPgpId, e.mSslId, QString::fromStdString(det.name + "(" + det.location + ")"));
+    if(e.mErrorCode == RsAuthSslError::NOT_A_FRIEND && (Settings->getMessageFlags() & RshareSettings::RS_MESSAGE_CONNECT_ATTEMPT))
+        MessageComposer::addConnectAttemptMsg(e.mPgpId, e.mSslId, QString::fromStdString(det.name + "(" + det.location + ")"));
 }
 
 #ifdef RS_USE_WIRE
