@@ -23,6 +23,8 @@
 
 #include <retroshare/rsconfig.h>
 #include <retroshare-gui/RsAutoUpdatePage.h>
+#include <QChartView>
+#include <QChart>
 #include <map>
 #include <string>
 
@@ -37,14 +39,21 @@ class QStackedWidget;
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     #include <QtCharts/QChartView>
     #include <QtCharts/QChart>
+    
+    // Qt 6 uses the QtCharts namespace explicitly
+    namespace QtCharts {
+        class QChartView;
+        class QChart;
+    }
+
 #else
     // Qt 5 branch
     #include <QChartView>
     #include <QChart>
+    
+    // Use the macro that Qt 5 provides for Charts
+    QT_CHARTS_USE_NAMESPACE
 #endif
-
-// Use the namespace macro for Charts in both Qt 5 and Qt 6
-QT_CHARTS_USE_NAMESPACE
 
 class CumulativeStatsWidget : public RsAutoUpdatePage
 {
