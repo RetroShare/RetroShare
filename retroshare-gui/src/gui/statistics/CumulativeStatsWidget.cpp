@@ -33,30 +33,18 @@
 #include <QStackedWidget>
 
 // Qt Charts includes
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    #include <QtCharts/QBarSeries>
-    #include <QtCharts/QBarSet>
-    #include <QtCharts/QPieSeries>
-    #include <QtCharts/QPieSlice>
-    #include <QtCharts/QBarCategoryAxis>
-    #include <QtCharts/QValueAxis>
-#else
-    #include <QBarSeries>
-    #include <QBarSet>
-    #include <QPieSeries>
-    #include <QPieSlice>
-    #include <QBarCategoryAxis>
-    #include <QValueAxis>
-#endif
+#include <QBarSeries>
+#include <QBarSet>
+#include <QPieSeries>
+#include <QPieSlice>
+#include <QBarCategoryAxis>
+#include <QValueAxis>
 
 #include "retroshare/rsconfig.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rstypes.h"
 
 #include "gui/settings/rsharesettings.h"
-
-// Use the namespace macro for Charts in both Qt 5 and Qt 6
-QT_CHARTS_USE_NAMESPACE
 
 class SizeSortWidgetItem : public QTreeWidgetItem {
 public:
@@ -82,7 +70,6 @@ CumulativeStatsWidget::CumulativeStatsWidget(QWidget *parent)
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     
     m_bProcessSettings = false;
-    mUseSessionStats = false; // Default to Lifetime
 
     // Create the Page Selector (ComboBox)
     pageSelector = new QComboBox(this);
@@ -98,11 +85,13 @@ CumulativeStatsWidget::CumulativeStatsWidget(QWidget *parent)
     // --- Create Friends Page ---
     peerPage = new QWidget();
     QVBoxLayout *friendsLayout = new QVBoxLayout(peerPage);
+    // ... add peerTree and charts to peerLayout ...
     stackedWidget->addWidget(peerPage);
 
     // --- Create Services Page ---
     servicePage = new QWidget();
     QVBoxLayout *servicesLayout = new QVBoxLayout(servicePage);
+    // ... add serviceTree and charts to serviceLayout ...
     stackedWidget->addWidget(servicePage);
     
     // Charts container
@@ -531,6 +520,7 @@ void CumulativeStatsWidget::updateTheme(int index)
     // Apply to Service Charts
     serviceBarChartView->chart()->setTheme(theme);
     servicePieChartView->chart()->setTheme(theme);
+    
 }
 
 void CumulativeStatsWidget::toggleStatsMode(bool checked)
