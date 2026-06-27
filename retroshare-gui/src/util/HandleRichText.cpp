@@ -31,6 +31,7 @@
 
 #include "HandleRichText.h"
 #include "gui/RetroShareLink.h"
+#include "gui/common/MimeTextEdit.h"
 #include "util/ObjectPainter.h"
 #include "util/imageutil.h"
 #include "util/RsQtVersion.h"
@@ -815,6 +816,29 @@ static void findBestColor(QString &val, qreal bglum, qreal desiredContrast)
 #endif // QT_VERSION < 0x040600
 }
 
+static void stripLinkColorStyle(QDomElement element)
+{
+	if (element.hasAttribute("style")) {
+		QString style = element.attribute("style");
+		style.remove(QRegularExpression("color\\s*:\\s*[^;]+;?", QRegularExpression::CaseInsensitiveOption));
+		if (style.trimmed().isEmpty()) {
+			element.removeAttribute("style");
+		} else {
+			element.setAttribute("style", style);
+		}
+	}
+	if (element.tagName().toLower() == "font" && element.hasAttribute("color")) {
+		element.removeAttribute("color");
+	}
+	QDomNodeList children = element.childNodes();
+	for (int i = 0; i < children.length(); ++i) {
+		QDomNode node = children.item(i);
+		if (node.isElement()) {
+			stripLinkColorStyle(node.toElement());
+		}
+	}
+}
+
 /**
  * @brief optimizeHtml: Optimize HTML Text in DomDocument to reduce size
  * @param doc: QDomDocument containing Text to optimize
@@ -903,6 +927,7 @@ static void optimizeHtml(QDomDocument& doc
 
 			//hidden text in a
 			if (element.tagName().toLower() == "a") {
+				stripLinkColorStyle(element);
 				if(element.hasAttribute("href")){
 					QString href = element.attribute("href", "");
 					if(href.startsWith("hidden:")){
@@ -1137,19 +1162,18 @@ static void styleCreate(QDomDocument& doc
 
 void RsHtml::optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag /*= 0*/)
 {
-	if (textEdit->toHtml() == QTextDocument(textEdit->toPlainText()).toHtml()) {
+	MimeTextEdit *mimeTextEdit = qobject_cast<MimeTextEdit*>(textEdit);
+	QString html = mimeTextEdit ? mimeTextEdit->toHtml() : textEdit->toHtml();
+
+	if (html == QTextDocument(textEdit->toPlainText()).toHtml()) {
 		text = textEdit->toPlainText();
 		//std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << textEdit->toHtml().length() << std::endl;
 		return;
 	}
 
-	text = textEdit->toHtml();
-
-		//std::cerr << "Optimized text from " << text.length() << " bytes , into " ;
+	text = html;
 
 	optimizeHtml(text, flag);
-
-        //std::cerr << text.length() << " bytes" << std::endl;
 }
 
 /**
