@@ -57,6 +57,7 @@ public:
 	QColor textColorQuote() const { return highlighter->textColorQuote();}
 	QVariant textColorQuotes() const { return highlighter->textColorQuotes();}
 	bool getShowImages() const { return mShowImages; }
+	QString toHtml(const QByteArray &encoding = QByteArray()) const;
 
 	QMenu *createStandardContextMenuFromPoint(const QPoint &widgetPos);
 

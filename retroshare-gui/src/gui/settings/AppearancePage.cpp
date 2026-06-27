@@ -435,8 +435,9 @@ void AppearancePage::on_linkColorButton_clicked()
 
 void AppearancePage::on_resetButton_clicked()
 {
-	QRgb color  = QString::number(QColor(3, 155, 198).rgba()).toUInt();
+	QRgb color  = QString::number(QColor(118, 118, 255).rgba()).toUInt();
 	defaultColor = color;
+	rgbLinkColor = color;
 	QPixmap pix(24, 24);
 	pix.fill(color);
 	ui.linkColorButton->setIcon(pix);

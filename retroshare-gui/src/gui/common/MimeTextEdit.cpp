@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QMimeData>
+#include <QTextDocument>
 #include <QTextDocumentFragment>
 #include <QCompleter>
 #include <QAbstractItemView>
@@ -34,6 +35,7 @@
 #include "gui/RetroShareLink.h"
 #include "util/imageutil.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/RsGUIEventManager.h"
 
 #include <retroshare/rspeers.h>
 
@@ -46,9 +48,8 @@ MimeTextEdit::MimeTextEdit(QWidget *parent)
 	highliter = new RsSyntaxHighlighter(this);
 	mOnlyPlainText = false;
 
-	linkColor = Settings->getLinkColor();
-	QString sheet = QString::fromLatin1("a { text-decoration: underline; color: %1 }").arg(linkColor.name());
-	document()->setDefaultStyleSheet(sheet);
+	updateLinkColor();
+	connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()), this, SLOT(updateLinkColor()));
 }
 
 bool MimeTextEdit::canInsertFromMimeData(const QMimeData* source) const
@@ -333,4 +334,37 @@ void MimeTextEdit::copyImage()
 	QPoint point = action->data().toPoint();
 	QTextCursor cursor = cursorForPosition(point);
 	ImageUtil::copyImage(window(), cursor);
+}
+
+void MimeTextEdit::updateLinkColor()
+{
+	linkColor = Settings->getLinkColor();
+	QPalette p = palette();
+	p.setColor(QPalette::Link, linkColor);
+	p.setColor(QPalette::LinkVisited, linkColor);
+	setPalette(p);
+
+	if (document()) {
+		document()->setDefaultStyleSheet(QString("a { color: %1; }").arg(linkColor.name()));
+	}
+}
+
+QString MimeTextEdit::toHtml(const QByteArray &encoding) const
+{
+	QTextDocument *doc = document();
+	QString oldSheet;
+	if (doc) {
+		oldSheet = doc->defaultStyleSheet();
+		doc->setDefaultStyleSheet("");
+	}
+	QString html;
+	if (encoding.isEmpty()) {
+		html = QTextEdit::toHtml();
+	} else {
+		html = doc->toHtml(encoding);
+	}
+	if (doc) {
+		doc->setDefaultStyleSheet(oldSheet);
+	}
+	return html;
 }

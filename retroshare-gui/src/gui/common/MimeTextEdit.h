@@ -53,6 +53,7 @@ public:
 	bool onlyPlainText() const {return mOnlyPlainText;}
 
 	void setMaxBytes(int limit) {mMaxBytes = limit;}
+	QString toHtml(const QByteArray &encoding = QByteArray()) const;
 
 public slots:
 	void setTextColorQuote(QColor textColorQuote) { highliter->setTextColorQuote(textColorQuote);}
@@ -77,6 +78,7 @@ private slots:
 	void spoiler();
 	void saveImage();
 	void copyImage();
+	void updateLinkColor();
 
 private:
 	QString textUnderCursor() const;

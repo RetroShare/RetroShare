@@ -1241,7 +1241,7 @@ void RshareSettings::setLinkColor(QRgb rgbValue)
 }
 QRgb RshareSettings::getLinkColor()
 {
-	return valueFromGroup("Chat", "LinkColor", QString::number(QColor(3, 155, 198).rgba())).toUInt();
+	return valueFromGroup("Chat", "LinkColor", QString::number(QColor(118, 118, 255).rgba())).toUInt();
 }
 
 #ifdef RS_JSONAPI

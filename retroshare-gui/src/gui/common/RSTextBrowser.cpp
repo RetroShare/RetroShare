@@ -24,6 +24,7 @@
 #include "gui/common/FilesDefs.h"
 #include "util/imageutil.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/RsGUIEventManager.h"
 
 #include <retroshare/rsinit.h> //To get RsAccounts
 
@@ -34,6 +35,7 @@
 #include <QMenu>
 #include <QPainter>
 #include <QPlainTextEdit>
+#include <QTextDocument>
 #include <QTextDocumentFragment>
 #include <QScrollBar>
 #include <QRegExp>
@@ -55,6 +57,7 @@ RSTextBrowser::RSTextBrowser(QWidget *parent) :
 	updateLinkColor();
 
 	connect(this, SIGNAL(anchorClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
+	connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()), this, SLOT(updateLinkColor()));
 }
 
 void RSTextBrowser::append(const QString &text)
@@ -374,7 +377,36 @@ void RSTextBrowser::showEvent(QShowEvent *event)
 void RSTextBrowser::updateLinkColor()
 {
 	linkColor = Settings->getLinkColor();
-	QString sheet = QString::fromLatin1("a { text-decoration: underline; color: %1 }").arg(linkColor.name());
-	document()->setDefaultStyleSheet(sheet);
+	QPalette p = palette();
+	p.setColor(QPalette::Link, linkColor);
+	p.setColor(QPalette::LinkVisited, linkColor);
+	setPalette(p);
 
+	if (document()) {
+		document()->setDefaultStyleSheet(QString("a { color: %1; }").arg(linkColor.name()));
+		if (!document()->isEmpty()) {
+			QString html = document()->toHtml();
+			document()->setHtml(html);
+		}
+	}
+}
+
+QString RSTextBrowser::toHtml(const QByteArray &encoding) const
+{
+	QTextDocument *doc = document();
+	QString oldSheet;
+	if (doc) {
+		oldSheet = doc->defaultStyleSheet();
+		doc->setDefaultStyleSheet("");
+	}
+	QString html;
+	if (encoding.isEmpty()) {
+		html = QTextBrowser::toHtml();
+	} else {
+		html = doc->toHtml(encoding);
+	}
+	if (doc) {
+		doc->setDefaultStyleSheet(oldSheet);
+	}
+	return html;
 }
