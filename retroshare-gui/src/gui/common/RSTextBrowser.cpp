@@ -403,7 +403,13 @@ QString RSTextBrowser::toHtml(const QByteArray &encoding) const
 	if (encoding.isEmpty()) {
 		html = QTextBrowser::toHtml();
 	} else {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+		// Qt 6: toHtml() takes no arguments
+		html = doc->toHtml();
+#else
+		// Qt 5: toHtml() accepts encoding parameter
 		html = doc->toHtml(encoding);
+#endif
 	}
 	if (doc) {
 		doc->setDefaultStyleSheet(oldSheet);
