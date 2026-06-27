@@ -297,6 +297,10 @@
               <property name="text">
                <string>H</string>
               </property>
+              <property name="icon">
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/textedit/heading.png</normaloff>:/icons/textedit/heading.png</iconset>
+              </property>
              </widget>
             </item>
             <item>
@@ -342,6 +346,10 @@
               <property name="text">
                <string>C</string>
               </property>
+              <property name="icon">
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/textedit/code.png</normaloff>:/icons/textedit/code.png</iconset>
+              </property>
              </widget>
             </item>
             <item>
@@ -354,7 +362,7 @@
               </property>
               <property name="icon">
                <iconset resource="../icons.qrc">
-                <normaloff>:/icons/textedit/code.png</normaloff>:/icons/textedit/code.png</iconset>
+                <normaloff>:/icons/textedit/blockquote.png</normaloff>:/icons/textedit/blockquote.png</iconset>
               </property>
              </widget>
             </item>
