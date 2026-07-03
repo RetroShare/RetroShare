@@ -230,14 +230,9 @@ void PostedCardView::fill()
 		
 		if (urlOkay)
 		{
-			linkColor = Settings->getLinkColor();
-			QString colorstring = QString("%1;").arg(linkColor.name());
-
 			QString urlstr =  QString("<a href=\"");
 			urlstr += QString(url.toEncoded());
-			urlstr += QString("\" ><span style=\" text-decoration: underline; color:");
-			urlstr += colorstring;
-			urlstr += QString("\"> ");
+			urlstr += QString("\" ><span style=\" text-decoration: underline; color:#2255AA;\"> ");
 			urlstr += messageName();
 			urlstr += QString(" </span></a>");
 

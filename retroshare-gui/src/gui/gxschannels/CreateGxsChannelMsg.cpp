@@ -729,7 +729,6 @@ void CreateGxsChannelMsg::sendMsg()
 
 	QString text;
 	text = RichTextEditWidget->toHtml();
-	RsHtml::optimizeHtml(text);
 	std::string msg = std::string(text.toUtf8());
 
 	std::list<RsGxsFile> files;
