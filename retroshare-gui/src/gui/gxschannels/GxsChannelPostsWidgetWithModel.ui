@@ -397,7 +397,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QTextBrowser" name="infoDescription">
+        <widget class="RSTextBrowser" name="infoDescription">
          <property name="html">
           <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -548,7 +548,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item>
-               <widget class="QTextBrowser" name="postDetails_TE">
+               <widget class="RSTextBrowser" name="postDetails_TE">
                 <property name="openExternalLinks">
                  <bool>true</bool>
                 </property>
@@ -684,6 +684,11 @@ p, li { white-space: pre-wrap; }
    <extends>QWidget</extends>
    <header>gui/gxs/GxsCommentDialog.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -345,7 +345,7 @@ void MimeTextEdit::updateLinkColor()
 	setPalette(p);
 
 	if (document()) {
-		document()->setDefaultStyleSheet(QString("a { color: %1; }").arg(linkColor.name()));
+		document()->setDefaultStyleSheet(QString("a[href] { color: %1; }").arg(linkColor.name()));
 	}
 }
 

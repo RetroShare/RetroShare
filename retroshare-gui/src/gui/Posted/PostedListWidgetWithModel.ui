@@ -46,7 +46,7 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="2" column="0">
-           <widget class="QTextBrowser" name="trans_Description">
+           <widget class="RSTextBrowser" name="trans_Description">
             <property name="styleSheet">
              <string notr="true"/>
             </property>
@@ -618,6 +618,11 @@ p, li { white-space: pre-wrap; }
    <extends>QTabWidget</extends>
    <header>gui/common/RSTabWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

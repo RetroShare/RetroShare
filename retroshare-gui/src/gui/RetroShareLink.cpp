@@ -1220,13 +1220,16 @@ QString RetroShareLink::niceName() const
 
 QString RetroShareLink::toHtml() const
 {
+	QColor linkColor = Settings->getLinkColor();
+	QString colorstring = QString("%1;").arg(linkColor.name());
+
 	QString html = "<a href=\"" + toString() + "\"";
 
 	QString linkTitle = title();
 	if (!linkTitle.isEmpty()) {
 		html += " title=\"" + linkTitle + "\"";
 	}
-	html += ">" + niceName() + "</a>" ;
+	html += " style=\"color:" + colorstring + "\">" + niceName() + "</a>" ;
 
 	return html;
 }
