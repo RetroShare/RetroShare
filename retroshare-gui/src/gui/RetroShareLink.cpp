@@ -1232,6 +1232,22 @@ QString RetroShareLink::toHtml() const
 	return html;
 }
 
+QString RetroShareLink::toHtmlColored() const
+{
+	//linkColor = Settings->getLinkColor();
+	QString colorstring = QString("%1;").arg(linkColor.name());
+
+	QString html = "<a href=\"" + toString() + "\"";
+
+	QString linkTitle = title();
+	if (!linkTitle.isEmpty()) {
+		html += " title=\"" + linkTitle + "\"";
+	}
+	html += " style=\"color:" + colorstring + "\">" + niceName() + "</a>" ;
+
+	return html;
+}
+
 QString RetroShareLink::toHtmlFull() const
 {
 	return QString("<a href=\"") + toString() + "\">" + toString() + "</a>" ;
