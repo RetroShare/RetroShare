@@ -961,6 +961,7 @@ void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *
 	groupItemInfo.publishKey = IS_GROUP_PUBLISHER(groupInfo->mMeta.mSubscribeFlags) ;
 	groupItemInfo.adminKey = IS_GROUP_ADMIN(groupInfo->mMeta.mSubscribeFlags) ;
 	groupItemInfo.max_visible_posts = groupInfo->mMeta.mVisibleMsgCount ;
+    groupItemInfo.creation_time = groupInfo->mMeta.mPublishTs ;
 
 #if TOGXS
 	if (groupInfo.mGroupFlags & RS_DISTRIB_AUTHEN_REQ) {
