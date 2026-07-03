@@ -23,8 +23,6 @@
 #include "RSImageBlockWidget.h"
 #include "gui/common/FilesDefs.h"
 #include "util/imageutil.h"
-#include "gui/settings/rsharesettings.h"
-#include "gui/RsGUIEventManager.h"
 
 #include <retroshare/rsinit.h> //To get RsAccounts
 
@@ -35,7 +33,6 @@
 #include <QMenu>
 #include <QPainter>
 #include <QPlainTextEdit>
-#include <QTextDocument>
 #include <QTextDocumentFragment>
 #include <QScrollBar>
 #include <QRegExp>
@@ -54,10 +51,7 @@ RSTextBrowser::RSTextBrowser(QWidget *parent) :
 
 	highlighter = new RsSyntaxHighlighter(this);
 
-	updateLinkColor();
-
 	connect(this, SIGNAL(anchorClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
-	connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()), this, SLOT(updateLinkColor()));
 }
 
 void RSTextBrowser::append(const QString &text)
@@ -365,54 +359,4 @@ void RSTextBrowser::copyImage()
 	QPoint point = action->data().toPoint();
 	QTextCursor cursor = cursorForPosition(point);
 	ImageUtil::copyImage(window(), cursor);
-}
-
-void RSTextBrowser::showEvent(QShowEvent *event)
-{
-	if (!event->spontaneous()) {
-		updateLinkColor();
-	}
-}
-
-void RSTextBrowser::updateLinkColor()
-{
-	linkColor = Settings->getLinkColor();
-	QPalette p = palette();
-	p.setColor(QPalette::Link, linkColor);
-	p.setColor(QPalette::LinkVisited, linkColor);
-	setPalette(p);
-
-	if (document()) {
-		document()->setDefaultStyleSheet(QString("a { color: %1; }").arg(linkColor.name()));
-		if (!document()->isEmpty()) {
-			QString html = document()->toHtml();
-			document()->setHtml(html);
-		}
-	}
-}
-
-QString RSTextBrowser::toHtml(const QByteArray &encoding) const
-{
-	QTextDocument *doc = document();
-	QString oldSheet;
-	if (doc) {
-		oldSheet = doc->defaultStyleSheet();
-		doc->setDefaultStyleSheet("");
-	}
-	QString html;
-	if (encoding.isEmpty()) {
-		html = QTextBrowser::toHtml();
-	} else {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-		// Qt 6: toHtml() takes no arguments
-		html = doc->toHtml();
-#else
-		// Qt 5: toHtml() accepts encoding parameter
-		html = doc->toHtml(encoding);
-#endif
-	}
-	if (doc) {
-		doc->setDefaultStyleSheet(oldSheet);
-	}
-	return html;
 }

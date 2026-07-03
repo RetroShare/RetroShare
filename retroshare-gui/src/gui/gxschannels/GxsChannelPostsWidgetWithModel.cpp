@@ -1440,7 +1440,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
     if(!group.mMeta.mAuthorId.isNull())
     {
         RetroShareLink link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
-        ui->infoAdministrator->setText(link.toHtmlColored());
+        ui->infoAdministrator->setText(link.toHtml());
     }
     else
         ui->infoAdministrator->setText("[No contact author]");
