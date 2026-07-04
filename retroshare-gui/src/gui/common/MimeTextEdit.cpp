@@ -30,6 +30,7 @@
 #include <QMenu>
 
 #include "MimeTextEdit.h"
+#include "gui/settings/rsharesettings.h"
 #include "util/HandleRichText.h"
 #include "gui/RetroShareLink.h"
 #include "util/imageutil.h"
@@ -328,4 +329,43 @@ void MimeTextEdit::copyImage()
 	QPoint point = action->data().toPoint();
 	QTextCursor cursor = cursorForPosition(point);
 	ImageUtil::copyImage(window(), cursor);
+}
+
+void MimeTextEdit::updateLinkColor()
+{
+	linkColor = Settings->getLinkColor();
+	QPalette p = palette();
+	p.setColor(QPalette::Link, linkColor);
+	p.setColor(QPalette::LinkVisited, linkColor);
+	setPalette(p);
+
+	if (document()) {
+		document()->setDefaultStyleSheet(QString("a[href] { color: %1; }").arg(linkColor.name()));
+	}
+}
+
+QString MimeTextEdit::toHtml(const QByteArray &encoding) const
+{
+	QTextDocument *doc = document();
+	QString oldSheet;
+	if (doc) {
+		oldSheet = doc->defaultStyleSheet();
+		doc->setDefaultStyleSheet("");
+	}
+	QString html;
+	if (encoding.isEmpty()) {
+		html = QTextEdit::toHtml();
+	} else {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+		// Qt 6: toHtml() takes no arguments
+		html = doc->toHtml();
+#else
+		// Qt 5: toHtml() accepts encoding parameter
+		html = doc->toHtml(encoding);
+#endif
+	}
+	if (doc) {
+		doc->setDefaultStyleSheet(oldSheet);
+	}
+	return html;
 }
