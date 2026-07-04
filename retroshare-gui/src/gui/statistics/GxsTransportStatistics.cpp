@@ -29,6 +29,8 @@
 #include <QMenu>
 #include <QObject>
 #include <QPainter>
+#include <QPushButton>
+#include <QShowEvent>
 #include <QStylePainter>
 #include <QTimer>
 #include <QTreeWidget>
@@ -88,7 +90,7 @@
 //#define DEBUG_GXSTRANS_STATS 1
 
 GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
-    : RsAutoUpdatePage(4000,parent)
+    : MainPage(parent)
 {
 	setupUi(this) ;
 	
@@ -110,6 +112,10 @@ GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
 	groupTreeWidget->setColumnHidden(COL_GROUP_AUTHOR_ID,true);
 
 	connect(RsGUIEventManager::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
+
+	// Manual refresh: fetching group statistics is a heavy, blocking GXS
+	// operation, so we refresh on demand rather than on a timer.
+	connect(refreshButton, &QPushButton::clicked, this, [this]() { updateDisplay(); });
 
 	// load settings
 	processSettings(true);
@@ -183,6 +189,14 @@ void GxsTransportStatistics::updateDisplay()
 	loadGroups();
 
 	mLastGroupReqTS = now ;
+}
+
+void GxsTransportStatistics::showEvent(QShowEvent *event)
+{
+	MainPage::showEvent(event);
+
+	// Refresh with fresh data whenever the user navigates to this page.
+	updateDisplay();
 }
 
 void GxsTransportStatistics::settingsChanged()

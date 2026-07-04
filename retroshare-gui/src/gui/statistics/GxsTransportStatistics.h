@@ -36,7 +36,7 @@
 class GxsTransportStatisticsWidget ;
 class UIStateHelper;
 
-class GxsTransportStatistics: public RsAutoUpdatePage, public Ui::GxsTransportStatistics
+class GxsTransportStatistics: public MainPage, public Ui::GxsTransportStatistics
 {
 	Q_OBJECT
 
@@ -48,6 +48,11 @@ public:
 	static QString getPeerName(const RsPeerId& peer_id) ;
 
 	void updateContent() ;
+
+protected:
+	// Refresh the page each time it becomes visible (cheap, user-triggered),
+	// instead of polling on a timer which saturates the GXS queue.
+	virtual void showEvent(QShowEvent *event) override;
 
 private slots:
 	/** Create the context popup menu and it's submenus */
