@@ -58,6 +58,8 @@ public:
 	QVariant textColorQuotes() const { return highlighter->textColorQuotes();}
 	bool getShowImages() const { return mShowImages; }
 
+	QString toHtml(const QByteArray &encoding = QByteArray()) const;
+
 	QMenu *createStandardContextMenuFromPoint(const QPoint &widgetPos);
 
 Q_SIGNALS:
@@ -67,6 +69,7 @@ public slots:
 	void showImages();
 	void setTextColorQuote(QColor textColorQuote) { highlighter->setTextColorQuote(textColorQuote);}
 	void setTextColorQuotes(QVariant textColorQuotes) { highlighter->setTextColorQuotes(textColorQuotes);}
+	void updateLinkColor();
 
 private slots:
 	void linkClicked(const QUrl &url);
@@ -77,6 +80,7 @@ private slots:
 
 protected:
 	void paintEvent(QPaintEvent *event);
+	void showEvent(QShowEvent *event);
 	virtual void contextMenuEvent(QContextMenuEvent *event);
 
 private:
@@ -90,6 +94,7 @@ private:
 	bool mLinkClickActive;
 	RsSyntaxHighlighter *highlighter;
 	QList<QAction*> mContextMenuActions;
+	QColor linkColor;
 #ifdef RSTEXTBROWSER_CHECKIMAGE_DEBUG
 	QRect mCursorRectStart;
 	QRect mCursorRectLeft;
