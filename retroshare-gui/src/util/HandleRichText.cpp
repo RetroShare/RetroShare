@@ -30,6 +30,8 @@
 #include <QRegExp>
 
 #include "HandleRichText.h"
+#include "gui/common/MimeTextEdit.h"
+#include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
 #include "util/ObjectPainter.h"
 #include "util/imageutil.h"
@@ -407,7 +409,8 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 				// skip it
 			} else if (element.tagName().toLower() == "a") {
 				// skip it
-				if (embedInfos.myType == Ahref) {
+				if (embedInfos.myType == Ahref && element.hasAttribute("href")) {
+					element.setAttribute("style", QString("color: %1;").arg(QColor(Settings->getLinkColor()).name()));
 					// but add title if not available
 					if (element.attribute("title").isEmpty()) {
 						RetroShareLink link(element.attribute("href"));
@@ -476,6 +479,7 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 							{
 								insertedTag = doc.createElement("a");
 								insertedTag.setAttribute("href", myRE.cap(0));
+								insertedTag.setAttribute("style", QString("color: %1;").arg(QColor(Settings->getLinkColor()).name()));
 								insertedTag.appendChild(doc.createTextNode(myRE.cap(0)));
 
 								RetroShareLink link(myRE.cap(0));
@@ -813,6 +817,66 @@ static void findBestColor(QString &val, qreal bglum, qreal desiredContrast)
 		val = c.name();
 	}
 #endif // QT_VERSION < 0x040600
+}
+
+static void stripLinkColorStyle(QDomElement element)
+{
+	if (element.hasAttribute("style")) {
+		QString style = element.attribute("style");
+		style.remove(QRegularExpression("color\\s*:\\s*[^;]+;?", QRegularExpression::CaseInsensitiveOption));
+		if (style.trimmed().isEmpty()) {
+			element.removeAttribute("style");
+		} else {
+			element.setAttribute("style", style);
+		}
+	}
+	if (element.tagName().toLower() == "font" && element.hasAttribute("color")) {
+		element.removeAttribute("color");
+	}
+	QDomNodeList children = element.childNodes();
+	for (int i = 0; i < children.length(); ++i) {
+		QDomNode node = children.item(i);
+		if (node.isElement()) {
+			stripLinkColorStyle(node.toElement());
+		}
+	}
+}
+
+static void stripThemeColors(QDomElement element, const QString &hexColor)
+{
+	if (element.hasAttribute("style")) {
+		QString style = element.attribute("style");
+		QRegularExpression re(QString("color\\s*:\\s*%1;?").arg(hexColor), QRegularExpression::CaseInsensitiveOption);
+		style.remove(re);
+		if (style.trimmed().isEmpty()) {
+			element.removeAttribute("style");
+		} else {
+			element.setAttribute("style", style);
+		}
+	}
+	if (element.tagName().toLower() == "font" && element.hasAttribute("color")) {
+		if (element.attribute("color").compare(hexColor, Qt::CaseInsensitive) == 0) {
+			element.removeAttribute("color");
+		}
+	}
+	if (element.tagName().toLower() == "a") {
+		stripLinkColorStyle(element);
+	}
+
+	QDomNodeList children = element.childNodes();
+	for (int i = 0; i < children.length(); ++i) {
+		QDomNode node = children.item(i);
+		if (node.isElement()) {
+			stripThemeColors(node.toElement(), hexColor);
+		}
+	}
+}
+
+static void stripAllLinkColors(QDomElement element)
+{
+	QColor linkColor = Settings->getLinkColor();
+	QString hexColor = linkColor.name();
+	stripThemeColors(element, hexColor);
 }
 
 /**
@@ -1186,6 +1250,7 @@ void RsHtml::optimizeHtml(QString &text, unsigned int flag /*= 0*/
 	}
 
 	QDomElement body = doc.documentElement();
+	stripAllLinkColors(body);
     
 	QHash<QString, QStringList> stylesList;
 	QHash<QString, QString> knownStyle;
