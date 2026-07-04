@@ -622,6 +622,27 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE RS_RELEASE_VERSION )
 target_compile_definitions(${PROJECT_NAME} PRIVATE TARGET=\"retroshare\")
 target_compile_definitions(${PROJECT_NAME} PRIVATE RS_DIRECT_CHAT)
 
+# RetroShare GUI own version (RS_GUI_VERSION), independent from libretroshare.
+# retroshare-gui is a directory of the RetroShare super-project (not a submodule),
+# so `git describe` here resolves to the super-project version, which is exactly
+# what the GUI should report as its own version. Drop the leading 'v' to match the
+# usual version style. rsguiversion.h provides a default, so a build without git
+# metadata (or the qmake/Android build path) still compiles.
+execute_process(
+	COMMAND ${GIT_EXECUTABLE} describe --tags --always --dirty
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+	OUTPUT_VARIABLE RS_GUI_VERSION
+	OUTPUT_STRIP_TRAILING_WHITESPACE
+	RESULT_VARIABLE RS_GUI_GIT_RESULT ) # Avoid CMake failure if git fails
+if(RS_GUI_GIT_RESULT EQUAL 0 AND NOT RS_GUI_VERSION STREQUAL "")
+	string(REGEX REPLACE "^v" "" RS_GUI_VERSION "${RS_GUI_VERSION}")
+	message(STATUS "RetroShare GUI version ${RS_GUI_VERSION}")
+	target_compile_definitions(
+		${PROJECT_NAME} PRIVATE RS_GUI_VERSION="${RS_GUI_VERSION}" )
+else()
+	message(WARNING "Determining RetroShare GUI version via git failed")
+endif()
+
 # Match the actual option name RS_GXSCIRCLES (defined above). It was previously
 # tested as RS_GXS_CIRCLES (extra underscore), so RS_USE_CIRCLES was never defined.
 if(RS_GXSCIRCLES)

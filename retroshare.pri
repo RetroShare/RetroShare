@@ -525,6 +525,15 @@ trough qmake command line arguments!")
     }
 }
 
+# RetroShare GUI own version (RS_GUI_VERSION), independent from libretroshare.
+# The block above resolves the RetroShare super-project version; the GUI reports
+# it as its own version (see retroshare-gui/src/rsguiversion.h). Only the GUI
+# consumes this define; harmless for the other sub-projects. When the version
+# could not be determined, rsguiversion.h falls back to its built-in default.
+!isEmpty(RS_MAJOR_VERSION) {
+    DEFINES += RS_GUI_VERSION=\\\"$${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\\\"
+}
+
 # Some supportlibs compilation won't start if the intstalled CMAKE verison is >=3.5.
 # Force compilation in that case
 CMAKE_FORCE_MINVERSION=""
