@@ -368,6 +368,7 @@ wikipoos {
 
 # Input
 HEADERS +=  rshare.h \
+            rsguiversion.h \
             retroshare-gui/configpage.h \
             retroshare-gui/RsAutoUpdatePage.h \
             retroshare-gui/mainpage.h \

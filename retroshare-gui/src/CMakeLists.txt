@@ -413,7 +413,8 @@ list(
 
 	src/TorControl/TorControlWindow.h
 
-	src/rshare.h 
+	src/rshare.h
+	src/rsguiversion.h
 	src/retroshare-gui/configpage.h 
 	src/retroshare-gui/RsAutoUpdatePage.h 
 	src/retroshare-gui/mainpage.h 
