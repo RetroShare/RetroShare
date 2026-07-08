@@ -412,26 +412,33 @@ bool GxsChannelDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo
 
 void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo)
 {
-	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupData, groupItemInfo);
+    GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupData, groupItemInfo);
 
-	const RsGxsChannelGroup *channelGroupData = dynamic_cast<const RsGxsChannelGroup*>(groupData);
+    const RsGxsChannelGroup *channelGroupData = dynamic_cast<const RsGxsChannelGroup*>(groupData);
 
-	if (!channelGroupData)
+    if (!channelGroupData)
     {
-		std::cerr << "GxsChannelDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsChannelGroupInfoData"<< std::endl;
-		return;
-	}
+        std::cerr << "GxsChannelDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsChannelGroupInfoData"<< std::endl;
+        return;
+    }
 
-	if(channelGroupData->mImage.mSize > 0)
-	{
-		QPixmap image;
-		GxsIdDetails::loadPixmapFromData(channelGroupData->mImage.mData, channelGroupData->mImage.mSize, image,GxsIdDetails::ORIGINAL);
-		groupItemInfo.icon = image;
-	}
-	else
+    // Before apr.2026 the validation of admin signature was ommited and the service string (used in channels) was used in the
+    // creation of its signature. Since the service string is local, this breaks signature validation at distant nodes.
+    // This flag is here to warn users about re-signing their channel.
+
+    if(groupItemInfo.adminKey && (channelGroupData->mMeta.mPublishTs < QDateTime(QDate(2026,4,15),QTime(0,0)).toSecsSinceEpoch()))
+        groupItemInfo.deprecated_format = true;
+
+    if(channelGroupData->mImage.mSize > 0)
+    {
+        QPixmap image;
+        GxsIdDetails::loadPixmapFromData(channelGroupData->mImage.mData, channelGroupData->mImage.mSize, image,GxsIdDetails::ORIGINAL);
+        groupItemInfo.icon = image;
+    }
+    else
         groupItemInfo.icon = GxsIdDetails::makeDefaultGroupIcon(channelGroupData->mMeta.mGroupId, ":icons/channel.png", GxsIdDetails::ORIGINAL);
 
-	groupItemInfo.description = QString::fromUtf8(channelGroupData->mDescription.c_str());
+    groupItemInfo.description = QString::fromUtf8(channelGroupData->mDescription.c_str());
 }
 
 void GxsChannelDialog::clearDistantSearchResults(TurtleRequestId id)

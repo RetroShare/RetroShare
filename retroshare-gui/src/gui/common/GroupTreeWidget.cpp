@@ -452,6 +452,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		item->setIcon(GTW_COLUMN_POPULARITY, PopularityDefs::icon(itemInfo.popularity));
 		item->setData(GTW_COLUMN_POPULARITY, ROLE_SORT, itemInfo.popularity);
 
+
 		/* Set tooltip */
 		if (itemInfo.adminKey)
 			tooltip += "\n" + tr("You are admin (modify names and description using Edit menu)");
@@ -487,7 +488,14 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		item->setData(GTW_COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS, itemInfo.subscribeFlags);
 
 		/* Set color */
-		if (itemInfo.publishKey) {
+
+        if(itemInfo.deprecated_format)
+        {
+            item->setData(GTW_COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_WARNING);
+            item->setData(GTW_COLUMN_NAME, Qt::ForegroundRole, QBrush(textColorWarning()));
+            item->setToolTip(GTW_COLUMN_NAME,tr("This object has been created and stored \nin a format that is no longer supported. Please \"edit\" it \nand press \"Update\" to re-sign it in the new format."));
+        }
+        else if (itemInfo.publishKey) {
 			item->setData(GTW_COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_PRIVATEKEY);
 			item->setData(GTW_COLUMN_NAME, Qt::ForegroundRole, QBrush(textColorPrivateKey()));
 		} else {

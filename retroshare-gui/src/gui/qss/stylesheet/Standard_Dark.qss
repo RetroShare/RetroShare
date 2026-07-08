@@ -2485,6 +2485,7 @@ GroupTreeWidget
 {
 	qproperty-textColorCategory: rgb(3, 155, 198);
 	qproperty-textColorPrivateKey: rgb(249,185,0);
+        qproperty-textColorWarning: rgb(250,91,15);
 }
 
 NetworkDialog {
