@@ -589,12 +589,12 @@ void PostedItem::fill()
 		else if (urlOkay && (mPost.mImage.mData == NULL))
 		{
 			ui->expandButton->setDisabled(true);
-			ui->thumbnailLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(LINK_IMAGE));
+			ui->thumbnailLabel->setPicture(FilesDefs::getPixmapFromQtResourcePath(LINK_IMAGE));
 		}
 		else
 		{
 			ui->expandButton->setDisabled(true);
-			ui->thumbnailLabel->setPixmap(sqpixmap2);
+			ui->thumbnailLabel->setPicture(sqpixmap2);
 		}
 	}
 
