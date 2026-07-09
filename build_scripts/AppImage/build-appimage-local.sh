@@ -27,9 +27,8 @@ LD_QT="$TOOLS/linuxdeploy-plugin-qt-x86_64.AppImage"
 # Extracting instead of FUSE-mounting sidesteps that dependency.
 export APPIMAGE_EXTRACT_AND_RUN=1
 
-# linuxdeploy-plugin-qt locates Qt through qmake. It must be the qmake of the
-# SAME Qt major the binary links (Qt5 here — see the Qt5 build in BUILD-cmake.md).
-export QMAKE="${QMAKE:-$(command -v qmake-qt5 || command -v qmake || true)}"
+# QMAKE for linuxdeploy-plugin-qt is chosen AFTER the build check below, once we
+# can read the binary's Qt major from it (see the "pick the qmake" section).
 
 # --- 0. require the CMake build -----------------------------------------------
 if [ ! -x "$BIN" ]; then
@@ -51,6 +50,48 @@ then re-run this script.
 EOF
     exit 1
 fi
+
+# --- 0b. pick the qmake matching the binary's Qt major ------------------------
+# linuxdeploy-plugin-qt locates Qt through qmake, and it MUST be the qmake of the
+# SAME Qt major the binary links. Feed it a Qt5 qmake for a Qt6 binary (or vice
+# versa) and it bundles the wrong Qt — the AppImage then dies at launch with
+# "could not load the Qt platform plugin xcb".
+#
+# So we read the major straight from the binary's DT_NEEDED (objdump; no need for
+# the libs to be resolvable, unlike ldd) and pick qmake accordingly. Override the
+# whole thing anytime by exporting QMAKE before running this script.
+BIN_QT_MAJOR="$( { objdump -p "$BIN" 2>/dev/null || readelf -d "$BIN" 2>/dev/null; } \
+                 | grep -oE 'libQt[56]Core' | grep -oE '[56]' | head -1 || true)"
+
+if [ -z "${QMAKE:-}" ]; then
+    case "$BIN_QT_MAJOR" in
+        6) QMAKE="$(command -v qmake6 || command -v qmake-qt6 || true)" ;;
+        5) QMAKE="$(command -v qmake-qt5 || command -v qmake5 || command -v qmake || true)" ;;
+        *) QMAKE="$(command -v qmake-qt5 || command -v qmake || true)" ;;   # unknown: legacy default
+    esac
+fi
+export QMAKE
+
+if [ -z "${QMAKE:-}" ]; then
+    echo "ERROR: no qmake found for Qt${BIN_QT_MAJOR:-?}. Install it or set QMAKE=/path/to/qmake." >&2
+    exit 1
+fi
+
+# Fail early on the qmake/binary Qt-major mismatch that silently yields a
+# non-starting AppImage (also catches a wrong hand-set QMAKE).
+QMAKE_QT_MAJOR="$("$QMAKE" -query QT_VERSION 2>/dev/null | cut -d. -f1 || true)"
+if [ -n "$BIN_QT_MAJOR" ] && [ -n "$QMAKE_QT_MAJOR" ] && [ "$BIN_QT_MAJOR" != "$QMAKE_QT_MAJOR" ]; then
+    cat >&2 <<EOF
+ERROR: Qt major mismatch — linuxdeploy would bundle the wrong Qt and the
+       AppImage would not start.
+    binary links Qt$BIN_QT_MAJOR   ($BIN)
+    QMAKE is      Qt$QMAKE_QT_MAJOR   ($QMAKE)
+Point QMAKE at the matching qmake, e.g.:
+    QMAKE=\$(command -v qmake$BIN_QT_MAJOR) $0
+EOF
+    exit 1
+fi
+echo ">>> Qt major: ${BIN_QT_MAJOR:-unknown} | QMAKE: $QMAKE (Qt${QMAKE_QT_MAJOR:-?})"
 
 # --- 1. fetch linuxdeploy + qt plugin -----------------------------------------
 mkdir -p "$TOOLS"
