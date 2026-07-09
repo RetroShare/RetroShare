@@ -55,7 +55,7 @@ jobs:
         sudo apt-get install -y
         build-essential g++ cmake ninja-build pkg-config git
         qtbase5-dev qtbase5-dev-tools qtmultimedia5-dev libqt5svg5-dev
-        libqt5x11extras5-dev qttools5-dev qttools5-dev-tools
+        libqt5x11extras5-dev qttools5-dev qttools5-dev-tools libqt5charts5-dev
         libssl-dev zlib1g-dev libbz2-dev libbotan-2-dev libjson-c-dev
         libasio-dev libsqlcipher-dev
         libspeex-dev libspeexdsp-dev libminiupnpc-dev
