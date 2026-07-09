@@ -121,6 +121,83 @@ cmake -G Ninja -B Build-cmake -S . \
 cmake --build Build-cmake -j$(nproc)
 ```
 
+### Debug build (Linux)
+
+The commands above build `Release` (`-O3 -DNDEBUG`): aggressive inlining, assertions
+stripped. Fine for daily use, wrong under a debugger — backtraces land on
+misattributed lines and locals read `<optimized out>`. To step through code or
+investigate a crash with `gdb`, build `Debug` instead.
+
+Two changes to the Qt5 configure above:
+- swap `-DCMAKE_BUILD_TYPE=Release` for `-DCMAKE_BUILD_TYPE=Debug` (gives `-g -O0`);
+- pin explicit debug flags so every symbol is emitted and nothing is inlined:
+  `-DCMAKE_CXX_FLAGS_DEBUG` / `-DCMAKE_C_FLAGS_DEBUG` = `-g3 -O0 -fno-omit-frame-pointer`.
+
+`-g3` emits full debug info **including macro definitions**; `-O0` disables inlining so
+backtrace line numbers are exact; `-fno-omit-frame-pointer` keeps stack unwinding
+reliable.
+
+```bash
+rm -rf Build-cmake
+cmake -G Ninja -B Build-cmake -S . \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Debug \
+  -DCMAKE_CXX_FLAGS_DEBUG="-g3 -O0 -fno-omit-frame-pointer" \
+  -DCMAKE_C_FLAGS_DEBUG="-g3 -O0 -fno-omit-frame-pointer" \
+  -DCMAKE_DISABLE_FIND_PACKAGE_Qt6=ON \
+  -DRS_RNPLIB=ON -DRS_JSON_API=ON -DRS_WEBUI=ON -DRS_SERVICE_TERMINAL_WEBUI_PASSWORD=ON \
+  -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON -DRS_PLUGINS=ON -DRS_FORUM_DEEP_INDEX=OFF \
+  -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON \
+  -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON
+cmake --build Build-cmake -j$(nproc)
+```
+
+> For a **Qt6** debug build, drop `-DCMAKE_DISABLE_FIND_PACKAGE_Qt6=ON` and set
+> `-DRS_PLUGINS=OFF` (as in the Release Qt6 command); the debug flags are identical.
+
+> A Debug build compiles slower and produces a much larger binary — expected.
+> `RelWithDebInfo` (`-O2 -g`) is a middle ground with usable symbols, but because it
+> still optimizes it gives approximate backtraces; prefer `Debug` when chasing a crash.
+
+Run the GUI under gdb (the binary lands at `Build-cmake/retroshare-gui/retroshare`):
+
+```bash
+gdb ./Build-cmake/retroshare-gui/retroshare
+```
+
+then `run`, reproduce the issue, and `bt` at the crash for a full symbolized stack.
+
+#### AddressSanitizer (use-after-free / heap bugs)
+
+For memory-corruption bugs (use-after-free, heap overflow, double free), an ASan build
+reports the fault **at the moment of the bad access**, with three stacks — allocation,
+free, and the offending access — instead of a bare `SIGSEGV` after the fact. Add
+`-fsanitize=address` to both the compile and the link flags:
+
+```bash
+rm -rf Build-cmake
+cmake -G Ninja -B Build-cmake -S . \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Debug \
+  -DCMAKE_CXX_FLAGS_DEBUG="-g3 -O1 -fno-omit-frame-pointer -fsanitize=address" \
+  -DCMAKE_C_FLAGS_DEBUG="-g3 -O1 -fno-omit-frame-pointer -fsanitize=address" \
+  -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address" \
+  -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=address" \
+  -DCMAKE_MODULE_LINKER_FLAGS="-fsanitize=address" \
+  -DCMAKE_DISABLE_FIND_PACKAGE_Qt6=ON \
+  -DRS_RNPLIB=ON -DRS_JSON_API=ON -DRS_WEBUI=ON -DRS_SERVICE_TERMINAL_WEBUI_PASSWORD=ON \
+  -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON -DRS_PLUGINS=ON -DRS_FORUM_DEEP_INDEX=OFF \
+  -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON \
+  -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON
+cmake --build Build-cmake -j$(nproc)
+```
+
+> Needs the ASan runtime: `sudo apt-get install -y libasan8`. Run with leak detection
+> **off** — RetroShare allocates plenty at startup that would otherwise bury the report:
+> ```bash
+> ASAN_OPTIONS=abort_on_error=1:detect_leaks=0 ./Build-cmake/retroshare-gui/retroshare
+> ```
+> `-O1` (not `-O0`) is deliberate: ASan needs light optimization for acceptable runtime
+> and cleaner reports, and the sanitizer preserves accurate line numbers regardless.
+
 ---
 
 ## macOS (Homebrew, Apple Silicon)
