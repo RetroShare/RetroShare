@@ -44,6 +44,12 @@ It downloads `linuxdeploy` + `linuxdeploy-plugin-qt` into
 `build_scripts/AppImage/tools/` (once), lays out a clean `AppDir`, and bundles
 Qt + libs.
 
+**Qt5 or Qt6:** the script reads the Qt major from the compiled binary and picks
+the matching `qmake` automatically (`qmake6` for a Qt6 build, `qmake`/`qmake-qt5`
+for Qt5), and aborts early on a qmake/binary Qt mismatch. So to ship a Qt6
+AppImage, just compile the GUI against Qt6 — no script change. Override the
+choice with `QMAKE=/path/to/qmake` if needed.
+
 ---
 
 ## 2. Portable build — `build-appimage-docker.sh`
