@@ -58,6 +58,17 @@ git submodule update --init supportlibs/restbed supportlibs/libsam3 \
                               supportlibs/udp-discovery-cpp supportlibs/rapidjson
 ```
 
+**rapidjson / GCC >= 13:** the commit pinned by the super-project (`f54b0e47`)
+has a broken `GenericStringRef::operator=` that assigns to the `const` member
+`length`, so it fails to compile on modern toolchains (e.g. Debian 13 / GCC 14)
+with *"assignment of read-only member 'length'"*. Check out the upstream fix
+commit (#719, on Tencent/rapidjson master):
+
+```bash
+git -C supportlibs/rapidjson fetch origin
+git -C supportlibs/rapidjson checkout 9bd618f5
+```
+
 ---
 
 ## Linux (Ubuntu/Debian)
