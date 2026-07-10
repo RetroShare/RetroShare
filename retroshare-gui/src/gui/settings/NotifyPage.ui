@@ -109,20 +109,29 @@
             </item>
             <item>
              <widget class="QCheckBox" name="notify_Security">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Connection attempts from actual Retroshare users who added you as a friend whereas you didn't do it yourself. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
-               <string>Friend Requests</string>
+               <string>Incoming Friend Requests</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QCheckBox" name="notify_SecurityIp">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Outgoing connections that fail are mostly due to the peer not having you has a friend, but not always. Connections may sometimes fail because of internet problems, and various errors.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
-               <string>Ip security</string>
+               <string>Failed outgoing connections</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QCheckBox" name="notify_TlsAttempt">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Connection attempts from non-Retroshare peers. These are mostly bots crowling the internet looking for an open TLS connection to bruteforce.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Non-Retroshare connections</string>
               </property>
