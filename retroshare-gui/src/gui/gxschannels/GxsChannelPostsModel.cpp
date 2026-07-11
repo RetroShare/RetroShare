@@ -637,13 +637,20 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
             pairs.push_back(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId));
      }
 
-    // 2 - then call the async methods
+    // 2 - then persist them all in a single background batch: one thread and one
+    //     event for the whole set, instead of one detached thread (and one
+    //     event) per post, which froze the UI on large channels.
 
-    for(uint32_t i=0;i<pairs.size();++i)
-        RsThread::async([p=pairs[i], read_status]()	// use async because each markRead() waits for the token to complete in order to properly acknowledge it.
+    std::vector<RsGxsMessageId> msgIds;
+    msgIds.reserve(pairs.size());
+    for(const RsGxsGrpMsgIdPair& p : pairs)
+        msgIds.push_back(p.second);
+
+    if(!msgIds.empty())
+        RsThread::async([channelId=mChannelGroup.mMeta.mGroupId, msgIds, read_status]()
         {
-            if(!rsGxsChannels->setMessageReadStatus(p,read_status))
-                RsErr() << "setAllMsgReadStatus: failed to change status of msg " << p.first << " in group " << p.second << " to status " << read_status << std::endl;
+            if(!rsGxsChannels->setMessageReadStatus(channelId, msgIds, read_status))
+                RsErr() << "setAllMsgReadStatus: failed to change status of " << msgIds.size() << " messages in channel " << channelId << std::endl;
         });
 
     // 3 - update the local model data, since we don't catch the READ_STATUS_CHANGED event later, to avoid re-loading the msg.

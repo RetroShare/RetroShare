@@ -737,20 +737,38 @@ void RsPostedPostsModel::createPostsArray(std::vector<RsPostedPost>& posts)
 
 void RsPostedPostsModel::setAllMsgReadStatus(bool read)
 {
-    // make a temporary listof pairs
+    // Collect the posts whose status actually changes, persist them all in a
+    // single background batch (one thread and one event for the whole set,
+    // instead of one detached thread + one event per post, which froze the UI
+    // on large boards), then update the local model and refresh once.
 
-    std::list<RsGxsGrpMsgIdPair> pairs;
+    std::vector<RsGxsMessageId> msgIds;
+    msgIds.reserve(mPosts.size());
 
     for(uint32_t i=0;i<mPosts.size();++i)
-        pairs.push_back(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId));
+    {
+        bool post_status = !(IS_MSG_UNREAD(mPosts[i].mMeta.mMsgStatus) || IS_MSG_NEW(mPosts[i].mMeta.mMsgStatus));
 
-        // Call blocking API
+        if(post_status != read)
+            msgIds.push_back(mPosts[i].mMeta.mMsgId);
+    }
 
-    for(auto& p:pairs)
-        RsThread::async([read,p]()
+    if(!msgIds.empty())
+        RsThread::async([boardId=mPostedGroup.mMeta.mGroupId, msgIds, read]()
         {
-            rsPosted->setPostReadStatus(p,read);
+            rsPosted->setPostReadStatus(boardId, msgIds, read);
         } );
+
+    // Update the local model immediately, since we don't catch the resulting
+    // event later (that would reload the posts).
+
+    for(uint32_t i=0;i<mPosts.size();++i)
+        if(read)
+            mPosts[i].mMeta.mMsgStatus &= ~(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD | GXS_SERV::GXS_MSG_STATUS_GUI_NEW);
+        else
+            mPosts[i].mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mDisplayedNbPosts-1,0,(void*)NULL));
 }
 void RsPostedPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
 {
