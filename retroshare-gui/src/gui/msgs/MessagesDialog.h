@@ -110,6 +110,9 @@ private slots:
 
   void tabChanged(int tab);
   void tabCloseRequested(int tab);
+  
+  void exportMails();
+  void importMails();
 
 private:
     void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
