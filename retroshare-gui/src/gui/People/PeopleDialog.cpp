@@ -30,6 +30,7 @@
 #include "gui/Identity/IdDialog.h"
 #include "gui/MainWindow.h"
 #include "gui/common/FilesDefs.h"
+#include "util/DateTime.h"
 
 #include "retroshare/rspeers.h"
 #include "retroshare/rsidentity.h"
@@ -40,6 +41,7 @@
 #include "retroshare/rsids.h"
 
 #include <iostream>
+#include <QDateTime>
 #include <QMenu>
 #include <QMessageBox>
 
@@ -66,11 +68,12 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	//mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
 	//connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
 
-	
 	tabWidget->removeTab(1);
-	//hide circle flow widget not functional yet
-	pictureFlowWidgetExternal->hide();
-	widgetExternal->hide();
+	//hide circle flow widget not functional more
+	switchButton->hide(); //disable this, to enable the circles flow widget
+
+    UsagePage = new UsageStatistics(this); 
+    detailsStackedWidget->addWidget(UsagePage);
 
 	//need erase QtCreator Layout first(for Win)
 	delete idExternal->layout();
@@ -114,6 +117,12 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	QObject::connect(pictureFlowWidgetInternal, SIGNAL(dropEventOccurs(QDropEvent*)), this, SLOT(pf_dropEventOccursInt(QDropEvent*)));
 	pictureFlowWidgetInternal->setMinimumHeight(60);
 	pictureFlowWidgetInternal->setSlideSizeRatio(4/4.0);
+    
+    connect(filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
+	connect(inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
+	connect(switchButton, SIGNAL(clicked()), this, SLOT(toggleStackedPage()));
+	connect(statsButton, SIGNAL(clicked()), this, SLOT(toggledetailsStackedPage()));
+	connect(ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
 
 	QByteArray geometryExt = Settings->valueFromGroup("PeopleDialog", "SplitterExtState", QByteArray()).toByteArray();
 	if (geometryExt.isEmpty() == false) {
@@ -123,6 +132,15 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	if (geometryInt.isEmpty() == false) {
 		splitterInternal->restoreState(geometryInt);
 	}
+
+	// Create the sort menu
+	QMenu *sortMenu = new QMenu(this);
+	sortMenu->addAction(tr("Sort by Name"), this, SLOT(sortByName()));
+	sortMenu->addAction(tr("Sort by Popularity"), this, SLOT(sortByPopularity()));
+
+	// Assign the menu
+	filterButton->setMenu(sortMenu);
+	filterButton->setPopupMode(QToolButton::InstantPopup);
 
 	reloadAll();
 
@@ -144,127 +162,119 @@ void PeopleDialog::updateDisplay(bool complete)
 	reloadAll();
 }
 
+static QString getHumanReadableDuration(uint32_t seconds)
+{
+    if(seconds < 60)
+        return QString(QObject::tr("%1 seconds ago")).arg(seconds) ;
+    else if(seconds < 120)
+        return QString(QObject::tr("%1 minute ago")).arg(seconds/60) ;
+    else if(seconds < 3600)
+        return QString(QObject::tr("%1 minutes ago")).arg(seconds/60) ;
+    else if(seconds < 7200)
+        return QString(QObject::tr("%1 hour ago")).arg(seconds/3600) ;
+    else if(seconds < 24*3600)
+        return QString(QObject::tr("%1 hours ago")).arg(seconds/3600) ;
+    else if(seconds < 2*24*3600)
+        return QString(QObject::tr("%1 day ago")).arg(seconds/86400) ;
+    else
+        return QString(QObject::tr("%1 days ago")).arg(seconds/86400) ;
+}
+
 void PeopleDialog::reloadAll()
 {
-	/* Update identity list */
-	requestIdList();
-	requestCirclesList();
+    /* Update identity list */
+    requestIdList();
+    requestCirclesList();
 
-	/* grab all ids */
-	std::list<RsPgpId> friend_pgpIds;
-	std::list<RsPgpId> all_pgpIds;
-	std::list<RsPgpId>::iterator it;
+    std::list<RsPgpId> friend_pgpIds;
+    rsPeers->getGPGAcceptedList(friend_pgpIds);
 
-	std::set<RsPgpId> friend_set;
+    // 1. Collect widgets in a list for sorting
+    QList<IdentityWidget*> toSort;
 
-	rsPeers->getGPGAcceptedList(friend_pgpIds);
-	//rsPeers->getGPGAllList(all_pgpIds);
+    for(std::list<RsPgpId>::iterator it = friend_pgpIds.begin(); it != friend_pgpIds.end(); ++it) {
+        RsPeerDetails details;
+        if(rsPeers->getGPGDetails(*it, details)) {
+            std::map<RsPgpId, IdentityWidget*>::iterator itFound = _pgp_identity_widgets.find(*it);
+            
+            IdentityWidget *widget = nullptr;
+            if(itFound == _pgp_identity_widgets.end()) {
+                // Create new if not exists
+                widget = new IdentityWidget();
+                _pgp_identity_widgets[*it] = widget;
+                QObject::connect(widget, SIGNAL(addButtonClicked()), this, SLOT(iw_AddButtonClickedInt()));
+                QObject::connect(widget, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedInt(QList<FlowLayoutItem*>,bool&)));
+            } else {
+                widget = itFound->second;
+            }
 
+            widget->updateData(details);
+            toSort.append(widget);
+        }
+    }
 
-	for(it = friend_pgpIds.begin(); it != friend_pgpIds.end(); ++it) {
-		RsPeerDetails details;
-		if(rsPeers->getGPGDetails(*it, details)){
-			std::map<RsPgpId,IdentityWidget *>::iterator itFound;
-			if((itFound=_pgp_identity_widgets.find(*it)) == _pgp_identity_widgets.end()) {
-				IdentityWidget *new_item = new IdentityWidget();
-				new_item->updateData(details) ;
-				_pgp_identity_widgets[*it] = new_item ;
+    // 2. Sort alphabetically
+    std::sort(toSort.begin(), toSort.end(), [](IdentityWidget* a, IdentityWidget* b) {
+        return a->getName().compare(b->getName(), Qt::CaseInsensitive) < 0;
+    });
 
-				QObject::connect(new_item, SIGNAL(addButtonClicked()), this, SLOT(iw_AddButtonClickedInt()));
-				QObject::connect(new_item, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedInt(QList<FlowLayoutItem*>,bool&)));
-				_flowLayoutInt->addWidget(new_item);
-			} else {//if((itFound=_pgp_identity_widgets.find(gdItem.mPgpId)) == _pgp_identity_widgets.end())
-				IdentityWidget *idWidget = itFound->second;
-
-				idWidget->updateData(details) ;
-			}//else ((itFound=_pgp_identity_widgets.find(gdItem.mPgpId)) == _pgp_identity_widgets.end())
-
-		friend_set.insert(*it);
-		}//if(rsPeers->getGPGDetails(*it, details))
-	}//for(it = friend_pgpIds.begin(); it != friend_pgpIds.end(); ++it)
-
-	for(it = all_pgpIds.begin(); it != all_pgpIds.end(); ++it) {
-		if(friend_set.end() != friend_set.find(*it)) {
-			// already added as a friend.
-			continue;
-		}//if(friend_set.end() != friend_set.find(*it))
-
-		RsPeerDetails details;
-		if (rsPeers->getGPGDetails(*it, details)) {
-			std::map<RsPgpId,IdentityWidget *>::iterator itFound;
-			if((itFound=_pgp_identity_widgets.find(*it)) == _pgp_identity_widgets.end()) {
-				IdentityWidget *new_item = new IdentityWidget();
-				new_item->updateData(details) ;
-				_pgp_identity_widgets[*it] = new_item ;
-
-				QObject::connect(new_item, SIGNAL(addButtonClicked()), this, SLOT(iw_AddButtonClickedInt()));
-				QObject::connect(new_item, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedInt(QList<FlowLayoutItem*>,bool&)));
-				_flowLayoutInt->addWidget(new_item);
-			} else {//if((itFound=_pgp_identity_widgets.find(gdItem.mPgpId)) == _pgp_identity_widgets.end())
-				IdentityWidget *idWidget = itFound->second;
-
-				idWidget->updateData(details) ;
-			}//else ((itFound=_pgp_identity_widgets.find(gdItem.mPgpId)) == _pgp_identity_widgets.end())
-		}//if(rsPeers->getGPGDetails(*it, details))
-	}//for(it = all_pgpIds.begin(); it != all_pgpIds.end(); ++it)
+    // 3. Add to layout in sorted order
+    for(auto* w : toSort) {
+        _flowLayoutInt->addWidget(w);
+    }
+    
+    filterChanged(filterLineEdit->text()); 
 }
 
 void PeopleDialog::insertIdList(uint32_t token)
 {
-	std::cerr << "**** In insertIdList() ****" << std::endl;
+    std::cerr << "**** In insertIdList() ****" << std::endl;
+    std::vector<RsGxsIdGroup> gdataVector;
+    if (!rsIdentity->getGroupData(token, gdataVector)) {
+        std::cerr << "PeopleDialog::insertIdList() Error getting GroupData";
+        std::cerr << std::endl;
 
-	std::vector<RsGxsIdGroup> gdataVector;
-	std::vector<RsGxsIdGroup>::iterator gdIt;
+        return;
+    }
 
-	if (!rsIdentity->getGroupData(token, gdataVector)) {
-		std::cerr << "PeopleDialog::insertIdList() Error getting GroupData";
-		std::cerr << std::endl;
+    // Declare the list at the TOP of the function so it is available everywhere
+    QList<IdentityWidget*> toSort;
 
-		return;
-	}//if (!rsIdentity->getGroupData(token, gdataVector))
+    for (auto const& gdItem : gdataVector) {
+        RsPeerDetails details;
+        bool bGotDetail = gdItem.mPgpKnown && rsPeers->getGPGDetails(gdItem.mPgpId, details);
 
-	//RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
+        RsGxsId gxsId(gdItem.mMeta.mGroupId);
+        std::map<RsGxsId, IdentityWidget*>::iterator itFound = _gxs_identity_widgets.find(gxsId);
+        
+        IdentityWidget *widget = nullptr;
+        if(itFound == _gxs_identity_widgets.end()) {
+            widget = new IdentityWidget();
+            _gxs_identity_widgets[gxsId] = widget;
+            QObject::connect(widget, SIGNAL(addButtonClicked()), this, SLOT(iw_AddButtonClickedExt()));
+            QObject::connect(widget, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedExt(QList<FlowLayoutItem*>,bool&)));
+            connect(widget, SIGNAL(clicked()), this, SLOT(onIdentitySelected()));
+			//connect(widget, SIGNAL(widgetSelected(IdentityWidget*)), this, SLOT(onIdentitySelected(IdentityWidget*)));
+        } else {
+            widget = itFound->second;
+        }
 
-	/* Insert items */
-	int i=0 ;
-	for (gdIt = gdataVector.begin(); gdIt != gdataVector.end(); ++gdIt){
-		RsGxsIdGroup gdItem = (*gdIt);
-		bool bGotDetail = false;
+        if (bGotDetail) widget->updateData(gdItem, details);
+        else widget->updateData(gdItem);
 
-		RsPeerDetails details;
-		if (gdItem.mPgpKnown) {
-			bGotDetail = rsPeers->getGPGDetails(gdItem.mPgpId, details);
-		}//if (gdItem.mPgpKnown)
+        toSort.append(widget);
+    }
 
-		std::map<RsGxsId,IdentityWidget *>::iterator itFound;
-		if((itFound=_gxs_identity_widgets.find(RsGxsId(gdItem.mMeta.mGroupId))) == _gxs_identity_widgets.end()) {
-			std::cerr << "Loading data vector identity GXS ID = " << gdItem.mMeta.mGroupId << ", i="<< i << std::endl;
+    // Sort and add to layout
+    std::sort(toSort.begin(), toSort.end(), [](IdentityWidget* a, IdentityWidget* b) {
+        return a->getName().compare(b->getName(), Qt::CaseInsensitive) < 0;
+    });
 
-			IdentityWidget *new_item = new IdentityWidget();
-			if (bGotDetail) {
-				new_item->updateData(gdItem, details);
-			} else {//if (bGotDetail)
-				new_item->updateData(gdItem);
-			}//else (bGotDetail)
-			_gxs_identity_widgets[RsGxsId(gdItem.mMeta.mGroupId)] = new_item ;
+    for(auto* w : toSort) {
+        _flowLayoutExt->addWidget(w);
+    }
 
-			QObject::connect(new_item, SIGNAL(addButtonClicked()), this, SLOT(iw_AddButtonClickedExt()));
-			QObject::connect(new_item, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedExt(QList<FlowLayoutItem*>,bool&)));
-			_flowLayoutExt->addWidget(new_item);
-			++i ;
-		} else {//if((itFound=_gxs_identity_widgets.find(RsGxsId(gdItem.mMeta.mGroupId))) == _gxs_identity_widgets.end())
-
-			std::cerr << "Updating data vector identity GXS ID = " << gdItem.mMeta.mGroupId << std::endl;
-			IdentityWidget *idWidget = itFound->second;
-
-			if (bGotDetail) {
-				idWidget->updateData(gdItem, details) ;
-			} else {//if (bGotDetail)
-				idWidget->updateData(gdItem) ;
-			}//else (bGotDetail)
-
-		}//else ((itFound=_gxs_identity_widgets.find(RsGxsId(gdItem.mMeta.mGroupId))) == _gxs_identity_widgets.end()))
-	}//for (gdIt = gdataVector.begin(); gdIt != gdataVector.end(); ++gdIt)
+    filterChanged(filterLineEdit->text());
 }
 
 void PeopleDialog::insertCircles(uint32_t token)
@@ -366,6 +376,8 @@ void PeopleDialog::insertCircles(uint32_t token)
 			}
 		}
 	}
+    
+	filterChanged(filterLineEdit->text());
 }
 
 void PeopleDialog::requestIdList()
@@ -637,18 +649,23 @@ void PeopleDialog::sendMessage()
 
 void PeopleDialog::sendInvite()
 {
-	QAction *action =
-	    qobject_cast<QAction *>(QObject::sender());
-	if (action) {
-		QString data = action->data().toString();
+    RsGxsId gxs_id;
 
-   	RsGxsId gxs_id = RsGxsId(data.toStdString());;
-    
-    MessageComposer::sendInvite(gxs_id,false);
+    // Check if triggered by a Context Menu Action
+    QAction *action = qobject_cast<QAction *>(QObject::sender());
+    if (action) {
+        QString data = action->data().toString();
+        gxs_id = RsGxsId(data.toStdString());
+    } 
+    // Otherwise, check if it was the UI Button
+    else {
+        gxs_id = mCurrentSelectedId;
+    }
 
-	}
-    
-
+    // Execute the invite if the ID is valid
+    if (!gxs_id.isNull()) {
+        MessageComposer::sendInvite(gxs_id, false);
+    }
 }
 
 void PeopleDialog::addtoContacts()
@@ -1121,3 +1138,335 @@ void PeopleDialog::populatePictureFlowInt()
 	}//for (it=_int_circles_widgets.begin(); it!=_int_circles_widgets.end(); ++it)
 	pictureFlowWidgetInternal->setSlideSizeRatio(4/4.0);
 }
+
+void PeopleDialog::filterChanged(const QString &text)
+{
+    Qt::CaseSensitivity cs = Qt::CaseInsensitive;
+
+    // Helper lambda to filter a map of widgets
+    auto filterMap = [&](auto& widgetMap) {
+        for (auto it = widgetMap.begin(); it != widgetMap.end(); ++it) {
+            QWidget* w = it->second;
+            QString name;
+            
+            // Get name based on widget type
+            if (auto* idW = qobject_cast<IdentityWidget*>(w)) name = idW->getName();
+            else if (auto* cirW = qobject_cast<CircleWidget*>(w)) name = cirW->getName();
+
+            // Toggle visibility based on search match
+            w->setVisible(name.contains(text, cs));
+        }
+    };
+
+    // Apply filtering to all maps
+    filterMap(_pgp_identity_widgets);
+    filterMap(_gxs_identity_widgets);
+    filterMap(_ext_circles_widgets);
+    filterMap(_int_circles_widgets);
+
+    // CRITICAL: Tell the layouts to recalculate positions without breaking events
+    _flowLayoutExt->update();
+    _flowLayoutInt->update();
+}
+
+void PeopleDialog::sortByName()
+{
+    clearAllSelections();
+	clearPerson();
+    applySortAndFilter(true); // true for name
+}
+
+void PeopleDialog::sortByPopularity()
+{
+    clearAllSelections();
+	clearPerson();
+    applySortAndFilter(false); // false for popularity
+}
+
+void PeopleDialog::applySortAndFilter(bool byName)
+{
+    clearAllSelections();
+    
+    QString filterText = filterLineEdit->text();
+    Qt::CaseSensitivity cs = Qt::CaseInsensitive;
+
+    // We process internal and external layouts separately
+    auto sortLayout = [&](FlowLayout* layout, auto& widgetMap) {
+        // 1. Collect widgets from the map
+        QList<QWidget*> list;
+        for (auto const& [id, w] : widgetMap) {
+            list << w;
+            
+            // Uncheck/Deselect the item here ---
+            w->setIsSelected(false);
+        }
+
+        // 2. Sort the list
+        std::sort(list.begin(), list.end(), [byName](QWidget* a, QWidget* b) {
+            auto* idA = qobject_cast<IdentityWidget*>(a);
+            auto* idB = qobject_cast<IdentityWidget*>(b);
+            if (!idA || !idB) return false;
+
+            if (byName) {
+                return idA->getName().compare(idB->getName(), Qt::CaseInsensitive) < 0;
+            } else {
+                // Popularity (Higher reputation first)
+                return idA->getReputation() > idB->getReputation();
+            }
+        });
+
+        // 3. Clear and Re-add to layout in sorted order
+        for (QWidget* w : list) {
+            // Apply filter while we are at it
+            QString name = qobject_cast<IdentityWidget*>(w)->getName();
+            w->setVisible(name.contains(filterText, cs));
+            
+            layout->addWidget(w); 
+        }
+    };
+
+    sortLayout(_flowLayoutInt, _pgp_identity_widgets);
+    sortLayout(_flowLayoutExt, _gxs_identity_widgets);
+}
+
+void PeopleDialog::clearAllSelections()
+{
+    // Tell every widget to visually uncheck
+    auto clearMap = [](auto& widgetMap) {
+        for (auto const& [id, w] : widgetMap) {
+            if (w) w->setIsSelected(false);
+        }
+    };
+
+    clearMap(_pgp_identity_widgets);
+    clearMap(_gxs_identity_widgets);
+    clearMap(_ext_circles_widgets);
+    clearMap(_int_circles_widgets);
+}
+
+void PeopleDialog::loadIdentityLabels(const RsGxsIdGroup& data)
+{
+    RsPgpId ownPgpId = rsPeers->getGPGOwnId();
+
+    lineEdit_PublishTS->setText(DateTime::formatDateTime(data.mMeta.mPublishTs));
+    lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
+
+    if(data.mPgpKnown)
+        lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
+    else
+        lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()) + tr(" [unverified]"));
+
+    // Update Visibility for GPG specific items
+    bool hasPgp = !data.mPgpId.isNull();
+    autoBanIdentities_CB->setVisible(hasPgp);
+    //banoption_label->setVisible(hasPgp);
+    lineEdit_GpgId->setVisible(hasPgp);
+    label_GpgId->setVisible(hasPgp);
+
+    time_t now = time(NULL);
+    lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS));
+    headerTextLabel_Person->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
+
+    // Avatar Loading
+    QPixmap pixmap;
+    if(data.mImage.mSize == 0 || !GxsIdDetails::loadPixmapFromData(data.mImage.mData, data.mImage.mSize, pixmap, GxsIdDetails::LARGE))
+        pixmap = GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId), GxsIdDetails::LARGE);
+
+    avatarLabel->setPixmap(pixmap.scaled(64, 64, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+	if (data.mPgpKnown)
+	{
+		RsPeerDetails details;
+		rsPeers->getGPGDetails(data.mPgpId, details);
+		lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
+	}
+	else
+	{
+		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
+			lineEdit_GpgName->setText(tr("[Unknown node]"));
+		else
+			lineEdit_GpgName->setText(tr("Anonymous Id"));
+	}
+
+	if(data.mPgpId.isNull())
+	{
+		lineEdit_GpgId->hide() ;
+		label_GpgId->hide() ;
+	}
+	else
+	{
+		lineEdit_GpgId->show() ;
+		label_GpgId->show() ;
+	}
+
+    if(data.mPgpKnown)
+    {
+		lineEdit_GpgName->show() ;
+		label_GpgName->show() ;
+    }
+    else
+    {
+		lineEdit_GpgName->hide() ;
+		label_GpgName->hide() ;
+    }
+
+    // Type and Node logic
+
+    bool isLinkedToOwnPgpId = (data.mPgpKnown && (data.mPgpId == ownPgpId)) ;
+    bool isOwnId = (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
+
+    if(isOwnId)
+        if (isLinkedToOwnPgpId)
+            lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node")) ;
+        else
+            if (data.mMeta.mGroupFlags & (GXS_SERV::FLAG_PRIVACY_PRIVATE | RSGXSID_GROUPFLAG_REALID))
+                lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node but not yet validated")) ;
+            else
+                lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
+    else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
+    {
+        if (data.mPgpKnown)
+            if (rsPeers->isGPGAccepted(data.mPgpId))
+                lineEdit_Type->setText(tr("Linked to a friend Retroshare node")) ;
+            else
+                lineEdit_Type->setText(tr("Linked to a known Retroshare node")) ;
+        else
+            lineEdit_Type->setText(tr("Linked to unknown Retroshare node")) ;
+    }
+    else
+    {
+        lineEdit_Type->setText(tr("Anonymous identity")) ;
+    }
+
+    autoBanIdentities_CB->setChecked(rsReputations->isNodeBanned(data.mPgpId));
+
+	/* now fill in the reputation information */
+
+	RsReputationInfo info;
+    rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),data.mPgpId,info) ;
+
+    QString frep_string ;
+    if(info.mFriendsPositiveVotes > 0) frep_string += QString::number(info.mFriendsPositiveVotes) + tr(" positive ") ;
+    if(info.mFriendsNegativeVotes > 0) frep_string += QString::number(info.mFriendsNegativeVotes) + tr(" negative ") ;
+
+    if(info.mFriendsPositiveVotes==0 && info.mFriendsNegativeVotes==0)
+        frep_string = tr("No votes from friends") ;
+
+    neighborNodesOpinion_TF->setText(frep_string) ;
+
+    label_positive->setText(QString::number(info.mFriendsPositiveVotes));
+    label_negative->setText(QString::number(info.mFriendsNegativeVotes));
+
+	switch(info.mOverallReputationLevel)
+	{
+	case RsReputationLevel::LOCALLY_POSITIVE:
+		overallOpinion_TF->setText(tr("Positive")); break;
+	case RsReputationLevel::LOCALLY_NEGATIVE:
+		overallOpinion_TF->setText(tr("Negative (Banned by you)")); break;
+	case RsReputationLevel::REMOTELY_POSITIVE:
+		overallOpinion_TF->setText(tr("Positive (according to your friends)"));
+		break;
+	case RsReputationLevel::REMOTELY_NEGATIVE:
+		overallOpinion_TF->setText(tr("Negative (according to your friends)"));
+		break;
+	case RsReputationLevel::NEUTRAL: // fallthrough
+	default:
+		overallOpinion_TF->setText(tr("Neutral")) ; break ;
+	}
+
+	switch(info.mOwnOpinion)
+	{
+    case RsOpinion::NEGATIVE: ownOpinion_CB->setCurrentIndex(0); break;
+    case RsOpinion::NEUTRAL : ownOpinion_CB->setCurrentIndex(1); break;
+    case RsOpinion::POSITIVE: ownOpinion_CB->setCurrentIndex(2); break;
+	default:
+		std::cerr << "Unexpected value in own opinion: "
+		          << static_cast<uint32_t>(info.mOwnOpinion) << std::endl;
+		break;
+	}
+
+    // Toggle Edit/Invite buttons
+    editButton->setVisible(isOwnId);
+    inviteButton->setVisible(!isOwnId);
+}
+
+void PeopleDialog::onIdentitySelected()
+{
+    IdentityWidget* widget = qobject_cast<IdentityWidget*>(sender());
+    if (widget) {
+        // Save the ID for the Invite Button to use later
+        mCurrentSelectedId = RsGxsId(widget->groupInfo().mMeta.mGroupId);
+        // Load the labels
+        this->loadIdentityLabels(widget->groupInfo());
+        
+        // Update the Usage Statistics page
+        UsageStatistics* usageWidget = qobject_cast<UsageStatistics*>(UsagePage);
+        
+        if (usageWidget) {
+            // This triggers the internal getIdDetails() call in UsageStatistics
+            usageWidget->setUsageData(widget->groupInfo());
+        }
+        
+        clearAllSelections();
+        widget->setIsSelected(true);
+    }
+}
+
+void PeopleDialog::clearPerson()
+{
+	headerTextLabel_Person->setText(tr("People"));
+	avatarLabel->clear();
+	avatarLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/people.png"));
+
+	lineEdit_GpgId->clear();
+	lineEdit_KeyId->clear();
+	lineEdit_Type->clear();
+	lineEdit_GpgName->clear();
+	lineEdit_PublishTS->clear();
+	lineEdit_LastUsed->clear();
+	neighborNodesOpinion_TF->clear();
+	overallOpinion_TF->clear();
+	label_positive->clear();
+	label_negative->clear();
+	ownOpinion_CB->setCurrentIndex(1);
+	autoBanIdentities_CB->setChecked(false);
+}
+
+void PeopleDialog::toggleStackedPage()
+{
+    if (widgetExternal->currentIndex() == 0) {
+        widgetExternal->setCurrentIndex(1);
+    } else {
+        widgetExternal->setCurrentIndex(0);
+    }
+}
+
+void PeopleDialog::toggledetailsStackedPage()
+{
+    if (detailsStackedWidget->currentIndex() == 0) {
+        detailsStackedWidget->setCurrentIndex(1);
+    } else {
+        detailsStackedWidget->setCurrentIndex(0);
+    }
+}
+
+void PeopleDialog::modifyReputation()
+{
+	RsGxsId id(lineEdit_KeyId->text().toStdString());
+
+	RsOpinion op;
+
+	switch(ownOpinion_CB->currentIndex())
+	{
+	case 0: op = RsOpinion::NEGATIVE; break;
+	case 1: op = RsOpinion::NEUTRAL ; break;
+	case 2: op = RsOpinion::POSITIVE; break;
+	default:
+		std::cerr << "Wrong value from opinion combobox. Bug??" << std::endl;
+		return;
+	}
+	rsReputations->setOwnOpinion(id,op);
+
+	return;
+}
+
