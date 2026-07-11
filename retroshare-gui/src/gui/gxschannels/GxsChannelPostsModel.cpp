@@ -655,67 +655,39 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 
 void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
 {
-#ifdef GXSPROFILING
-    // Start timer to measure how long the UI thread is occupied
-    auto startTime = std::chrono::steady_clock::now();
+    // No need to call preMods()/postMods() here because we're not changing the model
+    // All operations below are done async
 
-    RsDbg() << "GXSPROFILING [UI-CHANNELS]: Starting setAllMsgReadStatus for " << mPosts.size() << " messages";
-#endif
+    // 1 - copy all msg/grp id groups, so that changing the mPosts list while calling the async method will not break the work
 
-    // 1 - copy all msg/grp id groups
-    // This part is done on the UI thread and can be slow if mPosts is large
     std::vector<RsGxsGrpMsgIdPair> pairs;
 
-    for(uint32_t i=0; i<mPosts.size(); ++i)
+    for(uint32_t i=0;i<mPosts.size();++i)
     {
         bool post_status = !((IS_MSG_UNREAD(mPosts[i].mMeta.mMsgStatus) || IS_MSG_NEW(mPosts[i].mMeta.mMsgStatus)));
 
         if(post_status != read_status)
-            pairs.push_back(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId, mPosts[i].mMeta.mMsgId));
-    }
-
-#ifdef GXSPROFILING
-    RsDbg() << "GXSPROFILING [UI-CHANNELS]: Found " << pairs.size() << " messages requiring status change";
-#endif
+            pairs.push_back(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId));
+     }
 
     // 2 - then call the async methods
-    // We are launching N threads. The overhead of creating these threads 
-    // stays on the UI thread and contributes to the freeze.
-    for(uint32_t i=0; i<pairs.size(); ++i)
-    {
-        RsThread::async([p=pairs[i], read_status]()
+
+    for(uint32_t i=0;i<pairs.size();++i)
+        RsThread::async([p=pairs[i], read_status]()	// use async because each markRead() waits for the token to complete in order to properly acknowledge it.
         {
-            if(!rsGxsChannels->setMessageReadStatus(p, read_status))
+            if(!rsGxsChannels->setMessageReadStatus(p,read_status))
                 RsErr() << "setAllMsgReadStatus: failed to change status of msg " << p.first << " in group " << p.second << " to status " << read_status << std::endl;
         });
 
-#ifdef GXSPROFILING
-        if (i > 0 && i % 1000 == 0) {
-            RsDbg() << "GXSPROFILING [UI-CHANNELS]: Launched " << i << " async threads...";
-        }
-#endif
-    }
+    // 3 - update the local model data, since we don't catch the READ_STATUS_CHANGED event later, to avoid re-loading the msg.
 
-    // 3 - update the local model data
-    // This is the visual update part
-    for(uint32_t i=0; i<mPosts.size(); ++i)
-    {
+    for(uint32_t i=0;i<mPosts.size();++i)
         if(read_status)
             mPosts[i].mMeta.mMsgStatus &= ~(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD | GXS_SERV::GXS_MSG_STATUS_GUI_NEW);
         else
             mPosts[i].mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD ;
-    }
 
-    // Calculate total time spent in this function before returning control to the UI
-#ifdef GXSPROFILING
-    auto endTime = std::chrono::steady_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
-
-    RsDbg() << "GXSPROFILING [UI-CHANNELS]: Finished setAllMsgReadStatus";
-    RsDbg() << "GXSPROFILING [UI-CHANNELS]: TOTAL UI THREAD FREEZE: " << duration << " ms";
-#endif
-
-    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1, mColumns-1, (void*)NULL));
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,mColumns-1,(void*)NULL));
 }
 
 void RsGxsChannelPostsModel::updatePostWithNewComment(const RsGxsMessageId& msg_id)
