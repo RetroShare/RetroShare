@@ -165,7 +165,7 @@ private:
 	void setForumMessageSummary(const std::vector<RsGxsForumMsg>& messages);
 	void recursUpdateReadStatusAndTimes(ForumModelIndex i,bool& has_unread_below,bool& has_read_below);
 	uint32_t recursUpdateFilterStatus(ForumModelIndex i,int column,const QStringList& strings);
-	void recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children);
+	void recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children,std::vector<RsGxsMessageId>& changed_msgs);
 
 	static void generateMissingItem(const RsGxsMessageId &msgId,ForumModelPostEntry& entry);
 	static ForumModelIndex addEntry(std::vector<ForumModelPostEntry>& posts,const ForumModelPostEntry& entry,ForumModelIndex parent);
