@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TasksWidget</class>
+ <widget class="QWidget" name="TasksWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <layout class="QHBoxLayout" name="mainLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="handleWidth">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="sidebar" native="true">
+      <layout class="QVBoxLayout" name="sidebarLayout">
+       <property name="spacing">
+        <number>12</number>
+       </property>
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
+        <number>10</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="newTaskBtn">
+         <property name="styleSheet">
+          <string notr="true">font-weight: bold; background-color: #4a90e2; color: white; border-radius: 4px; padding: 6px;</string>
+         </property>
+         <property name="text">
+          <string>+ New Task</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCalendarWidget" name="sidebarCalendar">
+         <property name="gridVisible">
+          <bool>true</bool>
+         </property>
+         <property name="horizontalHeaderFormat">
+          <enum>QCalendarWidget::SingleLetterDayNames</enum>
+         </property>
+         <property name="verticalHeaderFormat">
+          <enum>QCalendarWidget::NoVerticalHeader</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="filterLabel">
+         <property name="styleSheet">
+          <string notr="true">font-weight: bold; font-size: 14px;</string>
+         </property>
+         <property name="text">
+          <string>Filter Tasks</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="filterList"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="calendarsLabel">
+         <property name="styleSheet">
+          <string notr="true">font-weight: bold; font-size: 14px;</string>
+         </property>
+         <property name="text">
+          <string>My Calendars</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="calendarList">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="sharedCalendarsLabel">
+         <property name="styleSheet">
+          <string notr="true">font-weight: bold; font-size: 14px; margin-top: 10px;</string>
+         </property>
+         <property name="text">
+          <string>Shared Calendars</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="sharedCalendarList">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="mainArea" native="true">
+      <layout class="QVBoxLayout" name="mainAreaLayout">
+       <property name="spacing">
+        <number>10</number>
+       </property>
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
+        <number>10</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="topLayout">
+         <item>
+          <widget class="QLineEdit" name="quickTaskEdit">
+           <property name="placeholderText">
+            <string>Click here to add a new task</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="searchEdit">
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="placeholderText">
+            <string>Search tasks...</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="taskTable">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SingleSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

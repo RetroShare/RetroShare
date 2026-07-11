@@ -26,6 +26,8 @@
 #include <QTimer>
 
 #include "MessagesDialog.h"
+#include "gui/msgs/CalendarWidget.h"
+#include "gui/msgs/TasksWidget.h"
 
 #include "gui/common/TagDefs.h"
 #include "gui/common/PeerDefs.h"
@@ -147,6 +149,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     lockUpdate = 0;
     lastSelectedIndex = QModelIndex();
     mLastCurrentQuickViewRow = -1;
+    mCalendarWidget = nullptr;
+    mTasksWidget = nullptr;
 
     msgWidget = new MessageWidget(true, this);
 	ui.msgLayout->addWidget(msgWidget);
@@ -265,6 +269,32 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	// remove close button of the the first tab
 	ui.tabWidget->hideCloseButton(0);
 	ui.tabWidget->setHideTabBarWithOneTab(true);
+
+	int tagIndex = ui.msgsButtons_HL->indexOf(ui.tagButton);
+	if (tagIndex == -1) {
+		tagIndex = 0;
+	}
+
+	QToolButton *calendarBtn = new QToolButton(this);
+	calendarBtn->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/svg/calendar-month.svg"));
+	calendarBtn->setIconSize(QSize(24, 24));
+	calendarBtn->setText(tr("Calendar"));
+	calendarBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	calendarBtn->setAutoRaise(true);
+	calendarBtn->setToolTip(tr("Show Calendar"));
+	connect(calendarBtn, SIGNAL(clicked()), this, SLOT(showCalendarTab()));
+
+	QToolButton *tasksBtn = new QToolButton(this);
+	tasksBtn->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/svg/calendar-today.svg"));
+	tasksBtn->setIconSize(QSize(24, 24));
+	tasksBtn->setText(tr("Tasks"));
+	tasksBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	tasksBtn->setAutoRaise(true);
+	tasksBtn->setToolTip(tr("Show Tasks"));
+	connect(tasksBtn, SIGNAL(clicked()), this, SLOT(showTasksTab()));
+
+	ui.msgsButtons_HL->insertWidget(tagIndex, calendarBtn);
+	ui.msgsButtons_HL->insertWidget(tagIndex + 1, tasksBtn);
 
 	int H = misc::getFontSizeFactor("HelpButton").height();
 	QString help_str = tr(
@@ -1575,8 +1605,14 @@ void MessagesDialog::emptyTrash()
 		rsMail->MessageDelete(it->msgId);
 }
 
-void MessagesDialog::tabChanged(int /*tab*/)
+void MessagesDialog::tabChanged(int tab)
 {
+	QWidget *widget = ui.tabWidget->widget(tab);
+	if (widget == mCalendarWidget && mCalendarWidget) {
+		mCalendarWidget->refreshData();
+	} else if (widget == mTasksWidget && mTasksWidget) {
+		mTasksWidget->refreshData();
+	}
 	connectActions();
 	updateInterface();
 }
@@ -1590,15 +1626,39 @@ void MessagesDialog::tabCloseRequested(int tab)
 	QWidget *widget = ui.tabWidget->widget(tab);
 
 	if (widget) {
+		if (widget == mCalendarWidget) {
+			mCalendarWidget = nullptr;
+		} else if (widget == mTasksWidget) {
+			mTasksWidget = nullptr;
+		}
+		ui.tabWidget->removeTab(tab);
 		widget->deleteLater();
 	}
+}
+
+void MessagesDialog::showCalendarTab()
+{
+	if (!mCalendarWidget) {
+		mCalendarWidget = new CalendarWidget(this);
+		ui.tabWidget->addTab(mCalendarWidget, FilesDefs::getIconFromQtResourcePath(":/icons/svg/calendar-month.svg"), tr("Calendar"));
+	}
+	ui.tabWidget->setCurrentWidget(mCalendarWidget);
+}
+
+void MessagesDialog::showTasksTab()
+{
+	if (!mTasksWidget) {
+		mTasksWidget = new TasksWidget(this);
+		ui.tabWidget->addTab(mTasksWidget, FilesDefs::getIconFromQtResourcePath(":/icons/svg/calendar-today.svg"), tr("Tasks"));
+	}
+	ui.tabWidget->setCurrentWidget(mTasksWidget);
 }
 
 void MessagesDialog::closeTab(const std::string &msgId)
 {
     QList<MessageWidget*> msgWidgets;
 
-    for (int tab = 1; tab < ui.tabWidget->count(); ++tab) {
+    for (int tab = 3; tab < ui.tabWidget->count(); ++tab) {
         MessageWidget *msgWidget = dynamic_cast<MessageWidget*>(ui.tabWidget->widget(tab));
         if (msgWidget && msgWidget->msgId() == msgId) {
             msgWidgets.append(msgWidget);
@@ -1626,7 +1686,7 @@ void MessagesDialog::connectActions()
 	ui.actionReplyAll->disconnect();
 	ui.actionForward->disconnect();
 
-	if (msgWidget) {
+	if (msg) {
 		// connect actions
 		msg->connectAction(MessageWidget::ACTION_REPLY, ui.actionReply);
 		msg->connectAction(MessageWidget::ACTION_REPLY_ALL, ui.actionReplyAll);
