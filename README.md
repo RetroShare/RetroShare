@@ -1,4 +1,4 @@
-## RetroShare
+README: updated# RetroShare
 
 RetroShare is a decentralized, private, secure, cross-platform, communication
 toolkit.
@@ -13,7 +13,7 @@ RetroShare provides file sharing, chat, messages, forums, channels, boards and m
 [![libretroshare GNU/Linux, Android (via Gitlab CI)](https://gitlab.com/RetroShare/libretroshare/badges/master/pipeline.svg)](https://gitlab.com/RetroShare/libretroshare/-/commits/master)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/RetroShare/RetroShare)
 
-## Get the source
+README: updated# Get the source
 
 Clone this repository, enter the directory and then get the submodules with the
 following command
@@ -22,34 +22,35 @@ following command
 
 
 
-## Compilation
+README: updated# Compilation
 
 Short of comprehensive and updated documentation on how to build RetroShare
 (for the many supported platforms it runs on), scripts and recipes are provided
 in the aim of creating packages for the supported platforms (and more)
 in the [build_scripts](https://github.com/RetroShare/RetroShare/tree/master/build_scripts) directory of this repository.
 
-## Compilation on Windows
+README: updated# Compilation on Windows
 Follow this file : [WindowsMSys2_InstallGuide](https://github.com/RetroShare/RetroShare/blob/master/build_scripts/Windows-msys2/WindowsMSys2_InstallGuide.md)
 
 With QtCreator :   [Windows-QtCreator-InstallGuide](https://github.com/RetroShare/RetroShare/blob/master/build_scripts/Windows/Windows-QtCreator-InstallGuide.md)
 
-## Compilation on MacOSX
+README: updated# Compilation on MacOSX
 
 Follow this file : [MacOS_X_InstallGuide](https://github.com/RetroShare/RetroShare/blob/master/build_scripts/OSX/MacOS_X_InstallGuide.md)
 
-## Compilation on Linux
+README: updated# Compilation on Linux
 
 Follow this file : [Linux_InstallGuide](https://github.com/RetroShare/RetroShare/blob/master/build_scripts/Debian+Ubuntu/Linux_InstallGuide.md)
 
-## Releases
+README: updated# Releases
 
 Latest release [here](https://github.com/RetroShare/RetroShare/releases)
 
 Other Builds [RetroShare Downloads](https://retroshare.cc/downloads.html)
 
 
-## Documentation
+README: updated# Documentation
 
 - [RetroShare Docs](https://retrosharedocs.readthedocs.io/en/latest/)
 
+\n## Contributing\n\nPlease read the build scripts in build_scripts\/ for contribution guidelines.
