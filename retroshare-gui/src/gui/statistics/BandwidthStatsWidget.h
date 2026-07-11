@@ -42,10 +42,14 @@ protected slots:
     void toggleLogScale(bool b);
     void updateLegendType(int n);
     void updateGraphSelection(int n);
+    void updateTimingSelection(int n);
+    void clearHistory();
+    void updateDataSelection(int n);
 
 private:
     void processSettings(bool bLoad);
     bool m_bProcessSettings;
+    bool m_mousePressed;
 
     Ui::BwStatsWidget ui;
 
