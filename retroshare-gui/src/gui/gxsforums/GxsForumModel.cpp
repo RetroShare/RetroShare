@@ -871,19 +871,34 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
 		return ;
 
+	// Collect the posts whose read status actually changes and update the
+	// in-memory model right away, but do NOT touch the backend or the view once
+	// per message: doing so used to spawn one detached thread AND emit one
+	// dataChanged() per post, which froze the UI for a very long time (and could
+	// crash) when marking a large forum (thousands of posts) as read.
+	std::vector<RsGxsMessageId> changed_msgs;
+	recursSetMsgReadStatus(entry,read_status,with_children,changed_msgs) ;
+
 	bool has_unread_below, has_read_below;
-	recursSetMsgReadStatus(entry,read_status,with_children) ;
 	recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below);
 
-    // also emit dataChanged() for parents since they need to re-draw
+	// Persist every change in a single background batch. This never runs on the
+	// GUI thread and spawns exactly one thread regardless of how many posts are
+	// affected, so the UI stays responsive even on very large forums.
+	if(!changed_msgs.empty())
+		RsThread::async( [grpId=mForumGroup.mMeta.mGroupId,changed_msgs,read_status]()
+		{
+			rsGxsForums->markRead(grpId, changed_msgs, read_status);
+		});
 
-    for(QModelIndex j = i.parent(); j.isValid(); j = j.parent())
-    {
-        emit dataChanged(j, j.sibling(j.row(), COLUMN_THREAD_NB_COLUMNS - 1));
-    }
+	// A single refresh of the whole view instead of one dataChanged() per post.
+	if(mTreeMode == TREE_MODE_FLAT)
+		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+	else
+		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts[0].mChildren.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 }
 
-void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children)
+void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children,std::vector<RsGxsMessageId>& changed_msgs)
 {
     uint32_t newStatus = (read_status ? mPosts[i].mMsgStatus & ~static_cast<int>(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD)
                                       : mPosts[i].mMsgStatus |  static_cast<int>(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD));
@@ -897,33 +912,21 @@ void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,
 		//Don't recurs post versions as this should be done before, if no change.
 		auto s = getPostVersions(mPosts[i].mMsgId) ;
 
+		// Just collect the affected message ids here. The backend is updated
+		// once, in a single batched call issued by setMsgReadStatus(), instead
+		// of one detached thread (and one dataChanged()) per message.
 		if(!s.empty())
 			for(auto it(s.begin());it!=s.end();++it)
-			{
-                RsThread::async( [grpId=mForumGroup.mMeta.mGroupId,msgId=it->second,original_msg_id=mPosts[i].mMsgId,read_status]()
-                {
-                    rsGxsForums->markRead(std::make_pair( grpId, msgId ), read_status);
-                    std::cerr << "Setting version " << msgId << " of post " << original_msg_id << " as read." << std::endl;
-                });
-			}
+				changed_msgs.push_back(it->second);
 		else
-            RsThread::async( [grpId=mForumGroup.mMeta.mGroupId,original_msg_id=mPosts[i].mMsgId,read_status]()
-            {
-                rsGxsForums->markRead(std::make_pair( grpId, original_msg_id), read_status);
-            });
-
-        void *ref ;
-        convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
-
-        QModelIndex itemIndex = (mTreeMode == TREE_MODE_FLAT)?createIndex(i - 1, 0, ref):createIndex(mPosts[i].prow,0,ref);
-        emit dataChanged(itemIndex, itemIndex.sibling(itemIndex.row(), COLUMN_THREAD_NB_COLUMNS - 1));
+			changed_msgs.push_back(mPosts[i].mMsgId);
 	}
 
 	if(!with_children)
 		return;
 
 	for(uint32_t j=0;j<mPosts[i].mChildren.size();++j)
-		recursSetMsgReadStatus(mPosts[i].mChildren[j],read_status,with_children);
+		recursSetMsgReadStatus(mPosts[i].mChildren[j],read_status,with_children,changed_msgs);
 }
 
 void RsGxsForumModel::recursUpdateReadStatusAndTimes(ForumModelIndex i,bool& has_unread_below,bool& has_read_below)
