@@ -360,3 +360,24 @@ void RSTextBrowser::copyImage()
 	QTextCursor cursor = cursorForPosition(point);
 	ImageUtil::copyImage(window(), cursor);
 }
+
+void RSTextBrowser::keyPressEvent(QKeyEvent *e)
+{
+    if (e->modifiers() == Qt::ControlModifier)
+    {
+        if (e->key() == Qt::Key_Z)
+        {
+            zoomIn(1); // Zoom In
+            e->accept();
+            return;
+        }
+        else if (e->key() == Qt::Key_Minus)
+        {
+            zoomOut(1); // Zoom Out
+            e->accept();
+            return;
+        }
+    }
+    
+    QTextBrowser::keyPressEvent(e);
+}
