@@ -69,6 +69,50 @@ git -C supportlibs/rapidjson fetch origin
 git -C supportlibs/rapidjson checkout 9bd618f5
 ```
 
+## Version numbering
+
+Versions are **not** hard-coded — CMake derives them at configure time from
+`git describe` run in each component's working tree, so what a build reports is
+exactly what your local checkout resolves to. Three independent strings are
+stamped in:
+
+| String | Source command | CMake file |
+|---|---|---|
+| `RS_GUI_VERSION` — the GUI's own version (shown in *Help ▸ About*) | `git describe --tags --always --dirty` in the super-project, leading `v` stripped | `retroshare-gui/CMakeLists.txt` |
+| libRetroShare version (`RS_MAJOR`/`RS_MINOR`/`RS_MINI` + `RS_EXTRA_VERSION`) | `git describe --tags --long --match 'v*.*.*'` in `libretroshare/`, parsed into `major.minor.mini` + trailing extra | `libretroshare/CMakeLists.txt` |
+| `RS_LIB_VERSION_HASH` — engine build hash | `git describe --tags --always --dirty` in `libretroshare/`, leading `v` stripped | `libretroshare/CMakeLists.txt` |
+
+The super-project's `describe` resolves to a `v0.6.7.x` tag; libretroshare's own
+tags are `v0.6.7`. So a GUI version reads like `0.6.7.3-1112-gd6047eb5a` and the
+engine like `0.6.7-548-g25845f94`, i.e. `<tag>-<commits since tag>-g<short hash>`.
+
+To read the exact values a build **would** stamp, without building, run from the
+super-project root:
+
+```bash
+git describe --tags --always --dirty
+git -C libretroshare describe --tags --long --match 'v*.*.*'
+```
+
+The first line is `RS_GUI_VERSION` (drop the leading `v`); the second is the
+libRetroShare version.
+
+Notes:
+- **`-dirty`** is appended whenever the working tree has *tracked* modifications
+  at configure time. Modified **submodule pointers count as tracked changes**, so
+  a tree that is otherwise clean apart from submodule drift still stamps `-dirty`
+  on the GUI/engine version. Untracked files never trigger it.
+- libretroshare uses `--long`, which **always** prints the `-<N>-g<hash>` suffix —
+  even on a tagged commit you get `v0.6.7-0-g…`, never a bare `0.6.7`.
+- Merging feature branches into an integration branch (e.g. `combo`) only grows
+  the `-<N>-` commit count and changes the `-g<hash>`; the `v0.6.7.x` / `v0.6.7`
+  tag prefix stays put. An octopus merge (one merge commit) yields a slightly
+  lower `<N>` than the same branches merged one by one (one merge commit each).
+- If git metadata is unavailable (tarball / distro build, or the git call fails),
+  the GUI falls back to the default in `retroshare-gui/src/rsguiversion.h`
+  (`"version not available"`), and libretroshare must be given the version on the
+  CMake command line: `-DRS_MAJOR_VERSION=… -DRS_MINOR_VERSION=… -DRS_MINI_VERSION=…`.
+
 ---
 
 ## Linux (Ubuntu/Debian)
