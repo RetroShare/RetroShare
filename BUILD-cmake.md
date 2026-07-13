@@ -363,6 +363,10 @@ cmake --build Build-cmake -j$(sysctl -n hw.ncpu)
 > on a low-memory machine lower it manually, e.g. `-j4` — that's why it used to be
 > hard-capped at `-j3`.
 
+> **`RS_USE_NATIVE_DIALOGS=ON`** — Qt's own (non-native) file/directory dialogs
+> hang on Windows. Using the OS native dialogs (`RS_USE_NATIVE_DIALOGS=ON`)
+> avoids the problem. On Linux/macOS the default `OFF` works fine.
+
 Dependencies — common + **Qt5** (use the UCRT64 doxygen, not the base MSYS one —
 it mishandles `D:/` paths):
 ```bash
@@ -400,6 +404,7 @@ cmake -G Ninja -B Build-cmake -S . \
   -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release \
   -DRS_LIBRETROSHARE_STATIC=OFF -DRS_LIBRETROSHARE_SHARED=ON \
   -DCMAKE_DISABLE_FIND_PACKAGE_Qt6=ON \
+  -DRS_USE_NATIVE_DIALOGS=ON \
   -DRS_RNPLIB=ON -DRS_JSON_API=ON -DRS_WEBUI=ON -DRS_SERVICE_TERMINAL_WEBUI_PASSWORD=ON \
   -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON -DRS_PLUGINS=ON -DRS_FORUM_DEEP_INDEX=OFF \
   -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON \
@@ -415,6 +420,7 @@ rm -rf Build-cmake
 cmake -G Ninja -B Build-cmake -S . \
   -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release \
   -DRS_LIBRETROSHARE_STATIC=OFF -DRS_LIBRETROSHARE_SHARED=ON \
+  -DRS_USE_NATIVE_DIALOGS=ON \
   -DRS_RNPLIB=ON -DRS_JSON_API=ON -DRS_WEBUI=ON -DRS_SERVICE_TERMINAL_WEBUI_PASSWORD=ON \
   -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON -DRS_PLUGINS=OFF -DRS_FORUM_DEEP_INDEX=OFF \
   -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON \
