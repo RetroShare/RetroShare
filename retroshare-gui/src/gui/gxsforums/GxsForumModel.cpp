@@ -891,11 +891,23 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 			rsGxsForums->markRead(grpId, changed_msgs, read_status);
 		});
 
-	// A single refresh of the whole view instead of one dataChanged() per post.
-	if(mTreeMode == TREE_MODE_FLAT)
-		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+	if (with_children || changed_msgs.size() > 5)
+	{
+		// A single refresh of the whole view instead of one dataChanged() per post.
+		if(mTreeMode == TREE_MODE_FLAT)
+			emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+		else
+			emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts[0].mChildren.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+	}
 	else
-		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts[0].mChildren.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+	{
+		// Emit dataChanged only for the changed message and its parents
+		emit dataChanged(i, i.sibling(i.row(), COLUMN_THREAD_NB_COLUMNS - 1));
+		for(QModelIndex j = i.parent(); j.isValid(); j = j.parent())
+		{
+			emit dataChanged(j, j.sibling(j.row(), COLUMN_THREAD_NB_COLUMNS - 1));
+		}
+	}
 }
 
 void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children,std::vector<RsGxsMessageId>& changed_msgs)
