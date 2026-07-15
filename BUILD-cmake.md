@@ -429,3 +429,41 @@ cmake -G Ninja -B Build-cmake -S . \
   -DCMAKE_CXX_FLAGS="-include cstring -include cstdint -Wno-template-body"
 cmake --build Build-cmake -j$(nproc)
 ```
+
+### Packaging & Deployment (Portable & Setup Installer)
+
+Once the CMake build finishes successfully, you can bundle RetroShare and all its DLL dependencies into a standalone portable folder, a compressed archive, and a Windows Setup Installer.
+
+To do this, run the deployment script from the project root:
+
+```bash
+./build_scripts/Windows-msys2/deploy-windows.sh
+```
+
+By default, the script looks for your build files in `Build-cmake/`. You can override this by setting the `BUILD_DIR` environment variable:
+
+```bash
+BUILD_DIR=MyCustomBuildDir ./build_scripts/Windows-msys2/deploy-windows.sh
+```
+
+#### Portable Archives (7z / ZIP)
+- The script automatically gathers all DLLs (Qt libraries, compiler runtime, and third-party dependencies) and places them alongside the executables.
+- It then compresses the folder into a portable package.
+- If `p7zip` is installed, it will compress using **7-Zip** for high compression ratios. Otherwise, it falls back to standard **ZIP**.
+- To install 7-Zip in MSYS2:
+  ```bash
+  pacman -S --needed p7zip
+  ```
+
+#### Setup Installer (NSIS)
+- If `makensis` is found, the script will automatically compile a self-extracting Windows installer (`-setup.exe`) using Nullsoft Scriptable Install System (NSIS).
+- To enable this, you must install the NSIS package for your active shell environment:
+  - **UCRT64 shell**:
+    ```bash
+    pacman -S --needed mingw-w64-ucrt-x86_64-nsis
+    ```
+  - **MinGW64 shell**:
+    ```bash
+    pacman -S --needed mingw-w64-x86_64-nsis
+    ```
+
