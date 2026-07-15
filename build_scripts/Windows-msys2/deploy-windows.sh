@@ -51,12 +51,14 @@ CLEAN_DESC=${GIT_DESC#v} # Strip the leading 'v'
 # Default values
 VERSION="$CLEAN_DESC"
 GIT_SUFFIX=""
+REVISION_VAL="0"
 
 if [[ "$CLEAN_DESC" == *-* ]]; then
     # Format: tag-commits-hash[-dirty] (e.g. 0.6.7.2-892-g5341b777d-dirty)
     VERSION=$(echo "$CLEAN_DESC" | cut -d'-' -f1)
     COMMIT_INFO=$(echo "$CLEAN_DESC" | cut -d'-' -f2-)
     GIT_SUFFIX="-${DATE_STR}-${COMMIT_INFO}"
+    REVISION_VAL="${COMMIT_INFO}"
 else
     # Exactly on a tag
     GIT_SUFFIX="-${DATE_STR}"
@@ -416,3 +418,73 @@ echo ">>> Packaging final compressed archive..."
         echo "================================================================================"
     fi
 )
+
+# 12. Create the setup installer if NSIS (makensis) is available
+MAKENSIS_CMD=""
+if command -v makensis &> /dev/null; then
+    MAKENSIS_CMD="makensis"
+else
+    # Fallback to standard MSYS2 MinGW paths if it's not in the active PATH
+    for prefix in "${MINGW_PREFIX}" "/ucrt64" "/mingw64" "/clang64" "/mingw32"; do
+        if [ -f "${prefix}/bin/makensis" ]; then
+            MAKENSIS_CMD="${prefix}/bin/makensis"
+            break
+        elif [ -f "${prefix}/bin/makensis.exe" ]; then
+            MAKENSIS_CMD="${prefix}/bin/makensis.exe"
+            break
+        fi
+    done
+fi
+
+if [ -n "$MAKENSIS_CMD" ]; then
+    echo ""
+    echo ">>> Generating Windows Installer using NSIS ($MAKENSIS_CMD)..."
+    
+    # Resolve absolute Windows paths (NSIS requires absolute paths for DEPLOYDIR and OUTDIR
+    # because it resolves relative paths relative to the .nsi file's directory).
+    if command -v cygpath &> /dev/null; then
+        WIN_DEPLOY_DIR=$(cygpath -w "$(pwd)/${DEPLOY_DIR}")
+        WIN_OUT_DIR=$(cygpath -w "$(pwd)/${BUILD_DIR}")
+    else
+        if command -v realpath &> /dev/null; then
+            WIN_DEPLOY_DIR=$(realpath "${DEPLOY_DIR}")
+            WIN_OUT_DIR=$(realpath "${BUILD_DIR}")
+        else
+            WIN_DEPLOY_DIR="$(pwd)/${DEPLOY_DIR}"
+            WIN_OUT_DIR="$(pwd)/${BUILD_DIR}"
+        fi
+    fi
+
+
+    # Determine architecture
+    if [[ "$ENV_TAG" == *64 ]]; then
+        ARCH="x64"
+    else
+        ARCH="x86"
+    fi
+
+    # Run makensis with correct parameters
+    # MSYS2_ARG_CONV_EXCL="/D" prevents MSYS2 from translating "/D..." options as Unix paths
+    MSYS2_ARG_CONV_EXCL="/D" "$MAKENSIS_CMD" \
+        /DDEPLOYDIR="${WIN_DEPLOY_DIR}" \
+        /DOUTDIR="${WIN_OUT_DIR}" \
+        /DVERSION="${VERSION}" \
+        /DARCHITECTURE="${ARCH}" \
+        /DTOOLCHAIN="${ENV_TAG}" \
+        /DREVISION="${REVISION_VAL}" \
+        /DQTVERSION="${QT_VERSION}" \
+        /DEXE_NAME="retroshare-gui.exe" \
+        build_scripts/Windows-msys2/installer/retroshare.nsi
+
+    echo "================================================================================"
+    echo "SUCCESS: Installer package created under: ${BUILD_DIR}/"
+    echo "================================================================================"
+else
+    echo ""
+    echo ">>> NSIS (makensis) not found. Skipping installer generation."
+    echo "    To build the installer, install NSIS:"
+    echo "      UCRT64: pacman -S mingw-w64-ucrt-x86_64-nsis"
+    echo "      MINGW64: pacman -S mingw-w64-x86_64-nsis"
+fi
+
+

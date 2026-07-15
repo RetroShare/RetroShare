@@ -1,4 +1,4 @@
-﻿; Script generated with the Venis Install Wizard & modified by defnax
+; Script generated with the Venis Install Wizard & modified by defnax
 ; Reworked by Thunder
 ; Adapted to msys2 and 64 bit by anmo
 
@@ -14,6 +14,9 @@
 # Optional defines
 ;!define OUTDIR ""
 ;!define INSTALLERADD ""
+!ifndef EXE_NAME
+!define EXE_NAME "retroshare.exe"
+!endif
 
 # Check needed defines
 !ifndef DEPLOYDIR
@@ -42,9 +45,11 @@
 !define SOURCEDIR "..\..\.."
 
 # Get version from executable
-!GetDllVersion "${DEPLOYDIR}\retroshare.exe" VERSION_
+!ifndef VERSION
+!GetDllVersion "${DEPLOYDIR}\${EXE_NAME}" VERSION_
 !define VERSION ${VERSION_1}.${VERSION_2}.${VERSION_3}
 ;!define REVISION ${VERSION_4}
+!endif
 
 # Check version
 !ifndef REVISION
@@ -107,7 +112,7 @@ Var StyleSheetDir
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_FINISHPAGE_LINK "Visit the RetroShare forum for the latest news and support"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://retroshare.sourceforge.net/forum/"
-!define MUI_FINISHPAGE_RUN "$INSTDIR\retroshare.exe"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\${EXE_NAME}"
 !define MUI_FINISHPAGE_SHOWREADME $INSTDIR\changelog.txt
 !define MUI_FINISHPAGE_SHOWREADME_TEXT changelog.txt
 !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
@@ -233,7 +238,7 @@ SectionEnd
 ;  WriteRegStr HKCR retroshare "" "PQI File"
 ;  WriteRegBin HKCR retroshare EditFlags 00000100
 ;  WriteRegStr HKCR "retroshare\shell" "" open
-;  WriteRegStr HKCR "retroshare\shell\open\command" "" `"$INSTDIR\retroshare.exe" "%1"`
+;  WriteRegStr HKCR "retroshare\shell\open\command" "" `"$INSTDIR\${EXE_NAME}" "%1"`
 ;SectionEnd
 
 # Shortcuts
@@ -242,24 +247,24 @@ Section $(Section_StartMenu) Section_StartMenu
   SetOutPath "$INSTDIR"
   CreateDirectory "$SMPROGRAMS\${APPNAME}"
   CreateShortCut "$SMPROGRAMS\${APPNAME}\$(Link_Uninstall).lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\retroshare.exe" "" "$INSTDIR\retroshare.exe" 0
+  CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\${EXE_NAME}" "" "$INSTDIR\${EXE_NAME}" 0
 SectionEnd
 
 Section $(Section_Desktop) Section_Desktop
-  CreateShortCut "$DESKTOP\${APPNAME}.lnk" "$INSTDIR\retroshare.exe" "" "$INSTDIR\retroshare.exe" 0
+  CreateShortCut "$DESKTOP\${APPNAME}.lnk" "$INSTDIR\${EXE_NAME}" "" "$INSTDIR\${EXE_NAME}" 0
 SectionEnd
 
 Section $(Section_QuickLaunch) Section_QuickLaunch
-  CreateShortCut "$QUICKLAUNCH\${APPNAME}.lnk" "$INSTDIR\retroshare.exe" "" "$INSTDIR\retroshare.exe" 0
+  CreateShortCut "$QUICKLAUNCH\${APPNAME}.lnk" "$INSTDIR\${EXE_NAME}" "" "$INSTDIR\${EXE_NAME}" 0
 SectionEnd
 SectionGroupEnd
 
 Section $(Section_AutoStart) Section_AutoStart
-  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroShare"   "$INSTDIR\retroshare.exe -m"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroShare"   "$INSTDIR\${EXE_NAME} -m"
 SectionEnd
 
 ;Section $(Section_AutoStart) Section_AutoStart
-;  CreateShortCut "$SMSTARTUP\${APPNAME}.lnk" "$INSTDIR\retroshare.exe" "" "$INSTDIR\retroshare.exe -m" 0
+;  CreateShortCut "$SMSTARTUP\${APPNAME}.lnk" "$INSTDIR\${EXE_NAME}" "" "$INSTDIR\${EXE_NAME} -m" 0
 ;SectionEnd
 
 Section -FinishSection
@@ -268,7 +273,7 @@ Section -FinishSection
     WriteRegStr HKLM "Software\${APPNAME}" "Version" "${VERSION}"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayName" "${APPNAME}"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayVersion" "${VERSION}"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayIcon" "$INSTDIR\retroshare.exe"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayIcon" "$INSTDIR\${EXE_NAME}"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "Publisher" "${PUBLISHER}"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "NoModify" "1"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "NoRepair" "1"
@@ -289,9 +294,15 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_StartMenu} $(Section_StartMenu_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Desktop} $(Section_Desktop_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_QuickLaunch} $(Section_QuickLaunch_Desc)
+!ifdef PLUGIN_EXISTS
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Plugins} $(Section_Plugins_Desc)
+!endif
+!ifdef PLUGIN_FEEDREADER_EXISTS
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Plugin_FeedReader} $(Section_Plugin_FeedReader_Desc)
+!endif
+!ifdef PLUGIN_VOIP_EXISTS
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Plugin_VOIP} $(Section_Plugin_VOIP_Desc)
+!endif
 ;  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Link} $(Section_Link_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_AutoStart} $(Section_AutoStart_Desc)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
