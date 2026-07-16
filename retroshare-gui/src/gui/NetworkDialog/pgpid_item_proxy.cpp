@@ -46,18 +46,74 @@ void pgpid_item_proxy::use_only_trusted_keys(bool val)
     invalidateFilter();
 }
 
+void pgpid_item_proxy::setFilterText(const QString &text)
+{
+    mFilterText = text;
+    invalidateFilter();
+}
+
 bool pgpid_item_proxy::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
+    RsPgpId peer_id(sourceModel()->data(sourceModel()->index(sourceRow, pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERID, sourceParent)).toString().toStdString());
+
     if(only_trusted_keys)
     {
         if(!rsPeers)
             return false;
-        RsPgpId peer_id (sourceModel()->data(sourceModel()->index(sourceRow, pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERID, sourceParent)).toString().toStdString());
         RsPeerDetails details;
         if(!rsPeers->getGPGDetails(peer_id, details))
             return false;
         if(details.validLvl < RS_TRUST_LVL_MARGINAL)
             return false;
     }
-    return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
+
+    // Multi-field search: if no text, accept all (that passed trusted-keys filter)
+    if(mFilterText.isEmpty())
+        return true;
+
+    if(!rsPeers)
+        return false;
+
+    RsPeerDetails detail;
+    if(!rsPeers->getGPGDetails(peer_id, detail))
+        return false;
+
+    // Check name
+    if(QString::fromUtf8(detail.name.c_str()).contains(mFilterText, Qt::CaseInsensitive))
+        return true;
+
+    // Check PGP ID
+    if(QString::fromStdString(detail.gpg_id.toStdString()).contains(mFilterText, Qt::CaseInsensitive))
+        return true;
+
+    // Check associated SSL node IDs and IPs
+    std::list<RsPeerId> ssl_ids;
+    if(rsPeers->getAssociatedSSLIds(peer_id, ssl_ids))
+    {
+        for(const auto& ssl_id : ssl_ids)
+        {
+            // Check node ID
+            if(QString::fromStdString(ssl_id.toStdString()).contains(mFilterText, Qt::CaseInsensitive))
+                return true;
+
+            // Check IPs
+            RsPeerDetails sslDetail;
+            if(rsPeers->getPeerDetails(ssl_id, sslDetail))
+            {
+                if(!sslDetail.localAddr.empty() && QString::fromStdString(sslDetail.localAddr).contains(mFilterText, Qt::CaseInsensitive))
+                    return true;
+                if(!sslDetail.extAddr.empty() && QString::fromStdString(sslDetail.extAddr).contains(mFilterText, Qt::CaseInsensitive))
+                    return true;
+                if(!sslDetail.connectAddr.empty() && QString::fromStdString(sslDetail.connectAddr).contains(mFilterText, Qt::CaseInsensitive))
+                    return true;
+                for(const auto& ip : sslDetail.ipAddressList)
+                {
+                    if(QString::fromStdString(ip).contains(mFilterText, Qt::CaseInsensitive))
+                        return true;
+                }
+            }
+        }
+    }
+
+    return false;
 }

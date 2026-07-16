@@ -38,9 +38,11 @@ public:
 
 public slots:
     void use_only_trusted_keys(bool val);
+    void setFilterText(const QString &text);
 
 private:
     bool only_trusted_keys = false;
+    QString mFilterText;
 };
 
 #endif // PGPID_ITEM_PROXY_H
