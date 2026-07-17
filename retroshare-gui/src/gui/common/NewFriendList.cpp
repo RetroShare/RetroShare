@@ -219,7 +219,7 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 	int W = QFontMetricsF(ui->peerTreeWidget->font()).horizontalAdvance("_");
 #endif
 
-    ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
+    ui->filterLineEdit->setPlaceholderText(tr("Search name, PGP ID, node ID, IP...")) ;
     ui->filterLineEdit->showFilterIcon();
 
 //    mEventHandlerId_pssc=0; // forces initialization
@@ -246,16 +246,9 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 	ui->peerTreeWidget->setItemDelegate(itemDelegate);
 	ui->peerTreeWidget->setWordWrap(false);
 
-    /* Add filter actions */
-    QString headerText = mModel->headerData(RsFriendListModel::COLUMN_THREAD_NAME,Qt::Horizontal,Qt::DisplayRole).toString();
-    ui->filterLineEdit->addFilter(QIcon(), headerText, RsFriendListModel::COLUMN_THREAD_NAME, QString("%1 %2").arg(tr("Search"), headerText));
-    ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RsFriendListModel::COLUMN_THREAD_ID, tr("Search ID"));
-
     mActionSortByState = new QAction(tr("Online friends on top"), this);
     mActionSortByState->setCheckable(true);
 
-    //setting default filter by column as subject
-    ui->filterLineEdit->setCurrentFilter(RsFriendListModel::COLUMN_THREAD_NAME);
 	ui->peerTreeWidget->setSortingEnabled(true);
 
     /* Set sort */
@@ -1692,17 +1685,14 @@ void NewFriendList::setShowGroups(bool show)
 }
 
 /**
- * Hides all items that don't contain text in the name column.
+ * Hides all items that match none of the typed words. Each word is searched for in every field of a
+ * profile at once: name, PGP id, node names/ids and IPs. A profile is kept when all words match.
  */
 void NewFriendList::filterItems(const QString &text)
 {
     QStringList lst = text.split(' ',QtSkipEmptyParts);
-	int filterColumn = ui->filterLineEdit->currentFilter();
 
-    if(filterColumn == 0)
-		mModel->setFilter(RsFriendListModel::FILTER_TYPE_NAME,lst);
-    else
-		mModel->setFilter(RsFriendListModel::FILTER_TYPE_ID,lst);
+	mModel->setFilter(RsFriendListModel::FILTER_TYPE_ALL,lst);
 
     // We do this in order to trigger a new filtering action in the proxy model.
 	QSortFilterProxyModel_setFilterRegularExpression(mProxyModel, QString(RsFriendListModel::FilterString)) ;
