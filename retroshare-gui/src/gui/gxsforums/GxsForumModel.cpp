@@ -882,10 +882,20 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 	bool has_unread_below, has_read_below;
 	recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below);
 
-	// Persist every change in a single background batch. This never runs on the
-	// GUI thread and spawns exactly one thread regardless of how many posts are
-	// affected, so the UI stays responsive even on very large forums.
-	if(!changed_msgs.empty())
+	// Persist the change(s) in the background so the GUI thread never blocks.
+	// A single interactive read (the common case: selecting/opening one post)
+	// goes through the per-message markRead(), which emits READ_STATUS_CHANGED
+	// right away, so the unread counters refresh without the extra latency added
+	// by the batch path (which only emits its event once waitToken() returns).
+	// Larger operations (mark-all, with-children, versioned posts) use the
+	// batched call, which persists everything in a single transaction and emits
+	// a single event when the whole set is done.
+	if(changed_msgs.size() == 1)
+		RsThread::async( [grpId=mForumGroup.mMeta.mGroupId,msgId=changed_msgs[0],read_status]()
+		{
+			rsGxsForums->markRead(std::make_pair(grpId, msgId), read_status);
+		});
+	else if(!changed_msgs.empty())
 		RsThread::async( [grpId=mForumGroup.mMeta.mGroupId,changed_msgs,read_status]()
 		{
 			rsGxsForums->markRead(grpId, changed_msgs, read_status);
