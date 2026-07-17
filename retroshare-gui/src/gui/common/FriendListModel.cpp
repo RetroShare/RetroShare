@@ -374,7 +374,7 @@ QVariant RsFriendListModel::headerData(int section, Qt::Orientation /*orientatio
 		switch(section)
 		{
 		case COLUMN_THREAD_NAME:         return tr("Name");
-		case COLUMN_THREAD_ID:           return tr("Id");
+		case COLUMN_THREAD_ID:           return tr("PGP / Node ID");	// PGP id on profile rows, node id on location rows
 		case COLUMN_THREAD_LAST_CONTACT: return tr("Last contact");
 		case COLUMN_THREAD_IP:           return tr("IP");
 		default:
@@ -421,6 +421,7 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
 	{
 	case Qt::SizeHintRole:   return sizeHintRole(entry,index.column()) ;
 	case Qt::DisplayRole:    return displayRole(entry,index.column()) ;
+	case Qt::ToolTipRole:    return toolTipRole(entry,index.column()) ;
 	case Qt::FontRole:       return fontRole(entry,index.column()) ;
  	case Qt::ForegroundRole: return textColorRole(entry,index.column()) ;
  	case Qt::DecorationRole: return decorationRole(entry,index.column()) ;
@@ -463,6 +464,82 @@ QVariant RsFriendListModel::statusRole(const EntryIndex& fmpe,int /*column*/) co
     return QVariant();
 }
 
+// Lists every searchable field of a profile: its own name and PGP id, then for each of its locations the
+// node name and id, the known addresses, the live connection type, and for hidden nodes the Tor/I2P type
+// and address. Everything comes from data already cached in the model, so no rsPeers call is needed here.
+// Several of these fields are shown in no column at all, hence the labels: see toolTipRole().
+
+QVector<QPair<QString,QString> > RsFriendListModel::profileSearchFields(const EntryIndex& e) const
+{
+	QVector<QPair<QString,QString> > fields;
+
+	const HierarchicalProfileInformation *profile = getProfileInfo(e);
+
+	if(!profile)
+		return fields;
+
+	fields.push_back(qMakePair(tr("Name")  ,QString::fromUtf8(profile->profile_info.name.c_str())));
+	fields.push_back(qMakePair(tr("PGP ID"),QString::fromStdString(profile->profile_info.gpg_id.toStdString())));
+
+	for(uint32_t i=0;i<profile->child_node_indices.size();++i)
+	{
+		const RsNodeDetails& node = mLocations[profile->child_node_indices[i]].node_info;
+
+		QString location = QString::fromUtf8(node.location.c_str());
+
+		if(location.isEmpty())
+			location = QString::fromStdString(node.id.toStdString());
+
+		auto add = [&fields,&location](const QString& label,const QString& value)
+		{
+			if(!value.isEmpty())
+				fields.push_back(qMakePair(QString("%1 [%2]").arg(label,location),value));
+		};
+
+		add(tr("Node name")         ,QString::fromUtf8(node.location.c_str()));
+		add(tr("Node ID")           ,QString::fromStdString(node.id.toStdString()));
+		add(tr("Local address")     ,QString::fromStdString(node.localAddr));
+		add(tr("External address")  ,QString::fromStdString(node.extAddr));
+		add(tr("Connected address") ,QString::fromStdString(node.connectAddr));
+
+		for(auto iter(node.ipAddressList.begin()); iter != node.ipAddressList.end(); ++iter)
+			add(tr("IP history"),QString::fromStdString(*iter));
+
+		// Live connection type: "TCP-in", "Tor-out", "I2P-in"... Only meaningful while connected, which is
+		// why the hidden node type below is searched separately.
+
+		if(node.state & RS_PEER_STATE_CONNECTED)
+			add(tr("Connection"),StatusDefs::connectStateIpString(node));
+
+		if(node.isHiddenNode)
+		{
+			if(node.hiddenType & RS_HIDDEN_TYPE_TOR)
+				add(tr("Hidden node type"),QString("Tor"));
+			else if(node.hiddenType & RS_HIDDEN_TYPE_I2P)
+				add(tr("Hidden node type"),QString("I2P"));
+
+			add(tr("Hidden address"),QString::fromStdString(node.hiddenNodeAddress));
+		}
+	}
+
+	return fields;
+}
+
+QString RsFriendListModel::profileSearchText(const EntryIndex& e) const
+{
+	const QVector<QPair<QString,QString> > fields = profileSearchFields(e);
+
+	if(fields.empty())
+		return QString();
+
+	QStringList values;
+
+	for(auto iter(fields.begin()); iter != fields.end(); ++iter)
+		values << iter->second;
+
+	return values.join(' ');
+}
+
 bool RsFriendListModel::passesFilter(const EntryIndex& e,int /*column*/) const
 {
 	QString s ;
@@ -479,6 +556,12 @@ bool RsFriendListModel::passesFilter(const EntryIndex& e,int /*column*/) const
 			if(s.isNull())
 				passes_strings = false;
 			break;
+
+		case FILTER_TYPE_ALL:   s = profileSearchText(e);
+			if(s.isNull())
+				passes_strings = false;
+			break;
+
 		case FILTER_TYPE_NONE:
 			RS_ERR("None Type for Filter.");
 		};
@@ -522,9 +605,29 @@ void RsFriendListModel::setFilter(FilterType filter_type, const QStringList& str
 	postMods();
 }
 
-QVariant RsFriendListModel::toolTipRole(const EntryIndex& /*fmpe*/,int /*column*/) const
+// Node ids, IP addresses and connection types are searched but shown in no column, so a hit on one of them
+// looks like a false positive. When a global search is active, tell the user which fields actually matched.
+
+QVariant RsFriendListModel::toolTipRole(const EntryIndex& e,int /*column*/) const
 {
-    return QVariant();
+	if(e.type != ENTRY_TYPE_PROFILE || mFilterType != FILTER_TYPE_ALL || mFilterStrings.empty())
+		return QVariant();
+
+	const QVector<QPair<QString,QString> > fields = profileSearchFields(e);
+	QStringList lines;
+
+	for(auto field(fields.begin()); field != fields.end(); ++field)
+		for(auto word(mFilterStrings.begin()); word != mFilterStrings.end(); ++word)
+			if(field->second.contains(*word,Qt::CaseInsensitive))
+			{
+				lines << QString("%1: %2").arg(field->first,field->second);
+				break;
+			}
+
+	if(lines.empty())
+		return QVariant();
+
+	return QVariant(tr("Matched by search:") + "\n" + lines.join('\n'));
 }
 
 QVariant RsFriendListModel::sizeHintRole(const EntryIndex& e,int col) const

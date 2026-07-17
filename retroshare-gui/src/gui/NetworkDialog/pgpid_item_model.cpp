@@ -72,7 +72,7 @@ QVariant pgpid_item_model::headerData(int section, Qt::Orientation orientation, 
                 return QString(tr("Connections"));
                 break;
             case PGP_ITEM_MODEL_COLUMN_PEERNAME:
-                return QString(tr("Profile"));
+                return QString(tr("Name"));
                 break;
             case PGP_ITEM_MODEL_COLUMN_I_AUTH_PEER:
                 return QString(tr("Trust level"));
@@ -81,7 +81,7 @@ QVariant pgpid_item_model::headerData(int section, Qt::Orientation orientation, 
                 return QString(tr("Has signed your key?"));
                 break;
             case PGP_ITEM_MODEL_COLUMN_PEERID:
-                return QString(tr("Id"));
+                return QString(tr("PGP ID"));
                 break;
             case PGP_ITEM_MODEL_COLUMN_LAST_USED:
                 return QString(tr("Last used"));

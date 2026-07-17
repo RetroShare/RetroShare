@@ -25,6 +25,8 @@
 #include "pgpid_item_model.h"
 
 #include <QSortFilterProxyModel>
+#include <QPair>
+#include <QVector>
 
 class pgpid_item_proxy :
         public QSortFilterProxyModel
@@ -35,12 +37,20 @@ public:
     pgpid_item_proxy(QObject *parent = nullptr);
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
 public slots:
     void use_only_trusted_keys(bool val);
     void setFilterText(const QString &text);
 
 private:
+    RsPgpId pgpIdOfRow(int sourceRow, const QModelIndex &sourceParent) const;
+
+    // Searchable fields of a profile, as (label,value) pairs. filterAcceptsRow() matches against the
+    // values, data() reuses the labels to tell the user which field a search actually hit.
+
+    QVector<QPair<QString,QString> > searchFields(const RsPgpId &pgp_id) const;
+
     bool only_trusted_keys = false;
     QString mFilterText;
 };
