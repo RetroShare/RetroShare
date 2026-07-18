@@ -39,6 +39,15 @@
 #include "gui/chat/ChatUserNotify.h"//For BradCast
 #include "util/DateTime.h"
 #include "util/rsdebug.h"
+
+// Set to 1 to trace chat unread-count bookkeeping to stderr (development diagnostics).
+#define DEBUG_CHAT_UNREAD_COUNT 0
+#if DEBUG_CHAT_UNREAD_COUNT
+#  define CHATCOUNT_DBG RsDbg()
+#else
+#  define CHATCOUNT_DBG while(false) RsDbg()
+#endif
+
 #include "util/imageutil.h"
 #include "util/qtthreadsutils.h"
 #include "gui/im_history/ImHistoryBrowser.h"
@@ -768,7 +777,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 
 void ChatWidget::checkVisibleAnchors()
 {
-	RsDbg() << "CHATCOUNT: Scroll Event Fired. ActiveWindow=" << isActive() << " ScrollValue=" << ui->textBrowser->verticalScrollBar()->value() << std::endl;
+	CHATCOUNT_DBG << "CHATCOUNT: Scroll Event Fired. ActiveWindow=" << isActive() << " ScrollValue=" << ui->textBrowser->verticalScrollBar()->value() << std::endl;
 	if (notify && chatType() == CHATTYPE_LOBBY && isActive()) {
 		QTextDocument *doc = ui->textBrowser->document();
 		if (!doc || doc->isEmpty()) return;
@@ -819,7 +828,7 @@ void ChatWidget::checkVisibleAnchors()
 		visibleAnchors.removeDuplicates();
 		
 		if (!visibleAnchors.isEmpty()){
-			RsDbg() << "CHATCOUNT: Success! Found " << visibleAnchors.size() << " visible anchors in the active viewport." << std::endl;
+			CHATCOUNT_DBG << "CHATCOUNT: Success! Found " << visibleAnchors.size() << " visible anchors in the active viewport." << std::endl;
 			for (const QString &anchor : visibleAnchors) {
 				notify->chatLobbyCleared(chatId.toLobbyId(), anchor);
 			}
