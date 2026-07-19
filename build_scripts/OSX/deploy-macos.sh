@@ -87,7 +87,21 @@ fi
 MACVERSION=$(sw_vers -productVersion 2>/dev/null || echo "UnknownOS")
 ARCH=$(uname -m)
 
-ARCHIVE_BASE="RetroShare-${VERSION}-macOS-${ARCH}${GIT_SUFFIX}-Qt-${QT_VERSION}"
+# Minimum macOS version to run = the deployment target baked into the built
+# binary (the macOS analog of the AppImage's glibc floor / min glibc to run).
+# Read it from the GUI binary's load commands (LC_BUILD_VERSION `minos`, or the
+# older LC_VERSION_MIN_MACOSX `version`); fall back to the build host's version.
+MINOS=$(otool -l "$GUI_BIN" 2>/dev/null \
+        | grep -A3 -E 'LC_BUILD_VERSION|LC_VERSION_MIN_MACOSX' \
+        | grep -oE '(minos|version) [0-9]+(\.[0-9]+)+' \
+        | grep -oE '[0-9]+(\.[0-9]+)+' | head -1)
+[ -n "$MINOS" ] || MINOS="$MACVERSION"
+
+# Naming mirrors the Linux AppImage and Windows schemes:
+#   RetroShare-v<ver>-<YYYYMMDD>-<count>-g<hash>-Qt-<qtver>-macos-<min>-<arch>.dmg
+# GIT_SUFFIX already carries "-<YYYYMMDD>-<count>-g<hash>" (or just the date when
+# exactly on a tag).
+ARCHIVE_BASE="RetroShare-v${VERSION}${GIT_SUFFIX}-Qt-${QT_VERSION}-macos-${MINOS}-${ARCH}"
 DEPLOY_DIR="${BUILD_DIR}/${ARCHIVE_BASE}"
 
 echo "  Target Package Name: ${ARCHIVE_BASE}"
