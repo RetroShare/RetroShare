@@ -3,9 +3,11 @@
 # Runs INSIDE the Debian 11 container (see Dockerfile.bullseye), invoked by
 # build-appimage-docker.sh. Bind-mounts: the repo at /src.
 #
-# Builds RetroShare (Qt5, GUI) fresh with CMake into a bullseye-specific build
-# dir (so it never clobbers the host's Build-cmake), assembles the AppDir and
-# emits a glibc-2.31 AppImage into /src/Build-appimage.
+# Builds RetroShare (Qt5, full feature set — same flags as the current-glibc
+# builds) fresh with CMake into a bullseye-specific build dir (so it never
+# clobbers the host's Build-cmake), assembles the AppDir and emits a glibc-2.31
+# AppImage into /src/Build-appimage. This is meant for old Linux installs, so it
+# is NOT stripped down: it follows the same rules as the other builds.
 #
 set -euo pipefail
 
@@ -25,17 +27,23 @@ export PATH=/opt/linuxdeploy:/usr/local/bin:$PATH
 # `set -e`, so the toolchain banner can't kill the build.
 echo ">>> toolchain: $(cmake --version | head -1) | gcc $(gcc -dumpversion) | glibc $(ldd --version 2>&1 | head -1)"
 
-# --- 1. configure + build (Qt5, GUI only) -------------------------------------
+# --- 1. configure + build (Qt5, same feature flags as the current-glibc builds)-
 # Incremental by default: reuse objects from a previous run (set CLEAN=1 to wipe).
 # RS_NO_LTO=ON: GCC 10's LTO plugin segfaults (lto1 ICE) linking libretroshare on
 # bullseye; LTO is only an optimization, so we turn it off for this build.
+# Feature flags mirror build-all-appimages.sh's current-glibc Qt5 build: Qt5 =>
+# plugins ON, service + friendserver ON (wanted in every build). FORUM_DEEP_INDEX
+# stays OFF here and is flipped to ON for combo by build-all-appimages.sh (via a
+# throwaway sed on this file) — so leave that exact flag token untouched below.
 [ -n "${CLEAN:-}" ] && rm -rf "$BUILD"
 cmake -G Ninja -B "$BUILD" -S "$SRC" \
     -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_DISABLE_FIND_PACKAGE_Qt6=ON \
     -DRS_NO_LTO=ON \
-    -DRS_GUI=ON -DRS_SERVICE=OFF -DRS_FRIENDSERVER=OFF -DRS_PLUGINS=OFF \
-    -DRS_JSON_API=ON -DRS_WEBUI=ON -DRS_FORUM_DEEP_INDEX=OFF
+    -DRS_RNPLIB=ON -DRS_JSON_API=ON -DRS_WEBUI=ON -DRS_SERVICE_TERMINAL_WEBUI_PASSWORD=ON \
+    -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON -DRS_PLUGINS=ON -DRS_FORUM_DEEP_INDEX=OFF \
+    -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON \
+    -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON
 cmake --build "$BUILD" -j"$(nproc)"
 
 BIN="$BUILD/retroshare-gui/retroshare-gui"
