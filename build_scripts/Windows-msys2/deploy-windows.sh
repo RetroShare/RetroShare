@@ -137,8 +137,14 @@ fi
 # Base name of the final archive. The environment tag reflects the MSYS2 shell
 # actually used (ucrt64 / mingw64 / clang64) instead of a hard-coded 'mingw64'
 # that lied on UCRT64/CLANG64 builds.
+#
+# Naming mirrors the Linux AppImage scheme:
+#   RetroShare-v<ver>-<YYYYMMDD>-<count>-g<hash>-Qt-<qtver>-<env>-msys2-x86_64
+# GIT_SUFFIX already carries "-<YYYYMMDD>-<count>-g<hash>" (or just the date when
+# exactly on a tag). The runtime slot is the MSYS2 environment (ucrt64-msys2),
+# the Windows analog of the AppImage's glibc-<ver>.
 ENV_TAG=$(echo "${MSYSTEM:-mingw64}" | tr '[:upper:]' '[:lower:]')
-ARCHIVE_BASE="RetroShare-${VERSION}-Windows-Portable${GIT_SUFFIX}-Qt-${QT_VERSION}-${ENV_TAG}-msys2"
+ARCHIVE_BASE="RetroShare-v${VERSION}${GIT_SUFFIX}-Qt-${QT_VERSION}-${ENV_TAG}-msys2-x86_64"
 DEPLOY_DIR="${BUILD_DIR}/${ARCHIVE_BASE}"
 
 echo "  Target Package Name: ${ARCHIVE_BASE}"
