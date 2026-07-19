@@ -130,6 +130,8 @@ sed -i 's/^Icon=.*/Icon=retroshare/' "$DESKTOP"
 sed -i 's|^Exec=/usr/bin/retroshare|Exec=retroshare-gui|' "$DESKTOP"
 
 # --- 3. bundle Qt + libs and emit the .AppImage -------------------------------
+# linuxdeploy names the output from $VERSION; we rename it afterwards (step 4)
+# because the glibc floor can only be read once every library is bundled.
 export VERSION="$(git -C "$ROOT" describe --tags --always 2>/dev/null || echo dev)"
 
 cd "$OUTDIR"
@@ -139,6 +141,28 @@ cd "$OUTDIR"
     --icon-file "$ROOT/data/128x128/apps/retroshare.png" --icon-filename retroshare \
     --plugin qt \
     --output appimage
+
+# --- 4. rename to the descriptive scheme --------------------------------------
+#   RetroShare-v<ver>-<YYYYMMDD>-<count>-g<hash>-Qt-<qtver>-glibc-<min>-x86_64.AppImage
+# Every field is self-computed here (no orchestrator needed): git describe gives
+# the version + commit count + hash, `date` the build day, qmake the exact Qt
+# version, and the highest GLIBC_2.x symbol required by any bundled ELF gives the
+# minimum glibc to run (an AppImage bundles no libc, so the host must provide it).
+produced="$(ls -1t "$OUTDIR"/*.AppImage 2>/dev/null | head -1 || true)"
+if [ -n "$produced" ]; then
+    desc="$(git -C "$ROOT" describe --tags --always 2>/dev/null | sed 's/^v//' || echo dev)"
+    ver="${desc%%-*}"                                            # 0.6.7.3
+    suffix="${desc#*-}"; [ "$suffix" = "$desc" ] && suffix=""    # 1057-g28175f481 (empty on a tag)
+    date="$(date +%Y%m%d)"
+    qtver="$("$QMAKE" -query QT_VERSION 2>/dev/null || echo "${BIN_QT_MAJOR:-0}.0.0")"
+    glibc="$(find "$APPDIR" -type f \( -name '*.so*' -o -path '*/bin/*' -o -path '*/plugins/*' \) 2>/dev/null \
+             | while read -r f; do objdump -T "$f" 2>/dev/null | grep -oE 'GLIBC_2\.[0-9]+(\.[0-9]+)?'; done \
+             | sort -uV | tail -1 | sed 's/^GLIBC_//')"
+    [ -n "$glibc" ] || glibc="unknown"
+    name="RetroShare-v${ver}-${date}${suffix:+-${suffix}}-Qt-${qtver}-glibc-${glibc}-x86_64.AppImage"
+    mv -f "$produced" "$OUTDIR/$name"
+    echo ">>> renamed -> $name"
+fi
 
 echo
 echo ">>> done. AppImage(s):"

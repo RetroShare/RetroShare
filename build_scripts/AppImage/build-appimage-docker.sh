@@ -57,6 +57,33 @@ $ENGINE run --rm \
     --user "$(id -u):$(id -g)" \
     "$IMAGE" bash /src/build_scripts/AppImage/_appimage-inside.sh
 
+# --- 3. rename to the descriptive scheme (host side) --------------------------
+#   RetroShare-v<ver>-<YYYYMMDD>-<count>-g<hash>-Qt-<qtver>-glibc-<min>-x86_64.AppImage
+# The container leaves its AppDir (AppDir-bullseye) and the AppImage in
+# Build-appimage/, so we compute everything here: git describe (version + count +
+# hash), the build date, the exact Qt version read from the bundled libQt5Core
+# (the legacy build is Qt5-only; its qmake lives only inside the container), and
+# the highest GLIBC_2.x symbol across all bundled ELFs (the minimum glibc to run).
+OUT="$ROOT/Build-appimage"
+APPDIR="$OUT/AppDir-bullseye"
+produced="$(ls -1t "$OUT"/*.AppImage 2>/dev/null | head -1 || true)"
+if [ -n "$produced" ]; then
+    desc="$(git -C "$ROOT" describe --tags --always 2>/dev/null | sed 's/^v//' || echo dev)"
+    ver="${desc%%-*}"                                            # 0.6.7.3
+    suffix="${desc#*-}"; [ "$suffix" = "$desc" ] && suffix=""    # 1121-ga87999bd2 (empty on a tag)
+    date="$(date +%Y%m%d)"
+    qtver="$(strings "$APPDIR/usr/lib/libQt5Core.so.5" 2>/dev/null \
+             | grep -oE 'Qt 5\.[0-9]+\.[0-9]+' | grep -oE '5\.[0-9]+\.[0-9]+' | head -1 || true)"
+    [ -n "$qtver" ] || qtver="unknown"
+    glibc="$(find "$APPDIR" -type f \( -name '*.so*' -o -path '*/bin/*' -o -path '*/plugins/*' \) 2>/dev/null \
+             | while read -r f; do objdump -T "$f" 2>/dev/null | grep -oE 'GLIBC_2\.[0-9]+(\.[0-9]+)?'; done \
+             | sort -uV | tail -1 | sed 's/^GLIBC_//')"
+    [ -n "$glibc" ] || glibc="unknown"
+    name="RetroShare-v${ver}-${date}${suffix:+-${suffix}}-Qt-${qtver}-glibc-${glibc}-x86_64.AppImage"
+    mv -f "$produced" "$OUT/$name"
+    echo ">>> renamed -> $name"
+fi
+
 echo
 echo ">>> done. Portable AppImage(s):"
 ls -1 "$ROOT/Build-appimage"/*.AppImage 2>/dev/null || echo "    (none — check the log above)"
