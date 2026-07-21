@@ -169,13 +169,11 @@ win32_program_files_folder()
 QString
 win32_app_data_folder()
 {
-  return win32_get_folder_location(
-#if 0
-      CSIDL_APPDATA, 
-#else
-      0, 
+#ifdef WIN32
+  QString appData = qEnvironmentVariable("APPDATA");
+  if (!appData.isEmpty())
+    return appData;
 #endif
-			QDir::homePath() + "\\Application Data");
-
+  return QDir::homePath() + "\\AppData\\Roaming";
 }
 
