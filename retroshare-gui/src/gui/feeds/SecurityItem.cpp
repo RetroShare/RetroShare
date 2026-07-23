@@ -300,7 +300,12 @@ void SecurityItem::updateItem()
 			chatButton->hide();
 		}
 
-		if (details.accept_connection)
+		// accept_connection is a PGP-keyring flag, only set when we own the peer's
+		// PGP key. An SSL-only friend (accepted unknown peer / short invite) has no
+		// PGP key, so it is flagged by skip_pgp_signature_validation instead. Treat
+		// both as accepted, otherwise the "Accept friend request" button keeps being
+		// shown after an SSL-only friend has already been added.
+		if (details.accept_connection || details.skip_pgp_signature_validation)
 		{
 			friendRequesttoolButton->hide();
 			requestLabel->hide();
