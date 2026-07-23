@@ -24,7 +24,7 @@ jobs:
 
       - name: Mirror repository to GitLab
         run: |
-          git clone --mirror "https://github.com/${GITHUB_REPOSITORY}.git" repo.git
+          git clone --bare "https://github.com/${GITHUB_REPOSITORY}.git" repo.git
           cd repo.git
           git remote set-url --push origin git@gitlab.com:RetroShare/RetroShare.git
-          git push --mirror
+          git push --prune origin 'refs/heads/*:refs/heads/*' 'refs/tags/*:refs/tags/*'
