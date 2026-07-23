@@ -100,7 +100,22 @@ set(CMAKE_AUTOUIC OFF)
 
 # Detect Qt6 first, fall back to Qt5. All Qt usage below is version-agnostic via
 # the ${QT_VERSION_MAJOR} variable so the same tree builds against both.
-find_package( QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+#
+# Do NOT use find_package(QT NAMES Qt6 Qt5 ...) here: on distros that ship Qt5
+# and Qt6 side by side in the same prefix (Debian/Ubuntu multiarch,
+# /usr/lib/<arch>/cmake), the NAMES order is NOT honoured. CMake globs the
+# sibling Qt5*/Qt6* config dirs and stops at whichever <name>Config.cmake it
+# reaches first; that order is filesystem-dependent and routinely picks Qt5 even
+# though Qt6 is listed first. We therefore probe Qt6 explicitly and fall back to
+# Qt5. Bonus: this makes -DCMAKE_DISABLE_FIND_PACKAGE_Qt6=ON work as a reliable
+# way to force a Qt5 build (it didn't, with the versionless QT package name).
+find_package( Qt6 QUIET COMPONENTS Core )
+if( Qt6_FOUND )
+	set( QT_VERSION_MAJOR 6 )
+else()
+	find_package( Qt5 COMPONENTS Core REQUIRED )
+	set( QT_VERSION_MAJOR 5 )
+endif()
 find_package( Qt${QT_VERSION_MAJOR} COMPONENTS
 	Core Widgets Xml Network Multimedia PrintSupport REQUIRED)
 if(QT_VERSION_MAJOR EQUAL 6)
