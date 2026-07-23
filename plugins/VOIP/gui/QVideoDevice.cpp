@@ -18,13 +18,12 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <QTimer>
 #include <QPainter>
 #include <QImageReader>
 #include <QBuffer>
 #include <QCamera>
 #include <QCameraInfo>
-#include <QCameraImageCapture>
+#include <util/rsdebug.h>
 #include "QVideoDevice.h"
 #include "VideoProcessor.h"
 
@@ -33,48 +32,37 @@
 QVideoInputDevice::QVideoInputDevice(QWidget *parent)
   :QObject(parent)
 {
-	_timer = NULL ;
 	_capture_device = NULL ;
 	_video_processor = NULL ;
 	_echo_output_device = NULL ;
-	_image_capture = NULL;
+    _video_surface = NULL;
 }
 
 QVideoInputDevice::~QVideoInputDevice()
 {
-    stop() ;
+    stop() ;             // releases _capture_device and _video_surface
     _video_processor = NULL ;
-
-    delete _image_capture;
-    delete _capture_device;
-    delete _timer;
 }
 
 bool QVideoInputDevice::stopped() const
 {
-    return _timer == NULL ;
+    return _capture_device == NULL ;
 }
 
 void QVideoInputDevice::stop()
 {
     _capture_device_info = QCameraInfo();
 
-	if(_timer != NULL)
-	{
-        _capture_device->stop();
-		_timer->stop() ;
-		delete _timer ;
-		_timer = NULL ;
-	}
 	if(_capture_device != NULL)
 	{
-		// the camera will be deinitialized automatically in VideoCapture destructor
-        delete _image_capture ;
-        delete _capture_device ;
-
-		_capture_device = NULL ;
-        _image_capture = NULL ;
+        _capture_device->stop() ;
+        delete _capture_device ;     // detaches and releases the viewfinder surface
+        _capture_device = NULL ;
     }
+    // Delete the surface only after the camera that referenced it is gone.
+    delete _video_surface ;
+    _video_surface = NULL ;
+
     if(_echo_output_device != NULL)
         _echo_output_device->showFrameOff() ;
 }
@@ -109,45 +97,47 @@ void QVideoInputDevice::start(const QString& description)
 
     if(caminfo.isNull())
     {
-        std::cerr << "No video camera available in this system!" << std::endl;
+        RsDbg() << "DISTANT_VOIP: [CRITICAL] No video camera available in this system!";
         return ;
     }
     _capture_device_info = caminfo;
+    RsDbg() << "DISTANT_VOIP: Initializing camera: " << caminfo.description().toStdString() << " (ID: " << caminfo.deviceName().toStdString() << ")";
+    
     _capture_device = new QCamera(caminfo);
 
     if(_capture_device->error() != QCamera::NoError)
     {
         emit cameraCaptureInfo(CANNOT_INITIALIZE_CAMERA,_capture_device->error());
-        std::cerr << "Cannot initialise camera. Something's wrong." << std::endl;
-        return;
-    }
-    _capture_device->setCaptureMode(QCamera::CaptureStillImage);
-
-    if(_capture_device->error() == QCamera::NoError)
-        emit cameraCaptureInfo(CAMERA_IS_READY,QCamera::NoError);
-
-    _image_capture = new QCameraImageCapture(_capture_device);
-
-    if(!_image_capture->isCaptureDestinationSupported(QCameraImageCapture::CaptureToBuffer))
-    {
-        emit cameraCaptureInfo(CAMERA_IS_READY,QCamera::NoError);
-
-        delete _capture_device;
-        delete _image_capture;
+        RsDbg() << "DISTANT_VOIP: [ERROR] Cannot initialise camera. Error code: " << (int)_capture_device->error();
         return;
     }
 
-    _image_capture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
+    _capture_device->setCaptureMode(QCamera::CaptureVideo);
 
-    QObject::connect(_image_capture,SIGNAL(imageAvailable(int,QVideoFrame)),this,SLOT(grabFrame(int,QVideoFrame)));
+    // Grab frames through a viewfinder surface. This works on every backend,
+    // unlike QVideoProbe which attaches but never delivers frames on macOS
+    // (AVFoundation) -> camera LED on, but no image.
+    _video_surface = new RsCameraVideoSurface(this);
+    QObject::connect(_video_surface,SIGNAL(frameAvailable(QVideoFrame)),this,SLOT(handleSurfaceFrame(QVideoFrame)));
+    _capture_device->setViewfinder(_video_surface);
+    RsDbg() << "DISTANT_VOIP: Viewfinder surface attached to camera.";
+
     QObject::connect(this,SIGNAL(cameraCaptureInfo(CameraStatus,QCamera::Error)),this,SLOT(errorHandling(CameraStatus,QCamera::Error)));
 
-    _timer = new QTimer ;
-    QObject::connect(_timer,SIGNAL(timeout()),_image_capture,SLOT(capture())) ;
+    if(_capture_device->error() == QCamera::NoError)
+    {
+        RsDbg() << "DISTANT_VOIP: Camera object created and mode set to CaptureVideo.";
+        emit cameraCaptureInfo(CAMERA_IS_READY,QCamera::NoError);
+    }
 
-    _timer->start(50) ;	// 10 images per second.
-
+    RsDbg() << "DISTANT_VOIP: Finalizing camera start(). LED should turn on now.";
     _capture_device->start();
+}
+
+void QVideoInputDevice::handleSurfaceFrame(const QVideoFrame& f)
+{
+    static int p_id = 0;
+    grabFrame(p_id++, f);
 }
 
 void QVideoInputDevice::errorHandling(CameraStatus status,QCamera::Error error)
@@ -167,18 +157,51 @@ void QVideoInputDevice::grabFrame(int id,QVideoFrame frame)
 {
     if(frame.size().isEmpty())
     {
-        std::cerr << "Empty frame!" ;
+        RsDbg() << "DISTANT_VOIP: [WARNING] Received an empty frame from camera!";
         return;
     }
 
+    static int frame_count = 0;
+    if (frame_count++ % 20 == 0) {
+        RsDbg() << "DISTANT_VOIP: Frame received. ID=" << id << " Size=" << frame.width() << "x" << frame.height() << " Format=" << (int)frame.pixelFormat();
+    }
+
     frame.map(QAbstractVideoBuffer::ReadOnly);
-    QByteArray data((const char *)frame.bits(), frame.mappedBytes());
-    QBuffer buffer;
-    buffer.setData(data);
-    buffer.open(QIODevice::ReadOnly);
-    QImageReader reader(&buffer, "JPG");
-    reader.setScaledSize(QSize(640,480));
-    QImage image(reader.read());
+    
+    QImage image;
+    
+    // Check if it's already a JPEG (common on some Windows cams)
+    if (frame.pixelFormat() == QVideoFrame::Format_Jpeg) {
+        QByteArray data((const char *)frame.bits(), frame.mappedBytes());
+        QBuffer buffer;
+        buffer.setData(data);
+        buffer.open(QIODevice::ReadOnly);
+        QImageReader reader(&buffer, "JPG");
+        reader.setScaledSize(QSize(640,480));
+        image = reader.read();
+    } else {
+        // Use Qt's native conversion which handles YUV, RGB, etc.
+        // If your Qt version is 5.15+, frame.image() is available.
+        // Otherwise, we create a QImage from the raw bits.
+        image = frame.image();
+        
+        if (image.isNull()) {
+            // Manual fallback for common formats if .image() fails
+            image = QImage(frame.bits(), frame.width(), frame.height(), frame.bytesPerLine(), QVideoFrame::imageFormatFromPixelFormat(frame.pixelFormat()));
+        }
+        
+        if (!image.isNull() && (image.width() > 640)) {
+            image = image.scaled(640, 480, Qt::KeepAspectRatio);
+        }
+    }
+
+    if (image.isNull()) {
+        RsDbg() << "DISTANT_VOIP: [ERROR] Failed to convert QVideoFrame to QImage. Format=" << (int)frame.pixelFormat();
+        frame.unmap();
+        return;
+    }
+    
+    frame.unmap();
 
 #ifdef DEBUG_QVIDEODEVICE
     std::cerr << "Frame " << id << ". Pixel format: " << frame.pixelFormat() << ". Size: " << image.size().width() << " x " << image.size().height() << std::endl; // if(frame.pixelFormat() != QVideoFrame::Format_Jpeg)
@@ -193,14 +216,14 @@ void QVideoInputDevice::grabFrame(int id,QVideoFrame frame)
         emit networkPacketReady() ;
     }
     if(_echo_output_device != NULL)
-        _echo_output_device->showFrame(image) ;
+        // Self-view is mirrored (horizontal flip), like every mainstream video
+        // app, so it feels natural. The frame sent to the peer (processImage
+        // above) stays un-mirrored, so the remote sees us the right way round.
+        _echo_output_device->showFrame(image.mirrored(true, false)) ;
 }
 
 bool QVideoInputDevice::getNextEncodedPacket(RsVOIPDataChunk& chunk)
 {
-    if(!_timer)
-        return false ;
-
     if(_video_processor)
         return _video_processor->nextEncodedPacket(chunk) ;
     else
@@ -232,6 +255,6 @@ void QVideoOutputDevice::showFrame(const QImage& img)
 #ifdef DEBUG_QVIDEODEVICE
     std::cerr << "img.size = " << img.width() << " x " << img.height() << std::endl;
 #endif
-    setPixmap(QPixmap::fromImage(img).scaled( QSize(height()*4/3,height()),Qt::IgnoreAspectRatio,Qt::SmoothTransformation)) ;
+    setPixmap(QPixmap::fromImage(img).scaled( QSize(height()*4/3,height()),Qt::KeepAspectRatio,Qt::SmoothTransformation)) ;
 }
 

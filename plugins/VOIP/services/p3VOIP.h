@@ -105,6 +105,9 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		virtual void setVoipATransmit(int) ;
 		virtual int  getVoipVoiceHold() const  { return _voice_hold ; }
 		virtual void setVoipVoiceHold(int) ;
+
+		RsSerialiser* getSerialiser() const { return rsSerialiser; }
+
 		virtual int  getVoipfVADmin() const    { return _vadmin ; }
 		virtual void setVoipfVADmin(int) ;
 		virtual int  getVoipfVADmax() const    { return _vadmax ; } 
@@ -115,6 +118,8 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		virtual void setVoipiMinLoudness(int) ;
 		virtual bool getVoipEchoCancel() const 	 { return _echo_cancel ; }
 		virtual void setVoipEchoCancel(bool) ;
+		virtual int  getVoipVideoMaximumBandwidth() const { return _video_max_bandwidth ; }
+		virtual void setVoipVideoMaximumBandwidth(int) ;
 
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
@@ -159,6 +164,13 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		RsServiceControl *mServiceControl;
 		VOIPNotify *mNotify ;
 
+		mutable class RsTurtleVOIPBridge* mBridge;
+	public:
+		void setTurtleBridge(class RsTurtleVOIPBridge* br) { mBridge = br; }
+	protected:
+		int sendItem(RsItem* item);
+
+	private:
 		int _atransmit ;
 		int _voice_hold ;
 		int _vadmin ;
@@ -166,4 +178,5 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		int _min_loudness ;
 		int _noise_suppress ;
 		bool _echo_cancel ;
+		int _video_max_bandwidth ;	// user cap for video encoding, bytes/s
 };
