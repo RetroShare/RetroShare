@@ -232,6 +232,6 @@ void QVideoOutputDevice::showFrame(const QImage& img)
 #ifdef DEBUG_QVIDEODEVICE
     std::cerr << "img.size = " << img.width() << " x " << img.height() << std::endl;
 #endif
-    setPixmap(QPixmap::fromImage(img).scaled( QSize(height()*4/3,height()),Qt::IgnoreAspectRatio,Qt::SmoothTransformation)) ;
+    setPixmap(QPixmap::fromImage(img).scaled( QSize(height()*4/3,height()),Qt::KeepAspectRatio,Qt::SmoothTransformation)) ;
 }
 
