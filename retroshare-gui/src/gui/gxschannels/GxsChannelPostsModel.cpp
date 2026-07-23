@@ -22,6 +22,7 @@
 #include <QFontMetrics>
 #include <QModelIndex>
 #include <QIcon>
+#include <chrono>
 
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxschannels.h"
@@ -39,6 +40,7 @@
 
 //#define DEBUG_CHANNEL_MODEL_DATA
 //#define DEBUG_CHANNEL_MODEL
+//#define GXSPROFILING
 
 Q_DECLARE_METATYPE(RsMsgMetaData)
 Q_DECLARE_METATYPE(RsGxsChannelPost)
@@ -528,95 +530,126 @@ void RsGxsChannelPostsModel::updateSinglePost(const RsGxsChannelPost& post,std::
 
 void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>& posts)
 {
-	preMods();
-
-	initEmptyHierarchy();
-	mChannelGroup = group;
-
-//    createPostsArray(posts);
-
-    mPosts = posts;
-	std::sort(mPosts.begin(),mPosts.end());
-
-	for(uint32_t i=0;i<mPosts.size();++i)
-		mFilteredPosts.push_back(i);
-
-#ifdef DEBUG_CHANNEL_MODEL
-	// debug_dump();
+#ifdef GXSPROFILING
+    // Start timer to measure UI thread work
+    auto startTime = std::chrono::steady_clock::now();
 #endif
 
-	if (rowCount()>0)
-	{
-		beginInsertRows(QModelIndex(),0,rowCount()-1);
-		endInsertRows();
-	}
+    preMods();
 
-	postMods();
+    initEmptyHierarchy();
+    mChannelGroup = group;
 
-	emit channelPostsLoaded();
+    mPosts = posts;
+
+    // Sorting can be expensive on the UI thread for large amounts of data
+    std::sort(mPosts.begin(), mPosts.end());
+
+    mFilteredPosts.clear();
+    for(uint32_t i=0; i<mPosts.size(); ++i)
+        mFilteredPosts.push_back(i);
+
+    if (rowCount() > 0)
+    {
+        beginInsertRows(QModelIndex(), 0, rowCount() - 1);
+        endInsertRows();
+    }
+
+    postMods();
+
+#ifdef GXSPROFILING
+    auto endTime = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+
+    RsDbg() << "GXSPROFILING [UI-MODEL]: setPosts (UI Thread sorting/reset) took: " << duration << " ms for " << mPosts.size() << " posts";
+#endif
+
+    emit channelPostsLoaded();
 }
-
-
 
 void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 {
-	if(group_id.isNull())
-		return;
+    if(group_id.isNull())
+        return;
 
-    MainWindow::getPage(MainWindow::Channels)->setCursor(Qt::WaitCursor) ; // Maybe we should pass that widget when calling update_posts
+#ifdef GXSPROFILING
+    // Start global timer for the loading process
+    auto totalRequestStart = std::chrono::steady_clock::now();
 
-    RsThread::async([this, group_id]()
-	{
-        // 1 - get message data from p3GxsChannels
+    RsDbg() << "GXSPROFILING [UI-LOAD]: Starting update_posts for group: " << group_id;
+#endif
+
+    MainWindow::getPage(MainWindow::Channels)->setCursor(Qt::WaitCursor);
+
+    RsThread::async([this, group_id
+#ifdef GXSPROFILING
+                     , totalRequestStart
+#endif
+                    ]()
+    {
+#ifdef GXSPROFILING
+        auto fetchStart = std::chrono::steady_clock::now();
+#endif
 
         std::list<RsGxsGroupId> channelIds;
-		std::vector<RsMsgMetaData> msg_metas;
-		std::vector<RsGxsChannelGroup> groups;
+        std::vector<RsGxsChannelGroup> groups;
 
         channelIds.push_back(group_id);
 
-		if(!rsGxsChannels->getChannelsInfo(channelIds,groups) || groups.size() != 1)
-		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel group info for channel " << group_id << std::endl;
-			return;
+        if(!rsGxsChannels->getChannelsInfo(channelIds,groups) || groups.size() != 1)
+        {
+            RsErr() << "DEBUG [UI-LOAD]: Failed to retrieve channel group info for " << group_id << std::endl;
+            return;
         }
 
         RsGxsChannelGroup group = groups[0];
 
-        std::vector<RsGxsChannelPost> *posts    = new std::vector<RsGxsChannelPost>(); // We use the heap because the arrays need to be stored accross async
-        std::vector<RsGxsComment>      comments ;
-        std::vector<RsGxsVote>         votes    ;
+        std::vector<RsGxsChannelPost> *posts = new std::vector<RsGxsChannelPost>();
+        std::vector<RsGxsComment> comments;
+        std::vector<RsGxsVote> votes;
 
-        if(!rsGxsChannels->getChannelAllContent(group_id, *posts,comments,votes))
-		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel messages for channel " << group_id << std::endl;
-			return;
-		}
-#ifdef DEBUG_CHANNEL_MODEL
-        std::cerr << "Got channel all content for channel " << group_id << std::endl;
-        std::cerr << "  posts   : " << posts->size() << std::endl;
-        std::cerr << "  comments: " << comments.size() << std::endl;
-        std::cerr << "  votes   : " << votes.size() << std::endl;
+        // The following call is the heavy database operation
+        if(!rsGxsChannels->getChannelAllContent(group_id, *posts, comments, votes))
+        {
+            RsErr() << "DEBUG [UI-LOAD]: Failed to retrieve channel content for " << group_id << std::endl;
+            delete posts;
+            return;
+        }
+
+#ifdef GXSPROFILING
+        auto fetchEnd = std::chrono::steady_clock::now();
+        auto fetchMs = std::chrono::duration_cast<std::chrono::milliseconds>(fetchEnd - fetchStart).count();
+
+        RsDbg() << "GXSPROFILING [UI-LOAD]: Backend fetch finished. Items: " << posts->size() 
+                << " posts. Time: " << fetchMs << " ms";
 #endif
 
-        // 2 - update the model in the UI thread.
+        // Return to UI thread for model update
+        RsQThreadUtils::postToObject( [group, posts, this
+#ifdef GXSPROFILING
+                                       , totalRequestStart
+#endif
+                                      ]()
+        {
+#ifdef GXSPROFILING
+            auto uiUpdateStart = std::chrono::steady_clock::now();
+#endif
 
-        RsQThreadUtils::postToObject( [group,posts,this]()
-		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete, note that
-			 * Qt::QueuedConnection is important!
-			 */
+            setPosts(group, *posts);
 
-            setPosts(group,*posts) ;
+#ifdef GXSPROFILING
+            auto now = std::chrono::steady_clock::now();
+            auto totalMs = std::chrono::duration_cast<std::chrono::milliseconds>(now - totalRequestStart).count();
+            auto uiDispatchMs = std::chrono::duration_cast<std::chrono::milliseconds>(now - uiUpdateStart).count();
+
+            RsDbg() << "GXSPROFILING [UI-LOAD]: UI model update finished. Dispatch/Update time: " << uiDispatchMs << " ms";
+            RsDbg() << "GXSPROFILING [UI-LOAD]: TOTAL LOADING TIME (User perceived): " << totalMs << " ms";
+#endif
 
             delete posts;
-
-            MainWindow::getPage(MainWindow::Channels)->setCursor(Qt::ArrowCursor) ;
+            MainWindow::getPage(MainWindow::Channels)->setCursor(Qt::ArrowCursor);
 
         }, this );
-
     });
 }
 
