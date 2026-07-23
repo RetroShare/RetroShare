@@ -31,6 +31,14 @@ option(RS_FRIENDSERVER "Build RetroShare Friendserver" ON)
 option(RS_PLUGINS "Build RetroShare Plugins" OFF)
 option(RS_USE_I2P_SAM3 "Enable I2P SAMv3 support" ON)
 
+# Experimental, off-by-default GXS features. These are declared here at the top
+# level so the option propagates to both libretroshare (which compiles the
+# p3wiki/p3wire services and defines RS_USE_WIKI/RS_USE_WIRE) and retroshare-gui
+# (which builds the WikiPoos/TheWire dialogs). Enable both halves together, e.g.
+# cmake -DRS_GXSTHEWIRE=ON -DRS_GXSWIKIPOS=ON ...
+option(RS_GXSWIKIPOS "Build the experimental GXS Wiki (WikiPoos) feature" OFF)
+option(RS_GXSTHEWIRE "Build the experimental GXS 'The Wire' feature" OFF)
+
 # The "sam3" target is defined once here, at the top level, because it is linked
 # by more than one subproject: libretroshare AND retroshare-gui (which uses libsam3
 # directly in gui/settings/ServerPage.cpp). Defining it once avoids a duplicate
