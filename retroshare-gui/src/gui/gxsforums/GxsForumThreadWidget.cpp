@@ -23,6 +23,7 @@
 #include <QKeyEvent>
 #include <QScrollBar>
 #include <QPainter>
+#include <QTimer>
 
 #include "util/qtthreadsutils.h"
 #include "util/misc.h"
@@ -374,6 +375,12 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->threadTreeWidget->enableColumnCustomize(true);
 #endif
 
+    // Single-shot timer used to coalesce the full-forum reloads requested by
+    // incoming GXS events (see scheduleForumReload()).
+    mDeferredReloadTimer = new QTimer(this);
+    mDeferredReloadTimer->setSingleShot(true);
+    connect(mDeferredReloadTimer, &QTimer::timeout, this, [this]() { updateDisplay(true); });
+
     mEventHandlerId = 0;
     // Needs to be asynced because this function is called by another thread!
     rsEvents->registerEventsHandler(
@@ -402,7 +409,7 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
         case RsForumEventCode::PINNED_POSTS_CHANGED:
         case RsForumEventCode::SYNC_PARAMETERS_UPDATED:
             if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
-                updateDisplay(true);
+                scheduleForumReload();
             break;
 
         case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
@@ -422,6 +429,16 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
         default: break;
         }
     }
+}
+
+void GxsForumThreadWidget::scheduleForumReload()
+{
+    // Coalesce bursts of incoming events into a single reload. 300 ms is short
+    // enough to feel immediate yet long enough to absorb a whole sync batch, so
+    // the expensive updateForum()/setPosts() cycle runs once instead of once per
+    // post. Restarting the timer on every event pushes the reload back until the
+    // events settle.
+    mDeferredReloadTimer->start(300);
 }
 
 void GxsForumThreadWidget::showForumInfo()
@@ -596,6 +613,10 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
     }
     if(complete) 	// need to update the group data, reload the messages etc.
     {
+        // We are reloading now, so drop any reload still pending in the coalescing
+        // timer (e.g. queued by events for a forum we just switched away from).
+        mDeferredReloadTimer->stop();
+
         saveExpandedItems(mSavedExpandedMessages);
 
         if(groupId() != mThreadModel->currentGroupId())

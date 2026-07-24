@@ -29,6 +29,7 @@
 #include "util/FontSizeHandler.h"
 
 class QSortFilterProxyModel;
+class QTimer;
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
 class GxsForumsFillThread;
@@ -197,6 +198,13 @@ private:
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
+	// Coalesce the full-forum reloads triggered by incoming GXS events: a sync
+	// burst delivers many NEW_MESSAGE events in a row, and reloading the whole
+	// forum for each one froze the UI for seconds and reset the model out from
+	// under the user's selection. Restart a single-shot timer instead so a burst
+	// results in one reload once the events settle.
+	void scheduleForumReload();
+
 private:
 	void setForumDescriptionLoading();
 	void clearForumDescription();
@@ -239,6 +247,8 @@ private:
 
     Ui::GxsForumThreadWidget *ui;
     RsEventsHandlerId_t mEventHandlerId;
+
+    QTimer *mDeferredReloadTimer;
 };
 
 #endif // GXSFORUMTHREADWIDGET_H
