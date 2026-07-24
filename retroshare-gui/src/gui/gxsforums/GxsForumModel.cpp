@@ -759,8 +759,15 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
 {
 	preMods();
 
+	// Populate the model *before* ending the reset: beginResetModel() must bracket
+	// the actual data swap, otherwise endResetModel() fires while mPosts still holds
+	// the previous hierarchy and the view/proxy caches a stale row->source mapping.
+	// The former code also emitted a bogus beginInsertRows()/endInsertRows() on top
+	// of the reset, double-counting rows and corrupting that mapping — which made a
+	// freshly arrived post map to an invalid source index (post not shown, title
+	// left bold when selected). A single reset already tells the views to re-query
+	// everything, so no explicit row-insertion signal is needed.
 	beginResetModel();
-	endResetModel();
 
 	mForumGroup = group;
 	mPosts = posts;
@@ -783,17 +790,7 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
 	debug_dump();
 #endif
 
-	int count = 0;
-	if(mTreeMode == TREE_MODE_FLAT)
-		count = mPosts.size();
-	else
-		count = mPosts[0].mChildren.size();
-
-	if(count>0)
-	{
-		beginInsertRows(QModelIndex(),0,count-1);
-		endInsertRows();
-	}
+	endResetModel();
 
 	postMods();
 	emit forumLoaded();
