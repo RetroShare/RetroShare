@@ -25,6 +25,7 @@
 #include <QProgressBar>
 #include <QTimer>
 //VOIP
+#include "gui/qtmultimedia_compat.h"
 #include "gui/VOIPNotify.h"
 #include <gui/SpeexProcessor.h>
 #include "services/rsVOIPItems.h"
@@ -33,8 +34,6 @@
 #include <gui/common/RsButtonOnText.h>
 
 class QToolButton;
-class QAudioInput;
-class QAudioOutput;
 class QVideoInputDevice ;
 class QVideoOutputDevice ;
 class VideoProcessor ;
@@ -99,8 +98,8 @@ protected:
 	bool eventFilter(QObject *obj, QEvent *event);
 
 	// Audio input/output
-	QAudioInput* inputAudioDevice;
-	QAudioOutput* outputAudioDevice;
+	RsAudioInput* inputAudioDevice;
+	RsAudioOutput* outputAudioDevice;
 
 	QtSpeex::SpeexInputProcessor* inputAudioProcessor;
 	QtSpeex::SpeexOutputProcessor* outputAudioProcessor;

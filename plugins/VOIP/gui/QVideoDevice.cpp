@@ -23,32 +23,192 @@
 #include <QImageReader>
 #include <QBuffer>
 #include <QCamera>
-#include <QCameraInfo>
-#include <QCameraImageCapture>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#  include <QMediaDevices>
+#  include <QCameraDevice>
+#  include <QMediaCaptureSession>
+#  include <QVideoSink>
+#  include <QVideoFrameFormat>
+#else
+#  include <QCameraInfo>
+#  include <QCameraImageCapture>
+#endif
 #include "QVideoDevice.h"
 #include "VideoProcessor.h"
 
 // #define DEBUG_QVIDEODEVICE 1
 
+// Period between two grabbed frames, in ms. Qt5 drives a still-image capture
+// with it; Qt6 uses it to sample the continuous frame stream of the video sink.
+static const int VIDEO_GRAB_PERIOD_MS = 50 ;	// 20 images per second.
+
 QVideoInputDevice::QVideoInputDevice(QWidget *parent)
   :QObject(parent)
 {
-	_timer = NULL ;
 	_capture_device = NULL ;
 	_video_processor = NULL ;
 	_echo_output_device = NULL ;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	_capture_session = NULL ;
+	_video_sink = NULL ;
+#else
+	_timer = NULL ;
 	_image_capture = NULL;
+#endif
 }
 
 QVideoInputDevice::~QVideoInputDevice()
 {
-    stop() ;
+    stop() ;	// releases the camera and the capture pipeline
     _video_processor = NULL ;
-
-    delete _image_capture;
-    delete _capture_device;
-    delete _timer;
 }
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+
+bool QVideoInputDevice::stopped() const
+{
+    return _capture_device == NULL ;
+}
+
+void QVideoInputDevice::stop()
+{
+    _capture_device_info = QCameraDevice();
+
+    if(_capture_device != NULL)
+    {
+        _capture_device->stop() ;
+        delete _capture_device ;
+        _capture_device = NULL ;
+    }
+    // The capture session wires camera -> sink; tear it down after the camera.
+    delete _capture_session ;
+    _capture_session = NULL ;
+    delete _video_sink ;
+    _video_sink = NULL ;
+    _frame_throttle.invalidate() ;
+
+    if(_echo_output_device != NULL)
+        _echo_output_device->showFrameOff() ;
+}
+
+void QVideoInputDevice::getAvailableDevices(QList<QString>& device_desc)
+{
+    device_desc.clear();
+
+    const QList<QCameraDevice> dev_list = QMediaDevices::videoInputs();
+
+    for(auto& cam:dev_list)
+        device_desc.push_back(cam.description());
+}
+
+void QVideoInputDevice::start(const QString& description)
+{
+	// make sure everything is re-initialised
+	//
+	stop() ;
+
+    QCameraDevice caminfo ;
+
+    if(description.isNull())
+        caminfo = QMediaDevices::defaultVideoInput();
+    else
+    {
+        const auto cam_list = QMediaDevices::videoInputs();
+
+        for(auto& s:cam_list)
+            if(s.description() == description)
+                caminfo = s;
+    }
+
+    if(caminfo.isNull())
+    {
+        std::cerr << "No video camera available in this system!" << std::endl;
+        return ;
+    }
+    _capture_device_info = caminfo;
+    _capture_device = new QCamera(caminfo);
+
+    if(_capture_device->error() != QCamera::NoError)
+    {
+        emit cameraCaptureInfo(CANNOT_INITIALIZE_CAMERA,_capture_device->error());
+        std::cerr << "Cannot initialise camera. Something's wrong." << std::endl;
+        return;
+    }
+
+    // Qt6 has no capture-to-buffer still-image API: the camera feeds a
+    // QVideoSink through a QMediaCaptureSession and videoFrameChanged() delivers
+    // every frame on the GUI thread; handleSinkFrame() samples them.
+    _video_sink = new QVideoSink(this);
+    _capture_session = new QMediaCaptureSession(this);
+    _capture_session->setCamera(_capture_device);
+    _capture_session->setVideoSink(_video_sink);
+
+    QObject::connect(_video_sink,SIGNAL(videoFrameChanged(QVideoFrame)),this,SLOT(handleSinkFrame(QVideoFrame)));
+    QObject::connect(this,SIGNAL(cameraCaptureInfo(CameraStatus,QCamera::Error)),this,SLOT(errorHandling(CameraStatus,QCamera::Error)));
+
+    emit cameraCaptureInfo(CAMERA_IS_READY,QCamera::NoError);
+
+    _capture_device->start();
+}
+
+void QVideoInputDevice::handleSinkFrame(const QVideoFrame& f)
+{
+    // The sink runs at the camera's native rate; keep the grab period of the
+    // Qt5 timer so the encoder sees the same frame rate on both Qt versions.
+    if(_frame_throttle.isValid() && _frame_throttle.elapsed() < VIDEO_GRAB_PERIOD_MS)
+        return;
+    _frame_throttle.start();
+
+    if(!f.isValid() || f.size().isEmpty())
+    {
+        std::cerr << "Empty frame!" ;
+        return;
+    }
+
+    QImage image;
+
+    if(f.pixelFormat() == QVideoFrameFormat::Format_Jpeg)
+    {
+        // Some cameras (Windows in particular) hand out compressed frames.
+        QVideoFrame frame(f);
+
+        if(!frame.map(QVideoFrame::ReadOnly))
+            return;
+
+        QByteArray data((const char *)frame.bits(0), frame.mappedBytes(0));
+        frame.unmap();
+
+        QBuffer buffer;
+        buffer.setData(data);
+        buffer.open(QIODevice::ReadOnly);
+        QImageReader reader(&buffer, "JPG");
+        reader.setScaledSize(QSize(640,480));
+        image = reader.read();
+    }
+    else
+    {
+        // toImage() converts YUV/RGB frames whatever the backend. The encoder
+        // rescales to its own frame size; just bound the work on large frames.
+        image = f.toImage();
+
+        if(!image.isNull() && image.width() > 640)
+            image = image.scaled(640, 480, Qt::KeepAspectRatio);
+    }
+
+    if(image.isNull())
+    {
+        std::cerr << "Cannot convert camera frame to image. Pixel format: " << (int)f.pixelFormat() << std::endl;
+        return;
+    }
+
+#ifdef DEBUG_QVIDEODEVICE
+    std::cerr << "Frame. Pixel format: " << (int)f.pixelFormat() << ". Size: " << image.size().width() << " x " << image.size().height() << std::endl;
+#endif
+
+    processImage(image) ;
+}
+
+#else // Qt5
 
 bool QVideoInputDevice::stopped() const
 {
@@ -145,22 +305,9 @@ void QVideoInputDevice::start(const QString& description)
     _timer = new QTimer ;
     QObject::connect(_timer,SIGNAL(timeout()),_image_capture,SLOT(capture())) ;
 
-    _timer->start(50) ;	// 10 images per second.
+    _timer->start(VIDEO_GRAB_PERIOD_MS) ;
 
     _capture_device->start();
-}
-
-void QVideoInputDevice::errorHandling(CameraStatus status,QCamera::Error error)
-{
-#ifdef DEBUG_QVIDEODEVICE
-    std::cerr << "Received msg from camera capture: status=" << (int)status << " error=" << (int)error << std::endl;
-#else
-    Q_UNUSED(error);
-#endif
-    if(status == CANNOT_INITIALIZE_CAMERA)
-    {
-        std::cerr << "Cannot initialize camera. Make sure to install package libqt5multimedia5-plugins, as this is a common cause for camera not being found." << std::endl;
-    }
 }
 
 void QVideoInputDevice::grabFrame(int id,QVideoFrame frame)
@@ -186,6 +333,26 @@ void QVideoInputDevice::grabFrame(int id,QVideoFrame frame)
     Q_UNUSED(id);
 #endif
 
+    processImage(image) ;
+}
+
+#endif // Qt5
+
+void QVideoInputDevice::errorHandling(CameraStatus status,QCamera::Error error)
+{
+#ifdef DEBUG_QVIDEODEVICE
+    std::cerr << "Received msg from camera capture: status=" << (int)status << " error=" << (int)error << std::endl;
+#else
+    Q_UNUSED(error);
+#endif
+    if(status == CANNOT_INITIALIZE_CAMERA)
+    {
+        std::cerr << "Cannot initialize camera. Make sure the QtMultimedia camera backend is installed (package libqt5multimedia5-plugins on Qt5), as this is a common cause for camera not being found." << std::endl;
+    }
+}
+
+void QVideoInputDevice::processImage(const QImage& image)
+{
     if(_video_processor != NULL)
     {
         _video_processor->processImage(image) ;
@@ -198,7 +365,7 @@ void QVideoInputDevice::grabFrame(int id,QVideoFrame frame)
 
 bool QVideoInputDevice::getNextEncodedPacket(RsVOIPDataChunk& chunk)
 {
-    if(!_timer)
+    if(stopped())
         return false ;
 
     if(_video_processor)
@@ -234,4 +401,3 @@ void QVideoOutputDevice::showFrame(const QImage& img)
 #endif
     setPixmap(QPixmap::fromImage(img).scaled( QSize(height()*4/3,height()),Qt::KeepAspectRatio,Qt::SmoothTransformation)) ;
 }
-
