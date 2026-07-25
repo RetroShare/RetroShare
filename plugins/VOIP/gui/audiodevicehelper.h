@@ -20,18 +20,17 @@
 
 #pragma once
 
-#include <QAudioInput>
-#include <QAudioOutput>
+#include "gui/qtmultimedia_compat.h"
 
 class AudioDeviceHelper
 {
 public:
     AudioDeviceHelper();
-    static QAudioInput* getDefaultInputDevice();
-    static QAudioInput* getPreferedInputDevice();
+    static RsAudioInput* getDefaultInputDevice();
+    static RsAudioInput* getPreferedInputDevice();
     //static list getInputDeviceList();
 
-    static QAudioOutput* getDefaultOutputDevice();
-    static QAudioOutput* getPreferedOutputDevice();
+    static RsAudioOutput* getDefaultOutputDevice();
+    static RsAudioOutput* getPreferedOutputDevice();
     //static list getOutputDeviceList();
 };

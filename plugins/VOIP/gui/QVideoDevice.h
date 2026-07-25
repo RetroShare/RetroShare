@@ -22,13 +22,25 @@
 
 #include <QLabel>
 #include <QCamera>
-#include <QCameraInfo>
+#include <QVideoFrame>
 #include "interface/rsVOIP.h"
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#  include <QCameraDevice>
+#  include <QMediaDevices>
+#  include <QMediaCaptureSession>
+#  include <QVideoSink>
+#  include <QElapsedTimer>
+#else
+#  include <QCameraInfo>
+#endif
 
 #include "gui/VideoProcessor.h"
 
 class VideoEncoder ;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 class QCameraImageCapture;
+#endif
 
 // Responsible from displaying the video. The source of the video is
 // a VideoDecoder object, which uses a codec.
@@ -44,6 +56,11 @@ class QVideoOutputDevice: public QLabel
 
 // Responsible for grabbing the video from the webcam and sending it to the 
 // VideoEncoder object.
+//
+// Qt5 grabs still images from the camera on a timer (QCameraImageCapture).
+// Qt6 removed that capture-to-buffer API, so there the camera feeds a
+// QVideoSink through a QMediaCaptureSession and we sample its frames at the
+// same period as the Qt5 timer.
 //
 class QVideoInputDevice: public QObject
 {
@@ -86,9 +103,17 @@ class QVideoInputDevice: public QObject
 
         static void getAvailableDevices(QList<QString>& device_desc);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        QString currentCameraDescriptionString() const { return _capture_device_info.description(); }
+#else
         QString currentCameraDescriptionString() const { return _capture_device_info.deviceName(); }
+#endif
 protected slots:
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        void handleSinkFrame(const QVideoFrame& f) ;
+#else
         void grabFrame(int id, QVideoFrame f) ;
+#endif
         void errorHandling(CameraStatus status,QCamera::Error error);
 
 	signals:
@@ -96,14 +121,23 @@ protected slots:
         void cameraCaptureInfo(CameraStatus status,QCamera::Error qt_cam_err_code);
 
 	private:
+        // Common tail of the capture path: encode the image and echo it locally.
+        void processImage(const QImage& image) ;
+
 		VideoProcessor *_video_processor ;
-		QTimer *_timer ;
         QCamera *_capture_device;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        QMediaCaptureSession *_capture_session;
+        QVideoSink *_video_sink;
+        QCameraDevice _capture_device_info;
+        QElapsedTimer _frame_throttle;	// paces the sink's native frame rate down to the grab period
+#else
+		QTimer *_timer ;
         QCameraImageCapture *_image_capture;
         QCameraInfo _capture_device_info;
+#endif
 
 		QVideoOutputDevice *_echo_output_device ;
 
 		std::list<RsVOIPDataChunk> _out_queue ;
 };
-
