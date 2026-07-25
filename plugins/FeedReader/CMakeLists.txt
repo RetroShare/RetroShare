@@ -2,7 +2,23 @@
 cmake_minimum_required(VERSION 3.18)
 project(FeedReaderPlugin)
 
-find_package(Qt5 COMPONENTS Core Widgets Xml Network REQUIRED)
+# Version-agnostic Qt detection: probe Qt6 first, fall back to Qt5, mirroring
+# retroshare-gui/CMakeLists.txt so the plugin builds against whichever Qt the GUI
+# uses. Do NOT use find_package(QT NAMES Qt6 Qt5 ...): on multiarch distros that
+# ship both, it picks Qt5 in filesystem order. The explicit probe is deterministic.
+find_package(Qt6 QUIET COMPONENTS Core)
+if(Qt6_FOUND)
+    set(QT_VERSION_MAJOR 6)
+else()
+    find_package(Qt5 COMPONENTS Core REQUIRED)
+    set(QT_VERSION_MAJOR 5)
+endif()
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Xml Network REQUIRED)
+if(QT_VERSION_MAJOR EQUAL 6)
+    # Core5Compat provides QRegExp/QTextCodec etc. still referenced by the shared
+    # retroshare-gui headers this plugin includes; matches the GUI's own link.
+    find_package(Qt6 COMPONENTS Core5Compat REQUIRED)
+endif()
 
 # --- Dependencies ---
 find_package(CURL REQUIRED)
@@ -55,10 +71,10 @@ set(FEEDREADER_RESOURCES
 
 # --- Translations (.ts -> .qm) ---
 file(GLOB TS_FILES "lang/*.ts")
-if(Qt5LinguistTools_FOUND)
-    qt5_add_translation(QM_FILES ${TS_FILES})
+if(Qt${QT_VERSION_MAJOR}LinguistTools_FOUND)
+    qt_add_translation(QM_FILES ${TS_FILES})
 else()
-    find_program(LRELEASE_EXECUTABLE NAMES lrelease-qt5 lrelease)
+    find_program(LRELEASE_EXECUTABLE NAMES lrelease-qt${QT_VERSION_MAJOR} lrelease-qt5 lrelease)
     foreach(ts_file ${TS_FILES})
         get_filename_component(ts_name ${ts_file} NAME_WE)
         set(qm_src_file "${CMAKE_CURRENT_SOURCE_DIR}/lang/${ts_name}.qm")
@@ -109,16 +125,19 @@ if(WIN32)
 endif()
 
 target_link_libraries(FeedReader PRIVATE
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::Xml
-    Qt5::Network
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Xml
+    Qt${QT_VERSION_MAJOR}::Network
     CURL::libcurl
     LibXml2::LibXml2
     LibXslt::LibXslt
     OpenSSL::SSL
     OpenSSL::Crypto
 )
+if(QT_VERSION_MAJOR EQUAL 6)
+    target_link_libraries(FeedReader PRIVATE Qt6::Core5Compat)
+endif()
 
 target_compile_options(FeedReader PRIVATE "-Wno-deprecated-declarations")
 target_compile_definitions(FeedReader PRIVATE RS_NO_WARN_DEPRECATED)
