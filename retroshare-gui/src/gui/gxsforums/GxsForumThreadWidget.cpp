@@ -254,6 +254,13 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 {
     ui->setupUi(this);
 
+    // Single-shot timer used to coalesce the full-forum reloads requested by
+    // incoming GXS events (see scheduleForumReload()). Created first thing:
+    // setGroupId(forumId) below reaches updateDisplay(), which touches this timer.
+    mDeferredReloadTimer = new QTimer(this);
+    mDeferredReloadTimer->setSingleShot(true);
+    connect(mDeferredReloadTimer, &QTimer::timeout, this, [this]() { updateDisplay(true); });
+
     //setUpdateWhenInvisible(true);
 
     //mUpdating = false;
@@ -374,12 +381,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 #ifdef SUSPENDED_CODE
     ui->threadTreeWidget->enableColumnCustomize(true);
 #endif
-
-    // Single-shot timer used to coalesce the full-forum reloads requested by
-    // incoming GXS events (see scheduleForumReload()).
-    mDeferredReloadTimer = new QTimer(this);
-    mDeferredReloadTimer->setSingleShot(true);
-    connect(mDeferredReloadTimer, &QTimer::timeout, this, [this]() { updateDisplay(true); });
 
     mEventHandlerId = 0;
     // Needs to be asynced because this function is called by another thread!
