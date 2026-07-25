@@ -326,11 +326,13 @@ int main(int argc, char *argv[])
     qt_use_native_dialogs = false;
 #endif
 
+    QString applicationFilePath;
     {
         /* Set the current directory to the application dir,
            because the start dir with autostart from the registry run key is not the exe dir */
         QApplication app(argc, argv);
         QDir::setCurrent(QCoreApplication::applicationDirPath());
+        applicationFilePath = QCoreApplication::applicationFilePath();
     }
 #endif
 #ifdef SIGFPE_DEBUG
@@ -427,7 +429,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
     // Now start RS login system
 
-    conf.main_executable_path = argv[0];
+    conf.main_executable_path = applicationFilePath.toStdString();
 
     int initResult = RsInit::InitRetroShare(conf);
 
