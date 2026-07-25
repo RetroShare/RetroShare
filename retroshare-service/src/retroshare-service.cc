@@ -283,7 +283,56 @@ int main(int argc, char* argv[])
 #endif /* defined(RS_JSONAPI) && defined(RS_WEBUI)
 	&& defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD) */
 
-	conf.main_executable_path = argv[0];
+	std::string mainExecutablePath;
+#ifdef WINDOWS_SYS
+	{
+		// Use a dynamic buffer to handle paths longer than MAX_PATH safely
+		std::vector<wchar_t> filename(MAX_PATH);
+		while (true) {
+			// Clear error state before the call to avoid stale error codes causing infinite loops
+			SetLastError(ERROR_SUCCESS);
+
+			// Passing NULL retrieves the path of the current executable (.exe)
+			DWORD result = GetModuleFileNameW(NULL, filename.data(), static_cast<DWORD>(filename.size()));
+
+			// Check for function failure
+			if (result == 0) {
+				RsFatal() << "Failed to calculate string size. Error code: " << GetLastError() << std::endl;
+				return 1;
+			}
+
+			// If the buffer was too small or truncated, double its size and try again
+			if (result == filename.size() || GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
+				filename.resize(filename.size() * 2);
+				continue;
+			}
+
+			// Success: path was fully copied
+			filename.resize(result); // Resize vector to the actual path length
+			break;
+		}
+
+		// Calculate the required buffer size for the UTF-8 string
+		int sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, filename.data(), -1, NULL, 0, NULL, NULL);
+		if (sizeNeeded == 0) {
+			RsFatal() << "Failed to calculate string size. Error code: " << GetLastError() << std::endl;
+			return 1;
+		}
+
+		// Instantiate a std::string with the matching size
+		mainExecutablePath.resize(sizeNeeded - 1, 0); // -1 excludes the null-terminator
+
+		// Convert UTF-16 to UTF-8
+		int result = WideCharToMultiByte(CP_UTF8, 0, filename.data(), -1, &mainExecutablePath[0], sizeNeeded, NULL, NULL);
+		if (result == 0) {
+			RsFatal() << "Failed to convert string to UTF-8. Error code: " << GetLastError() << std::endl;
+			return 1;
+		}
+	}
+#else
+	mainExecutablePath = argv[0];
+#endif
+	conf.main_executable_path = mainExecutablePath;
 
 	int initResult = RsInit::InitRetroShare(conf);
 
