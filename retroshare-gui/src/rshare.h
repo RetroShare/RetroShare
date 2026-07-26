@@ -132,13 +132,6 @@ public:
   /** Returns Rshare's application startup time. */
   static QDateTime startupTime();
 
-  /** Returns the location Rshare uses for its data files. */
-  static QString dataDirectory();
-  /** Returns the default location of Rshare's data directory. */
-  static QString defaultDataDirectory();
-  /** Creates Rshare's data directory, if it doesn't already exist. */
-  static bool createDataDirectory(QString *errmsg);
-  
   /** Writes <b>msg</b> with severity <b>level</b> to RetroShare's log. */
   static Log::LogMessage log(Log::LogLevel level, QString msg);
   

@@ -589,9 +589,10 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
         // Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
 
-        std::string tor_hidden_service_dir = RsAccounts::AccountDirectory() + "/hidden_service/" ;
+        std::string account_directory = RsAccounts::AccountDirectory();
+        std::string tor_hidden_service_dir = account_directory + "/hidden_service/" ;
 
-        RsTor::setTorDataDirectory(RsApplication::dataDirectory().toStdString() + "/tor/");
+        RsTor::setTorDataDirectory(account_directory + "/tor/");
         RsTor::setHiddenServiceDirectory(tor_hidden_service_dir);	// re-set it, because now it's changed to the specific location that is run
 
         RsDirUtil::checkCreateDirectory(std::string(tor_hidden_service_dir)) ;
