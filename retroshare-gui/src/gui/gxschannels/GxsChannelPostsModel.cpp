@@ -527,7 +527,7 @@ void RsGxsChannelPostsModel::updateSinglePost(const RsGxsChannelPost& post,std::
     triggerViewUpdate(true,false);
 }
 
-void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>& posts)
+void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>&& posts)
 {
     RsGxsProfiler::Timer prof_timer;
 
@@ -538,13 +538,20 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
 
 //    createPostsArray(posts);
 
-    mPosts = posts;
+    // The caller hands over its array and discards it right after, so take it
+    // rather than deep copying every post (and every thumbnail) one more time.
+    mPosts = std::move(posts);
 
     const long prof_copy_ms = prof_timer.lap();
 
+    // update_posts() already sorted the array in its loader thread. Kept as a
+    // cheap safety net for any other caller: on already ordered input this only
+    // costs comparisons, no element is moved.
 	std::sort(mPosts.begin(),mPosts.end());
 
     const long prof_sort_ms = prof_timer.lap();
+
+	mFilteredPosts.reserve(mPosts.size());
 
 	for(uint32_t i=0;i<mPosts.size();++i)
 		mFilteredPosts.push_back(i);
@@ -614,13 +621,23 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 			return;
 		}
 
-        const long prof_content_ms = prof_timer.ms();
+        const long prof_content_ms = prof_timer.lap();
 
-        RS_GXS_PROF( prof_grpinfo_ms + prof_content_ms,
+        // Sort here rather than in setPosts(): setPosts() runs in the Qt thread,
+        // where sorting a few thousand posts is a visible freeze. The model only
+        // ever displays a sorted array, so the order may as well be established
+        // in this loader thread.
+        std::sort(posts->begin(),posts->end());
+
+        const long prof_sort_ms = prof_timer.ms();
+        const long prof_total_ms = prof_grpinfo_ms + prof_content_ms + prof_sort_ms;
+
+        RS_GXS_PROF( prof_total_ms,
                      "update_posts     grp=" << group_id << " posts=" << posts->size()
                      << " getChannelsInfo=" << prof_grpinfo_ms << "ms"
                      << " getChannelAllContent=" << prof_content_ms << "ms"
-                     << " service_total=" << (prof_grpinfo_ms + prof_content_ms) << "ms" );
+                     << " sort=" << prof_sort_ms << "ms"
+                     << " service_total=" << prof_total_ms << "ms" );
 #ifdef DEBUG_CHANNEL_MODEL
         std::cerr << "Got channel all content for channel " << group_id << std::endl;
         std::cerr << "  posts   : " << posts->size() << std::endl;
@@ -638,7 +655,7 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 			 * Qt::QueuedConnection is important!
 			 */
 
-            setPosts(group,*posts) ;
+            setPosts(group,std::move(*posts)) ;
 
             delete posts;
 
