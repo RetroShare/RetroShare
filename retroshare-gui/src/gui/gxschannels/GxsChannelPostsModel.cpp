@@ -26,6 +26,7 @@
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxschannels.h"
 #include "retroshare/rsexpr.h"
+#include "gxs/rsgxsprofiler.h"
 
 #include "gui/MainWindow.h"
 #include "gui/mainpagestack.h"
@@ -528,6 +529,8 @@ void RsGxsChannelPostsModel::updateSinglePost(const RsGxsChannelPost& post,std::
 
 void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>& posts)
 {
+    RsGxsProfiler::Timer prof_timer;
+
 	preMods();
 
 	initEmptyHierarchy();
@@ -536,7 +539,12 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
 //    createPostsArray(posts);
 
     mPosts = posts;
+
+    const long prof_copy_ms = prof_timer.lap();
+
 	std::sort(mPosts.begin(),mPosts.end());
+
+    const long prof_sort_ms = prof_timer.lap();
 
 	for(uint32_t i=0;i<mPosts.size();++i)
 		mFilteredPosts.push_back(i);
@@ -553,6 +561,15 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
 
 	postMods();
 
+    const long prof_view_ms = prof_timer.ms();
+    const long prof_total_ms = prof_copy_ms + prof_sort_ms + prof_view_ms;
+
+    RS_GXS_PROF( prof_total_ms, "setPosts (UI)    posts=" << mPosts.size()
+                 << " copy=" << prof_copy_ms << "ms"
+                 << " sort=" << prof_sort_ms << "ms"
+                 << " view_update=" << prof_view_ms << "ms"
+                 << " total=" << prof_total_ms << "ms" );
+
 	emit channelPostsLoaded();
 }
 
@@ -567,6 +584,8 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 
     RsThread::async([this, group_id]()
 	{
+        RsGxsProfiler::Timer prof_timer;
+
         // 1 - get message data from p3GxsChannels
 
         std::list<RsGxsGroupId> channelIds;
@@ -583,6 +602,8 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 
         RsGxsChannelGroup group = groups[0];
 
+        const long prof_grpinfo_ms = prof_timer.lap();
+
         std::vector<RsGxsChannelPost> *posts    = new std::vector<RsGxsChannelPost>(); // We use the heap because the arrays need to be stored accross async
         std::vector<RsGxsComment>      comments ;
         std::vector<RsGxsVote>         votes    ;
@@ -592,6 +613,14 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel messages for channel " << group_id << std::endl;
 			return;
 		}
+
+        const long prof_content_ms = prof_timer.ms();
+
+        RS_GXS_PROF( prof_grpinfo_ms + prof_content_ms,
+                     "update_posts     grp=" << group_id << " posts=" << posts->size()
+                     << " getChannelsInfo=" << prof_grpinfo_ms << "ms"
+                     << " getChannelAllContent=" << prof_content_ms << "ms"
+                     << " service_total=" << (prof_grpinfo_ms + prof_content_ms) << "ms" );
 #ifdef DEBUG_CHANNEL_MODEL
         std::cerr << "Got channel all content for channel " << group_id << std::endl;
         std::cerr << "  posts   : " << posts->size() << std::endl;
