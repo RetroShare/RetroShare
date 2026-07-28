@@ -133,6 +133,10 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 		splitterInternal->restoreState(geometryInt);
 	}
 
+	/* Thumbnails (index 0) stretch to fill space; details (index 1) stays compact */
+	splitterExternal->setStretchFactor(0, 1);
+	splitterExternal->setStretchFactor(1, 0);
+
 	// Create the sort menu
 	QMenu *sortMenu = new QMenu(this);
 	sortMenu->addAction(tr("Sort by Name"), this, SLOT(sortByName()));
@@ -1164,9 +1168,9 @@ void PeopleDialog::filterChanged(const QString &text)
     filterMap(_ext_circles_widgets);
     filterMap(_int_circles_widgets);
 
-    // CRITICAL: Tell the layouts to recalculate positions without breaking events
-    _flowLayoutExt->update();
-    _flowLayoutInt->update();
+    // CRITICAL: Invalidate layouts so Qt recomputes positions (not just repaints)
+    _flowLayoutExt->invalidate();
+    _flowLayoutInt->invalidate();
 }
 
 void PeopleDialog::sortByName()
