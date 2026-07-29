@@ -39,6 +39,7 @@
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/gxs/GxsPerfProbe.h"
 #include "util/HandleRichText.h"
 #include "CreateGxsForumMsg.h"
 #include "gui/MainWindow.h"
@@ -59,6 +60,8 @@
 #include <algorithm>
 
 //#define DEBUG_FORUMS
+
+using RsGuiPerf::Probe;
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE          ":/icons/mail/compose.png"
@@ -254,6 +257,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 {
     ui->setupUi(this);
 
+    RsGuiPerf::installGuiStallWatchdog();
+
     // Single-shot timer used to coalesce the full-forum reloads requested by
     // incoming GXS events (see scheduleForumReload()). Created first thing:
     // setGroupId(forumId) below reaches updateDisplay(), which touches this timer.
@@ -410,7 +415,7 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
         case RsForumEventCode::PINNED_POSTS_CHANGED:
         case RsForumEventCode::SYNC_PARAMETERS_UPDATED:
             if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
-                scheduleForumReload();
+                scheduleForumReload(static_cast<int>(e->mForumEventCode));
             break;
 
         case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
@@ -428,8 +433,14 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
     }
 }
 
-void GxsForumThreadWidget::scheduleForumReload()
+void GxsForumThreadWidget::scheduleForumReload(int event_code)
 {
+    // A full reload re-reads and re-sorts every post of the forum, so if one is
+    // scheduled while the user is only navigating, that alone explains the lag.
+    // See RsForumEventCode for the meaning of the code.
+    if(RsGuiPerf::enabled())
+        RsDbg() << "GUI-PROF scheduleForumReload  event_code=" << event_code;
+
     // Coalesce bursts of incoming events into a single reload. 300 ms is short
     // enough to feel immediate yet long enough to absorb a whole sync batch, so
     // the expensive updateForum()/setPosts() cycle runs once instead of once per
@@ -941,6 +952,8 @@ void GxsForumThreadWidget::changedThread(QModelIndex index)
     if(!index.isValid())
         return;
 
+    Probe prof("changedThread");
+
     RsGxsMessageId new_id(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID).data(Qt::UserRole).toString().toStdString());
 
     if(new_id == mThreadId)
@@ -1173,6 +1186,8 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
 
 void GxsForumThreadWidget::insertMessage()
 {
+    Probe prof("insertMessage");
+
 #ifdef DEBUG_FORUMS
     std::cerr << "Inserting message, threadId=" << mThreadId <<std::endl;
 #endif
@@ -1306,6 +1321,8 @@ void GxsForumThreadWidget::setMessageLoadingError(const QString& error)
 
 void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 {
+    Probe prof("insertMessageData");
+
     /* As some time has elapsed since request - check that this is still the current msg.
      * otherwise, another request will fill the data
      */
@@ -1481,6 +1498,9 @@ void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool f
     if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) {
         return;
     }
+
+    Probe prof("markMsgAsReadUnread");
+    prof.detail(QString("read=%1 children=%2 forum=%3").arg(read?1:0).arg(children?1:0).arg(forum?1:0));
 
     QModelIndex src_index;
     if(forum)
@@ -1924,6 +1944,9 @@ void GxsForumThreadWidget::filterItems(const QString& text)
 
 void GxsForumThreadWidget::postForumLoading()
 {
+	Probe prof("postForumLoading");
+	prof.detail(QString("expanded_items=%1").arg(mSavedExpandedMessages.size()));
+
 	if(groupId().isNull())
 	{
 		ui->nextUnreadButton->setEnabled(false);
