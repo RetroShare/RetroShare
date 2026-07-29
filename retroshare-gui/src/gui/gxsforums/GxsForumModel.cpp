@@ -874,7 +874,8 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 	// dataChanged() per post, which froze the UI for a very long time (and could
 	// crash) when marking a large forum (thousands of posts) as read.
 	std::vector<RsGxsMessageId> changed_msgs;
-	recursSetMsgReadStatus(entry,read_status,with_children,changed_msgs) ;
+	uint32_t changed_entries = 0;
+	recursSetMsgReadStatus(entry,read_status,with_children,changed_msgs,changed_entries) ;
 
 	bool has_unread_below, has_read_below;
 	recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below);
@@ -898,7 +899,14 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 			rsGxsForums->markRead(grpId, changed_msgs, read_status);
 		});
 
-	if (with_children || changed_msgs.size() > 5)
+	// How the view is refreshed depends on how many *rows* changed, not on how
+	// many messages were written. A post keeps every edited version of itself in
+	// the database and they all share one read status, so marking a single post
+	// read can queue dozens of message ids while still repainting exactly one
+	// row. Testing changed_msgs.size() here meant that one click on a post with
+	// 47 stored versions emitted dataChanged() over the whole model: 1072 ms of
+	// frozen interface on a 8259 post forum, measured.
+	if (with_children || changed_entries > 5)
 	{
 		// A single refresh of the whole view instead of one dataChanged() per post.
 		if(mTreeMode == TREE_MODE_FLAT)
@@ -917,7 +925,7 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 	}
 }
 
-void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children,std::vector<RsGxsMessageId>& changed_msgs)
+void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children,std::vector<RsGxsMessageId>& changed_msgs,uint32_t& changed_entries)
 {
     uint32_t newStatus = (read_status ? mPosts[i].mMsgStatus & ~static_cast<int>(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD)
                                       : mPosts[i].mMsgStatus |  static_cast<int>(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD));
@@ -928,6 +936,10 @@ void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,
 
 	if (bChanged)
 	{
+		// One row changed, whatever the number of stored versions collected just
+		// below. setMsgReadStatus() sizes its view refresh on this count.
+		++changed_entries;
+
 		//Don't recurs post versions as this should be done before, if no change.
 		auto s = getPostVersions(mPosts[i].mMsgId) ;
 
@@ -945,7 +957,7 @@ void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,
 		return;
 
 	for(uint32_t j=0;j<mPosts[i].mChildren.size();++j)
-		recursSetMsgReadStatus(mPosts[i].mChildren[j],read_status,with_children,changed_msgs);
+		recursSetMsgReadStatus(mPosts[i].mChildren[j],read_status,with_children,changed_msgs,changed_entries);
 }
 
 void RsGxsForumModel::recursUpdateReadStatusAndTimes(ForumModelIndex i,bool& has_unread_below,bool& has_read_below)
