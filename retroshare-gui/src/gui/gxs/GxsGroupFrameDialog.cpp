@@ -1037,11 +1037,59 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGxsGenericGroupData
 
 	mInFill = false;
 
+	restoreCachedGroupCounts();
+
 	/* Re-fill group */
 	if (!ui->groupTreeWidget->activateId(QString::fromStdString(mGroupId.toStdString()), true))
 		mGroupId.clear();
 
 	updateMessageSummaryList(RsGxsGroupId());
+}
+
+void GxsGroupFrameDialog::restoreCachedGroupCounts()
+{
+	// Two different things write the post count column: fillGroupItems() above
+	// puts there the number of posts the *network* advertises for the group
+	// (mVisibleMsgCount), and setCounts() puts there the number of posts we
+	// actually hold locally. Last writer wins, so a tree refill silently
+	// replaces the local figure by the neighbours' one -- 800 instead of 8259
+	// observed on a forum whose neighbours keep a much shorter history.
+	//
+	// It used to be papered over: every network statistics event ran a full
+	// local recomputation, which wrote the local figure back a moment later.
+	// That recomputation was ruinous and is gone, so re-apply what is already
+	// known instead. This costs nothing, the numbers come from the cache.
+
+	if(mCachedGroupStats.empty())
+		return;
+
+	QTreeWidgetItem *categories[2] = { mYourGroups, mSubscribedGroups };
+
+	for(int c = 0; c < 2; ++c)
+	{
+		if(!categories[c])
+			continue;
+
+		const int childCount = categories[c]->childCount();
+
+		for(int child = 0; child < childCount; ++child)
+		{
+			QTreeWidgetItem *item = categories[c]->child(child);
+			const QString childId = ui->groupTreeWidget->itemId(item);
+
+			if(childId.isEmpty())
+				continue;
+
+			auto it = mCachedGroupStats.find(RsGxsGroupId(childId.toStdString()));
+
+			if(it == mCachedGroupStats.end())
+				continue;
+
+			const GxsGroupStatistic& stats(it->second);
+
+			ui->groupTreeWidget->setCounts(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread, stats.mNumMsgs);
+		}
+	}
 }
 
 void GxsGroupFrameDialog::updateMessageSummaryList(RsGxsGroupId groupId)

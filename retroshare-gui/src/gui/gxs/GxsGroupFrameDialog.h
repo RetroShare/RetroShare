@@ -219,6 +219,9 @@ private:
     void startStatisticsJobs();
     void startOneStatisticsJob(const RsGxsGroupId &groupId);
 
+    /*! Re-apply the known local post/unread counts after a group tree refill. */
+    void restoreCachedGroupCounts();
+
     static const int MAX_CONCURRENT_STATISTICS_JOBS = 8;
 
     std::set<RsGxsGroupId> mStatisticsQueue;
