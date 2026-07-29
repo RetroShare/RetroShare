@@ -1485,7 +1485,6 @@ void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool f
     if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) {
         return;
     }
-    saveExpandedItems(mSavedExpandedMessages);
 
     QModelIndex src_index;
     if(forum)
@@ -1497,11 +1496,15 @@ void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool f
         else
             src_index = mThreadModel->getIndexOfMessage(mThreadId);
     }
-    mThreadModel->setMsgReadStatus(src_index,read,children);
 
-    //Restore Selection
-    whileBlocking(ui->threadTreeWidget)->setCurrentIndex(mThreadProxyModel->mapFromSource(mThreadModel->getIndexOfMessage(mThreadId)));
-    recursRestoreExpandedItems(QModelIndex(),mSavedExpandedMessages);
+    // setMsgReadStatus() only emits dataChanged(): it never resets the model nor
+    // changes its layout, so neither the expanded items nor the current index are
+    // lost here. Saving and restoring them was pure overhead -- and not a cheap
+    // one: restoring walks every expanded item, and each of them costs a linear
+    // scan of the post array (getIndexOfMessage) plus a linear scan of the view
+    // items (QTreeView::setExpanded). On a forum with thousands of posts that is
+    // quadratic work on the GUI thread for every single post marked read.
+    mThreadModel->setMsgReadStatus(src_index,read,children);
 }
 
 void GxsForumThreadWidget::markMsgAsRead()
