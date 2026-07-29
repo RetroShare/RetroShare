@@ -23,8 +23,6 @@
 
 #include "gui/gxs/GxsGroupFrameDialog.h"
 
-#include <set>
-
 #define IMAGE_GXSFORUMS         ":/icons/png/forums.png"
 
 class GxsForumsDialog : public GxsGroupFrameDialog
@@ -70,16 +68,8 @@ private:
 
     QTimer *mUpdateTimer;
 
-    // Read/unread events are debounced: recomputing a forum's statistics means
-    // rebuilding its whole post hierarchy (see p3GxsForums::getForumStatistics),
-    // so doing it on every single post marked read makes navigation crawl on a
-    // large forum. Bursts collapse into one recomputation per forum.
-    QTimer *mStatisticsDebounceTimer;
-    std::set<RsGxsGroupId> mStatisticsPending;
-
 private slots:
     void timerUpdate() { updateDisplay(true); }
-    void flushPendingStatistics();
 };
 
 #endif

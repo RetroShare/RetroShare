@@ -82,7 +82,6 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl,const QStri
 	mShouldUpdateMessageSummaryList = true;
 	mShouldUpdateGroupStatistics = false;
     mLastGroupStatisticsUpdateTs=0;
-    mStatisticsJobsInFlight = 0;
 	mInitialized = false;
 	mDistSyncAllowed = allow_dist_sync;
 	mInFill = false;
@@ -1309,27 +1308,6 @@ void GxsGroupFrameDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
 
 void GxsGroupFrameDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
 {
-    // Queue rather than start: see startStatisticsJobs() for why the number of
-    // concurrent requests has to stay bounded.
-    mStatisticsQueue.insert(groupId);
-
-    startStatisticsJobs();
-}
-
-void GxsGroupFrameDialog::startStatisticsJobs()
-{
-    while(mStatisticsJobsInFlight < MAX_CONCURRENT_STATISTICS_JOBS && !mStatisticsQueue.empty())
-    {
-        const RsGxsGroupId groupId = *mStatisticsQueue.begin();
-        mStatisticsQueue.erase(mStatisticsQueue.begin());
-
-        ++mStatisticsJobsInFlight;
-        startOneStatisticsJob(groupId);
-    }
-}
-
-void GxsGroupFrameDialog::startOneStatisticsJob(const RsGxsGroupId &groupId)
-{
     RsThread::async([this,groupId]()
     {
         GxsGroupStatistic stats;
@@ -1345,9 +1323,12 @@ void GxsGroupFrameDialog::startOneStatisticsJob(const RsGxsGroupId &groupId)
         }
 
         if(!ok)
+        {
             std::cerr << __PRETTY_FUNCTION__ << " failed to collect group statistics for group " << groupId << std::endl;
+            return;
+        }
 
-        RsQThreadUtils::postToObject( [this,stats,groupId,ok]()
+        RsQThreadUtils::postToObject( [this,stats,groupId]()
         {
             RsGuiPerf::Probe prof("groupStatistics(UI apply)");
 
@@ -1357,22 +1338,15 @@ void GxsGroupFrameDialog::startOneStatisticsJob(const RsGxsGroupId &groupId)
              * Qt::QueuedConnection is important!
              */
 
-            if(ok)
-            {
-                QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
+            QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
 
-                if (item)
-                    // ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
-                    ui->groupTreeWidget->setCounts(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread, stats.mNumMsgs);
+            if (item)
+                // ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+                ui->groupTreeWidget->setCounts(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread, stats.mNumMsgs);
 
-                mCachedGroupStats[groupId] = stats;
+            mCachedGroupStats[groupId] = stats;
 
-                getUserNotify()->updateIcon();
-            }
-
-            // Free the slot and refill the window.
-            --mStatisticsJobsInFlight;
-            startStatisticsJobs();
+            getUserNotify()->updateIcon();
 
         }, this );
     });
