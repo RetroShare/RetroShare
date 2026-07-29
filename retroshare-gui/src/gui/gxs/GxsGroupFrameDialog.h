@@ -194,6 +194,38 @@ protected:
     virtual void updateGroupStatistics(const RsGxsGroupId &groupId);
     virtual void updateGroupStatisticsReal(const RsGxsGroupId &groupId);
 
+private:
+    /*!
+     * rief Runs the queued group statistics with a bounded number in flight.
+     *
+     * Computing the statistics of one group is a blocking GXS request served by
+     * a single engine thread that sleeps 100 ms between passes, so most of a
+     * job's duration is waiting, not work: median 100 ms per group, which is
+     * exactly the tick quantum. Two extremes are both wrong.
+     *
+     * One detached thread per group: 839 jobs completing in the same second,
+     * and because each gives up after 5 s (waitToken cap) the ones at the back
+     * time out, are cancelled, and their counter never appears -- 104 of them
+     * measured.
+     *
+     * Strictly one at a time: no failures, but the 100 ms of latency is paid
+     * once per group in sequence -- 630 groups took 172 s before every counter
+     * showed up, and one slow group (a cold-cache forum taking 28 s) blocked
+     * all the others behind it.
+     *
+     * A small window keeps several requests waiting on the same tick pass, so
+     * they are served together, while staying far from the failure threshold.
+     */
+    void startStatisticsJobs();
+    void startOneStatisticsJob(const RsGxsGroupId &groupId);
+
+    static const int MAX_CONCURRENT_STATISTICS_JOBS = 8;
+
+    std::set<RsGxsGroupId> mStatisticsQueue;
+    int mStatisticsJobsInFlight;
+
+protected:
+
     // This needs to be overloaded by subclasses, possibly calling the blocking API, since it is used asynchronously.
     virtual bool getGroupStatistics(const RsGxsGroupId& groupId, GxsGroupStatistic& stat) = 0;
 
