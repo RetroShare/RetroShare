@@ -38,6 +38,7 @@
 #include "retroshare/rsgxsifacetypes.h"
 #include "GxsCommentDialog.h"
 #include "util/DateTime.h"
+#include "gui/gxs/GxsPerfProbe.h"
 
 //#define DEBUG_GROUPFRAMEDIALOG
 
@@ -982,6 +983,9 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGxsGenericGroupData
 		return;
 	}
 
+	RsGuiPerf::Probe prof("insertGroupsData");
+	prof.detail(QString("groups=%1").arg(groupList.size()));
+
 	mInFill = true;
 
 	QList<GroupItemInfo> adminList;
@@ -1110,6 +1114,8 @@ void GxsGroupFrameDialog::updateMessageSummaryListReal(RsGxsGroupId groupId)
 		return;
 	}
 
+	RsGuiPerf::Probe prof("updateMessageSummaryListReal");
+
 	if (groupId.isNull())
 	{
 		QTreeWidgetItem *items[2] = { mYourGroups, mSubscribedGroups };
@@ -1157,6 +1163,8 @@ void GxsGroupFrameDialog::updateGroupSummary()
 
 		RsQThreadUtils::postToObject( [this,groupInfo]()
 		{
+			RsGuiPerf::Probe prof("groupSummary(UI apply)");
+
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete, note that
@@ -1325,13 +1333,24 @@ void GxsGroupFrameDialog::startOneStatisticsJob(const RsGxsGroupId &groupId)
     RsThread::async([this,groupId]()
     {
         GxsGroupStatistic stats;
-        const bool ok = getGroupStatistics(groupId, stats);
+        bool ok = false;
+
+        {
+            // Runs off the GUI thread, but holds the GXS engine for its whole
+            // duration, so it delays everything the interface waits for.
+            RsGuiPerf::Probe prof("getGroupStatistics");
+            prof.detail(QString::fromStdString(groupId.toStdString()));
+
+            ok = getGroupStatistics(groupId, stats);
+        }
 
         if(!ok)
             std::cerr << __PRETTY_FUNCTION__ << " failed to collect group statistics for group " << groupId << std::endl;
 
         RsQThreadUtils::postToObject( [this,stats,groupId,ok]()
         {
+            RsGuiPerf::Probe prof("groupStatistics(UI apply)");
+
             /* Here it goes any code you want to be executed on the Qt Gui
              * thread, for example to update the data model with new information
              * after a blocking call to RetroShare API complete, note that

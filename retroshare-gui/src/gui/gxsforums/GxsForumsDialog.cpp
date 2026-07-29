@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include "GxsForumsDialog.h"
+#include "gui/gxs/GxsPerfProbe.h"
 #include "GxsForumGroupDialog.h"
 #include "GxsForumThreadWidget.h"
 #include "CreateGxsForumMsg.h"
@@ -66,6 +67,8 @@ void GxsForumsDialog::flushPendingStatistics()
 
 void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
+    RsGuiPerf::Probe prof("forumsDialog::handleEvent");
+
     if(event->mType == RsEventType::GXS_FORUMS)
     {
         const RsGxsForumEvent *e = dynamic_cast<const RsGxsForumEvent*>(event.get());

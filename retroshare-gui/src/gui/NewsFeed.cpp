@@ -21,6 +21,7 @@
 #include <QDateTime>
 
 #include "NewsFeed.h"
+#include "gui/gxs/GxsPerfProbe.h"
 #include "ui_NewsFeed.h"
 
 #include <retroshare/rsbanlist.h>
@@ -274,6 +275,11 @@ void NewsFeed::handleForumEvent(std::shared_ptr<const RsEvent> event)
 {
 	const RsGxsForumEvent *pe = dynamic_cast<const RsGxsForumEvent*>(event.get());
 	if(!pe) return;
+
+	// Runs on the GUI thread and builds one full widget per incoming message,
+	// so a sync burst turns into a burst of widget construction here.
+	RsGuiPerf::Probe prof("newsFeed::handleForumEvent");
+	prof.detail(QString("code=%1").arg(static_cast<int>(pe->mForumEventCode)));
 
 	switch(pe->mForumEventCode)
 	{
