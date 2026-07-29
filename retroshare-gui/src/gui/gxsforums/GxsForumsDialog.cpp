@@ -50,6 +50,18 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent) :
     mUpdateTimer = new QTimer(this);
     mUpdateTimer->setSingleShot(true);
     connect(mUpdateTimer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
+
+    mStatisticsDebounceTimer = new QTimer(this);
+    mStatisticsDebounceTimer->setSingleShot(true);
+    connect(mStatisticsDebounceTimer, SIGNAL(timeout()), this, SLOT(flushPendingStatistics()));
+}
+
+void GxsForumsDialog::flushPendingStatistics()
+{
+    for(const RsGxsGroupId& groupId: mStatisticsPending)
+        updateGroupStatisticsReal(groupId);
+
+    mStatisticsPending.clear();
 }
 
 void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -66,7 +78,14 @@ void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
 		case RsForumEventCode::NEW_MESSAGE:
 		case RsForumEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
 		case RsForumEventCode::READ_STATUS_CHANGED:
-			updateGroupStatisticsReal(e->mForumGroupId); // update the list immediately
+			// Debounced rather than immediate: one recomputation costs a full
+			// rebuild of the forum's post hierarchy, and marking posts read or
+			// unread produces one event each. 700 ms still reads as instant.
+			// The timer is not restarted by later events, so a long burst (a
+			// sync delivering messages) cannot postpone the update forever.
+			mStatisticsPending.insert(e->mForumGroupId);
+			if(!mStatisticsDebounceTimer->isActive())
+				mStatisticsDebounceTimer->start(700);
             break;
 
         case RsForumEventCode::NEW_FORUM:           // [[fallthrough]];
