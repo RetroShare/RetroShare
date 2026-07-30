@@ -235,9 +235,10 @@ uint32_t IdentityWidget::getReputation() const
 
 void IdentityWidget::mousePressEvent(QMouseEvent *event)
 {
-    // Emit our new signal
-    emit clicked();
-    
-    // Call base class implementation so selection/dragging still works
+    if (event->button() == Qt::RightButton) {
+        emit addButtonClicked();
+    } else {
+        emit clicked();
+    }
     FlowLayoutItem::mousePressEvent(event);
 }

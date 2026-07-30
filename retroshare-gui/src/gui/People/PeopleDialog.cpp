@@ -31,6 +31,7 @@
 #include "gui/MainWindow.h"
 #include "gui/common/FilesDefs.h"
 #include "util/DateTime.h"
+#include "util/qtthreadsutils.h"
 
 #include "retroshare/rspeers.h"
 #include "retroshare/rsidentity.h"
@@ -41,9 +42,11 @@
 #include "retroshare/rsids.h"
 
 #include <iostream>
+#include <QApplication>
 #include <QDateTime>
 #include <QMenu>
 #include <QMessageBox>
+#include <QSignalBlocker>
 
 /******
  * #define PEOPLE_DIALOG_DEBUG 1
@@ -81,6 +84,14 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	//QT Designer don't accept Custom Layout, maybe on QT5
 	_flowLayoutExt = new FlowLayout(idExternal);
 	_flowLayoutInt = new FlowLayout(idInternal);
+
+	// Setup circlesTreeWidget
+	circlesTreeWidget->header()->resizeSection(0, 160);
+	circlesTreeWidget->header()->resizeSection(1, 80);
+	circlesTreeWidget->header()->resizeSection(2, 60);
+
+	connect(circlesTreeWidget, &QTreeWidget::itemClicked, this, &PeopleDialog::onCircleTreeItemClicked);
+	connect(circlesTreeWidget, &QTreeWidget::customContextMenuRequested, this, &PeopleDialog::onCircleTreeContextMenuRequested);
 
 	{//First Get Item created in Qt Designer for External
 		int count = idExternal->children().count();
@@ -122,7 +133,10 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	connect(inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 	connect(switchButton, SIGNAL(clicked()), this, SLOT(toggleStackedPage()));
 	connect(statsButton, SIGNAL(clicked()), this, SLOT(toggledetailsStackedPage()));
+	connect(detailsStackedWidget, &QStackedWidget::currentChanged, this, &PeopleDialog::onDetailsPageChanged);
 	connect(ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
+	connect(backButton, &QPushButton::clicked, this, &PeopleDialog::onBackClicked);
+	connect(joinLeaveCircleButton, &QPushButton::clicked, this, &PeopleDialog::requestJoinLeaveCircle);
 
 	QByteArray geometryExt = Settings->valueFromGroup("PeopleDialog", "SplitterExtState", QByteArray()).toByteArray();
 	if (geometryExt.isEmpty() == false) {
@@ -147,6 +161,7 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	filterButton->setPopupMode(QToolButton::InstantPopup);
 
 	reloadAll();
+	showNoneSelected();
 
 }
 
@@ -281,107 +296,67 @@ void PeopleDialog::insertIdList(uint32_t token)
     filterChanged(filterLineEdit->text());
 }
 
+void PeopleDialog::populateCirclesTree(const std::list<RsGroupMetaData>& circles)
+{
+	for (const auto& gsItem : circles) {
+		RsGxsCircleDetails details;
+		bool hasDetails = rsGxsCircles && rsGxsCircles->getCircleDetails(RsGxsCircleId(gsItem.mGroupId), details);
+
+		auto itFound = _ext_circles_widgets.find(gsItem.mGroupId);
+		if (itFound == _ext_circles_widgets.end()) {
+			std::cerr << "PeopleDialog::populateCirclesTree() add new GroupId: " << gsItem.mGroupId
+			          << " GroupName: " << gsItem.mGroupName << std::endl;
+
+			CircleWidget *gitem = new CircleWidget();
+			QObject::connect(gitem, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedExt(QList<FlowLayoutItem*>,bool&)));
+			QObject::connect(gitem, SIGNAL(askForGXSIdentityWidget(RsGxsId)), this, SLOT(cw_askForGXSIdentityWidget(RsGxsId)));
+			QObject::connect(gitem, SIGNAL(askForPGPIdentityWidget(RsPgpId)), this, SLOT(cw_askForPGPIdentityWidget(RsPgpId)));
+			QObject::connect(gitem, SIGNAL(imageUpdated()), this, SLOT(cw_imageUpdatedExt()));
+			QObject::connect(gitem, &CircleWidget::clicked, this, &PeopleDialog::onCircleSelected);
+
+			gitem->updateData(gsItem, details);
+			_ext_circles_widgets[gsItem.mGroupId] = gitem;
+
+			QPixmap pixmap = gitem->getImage();
+			pictureFlowWidgetExternal->addSlide(pixmap);
+			_extListCir << gitem;
+		} else {
+			CircleWidget *cirWidget = itFound->second;
+			cirWidget->updateData(gsItem, details);
+		}
+
+		// Update or create QTreeWidgetItem in circlesTreeWidget
+		QString groupIdStr = QString::fromStdString(gsItem.mGroupId.toStdString());
+		QTreeWidgetItem *treeItem = nullptr;
+		for (int i = 0; i < circlesTreeWidget->topLevelItemCount(); ++i) {
+			if (circlesTreeWidget->topLevelItem(i)->data(0, Qt::UserRole).toString() == groupIdStr) {
+				treeItem = circlesTreeWidget->topLevelItem(i);
+				break;
+			}
+		}
+
+		if (!treeItem) {
+			treeItem = new QTreeWidgetItem(circlesTreeWidget);
+			treeItem->setData(0, Qt::UserRole, groupIdStr);
+			treeItem->setIcon(0, QIcon(":/icons/png/circles.png"));
+		}
+
+		treeItem->setText(0, QString::fromUtf8(gsItem.mGroupName.c_str()));
+		treeItem->setText(1, hasDetails ? QString::number(details.mAllowedGxsIds.size()) : tr("0"));
+	}
+
+	filterChanged(filterLineEdit->text());
+}
+
 void PeopleDialog::insertCircles(uint32_t token)
 {
 	std::cerr << "PeopleDialog::insertExtCircles(token==" << token << ")" << std::endl;
 
 	std::list<RsGroupMetaData> gSummaryList;
-	std::list<RsGroupMetaData>::iterator gsIt;
-
-	if (!rsGxsCircles->getGroupSummary(token,gSummaryList))
-    {
-		std::cerr << "PeopleDialog::insertExtCircles() Error getting GroupSummary";
-		std::cerr << std::endl;
-
-		return;
+	if (rsGxsCircles && rsGxsCircles->getGroupSummary(token, gSummaryList))
+	{
+		populateCirclesTree(gSummaryList);
 	}
-
-	for(gsIt = gSummaryList.begin(); gsIt != gSummaryList.end(); ++gsIt) {
-		RsGroupMetaData gsItem = (*gsIt);
-
-		RsGxsCircleDetails details ;
-		if(!rsGxsCircles->getCircleDetails(RsGxsCircleId(gsItem.mGroupId), details))
-        {
-			std::cerr << "(EE) Cannot get details for circle id " << gsItem.mGroupId << ". Circle item is not created!" << std::endl;
-			continue ;
-		}
-
-		if (details.mCircleType != RsGxsCircleType::EXTERNAL)
-        {
-			std::map<RsGxsGroupId, CircleWidget*>::iterator itFound;
-			if((itFound=_int_circles_widgets.find(gsItem.mGroupId)) == _int_circles_widgets.end())
-            {
-				std::cerr << "PeopleDialog::insertExtCircles() add new Internal GroupId: " << gsItem.mGroupId;
-				std::cerr << " GroupName: " << gsItem.mGroupName;
-				std::cerr << std::endl;
-
-				CircleWidget *gitem = new CircleWidget() ;
-				QObject::connect(gitem, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedInt(QList<FlowLayoutItem*>,bool&)));
-				QObject::connect(gitem, SIGNAL(askForGXSIdentityWidget(RsGxsId)), this, SLOT(cw_askForGXSIdentityWidget(RsGxsId)));
-				QObject::connect(gitem, SIGNAL(askForPGPIdentityWidget(RsPgpId)), this, SLOT(cw_askForPGPIdentityWidget(RsPgpId)));
-				QObject::connect(gitem, SIGNAL(imageUpdated()), this, SLOT(cw_imageUpdatedInt()));
-				gitem->updateData( gsItem, details );
-				_int_circles_widgets[gsItem.mGroupId] = gitem ;
-
-				_flowLayoutInt->addWidget(gitem);
-
-				QPixmap pixmap = gitem->getImage();
-				pictureFlowWidgetInternal->addSlide( pixmap );
-				_intListCir << gitem;
-			}
-            else
-            {
-				std::cerr << "PeopleDialog::insertExtCircles() Update GroupId: " << gsItem.mGroupId;
-				std::cerr << " GroupName: " << gsItem.mGroupName;
-				std::cerr << std::endl;
-
-				CircleWidget *cirWidget = itFound->second;
-				cirWidget->updateData( gsItem, details );
-
-				//int index = _intListCir.indexOf(cirWidget);
-				//QPixmap pixmap = cirWidget->getImage();
-				//pictureFlowWidgetInternal->setSlide(index, pixmap);
-			}
-		}
-        else
-        {
-			std::map<RsGxsGroupId, CircleWidget*>::iterator itFound;
-			if((itFound=_ext_circles_widgets.find(gsItem.mGroupId)) == _ext_circles_widgets.end()) {
-				std::cerr << "PeopleDialog::insertExtCircles() add new GroupId: " << gsItem.mGroupId;
-				std::cerr << " GroupName: " << gsItem.mGroupName;
-				std::cerr << std::endl;
-
-				CircleWidget *gitem = new CircleWidget() ;
-				QObject::connect(gitem, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedExt(QList<FlowLayoutItem*>,bool&)));
-				QObject::connect(gitem, SIGNAL(askForGXSIdentityWidget(RsGxsId)), this, SLOT(cw_askForGXSIdentityWidget(RsGxsId)));
-				QObject::connect(gitem, SIGNAL(askForPGPIdentityWidget(RsPgpId)), this, SLOT(cw_askForPGPIdentityWidget(RsPgpId)));
-				QObject::connect(gitem, SIGNAL(imageUpdated()), this, SLOT(cw_imageUpdatedExt()));
-				gitem->updateData( gsItem, details );
-				_ext_circles_widgets[gsItem.mGroupId] = gitem ;
-
-				_flowLayoutExt->addWidget(gitem);
-
-				QPixmap pixmap = gitem->getImage();
-				pictureFlowWidgetExternal->addSlide( pixmap );
-				_extListCir << gitem;
-			}
-            else
-            {
-				std::cerr << "PeopleDialog::insertExtCircles() Update GroupId: " << gsItem.mGroupId;
-				std::cerr << " GroupName: " << gsItem.mGroupName;
-				std::cerr << std::endl;
-
-				CircleWidget *cirWidget = itFound->second;
-				cirWidget->updateData( gsItem, details );
-
-				//int index = _extListCir.indexOf(cirWidget);
-				//QPixmap pixmap = cirWidget->getImage();
-				//pictureFlowWidgetExternal->setSlide(index, pixmap);
-			}
-		}
-	}
-    
-	filterChanged(filterLineEdit->text());
 }
 
 void PeopleDialog::requestIdList()
@@ -404,15 +379,30 @@ void PeopleDialog::requestCirclesList()
 {
 	std::cerr << "Requesting Circles list..." << std::endl;
 
-	if (!mCirclesQueue) return;
+	if (mCirclesQueue) {
+		mCirclesQueue->cancelActiveRequestTokens(PD_CIRCLES);
 
-	mCirclesQueue->cancelActiveRequestTokens(PD_CIRCLES);
+		RsTokReqOptions opts;
+		opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+		uint32_t token;
+		mCirclesQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, PD_CIRCLES);
+	}
 
-	uint32_t token;
-	mCirclesQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, PD_CIRCLES);
+	// Directly query rsGxsCircles asynchronously to guarantee circle loading
+	RsThread::async([this]()
+	{
+		std::list<RsGroupMetaData> circles;
+		if (!rsGxsCircles || !rsGxsCircles->getCirclesSummaries(circles)) {
+			std::cerr << "PeopleDialog::requestCirclesList() failed to get circles summaries" << std::endl;
+			return;
+		}
+
+		RsQThreadUtils::postToObject([this, circles]()
+		{
+			populateCirclesTree(circles);
+		}, this);
+	});
 }
 
 void PeopleDialog::updateCirclesDisplay(bool)
@@ -1147,26 +1137,33 @@ void PeopleDialog::filterChanged(const QString &text)
 {
     Qt::CaseSensitivity cs = Qt::CaseInsensitive;
 
-    // Helper lambda to filter a map of widgets
-    auto filterMap = [&](auto& widgetMap) {
-        for (auto it = widgetMap.begin(); it != widgetMap.end(); ++it) {
-            QWidget* w = it->second;
-            QString name;
-            
-            // Get name based on widget type
-            if (auto* idW = qobject_cast<IdentityWidget*>(w)) name = idW->getName();
-            else if (auto* cirW = qobject_cast<CircleWidget*>(w)) name = cirW->getName();
-
-            // Toggle visibility based on search match
-            w->setVisible(name.contains(text, cs));
+    if (_selectionMode == SelectionMode::Circle) {
+        // When a circle is selected, filter only among its members (shown in A)
+        auto it = _ext_circles_widgets.find(_selectedCircleId);
+        if (it != _ext_circles_widgets.end()) {
+            const auto& allowed = it->second->circleDetails().mAllowedGxsIds;
+            for (auto& [id, w] : _gxs_identity_widgets) {
+                bool isMember = (allowed.count(id) > 0);
+                bool matches  = text.isEmpty() || w->getName().contains(text, cs);
+                w->setVisible(isMember && matches);
+            }
         }
-    };
+    } else {
+        // No selection / identity selected: filter all identity widgets
+        for (auto& [id, w] : _gxs_identity_widgets)
+            w->setVisible(text.isEmpty() || w->getName().contains(text, cs));
+    }
 
-    // Apply filtering to all maps
-    filterMap(_pgp_identity_widgets);
-    filterMap(_gxs_identity_widgets);
-    filterMap(_ext_circles_widgets);
-    filterMap(_int_circles_widgets);
+    // Always filter the PGP identity widgets (internal tab, kept for completeness)
+    for (auto& [id, w] : _pgp_identity_widgets)
+        w->setVisible(text.isEmpty() || w->getName().contains(text, cs));
+
+    // Filter circlesTreeWidget items based on search text
+    for (int i = 0; i < circlesTreeWidget->topLevelItemCount(); ++i) {
+        QTreeWidgetItem *item = circlesTreeWidget->topLevelItem(i);
+        QString name = item->text(0);
+        item->setHidden(!text.isEmpty() && !name.contains(text, cs));
+    }
 
     // CRITICAL: Invalidate layouts so Qt recomputes positions (not just repaints)
     _flowLayoutExt->invalidate();
@@ -1400,19 +1397,17 @@ void PeopleDialog::onIdentitySelected()
     if (widget) {
         // Save the ID for the Invite Button to use later
         mCurrentSelectedId = RsGxsId(widget->groupInfo().mMeta.mGroupId);
-        // Load the labels
-        this->loadIdentityLabels(widget->groupInfo());
-        
+
         // Update the Usage Statistics page
         UsageStatistics* usageWidget = qobject_cast<UsageStatistics*>(UsagePage);
-        
-        if (usageWidget) {
-            // This triggers the internal getIdDetails() call in UsageStatistics
+        if (usageWidget)
             usageWidget->setUsageData(widget->groupInfo());
-        }
-        
+
         clearAllSelections();
         widget->setIsSelected(true);
+
+        // Drive the state machine
+        showIdentitySelected(mCurrentSelectedId);
     }
 }
 
@@ -1447,11 +1442,21 @@ void PeopleDialog::toggleStackedPage()
 
 void PeopleDialog::toggledetailsStackedPage()
 {
-    if (detailsStackedWidget->currentIndex() == 0) {
-        detailsStackedWidget->setCurrentIndex(1);
-    } else {
-        detailsStackedWidget->setCurrentIndex(0);
-    }
+	// Toggle between usage stats (2) and details (0 for identity, 1 for circle)
+	if (detailsStackedWidget->currentIndex() == 2) {
+		detailsStackedWidget->setCurrentIndex(_selectionMode == SelectionMode::Circle ? 1 : 0);
+	} else {
+		detailsStackedWidget->setCurrentIndex(2);
+	}
+}
+
+void PeopleDialog::onDetailsPageChanged(int index)
+{
+	if (index == 2) {
+		statsButton->setText(tr("View Details"));
+	} else {
+		statsButton->setText(tr("View Stats"));
+	}
 }
 
 void PeopleDialog::modifyReputation()
@@ -1472,5 +1477,303 @@ void PeopleDialog::modifyReputation()
 	rsReputations->setOwnOpinion(id,op);
 
 	return;
+}
+
+void PeopleDialog::setVoteControlsVisible(bool visible)
+{
+	label_YourOpinion->setVisible(visible);
+	ownOpinion_CB->setVisible(visible);
+	autoBanIdentities_CB->setVisible(visible);
+	neighborNodesOpinion_LB->setVisible(visible);
+	neighborNodesOpinion_TF->setVisible(visible);
+	overallOpinion_TF->setVisible(visible);
+	label_PosIcon->setVisible(visible);
+	label_positive->setVisible(visible);
+	line_Opinion->setVisible(visible);
+	label_NegIcon->setVisible(visible);
+	label_negative->setVisible(visible);
+}
+
+// ─── State machine ────────────────────────────────────────────────────────────
+
+void PeopleDialog::showNoneSelected()
+{
+	_selectionMode   = SelectionMode::None;
+	_selectedGxsId   = RsGxsId();
+	_selectedCircleId = RsGxsGroupId();
+
+	backButton->setVisible(false);
+	joinLeaveCircleButton->setVisible(false);
+	setVoteControlsVisible(true);
+
+	// Rule 2c: show all identities in A, nothing in B, and all circles in C.
+	for (auto& [id, w] : _gxs_identity_widgets) {
+		w->setStyleSheet(QString());
+		w->setVisible(true);
+	}
+
+	clearPerson();
+	detailsStackedWidget->setCurrentIndex(0);
+
+	// Show all circles in circlesTreeWidget
+	{
+		QSignalBlocker blocker(circlesTreeWidget);
+		for (int i = 0; i < circlesTreeWidget->topLevelItemCount(); ++i) {
+			QTreeWidgetItem *item = circlesTreeWidget->topLevelItem(i);
+			item->setHidden(false);
+			item->setForeground(0, QBrush());
+			QFont font = item->font(0);
+			font.setBold(false);
+			item->setFont(0, font);
+		}
+		circlesTreeWidget->clearSelection();
+	}
+
+	_flowLayoutExt->invalidate();
+}
+
+void PeopleDialog::showIdentitySelected(const RsGxsId& id)
+{
+	_selectionMode  = SelectionMode::Identity;
+	_selectedGxsId  = id;
+
+	backButton->setVisible(true);
+	joinLeaveCircleButton->setVisible(false);
+	setVoteControlsVisible(true);
+
+	// Rule 2a: show identity details in B and the circles the identity belongs to in C
+	for (auto& [gid, w] : _gxs_identity_widgets) {
+		w->setVisible(true);
+		w->setStyleSheet(gid == id
+			? QStringLiteral("border: 2px solid #2196F3; border-radius: 4px;")
+			: QString());
+	}
+
+	auto it = _gxs_identity_widgets.find(id);
+	if (it != _gxs_identity_widgets.end())
+		loadIdentityLabels(it->second->groupInfo());
+	detailsStackedWidget->setCurrentIndex(0);
+
+	// Show ONLY circles the identity belongs to in C (and highlight green)
+	{
+		QSignalBlocker blocker(circlesTreeWidget);
+		for (int i = 0; i < circlesTreeWidget->topLevelItemCount(); ++i) {
+			QTreeWidgetItem *item = circlesTreeWidget->topLevelItem(i);
+			RsGxsGroupId circleId(item->data(0, Qt::UserRole).toString().toStdString());
+			auto cit = _ext_circles_widgets.find(circleId);
+			bool member = false;
+			if (cit != _ext_circles_widgets.end()) {
+				member = (cit->second->circleDetails().mAllowedGxsIds.count(id) > 0);
+			}
+			item->setHidden(!member);
+			if (member) {
+				item->setForeground(0, QBrush(QColor("#4CAF50")));
+				QFont font = item->font(0);
+				font.setBold(true);
+				item->setFont(0, font);
+			}
+		}
+		circlesTreeWidget->clearSelection();
+	}
+
+	_flowLayoutExt->invalidate();
+}
+
+void PeopleDialog::showCircleSelected(const RsGxsGroupId& circleId)
+{
+	_selectionMode    = SelectionMode::Circle;
+	_selectedCircleId = circleId;
+
+	backButton->setVisible(true);
+	editButton->setVisible(false);
+	inviteButton->setVisible(false);
+	joinLeaveCircleButton->setVisible(true);
+	setVoteControlsVisible(false);
+
+	auto it = _ext_circles_widgets.find(circleId);
+	if (it == _ext_circles_widgets.end()) return;
+
+	CircleWidget* cw = it->second;
+	const RsGxsCircleDetails& details = cw->circleDetails();
+
+	// Rule 2b: show in A the identities in that circle (with color code for member)
+	for (auto& [gid, w] : _gxs_identity_widgets) {
+		const bool isMember = (details.mAllowedGxsIds.count(gid) > 0);
+		w->setVisible(isMember);
+		w->setStyleSheet(isMember
+			? QStringLiteral("border: 2px solid #4CAF50; border-radius: 4px;")
+			: QString());
+	}
+
+	// Circle details in B
+	loadCircleLabels(circleId);
+	detailsStackedWidget->setCurrentIndex(1);
+
+	// All circles visible in C, select current
+	{
+		QSignalBlocker blocker(circlesTreeWidget);
+		QString targetIdStr = QString::fromStdString(circleId.toStdString());
+		for (int i = 0; i < circlesTreeWidget->topLevelItemCount(); ++i) {
+			QTreeWidgetItem *item = circlesTreeWidget->topLevelItem(i);
+			item->setHidden(false);
+			if (item->data(0, Qt::UserRole).toString() == targetIdStr) {
+				circlesTreeWidget->setCurrentItem(item);
+			}
+		}
+	}
+
+	_flowLayoutExt->invalidate();
+}
+
+void PeopleDialog::loadCircleLabels(const CircleWidget* cw)
+{
+	if (!cw) return;
+	loadCircleLabels(cw->groupInfo().mGroupId);
+}
+
+void PeopleDialog::loadCircleLabels(const RsGxsGroupId& circleId)
+{
+	auto it = _ext_circles_widgets.find(circleId);
+	if (it == _ext_circles_widgets.end()) return;
+
+	const RsGroupMetaData&    info    = it->second->groupInfo();
+	const RsGxsCircleDetails& details = it->second->circleDetails();
+
+	headerTextLabel_Person->setText(QString::fromUtf8(info.mGroupName.c_str()));
+	circleNameEdit->setText(QString::fromUtf8(info.mGroupName.c_str()));
+	circleIdEdit->setText(QString::fromStdString(info.mGroupId.toStdString()));
+
+	avatarLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/circles.png"));
+
+	const bool isExternal = (details.mCircleType == RsGxsCircleType::EXTERNAL);
+	circleTypeEdit->setText(isExternal ? tr("External") : tr("Personal"));
+
+	circleMemberCountEdit->setText(QString::number(details.mAllowedGxsIds.size()));
+
+	// Join / leave button label & state
+	const bool isMember = details.mAmIAllowed;
+	const bool isRequested = _requestedCircles.count(circleId) > 0;
+
+	if (isMember) {
+		joinLeaveCircleButton->setEnabled(true);
+		joinLeaveCircleButton->setText(tr("Leave Circle"));
+		joinLeaveCircleButton->setToolTip(tr("Cancel circle membership"));
+	} else if (isRequested) {
+		joinLeaveCircleButton->setEnabled(false);
+		joinLeaveCircleButton->setText(tr("Requested"));
+		joinLeaveCircleButton->setToolTip(tr("Membership request sent"));
+	} else {
+		joinLeaveCircleButton->setEnabled(true);
+		joinLeaveCircleButton->setText(tr("Request"));
+		joinLeaveCircleButton->setToolTip(tr("Request to join"));
+	}
+}
+
+void PeopleDialog::onCircleSelected()
+{
+	CircleWidget* w = qobject_cast<CircleWidget*>(sender());
+	if (!w) return;
+	clearAllSelections();
+	w->setIsSelected(true);
+	showCircleSelected(w->groupInfo().mGroupId);
+}
+
+void PeopleDialog::onCircleTreeItemClicked(QTreeWidgetItem *item, int /*column*/)
+{
+	if (!item) return;
+
+	// Ignore right-clicks so right-clicking opens context menu without switching view
+	if (QApplication::mouseButtons() & Qt::RightButton) return;
+
+	QString groupIdStr = item->data(0, Qt::UserRole).toString();
+	if (!groupIdStr.isEmpty()) {
+		RsGxsGroupId groupId(groupIdStr.toStdString());
+		showCircleSelected(groupId);
+	}
+}
+
+void PeopleDialog::onCircleTreeContextMenuRequested(const QPoint &pos)
+{
+	QTreeWidgetItem *item = circlesTreeWidget->itemAt(pos);
+	if (!item) return;
+
+	QString groupIdStr = item->data(0, Qt::UserRole).toString();
+	RsGxsGroupId groupId(groupIdStr.toStdString());
+
+	// Check if local user is Admin of this circle
+	bool isAdmin = false;
+	auto it = _ext_circles_widgets.find(groupId);
+	if (it != _ext_circles_widgets.end()) {
+		isAdmin = (it->second->groupInfo().mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) != 0;
+	}
+
+	QMenu menu(this);
+	QAction *actAction = nullptr;
+	if (isAdmin) {
+		actAction = menu.addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/pencil-edit-button.png"), tr("Edit Circle"));
+	} else {
+		actAction = menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/info16.png"), tr("View Details"));
+	}
+
+	QAction *actJoinLeave = menu.addAction(tr("Request to Join / Leave"));
+
+	menu.addSeparator();
+	QAction *actCopyLink = menu.addAction(tr("Copy retroshare link"));
+
+	QAction *selected = menu.exec(circlesTreeWidget->mapToGlobal(pos));
+	if (selected == actAction) {
+		CreateCircleDialog dlg;
+		dlg.editExistingId(groupId, true, !isAdmin); // readonly = false if Admin (Edit Circle), readonly = true if Non-Admin (View Details)
+		dlg.exec();
+	} else if (selected == actJoinLeave) {
+		_selectedCircleId = groupId;
+		requestJoinLeaveCircle();
+	} else if (selected == actCopyLink) {
+		RsGxsCircleDetails details;
+		if (rsGxsCircles && rsGxsCircles->getCircleDetails(RsGxsCircleId(groupId), details)) {
+			QList<RetroShareLink> urls;
+			RetroShareLink link = RetroShareLink::createCircle(RsGxsCircleId(groupId), QString::fromUtf8(details.mCircleName.c_str()));
+			urls.push_back(link);
+			RSLinkClipboard::copyLinks(urls);
+		}
+	}
+}
+
+void PeopleDialog::onBackClicked()
+{
+	clearAllSelections();
+	showNoneSelected();
+}
+
+void PeopleDialog::requestJoinLeaveCircle()
+{
+	auto it = _ext_circles_widgets.find(_selectedCircleId);
+	if (it == _ext_circles_widgets.end()) return;
+
+	const RsGxsCircleDetails& details = it->second->circleDetails();
+	const bool isMember = details.mAmIAllowed;
+
+	// Pick the first own GXS identity (same approach used elsewhere in the dialog)
+	std::list<RsGxsId> ownIds;
+	rsIdentity->getOwnIds(ownIds);
+	if (ownIds.empty()) {
+		std::cerr << "PeopleDialog::requestJoinLeaveCircle() No own identity available." << std::endl;
+		return;
+	}
+	const RsGxsId ownId = ownIds.front();
+
+	if (isMember) {
+		rsGxsCircles->cancelCircleMembership(ownId, RsGxsCircleId(_selectedCircleId));
+		_requestedCircles.erase(_selectedCircleId);
+		joinLeaveCircleButton->setEnabled(true);
+		joinLeaveCircleButton->setText(tr("Request"));
+		joinLeaveCircleButton->setToolTip(tr("Request to join"));
+	} else {
+		rsGxsCircles->requestCircleMembership(ownId, RsGxsCircleId(_selectedCircleId));
+		_requestedCircles.insert(_selectedCircleId);
+		joinLeaveCircleButton->setEnabled(false);
+		joinLeaveCircleButton->setText(tr("Requested"));
+		joinLeaveCircleButton->setToolTip(tr("Membership request sent"));
+	}
 }
 
