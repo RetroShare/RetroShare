@@ -68,6 +68,7 @@ private slots:
 	void markAsReadMsg();
 	void markAsUnreadMsg();
 	void markAllAsReadMsg();
+	void markAllAsUnreadMsg();
 	void copySelectedLinksMsg();
 	void removeMsg();
 	void processFeed();
@@ -91,6 +92,7 @@ private:
 	void calculateMsgIconsAndFonts(QTreeWidgetItem *item);
 	void updateMsgItem(QTreeWidgetItem *item, FeedMsgInfo &info);
 	void setMsgAsReadUnread(QList<QTreeWidgetItem*> &rows, bool read);
+	void setAllMsgAsReadUnread(bool read);
 	void filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 	void filterItem(QTreeWidgetItem *item);
 	void toggleMsgText_internal();
