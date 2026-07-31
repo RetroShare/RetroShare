@@ -293,6 +293,7 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.chat_Blink,                 SIGNAL(toggled(bool)),            this, SLOT(updateChatFlags()));
 
 	connect(ui.chatLobby_Blink,            SIGNAL(toggled(bool)),            this, SLOT(updateChatLobbyFlags()));
+	connect(ui.chatLobby_HideJoinLeave,    SIGNAL(toggled(bool)),            this, SLOT(updateChatLobbyFlags()));
 
 	connect(ui.publicStyle,                SIGNAL(currentIndexChanged(int)), this,SLOT(on_publicList_currentRowChanged(int)));
 	connect(ui.privateStyle,               SIGNAL(currentIndexChanged(int)), this,SLOT(on_privateList_currentRowChanged(int)));
@@ -376,6 +377,9 @@ void ChatPage::updateChatLobbyFlags()
 
 	if (ui.chatLobby_Blink->isChecked())
 		chatLobbyFlags |= RS_CHATLOBBY_BLINK;
+
+	if (ui.chatLobby_HideJoinLeave->isChecked())
+		chatLobbyFlags |= RS_CHATLOBBY_HIDE_JOIN_LEAVE;
 
 	Settings->setChatLobbyFlags(chatLobbyFlags);
 }
@@ -486,6 +490,7 @@ ChatPage::load()
     uint chatLobbyFlags = Settings->getChatLobbyFlags();
 
     whileBlocking(ui.chatLobby_Blink)->setChecked(chatLobbyFlags & RS_CHATLOBBY_BLINK);
+    whileBlocking(ui.chatLobby_HideJoinLeave)->setChecked(chatLobbyFlags & RS_CHATLOBBY_HIDE_JOIN_LEAVE);
 
 	 // load personal invites
 	 //

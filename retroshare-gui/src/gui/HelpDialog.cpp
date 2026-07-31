@@ -80,12 +80,10 @@ HelpDialog::HelpDialog(QWidget *parent) :
 		ui->thanks->setHtml(in.readAll());
 	}
 
-    /* [Modified] Display both RetroShare and libretroshare versions clearly */
-    QString versionText = QString("RetroShare: %1\nlibretroshare: %2")
-                          .arg(RsApplication::retroshareVersion(true))
-                          .arg(QString::fromUtf8(RsInit::libRetroShareVersion()));
-
-	ui->version->setText(versionText);
+	/* Display RetroShare GUI's own version. libretroshare is one of the
+	 * libraries the GUI links against, so its version is shown among the other
+	 * libraries below (see push_front just after getLibraries), not here. */
+	ui->version->setText(RsApplication::retroshareVersion(true));
 
 	/* Add version numbers of libretroshare */
 	std::list<RsLibraryInfo> libraries;

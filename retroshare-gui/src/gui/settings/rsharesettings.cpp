@@ -141,7 +141,15 @@ void RshareSettings::initSettings()
 	// This is not default... RS_CHAT_FOCUS.
 
     RsNotifyPopupFlags defNotify = (RsNotifyPopupFlags::RS_POPUP_CONNECT | RsNotifyPopupFlags::RS_POPUP_MSG);
-    RsFeedTypeFlags defNewsFeed = (RsFeedTypeFlags::RS_FEED_TYPE_MSG | RsFeedTypeFlags::RS_FEED_TYPE_FILES | RsFeedTypeFlags::RS_FEED_TYPE_SECURITY | RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP | RsFeedTypeFlags::RS_FEED_TYPE_CIRCLE | RsFeedTypeFlags::RS_FEED_TYPE_CHANNEL |RsFeedTypeFlags::RS_FEED_TYPE_FORUM | RsFeedTypeFlags::RS_FEED_TYPE_POSTED);
+    RsFeedTypeFlags defNewsFeed = (RsFeedTypeFlags::RS_FEED_TYPE_MSG
+                                   | RsFeedTypeFlags::RS_FEED_TYPE_FILES
+                   | RsFeedTypeFlags::RS_FEED_TYPE_SECURITY
+                   | RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP
+                   | RsFeedTypeFlags::RS_FEED_TYPE_TLS_ATTEMPT
+                   | RsFeedTypeFlags::RS_FEED_TYPE_CIRCLE
+                   | RsFeedTypeFlags::RS_FEED_TYPE_CHANNEL
+                   | RsFeedTypeFlags::RS_FEED_TYPE_FORUM
+                   | RsFeedTypeFlags::RS_FEED_TYPE_POSTED);
 
 #ifdef RS_USE_WIRE
     defNewsFeed = (defNewsFeed | RsFeedTypeFlags::RS_FEED_TYPE_WIRE);

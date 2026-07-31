@@ -1,0 +1,30 @@
+name: Mirror to GitLab
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install GitLab deploy key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.RETROSHARE_GITLAB_MIRROR_SSH_KEY }}
+
+      - name: Trust GitLab host key
+        run: |
+          ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+
+      - name: Mirror repository to GitLab
+        run: |
+          git clone --mirror "https://github.com/${GITHUB_REPOSITORY}.git" repo.git
+          cd repo.git
+          git remote set-url --push origin git@gitlab.com:RetroShare/RetroShare.git
+          git push --mirror

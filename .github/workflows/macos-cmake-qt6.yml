@@ -1,0 +1,89 @@
+# macOS CMake CI for the RetroShare super-project built against Qt6.
+#
+# Qt6 counterpart of macos-cmake.yml. Same whole-tree build and Homebrew flag
+# harvesting, but installs the `qt` formula (Qt6, which bundles qt5compat, svg,
+# multimedia and tools) instead of qt@5, and builds with plugins OFF (VOIP still
+# uses the Qt5-era QtMultimedia API; out of scope for this migration).
+#
+# Submodules are initialised WITHOUT --remote so libretroshare stays on its
+# pinned, CMake-enabled commit.
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: macOS CMake C/C++ CI (Qt6)
+
+on:
+  push:
+    paths-ignore:
+    - '**/*.md'
+  pull_request:
+    paths-ignore:
+    - '**/*.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: macOS 14 / Qt6 / CMake
+    runs-on: macos-14
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - uses: actions/checkout@v5
+      with:
+        persist-credentials: false
+
+    # Same pinned-commit init as the Ubuntu CMake CI (no --remote); librnp needs
+    # --recursive for its nested src/libsexpp.
+    - name: Init submodules (pinned commits)
+      run: |
+        git submodule update --init \
+          libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/
+        git submodule update --init --recursive \
+          supportlibs/librnp
+        git submodule update --init \
+          supportlibs/restbed supportlibs/libsam3 \
+          supportlibs/udp-discovery-cpp supportlibs/rapidjson
+        git --no-pager -C libretroshare log --max-count 1 --oneline
+
+    - name: Install Homebrew dependencies
+      run: >
+        brew install
+        ninja qt openssl@3 botan@2 sqlcipher miniupnpc
+        json-c asio speex speexdsp ffmpeg
+        libxml2 libxslt bzip2 zlib rapidjson doxygen
+
+    # Mirrors the validated local macOS command: harvest every Homebrew opt/*
+    # include/lib dir into the compiler/linker flags, and additionally expose them
+    # to find_package() via CMAKE_PREFIX_PATH (needed for keg-only botan@2…).
+    - name: CMake configure
+      run: |
+        HB="$(brew --prefix)"
+        QT6="$(brew --prefix qt)"
+        IFLAGS="-I$HB/include"; for d in "$HB"/opt/*/include; do IFLAGS="$IFLAGS -I$d"; done
+        LFLAGS="-L$HB/lib";     for d in "$HB"/opt/*/lib;     do LFLAGS="$LFLAGS -L$d"; done
+        # qt (Qt6) first so find_package(QT NAMES Qt6 Qt5) resolves to this config.
+        PREFIX="$QT6;$HB";      for d in "$HB"/opt/*;          do PREFIX="$PREFIX;$d"; done
+        cmake -G Ninja -B Build-cmake -S . \
+          -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_PREFIX_PATH="$PREFIX" \
+          -DQt6_DIR="$QT6/lib/cmake/Qt6" \
+          -DOPENSSL_ROOT_DIR="$(brew --prefix openssl@3)" \
+          -DRS_RNPLIB=ON -DRS_JSON_API=ON -DRS_WEBUI=ON \
+          -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON -DRS_PLUGINS=OFF -DRS_FORUM_DEEP_INDEX=OFF \
+          -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON \
+          -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON \
+          -DCMAKE_C_FLAGS="$IFLAGS" -DCMAKE_CXX_FLAGS="$IFLAGS" \
+          -DCMAKE_EXE_LINKER_FLAGS="$LFLAGS" \
+          -DCMAKE_SHARED_LINKER_FLAGS="$LFLAGS" \
+          -DCMAKE_MODULE_LINKER_FLAGS="$LFLAGS"
+
+    - name: CMake build
+      run: cmake --build Build-cmake -j$(sysctl -n hw.ncpu)

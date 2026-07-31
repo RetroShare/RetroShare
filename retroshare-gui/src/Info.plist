@@ -13,11 +13,15 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleExecutable</key>
-	<string>retroshare</string>
+	<string>retroshare-gui</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.retroshare</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>RetroShare needs access to your camera for video calls.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>RetroShare needs access to your microphone for voice and video calls.</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>

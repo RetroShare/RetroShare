@@ -368,6 +368,7 @@ wikipoos {
 
 # Input
 HEADERS +=  rshare.h \
+            rsguiversion.h \
             retroshare-gui/configpage.h \
             retroshare-gui/RsAutoUpdatePage.h \
             retroshare-gui/mainpage.h \
@@ -615,6 +616,7 @@ HEADERS +=  rshare.h \
             gui/feeds/ChatMsgItem.h \
             gui/feeds/SubFileItem.h \
             gui/feeds/AttachFileItem.h \
+            gui/feeds/TLSItem.h \
             gui/feeds/SecurityItem.h \
             gui/feeds/SecurityIpItem.h \
             gui/feeds/NewsFeedUserNotify.h \
@@ -711,6 +713,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/feeds/ChatMsgItem.ui \
             gui/feeds/SubFileItem.ui \
             gui/feeds/AttachFileItem.ui \
+            gui/feeds/TLSItem.ui \
             gui/feeds/SecurityItem.ui \
             gui/feeds/SecurityIpItem.ui \
             gui/im_history/ImHistoryBrowser.ui \
@@ -975,6 +978,7 @@ SOURCES +=  main.cpp \
             gui/feeds/ChatMsgItem.cpp \
             gui/feeds/SubFileItem.cpp \
             gui/feeds/AttachFileItem.cpp \
+            gui/feeds/TLSItem.cpp \
             gui/feeds/SecurityItem.cpp \
             gui/feeds/SecurityIpItem.cpp \
             gui/feeds/NewsFeedUserNotify.cpp \

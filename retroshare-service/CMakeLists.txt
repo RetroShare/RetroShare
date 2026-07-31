@@ -1,7 +1,6 @@
 # RetroShare decentralized communication platform
 #
 # Copyright (C) 2021-2022  Gioacchino Mazzurco <gio@retroshare.cc>
-# Copyright (C) 2021-2022  Asociación Civil Altermundi <info@altermundi.net>
 #
 # SPDX-License-Identifier: CC0-1.0
 
@@ -10,10 +9,7 @@ project(retroshare-service)
 
 include(CMakeDependentOption)
 
-if(APPLE)
-  include_directories("/usr/local/include") 
-  LINK_DIRECTORIES("/usr/local/lib")
-endif()
+
 
 set(
 	RS_BIN_INSTALL_DIR
@@ -52,14 +48,14 @@ cmake_dependent_option(
 	"Enable settin Web UI password via terminal in retroshare-service"
 	OFF
 	"RS_WEBUI"
-	ON )
+	OFF )
 
 cmake_dependent_option(
 	RS_WEBUI
 	"Install RetroShare Web UI"
 	OFF
 	"RS_JSON_API"
-	ON )
+	OFF )
 
 ################################################################################
 
@@ -98,6 +94,11 @@ list(
 
 add_executable(${PROJECT_NAME} ${RS_SERVICE_SOURCES})
 
+if(APPLE)
+	target_include_directories(${PROJECT_NAME} PRIVATE "/usr/local/include")
+	target_link_directories(${PROJECT_NAME} PRIVATE "/usr/local/lib")
+endif()
+
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
@@ -110,58 +111,33 @@ endif(RS_DEVELOPMENT_BUILD)
 
 ################################################################################
 
-set(LIBRETROSHARE_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libretroshare/")
-if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/CMakeLists.txt" )
-	message(
-		STATUS
-		"libretroshare source found at ${LIBRETROSHARE_DEVEL_DIR} using it" )
-	add_subdirectory(
-		"${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libretroshare" )
-else()
-	FetchContent_Declare(
-		libretroshare
-		GIT_REPOSITORY "https://github.com/RetroShare/libretroshare.git"
-		GIT_TAG "origin/master"
-		GIT_SHALLOW TRUE
-		GIT_PROGRESS TRUE
-		TIMEOUT 10
-	)
-	FetchContent_MakeAvailable(libretroshare)
+if(NOT TARGET retroshare)
+	set(LIBRETROSHARE_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libretroshare/")
+	if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/CMakeLists.txt" )
+		message(
+			STATUS
+			"libretroshare source found at ${LIBRETROSHARE_DEVEL_DIR} using it" )
+		add_subdirectory(
+			"${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libretroshare" )
+	else()
+		FetchContent_Declare(
+			libretroshare
+			GIT_REPOSITORY "https://github.com/RetroShare/libretroshare.git"
+			GIT_TAG "origin/master"
+			GIT_SHALLOW TRUE
+			GIT_PROGRESS TRUE
+			TIMEOUT 10
+		)
+		FetchContent_MakeAvailable(libretroshare)
+	endif()
 endif()
 
+# Link libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
 
-################################################################################
-
-if(RS_RNPLIB)
-	# Add RNP build directories to linker search path
-	target_link_directories(${PROJECT_NAME} PRIVATE
-		${CMAKE_CURRENT_BINARY_DIR}/supportlibs/librnp/Build/src/lib
-		${CMAKE_CURRENT_BINARY_DIR}/supportlibs/librnp/Build/src/libsexpp
-	)
-
-	# Link libraries by name, including RNP libs and dependencies first
-	target_link_libraries(${PROJECT_NAME} PRIVATE
-		rnp             # Link by name
-		sexpp
-		botan-3
-		json-c
-		bz2
-		z
-		retroshare
-	)
-endif(RS_RNPLIB)
-
-################################################################################
-
-# Add include directories from found packages
-# target_include_directories(${PROJECT_NAME} PRIVATE
-#     ${Botan_INCLUDE_DIRS}
-#     ${JSONC_INCLUDE_DIRS}
-# )
-
-# Link only libretroshare, it should handle its own dependencies now
-target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
+if(WIN32)
+	target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32 winmm iphlpapi mswsock)
+endif()
 
 ################################################################################
 
@@ -199,6 +175,7 @@ endif(RS_SERVICE_TERMINAL_LOGIN)
 
 if(RS_WEBUI)
 	set(RS_WEBUI_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../retroshare-webui/")
+	get_filename_component(RS_WEBUI_DEVEL_DIR "${RS_WEBUI_DEVEL_DIR}" ABSOLUTE)
 	if(EXISTS "${RS_WEBUI_DEVEL_DIR}/CMakeLists.txt" )
 		message(
 			STATUS
@@ -215,6 +192,19 @@ if(RS_WEBUI)
 			TIMEOUT 10
 		)
 		FetchContent_MakeAvailable(webui)
+		set(RS_WEBUI_DEVEL_DIR "${webui_SOURCE_DIR}")
+	endif()
+
+	# If the target is not defined (e.g. on Windows where the submodule CMakeLists skips it),
+	# define it here to trigger the WebUI compilation via shell execution under MSYS2/MinGW.
+	if(NOT TARGET retroshare-webui)
+		add_custom_target(
+			retroshare-webui ALL
+			COMMAND sh ./build.sh
+			WORKING_DIRECTORY "${RS_WEBUI_DEVEL_DIR}/webui-src/make-src"
+			COMMENT "Compiling RetroShare WebUI (Windows)"
+			SOURCES "${RS_WEBUI_DEVEL_DIR}/webui-src"
+		)
 	endif()
 
 	add_dependencies(${PROJECT_NAME} retroshare-webui)
