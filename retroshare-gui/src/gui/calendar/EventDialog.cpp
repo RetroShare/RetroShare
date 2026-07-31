@@ -18,7 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#include "gui/msgs/EventDialog.h"
+#include "gui/calendar/EventDialog.h"
 #include <retroshare/rsgxscalendar.h>
 #include "retroshare/rsgxsflags.h"
 #include <QVBoxLayout>

@@ -18,7 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#include "gui/msgs/CalendarPropertiesDialog.h"
+#include "gui/calendar/CalendarPropertiesDialog.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QFormLayout>

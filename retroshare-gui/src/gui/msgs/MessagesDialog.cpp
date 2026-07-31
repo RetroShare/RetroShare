@@ -26,8 +26,10 @@
 #include <QTimer>
 
 #include "MessagesDialog.h"
-#include "gui/msgs/CalendarWidget.h"
-#include "gui/msgs/TasksWidget.h"
+#ifdef RS_USE_CALENDAR
+#include "gui/calendar/CalendarWidget.h"
+#include "gui/calendar/TasksWidget.h"
+#endif
 
 #include "gui/common/TagDefs.h"
 #include "gui/common/PeerDefs.h"
@@ -149,8 +151,10 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     lockUpdate = 0;
     lastSelectedIndex = QModelIndex();
     mLastCurrentQuickViewRow = -1;
+#ifdef RS_USE_CALENDAR
     mCalendarWidget = nullptr;
     mTasksWidget = nullptr;
+#endif
 
     msgWidget = new MessageWidget(true, this);
 	ui.msgLayout->addWidget(msgWidget);
@@ -275,6 +279,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 		tagIndex = 0;
 	}
 
+#ifdef RS_USE_CALENDAR
 	QToolButton *calendarBtn = new QToolButton(this);
 	calendarBtn->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/svg/calendar-month.svg"));
 	calendarBtn->setIconSize(QSize(24, 24));
@@ -295,6 +300,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
 	ui.msgsButtons_HL->insertWidget(tagIndex, calendarBtn);
 	ui.msgsButtons_HL->insertWidget(tagIndex + 1, tasksBtn);
+#endif
 
 	int H = misc::getFontSizeFactor("HelpButton").height();
 	QString help_str = tr(
@@ -1608,11 +1614,13 @@ void MessagesDialog::emptyTrash()
 void MessagesDialog::tabChanged(int tab)
 {
 	QWidget *widget = ui.tabWidget->widget(tab);
+#ifdef RS_USE_CALENDAR
 	if (widget == mCalendarWidget && mCalendarWidget) {
 		mCalendarWidget->refreshData();
 	} else if (widget == mTasksWidget && mTasksWidget) {
 		mTasksWidget->refreshData();
 	}
+#endif
 	connectActions();
 	updateInterface();
 }
@@ -1626,16 +1634,19 @@ void MessagesDialog::tabCloseRequested(int tab)
 	QWidget *widget = ui.tabWidget->widget(tab);
 
 	if (widget) {
+#ifdef RS_USE_CALENDAR
 		if (widget == mCalendarWidget) {
 			mCalendarWidget = nullptr;
 		} else if (widget == mTasksWidget) {
 			mTasksWidget = nullptr;
 		}
+#endif
 		ui.tabWidget->removeTab(tab);
 		widget->deleteLater();
 	}
 }
 
+#ifdef RS_USE_CALENDAR
 void MessagesDialog::showCalendarTab()
 {
 	if (!mCalendarWidget) {
@@ -1653,6 +1664,7 @@ void MessagesDialog::showTasksTab()
 	}
 	ui.tabWidget->setCurrentWidget(mTasksWidget);
 }
+#endif
 
 void MessagesDialog::closeTab(const std::string &msgId)
 {

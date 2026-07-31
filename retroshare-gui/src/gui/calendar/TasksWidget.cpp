@@ -18,9 +18,9 @@
  *                                                                             *
  *******************************************************************************/
 
-#include "gui/msgs/TasksWidget.h"
-#include "gui/msgs/TaskDialog.h"
-#include "gui/msgs/CalendarPropertiesDialog.h"
+#include "gui/calendar/TasksWidget.h"
+#include "gui/calendar/TaskDialog.h"
+#include "gui/calendar/CalendarPropertiesDialog.h"
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsgxscalendar.h>
 #include <QVBoxLayout>

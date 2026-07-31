@@ -23,7 +23,7 @@
 
 #include <QWidget>
 #include <QDate>
-#include "gui/msgs/CalendarData.h"
+#include "gui/calendar/CalendarData.h"
 #include "ui_TasksWidget.h"
 
 class QListWidgetItem;

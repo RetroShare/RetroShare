@@ -23,7 +23,7 @@
 
 #include <QDialog>
 #include <QColor>
-#include "gui/msgs/CalendarData.h"
+#include "gui/calendar/CalendarData.h"
 
 class QStackedWidget;
 class QRadioButton;

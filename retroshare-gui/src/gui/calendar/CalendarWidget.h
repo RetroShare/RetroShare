@@ -26,7 +26,7 @@
 #include <QDate>
 #include <QMap>
 #include <QStyledItemDelegate>
-#include "gui/msgs/CalendarData.h"
+#include "gui/calendar/CalendarData.h"
 #include "ui_CalendarWidget.h"
 
 class QListWidgetItem;

@@ -18,9 +18,9 @@
  *                                                                             *
  *******************************************************************************/
 
-#include "gui/msgs/CalendarWidget.h"
-#include "gui/msgs/EventDialog.h"
-#include "gui/msgs/CalendarPropertiesDialog.h"
+#include "gui/calendar/CalendarWidget.h"
+#include "gui/calendar/EventDialog.h"
+#include "gui/calendar/CalendarPropertiesDialog.h"
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsgxscalendar.h>
 #include "retroshare/rsgxsflags.h"

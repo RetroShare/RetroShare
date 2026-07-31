@@ -18,7 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#include "gui/msgs/CalendarData.h"
+#include "gui/calendar/CalendarData.h"
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsgxscalendar.h>

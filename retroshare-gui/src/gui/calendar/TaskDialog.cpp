@@ -1,4 +1,4 @@
-#include "gui/msgs/TaskDialog.h"
+#include "gui/calendar/TaskDialog.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QFormLayout>

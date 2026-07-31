@@ -111,6 +111,7 @@ CONFIG += gxschannels
 CONFIG += posted
 CONFIG += gxsgui
 CONFIG += gxscircles
+#CONFIG += gxscalendar
 
 # Other Disabled Bits.
 #CONFIG += framecatcher
@@ -477,12 +478,6 @@ HEADERS +=  rshare.h \
             gui/connect/PGPKeyDialog.h \
             gui/connect/FriendRecommendDialog.h \
             gui/msgs/MessagesDialog.h \
-            gui/msgs/CalendarData.h \
-            gui/msgs/CalendarWidget.h \
-            gui/msgs/TasksWidget.h \
-            gui/msgs/CalendarPropertiesDialog.h \
-            gui/msgs/EventDialog.h \
-            gui/msgs/TaskDialog.h \
             gui/msgs/MessageInterface.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/MessageWindow.h \
@@ -672,8 +667,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/msgs/MessageComposer.ui \
             gui/msgs/MessageWindow.ui\
             gui/msgs/MessageWidget.ui\
-            gui/msgs/CalendarWidget.ui \
-            gui/msgs/TasksWidget.ui \
             gui/settings/settingsw.ui \
             gui/settings/GeneralPage.ui \
             gui/settings/ServerPage.ui \
@@ -843,12 +836,6 @@ SOURCES +=  main.cpp \
             gui/connect/ConfCertDialog.cpp \
             gui/connect/PGPKeyDialog.cpp \
             gui/msgs/MessagesDialog.cpp \
-            gui/msgs/CalendarData.cpp \
-            gui/msgs/CalendarWidget.cpp \
-            gui/msgs/TasksWidget.cpp \
-            gui/msgs/CalendarPropertiesDialog.cpp \
-            gui/msgs/EventDialog.cpp \
-            gui/msgs/TaskDialog.cpp \
             gui/msgs/MessageComposer.cpp \
             gui/msgs/MessageWidget.cpp \
             gui/msgs/MessageWindow.cpp \
@@ -1510,6 +1497,30 @@ gxsgui {
 #		gui/gxs/GxsMsgDialog.cpp \
 	
 	
+}
+
+gxscalendar {
+	DEFINES += RS_USE_CALENDAR
+
+	HEADERS += \
+		gui/calendar/CalendarData.h \
+		gui/calendar/CalendarWidget.h \
+		gui/calendar/TasksWidget.h \
+		gui/calendar/CalendarPropertiesDialog.h \
+		gui/calendar/EventDialog.h \
+		gui/calendar/TaskDialog.h
+
+	FORMS += \
+		gui/calendar/CalendarWidget.ui \
+		gui/calendar/TasksWidget.ui
+
+	SOURCES += \
+		gui/calendar/CalendarData.cpp \
+		gui/calendar/CalendarWidget.cpp \
+		gui/calendar/TasksWidget.cpp \
+		gui/calendar/CalendarPropertiesDialog.cpp \
+		gui/calendar/EventDialog.cpp \
+		gui/calendar/TaskDialog.cpp
 }
 
 

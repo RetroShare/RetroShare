@@ -2,7 +2,7 @@
 #define TASKDIALOG_H
 
 #include <QDialog>
-#include "gui/msgs/CalendarData.h"
+#include "gui/calendar/CalendarData.h"
 
 class QComboBox;
 class QLineEdit;
