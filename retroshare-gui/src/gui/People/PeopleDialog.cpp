@@ -1232,17 +1232,35 @@ void PeopleDialog::applySortAndFilter(bool byName)
 
 void PeopleDialog::clearAllSelections()
 {
-    // Tell every widget to visually uncheck
-    auto clearMap = [](auto& widgetMap) {
-        for (auto const& [id, w] : widgetMap) {
-            if (w) w->setIsSelected(false);
+    // Tell every identity widget to visually uncheck & reset current state
+    for (auto const& [id, w] : _gxs_identity_widgets) {
+        if (w) {
+            w->setIsSelected(false);
+            w->setIsCurrent(false);
+            w->setStyleSheet(QString());
         }
-    };
+    }
+    for (auto const& [id, w] : _pgp_identity_widgets) {
+        if (w) {
+            w->setIsSelected(false);
+            w->setIsCurrent(false);
+            w->setStyleSheet(QString());
+        }
+    }
 
-    clearMap(_pgp_identity_widgets);
-    clearMap(_gxs_identity_widgets);
-    clearMap(_ext_circles_widgets);
-    clearMap(_int_circles_widgets);
+    // Tell every circle widget to visually uncheck
+    for (auto const& [id, w] : _ext_circles_widgets) {
+        if (w) {
+            w->setIsSelected(false);
+            w->setStyleSheet(QString());
+        }
+    }
+    for (auto const& [id, w] : _int_circles_widgets) {
+        if (w) {
+            w->setIsSelected(false);
+            w->setStyleSheet(QString());
+        }
+    }
 }
 
 void PeopleDialog::loadIdentityLabels(const RsGxsIdGroup& data)
@@ -1502,13 +1520,14 @@ void PeopleDialog::showNoneSelected()
 	_selectedGxsId   = RsGxsId();
 	_selectedCircleId = RsGxsGroupId();
 
+	clearAllSelections();
+
 	backButton->setVisible(false);
 	joinLeaveCircleButton->setVisible(false);
 	setVoteControlsVisible(true);
 
 	// Rule 2c: show all identities in A, nothing in B, and all circles in C.
 	for (auto& [id, w] : _gxs_identity_widgets) {
-		w->setStyleSheet(QString());
 		w->setVisible(true);
 	}
 
@@ -1537,14 +1556,19 @@ void PeopleDialog::showIdentitySelected(const RsGxsId& id)
 	_selectionMode  = SelectionMode::Identity;
 	_selectedGxsId  = id;
 
+	clearAllSelections();
+
 	backButton->setVisible(true);
 	joinLeaveCircleButton->setVisible(false);
 	setVoteControlsVisible(true);
 
 	// Rule 2a: show identity details in B and the circles the identity belongs to in C
 	for (auto& [gid, w] : _gxs_identity_widgets) {
+		const bool isSelected = (gid == id);
 		w->setVisible(true);
-		w->setStyleSheet(gid == id
+		w->setIsSelected(isSelected);
+		w->setIsCurrent(isSelected);
+		w->setStyleSheet(isSelected
 			? QStringLiteral("border: 2px solid #2196F3; border-radius: 4px;")
 			: QString());
 	}
@@ -1584,6 +1608,8 @@ void PeopleDialog::showCircleSelected(const RsGxsGroupId& circleId)
 	_selectionMode    = SelectionMode::Circle;
 	_selectedCircleId = circleId;
 
+	clearAllSelections();
+
 	backButton->setVisible(true);
 	editButton->setVisible(false);
 	inviteButton->setVisible(false);
@@ -1594,12 +1620,15 @@ void PeopleDialog::showCircleSelected(const RsGxsGroupId& circleId)
 	if (it == _ext_circles_widgets.end()) return;
 
 	CircleWidget* cw = it->second;
+	cw->setIsSelected(true);
 	const RsGxsCircleDetails& details = cw->circleDetails();
 
 	// Rule 2b: show in A the identities in that circle (with color code for member)
 	for (auto& [gid, w] : _gxs_identity_widgets) {
 		const bool isMember = (details.mAllowedGxsIds.count(gid) > 0);
 		w->setVisible(isMember);
+		w->setIsSelected(false);
+		w->setIsCurrent(false);
 		w->setStyleSheet(isMember
 			? QStringLiteral("border: 2px solid #4CAF50; border-radius: 4px;")
 			: QString());
