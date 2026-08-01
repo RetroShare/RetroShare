@@ -203,7 +203,7 @@ private:
 	// forum for each one froze the UI for seconds and reset the model out from
 	// under the user's selection. Restart a single-shot timer instead so a burst
 	// results in one reload once the events settle.
-	void scheduleForumReload(int event_code);
+	void scheduleForumReload();
 
 private:
 	void setForumDescriptionLoading();

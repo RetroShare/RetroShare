@@ -30,7 +30,6 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "GxsForumModel.h"
-#include "gui/gxs/GxsPerfProbe.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxsforums.h"
 #include "retroshare/rsexpr.h"
@@ -869,16 +868,6 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
 		return ;
 
-	RsGuiPerf::Probe prof("model::setMsgReadStatus");
-
-	auto stamp = std::chrono::steady_clock::now();
-	auto lap   = [&stamp]() {
-		const auto now = std::chrono::steady_clock::now();
-		const double ms = std::chrono::duration<double,std::milli>(now-stamp).count();
-		stamp = now;
-		return ms;
-	};
-
 	// Collect the posts whose read status actually changes and update the
 	// in-memory model right away, but do NOT touch the backend or the view once
 	// per message: doing so used to spawn one detached thread AND emit one
@@ -888,12 +877,8 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 	uint32_t changed_entries = 0;
 	recursSetMsgReadStatus(entry,read_status,with_children,changed_msgs,changed_entries) ;
 
-	const double ms_collect = lap();
-
 	bool has_unread_below, has_read_below;
 	recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below);
-
-	const double ms_flags = lap();
 
 	// Persist the change(s) in the background so the GUI thread never blocks.
 	// A single interactive read (the common case: selecting/opening one post)
@@ -938,14 +923,6 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 			emit dataChanged(j, j.sibling(j.row(), COLUMN_THREAD_NB_COLUMNS - 1));
 		}
 	}
-
-	const double ms_spawn_and_notify = lap();
-
-	// dataChanged() is emitted synchronously, so the view's reaction to it -- and
-	// anything the delegates do while repainting -- is accounted for here.
-	prof.detail(QString("posts=%1 rows=%2 msgs=%3 collect=%4ms flags=%5ms notify=%6ms")
-	            .arg(mPosts.size()).arg(changed_entries).arg(changed_msgs.size())
-	            .arg(ms_collect).arg(ms_flags).arg(ms_spawn_and_notify));
 }
 
 void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children,std::vector<RsGxsMessageId>& changed_msgs,uint32_t& changed_entries)
