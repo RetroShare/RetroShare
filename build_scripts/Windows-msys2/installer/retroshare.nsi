@@ -15,7 +15,7 @@
 ;!define OUTDIR ""
 ;!define INSTALLERADD ""
 !ifndef EXE_NAME
-!define EXE_NAME "retroshare.exe"
+!define EXE_NAME "retroshare-gui.exe"
 !endif
 
 # Check needed defines
