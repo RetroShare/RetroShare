@@ -219,7 +219,7 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 	int W = QFontMetricsF(ui->peerTreeWidget->font()).horizontalAdvance("_");
 #endif
 
-    ui->filterLineEdit->setPlaceholderText(tr("Search name, PGP ID, node ID, IP...")) ;
+    ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();
 
 //    mEventHandlerId_pssc=0; // forces initialization

@@ -86,7 +86,7 @@ NetworkDialog::NetworkDialog(QWidget */*parent*/)
     ui.onlyTrustedKeys->setMinimumWidth(20*f);
 
     /* Global search: search by name, PGP ID, node ID, IP */
-    ui.filterLineEdit->setPlaceholderText(tr("Search name, PGP ID, node ID, IP..."));
+    ui.filterLineEdit->setPlaceholderText(tr("Search"));
     connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), PGPIdItemProxy, SLOT(setFilterText(QString)));
 }
 

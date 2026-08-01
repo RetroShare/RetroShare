@@ -374,7 +374,7 @@ QVariant RsFriendListModel::headerData(int section, Qt::Orientation /*orientatio
 		switch(section)
 		{
 		case COLUMN_THREAD_NAME:         return tr("Name");
-		case COLUMN_THREAD_ID:           return tr("PGP / Node ID");	// PGP id on profile rows, node id on location rows
+		case COLUMN_THREAD_ID:           return tr("Id");	// PGP id on profile rows, node id on location rows
 		case COLUMN_THREAD_LAST_CONTACT: return tr("Last contact");
 		case COLUMN_THREAD_IP:           return tr("IP");
 		default:

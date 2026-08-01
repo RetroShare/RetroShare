@@ -81,7 +81,7 @@ QVariant pgpid_item_model::headerData(int section, Qt::Orientation orientation, 
                 return QString(tr("Has signed your key?"));
                 break;
             case PGP_ITEM_MODEL_COLUMN_PEERID:
-                return QString(tr("PGP ID"));
+                return QString(tr("Id"));
                 break;
             case PGP_ITEM_MODEL_COLUMN_LAST_USED:
                 return QString(tr("Last used"));
