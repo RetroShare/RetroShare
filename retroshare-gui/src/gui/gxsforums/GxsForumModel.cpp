@@ -894,10 +894,17 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 			rsGxsForums->markRead(std::make_pair(grpId, msgId), read_status);
 		});
 	else if(!changed_msgs.empty())
-		RsThread::async( [grpId=mForumGroup.mMeta.mGroupId,changed_msgs,read_status]()
+	{
+		// Hand the (possibly long) id list over through a pointer: the lambda
+		// capture would otherwise deep copy it.
+		auto* msgs = new std::vector<RsGxsMessageId>(std::move(changed_msgs));
+
+		RsThread::async( [grpId=mForumGroup.mMeta.mGroupId,msgs,read_status]()
 		{
-			rsGxsForums->markRead(grpId, changed_msgs, read_status);
+			rsGxsForums->markRead(grpId, *msgs, read_status);
+			delete msgs;
 		});
+	}
 
 	// How the view is refreshed depends on how many *rows* changed, not on how
 	// many messages were written. A post keeps every edited version of itself in
