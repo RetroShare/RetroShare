@@ -341,8 +341,101 @@ void PeopleDialog::populateCirclesTree(const std::list<RsGroupMetaData>& circles
 			treeItem->setIcon(0, QIcon(":/icons/png/circles.png"));
 		}
 
+		// Calculate total member count
+		uint32_t validMembers = 0;
+		if (hasDetails) {
+			for (const auto& [mId, flags] : details.mSubscriptionFlags) {
+				const bool invited = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST);
+				const bool subscrb = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED);
+				if (invited || subscrb) {
+					validMembers++;
+				}
+			}
+			if (validMembers == 0) {
+				if (!details.mAllowedNodes.empty()) {
+					validMembers = details.mAllowedNodes.size();
+				} else {
+					validMembers = details.mAllowedGxsIds.size();
+				}
+			}
+		}
+
 		treeItem->setText(0, QString::fromUtf8(gsItem.mGroupName.c_str()));
-		treeItem->setText(1, hasDetails ? QString::number(details.mAllowedGxsIds.size()) : tr("0"));
+		treeItem->setText(1, QString::number(validMembers));
+
+		// Populate sub-items for circle members in treeItem
+		if (hasDetails) {
+			if (!details.mSubscriptionFlags.empty()) {
+				// Remove stale children
+				while (treeItem->childCount() > 0) {
+					delete treeItem->takeChild(0);
+				}
+
+				for (const auto& [gxsId, flags] : details.mSubscriptionFlags) {
+					const bool invited = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST);
+					const bool subscrb = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED);
+					if (!(invited || subscrb)) continue;
+
+					QTreeWidgetItem *childItem = new QTreeWidgetItem(treeItem);
+					childItem->setData(0, Qt::UserRole, QString::fromStdString(gxsId.toStdString()));
+
+					// Identity name & icon
+					QString name;
+					QIcon icon;
+					auto idWidgetIt = _gxs_identity_widgets.find(gxsId);
+					if (idWidgetIt != _gxs_identity_widgets.end()) {
+						name = idWidgetIt->second->nickname();
+						icon = QIcon(QPixmap::fromImage(idWidgetIt->second->avatar()));
+					} else {
+						RsIdentityDetails idDetails;
+						if (rsIdentity && rsIdentity->getIdDetails(gxsId, idDetails)) {
+							name = QString::fromUtf8(idDetails.mNickname.c_str());
+						} else {
+							name = tr("[Unknown]");
+						}
+						icon = QIcon(GxsIdDetails::makeDefaultIcon(gxsId));
+					}
+
+					childItem->setText(0, name);
+					childItem->setIcon(0, icon);
+
+					// Status (Invited, Subscribed, Member)
+					QString statusText;
+					if (subscrb && invited) {
+						statusText = tr("Member");
+					} else if (invited) {
+						statusText = tr("Invited");
+					} else if (subscrb) {
+						statusText = tr("Subscribed");
+					} else {
+						statusText = tr("Pending");
+					}
+
+					childItem->setText(1, statusText);
+				}
+			} else if (!details.mAllowedNodes.empty()) {
+				while (treeItem->childCount() > 0) {
+					delete treeItem->takeChild(0);
+				}
+
+				for (const auto& nodePgpId : details.mAllowedNodes) {
+					QTreeWidgetItem *childItem = new QTreeWidgetItem(treeItem);
+					childItem->setData(0, Qt::UserRole, QString::fromStdString(nodePgpId.toStdString()));
+
+					RsPeerDetails pDetails;
+					QString name;
+					if (rsPeers && rsPeers->getGPGDetails(nodePgpId, pDetails)) {
+						name = QString::fromUtf8(pDetails.name.c_str());
+					} else {
+						name = QString::fromStdString(nodePgpId.toStdString());
+					}
+
+					childItem->setText(0, name);
+					childItem->setIcon(0, QIcon(":/icons/png/person.png"));
+					childItem->setText(1, tr("Member"));
+				}
+			}
+		}
 	}
 
 	filterChanged(filterLineEdit->text());
@@ -1587,7 +1680,23 @@ void PeopleDialog::showIdentitySelected(const RsGxsId& id)
 			auto cit = _ext_circles_widgets.find(circleId);
 			bool member = false;
 			if (cit != _ext_circles_widgets.end()) {
-				member = (cit->second->circleDetails().mAllowedGxsIds.count(id) > 0);
+				RsGxsCircleDetails cDet;
+				if (rsGxsCircles && rsGxsCircles->getCircleDetails(RsGxsCircleId(circleId), cDet)) {
+					cit->second->updateData(cit->second->groupInfo(), cDet);
+				} else {
+					cDet = cit->second->circleDetails();
+				}
+
+				auto subIt = cDet.mSubscriptionFlags.find(id);
+				if (subIt != cDet.mSubscriptionFlags.end()) {
+					const uint32_t flags = subIt->second;
+					const bool invited = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST);
+					const bool subscrb = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED);
+					member = (invited || subscrb);
+				}
+				if (!member) {
+					member = (cDet.mAllowedGxsIds.count(id) > 0);
+				}
 			}
 			item->setHidden(!member);
 			if (member) {
@@ -1621,11 +1730,49 @@ void PeopleDialog::showCircleSelected(const RsGxsGroupId& circleId)
 
 	CircleWidget* cw = it->second;
 	cw->setIsSelected(true);
-	const RsGxsCircleDetails& details = cw->circleDetails();
+
+	// Re-fetch latest circle details directly from rsGxsCircles
+	RsGxsCircleDetails details;
+	if (rsGxsCircles && rsGxsCircles->getCircleDetails(RsGxsCircleId(circleId), details)) {
+		cw->updateData(cw->groupInfo(), details);
+	} else {
+		details = cw->circleDetails();
+	}
+
+	// Ensure all circle members exist in _gxs_identity_widgets
+	for (const auto& [memberId, flags] : details.mSubscriptionFlags) {
+		const bool invited = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST);
+		const bool subscrb = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED);
+		if (!(invited || subscrb)) continue;
+
+		if (_gxs_identity_widgets.find(memberId) == _gxs_identity_widgets.end()) {
+			std::vector<RsGxsIdGroup> idsInfo;
+			if (rsIdentity && rsIdentity->getIdentitiesInfo({memberId}, idsInfo) && !idsInfo.empty()) {
+				IdentityWidget *w = new IdentityWidget();
+				w->updateData(idsInfo[0]);
+				QObject::connect(w, SIGNAL(addButtonClicked()), this, SLOT(iw_AddButtonClickedExt()));
+				QObject::connect(w, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedExt(QList<FlowLayoutItem*>,bool&)));
+				QObject::connect(w, &IdentityWidget::clicked, this, &PeopleDialog::onIdentitySelected);
+				_gxs_identity_widgets[memberId] = w;
+				_flowLayoutExt->addWidget(w);
+			}
+		}
+	}
 
 	// Rule 2b: show in A the identities in that circle (with color code for member)
 	for (auto& [gid, w] : _gxs_identity_widgets) {
-		const bool isMember = (details.mAllowedGxsIds.count(gid) > 0);
+		bool isMember = false;
+		auto subIt = details.mSubscriptionFlags.find(gid);
+		if (subIt != details.mSubscriptionFlags.end()) {
+			const uint32_t flags = subIt->second;
+			const bool invited = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST);
+			const bool subscrb = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED);
+			isMember = (invited || subscrb);
+		}
+		if (!isMember) {
+			isMember = (details.mAllowedGxsIds.count(gid) > 0);
+		}
+
 		w->setVisible(isMember);
 		w->setIsSelected(false);
 		w->setIsCurrent(false);
@@ -1665,8 +1812,14 @@ void PeopleDialog::loadCircleLabels(const RsGxsGroupId& circleId)
 	auto it = _ext_circles_widgets.find(circleId);
 	if (it == _ext_circles_widgets.end()) return;
 
-	const RsGroupMetaData&    info    = it->second->groupInfo();
-	const RsGxsCircleDetails& details = it->second->circleDetails();
+	RsGxsCircleDetails details;
+	if (rsGxsCircles && rsGxsCircles->getCircleDetails(RsGxsCircleId(circleId), details)) {
+		it->second->updateData(it->second->groupInfo(), details);
+	} else {
+		details = it->second->circleDetails();
+	}
+
+	const RsGroupMetaData& info = it->second->groupInfo();
 
 	headerTextLabel_Person->setText(QString::fromUtf8(info.mGroupName.c_str()));
 	circleNameEdit->setText(QString::fromUtf8(info.mGroupName.c_str()));
@@ -1677,7 +1830,19 @@ void PeopleDialog::loadCircleLabels(const RsGxsGroupId& circleId)
 	const bool isExternal = (details.mCircleType == RsGxsCircleType::EXTERNAL);
 	circleTypeEdit->setText(isExternal ? tr("External") : tr("Personal"));
 
-	circleMemberCountEdit->setText(QString::number(details.mAllowedGxsIds.size()));
+	uint32_t validMembers = 0;
+	for (const auto& [mId, flags] : details.mSubscriptionFlags) {
+		const bool invited = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST);
+		const bool subscrb = (flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED);
+		if (invited || subscrb) {
+			validMembers++;
+		}
+	}
+	if (validMembers == 0) {
+		validMembers = details.mAllowedGxsIds.size();
+	}
+
+	circleMemberCountEdit->setText(QString::number(validMembers));
 
 	// Join / leave button label & state
 	const bool isMember = details.mAmIAllowed;

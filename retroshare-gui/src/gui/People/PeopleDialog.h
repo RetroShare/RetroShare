@@ -60,7 +60,7 @@ class PeopleDialog : public MainPage, public Ui::PeopleDialog, public TokenRespo
 	void insertCircles(uint32_t token) ;
 
 	protected:
-	// Derives from RsGxsUpdateBroadcastPage
+	// Derives from MainPage
 		virtual void updateDisplay(bool complete);
 	//End RsGxsUpdateBroadcastPage
 
