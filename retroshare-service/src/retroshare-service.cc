@@ -151,6 +151,76 @@ void openUrl(const std::string& url)
 #endif
 }
 
+#ifdef RS_SERVICE_TERMINAL_LOGIN
+static bool doTerminalCreateAccount()
+{
+	std::cout << std::endl
+	          << colored(COLOR_GREEN, "=== Create New RetroShare Account ===") << std::endl << std::endl;
+
+	std::string pgpName;
+	while (keepRunning && pgpName.empty())
+	{
+		std::cout << colored(COLOR_GREEN, "Please enter your Name or Nickname (PGP Name): ");
+		std::cout.flush();
+		std::getline(std::cin, pgpName);
+		if (pgpName.empty())
+			std::cout << colored(COLOR_RED, "Name cannot be empty!") << std::endl;
+	}
+	if (!keepRunning) return false;
+
+	std::string locationName;
+	while (keepRunning && locationName.empty())
+	{
+		std::cout << colored(COLOR_GREEN, "Please enter Node/Location Name (e.g. Laptop, Home): ");
+		std::cout.flush();
+		std::getline(std::cin, locationName);
+		if (locationName.empty())
+			std::cout << colored(COLOR_RED, "Location name cannot be empty!") << std::endl;
+	}
+	if (!keepRunning) return false;
+
+	std::string pass1, pass2;
+	while (keepRunning)
+	{
+		pass1 = RsUtil::rs_getpass(colored(COLOR_GREEN, "Please enter passphrase for new account: "));
+		pass2 = RsUtil::rs_getpass(colored(COLOR_GREEN, "Please enter the same passphrase again   : "));
+
+		if (pass1 != pass2)
+		{
+			std::cout << colored(COLOR_RED, "Passphrases do not match! Please try again.") << std::endl;
+			continue;
+		}
+		if (pass1.empty())
+		{
+			std::cout << colored(COLOR_RED, "Passphrase cannot be empty! Please try again.") << std::endl;
+			continue;
+		}
+		break;
+	}
+	if (!keepRunning) return false;
+
+	std::cout << colored(COLOR_YELLOW, "Generating 4096-bit PGP key & SSL certificate (this may take a few seconds)...") << std::endl;
+
+	RsPeerId locationId;
+	RsPgpId pgpId;
+	std::error_condition err = rsLoginHelper->createLocationV2(locationId, pgpId, locationName, pgpName, pass1);
+
+	if (err)
+	{
+		RsErr() << colored(COLOR_RED, "Account creation failed: " + err.message()) << std::endl;
+		return false;
+	}
+
+	std::cout << std::endl
+	          << colored(COLOR_GREEN, "Account successfully created and logged in!") << std::endl;
+	std::cout << colored(COLOR_GREEN, "  Location ID : ") << colored(COLOR_YELLOW, locationId.toStdString()) << std::endl;
+	std::cout << colored(COLOR_GREEN, "  PGP ID      : ") << colored(COLOR_BLUE, pgpId.toStdString()) << std::endl << std::endl;
+
+	return true;
+}
+#endif
+
+
 
 int main(int argc, char* argv[])
 {
@@ -237,7 +307,7 @@ int main(int argc, char* argv[])
 #ifdef RS_SERVICE_TERMINAL_LOGIN
 	as >> parameter( 'U', "user-id", prefUserString, "ID",
 	                 "[node Id] Selected account to use and asks for passphrase"
-	                 ". Use \"-U list\" in order to list available accounts.",
+	                 ". Use \"-U list\" to list accounts, or \"-U create\" to create a new account.",
 	                 false );
 #endif // def RS_SERVICE_TERMINAL_LOGIN
 
@@ -351,83 +421,101 @@ int main(int argc, char* argv[])
 #ifdef RS_SERVICE_TERMINAL_LOGIN
 	if(!prefUserString.empty()) // Login from terminal requested
 	{
-		if(prefUserString == "list")
+		bool alreadyLoggedIn = false;
+
+		if(prefUserString == "create")
+		{
+			alreadyLoggedIn = doTerminalCreateAccount();
+			if (!alreadyLoggedIn) return -1;
+		}
+		else if(prefUserString == "list")
 		{
 			std::vector<RsLoginHelper::Location> locations;
 			rsLoginHelper->getLocations(locations);
 
-            if(locations.size() == 0)
-            {
-                RsErr() << colored(COLOR_RED,"No available accounts. You cannot use option -U list") << std::endl;
-                return -RsInit::ERR_NO_AVAILABLE_ACCOUNT;
-            }
-
-            std::cout << std::endl << std::endl
-                      << colored(COLOR_GREEN,"Available accounts:") << std::endl<<std::endl;
-
-            int accountCountDigits = static_cast<int>( ceil(log(locations.size())/log(10.0)) );
-
-			for( uint32_t i=0; i<locations.size(); ++i )
-                std::cout << colored(COLOR_GREEN,"  [" + RsUtil::NumberToString(i+1,false,'0',accountCountDigits)+"]") << " "
-                          << colored(COLOR_YELLOW,locations[i].mLocationId.toStdString())<< " "
-                          << colored(COLOR_BLUE,"(" + locations[i].mPgpId.toStdString()+ "): ")
-                          << colored(COLOR_PURPLE,locations[i].mPgpName + " (" + locations[i].mLocationName + ")" )
-				          << std::endl;
-
-            std::cout << std::endl;
-            uint32_t nacc = 0;
-			while(keepRunning && (nacc < 1 || nacc >= locations.size()))
+			if(locations.size() == 0)
 			{
-                std::cout << colored(COLOR_GREEN,"Please enter account number: ");
-				std::cout.flush();
+				std::cout << std::endl
+				          << colored(COLOR_YELLOW, "No existing RetroShare accounts found.") << std::endl;
+				std::cout << colored(COLOR_GREEN, "Starting interactive account creation...") << std::endl;
+				alreadyLoggedIn = doTerminalCreateAccount();
+				if (!alreadyLoggedIn) return -RsInit::ERR_NO_AVAILABLE_ACCOUNT;
+			}
+			else
+			{
+				std::cout << std::endl << std::endl
+				          << colored(COLOR_GREEN,"Available accounts:") << std::endl<<std::endl;
 
-				std::string inputStr;
-				std::getline(std::cin, inputStr);
+				int accountCountDigits = static_cast<int>( ceil(log(locations.size() + 1)/log(10.0)) );
 
-				nacc = static_cast<uint32_t>(atoi(inputStr.c_str())-1);
-				if(nacc < locations.size())
+				for( uint32_t i=0; i<locations.size(); ++i )
+					std::cout << colored(COLOR_GREEN,"  [" + RsUtil::NumberToString(i+1,false,'0',accountCountDigits)+"]") << " "
+					          << colored(COLOR_YELLOW,locations[i].mLocationId.toStdString())<< " "
+					          << colored(COLOR_BLUE,"(" + locations[i].mPgpId.toStdString()+ "): ")
+					          << colored(COLOR_PURPLE,locations[i].mPgpName + " (" + locations[i].mLocationName + ")" )
+					          << std::endl;
+
+				std::cout << colored(COLOR_GREEN,"  [c]") << " " << colored(COLOR_YELLOW,"Create new account") << std::endl;
+				std::cout << std::endl;
+
+				while(keepRunning)
 				{
-					prefUserString = locations[nacc].mLocationId.toStdString();
-					break;
+					std::cout << colored(COLOR_GREEN,"Please enter account number or 'c' to create: ");
+					std::cout.flush();
+
+					std::string inputStr;
+					std::getline(std::cin, inputStr);
+
+					if(inputStr == "c" || inputStr == "C")
+					{
+						alreadyLoggedIn = doTerminalCreateAccount();
+						if (!alreadyLoggedIn) return -1;
+						break;
+					}
+
+					uint32_t nacc = static_cast<uint32_t>(atoi(inputStr.c_str())-1);
+					if(nacc < locations.size())
+					{
+						prefUserString = locations[nacc].mLocationId.toStdString();
+						break;
+					}
 				}
-				nacc=0; // allow to continue if something goes wrong.
 			}
 		}
 
-
-		RsPeerId ssl_id(prefUserString);
-		if(ssl_id.isNull())
+		if(!alreadyLoggedIn)
 		{
-            RsErr() << colored(COLOR_RED,"Invalid User location id: a hexadecimal ID is expected.")
-			        << std::endl;
-			return -EINVAL;
-		}
+			RsPeerId ssl_id(prefUserString);
+			if(ssl_id.isNull())
+			{
+				RsErr() << colored(COLOR_RED,"Invalid User location id: a hexadecimal ID, 'list', or 'create' is expected.")
+				        << std::endl;
+				return -EINVAL;
+			}
 
-        //RsServiceNotify* notify = new RsServiceNotify();
-        //rsNotify->registerNotifyClient(notify);
+			// supply empty passwd so that it is properly asked 3 times on console
+			RsInit::LoadCertificateStatus result = rsLoginHelper->attemptLogin(ssl_id, "");
 
-		// supply empty passwd so that it is properly asked 3 times on console
-		RsInit::LoadCertificateStatus result = rsLoginHelper->attemptLogin(ssl_id, "");
-
-		switch(result)
-		{
-		case RsInit::OK: break;
-		case RsInit::ERR_ALREADY_RUNNING:
-			RsErr() << "Another RetroShare using the same profile is already "
-			           "running on your system. Please close that instance "
-			           "first." << std::endl << "Lock file: "
-			        << RsInit::lockFilePath() << std::endl;
-			return -RsInit::ERR_ALREADY_RUNNING;
-		case RsInit::ERR_CANT_ACQUIRE_LOCK:
-			RsErr() << "An unexpected error occurred when Retroshare tried to "
-			           "acquire the single instance lock file." << std::endl
-			        << "Lock file: " << RsInit::lockFilePath() << std::endl;
-			return -RsInit::ERR_CANT_ACQUIRE_LOCK;
-		case RsInit::ERR_UNKNOWN: // Fall-throug
-		default:
-			RsErr() << "Cannot login. Check your passphrase." << std::endl
-			        << std::endl;
-			return -result;
+			switch(result)
+			{
+			case RsInit::OK: break;
+			case RsInit::ERR_ALREADY_RUNNING:
+				RsErr() << "Another RetroShare using the same profile is already "
+				           "running on your system. Please close that instance "
+				           "first." << std::endl << "Lock file: "
+				        << RsInit::lockFilePath() << std::endl;
+				return -RsInit::ERR_ALREADY_RUNNING;
+			case RsInit::ERR_CANT_ACQUIRE_LOCK:
+				RsErr() << "An unexpected error occurred when Retroshare tried to "
+				           "acquire the single instance lock file." << std::endl
+				        << "Lock file: " << RsInit::lockFilePath() << std::endl;
+				return -RsInit::ERR_CANT_ACQUIRE_LOCK;
+			case RsInit::ERR_UNKNOWN: // Fall-through
+			default:
+				RsErr() << "Cannot login. Check your passphrase." << std::endl
+				        << std::endl;
+				return -result;
+			}
 		}
 
         if(RsAccounts::isTorAuto())
