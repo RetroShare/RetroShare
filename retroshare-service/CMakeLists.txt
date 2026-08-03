@@ -217,3 +217,24 @@ if(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
 endif(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
 
 ################################################################################
+
+option(
+	RS_SERVICE_TRAY
+	"Enable Qt-based cross-platform system tray icon support (requires Qt5 or Qt6 Widgets)"
+	OFF )
+
+if(RS_SERVICE_TRAY)
+	find_package(Qt6 COMPONENTS Widgets QUIET)
+	if(Qt6_FOUND)
+		target_compile_definitions(${PROJECT_NAME} PUBLIC RS_SERVICE_TRAY)
+		target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets)
+		message(STATUS "retroshare-service: Qt6 System Tray support enabled (RS_SERVICE_TRAY)")
+	else()
+		find_package(Qt5 COMPONENTS Widgets REQUIRED)
+		target_compile_definitions(${PROJECT_NAME} PUBLIC RS_SERVICE_TRAY)
+		target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets)
+		message(STATUS "retroshare-service: Qt5 System Tray support enabled (RS_SERVICE_TRAY)")
+	endif()
+endif(RS_SERVICE_TRAY)
+
+################################################################################

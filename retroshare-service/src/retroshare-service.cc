@@ -24,6 +24,21 @@
 #include <csignal>
 #include <iomanip>
 #include <atomic>
+#include <cstdlib>
+
+#ifdef WINDOWS_SYS
+#include <windows.h>
+#include <shellapi.h>
+#endif
+
+#ifdef RS_SERVICE_TRAY
+#include <QApplication>
+#include <QSystemTrayIcon>
+#include <QMenu>
+#include <QAction>
+#include <QTimer>
+#include <QIcon>
+#endif
 
 #include "retroshare/rsinit.h"
 #include "retroshare/rstor.h"
@@ -121,6 +136,19 @@ void signalHandler(int signal)
 		RsControl::instance()->rsGlobalShutDown();
 	receivedSignal = signal;
 	keepRunning = false;
+}
+
+void openUrl(const std::string& url)
+{
+#if defined(WINDOWS_SYS)
+	ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+#elif defined(__APPLE__)
+	std::string cmd = "open \"" + url + "\"";
+	std::system(cmd.c_str());
+#else
+	std::string cmd = "xdg-open \"" + url + "\"";
+	std::system(cmd.c_str());
+#endif
 }
 
 
@@ -239,8 +267,29 @@ int main(int argc, char* argv[])
 	              "enable auto-login." );
 #endif
 
+	bool noOpenBrowser = false;
+	bool noTray = false;
+#ifdef WINDOWS_SYS
+	bool hideConsole = false;
+#endif
+
+	as >> option( "no-open-browser", noOpenBrowser, "Disable automatically opening WebUI in the browser." );
+#if defined(RS_SERVICE_TRAY) || defined(WINDOWS_SYS)
+	as >> option( "no-tray", noTray, "Disable system tray icon." );
+#endif
+#ifdef WINDOWS_SYS
+	as >> option( "hide-console", hideConsole, "Hide console window on startup." );
+#endif
+
 	as >> help( 'h', "help", "Display this Help" );
 	as.defaultErrorHandling(true, true);
+
+	bool openBrowser = !noOpenBrowser;
+#if defined(RS_SERVICE_TRAY) || defined(WINDOWS_SYS)
+	bool enableTray = !noTray;
+#else
+	bool enableTray = false;
+#endif
 
     if(!conf.userSuppliedTorExecutable.empty())
         RsTor::setTorExecutablePath(conf.userSuppliedTorExecutable);
@@ -412,10 +461,137 @@ int main(int argc, char* argv[])
 	}
 #endif // def RS_SERVICE_TERMINAL_LOGIN
 
+#ifdef RS_JSONAPI
+	if (openBrowser && conf.enableWebUI)
+	{
+		std::string bindAddress = conf.jsonApiBindAddress.empty() ? "127.0.0.1" : conf.jsonApiBindAddress;
+		uint16_t port = conf.jsonApiPort;
+		std::string url = "http://" + bindAddress + ":" + std::to_string(port) + "/index.html";
+		RsInfo() << "Opening WebUI in default browser: " << url << std::endl;
+		openUrl(url);
+	}
+#endif
+
+#ifdef RS_SERVICE_TRAY
+	// --- Qt-based cross-platform system tray ---
+	QApplication *qtApp = nullptr;
+	QSystemTrayIcon *trayIcon = nullptr;
+	QMenu *trayMenu = nullptr;
+
+	if (enableTray)
+	{
+		std::string bindAddress = conf.jsonApiBindAddress.empty() ? "127.0.0.1" : conf.jsonApiBindAddress;
+		uint16_t port = conf.jsonApiPort;
+		std::string trayWebuiUrl = "http://" + bindAddress + ":" + std::to_string(port) + "/index.html";
+
+#ifdef WINDOWS_SYS
+		// Hide console window if requested
+		HWND hConsole = GetConsoleWindow();
+		if (hConsole != NULL && hideConsole)
+			ShowWindow(hConsole, SW_HIDE);
+#endif
+
+		qtApp = new QApplication(argc, argv);
+		qtApp->setQuitOnLastWindowClosed(false);
+
+		trayIcon = new QSystemTrayIcon();
+
+		// Load icon
+		QString appDir = QApplication::applicationDirPath();
+		QIcon icon;
+#ifdef WINDOWS_SYS
+		icon = QIcon(appDir + "/logo.ico");
+#elif defined(__APPLE__)
+		icon = QIcon(appDir + "/../Resources/logo.icns");
+#else
+		icon = QIcon(appDir + "/../share/icons/hicolor/scalable/retroshare-service.svg");
+		if (icon.isNull())
+			icon = QIcon::fromTheme("retroshare-service");
+#endif
+		if (icon.isNull())
+			std::cerr << "(WW) System tray: Could not load icon." << std::endl;
+
+		trayIcon->setIcon(icon);
+		trayIcon->setToolTip("RetroShare Service");
+
+		trayMenu = new QMenu();
+
+		QAction *openWebAction = trayMenu->addAction("Open Web Interface");
+		QObject::connect(openWebAction, &QAction::triggered, [trayWebuiUrl]() {
+			openUrl(trayWebuiUrl);
+		});
+
+		trayMenu->addSeparator();
+
+#ifdef WINDOWS_SYS
+		QAction *toggleConsoleAction = trayMenu->addAction("Toggle Console Window");
+		QObject::connect(toggleConsoleAction, &QAction::triggered, []() {
+			HWND hCon = GetConsoleWindow();
+			if (hCon != NULL)
+			{
+				if (IsWindowVisible(hCon))
+					ShowWindow(hCon, SW_HIDE);
+				else
+				{
+					ShowWindow(hCon, SW_SHOW);
+					SetForegroundWindow(hCon);
+				}
+			}
+		});
+		trayMenu->addSeparator();
+#endif
+
+		QAction *exitAction = trayMenu->addAction("Exit RetroShare");
+		QObject::connect(exitAction, &QAction::triggered, []() {
+			if (RsControl::instance()->isReady())
+				RsControl::instance()->rsGlobalShutDown();
+			keepRunning = false;
+			QApplication::quit();
+		});
+
+		trayIcon->setContextMenu(trayMenu);
+
+		// Double-click opens WebUI
+		QObject::connect(trayIcon, &QSystemTrayIcon::activated,
+			[trayWebuiUrl](QSystemTrayIcon::ActivationReason reason) {
+				if (reason == QSystemTrayIcon::DoubleClick)
+					openUrl(trayWebuiUrl);
+			});
+
+		trayIcon->show();
+		std::cerr << "(II) Qt System Tray icon started." << std::endl;
+	}
+
+	rsControl->setShutdownCallback([&](int){
+		keepRunning = false;
+		if (qtApp) QMetaObject::invokeMethod(qtApp, "quit", Qt::QueuedConnection);
+	});
+
+	if (enableTray && qtApp)
+	{
+		QTimer shutdownTimer;
+		QObject::connect(&shutdownTimer, &QTimer::timeout, [&]() {
+			if (!keepRunning) QApplication::quit();
+		});
+		shutdownTimer.start(500);
+		qtApp->exec();
+
+		delete trayIcon;
+		delete trayMenu;
+		delete qtApp;
+	}
+	else
+	{
+		rsControl->setShutdownCallback([&](int){keepRunning = false;});
+		while(keepRunning)
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	}
+#else
 	rsControl->setShutdownCallback([&](int){keepRunning = false;});
 
 	while(keepRunning)
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+#endif
 
 	return 0;
 }

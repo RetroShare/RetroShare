@@ -26,6 +26,16 @@ TARGET = retroshare-service
 
 SOURCES += retroshare-service.cc
 
+################################ System Tray ###################################
+
+# Optional Qt-based cross-platform system tray icon support.
+# Enable with: CONFIG+=rs_service_tray
+rs_service_tray {
+	QT += widgets
+	DEFINES += RS_SERVICE_TRAY
+	message("retroshare-service: Qt System Tray support enabled (RS_SERVICE_TRAY)")
+}
+
 ################################# Linux ########################################
 
 appimage {
