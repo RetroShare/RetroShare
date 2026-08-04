@@ -28,7 +28,6 @@
 
 #ifdef WINDOWS_SYS
 #include <windows.h>
-#include <shellapi.h>
 #endif
 
 #ifdef RS_SERVICE_TRAY
@@ -38,6 +37,8 @@
 #include <QAction>
 #include <QTimer>
 #include <QIcon>
+#include <QDesktopServices>
+#include <QUrl>
 #endif
 
 #include "retroshare/rsinit.h"
@@ -138,18 +139,7 @@ void signalHandler(int signal)
 	keepRunning = false;
 }
 
-void openUrl(const std::string& url)
-{
-#if defined(WINDOWS_SYS)
-	ShellExecuteA(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
-#elif defined(__APPLE__)
-	std::string cmd = "open \"" + url + "\"";
-	std::system(cmd.c_str());
-#else
-	std::string cmd = "xdg-open \"" + url + "\"";
-	std::system(cmd.c_str());
-#endif
-}
+
 
 #ifdef RS_SERVICE_TERMINAL_LOGIN
 static bool doTerminalCreateAccount()
@@ -337,13 +327,11 @@ int main(int argc, char* argv[])
 	              "enable auto-login." );
 #endif
 
-	bool noOpenBrowser = false;
 	bool noTray = false;
 #ifdef WINDOWS_SYS
 	bool hideConsole = false;
 #endif
 
-	as >> option( "no-open-browser", noOpenBrowser, "Disable automatically opening WebUI in the browser." );
 #if defined(RS_SERVICE_TRAY) || defined(WINDOWS_SYS)
 	as >> option( "no-tray", noTray, "Disable system tray icon." );
 #endif
@@ -354,7 +342,6 @@ int main(int argc, char* argv[])
 	as >> help( 'h', "help", "Display this Help" );
 	as.defaultErrorHandling(true, true);
 
-	bool openBrowser = !noOpenBrowser;
 #if defined(RS_SERVICE_TRAY) || defined(WINDOWS_SYS)
 	bool enableTray = !noTray;
 #else
@@ -549,16 +536,7 @@ int main(int argc, char* argv[])
 	}
 #endif // def RS_SERVICE_TERMINAL_LOGIN
 
-#ifdef RS_JSONAPI
-	if (openBrowser && conf.enableWebUI)
-	{
-		std::string bindAddress = conf.jsonApiBindAddress.empty() ? "127.0.0.1" : conf.jsonApiBindAddress;
-		uint16_t port = conf.jsonApiPort;
-		std::string url = "http://" + bindAddress + ":" + std::to_string(port) + "/index.html";
-		RsInfo() << "Opening WebUI in default browser: " << url << std::endl;
-		openUrl(url);
-	}
-#endif
+
 
 #ifdef RS_SERVICE_TRAY
 	// --- Qt-based cross-platform system tray ---
@@ -606,7 +584,7 @@ int main(int argc, char* argv[])
 
 		QAction *openWebAction = trayMenu->addAction("Open Web Interface");
 		QObject::connect(openWebAction, &QAction::triggered, [trayWebuiUrl]() {
-			openUrl(trayWebuiUrl);
+			QDesktopServices::openUrl(QUrl(QString::fromStdString(trayWebuiUrl)));
 		});
 
 		trayMenu->addSeparator();
@@ -643,7 +621,7 @@ int main(int argc, char* argv[])
 		QObject::connect(trayIcon, &QSystemTrayIcon::activated,
 			[trayWebuiUrl](QSystemTrayIcon::ActivationReason reason) {
 				if (reason == QSystemTrayIcon::DoubleClick)
-					openUrl(trayWebuiUrl);
+					QDesktopServices::openUrl(QUrl(QString::fromStdString(trayWebuiUrl)));
 			});
 
 		trayIcon->show();
