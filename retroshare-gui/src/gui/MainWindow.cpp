@@ -1296,6 +1296,14 @@ void MainWindow::receiveNewArgs(QStringList args)
 {
     RsInfo() << "Received new arguments from operating system call.";
 
+    if (args.isEmpty())
+    {
+        /* No arguments were passed: another instance just asked us to show the main window. */
+        RsInfo() << "No arguments received, showing the main window.";
+        raiseWindow();
+        return;
+    }
+
     std::string argstring = RsApplication::applicationFilePath().toStdString() ;
 
     for(auto l:args)
