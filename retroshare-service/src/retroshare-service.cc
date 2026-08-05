@@ -20,6 +20,7 @@
  */
 
 
+#include <fstream>
 #include <cmath>
 #include <csignal>
 #include <iomanip>
@@ -86,6 +87,39 @@ std::string colored(int color,const std::string& s)
     }
 }
 
+#ifdef RS_SERVICE_TERMINAL_LOGIN
+struct StderrMuter
+{
+#ifdef WINDOWS_SYS
+	std::ofstream nullStream{"NUL"};
+#else
+	std::ofstream nullStream{"/dev/null"};
+#endif
+	std::streambuf* oldCerr{nullptr};
+
+	StderrMuter()
+	{
+		if (nullStream.is_open())
+			oldCerr = std::cerr.rdbuf(nullStream.rdbuf());
+	}
+
+	~StderrMuter()
+	{
+		if (oldCerr)
+			std::cerr.rdbuf(oldCerr);
+	}
+};
+
+static std::string getpassCleanPrompt(const std::string& prompt)
+{
+	std::cout << prompt;
+	std::cout.flush();
+	std::string res = RsUtil::rs_getpass("");
+	std::cout << std::endl;
+	return res;
+}
+#endif
+
 static void eventHandler(std::shared_ptr<const RsEvent> e)
 {
     auto fe = dynamic_cast<const RsSystemEvent*>(e.get());
@@ -97,7 +131,7 @@ static void eventHandler(std::shared_ptr<const RsEvent> e)
     if(fe->mEventCode == RsSystemEventCode::PASSWORD_REQUESTED)
     {
         std::string question1 = fe->passwd_request_title + colored(COLOR_GREEN,"Please enter your PGP password for key:\n    ") + fe->passwd_request_key_details + " :";
-        std::string password = RsUtil::rs_getpass(question1.c_str()) ;
+        std::string password = getpassCleanPrompt(question1.c_str()) ;
 
         if(!password.empty())
             RsLoginHelper::cachePgpPassphrase(password);
@@ -172,8 +206,8 @@ static bool doTerminalCreateAccount()
 	std::string pass1, pass2;
 	while (keepRunning)
 	{
-		pass1 = RsUtil::rs_getpass(colored(COLOR_GREEN, "Please enter passphrase for new account: "));
-		pass2 = RsUtil::rs_getpass(colored(COLOR_GREEN, "Please enter the same passphrase again   : "));
+		pass1 = getpassCleanPrompt(colored(COLOR_GREEN, "Please enter passphrase for new account: "));
+		pass2 = getpassCleanPrompt(colored(COLOR_GREEN, "Please enter the same passphrase again: "));
 
 		if (pass1 != pass2)
 		{
@@ -197,7 +231,7 @@ static bool doTerminalCreateAccount()
 
 	if (err)
 	{
-		RsErr() << colored(COLOR_RED, "Account creation failed: " + err.message()) << std::endl;
+		std::cout << colored(COLOR_RED, "Account creation failed: " + err.message()) << std::endl;
 		return false;
 	}
 
@@ -408,6 +442,7 @@ int main(int argc, char* argv[])
 #ifdef RS_SERVICE_TERMINAL_LOGIN
 	if(!prefUserString.empty()) // Login from terminal requested
 	{
+		StderrMuter muter;
 		bool alreadyLoggedIn = false;
 
 		if(prefUserString == "create")
@@ -475,7 +510,7 @@ int main(int argc, char* argv[])
 			RsPeerId ssl_id(prefUserString);
 			if(ssl_id.isNull())
 			{
-				RsErr() << colored(COLOR_RED,"Invalid User location id: a hexadecimal ID, 'list', or 'create' is expected.")
+				std::cout << colored(COLOR_RED,"Invalid User location id: a hexadecimal ID, 'list', or 'create' is expected.")
 				        << std::endl;
 				return -EINVAL;
 			}
@@ -487,19 +522,19 @@ int main(int argc, char* argv[])
 			{
 			case RsInit::OK: break;
 			case RsInit::ERR_ALREADY_RUNNING:
-				RsErr() << "Another RetroShare using the same profile is already "
+				std::cout << "Another RetroShare using the same profile is already "
 				           "running on your system. Please close that instance "
 				           "first." << std::endl << "Lock file: "
 				        << RsInit::lockFilePath() << std::endl;
 				return -RsInit::ERR_ALREADY_RUNNING;
 			case RsInit::ERR_CANT_ACQUIRE_LOCK:
-				RsErr() << "An unexpected error occurred when Retroshare tried to "
+				std::cout << "An unexpected error occurred when Retroshare tried to "
 				           "acquire the single instance lock file." << std::endl
 				        << "Lock file: " << RsInit::lockFilePath() << std::endl;
 				return -RsInit::ERR_CANT_ACQUIRE_LOCK;
 			case RsInit::ERR_UNKNOWN: // Fall-through
 			default:
-				RsErr() << "Cannot login. Check your passphrase." << std::endl
+				std::cout << "Cannot login. Check your passphrase." << std::endl
 				        << std::endl;
 				return -result;
 			}
