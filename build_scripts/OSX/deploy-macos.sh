@@ -143,9 +143,15 @@ if [ -d "retroshare-gui/src/translations" ]; then
     find "retroshare-gui/src/translations" -name "*.qm" -exec cp {} "$APP_RESOURCES/translations/" \; 2>/dev/null || true
 fi
 
-if [ -d "retroshare-webui/src" ]; then
-    cp -r retroshare-webui/src/* "$APP_RESOURCES/webui/" 2>/dev/null || true
+# The generated web files live in retroshare-webui/webui (retroshare-webui/src
+# never existed, so this copy silently did nothing and shipped an empty webui
+# folder). Contents/Resources/webui is where libretroshare looks for them.
+if [ -d "retroshare-webui/webui" ]; then
+    cp -r retroshare-webui/webui/. "$APP_RESOURCES/webui/"
     echo "  WebUI copied to app resources."
+else
+    echo "  WARNING: retroshare-webui/webui not found, the bundle will ship no web interface."
+    echo "           Configure the build with -DRS_WEBUI=ON to generate it."
 fi
 
 # 6. Mise à jour du Info.plist
