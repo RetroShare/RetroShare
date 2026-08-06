@@ -79,6 +79,31 @@ void RsPostedPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> 
 		case RsPostedEventCode::MESSAGE_VOTES_UPDATED:
 		case RsPostedEventCode::NEW_MESSAGE:
 		{
+			// Batched read-status change ("mark all as read", possibly issued by
+			// another frontend such as the webUI): the event carries the affected
+			// message ids and their new state, so update the flags locally
+			// instead of re-reading the posts from the database.
+			if( e->mPostedEventCode == RsPostedEventCode::READ_STATUS_CHANGED
+			        && !e->mPostedMsgIds.empty() )
+			{
+				if(e->mPostedGroupId != mPostedGroup.mMeta.mGroupId)
+					return;
+
+				const std::set<RsGxsMessageId> ids(e->mPostedMsgIds.begin(),e->mPostedMsgIds.end());
+
+				for(uint32_t i=0;i<mPosts.size();++i)
+					if(ids.count(mPosts[i].mMeta.mMsgId))
+					{
+						if(e->mPostedMsgsRead)
+							mPosts[i].mMeta.mMsgStatus &= ~(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD | GXS_SERV::GXS_MSG_STATUS_GUI_NEW);
+						else
+							mPosts[i].mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+					}
+
+				emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mDisplayedNbPosts-1,0,(void*)NULL));
+				return;
+			}
+
 			// Normally we should just emit dataChanged() on the index of the data that has changed:
 			//
 			// We need to update the data!
@@ -737,20 +762,38 @@ void RsPostedPostsModel::createPostsArray(std::vector<RsPostedPost>& posts)
 
 void RsPostedPostsModel::setAllMsgReadStatus(bool read)
 {
-    // make a temporary listof pairs
+    // Collect the posts whose status actually changes, persist them all in a
+    // single background batch (one thread and one event for the whole set,
+    // instead of one detached thread + one event per post, which froze the UI
+    // on large boards), then update the local model and refresh once.
 
-    std::list<RsGxsGrpMsgIdPair> pairs;
+    std::vector<RsGxsMessageId> msgIds;
+    msgIds.reserve(mPosts.size());
 
     for(uint32_t i=0;i<mPosts.size();++i)
-        pairs.push_back(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId));
+    {
+        bool post_status = !(IS_MSG_UNREAD(mPosts[i].mMeta.mMsgStatus) || IS_MSG_NEW(mPosts[i].mMeta.mMsgStatus));
 
-        // Call blocking API
+        if(post_status != read)
+            msgIds.push_back(mPosts[i].mMeta.mMsgId);
+    }
 
-    for(auto& p:pairs)
-        RsThread::async([read,p]()
+    if(!msgIds.empty())
+    {
+        // Hand the id list over through a pointer: the lambda capture would
+        // otherwise deep copy it.
+        auto* ids = new std::vector<RsGxsMessageId>(std::move(msgIds));
+
+        RsThread::async([boardId=mPostedGroup.mMeta.mGroupId, ids, read]()
         {
-            rsPosted->setPostReadStatus(p,read);
+            rsPosted->setPostReadStatus(boardId, *ids, read);
+            delete ids;
         } );
+    }
+
+    // The model is updated when the resulting READ_STATUS_CHANGED event comes
+    // back (see handleEvent_main_thread()), through the same path as a batch
+    // initiated by any other frontend (e.g. the webUI).
 }
 void RsPostedPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
 {
