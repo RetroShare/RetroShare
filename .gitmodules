@@ -26,7 +26,7 @@
 	url = https://github.com/RetroShare/OpenPGP-SDK.git
 	branch = master
 [submodule "libbitdht"]
-	path = libbitdht
+	path = supportlibs/libbitdht
 	url = https://github.com/RetroShare/BitDHT.git
 	branch = master
 [submodule "libretroshare"]
