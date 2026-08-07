@@ -1,8 +1,10 @@
 # CMakeLists.txt for the RetroShare super-project (root aggregate build)
 #
+# Copyright (C) 2026       David Bears <dbear4q@gmail.com>
+#
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-cmake_minimum_required(VERSION 3.24.0...4.3.4)
+cmake_minimum_required(VERSION 3.24...4.4.1)
 project(retroshare-superproject)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/mk/cmake")
