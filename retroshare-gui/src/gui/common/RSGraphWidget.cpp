@@ -439,10 +439,23 @@ void RSGraphWidget::paintData()
 
           /* Plot the data as area graphs */
 
-		  points.push_front(QPointF( _rec.width(), _rec.height() - _graph_base)) ; // add a point in the lower right corner, to close the path.
+          if ((_flags & RSGRAPH_FLAGS_PAINT_STYLE_PLAIN) && !points.isEmpty())
+          {
+              // Close the filled area along a flat baseline: drop from the last
+              // (rightmost) point down to the baseline, and raise the first
+              // (leftmost) point from the baseline. The previous code prepended
+              // only the bottom-RIGHT corner, so the polygon closed by joining
+              // the bottom-right corner straight to the leftmost data point -> a
+              // spurious diagonal across the whole graph whenever that point was
+              // high.
+              const qreal baseline = _rec.height() - _graph_base ;
+              const qreal left_x  = points.front().x() ;
+              const qreal right_x = points.back().x() ;
+              points.push_back (QPointF(right_x, baseline)) ;
+              points.push_front(QPointF(left_x , baseline)) ;
 
-          if (_flags & RSGRAPH_FLAGS_PAINT_STYLE_PLAIN)
               paintIntegral(points, pcolor, _opacity);
+          }
       }
   if(_maxValue > 0.0f)
   {

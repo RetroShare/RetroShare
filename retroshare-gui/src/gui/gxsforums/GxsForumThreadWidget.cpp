@@ -23,6 +23,7 @@
 #include <QKeyEvent>
 #include <QScrollBar>
 #include <QPainter>
+#include <QTimer>
 
 #include "util/qtthreadsutils.h"
 #include "util/misc.h"
@@ -253,6 +254,13 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 {
     ui->setupUi(this);
 
+    // Single-shot timer used to coalesce the full-forum reloads requested by
+    // incoming GXS events (see scheduleForumReload()). Created first thing:
+    // setGroupId(forumId) below reaches updateDisplay(), which touches this timer.
+    mDeferredReloadTimer = new QTimer(this);
+    mDeferredReloadTimer->setSingleShot(true);
+    connect(mDeferredReloadTimer, &QTimer::timeout, this, [this]() { updateDisplay(true); });
+
     //setUpdateWhenInvisible(true);
 
     //mUpdating = false;
@@ -402,26 +410,32 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
         case RsForumEventCode::PINNED_POSTS_CHANGED:
         case RsForumEventCode::SYNC_PARAMETERS_UPDATED:
             if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
-                updateDisplay(true);
+                scheduleForumReload();
             break;
 
         case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
             if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
-            {
-                // Toggle subscribe flag locally and refresh UI without GXS request
-                // to avoid concurrent request with parent dialog's tree rebuild
-                if(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags))
-                    mForumGroup.mMeta.mSubscribeFlags &= ~GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
-                else
-                    mForumGroup.mMeta.mSubscribeFlags |= GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
-
+                // Re-read the group instead of guessing the new flag by flipping
+                // the current one: the event says the status changed, not that it
+                // was toggled, and a wrong guess makes the widget believe the
+                // forum is unsubscribed, which silently disables marking posts
+                // read or unread until the group data comes back.
                 updateGroupData();
-            }
             break;
 
         default: break;
         }
     }
+}
+
+void GxsForumThreadWidget::scheduleForumReload()
+{
+    // Coalesce bursts of incoming events into a single reload. 300 ms is short
+    // enough to feel immediate yet long enough to absorb a whole sync batch, so
+    // the expensive updateForum()/setPosts() cycle runs once instead of once per
+    // post. Restarting the timer on every event pushes the reload back until the
+    // events settle.
+    mDeferredReloadTimer->start(300);
 }
 
 void GxsForumThreadWidget::showForumInfo()
@@ -596,6 +610,10 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
     }
     if(complete) 	// need to update the group data, reload the messages etc.
     {
+        // We are reloading now, so drop any reload still pending in the coalescing
+        // timer (e.g. queued by events for a forum we just switched away from).
+        mDeferredReloadTimer->stop();
+
         saveExpandedItems(mSavedExpandedMessages);
 
         if(groupId() != mThreadModel->currentGroupId())
@@ -1463,7 +1481,6 @@ void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool f
     if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) {
         return;
     }
-    saveExpandedItems(mSavedExpandedMessages);
 
     QModelIndex src_index;
     if(forum)
@@ -1475,11 +1492,15 @@ void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool f
         else
             src_index = mThreadModel->getIndexOfMessage(mThreadId);
     }
-    mThreadModel->setMsgReadStatus(src_index,read,children);
 
-    //Restore Selection
-    whileBlocking(ui->threadTreeWidget)->setCurrentIndex(mThreadProxyModel->mapFromSource(mThreadModel->getIndexOfMessage(mThreadId)));
-    recursRestoreExpandedItems(QModelIndex(),mSavedExpandedMessages);
+    // setMsgReadStatus() only emits dataChanged(): it never resets the model nor
+    // changes its layout, so neither the expanded items nor the current index are
+    // lost here. Saving and restoring them was pure overhead -- and not a cheap
+    // one: restoring walks every expanded item, and each of them costs a linear
+    // scan of the post array (getIndexOfMessage) plus a linear scan of the view
+    // items (QTreeView::setExpanded). On a forum with thousands of posts that is
+    // quadratic work on the GUI thread for every single post marked read.
+    mThreadModel->setMsgReadStatus(src_index,read,children);
 }
 
 void GxsForumThreadWidget::markMsgAsRead()
@@ -1930,6 +1951,21 @@ void GxsForumThreadWidget::postForumLoading()
 		ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
 		ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
 
+		// Restoring the selection above does not necessarily refresh the post panel: the
+		// currentChanged() signal it triggers is filtered out by changedSelection() when the
+		// previous index is invalid (which is the case right after a model reset) and mThreadId
+		// is still set. So if the displayed post got a new version in the meantime (typically
+		// after editing it), force a refresh here. Otherwise the edited content would only show
+		// up after navigating to another post and back. Comparing against mOrigThreadId (the most
+		// recent version the row used to point at) leaves an explicit old-version selection in the
+		// versions combo untouched when the post itself did not change.
+		ForumModelPostEntry fmpe;
+		if( mThreadModel->getPostData(source_index,fmpe) && !fmpe.mMsgId.isNull() && fmpe.mMsgId != mOrigThreadId )
+		{
+			mThreadId = mOrigThreadId = fmpe.mMsgId;
+			mLastSelectedPosts[groupId()] = fmpe.mMsgId;
+			insertMessage();
+		}
 	}
 	else
 	{

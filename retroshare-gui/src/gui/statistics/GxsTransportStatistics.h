@@ -49,6 +49,11 @@ public:
 
 	void updateContent() ;
 
+protected:
+	// Refresh the page each time it becomes visible (cheap, user-triggered),
+	// instead of polling on a timer which saturates the GXS queue.
+	virtual void showEvent(QShowEvent *event) override;
+
 private slots:
 	/** Create the context popup menu and it's submenus */
 	void CustomPopupMenu( QPoint point );
@@ -56,13 +61,15 @@ private slots:
 
 	void personDetails();
 	void showAuthorInPeople();
+	void settingsChanged();
 
 private:
-	void updateDisplay(bool complete) ;
+	void updateDisplay() ;
 	void loadGroups();
 
 	void processSettings(bool bLoad);
 	bool m_bProcessSettings;
+	int mLastDateFormat;
 
 	GxsTransportStatisticsWidget *_tst_CW ;
 	UIStateHelper *mStateHelper;

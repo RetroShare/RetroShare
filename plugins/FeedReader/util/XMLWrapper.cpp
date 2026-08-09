@@ -124,42 +124,24 @@ void XMLWrapper::attach(xmlDocPtr document)
 
 bool XMLWrapper::convertToString(const xmlChar *xmlText, std::string &text)
 {
-	bool result = false;
-
-	xmlBufferPtr in = xmlBufferCreateStatic((void*) xmlText, xmlStrlen(xmlText));
-	xmlBufferPtr out = xmlBufferCreate();
-	int ret = xmlCharEncOutFunc(mCharEncodingHandler, out, in);
-	if (ret >= 0) {
-		result = true;
-		text = (char*) xmlBufferContent(out);
+	if (!xmlText) {
+		text.clear();
+		return false;
 	}
 
-	xmlBufferFree(in);
-	xmlBufferFree(out);
-
-	return result;
+	text = (const char*) xmlText;
+	return true;
 }
 
 bool XMLWrapper::convertFromString(const char *text, xmlChar *&xmlText)
 {
-	bool result = false;
-
-	xmlBufferPtr in = xmlBufferCreateStatic((void*) text, strlen(text));
-	xmlBufferPtr out = xmlBufferCreate();
-	int ret = xmlCharEncInFunc(mCharEncodingHandler, out, in);
-	if (ret >= 0) {
-		result = true;
-#if LIBXML_VERSION >= 20800
-		xmlText = xmlBufferDetach(out);
-#else
-		xmlText = xmlStrdup(xmlBufferContent(out));
-#endif
+	if (!text) {
+		xmlText = NULL;
+		return false;
 	}
 
-	xmlBufferFree(in);
-	xmlBufferFree(out);
-
-	return result;
+	xmlText = xmlStrdup(BAD_CAST text);
+	return xmlText != NULL;
 }
 
 xmlDocPtr XMLWrapper::getDocument() const
@@ -345,15 +327,7 @@ bool XMLWrapper::getChildText(xmlNodePtr node, const char *childName, std::strin
 		return nodeDump(div, text, true);
 	}
 
-	if (child->children->type != XML_TEXT_NODE) {
-		return false;
-	}
-
-	if (child->children->content) {
-		return convertToString(child->children->content, text);
-	}
-
-	return true;
+	return getContent(child, text, false);
 }
 
 std::string XMLWrapper::getAttr(xmlNodePtr node, xmlAttrPtr attr)

@@ -455,6 +455,7 @@ QVariant RsIdentityListModel::data(const QModelIndex &index, int role) const
 	case Qt::FontRole:       return fontRole(entry,index.column()) ;
     case Qt::ForegroundRole: return foregroundRole(entry,index.column()) ;
     case Qt::DecorationRole: return decorationRole(entry,index.column()) ;
+    case Qt::ToolTipRole:    return toolTipRole(entry,index.column()) ;
 
  	case FilterRole:         return filterRole(entry,index.column()) ;
  	case SortRole:           return sortRole(entry,index.column()) ;
@@ -463,6 +464,14 @@ QVariant RsIdentityListModel::data(const QModelIndex &index, int role) const
 	default:
 		return QVariant();
 	}
+}
+
+// This function checks that the ID has been signed using the old protocol that used to
+// include the service string into the signed data. New RS instances will not accept these identities anymore.
+
+static bool checkDate_deprecated_ids(const time_t t)
+{
+    return t > QDateTime(QDate(2026,4,20),QTime(0,0)).toSecsSinceEpoch();
 }
 
 bool RsIdentityListModel::passesFilter(const EntryIndex& e,int /*column*/) const
@@ -535,7 +544,12 @@ QVariant RsIdentityListModel::toolTipRole(const EntryIndex& fmpe,int /*column*/)
             return QVariant( tr("\nThis identity has a insecure fingerprint (It's probably quite old).\nYou should get rid of it now and use a new one.\nThese identities are not supported anymore.") ) ;
 
         if(rsIdentity->isOwnId(id_info->id))
-            return QVariant(tr("This identity is owned by you"));
+        {
+            if(!checkDate_deprecated_ids(id_info->creation_date))
+                    return QVariant(tr("This identity is owned by you but was created in a format\nthat is now deprecated. Just select \"edit\" from the context menu\nand press \"update\" in order to fix this."));
+                else
+                    return QVariant(tr("This identity is owned by you"));
+        }
 
         if(id_info->owner.isNull())
             return QVariant("Anonymous identity");
@@ -660,6 +674,9 @@ QVariant RsIdentityListModel::foregroundRole(const EntryIndex& e, int /*col*/) c
         return QVariant();
 
     if(it->flags & RS_IDENTITY_FLAGS_IS_DEPRECATED)
+        return QVariant(QColor(Qt::red));
+
+    if(rsIdentity->isOwnId(it->id) && !checkDate_deprecated_ids(it->creation_date))
         return QVariant(QColor(Qt::red));
 
     return QVariant();
@@ -828,6 +845,7 @@ const RsIdentityListModel::HierarchicalIdentityInformation *RsIdentityListModel:
                 it.owner = det.mPgpId;
                 it.flags = det.mFlags;
                 it.last_update_TS = now;
+                it.creation_date = det.mPublishTS;
             }
         }
         return &it;

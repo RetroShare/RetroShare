@@ -101,7 +101,7 @@ void PhotoDialog::toggleComments()
 			RsGxsId current_author;
 			// create CommentDialog.
 			RsGxsCommentService *commentService = dynamic_cast<RsGxsCommentService *>(mRsPhoto);
-			GxsCommentDialog *commentDialog = new GxsCommentDialog(this,current_author, mRsPhoto->getTokenService(), commentService);
+			GxsCommentDialog *commentDialog = new GxsCommentDialog(this, current_author, commentService);
 
 			// TODO: Need to fetch all msg versions, otherwise - won't get all the comments.
 			// For the moment - use current msgid.

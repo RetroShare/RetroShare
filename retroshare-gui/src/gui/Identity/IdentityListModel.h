@@ -92,6 +92,7 @@ public:
         RsPgpId owner;
         uint32_t flags;
         std::string nickname;
+        rstime_t creation_date;
     };
 
     // This structure encodes the position of a node in the hierarchy. The type tells which of the index fields are valid.

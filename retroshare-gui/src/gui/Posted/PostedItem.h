@@ -123,6 +123,13 @@ private:
 	Ui::PostedItem *ui;
 };
 
+// Qt5 only (see GxsFeedItem.h/GxsGroupFeedItem.h): Qt6 auto-registers this
+// complete type with the metatype system, and an explicit specialization here
+// clashes with the implicit QMetaTypeId instantiation in CMake AUTOMOC's single
+// mocs_compilation.cpp translation unit ("specialization after instantiation").
+// qmake compiles each moc separately.
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
 Q_DECLARE_METATYPE(RsPostedPost)
+#endif
 
 #endif

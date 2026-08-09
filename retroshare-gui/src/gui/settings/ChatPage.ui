@@ -564,6 +564,13 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QCheckBox" name="chatLobby_HideJoinLeave">
+           <property name="text">
+            <string>Hide join/leave messages</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>

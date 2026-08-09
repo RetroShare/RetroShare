@@ -22,6 +22,7 @@
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QBuffer>
+#include <QStyle>
 
 #include "PulseTopLevel.h"
 #include "gui/common/FilesDefs.h"
@@ -44,6 +45,11 @@ PulseTopLevel::PulseTopLevel(PulseViewHolder *holder, RsWirePulseSPtr pulse)
 
 }
 
+bool PulseTopLevel::isUnread() const
+{
+	return IS_MSG_UNREAD(mPulse->mMeta.mMsgStatus) ;
+}
+
 void PulseTopLevel::setup()
 {
 	connect(toolButton_viewGroup, SIGNAL(clicked()), this, SLOT(actionViewGroup()));
@@ -57,6 +63,7 @@ void PulseTopLevel::setup()
 	connect(toolButton_like, SIGNAL(clicked()), this, SLOT(actionLike()));
 	connect(toolButton_view, SIGNAL(clicked()), this, SLOT(actionViewPulse()));
 	connect(toolButton_copyLink, SIGNAL(clicked()), this, SLOT(actionCopyLink()));
+	connect(readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool))); 
 }
 
 void PulseTopLevel::setRefMessage(QString /*msg*/, uint32_t /*image_count*/)
@@ -152,6 +159,38 @@ void PulseTopLevel::setReferenceString(QString ref)
 	
 void PulseTopLevel::mousePressEvent(QMouseEvent */*event*/)
 {
+}
+
+void PulseTopLevel::readToggled(bool /*checked*/)
+{
+    if (mInFill) return;
+
+    RsGxsGrpMsgIdPair msgPair = std::make_pair(mPulse->mMeta.mGroupId, mPulse->mMeta.mMsgId);
+    rsWire->setMessageReadStatus(msgPair, isUnread());
+}
+
+void PulseTopLevel::setReadStatus(bool isNew, bool isUnread)
+{
+
+	// Update the Read Button Icon and State
+	if (isUnread)
+	{
+		readButton->setChecked(true);
+		readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
+	}
+	else
+	{
+		readButton->setChecked(false);
+		readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
+	}
+
+	// Update the New Label
+	newLabel->setVisible(isNew);
+
+    // leave it empty or just handle the frame styling:
+    /*plainFrame->setProperty("new", isNew);
+    plainFrame->style()->unpolish(plainFrame);
+    plainFrame->style()->polish(plainFrame);*/
 }
 
 

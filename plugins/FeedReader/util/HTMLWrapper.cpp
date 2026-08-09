@@ -32,7 +32,7 @@ bool HTMLWrapper::readHTML(const char *html, const char *url)
 	cleanup();
 
 	handleError(true, mLastErrorString);
-	mDocument = htmlReadMemory(html, strlen(html), url, "", /*HTML_PARSE_NOERROR | HTML_PARSE_NOWARNING | */HTML_PARSE_COMPACT | HTML_PARSE_NONET | HTML_PARSE_NOBLANKS);
+	mDocument = htmlReadMemory(html, strlen(html), url, "UTF-8", /*HTML_PARSE_NOERROR | HTML_PARSE_NOWARNING | */HTML_PARSE_COMPACT | HTML_PARSE_NONET | HTML_PARSE_NOBLANKS);
 	handleError(false, mLastErrorString);
 
 	if (mDocument) {

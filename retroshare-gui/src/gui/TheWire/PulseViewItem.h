@@ -76,6 +76,8 @@ protected:
 	// 
 	virtual void setReferenceString(QString ref) = 0;
 	virtual void setPulseStatus(PulseStatus status) = 0;
+
+	virtual void setReadStatus(bool isNew, bool isUnread) = 0;
 };
 
 
@@ -139,6 +141,8 @@ protected:
 	void setReference(uint32_t flags, RsGxsGroupId groupId, std::string groupName);
 
     void mousePressEvent(QMouseEvent *event);
+
+	bool mInFill;
 
 	// DATA.
 	RsWirePulseSPtr mPulse;
