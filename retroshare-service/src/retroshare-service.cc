@@ -184,7 +184,7 @@ static bool doTerminalCreateAccount()
 	std::string pgpName;
 	while (keepRunning && pgpName.empty())
 	{
-		std::cout << colored(COLOR_GREEN, "Please enter your Name or Nickname (PGP Name): ");
+		std::cout << colored(COLOR_GREEN, "Please enter your Username: ");
 		std::cout.flush();
 		std::getline(std::cin, pgpName);
 		if (pgpName.empty())
