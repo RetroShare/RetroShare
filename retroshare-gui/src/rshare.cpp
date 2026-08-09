@@ -53,7 +53,7 @@
 
 #include <util/argstream.h>
 #include <retroshare/rsinit.h>
-#include <retroshare/rsversion.h>
+#include "rsguiversion.h"
 #include <retroshare/rsplugin.h>
 
 #include "rshare.h"
@@ -241,7 +241,10 @@ void RsApplication::slotConnectionEstablished()
     }
 }
 
-QString RsApplication::retroshareVersion(bool) { return RS_HUMAN_READABLE_VERSION; }
+/* The GUI reports its OWN version here (RS_GUI_VERSION, injected from the
+ * super-project git describe), independent from libretroshare. libretroshare's
+ * version is obtained separately through RsInit::libRetroShareVersion(). */
+QString RsApplication::retroshareVersion(bool) { return RS_GUI_HUMAN_READABLE_VERSION; }
 
 /** Enters the main event loop and waits until exit() is called. The signal
  * running() will be emitted when the event loop has started. */

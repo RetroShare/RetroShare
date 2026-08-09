@@ -120,7 +120,19 @@ public:
     void setUploadedOnly(bool val) {
         if (m_uploadedOnly != val) {
              m_uploadedOnly = val;
-             invalidateFilter(); 
+             // Use invalidate() rather than invalidateFilter(). invalidateFilter()
+             // triggers Qt's *incremental* row-removal path (filter_changed), which
+             // emits rowsAboutToBeRemoved while walking the currently-mapped tree.
+             // With an active text filter and an expanded tree there are live
+             // persistent proxy indexes, and removing an interior directory node
+             // frees child mapping structs those indexes still point to -> the
+             // removal bookkeeping then dereferences freed memory inside
+             // QSortFilterProxyModel::parent() and crashes (SIGSEGV). This is the
+             // "search a keyword, then click Popular files" crash.
+             // invalidate() rebuilds the whole proxy mapping via the layoutChanged
+             // protocol, which remaps persistent indexes safely, and it does NOT
+             // re-crawl the source model, so it stays near-instant.
+             invalidate();
         }
     }
 

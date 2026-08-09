@@ -146,6 +146,8 @@ public:
 	virtual	bool     serialise(RsItem *item, void *data, uint32_t *size);
 	virtual	RsItem  *deserialise(void *data, uint32_t *size);
 
+	static void correctMsgSize(RsFeedReaderMsg *item);
+
 private:
 	/* For RS_PKT_SUBTYPE_FEEDREADER_FEED */
 	virtual uint32_t         sizeFeed(RsFeedReaderFeed *item);

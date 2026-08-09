@@ -179,7 +179,7 @@ void GxsCommentDialog::setCommentHeader(QWidget *header)
 	ui->postFrame->setVisible(true);
 
 	QDateTime qtime;
-	qtime.setTime_t(mCurrentPost.mMeta.mPublishTs);
+	qtime.setSecsSinceEpoch(mCurrentPost.mMeta.mPublishTs);
 	QString timestamp = DateTime::formatDateTime(qtime);
 	ui->dateLabel->setText(timestamp);
 	ui->fromLabel->setText(QString::fromUtf8(mCurrentPost.mMeta.mAuthorId.c_str()));

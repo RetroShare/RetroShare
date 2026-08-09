@@ -42,6 +42,11 @@
 #include "PluginsPage.h"
 #include "PluginManager.h"
 
+// PluginsPage is declared inside "namespace gui" in PluginsPage.h, so the
+// definitions must live in the same namespace. This also disambiguates it from
+// the unrelated gui/settings/PluginsPage class.
+namespace gui {
+
 //============================================================================== 
 
 PluginsPage::PluginsPage(QWidget *parent )
@@ -95,5 +100,6 @@ PluginsPage::pluginRegistered(QString pluginName)
 
     pluginTabs->addTab( pw , pluginName );
 }
+} // namespace gui
 
 //==============================================================================

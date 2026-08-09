@@ -252,6 +252,7 @@ GroupTreeWidget
 {
 	qproperty-textColorCategory: rgb(79, 79, 79);
 	qproperty-textColorPrivateKey: rgb(35,91,159);
+        qproperty-textColorWarning: rgb(250,91,15);
 }
 
 MessagesDialog

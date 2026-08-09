@@ -239,7 +239,8 @@ private:
 	//void computeMessagesHierarchy(const RsGxsChannelGroup& forum_group, const std::vector<RsMsgMetaData> &msgs_array, std::vector<ChannelPostsModelPostEntry> &posts, std::map<RsGxsMessageId, std::vector<std::pair<time_t, RsGxsMessageId> > > &mPostVersions);
 	void old_createPostsArray(std::vector<RsGxsChannelPost> &posts);
     void createPostsArray(std::vector<RsGxsChannelPost>& posts);
-    void setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost> &posts);
+    /// Takes ownership of posts: the array is moved into the model.
+    void setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost> &&posts);
 public:
     void updateSinglePost(const RsGxsChannelPost& post, std::set<RsGxsFile>& added_files, std::set<RsGxsFile>& removed_files);
 private:

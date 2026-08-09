@@ -25,6 +25,7 @@
 
 #include <QTreeWidgetItem>
 #include <QDateTime>
+#include "util/rstime.h"
 #include "util/FontSizeHandler.h"
 
 class QToolButton;
@@ -35,7 +36,8 @@ class RSTreeWidget;
 #define GROUPTREEWIDGET_COLOR_STANDARD   -1
 #define GROUPTREEWIDGET_COLOR_CATEGORY   0
 #define GROUPTREEWIDGET_COLOR_PRIVATEKEY 1
-#define GROUPTREEWIDGET_COLOR_COUNT      2
+#define GROUPTREEWIDGET_COLOR_WARNING    2
+#define GROUPTREEWIDGET_COLOR_COUNT      3
 
 #define GTW_COLUMN_NAME         0
 #define GTW_COLUMN_UNREAD       1
@@ -55,8 +57,8 @@ class GroupItemInfo
 {
 public:
 	GroupItemInfo()
-	  : popularity(0), publishKey(false), adminKey(false)
-	  , subscribeFlags(0), max_visible_posts(0)
+        : popularity(0), creation_time(0),publishKey(false), adminKey(false)
+        , subscribeFlags(0), max_visible_posts(0), deprecated_format(false)
 	{}
 
 public:
@@ -65,12 +67,14 @@ public:
 	QString               description;
 	int                   popularity;
 	QDateTime             lastpost;
-	QIcon                 icon;
+    rstime_t              creation_time;
+    QIcon                 icon;
 	bool                  publishKey;
 	bool                  adminKey;
     quint32               subscribeFlags;
     quint32               max_visible_posts ;
     std::set<std::string> context_strings;
+    bool                  deprecated_format;			// this was added on 07/2026 for forcing admin re-signature of incompatible groups
 };
 
 //cppcheck-suppress noConstructor
@@ -78,8 +82,9 @@ class GroupTreeWidget : public QWidget
 {
 	Q_OBJECT
 
-	Q_PROPERTY(QColor textColorCategory READ textColorCategory WRITE setTextColorCategory)
+    Q_PROPERTY(QColor textColorCategory   READ textColorCategory   WRITE setTextColorCategory)
 	Q_PROPERTY(QColor textColorPrivateKey READ textColorPrivateKey WRITE setTextColorPrivateKey)
+    Q_PROPERTY(QColor textColorWarning    READ textColorWarning    WRITE setTextColorWarning)
 
 public:
 	GroupTreeWidget(QWidget *parent = 0);
@@ -128,9 +133,11 @@ public:
 
 	QColor textColorCategory() const { return mTextColor[GROUPTREEWIDGET_COLOR_CATEGORY]; }
 	QColor textColorPrivateKey() const { return mTextColor[GROUPTREEWIDGET_COLOR_PRIVATEKEY]; }
+    QColor textColorWarning() const { return mTextColor[GROUPTREEWIDGET_COLOR_WARNING]; }
 
 	void setTextColorCategory(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_CATEGORY] = color; }
 	void setTextColorPrivateKey(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_PRIVATEKEY] = color; }
+    void setTextColorWarning(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_WARNING] = color; }
 
 	bool getGroupName(const QString& id, QString& name);
 

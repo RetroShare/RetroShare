@@ -2,7 +2,6 @@
 #
 # Copyright (C) 2004-2021  Retroshare Team <contact@retroshare.cc>
 # Copyright (C) 2016-2021  Gioacchino Mazzurco <gio@eigenlab.org>
-# Copyright (C) 2021  Asociación Civil Altermundi <info@altermundi.net>
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU Lesser General Public License as published by the
@@ -524,6 +523,15 @@ determined via git")
         warning("Determining RetroShare version via git failed plese specify it\
 trough qmake command line arguments!")
     }
+}
+
+# RetroShare GUI own version (RS_GUI_VERSION), independent from libretroshare.
+# The block above resolves the RetroShare super-project version; the GUI reports
+# it as its own version (see retroshare-gui/src/rsguiversion.h). Only the GUI
+# consumes this define; harmless for the other sub-projects. When the version
+# could not be determined, rsguiversion.h falls back to its built-in default.
+!isEmpty(RS_MAJOR_VERSION) {
+    DEFINES += RS_GUI_VERSION=\\\"$${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\\\"
 }
 
 # Some supportlibs compilation won't start if the intstalled CMAKE verison is >=3.5.

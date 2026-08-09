@@ -33,7 +33,6 @@ const uint32_t NEWSFEED_PEERLIST =       0x0001;
 
 const uint32_t NEWSFEED_NEW_FORUM      =   0x0002;
 const uint32_t NEWSFEED_NEW_FORUM_MSG  =   0x0003;
-const uint32_t NEWSFEED_UPDATED_FORUM  =   0x000f;
 
 const uint32_t NEWSFEED_CHANNELNEWLIST = 0x0004;
 //const uint32_t NEWSFEED_CHANNELMSGLIST = 0x0005;
@@ -49,7 +48,9 @@ const uint32_t NEWSFEED_POSTEDNEWLIST =    0x000b;
 const uint32_t NEWSFEED_POSTEDMSGLIST =    0x000c;
 const uint32_t NEWSFEED_CIRCLELIST    =    0x000d;
 const uint32_t NEWSFEED_CHANNELPUBKEYLIST= 0x000e;
+const uint32_t NEWSFEED_UPDATED_FORUM  =   0x000f;
 const uint32_t NEWSFEED_WIRELIST         = 0x0010;
+const uint32_t NEWSFEED_TLSLIST          = 0x0011;
 
 namespace Ui {
 class NewsFeed;

@@ -63,6 +63,10 @@ private:
 	uint32_t mTokenTypeComment;
 };
 
+// Qt5 only (see GxsGroupFeedItem.h): Qt6 auto-registers the type and an explicit
+// specialization clashes with AUTOMOC's single-TU build.
+#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
 Q_DECLARE_METATYPE(RsGxsMessageId)
+#endif
 
 #endif

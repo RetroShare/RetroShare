@@ -364,6 +364,9 @@ void FeedReaderMessageWidget::msgTreeCustomPopupMenu(QPoint /*point*/)
 	action = contextMnu.addAction(QIcon(""), tr("Mark all as read"), this, SLOT(markAllAsReadMsg()));
 	action->setEnabled(mFeedId);
 
+	action = contextMnu.addAction(QIcon(""), tr("Mark all as unread"), this, SLOT(markAllAsUnreadMsg()));
+	action->setEnabled(mFeedId);
+
 	contextMnu.addSeparator();
 
 	action = contextMnu.addAction(QIcon(""), tr("Copy link"), this, SLOT(copySelectedLinksMsg()));
@@ -821,6 +824,16 @@ void FeedReaderMessageWidget::markAsUnreadMsg()
 
 void FeedReaderMessageWidget::markAllAsReadMsg()
 {
+	setAllMsgAsReadUnread(true);
+}
+
+void FeedReaderMessageWidget::markAllAsUnreadMsg()
+{
+	setAllMsgAsReadUnread(false);
+}
+
+void FeedReaderMessageWidget::setAllMsgAsReadUnread(bool read)
+{
 	QList<QTreeWidgetItem*> items;
 
 	QTreeWidgetItemIterator it(ui->msgTreeWidget);
@@ -831,7 +844,7 @@ void FeedReaderMessageWidget::markAllAsReadMsg()
 		}
 		++it;
 	}
-	setMsgAsReadUnread(items, true);
+	setMsgAsReadUnread(items, read);
 }
 
 void FeedReaderMessageWidget::copySelectedLinksMsg()

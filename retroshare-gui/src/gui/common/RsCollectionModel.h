@@ -1,4 +1,6 @@
+#pragma once
 #include <QAbstractItemModel>
+
 
 #include "RsCollection.h"
 

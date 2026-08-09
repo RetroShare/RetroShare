@@ -526,7 +526,7 @@ void RsGxsChannelPostsModel::updateSinglePost(const RsGxsChannelPost& post,std::
     triggerViewUpdate(true,false);
 }
 
-void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>& posts)
+void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>&& posts)
 {
 	preMods();
 
@@ -535,8 +535,16 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
 
 //    createPostsArray(posts);
 
-    mPosts = posts;
+    // The caller hands over its array and discards it right after, so take it
+    // rather than deep copying every post (and every thumbnail) one more time.
+    mPosts = std::move(posts);
+
+    // update_posts() already sorted the array in its loader thread. Kept as a
+    // cheap safety net for any other caller: on already ordered input this only
+    // costs comparisons, no element is moved.
 	std::sort(mPosts.begin(),mPosts.end());
+
+	mFilteredPosts.reserve(mPosts.size());
 
 	for(uint32_t i=0;i<mPosts.size();++i)
 		mFilteredPosts.push_back(i);
@@ -592,6 +600,13 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel messages for channel " << group_id << std::endl;
 			return;
 		}
+
+        // Sort here rather than in setPosts(): setPosts() runs in the Qt thread,
+        // where sorting a few thousand posts is a visible freeze. The model only
+        // ever displays a sorted array, so the order may as well be established
+        // in this loader thread.
+        std::sort(posts->begin(),posts->end());
+
 #ifdef DEBUG_CHANNEL_MODEL
         std::cerr << "Got channel all content for channel " << group_id << std::endl;
         std::cerr << "  posts   : " << posts->size() << std::endl;
@@ -609,7 +624,7 @@ void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
 			 * Qt::QueuedConnection is important!
 			 */
 
-            setPosts(group,*posts) ;
+            setPosts(group,std::move(*posts)) ;
 
             delete posts;
 
@@ -637,13 +652,20 @@ void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
             pairs.push_back(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId));
      }
 
-    // 2 - then call the async methods
+    // 2 - then persist them all in a single background batch: one thread and one
+    //     event for the whole set, instead of one detached thread (and one
+    //     event) per post, which froze the UI on large channels.
 
-    for(uint32_t i=0;i<pairs.size();++i)
-        RsThread::async([p=pairs[i], read_status]()	// use async because each markRead() waits for the token to complete in order to properly acknowledge it.
+    std::vector<RsGxsMessageId> msgIds;
+    msgIds.reserve(pairs.size());
+    for(const RsGxsGrpMsgIdPair& p : pairs)
+        msgIds.push_back(p.second);
+
+    if(!msgIds.empty())
+        RsThread::async([channelId=mChannelGroup.mMeta.mGroupId, msgIds, read_status]()
         {
-            if(!rsGxsChannels->setMessageReadStatus(p,read_status))
-                RsErr() << "setAllMsgReadStatus: failed to change status of msg " << p.first << " in group " << p.second << " to status " << read_status << std::endl;
+            if(!rsGxsChannels->setMessageReadStatus(channelId, msgIds, read_status))
+                RsErr() << "setAllMsgReadStatus: failed to change status of " << msgIds.size() << " messages in channel " << channelId << std::endl;
         });
 
     // 3 - update the local model data, since we don't catch the READ_STATUS_CHANGED event later, to avoid re-loading the msg.

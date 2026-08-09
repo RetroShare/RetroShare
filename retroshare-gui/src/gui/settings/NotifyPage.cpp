@@ -166,6 +166,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.notify_Chat,         SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
 	connect(ui.notify_Security,     SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
 	connect(ui.notify_SecurityIp,   SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
+    connect(ui.notify_TlsAttempt,   SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
 
 #ifdef RS_USE_WIRE
     connect(ui.notify_Wire,         SIGNAL(toggled(bool)), this, SLOT(updateNewsFeedFlags()));
@@ -208,6 +209,8 @@ RsFeedTypeFlags NotifyPage::getNewsFlags()
         newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_CHAT;
     if (ui.notify_Security->isChecked())
         newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_SECURITY;
+    if (ui.notify_TlsAttempt->isChecked())
+        newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_TLS_ATTEMPT;
     if (ui.notify_SecurityIp->isChecked())
         newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP;
 
@@ -333,6 +336,7 @@ void NotifyPage::load()
     whileBlocking(ui.notify_Chat      )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_CHAT));
     whileBlocking(ui.notify_Security  )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_SECURITY));
     whileBlocking(ui.notify_SecurityIp)->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP));
+    whileBlocking(ui.notify_TlsAttempt)->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_TLS_ATTEMPT));
 
     whileBlocking(ui.message_ConnectAttempt)->setChecked(messageflags & RshareSettings::RS_MESSAGE_CONNECT_ATTEMPT);
 

@@ -358,9 +358,12 @@ void GxsGroupDialog::setupDefaults()
     	ui.antiSpamValueLabel->setText(antispam_string) ;
         
 #ifndef RS_USE_CIRCLES
+    // Disable the group-visibility radio buttons when circles are disabled.
+    // The .ui defines only typeGroup and typeLocal; the previously referenced
+    // typeGroup_3 / typeLocal_3 do not exist and broke this branch whenever
+    // RS_USE_CIRCLES was not defined.
     ui.typeGroup->setEnabled(false);
-    ui.typeGroup_3->setEnabled(false);
-    ui.typeLocal_3->setEnabled(false);
+    ui.typeLocal->setEnabled(false);
 #endif
 }
 
