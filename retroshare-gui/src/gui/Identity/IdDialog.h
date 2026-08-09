@@ -151,8 +151,9 @@ private:
 	void clearPerson();
     
 	bool importExportIdentityFileDialog(QString &fileName, bool import);
-    bool exportContacts(const QString &fileName);
-    bool importContacts(const QString &fileName);
+	bool exportIdentities(
+	        const QString& fileName, const std::list<RsGxsId>& identities );
+	bool importIdentities(const QString& fileName);
 
 private:
 	UIStateHelper *mStateHelper;
