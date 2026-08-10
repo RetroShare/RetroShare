@@ -30,6 +30,8 @@
 #include "gui/FeedReaderConfig.h"
 #include "gui/FeedReaderFeedNotify.h"
 #include "services/p3FeedReader.h"
+#include "services/FeedReaderJsonApi.h"
+#include <retroshare/rsjsonapi.h>
 
 #include <libxml/xmlversion.h>
 #include <libxslt/xsltconfig.h>
@@ -83,6 +85,7 @@ FeedReaderPlugin::FeedReaderPlugin()
 	mFeedReader = NULL;
 	mNotify = NULL;
 	mFeedNotify = NULL;
+	mJsonApiProvider = NULL;
 
 	Q_INIT_RESOURCE(FeedReader_images);
 	Q_INIT_RESOURCE(FeedReader_qss);
@@ -91,12 +94,41 @@ FeedReaderPlugin::FeedReaderPlugin()
 void FeedReaderPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 {
 	mInterfaces = interfaces;
+	std::cerr << "FeedReader: JSON API interface pointer="
+	          << static_cast<void*>(mInterfaces.mJsonApi) << std::endl;
 
 	mFeedReader = new p3FeedReader(mPlugInHandler, mInterfaces.mGxsForums, mInterfaces.mPosted);
 	rsFeedReader = mFeedReader;
 
 	mNotify = new FeedReaderNotify();
 	mFeedReader->setNotify(mNotify);
+
+	if(mInterfaces.mJsonApi)
+	{
+		mJsonApiProvider = new FeedReaderJsonApi(*mFeedReader, *mInterfaces.mJsonApi);
+		mInterfaces.mJsonApi->registerResourceProvider(*mJsonApiProvider);
+		std::cerr << "FeedReader: JSON API provider registered="
+		          << mInterfaces.mJsonApi->hasResourceProvider(*mJsonApiProvider)
+		          << std::endl;
+		// retroshare-service and Android may start JSON API before plugins are
+		// initialized, while the desktop GUI configures and starts it afterwards.
+		// Restart only an already-running server. In the GUI case the provider is
+		// picked up by the normal, later startupWebServices() call.
+		if(mInterfaces.mJsonApi->isRunning())
+		{
+			const std::error_condition restartError =
+			        mInterfaces.mJsonApi->restart(true);
+			std::cerr << "FeedReader: JSON API restart result="
+			          << restartError.value() << " (" << restartError.message()
+			          << ")" << std::endl;
+		}
+		else
+			std::cerr << "FeedReader: JSON API startup deferred to core"
+			          << std::endl;
+	}
+	else
+		std::cerr << "FeedReader: JSON API unavailable; routes not registered"
+		          << std::endl;
 }
 
 ConfigPage *FeedReaderPlugin::qt_config_page() const
@@ -123,6 +155,17 @@ FeedNotify *FeedReaderPlugin::qt_feedNotify()
 
 void FeedReaderPlugin::stop()
 {
+	if(mJsonApiProvider)
+	{
+		if(mInterfaces.mJsonApi)
+		{
+			mInterfaces.mJsonApi->unregisterResourceProvider(*mJsonApiProvider);
+			if(mInterfaces.mJsonApi->isRunning())
+				mInterfaces.mJsonApi->restart(true);
+		}
+		delete mJsonApiProvider;
+		mJsonApiProvider = NULL;
+	}
 	if (mFeedReader) {
 		mFeedReader->setNotify(NULL);
 		mFeedReader->stop();
