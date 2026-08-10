@@ -28,6 +28,7 @@
 class p3FeedReader;
 class FeedReaderNotify;
 class RsForums;
+class FeedReaderJsonApi;
 
 class FeedReaderPlugin: public RsPlugin
 {
@@ -65,4 +66,5 @@ private:
 	mutable MainPage *mainpage;
 	mutable QIcon *mIcon;
 	mutable FeedNotify *mFeedNotify;
+	mutable FeedReaderJsonApi *mJsonApiProvider;
 };
