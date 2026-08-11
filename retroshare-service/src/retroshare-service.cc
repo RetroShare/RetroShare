@@ -420,15 +420,13 @@ int main(int argc, char* argv[])
 			std::vector<RsLoginHelper::Location> locations;
 			rsLoginHelper->getLocations(locations);
 
-			if(locations.size() == 0)
-			{
-				RsErr() << colored(COLOR_RED,"No available accounts. Use -U create from an interactive terminal to create one.") << std::endl;
-				return -RsInit::ERR_NO_AVAILABLE_ACCOUNT;
-			}
+			std::cout << std::endl << std::endl;
+			if(locations.empty())
+				std::cout << colored(COLOR_YELLOW,"No existing RetroShare accounts found.")
+				          << std::endl << std::endl;
 			else
 			{
-				std::cout << std::endl << std::endl
-				          << colored(COLOR_GREEN,"Available accounts:") << std::endl<<std::endl;
+				std::cout << colored(COLOR_GREEN,"Available accounts:") << std::endl<<std::endl;
 
 				int accountCountDigits = static_cast<int>( ceil(log(locations.size() + 1)/log(10.0)) );
 
@@ -439,27 +437,48 @@ int main(int argc, char* argv[])
 					          << colored(COLOR_PURPLE,locations[i].mPgpName + " (" + locations[i].mLocationName + ")" )
 					          << std::endl;
 
-				std::cout << std::endl;
+			}
 
-				while(keepRunning)
+			std::cout << colored(COLOR_GREEN,"  [c]") << " "
+			          << colored(COLOR_YELLOW,"Create new account") << std::endl
+			          << std::endl;
+
+			if(!hasInteractiveStdin())
+			{
+				RsErr() << "Account selection and creation require an interactive terminal."
+				        << std::endl;
+				return -RsInit::ERR_NO_AVAILABLE_ACCOUNT;
+			}
+
+			while(keepRunning)
+			{
+				std::cout << colored(COLOR_GREEN,"Please enter account number or 'c' to create: ");
+				std::cout.flush();
+
+				std::string inputStr;
+				if(!std::getline(std::cin, inputStr))
 				{
-					std::cout << colored(COLOR_GREEN,"Please enter account number: ");
-					std::cout.flush();
-
-					std::string inputStr;
-					if(!std::getline(std::cin, inputStr))
-					{
-						RsErr() << "Unable to read an account selection from the terminal." << std::endl;
-						return -RsInit::ERR_NO_AVAILABLE_ACCOUNT;
-					}
-
-					uint32_t nacc = static_cast<uint32_t>(atoi(inputStr.c_str())-1);
-					if(nacc < locations.size())
-					{
-						prefUserString = locations[nacc].mLocationId.toStdString();
-						break;
-					}
+					RsErr() << "Unable to read an account selection from the terminal." << std::endl;
+					return -RsInit::ERR_NO_AVAILABLE_ACCOUNT;
 				}
+
+				if(inputStr == "c" || inputStr == "C")
+				{
+					alreadyLoggedIn = doTerminalCreateAccount();
+					if(!alreadyLoggedIn) return -1;
+					break;
+				}
+
+				char* inputEnd = nullptr;
+				unsigned long selection = std::strtoul(inputStr.c_str(), &inputEnd, 10);
+				if(inputEnd != inputStr.c_str() && *inputEnd == '\0' &&
+				        selection >= 1 && selection <= locations.size())
+				{
+					prefUserString = locations[selection - 1].mLocationId.toStdString();
+					break;
+				}
+
+				std::cout << colored(COLOR_RED,"Invalid selection. Please try again.") << std::endl;
 			}
 		}
 
