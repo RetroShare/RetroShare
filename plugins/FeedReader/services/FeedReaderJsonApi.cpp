@@ -20,7 +20,6 @@
 
 #include "FeedReaderJsonApi.h"
 
-#include <iostream>
 #include <sstream>
 
 #include <rapidjson/document.h>
@@ -179,7 +178,6 @@ FeedReaderJsonApi::FeedReaderJsonApi(
 
 std::vector<std::shared_ptr<restbed::Resource>> FeedReaderJsonApi::getResources() const
 {
-	std::cerr << "FeedReader: constructing JSON API resources" << std::endl;
 	std::vector<std::shared_ptr<restbed::Resource>> resources;
 	auto resource = [this](const std::string& path, auto handler)
 	{

@@ -32,6 +32,7 @@
 #include "services/p3FeedReader.h"
 #include "services/FeedReaderJsonApi.h"
 #include <retroshare/rsjsonapi.h>
+#include <util/rsdebug.h>
 
 #include <libxml/xmlversion.h>
 #include <libxslt/xsltconfig.h>
@@ -94,8 +95,6 @@ FeedReaderPlugin::FeedReaderPlugin()
 void FeedReaderPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 {
 	mInterfaces = interfaces;
-	std::cerr << "FeedReader: JSON API interface pointer="
-	          << static_cast<void*>(mInterfaces.mJsonApi) << std::endl;
 
 	mFeedReader = new p3FeedReader(mPlugInHandler, mInterfaces.mGxsForums, mInterfaces.mPosted);
 	rsFeedReader = mFeedReader;
@@ -107,15 +106,14 @@ void FeedReaderPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 	{
 		mJsonApiProvider = new FeedReaderJsonApi(*mFeedReader, *mInterfaces.mJsonApi);
 		mInterfaces.mJsonApi->registerResourceProvider(*mJsonApiProvider);
-		std::cerr << "FeedReader: JSON API provider registered="
-		          << mInterfaces.mJsonApi->hasResourceProvider(*mJsonApiProvider)
-		          << std::endl;
-		// The core publishes all providers together after plugin initialization.
-		// This avoids one burst-protected JSON API restart per plugin.
+
+		// No restart here: the core publishes every provider together once all
+		// plugins have received their interfaces, which avoids one
+		// burst-protected JSON API restart per plugin.
+		RsDbg() << "FeedReader: JSON API routes registered.";
 	}
 	else
-		std::cerr << "FeedReader: JSON API unavailable; routes not registered"
-		          << std::endl;
+		RsInfo() << "FeedReader: JSON API not available, routes not registered.";
 }
 
 ConfigPage *FeedReaderPlugin::qt_config_page() const
@@ -145,11 +143,13 @@ void FeedReaderPlugin::stop()
 	if(mJsonApiProvider)
 	{
 		if(mInterfaces.mJsonApi)
-		{
 			mInterfaces.mJsonApi->unregisterResourceProvider(*mJsonApiProvider);
-			if(mInterfaces.mJsonApi->isRunning())
-				mInterfaces.mJsonApi->restart(true);
-		}
+
+		/* No restart here. The core stops the JSON API before it stops the
+		 * plugins, so the restbed resources whose handlers capture this
+		 * provider are already gone by now and deleting it is safe. Restarting
+		 * would only wait out RESTART_BURST_PROTECTION and bring the server
+		 * back up in the middle of the core teardown. */
 		delete mJsonApiProvider;
 		mJsonApiProvider = NULL;
 	}
