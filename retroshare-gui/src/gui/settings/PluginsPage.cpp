@@ -67,6 +67,10 @@ settings::PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
                                                    short_status_string = tr("[loading problem]");
 															  break ;
 
+                 case PLUGIN_STATUS_WRONG_API:     status_string = tr("Incompatible plugin API version. Rebuild or update this plugin.");
+                                                   short_status_string = tr("[incompatible]");
+                                                              break ;
+
 				 case PLUGIN_STATUS_MISSING_SVN:   status_string = tr("No SVN number supplied. Please read plugin development manual.") ;
                                                    short_status_string = tr("[loading problem]");
 															  break ;
