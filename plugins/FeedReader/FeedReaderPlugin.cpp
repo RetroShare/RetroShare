@@ -110,21 +110,8 @@ void FeedReaderPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 		std::cerr << "FeedReader: JSON API provider registered="
 		          << mInterfaces.mJsonApi->hasResourceProvider(*mJsonApiProvider)
 		          << std::endl;
-		// retroshare-service and Android may start JSON API before plugins are
-		// initialized, while the desktop GUI configures and starts it afterwards.
-		// Restart only an already-running server. In the GUI case the provider is
-		// picked up by the normal, later startupWebServices() call.
-		if(mInterfaces.mJsonApi->isRunning())
-		{
-			const std::error_condition restartError =
-			        mInterfaces.mJsonApi->restart(true);
-			std::cerr << "FeedReader: JSON API restart result="
-			          << restartError.value() << " (" << restartError.message()
-			          << ")" << std::endl;
-		}
-		else
-			std::cerr << "FeedReader: JSON API startup deferred to core"
-			          << std::endl;
+		// The core publishes all providers together after plugin initialization.
+		// This avoids one burst-protected JSON API restart per plugin.
 	}
 	else
 		std::cerr << "FeedReader: JSON API unavailable; routes not registered"
