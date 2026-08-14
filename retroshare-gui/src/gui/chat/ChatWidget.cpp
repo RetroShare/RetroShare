@@ -775,15 +775,22 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 	return QWidget::eventFilter(obj, event);
 }
 
+/**
+ * @brief Clear the unread status of the messages currently displayed.
+ *
+ * Each message carries an anchor holding its timestamp. The blocks of the document
+ * are walked and their geometry compared to the viewport, so that only the messages
+ * really shown to the user are reported as read. Called on scroll, show and resize.
+ */
 void ChatWidget::checkVisibleAnchors()
 {
-	CHATCOUNT_DBG << "CHATCOUNT: Scroll Event Fired. ActiveWindow=" << isActive() << " ScrollValue=" << ui->textBrowser->verticalScrollBar()->value() << std::endl;
+	CHATCOUNT_DBG << "CHATCOUNT: check requested, active=" << isActive() << " scroll=" << ui->textBrowser->verticalScrollBar()->value() << std::endl;
 	if (notify && chatType() == CHATTYPE_LOBBY && isActive()) {
 		QTextDocument *doc = ui->textBrowser->document();
 		if (!doc || doc->isEmpty()) return;
-		
-		// RACE CONDITION SHIELD: If layout engine is not initialized or reports zero height, 
-		// everything will erroneously appear to fit on screen. Force abort and wait for next cycle.
+
+		// The layout may not be computed yet, in which case every block reports a null
+		// geometry and would look visible. Give up and wait for the next call.
 		qreal totalH = doc->documentLayout()->documentSize().height();
 		if (totalH <= 0) return;
 
@@ -795,22 +802,21 @@ void ChatWidget::checkVisibleAnchors()
 		rx.setMinimal(true);
 
 		for (QTextBlock block = doc->begin(); block.isValid(); block = block.next()) {
-			// Acquire absolute document geometry coordinates, 100% race-free and stable!
 			QRectF blockRect = doc->documentLayout()->blockBoundingRect(block);
-			
-			// Project raw document coordinates into physical visual viewport coordinates
+
+			// document coordinates -> viewport coordinates
 			qreal vTop = blockRect.top() - vScroll;
 			qreal vBottom = blockRect.bottom() - vScroll;
-			
+
 			if (vTop > viewH) {
-				break; // Block is physically below visible horizon. Halt search!
+				break;		// below the viewport: the next blocks are lower, stop here
 			}
-			
+
 			if (vBottom < 0) {
-				continue; // Block is physically above visible horizon. Skip!
+				continue;	// above the viewport
 			}
-			
-			// THIS BLOCK IS PHYSICALLY VISIBLE! Extract anchor using PROVEN Regex parser!
+
+			// visible block: collect the anchors it contains
 			QTextCursor bCursor(block);
 			bCursor.select(QTextCursor::BlockUnderCursor);
 			QString blockHtml = bCursor.selection().toHtml();
@@ -824,11 +830,11 @@ void ChatWidget::checkVisibleAnchors()
 				pos += rx.matchedLength();
 			}
 		}
-		
+
 		visibleAnchors.removeDuplicates();
-		
+
 		if (!visibleAnchors.isEmpty()){
-			CHATCOUNT_DBG << "CHATCOUNT: Success! Found " << visibleAnchors.size() << " visible anchors in the active viewport." << std::endl;
+			CHATCOUNT_DBG << "CHATCOUNT: " << visibleAnchors.size() << " anchors visible in the viewport" << std::endl;
 			for (const QString &anchor : visibleAnchors) {
 				notify->chatLobbyCleared(chatId.toLobbyId(), anchor);
 			}
