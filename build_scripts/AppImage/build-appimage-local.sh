@@ -42,7 +42,7 @@ Build it first (Qt5, GUI) from the repo root — see BUILD-cmake.md:
     cmake -G Ninja -B Build-cmake -S . \\
       -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release \\
       -DCMAKE_DISABLE_FIND_PACKAGE_Qt6=ON \\
-      -DRS_GUI=ON -DRS_SERVICE=OFF -DRS_FRIENDSERVER=OFF -DRS_PLUGINS=OFF \\
+      -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON -DRS_PLUGINS=ON \\
       -DRS_JSON_API=ON -DRS_WEBUI=ON -DRS_FORUM_DEEP_INDEX=OFF
     cmake --build Build-cmake -j\$(nproc)
 
@@ -129,16 +129,43 @@ cp "$ROOT/data/retroshare.desktop" "$DESKTOP"
 sed -i 's/^Icon=.*/Icon=retroshare/' "$DESKTOP"
 sed -i 's|^Exec=/usr/bin/retroshare|Exec=retroshare-gui|' "$DESKTOP"
 
+# plugins (VOIP, FeedReader): built into Build-cmake/plugins when RS_PLUGINS=ON.
+# RetroShare searches <exedir>/../lib/retroshare/extensions6/ for them, which from
+# usr/bin/retroshare-gui is exactly usr/lib/retroshare/extensions6 — the only
+# search path that resolves inside an AppImage (PLUGIN_DIR is absolute and would
+# point at the host, and ~/.retroshare/extensions6 is the user's, not ours).
+# Their own dependencies (ffmpeg & co) are deployed in step 3 below.
+PLUGINDIR="$APPDIR/usr/lib/retroshare/extensions6"
+shopt -s nullglob
+RS_PLUGINS=( "$BUILDDIR"/plugins/*.so )
+shopt -u nullglob
+if [ ${#RS_PLUGINS[@]} -gt 0 ]; then
+    mkdir -p "$PLUGINDIR"
+    install -m 0644 "${RS_PLUGINS[@]}" "$PLUGINDIR/"
+    echo ">>> ${#RS_PLUGINS[@]} plugin(s) bundled: $(basename -a "${RS_PLUGINS[@]}" | tr '\n' ' ')"
+else
+    echo ">>> WARNING: no plugin in $BUILDDIR/plugins — the AppImage will ship none."
+    echo "    Configure the build with -DRS_PLUGINS=ON to get VOIP and FeedReader."
+fi
+
 # --- 3. bundle Qt + libs and emit the .AppImage -------------------------------
 # linuxdeploy names the output from $VERSION; we rename it afterwards (step 4)
 # because the glibc floor can only be read once every library is bundled.
 export VERSION="$(git -C "$ROOT" describe --tags --always 2>/dev/null || echo dev)"
+
+# --deploy-deps-only: the plugins are already in the AppDir and must STAY where
+# they are (RetroShare looks them up by path), but linuxdeploy still has to pull
+# in what they link — ffmpeg, opencv, ... — and patch their rpath. Passing them
+# with --library instead would move them into usr/lib, where RS never looks.
+DEPS_ONLY=()
+[ -d "$PLUGINDIR" ] && DEPS_ONLY=( --deploy-deps-only "$PLUGINDIR" )
 
 cd "$OUTDIR"
 "$LD" --appdir "$APPDIR" \
     --executable "$APPDIR/usr/bin/retroshare-gui" \
     --desktop-file "$DESKTOP" \
     --icon-file "$ROOT/data/128x128/apps/retroshare.png" --icon-filename retroshare \
+    ${DEPS_ONLY[@]+"${DEPS_ONLY[@]}"} \
     --plugin qt \
     --output appimage
 
