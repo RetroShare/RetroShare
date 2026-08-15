@@ -69,13 +69,38 @@ cp "$SRC/data/retroshare.desktop" "$DESKTOP"
 sed -i 's/^Icon=.*/Icon=retroshare/' "$DESKTOP"
 sed -i 's|^Exec=/usr/bin/retroshare|Exec=retroshare-gui|' "$DESKTOP"
 
+# plugins (VOIP, FeedReader): RetroShare searches
+# <exedir>/../lib/retroshare/extensions6/, i.e. usr/lib/retroshare/extensions6
+# from usr/bin/retroshare-gui — the only search path that resolves inside an
+# AppImage (PLUGIN_DIR is absolute and would point at the host, and
+# ~/.retroshare/extensions6 is the user's, not ours). Their own dependencies are
+# deployed in step 3 below.
+PLUGINDIR="$APPDIR/usr/lib/retroshare/extensions6"
+shopt -s nullglob
+RS_PLUGINS=( "$BUILD"/plugins/*.so )
+shopt -u nullglob
+if [ ${#RS_PLUGINS[@]} -gt 0 ]; then
+    mkdir -p "$PLUGINDIR"
+    install -m 0644 "${RS_PLUGINS[@]}" "$PLUGINDIR/"
+    echo ">>> ${#RS_PLUGINS[@]} plugin(s) bundled: $(basename -a "${RS_PLUGINS[@]}" | tr '\n' ' ')"
+else
+    echo ">>> WARNING: no plugin in $BUILD/plugins — the AppImage will ship none."
+fi
+
 # --- 3. bundle Qt + libs, emit the AppImage -----------------------------------
 # VERSION is passed in from the host for the output filename.
+# --deploy-deps-only: the plugins must STAY in extensions6 (RetroShare looks them
+# up by path), but linuxdeploy still has to bundle what they link and patch their
+# rpath. --library would move them into usr/lib, where RS never looks.
+DEPS_ONLY=()
+[ -d "$PLUGINDIR" ] && DEPS_ONLY=( --deploy-deps-only "$PLUGINDIR" )
+
 cd "$OUT"
 linuxdeploy-x86_64.AppImage --appdir "$APPDIR" \
     --executable "$APPDIR/usr/bin/retroshare-gui" \
     --desktop-file "$DESKTOP" \
     --icon-file "$SRC/data/128x128/apps/retroshare.png" --icon-filename retroshare \
+    ${DEPS_ONLY[@]+"${DEPS_ONLY[@]}"} \
     --plugin qt \
     --output appimage
 
