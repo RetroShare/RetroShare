@@ -137,9 +137,13 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 		td.setHtml(ownOption.text);
 		ownOption.text = td.toPlainText();
 	}
-	// Get Font as option.font is not accurate
+	// Get Font as option.font is not accurate. Merge it into the font of the view instead
+	// of replacing it: a font stored in the model usually only sets a couple of attributes
+	// (bold, italic) and expects the rest (family, size) to be inherited from the view.
+	// QFont::resolve() keeps exactly what the model really set and takes the rest from the
+	// view, which is what QStyledItemDelegate::initStyleOption() does as well.
 	if (index.data(Qt::FontRole).type() == QVariant::Font) {
-		QFont font = index.data(Qt::FontRole).value<QFont>();
+		QFont font = index.data(Qt::FontRole).value<QFont>().resolve(ownOption.font);
 		ownOption.font = font;
 		ownOption.fontMetrics = QFontMetrics(font);
 #ifdef DEBUG_EID_PAINT
@@ -421,9 +425,9 @@ bool RSElidedItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 							td.setHtml(ownOption.text);
 							ownOption.text = td.toPlainText();
 						}
-						//Get Font as option.font is not accurate
+						//Get Font as option.font is not accurate, merged into the one of the view (see paint())
 						if (index.data(Qt::FontRole).type() == QVariant::Font) {
-							QFont font = index.data(Qt::FontRole).value<QFont>();
+							QFont font = index.data(Qt::FontRole).value<QFont>().resolve(ownOption.font);
 							ownOption.font = font;
 							ownOption.fontMetrics = QFontMetrics(font);
 						}
