@@ -330,6 +330,29 @@ void ChatLobbyWidget::updateNotify(ChatLobbyId id, unsigned int count)
  * when it has unread messages, so that a collapsed branch still tells that something
  * is waiting inside.
  */
+/*!
+ * \brief Put an item of the room tree in bold, or back to normal.
+ *
+ * The tree itself carries the font size taken from the settings (see FontSizeHandler),
+ * but QTreeWidgetItem::font() returns a default constructed font when the item has no
+ * Qt::FontRole yet, and RSElidedItemDelegate paints the item with the model font as is,
+ * without merging it into the font of the view. Deriving the bold font from the item
+ * would therefore shrink the whole list down to the application font. So derive it from
+ * the tree, and remove the role altogether when the item is not bold, so that it keeps
+ * following the font size of the settings.
+ */
+static void setItemBold(QTreeWidget *treeWidget, QTreeWidgetItem *item, bool bold)
+{
+	if(bold)
+	{
+		QFont font = treeWidget->font();
+		font.setBold(true);
+		item->setFont(COLUMN_NAME, font);
+	}
+	else
+		item->setData(COLUMN_NAME, Qt::FontRole, QVariant());
+}
+
 void ChatLobbyWidget::updateUnreadCounters()
 {
 	QTreeWidgetItem *branches[4] = { privateSubLobbyItem, publicSubLobbyItem, privateLobbyItem, publicLobbyItem };
@@ -366,9 +389,7 @@ void ChatLobbyWidget::updateUnreadCounters()
 
 			item->setText(COLUMN_NAME, unread ? QString("%1 [%2]").arg(name).arg(unread) : name);
 
-			QFont font = item->font(COLUMN_NAME);
-			font.setBold(unread > 0);
-			item->setFont(COLUMN_NAME, font);
+			setItemBold(ui.lobbyTreeWidget, item, unread > 0);
 		}
 
 		QString label = branch->data(COLUMN_NAME, ROLE_BASE_NAME).toString();
@@ -382,9 +403,7 @@ void ChatLobbyWidget::updateUnreadCounters()
 		branch->setText(COLUMN_NAME, label);
 		branch->setToolTip(COLUMN_NAME, branch_unread ? tr("%n unread message(s)", "", branch_unread) : QString());
 
-		QFont font = branch->font(COLUMN_NAME);
-		font.setBold(branch_unread > 0);
-		branch->setFont(COLUMN_NAME, font);
+		setItemBold(ui.lobbyTreeWidget, branch, branch_unread > 0);
 	}
 }
 
