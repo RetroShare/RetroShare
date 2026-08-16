@@ -96,7 +96,7 @@ void ChatDialog::init(const ChatId &id, const QString &title)
     if (cd == NULL) {
 
         if(id.isDistantChatId())
-            chatflags = RsChatFlags::RS_CHAT_OPEN | RsChatFlags::RS_CHAT_FOCUS; // force open for distant chat
+            chatflags = RsChatFlags::RS_CHAT_OPEN | (chatflags & RsChatFlags::RS_CHAT_FOCUS); // force open for distant chat, but respect focus settings
 
         if (!!(chatflags & RsChatFlags::RS_CHAT_OPEN)) {
             if (id.isLobbyId()) {
