@@ -9,23 +9,6 @@ project(retroshare-superproject)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/mk/cmake")
 
-# Default to Release build type if not specified
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-	set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
-endif()
-# Force C++17 globally for all targets (including plugins)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-if(APPLE)
-       # On macOS, allow undefined symbols in shared modules/libraries at link time
-       # because they will be resolved at runtime by the host executable (retroshare-gui)
-       set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -undefined dynamic_lookup")
-       set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -undefined dynamic_lookup")
-endif()
-
-# Global setting to allow executables to export symbols for plugin/module linking
-set(CMAKE_ENABLE_EXPORTS ON)
 
 # Configuration Options
 option(RS_GUI "Build RetroShare GUI" ON)
@@ -34,6 +17,37 @@ option(RS_FRIENDSERVER "Build RetroShare Friendserver" ON)
 option(RS_PLUGINS "Build RetroShare Plugins" OFF)
 option(RS_USE_I2P_SAM3 "Enable I2P SAMv3 support" ON)
 
+
+# Default to Release build type if not specified
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+	set(CMAKE_BUILD_TYPE "Release" CACHE
+		STRING "Choose the type of build (Debug or Release)" FORCE
+	)
+endif()
+
+
+### some misc global properties
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# export symbols for plugin/module linking
+set(CMAKE_ENABLE_EXPORTS ON)
+if(RS_LIBRETROSHARE_SHARED)
+	# Some static-lib dependencies can be linked into shared libretroshare, so
+	# they need PIC.
+	set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+endif()
+
+if(APPLE)
+	# On macOS, allow undefined symbols in shared modules/libraries at link time
+	# because they will be resolved at runtime by the host executable (retroshare-gui)
+	set(CMAKE_SHARED_LINKER_FLAGS
+		"${CMAKE_SHARED_LINKER_FLAGS} -undefined dynamic_lookup"
+	)
+	set(CMAKE_MODULE_LINKER_FLAGS
+		"${CMAKE_MODULE_LINKER_FLAGS} -undefined dynamic_lookup"
+	)
+endif()
 
 ################################################################################
 ### add subdirectories

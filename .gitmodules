@@ -22,7 +22,7 @@
 	path = supportlibs/jni.hpp
 	url = https://github.com/RetroShare/jni.hpp.git
 [submodule "openpgpsdk"]
-	path = openpgpsdk
+	path = supportlibs/openpgpsdk
 	url = https://github.com/RetroShare/OpenPGP-SDK.git
 	branch = master
 [submodule "libbitdht"]

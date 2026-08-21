@@ -23,18 +23,44 @@
 include(FetchContent)
 include(ExternalProject)
 
+function(DevelFound name)
+	string(TOUPPER ${name} NAME)
+	cmake_path(ABSOLUTE_PATH ${NAME}_DEVEL_DIR OUTPUT_VARIABLE dir)
+	message(STATUS "Found ${name} source: ${dir}")
+endfunction(DevelFound)
+function(DevelNotFound name)
+	string(TOUPPER ${name} NAME)
+	cmake_path(ABSOLUTE_PATH ${NAME}_DEVEL_DIR OUTPUT_VARIABLE dir)
+	message(WARNING
+		"${name} source not found at ${dir}."
+		" Maybe a git submodule is missing?"
+		" Downloading from the web instead."
+	)
+endfunction(DevelNotFound)
+
+if(CMAKE_VERSION VERSION_LESS 4.2)
+	function(EnvironmentModification outvar)
+		list(TRANSFORM ARGN PREPEND --modify\;)
+		set(${outvar} ${CMAKE_COMMAND} -E env ${ARGN} -- PARENT_SCOPE)
+	endfunction(EnvironmentModification)
+else()
+	function(EnvironmentModification)
+	endfunction()
+endif()
+
 ################################################################################
 ### bitdht
 
-set(BITDHT_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libbitdht/")
+set(BITDHT_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libbitdht")
 if(EXISTS "${BITDHT_DEVEL_DIR}/CMakeLists.txt" )
-	message(STATUS "bitdht source found at ${BITDHT_DEVEL_DIR}")
+	DevelFound(bitdht)
 	FetchContent_Declare(
 		bitdht
-		SOURCE_DIR ${BITDHT_DEVEL_DIR}
+		SOURCE_DIR "${BITDHT_DEVEL_DIR}"
 		OVERRIDE_FIND_PACKAGE
 	)
 else()
+	DevelNotFound(bitdht)
 	FetchContent_Declare(
 		bitdht
 		GIT_REPOSITORY "https://github.com/RetroShare/BitDHT.git"
@@ -62,13 +88,15 @@ FetchContent_Declare(cpptrace
 ################################################################################
 ### jni.hpp
 
-set(JNI_HPP_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/jni.hpp")
-if(EXISTS "${JNI_HPP_DEVEL_DIR}/CMakeLists.txt")
+set(JNI.HPP_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/jni.hpp")
+if(EXISTS "${JNI.HPP_DEVEL_DIR}/include")
+	DevelFound(jni.hpp)
 	FetchContent_Declare(jni.hpp
-		SOURCE_DIR "${JNI_HPP_DEVEL_DIR}"
+		SOURCE_DIR "${JNI.HPP_DEVEL_DIR}"
 		OVERRIDE_FIND_PACKAGE
 	)
 else()
+	DevelNotFound(jni.hpp)
 	FetchContent_Declare(jni.hpp
 		GIT_REPOSITORY "https://github.com/RetroShare/jni.hpp.git"
 		GIT_TAG "origin/master"
@@ -93,15 +121,16 @@ endif()
 ################################################################################
 ### librnp
 
-set(RNPLIB_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/librnp/")
-if(EXISTS "${RNPLIB_DEVEL_DIR}/CMakeLists.txt")
-	message(STATUS "librnp source found at ${RNPLIB_DEVEL_DIR}")
+set(RNP_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/librnp/")
+if(EXISTS "${RNP_DEVEL_DIR}/CMakeLists.txt")
+	DevelFound(rnp)
 	FetchContent_Declare(
 		rnp
-		SOURCE_DIR ${RNPLIB_DEVEL_DIR}
+		SOURCE_DIR ${RNP_DEVEL_DIR}
 		OVERRIDE_FIND_PACKAGE
 	)
 else()
+	DevelNotFound(rnp)
 	FetchContent_Declare(
 		rnp
 		GIT_REPOSITORY "https://github.com/rnpgp/rnp.git"
@@ -127,24 +156,26 @@ endif()
 ################################################################################
 ### libsam3
 
-set(SAM3_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libsam3")
-if(EXISTS "${SAM3_DEVEL_DIR}")
-	message(STATUS "libsam3 found at ${SAM3_DEVEL_DIR}")
-	set(SAM3_DOWNLOAD_OPTIONS
-		SOURCE_DIR "${SAM3_DEVEL_DIR}"
+set(LIBSAM3_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libsam3")
+if(EXISTS "${LIBSAM3_DEVEL_DIR}/Makefile")
+	DevelFound(libsam3)
+	set(LIBSAM3_DOWNLOAD_OPTIONS
+		SOURCE_DIR "${LIBSAM3_DEVEL_DIR}"
 	)
-  set(libsam3_external_SOURCE_DIR ${SAM3_DEVEL_DIR})
+  set(libsam3_external_SOURCE_DIR ${LIBSAM3_DEVEL_DIR})
 else()
-	set(SAM3_DOWNLOAD_OPTIONS
+	DevelNotFound(libsam3)
+	set(LIBSAM3_DOWNLOAD_OPTIONS
 		GIT_REPOSITORY "https://github.com/i2p/libsam3.git"
 		GIT_TAG "origin/master"
 		GIT_SHALLOW TRUE
 		GIT_PROGRESS TRUE
 		TIMEOUT 10
 	)
-  set(libsam3_external_SOURCE_DIR "libsam3_external-prefix/src/libsam3_external")
+  set(libsam3_external_SOURCE_DIR
+		"libsam3_external-prefix/src/libsam3_external"
+	)
 endif()
-message(STATUS "libsam3 source directory: ${libsam3_external_SOURCE_DIR}")
 set(libsam3_external_BINARY_DIR ${libsam3_external_SOURCE_DIR})
 list(APPEND libsam3_external_BUILD_ENVIRONMENT
   "CC=set:${CMAKE_C_COMPILER}"
@@ -154,11 +185,12 @@ if(WIN32)
     "LDFLAGS=set:-lmingw32 -lws2_32 -lwsock32 -mwindows"
   )
 endif()
+EnvironmentModification(envmod_build ${libsam3_external_BUILD_ENVIRONMENT})
 ExternalProject_Add(
 	libsam3_external
-	${SAM3_DOWNLOAD_OPTIONS}
+	${LIBSAM3_DOWNLOAD_OPTIONS}
 	CONFIGURE_COMMAND ""
-  BUILD_COMMAND make build
+  BUILD_COMMAND ${envmod_build} make build
   INSTALL_COMMAND ""
   BUILD_IN_SOURCE TRUE
 	EXCLUDE_FROM_ALL YES
@@ -176,13 +208,14 @@ configure_file(
 
 set(OPENPGPSDK_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/openpgpsdk/")
 if(EXISTS "${OPENPGPSDK_DEVEL_DIR}/CMakeLists.txt" )
-	message(STATUS "openpgpsdk source found at ${OPENPGPSDK_DEVEL_DIR}")
+	DevelFound(openpgpsdk)
 	FetchContent_Declare(
 		openpgpsdk
 		SOURCE_DIR ${OPENPGPSDK_DEVEL_DIR}
 		OVERRIDE_FIND_PACKAGE
 	)
 else()
+	DevelNotFound(openpgpsdk)
 	FetchContent_Declare(
 		openpgpsdk
 		GIT_REPOSITORY "https://github.com/RetroShare/OpenPGP-SDK.git"
@@ -214,13 +247,14 @@ set(RAPIDJSON_BUILD_TESTS OFF CACHE BOOL
 	"Build rapidjson perftests and unittests."
 )
 if(EXISTS "${RAPIDJSON_DEVEL_DIR}/CMakeLists.txt")
-	message(STATUS "RapidJSON found at ${RAPIDJSON_DEVEL_DIR}")
+	DevelFound(RapidJSON)
 	FetchContent_Declare(
 		RapidJSON
 		SOURCE_DIR ${RAPIDJSON_DEVEL_DIR}
 		OVERRIDE_FIND_PACKAGE
 	)
 else()
+	DevelNotFound(RapidJSON)
 	FetchContent_Declare(
 		RapidJSON
 		GIT_REPOSITORY "https://github.com/Tencent/rapidjson.git"
@@ -250,18 +284,17 @@ set(RESTBED_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/restbed")
 set(BUILD_TESTS OFF CACHE BOOL "build restbed tests")
 set(BUILD_SSL OFF CACHE BOOL "enable SSL support in restbed")
 if(NOT WIN32 AND EXISTS "${RESTBED_DEVEL_DIR}/CMakeLists.txt")
+	DevelFound(restbed)
 	list(APPEND RESTBED_DOWNLOAD_OPTIONS SOURCE_DIR "${RESTBED_DEVEL_DIR}")
 else()
+	DevelNotFound(restbed)
 	list(APPEND RESTBED_DOWNLOAD_OPTIONS
 		GIT_REPOSITORY "https://github.com/Corvusoft/restbed.git"
-		GIT_TAG "4.8"
+		GIT_TAG 6001a322809b5005b8bcccdf593fdda6f0173691
 		GIT_SUBMODULES dependency/asio dependency/catch
-		GIT_SHALLOW TRUE
+		# GIT_SHALLOW TRUE
 		GIT_PROGRESS TRUE
 		TIMEOUT 10
-		# 1. Remove /wd4251 (MSVC-specific flag) that breaks GCC/Clang builds.
-		# 2. Bump CMake minimum version to 3.5.0 to suppress deprecation warnings in CMake >= 3.27.
-		PATCH_COMMAND sed -i -e "s|/wd4251||g" -e "s|VERSION 3.1.0|VERSION 3.5.0|g" CMakeLists.txt
 	)
 endif()
 if(
@@ -282,16 +315,17 @@ FetchContent_Declare(restbed
 ################################################################################
 ### udp-discovery
 
-set(UDP_DISCOVERY_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/udp-discovery-cpp")
+set(UDP-DISCOVERY-CPP_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/udp-discovery-cpp")
 ## TODO: upstream option to disable tests building
 set(BUILD_EXAMPLE OFF CACHE BOOL "build udp-discovery-cpp examples")
 set(BUILD_TOOL OFF CACHE BOOL "build udp-discovery-tool application")
-if(EXISTS "${UDP_DISCOVERY_DEVEL_DIR}/CMakeLists.txt")
-	message(STATUS "UDP discovery source found at ${UDP_DISCOVERY_DEVEL_DIR}")
+if(EXISTS "${UDP-DISCOVERY-CPP_DEVEL_DIR}/CMakeLists.txt")
+	DevelFound(udp-discovery-cpp)
 	set(UDP-DISCOVERY-CPP_DOWNLOAD_OPTIONS
-		SOURCE_DIR "${UDP_DISCOVERY_DEVEL_DIR}"
+		SOURCE_DIR "${UDP-DISCOVERY-CPP_DEVEL_DIR}"
 	)
 else()
+	DevelNotFound(udp-discovery-cpp)
 	set(UDP-DISCOVERY-CPP_DOWNLOAD_OPTIONS
 		GIT_REPOSITORY "https://github.com/truvorskameikin/udp-discovery-cpp.git"
 		GIT_TAG "origin/master"
@@ -303,7 +337,7 @@ endif()
 FetchContent_Declare(udp-discovery-cpp
 	${UDP-DISCOVERY-CPP_DOWNLOAD_OPTIONS}
 	OVERRIDE_FIND_PACKAGE
-	PATCH_COMMAND sed -i -e "s/^\\(cmake_minimum_required(VERSION 2.8\\))\$/\\1...4.3.4)/" CMakeLists.txt
+	PATCH_COMMAND sed -i -e "s/^cmake_minimum_required(VERSION 2.8)\$/cmake_minimum_required(VERSION 2.8...4.3.4)/" CMakeLists.txt
 )
 if(
 	NOT EXISTS ${CMAKE_FIND_PACKAGE_REDIRECTS_DIR}/udp-discovery-cpp-extra.cmake
