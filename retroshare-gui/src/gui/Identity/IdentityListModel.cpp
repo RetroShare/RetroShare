@@ -541,7 +541,14 @@ QVariant RsIdentityListModel::toolTipRole(const EntryIndex& fmpe,int /*column*/)
             return QVariant();
 
         if(id_info->flags & RS_IDENTITY_FLAGS_IS_DEPRECATED)
-            return QVariant( tr("\nThis identity has a insecure fingerprint (It's probably quite old).\nYou should get rid of it now and use a new one.\nThese identities are not supported anymore.") ) ;
+        {
+            QString out_str = tr("\nThis identity has a insecure fingerprint is not supported anymore (It's probably quite old).");
+
+            if(rsIdentity->isOwnId(id_info->id) )
+                out_str += tr("\nYou should stop using it and create a new one.\n.")  ;
+
+            return QVariant(out_str);
+        }
 
         if(rsIdentity->isOwnId(id_info->id))
         {
