@@ -33,33 +33,120 @@ void BWGraphSource::update()
     std::cerr << "Updating BW graphsource..." << std::endl;
 #endif
 
-    TrafficHistoryChunk thc ;
-    rsConfig->getTrafficInfo(thc.out_rstcl,thc.in_rstcl);
+    std::list<RSTrafficClue> in_clues,out_clues;
+    rsConfig->getTrafficInfo(out_clues,in_clues);
+
+    // Add the collected records to the cumulated traffic map
+
+    auto add_traffic_to_cumulated_map = [](const std::list<RSTrafficClue>& incoming_lst,CumulatedTrafficMap& tmap) {
+            for(const auto& c:incoming_lst)
+            {
+                auto& t = tmap[PeerSrvSubsrv(c)];
+                t.cumulated_size  += c.size;
+                t.cumulated_count += c.count;
+#ifdef BWGRAPH_DEBUG
+                std::cerr << "Pushing " << c.TS << "  " << c.peer_id << "  " << c.service_id << "  " << (int)c.service_sub_id << " into cumulated map" << std::endl;
+#endif
+            }
+    };
+
+    add_traffic_to_cumulated_map(out_clues,mCumulatedTrafficMap_Out);
+    add_traffic_to_cumulated_map(in_clues,mCumulatedTrafficMap_In);
 
 #ifdef BWGRAPH_DEBUG
-    std::cerr << "  got " << std::dec << thc.out_rstcl.size() << " out clues" << std::endl;
-    std::cerr << "  got " << std::dec << thc.in_rstcl.size() << " in clues" << std::endl;
+    std::cerr << "cumulated map is now: " << std::endl;
+    for(const auto& it:mCumulatedTrafficMap_Out)
+        std::cerr << "  " << it.first.peer_id << "  " << it.first.service_id << "  " << (int)it.first.service_sub_id << ": " << it.second.cumulated_size << "  " << it.second.cumulated_count << std::endl;
+#endif
+
+    // Parse the cumulated map and add elements to the traffic clues when missing, converting
+    // RSTrafficClue (that misses the cumulated traffic) into a RSTrafficClueExt that includes it.
+
+    auto add_missing_clues_and_convert = [](std::list<RSTrafficClueExt>& clues,const std::list<RSTrafficClue>& incoming_lst,const CumulatedTrafficMap& tmap) {
+
+            std::set<PeerSrvSubsrv> incoming_elements;
+            uint64_t ts=time(nullptr);
+
+            // 1 - convert existing traffic clues from incoming list into extended clues with cimulated traffic
+
+            for(const auto& c:incoming_lst)
+            {
+                auto pss_c = PeerSrvSubsrv(c);
+                RSTrafficClueExt e(c);
+
+                auto tm_it = tmap.find(pss_c);
+
+                if(tm_it == tmap.end())
+                {
+                    RsErr() << "missing value " << c.peer_id << "  " << c.service_id << "  " << (int)c.service_sub_id << " into cumulated map" << std::endl;
+                    continue;
+                }
+
+                // only insert the cumulated values once since these traffic clues may be added together.
+
+                if(incoming_elements.find(pss_c) == incoming_elements.end())
+                {
+                    e.cumulated_size  = tm_it->second.cumulated_size;
+                    e.cumulated_count = tm_it->second.cumulated_count;
+                }
+#ifdef BWGRAPH_DEBUG
+                std::cerr << "incoming clue: " << c.TS << "  " << c.peer_id << "  " << c.service_id << "  " << (int)c.service_sub_id << " " << c.size << std::endl;
+                std::cerr << "pushing new  : " << e.TS << "  " << e.peer_id << "  " << e.service_id << "  " << (int)e.service_sub_id << " " << e.size << "  " << e.cumulated_size << std::endl;
+#endif
+
+                clues.push_back(e);
+                incoming_elements.insert(pss_c);
+            }
+
+            // 2 - look into tmap and possibly add one placeholder traffic clue for each missing element
+
+            for(const auto& it:tmap)
+                if(incoming_elements.find(it.first) == incoming_elements.end())
+                {
+                    RSTrafficClueExt e;
+                    e.TS              = ts;
+                    e.peer_id         = it.first.peer_id;
+                    e.service_id      = it.first.service_id;
+                    e.service_sub_id  = it.first.service_sub_id;
+                    e.cumulated_count = it.second.cumulated_count;
+                    e.cumulated_size  = it.second.cumulated_size ;
+                    clues.push_back(e);
+#ifdef BWGRAPH_DEBUG
+                    std::cerr << "pushing placeholder  : " << e.TS << "  " << e.peer_id << "  " << e.service_id << "  " << (int)e.service_sub_id << " " << e.size << "  " << e.cumulated_size << std::endl;
+#endif
+                }
+    };
+
+    TrafficHistoryChunk thc ;
+    add_missing_clues_and_convert(thc.out_rstcl,out_clues,mCumulatedTrafficMap_Out);
+    add_missing_clues_and_convert(thc.in_rstcl,in_clues,mCumulatedTrafficMap_In);
+
+    thc.time_stamp = getTime() ;
+
+#ifdef BWGRAPH_DEBUG
+    std::cerr << "Traffic detail:" << std::endl;
+    for(const auto& tc:thc.out_rstcl)
+            std::cerr << "TS=" << tc.TS << " peer=" << tc.peer_id << " service " << tc.service_id << " ("
+                      << (int)tc.service_sub_id << ") " << tc.size << " ( " << tc.cumulated_size << ")" << tc.count << " ( " << tc.cumulated_count << ")"<< std::endl;
 #endif
 
     // keep track of them, in case we need to change the sorting
 
-    thc.time_stamp = getTime() ;
     mTrafficHistory.push_back(thc) ;
 
     std::set<RsPeerId> fds ;
 
     // add visible friends/services
 
-    for(std::list<RSTrafficClue>::const_iterator it(thc.out_rstcl.begin());it!=thc.out_rstcl.end();++it)
+    for(const auto& c:thc.out_rstcl)
     {
-        fds.insert(it->peer_id) ;
-        mVisibleServices.insert(it->service_id) ;
+        fds.insert(c.peer_id) ;
+        mVisibleServices.insert(c.service_id) ;
     }
-
-    for(std::list<RSTrafficClue>::const_iterator it(thc.in_rstcl.begin());it!=thc.in_rstcl.end();++it)
+    for(const auto& c:thc.in_rstcl)
     {
-        fds.insert(it->peer_id) ;
-        mVisibleServices.insert(it->service_id) ;
+        fds.insert(c.peer_id) ;
+        mVisibleServices.insert(c.service_id) ;
     }
 
     for(std::set<RsPeerId>::const_iterator it(fds.begin());it!=fds.end();++it)
@@ -200,6 +287,22 @@ void BWGraphSource::update()
 #endif
 }
 
+void BWGraphSource::clear()
+{
+    _total_sent =0;
+    _total_recv =0;
+
+    _total_duration_seconds =0;
+
+    mTrafficHistory.clear() ;
+    mCumulatedTrafficMap_In.clear();
+    mCumulatedTrafficMap_Out.clear();
+
+    mVisibleFriends.clear() ;
+    mVisibleServices.clear() ;
+
+    recomputeCurrentCurves() ;
+}
 void BWGraphSource::getCumulatedValues(std::vector<float>& vals) const
 {
 	if(_current_unit == UNIT_KILOBYTES && _total_duration_seconds > 0.0)
@@ -227,49 +330,55 @@ std::string BWGraphSource::makeSubItemName(uint16_t service_id,uint8_t sub_item_
     }
 }
 
-void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& lst,std::map<std::string,float>& vals) const
+void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClueExt>& lst,std::map<std::string,float>& vals) const
 {
-	switch(_friend_graph_type)
+   auto select_value = [this](const RSTrafficClueExt& tc) -> uint64_t {
+       return  (_current_unit == UNIT_KILOBYTES)?
+                                (_current_timing==TIMING_INSTANT?tc.size:tc.cumulated_size)
+                              :(_current_timing==TIMING_INSTANT?tc.count:tc.cumulated_count) ;
+   };
+
+    switch(_friend_graph_type)
 	{
 	case GRAPH_TYPE_SINGLE:
 		switch(_service_graph_type)
 		{
 		case GRAPH_TYPE_SINGLE:		// single friend, single service => one curve per service sub_id
 		{
-			std::vector<RSTrafficClue> clue_per_sub_id(256) ;
+            std::vector<RSTrafficClueExt> clue_per_sub_id(256) ;
 
-			for(std::list<RSTrafficClue>::const_iterator  it(lst.begin());it!=lst.end();++it)
-				if(it->peer_id == _current_selected_friend && it->service_id == _current_selected_service)
-					clue_per_sub_id[it->service_sub_id] += *it ;
+            for(std::list<RSTrafficClueExt>::const_iterator  it(lst.begin());it!=lst.end();++it)
+                if(it->peer_id == _current_selected_friend && it->service_id == _current_selected_service)
+                    clue_per_sub_id[it->service_sub_id] += *it ;
 
-			for(uint32_t i=0;i<256;++i)
-				if(clue_per_sub_id[i].count > 0)
-					vals[makeSubItemName(clue_per_sub_id[i].service_id,i)] = (_current_unit == UNIT_KILOBYTES)?(clue_per_sub_id[i].size):(clue_per_sub_id[i].count) ;
-		}
+            for(uint32_t i=0;i<256;++i)
+                if(clue_per_sub_id[i].cumulated_count > 0) // checks if i corresponds to an active service
+                    vals[makeSubItemName(clue_per_sub_id[i].service_id,i)] = select_value(clue_per_sub_id[i]);
+        }
 			break ;
 
 		case GRAPH_TYPE_ALL:		// single friend, all services => one curve per service id
 		{
-			std::map<uint16_t,RSTrafficClue> clue_per_id ;
+            std::map<uint16_t,RSTrafficClueExt> clue_per_id ;
 
-			for(std::list<RSTrafficClue>::const_iterator  it(lst.begin());it!=lst.end();++it)
-				if(it->peer_id == _current_selected_friend)
-					clue_per_id[it->service_id] += *it ;
+            for(std::list<RSTrafficClueExt>::const_iterator  it(lst.begin());it!=lst.end();++it)
+                if(it->peer_id == _current_selected_friend)
+                    clue_per_id[it->service_id] += *it ;
 
-			for(std::map<uint16_t,RSTrafficClue>::const_iterator it(clue_per_id.begin());it!=clue_per_id.end();++it)
-		    		vals[mServiceInfoMap[it->first].mServiceName] = (_current_unit == UNIT_KILOBYTES)?(it->second.size):(it->second.count) ;
+            for(std::map<uint16_t,RSTrafficClueExt>::const_iterator it(clue_per_id.begin());it!=clue_per_id.end();++it)
+                    vals[mServiceInfoMap[it->first].mServiceName] = select_value(it->second);
 		}
 			break ;
 		case GRAPH_TYPE_SUM:	// single friend, sum services => one curve
 		{
-			RSTrafficClue total ;
-			std::map<uint16_t,RSTrafficClue> clue_per_id ;
+            RSTrafficClueExt total ;
+            std::map<uint16_t,RSTrafficClueExt> clue_per_id ;
 
-			for(std::list<RSTrafficClue>::const_iterator  it(lst.begin());it!=lst.end();++it)
-				if(it->peer_id == _current_selected_friend)
-					total += *it ;
+            for(std::list<RSTrafficClueExt>::const_iterator  it(lst.begin());it!=lst.end();++it)
+                if(it->peer_id == _current_selected_friend)
+                    total += *it ;
 
-			vals[visibleFriendName(_current_selected_friend)] = (_current_unit == UNIT_KILOBYTES)?(total.size):(total.count) ;
+            vals[visibleFriendName(_current_selected_friend)] = select_value(total);
 		}
 		}
 		break ;
@@ -279,14 +388,14 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 		{
 		case GRAPH_TYPE_SINGLE: // all friends, single service => one curve per friend for that service
 		{
-			std::map<RsPeerId,RSTrafficClue> clue_per_peer_id;
+            std::map<RsPeerId,RSTrafficClueExt> clue_per_peer_id;
 
-			for(std::list<RSTrafficClue>::const_iterator  it(lst.begin());it!=lst.end();++it)
+            for(std::list<RSTrafficClueExt>::const_iterator  it(lst.begin());it!=lst.end();++it)
 				if(it->service_id == _current_selected_service)
 					clue_per_peer_id[it->peer_id] += *it ;
 
-			for(std::map<RsPeerId,RSTrafficClue>::const_iterator it(clue_per_peer_id.begin());it!=clue_per_peer_id.end();++it)
-				vals[visibleFriendName(it->first)] = (_current_unit == UNIT_KILOBYTES)?(it->second.size):(it->second.count) ;
+            for(std::map<RsPeerId,RSTrafficClueExt>::const_iterator it(clue_per_peer_id.begin());it!=clue_per_peer_id.end();++it)
+                vals[visibleFriendName(it->first)] = select_value(it->second);
 		}
 			break ;
 
@@ -294,14 +403,14 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 			/* fallthrough */
 		case GRAPH_TYPE_SUM:		// all friends, sum of services => one curve per friend
 		{
-			RSTrafficClue total ;
-			std::map<RsPeerId,RSTrafficClue> clue_per_peer_id ;
+            RSTrafficClueExt total ;
+            std::map<RsPeerId,RSTrafficClueExt> clue_per_peer_id ;
 
-			for(std::list<RSTrafficClue>::const_iterator  it(lst.begin());it!=lst.end();++it)
+            for(std::list<RSTrafficClueExt>::const_iterator  it(lst.begin());it!=lst.end();++it)
 				clue_per_peer_id[it->peer_id] += *it;
 
-			for(std::map<RsPeerId,RSTrafficClue>::const_iterator it(clue_per_peer_id.begin());it!=clue_per_peer_id.end();++it)
-				vals[visibleFriendName(it->first)] = (_current_unit == UNIT_KILOBYTES)?(it->second.size):(it->second.count) ;
+            for(std::map<RsPeerId,RSTrafficClueExt>::const_iterator it(clue_per_peer_id.begin());it!=clue_per_peer_id.end();++it)
+                vals[visibleFriendName(it->first)] = select_value(it->second);
 		}
 			break ;
 		}
@@ -312,9 +421,9 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
 		{
 		case GRAPH_TYPE_SINGLE:	// sum of friends, single service => one curve per service sub id summed over all friends
 		{
-			std::vector<RSTrafficClue> clue_per_sub_id(256) ;
+            std::vector<RSTrafficClueExt> clue_per_sub_id(256) ;
 
-			for(std::list<RSTrafficClue>::const_iterator  it(lst.begin());it!=lst.end();++it)
+            for(std::list<RSTrafficClueExt>::const_iterator  it(lst.begin());it!=lst.end();++it)
 				if(it->service_id == _current_selected_service)
                 {
 					clue_per_sub_id[it->service_sub_id] += *it ;
@@ -322,31 +431,31 @@ void BWGraphSource::convertTrafficClueToValues(const std::list<RSTrafficClue>& l
                 }
 
 			for(uint32_t i=0;i<256;++i)
-				if(clue_per_sub_id[i].count > 0)
-					vals[makeSubItemName(clue_per_sub_id[i].service_id,i)] = (_current_unit == UNIT_KILOBYTES)?(clue_per_sub_id[i].size):(clue_per_sub_id[i].count) ;
+                if(clue_per_sub_id[i].cumulated_count > 0) // checks if this corresponds to an active service
+                    vals[makeSubItemName(clue_per_sub_id[i].service_id,i)] = select_value(clue_per_sub_id[i]);
 		}
 			break ;
 
 		case GRAPH_TYPE_ALL:	// sum of friends, all services => one curve per service id summed over all friends
 		{
-			std::map<uint16_t,RSTrafficClue> clue_per_service ;
+            std::map<uint16_t,RSTrafficClueExt> clue_per_service ;
 
-			for(std::list<RSTrafficClue>::const_iterator  it(lst.begin());it!=lst.end();++it)
+            for(std::list<RSTrafficClueExt>::const_iterator  it(lst.begin());it!=lst.end();++it)
 				clue_per_service[it->service_id] += *it;
 
-			for(std::map<uint16_t,RSTrafficClue>::const_iterator it(clue_per_service.begin());it!=clue_per_service.end();++it)
-				vals[mServiceInfoMap[it->first].mServiceName] = (_current_unit == UNIT_KILOBYTES)?(it->second.size):(it->second.count) ;
+            for(std::map<uint16_t,RSTrafficClueExt>::const_iterator it(clue_per_service.begin());it!=clue_per_service.end();++it)
+                vals[mServiceInfoMap[it->first].mServiceName] = select_value(it->second);
 		}
 			break ;
 
 		case GRAPH_TYPE_SUM: 	// sum of friends, sum of services => one single curve covering the total bandwidth
 		{
-			RSTrafficClue total ;
+            RSTrafficClueExt total ;
 
-			for(std::list<RSTrafficClue>::const_iterator  it(lst.begin());it!=lst.end();++it)
+            for(std::list<RSTrafficClueExt>::const_iterator  it(lst.begin());it!=lst.end();++it)
 				total += *it;
 
-			vals[QString("Total").toStdString()] = (_current_unit == UNIT_KILOBYTES)?(total.size):(total.count) ;
+            vals[QString("Total").toStdString()] = select_value(total);
 		}
 			break ;
 		}
@@ -402,39 +511,27 @@ void BWGraphSource::getValues(std::map<std::string,float>& values) const
     _total_recv += 1024 * totalRates.mRateIn * _update_period_msecs/1000.0f ;
 }
 
-QString BWGraphSource::unitName() const { return (_current_unit == UNIT_KILOBYTES)?tr("KB/s"):QString(); }
+QString BWGraphSource::unitName() const
+{
+    if(_current_timing == TIMING_CUMULATED)
+        return tr("KB");
 
-//QString BWGraphSource::displayName(int i) const
-//{
-//    int n=0;
-//    for(std::map<std::string,std::list<std::pair<qint64,float> > >::const_iterator  it = _points.begin();it!=_points.end() ;++it)
-//        if(n++ == i)
-//        {
-//            // find out what is displayed
-//
-//            if(_service_graph_type == GRAPH_TYPE_SINGLE )
-//                if(_friend_graph_type != GRAPH_TYPE_ALL)
-//		    return QString::fromStdString(it->first) ;// sub item
-//		else
-//		    return QString::fromStdString(mVisibleFriends[RsPeerId(it->first)]) ;// peer id item
-//            else
-//
-//
-//        }
-//
-//    return QString("[error]");
-//}
+    if(_current_unit == UNIT_KILOBYTES)
+        return tr("KB/s");
+
+    return QString();
+}
 
 QString BWGraphSource::displayValue(float v) const
 {
     if(_current_unit == UNIT_KILOBYTES)
     {
-	    if(v < 1000)
-		    return QString::number(v,'f',2) + " B/s" ;
-	    else if(v < 1000*1024)
-		    return QString::number(v/1024.0,'f',2) + " KB/s" ;
-	    else
-		    return QString::number(v/(1024.0*1024),'f',2) + " MB/s" ;
+        QString s = niceNumber(v);
+
+        if(_current_timing == TIMING_INSTANT)
+            return s + "/s";
+        else
+            return s ;
     }
     else if(_current_unit == UNIT_COUNT)
     {
@@ -465,17 +562,17 @@ QString BWGraphSource::niceNumber(float v) const
         return QString::number(v/(1024*1024.0*1024),'f',2) + " GB";
 }
 
-void BWGraphSource::setSelector(int selector_type,int graph_type,const std::string& selector_client_string)
+void BWGraphSource::setSelector(int selector_type,int selector_value,const std::string& selector_client_string)
 {
 #ifdef BWGRAPH_DEBUG
-    std::cerr << "Setting Graph Source selector to " << selector_type << " - " << graph_type << " - " << selector_client_string << std::endl;
+    std::cerr << "Setting Graph Source selector to " << selector_type << " - " << selector_value << " - " << selector_client_string << std::endl;
 #endif
 
     bool changed = false ;
 
-    if(selector_type == SELECTOR_TYPE_FRIEND && (_friend_graph_type != graph_type || (graph_type == GRAPH_TYPE_SINGLE && selector_client_string != _current_selected_friend.toStdString())))
+    if(selector_type == SELECTOR_TYPE_FRIEND && (_friend_graph_type != selector_value || (selector_value == GRAPH_TYPE_SINGLE && selector_client_string != _current_selected_friend.toStdString())))
     {
-	    if(graph_type ==  GRAPH_TYPE_SINGLE)
+        if(selector_value ==  GRAPH_TYPE_SINGLE)
 	    {
 
 		    RsPeerId ns(selector_client_string) ;
@@ -484,7 +581,7 @@ void BWGraphSource::setSelector(int selector_type,int graph_type,const std::stri
 		    {
 			    _current_selected_friend = ns ;
 			    changed = true ;
-			    _friend_graph_type = graph_type ;
+                _friend_graph_type = selector_value ;
 		    }
 
 		    else
@@ -493,13 +590,13 @@ void BWGraphSource::setSelector(int selector_type,int graph_type,const std::stri
 	    else
 	    {
 		    changed = true ;
-		    _friend_graph_type = graph_type ;
+            _friend_graph_type = selector_value ;
 	    }
     }
     else if(selector_type == SELECTOR_TYPE_SERVICE
-                    && (_service_graph_type != graph_type || (graph_type == GRAPH_TYPE_SINGLE && selector_client_string != QString::number(_current_selected_service,16).toStdString())))
+                    && (_service_graph_type != selector_value || (selector_value == GRAPH_TYPE_SINGLE && selector_client_string != QString::number(_current_selected_service,16).toStdString())))
     {
-	    if(graph_type ==  GRAPH_TYPE_SINGLE)
+        if(selector_value ==  GRAPH_TYPE_SINGLE)
 	    {
 		    //bool ok = false ;
 		    int tmp = QString::fromStdString(selector_client_string).toInt() ;
@@ -509,7 +606,7 @@ void BWGraphSource::setSelector(int selector_type,int graph_type,const std::stri
 			    _current_selected_service = tmp ;
 
 			    changed = true ;
-			    _service_graph_type = graph_type ;
+                _service_graph_type = selector_value ;
 		    }
                     else
 			    std::cerr << "(EE) Cannot set current service to " << selector_client_string << ": unrecognized service string." << std::endl;
@@ -518,7 +615,7 @@ void BWGraphSource::setSelector(int selector_type,int graph_type,const std::stri
 	    else
 	    {
 		    changed = true ;
-		    _service_graph_type = graph_type ;
+            _service_graph_type = selector_value ;
 	    }
     }
 
@@ -545,6 +642,15 @@ void BWGraphSource::setDirection(int dir)
     _current_direction = dir ;
 
     recomputeCurrentCurves() ;
+}
+
+void BWGraphSource::setTiming(int t)
+{
+    if(t == _current_timing)
+        return;
+
+    _current_timing = t;
+    recomputeCurrentCurves();
 }
 void BWGraphSource::recomputeCurrentCurves()
 {
@@ -599,7 +705,6 @@ BWGraph::BWGraph(QWidget *parent) : RSGraphWidget(parent)
 {
     _local_source = new BWGraphSource() ;
 
-    std::cerr << "creaitng new BWGraph Source " << (void*)_local_source << std::endl;
     _local_source->setCollectionTimeLimit(30*60*1000) ; // 30  mins
     _local_source->setCollectionTimePeriod(1000) ;      // collect every second
     _local_source->setDigits(2) ;
