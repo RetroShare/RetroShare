@@ -48,6 +48,8 @@ protected slots:
 
 private slots:
 	void updateFonts();
+    
+    void reindexAll();
 
 private:
 	Ui::ForumPage ui;
