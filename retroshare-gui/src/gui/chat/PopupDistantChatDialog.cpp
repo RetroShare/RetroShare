@@ -217,16 +217,30 @@ void PopupDistantChatDialog::handleEvent_main_thread(std::shared_ptr<const RsEve
 		getChatWidget()->unblockSending();
         setPeerStatus(RsStatusValue::RS_STATUS_ONLINE);
 		break;
+
+    case RsDistantChatEventCode::TUNNEL_STATUS_LOCALLY_CLOSED:
+        // Closed by another client of this core -- the web UI, or a JSON API
+        // caller. Closing it from this window never reaches here: the window
+        // is gone before the event arrives. Ending a conversation closes its
+        // window when done from here; done from elsewhere it must end the
+        // same way. closeEvent() asks nothing: the core has no tunnel left.
+        close();
+        break;
 	}
 }
 
 void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 {
     DistantChatPeerInfo tinfo ;
-    
-    rsChats->getDistantChatStatus(_tunnel_id,tinfo) ;
 
-	if(tinfo.status != RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED)
+    // getDistantChatStatus() answers false once the core has dropped the
+    // tunnel -- closed from another client, or died on its own. Its return
+    // value was ignored and tinfo left at its default, status 0, which is not
+    // REMOTELY_CLOSED: the user was then asked whether to end a conversation
+    // that did not exist, and closeDistantChatConnexion() ran on nothing.
+    bool tunnel_known = rsChats->getDistantChatStatus(_tunnel_id,tinfo) ;
+
+	if(tunnel_known && tinfo.status != RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED)
 	{
 		QString msg = tr("Closing this window will end the conversation. Unsent messages will be dropped.") ;
 
