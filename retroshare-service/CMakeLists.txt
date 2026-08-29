@@ -173,7 +173,9 @@ if(RS_SERVICE_TERMINAL_LOGIN)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC RS_SERVICE_TERMINAL_LOGIN)
 endif(RS_SERVICE_TERMINAL_LOGIN)
 
-if(RS_WEBUI)
+if(RS_WEBUI AND NOT TARGET retroshare-webui)
+	# Only reached when retroshare-service is built standalone: in a super
+	# project build the root CMakeLists already created the target.
 	set(RS_WEBUI_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../retroshare-webui/")
 	get_filename_component(RS_WEBUI_DEVEL_DIR "${RS_WEBUI_DEVEL_DIR}" ABSOLUTE)
 	if(EXISTS "${RS_WEBUI_DEVEL_DIR}/CMakeLists.txt" )
@@ -206,7 +208,9 @@ if(RS_WEBUI)
 			SOURCES "${RS_WEBUI_DEVEL_DIR}/webui-src"
 		)
 	endif()
+endif()
 
+if(RS_WEBUI)
 	add_dependencies(${PROJECT_NAME} retroshare-webui)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC RS_WEBUI)
 endif(RS_WEBUI)
