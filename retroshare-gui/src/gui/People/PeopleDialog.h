@@ -66,6 +66,11 @@ class PeopleDialog : public MainPage, public Ui::PeopleDialog, public TokenRespo
 private slots:
 	void updateCirclesDisplay(bool);
 
+	void on_listViewButton_toggled(bool checked);
+	void on_thumbnailViewButton_toggled(bool checked);
+	void on_searchPeopleLineEdit_textChanged(const QString &text);
+	void on_sortPeopleComboBox_currentIndexChanged(int index);
+
 	void iw_AddButtonClickedExt();
 	void iw_AddButtonClickedInt();
 	void addToCircleExt();
@@ -94,6 +99,20 @@ private:
 	void reloadAll();
 	void populatePictureFlowExt();
 	void populatePictureFlowInt();
+	void filterIdentities();
+	void sortIdentities();
+	void setViewMode(int mode);
+
+	enum ViewMode {
+		VIEW_MODE_LIST = 0,
+		VIEW_MODE_THUMBNAIL = 1
+	};
+
+	int mCurrentViewMode;
+	QString mSearchFilter;
+	int mSortMethod;
+
+	void setIdentitiesViewMode(int mode);
 
 	TokenQueue *mIdentityQueue;
 	TokenQueue *mCirclesQueue;
