@@ -49,6 +49,7 @@ signals:
 	void zoomRequested(bool zoom_or_unzoom);
 
 protected:
+	virtual void mousePressEvent(QMouseEvent *e) override; // overriding so as to prevent right-click from triggering editTriggers
 	virtual void mouseMoveEvent(QMouseEvent *e) override; // overriding so as to manage auto-selection
 	virtual void leaveEvent(QEvent *e) override; // overriding so as to manage auto-selection clear
 	virtual void wheelEvent(QWheelEvent *e) override; // overriding so as to manage zoom

@@ -31,6 +31,7 @@
 #include <QDir>
 #include <QGridLayout>
 #include <QMenu>
+#include <QPointer>
 #include <QPainter>
 #include <QPlainTextEdit>
 #include <QTextDocumentFragment>
@@ -271,7 +272,7 @@ void RSTextBrowser::contextMenuEvent(QContextMenuEvent *event)
 {
 	emit calculateContextMenuActions();
 
-	QMenu *contextMenu = createStandardContextMenuFromPoint(event->pos());
+	QPointer<QMenu> contextMenu = createStandardContextMenuFromPoint(event->pos());
 
 	QList<QAction*>::iterator it;
 	for (it = mContextMenuActions.begin(); it != mContextMenuActions.end(); ++it) {
@@ -280,7 +281,7 @@ void RSTextBrowser::contextMenuEvent(QContextMenuEvent *event)
 
 	contextMenu->exec(QCursor::pos());
 
-	delete(contextMenu);
+	delete contextMenu;
 }
 
 QMenu *RSTextBrowser::createStandardContextMenuFromPoint(const QPoint &widgetPos)
