@@ -80,7 +80,7 @@
 #include "gui/GetStartedDialog.h"
 #endif
 
-#ifdef RS_USE_CIRCLES
+#ifdef RS_USE_NEW_PEOPLE
 #include "gui/People/PeopleDialog.h"
 #endif
 #include "idle/idle.h"
@@ -456,10 +456,10 @@ void MainWindow::initStackedPage()
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
 
-  #ifdef RS_USE_NEW_PEOPLE_DIALOG
+#ifdef RS_USE_NEW_PEOPLE
   PeopleDialog *peopleDialog = NULL;
   addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
-  #endif
+#endif
 #ifdef RS_USE_WIKI
   wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);

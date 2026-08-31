@@ -300,9 +300,7 @@ RsIdentityListModel::EntryIndex RsIdentityListModel::EntryIndex::parent() const
 		break;
         case ENTRY_TYPE_TOP_LEVEL:
                 std::cerr << "ERROR: calling parent() on entryindex with no parent!" << std::endl;
-
-    default:
-			//Can be when request root index.
+                i.type = ENTRY_TYPE_TOP_LEVEL;
 		break;
 	}
 
