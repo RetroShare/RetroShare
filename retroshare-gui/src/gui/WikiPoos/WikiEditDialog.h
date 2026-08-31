@@ -63,6 +63,16 @@ void  	generateMerge();
 void    historyItemChanged(QTreeWidgetItem *item, int column);
 void    updateMergeButtonState();
 
+void    onMarkdownHeading();
+void    onMarkdownBold();
+void    onMarkdownItalic();
+void    onMarkdownQuote();
+void    onMarkdownCode();
+void    onMarkdownLink();
+void    onMarkdownImage();
+void    onMarkdownUnorderedList();
+void    onMarkdownOrderedList();
+
 private:
 
 void 	updateHistoryStatus();
@@ -93,6 +103,9 @@ rstime_t getEditTimestamp(const RsGxsMessageId &msgId) const;
 QString getAuthorName(const RsGxsMessageId &msgId) const;
 QTreeWidgetItem *findHistoryItem(const RsGxsMessageId &msgId) const;
 void 	resetEditorState();
+
+void    insertMarkdownWrap(const QString &prefix, const QString &suffix);
+void    insertMarkdownBlockPrefix(const QString &prefix);
 
 
         bool mNewPage;
