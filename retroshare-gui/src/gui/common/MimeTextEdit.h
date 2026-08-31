@@ -52,12 +52,15 @@ public:
 	QVariant textColorQuotes() const { return highliter->textColorQuotes();}
 	bool onlyPlainText() const {return mOnlyPlainText;}
 
+	QString toHtml(const QByteArray &encoding = QByteArray()) const;
+
 	void setMaxBytes(int limit) {mMaxBytes = limit;}
 
 public slots:
 	void setTextColorQuote(QColor textColorQuote) { highliter->setTextColorQuote(textColorQuote);}
 	void setTextColorQuotes(QVariant textColorQuotes) { highliter->setTextColorQuotes(textColorQuotes);}
 	void setOnlyPlainText(bool bOnlyPlainText) {mOnlyPlainText = bOnlyPlainText;}
+	void updateLinkColor();
 
 signals:
 	void calculateContextMenuActions();
@@ -91,6 +94,7 @@ private:
 	RsSyntaxHighlighter *highliter;
 	bool mOnlyPlainText;
 	int mMaxBytes = -1;	//limit content size, for pasting images
+	QColor linkColor;
 };
 
 #endif // MIMETEXTEDIT_H
