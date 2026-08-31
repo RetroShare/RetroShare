@@ -64,6 +64,7 @@ private slots:
     void applyAndClose() ;
     void cancel() ;
     void reload() ;
+    void refreshGroups() ;
 
     static QString getGroupString(const std::list<RsNodeGroupId>& groups);
 private:
