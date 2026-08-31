@@ -52,6 +52,7 @@ jobs:
             mingw-w64-x86_64-sqlcipher
             mingw-w64-x86_64-qt5-base
             mingw-w64-x86_64-qt5-multimedia
+            mingw-w64-x86_64-qt5-charts
             mingw-w64-x86_64-ccmake
             mingw-w64-x86_64-rapidjson
             mingw-w64-x86_64-json-c
