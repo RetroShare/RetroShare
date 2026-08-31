@@ -137,6 +137,7 @@ private slots:
 	void showPostDetails();
 #endif
     void postContextMenu(const QPoint&);
+    void pinPost();
     void showAuthorInPeople();
     void tabCloseRequested(int index);
     void updateSorting(int);
