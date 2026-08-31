@@ -75,18 +75,30 @@ ShareManager::ShareManager()
 
     mEventHandlerId = 0;
 
+    // The dialog edits a local copy of the shared directories (mDirInfos) and
+    // only commits it in applyAndClose(). FRIEND_LIST events fire constantly
+    // while friends are online (status, connection, avatar, state string...),
+    // so they must NOT reload the list from the core: that silently discards
+    // the pending edits. Only the friend-group events matter here, and they
+    // only need the group names column to be refreshed, not a reload.
+
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
     {
-        RsQThreadUtils::postToObject([=]()
+        auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
+
+        if(!fe)
+            return;
+
+        switch(fe->mEventCode)
         {
-            auto fe = dynamic_cast<const RsFriendListEvent*>(e.get());
-
-            if(!fe)
-                return;
-
-            reload();
+        case RsFriendListEventCode::GROUP_ADDED:
+        case RsFriendListEventCode::GROUP_REMOVED:
+        case RsFriendListEventCode::GROUP_CHANGED:
+            RsQThreadUtils::postToObject([this]() { refreshGroups(); }, this );
+            break;
+        default:
+            break;
         }
-        , this );
     }, mEventHandlerId, RsEventType::FRIEND_LIST );
 
     QHeaderView* header = ui.shareddirList->horizontalHeader();
@@ -215,6 +227,24 @@ void ShareManager::shareddirListCustomPopupMenu( QPoint /*point*/ )
     contextMnu.exec(QCursor::pos());
 }
 
+// Friend groups changed: drop the groups that no longer exist from the
+// pending edits and redraw the group names, keeping the user's changes.
+void ShareManager::refreshGroups()
+{
+    for(uint32_t i=0;i<mDirInfos.size();++i)
+        for(auto it(mDirInfos[i].parent_groups.begin());it!=mDirInfos[i].parent_groups.end();)
+        {
+            RsGroupInfo groupInfo;
+
+            if(rsPeers->getGroupInfo(*it,groupInfo))
+                ++it;
+            else
+                it = mDirInfos[i].parent_groups.erase(it);
+        }
+
+    load();
+}
+
 void ShareManager::reload()
 {
     std::list<SharedDirInfo> dirs ;
@@ -297,8 +327,9 @@ void ShareManager::showYourself()
 {
     if(_instance == NULL)
         _instance = new ShareManager() ;
+    else if(_instance->isHidden())
+        _instance->reload() ;	// do not discard pending edits when the dialog is already open
 
-    _instance->reload() ;
     _instance->show() ;
     _instance->activateWindow();
 }
