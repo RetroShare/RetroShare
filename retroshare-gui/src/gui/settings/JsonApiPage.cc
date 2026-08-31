@@ -26,6 +26,7 @@
 #include "util/qtthreadsutils.h"
 
 #include <QTimer>
+#include <QMessageBox>
 #include <QStringListModel>
 #include <QProgressDialog>
 #include <QRegularExpression>
@@ -64,6 +65,9 @@ JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
     ui.listenAddressLineEdit->setValidator(ipValidator);
     ui.providersListView->setSelectionMode(QAbstractItemView::NoSelection);	// prevents edition.
 
+    ui.tokensListView->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui.tokensListView->setEditTriggers(QAbstractItemView::NoEditTriggers);	// prevents in-place edition of tokens
+
     mEventHandlerId = 0;
 
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e)
@@ -97,14 +101,16 @@ QString JsonApiPage::helpText() const
        The web interface for instance will automatically register its own token to the JSON API which will be visible \
         in the list of authenticated tokens after you enable it.</p>");
 }
+void JsonApiPage::setServerWidgetsEnabled(bool enabled)
+{
+	ui.applyConfigPushButton->setEnabled(enabled);
+	ui.portSpinBox->setEnabled(enabled);
+	ui.listenAddressLineEdit->setEnabled(enabled);
+}
+
 void JsonApiPage::enableJsonApi(bool checked)
 {
-	ui.addTokenPushButton->setEnabled(checked);
-	ui.applyConfigPushButton->setEnabled(checked);
-	ui.removeTokenPushButton->setEnabled(checked);
-	ui.tokensListView->setEnabled(checked);
-	ui.portSpinBox->setEnabled(checked);
-	ui.listenAddressLineEdit->setEnabled(checked);
+	setServerWidgetsEnabled(checked);
 
     Settings->setJsonApiEnabled(checked);
 
@@ -128,27 +134,41 @@ bool JsonApiPage::updateParams()
 	return ok;
 }
 
-void JsonApiPage::load()
+void JsonApiPage::updateTokenList()
 {
-    whileBlocking(ui.portSpinBox)->setValue(rsJsonApi->listeningPort());
-    whileBlocking(ui.listenAddressLineEdit)->setText(QString::fromStdString(rsJsonApi->getBindingAddress()));
-    whileBlocking(ui.enableCheckBox)->setChecked(rsJsonApi->isRunning());
-
-    QStringList newTk;
+	QStringList newTk;
 
 	for(const auto& it : rsJsonApi->getAuthorizedTokens())
 		newTk.push_back(
 		            QString::fromStdString(it.first) + ":" +
 		            QString::fromStdString(it.second) );
 
-    whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
+	QAbstractItemModel *oldModel = ui.tokensListView->model();
+	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk,ui.tokensListView));
+	delete oldModel;
+}
+
+void JsonApiPage::load()
+{
+    whileBlocking(ui.portSpinBox)->setValue(rsJsonApi->listeningPort());
+    whileBlocking(ui.listenAddressLineEdit)->setText(QString::fromStdString(rsJsonApi->getBindingAddress()));
+    whileBlocking(ui.enableCheckBox)->setChecked(rsJsonApi->isRunning());
+
+    // the check box is set whileBlocking, so the widgets it commands need to be
+    // synced explicitly, otherwise the page opens in an inconsistent state.
+
+    setServerWidgetsEnabled(rsJsonApi->isRunning());
+
+    updateTokenList();
 
     QStringList newTk2;
 
     for(const auto& it : rsJsonApi->getResourceProviders())
         newTk2.push_back( QString::fromStdString(it.get().getName())) ;
 
-    whileBlocking(ui.providersListView)->setModel(new QStringListModel(newTk2));
+    QAbstractItemModel *oldProvidersModel = ui.providersListView->model();
+    whileBlocking(ui.providersListView)->setModel(new QStringListModel(newTk2,ui.providersListView));
+    delete oldProvidersModel;
 
     if(rsJsonApi->isRunning())
         ui.statusLabelLED->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_LEDON)) ;
@@ -220,37 +240,61 @@ void JsonApiPage::addTokenClicked()
 	QString token(ui.tokenLineEdit->text());
     std::string user,passwd;
 
-	if(!RsJsonApi::parseToken(token.toStdString(),user,passwd)) return;
+	if(!RsJsonApi::parseToken(token.toStdString(),user,passwd))
+	{
+		QMessageBox::warning( this, tr("Invalid token"),
+		                      tr("Tokens should spell as \"user:password\", where both "
+		                         "user and password are alphanumeric strings.") );
+		return;
+	}
 
-	rsJsonApi->authorizeUser(user,passwd);
+	auto err = rsJsonApi->authorizeUser(user,passwd);
 
-    QStringList newTk;
+	if(err)
+		QMessageBox::warning( this, tr("Cannot add token"),
+		                      QString::fromStdString(err.message()) );
 
-	for(const auto& it : rsJsonApi->getAuthorizedTokens())
-		newTk.push_back(
-		            QString::fromStdString(it.first) + ":" +
-		            QString::fromStdString(it.second) );
+	updateTokenList();
+}
 
-	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
+QString JsonApiPage::selectedTokenUser() const
+{
+	// The list selection is what the user actually points at. The token line
+	// edit is only used as a fallback, for tokens typed by hand.
+
+	QString token;
+	const QModelIndex index = ui.tokensListView->currentIndex();
+
+	if(index.isValid() && ui.tokensListView->selectionModel()->isSelected(index))
+		token = index.data().toString();
+	else
+		token = ui.tokenLineEdit->text();
+
+	return token.section(':',0,0);	// the core indexes tokens by user, not by "user:password"
 }
 
 void JsonApiPage::removeTokenClicked()
 {
-    QString token(ui.tokenLineEdit->text());
-    std::string tokenStr = token.toStdString();
-    rsJsonApi->revokeAuthToken(tokenStr.substr(0, tokenStr.find_first_of(":")));
+	const QString user = selectedTokenUser();
 
-    QStringList newTk;
+	if(user.isEmpty())
+	{
+		QMessageBox::information( this, tr("No token selected"),
+		                          tr("Please select in the list below the token to remove.") );
+		return;
+	}
 
-    for(const auto& it : rsJsonApi->getAuthorizedTokens())
-        newTk.push_back(
-                    QString::fromStdString(it.first) + ":" +
-                    QString::fromStdString(it.second) );
+	if(!rsJsonApi->revokeAuthToken(user.toStdString()))
+		QMessageBox::warning( this, tr("Cannot remove token"),
+		                      tr("No authorization was found for user \"%1\".").arg(user) );
 
-    whileBlocking(ui.tokensListView)->setModel(new QStringListModel(Settings->getJsonApiAuthTokens()) );
+	ui.tokenLineEdit->clear();
+
+	updateTokenList();
 }
 
 void JsonApiPage::tokenClicked(const QModelIndex& index)
 {
-	ui.tokenLineEdit->setText(ui.tokensListView->model()->data(index).toString());
+	if(index.isValid())	// a click below the last item gives an invalid index
+		ui.tokenLineEdit->setText(index.data().toString());
 }
