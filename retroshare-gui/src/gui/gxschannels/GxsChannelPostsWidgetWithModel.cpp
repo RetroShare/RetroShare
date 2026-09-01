@@ -161,6 +161,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
     {
         painter->save();
         painter->setClipRect(option.rect);
+        painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
 
         // Constants to match legacy ChannelPostThumbnailView Exactly
         const float THUMBNAIL_OVERSAMPLE_FACTOR = 2.0;
