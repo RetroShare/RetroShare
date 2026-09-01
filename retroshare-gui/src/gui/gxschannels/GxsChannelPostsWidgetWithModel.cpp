@@ -23,6 +23,7 @@
 #include <QSignalMapper>
 #include <QPainter>
 #include <QMessageBox>
+#include <QTextLayout>
 
 #include "retroshare/rsgxscircles.h"
 
@@ -83,6 +84,36 @@ QColor SelectedColor = QRgb(0xff308dc7);
 #define IMAGE_UNREAD                 ":icons/png/message.png"
 
 Q_DECLARE_METATYPE(ChannelPostFileInfo)
+
+namespace
+{
+qreal wrappedTextHeight(const QString& text, const QFont& font, qreal width)
+{
+    if(text.isEmpty() || width <= 0.0)
+        return 0.0;
+
+    QTextLayout textLayout(text, font);
+    QTextOption textOption;
+    textOption.setWrapMode(QTextOption::WordWrap);
+    textLayout.setTextOption(textOption);
+
+    qreal height = 0.0;
+    textLayout.beginLayout();
+    while(true)
+    {
+        QTextLine line = textLayout.createLine();
+        if(!line.isValid())
+            break;
+
+        line.setLineWidth(width);
+        line.setPosition(QPointF(0.0, height));
+        height += line.height();
+    }
+    textLayout.endLayout();
+
+    return height;
+}
+}
 
 // Delegate used to paint into the table of thumbnails
 
@@ -298,48 +329,55 @@ QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
     const float DEFAULT_SIZE_IN_FONT_HEIGHT = 5.0; 
     const float FONT_SCALE_FACTOR = 1.5;
 
-    // Master Internal Geometry
-    float internal_W = 10.0 * font_height + 18.0; 
+    // Calculate the hint in the same final coordinate system used by paint().
+    // Measuring the title in the unscaled coordinate system and scaling the
+    // result afterwards produces platform-dependent rounding, especially with
+    // the Windows font engine, and leaves unused space below each grid row.
+    float internal_W = 10.0 * font_height + 18.0;
+    float cell_width = mZoom * COLUMN_SIZE_FONT_FACTOR_W * font_height;
+    float visual_scale = cell_width / internal_W;
+
     float base_h = DEFAULT_SIZE_IN_FONT_HEIGHT;
     if(mAspectRatio == ChannelPostThumbnailView::ASPECT_RATIO_2_3) base_h *= 1.5;
     else if(mAspectRatio == ChannelPostThumbnailView::ASPECT_RATIO_16_9) base_h *= 0.5625;
 
-    float img_H = THUMBNAIL_OVERSAMPLE_FACTOR * base_h * font_height;
-
-    float total_h = img_H + 18.0; // Image + top/bottom margins
+    float img_H = THUMBNAIL_OVERSAMPLE_FACTOR * base_h * font_height * visual_scale;
+    float cell_height = img_H + 18.0 * visual_scale; // Image + top/bottom margins
 
     if(mUseGrid)
     {
-         float text_W = 10.0 * font_height; // Text is 10fh wide in internal layout
+         float text_W = 10.0 * font_height * visual_scale;
 
          QString msg = QString::fromUtf8(post.mMeta.mMsgName.c_str());
          if(msg.length() > 30) msg = msg.left(30)+"...";
 
          QFont font = option.font;
-         font.setPointSizeF(FONT_SCALE_FACTOR * DEFAULT_SIZE_IN_FONT_HEIGHT / 5.0 * font.pointSizeF());
+         font.setPointSizeF(FONT_SCALE_FACTOR * DEFAULT_SIZE_IN_FONT_HEIGHT / 5.0
+                            * visual_scale * font.pointSizeF());
          if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
              font.setBold(true);
 
-         QFontMetricsF title_fm(font);
-         QRectF text_rect = title_fm.boundingRect(QRectF(0,0, text_W, 10000), Qt::TextWordWrap, msg);
-
-         total_h += text_rect.height();
-         total_h += 12.0 + 0.5 * font_height; // Spacing logic (increased to 12.0 to avoid descender clipping)
+         cell_height += wrappedTextHeight(msg, font, text_W);
+         cell_height += (6.0 + 0.5 * font_height) * visual_scale;
     }
 
-    float aspect_ratio = total_h / internal_W;
-
-    float cell_width  = mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height();
-    float cell_height = cell_width * aspect_ratio;
+#if defined(Q_OS_WIN)
+    /* Qt 5's Windows tree view adds about two unscaled font lines to the row
+     * returned by this custom delegate. Compensate here so the selection and
+     * the next row end immediately after the painted title. Keep enough room
+     * for the complete thumbnail in case a platform font is unusually small. */
+    const float minimum_height = img_H + 2.0f * 9.0f * visual_scale;
+    cell_height = std::max(minimum_height, cell_height - 2.0f * font_height);
+#endif
 
 #ifdef DEBUG_CHANNEL_POSTS_WIDGET
     RsDbg() << "SizeHint: mUseGrid=" << mUseGrid << " cell_width=" << cell_width << " cell_height=" << cell_height << " mZoom=" << mZoom ;
 #endif
 
     if(mUseGrid || index.column()==0)
-        return QSize(cell_width,cell_height);
+        return QSize(ceil(cell_width),ceil(cell_height));
     else
-        return QSize(option.rect.width()-cell_width,cell_height);
+        return QSize(option.rect.width()-ceil(cell_width),ceil(cell_height));
 }
 
 void ChannelPostDelegate::setWidgetGrid(bool use_grid)
