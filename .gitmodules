@@ -20,7 +20,7 @@
 	url = https://github.com/i2p/libsam3.git
 [submodule "supportlibs/jni.hpp"]
 	path = supportlibs/jni.hpp
-	url = https://github.com/RetroShare/jni.hpp.git
+	url = https://github.com/RetroShare/jni-hpp.git
 [submodule "openpgpsdk"]
 	path = openpgpsdk
 	url = https://github.com/RetroShare/OpenPGP-SDK.git
