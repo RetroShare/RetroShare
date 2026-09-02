@@ -27,6 +27,7 @@
 
 #include <retroshare/rsturtle.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsconfig.h>
 #include "TurtleRouterStatistics.h"
 #include "TurtleRouterDialog.h"
 #include "GxsNetTunnelsDialog.h"
@@ -345,7 +346,22 @@ void TurtleRouterStatisticsWidget::updateTunnelStatistics(const std::vector<std:
 
 	painter.drawText(ox+2*cellx,oy+celly,tr("TR Forward probabilities")+"\t: " + prob_string ) ; 
 	oy += celly ;
-	oy += celly ;
+	oy += celly;
+
+	// Display cumulative turtle traffic statistics (KB/MB/GB)
+	RsCumulativeTrafficStats turtleCumStats;
+	if(rsConfig->getTotalCumulativeTraffic(turtleCumStats)) {
+		painter.setPen(QColor::fromRgb(70,70,70)) ;
+		painter.drawLine(0,oy,maxWidth,oy) ;
+		oy += celly ;
+		
+		painter.drawText(ox,oy+celly,tr("Cumulative Total Traffic")+":") ; 
+		oy += celly*2 ;
+		painter.drawText(ox+2*cellx,oy+celly,tr("Total Received")+"\t: " + dataSizeString(turtleCumStats.bytesIn)) ; 
+		oy += celly ;
+		painter.drawText(ox+2*cellx,oy+celly,tr("Total Sent")+"\t: " + dataSizeString(turtleCumStats.bytesOut)) ; 
+		oy += celly ;
+	}
 
 	// update the pixmap
 	//
@@ -361,6 +377,19 @@ QString TurtleRouterStatisticsWidget::speedString(float f)
 		return QString::number((int)f)+" B/s" ;
 
 	return QString::number(f/1024.0,'f',2) + " KB/s";
+}
+
+QString TurtleRouterStatisticsWidget::dataSizeString(uint64_t bytes)
+{
+	// Format bytes into human-readable KB/MB/GB
+	if(bytes < 1024ULL)
+		return QString::number(bytes) + " B";
+	if(bytes < 1024ULL * 1024ULL)
+		return QString::number(bytes / 1024.0, 'f', 2) + " KB";
+	if(bytes < 1024ULL * 1024ULL * 1024ULL)
+		return QString::number(bytes / (1024.0 * 1024.0), 'f', 2) + " MB";
+	
+	return QString::number(bytes / (1024.0 * 1024.0 * 1024.0), 'f', 2) + " GB";
 }
 
 void TurtleRouterStatisticsWidget::paintEvent(QPaintEvent */*event*/)
