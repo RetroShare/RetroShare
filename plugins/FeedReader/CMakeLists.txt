@@ -17,6 +17,7 @@ set(CMAKE_AUTOUIC ON)
 set(FEEDREADER_SOURCES
     FeedReaderPlugin.cpp
     services/p3FeedReader.cc
+    services/FeedReaderJsonApi.cpp
     services/p3FeedReaderThread.cc
     services/rsFeedReaderItems.cc
     gui/FeedReaderDialog.cpp
@@ -105,7 +106,7 @@ if(WIN32)
     # (Linux) the loader resolves these symbols from the hosting retroshare-gui
     # process at load time, so this explicit link is only needed on Windows.
     target_link_libraries(FeedReader PRIVATE retroshare retroshare-gui)
-    target_compile_definitions(FeedReader PRIVATE WINDOWS_SYS)
+    target_compile_definitions(FeedReader PRIVATE WINDOWS_SYS WIN_DLL_EXPORT)
 endif()
 
 target_link_libraries(FeedReader PRIVATE
@@ -123,6 +124,13 @@ target_link_libraries(FeedReader PRIVATE
 target_compile_options(FeedReader PRIVATE "-Wno-deprecated-declarations")
 target_compile_definitions(FeedReader PRIVATE RS_NO_WARN_DEPRECATED)
 
+# RapidJSON 1.1 contains an intentionally unusable assignment operator for
+# GenericStringRef. GCC 15 diagnoses its body eagerly unless this warning is
+# disabled (older GCC versions do not know this option).
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 15)
+    target_compile_options(FeedReader PRIVATE "-Wno-template-body")
+endif()
+
 if(RS_DEVELOPMENT_BUILD)
     target_compile_options(FeedReader PRIVATE "-g" "-O0")
 endif()
@@ -138,7 +146,14 @@ target_include_directories(FeedReader PRIVATE
     ${CMAKE_SOURCE_DIR}/retroshare-gui/src
     ${CMAKE_SOURCE_DIR}/retroshare-gui/src/gui
     ${CMAKE_SOURCE_DIR}/supportlibs/rapidjson/include
+    ${CMAKE_SOURCE_DIR}/supportlibs/restbed/include
 )
+
+if(TARGET restbed-static)
+    target_link_libraries(FeedReader PRIVATE restbed-static)
+elseif(TARGET restbed-shared)
+    target_link_libraries(FeedReader PRIVATE restbed-shared)
+endif()
 
 # --- Installation ---
 install(TARGETS FeedReader DESTINATION lib/retroshare/plugins)
