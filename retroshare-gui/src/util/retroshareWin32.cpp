@@ -30,38 +30,7 @@
 #include <shlobj.h>
 #endif
 
-#include <QDir>
 #include "retroshareWin32.h"
-
-
-/** Finds the location of the "special" Windows folder using the given CSIDL
- * value. If the folder cannot be found, the given default path is used. */
-QString
-win32_get_folder_location(int /*folder*/, QString defaultPath)
-{
-#if 0
-  TCHAR path[MAX_PATH+1];
-  LPITEMIDLIST idl;
-  IMalloc *m;
-  HRESULT result;
-
-  /* Find the location of %PROGRAMFILES% */
-  if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, folder, &idl))) {
-    /* Get the path from the IDL */
-    result = SHGetPathFromIDList(idl, path);
-    SHGetMalloc(&m);
-    if (m) {
-      m->Release();
-    }
-    if (SUCCEEDED(result)) {
-      QT_WA(return QString::fromUtf16((const ushort *)path);,
-            return QString::fromLocal8Bit((char *)path);)
-    }
-  }
-#endif
-
-  return defaultPath;
-}
 
 /** Returns the value in keyName at keyLocation. 
  *  Returns an empty QString if the keyName doesn't exist */
@@ -151,31 +120,3 @@ win32_registry_remove_key(QString keyLocation, QString keyName)
   Q_UNUSED(keyName);
 #endif
 }
-
-/** Gets the location of the user's %PROGRAMFILES% folder. */
-QString
-win32_program_files_folder()
-{
-  return win32_get_folder_location(
-#if 0
-     CSIDL_PROGRAM_FILES, 
-#else
-     0, 
-#endif
-	  QDir::rootPath() + "\\Program Files");
-}
-
-/** Gets the location of the user's %APPDATA% folder. */
-QString
-win32_app_data_folder()
-{
-  return win32_get_folder_location(
-#if 0
-      CSIDL_APPDATA, 
-#else
-      0, 
-#endif
-			QDir::homePath() + "\\Application Data");
-
-}
-

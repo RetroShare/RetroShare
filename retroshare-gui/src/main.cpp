@@ -326,11 +326,13 @@ int main(int argc, char *argv[])
     qt_use_native_dialogs = false;
 #endif
 
+    QString applicationFilePath;
     {
         /* Set the current directory to the application dir,
            because the start dir with autostart from the registry run key is not the exe dir */
         QApplication app(argc, argv);
         QDir::setCurrent(QCoreApplication::applicationDirPath());
+        applicationFilePath = QCoreApplication::applicationFilePath();
     }
 #endif
 #ifdef SIGFPE_DEBUG
@@ -427,7 +429,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
     // Now start RS login system
 
-    conf.main_executable_path = argv[0];
+    conf.main_executable_path = applicationFilePath.toStdString();
 
     int initResult = RsInit::InitRetroShare(conf);
 
@@ -587,9 +589,10 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
         // Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
 
-        std::string tor_hidden_service_dir = RsAccounts::AccountDirectory() + "/hidden_service/" ;
+        std::string account_directory = RsAccounts::AccountDirectory();
+        std::string tor_hidden_service_dir = account_directory + "/hidden_service/" ;
 
-        RsTor::setTorDataDirectory(RsApplication::dataDirectory().toStdString() + "/tor/");
+        RsTor::setTorDataDirectory(account_directory + "/tor/");
         RsTor::setHiddenServiceDirectory(tor_hidden_service_dir);	// re-set it, because now it's changed to the specific location that is run
 
         RsDirUtil::checkCreateDirectory(std::string(tor_hidden_service_dir)) ;

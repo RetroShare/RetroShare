@@ -559,41 +559,6 @@ void RsApplication::initPlugins()
     LanguageSupport::translatePlugins(options.language);
 }
 
-/** Returns the directory RetroShare uses for its data files. */
-QString RsApplication::dataDirectory()
-{
-    if(!options.optBaseDir.empty())
-        return QString::fromUtf8(options.optBaseDir.c_str());
-    else
-        return defaultDataDirectory();
-}
-
-/** Returns the default location of RetroShare's data directory. */
-QString
-RsApplication::defaultDataDirectory()
-{
-#if defined(Q_OS_WIN)
-  return (win32_app_data_folder() + "\\RetroShare");
-#else
-  return (QDir::homePath() + "/.retroshare");
-#endif
-}
-
-/** Creates RsApplication's data directory, if it doesn't already exist. */
-bool
-RsApplication::createDataDirectory(QString *errmsg)
-{
-  QDir datadir(dataDirectory());
-  if (!datadir.exists()) {
-    QString path = datadir.absolutePath();
-    if (!datadir.mkpath(path)) {
-      return err(errmsg, 
-                 tr("Could not create data directory: %1").arg(path));
-    }
-  }
-  return true;
-}
-
 /** Set RsApplication's data directory - externally */
 bool RsApplication::setConfigDirectory(const QString& dir)
 {
