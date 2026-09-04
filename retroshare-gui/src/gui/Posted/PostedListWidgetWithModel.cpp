@@ -366,12 +366,26 @@ void PostedListWidgetWithModel::postContextMenu(const QPoint& point)
 
     menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR), tr("Show author in People tab"), this, SLOT(showAuthorInPeople()))->setData(index);
 
-#ifdef TODO
-    // This feature is not implemented yet in libretroshare.
+    // Own posts can always be edited by their author. Board admins can also
+    // edit any post, similarly to what is already done for forums.
 
-    if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
-        menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
-#endif
+    bool can_edit = rsIdentity->isOwnId(post.mMeta.mAuthorId)
+                     || IS_GROUP_ADMIN(mGroup.mMeta.mSubscribeFlags);
+
+    if(can_edit)
+        menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()))->setData(index);
+
+    // Sticking ("pinning") a post to the top of the feed is an admin-only
+    // moderation action, similarly to what is already done for forums.
+
+    if(IS_GROUP_ADMIN(mGroup.mMeta.mSubscribeFlags))
+    {
+        bool is_pinned = mGroup.mPinnedPosts.ids.find(post.mMeta.mMsgId) != mGroup.mPinnedPosts.ids.end();
+
+        menu.addAction( FilesDefs::getIconFromQtResourcePath(":/images/pin32.png"),
+                         is_pinned ? tr("Un-pin this post") : tr("Pin this post up"),
+                         this, SLOT(togglePinPost()))->setData(index);
+    }
 
     menu.exec(QCursor::pos());
 }
@@ -537,16 +551,48 @@ void PostedListWidgetWithModel::copyMessageLink()
     }
 }
 
-#ifdef TODO
 void PostedListWidgetWithModel::editPost()
 {
     QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
-	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
 
-	CreatePostedMsg *msgDialog = new CreatePostedMsg(post.mMeta.mGroupId,post.mMeta.mMsgId);
+    if(!index.isValid())
+        return;
+
+    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
+
+    if(post.mMeta.mMsgId.isNull())
+        return;
+
+    PostedCreatePostDialog *msgDialog = new PostedCreatePostDialog(rsPosted,post.mMeta.mGroupId,post.mMeta.mAuthorId,post.mMeta.mMsgId);
     msgDialog->show();
+
+    /* window will destroy itself! */
 }
-#endif
+
+void PostedListWidgetWithModel::togglePinPost()
+{
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+
+    if(!index.isValid())
+        return;
+
+    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
+
+    if(post.mMeta.mMsgId.isNull())
+        return;
+
+    if(mGroup.mPinnedPosts.ids.find(post.mMeta.mMsgId) == mGroup.mPinnedPosts.ids.end())
+        mGroup.mPinnedPosts.ids.insert(post.mMeta.mMsgId);
+    else
+        mGroup.mPinnedPosts.ids.erase(post.mMeta.mMsgId);
+
+    uint32_t token;
+    rsPosted->updateGroup(token,mGroup);
+
+    // The actual model/view update will be triggered by libretroshare using
+    // the rsEvent system once the board data is updated (RsPostedEventCode
+    // ::PINNED_POSTS_CHANGED / UPDATED_POSTED_GROUP).
+}
 
 void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
@@ -576,6 +622,7 @@ void PostedListWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const Rs
 		case RsPostedEventCode::UPDATED_POSTED_GROUP:    [[fallthrough]];
 		case RsPostedEventCode::UPDATED_MESSAGE:         [[fallthrough]];
 		case RsPostedEventCode::BOARD_DELETED:           [[fallthrough]];
+		case RsPostedEventCode::PINNED_POSTS_CHANGED:    [[fallthrough]];
 		case RsPostedEventCode::SYNC_PARAMETERS_UPDATED:
 		{
 			if(e->mPostedGroupId == groupId())
