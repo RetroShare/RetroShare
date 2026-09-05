@@ -299,6 +299,9 @@ QString filedialog_existing_directory_hook(QWidget *parent, const QString &capti
 
 int main(int argc, char *argv[])
 {
+    /* On Windows argv[0] does not always contain the full path, so the real
+       one is fetched below through QCoreApplication::applicationFilePath(). */
+    QString applicationFilePath = QString::fromLocal8Bit(argv[0]);
 #ifdef WINDOWS_SYS
     // The current directory of the application is changed when using the native dialog on Windows
     // This is a quick fix until libretroshare is using a absolute path in the portable Version
@@ -326,7 +329,6 @@ int main(int argc, char *argv[])
     qt_use_native_dialogs = false;
 #endif
 
-    QString applicationFilePath;
     {
         /* Set the current directory to the application dir,
            because the start dir with autostart from the registry run key is not the exe dir */
