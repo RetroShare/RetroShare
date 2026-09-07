@@ -59,25 +59,34 @@ cmake_dependent_option(
 
 ################################################################################
 
+################################################################################
+## Offline build guard. Several dependencies fall back to FetchContent (network
+## download at configure time) when their local sources are absent. For
+## offline/distribution builds (e.g. a Debian source package) that fallback must
+## be a hard error: it would silently build against an unpinned upstream tip.
+option(
+	RS_FETCH_MISSING_DEPS
+	"Allow downloading missing dependencies at configure time via FetchContent. Turn OFF for offline/distribution builds: a missing dependency then stops the configure with an explicit error instead of a silent network download." ON )
+
+macro(rs_fetch_fallback_guard RS_FFG_DEP_NAME)
+	if(RS_FETCH_MISSING_DEPS)
+		message(STATUS "${RS_FFG_DEP_NAME} not found locally, downloading it via FetchContent (pass -DRS_FETCH_MISSING_DEPS=OFF to make this an error)")
+	else()
+		message(FATAL_ERROR "${RS_FFG_DEP_NAME} not found locally and RS_FETCH_MISSING_DEPS is OFF: refusing to download it at configure time. Provide its sources (git submodule / complete source tarball) or the system library." )
+	endif()
+endmacro()
+################################################################################
+
 set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)
 
 # Find required dependencies
 # find_package for Botan and json-c failed to populate variables, remove them.
 # find_package(Botan 3 REQUIRED)
-# message(STATUS "Botan_FOUND=${Botan_FOUND}")
-# message(STATUS "BOTAN_LIBRARIES=${BOTAN_LIBRARIES}")
-# message(STATUS "BOTAN_INCLUDE_DIRS=${BOTAN_INCLUDE_DIRS}")
-# 
-# find_package(json-c REQUIRED)
-# message(STATUS "json-c_FOUND=${json-c_FOUND}")
-# message(STATUS "JSON-C_LIBRARIES=${JSON-C_LIBRARIES}")
-# message(STATUS "JSON-C_INCLUDE_DIRS=${JSON-C_INCLUDE_DIRS}")
-
-find_package(ZLIB REQUIRED)
-find_package(BZip2 REQUIRED)
-
-find_package(Git REQUIRED)
+# Git is optional: it is only used to stamp versions (git describe, with a
+# Source_Version file fallback for source tarballs) and by the FetchContent
+# network fallbacks, which are guarded by RS_FETCH_MISSING_DEPS.
+find_package(Git)
 
 ################################################################################
 
@@ -120,6 +129,7 @@ if(NOT TARGET retroshare)
 		add_subdirectory(
 			"${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libretroshare" )
 	else()
+		rs_fetch_fallback_guard(libretroshare)
 		FetchContent_Declare(
 			libretroshare
 			GIT_REPOSITORY "https://github.com/RetroShare/libretroshare.git"
@@ -183,6 +193,7 @@ if(RS_WEBUI)
 		add_subdirectory(
 			"${RS_WEBUI_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/webui" )
 	else()
+		rs_fetch_fallback_guard(webui)
 		FetchContent_Declare(
 			webui
 			GIT_REPOSITORY "https://github.com/RetroShare/RSNewWebUI.git"
