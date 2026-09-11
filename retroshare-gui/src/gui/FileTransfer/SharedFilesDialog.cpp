@@ -110,8 +110,8 @@ const QString Image_AddNewAssotiationForFile = ":/icons/svg/options.svg";
 class SFDSortFilterProxyModel : public QSortFilterProxyModel
 {
 public:
-    SFDSortFilterProxyModel(RetroshareDirModel *dirModel, QObject *parent) 
-        : QSortFilterProxyModel(parent), m_uploadedOnly(false)
+    SFDSortFilterProxyModel(RetroshareDirModel *dirModel, QObject *parent)
+        : QSortFilterProxyModel(parent), m_uploadedOnly(false), m_hideFilesIHave(false)
     {
         m_dirModel = dirModel;
         setDynamicSortFilter(false);
@@ -136,10 +136,19 @@ public:
         }
     }
 
+    void setHideFilesIHave(bool val) {
+        if (m_hideFilesIHave != val) {
+             m_hideFilesIHave = val;
+             // See setUploadedOnly() above for why invalidate() and not
+             // invalidateFilter().
+             invalidate();
+        }
+    }
+
 protected:
     virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
     {
-        if (m_uploadedOnly) {
+        if (m_uploadedOnly || m_hideFilesIHave) {
             QModelIndex source_index = sourceModel()->index(source_row, 0, source_parent);
             void *ref = source_index.internalPointer();
 
@@ -148,7 +157,14 @@ protected:
                 return false;
             }
 
-            if (!m_dirModel->hasUploads(ref)) {
+            if (m_uploadedOnly && !m_dirModel->hasUploads(ref)) {
+                return false;
+            }
+
+            // isSharedByMe() is true once *everything* under this node is
+            // already in our own shares, i.e. there is nothing new left to
+            // see here, so we hide it.
+            if (m_hideFilesIHave && m_dirModel->isSharedByMe(ref)) {
                 return false;
             }
         }
@@ -171,6 +187,7 @@ protected:
 private:
     RetroshareDirModel *m_dirModel;
     bool m_uploadedOnly;
+    bool m_hideFilesIHave;
 };
 
 // This class allows to draw the item in the share flags column using an appropriate size
@@ -338,6 +355,11 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
 {
     connect(ui.uploadedOnly_CB, SIGNAL(toggled(bool)), this, SLOT(filterUploadedOnlyToggled(bool)));
 
+    // Every file here is by definition already in our own shares, so
+    // "Hide files I have" (meant for the friends' file list) would hide
+    // everything - hide the checkbox itself instead.
+    ui.hideFilesIHave_CB->hide();
+
     // Ensure proper columns are visible for local sharing
     ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, false) ;
     ui.downloadButton->hide() ;
@@ -365,6 +387,8 @@ RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
     ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_WN_VISU_DIR, true) ;
     ui.dirTreeView->setColumnHidden(SHARED_FILES_DIALOG_COLUMN_UPLOADED, true) ;
     ui.checkButton->hide() ;
+
+    connect(ui.hideFilesIHave_CB, SIGNAL(toggled(bool)), this, SLOT(filterHideFilesIHaveToggled(bool)));
 
     connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadRemoteSelected()));
     connect(ui.dirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), this, SLOT(   expanded(const QModelIndex & ) ) );
@@ -506,6 +530,11 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
         if(flat_proxyModel) flat_proxyModel->setUploadedOnly(ui.uploadedOnly_CB->isChecked());
     }
 
+    if(ui.hideFilesIHave_CB) {
+        if(tree_proxyModel) tree_proxyModel->setHideFilesIHave(ui.hideFilesIHave_CB->isChecked());
+        if(flat_proxyModel) flat_proxyModel->setHideFilesIHave(ui.hideFilesIHave_CB->isChecked());
+    }
+
     showProperColumns() ;
 
     std::set<std::string> expanded_indexes,hidden_indexes,selected_indexes ;
@@ -538,6 +567,8 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
     FilterItems();
 
     // MODIFICATION: Expand tree if "Uploaded Only" is active, otherwise items remain hidden in collapsed folders.
+    // "Hide files I have" deliberately does not force expansion - see
+    // filterHideFilesIHaveToggled() - so it is not part of this condition.
     if(viewTypeIndex==VIEW_TYPE_TREE && ui.uploadedOnly_CB && ui.uploadedOnly_CB->isChecked()) {
         expandAll();
     }
@@ -1660,7 +1691,9 @@ void SharedFilesDialog::filterUploadedOnlyToggled(bool checked)
     if(ui.viewType_CB->currentIndex() == VIEW_TYPE_TREE) {
         if (checked) expandAll();
         else {
-             // MODIFICATION: Do not collapse if we have a text filter active, otherwise results are hidden.
+             // MODIFICATION: Do not collapse if we have a text filter active,
+             // otherwise results are hidden. ("Hide files I have" doesn't
+             // force expansion itself, so it isn't part of this condition.)
              if (ui.filterPatternLineEdit->text().length() >= 3) {
                   expandAll();
              } else {
@@ -1668,6 +1701,40 @@ void SharedFilesDialog::filterUploadedOnlyToggled(bool checked)
              }
         }
     }
+}
+
+/**
+ * Handles the "Hide files I have" checkbox logic, mirroring
+ * filterUploadedOnlyToggled() above.
+ */
+void SharedFilesDialog::filterHideFilesIHaveToggled(bool checked)
+{
+    if (ui.dirTreeView->selectionModel()) {
+        ui.dirTreeView->selectionModel()->clear();
+    }
+
+    // Turning this on/off in the friends' file view (re)computes which of a
+    // friend's files/folders we already share ourselves - unlike
+    // filterUploadedOnlyToggled() above, this is NOT free: walking a
+    // friend's remote tree needs a core fetch per node. It is only ever
+    // done here, on this explicit user action, never silently on every
+    // background directory refresh - see setComputeSharedByMeInfo(). Do
+    // this before touching the proxy filters, so isSharedByMe() already
+    // has fresh data by the time they invalidate().
+    if (tree_model) tree_model->setComputeSharedByMeInfo(checked);
+    if (flat_model) flat_model->setComputeSharedByMeInfo(checked);
+
+    if (tree_proxyModel) tree_proxyModel->setHideFilesIHave(checked);
+    if (flat_proxyModel) flat_proxyModel->setHideFilesIHave(checked);
+
+    // Deliberately do NOT expandAll()/collapseAll() here, unlike
+    // filterUploadedOnlyToggled() above. expandAll() opens every folder
+    // that still has anything visible in it - for this filter that is
+    // most of a friend's tree (everything except what's fully redundant),
+    // so on a large share it both takes a long time and dumps a huge,
+    // fully-unfolded list on screen. Leave whatever the user already had
+    // open/closed as it was; already-visible folders get their filtered
+    // contents, and folders left collapsed can still be opened normally.
 }
 
 void SharedFilesDialog::updateDirTreeView()

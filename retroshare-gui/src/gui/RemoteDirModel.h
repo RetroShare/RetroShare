@@ -87,6 +87,20 @@ class RetroshareDirModel : public QAbstractItemModel
 		// MODIFICATION A: Virtual method to check if a branch has cumulative uploads
 		virtual bool hasUploads(void *ref) const = 0;
 
+		// Whether this file (or, for a directory/friend node, *every* file
+		// beneath it) also exists in our own local shares - true means
+		// there is nothing new left under this node, so it is safe to hide
+		// entirely when filtering out what we already have.
+		virtual bool isSharedByMe(void *ref) const = 0;
+
+		// Enable/disable computing the data isSharedByMe() needs for a
+		// friend's remote tree. This is expensive there (every node needs a
+		// fresh fetch from the core - see requestDirDetails()), so it
+		// should only be turned on while the "Hide files I have" filter is
+		// actually in use. No-op by default (e.g. for local mode, where
+		// isSharedByMe() is trivially always true and nothing to compute).
+		virtual void setComputeSharedByMeInfo(bool /*enabled*/) {}
+
 		virtual void update() {}
 		virtual void updateRef(const QModelIndex&) const =0;
 
@@ -213,6 +227,8 @@ class TreeStyle_RDM: public RetroshareDirModel
 
 		// MODIFICATION B: Implementation for Tree Style
 		virtual bool hasUploads(void *ref) const;
+		virtual bool isSharedByMe(void *ref) const;
+		virtual void setComputeSharedByMeInfo(bool enabled);
 
 	private slots:
 		void showEmpty(const bool value);
@@ -220,6 +236,11 @@ class TreeStyle_RDM: public RetroshareDirModel
 	private:
 		QAction *_showEmptyAct;
 		bool _showEmpty;
+
+		// Whether the (expensive, in remote mode) sharedByMeCount aggregate
+		// computed by recalculateDirectoryTotals() is currently wanted -
+		// see setComputeSharedByMeInfo().
+		bool _computeSharedByMeInfo = false;
 
         // Helper to calculate total recursive statistics per directory (Files count, Size, Uploads)
         void recalculateDirectoryTotals();
@@ -229,13 +250,15 @@ class TreeStyle_RDM: public RetroshareDirModel
 			uint64_t size;
 			uint32_t count;
 			uint64_t uploads;
-			
-			FolderStats() : size(0), count(0), uploads(0) {}
+			uint32_t sharedByMeCount; // how many of the files under here (recursively) are also in our own shares
+
+			FolderStats() : size(0), count(0), uploads(0), sharedByMeCount(0) {}
 
 			FolderStats& operator+=(const FolderStats& s) {
 				size += s.size;
 				count += s.count;
 				uploads += s.uploads;
+				sharedByMeCount += s.sharedByMeCount;
 				return *this;
 			}
 		};
@@ -275,7 +298,8 @@ class FlatStyle_RDM: public RetroshareDirModel
 		virtual void updateRef(const QModelIndex&) const {}
 		// MODIFICATION H: Implement hasUploads for Flat Style to fix compilation
 		virtual bool hasUploads(void *ref) const;
-		
+		virtual bool isSharedByMe(void *ref) const;
+
         // MODIFICATION: Override data() to use internal cache for Flat View
         virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
@@ -305,6 +329,7 @@ class FlatStyle_RDM: public RetroshareDirModel
             uint32_t mtime;
             uint64_t uploads;
             bool hasUploads;
+            bool sharedByMe;
         };
         std::map<void*, CachedFileDetails> m_cache;
 

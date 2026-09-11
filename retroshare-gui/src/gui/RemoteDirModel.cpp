@@ -142,6 +142,14 @@ static bool isNewerThanEpoque(uint32_t ts)
     return ts > 0 ;	// this should be conservative enough
 }
 
+// A file counts as "shared by me" when its hash also exists in our own
+// local shared directories, independent of who is asking about it.
+static bool isHashSharedByMe(const RsFileHash& hash)
+{
+    FileInfo info;
+    return rsFiles->FileDetails(hash, RS_FILE_HINTS_LOCAL, info);
+}
+
 void RetroshareDirModel::treeStyle()
 {
 	categoryIcon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/folder.png"), QIcon::Normal, QIcon::Off);
@@ -153,13 +161,27 @@ void TreeStyle_RDM::recalculateDirectoryTotals()
 {
     m_folderTotals.clear();
 
-    // Stats are primarily calculated for local files. 
-    // For remote files, branch stats are limited by what the core provides.
-    if(RemoteMode)
+    // Walking a friend's whole remote tree is expensive: the one-entry
+    // requestDirDetails() cache gets thrashed by the recursion, so every
+    // single node ends up needing a fresh fetch from the core. Only pay
+    // that cost while something actually needs the result: our own local
+    // shares always need it (size/count/uploads columns); a friend's tree
+    // only needs it while "Hide files I have" is active - see
+    // setComputeSharedByMeInfo().
+    if(RemoteMode && !_computeSharedByMeInfo)
         return;
 
     // Start recursion from Root (NULL)
     collectStatsRecursive(NULL);
+}
+
+void TreeStyle_RDM::setComputeSharedByMeInfo(bool enabled)
+{
+    if(_computeSharedByMeInfo != enabled)
+    {
+        _computeSharedByMeInfo = enabled;
+        update();
+    }
 }
 
 TreeStyle_RDM::FolderStats TreeStyle_RDM::collectStatsRecursive(void* ref)
@@ -180,7 +202,12 @@ TreeStyle_RDM::FolderStats TreeStyle_RDM::collectStatsRecursive(void* ref)
     {
         stats.size = details.size;
         stats.count = 1;
-        stats.uploads = rsFiles->getCumulativeUpload(details.hash);
+        stats.sharedByMeCount = isHashSharedByMe(details.hash) ? 1 : 0;
+
+        // Uploads aren't ours to report for a friend's file - only
+        // meaningful (and only ever displayed) for our own local shares.
+        if(!RemoteMode)
+            stats.uploads = rsFiles->getCumulativeUpload(details.hash);
 
         // Special handling for Extra Files (virtual root)
         if (details.type == DIR_TYPE_EXTRA_FILE) 
@@ -199,8 +226,11 @@ TreeStyle_RDM::FolderStats TreeStyle_RDM::collectStatsRecursive(void* ref)
             stats += collectStatsRecursive(child.ref);
         }
 
-        // If this is a real directory, store the aggregated totals
-        if(details.type == DIR_TYPE_DIR)
+        // Store the aggregated totals for real directories, and also for a
+        // friend's root node (DIR_TYPE_PERSON) so isSharedByMe() can tell
+        // whether *every* one of that friend's files is also in our own
+        // shares (in which case the whole node has nothing new to hide to).
+        if(details.type == DIR_TYPE_DIR || details.type == DIR_TYPE_PERSON)
         {
             QString path = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
             m_folderTotals[path] = stats;
@@ -237,7 +267,31 @@ bool TreeStyle_RDM::hasUploads(void *ref) const
         return (it != m_folderTotals.end()) ? (it->second.uploads > 0) : false;
     }
 
-    return true; 
+    return true;
+}
+
+// Check if a file (or, for a directory/friend node, any file beneath it)
+// also exists in our own local shares.
+bool TreeStyle_RDM::isSharedByMe(void *ref) const
+{
+    if (ref == NULL) return false;
+
+    DirDetails details;
+    if (!requestDirDetails(ref, RemoteMode, details)) return false;
+
+    if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE)
+        return isHashSharedByMe(details.hash);
+
+    if (details.type == DIR_TYPE_DIR || details.type == DIR_TYPE_PERSON) {
+        QString path = QDir::cleanPath(QString::fromUtf8(details.path.c_str()));
+        auto it = m_folderTotals.find(path);
+        // An empty folder has nothing to hide either way; only claim
+        // "fully shared by me" once every contained file actually matches.
+        if (it == m_folderTotals.end() || it->second.count == 0) return false;
+        return it->second.sharedByMeCount == it->second.count;
+    }
+
+    return false;
 }
 
 void TreeStyle_RDM::update()
@@ -1949,6 +2003,7 @@ void FlatStyle_RDM::updateRefs()
                     cfd.uploadStr = x ? misc::friendlyUnit(x) : QString();
                     cfd.uploads = x;
                     cfd.hasUploads = (x > 0);
+                    cfd.sharedByMe = isHashSharedByMe(details.hash);
                     cfd.size = details.size;
                     cfd.mtime = details.max_mtime;
 
@@ -2019,6 +2074,29 @@ bool FlatStyle_RDM::hasUploads(void *ref) const
 
     if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE) {
         return rsFiles->getCumulativeUpload(details.hash) > 0;
+    }
+
+    return false;
+}
+
+// isSharedByMe for FlatStyle - mirrors hasUploads() above
+bool FlatStyle_RDM::isSharedByMe(void *ref) const
+{
+    if (ref == NULL) return false;
+
+    RS_STACK_MUTEX(_ref_mutex);
+    auto it = m_cache.find(ref);
+    if (it != m_cache.end())
+    {
+        return it->second.sharedByMe;
+    }
+
+    // Fallback if not in cache (should be rare in steady state)
+    DirDetails details;
+    if (!requestDirDetails(ref, RemoteMode, details)) return false;
+
+    if (details.type == DIR_TYPE_FILE || details.type == DIR_TYPE_EXTRA_FILE) {
+        return isHashSharedByMe(details.hash);
     }
 
     return false;
