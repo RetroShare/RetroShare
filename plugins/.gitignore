@@ -1,0 +1,6 @@
+# We ignore subdirectories because users may put plugins in here that should be
+# version-controlled separately.
+/*/
+!/Common/
+!/FeedReader/
+!/VOIP/

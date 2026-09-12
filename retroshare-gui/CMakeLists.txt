@@ -195,7 +195,7 @@ endif()
 
 set(GUI_TYPE "")
 if(WIN32)
-	# Hide the console window on Windows for production builds (Release), 
+	# Hide the console window on Windows for production builds (Release),
 	# but keep it visible for Debug and Development builds to view stdout/stderr logs.
 	if(NOT RS_DEVELOPMENT_BUILD AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
 		set(GUI_TYPE WIN32)
@@ -319,6 +319,8 @@ endif(RS_SERVICE_DESKTOP)
 ################################################################################
 
 if(RS_JSON_API)
+	find_package(restbed REQUIRED)
+	target_link_libraries(${PROJECT_NAME} PRIVATE restbed::restbed)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC RS_JSONAPI)
 endif(RS_JSON_API)
 
@@ -354,11 +356,15 @@ endif(RS_GUI_CMARK)
 
 ################################# LibSam v3 ####################################
 
-# sam3 is used directly by the GUI (gui/settings/ServerPage.cpp includes
-# <libsam3.h> and calls sam3CloseConnection()), so it is linked here too, not
-# only inside libretroshare.
+# sam3 is used in gui/settings/ServerPage.cpp
 if(RS_USE_I2P_SAM3)
-	target_link_libraries(${PROJECT_NAME} PRIVATE sam3)
+	find_package(libsam3 REQUIRED)
+	target_link_libraries(${PROJECT_NAME} PRIVATE libsam3::libsam3)
+	target_compile_definitions(${PROJECT_NAME}
+		PRIVATE
+		RS_USE_I2P_SAM3
+		RS_USE_I2P_SAM3_LIBSAM3
+	)
 endif()
 
 ################################################################################
@@ -377,7 +383,7 @@ endif()
 #   		QMAKE_LIBDIR *= $$clean_path($${CMARK_BUILD_PATH}/)
 #   		# Using sLibs would fail as libcmark.a is generated at compile-time
 #   		LIBS *= -L$$clean_path($${CMARK_BUILD_PATH}/src/) -lcmark
-#   
+#
 #   		DUMMYCMARKINPUT = FORCE
 #   		CMAKE_GENERATOR_OVERRIDE=""
 #   		win32-g++|win32-clang-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
@@ -447,10 +453,10 @@ if(RS_SANITIZE)
 endif(RS_SANITIZE)
 
 #                       #################### Cross compilation for windows under Linux ###################
-#                       
+#
 #                       win32-x-g++ {
 #                       		OBJECTS_DIR = temp/win32-x-g++/obj
-#                       
+#
 #                       		LIBS += ../../../../lib/win32-x-g++-v0.5/libssl.a
 #                       		LIBS += ../../../../lib/win32-x-g++-v0.5/libcrypto.a
 #                       		LIBS += ../../../../lib/win32-x-g++-v0.5/libgpgme.dll.a
@@ -460,17 +466,17 @@ endif(RS_SANITIZE)
 #                       		LIBS += -lQtUiTools
 #                       		LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32 -gdi32
 #                       		LIBS += -lole32 -lwinmm
-#                       
+#
 #                       		DEFINES *= WINDOWS_SYS WIN32 WIN32_CROSS_UBUNTU
-#                       
+#
 #                       		INCLUDEPATH += ../../../../gpgme-1.1.8/src/
 #                       		INCLUDEPATH += ../../../../libgpg-error-1.7/src/
-#                       
+#
 #                       		RC_FILE = gui/images/retroshare_win.rc
 #                       }
-#                       
+#
 #                       #################################### Windows #####################################
-#                       
+#
 #                       win32-g++|win32-clang-g++ {
 #                       	CONFIG(debug, debug|release) {
 #                       		# show console output
@@ -478,7 +484,7 @@ endif(RS_SANITIZE)
 #                       	} else {
 #                       		CONFIG -= console
 #                       	}
-#                       
+#
 #                       	CONFIG(debug, debug|release) {
 #                       	} else {
 #                       		# Tell linker to use ASLR protection
@@ -486,38 +492,38 @@ endif(RS_SANITIZE)
 #                       		# Tell linker to use DEP protection
 #                       		QMAKE_LFLAGS += -Wl,-nxcompat
 #                       	}
-#                       
+#
 #                           # Fix linking error (ld.exe: Error: export ordinal too large) due to too
 #                           # many exported symbols.
 #                           !libretroshare_shared:QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL
-#                       
+#
 #                       	# Switch off optimization for release version
 #                       	QMAKE_CXXFLAGS_RELEASE -= -O2
 #                       	QMAKE_CXXFLAGS_RELEASE += -O0
 #                       	QMAKE_CFLAGS_RELEASE -= -O2
 #                       	QMAKE_CFLAGS_RELEASE += -O0
-#                       
+#
 #                       	# Switch on optimization for debug version
 #                       	#QMAKE_CXXFLAGS_DEBUG += -O2
 #                       	#QMAKE_CFLAGS_DEBUG += -O2
-#                       
+#
 #                       	OBJECTS_DIR = temp/obj
-#                       
+#
 #                           dLib = ws2_32 gdi32 uuid ole32 iphlpapi crypt32 winmm
 #                           LIBS *= $$linkDynamicLibs(dLib)
-#                       
+#
 #                       	RC_FILE = gui/images/retroshare_win.rc
-#                       
+#
 #                       	# export symbols for the plugins
 #                       	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
-#                       
+#
 #                       	# create lib directory
 #                       	isEmpty(QMAKE_SH) {
 #                       		QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib $(MKDIR) lib
 #                       	} else {
 #                       		QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib || $(MKDIR) lib
 #                       	}
-#                       
+#
 #                       	greaterThan(QT_MAJOR_VERSION, 4) {
 #                       		# Qt 5
 #                       		RC_INCLUDEPATH += $$_PRO_FILE_PWD_/../../libretroshare/src
@@ -526,9 +532,9 @@ endif(RS_SANITIZE)
 #                       		QMAKE_RC += --include-dir=$$_PRO_FILE_PWD_/../../libretroshare/src
 #                       	}
 #                       }
-#                       
+#
 #                       ##################################### MacOS ######################################
-#                       
+#
 #                       macx {
 #                       	# ENABLE THIS OPTION FOR Univeral Binary BUILD.
 #                       	#CONFIG += ppc x86
@@ -544,48 +550,48 @@ endif(RS_SANITIZE)
 #                       		$$PWD/gui/qss/chat/Bubble \
 #                       		$$PWD/gui/qss/chat/Bubble_Compact
 #                       	dplChatStyles.path = Contents/Resources/stylesheets
-#                       	QMAKE_BUNDLE_DATA += dplChatStyles 
+#                       	QMAKE_BUNDLE_DATA += dplChatStyles
 #                       #	mac_webui.files = $$files($$PWD/../../libresapi/src/webui)
 #                       #	mac_webui.path = Contents/Resources
 #                       #	QMAKE_BUNDLE_DATA += mac_webui
-#                       
+#
 #                       	OBJECTS_DIR = temp/obj
-#                       
+#
 #                       	CONFIG += version_detail_bash_script
-#                       	LIBS += -lssl -lcrypto -lz 
+#                       	LIBS += -lssl -lcrypto -lz
 #                       	for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
 #                       	LIBS += -framework CoreFoundation
 #                       	LIBS += -framework Security
 #                       	LIBS += -framework Carbon
-#                       
+#
 #                       	for(lib, LIB_DIR):LIBS += -L"$$lib"
 #                       	for(bin, BIN_DIR):LIBS += -L"$$bin"
-#                       
+#
 #                       	DEPENDPATH += . $$INC_DIR
 #                       	INCLUDEPATH += . $$INC_DIR
-#                       
+#
 #                       	#DEFINES *= MAC_IDLE # for idle feature
 #                       	CONFIG -= uitools
 #                       }
-#                       
+#
 #                       ##################################### FreeBSD ######################################
-#                       
+#
 #                       freebsd-* {
 #                       	INCLUDEPATH *= /usr/local/include/gpgme
 #                       	LIBS *= -lssl
 #                       	LIBS *= -lgpgme
 #                       	LIBS *= -lupnp
 #                       	LIBS *= -lgnome-keyring
-#                       
+#
 #                       	LIBS += -lsqlite3
 #                       }
-#                       
+#
 #                       ##################################### Haiku ######################################
-#                       
+#
 #                       haiku-* {
 #                       	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 #                       	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
-#                       
+#
 #                       	LIBS *= ../../libretroshare/src/lib/libretroshare.a
 #                       	LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2 -lbsd
 #                       	LIBS *= -lssl -lcrypto -lnetwork
@@ -593,16 +599,16 @@ endif(RS_SANITIZE)
 #                       	LIBS *= -lupnp
 #                       	LIBS *= -lz
 #                       	LIBS *= -lixml
-#                       
+#
 #                       	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 #                       	LIBS += -lsqlite3
 #                       }
-#                       
+#
 #                       ##################################### OpenBSD ######################################
-#                       
+#
 #                       openbsd-* {
 #                       	INCLUDEPATH *= /usr/local/include
-#                       
+#
 #                       	LIBS *= -lssl -lcrypto
 #                       	LIBS *= -lgpgme
 #                       	LIBS *= -lupnp
@@ -610,9 +616,9 @@ endif(RS_SANITIZE)
 #                       	LIBS += -lsqlite3
 #                       	LIBS *= -rdynamic
 #                       }
-#                       
+#
 #                       ################################### COMMON stuff ##################################
-#                       
+#
 #                       wikipoos {
 #                       	PRE_TARGETDEPS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 #                       	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
