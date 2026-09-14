@@ -74,10 +74,10 @@ void RsCollection::autoDownloadFiles(ColFileInfo colFileInfo, QString dlDir) con
     if (!colFileInfo.filename_has_wrong_characters)
     {
         QString cleanPath = dlDir + colFileInfo.path ;
-        std::cout << "making directory " << cleanPath.toStdString() << std::endl;
 
-        if(!QDir(QApplication::applicationDirPath()).mkpath(cleanPath))
-            std::cerr << "Unable to make path: " + cleanPath.toStdString() << std::endl;
+        // No need to pre-create cleanPath here: FileRequest() stages into
+        // the Partials directory, and RsDirUtil::moveFile() creates any
+        // missing destination directories lazily once the file completes.
 
         if (colFileInfo.type==DIR_TYPE_FILE)
             rsFiles->FileRequest(colFileInfo.name.toUtf8().constData(),
