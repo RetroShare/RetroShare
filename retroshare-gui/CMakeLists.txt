@@ -669,18 +669,25 @@ endif(RS_GXSCIRCLES)
 # because the statically-linked librnp does not propagate them. Ideally librnp
 # (or libretroshare) should export these as link-interface deps so consumers don't
 # have to repeat them; that belongs to libretroshare and is left as a follow-up.
-find_library(BOTAN_LIBRARY NAMES botan botan-3 botan-2 libbotan-3 libbotan-2 REQUIRED)
-
-if(WIN32)
-    # Robust resolution including RNP and sexpp inside the link group for Windows MinGW
-    target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--start-group retroshare librnp sexpp z bz2 json-c ${BOTAN_LIBRARY} -Wl,--end-group)
-elseif(APPLE)
-    # macOS specific behavior: skip Linux-specific linker flags
-    target_link_libraries(${PROJECT_NAME} PRIVATE retroshare z bz2 json-c ${BOTAN_LIBRARY})
-else()
-    # Default behavior for Linux
+# When RS_SYSTEM_LIBRNP is ON (distribution builds, e.g. Debian) the system
+# librnp is a shared library that carries its own dependencies, so none of this
+# is needed — and botan development files may legitimately be absent.
+if(RS_SYSTEM_LIBRNP)
     target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
-    target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--no-as-needed z bz2 json-c ${BOTAN_LIBRARY} -Wl,--as-needed)
+else()
+    find_library(BOTAN_LIBRARY NAMES botan botan-3 botan-2 libbotan-3 libbotan-2 REQUIRED)
+
+    if(WIN32)
+        # Robust resolution including RNP and sexpp inside the link group for Windows MinGW
+        target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--start-group retroshare librnp sexpp z bz2 json-c ${BOTAN_LIBRARY} -Wl,--end-group)
+    elseif(APPLE)
+        # macOS specific behavior: skip Linux-specific linker flags
+        target_link_libraries(${PROJECT_NAME} PRIVATE retroshare z bz2 json-c ${BOTAN_LIBRARY})
+    else()
+        # Default behavior for Linux
+        target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
+        target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--no-as-needed z bz2 json-c ${BOTAN_LIBRARY} -Wl,--as-needed)
+    endif()
 endif()
 
 if(RS_PLUGINS AND CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
