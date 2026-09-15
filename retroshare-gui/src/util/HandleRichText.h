@@ -69,9 +69,9 @@ public:
 	static void    optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag = 0);
 	static void    optimizeHtml(QString &text, unsigned int flag = 0, const QColor &backgroundColor = Qt::white, qreal desiredContrast = 1.0, int desiredMinimumFontSize = 10);
 	static QString toHtml(QString text, bool realHtml = true);
+	static bool    makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels, const int maxBytes = -1, const QString &cssClass = QString());
 
-	static bool    makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels, const int maxBytes = -1);
-    static bool    makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels, const int maxBytes = -1);
+    static bool    makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels, const int maxBytes = -1, const QString &cssClass = QString());
 
 	static QString plainText(const QString &text);
 	static QString plainText(const std::string &text);

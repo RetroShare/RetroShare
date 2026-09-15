@@ -260,7 +260,7 @@ bool ImageUtil::hasAlphaContent(const QImage& image)
     std::cerr << "Image of size " << image.width() << " x " << image.height() << ": No transparency content detected." << std::endl;
     return false;
 }
-bool ImageUtil::optimizeSizeHtml(QString &html, const QImage& original, QImage &optimized, int maxPixels, int maxBytes)
+bool ImageUtil::optimizeSizeHtml(QString &html, const QImage& original, QImage &optimized, int maxPixels, int maxBytes, const QString &cssClass)
 {
 	QByteArray bytearray;
 	if(maxBytes > 0){
@@ -274,7 +274,10 @@ bool ImageUtil::optimizeSizeHtml(QString &html, const QImage& original, QImage &
     if(optimizeSizeBytes(bytearray, original, optimized,has_transparency?"PNG":"JPG",maxPixels, maxBytes))
 	{
 		QByteArray encodedByteArray = bytearray.toBase64();
-		html = "<img src=\"data:image/";
+		html = "<img";
+		if (!cssClass.isEmpty())
+			html += " class=\"" + cssClass + "\"";
+		html += " src=\"data:image/";
 		html.append(has_transparency ? "png" : "jpeg");
 		html.append(";base64,");
 		html.append(encodedByteArray);
