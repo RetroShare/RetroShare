@@ -22,6 +22,8 @@
 
 #include <QWheelEvent>
 #include <QDateTime>
+#include <QPainter>
+#include <QLinearGradient>
 
 #include "gui/common/FilesDefs.h"
 #include "gui/gxschannels/GxsChannelPostThumbnail.h"
@@ -351,6 +353,10 @@ void ZoomableLabel::setPicture(const QPixmap& pix)
 
     reset();
     updateView();
+}
+void ZoomableLabel::setPixmap(const QPixmap& pix)
+{
+    setPicture(pix);
 }
 void ZoomableLabel::resizeEvent(QResizeEvent *e)
 {

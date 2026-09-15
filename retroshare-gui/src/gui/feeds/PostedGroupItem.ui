@@ -311,7 +311,7 @@
          </layout>
         </item>
         <item row="0" column="0" rowspan="3">
-         <widget class="ZoomableLabel" name="logoLabel">
+         <widget class="GroupFeedLogoLabel" name="logoLabel">
           <property name="minimumSize">
            <size>
             <width>70</width>
@@ -411,7 +411,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZoomableLabel</class>
+   <class>GroupFeedLogoLabel</class>
    <extends>QLabel</extends>
    <header>gui/gxschannels/GxsChannelPostThumbnail.h</header>
   </customwidget>
