@@ -90,6 +90,9 @@ private slots:
   /** Slot for the Uploaded Only checkbox filter */
   void filterUploadedOnlyToggled(bool checked);
 
+  /** Slot for the "Hide files I have" checkbox filter */
+  void filterHideFilesIHaveToggled(bool checked);
+
   public slots:
   void changeCurrentViewModel(int viewTypeIndex);
 signals:

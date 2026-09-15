@@ -247,6 +247,16 @@ border-image: url(:/images/closepressed.png)
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="hideFilesIHave_CB">
+        <property name="toolTip">
+         <string>Hide files and folders that you already have in your own shares</string>
+        </property>
+        <property name="text">
+         <string>Hide files I have</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="RSComboBox" name="indicatorCBox">
         <item>
          <property name="text">
