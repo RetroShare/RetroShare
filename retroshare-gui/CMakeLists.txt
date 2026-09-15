@@ -352,6 +352,27 @@ if(RS_GUI_CMARK)
 	target_include_directories(${PROJECT_NAME} PRIVATE "${CMARK_INCLUDE_DIR}")
 endif(RS_GUI_CMARK)
 
+############################# pegmarkdown (WikiPoos) ###########################
+
+# The WikiPoos GUI (gui/WikiPoos/*) renders markdown via the bundled
+# peg-markdown library. Build and link it only when the Wiki feature is on.
+if(RS_GXSWIKIPOS)
+	set(PEGMARKDOWN_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/pegmarkdown/")
+	if(EXISTS "${PEGMARKDOWN_DEVEL_DIR}/CMakeLists.txt")
+		message(STATUS "pegmarkdown source found at ${PEGMARKDOWN_DEVEL_DIR} using it")
+		if(NOT TARGET pegmarkdown)
+			add_subdirectory("${PEGMARKDOWN_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/pegmarkdown")
+		endif()
+		# PUBLIC include dir of the pegmarkdown target makes markdown_lib.h and
+		# the dummy <glib.h> reachable from the GUI's Wiki sources.
+		target_link_libraries(${PROJECT_NAME} PRIVATE pegmarkdown)
+	else()
+		message(FATAL_ERROR
+			"RS_GXSWIKIPOS is ON but pegmarkdown was not found at "
+			"${PEGMARKDOWN_DEVEL_DIR}")
+	endif()
+endif(RS_GXSWIKIPOS)
+
 ################################# LibSam v3 ####################################
 
 # sam3 is used directly by the GUI (gui/settings/ServerPage.cpp includes
