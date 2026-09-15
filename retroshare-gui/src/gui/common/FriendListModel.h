@@ -22,6 +22,8 @@
 
 #include <QModelIndex>
 #include <QColor>
+#include <QPair>
+#include <QVector>
 
 #include "retroshare/rsstatus.h"
 #include "retroshare/rschats.h"
@@ -88,7 +90,8 @@ public:
 
     enum FilterType{ FILTER_TYPE_NONE = 0x00,
         			 FILTER_TYPE_ID   = 0x01,
-                     FILTER_TYPE_NAME = 0x02
+                     FILTER_TYPE_NAME = 0x02,
+                     FILTER_TYPE_ALL  = 0x03	// matches against name, PGP id, node names/ids and IPs at once
                    };
 
     enum EntryType{ ENTRY_TYPE_UNKNOWN   = 0x00,
@@ -211,6 +214,12 @@ signals:
 private:
 	void updateInternalData();
 	bool passesFilter(const EntryIndex &e, int column) const;
+
+	// Searchable fields of a profile, as (label,value) pairs. passesFilter() matches against the values,
+	// toolTipRole() reuses the labels to tell the user which field a search actually hit.
+
+	QVector<QPair<QString,QString> > profileSearchFields(const EntryIndex &e) const;
+	QString profileSearchText(const EntryIndex &e) const;
 
 	void preMods() ;
 	void postMods() ;
