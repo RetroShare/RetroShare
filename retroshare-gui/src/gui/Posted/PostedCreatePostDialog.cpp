@@ -33,6 +33,7 @@
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
 #include "util/RichTextEdit.h"
+#include "util/HandleRichText.h"
 #include "gui/feeds/SubFileItem.h"
 #include "util/rsdir.h"
 
@@ -167,6 +168,7 @@ void PostedCreatePostDialog::createPost()
 	if(!ui->RichTextEditWidget->toPlainText().trimmed().isEmpty()) {
 		QString text;
 		text = ui->RichTextEditWidget->toHtml();
+		RsHtml::optimizeHtml(text);
 		post.mNotes = std::string(text.toUtf8());
 	}
 
