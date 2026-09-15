@@ -277,6 +277,11 @@
              </column>
              <column>
               <property name="text">
+               <string>Status</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
                <string>IDs</string>
               </property>
              </column>
@@ -301,7 +306,13 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="addButton">
+           <widget class="QToolButton" name="addMemberButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Add</string>
             </property>
@@ -315,7 +326,13 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="removeButton">
+           <widget class="QToolButton" name="removeButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Remove </string>
             </property>
