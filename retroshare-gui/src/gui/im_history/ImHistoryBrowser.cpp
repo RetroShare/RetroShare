@@ -307,7 +307,7 @@ void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg)
     }
 
     QColor backgroundColor = ui.listWidget->palette().base().color();
-    QString formatMsg = style.formatMessage(type, name, DateTime::DateTimeFromTime_t(msg.sendTime), messageText, 0, backgroundColor);
+    QString formatMsg = style.formatMessage(type, name, name, QDateTime::fromTime_t(msg.sendTime), messageText, 0, backgroundColor);
 
     itemWidget->setData(Qt::DisplayRole, QVariant::fromValue(IMHistoryItemPainter(formatMsg)));
     itemWidget->setData(ROLE_MSGID, msg.msgId);

@@ -268,6 +268,7 @@ static QString getStyle(const QDir &styleDir, const QString &styleVariant, enumG
 
 QString ChatStyle::formatMessage(enumFormatMessage type
                                  , const QString &name
+                                 , const QString &gxsid
                                  , const QDateTime &timestamp
                                  , const QString &message
                                  , unsigned int flag
@@ -356,10 +357,10 @@ QString ChatStyle::formatMessage(enumFormatMessage type
 	if (flag & CHAT_FORMATMSG_SYSTEM) {
 		color = Qt::darkBlue;
 	} else {
-		// Calculate color from the name
+		// Calculate color from the id
 		uint hash = 0;
-		for (int i = 0; i < name.length(); ++i) {
-			hash = (((hash << 1) + (hash >> 14)) ^ ((int) name[i].toLatin1())) & 0x3fff;
+		for (int i = 0; i < gxsid.length(); ++i) {
+			hash = (((hash << 1) + (hash >> 14)) ^ ((int) gxsid[i].toLatin1())) & 0x3fff;
 		}
 
 		color.setHsv(hash, 255, 150);
