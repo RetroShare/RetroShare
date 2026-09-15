@@ -144,7 +144,7 @@ void RshareSettings::initSettings()
     RsFeedTypeFlags defNewsFeed = (RsFeedTypeFlags::RS_FEED_TYPE_MSG
                                    | RsFeedTypeFlags::RS_FEED_TYPE_FILES
                    | RsFeedTypeFlags::RS_FEED_TYPE_SECURITY
-                   | RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP
+                   | RsFeedTypeFlags::RS_FEED_TYPE_CONNECTION_REFUSED_REMOTELY
                    | RsFeedTypeFlags::RS_FEED_TYPE_TLS_ATTEMPT
                    | RsFeedTypeFlags::RS_FEED_TYPE_CIRCLE
                    | RsFeedTypeFlags::RS_FEED_TYPE_CHANNEL

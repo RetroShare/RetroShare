@@ -212,7 +212,7 @@ RsFeedTypeFlags NotifyPage::getNewsFlags()
     if (ui.notify_TlsAttempt->isChecked())
         newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_TLS_ATTEMPT;
     if (ui.notify_SecurityIp->isChecked())
-        newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP;
+        newsFlags |= RsFeedTypeFlags::RS_FEED_TYPE_CONNECTION_REFUSED_REMOTELY;
 
 #ifdef RS_USE_WIRE
     if (ui.notify_Wire->isChecked())
@@ -335,7 +335,7 @@ void NotifyPage::load()
     whileBlocking(ui.notify_Messages  )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_MSG));
     whileBlocking(ui.notify_Chat      )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_CHAT));
     whileBlocking(ui.notify_Security  )->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_SECURITY));
-    whileBlocking(ui.notify_SecurityIp)->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_SECURITY_IP));
+    whileBlocking(ui.notify_SecurityIp)->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_CONNECTION_REFUSED_REMOTELY));
     whileBlocking(ui.notify_TlsAttempt)->setChecked(!!(newsflags & RsFeedTypeFlags::RS_FEED_TYPE_TLS_ATTEMPT));
 
     whileBlocking(ui.message_ConnectAttempt)->setChecked(messageflags & RshareSettings::RS_MESSAGE_CONNECT_ATTEMPT);

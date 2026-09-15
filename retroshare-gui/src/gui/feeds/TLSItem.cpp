@@ -61,7 +61,7 @@ void TLSItem::addIPEntry(const std::string& ip_string)
 {
     mIps.push_front(std::make_pair(QDateTime::currentDateTime(),ip_string));
 
-    while(mIps.size() > 5) // quadratic cost, but for small lists it's ok
+    while(mIps.size() > 10) // quadratic cost, but for small lists it's ok
         mIps.pop_back();
 
     updateItem();
@@ -70,7 +70,7 @@ void TLSItem::addIPEntry(const std::string& ip_string)
 void TLSItem::updateItemStatic()
 {
     ipLabel_2->clear();
-    ip_TW->clearContents();
+    ip_TW->setRowCount(0);
 
     if(mIps.empty())
         return;
