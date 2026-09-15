@@ -480,10 +480,21 @@ class PostSorter
 {
 public:
 
-    PostSorter(RsPostedPostsModel::SortingStrategy s) : mSortingStrategy(s) {}
+    PostSorter(RsPostedPostsModel::SortingStrategy s, const RsTlvGxsMsgIdSet& pinned_posts)
+        : mSortingStrategy(s), mPinnedPosts(pinned_posts) {}
 
 	bool operator()(const RsPostedPost& p1,const RsPostedPost& p2) const
 	{
+        // Pinned ("stuck") posts are always shown on top of the feed,
+        // regardless of the currently selected sorting strategy. This
+        // mirrors the behaviour already implemented for forums.
+
+        bool p1_pinned = mPinnedPosts.ids.find(p1.mMeta.mMsgId) != mPinnedPosts.ids.end();
+        bool p2_pinned = mPinnedPosts.ids.find(p2.mMeta.mMsgId) != mPinnedPosts.ids.end();
+
+        if(p1_pinned != p2_pinned)
+            return p1_pinned;
+
         switch(mSortingStrategy)
         {
         default:
@@ -495,6 +506,7 @@ public:
 
 private:
     RsPostedPostsModel::SortingStrategy mSortingStrategy;
+    const RsTlvGxsMsgIdSet& mPinnedPosts;
 };
 
 Qt::ItemFlags RsPostedPostsModel::flags(const QModelIndex& index) const
@@ -510,7 +522,7 @@ void RsPostedPostsModel::setSortingStrategy(RsPostedPostsModel::SortingStrategy 
     preMods();
 
     mSortingStrategy = s;
-    std::sort(mPosts.begin(),mPosts.end(), PostSorter(s));
+    std::sort(mPosts.begin(),mPosts.end(), PostSorter(s,mPostedGroup.mPinnedPosts));
 
 	postMods();
 }
@@ -564,7 +576,7 @@ void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPost
 
 	createPostsArray(posts);
 
-	std::sort(mPosts.begin(),mPosts.end(), PostSorter(mSortingStrategy));
+	std::sort(mPosts.begin(),mPosts.end(), PostSorter(mSortingStrategy,mPostedGroup.mPinnedPosts));
 
 	uint32_t tmpval;
 	setFilter(QStringList(),tmpval);

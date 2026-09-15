@@ -41,6 +41,7 @@
 #include <QBuffer>
 
 #include <iostream>
+#include <retroshare/rsidentity.h>
 #include <gui/RetroShareLink.h>
 #include <util/imageutil.h>
 #include "gui/common/FilesDefs.h"
@@ -55,9 +56,9 @@
 
 const int MAXMESSAGESIZE = 199000;
 
-PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGroupId& grpId, const RsGxsId& default_author, QWidget *parent):
+PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGroupId& grpId, const RsGxsId& default_author, const RsGxsMessageId& existingPostId, QWidget *parent):
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
-	mPosted(posted), mGrpId(grpId),
+	mPosted(posted), mGrpId(grpId), mOrigPostId(existingPostId),
 	ui(new Ui::PostedCreatePostDialog)
 {
 	ui->setupUi(this);
@@ -69,7 +70,14 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 	connect(ui->RichTextEditWidget, SIGNAL(textSizeOk(bool)),ui->postButton, SLOT(setEnabled(bool)));
 
 	ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/postedlinks.png"));
-	ui->headerFrame->setHeaderText(tr("Create a new Post"));
+
+	if(!mOrigPostId.isNull())
+	{
+		ui->headerFrame->setHeaderText(tr("Edit Post"));
+		ui->postButton->setText(tr("Update"));
+	}
+	else
+		ui->headerFrame->setHeaderText(tr("Create a new Post"));
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
@@ -107,6 +115,61 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 
         // should we save the ID in the settings here? I'm not sure we want this.
     }
+
+    if(!mOrigPostId.isNull())
+        loadExistingPost();
+}
+
+void PostedCreatePostDialog::loadExistingPost()
+{
+    RsGxsGroupId grpId = mGrpId;
+    RsGxsMessageId postId = mOrigPostId;
+
+    RsThread::async([this,grpId,postId]()
+    {
+        std::vector<RsPostedPost> posts;
+        std::vector<RsGxsComment> comments;
+        std::vector<RsGxsVote> votes;
+        std::set<RsGxsMessageId> s({ postId });
+
+        bool ok = mPosted->getBoardContent(grpId,s,posts,comments,votes) && posts.size()==1;
+
+        RsQThreadUtils::postToObject( [ok,posts,this]()
+        {
+            if(!ok)
+            {
+                QMessageBox::warning(this, tr("RetroShare"), tr("This post could not be loaded, it may not be available locally."), QMessageBox::Ok, QMessageBox::Ok);
+                return;
+            }
+
+            const RsPostedPost& post(posts[0]);
+
+            setTitle(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
+            setLink(QString::fromUtf8(post.mLink.c_str()));
+            ui->RichTextEditWidget->setText(QString::fromUtf8(post.mNotes.c_str()));
+
+            if(post.mImage.mSize > 0 && post.mImage.mData != NULL)
+            {
+                imagebytes = QByteArray((const char*)post.mImage.mData, post.mImage.mSize);
+
+                QPixmap pix;
+                if(pix.loadFromData(imagebytes))
+                {
+                    ui->imageLabel->setPixmap(pix);
+                    ui->removeButton->show();
+                    ui->stackedWidgetPicture->setCurrentIndex(IMG_PICTURE);
+                }
+            }
+
+            // Default to editing with the original author's identity when we
+            // own it (typical case: the author edits their own post). When
+            // editing someone else's post as board admin, the edit will be
+            // signed with whichever own identity is currently selected.
+
+            if(rsIdentity->isOwnId(post.mMeta.mAuthorId))
+                ui->idChooser->setChosenId(post.mMeta.mAuthorId);
+        }, this );
+    });
 }
 
 PostedCreatePostDialog::~PostedCreatePostDialog()
@@ -160,42 +223,46 @@ void PostedCreatePostDialog::createPost()
 		return;
 	}//switch (ui->idChooser->getChosenId(authorId))
 
-	RsPostedPost post;
-	post.mMeta.mGroupId = mGrpId;
-	post.mLink = std::string(ui->linkEdit->text().toUtf8());
-	
+	std::string link = std::string(ui->linkEdit->text().toUtf8());
+	std::string notes;
+
 	if(!ui->RichTextEditWidget->toPlainText().trimmed().isEmpty()) {
 		QString text;
 		text = ui->RichTextEditWidget->toHtml();
-		post.mNotes = std::string(text.toUtf8());
+		notes = std::string(text.toUtf8());
 	}
 
-	post.mMeta.mAuthorId = authorId;
-	post.mMeta.mMsgName = std::string(ui->titleEdit->text().toUtf8());
-	
+	std::string title = std::string(ui->titleEdit->text().toUtf8());
+
+	RsGxsImage image;
 	if(imagebytes.size() > 0)
 	{
 		// send posted image
-		post.mImage.copy((uint8_t *) imagebytes.data(), imagebytes.size());
-	}	
+		image.copy((uint8_t *) imagebytes.data(), imagebytes.size());
+	}
 
-	int msgsize = post.mLink.length() + post.mMeta.mMsgName.length() + post.mNotes.length() + imagebytes.size();
+	int msgsize = link.length() + title.length() + notes.length() + imagebytes.size();
 	if(msgsize > MAXMESSAGESIZE) {
 		QString errormessage = QString(tr("Message is too large.<br />actual size: %1 bytes, maximum size: %2 bytes.")).arg(msgsize).arg(MAXMESSAGESIZE);
 		QMessageBox::warning(this, "RetroShare", errormessage, QMessageBox::Ok, QMessageBox::Ok);
 		return;
 	}
 
-    RsThread::async([this,post]()
+	RsGxsGroupId grpId = mGrpId;
+	RsGxsMessageId origPostId = mOrigPostId;
+
+    RsThread::async([this,grpId,title,link,notes,authorId,image,origPostId]()
     {
         RsGxsMessageId post_id;
+        std::string error_message;
 
-        bool res = rsPosted->createPost(post,post_id);
+        bool res = rsPosted->createPostV2(grpId,title,RsUrl(link),notes,authorId,image,post_id,error_message,origPostId);
 
-        RsQThreadUtils::postToObject( [res,this]()
+        RsQThreadUtils::postToObject( [res,error_message,this]()
         {
             if(!res)
-                QMessageBox::information(nullptr,tr("Error while creating post"),tr("An error occurred while creating the post."));
+                QMessageBox::information(nullptr,tr("Error while creating post"),
+                    tr("An error occurred while creating the post: ") + QString::fromUtf8(error_message.c_str()));
 
             accept();
         }, this );
