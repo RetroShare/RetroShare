@@ -148,7 +148,8 @@ protected:
                 return false;
             }
 
-            if (!m_dirModel->hasUploads(ref)) {
+            DirDetails details;
+            if (!m_dirModel->requestDirDetails(ref, m_dirModel->isRemote(), details) || details.uploads == 0) {
                 return false;
             }
         }

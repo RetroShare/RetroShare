@@ -81,11 +81,11 @@ class RetroshareDirModel : public QAbstractItemModel
 		void getFilePaths(const QModelIndexList &list, std::list<std::string> &fullpaths);
 		void getFilePath(const QModelIndex& index, std::string& fullpath);
 		void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
+		bool isRemote() const { return RemoteMode; }
 
 		bool requestDirDetails(void *ref, bool remote,DirDetails& d) const;
 
-		// MODIFICATION A: Virtual method to check if a branch has cumulative uploads
-		virtual bool hasUploads(void *ref) const = 0;
+
 
 		virtual void update() {}
 		virtual void updateRef(const QModelIndex&) const =0;
@@ -211,8 +211,7 @@ class TreeStyle_RDM: public RetroshareDirModel
 
 		virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-		// MODIFICATION B: Implementation for Tree Style
-		virtual bool hasUploads(void *ref) const;
+
 
 	private slots:
 		void showEmpty(const bool value);
@@ -221,28 +220,9 @@ class TreeStyle_RDM: public RetroshareDirModel
 		QAction *_showEmptyAct;
 		bool _showEmpty;
 
-        // Helper to calculate total recursive statistics per directory (Files count, Size, Uploads)
-        void recalculateDirectoryTotals();
+
         
-	private:
-		struct FolderStats {
-			uint64_t size;
-			uint32_t count;
-			uint64_t uploads;
-			
-			FolderStats() : size(0), count(0), uploads(0) {}
 
-			FolderStats& operator+=(const FolderStats& s) {
-				size += s.size;
-				count += s.count;
-				uploads += s.uploads;
-				return *this;
-			}
-		};
-
-        std::map<QString, FolderStats> m_folderTotals; // Key: clean path, Val: recursive stats
-
-		FolderStats collectStatsRecursive(void* ref);
 
 	protected:
 		mutable std::vector<int> _parentRow ; // used to store the real parent row for non empty child
@@ -273,8 +253,7 @@ class FlatStyle_RDM: public RetroshareDirModel
 		virtual void preMods();
 		virtual void postMods();/* Callback from Core */
 		virtual void updateRef(const QModelIndex&) const {}
-		// MODIFICATION H: Implement hasUploads for Flat Style to fix compilation
-		virtual bool hasUploads(void *ref) const;
+
 		
         // MODIFICATION: Override data() to use internal cache for Flat View
         virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
@@ -304,7 +283,7 @@ class FlatStyle_RDM: public RetroshareDirModel
             uint64_t size;
             uint32_t mtime;
             uint64_t uploads;
-            bool hasUploads;
+
         };
         std::map<void*, CachedFileDetails> m_cache;
 
