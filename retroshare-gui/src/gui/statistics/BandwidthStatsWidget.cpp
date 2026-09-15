@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QComboBox>
+#include <QMouseEvent>
 #include <QTimer>
 
 #include "retroshare/rspeers.h"
@@ -32,6 +33,7 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
 {
     ui.setupUi(this) ;
 
+    m_mousePressed = false;
     m_bProcessSettings = false;
 
     // now add one button per service
@@ -42,12 +44,19 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
     ui.service_CB->addItem(tr("Sum")) ;
     ui.service_CB->addItem(tr("All")) ;
 
+    ui.data_CB->addItem(tr("history (curves)")) ;
+    ui.data_CB->addItem(tr("last 5 secs. (pie)")) ;
+
+    ui.timing_CB->addItem(tr("real time")) ;
+    ui.timing_CB->addItem(tr("cumulated")) ;
+
     ui.unit_CB->addItem(tr("KB/s")) ;
     ui.unit_CB->addItem(tr("Count")) ;
 
     ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SUM) ;
     ui.bwgraph_BW->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SUM) ;
     ui.bwgraph_BW->setUnit(BWGraphSource::UNIT_KILOBYTES) ;
+    ui.bwgraph_BW->setTiming(BWGraphSource::TIMING_INSTANT) ;
 
 	ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_LEGEND_CUMULATED) ;
 
@@ -60,7 +69,10 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
 
     QObject::connect(ui.friend_CB  ,SIGNAL(currentIndexChanged(int )),this, SLOT( updateFriendSelection(int ))) ;
     QObject::connect(ui.updn_CB    ,SIGNAL(currentIndexChanged(int )),this, SLOT( updateUpDownSelection(int ))) ;
+    QObject::connect(ui.timing_CB  ,SIGNAL(currentIndexChanged(int )),this, SLOT( updateTimingSelection(int ))) ;
+    QObject::connect(ui.data_CB    ,SIGNAL(currentIndexChanged(int )),this, SLOT(   updateDataSelection(int ))) ;
     QObject::connect(ui.unit_CB    ,SIGNAL(currentIndexChanged(int )),this, SLOT(   updateUnitSelection(int ))) ;
+    QObject::connect(ui.clear_PB   ,SIGNAL(            clicked(    )),this, SLOT(          clearHistory(    ))) ;
     QObject::connect(ui.service_CB ,SIGNAL(currentIndexChanged(int )),this, SLOT(updateServiceSelection(int ))) ;
     QObject::connect(ui.legend_CB  ,SIGNAL(currentIndexChanged(int )),this, SLOT(      updateLegendType(int ))) ;
     QObject::connect(ui.logScale_CB,SIGNAL(            toggled(bool)),this, SLOT(        toggleLogScale(bool))) ;
@@ -90,6 +102,10 @@ BandwidthStatsWidget::~BandwidthStatsWidget ()
     processSettings(false);
 }
 
+void BandwidthStatsWidget::clearHistory()
+{
+    ui.bwgraph_BW->clear();
+}
 void BandwidthStatsWidget::processSettings(bool bLoad)
 {
     m_bProcessSettings = true;
@@ -254,12 +270,40 @@ void BandwidthStatsWidget::updateServiceSelection(int n)
     }
 }
 
+void BandwidthStatsWidget::updateDataSelection(int n)
+{
+    std::cerr << "updating data selection to " << n << " !" << std::endl;
+    if(n==0)
+        ui.bwgraph_BW->setViewMode(RSGraphWidget::ViewMode::History) ;
+    else
+        ui.bwgraph_BW->setViewMode(RSGraphWidget::ViewMode::Slice) ;
+}
+
+void BandwidthStatsWidget::updateTimingSelection(int n)
+{
+    if(n==0)
+    {
+        ui.bwgraph_BW->setTiming(BWGraphSource::TIMING_INSTANT) ;
+        ui.unit_CB->setItemText(0,"KB/s");
+        ui.legend_CB->setEnabled(true);
+    }
+    else
+    {
+        ui.bwgraph_BW->setTiming(BWGraphSource::TIMING_CUMULATED) ;
+        ui.unit_CB->setItemText(0,"KB");
+        ui.legend_CB->setCurrentIndex(0);
+        ui.legend_CB->setEnabled(false);
+    }
+}
+
 void BandwidthStatsWidget::updateUpDownSelection(int n)
 {
     if(n==0)
         ui.bwgraph_BW->setDirection(BWGraphSource::DIRECTION_UP) ;
-    else
+    else if(n==1)
         ui.bwgraph_BW->setDirection(BWGraphSource::DIRECTION_DOWN) ;
+    else
+        ui.bwgraph_BW->setDirection(BWGraphSource::DIRECTION_DOWN | BWGraphSource::DIRECTION_UP) ;
 }
 void BandwidthStatsWidget::updateUnitSelection(int n)
 {
@@ -288,3 +332,4 @@ void BandwidthStatsWidget::updateGraphSelection(int n)
 	else
 		ui.bwgraph_BW->setFlags(RSGraphWidget::RSGRAPH_FLAGS_DARK_STYLE);
 }
+
