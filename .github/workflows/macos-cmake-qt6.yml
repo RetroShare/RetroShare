@@ -56,7 +56,7 @@ jobs:
     - name: Install Homebrew dependencies
       run: >
         brew install
-        ninja qt openssl@3 botan@2 sqlcipher miniupnpc
+        ninja qt qtcharts openssl@3 botan@2 sqlcipher miniupnpc
         json-c asio speex speexdsp ffmpeg
         libxml2 libxslt bzip2 zlib rapidjson doxygen
 
