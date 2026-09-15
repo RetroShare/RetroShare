@@ -1,0 +1,32 @@
+RetroShare AppImage — notes for testers
+========================================
+
+WHAT YOU NEED
+  - 64-bit x86 Linux (x86_64). Not ARM / Raspberry Pi.
+  - glibc >= 2.31  (the "portable" build). Check with:  ldd --version
+      2.31 covers everything from ~2020 on: Debian 11+, Ubuntu 20.04+,
+      MX 21+, Slackware 15, Fedora 34+, Mint 20+, openSUSE Leap 15.3+ ...
+  - A graphical session (X11, or Wayland with XWayland — the default).
+
+HOW TO RUN
+  chmod +x RetroShare-*.AppImage
+  ./RetroShare-*.AppImage
+
+IF IT WON'T START WITH A "libfuse.so.2" ERROR
+  Newer distros don't ship FUSE 2 by default. Either:
+      sudo apt install libfuse2            (Debian/Ubuntu/MX)
+  or run it without FUSE:
+      APPIMAGE_EXTRACT_AND_RUN=1 ./RetroShare-*.AppImage
+
+YOUR PROFILE (~/.retroshare)
+  - The AppImage bundles NO profile. It uses ~/.retroshare, exactly like a
+    normal RetroShare install. An existing profile is picked up automatically;
+    the AppImage and a system install share the same ~/.retroshare.
+  - To test in isolation, without touching your real profile:
+      HOME=/tmp/rs-test ./RetroShare-*.AppImage
+    (creates a fresh ~/.retroshare under /tmp/rs-test)
+
+DON'T RUN IT FROM INSIDE A RETROSHARE SHARED FOLDER
+  If a running RetroShare is sharing the folder the AppImage sits in, you'll
+  get "Text file busy" (RS holds the file open). Put the AppImage in a normal
+  folder (Downloads, home) and run it from there.
