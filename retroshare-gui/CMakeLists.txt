@@ -324,6 +324,13 @@ endif(RS_JSON_API)
 
 if(RS_WEBUI)
 	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_WEBUI)
+
+	# The GUI serves the web files too, so it must wait for them to be generated
+	# (the target is created by the root CMakeLists, or by retroshare-service in
+	# a standalone build).
+	if(TARGET retroshare-webui)
+		add_dependencies(${PROJECT_NAME} retroshare-webui)
+	endif()
 endif(RS_WEBUI)
 
 ################################# CMark ########################################
