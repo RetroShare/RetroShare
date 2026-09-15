@@ -1052,6 +1052,7 @@ if(RS_GXSIDENTITIES)
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
 		src/gui/Identity/IdDialog.h 
+		src/gui/Identity/BannedIdentitiesDialog.h
 		src/gui/Identity/IdEditDialog.h 
 		src/gui/Identity/IdDetailsDialog.h 
 		src/gui/Identity/IdentityListModel.h 
@@ -1066,6 +1067,7 @@ if(RS_GXSIDENTITIES)
 
 	list(
 		APPEND RS_GUI_SOURCES
+		src/gui/Identity/BannedIdentitiesDialog.cpp
 		src/gui/Identity/IdDialog.cpp 
 		src/gui/Identity/IdEditDialog.cpp 
 		src/gui/Identity/IdDetailsDialog.cpp 
