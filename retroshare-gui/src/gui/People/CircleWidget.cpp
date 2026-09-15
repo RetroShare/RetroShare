@@ -52,6 +52,12 @@ CircleWidget::CircleWidget(QString name/*=QString()*/
 	setAcceptDrops(true);
 }
 
+void CircleWidget::mousePressEvent(QMouseEvent *event)
+{
+	emit clicked();
+	FlowLayoutItem::mousePressEvent(event);
+}
+
 CircleWidget::~CircleWidget()
 {
 	delete _scene;

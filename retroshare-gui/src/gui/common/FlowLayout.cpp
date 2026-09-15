@@ -596,8 +596,10 @@ QSize FlowLayout::minimumSize() const
 {
 	QSize size;
 	QLayoutItem *item;
-	foreach (item, m_itemList)
+	foreach (item, m_itemList) {
+		if (item->widget() && !item->widget()->isVisible()) continue;
 		size = size.expandedTo(item->minimumSize());
+	}
 
 	QMargins margins = contentsMargins();
 	size += QSize(margins.left() + margins.right(), margins.top() + margins.bottom());
@@ -681,6 +683,8 @@ int FlowLayout::doLayout(const QRect &rect, bool testOnly) const
 	for (int curs=0; curs<count; ++curs) {
 		QLayoutItem *item=m_itemList.value(curs);
 		QWidget *wid = item->widget();
+		// Skip hidden widgets so they don't leave empty gaps in the flow
+		if (!wid || !wid->isVisible()) continue;
 		int spaceX = horizontalSpacing();
 		if (spaceX == -1)
 			spaceX = wid->style()->layoutSpacing(

@@ -59,9 +59,13 @@ public:
 signals:
 	void askForGXSIdentityWidget(RsGxsId gxs_id);
 	void askForPGPIdentityWidget(RsPgpId pgp_id);
+	void clicked();  // emitted when circle is clicked (for selection state machine)
 
 private slots:
 	void updateIdImage();
+
+protected:
+	virtual void mousePressEvent(QMouseEvent *event) override;
 
 private:
 	void updateScene();

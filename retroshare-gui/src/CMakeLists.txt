@@ -1078,29 +1078,43 @@ if(RS_GXSCIRCLES)
 		APPEND RS_IMPLEMENTATION_HEADERS
 		src/gui/Circles/CirclesDialog.h 
 		src/gui/Circles/CreateCircleDialog.h 
-		src/gui/People/PeopleDialog.h
-		src/gui/People/CircleWidget.h
-		src/gui/People/IdentityWidget.h
 		)
 
 	list(
 		APPEND RS_GUI_FORMS
 		src/gui/Circles/CirclesDialog.ui 
 		src/gui/Circles/CreateCircleDialog.ui 
-		src/gui/People/PeopleDialog.ui 
-		src/gui/People/CircleWidget.ui
-		src/gui/People/IdentityWidget.ui
 		)
 
 	list(
 		APPEND RS_GUI_SOURCES
 		src/gui/Circles/CirclesDialog.cpp 
 		src/gui/Circles/CreateCircleDialog.cpp 
-		src/gui/People/PeopleDialog.cpp 
-		src/gui/People/CircleWidget.cpp
-		src/gui/People/IdentityWidget.cpp
 		)
 endif(RS_GXSCIRCLES)
+
+if(RS_GXSPEOPLE)
+	list(
+		APPEND RS_IMPLEMENTATION_HEADERS
+		src/gui/People/CircleWidget.h
+		src/gui/People/IdentityWidget.h
+		src/gui/People/PeopleDialog.h
+		)
+
+	list(
+		APPEND RS_GUI_FORMS
+		src/gui/People/CircleWidget.ui
+		src/gui/People/IdentityWidget.ui
+		src/gui/People/PeopleDialog.ui
+		)
+
+	list(
+		APPEND RS_GUI_SOURCES
+		src/gui/People/CircleWidget.cpp
+		src/gui/People/IdentityWidget.cpp
+		src/gui/People/PeopleDialog.cpp
+		)
+endif(RS_GXSPEOPLE)
 
 if(RS_GXSGUI)
 	list(
