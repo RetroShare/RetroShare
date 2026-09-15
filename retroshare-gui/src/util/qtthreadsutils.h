@@ -43,14 +43,15 @@ void postToObject(F &&fun, QObject *obj = qApp)
 {
 	if (qobject_cast<QThread*>(obj))
 		qWarning() << "posting a call to a thread object - consider using postToThread";
-	QObject src;
-	auto type = obj->metaObject();
-	QObject::connect( &src, &QObject::destroyed, obj,
-	                  [fun = std::move(fun), type, obj]
-	{
-		// ensure that the object is not being destructed
-		if (obj->metaObject()->inherits(type)) fun();
-	}, Qt::QueuedConnection );
+	// Post the functor to obj's thread WITHOUT creating a temporary QObject on the
+	// calling thread. Creating a QObject here adopts Qt on a non-Qt worker thread
+	// (e.g. std::thread): it allocates per-thread QThreadData and registers a
+	// thread_local cleanup, which crashes when that worker thread exits on MinGW
+	// (libgcc emutls frees the thread_local storage before the __cxa_thread_atexit
+	// destructors run -> NULL deref in Qt's Cleanup::~Cleanup, qthread_win.cpp).
+	// invokeMethod posts to obj's thread without touching the caller's Qt state,
+	// and Qt cancels the call automatically if obj is destroyed first.
+	QMetaObject::invokeMethod(obj, std::forward<F>(fun), Qt::QueuedConnection);
 }
 
 /**
@@ -61,14 +62,8 @@ void postToThread(F &&fun, QThread *thread = qApp->thread())
 {
 	QObject * obj = QAbstractEventDispatcher::instance(thread);
 	Q_ASSERT(obj);
-	QObject src;
-	auto type = obj->metaObject();
-	QObject::connect( &src, &QObject::destroyed, obj,
-	                  [fun, type, obj]
-	{
-		// ensure that the object is not being destructed
-		if (obj->metaObject()->inherits(type)) fun();
-	}, Qt::QueuedConnection );
+	// Same rationale as postToObject: never create a QObject on the calling thread.
+	QMetaObject::invokeMethod(obj, std::forward<F>(fun), Qt::QueuedConnection);
 }
 
 #else // QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
