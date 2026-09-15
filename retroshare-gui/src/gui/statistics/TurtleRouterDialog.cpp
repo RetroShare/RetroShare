@@ -43,9 +43,10 @@
 
 #define COL_TUN_ID              0
 #define COL_TUN_SPEED           1
-#define COL_TUN_LASTTRANSFER    2
-#define COL_TUN_FROM            3
-#define COL_TUN_TO              4
+#define COL_TUN_TRAFFIC         2
+#define COL_TUN_LASTTRANSFER    3
+#define COL_TUN_FROM            4
+#define COL_TUN_TO              5
 
 static const uint MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
@@ -164,6 +165,8 @@ TurtleRouterDialog::TurtleRouterDialog(QWidget *parent)
 	_header->resizeSection ( COL_REQ_ID, 170*fact );
 	QHeaderView * _header2 = tunnels_treeWidget->header () ;
 	_header2->resizeSection ( COL_TUN_ID, 270*fact );
+	_header2->resizeSection ( COL_TUN_FROM, 200*fact );
+	_header2->resizeSection ( COL_TUN_TO, 200*fact );
 
 	// load settings
     processSettings(true);
@@ -213,9 +216,6 @@ void TurtleRouterDialog::hideEvent(QHideEvent *event)
 	QWidget::hideEvent(event);
 }
 
-bool sr_Compare(const TurtleSearchRequestDisplayInfo& m1, const TurtleSearchRequestDisplayInfo& m2) { return m1.age < m2.age; }
-bool tr_Compare(const TurtleTunnelRequestDisplayInfo& m1, const TurtleTunnelRequestDisplayInfo& m2) { return m1.age < m2.age; }
-
 void TurtleRouterDialog::updateDisplay()
 {
 	std::vector<std::vector<std::string> > hashes_info ;
@@ -224,9 +224,6 @@ void TurtleRouterDialog::updateDisplay()
 	std::vector<TurtleTunnelRequestDisplayInfo > tunnel_reqs_info ;
 
 	rsTurtle->getInfo(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
-	
-	std::sort(search_reqs_info.begin(),search_reqs_info.end(),sr_Compare) ;
-	std::sort(tunnel_reqs_info.begin(),tunnel_reqs_info.end(),tr_Compare) ;
 	
 	updateTunnelRequests(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 
@@ -322,12 +319,22 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 		else
 			sprintf(tmp,"%3.2f %s",num,units[k].c_str()) ;
 
+		float num2 = strtoull(tunnels_info[i][6].c_str(), NULL, 0);
+		char tmp2[100] ;
+		std::string units2[4] = { "B","KB","MB","GB" } ;
+		int k2=0 ;
+		while(num2 >= 800.0f && k2<4)
+			num2 /= 1024.0f,++k2;
+		sprintf(tmp2,"%3.2f %s",num2,units2[k2].c_str()) ;
+		
 		TurtleTreeWidgetItem *tunnel_item = NULL;
 		tunnel_item = new TurtleTreeWidgetItem();
 
 		tunnel_item->setData(COL_TUN_ID,           Qt::DisplayRole, QString::fromUtf8(tunnels_info[i][0].c_str()));
 		tunnel_item->setData(COL_TUN_SPEED,        Qt::DisplayRole, QString::fromStdString(tmp)) ;
 		tunnel_item->setData(COL_TUN_SPEED,        Qt::UserRole,    strtof(tunnels_info[i][5].c_str(), NULL));
+		tunnel_item->setData(COL_TUN_TRAFFIC,      Qt::DisplayRole, QString::fromStdString(tmp2)) ;
+		tunnel_item->setData(COL_TUN_TRAFFIC,      Qt::UserRole,    (qlonglong)strtol(tunnels_info[i][6].c_str(), NULL, 0));
 		tunnel_item->setData(COL_TUN_LASTTRANSFER, Qt::DisplayRole, QString::fromStdString(tunnels_info[i][4]));
 		tunnel_item->setData(COL_TUN_LASTTRANSFER, Qt::UserRole,    (qlonglong)strtol(tunnels_info[i][4].c_str(), NULL, 0));
 		tunnel_item->setData(COL_TUN_FROM,         Qt::DisplayRole, QString::fromUtf8(tunnels_info[i][2].c_str()));
