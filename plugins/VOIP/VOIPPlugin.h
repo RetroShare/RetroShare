@@ -65,6 +65,10 @@ class VOIPPlugin: public RsPlugin
 		mutable p3VOIP *mVOIP ;
 		mutable RsPluginHandler *mPlugInHandler;
 		mutable RsPeers* mPeers;
+		mutable class RsChats* mChats;
+		mutable RsTurtle* mTurtle;
+		mutable class RsIdentity* mIdentity;
+		mutable class RsTurtleVOIPBridge* mTurtleBridge;
 		mutable ConfigPage *config_page ;
 		mutable QIcon *mIcon;
 

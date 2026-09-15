@@ -87,11 +87,16 @@ private slots:
 	void botMouseLeaveDecline();
 	void timerAudioRingTimeOut();
 	void timerVideoRingTimeOut();
+	void checkTunnelAndAutoCall();
 
 private:
+	RsPeerId getEffectivePeerId(bool allowPopup = false);
 	void deleteButtonMap(int flags = RS_VOIP_FLAGS_AUDIO_DATA | RS_VOIP_FLAGS_VIDEO_DATA);
 	void addNewVideoButtonMap(const RsPeerId &peer_id);
 	void addNewAudioButtonMap(const RsPeerId &peer_id);
+
+	QTimer* mTunnelWaitTimer;
+	RsChats* mChats; // already exists? no, we use global, that's fine.
 	void replaceFullscreenWidget();
 	void showNormalView();
 

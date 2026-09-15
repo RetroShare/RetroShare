@@ -23,12 +23,51 @@
 #include <QLabel>
 #include <QCamera>
 #include <QCameraInfo>
+#include <QAbstractVideoSurface>
 #include "interface/rsVOIP.h"
 
 #include "gui/VideoProcessor.h"
 
 class VideoEncoder ;
-class QCameraImageCapture;
+
+// Minimal video surface used as the camera viewfinder to grab live frames.
+// We use a viewfinder surface rather than QVideoProbe because, on the macOS
+// AVFoundation backend, QVideoProbe::setSource() reports success but never
+// delivers a single frame (camera LED turns on, but no image). A viewfinder
+// surface reliably receives every frame on all platforms.
+class RsCameraVideoSurface: public QAbstractVideoSurface
+{
+    Q_OBJECT
+
+    public:
+        explicit RsCameraVideoSurface(QObject *parent = nullptr) : QAbstractVideoSurface(parent) {}
+
+        QList<QVideoFrame::PixelFormat> supportedPixelFormats(
+                QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const override
+        {
+            Q_UNUSED(handleType);
+            // Advertise the formats the camera backends commonly produce; grabFrame()
+            // converts whatever we get (frame.image() + manual fallbacks).
+            return QList<QVideoFrame::PixelFormat>()
+                << QVideoFrame::Format_RGB32   << QVideoFrame::Format_ARGB32
+                << QVideoFrame::Format_BGRA32  << QVideoFrame::Format_RGB24
+                << QVideoFrame::Format_NV12    << QVideoFrame::Format_NV21
+                << QVideoFrame::Format_YUYV    << QVideoFrame::Format_UYVY
+                << QVideoFrame::Format_YUV420P << QVideoFrame::Format_Jpeg;
+        }
+
+        bool present(const QVideoFrame &frame) override
+        {
+            // present() may run on the capture thread (AVFoundation queue); emit a
+            // signal so the frame is marshalled to the GUI thread (queued connection).
+            if(frame.isValid())
+                emit frameAvailable(QVideoFrame(frame));
+            return true;
+        }
+
+    signals:
+        void frameAvailable(const QVideoFrame& frame);
+};
 
 // Responsible from displaying the video. The source of the video is
 // a VideoDecoder object, which uses a codec.
@@ -89,6 +128,7 @@ class QVideoInputDevice: public QObject
         QString currentCameraDescriptionString() const { return _capture_device_info.deviceName(); }
 protected slots:
         void grabFrame(int id, QVideoFrame f) ;
+        void handleSurfaceFrame(const QVideoFrame& f) ;
         void errorHandling(CameraStatus status,QCamera::Error error);
 
 	signals:
@@ -97,9 +137,8 @@ protected slots:
 
 	private:
 		VideoProcessor *_video_processor ;
-		QTimer *_timer ;
         QCamera *_capture_device;
-        QCameraImageCapture *_image_capture;
+        RsCameraVideoSurface *_video_surface;
         QCameraInfo _capture_device_info;
 
 		QVideoOutputDevice *_echo_output_device ;

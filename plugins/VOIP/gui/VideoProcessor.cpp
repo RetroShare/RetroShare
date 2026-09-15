@@ -31,6 +31,7 @@
 #include <QImage>
 
 #include "util/rsmemory.h"
+#include "util/rsdebug.h"
 
 #include "VideoProcessor.h"
 #include "QVideoDevice.h"
@@ -141,13 +142,16 @@ VideoProcessor::VideoProcessor()
 
     _estimated_bandwidth_in = 0 ;
     _estimated_bandwidth_out = 0 ;
-    _target_bandwidth_out = 30*1024 ;	// 30 KB/s
+    _target_bandwidth_out = 128*1024 ;	// 128 KB/s (~1 Mbps after the x8 in FFmpegVideo::encodeData). Raise/lower for quality vs bandwidth.
 
     _total_encoded_size_in = 0 ;
     _total_encoded_size_out = 0 ;
 
     _last_bw_estimate_in_TS = time(NULL) ;
     _last_bw_estimate_out_TS = time(NULL) ;
+
+    RsDbg() << "X264VBR VideoProcessor ctor: current_codec=" << _encoding_current_codec
+            << " target_bandwidth_out=" << (uint32_t)_target_bandwidth_out << " B/s";
 }
 
 VideoProcessor::~VideoProcessor()
@@ -295,6 +299,8 @@ void VideoProcessor::setMaximumBandwidth(uint32_t bytes_per_sec)
 {
     std::cerr << "Video Encoder: maximum frame rate is set to " << bytes_per_sec << " Bps" << std::endl;
     _target_bandwidth_out = bytes_per_sec ;
+
+    RsDbg() << "X264VBR setMaximumBandwidth: target_bandwidth_out=" << bytes_per_sec << " B/s";
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -430,16 +436,30 @@ FFmpegVideo::FFmpegVideo()
     //AVCodecID codec_id = AV_CODEC_ID_H264 ;
     //AVCodecID codec_id = AV_CODEC_ID_MPEG2VIDEO;
 #if LIBAVCODEC_VERSION_MAJOR < 54
+    // Ancient ffmpeg: keep MPEG4 (no libx264 path here).
     CodecID codec_id = CODEC_ID_MPEG4;
-#else
-    AVCodecID codec_id = AV_CODEC_ID_MPEG4;
-#endif
-
-    /* find the video encoder */
     encoding_codec = avcodec_find_encoder(codec_id);
+#else
+    // X264VBR step 1: prefer H264 via libx264, but fall back to MPEG4 if the
+    // ffmpeg build has no x264 encoder (e.g. built without --enable-libx264).
+    // This way we never crash on an x264-less build; we just keep the old codec.
+    AVCodecID codec_id = AV_CODEC_ID_H264;
+    encoding_codec = avcodec_find_encoder_by_name("libx264");    // explicit GPL x264
+    if(!encoding_codec)
+        encoding_codec = avcodec_find_encoder(AV_CODEC_ID_H264); // any H264 encoder
+    if(!encoding_codec)
+    {
+        RsDbg() << "X264VBR no H264/libx264 encoder available, falling back to MPEG4";
+        codec_id = AV_CODEC_ID_MPEG4;
+        encoding_codec = avcodec_find_encoder(codec_id);
+    }
+#endif
 
     if (!encoding_codec) std::cerr << "AV codec not found for codec id " << std::endl;
     if (!encoding_codec) throw std::runtime_error("AV codec not found for codec id ") ;
+
+    RsDbg() << "X264VBR FFmpegVideo ctor: requested codec_id=" << (int)codec_id
+            << " encoder found=" << (encoding_codec->name ? encoding_codec->name : "?");
 
     encoding_context = avcodec_alloc_context3(encoding_codec);
 
@@ -447,21 +467,23 @@ FFmpegVideo::FFmpegVideo()
     if (!encoding_context) throw std::runtime_error("AV: Could not allocate video codec encoding context");
 
     /* put sample parameters */
-    encoding_context->bit_rate = 10*1024 ; // default bitrate is 30KB/s
-    encoding_context->bit_rate_tolerance = encoding_context->bit_rate ;
+    // X264VBR step 4: rate control. Default below = ABR targeting the cap (used by
+    // the MPEG4 fallback). For x264 it is switched to *capped CRF* in the H264
+    // block below (constant quality, variable bitrate bounded by the VBV ceiling).
+    // The VBV ceiling (rc_max_rate/rc_buffer_size) is seeded here (~1 Mbps default
+    // = _target_bandwidth_out 128 KB/s x8) and tracked live in encodeData; it MUST
+    // be ON before avcodec_open2 for x264 to allow runtime reconfig.
+    encoding_uses_crf = false ;
+    const int initial_cap = 1024*1024 ;	// bits/s VBV ceiling, overwritten per-frame
+    encoding_context->bit_rate = initial_cap ;
+    encoding_context->bit_rate_tolerance = initial_cap ;
+    encoding_context->rc_min_rate = 0;
+    encoding_context->rc_max_rate = initial_cap;
+    encoding_context->rc_buffer_size = initial_cap;
+    encoding_context->rc_initial_buffer_occupancy = (int)(0.9 * initial_cap);
 
-#ifdef USE_VARIABLE_BITRATE
-    encoding_context->rc_min_rate = 0;
-    encoding_context->rc_max_rate = 10*1024;//encoding_context->bit_rate;
-    encoding_context->rc_buffer_size = 10*1024*1024;
-    encoding_context->rc_initial_buffer_occupancy = (int) ( 0.9 * encoding_context->rc_buffer_size);
-    encoding_context->rc_max_available_vbv_use = 1.0;
-    encoding_context->rc_min_vbv_overflow_use = 0.0;
-#else
-    encoding_context->rc_min_rate = 0;
-    encoding_context->rc_max_rate = 0;
-    encoding_context->rc_buffer_size = 0;
-#endif
+    RsDbg() << "X264VBR FFmpegVideo ctor: VBV seeded rc_max_rate=" << (int)encoding_context->rc_max_rate
+            << " rc_buffer_size=" << (int)encoding_context->rc_buffer_size;
 #if LIBAVCODEC_VERSION_MAJOR < 58
 	if (encoding_codec->capabilities & AV_CODEC_CAP_TRUNCATED)
 		encoding_context->flags |= AV_CODEC_FLAG_TRUNCATED;
@@ -504,7 +526,20 @@ FFmpegVideo::FFmpegVideo()
     if (codec_id == AV_CODEC_ID_H264)
 #endif
     {
-        av_opt_set(encoding_context->priv_data, "preset", "slow", 0);
+        // X264VBR step 1: real-time tuning. 'slow' was unusable for live video.
+        // veryfast keeps CPU sane; zerolatency kills B-frames + lookahead so
+        // frames don't buffer (critical for latency over the tunnel).
+        av_opt_set(encoding_context->priv_data, "preset", "veryfast", 0);
+        av_opt_set(encoding_context->priv_data, "tune", "zerolatency", 0);
+        // X264VBR step 4: capped CRF = constant quality, variable bitrate bounded
+        // by the VBV ceiling (the user's max). crf needs bit_rate=0 (otherwise x264
+        // does ABR and fills to the target regardless of scene complexity); the
+        // rc_max_rate/rc_buffer_size seeded above (and tracked live in encodeData)
+        // bound the peak. On a static scene the bitrate now drops on its own.
+        av_opt_set_double(encoding_context->priv_data, "crf", 23.0, 0);
+        encoding_context->bit_rate = 0;
+        encoding_uses_crf = true;
+        RsDbg() << "X264VBR FFmpegVideo ctor: x264 preset=veryfast tune=zerolatency crf=23 (capped CRF)";
     }
 
     /* open it */
@@ -513,6 +548,13 @@ FFmpegVideo::FFmpegVideo()
         std::cerr << "AV: Could not open codec context. Something's wrong." << std::endl;
         throw std::runtime_error( "AV: Could not open codec context. Something's wrong.");
     }
+
+    RsDbg() << "X264VBR FFmpegVideo ctor: codec opened name=" << (encoding_codec->name ? encoding_codec->name : "?")
+            << " " << encoding_context->width << "x" << encoding_context->height
+            << " bit_rate=" << (int)encoding_context->bit_rate
+            << " rc_max_rate=" << (int)encoding_context->rc_max_rate
+            << " gop_size=" << encoding_context->gop_size
+            << " time_base=" << encoding_context->time_base.num << "/" << encoding_context->time_base.den;
 
 #if (LIBAVCODEC_VERSION_MAJOR < 57) | (LIBAVCODEC_VERSION_MAJOR == 57 && LIBAVCODEC_VERSION_MINOR <3 )
     encoding_frame_buffer = avcodec_alloc_frame() ;//(AVFrame*)malloc(sizeof(AVFrame)) ;
@@ -602,7 +644,7 @@ FFmpegVideo::~FFmpegVideo()
     av_frame_free(&decoding_frame_buffer);
 }
 
-#define MAX_FFMPEG_ENCODING_BITRATE 81920
+#define MAX_FFMPEG_ENCODING_BITRATE (256*1024)	// bytes/s ceiling (~2 Mbps after the x8 in encodeData)
 
 static void imageToFrame(AVFrame *frame, const QImage& image) {
   QImage input;
@@ -685,9 +727,32 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
         std::cerr << "Max encodign bitrate eexceeded. Capping to " << MAX_FFMPEG_ENCODING_BITRATE << std::endl;
         target_encoding_bitrate = MAX_FFMPEG_ENCODING_BITRATE ;
     }
-	//encoding_context->bit_rate = target_encoding_bitrate;
-	encoding_context->rc_max_rate = target_encoding_bitrate;
-	//encoding_context->bit_rate_tolerance = target_encoding_bitrate;
+	// X264VBR step 4: drive the rate control live from the bandwidth feedback.
+	// _target_bandwidth_out is BYTES/s; x264 wants BITS/s -> x8. libx264 picks
+	// these up via x264_encoder_reconfig (VBV was enabled at init in the ctor).
+	int target_bits = (int)(target_encoding_bitrate * 8);
+	if(encoding_uses_crf)
+	{
+		// capped CRF: the user's value is only the VBV ceiling. Quality is fixed
+		// (crf), so the bitrate floats below the cap on simple scenes. bit_rate
+		// MUST stay 0 or x264 reverts to ABR (filling the target).
+		encoding_context->bit_rate       = 0;
+		encoding_context->rc_max_rate    = target_bits;
+		encoding_context->rc_buffer_size = target_bits;
+	}
+	else
+	{
+		// MPEG4 fallback: ABR targeting the cap.
+		encoding_context->bit_rate           = target_bits;
+		encoding_context->rc_max_rate        = target_bits;
+		encoding_context->rc_buffer_size     = target_bits;
+		encoding_context->bit_rate_tolerance = target_bits;
+	}
+
+	RsDbg() << "X264VBR encodeData: frame=" << (uint32_t)encoding_frame_count
+	        << " target=" << target_encoding_bitrate << " B/s -> "
+	        << (encoding_uses_crf ? "CRF cap" : "ABR") << " rc_max_rate="
+	        << target_bits << " buf=" << (int)encoding_context->rc_buffer_size << " bits";
 
   imageToFrame(encoding_frame_buffer, image);
 
@@ -761,6 +826,9 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 
 		voip_chunk.size = pkt.size + HEADER_SIZE;
 		voip_chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_VIDEO ;
+
+		RsDbg() << "X264VBR encodeData: produced packet pkt.size=" << pkt.size
+		        << " B (chunk=" << voip_chunk.size << " B)";
 
     dst.push();
 
