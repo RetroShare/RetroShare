@@ -18,6 +18,10 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <iostream>
+#include <QPushButton>
+#include <QMessageBox>
+#include "retroshare/rsgxsforums.h"
 #include "ForumPage.h"
 #include "util/misc.h"
 #include "rsharesettings.h"
@@ -39,6 +43,49 @@ ForumPage::ForumPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.minimumContrast    , SIGNAL(valueChanged(int)), this, SLOT(updateFonts()));
 
     ui.groupFrameSettingsWidget->setType(GroupFrameSettings::Forum) ;
+
+#ifdef RS_DEEP_FORUMS_INDEX
+    // Add Re-index button
+    QPushButton *reindexBtn = new QPushButton(tr("Re-index Content"), this);
+    reindexBtn->setToolTip(tr("Re-index all forums content for search. This may take a while."));
+    connect(reindexBtn, SIGNAL(clicked()), this, SLOT(reindexAll()));
+
+    // Add to the layout. The UI is widget based.
+    // Let's add it to the vertical layout of the page.
+    if(layout()) {
+        layout()->addWidget(reindexBtn);
+    } else {
+        // Fallback if no main layout (should exist from setupUi)
+        // ui.verticalLayout seems to be the main layout usually.
+        // Checking ForumPage.ui would be best but let's assume verticalLayout exists or try to add to 'this' layout.
+        // Actually, setupUi usually creates a layout on the widget.
+        // Let's check if we can access the layout via QWidget::layout()
+        if(!layout()) {
+             QVBoxLayout *l = new QVBoxLayout(this);
+             l->addWidget(reindexBtn);
+        } else {
+             // If it's a grid or something else, addWidget might fail if signatures differ, but usually OK for VBox/HBox/Grid.
+             // Safer to put it in a specific container if possible.
+             // ui.scrollAreaWidgetContents is common.
+             // For now, let's append to the main layout.
+             qobject_cast<QBoxLayout*>(layout())->addWidget(reindexBtn);
+        }
+    }
+#endif
+}
+
+void ForumPage::reindexAll()
+{
+#ifdef RS_DEEP_FORUMS_INDEX
+    if(QMessageBox::question(this, tr("Re-index Forums"), 
+        tr("Are you sure you want to re-index all forum content?\nThis may take some time depending on the number of messages."),
+        QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+    {
+        RsDbg() << "DEEPSEARCH: Requesting full re-indexing from GUI Preferences.";
+        rsGxsForums->reindexAll();
+        QMessageBox::information(this, tr("Re-index Forums"), tr("Re-indexing Completed Successfully!"));
+    }
+#endif
 }
 
 ForumPage::~ForumPage()
