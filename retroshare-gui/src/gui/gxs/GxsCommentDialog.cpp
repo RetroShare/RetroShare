@@ -79,6 +79,10 @@ void GxsCommentDialog::init(const RsGxsId& default_author)
 	ui->sortBox->setIconSize(QSize(S*1.5,S*1.5));
 	ui->commentButton->setIconSize(QSize(S*1.5,S*1.5));
 	ui->viewModeButton->setIconSize(QSize(S*1.5,S*1.5));
+	ui->viewModeButton->setStyleSheet(
+		"QToolButton { padding: 2px; border: 1px solid transparent; border-radius: 3px; }"
+		"QToolButton:hover { border: 1px solid palette(highlight); background: palette(alternate-base); }"
+		"QToolButton:checked { border: 1px solid palette(highlight); background: palette(alternate-base); }");
 }
 
 void GxsCommentDialog::setGxsService(RsGxsCommentService *comment_service)

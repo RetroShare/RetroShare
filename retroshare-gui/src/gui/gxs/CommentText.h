@@ -23,6 +23,9 @@
 
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QFrame>
+#include <QLabel>
+#include <QScrollArea>
 #include <QImage>
 #include <QTextBlock>
 #include <QTextCursor>
@@ -69,16 +72,38 @@ inline bool setPreview(QTextDocument *document, const QString &text, int width)
 inline void showFullSize(QWidget *parent, const QString &text)
 {
 	QDialog dialog(parent);
-	dialog.setWindowTitle(QObject::tr("Full-size comment"));
+	dialog.setWindowTitle(QObject::tr("Full-size image"));
 	auto layout = new QVBoxLayout(&dialog);
-	auto browser = new RSTextBrowser(&dialog);
-	browser->setHtml(RsHtml().formatText(browser->document(), text,
-	        RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
-	layout->addWidget(browser);
+	QTextDocument document;
+	document.setHtml(text);
+	QImage image;
+	for (QTextBlock block = document.begin(); block.isValid() && image.isNull(); block = block.next())
+		for (auto it = block.begin(); !it.atEnd() && image.isNull(); ++it) {
+			const QTextFragment fragment = it.fragment();
+			if (!fragment.charFormat().isImageFormat()) continue;
+			const QString source = fragment.charFormat().toImageFormat().name();
+			const int comma = source.indexOf(',');
+			if (source.startsWith("data:image", Qt::CaseInsensitive) && comma >= 0)
+				image = QImage::fromData(QByteArray::fromBase64(source.mid(comma + 1).toLatin1()));
+		}
+	if (!image.isNull()) {
+		auto scroll = new QScrollArea(&dialog);
+		scroll->setWidgetResizable(true);
+		scroll->setAlignment(Qt::AlignCenter);
+		scroll->setStyleSheet("QScrollArea { background: white; border: 0; }");
+		auto imageLabel = new QLabel;
+		imageLabel->setAlignment(Qt::AlignCenter);
+		imageLabel->setPixmap(QPixmap::fromImage(image));
+		scroll->setWidget(imageLabel);
+		layout->addWidget(scroll);
+		dialog.resize(qMin(image.width() + 40, 1000), qMin(image.height() + 80, 800));
+	} else {
+		layout->addWidget(new QLabel(QObject::tr("No embedded image found"), &dialog));
+		dialog.resize(400, 120);
+	}
 	auto buttons = new QDialogButtonBox(QDialogButtonBox::Close, &dialog);
 	QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
 	layout->addWidget(buttons);
-	dialog.resize(800, 600);
 	dialog.exec();
 }
 }
