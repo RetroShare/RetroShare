@@ -63,7 +63,10 @@ void GxsCommentDialog::init(const RsGxsId& default_author)
     connect(ui->idChooser, SIGNAL(idsLoaded()), this, SLOT(idChooserReady()));
     connect(ui->treeWidget,SIGNAL(commentsLoaded(int)),this,SLOT(notifyCommentsLoaded(int)));
 	
-	connect(ui->commentButton, SIGNAL(clicked()), ui->treeWidget, SLOT(makeComment()));
+	connect(ui->commentButton, &QToolButton::clicked, this, [this]() {
+		ui->treeWidget->makeComment();
+		refresh();
+	});
 	connect(ui->sortBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sortComments(int)));
 
 	connect(ui->viewModeButton, &QToolButton::toggled, this, &GxsCommentDialog::onFlatViewToggled);

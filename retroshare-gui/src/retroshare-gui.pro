@@ -1453,6 +1453,7 @@ gxsgui {
 		gui/gxs/GxsCommentContainer.h \
 		gui/gxs/GxsCommentDialog.h \
 		gui/gxs/CommentItemWidget.h \
+		gui/gxs/CommentText.h \
 		gui/gxs/FlatViewCommentWidget.h \
 		gui/gxs/GxsCreateCommentDialog.h \
 		gui/gxs/GxsGroupFrameDialog.h \

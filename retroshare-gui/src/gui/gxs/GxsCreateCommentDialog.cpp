@@ -63,8 +63,9 @@ void GxsCreateCommentDialog::createComment()
 {
 	RsGxsComment comment;
 
-    QString text = ui->commentTextEdit->toPlainText();
-    // RsHtml::optimizeHtml(text);
+	QString text;
+	// Preserve embedded images and link anchors, as in checkLength().
+	RsHtml::optimizeHtml(ui->commentTextEdit, text);
 	std::string msg = text.toUtf8().constData();
 
 	comment.mComment = msg;

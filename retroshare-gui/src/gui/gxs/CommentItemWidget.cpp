@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include "CommentItemWidget.h"
+#include "CommentText.h"
 #include "ui_CommentItemWidget.h"
 #include "GxsIdDetails.h"
 #include "util/DateTime.h"
@@ -33,6 +34,8 @@
 #include <QIcon>
 #include <QDebug>
 #include <QMouseEvent>
+#include <QAbstractTextDocumentLayout>
+#include <QtMath>
 
 CommentItemWidget::CommentItemWidget(QWidget *parent)
 	: QWidget(parent), ui(new Ui::CommentItemWidget), mViewRepliesButton(nullptr),
@@ -40,6 +43,24 @@ CommentItemWidget::CommentItemWidget(QWidget *parent)
 {
 	ui->setupUi(this);
 	setupStyle();
+	mFullSizeButton = new QPushButton(tr("View full size"), this);
+	mFullSizeButton->setFlat(true);
+	mFullSizeButton->hide();
+	ui->contentLayout->insertWidget(2, mFullSizeButton, 0, Qt::AlignLeft);
+	connect(mFullSizeButton, &QPushButton::clicked, this, [this]() {
+		CommentText::showFullSize(this, mCommentText);
+	});
+	ui->commentTextBrowser->setFrameShape(QFrame::NoFrame);
+	ui->commentTextBrowser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	ui->commentTextBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	ui->commentTextBrowser->setStyleSheet("background: transparent;");
+	ui->commentTextBrowser->document()->setDocumentMargin(0);
+	ui->commentTextBrowser->viewport()->installEventFilter(this);
+	connect(ui->commentTextBrowser->document()->documentLayout(),
+	        &QAbstractTextDocumentLayout::documentSizeChanged, this,
+	        [this](const QSizeF &size) {
+		ui->commentTextBrowser->setFixedHeight(qMax(1, qCeil(size.height())));
+	});
 
 	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
 
@@ -96,7 +117,9 @@ void CommentItemWidget::setAuthorAvatar(const QPixmap &avatar)
 void CommentItemWidget::setCommentText(const QString &text)
 {
 	mCommentText = text;
-	ui->commentTextLabel->setText(RsHtml().formatText(NULL, text, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+	mFullSizeButton->setVisible(CommentText::setPreview(
+	        ui->commentTextBrowser->document(), text,
+	        ui->commentTextBrowser->viewport()->width()));
 }
 
 void CommentItemWidget::setDateTime(const QString &datetime)
@@ -212,4 +235,18 @@ void CommentItemWidget::mousePressEvent(QMouseEvent *event)
 {
 	QWidget::mousePressEvent(event);
 	emit commentSelected(mMsgId);
+}
+
+bool CommentItemWidget::eventFilter(QObject *watched, QEvent *event)
+{
+	if (event->type() == QEvent::Resize
+	        && watched == ui->commentTextBrowser->viewport()) {
+		auto resize = static_cast<QResizeEvent*>(event);
+		if (resize->size().width() != resize->oldSize().width())
+			setCommentText(mCommentText);
+	}
+	if (event->type() == QEvent::MouseButtonPress
+	        && watched == ui->commentTextBrowser->viewport())
+		emit commentSelected(mMsgId);
+	return QWidget::eventFilter(watched, event);
 }

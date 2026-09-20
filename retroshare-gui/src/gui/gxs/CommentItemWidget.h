@@ -74,6 +74,7 @@ public:
 
 protected:
 	void mousePressEvent(QMouseEvent *event) override;
+	bool eventFilter(QObject *watched, QEvent *event) override;
 
 private slots:
 	void on_upvoteButton_clicked();
@@ -88,6 +89,7 @@ private:
 	Ui::CommentItemWidget *ui;
 
 	QPushButton *mViewRepliesButton;
+	QPushButton *mFullSizeButton;
 	int mLevel;
 	bool mUpvoteActive;
 	bool mDownvoteActive;
