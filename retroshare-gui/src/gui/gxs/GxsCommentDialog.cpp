@@ -262,6 +262,7 @@ void GxsCommentDialog::setupFlatViewWidget()
 
 	mFlatViewWidget = new FlatViewCommentWidget(ui->flatViewPage);
 	mFlatViewWidget->setCommentService(mCommentService);
+	ui->sortBox->setCurrentIndex(1); // Default flat view to newest first.
 
 	connect(mFlatViewWidget, &FlatViewCommentWidget::commentReply,
 	        this, &GxsCommentDialog::onFlatViewCommentReply);

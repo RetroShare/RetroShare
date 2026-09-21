@@ -112,6 +112,7 @@ void FlatViewCommentWidget::updateReplyCountButtons()
 		if (parent)
 			parent->setViewRepliesCount(it.value().size());
 	}
+	sortComments(mSortMethod);
 }
 
 void FlatViewCommentWidget::clearComments()
@@ -254,6 +255,7 @@ void FlatViewCommentWidget::loadCommentsForPost(const RsGxsGroupId &groupId, con
 
 void FlatViewCommentWidget::sortComments(int sortMethod)
 {
+	mSortMethod = sortMethod;
 	// Collect top-level CommentItemWidget pointers
 	QList<CommentItemWidget *> topLevel;
 	for (auto it = mCommentWidgets.begin(); it != mCommentWidgets.end(); ++it) {

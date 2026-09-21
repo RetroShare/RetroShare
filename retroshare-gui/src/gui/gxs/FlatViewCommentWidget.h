@@ -77,6 +77,7 @@ private:
 	QMap<RsGxsMessageId, QList<RsGxsMessageId> > mRepliesMap;
 	QMap<RsGxsMessageId, double> mScoreMap;
 	QMap<RsGxsMessageId, rstime_t> mTimestampMap;
+	int mSortMethod = 1; // Newest first, retained across reloads.
 
 	RsGxsCommentService *mCommentService;
 	RsGxsGroupId mCurrentGroupId;
