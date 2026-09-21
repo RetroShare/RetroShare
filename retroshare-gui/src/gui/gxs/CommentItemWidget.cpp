@@ -44,7 +44,8 @@ CommentItemWidget::CommentItemWidget(QWidget *parent)
 	ui->setupUi(this);
 	setupStyle();
 	mFullSizeButton = new QPushButton(tr("View full size"), this);
-	mFullSizeButton->setFlat(true);
+	mFullSizeButton->setFlat(false);
+	mFullSizeButton->setCursor(Qt::PointingHandCursor);
 	mFullSizeButton->hide();
 	ui->contentLayout->insertWidget(2, mFullSizeButton, 0, Qt::AlignLeft);
 	connect(mFullSizeButton, &QPushButton::clicked, this, [this]() {
@@ -66,6 +67,7 @@ CommentItemWidget::CommentItemWidget(QWidget *parent)
 
 	mViewRepliesButton = new QPushButton(this);
 	mViewRepliesButton->setFlat(true);
+	mViewRepliesButton->setCursor(Qt::PointingHandCursor);
 	mViewRepliesButton->hide();
 	connect(mViewRepliesButton, &QPushButton::clicked, this, &CommentItemWidget::on_viewRepliesButton_clicked);
 
@@ -111,7 +113,7 @@ void CommentItemWidget::setAuthorName(const QString &name)
 void CommentItemWidget::setAuthorAvatar(const QPixmap &avatar)
 {
 	if (!avatar.isNull())
-		ui->avatarLabel->setPixmap(avatar);
+		ui->avatarLabel->setPixmap(avatar.scaled(ui->avatarLabel->size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
 }
 
 void CommentItemWidget::setCommentText(const QString &text)
@@ -205,7 +207,7 @@ void CommentItemWidget::setViewRepliesCount(int count)
 	}
 	mRepliesExpanded = false;
 	mViewRepliesButton->setIcon(QIcon(":/icons/png/down-arrow.png"));
-	mViewRepliesButton->setText(tr("View %1 repl%2").arg(count).arg(count == 1 ? "y" : "ies"));
+	mViewRepliesButton->setText(tr(" View %1 repl%2").arg(count).arg(count == 1 ? "y" : "ies"));
 	mViewRepliesButton->show();
 }
 
@@ -214,10 +216,10 @@ void CommentItemWidget::on_viewRepliesButton_clicked()
 	mRepliesExpanded = !mRepliesExpanded;
 	if (mRepliesExpanded){
 		mViewRepliesButton->setIcon(QIcon(":/icons/png/up-arrow.png"));
-		mViewRepliesButton->setText(tr("Hide %1 repl%2").arg(mReplyCount).arg(mReplyCount == 1 ? "y" : "ies"));
+		mViewRepliesButton->setText(tr(" Hide %1 repl%2").arg(mReplyCount).arg(mReplyCount == 1 ? "y" : "ies"));
 	}else{
 		mViewRepliesButton->setIcon(QIcon(":/icons/png/down-arrow.png"));
-		mViewRepliesButton->setText(tr("View %1 repl%2").arg(mReplyCount).arg(mReplyCount == 1 ? "y" : "ies"));
+		mViewRepliesButton->setText(tr(" View %1 repl%2").arg(mReplyCount).arg(mReplyCount == 1 ? "y" : "ies"));
 	}
 	emit viewRepliesToggled(mMsgId, mRepliesExpanded);
 }

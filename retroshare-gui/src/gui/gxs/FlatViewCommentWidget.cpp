@@ -44,10 +44,10 @@ static void fillCommentItemWidgetCallback(GxsIdDetailsType type, const RsIdentit
 		item->setAuthorName(GxsIdDetails::getNameForType(type, details));
 		{
 			QPixmap avatar;
-			if (details.mAvatar.mSize > 0 && GxsIdDetails::loadPixmapFromData(details.mAvatar.mData, details.mAvatar.mSize, avatar))
+			if (details.mAvatar.mSize > 0 && GxsIdDetails::loadPixmapFromData(details.mAvatar.mData, details.mAvatar.mSize, avatar, GxsIdDetails::LARGE))
 				item->setAuthorAvatar(avatar);
 			else
-				item->setAuthorAvatar(GxsIdDetails::makeDefaultIcon(details.mId));
+				item->setAuthorAvatar(GxsIdDetails::makeDefaultIcon(details.mId, GxsIdDetails::LARGE));
 		}
 		break;
 
@@ -55,21 +55,21 @@ static void fillCommentItemWidgetCallback(GxsIdDetailsType type, const RsIdentit
 		// Set generated default avatar so the slot is never blank while loading.
 		// Leave the name empty — no raw ID prefix shown.
 		if (!details.mId.isNull())
-			item->setAuthorAvatar(GxsIdDetails::makeDefaultIcon(details.mId));
+			item->setAuthorAvatar(GxsIdDetails::makeDefaultIcon(details.mId, GxsIdDetails::LARGE));
 		break;
 
 	case GXS_ID_DETAILS_TYPE_FAILED:
 		// Identity not available; show truncated ID as fallback, keep default icon.
 		if (!details.mId.isNull()) {
 			item->setAuthorName(QString::fromStdString(details.mId.toStdString().substr(0, 10)) + QStringLiteral("…"));
-			item->setAuthorAvatar(GxsIdDetails::makeDefaultIcon(details.mId));
+			item->setAuthorAvatar(GxsIdDetails::makeDefaultIcon(details.mId, GxsIdDetails::LARGE));
 		}
 		break;
 
 	case GXS_ID_DETAILS_TYPE_BANNED:
 		item->setAuthorName(QObject::tr("[Banned]"));
 		if (!details.mId.isNull())
-			item->setAuthorAvatar(GxsIdDetails::makeDefaultIcon(details.mId));
+			item->setAuthorAvatar(GxsIdDetails::makeDefaultIcon(details.mId, GxsIdDetails::LARGE));
 		break;
 
 	case GXS_ID_DETAILS_TYPE_EMPTY:
