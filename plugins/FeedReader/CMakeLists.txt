@@ -130,6 +130,7 @@ endif()
 # --- Includes ---
 find_package(OpenSSL REQUIRED)
 find_package(RapidJSON 1.1.0 REQUIRED)
+include(RapidJSONTarget)
 target_include_directories(FeedReader PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/gui
