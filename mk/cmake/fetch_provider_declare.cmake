@@ -26,6 +26,8 @@ list(APPEND CMAKE_MODULE_PATH
 set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)
 include(ExternalProject)
+find_package(Patch REQUIRED)
+find_package(Git REQUIRED)
 
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 4.2)
 	function(EnvironmentModification)
@@ -101,7 +103,8 @@ ExternalProject_Add(sam3_external
 	TIMEOUT 10
 	CONFIGURE_COMMAND ""
   BUILD_COMMAND ${envmod_build} make build
-	PATCH_COMMAND patch -p1 -i
+	PATCH_COMMAND ${GIT_EXECUTABLE} reset --hard
+	COMMAND ${Patch_EXECUTABLE} -tNp1 -i
 		"${PROJECT_SOURCE_DIR}/mk/cmake/fetch_provider_packages/sam3.patch"
   INSTALL_COMMAND ""
   BUILD_IN_SOURCE TRUE
