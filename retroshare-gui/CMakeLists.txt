@@ -311,7 +311,7 @@ if(RS_SERVICE_DESKTOP)
 		)
 
 		install(
-			FILES data/retroshare.desktop
+			FILES data/retroshare-gui.desktop
 			DESTINATION "${CMAKE_INSTALL_DATADIR}/applications/"
 		)
 

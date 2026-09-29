@@ -163,7 +163,7 @@ unix {
 	INSTALLS += icon_files
 
 	desktop_files.path = "$${PREFIX}/share/applications"
-	desktop_files.files = ../../data/retroshare.desktop
+	desktop_files.files = ../../data/retroshare-gui.desktop
 	INSTALLS += desktop_files
 
 	pixmap_files.path = "$${PREFIX}/share/pixmaps"
