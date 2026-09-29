@@ -23,7 +23,6 @@ cmake_minimum_required(VERSION 3.24...4.4)
 list(APPEND CMAKE_MODULE_PATH
 	"${PROJECT_SOURCE_DIR}/mk/cmake/fetch_provider_packages"
 )
-set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)
 include(ExternalProject)
 find_package(Patch REQUIRED)

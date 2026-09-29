@@ -53,7 +53,6 @@ cmake_dependent_option(
 
 ################################################################################
 
-set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)
 
 # Find required dependencies

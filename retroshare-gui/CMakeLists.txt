@@ -149,7 +149,6 @@ endif()
 
 ################################################################################
 
-set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)
 
 find_package(Git REQUIRED)
