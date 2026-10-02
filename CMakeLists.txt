@@ -65,12 +65,12 @@ include(mk/cmake/fetch_provider_declare.cmake)
 # supportlibs first so dependencies are fetched and available
 # add_subdirectory(supportlibs)
 
-add_subdirectory(libretroshare)
+# add_subdirectory(libretroshare)
 
 if(RS_GUI)
 	add_subdirectory(retroshare-gui)
 
-	# I guess it's currently not possible to use plugins without the GUI?
+	# I guess it's not possible to use plugins without the GUI?
 	if(RS_PLUGINS)
 		add_subdirectory(plugins)
 	endif()

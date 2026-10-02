@@ -1,6 +1,6 @@
 ################################################################################
 # retroshare-gui/CMakeLists.txt                                                #
-# Copyright (C) 2022, Retroshare team <retroshare.team@gmailcom>               #
+# Copyright (C) 2026, Retroshare team <retroshare.team@gmailcom>               #
 #                                                                              #
 # This program is free software: you can redistribute it and/or modify         #
 # it under the terms of the GNU Affero General Public License as               #
@@ -87,10 +87,42 @@ option(
 	"Build RetroShare Plugins"
 	OFF )
 
-################################ QT FILES #######################################
+################################################################################
+### dependencies
+
+find_package(RetroShare REQUIRED)
+
+################################################################################
+### version
+
+set(RSGUI_VERSION_SUFFIX "" CACHE STRING
+	"Custom version suffix to use; mostly useful for downstream packaging."
+)
+include(GetGitRevisionDescription)
+if(DEFINED RSGUI_VERSION_SUFFIX AND NOT (RSGUI_VERSION_SUFFIX STREQUAL ""))
+	set(FULL_PROJECT_VERSION "${PROJECT_VERSION}-${RSGUI_VERSION_SUFFIX}")
+else()
+	git_describe_working_tree(FULL_PROJECT_VERSION
+		--tags --long --always --dirty --match v*.*.*
+	)
+	if(FULL_PROJECT_VERSION)
+		string(SUBSTRING "${FULL_PROJECT_VERSION}" 1 -1 FULL_PROJECT_VERSION)
+	else()
+		set(FULL_PROJECT_VERSION "${PROJECT_VERSION}-unknown")
+	endif()
+endif()
+message(STATUS "RetroShare-GUI version: ${FULL_PROJECT_VERSION}")
+
+################################################################################
+### general build options
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(RS_DEVELOPMENT_BUILD)
+	set(CMAKE_VERBOSE_MAKEFILE ON)
+	set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+endif(RS_DEVELOPMENT_BUILD)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -98,7 +130,30 @@ set(CMAKE_AUTORCC ON)
 # (RS_GUI_FORMS) and processed explicitly below with qt_wrap_ui/qt5_wrap_ui, which
 # generate the ui_*.h headers into the build directory (added to the include path).
 # Enabling AUTOUIC as well would process the same forms a second time.
-set(CMAKE_AUTOUIC OFF)
+set(CMAKE_AUTOUIC ON)
+
+################################################################################
+### targets
+
+add_executable(${PROJECT_NAME})
+
+target_link_libraries(${PROJECT_NAME} PUBLIC retroshare::retroshare)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+	RUNTIME_OUTPUT_NAME "retroshare-gui"
+	ENABLE_EXPORTS TRUE
+)
+
+################################################################################
+### QT
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+# AUTOUIC is intentionally OFF: the .ui forms are collected in src/CMakeLists.txt
+# (RS_GUI_FORMS) and processed explicitly below with qt_wrap_ui/qt5_wrap_ui, which
+# generate the ui_*.h headers into the build directory (added to the include path).
+# Enabling AUTOUIC as well would process the same forms a second time.
+set(CMAKE_AUTOUIC ON)
 
 # Detect Qt6 first, fall back to Qt5. All Qt usage below is version-agnostic via
 # the ${QT_VERSION_MAJOR} variable so the same tree builds against both.
@@ -149,24 +204,11 @@ endif()
 
 ################################################################################
 
-include(FetchContent)
-
-find_package(Git REQUIRED)
-
-################################################################################
-
-if(RS_DEVELOPMENT_BUILD)
-	set(CMAKE_VERBOSE_MAKEFILE ON)
-	set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-endif(RS_DEVELOPMENT_BUILD)
-
-################################################################################
-
-include(src/CMakeLists.txt)
+add_subdirectory(src)
 
 # Versionless command, available for both Qt5 (>=5.15) and Qt6. Called once to
 # avoid generating duplicate ui_*.h rules.
-qt_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
+# qt_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
 
 # Compatibility shim: src/gui/AboutWidget.cpp unconditionally does
 # #include "include/qmake_info.h" and prints Rs_qmake_DEFINES / Rs_qmake_CONFIG in
@@ -187,11 +229,18 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/include/qmake_info.h"
 )
 
 if(WIN32)
-    list(APPEND RS_GUI_SOURCES src/gui/images/retroshare_win.rc)
+	target_sources(${PROJECT_NAME}
+		${PRIVATE_FILESET_SOURCES_FILES}
+		src/gui/images/retroshare_win.rc
+	)
 elseif(APPLE)
-    list(APPEND RS_GUI_SOURCES src/gui/common/MacDockIconHandler.mm src/rsMacIcon.icns)
-    set_source_files_properties(src/gui/common/MacDockIconHandler.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
-    set_source_files_properties(src/rsMacIcon.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+	target_sources(${PROJECT_NAME}
+		${PRIVATE_FILESET_SOURCES_FILES}
+		src/gui/common/MacDockIconHandler.mm
+		src/rsMacIcon.icns
+	)
+  set_source_files_properties(src/gui/common/MacDockIconHandler.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
+  set_source_files_properties(src/rsMacIcon.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 endif()
 
 set(GUI_TYPE "")
@@ -204,12 +253,6 @@ if(WIN32)
 elseif(APPLE)
 	set(GUI_TYPE MACOSX_BUNDLE)
 endif()
-
-add_executable(${PROJECT_NAME} ${GUI_TYPE} ${RS_GUI_SOURCES} ${RS_IMPLEMENTATION_HEADERS} ${RS_UI_HEADERS} ${RS_GUI_QTRESOURCES})
-# The GUI executable is named "retroshare-gui" on all platforms (it was
-# historically just "retroshare"; renamed for clarity vs retroshare-service).
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_NAME "retroshare-gui")
-set_target_properties(${PROJECT_NAME} PROPERTIES ENABLE_EXPORTS TRUE)
 
 if(APPLE)
 	set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -228,7 +271,7 @@ if(WIN32)
 		# libsam3.a in FeedReader) then fail with "multiple definition" at link time.
 		# The MSYS Makefiles generator does not hit this, but excluding them keeps
 		# Ninja builds working too.
-		target_link_options(${PROJECT_NAME} PRIVATE "-Wl,--export-all-symbols" "-Wl,--exclude-libs,libretroshare.a:libbitdht.a:librnp.a:libsexpp.a:libsam3.a")
+		target_link_options(${PROJECT_NAME} PRIVATE "-Wl,--export-all-symbols" "-Wl,--exclude-libs,libbitdht.a:librnp.a:libsexpp.a:libsam3.a")
 	endif()
 endif()
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
@@ -246,34 +289,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/s
 if(RS_DEVELOPMENT_BUILD)
 	target_compile_options(${PROJECT_NAME} PRIVATE "-O0")
 endif(RS_DEVELOPMENT_BUILD)
-
-################################################################################
-
-if(NOT TARGET retroshare)
-	get_filename_component(LIBRETROSHARE_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libretroshare/" ABSOLUTE)
-	if(EXISTS "${LIBRETROSHARE_DEVEL_DIR}/CMakeLists.txt" )
-		message(
-			STATUS
-			"libretroshare submodule found at ${LIBRETROSHARE_DEVEL_DIR} using it" )
-		add_subdirectory(
-			"${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libretroshare" )
-	else()
-		FetchContent_Declare(
-			libretroshare
-			GIT_REPOSITORY "https://gitlab.com/RetroShare/libretroshare.git"
-			GIT_TAG "origin/master"
-			GIT_SHALLOW TRUE
-			GIT_PROGRESS TRUE
-			TIMEOUT 10
-		)
-		FetchContent_MakeAvailable(libretroshare)
-		set(LIBRETROSHARE_DEVEL_DIR "${libretroshare_SOURCE_DIR}")
-	endif()
-else()
-	get_target_property(LIBRETROSHARE_DEVEL_DIR retroshare SOURCE_DIR)
-endif()
-
-target_include_directories(${PROJECT_NAME} PRIVATE ${LIBRETROSHARE_DEVEL_DIR}/src/)
 
 ################################################################################
 

@@ -76,6 +76,14 @@ FetchContent_Declare(RapidJSON
 
 
 ################################################################################
+### RetroShare
+
+FetchContent_Declare(RetroShare
+	SOURCE_DIR "${PROJECT_SOURCE_DIR}/libretroshare"
+)
+
+
+################################################################################
 ### sam3
 
 if(NOT TARGET sam3_external)
