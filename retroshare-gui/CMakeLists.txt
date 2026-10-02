@@ -357,7 +357,7 @@ endif(RS_WEBUI)
 if(RS_GUI_CMARK)
 	find_package(cmark REQUIRED)
 	target_compile_definitions(${PROJECT_NAME} PRIVATE USE_CMARK)
-	target_link_libraries(${PROJECT_NAME} PRIVATE cmark)
+	target_link_libraries(${PROJECT_NAME} PRIVATE cmark::cmark)
 endif(RS_GUI_CMARK)
 
 ################################# LibSam v3 ####################################
@@ -685,13 +685,12 @@ find_library(BOTAN_LIBRARY NAMES botan botan-3 botan-2 libbotan-3 libbotan-2 REQ
 
 if(WIN32)
     # Robust resolution including RNP and sexpp inside the link group for Windows MinGW
-    target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--start-group retroshare librnp sexpp z bz2 json-c ${BOTAN_LIBRARY} -Wl,--end-group)
+    target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--start-group librnp sexpp z bz2 json-c ${BOTAN_LIBRARY} -Wl,--end-group)
 elseif(APPLE)
     # macOS specific behavior: skip Linux-specific linker flags
-    target_link_libraries(${PROJECT_NAME} PRIVATE retroshare z bz2 json-c ${BOTAN_LIBRARY})
+    target_link_libraries(${PROJECT_NAME} PRIVATE z bz2 json-c ${BOTAN_LIBRARY})
 else()
     # Default behavior for Linux
-    target_link_libraries(${PROJECT_NAME} PRIVATE retroshare)
     target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--no-as-needed z bz2 json-c ${BOTAN_LIBRARY} -Wl,--as-needed)
 endif()
 
