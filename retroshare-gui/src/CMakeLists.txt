@@ -66,3 +66,40 @@ target_sources(${PROJECT_NAME}
 
 	${PRIVATE_FILESET_RESOURCES_FILES}
 )
+
+
+# Compatibility shim: gui/AboutWidget.cpp unconditionally does
+# `#include "include/qmake_info.h"`` and prints
+# Rs_qmake_DEFINES / Rs_qmake_CONFIG in the About dialog. That header is
+# normally produced by the qmake build (and is git-ignored), so a CMake build
+# has nothing to include. We generate a minimal stand-in here to keep
+# AboutWidget compiling.
+# TODO: replace this by generating the file from the real CMake configuration
+# via configure_file(), or make AboutWidget obtain the build info without a
+# qmake-specific header.
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include")
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/include/qmake_info.h"
+	"#ifndef INFO_H\n"
+	"#define INFO_H\n\n"
+	"#include <QString>\n\n"
+	"static const QString Rs_qmake_DEFINES = QStringLiteral(\"CMake Build\");\n"
+	"static const QString Rs_qmake_CONFIG = QStringLiteral(\"CMake Build\");\n\n"
+	"#endif // INFO_H\n"
+)
+target_sources(${PROJECT_NAME}
+	PRIVATE FILE_SET private_HEADERS FILES
+	"${CMAKE_CURRENT_BINARY_DIR}/include/qmake_info.h"
+)
+
+if(APPLE)
+	target_sources(${PROJECT_NAME}
+		${PRIVATE_FILESET_RESOURCES_FILES}
+		rsMacIcon.icns
+	)
+	set_source_files_properties(rsMacIcon.icns PROPERTIES
+		MACOSX_PACKAGE_LOCATION "Resources"
+	)
+	set_target_properties(${PROJECT_NAME} PROPERTIES
+		MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Info.plist"
+	)
+endif()

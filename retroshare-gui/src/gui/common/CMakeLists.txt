@@ -163,3 +163,13 @@ if(RS_MESSENGER)
 		src/gui/common/FriendList.ui
 	)
 endif(RS_MESSENGER)
+
+if(APPLE)
+	target_sources(${PROJECT_NAME}
+		${PRIVATE_FILESET_SOURCES_FILES}
+		MacDockIconHandler.mm
+	)
+	set_source_files_properties(MacDockIconHandler.mm PROPERTIES
+		COMPILE_FLAGS "-x objective-c++"
+	)
+endif()

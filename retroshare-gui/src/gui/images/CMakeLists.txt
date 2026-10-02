@@ -22,7 +22,6 @@ target_sources(${PROJECT_NAME}
 	PUBLIC FILE_SET HEADERS FILES
 
 	PRIVATE FILE_SET private_HEADERS FILES
-	retroshare_win.rc.h
 
 	${PRIVATE_FILESET_SOURCES_FILES}
 
@@ -30,3 +29,13 @@ target_sources(${PROJECT_NAME}
 
 	${PRIVATE_FILESET_RESOURCES_FILES}
 )
+
+if(WIN32)
+	target_sources(${PROJECT_NAME}
+		PRIVATE FILE_SET private_HEADERS FILES
+		retroshare_win.rc.h
+
+		${PRIVATE_FILESET_RESOURCES_FILES}
+		retroshare_win.rc
+	)
+endif()

@@ -32,3 +32,18 @@ target_sources(${PROJECT_NAME}
 
 	${PRIVATE_FILESET_RESOURCES_FILES}
 )
+
+
+# X11 + XScreenSaver are used directly by the GUI for idle detection
+# NOTE: XScreenSaver extension only works under X11/XWayland, not native
+#       Wayland; modernising idle detection for Wayland is a separate effort.
+find_package(X11)
+find_package(XScreensaver)
+if(X11_FOUND AND XScreensaver_FOUND)
+	target_link_libraries(${PROJECT_NAME}
+		PRIVATE
+		X11::X11
+		XScreensaver::XScreensaver
+	)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE HAVE_XSS)
+endif()

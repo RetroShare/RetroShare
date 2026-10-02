@@ -1,6 +1,9 @@
 ################################################################################
 # retroshare-gui/CMakeLists.txt                                                #
-# Copyright (C) 2026, Retroshare team <retroshare.team@gmailcom>               #
+# This file is part of Retroshare-GUI.                                         #
+#                                                                              #
+# Copyright (C) 2022      Retroshare team <retroshare.team@gmailcom>           #
+# Copyright (C) 2026      David Bears <dbear4q@gmail.com>                      #
 #                                                                              #
 # This program is free software: you can redistribute it and/or modify         #
 # it under the terms of the GNU Affero General Public License as               #
@@ -91,6 +94,9 @@ option(
 ################################################################################
 ### dependencies
 
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/mk/cmake")
+set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
+
 find_package(RetroShare REQUIRED)
 
 ################################################################################
@@ -127,10 +133,6 @@ endif(RS_DEVELOPMENT_BUILD)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-# AUTOUIC is intentionally OFF: the .ui forms are collected in src/CMakeLists.txt
-# (RS_GUI_FORMS) and processed explicitly below with qt_wrap_ui/qt5_wrap_ui, which
-# generate the ui_*.h headers into the build directory (added to the include path).
-# Enabling AUTOUIC as well would process the same forms a second time.
 set(CMAKE_AUTOUIC ON)
 
 ################################################################################
@@ -145,16 +147,55 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 	ENABLE_EXPORTS TRUE
 )
 
+# NOTE: TARGET is NOT the executable name: it is the single-instance IPC socket
+# name used in main.cpp / rshare.cpp (connectToServer(TARGET)). Kept as
+# "retroshare" so the single-instance lock/socket name stays unchanged.
+target_compile_definitions(${PROJECT_NAME}
+	PRIVATE
+	"RS_GUI_VERSION=\"${FULL_PROJECT_VERSION}\""
+	RS_RELEASE_VERSION
+	TARGET=\"retroshare\"
+	RS_DIRECT_CHAT
+)
+
+if(RS_USE_NATIVE_DIALOGS)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_NATIVEDIALOGS)
+endif()
+
+if(RS_DEVELOPMENT_BUILD)
+	target_compile_options(${PROJECT_NAME} PRIVATE "-O0")
+endif()
+
+if(RS_SANITIZE)
+	target_link_libraries(${PROJECT_NAME} PRIVATE asan ubsan)
+endif()
+
+if(NOT RS_WARN_DEPRECATED)
+	target_compile_options(${PROJECT_NAME}
+		PRIVATE
+		-Wno-deprecated
+		-Wno-deprecated-declarations
+	)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC RS_NO_WARN_DEPRECATED)
+endif()
+
+################################################################################
+### feature enablement
+
+if(RS_JSON_API)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC RS_JSONAPI)
+endif()
+
+if(RS_WEBUI)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_WEBUI)
+endif()
+
+if(RS_GXSCIRCLES)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_USE_CIRCLES )
+endif(RS_GXSCIRCLES)
+
 ################################################################################
 ### QT
-
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-# AUTOUIC is intentionally OFF: the .ui forms are collected in src/CMakeLists.txt
-# (RS_GUI_FORMS) and processed explicitly below with qt_wrap_ui/qt5_wrap_ui, which
-# generate the ui_*.h headers into the build directory (added to the include path).
-# Enabling AUTOUIC as well would process the same forms a second time.
-set(CMAKE_AUTOUIC ON)
 
 # Detect Qt6 first, fall back to Qt5. All Qt usage below is version-agnostic via
 # the ${QT_VERSION_MAJOR} variable so the same tree builds against both.
@@ -189,82 +230,67 @@ if(UNIX AND NOT APPLE AND QT_VERSION_MAJOR EQUAL 5)
 	find_package( Qt5 COMPONENTS X11Extras REQUIRED )
 endif()
 
-list( APPEND RS_LINK_LIBRARIES
-	Qt${QT_VERSION_MAJOR}::Multimedia Qt${QT_VERSION_MAJOR}::Widgets
-	Qt${QT_VERSION_MAJOR}::Xml Qt${QT_VERSION_MAJOR}::Network
-	Qt${QT_VERSION_MAJOR}::PrintSupport)
+target_link_libraries(${PROJECT_NAME}
+	PRIVATE
+	Qt${QT_VERSION_MAJOR}::Multimedia
+	Qt${QT_VERSION_MAJOR}::Network
+	Qt${QT_VERSION_MAJOR}::PrintSupport
+	Qt${QT_VERSION_MAJOR}::Widgets
+	Qt${QT_VERSION_MAJOR}::Xml
+)
 if(QT_VERSION_MAJOR EQUAL 6)
-	list( APPEND RS_LINK_LIBRARIES Qt6::Core5Compat )
+	target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Core5Compat)
 endif()
 if(APPLE)
-	list( APPEND RS_LINK_LIBRARIES Qt${QT_VERSION_MAJOR}::Svg )
+	target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Svg)
 endif()
 if(UNIX AND NOT APPLE AND QT_VERSION_MAJOR EQUAL 5)
-	list( APPEND RS_LINK_LIBRARIES Qt5::X11Extras )
+	target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::X11Extras)
+endif()
+
+################################# CMark ########################################
+
+if(RS_GUI_CMARK)
+	find_package(cmark REQUIRED)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE USE_CMARK)
+	target_link_libraries(${PROJECT_NAME} PRIVATE cmark::cmark)
+endif(RS_GUI_CMARK)
+
+################################# LibSam v3 ####################################
+
+# sam3 is used in gui/settings/ServerPage.cpp
+if(RS_USE_I2P_SAM3)
+	find_package(sam3 REQUIRED)
+	target_link_libraries(${PROJECT_NAME} PRIVATE sam3::libsam3)
+	target_compile_definitions(${PROJECT_NAME}
+		PRIVATE
+		RS_USE_I2P_SAM3
+		RS_USE_I2P_SAM3_LIBSAM3
+	)
 endif()
 
 ################################################################################
+### platforms
 
-add_subdirectory(src)
-
-# Versionless command, available for both Qt5 (>=5.15) and Qt6. Called once to
-# avoid generating duplicate ui_*.h rules.
-# qt_wrap_ui(RS_UI_HEADERS ${RS_GUI_FORMS})
-
-# Compatibility shim: src/gui/AboutWidget.cpp unconditionally does
-# #include "include/qmake_info.h" and prints Rs_qmake_DEFINES / Rs_qmake_CONFIG in
-# the About dialog. That header is normally produced by the qmake build (and is
-# git-ignored), so a CMake build has nothing to include. We generate a minimal
-# stand-in here to keep AboutWidget compiling.
-# TODO: replace this by generating the file from the real CMake configuration via
-# configure_file(), or make AboutWidget obtain the build info without a
-# qmake-specific header.
-file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include")
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/include/qmake_info.h"
-	"#ifndef INFO_H\n"
-	"#define INFO_H\n\n"
-	"#include <QString>\n\n"
-	"static const QString Rs_qmake_DEFINES = QStringLiteral(\"CMake Build\");\n"
-	"static const QString Rs_qmake_CONFIG = QStringLiteral(\"CMake Build\");\n\n"
-	"#endif // INFO_H\n"
-)
-
-if(WIN32)
-	target_sources(${PROJECT_NAME}
-		${PRIVATE_FILESET_SOURCES_FILES}
-		src/gui/images/retroshare_win.rc
-	)
-elseif(APPLE)
-	target_sources(${PROJECT_NAME}
-		${PRIVATE_FILESET_SOURCES_FILES}
-		src/gui/common/MacDockIconHandler.mm
-		src/rsMacIcon.icns
-	)
-  set_source_files_properties(src/gui/common/MacDockIconHandler.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
-  set_source_files_properties(src/rsMacIcon.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+if(UNIX)
+	# Large File Support for 32-bit builds (64-bit off_t). No-op on 64-bit
+	# platforms; kept because the GUI does perform some direct file I/O and this
+	# keeps it consistent with libretroshare.
+	target_compile_definitions(${PROJECT_NAME} PRIVATE _FILE_OFFSET_BITS=64)
+	target_link_options(${PROJECT_NAME} PRIVATE -rdynamic)
 endif()
 
-set(GUI_TYPE "")
-if(WIN32)
-	# Hide the console window on Windows for production builds (Release),
-	# but keep it visible for Debug and Development builds to view stdout/stderr logs.
-	if(NOT RS_DEVELOPMENT_BUILD AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-		set(GUI_TYPE WIN32)
-	endif()
-elseif(APPLE)
-	set(GUI_TYPE MACOSX_BUNDLE)
-endif()
-
-if(APPLE)
-	set_target_properties(${PROJECT_NAME} PROPERTIES
-		MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/src/Info.plist"
-	)
-endif()
 
 if(WIN32)
 	set_target_properties(${PROJECT_NAME} PROPERTIES
 		ARCHIVE_OUTPUT_NAME "retroshare-gui"
 	)
+
+	if(NOT RS_DEVELOPMENT_BUILD AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+		# Hide console window on Windows for release builds (Release)
+		set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
+	endif()
+
 	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 		# Exclude static libs from the re-exported symbol set. This matters for the
 		# Ninja generator on Windows: there the GUI otherwise re-exports the symbols
@@ -272,26 +298,28 @@ if(WIN32)
 		# libsam3.a in FeedReader) then fail with "multiple definition" at link time.
 		# The MSYS Makefiles generator does not hit this, but excluding them keeps
 		# Ninja builds working too.
-		target_link_options(${PROJECT_NAME} PRIVATE "-Wl,--export-all-symbols" "-Wl,--exclude-libs,libbitdht.a:librnp.a:libsexpp.a:libsam3.a")
+		target_link_options(${PROJECT_NAME}
+			PRIVATE
+			"-Wl,--export-all-symbols"
+			"-Wl,--exclude-libs,libbitdht.a:librnp.a:libsexpp.a:libsam3.a"
+		)
 	endif()
 endif()
-install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 
-if(RS_USE_NATIVE_DIALOGS)
-	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_NATIVEDIALOGS)
+if(APPLE)
+	set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE TRUE)
 endif()
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/)
+################################################################################
+### subdirectories
+
+add_subdirectory(src)
 
 ################################################################################
+### install
 
-if(RS_DEVELOPMENT_BUILD)
-	target_compile_options(${PROJECT_NAME} PRIVATE "-O0")
-endif(RS_DEVELOPMENT_BUILD)
-
-################################################################################
+install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 if(RS_SERVICE_DESKTOP)
 	if(UNIX AND NOT APPLE)
@@ -342,121 +370,8 @@ if(RS_SERVICE_DESKTOP)
 	endif(UNIX AND NOT APPLE)
 endif(RS_SERVICE_DESKTOP)
 
-################################################################################
-
-if(RS_JSON_API)
-	target_compile_definitions(${PROJECT_NAME} PUBLIC RS_JSONAPI)
-endif(RS_JSON_API)
-
-if(RS_WEBUI)
-	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_WEBUI)
-endif(RS_WEBUI)
-
-################################# CMark ########################################
-
-if(RS_GUI_CMARK)
-	find_package(cmark REQUIRED)
-	target_compile_definitions(${PROJECT_NAME} PRIVATE USE_CMARK)
-	target_link_libraries(${PROJECT_NAME} PRIVATE cmark::cmark)
-endif(RS_GUI_CMARK)
-
-################################# LibSam v3 ####################################
-
-# sam3 is used in gui/settings/ServerPage.cpp
-if(RS_USE_I2P_SAM3)
-	find_package(sam3 REQUIRED)
-	target_link_libraries(${PROJECT_NAME} PRIVATE sam3::libsam3)
-	target_compile_definitions(${PROJECT_NAME}
-		PRIVATE
-		RS_USE_I2P_SAM3
-		RS_USE_I2P_SAM3_LIBSAM3
-	)
-endif()
-
-################################################################################
-#                                    TODO                                      #
-################################################################################
-
-#   # Auto detect installed version of cmark
-#   rs_gui_cmark {
-#   	DEFINES *= USE_CMARK
-#   	no_rs_cross_compiling {
-#   		message("Using compiled cmark")
-#   		CMARK_SRC_PATH=$$clean_path($${RS_SRC_PATH}/supportlibs/cmark)
-#   		CMARK_BUILD_PATH=$$clean_path($${RS_BUILD_PATH}/supportlibs/cmark/build)
-#   		INCLUDEPATH *= $$clean_path($${CMARK_SRC_PATH}/src/)
-#   		DEPENDPATH *= $$clean_path($${CMARK_SRC_PATH}/src/)
-#   		QMAKE_LIBDIR *= $$clean_path($${CMARK_BUILD_PATH}/)
-#   		# Using sLibs would fail as libcmark.a is generated at compile-time
-#   		LIBS *= -L$$clean_path($${CMARK_BUILD_PATH}/src/) -lcmark
-#
-#   		DUMMYCMARKINPUT = FORCE
-#   		CMAKE_GENERATOR_OVERRIDE=""
-#   		win32-g++|win32-clang-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
-#   		gencmarklib.name = Generating libcmark.
-#   		gencmarklib.input = DUMMYCMARKINPUT
-#   		gencmarklib.output = $$clean_path($${CMARK_BUILD_PATH}/src/libcmark.a)
-#   		gencmarklib.CONFIG += target_predeps combine
-#   		gencmarklib.variable_out = PRE_TARGETDEPS
-#   		gencmarklib.commands = \
-#   		    cd $${RS_SRC_PATH} && ( \
-#   		    git submodule update --init supportlibs/cmark ; \
-#   		    cd $${CMARK_SRC_PATH} ; \
-#   		    true ) && \
-#   		    mkdir -p $${CMARK_BUILD_PATH} && cd $${CMARK_BUILD_PATH} && \
-#   		    cmake \
-#   		        -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
-#                           \"-DCMAKE_CXX_FLAGS=$${QMAKE_CXXFLAGS}\" \
-#   		        $${CMAKE_GENERATOR_OVERRIDE} \
-#   		        -DCMAKE_INSTALL_PREFIX=. \
-#   		        -B. \
-#   		        -H$$shell_path($${CMARK_SRC_PATH}) && \
-#   		    $(MAKE)
-#   		QMAKE_EXTRA_COMPILERS += gencmarklib
-#   	} else {
-#   		message("Using systems cmark")
-#   		sLibs *= libcmark
-#   	}
-#   }
-
 ################################# Linux ##########################################
-# Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
 
-if(UNIX)
-	find_package(PkgConfig REQUIRED)
-
-	if(NOT APPLE)
-		# X11 + XScreenSaver are used directly by the GUI for idle detection
-		# (src/idle/idle_platform.cpp, guarded by HAVE_XSS). NOTE: the XScreenSaver
-		# extension only works under X11/XWayland, not native Wayland; modernising
-		# idle detection for Wayland is a separate effort.
-		pkg_check_modules(REQUIRED x11)
-		pkg_check_modules(X11 REQUIRED x11)
-		pkg_check_modules(XSCRNSAVER REQUIRED xscrnsaver)
-
-		list( APPEND RS_LINK_LIBRARIES ${X11_LIBRARIES} )
-		list( APPEND RS_LINK_LIBRARIES ${XSCRNSAVER_LIBRARIES} )
-
-		target_include_directories(${PROJECT_NAME} PRIVATE ${X11_INCLUDE_DIRS})
-		target_compile_options(${PROJECT_NAME} PRIVATE ${X11_CFLAGS_OTHER})
-
-		target_include_directories(retroshare-gui PRIVATE ${XSCRNSAVER_INCLUDE_DIRS})
-		target_compile_options(retroshare-gui PRIVATE ${XSCRNSAVER_CFLAGS_OTHER})
-
-		target_compile_definitions(${PROJECT_NAME} PRIVATE HAVE_XSS)
-	endif()
-
-	# Large File Support for 32-bit builds (64-bit off_t). No-op on 64-bit
-	# platforms; kept because the GUI does perform some direct file I/O and this
-	# keeps it consistent with libretroshare.
-	target_compile_definitions(${PROJECT_NAME} PRIVATE _FILE_OFFSET_BITS=64)
-	target_link_options(${PROJECT_NAME} PRIVATE -rdynamic)
-endif(UNIX)
-
-if(RS_SANITIZE)
-	list( APPEND RS_LINK_LIBRARIES asan )
-	list( APPEND RS_LINK_LIBRARIES ubsan )
-endif(RS_SANITIZE)
 
 #                       #################### Cross compilation for windows under Linux ###################
 #
@@ -630,74 +545,3 @@ endif(RS_SANITIZE)
 #                       	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 #                       	LIBS *= -lglib-2.0
 #                       }
-
-################################ GENERAL #######################################
-
-target_link_libraries(${PROJECT_NAME} PRIVATE ${RS_LINK_LIBRARIES})
-
-
-# Controlled by an option, like in libretroshare/CMakeLists.txt: silence the
-# deprecation warnings unless the developer explicitly asks to see them.
-if(NOT RS_WARN_DEPRECATED)
-	target_compile_options(${PROJECT_NAME} PRIVATE -Wno-deprecated -Wno-deprecated-declarations)
-	target_compile_definitions(${PROJECT_NAME} PUBLIC RS_NO_WARN_DEPRECATED)
-endif(NOT RS_WARN_DEPRECATED)
-target_compile_definitions(${PROJECT_NAME} PRIVATE RS_RELEASE_VERSION )
-# NOTE: TARGET is NOT the executable name: it is the single-instance IPC socket
-# name used in main.cpp / rshare.cpp (connectToServer(TARGET)). Kept as
-# "retroshare" so the single-instance lock/socket name stays unchanged.
-target_compile_definitions(${PROJECT_NAME} PRIVATE TARGET=\"retroshare\")
-target_compile_definitions(${PROJECT_NAME} PRIVATE RS_DIRECT_CHAT)
-
-# RetroShare GUI own version (RS_GUI_VERSION), independent from libretroshare.
-# retroshare-gui is a directory of the RetroShare super-project (not a submodule),
-# so `git describe` here resolves to the super-project version, which is exactly
-# what the GUI should report as its own version. Drop the leading 'v' to match the
-# usual version style. rsguiversion.h provides a default, so a build without git
-# metadata (or the qmake/Android build path) still compiles.
-execute_process(
-	COMMAND ${GIT_EXECUTABLE} describe --tags --always --dirty
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	OUTPUT_VARIABLE RS_GUI_VERSION
-	OUTPUT_STRIP_TRAILING_WHITESPACE
-	RESULT_VARIABLE RS_GUI_GIT_RESULT ) # Avoid CMake failure if git fails
-if(RS_GUI_GIT_RESULT EQUAL 0 AND NOT RS_GUI_VERSION STREQUAL "")
-	string(REGEX REPLACE "^v" "" RS_GUI_VERSION "${RS_GUI_VERSION}")
-	message(STATUS "RetroShare GUI version ${RS_GUI_VERSION}")
-	target_compile_definitions(
-		${PROJECT_NAME} PRIVATE RS_GUI_VERSION="${RS_GUI_VERSION}" )
-else()
-	message(WARNING "Determining RetroShare GUI version via git failed")
-endif()
-
-# Match the actual option name RS_GXSCIRCLES (defined above). It was previously
-# tested as RS_GXS_CIRCLES (extra underscore), so RS_USE_CIRCLES was never defined.
-if(RS_GXSCIRCLES)
-	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_USE_CIRCLES )
-endif(RS_GXSCIRCLES)
-
-# NOTE: the GUI does NOT use botan, json-c, z or bz2 directly (it uses rapidjson
-# for JSON). They are transitive dependencies of librnp (PGP), pulled in here only
-# because the statically-linked librnp does not propagate them. Ideally librnp
-# (or libretroshare) should export these as link-interface deps so consumers don't
-# have to repeat them; that belongs to libretroshare and is left as a follow-up.
-find_library(BOTAN_LIBRARY NAMES botan botan-3 botan-2 libbotan-3 libbotan-2 REQUIRED)
-
-if(WIN32)
-    # Robust resolution including RNP and sexpp inside the link group for Windows MinGW
-    target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--start-group librnp sexpp z bz2 json-c ${BOTAN_LIBRARY} -Wl,--end-group)
-elseif(APPLE)
-    # macOS specific behavior: skip Linux-specific linker flags
-    target_link_libraries(${PROJECT_NAME} PRIVATE z bz2 json-c ${BOTAN_LIBRARY})
-else()
-    # Default behavior for Linux
-    target_link_libraries(${PROJECT_NAME} PRIVATE -Wl,--no-as-needed z bz2 json-c ${BOTAN_LIBRARY} -Wl,--as-needed)
-endif()
-
-if(RS_PLUGINS AND CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-	set(PLUGINS_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../plugins/")
-	if(EXISTS "${PLUGINS_DEVEL_DIR}/CMakeLists.txt")
-		message(STATUS "plugins source found at ${PLUGINS_DEVEL_DIR} using it")
-		add_subdirectory("${PLUGINS_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/plugins")
-	endif()
-endif()
