@@ -1,8 +1,7 @@
 # ------------------------------------------------------------------------ *\
-# src/gui/CMakeLists.txt
+# src/gui/statistics/CMakeLists.txt
 # This file is part of RetroShare-GUI.
 #
-# Copyright (C) 2018      RetroShare Team <retroshare.team@gmail.com>
 # Copyright (C) 2026      David Bears <dbear4q@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -20,49 +19,58 @@
 # ------------------------------------------------------------------------ */
 
 target_sources(${PROJECT_NAME}
-	PUBLIC FILE_SET HEADERS
-	BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-
-	PRIVATE FILE_SET private_HEADERS TYPE HEADERS
-	BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-)
-if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.4")
-	target_sources(${PROJECT_NAME}
-		PRIVATE FILE_SET SOURCES
-		PRIVATE FILE_SET ui TYPE SOURCES
-		PRIVATE FILE_SET resources TYPE SOURCES
-	)
-	set("PRIVATE_FILESET_SOURCES_FILES" PRIVATE FILE_SET SOURCES FILES)
-	set("PRIVATE_FILESET_UI_FILES" PRIVATE FILE_SET ui FILES)
-	set("PRIVATE_FILESET_RESOURCES_FILES" PRIVATE FILE_SET resources FILES)
-else()
-	set("PRIVATE_FILESET_SOURCES_FILES" PRIVATE)
-	set("PRIVATE_FILESET_UI_FILES" PRIVATE)
-	set("PRIVATE_FILESET_RESOURCES_FILES" PRIVATE)
-endif()
-
-add_subdirectory(control)
-add_subdirectory(gui)
-if(RS_IDLE)
-	add_subdirectory(idle)
-endif()
-add_subdirectory(lang)
-add_subdirectory(retroshare-gui)
-add_subdirectory(TorControl)
-add_subdirectory(util)
-
-target_sources(${PROJECT_NAME}
 	PUBLIC FILE_SET HEADERS FILES
 
 	PRIVATE FILE_SET private_HEADERS FILES
-	rshare.h
+	BandwidthGraphWindow.h
+	BandwidthStatsWidget.h
+	BwCtrlWindow.h
+	BWGraph.h
+	dhtgraph.h
+	DhtWindow.h
+	GlobalRouterStatistics.h
+	GxsIdStatistics.h
+	GxsNetTunnelsDialog.h
+	GxsTransportStatistics.h
+	Histogram.h
+	RttStatistics.h
+	StatisticsWindow.h
+	TunnelStatisticsDialog.h
+	turtlegraph.h
+	TurtleRouterDialog.h
+	TurtleRouterStatistics.h
 
 	${PRIVATE_FILESET_SOURCES_FILES}
-	rsguiversion.h
-	rshare.cpp
-	main.cpp
+	BandwidthGraphWindow.cpp
+	BandwidthStatsWidget.cpp
+	DhtWindow.cpp
+	Histogram.cpp
+	TurtleRouterDialog.cpp
+	TurtleRouterStatistics.cpp
+	GxsIdStatistics.cpp
+	GlobalRouterStatistics.cpp
+	GxsTransportStatistics.cpp
+	StatisticsWindow.cpp
+	BwCtrlWindow.cpp
+	RttStatistics.cpp
+	GxsNetTunnelsDialog.cpp
+	TunnelStatisticsDialog.cpp
+	BWGraph.cpp
 
 	${PRIVATE_FILESET_UI_FILES}
+	BandwidthGraphWindow.ui
+	BandwidthStatsWidget.ui
+	BwCtrlWindow.ui
+	DhtWindow.ui
+	GlobalRouterStatistics.ui
+	GxsIdStatistics.ui
+	GxsNetTunnelsDialog.ui
+	GxsTransportStatistics.ui
+	RttStatistics.ui
+	StatisticsWindow.ui
+	TunnelStatisticsDialog.ui
+	TurtleRouterDialog.ui
+	TurtleRouterStatistics.ui
 
 	${PRIVATE_FILESET_RESOURCES_FILES}
 )

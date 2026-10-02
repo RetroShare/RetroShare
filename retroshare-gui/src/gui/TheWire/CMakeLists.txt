@@ -1,8 +1,7 @@
 # ------------------------------------------------------------------------ *\
-# src/gui/CMakeLists.txt
+# src/gui/TheWire/CMakeLists.txt
 # This file is part of RetroShare-GUI.
 #
-# Copyright (C) 2018      RetroShare Team <retroshare.team@gmail.com>
 # Copyright (C) 2026      David Bears <dbear4q@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -20,49 +19,49 @@
 # ------------------------------------------------------------------------ */
 
 target_sources(${PROJECT_NAME}
-	PUBLIC FILE_SET HEADERS
-	BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-
-	PRIVATE FILE_SET private_HEADERS TYPE HEADERS
-	BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-)
-if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.4")
-	target_sources(${PROJECT_NAME}
-		PRIVATE FILE_SET SOURCES
-		PRIVATE FILE_SET ui TYPE SOURCES
-		PRIVATE FILE_SET resources TYPE SOURCES
-	)
-	set("PRIVATE_FILESET_SOURCES_FILES" PRIVATE FILE_SET SOURCES FILES)
-	set("PRIVATE_FILESET_UI_FILES" PRIVATE FILE_SET ui FILES)
-	set("PRIVATE_FILESET_RESOURCES_FILES" PRIVATE FILE_SET resources FILES)
-else()
-	set("PRIVATE_FILESET_SOURCES_FILES" PRIVATE)
-	set("PRIVATE_FILESET_UI_FILES" PRIVATE)
-	set("PRIVATE_FILESET_RESOURCES_FILES" PRIVATE)
-endif()
-
-add_subdirectory(control)
-add_subdirectory(gui)
-if(RS_IDLE)
-	add_subdirectory(idle)
-endif()
-add_subdirectory(lang)
-add_subdirectory(retroshare-gui)
-add_subdirectory(TorControl)
-add_subdirectory(util)
-
-target_sources(${PROJECT_NAME}
 	PUBLIC FILE_SET HEADERS FILES
 
 	PRIVATE FILE_SET private_HEADERS FILES
-	rshare.h
+	WireDialog.h
+	WireGroupItem.h
+	WireGroupDialog.h
+	WireGroupExtra.h
+	PulseAddDialog.h
+	PulseViewItem.h
+	PulseTopLevel.h
+	PulseViewGroup.h
+	PulseReply.h
+	PulseReplySeperator.h
+	PulseMessage.h
+	WireUserNotify.h
 
 	${PRIVATE_FILESET_SOURCES_FILES}
-	rsguiversion.h
-	rshare.cpp
-	main.cpp
+	WireDialog.cpp
+	WireGroupItem.cpp
+	WireGroupDialog.cpp
+	WireGroupExtra.cpp
+	PulseAddDialog.cpp
+	PulseViewItem.cpp
+	PulseTopLevel.cpp
+	PulseViewGroup.cpp
+	PulseReply.cpp
+	PulseReplySeperator.cpp
+	PulseMessage.cpp
+	WireUserNotify.cpp
 
 	${PRIVATE_FILESET_UI_FILES}
+	WireDialog.ui
+	WireGroupItem.ui
+	WireGroupExtra.ui
+	PulseAddDialog.ui
+	PulseTopLevel.ui
+	PulseViewGroup.ui
+	PulseReply.ui
+	PulseReplySeperator.ui
+	PulseMessage.ui
 
 	${PRIVATE_FILESET_RESOURCES_FILES}
+	TheWire_images.qrc
 )
+
+target_compile_definitions(${PROJECT_NAME} PUBLIC RS_USE_WIRE)

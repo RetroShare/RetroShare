@@ -1,8 +1,7 @@
 # ------------------------------------------------------------------------ *\
-# src/gui/CMakeLists.txt
+# src/gui/gxschannels/CMakeLists.txt
 # This file is part of RetroShare-GUI.
 #
-# Copyright (C) 2018      RetroShare Team <retroshare.team@gmail.com>
 # Copyright (C) 2026      David Bears <dbear4q@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -20,49 +19,34 @@
 # ------------------------------------------------------------------------ */
 
 target_sources(${PROJECT_NAME}
-	PUBLIC FILE_SET HEADERS
-	BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-
-	PRIVATE FILE_SET private_HEADERS TYPE HEADERS
-	BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-)
-if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.4")
-	target_sources(${PROJECT_NAME}
-		PRIVATE FILE_SET SOURCES
-		PRIVATE FILE_SET ui TYPE SOURCES
-		PRIVATE FILE_SET resources TYPE SOURCES
-	)
-	set("PRIVATE_FILESET_SOURCES_FILES" PRIVATE FILE_SET SOURCES FILES)
-	set("PRIVATE_FILESET_UI_FILES" PRIVATE FILE_SET ui FILES)
-	set("PRIVATE_FILESET_RESOURCES_FILES" PRIVATE FILE_SET resources FILES)
-else()
-	set("PRIVATE_FILESET_SOURCES_FILES" PRIVATE)
-	set("PRIVATE_FILESET_UI_FILES" PRIVATE)
-	set("PRIVATE_FILESET_RESOURCES_FILES" PRIVATE)
-endif()
-
-add_subdirectory(control)
-add_subdirectory(gui)
-if(RS_IDLE)
-	add_subdirectory(idle)
-endif()
-add_subdirectory(lang)
-add_subdirectory(retroshare-gui)
-add_subdirectory(TorControl)
-add_subdirectory(util)
-
-target_sources(${PROJECT_NAME}
 	PUBLIC FILE_SET HEADERS FILES
 
 	PRIVATE FILE_SET private_HEADERS FILES
-	rshare.h
+	GxsChannelDialog.h
+	GxsChannelGroupDialog.h
+	CreateGxsChannelMsg.h
+	GxsChannelPostsWidgetWithModel.h
+	GxsChannelPostsModel.h
+	GxsChannelPostFilesModel.h
+	GxsChannelPostThumbnail.h
+	GxsChannelFilesStatusWidget.h
+	GxsChannelUserNotify.h
 
 	${PRIVATE_FILESET_SOURCES_FILES}
-	rsguiversion.h
-	rshare.cpp
-	main.cpp
+	GxsChannelDialog.cpp
+	GxsChannelPostsWidgetWithModel.cpp
+	GxsChannelPostsModel.cpp
+	GxsChannelPostFilesModel.cpp
+	GxsChannelFilesStatusWidget.cpp
+	GxsChannelPostThumbnail.cpp
+	GxsChannelGroupDialog.cpp
+	CreateGxsChannelMsg.cpp
+	GxsChannelUserNotify.cpp
 
 	${PRIVATE_FILESET_UI_FILES}
+	GxsChannelPostsWidgetWithModel.ui
+	GxsChannelFilesStatusWidget.ui
+	CreateGxsChannelMsg.ui
 
 	${PRIVATE_FILESET_RESOURCES_FILES}
 )

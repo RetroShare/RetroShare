@@ -16,7 +16,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
 ################################################################################
 
-cmake_minimum_required (VERSION 3.18.0)
+cmake_minimum_required(VERSION 3.24...4.4)
+
 project(retroshare-gui VERSION 0.6.7 LANGUAGES CXX C)
 
 include(GNUInstallDirs)
