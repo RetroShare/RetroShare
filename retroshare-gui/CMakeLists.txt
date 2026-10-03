@@ -319,58 +319,57 @@ add_subdirectory(src)
 ################################################################################
 ### install
 
-install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
+set(INSTALL_COMPONENT COMPONENT retroshare-gui)
 
-if(RS_SERVICE_DESKTOP)
-	if(UNIX AND NOT APPLE)
+install(TARGETS ${PROJECT_NAME}
+	EXPORT ${PROJECT_NAME}_export
+	${INSTALL_COMPONENT}
+	FILE_SET HEADERS
+		DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/retroshare-gui"
+)
+
+if(UNIX AND NOT APPLE AND RS_SERVICE_DESKTOP)
+	install(
+		FILES data/retroshare.svg
+		DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/"
+		${INSTALL_COMPONENT}
+	)
+
+	foreach(size 24x24 48x48 64x64 128x128)
 		install(
-			FILES data/retroshare.svg
-			DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/"
+			FILES data/${size}/apps/retroshare.png
+			DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/${size}/apps/"
+			${INSTALL_COMPONENT}
 		)
+	endforeach()
 
-		install(
-			FILES data/retroshare.xpm
-			DESTINATION "${CMAKE_INSTALL_DATADIR}/pixmaps/"
-		)
+	install(
+		FILES data/retroshare.xpm
+		DESTINATION "${CMAKE_INSTALL_DATADIR}/pixmaps/"
+		${INSTALL_COMPONENT}
+	)
 
-		install(
-			FILES data/24x24/apps/retroshare.png
-			DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/24x24/apps/"
-		)
+	install(
+		FILES data/retroshare-gui.desktop
+		DESTINATION "${CMAKE_INSTALL_DATADIR}/applications/"
+		${INSTALL_COMPONENT}
+	)
 
-		install(
-			FILES data/48x48/apps/retroshare.png
-			DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/48x48/apps/"
-		)
+	install(
+		DIRECTORY src/gui/qss/chat/Bubble src/gui/qss/chat/Bubble_Compact
+		DESTINATION "${RS_INSTALL_DATADIR}/stylesheets/"
+		${INSTALL_COMPONENT}
+	)
 
-		install(
-			FILES data/64x64/apps/retroshare.png
-			DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/64x64/apps/"
-		)
+	install(
+		DIRECTORY src/sounds/ src/qss/ # TODO: move from src to data
+		DESTINATION "${RS_INSTALL_DATADIR}"
+		${INSTALL_COMPONENT}
+	)
+endif()
 
-		install(
-			FILES data/128x128/apps/retroshare.png
-			DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/128x128/apps"
-		)
+## TODO: config packages, alias target
 
-		install(
-			FILES data/retroshare-gui.desktop
-			DESTINATION "${CMAKE_INSTALL_DATADIR}/applications/"
-		)
-
-		install(
-			DIRECTORY src/gui/qss/chat/Bubble src/gui/qss/chat/Bubble_Compact
-			DESTINATION "${RS_INSTALL_DATADIR}/stylesheets/"
-		)
-
-		install(
-			DIRECTORY src/sounds/ src/qss/
-			DESTINATION "${RS_INSTALL_DATADIR}"
-		)
-	endif(UNIX AND NOT APPLE)
-endif(RS_SERVICE_DESKTOP)
-
-################################# Linux ##########################################
 
 
 #                       #################### Cross compilation for windows under Linux ###################
