@@ -22,20 +22,22 @@ target_sources(${PROJECT_NAME}
 	PUBLIC FILE_SET HEADERS FILES
 
 	PRIVATE FILE_SET private_HEADERS FILES
-	WireDialog.h
-	WireGroupItem.h
-	WireGroupDialog.h
-	WireGroupExtra.h
+	CustomFrame.h
 	PulseAddDialog.h
-	PulseViewItem.h
-	PulseTopLevel.h
-	PulseViewGroup.h
+	PulseMessage.h
 	PulseReply.h
 	PulseReplySeperator.h
-	PulseMessage.h
+	PulseTopLevel.h
+	PulseViewItem.h
+	PulseViewGroup.h
+	WireDialog.h
+	WireGroupDialog.h
+	WireGroupExtra.h
+	WireGroupItem.h
 	WireUserNotify.h
 
 	${PRIVATE_FILESET_SOURCES_FILES}
+	CustomFrame.cpp
 	WireDialog.cpp
 	WireGroupItem.cpp
 	WireGroupDialog.cpp

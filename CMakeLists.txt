@@ -59,13 +59,12 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/mk/cmake")
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 include(mk/cmake/fetch_provider_declare.cmake)
 
+if(RS_GXSWIKIPOS)
+	add_subdirectory(supportlibs/pegmarkdown)
+endif()
+
 ################################################################################
 ### add subdirectories
-
-# supportlibs first so dependencies are fetched and available
-# add_subdirectory(supportlibs)
-
-# add_subdirectory(libretroshare)
 
 if(RS_GUI)
 	add_subdirectory(retroshare-gui)

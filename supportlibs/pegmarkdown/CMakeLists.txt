@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------------ *\
-# src/gui/WikiPoos/CMakeLists.txt
-# This file is part of RetroShare-GUI.
+# CMakeLists.txt
+# This file is part of pegmarkdown
 #
 # Copyright (C) 2026      David Bears <dbear4q@gmail.com>
 #
@@ -18,32 +18,29 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # ------------------------------------------------------------------------ */
 
-target_sources(${PROJECT_NAME}
-	PUBLIC FILE_SET HEADERS FILES
+cmake_minimum_required(VERSION 3.24...4.4)
 
-	PRIVATE FILE_SET private_HEADERS FILES
-	WikiAddDialog.h
-	WikiDialog.h
-	WikiEditDialog.h
-	WikiUserNotify.h
-
-	${PRIVATE_FILESET_SOURCES_FILES}
-	WikiAddDialog.cpp
-	WikiDialog.cpp
-	WikiEditDialog.cpp
-	WikiUserNotify.cpp
-
-	${PRIVATE_FILESET_UI_FILES}
-	WikiAddDialog.ui
-	WikiDialog.ui
-	WikiEditDialog.ui
-
-	${PRIVATE_FILESET_RESOURCES_FILES}
+project(pegmarkdown
+  LANGUAGES C
 )
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC RS_USE_WIKI)
+add_library(pegmarkdown STATIC
+  GLibFacade.h
+  markdown_lib.h
+	markdown_peg.h
+	odf.h
+	parsing_functions.h
+	utility_functions.h
 
-target_link_libraries(${PROJECT_NAME}
-	PUBLIC
-	pegmarkdown::pegmarkdown
+  GLibFacade.c
+	markdown_lib.c
+  markdown_output.c
+	markdown_parser.c
+	parsing_functions.c
+	odf.c
+	utility_functions.c
 )
+
+target_include_directories(pegmarkdown PUBLIC ${PROJECT_SOURCE_DIR})
+
+add_library(pegmarkdown::pegmarkdown ALIAS pegmarkdown)
