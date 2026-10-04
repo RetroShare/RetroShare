@@ -82,3 +82,8 @@ endif()
 if(RS_FRIENDSERVER)
 	add_subdirectory(retroshare-friendserver)
 endif()
+
+if(RS_WEBUI)
+	## TODO: integrate retroshare-webui with find_package
+	add_subdirectory(retroshare-webui)
+endif()
