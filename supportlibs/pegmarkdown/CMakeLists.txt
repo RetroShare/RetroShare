@@ -41,6 +41,7 @@ add_library(pegmarkdown STATIC
 	utility_functions.c
 )
 
+target_compile_definitions(pegmarkdown PRIVATE _GNU_SOURCE)
 target_include_directories(pegmarkdown PUBLIC ${PROJECT_SOURCE_DIR})
 
 add_library(pegmarkdown::pegmarkdown ALIAS pegmarkdown)
