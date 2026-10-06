@@ -1,5 +1,24 @@
-# plugins/VOIP/CMakeLists.txt
-cmake_minimum_required(VERSION 3.18)
+# ------------------------------------------------------------------------ *\
+# CMakeLists.txt
+# This file is part of the VOIP plugin for RetroShare.
+#
+# Copyright (C) 2026      David Bears <dbear4q@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# ------------------------------------------------------------------------ */
+
+cmake_minimum_required(VERSION 3.18...4.4)
 project(VOIPPlugin)
 
 # --- Dependencies ---
@@ -9,30 +28,29 @@ pkg_check_modules(AVCODEC REQUIRED libavcodec)
 pkg_check_modules(AVUTIL REQUIRED libavutil)
 pkg_check_modules(SPEEX REQUIRED speex)
 pkg_check_modules(SPEEXDSP REQUIRED speexdsp)
+find_package(RetroShare REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-# --- Definitions ---
-
 # --- Sources ---
 set(VOIP_SOURCES
-    VOIPPlugin.cpp
-    gui/VOIPConfigPanel.cpp
-    services/p3VOIP.cc
-    services/rsVOIPItems.cc
-    gui/AudioStats.cpp
-    gui/AudioWizard.cpp
-    gui/SpeexProcessor.cpp
-    gui/audiodevicehelper.cpp
-    gui/VideoProcessor.cpp
-    gui/QVideoDevice.cpp
-    gui/VOIPChatWidgetHolder.cpp
-    gui/VOIPGUIHandler.cpp
-    gui/VOIPNotify.cpp
-    gui/VOIPToasterItem.cpp
-    gui/VOIPToasterNotify.cpp
+	VOIPPlugin.cpp
+	gui/VOIPConfigPanel.cpp
+	services/p3VOIP.cc
+	services/rsVOIPItems.cc
+	gui/AudioStats.cpp
+	gui/AudioWizard.cpp
+	gui/SpeexProcessor.cpp
+	gui/audiodevicehelper.cpp
+	gui/VideoProcessor.cpp
+	gui/QVideoDevice.cpp
+	gui/VOIPChatWidgetHolder.cpp
+	gui/VOIPGUIHandler.cpp
+	gui/VOIPNotify.cpp
+	gui/VOIPToasterItem.cpp
+	gui/VOIPToasterNotify.cpp
 )
 
 set(VOIP_FORMS
@@ -81,6 +99,31 @@ add_library(VOIP MODULE
     ${QM_FILES}
 )
 
+target_include_directories(VOIP PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}/gui
+	${CMAKE_CURRENT_SOURCE_DIR}/services
+	${CMAKE_CURRENT_SOURCE_DIR}/interface
+	${AVCODEC_INCLUDE_DIRS}
+	${AVUTIL_INCLUDE_DIRS}
+	${SPEEX_INCLUDE_DIRS}
+	${SPEEXDSP_INCLUDE_DIRS}
+)
+
+target_link_libraries(VOIP PRIVATE
+	Qt5::Core
+	Qt5::Widgets
+	Qt5::Multimedia
+	Qt5::Xml
+	Qt5::Network
+	${AVCODEC_LIBRARIES}
+	${AVUTIL_LIBRARIES}
+	${SPEEX_LIBRARIES}
+	${SPEEXDSP_LIBRARIES}
+	retroshare::retroshare
+	retroshare-gui
+)
+
 set_target_properties(VOIP PROPERTIES
     PREFIX "lib"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins"
@@ -98,53 +141,12 @@ if(WIN32)
     target_compile_definitions(VOIP PRIVATE WINDOWS_SYS)
 endif()
 
-# --- Links ---
-if(WIN32)
-    # See FeedReader/CMakeLists.txt: on Windows a plugin DLL must resolve every
-    # symbol at link time; on Linux they are resolved from the host process.
-    target_link_libraries(VOIP PRIVATE retroshare retroshare-gui)
-endif()
-
-# NOTE: VOIP makes no direct use of OpenSSL (it relies on libretroshare for any
-# cryptography), so it does not find_package/link OpenSSL itself.
-target_link_libraries(VOIP PRIVATE
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::Multimedia
-    Qt5::Xml
-    Qt5::Network
-    ${AVCODEC_LIBRARIES}
-    ${AVUTIL_LIBRARIES}
-    ${SPEEX_LIBRARIES}
-    ${SPEEXDSP_LIBRARIES}
-)
-
 target_compile_options(VOIP PRIVATE "-Wno-deprecated-declarations")
 target_compile_definitions(VOIP PRIVATE RS_NO_WARN_DEPRECATED)
 
 if(RS_DEVELOPMENT_BUILD)
     target_compile_options(VOIP PRIVATE "-g" "-O0")
 endif()
-
-# --- Includes ---
-find_package(OpenSSL REQUIRED)
-find_package(RapidJSON 1.1.0 REQUIRED)
-include(RapidJSONTarget)
-target_include_directories(VOIP PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/gui
-    ${CMAKE_CURRENT_SOURCE_DIR}/services
-    ${CMAKE_CURRENT_SOURCE_DIR}/interface
-    ${CMAKE_SOURCE_DIR}/libretroshare/src
-    ${CMAKE_SOURCE_DIR}/retroshare-gui/src
-    ${CMAKE_SOURCE_DIR}/retroshare-gui/src/gui
-    $<TARGET_PROPERTY:RapidJSON,INTERFACE_INCLUDE_DIRECTORIES>
-    $<TARGET_PROPERTY:OpenSSL::Crypto,INTERFACE_INCLUDE_DIRECTORIES>
-    ${AVCODEC_INCLUDE_DIRS}
-    ${AVUTIL_INCLUDE_DIRS}
-    ${SPEEX_INCLUDE_DIRS}
-    ${SPEEXDSP_INCLUDE_DIRS}
-)
 
 # --- Installation ---
 install(TARGETS VOIP DESTINATION lib/retroshare/plugins)
