@@ -29,6 +29,7 @@ pkg_check_modules(AVUTIL REQUIRED libavutil)
 pkg_check_modules(SPEEX REQUIRED speex)
 pkg_check_modules(SPEEXDSP REQUIRED speexdsp)
 find_package(RetroShare REQUIRED)
+find_package(RetroShare-GUI REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -126,10 +127,15 @@ target_link_libraries(VOIP PRIVATE
 
 set_target_properties(VOIP PROPERTIES
     PREFIX "lib"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins"
-    AUTOUIC_SEARCH_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/gui"
+		AUTOUIC_SEARCH_PATHS "${CMAKE_CURRENT_SOURCE_DIR}/gui"
 )
+
+if(RS_PLUGIN_BINARY_DIR)
+	set_target_properties(VOIP PROPERTIES
+		LIBRARY_OUTPUT_DIRECTORY ${RS_PLUGIN_BINARY_DIR}
+		RUNTIME_OUTPUT_DIRECTORY ${RS_PLUGIN_BINARY_DIR}
+	)
+endif()
 
 # FFmpeg/libav headers (libavcodec/libavutil, included by gui/VideoProcessor.*)
 # use the C99 fixed-width constant macros (INT64_C, UINT64_C, ...). In a C++

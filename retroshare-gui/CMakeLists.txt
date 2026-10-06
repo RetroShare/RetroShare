@@ -321,7 +321,14 @@ add_subdirectory(src)
 ################################################################################
 ### install
 
+set(BUILD_CONFIG_DIR "${PROJECT_BINARY_DIR}/cmake")
+set(INSTALL_CONFIG_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+set(TARGET_NAMESPACE retroshare)
 set(INSTALL_COMPONENT COMPONENT retroshare-gui)
+if(CMAKE_EXPERIMENTAL_EXPORT_PACKAGE_DEPENDENCIES)
+	set(EXPORT_PACKAGE_DEPENDENCIES EXPORT_PACKAGE_DEPENDENCIES)
+endif()
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 
 install(TARGETS ${PROJECT_NAME}
 	EXPORT ${PROJECT_NAME}_export
@@ -332,6 +339,67 @@ install(TARGETS ${PROJECT_NAME}
 		DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
+
+# If dependencies are fetched via FetchContent, then their targets might not
+# have export sets, and this prevents us from using our own export set.
+if(NOT FETCH_DEPENDENCY_PROVIDER)
+
+	## config for install tree
+	install(EXPORT ${PROJECT_NAME}_export
+		DESTINATION "${INSTALL_CONFIG_DIR}"
+		FILE ${PROJECT_NAME_LOWER}-targets.cmake
+		NAMESPACE ${TARGET_NAMESPACE}::
+		${INSTALL_COMPONENT}
+		${EXPORT_PACKAGE_DEPENDENCIES}
+	)
+	include(CMakePackageConfigHelpers)
+	configure_package_config_file(
+		mk/cmake/retroshare-gui-config.cmake.in
+		"${BUILD_CONFIG_DIR}/${PROJECT_NAME_LOWER}-config-install.cmake"
+		INSTALL_DESTINATION "${INSTALL_CONFIG_DIR}"
+	)
+	write_basic_package_version_file(
+		"${BUILD_CONFIG_DIR}/${PROJECT_NAME_LOWER}-config-version-install.cmake"
+		COMPATIBILITY SameMinorVersion
+	)
+	foreach(config config config-version)
+		install(FILES
+			"${BUILD_CONFIG_DIR}/${PROJECT_NAME_LOWER}-${config}-install.cmake"
+			DESTINATION "${INSTALL_CONFIG_DIR}"
+			RENAME ${PROJECT_NAME_LOWER}-${config}.cmake
+			${INSTALL_COMPONENT}
+		)
+	endforeach()
+
+
+	## config for build tree
+	export(EXPORT ${PROJECT_NAME}_export
+	  FILE "${BUILD_CONFIG_DIR}/${PROJECT_NAME_LOWER}-targets.cmake"
+	  NAMESPACE ${TARGET_NAMESPACE}::
+	  ${EXPORT_PACKAGE_DEPENDENCIES}
+	)
+	include(CMakePackageConfigHelpers)
+	configure_package_config_file(
+		mk/cmake/retroshare-gui-config.cmake.in
+	  "${BUILD_CONFIG_DIR}/${PROJECT_NAME_LOWER}-config.cmake"
+	  INSTALL_DESTINATION "${BUILD_CONFIG_DIR}"
+		INSTALL_PREFIX "${PROJECT_BINARY_DIR}"
+	)
+	write_basic_package_version_file(
+		"${BUILD_CONFIG_DIR}/${PROJECT_NAME_LOWER}-config-version.cmake"
+	  COMPATIBILITY SameMinorVersion
+	)
+
+endif()
+
+
+## Alias target for super-builds (brought in via add_subdirectory)
+add_executable(${TARGET_NAMESPACE}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+
+
+
+
+## TODO: These install commands should move to data/CMakeLists.txt.
 if(UNIX AND NOT APPLE AND RS_SERVICE_DESKTOP)
 	install(
 		FILES data/retroshare.svg
@@ -373,178 +441,3 @@ if(UNIX AND NOT APPLE AND RS_SERVICE_DESKTOP)
 endif()
 
 ## TODO: config packages, alias target
-
-
-
-#                       #################### Cross compilation for windows under Linux ###################
-#
-#                       win32-x-g++ {
-#                       		OBJECTS_DIR = temp/win32-x-g++/obj
-#
-#                       		LIBS += ../../../../lib/win32-x-g++-v0.5/libssl.a
-#                       		LIBS += ../../../../lib/win32-x-g++-v0.5/libcrypto.a
-#                       		LIBS += ../../../../lib/win32-x-g++-v0.5/libgpgme.dll.a
-#                       		LIBS += ../../../../lib/win32-x-g++-v0.5/libminiupnpc.a
-#                       		LIBS += ../../../../lib/win32-x-g++-v0.5/libz.a
-#                       		LIBS += -L${HOME}/.wine/drive_c/pthreads/lib -lpthreadGCE2
-#                       		LIBS += -lQtUiTools
-#                       		LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32 -gdi32
-#                       		LIBS += -lole32 -lwinmm
-#
-#                       		DEFINES *= WINDOWS_SYS WIN32 WIN32_CROSS_UBUNTU
-#
-#                       		INCLUDEPATH += ../../../../gpgme-1.1.8/src/
-#                       		INCLUDEPATH += ../../../../libgpg-error-1.7/src/
-#
-#                       		RC_FILE = gui/images/retroshare_win.rc
-#                       }
-#
-#                       #################################### Windows #####################################
-#
-#                       win32-g++|win32-clang-g++ {
-#                       	CONFIG(debug, debug|release) {
-#                       		# show console output
-#                       		CONFIG += console
-#                       	} else {
-#                       		CONFIG -= console
-#                       	}
-#
-#                       	CONFIG(debug, debug|release) {
-#                       	} else {
-#                       		# Tell linker to use ASLR protection
-#                       		QMAKE_LFLAGS += -Wl,-dynamicbase
-#                       		# Tell linker to use DEP protection
-#                       		QMAKE_LFLAGS += -Wl,-nxcompat
-#                       	}
-#
-#                           # Fix linking error (ld.exe: Error: export ordinal too large) due to too
-#                           # many exported symbols.
-#                           !libretroshare_shared:QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL
-#
-#                       	# Switch off optimization for release version
-#                       	QMAKE_CXXFLAGS_RELEASE -= -O2
-#                       	QMAKE_CXXFLAGS_RELEASE += -O0
-#                       	QMAKE_CFLAGS_RELEASE -= -O2
-#                       	QMAKE_CFLAGS_RELEASE += -O0
-#
-#                       	# Switch on optimization for debug version
-#                       	#QMAKE_CXXFLAGS_DEBUG += -O2
-#                       	#QMAKE_CFLAGS_DEBUG += -O2
-#
-#                       	OBJECTS_DIR = temp/obj
-#
-#                           dLib = ws2_32 gdi32 uuid ole32 iphlpapi crypt32 winmm
-#                           LIBS *= $$linkDynamicLibs(dLib)
-#
-#                       	RC_FILE = gui/images/retroshare_win.rc
-#
-#                       	# export symbols for the plugins
-#                       	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
-#
-#                       	# create lib directory
-#                       	isEmpty(QMAKE_SH) {
-#                       		QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib $(MKDIR) lib
-#                       	} else {
-#                       		QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib || $(MKDIR) lib
-#                       	}
-#
-#                       	greaterThan(QT_MAJOR_VERSION, 4) {
-#                       		# Qt 5
-#                       		RC_INCLUDEPATH += $$_PRO_FILE_PWD_/../../libretroshare/src
-#                       	} else {
-#                       		# Qt 4
-#                       		QMAKE_RC += --include-dir=$$_PRO_FILE_PWD_/../../libretroshare/src
-#                       	}
-#                       }
-#
-#                       ##################################### MacOS ######################################
-#
-#                       macx {
-#                       	# ENABLE THIS OPTION FOR Univeral Binary BUILD.
-#                       	#CONFIG += ppc x86
-#                       	#QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
-#                       	QMAKE_INFO_PLIST = Info.plist
-#                       	mac_icon.files = $$files($$PWD/rsMacIcon.icns)
-#                       	mac_icon.path = Contents/Resources
-#                       	QMAKE_BUNDLE_DATA += mac_icon
-#                       	dplQSS.files = $$PWD/qss
-#                       	dplQSS.path = Contents/Resources
-#                       	QMAKE_BUNDLE_DATA += dplQSS
-#                       	dplChatStyles.files = \
-#                       		$$PWD/gui/qss/chat/Bubble \
-#                       		$$PWD/gui/qss/chat/Bubble_Compact
-#                       	dplChatStyles.path = Contents/Resources/stylesheets
-#                       	QMAKE_BUNDLE_DATA += dplChatStyles
-#                       #	mac_webui.files = $$files($$PWD/../../libresapi/src/webui)
-#                       #	mac_webui.path = Contents/Resources
-#                       #	QMAKE_BUNDLE_DATA += mac_webui
-#
-#                       	OBJECTS_DIR = temp/obj
-#
-#                       	CONFIG += version_detail_bash_script
-#                       	LIBS += -lssl -lcrypto -lz
-#                       	for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
-#                       	LIBS += -framework CoreFoundation
-#                       	LIBS += -framework Security
-#                       	LIBS += -framework Carbon
-#
-#                       	for(lib, LIB_DIR):LIBS += -L"$$lib"
-#                       	for(bin, BIN_DIR):LIBS += -L"$$bin"
-#
-#                       	DEPENDPATH += . $$INC_DIR
-#                       	INCLUDEPATH += . $$INC_DIR
-#
-#                       	#DEFINES *= MAC_IDLE # for idle feature
-#                       	CONFIG -= uitools
-#                       }
-#
-#                       ##################################### FreeBSD ######################################
-#
-#                       freebsd-* {
-#                       	INCLUDEPATH *= /usr/local/include/gpgme
-#                       	LIBS *= -lssl
-#                       	LIBS *= -lgpgme
-#                       	LIBS *= -lupnp
-#                       	LIBS *= -lgnome-keyring
-#
-#                       	LIBS += -lsqlite3
-#                       }
-#
-#                       ##################################### Haiku ######################################
-#
-#                       haiku-* {
-#                       	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-#                       	PRE_TARGETDEPS *= ../../supportlibs/openpgpsdk/src/lib/libops.a
-#
-#                       	LIBS *= ../../libretroshare/src/lib/libretroshare.a
-#                       	LIBS *= ../../supportlibs/openpgpsdk/src/lib/libops.a -lbz2 -lbsd
-#                       	LIBS *= -lssl -lcrypto -lnetwork
-#                       	LIBS *= -lgpgme
-#                       	LIBS *= -lupnp
-#                       	LIBS *= -lz
-#                       	LIBS *= -lixml
-#
-#                       	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-#                       	LIBS += -lsqlite3
-#                       }
-#
-#                       ##################################### OpenBSD ######################################
-#
-#                       openbsd-* {
-#                       	INCLUDEPATH *= /usr/local/include
-#
-#                       	LIBS *= -lssl -lcrypto
-#                       	LIBS *= -lgpgme
-#                       	LIBS *= -lupnp
-#                       	LIBS *= -lgnome-keyring
-#                       	LIBS += -lsqlite3
-#                       	LIBS *= -rdynamic
-#                       }
-#
-#                       ################################### COMMON stuff ##################################
-#
-#                       wikipoos {
-#                       	PRE_TARGETDEPS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-#                       	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-#                       	LIBS *= -lglib-2.0
-#                       }

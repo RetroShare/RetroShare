@@ -26,6 +26,12 @@ option(FETCH_DEPENDENCY_PROVIDER
 )
 
 macro(fetch_provide_dependency method package)
+	set(FETCH_PROVIDER_${package} NORMAL CACHE STRING
+		"control how the Fetch dependency provider handles ${package}"
+	)
+	set_property(CACHE FETCH_PROVIDER_${package} PROPERTY STRINGS
+		NORMAL FIND_ONLY FETCH_ONLY
+	)
 	set(fetch_provider_${package}_findargs
 		${ARGN} BYPASS_PROVIDER
 	)
@@ -33,7 +39,7 @@ macro(fetch_provide_dependency method package)
 	if(CMAKE_VERSION VERSION_GREATER_EQUAL 4.0)
 		list(APPEND fetch_provider_${package}_findargs OPTIONAL)
 	endif()
-	if(NOT FETCH_PROVIDER_${package} STREQUAL FORCE)
+	if(NOT FETCH_PROVIDER_${package} STREQUAL FETCH_ONLY)
 		find_package(${package} ${fetch_provider_${package}_findargs})
 	endif()
 	if(NOT ${package}_FOUND AND NOT FETCH_PROVIDER_${package} STREQUAL FIND_ONLY)

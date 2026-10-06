@@ -18,6 +18,10 @@ option(RS_SERVICE "Build RetroShare Service" ON)
 option(RS_FRIENDSERVER "Build RetroShare Friendserver" ON)
 option(RS_PLUGINS "Build RetroShare Plugins" OFF)
 option(RS_USE_I2P_SAM3 "Enable I2P SAMv3 support" ON)
+set(RS_PLUGIN_BINARY_DIR ${PROJECT_BINARY_DIR}/plugins CACHE PATH
+	"directory to place plugin shared objects at build time"
+	" (does not affect install location)"
+)
 
 
 # Default to Release build type if not specified
@@ -34,11 +38,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # export symbols for plugin/module linking
 set(CMAKE_ENABLE_EXPORTS ON)
-if(RS_LIBRETROSHARE_SHARED)
-	# Some static-lib dependencies can be linked into shared libretroshare, so
-	# they need PIC.
-	set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-endif()
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if(APPLE)
 	# On macOS, allow undefined symbols in shared modules/libraries at link time

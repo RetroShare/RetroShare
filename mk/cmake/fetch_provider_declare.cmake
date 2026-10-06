@@ -82,6 +82,11 @@ FetchContent_Declare(RetroShare
 	SOURCE_DIR "${PROJECT_SOURCE_DIR}/libretroshare"
 )
 
+# avoid using system libretroshare unless the user specifically asks for it
+set(FETCH_PROVIDER_RetroShare FETCH_ONLY CACHE STRING
+	"control how the Fetch dependency provider handles RetroShare"
+)
+
 
 ################################################################################
 ### sam3
