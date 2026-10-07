@@ -18,7 +18,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # ------------------------------------------------------------------------ */
 
-cmake_minimum_required(VERSION 3.24...4.4)
+cmake_minimum_required(VERSION 3.0...4.4)
 
 option(FETCH_DEPENDENCY_PROVIDER
 	"Use the Fetch dependency provider to get project dependencies"
@@ -61,6 +61,14 @@ macro(fetch_provide_dependency method package)
 endmacro(fetch_provide_dependency)
 
 if(FETCH_DEPENDENCY_PROVIDER)
+	if(CMAKE_VERSION VERSION_LESS 3.24)
+		message(FATAL_ERROR
+			"Dependency providers are not supported in CMake <3.24."
+			" Please set FETCH_DEPENDENCY_PROVIDER=OFF"
+			" or use a more recent version of CMake."
+		)
+	endif()
+
 	cmake_language(SET_DEPENDENCY_PROVIDER fetch_provide_dependency
 		SUPPORTED_METHODS FIND_PACKAGE
 	)

@@ -19,7 +19,8 @@
  # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 ## ---------------------------------------------------------------------- ##
 
-cmake_minimum_required(VERSION 3.24...4.4)
+# 3.7 : pkg_check_modules(IMPORTED_TARGET)
+cmake_minimum_required(VERSION 3.7...4.4)
 
 find_package(PkgConfig)
 if(PkgConfig_FOUND)

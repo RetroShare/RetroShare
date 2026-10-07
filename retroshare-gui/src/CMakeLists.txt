@@ -19,6 +19,9 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # ------------------------------------------------------------------------ */
 
+# 3.23: target_sources(FILE_SET)
+cmake_minimum_required(VERSION 3.23...4.4)
+
 target_sources(${PROJECT_NAME}
 	PUBLIC FILE_SET HEADERS
 	BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}

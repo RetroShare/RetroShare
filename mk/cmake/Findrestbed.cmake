@@ -19,7 +19,7 @@
  # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 ## ---------------------------------------------------------------------- ##
 
-cmake_minimum_required(VERSION 3.24...4.4)
+cmake_minimum_required(VERSION 3.0...4.4)
 
 find_library(RESTBED_LIBRARY NAMES restbed)
 find_path(RESTBED_INCLUDE NAMES restbed PATH_SUFFIXES source)

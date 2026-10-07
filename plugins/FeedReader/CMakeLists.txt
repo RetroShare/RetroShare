@@ -18,7 +18,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # ------------------------------------------------------------------------ */
 
-cmake_minimum_required(VERSION 3.18...4.4)
+cmake_minimum_required(VERSION 3.0...4.4)
+
 project(FeedReaderPlugin)
 
 # --- Dependencies ---

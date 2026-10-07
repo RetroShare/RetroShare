@@ -18,6 +18,11 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # ------------------------------------------------------------------------ */
 
+# 3.1 : target_sources()
+# 3.13: CMP0076
+# 3.23: target_sources(FILE_SET)
+cmake_minimum_required(VERSION 3.23...4.4)
+
 add_subdirectory(advsearch)
 add_subdirectory(chat)
 if(RS_GXSCIRCLES)

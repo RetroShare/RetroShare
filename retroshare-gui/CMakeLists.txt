@@ -19,7 +19,11 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
 ################################################################################
 
-cmake_minimum_required(VERSION 3.24...4.4)
+# 3.1 : configure_package_config_file(INSTALL_PREFIX)
+# 3.11: add_executable() ... target_sources()
+# 3.11: configure_package_config_file(COMPATIBILITY SameMinorVersion)
+# 3.23: install(TARGETS FILE_SET)
+cmake_minimum_required(VERSION 3.23...4.4)
 
 project(retroshare-gui VERSION 0.6.7 LANGUAGES CXX C)
 
@@ -439,5 +443,3 @@ if(UNIX AND NOT APPLE AND RS_SERVICE_DESKTOP)
 		${INSTALL_COMPONENT}
 	)
 endif()
-
-## TODO: config packages, alias target

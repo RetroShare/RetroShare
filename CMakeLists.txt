@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-cmake_minimum_required(VERSION 3.24...4.4)
+cmake_minimum_required(VERSION 3.0...4.4)
 
 list(PREPEND CMAKE_PROJECT_TOP_LEVEL_INCLUDES
 	"${CMAKE_CURRENT_SOURCE_DIR}/mk/cmake/fetch_provider.cmake"
