@@ -22,7 +22,7 @@ cmake_minimum_required(VERSION 3.24...4.4)
 
 include(FetchContent)
 FetchContent_Declare(RetroShare
-	SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../libretroshare"
+	SOURCE_DIR "${retroshare-superproject_SOURCE_DIR}/libretroshare"
 )
 FetchContent_MakeAvailable(${FETCH_PROVIDER_PACKAGE_NAME})
 set(${FETCH_PROVIDER_PACKAGE_NAME}_FOUND TRUE)
