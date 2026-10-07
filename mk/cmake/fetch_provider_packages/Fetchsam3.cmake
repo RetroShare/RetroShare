@@ -18,7 +18,50 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # ------------------------------------------------------------------------ */
 
-cmake_minimum_required(VERSION 3.24...4.4)
+cmake_minimum_required(VERSION 3.0...4.4)
+
+if(NOT TARGET sam3_external)
+include(ExternalProject)
+find_package(Git REQUIRED)
+find_package(Patch REQUIRED)
+include(EnvironmentModification)
+
+set(sam3_external_SOURCE_DIR "sam3_external-prefix/src/sam3_external")
+set(sam3_external_BINARY_DIR ${sam3_external_SOURCE_DIR})
+set(sam3_external_LDFLAGS "-fPIC")
+if(WIN32)
+	list(APPEND sam3_external_LDFLAGS
+		"-lmingw32" "-lws2_32" "-lwsock32" "-mwindows"
+	)
+endif()
+
+list(JOIN sam3_external_LDFLAGS " " sam3_external_LDFLAGS)
+set(sam3_external_BUILD_ENVIRONMENT
+	"CC=set:${CMAKE_C_COMPILER}"
+	"AR=set:${CMAKE_AR}"
+	"LDFLAGS=set:${sam3_external_LDFLAGS}"
+)
+EnvironmentModification(envmod_build ${sam3_external_BUILD_ENVIRONMENT})
+
+ExternalProject_Add(sam3_external
+	GIT_REPOSITORY "https://github.com/i2p/libsam3.git"
+	GIT_TAG "origin/master"
+	GIT_SHALLOW TRUE
+	GIT_PROGRESS TRUE
+	TIMEOUT 10
+	CONFIGURE_COMMAND ""
+  BUILD_COMMAND ${envmod_build} make build
+	PATCH_COMMAND ${GIT_EXECUTABLE} reset --hard
+	COMMAND ${Patch_EXECUTABLE} -tNp1 -i
+		"${CMAKE_CURRENT_LIST_DIR}/sam3.patch"
+	INSTALL_COMMAND ""
+	BUILD_IN_SOURCE TRUE
+	BUILD_ALWAYS TRUE
+	EXCLUDE_FROM_ALL YES
+	BUILD_BYPRODUCTS "${sam3_external_BINARY_DIR}/libsam3.a"
+	BUILD_ENVIRONMENT_MODIFICATION ${sam3_external_BUILD_ENVIRONMENT}
+)
+endif()
 
 ExternalProject_Get_Property(sam3_external SOURCE_DIR BINARY_DIR)
 set(${FETCH_PROVIDER_PACKAGE_NAME}_FOUND TRUE)

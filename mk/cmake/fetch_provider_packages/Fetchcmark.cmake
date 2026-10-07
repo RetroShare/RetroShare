@@ -20,6 +20,14 @@
 
 cmake_minimum_required(VERSION 3.24...4.4)
 
+include(FetchContent)
+FetchContent_Declare(cmark
+	GIT_REPOSITORY "https://github.com/commonmark/cmark.git"
+	GIT_TAG "origin/master"
+	GIT_SHALLOW TRUE
+	GIT_PROGRESS TRUE
+	TIMEOUT 10
+)
 FetchContent_MakeAvailable(${FETCH_PROVIDER_PACKAGE_NAME})
 set(${FETCH_PROVIDER_PACKAGE_NAME}_FOUND TRUE)
 

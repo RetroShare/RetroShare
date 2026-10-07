@@ -55,9 +55,16 @@ endif()
 ################################################################################
 ### dependencies
 
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/mk/cmake")
+list(APPEND CMAKE_MODULE_PATH
+	"${PROJECT_SOURCE_DIR}/mk/cmake"
+	"${PROJECT_SOURCE_DIR}/mk/cmake/fetch_provider_packages"
+)
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
-include(mk/cmake/fetch_provider_declare.cmake)
+
+# avoid using system libretroshare unless the user specifically asks for it
+set(FETCH_PROVIDER_RetroShare FETCH_ONLY CACHE STRING
+	"control how the Fetch dependency provider handles RetroShare"
+)
 
 if(RS_GXSWIKIPOS)
 	add_subdirectory(supportlibs/pegmarkdown)

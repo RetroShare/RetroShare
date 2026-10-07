@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------------ *\
-# mk/cmake/fetch_provider_packages/FetchRetroShare.cmake
-# This file is part of RetroShare.
+# mk/cmake/EnvironmentModification.cmake
+# This file is part of libRetroShare.
 #
 # Copyright (C) 2026      David Bears <dbear4q@gmail.com>
 #
@@ -18,11 +18,20 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # ------------------------------------------------------------------------ */
 
-cmake_minimum_required(VERSION 3.24...4.4)
+cmake_minimum_required(VERSION 3.12...4.4)
 
-include(FetchContent)
-FetchContent_Declare(RetroShare
-	SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../libretroshare"
-)
-FetchContent_MakeAvailable(${FETCH_PROVIDER_PACKAGE_NAME})
-set(${FETCH_PROVIDER_PACKAGE_NAME}_FOUND TRUE)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 4.2)
+	function(EnvironmentModification)
+	endfunction()
+elseif(CMAKE_VERSION VERSION_GREATER_EQUAL 3.25)
+	function(EnvironmentModification outvar)
+		list(TRANSFORM ARGN PREPEND --modify\;)
+		set(${outvar} ${CMAKE_COMMAND} -E env ${ARGN} -- PARENT_SCOPE)
+	endfunction(EnvironmentModification)
+else()
+	function(EnvironmentModification outvar)
+		list(TRANSFORM ARGN REPLACE "^([^=]+)=set:(.*)\$" "\\1=\\2")
+		list(TRANSFORM ARGN REPLACE "^([^=]+)=unset:(.*)\$" "--unset=\\1")
+		set(${outvar} ${CMAKE_COMMAND} -E env ${ARGN} -- PARENT_SCOPE)
+	endfunction(EnvironmentModification)
+endif()
