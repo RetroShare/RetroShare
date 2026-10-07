@@ -28,7 +28,7 @@ FetchContent_Declare(cmark
 	GIT_PROGRESS TRUE
 	TIMEOUT 10
 )
-FetchContent_MakeAvailable(${FETCH_PROVIDER_PACKAGE_NAME})
+FetchContent_MakeAvailable(cmark)
 set(${FETCH_PROVIDER_PACKAGE_NAME}_FOUND TRUE)
 
 if(NOT TARGET cmark::cmark)
