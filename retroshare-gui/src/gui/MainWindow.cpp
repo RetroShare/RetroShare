@@ -148,6 +148,10 @@
 #define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
+/* Minimum spacing between two systray balloons. D-Bus trays (xfce4-panel, ...) choke on a burst of
+ * showMessage() calls, which a busy chat room used to produce one per message. */
+#define SYSTRAY_MSG_INTERVAL_MS 3000
+
 #define IMAGE_BWGRAPH           ":/icons/png/bandwidth.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_NEWRSCOLLECTION   ":/images/library.png"
@@ -184,6 +188,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 {
     ui = new Ui::MainWindow;
     trayIcon = NULL;
+
+    mPendingSystrayCount = 0;
+    mPendingSystrayMixed = false;
+    mSystrayMsgTimer = new QTimer(this);
+    mSystrayMsgTimer->setSingleShot(true);
+    connect(mSystrayMsgTimer, SIGNAL(timeout()), this, SLOT(flushPendingSystrayMsg()));
 
 	friendsDialog=NULL;
 	idDialog=NULL;
@@ -799,7 +809,40 @@ const QList<UserNotify*> &MainWindow::getUserNotifyList()
 
 void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
 {
-    trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, 3000);
+    if (!trayIcon)
+        return;
+
+    if (mSystrayMsgTimer->isActive()) {
+        // A balloon is still up: fold this one into the next flush instead of stacking calls.
+        if (mPendingSystrayCount == 0)
+            mPendingSystrayTitle = title;
+        else if (mPendingSystrayTitle != title)
+            mPendingSystrayMixed = true;
+
+        mPendingSystrayMsg = msg;
+        ++mPendingSystrayCount;
+        return;
+    }
+
+    trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, SYSTRAY_MSG_INTERVAL_MS);
+    mSystrayMsgTimer->start(SYSTRAY_MSG_INTERVAL_MS);
+}
+
+void MainWindow::flushPendingSystrayMsg()
+{
+    if (mPendingSystrayCount == 0 || !trayIcon)
+        return;
+
+    QString title = mPendingSystrayMixed ? tr("Chat") : mPendingSystrayTitle;
+    QString msg = (mPendingSystrayCount == 1) ? mPendingSystrayMsg : tr("%1 new messages").arg(mPendingSystrayCount);
+
+    mPendingSystrayCount = 0;
+    mPendingSystrayMixed = false;
+    mPendingSystrayTitle.clear();
+    mPendingSystrayMsg.clear();
+
+    trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, SYSTRAY_MSG_INTERVAL_MS);
+    mSystrayMsgTimer->start(SYSTRAY_MSG_INTERVAL_MS);
 }
 
 void MainWindow::updateTrayCombine()
@@ -917,8 +960,16 @@ void MainWindow::updateFriends()
         trayIconResource = IMAGE_RETROSHARE;
     }
 
+    bool overlay = notifyMenu && notifyMenu->menuAction()->isVisible();
+
+    // Every setIcon() re-sends the pixmap over D-Bus on SNI trays: skip it when nothing changed.
+    QString trayIconKey = trayIconResource + (overlay ? "+" : "");
+    if (trayIconKey == mLastTrayIconKey)
+        return;
+    mLastTrayIconKey = trayIconKey;
+
     QIcon icon;
-    if (notifyMenu && notifyMenu->menuAction()->isVisible()) {
+    if (overlay) {
         QPixmap trayImage(trayIconResource);
         QPixmap overlayImage(IMAGE_OVERLAY);
 
