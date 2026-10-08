@@ -26,6 +26,7 @@
 
 #include "gui/People/CircleWidget.h"
 #include "gui/People/IdentityWidget.h"
+#include "gui/Identity/UsageStatistics.h"
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 #include "util/TokenQueue.h"
 
@@ -59,7 +60,7 @@ class PeopleDialog : public MainPage, public Ui::PeopleDialog, public TokenRespo
 	void insertCircles(uint32_t token) ;
 
 	protected:
-	// Derives from RsGxsUpdateBroadcastPage
+	// Derives from MainPage
 		virtual void updateDisplay(bool complete);
 	//End RsGxsUpdateBroadcastPage
 
@@ -88,16 +89,51 @@ private slots:
 	void personDetails();
 	void sendInvite();
 	void addtoContacts();
-
+	void filterChanged(const QString &text);
+	void sortByName();
+	void sortByPopularity();
+	void clearAllSelections();
+	void onIdentitySelected();
+	void onCircleSelected();        // circle widget clicked → circle-selected state
+	void onCircleTreeItemClicked(QTreeWidgetItem *item, int column);
+	void onCircleTreeContextMenuRequested(const QPoint &pos);
+	void onBackClicked();           // back button → return to no-selection state
+	void clearPerson();
+	void toggleStackedPage();
+    void toggledetailsStackedPage();
+	void onDetailsPageChanged(int index);
+	void modifyReputation();
+	void requestJoinLeaveCircle();  // join/leave button in circle details page
 
 private:
 	void reloadAll();
 	void populatePictureFlowExt();
 	void populatePictureFlowInt();
+	void applySortAndFilter(bool);
+	void loadIdentityLabels(const RsGxsIdGroup& data);
+	void populateCirclesTree(const std::list<RsGroupMetaData>& circles);
+	void setVoteControlsVisible(bool visible);
+
+	// Selection state machine
+	enum class SelectionMode { None, Identity, Circle };
+	void showNoneSelected();
+	void showIdentitySelected(const RsGxsId& id);
+	void showCircleSelected(const RsGxsGroupId& circleId);
+	void loadCircleLabels(const CircleWidget* cw);
+	void loadCircleLabels(const RsGxsGroupId& circleId);
 
 	TokenQueue *mIdentityQueue;
 	TokenQueue *mCirclesQueue;
 	//RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
+	RsGxsId mCurrentSelectedId; // Store the ID of the person currently clicked
+    QWidget *UsagePage;
+
+	// Selection state
+	SelectionMode _selectionMode = SelectionMode::None;
+	RsGxsId      _selectedGxsId;
+	RsGxsGroupId _selectedCircleId;
+	bool         _inSelectionUpdate = false;
+	std::set<RsGxsGroupId> _requestedCircles;
 
 	FlowLayout *_flowLayoutExt;
 	std::map<RsGxsId,IdentityWidget *> _gxs_identity_widgets ;

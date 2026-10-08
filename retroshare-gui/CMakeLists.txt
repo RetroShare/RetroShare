@@ -62,6 +62,7 @@ option( RS_GXSCHANNELS "Enable GXS channels in GUI" ON )
 option( RS_GXSFORUMS   "Enable GXS forums in GUI"   ON )
 option( RS_GXSPOSTED   "Enable GXS posted in GUI"   ON )
 option( RS_GXSCIRCLES  "Enable GXS circles in GUI"  ON )
+option( RS_GXSPEOPLE   "Enable GXS people page in GUI" OFF )
 option( RS_GUI_CMARK    "Enable CommonMark support in GUI"  OFF )
 set(RS_GXSIDENTITIES ON CACHE BOOL "Enable GXS identities in GUI" FORCE)
 set(RS_IDLE ON CACHE BOOL "Enable Idle support" FORCE)
@@ -663,6 +664,10 @@ endif()
 if(RS_GXSCIRCLES)
 	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_USE_CIRCLES )
 endif(RS_GXSCIRCLES)
+
+if(RS_GXSPEOPLE)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE RS_USE_NEW_PEOPLE )
+endif(RS_GXSPEOPLE)
 
 # NOTE: the GUI does NOT use botan, json-c, z or bz2 directly (it uses rapidjson
 # for JSON). They are transitive dependencies of librnp (PGP), pulled in here only
