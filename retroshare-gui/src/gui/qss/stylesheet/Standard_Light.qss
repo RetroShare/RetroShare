@@ -2672,4 +2672,4 @@ StartDialog QPushButton#loadButton:hover {
 }
 
 /* AvatarWidget */
-AvatarWidget{border-width: 10px;}
+AvatarWidget{border-width: 1px;}
