@@ -289,6 +289,11 @@ QMenu *RSTextBrowser::createStandardContextMenuFromPoint(const QPoint &widgetPos
 	transform.translate(horizontalScrollBar()->value(), verticalScrollBar()->value());
 
 	QMenu *menu = QTextBrowser::createStandardContextMenu(transform.map(widgetPos));
+	// Keep rich-text context menus readable when the application palette is dark.
+	menu->setStyleSheet(
+		"QMenu { background-color: #ffffff; color: #202020; }"
+		"QMenu::item { padding: 4px 24px 4px 8px; }"
+		"QMenu::item:selected { background-color: #dcecff; color: #202020; }");
 
 	menu->addSeparator();
 	QAction *a = menu->addAction(FilesDefs::getIconFromQtResourcePath("://icons/textedit/code.png"), tr("View &Source"), this, SLOT(viewSource()));
