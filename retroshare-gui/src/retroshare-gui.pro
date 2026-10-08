@@ -111,6 +111,7 @@ CONFIG += gxschannels
 CONFIG += posted
 CONFIG += gxsgui
 CONFIG += gxscircles
+#CONFIG += gxscalendar
 
 # Other Disabled Bits.
 #CONFIG += framecatcher
@@ -1496,6 +1497,30 @@ gxsgui {
 #		gui/gxs/GxsMsgDialog.cpp \
 	
 	
+}
+
+gxscalendar {
+	DEFINES += RS_USE_CALENDAR
+
+	HEADERS += \
+		gui/calendar/CalendarData.h \
+		gui/calendar/CalendarWidget.h \
+		gui/calendar/TasksWidget.h \
+		gui/calendar/CalendarPropertiesDialog.h \
+		gui/calendar/EventDialog.h \
+		gui/calendar/TaskDialog.h
+
+	FORMS += \
+		gui/calendar/CalendarWidget.ui \
+		gui/calendar/TasksWidget.ui
+
+	SOURCES += \
+		gui/calendar/CalendarData.cpp \
+		gui/calendar/CalendarWidget.cpp \
+		gui/calendar/TasksWidget.cpp \
+		gui/calendar/CalendarPropertiesDialog.cpp \
+		gui/calendar/EventDialog.cpp \
+		gui/calendar/TaskDialog.cpp
 }
 
 
