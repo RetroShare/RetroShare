@@ -30,6 +30,9 @@
 #include "gui/FeedReaderConfig.h"
 #include "gui/FeedReaderFeedNotify.h"
 #include "services/p3FeedReader.h"
+#include "services/FeedReaderJsonApi.h"
+#include <retroshare/rsjsonapi.h>
+#include <util/rsdebug.h>
 
 #include <libxml/xmlversion.h>
 #include <libxslt/xsltconfig.h>
@@ -83,6 +86,7 @@ FeedReaderPlugin::FeedReaderPlugin()
 	mFeedReader = NULL;
 	mNotify = NULL;
 	mFeedNotify = NULL;
+	mJsonApiProvider = NULL;
 
 	Q_INIT_RESOURCE(FeedReader_images);
 	Q_INIT_RESOURCE(FeedReader_qss);
@@ -97,6 +101,19 @@ void FeedReaderPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 
 	mNotify = new FeedReaderNotify();
 	mFeedReader->setNotify(mNotify);
+
+	if(mInterfaces.mJsonApi)
+	{
+		mJsonApiProvider = new FeedReaderJsonApi(*mFeedReader, *mInterfaces.mJsonApi);
+		mInterfaces.mJsonApi->registerResourceProvider(*mJsonApiProvider);
+
+		// No restart here: the core publishes every provider together once all
+		// plugins have received their interfaces, which avoids one
+		// burst-protected JSON API restart per plugin.
+		RsDbg() << "FeedReader: JSON API routes registered.";
+	}
+	else
+		RsInfo() << "FeedReader: JSON API not available, routes not registered.";
 }
 
 ConfigPage *FeedReaderPlugin::qt_config_page() const
@@ -123,6 +140,19 @@ FeedNotify *FeedReaderPlugin::qt_feedNotify()
 
 void FeedReaderPlugin::stop()
 {
+	if(mJsonApiProvider)
+	{
+		if(mInterfaces.mJsonApi)
+			mInterfaces.mJsonApi->unregisterResourceProvider(*mJsonApiProvider);
+
+		/* No restart here. The core stops the JSON API before it stops the
+		 * plugins, so the restbed resources whose handlers capture this
+		 * provider are already gone by now and deleting it is safe. Restarting
+		 * would only wait out RESTART_BURST_PROTECTION and bring the server
+		 * back up in the middle of the core teardown. */
+		delete mJsonApiProvider;
+		mJsonApiProvider = NULL;
+	}
 	if (mFeedReader) {
 		mFeedReader->setNotify(NULL);
 		mFeedReader->stop();
