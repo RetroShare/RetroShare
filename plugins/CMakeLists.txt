@@ -18,11 +18,14 @@
  # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ## ------------------------------------------------------------------------- ##
 
-# 3.24: CMAKE_FIND_PACKAGE_REDIRECTS_DIR
-cmake_minimum_required(VERSION 3.24...4.4)
+cmake_minimum_required(VERSION 3.0...4.4)
 
 if(RS_GUI)
 	# don't accidentally find an installed version of RetroShare-GUI
+	if(CMAKE_VERSION VERSION_LESS 3.24)
+		set(CMAKE_FIND_PACKAGE_REDIRECTS_DIR ${CMAKE_BINARY_DIR}/pkgRedirects)
+		set(RetroShare_ROOT ${CMAKE_FIND_PACKAGE_REDIRECTS_DIR})
+	endif()
 	file(WRITE ${CMAKE_FIND_PACKAGE_REDIRECTS_DIR}/RetroShare-GUIConfig.cmake
 		"message(STATUS \"using RetroShare-GUI from this build\")"
 	)
