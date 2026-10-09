@@ -64,6 +64,18 @@ public slots:
 	void checkToken(QString);
 
 private:
+	/// Refresh the token list view from the tokens actually authorized in the core
+	void updateTokenList();
+
+	/// Enable/disable the widgets that only make sense while the server runs.
+	/// Token management is *not* part of them: authorizations are persistent
+	/// configuration, they must stay editable while the server is stopped.
+	void setServerWidgetsEnabled(bool enabled);
+
+	/// Token currently designated for removal: the list selection if any,
+	/// the token line edit otherwise. Returns the user part only.
+	QString selectedTokenUser() const;
+
 	Ui::JsonApiPage ui; /// Qt Designer generated object
     RsEventsHandlerId_t mEventHandlerId;
 };

@@ -403,8 +403,8 @@ public:
 	QString getJsonApiListenAddress();
 	void setJsonApiListenAddress(const QString& listenAddress);
 
-	QStringList getJsonApiAuthTokens();
-	void setJsonApiAuthTokens(const QStringList& authTokens);
+	// Authorized tokens are *not* stored here: they belong to the core config
+	// (jsonapi.cfg), and are managed through rsJsonApi.
 #endif // ifdef RS_JSONAPI
 
 protected:

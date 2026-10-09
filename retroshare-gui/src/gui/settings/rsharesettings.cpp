@@ -1276,15 +1276,6 @@ void RshareSettings::setJsonApiListenAddress(const QString& listenAddress)
 	setValueToGroup("JsonApi", "listenAddress", listenAddress);
 }
 
-QStringList RshareSettings::getJsonApiAuthTokens()
-{
-	return valueFromGroup("JsonApi", "authTokens", QStringList()).toStringList();
-}
-
-void RshareSettings::setJsonApiAuthTokens(const QStringList& authTokens)
-{
-	setValueToGroup("JsonApi", "authTokens", authTokens);
-}
 #endif // RS_JSONAPI
        
 int RshareSettings::getDateFormat()
