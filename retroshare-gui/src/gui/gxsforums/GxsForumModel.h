@@ -99,7 +99,9 @@ public:
 	void setBackgroundColorFiltered (QColor color) { mBackgroundColorFiltered = color;}
 
 	void setMsgReadStatus(const QModelIndex &i, bool read_status, bool with_children);
+    // Filter methods
     void setFilter(int column, const QStringList &strings, uint32_t &count) ;
+    void setContentFilter(const std::set<RsGxsMessageId>& ids, const QStringList& filterStrings, uint32_t& count);
 	void setAuthorOpinion(const QModelIndex& indx,RsOpinion op);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -146,6 +148,8 @@ private:
 
     bool mUseChildTS;
     bool mFilteringEnabled;
+    bool mContentFilteringEnabled;
+    std::set<RsGxsMessageId> mContentFilterIds;
     TreeMode mTreeMode;
     SortMode mSortMode;
 
