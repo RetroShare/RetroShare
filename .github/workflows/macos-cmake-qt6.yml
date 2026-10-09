@@ -29,8 +29,8 @@ permissions:
 
 jobs:
   build:
-    name: macOS 14 / Qt6 / CMake
-    runs-on: macos-14
+    name: macOS 15 / Qt6 / CMake
+    runs-on: macos-15
     defaults:
       run:
         shell: bash
