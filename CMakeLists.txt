@@ -64,7 +64,35 @@ endif()
 # 1. First add the core library (libretroshare)
 add_subdirectory(libretroshare)
 
-# 2. Then add the dependent executables
+# 2. The Web UI is data served by any front end, so it is built as soon as
+# RS_WEBUI is enabled. It used to be built as a side effect of adding
+# retroshare-service, which left a GUI only build (RS_SERVICE=OFF, the AppImage
+# configuration) with no web files generated at all. retroshare-service keeps
+# its own copy of this logic for standalone builds, guarded on the target not
+# existing yet.
+if(RS_WEBUI)
+	set(RS_WEBUI_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/retroshare-webui")
+
+	if(EXISTS "${RS_WEBUI_DEVEL_DIR}/CMakeLists.txt")
+		message(
+			STATUS
+			"RetroShare WebUI source found at ${RS_WEBUI_DEVEL_DIR} using it" )
+		add_subdirectory("${RS_WEBUI_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/webui")
+	endif()
+
+	# On Windows the WebUI CMakeLists defines no target, so drive the build
+	# script through a shell (MSYS2/MinGW) here.
+	if(NOT TARGET retroshare-webui)
+		add_custom_target(
+			retroshare-webui ALL
+			COMMAND sh ./build.sh
+			WORKING_DIRECTORY "${RS_WEBUI_DEVEL_DIR}/webui-src/make-src"
+			COMMENT "Compiling RetroShare WebUI"
+			SOURCES "${RS_WEBUI_DEVEL_DIR}/webui-src" )
+	endif()
+endif(RS_WEBUI)
+
+# 3. Then add the dependent executables
 if(RS_GUI)
 	add_subdirectory(retroshare-gui)
 	if(RS_PLUGINS)
