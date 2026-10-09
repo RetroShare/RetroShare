@@ -291,7 +291,7 @@ isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
 #
 #  V07_NON_BACKWARD_COMPATIBLE_CHANGE_002:
 #
-#     What: Use RSA+SHA256 instead of RSA+SHA1 for SSL certificates 
+#     What: Use RSA+SHA256 instead of RSA+SHA1 for SSL certificates
 #
 #     Why:  Sha1 is likely to be prone to primary collisions anytime soon, so it is urgent to turn to a more secure solution.
 #
@@ -317,7 +317,7 @@ isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
 #
 #    What: Stop accepting certificates signed with sha1 algorithm
 #
-#    Why:  Sha1 has been declared insecure and shouldn't be used anymore. 
+#    Why:  Sha1 has been declared insecure and shouldn't be used anymore.
 #
 #    BackwardCompat: Retroshare profiles generated before Nov.2024 with openpgp-sdk may still use sha1
 #
@@ -555,7 +555,7 @@ rs_service_terminal_login:DEFINES *= RS_SERVICE_TERMINAL_LOGIN
 
 sqlcipher {
     DEFINES -= NO_SQLCIPHER
-    RS_SQL_LIB = sqlcipher 
+    RS_SQL_LIB = sqlcipher
 }
 no_sqlcipher {
     DEFINES *= NO_SQLCIPHER
@@ -909,7 +909,7 @@ isEmpty(RS_UPNP_LIB) {
 
 rs_openpgpsdk {
         SUBDIRS += openpgpsdk
-        openpgpsdk.file = openpgpsdk/src/openpgpsdk.pro
+        openpgpsdk.file = supportlibs/openpgpsdk/src/openpgpsdk.pro
         libretroshare.depends += openpgpsdk
         message("Using OpenPGP-SDK for PGP")
 }

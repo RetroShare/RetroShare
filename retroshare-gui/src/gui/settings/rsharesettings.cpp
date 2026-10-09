@@ -838,6 +838,7 @@ bool RshareSettings::getRetroShareProtocol()
 		}
 	}
 #elif defined(Q_OS_LINUX)
+	// TODO: don't hardcode the install prefix
 	QFile desktop("/usr/share/applications/retroshare.desktop");
 	if (!desktop.exists()) {
 		desktop.setFileName("/usr/share/applications/retroshare.desktop");

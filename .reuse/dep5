@@ -6,11 +6,11 @@ Files: *
 Copyright: 2004-2019, Retroshare Team <contact@retroshare.cc>
 License: AGPL-3.0-only
 
-Files: libbitdht/*
+Files: supportlibs/libbitdht/*
 Copyright: 2004-2019, Retroshare Team <contact@retroshare.cc>
 License: LGPL-3.0-or-later
 
-Files: openpgpsdk/*
+Files: supportlibs/openpgpsdk/*
 Copyright: 2005-2008, Ben Laurie
            2005-2008, Rachel Willmer
            2008-2019, Retroshare Team <contact@retroshare.cc>

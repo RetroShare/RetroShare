@@ -44,13 +44,7 @@ jobs:
     # --recursive for its nested src/libsexpp.
     - name: Init submodules (pinned commits)
       run: |
-        git submodule update --init \
-          libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/
-        git submodule update --init --recursive \
-          supportlibs/librnp
-        git submodule update --init \
-          supportlibs/restbed supportlibs/libsam3 \
-          supportlibs/udp-discovery-cpp supportlibs/rapidjson
+        git submodule update --init libretroshare retroshare-webui
         git --no-pager -C libretroshare log --max-count 1 --oneline
 
     - name: Install Homebrew dependencies
@@ -58,7 +52,7 @@ jobs:
         brew install
         ninja qt openssl@3 botan@2 sqlcipher miniupnpc
         json-c asio speex speexdsp ffmpeg
-        libxml2 libxslt bzip2 zlib rapidjson doxygen
+        libxml2 libxslt bzip2 zlib doxygen
 
     # Mirrors the validated local macOS command: harvest every Homebrew opt/*
     # include/lib dir into the compiler/linker flags, and additionally expose them
@@ -80,7 +74,8 @@ jobs:
           -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON -DRS_PLUGINS=OFF -DRS_FORUM_DEEP_INDEX=OFF \
           -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON \
           -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON \
-          -DCMAKE_C_FLAGS="$IFLAGS" -DCMAKE_CXX_FLAGS="$IFLAGS" \
+          -DCMAKE_C_FLAGS="-Wno-deprecated-declarations $IFLAGS" \
+          -DCMAKE_CXX_FLAGS="-Wno-deprecated-declarations $IFLAGS" \
           -DCMAKE_EXE_LINKER_FLAGS="$LFLAGS" \
           -DCMAKE_SHARED_LINKER_FLAGS="$LFLAGS" \
           -DCMAKE_MODULE_LINKER_FLAGS="$LFLAGS"

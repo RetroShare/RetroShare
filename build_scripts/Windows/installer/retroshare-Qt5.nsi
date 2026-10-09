@@ -259,7 +259,7 @@ Section $(Section_Main) Section_Main
 
   ; Other files
   File "${RELEASEDIR}\changelog.txt"
-  File "${SOURCEDIR}\libbitdht\src\bitdht\bdboot.txt"
+  File "${SOURCEDIR}\supportlibs\libbitdht\src\bitdht\bdboot.txt"
 
   ; License
   SetOutPath "$INSTDIR\license"

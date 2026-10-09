@@ -52,7 +52,7 @@ while [ ${#} -gt 0 ]; do
 		  		nodl=yes
 				shift
 				;;
-		  "-makeorig") 
+		  "-makeorig")
 		  		makeorig=yes
 				shift
 				;;
@@ -85,8 +85,6 @@ removeIrrelevantFiles() {
 	rm -rf ${workdir}/src/unittests/
 	rm -rf ${workdir}/src/tests/
 	rm -rf ${workdir}/src/build_scripts/
-	rm -rf ${workdir}/src/libbitdht/src/tests/
-	rm -rf ${workdir}/src/libbitdht/src/example/
 	rm -rf ${workdir}/src/retroshare-gui/src/gui/WikiPoos/
 	rm -rf ${workdir}/src/retroshare-gui/src/Unused/
 	rm -f ${workdir}/debian/*~
@@ -121,10 +119,10 @@ fi
 
 echo Done.
 version="${version_number}"."${rev}"
-echo Got version number ${version} 
+echo Got version number ${version}
 echo
-echo Please check that the changelog is up to date. 
-echo Hit ENTER if this is correct. Otherwise hit Ctrl+C 
+echo Please check that the changelog is up to date.
+echo Hit ENTER if this is correct. Otherwise hit Ctrl+C
 read tmp
 
 echo Extracting base archive...
@@ -141,17 +139,17 @@ if ! test "${nodl}" = "yes"; then
 	echo Checking out latest snapshot...
 	cd ${workdir}/src
 	git clone --depth 1 ${gitpath} --single-branch --branch $branch .
-	
+
 	cd -
 
 	if ! test -d ${workdir}/src/libretroshare/; then
-	   echo Git clone failed. 
+	   echo Git clone failed.
 	   exit
 	fi
 
 	cp -r debian ${workdir}/debian
 
-	# VOIP tweak  
+	# VOIP tweak
 	cp ${workdir}/src/retroshare-gui/src/gui/chat/PopupChatDialog.ui ${workdir}/src/plugins/VOIP/gui/PopupChatDialog.ui
 
 	removeIrrelevantFiles

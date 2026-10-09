@@ -8,8 +8,8 @@ on:
     paths-ignore:
     - '**/*.md'
 
-concurrency:  
-  group: ${{ github.workflow}}-${{ github.head_ref }}  
+concurrency:
+  group: ${{ github.workflow}}-${{ github.head_ref }}
   cancel-in-progress: true
 
 permissions:
@@ -61,8 +61,8 @@ jobs:
       - name: Checkout submodules
         run: |
           env
-          git submodule update --init --remote libbitdht/ libretroshare/ retroshare-webui/
-          git submodule update --init supportlibs/librnp supportlibs/rapidjson supportlibs/restbed
+          git submodule update --init libretroshare/ retroshare-webui/
+          git submodule update --init supportlibs/libbitdht supportlibs/librnp supportlibs/rapidjson supportlibs/restbed
 
       - name: Workaround librnp strlen build regression
         run: |

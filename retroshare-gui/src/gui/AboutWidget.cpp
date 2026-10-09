@@ -24,9 +24,9 @@
 #include "include/qmake_info.h"
 #include "rshare.h"
 
-#ifdef RS_JSONAPI
-#include "restbed"
-#endif
+// #ifdef RS_JSONAPI
+// #include "restbed"
+// #endif
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rsplugin.h>
@@ -417,7 +417,7 @@ void AWidget::mouseMoveEvent(QMouseEvent* e) {
 }
 
 
-void AWidget::calcWater(int npage, int density) { 
+void AWidget::calcWater(int npage, int density) {
     int w = image1.width();
     int h = image1.height();
     int count = w + 1;
@@ -529,7 +529,7 @@ void AWidget::drawWater(QRgb* srcImage,QRgb* dstImage) {
 // T
 TBoard::TBoard(QWidget *parent) {
     Q_UNUSED(parent);
-    
+
     setFocusPolicy(Qt::StrongFocus);
     isStarted = false;
     isWaitingAfterLine = false;
@@ -598,12 +598,12 @@ void TBoard::paintEvent(QPaintEvent *event) {
     QWidget::paintEvent(event);
 
     QPainter painter(this);
-    
+
     painter.setPen(Qt::black);
-    painter.drawRect(frameRect());  
+    painter.drawRect(frameRect());
     QRect rect = boardRect();
     painter.fillRect(rect, Qt::white);
-    
+
     if (isPaused) {
         painter.drawText(rect, Qt::AlignCenter, tr("Pause"));
         return;
@@ -1007,4 +1007,3 @@ void AboutWidget::on_copy_button_clicked()
 
 	QApplication::clipboard()->setText(verInfo);
 }
-

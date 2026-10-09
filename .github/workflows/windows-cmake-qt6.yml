@@ -80,13 +80,7 @@ jobs:
       # needs --recursive for its nested src/libsexpp.
       - name: Init submodules (pinned commits)
         run: |
-          git submodule update --init \
-            libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/
-          git submodule update --init --recursive \
-            supportlibs/librnp
-          git submodule update --init \
-            supportlibs/restbed supportlibs/libsam3 \
-            supportlibs/udp-discovery-cpp supportlibs/rapidjson
+          git submodule update --init libretroshare retroshare-webui
           git --no-pager -C libretroshare log --max-count 1 --oneline
 
       # Mirrors windows-cmake.yml (Ninja, shared libretroshare) but with Qt6 and
@@ -102,8 +96,8 @@ jobs:
           -DRS_PLUGINS=OFF -DRS_FORUM_DEEP_INDEX=OFF
           -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON
           -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON
-          -DCMAKE_C_FLAGS="-include string.h -include stdint.h"
-          -DCMAKE_CXX_FLAGS="-include cstring -include cstdint -Wno-template-body"
+          -DCMAKE_C_FLAGS="-Wno-deprecated-declarations"
+          -DCMAKE_CXX_FLAGS="-Wno-template-body -Wno-deprecated-declarations"
 
       - name: CMake build
         run: cmake --build Build-cmake -j3

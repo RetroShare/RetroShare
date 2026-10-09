@@ -32,7 +32,7 @@ rs_jsonapi:isEmpty(JSONAPI_GENERATOR_EXE) {
 }
 
 SUBDIRS += libbitdht
-libbitdht.file = libbitdht/src/libbitdht.pro
+libbitdht.file = supportlibs/libbitdht/src/libbitdht.pro
 libretroshare.depends += libbitdht
 
 SUBDIRS += libretroshare
