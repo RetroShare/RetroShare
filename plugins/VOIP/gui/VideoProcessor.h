@@ -108,6 +108,7 @@ private:
     AVFrame *decoding_frame_buffer ;
     AVPacket decoding_buffer;
     uint64_t encoding_frame_count ;
+    bool encoding_uses_crf ;	// true for x264 (capped CRF); false for MPEG4 fallback (ABR)
 
 #ifdef DEBUG_MPEG_VIDEO
     FILE *encoding_debug_file ;

@@ -35,6 +35,15 @@ set(VOIP_SOURCES
     gui/VOIPToasterNotify.cpp
 )
 
+# RsTurtleVOIPBridge implements distant (gxsid<->gxsid) VOIP. It is now a client
+# of p3GxsTunnelService (libretroshare) for the encrypted E2E transport and no
+# longer uses OpenSSL directly, so no extra crypto link is required. It is still
+# added conditionally so the plugin builds on a tree without the bridge (e.g.
+# master).
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/services/RsTurtleVOIPBridge.cpp")
+    list(APPEND VOIP_SOURCES services/RsTurtleVOIPBridge.cpp)
+endif()
+
 set(VOIP_FORMS
     gui/AudioStats.ui
     gui/AudioWizard.ui
@@ -105,8 +114,21 @@ if(WIN32)
     target_link_libraries(VOIP PRIVATE retroshare retroshare-gui)
 endif()
 
-# NOTE: VOIP makes no direct use of OpenSSL (it relies on libretroshare for any
-# cryptography), so it does not find_package/link OpenSSL itself.
+# pkg-config gives the FFmpeg/speex libs by name only (avcodec, avutil, ...);
+# their directory must be added explicitly or the linker won't find them when
+# they live outside the default search path (e.g. Homebrew /opt/homebrew/... on
+# macOS -> "ld: library 'avcodec' not found"). Harmless on Linux/Windows where
+# these dirs are already on the default path.
+target_link_directories(VOIP PRIVATE
+    ${AVCODEC_LIBRARY_DIRS}
+    ${AVUTIL_LIBRARY_DIRS}
+    ${SPEEX_LIBRARY_DIRS}
+    ${SPEEXDSP_LIBRARY_DIRS}
+)
+
+# NOTE: the VOIP plugin makes no direct use of OpenSSL. All cryptography for
+# distant VOIP is delegated to libretroshare's p3GxsTunnelService, so the plugin
+# stays OpenSSL-free.
 target_link_libraries(VOIP PRIVATE
     Qt5::Core
     Qt5::Widgets

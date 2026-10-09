@@ -30,7 +30,8 @@
 #include <retroshare/rstypes.h>
 
 class RsVOIP ;
-extern RsVOIP *rsVOIP;
+extern class RsVOIP *rsVOIP;
+extern class RsTurtleVOIPBridge *rsTurtleBridge;
  
 static const uint32_t CONFIG_TYPE_VOIP_PLUGIN 		= 0xe001 ;
 
@@ -94,6 +95,8 @@ class RsVOIP
 		virtual void setVoipiMinLoudness(int) = 0 ;
 		virtual bool getVoipEchoCancel() const = 0 ;
 		virtual void setVoipEchoCancel(bool) = 0 ;
+		virtual int getVoipVideoMaximumBandwidth() const = 0 ;	// user cap (bytes/s) applied to the call encoder
+		virtual void setVoipVideoMaximumBandwidth(int) = 0 ;
 
 		virtual uint32_t getPongResults(const RsPeerId& id, int n, std::list<RsVOIPPongResult> &results) = 0;
 };

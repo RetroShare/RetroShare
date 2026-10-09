@@ -23,17 +23,31 @@
 #include <list>
 #include "VOIPGUIHandler.h"
 #include <gui/VOIPChatWidgetHolder.h>
+#include "services/RsTurtleVOIPBridge.h"
+#include <util/rsdebug.h>
 
 #include <gui/chat/ChatDialog.h>
 #include "gui/chat/ChatWidget.h"
 #include "gui/settings/rsharesettings.h"
+
+static ChatId getEffectiveChatId(const RsPeerId& peer_id) 
+{
+    if (rsTurtleBridge != NULL) {
+        ChatId mapped = rsTurtleBridge->resolveVirtualToDistantChat(peer_id);
+        if (!mapped.isNotSet()) {
+             RsDbg() << "VOIPGUIHandler: Successfully mapped incoming Virtual Peer " << peer_id.toStdString() << " back to real Chat " << mapped.toStdString();
+             return mapped;
+        }
+    }
+    return ChatId(peer_id);
+}
 
 void VOIPGUIHandler::ReceivedInvitation(const RsPeerId &peer_id, int flags)
 {
 #ifdef VOIPGUIHANDLER_DEBUG
 	std::cerr << "****** VOIPGUIHandler: received Invitation from peer " << peer_id.toStdString() << " with flags==" << flags << std::endl;
 #endif
-	ChatDialog *di = ChatDialog::getChat(ChatId(peer_id), (RsChatFlags) Settings->getChatFlags());
+	ChatDialog *di = ChatDialog::getChat(getEffectiveChatId(peer_id), (RsChatFlags) Settings->getChatFlags());
 	if (di) {
 		ChatWidget *cw = di->getChatWidget();
 		if(cw) {
@@ -57,7 +71,7 @@ void VOIPGUIHandler::ReceivedVoipHangUp(const RsPeerId &peer_id, int flags)
 #ifdef VOIPGUIHANDLER_DEBUG
 	std::cerr << "****** VOIPGUIHandler: received HangUp from peer " << peer_id.toStdString() << " with flags==" << flags << std::endl;
 #endif
-	ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
+	ChatDialog *di = ChatDialog::getExistingChat(getEffectiveChatId(peer_id)) ;
 	if (di) {
 		ChatWidget *cw = di->getChatWidget();
 		if(cw) {
@@ -81,7 +95,7 @@ void VOIPGUIHandler::ReceivedVoipAccept(const RsPeerId &peer_id, int flags)
 #ifdef VOIPGUIHANDLER_DEBUG
 	std::cerr << "****** VOIPGUIHandler: received VoipAccept from peer " << peer_id.toStdString() << " with flags==" << flags << std::endl;
 #endif
-	ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
+	ChatDialog *di = ChatDialog::getExistingChat(getEffectiveChatId(peer_id)) ;
 	if (di) {
 		ChatWidget *cw = di->getChatWidget();
 		if(cw) {
@@ -113,7 +127,7 @@ void VOIPGUIHandler::ReceivedVoipData(const RsPeerId &peer_id)
 		return ;
 	}
 
-	ChatDialog *di = ChatDialog::getChat(ChatId(peer_id), (RsChatFlags) Settings->getChatFlags());
+	ChatDialog *di = ChatDialog::getChat(getEffectiveChatId(peer_id), (RsChatFlags) Settings->getChatFlags());
 	if (di) {
 		ChatWidget *cw = di->getChatWidget();
 		if (cw) {
@@ -154,7 +168,7 @@ void VOIPGUIHandler::ReceivedVoipBandwidthInfo(const RsPeerId &peer_id, int byte
 	std::cerr << "VOIPGUIHandler::received bw info for peer " << peer_id.toStdString() << ": " << bytes_per_sec << " Bps" << std::endl;
 #endif
 
-	ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
+	ChatDialog *di = ChatDialog::getExistingChat(getEffectiveChatId(peer_id)) ;
 	if(di)
 	{
 
@@ -184,7 +198,7 @@ void VOIPGUIHandler::AnswerAudioCall(const RsPeerId &peer_id)
 	std::cerr << "VOIPGUIHandler::Answer to Audio Call for peer " << peer_id.toStdString() << std::endl;
 #endif
 
-	ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
+	ChatDialog *di = ChatDialog::getExistingChat(getEffectiveChatId(peer_id)) ;
 	if (di) {
 		ChatWidget *cw = di->getChatWidget();
 		if(cw) {
@@ -205,7 +219,7 @@ void VOIPGUIHandler::AnswerAudioCall(const RsPeerId &peer_id)
 
 void VOIPGUIHandler::AnswerVideoCall(const RsPeerId &peer_id)
 {
-	ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
+	ChatDialog *di = ChatDialog::getExistingChat(getEffectiveChatId(peer_id)) ;
 	if (di) {
 		ChatWidget *cw = di->getChatWidget();
 		if(cw) {
@@ -226,7 +240,7 @@ void VOIPGUIHandler::AnswerVideoCall(const RsPeerId &peer_id)
 
 void VOIPGUIHandler::HangupAudioCall(const RsPeerId &peer_id)
 {
-	ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
+	ChatDialog *di = ChatDialog::getExistingChat(getEffectiveChatId(peer_id)) ;
 	if (di) {
 		ChatWidget *cw = di->getChatWidget();
 		if(cw) {
@@ -247,7 +261,7 @@ void VOIPGUIHandler::HangupAudioCall(const RsPeerId &peer_id)
 
 void VOIPGUIHandler::HangupVideoCall(const RsPeerId &peer_id)
 {
-	ChatDialog *di = ChatDialog::getExistingChat(ChatId(peer_id)) ;
+	ChatDialog *di = ChatDialog::getExistingChat(getEffectiveChatId(peer_id)) ;
 	if (di) {
 		ChatWidget *cw = di->getChatWidget();
 		if(cw) {
