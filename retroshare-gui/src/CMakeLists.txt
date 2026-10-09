@@ -19,16 +19,31 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # ------------------------------------------------------------------------ */
 
-# 3.23: target_sources(FILE_SET)
-cmake_minimum_required(VERSION 3.23...4.4)
+# 3.1 : target_sources()
+# 3.13: CMP0076
+cmake_minimum_required(VERSION 3.13...4.4)
 
-target_sources(${PROJECT_NAME}
-	PUBLIC FILE_SET HEADERS
-	BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.23)
+	target_sources(${PROJECT_NAME}
+		PUBLIC FILE_SET HEADERS
+		BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
 
-	PRIVATE FILE_SET private_HEADERS TYPE HEADERS
-	BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-)
+		PRIVATE FILE_SET private_HEADERS TYPE HEADERS
+		BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+	)
+	set(PUBLIC_FILESET_HEADERS_FILES PUBLIC FILE_SET HEADERS FILES)
+	set(PRIVATE_FILESET_private_HEADERS_FILES
+		PRIVATE FILE_SET private_HEADERS FILES
+	)
+else()
+	set(PUBLIC_FILESET_HEADERS_FILES PRIVATE)
+	set(PRIVATE_FILESET_private_HEADERS_FILES PRIVATE)
+	target_include_directories(${PROJECT_NAME}
+		PUBLIC
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+	)
+endif()
 if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.4")
 	target_sources(${PROJECT_NAME}
 		PRIVATE FILE_SET SOURCES
@@ -55,9 +70,9 @@ add_subdirectory(TorControl)
 add_subdirectory(util)
 
 target_sources(${PROJECT_NAME}
-	PUBLIC FILE_SET HEADERS FILES
+	${PUBLIC_FILESET_HEADERS_FILES}
 
-	PRIVATE FILE_SET private_HEADERS FILES
+	${PRIVATE_FILESET_private_HEADERS_FILES}
 	rshare.h
 
 	${PRIVATE_FILESET_SOURCES_FILES}
@@ -90,7 +105,7 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/include/qmake_info.h"
 	"#endif // INFO_H\n"
 )
 target_sources(${PROJECT_NAME}
-	PRIVATE FILE_SET private_HEADERS FILES
+	${PRIVATE_FILESET_private_HEADERS_FILES}
 	"${CMAKE_CURRENT_BINARY_DIR}/include/qmake_info.h"
 )
 

@@ -20,8 +20,7 @@
 
 # 3.1 : target_sources()
 # 3.13: CMP0076
-# 3.23: target_sources(FILE_SET)
-cmake_minimum_required(VERSION 3.23...4.4)
+cmake_minimum_required(VERSION 3.13...4.4)
 
 add_subdirectory(advsearch)
 add_subdirectory(chat)
@@ -79,9 +78,9 @@ if(RS_GXSWIKIPOS)
 endif(RS_GXSWIKIPOS)
 
 target_sources(${PROJECT_NAME}
-	PUBLIC FILE_SET HEADERS FILES
+	${PUBLIC_FILESET_HEADERS_FILES}
 
-	PRIVATE FILE_SET private_HEADERS FILES
+	${PRIVATE_FILESET_private_HEADERS_FILES}
 	ChatLobbyWidget.h
 	QuickStartWizard.h
 	RsGUIEventManager.h
@@ -162,7 +161,7 @@ target_sources(${PROJECT_NAME}
 
 if(RS_MESSENGER)
 	target_sources(${PROJECT_NAME}
-		PRIVATE FILE_SET private_HEADERS FILES
+		${PRIVATE_FILESET_private_HEADERS_FILES}
 		MessengerWindow.h
 
 		${PRIVATE_FILESET_SOURCES_FILES}
@@ -176,7 +175,7 @@ endif(RS_MESSENGER)
 # Embedded Friend Server
 if(RS_EFS)
 	target_sources(${PROJECT_NAME}
-		PRIVATE FILE_SET private_HEADERS FILES
+		${PRIVATE_FILESET_private_HEADERS_FILES}
 		FriendServerControl.h
 
 		${PRIVATE_FILESET_SOURCES_FILES}

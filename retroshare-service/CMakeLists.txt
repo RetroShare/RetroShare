@@ -61,7 +61,6 @@ set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 find_package(RetroShare REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(BZip2 REQUIRED)
-find_package(Git REQUIRED)
 
 ################################################################################
 ### global options

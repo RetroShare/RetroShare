@@ -20,13 +20,12 @@
 
 # 3.1 : target_sources()
 # 3.13: CMP0076
-# 3.23: target_sources(FILE_SET)
-cmake_minimum_required(VERSION 3.23...4.4)
+cmake_minimum_required(VERSION 3.13...4.4)
 
 target_sources(${PROJECT_NAME}
-	PUBLIC FILE_SET HEADERS FILES
+	${PUBLIC_FILESET_HEADERS_FILES}
 
-	PRIVATE FILE_SET private_HEADERS FILES
+	${PRIVATE_FILESET_private_HEADERS_FILES}
 	AttachFileItem.h
 	BoardsCommentsItem.h
 	ChannelsCommentsItem.h
@@ -76,9 +75,9 @@ target_sources(${PROJECT_NAME}
 
 if(RS_GXSGUI)
 	target_sources(${PROJECT_NAME}
-		PUBLIC FILE_SET HEADERS FILES
+		${PUBLIC_FILESET_HEADERS_FILES}
 
-		PRIVATE FILE_SET private_HEADERS FILES
+		${PRIVATE_FILESET_private_HEADERS_FILES}
 		GxsGroupFeedItem.h
 		GxsFeedItem.h
 
@@ -94,9 +93,9 @@ endif(RS_GXSGUI)
 
 if(RS_GXSFORUMS)
 	target_sources(${PROJECT_NAME}
-		PUBLIC FILE_SET HEADERS FILES
+		${PUBLIC_FILESET_HEADERS_FILES}
 
-		PRIVATE FILE_SET private_HEADERS FILES
+		${PRIVATE_FILESET_private_HEADERS_FILES}
 		GxsForumGroupItem.h
 		GxsForumMsgItem.h
 
@@ -114,9 +113,9 @@ endif(RS_GXSFORUMS)
 
 if(RS_GXSCHANNELS)
 	target_sources(${PROJECT_NAME}
-		PUBLIC FILE_SET HEADERS FILES
+		${PUBLIC_FILESET_HEADERS_FILES}
 
-		PRIVATE FILE_SET private_HEADERS FILES
+		${PRIVATE_FILESET_private_HEADERS_FILES}
 		GxsChannelGroupItem.h
 		GxsChannelPostItem.h
 
@@ -134,9 +133,9 @@ endif(RS_GXSCHANNELS)
 
 if(RS_GXSPOSTED)
 	target_sources(${PROJECT_NAME}
-		PUBLIC FILE_SET HEADERS FILES
+		${PUBLIC_FILESET_HEADERS_FILES}
 
-		PRIVATE FILE_SET private_HEADERS FILES
+		${PRIVATE_FILESET_private_HEADERS_FILES}
 		PostedGroupItem.h
 		BoardsPostItem.h
 
@@ -154,9 +153,9 @@ endif(RS_GXSPOSTED)
 
 if(RS_GXSTHEWIRE)
 	target_sources(${PROJECT_NAME}
-		PUBLIC FILE_SET HEADERS FILES
+		${PUBLIC_FILESET_HEADERS_FILES}
 
-		PRIVATE FILE_SET private_HEADERS FILES
+		${PRIVATE_FILESET_private_HEADERS_FILES}
 		WireNotifyGroupItem.h
 		WireNotifyPostItem.h
 

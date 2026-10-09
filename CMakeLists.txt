@@ -6,9 +6,13 @@
 
 cmake_minimum_required(VERSION 3.0...4.4)
 
-list(PREPEND CMAKE_PROJECT_TOP_LEVEL_INCLUDES
-	"${CMAKE_CURRENT_SOURCE_DIR}/mk/cmake/fetch_provider.cmake"
-)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.24)
+	list(PREPEND CMAKE_PROJECT_TOP_LEVEL_INCLUDES
+		"${CMAKE_CURRENT_SOURCE_DIR}/mk/cmake/fetch_provider.cmake"
+	)
+else()
+	include(mk/cmake/fetch_provider.cmake)
+endif()
 
 project(retroshare-superproject)
 

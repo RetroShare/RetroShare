@@ -20,13 +20,12 @@
 
 # 3.1 : target_sources()
 # 3.13: CMP0076
-# 3.23: target_sources(FILE_SET)
-cmake_minimum_required(VERSION 3.23...4.4)
+cmake_minimum_required(VERSION 3.13...4.4)
 
 target_sources(${PROJECT_NAME}
-	PUBLIC FILE_SET HEADERS FILES
+	${PUBLIC_FILESET_HEADERS_FILES}
 
-	PRIVATE FILE_SET private_HEADERS FILES
+	${PRIVATE_FILESET_private_HEADERS_FILES}
 	AspectRatioPixmapLabel.h
 	ClickableLabel.h
 	DateTime.h
@@ -94,9 +93,9 @@ target_sources(${PROJECT_NAME}
 
 if(RS_GXSGUI)
 	target_sources(${PROJECT_NAME}
-		PUBLIC FILE_SET HEADERS FILES
+		${PUBLIC_FILESET_HEADERS_FILES}
 
-		PRIVATE FILE_SET private_HEADERS FILES
+		${PRIVATE_FILESET_private_HEADERS_FILES}
 		TokenQueue.h
 		RsGxsUpdateBroadcast.h
 
@@ -112,9 +111,9 @@ endif(RS_GXSGUI)
 
 if(RS_FRAMECATCHER)
 	target_sources(${PROJECT_NAME}
-		PUBLIC FILE_SET HEADERS FILES
+		${PUBLIC_FILESET_HEADERS_FILES}
 
-		PRIVATE FILE_SET private_HEADERS FILES
+		${PRIVATE_FILESET_private_HEADERS_FILES}
 		framecatcher.h
 
 		${PRIVATE_FILESET_SOURCES_FILES}

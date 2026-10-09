@@ -20,18 +20,25 @@
 ## ---------------------------------------------------------------------- ##
 
 # 3.7 : pkg_check_modules(IMPORTED_TARGET)
-cmake_minimum_required(VERSION 3.7...4.4)
+# 3.11: add_library(ALIAS <IMPORTED GLOBAL>)
+# 3.13: pkg_check_modules(IMPORTED_TARGET GLOBAL)
+cmake_minimum_required(VERSION 3.13...4.4)
 
 find_package(PkgConfig)
 if(PkgConfig_FOUND)
   pkg_check_modules(XScreensaver IMPORTED_TARGET GLOBAL xscrnsaver)
 endif()
 
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.19)
+	set(HANDLE_VERSION_RANGE HANDLE_VERSION_RANGE)
+else()
+  set(HANDLE_VERSION_RANGE)
+endif()
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(XScreensaver
   REQUIRED_VARS XScreensaver_FOUND
   VERSION_VAR XScreensaver_VERSION
-  HANDLE_VERSION_RANGE
+  ${HANDLE_VERSION_RANGE}
 )
 
 if(XScreensaver_FOUND)

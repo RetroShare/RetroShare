@@ -20,18 +20,25 @@
 ## ---------------------------------------------------------------------- ##
 
 # 3.7 : pkg_check_modules(IMPORTED_TARGET)
-cmake_minimum_required(VERSION 3.7...4.4)
+# 3.11: add_library(ALIAS <IMPORTED GLOBAL>)
+# 3.13: pkg_check_modules(IMPORTED_TARGET GLOBAL)
+cmake_minimum_required(VERSION 3.13...4.4)
 
 find_package(PkgConfig)
 if(PkgConfig_FOUND)
   pkg_check_modules(X11 IMPORTED_TARGET GLOBAL x11)
 endif()
 
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.19)
+	set(HANDLE_VERSION_RANGE HANDLE_VERSION_RANGE)
+else()
+  set(HANDLE_VERSION_RANGE)
+endif()
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(X11
   REQUIRED_VARS X11_FOUND
   VERSION_VAR X11_VERSION
-  HANDLE_VERSION_RANGE
+  ${HANDLE_VERSION_RANGE}
 )
 
 if(X11_FOUND)

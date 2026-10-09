@@ -22,8 +22,7 @@
 # 3.1 : configure_package_config_file(INSTALL_PREFIX)
 # 3.11: add_executable() ... target_sources()
 # 3.11: configure_package_config_file(COMPATIBILITY SameMinorVersion)
-# 3.23: install(TARGETS FILE_SET)
-cmake_minimum_required(VERSION 3.23...4.4)
+cmake_minimum_required(VERSION 3.11...4.4)
 
 project(retroshare-gui VERSION 0.6.7 LANGUAGES CXX C)
 
@@ -214,7 +213,9 @@ endif(RS_GXSCIRCLES)
 # though Qt6 is listed first. We therefore probe Qt6 explicitly and fall back to
 # Qt5. Bonus: this makes -DCMAKE_DISABLE_FIND_PACKAGE_Qt6=ON work as a reliable
 # way to force a Qt5 build (it didn't, with the versionless QT package name).
-find_package( Qt6 QUIET COMPONENTS Core )
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.22)
+	find_package( Qt6 QUIET COMPONENTS Core )
+endif()
 if( Qt6_FOUND )
 	set( QT_VERSION_MAJOR 6 )
 else()
@@ -334,11 +335,45 @@ if(CMAKE_EXPERIMENTAL_EXPORT_PACKAGE_DEPENDENCIES)
 endif()
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.23)
+	set(FILESET_INSTALL
+		FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/retroshare-gui
+	)
+else()
+	set(FILESET_INSTALL
+		INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/retroshare-gui
+	)
+	get_target_property(${PROJECT_NAME}_SOURCES ${PROJECT_NAME} SOURCES)
+	foreach(source ${${PROJECT_NAME}_SOURCES})
+		string(TOLOWER ${source} sourceLower)
+		if(NOT sourceLower MATCHES "\\.(h|hh|h\\+\\+|hpp)\$")
+			continue()
+		endif()
+		foreach(base_ ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
+			string(FIND ${source} ${base_}/ basePos)
+			if(basePos EQUAL 0)
+				set(base ${base_})
+				break()
+			endif()
+		endforeach()
+		if(NOT basePos EQUAL 0)
+			message(SEND_ERROR "couldn't find base for header ${source}")
+			continue()
+		endif()
+
+		get_filename_component(dest ${source} DIRECTORY)
+		file(RELATIVE_PATH dest ${base} ${dest})
+		install(FILES ${source}
+			DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/retroshare-gui/${dest}
+			${INSTALL_COMPONENT}
+		)
+	endforeach()
+endif()
+
 install(TARGETS ${PROJECT_NAME}
 	EXPORT ${PROJECT_NAME}_export
 	${INSTALL_COMPONENT}
-	FILE_SET HEADERS
-		DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/retroshare-gui"
+	${FILESET_INSTALL}
 	BUNDLE
 		DESTINATION ${CMAKE_INSTALL_BINDIR}
 )

@@ -20,13 +20,12 @@
 
 # 3.1 : target_sources()
 # 3.13: CMP0076
-# 3.23: target_sources(FILE_SET)
-cmake_minimum_required(VERSION 3.23...4.4)
+cmake_minimum_required(VERSION 3.13...4.4)
 
 target_sources(${PROJECT_NAME}
-	PUBLIC FILE_SET HEADERS FILES
+	${PUBLIC_FILESET_HEADERS_FILES}
 
-	PRIVATE FILE_SET private_HEADERS FILES
+	${PRIVATE_FILESET_private_HEADERS_FILES}
 	AboutPage.h
 	AddFileAssociationDialog.h
 	AppearancePage.h
@@ -109,7 +108,7 @@ target_sources(${PROJECT_NAME}
 
 if(RS_JSON_API)
 	target_sources(${PROJECT_NAME}
-		PRIVATE FILE_SET private_HEADERS FILES
+		${PRIVATE_FILESET_private_HEADERS_FILES}
 		JsonApiPage.h
 
 		${PRIVATE_FILESET_SOURCES_FILES}
@@ -122,7 +121,7 @@ endif(RS_JSON_API)
 
 if(RS_WEBUI)
 	target_sources(${PROJECT_NAME}
-		PRIVATE FILE_SET private_HEADERS FILES
+		${PRIVATE_FILESET_private_HEADERS_FILES}
 		WebuiPage.h
 
 		${PRIVATE_FILESET_SOURCES_FILES}
