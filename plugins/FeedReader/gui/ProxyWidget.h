@@ -26,6 +26,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
 	void addressChanged(const QString &value);
+	void updateWarning();
 
 private:
 	void connectUi(bool doConnect);
