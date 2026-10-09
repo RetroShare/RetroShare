@@ -17,7 +17,11 @@ permissions:
 
 jobs:
   build:
-    runs-on: macos-14
+    # macos-15: Homebrew dropped macOS 14 (Sonoma) as a supported version, so
+    # it no longer builds bottles for it. On macos-14 `brew install qt` then
+    # tries to build qtwebengine (Chromium) from source, which first demands a
+    # full Xcode >= 15.3 and, even with one, fails after an hour on the runner.
+    runs-on: macos-15
     permissions:
       actions: write
     defaults:
@@ -25,11 +29,10 @@ jobs:
         shell: bash
 
     steps:
-      - name: Setup XCode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: 15.0.1
-
+      # No explicit Xcode pin: the previously pinned Xcode 15.0.1 does not
+      # exist on macos-15 and was only needed for the macosx14.0 SDK (see the
+      # CI-Build step). The runner default is used, like in the CMake macOS
+      # workflows.
       - name: Show current version of Xcode
         run: xcodebuild -version
 
@@ -63,6 +66,11 @@ jobs:
           git submodule update --init --remote libbitdht/ libretroshare/ retroshare-webui/
           git submodule update --init supportlibs/librnp supportlibs/rapidjson supportlibs/restbed openpgpsdk/
 
+      # rs_macos14.0 keeps the 14.0 deployment target but hard-codes
+      # QMAKE_MAC_SDK=macosx14.0, an SDK only shipped by Xcode 15.0.x. The
+      # `-after` assignment (applied after retroshare.pri) replaces it with the
+      # generic "macosx" SDK name, which resolves to whatever SDK the selected
+      # Xcode provides, so the job no longer breaks on every Xcode/SDK bump.
       - name: CI-Build
         run: |
           qmake6 . -r "CONFIG+=rs_macos14.0" "CONFIG+=release" "CONFIG+=rs_autologin" "CONFIG+=no_rs_sam3" "CONFIG+=no_rs_sam3_libsam3" "CONFIG+=rs_no_rnplib" \
@@ -79,5 +87,6 @@ jobs:
           QMAKE_LIBDIR+="/opt/homebrew/opt/libxslt/lib" \
           QMAKE_LIBDIR+="/opt/homebrew/opt/libxml2/lib" \
           CONFIG+=no_retroshare_service \
-          CONFIG+=no_retroshare_friendserver
+          CONFIG+=no_retroshare_friendserver \
+          -after QMAKE_MAC_SDK=macosx
           make
