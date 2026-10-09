@@ -41,6 +41,6 @@ find_package_handle_standard_args(XScreensaver
   ${HANDLE_VERSION_RANGE}
 )
 
-if(XScreensaver_FOUND)
+if(XScreensaver_FOUND AND NOT TARGET XScreensaver::XScreensaver)
   add_library(XScreensaver::XScreensaver ALIAS PkgConfig::XScreensaver)
 endif()

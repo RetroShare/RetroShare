@@ -41,6 +41,6 @@ find_package_handle_standard_args(X11
   ${HANDLE_VERSION_RANGE}
 )
 
-if(X11_FOUND)
+if(X11_FOUND AND NOT TARGET X11::X11)
   add_library(X11::X11 ALIAS PkgConfig::X11)
 endif()
