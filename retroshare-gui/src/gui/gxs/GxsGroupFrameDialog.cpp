@@ -23,6 +23,8 @@
 #include <QToolButton>
 
 #include "GxsGroupFrameDialog.h"
+#include "retroshare/rsgxscircles.h"
+#include "retroshare/rsidentity.h"
 #include "ui_GxsGroupFrameDialog.h"
 #include "GxsMessageFrameWidget.h"
 
@@ -962,6 +964,37 @@ void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *
 	groupItemInfo.adminKey = IS_GROUP_ADMIN(groupInfo->mMeta.mSubscribeFlags) ;
 	groupItemInfo.max_visible_posts = groupInfo->mMeta.mVisibleMsgCount ;
     groupItemInfo.creation_time = groupInfo->mMeta.mPublishTs ;
+
+    // A group restricted to an external circle only delivers its posts to the circle's members. Being
+    // subscribed without being a member looks like a normal, silent group; tell the user why.
+    if(IS_GROUP_SUBSCRIBED(groupInfo->mMeta.mSubscribeFlags) && groupInfo->mMeta.mCircleType == static_cast<uint32_t>(RsGxsCircleType::EXTERNAL))
+    {
+        RsGxsCircleDetails circle;
+
+        if(!rsGxsCircles->getCircleDetails(groupInfo->mMeta.mCircleId, circle))
+            groupItemInfo.circle_warning = tr("Restricted to a circle this node has not received yet (%1). No post can be read until the circle arrives.")
+                                               .arg(QString::fromStdString(groupInfo->mMeta.mCircleId.toStdString()));
+        else if(!circle.mAmIAllowed)
+        {
+            std::list<RsGxsId> own_ids;
+            rsIdentity->getOwnIds(own_ids);
+
+            bool invited = false;
+            for(const auto& id : own_ids)
+                if(circle.isIdInInviteeList(id))
+                {
+                    invited = true;
+                    break;
+                }
+
+            QString circle_name = QString::fromUtf8(circle.mCircleName.c_str());
+
+            if(invited)
+                groupItemInfo.circle_warning = tr("You are invited to circle \"%1\" but have not accepted yet, so posts are not sent to you. Accept the invitation in People > Circles, or unsubscribe.").arg(circle_name);
+            else
+                groupItemInfo.circle_warning = tr("None of your identities is a member of circle \"%1\", so posts are not sent to you. Ask to join the circle, or unsubscribe.").arg(circle_name);
+        }
+    }
 
 #if TOGXS
 	if (groupInfo.mGroupFlags & RS_DISTRIB_AUTHEN_REQ) {
