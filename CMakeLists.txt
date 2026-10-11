@@ -66,7 +66,7 @@ list(APPEND CMAKE_MODULE_PATH
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 
 # avoid using system libretroshare unless the user specifically asks for it
-set(FETCH_PROVIDER_RetroShare FETCH_ONLY CACHE STRING
+set(FETCH_PROVIDER_RetroShare_MODE FETCH_ONLY CACHE STRING
 	"control how the Fetch dependency provider handles RetroShare"
 )
 

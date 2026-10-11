@@ -1,51 +1,72 @@
-# ------------------------------------------------------------------------ *\
-# mk/cmake/fetchcontent_provider.cmake
-# This file is part of RetroShare.
-#
-# Copyright (C) 2026      David Bears <dbear4q@gmail.com>
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-# ------------------------------------------------------------------------ */
+## ------------------------------------------------------------------------- ##
+ # mk/cmake/fetchcontent_provider.cmake
+ # This file is part of RetroShare.
+ #
+ # Copyright (C) 2026      David Bears <dbear4q@gmail.com>
+ #
+ # SPDX-License-Identifier: AGPL-3.0-or-later
+ #
+ # This program is free software: you can redistribute it and/or modify
+ # it under the terms of the GNU Affero General Public License as
+ # published by the Free Software Foundation, either version 3 of the
+ # License, or (at your option) any later version.
+ #
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU Affero General Public License for more details.
+ #
+ # You should have received a copy of the GNU Affero General Public License
+ # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+## ------------------------------------------------------------------------- ##
 
-cmake_minimum_required(VERSION 3.0...4.4)
+cmake_minimum_required(VERSION 3.3...4.4)
 
-include(CMakeDependentOption)
-cmake_dependent_option(FETCH_DEPENDENCY_PROVIDER
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.24)
+	set(FETCH_DEPENDENCY_PROVIDER_DEFAULT ON)
+else()
+	set(FETCH_DEPENDENCY_PROVIDER_DEFAULT OFF)
+endif()
+set(FETCH_DEPENDENCY_PROVIDER ${FETCH_DEPENDENCY_PROVIDER_DEFAULT} CACHE BOOL
 	"Use the Fetch dependency provider to get project dependencies"
-	ON
-	"CMAKE_VERSION VERSION_GREATER_EQUAL 3.24"
-	OFF
 )
 
+
 macro(fetch_provide_dependency method package)
-	set(FETCH_PROVIDER_${package} NORMAL CACHE STRING
+	set(FETCH_PROVIDER_${package}_MODE NORMAL CACHE STRING
 		"control how the Fetch dependency provider handles ${package}"
 	)
-	set_property(CACHE FETCH_PROVIDER_${package} PROPERTY STRINGS
+	set_property(CACHE FETCH_PROVIDER_${package}_MODE PROPERTY STRINGS
 		NORMAL FIND_ONLY FETCH_ONLY
 	)
+	if(FETCH_PROVIDER_${package}_MODE STREQUAL "NORMAL")
+		set(fetch_provider_${package}_find TRUE)
+		set(fetch_provider_${package}_fetch TRUE)
+	elseif(FETCH_PROVIDER_${package}_MODE STREQUAL "FIND_ONLY")
+		set(fetch_provider_${package}_find TRUE)
+		set(fetch_provider_${package}_fetch FALSE)
+	elseif(FETCH_PROVIDER_${package}_MODE STREQUAL "FETCH_ONLY")
+		set(fetch_provider_${package}_find FALSE)
+		set(fetch_provider_${package}_fetch TRUE)
+	else()
+		message(FATAL_ERROR
+			"invalid fetch provider mode: ${fetch_provider_${package}_mode}"
+		)
+	endif()
 	set(fetch_provider_${package}_findargs
-		${ARGN} BYPASS_PROVIDER
+		${fetch_provider_${package}_UNPARSED_ARGUMENTS}
 	)
 	list(REMOVE_ITEM fetch_provider_${package}_findargs REQUIRED)
+	if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.24)
+		list(APPEND fetch_provider_${package}_findargs BYPASS_PROVIDER)
+	endif()
 	if(CMAKE_VERSION VERSION_GREATER_EQUAL 4.0)
 		list(APPEND fetch_provider_${package}_findargs OPTIONAL)
 	endif()
-	if(NOT FETCH_PROVIDER_${package} STREQUAL FETCH_ONLY)
+	if(fetch_provider_${package}_find)
 		find_package(${package} ${fetch_provider_${package}_findargs})
 	endif()
-	if(NOT ${package}_FOUND AND NOT FETCH_PROVIDER_${package} STREQUAL FIND_ONLY)
+	if(NOT ${package}_FOUND AND fetch_provider_${package}_fetch)
 		message(STATUS "Fetching ${package}...")
 		set(FETCH_PROVIDER_PACKAGE_NAME ${package})
 		include(Fetch${package} OPTIONAL

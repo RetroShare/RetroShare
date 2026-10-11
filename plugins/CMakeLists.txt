@@ -22,11 +22,9 @@ cmake_minimum_required(VERSION 3.0...4.4)
 
 if(RS_GUI)
 	# don't accidentally find an installed version of RetroShare-GUI
-	if(CMAKE_VERSION VERSION_LESS 3.24)
-		set(CMAKE_FIND_PACKAGE_REDIRECTS_DIR ${CMAKE_BINARY_DIR}/pkgRedirects)
-		set(RetroShare_ROOT ${CMAKE_FIND_PACKAGE_REDIRECTS_DIR})
-	endif()
-	file(WRITE ${CMAKE_FIND_PACKAGE_REDIRECTS_DIR}/RetroShare-GUIConfig.cmake
+	include(RedirectFindPackage)
+	redirect_find_package(RetroShare-GUI)
+	file(WRITE ${CMAKE_FIND_PACKAGE_REDIRECTS_DIR}/RetroShare-GUIExtra.cmake
 		"message(STATUS \"using RetroShare-GUI from this build\")"
 	)
 
