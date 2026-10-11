@@ -58,6 +58,8 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 	removeFriendButton->setEnabled(false);
 	removeFriendButton->hide();
 	banButton->hide();
+	banButton->setToolTip(tr("Ignore this profile: it is added to the Ignored Users list, its connection attempts are denied automatically "
+	                         "and no longer shown here. You can manage the list in Preferences -> Notify."));
     
     QPalette pal = banButton->palette();
     pal.setColor(QPalette::ButtonText, Qt::red);
