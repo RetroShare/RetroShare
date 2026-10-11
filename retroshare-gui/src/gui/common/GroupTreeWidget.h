@@ -75,6 +75,7 @@ public:
     quint32               max_visible_posts ;
     std::set<std::string> context_strings;
     bool                  deprecated_format;			// this was added on 07/2026 for forcing admin re-signature of incompatible groups
+    QString               circle_warning;			// non empty when subscribed to a circle-restricted group whose posts cannot reach us (not a member)
 };
 
 //cppcheck-suppress noConstructor
