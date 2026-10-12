@@ -23,6 +23,8 @@
 
 #include "gui/gxs/GxsCommentContainer.h"
 
+class YouTubeStyleCommentWidget;
+
 namespace Ui {
 class GxsCommentDialog;
 }
@@ -44,20 +46,28 @@ public:
 	RsGxsGroupId groupId() { return mGrpId; }
 	RsGxsMessageId messageId() { return mMostRecentMsgId; }
 
+	// YouTube style methods
+	void setUseYouTubeStyle(bool useYouTubeStyle) { mUseYouTubeStyle = useYouTubeStyle; }
+	void loadYouTubeStyleComments(const std::vector<RsGxsComment> &comments);
+
 public slots:
     void refresh();
+	void loadYouTubeStyle();
 
 private slots:
     void idChooserReady();
 	void voterSelectionChanged( int index );
 	void sortComments(int);
     void notifyCommentsLoaded(int n);
+	void onYouTubeStyleToggled(bool checked);
+	void onYouTubeCommentReply(const RsGxsMessageId &parentId);
 
 signals:
     void commentsLoaded(int);
 
 private:
     void init(const RsGxsId &default_author);
+	void setupYouTubeStyleWidget();
 
 	RsGxsGroupId   mGrpId;
 	RsGxsMessageId mMostRecentMsgId;
@@ -65,6 +75,10 @@ private:
 
 	/* UI - from Designer */
 	Ui::GxsCommentDialog *ui;
+
+	bool mUseYouTubeStyle;
+	YouTubeStyleCommentWidget *mYouTubeStyleWidget;
+	RsGxsCommentService *mCommentService;
 };
 
 #endif
