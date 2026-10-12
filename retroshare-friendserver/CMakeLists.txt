@@ -76,4 +76,6 @@ endif()
 
 
 ## install
-install(TARGETS ${PROJECT_NAME})
+install(TARGETS ${PROJECT_NAME}
+	COMPONENT retroshare-friendserver
+)
