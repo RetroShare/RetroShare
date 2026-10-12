@@ -24,9 +24,10 @@
 #include <retroshare-gui/mainpage.h>
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsgxschannels.h>
 
 #include <QWidget>
-
+#include <QVBoxLayout>
 
 class QAction;
 
@@ -67,6 +68,7 @@ private slots:
 	void openWebHelp() ;
 	void recommendFriends();
 	void updateHomeLogo();
+	void loadChannelContent();
 
 private:
 	Ui::HomePage *ui;
@@ -80,6 +82,8 @@ private:
     RsEventsHandlerId_t mEventHandlerId;
 
     void handleEvent(std::shared_ptr<const RsEvent> event);
+
+    QVBoxLayout *mChannelContentLayout;
 };
 
 #endif // HomePage_H
