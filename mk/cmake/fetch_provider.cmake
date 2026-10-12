@@ -33,6 +33,12 @@ set(FETCH_DEPENDENCY_PROVIDER ${FETCH_DEPENDENCY_PROVIDER_DEFAULT} CACHE BOOL
 
 
 macro(fetch_provide_dependency method package)
+	cmake_parse_arguments(fetch_provider_${package}
+		""
+		""
+		""
+		${ARGN}
+	)
 	set(FETCH_PROVIDER_${package}_MODE NORMAL CACHE STRING
 		"control how the Fetch dependency provider handles ${package}"
 	)
