@@ -20,6 +20,7 @@
  # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ## ------------------------------------------------------------------------- ##
 
+# 3.11: FetchContent
 # 3.14: FetchContent_MakeAvailable()
 cmake_minimum_required(VERSION 3.14...4.4)
 
@@ -29,7 +30,6 @@ FetchContent_Declare(cmark
 	GIT_TAG "origin/master"
 	GIT_SHALLOW TRUE
 	GIT_PROGRESS TRUE
-	TIMEOUT 10
 )
 FetchContent_MakeAvailable(cmark)
 set(${FETCH_PROVIDER_PACKAGE_NAME}_FOUND TRUE)

@@ -20,8 +20,7 @@
  # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ## ------------------------------------------------------------------------- ##
 
-# 3.14: FetchContent_MakeAvailable()
-cmake_minimum_required(VERSION 3.14...4.4)
+cmake_minimum_required(VERSION 3.0...4.4)
 
 if(NOT TARGET sam3_external)
 include(ExternalProject)
@@ -51,7 +50,6 @@ ExternalProject_Add(sam3_external
 	GIT_TAG "origin/master"
 	GIT_SHALLOW TRUE
 	GIT_PROGRESS TRUE
-	TIMEOUT 10
 	CONFIGURE_COMMAND ""
   BUILD_COMMAND ${envmod_build} make build
 	PATCH_COMMAND ${GIT_EXECUTABLE} reset --hard
