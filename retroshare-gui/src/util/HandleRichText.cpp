@@ -1211,7 +1211,7 @@ QString RsHtml::toHtml(QString text, bool realHtml)
 }
 
 /** Loads image and converts image to embedded image HTML fragment **/
-bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels, const int maxBytes)
+bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels, const int maxBytes, const QString &cssClass)
 {
 	QImage image;
 
@@ -1219,15 +1219,15 @@ bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, 
 		fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", fileName.toLatin1().constData());
 		return false;
 	}
-    return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels, maxBytes);
+    return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels, maxBytes, cssClass);
 }
 
 /** Converts image to embedded image HTML fragment **/
-bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels, const int maxBytes)
+bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels, const int maxBytes, const QString &cssClass)
 {
 	rstime::RsScopeTimer s("Embed image");
 	QImage opt;
-    return ImageUtil::optimizeSizeHtml(embeddedImage, originalImage, opt, maxPixels, maxBytes);
+    return ImageUtil::optimizeSizeHtml(embeddedImage, originalImage, opt, maxPixels, maxBytes, cssClass);
 }
 
 QString RsHtml::plainText(const QString &text)
