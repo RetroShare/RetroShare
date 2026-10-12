@@ -33,12 +33,18 @@ set(FETCH_DEPENDENCY_PROVIDER ${FETCH_DEPENDENCY_PROVIDER_DEFAULT} CACHE BOOL
 
 
 macro(fetch_provide_dependency method package)
-	cmake_parse_arguments(fetch_provider_${package}
-		""
-		""
-		""
-		${ARGN}
-	)
+	if("${method}" STREQUAL "FIND_PACKAGE")
+		cmake_parse_arguments(fetch_provider_${package}
+			""
+			""
+			""
+			${ARGN}
+		)
+	else()
+		message(FATAL_ERROR
+			"Unrecognized method for fetch_provide_dependency: ${method}"
+		)
+	endif()
 	set(FETCH_PROVIDER_${package}_MODE NORMAL CACHE STRING
 		"control how the Fetch dependency provider handles ${package}"
 	)
