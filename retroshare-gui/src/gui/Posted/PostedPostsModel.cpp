@@ -74,6 +74,36 @@ void RsPostedPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> 
 
 	switch(e->mPostedEventCode)
 	{
+		case RsPostedEventCode::UPDATED_POSTED_GROUP:
+		{
+			if(E.mPostedGroupId == mPostedGroup.mMeta.mGroupId)
+				RsThread::async([this, E]()
+				{
+					std::vector<RsPostedGroup> groups;
+					if(!rsPosted->getBoardsInfo({E.mPostedGroupId}, groups) || groups.empty())
+						return;
+
+					RsPostedGroup group = groups[0];
+
+					auto *posts    = new std::vector<RsPostedPost>();
+					auto *comments = new std::vector<RsGxsComment>();
+					auto *votes    = new std::vector<RsGxsVote>();
+
+					if(!rsPosted->getBoardAllContent(E.mPostedGroupId, *posts, *comments, *votes))
+					{
+						delete posts; delete comments; delete votes;
+						return;
+					}
+
+					RsQThreadUtils::postToObject([group, posts, comments, votes, this]()
+					{
+						setPosts(group, *posts);
+						delete posts; delete comments; delete votes;
+					}, this);
+				});
+		}
+		break;
+
 		case RsPostedEventCode::UPDATED_MESSAGE:
 		case RsPostedEventCode::READ_STATUS_CHANGED:
 		case RsPostedEventCode::MESSAGE_VOTES_UPDATED:
@@ -480,10 +510,16 @@ class PostSorter
 {
 public:
 
-    PostSorter(RsPostedPostsModel::SortingStrategy s) : mSortingStrategy(s) {}
+    PostSorter(RsPostedPostsModel::SortingStrategy s, const RsTlvGxsMsgIdSet& pinnedPosts) : mSortingStrategy(s), mPinnedPosts(pinnedPosts) {}
 
 	bool operator()(const RsPostedPost& p1,const RsPostedPost& p2) const
 	{
+        bool p1_pinned = mPinnedPosts.ids.find(p1.mMeta.mMsgId) != mPinnedPosts.ids.end();
+        bool p2_pinned = mPinnedPosts.ids.find(p2.mMeta.mMsgId) != mPinnedPosts.ids.end();
+
+        if(p1_pinned != p2_pinned)
+            return p1_pinned;
+
         switch(mSortingStrategy)
         {
         default:
@@ -495,6 +531,7 @@ public:
 
 private:
     RsPostedPostsModel::SortingStrategy mSortingStrategy;
+    const RsTlvGxsMsgIdSet& mPinnedPosts;
 };
 
 Qt::ItemFlags RsPostedPostsModel::flags(const QModelIndex& index) const
@@ -510,7 +547,7 @@ void RsPostedPostsModel::setSortingStrategy(RsPostedPostsModel::SortingStrategy 
     preMods();
 
     mSortingStrategy = s;
-    std::sort(mPosts.begin(),mPosts.end(), PostSorter(s));
+    std::sort(mPosts.begin(),mPosts.end(), PostSorter(s, mPostedGroup.mPinnedPosts));
 
 	postMods();
 }
@@ -564,7 +601,7 @@ void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPost
 
 	createPostsArray(posts);
 
-	std::sort(mPosts.begin(),mPosts.end(), PostSorter(mSortingStrategy));
+	std::sort(mPosts.begin(),mPosts.end(), PostSorter(mSortingStrategy, mPostedGroup.mPinnedPosts));
 
 	uint32_t tmpval;
 	setFilter(QStringList(),tmpval);

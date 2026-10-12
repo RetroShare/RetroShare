@@ -186,16 +186,24 @@ void PostedCreatePostDialog::createPost()
 		return;
 	}
 
-    RsThread::async([this,post]()
+	RsThread::async([this,post]()
     {
         RsGxsMessageId post_id;
+        std::string error_message;
 
-        bool res = rsPosted->createPost(post,post_id);
+        bool res = rsPosted->createPostV2(mGrpId,
+                                          std::string(ui->titleEdit->text().toUtf8()),
+                                          RsUrl(std::string(ui->linkEdit->text().toUtf8())),
+                                          std::string(ui->RichTextEditWidget->toHtml().toUtf8()),
+                                          post.mMeta.mAuthorId,
+                                          post.mImage,
+                                          post_id,
+                                          error_message);
 
-        RsQThreadUtils::postToObject( [res,this]()
+        RsQThreadUtils::postToObject( [res,error_message,this]()
         {
             if(!res)
-                QMessageBox::information(nullptr,tr("Error while creating post"),tr("An error occurred while creating the post."));
+                QMessageBox::information(nullptr,tr("Error while creating post"),tr("An error occurred while creating the post.") + " " + QString::fromStdString(error_message));
 
             accept();
         }, this );
