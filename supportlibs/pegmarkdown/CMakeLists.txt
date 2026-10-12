@@ -86,6 +86,7 @@ target_compile_definitions(pegmarkdown PRIVATE _GNU_SOURCE)
 ################################################################################
 ### install
 
+include(GNUInstallDirs)
 set(BUILD_CONFIG_DIR "${PROJECT_BINARY_DIR}/cmake")
 set(INSTALL_CONFIG_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 set(TARGET_NAMESPACE pegmarkdown)

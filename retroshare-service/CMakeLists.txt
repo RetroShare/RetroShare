@@ -119,12 +119,16 @@ endif()
 ################################################################################
 ### install
 
-install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS ${PROJECT_NAME}
+	DESTINATION ${CMAKE_INSTALL_BINDIR}
+	COMPONENT retroshare-service
+)
 
 if(UNIX AND NOT APPLE AND RS_SERVICE_DESKTOP)
 	install(
 		FILES data/retroshare-service.svg
 		DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/
+		COMPONENT retroshare-service
 	)
 
 	foreach(size 48x48 128x128)
@@ -132,11 +136,13 @@ if(UNIX AND NOT APPLE AND RS_SERVICE_DESKTOP)
 			FILES data/retroshare-service_${size}.png
 			DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/${size}/apps/
 			RENAME retroshare-service.png
+			COMPONENT retroshare-service
 		)
 	endforeach()
 
 	install(
 		FILES data/retroshare-service.desktop
 		DESTINATION ${CMAKE_INSTALL_PREFIX}/data/
+		COMPONENT retroshare-service
 	)
 endif()
