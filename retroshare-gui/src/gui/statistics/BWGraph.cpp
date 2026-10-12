@@ -451,7 +451,27 @@ QString BWGraphSource::displayValue(float v) const
 
 QString BWGraphSource::legend(int i,float v,bool show_value) const
 {
-	return RSGraphSource::legend(i,v,show_value) ;
+	// Get base legend (name + current speed)
+	QString base_legend = RSGraphSource::legend(i,v,show_value);
+	
+	// Add cumulative data if showing KB/s
+	if(_current_unit == UNIT_KILOBYTES && show_value)
+	{
+		// Get cumulative total for this curve
+		std::vector<float> cum_vals;
+		getCumulatedValues(cum_vals);
+		
+		if(i >= 0 && i < (int)cum_vals.size())
+		{
+			float cum_val = cum_vals[i];
+			// Convert to total bytes and format
+			float total_bytes = cum_val * _total_duration_seconds * 1024.0f; // cum_val is in KB/s * seconds
+			QString cum_str = niceNumber(total_bytes);
+			base_legend += QString(" [Total: %1]").arg(cum_str);
+		}
+	}
+	
+	return base_legend;
 }
 QString BWGraphSource::niceNumber(float v) const
 {
