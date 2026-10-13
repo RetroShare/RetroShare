@@ -29,6 +29,7 @@ list(
 	src/gui/QuickStartWizard.cpp 
 	src/gui/StartDialog.cpp 
 	src/gui/HomePage.cpp
+	src/gui/HomeChannelsWidget.cpp
 	src/gui/ChatLobbyWidget.cpp 
 	src/gui/GetStartedDialog.cpp 
 	src/gui/GenCertDialog.cpp 
@@ -427,6 +428,7 @@ list(
 	src/gui/GetStartedDialog.h 
 	src/gui/StartDialog.h 
 	src/gui/HomePage.h
+	src/gui/HomeChannelsWidget.h
 	src/gui/NetworkDialog.h 
 	src/gui/GenCertDialog.h 
 	src/gui/linetypes.h 

@@ -29,6 +29,7 @@
 
 
 class QAction;
+class HomeChannelsWidget;
 
 namespace Ui {
 class HomePage;
@@ -67,6 +68,7 @@ private slots:
 	void openWebHelp() ;
 	void recommendFriends();
 	void updateHomeLogo();
+	void currentTabChanged(int index);
 
 private:
 	Ui::HomePage *ui;
@@ -76,6 +78,9 @@ private:
     QAction *mIncludeExtIPact;
     QAction *mIncludeLocIPact;
     QAction *mUseOldFormatact;
+
+    HomeChannelsWidget *mLatestPostsWidget;
+    HomeChannelsWidget *mPopularChannelsWidget;
 
     RsEventsHandlerId_t mEventHandlerId;
 

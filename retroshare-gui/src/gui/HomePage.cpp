@@ -20,6 +20,7 @@
 
 #include "HomePage.h"
 #include "ui_HomePage.h"
+#include "HomeChannelsWidget.h"
 
 #include "retroshare/rsinit.h"
 
@@ -54,6 +55,31 @@ HomePage::HomePage(QWidget *parent) :
     ui(new Ui::HomePage)
 {
     ui->setupUi(this);
+
+    // Home V2 (issue #1424): latest content of the subscribed channels and
+    // popular channels, next to the existing "Add friends" page.
+
+    mLatestPostsWidget = new HomeChannelsWidget(HomeChannelsWidget::LatestPosts, this);
+    mPopularChannelsWidget = new HomeChannelsWidget(HomeChannelsWidget::PopularChannels, this);
+
+    ui->homeTabWidget->insertTab(0, mLatestPostsWidget, FilesDefs::getIconFromQtResourcePath(":/icons/png/channels.png"), tr("What's new"));
+    ui->homeTabWidget->insertTab(1, mPopularChannelsWidget, FilesDefs::getIconFromQtResourcePath(":/icons/png/channel.png"), tr("Discover channels"));
+    ui->homeTabWidget->setTabIcon(ui->homeTabWidget->indexOf(ui->addFriendTab), FilesDefs::getIconFromQtResourcePath(":/icons/png/add.png"));
+
+    // Restore the last tab. The first time, users without friends start on the
+    // "Add friends" tab since there is no content to show them yet.
+
+    int tab = Settings->value("/HomePage/currentTab", -1).toInt();
+
+    if(tab < 0 || tab >= ui->homeTabWidget->count())
+    {
+        std::list<RsPeerId> friends;
+        rsPeers->getFriendList(friends);
+        tab = friends.empty() ? ui->homeTabWidget->indexOf(ui->addFriendTab) : 0;
+    }
+    ui->homeTabWidget->setCurrentIndex(tab);
+
+    connect(ui->homeTabWidget, SIGNAL(currentChanged(int)), this, SLOT(currentTabChanged(int)));
 
     connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addFriend()));
     connect(ui->copyIDButton, SIGNAL(clicked()), this, SLOT(copyId()));
@@ -394,6 +420,11 @@ void HomePage::showEvent(QShowEvent *event)
 	if (!event->spontaneous()) {
 		updateHomeLogo();
 	}
+}
+
+void HomePage::currentTabChanged(int index)
+{
+	Settings->setValue("/HomePage/currentTab", index);
 }
 
 void HomePage::updateHomeLogo()
