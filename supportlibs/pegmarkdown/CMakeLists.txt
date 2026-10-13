@@ -29,6 +29,8 @@ project(pegmarkdown
 	LANGUAGES C
 )
 
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
+
 add_library(pegmarkdown STATIC)
 
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.23)
@@ -52,7 +54,6 @@ else()
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
 	)
 endif()
-
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 4.4)
 	target_sources(${PROJECT_NAME}
 		PRIVATE FILE_SET SOURCES
@@ -64,7 +65,6 @@ endif()
 
 target_sources(pegmarkdown
 	${PUBLIC_FILESET_HEADERS_FILES}
-	GLibFacade.h
 	markdown_lib.h
 	markdown_peg.h
 	odf.h
@@ -72,7 +72,6 @@ target_sources(pegmarkdown
 	utility_functions.h
 
 	${PRIVATE_FILESET_SOURCES_FILES}
-	GLibFacade.c
 	markdown_lib.c
 	markdown_output.c
 	markdown_parser.c
@@ -82,6 +81,25 @@ target_sources(pegmarkdown
 )
 
 target_compile_definitions(pegmarkdown PRIVATE _GNU_SOURCE)
+
+
+################################################################################
+### GLib
+
+find_package(GLib2 QUIET)
+if(GLib2_FOUND)
+	target_link_libraries(pegmarkdown PUBLIC GLib2::GLib2)
+else()
+	message(STATUS "GLib2 not found -- using GLibFacade")
+	target_sources(pegmarkdown
+		${PUBLIC_FILESET_HEADERS_FILES}
+		glib.h
+		GLibFacade.h
+
+		${PRIVATE_FILESET_SOURCES_FILES}
+		GLibFacade.c
+	)
+endif()
 
 
 ################################################################################
