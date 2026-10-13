@@ -26,6 +26,8 @@
 #include "ui_AppearancePage.h"
 #include "gui/common/FilesDefs.h"
 
+class QTimer;
+
 class AppearancePage : public ConfigPage
 {
 	Q_OBJECT
@@ -43,6 +45,7 @@ public:
 
 private slots:
 	void loadStyleSheet(int index);
+	void applyPendingStyleSheet();
 
     void switch_status_grpStatus(bool b)   ;
     void switch_status_compactMode(bool b) ;
@@ -79,6 +82,12 @@ private:
 
 	/** Qt Designer generated object */
 	Ui::AppearancePage ui;
+
+	/** Debounces stylesheet changes: qApp->setStyleSheet() re-polishes every
+	 *  widget of the application, so it must not run once per wheel/arrow step. */
+	QTimer *mStyleSheetTimer;
+	/** Sheet name currently applied, to skip useless reloads. */
+	QString mAppliedSheet;
 };
 
 #endif
