@@ -39,5 +39,6 @@ target_sources(${PROJECT_NAME}
 	browser/helpbrowser.ui
 
 	${PRIVATE_FILESET_RESOURCES_FILES}
+	help.qrc
 	content/content.qrc
 )

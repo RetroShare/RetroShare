@@ -4,7 +4,8 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-cmake_minimum_required(VERSION 3.0...4.4)
+# 3.7 : if(VERSION_GREATER_EQUAL)
+cmake_minimum_required(VERSION 3.7...4.4)
 
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.24)
 	list(PREPEND CMAKE_PROJECT_TOP_LEVEL_INCLUDES

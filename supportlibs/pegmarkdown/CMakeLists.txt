@@ -21,6 +21,7 @@
 ## ------------------------------------------------------------------------- ##
 
 # 3.1 : target_sources()
+# 3.7 : if(VERSION_GREATER_EQUAL)
 # 3.11: add_library() ... target_sources()
 cmake_minimum_required(VERSION 3.11...4.4)
 

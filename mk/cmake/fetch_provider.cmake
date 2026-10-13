@@ -20,7 +20,8 @@
  # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ## ------------------------------------------------------------------------- ##
 
-cmake_minimum_required(VERSION 3.3...4.4)
+# 3.7 : if(VERSION_GREATER_EQUAL)
+cmake_minimum_required(VERSION 3.7...4.4)
 
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.24)
 	set(FETCH_DEPENDENCY_PROVIDER_DEFAULT ON)

@@ -22,6 +22,7 @@
 ## ------------------------------------------------------------------------- ##
 
 # 3.1 : target_sources()
+# 3.7 : if(VERSION_GREATER_EQUAL)
 # 3.13: CMP0076
 cmake_minimum_required(VERSION 3.13...4.4)
 

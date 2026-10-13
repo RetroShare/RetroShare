@@ -20,6 +20,7 @@
  # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ## ------------------------------------------------------------------------- ##
 
+# 3.7 : if(VERSION_GREATER_EQUAL)
 # 3.12: list(TRANSFORM)
 cmake_minimum_required(VERSION 3.12...4.4)
 

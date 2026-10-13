@@ -48,7 +48,6 @@ add_subdirectory(help)
 if(RS_GXSIDENTITIES)
 	add_subdirectory(Identity)
 endif()
-add_subdirectory(images)
 add_subdirectory(im_history)
 add_subdirectory(msgs)
 add_subdirectory(NetworkDialog)
@@ -63,7 +62,6 @@ if(RS_GXSPOSTED)
 	add_subdirectory(Posted)
 endif(RS_GXSPOSTED)
 add_subdirectory(profile)
-add_subdirectory(qss)
 add_subdirectory(settings)
 add_subdirectory(statistics)
 add_subdirectory(statusbar)
@@ -156,9 +154,6 @@ target_sources(${PROJECT_NAME}
 	StartDialog.ui
 
 	${PRIVATE_FILESET_RESOURCES_FILES}
-	emojione.qrc
-	icons.qrc
-	images.qrc
 )
 
 if(RS_MESSENGER)

@@ -20,6 +20,7 @@
 ################################################################################
 
 # 3.1 : configure_package_config_file(INSTALL_PREFIX)
+# 3.7 : if(VERSION_GREATER_EQUAL)
 # 3.11: add_executable() ... target_sources()
 # 3.11: configure_package_config_file(COMPATIBILITY SameMinorVersion)
 cmake_minimum_required(VERSION 3.11...4.4)
@@ -54,11 +55,6 @@ option(
 	RS_USE_NATIVE_DIALOGS
 	"Use the operating system native file/font/directory dialogs. When OFF, Qt's \
 	 own (non-native) dialogs are used instead (QFileDialog::DontUseNativeDialog)."
-	OFF )
-
-option(
-	RS_SERVICE_DESKTOP
-	"Install icons and shortcuts for desktop environements"
 	OFF )
 
 option(
@@ -322,6 +318,7 @@ endif()
 ### subdirectories
 
 add_subdirectory(src)
+add_subdirectory(data)
 
 ################################################################################
 ### install
@@ -441,47 +438,3 @@ endif()
 
 ## Alias target for super-builds (brought in via add_subdirectory)
 add_executable(${TARGET_NAMESPACE}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
-
-
-
-
-## TODO: These install commands should move to data/CMakeLists.txt.
-if(UNIX AND NOT APPLE AND RS_SERVICE_DESKTOP)
-	install(
-		FILES data/retroshare.svg
-		DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/"
-		${INSTALL_COMPONENT}
-	)
-
-	foreach(size 24x24 48x48 64x64 128x128)
-		install(
-			FILES data/${size}/apps/retroshare.png
-			DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/${size}/apps/"
-			${INSTALL_COMPONENT}
-		)
-	endforeach()
-
-	install(
-		FILES data/retroshare.xpm
-		DESTINATION "${CMAKE_INSTALL_DATADIR}/pixmaps/"
-		${INSTALL_COMPONENT}
-	)
-
-	install(
-		FILES data/retroshare-gui.desktop
-		DESTINATION "${CMAKE_INSTALL_DATADIR}/applications/"
-		${INSTALL_COMPONENT}
-	)
-
-	install(
-		DIRECTORY src/gui/qss/chat/Bubble src/gui/qss/chat/Bubble_Compact
-		DESTINATION "${RS_INSTALL_DATADIR}/stylesheets/"
-		${INSTALL_COMPONENT}
-	)
-
-	install(
-		DIRECTORY src/sounds/ src/qss/ # TODO: move from src to data
-		DESTINATION "${RS_INSTALL_DATADIR}"
-		${INSTALL_COMPONENT}
-	)
-endif()
