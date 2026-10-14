@@ -20,6 +20,7 @@
 ################################################################################
 
 # 3.1 : configure_package_config_file(INSTALL_PREFIX)
+# 3.4 : CPACK_VERBATIM_VARIABLES
 # 3.7 : if(VERSION_GREATER_EQUAL)
 # 3.11: add_executable() ... target_sources()
 # 3.11: configure_package_config_file(COMPATIBILITY SameMinorVersion)
@@ -438,3 +439,57 @@ endif()
 
 ## Alias target for super-builds (brought in via add_subdirectory)
 add_executable(${TARGET_NAMESPACE}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+
+
+################################################################################
+### packaging
+
+if(PROJECT_IS_TOP_LEVEL)
+
+## generators
+set(CPACK_GENERATOR TXZ)
+if(WIN32)
+	set(CPACK_GENERATOR ZIP)
+endif()
+set(CPACK_SOURCE_GENERATOR ${CPACK_GENERATOR})
+if(WIN32)
+	list(APPEND CPACK_GENERATOR NSIS)
+endif()
+set(CPACK_PACKAGE_CHECKSUM SHA256)
+
+## package metadata
+set(CPACK_PACKAGE_NAME "RetroShare-GUI")
+set(CPACK_PACKAGE_VENDOR "RetroShare")
+set(CPACK_PACKAGE_ICON ${PROJECT_SOURCE_DIR}/data/logos/128x128.png)
+# set(CPACK_RESOURCE_FILE_README "${PROJECT_SOURCE_DIR}/README.md")
+# set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/COPYING.txt")
+set(CPACK_PACKAGE_VERSION ${FULL_PROJECT_VERSION})
+
+## NSIS generator
+# set(CPACK_NSIS_MUI_ICON ${PROJECT_SOURCE_DIR}/data/logos/${APPSTREAM_ID}.ico)
+set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL YES)
+set(CPACK_NSIS_MODIFY_PATH YES)
+set(CPACK_NSIS_IGNORE_LICENSE_PAGE YES)
+set(CPACK_NSIS_DISPLAY_NAME "RetroShare-GUI")
+
+## misc packaging options
+set(CPACK_VERBATIM_VARIABLES TRUE)
+set(CPACK_COMPONENTS_ALL retroshare-gui)
+# if(CMAKE_CXX_FLAGS_${BUILD_TYPE_UPPER} MATCHES "(^| )-g( |$)")
+#   set(CPACK_STRIP_FILES FALSE)
+# else()
+#   set(CPACK_STRIP_FILES TRUE)
+# endif()
+set(CPACK_SOURCE_IGNORE_FILES
+  "${PROJECT_BINARY_DIR}/"
+  "${PROJECT_SOURCE_DIR}/\\.git/"
+  "${PROJECT_SOURCE_DIR}/build/"
+)
+set(CPACK_THREADS 0)
+
+find_package(Git QUIET)
+configure_file(mk/cmake/RSCPackConfig.cmake.in RSCPackConfig.cmake @ONLY)
+set(CPACK_PROJECT_CONFIG_FILE ${CMAKE_CURRENT_BINARY_DIR}/RSCPackConfig.cmake)
+include(CPack)
+
+endif()
