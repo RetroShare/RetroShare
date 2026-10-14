@@ -55,7 +55,7 @@ foreach(icon ${icons})
 	install(
 		FILES ${icon}
 		DESTINATION ${ICON_INSTALL_DESTINATION_${icon}}
-		RENAME ${PROJECT_NAME}.${ext}
+		RENAME retroshare${ext}
 		COMPONENT retroshare-gui
 	)
 endforeach()
