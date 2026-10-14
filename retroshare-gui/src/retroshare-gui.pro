@@ -1011,9 +1011,17 @@ SOURCES +=  main.cpp \
 #            gui/feeds/ChanNewItem.cpp \
 #            gui/feeds/ChanMsgItem.cpp \
 
-RESOURCES += gui/images.qrc gui/icons.qrc lang/lang.qrc gui/help/content/content.qrc gui/emojione.qrc \
-  gui/qss/stylesheet/qdarkstyle/dark/Standard_Dark.qrc \
-  gui/qss/stylesheet/qdarkstyle/light/Standard_Light.qrc
+RESOURCES += \
+  ../data/emojione/emojione.qrc \
+  ../data/icons/icons.qrc \
+  ../data/images/images.qrc \
+  ../data/stylesheets/app/stylesheets.qrc \
+  ../data/stylesheets/app/Standard_Dark/Standard_Dark.qrc \
+  ../data/stylesheets/app/Standard_Light/Standard_Light.qrc \
+  ../data/stylesheets/chat/chat.qrc \
+  gui/help/content/content.qrc \
+  gui/help/help.qrc \
+  lang/lang.qrc \
 
 TRANSLATIONS +=  \
             lang/retroshare_ca_ES.ts \
