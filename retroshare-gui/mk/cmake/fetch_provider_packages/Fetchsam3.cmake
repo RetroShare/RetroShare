@@ -28,6 +28,14 @@ find_package(Git REQUIRED)
 find_package(Patch REQUIRED)
 include(EnvironmentModification)
 
+set(Fetch${FETCH_PROVIDER_PACKAGE_NAME}_GIT_TAG "" CACHE STRING
+	"git tag to use for fetching ${FETCH_PROVIDER_PACKAGE_NAME}"
+)
+mark_as_advanced(Fetch${FETCH_PROVIDER_PACKAGE_NAME}_GIT_TAG)
+if(NOT Fetch${FETCH_PROVIDER_PACKAGE_NAME}_GIT_TAG)
+	set(Fetch${FETCH_PROVIDER_PACKAGE_NAME}_GIT_TAG origin/master)
+endif()
+
 set(sam3_external_SOURCE_DIR "sam3_external-prefix/src/sam3_external")
 set(sam3_external_BINARY_DIR ${sam3_external_SOURCE_DIR})
 set(sam3_external_LDFLAGS "-fPIC")
@@ -47,8 +55,7 @@ EnvironmentModification(envmod_build ${sam3_external_BUILD_ENVIRONMENT})
 
 ExternalProject_Add(sam3_external
 	GIT_REPOSITORY "https://github.com/i2p/libsam3.git"
-	GIT_TAG "origin/master"
-	GIT_SHALLOW TRUE
+	GIT_TAG ${Fetch${FETCH_PROVIDER_PACKAGE_NAME}_GIT_TAG}
 	GIT_PROGRESS TRUE
 	CONFIGURE_COMMAND ""
   BUILD_COMMAND ${envmod_build} make build

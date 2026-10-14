@@ -24,11 +24,18 @@
 # 3.14: FetchContent_MakeAvailable()
 cmake_minimum_required(VERSION 3.14...4.4)
 
+set(Fetch${FETCH_PROVIDER_PACKAGE_NAME}_GIT_TAG "" CACHE STRING
+	"git tag to use for fetching ${FETCH_PROVIDER_PACKAGE_NAME}"
+)
+mark_as_advanced(Fetch${FETCH_PROVIDER_PACKAGE_NAME}_GIT_TAG)
+if(NOT Fetch${FETCH_PROVIDER_PACKAGE_NAME}_GIT_TAG)
+	set(Fetch${FETCH_PROVIDER_PACKAGE_NAME}_GIT_TAG origin/master)
+endif()
+
 include(FetchContent)
 FetchContent_Declare(cmark
 	GIT_REPOSITORY "https://github.com/commonmark/cmark.git"
-	GIT_TAG "origin/master"
-	GIT_SHALLOW TRUE
+	GIT_TAG ${Fetch${FETCH_PROVIDER_PACKAGE_NAME}_GIT_TAG}
 	GIT_PROGRESS TRUE
 )
 FetchContent_MakeAvailable(cmark)
