@@ -1,6 +1,6 @@
 ## ------------------------------------------------------------------------- ##
  # mk/cmake/fetch_provider_packages/Fetchsam3.cmake
- # This file is part of libRetroShare.
+ # This file is part of RetroShare-GUI.
  #
  # Copyright (C) 2026      David Bears <dbear4q@gmail.com>
  #
