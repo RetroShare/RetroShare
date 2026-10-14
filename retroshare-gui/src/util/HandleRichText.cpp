@@ -34,6 +34,7 @@
 #include "util/ObjectPainter.h"
 #include "util/imageutil.h"
 #include "util/RsQtVersion.h"
+#include "util/RsMarkdown.h"
 
 #include "util/rsdebug.h"
 #include "util/rstime.h"
@@ -405,6 +406,8 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 				// skip it
 			} else if(element.tagName().toLower() == "style") {
 				// skip it
+			} else if ((flag & RSHTML_FORMATTEXT_MARKDOWN) && (element.tagName().toLower() == "pre" || element.tagName().toLower() == "code")) {
+				// skip it: Markdown code is shown verbatim (no smileys, no links)
 			} else if (element.tagName().toLower() == "a") {
 				// skip it
 				if (embedInfos.myType == Ahref) {
@@ -605,12 +608,17 @@ static QString saveSpace(const QString text)
 	return savedSpaceText;
 }
 
-QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulong flag, const QColor &backgroundColor, qreal desiredContrast, int desiredMinimumFontSize)
+QString RsHtml::formatText(QTextDocument *textDocument, const QString &originalText, ulong flag, const QColor &backgroundColor, qreal desiredContrast, int desiredMinimumFontSize)
 {
-	if (flag == 0 || text.isEmpty()) {
+	if (flag == 0 || originalText.isEmpty()) {
 		// nothing to do
-		return text;
+		return originalText;
 	}
+
+	// Markdown messages (channels, forums, boards) are rendered to HTML first,
+	// then links, RetroShare links, smileys and images are handled as for HTML.
+	const QString text = ((flag & RSHTML_FORMATTEXT_MARKDOWN) && RsMarkdown::containsMarkdown(originalText))
+	        ? RsMarkdown::toHtml(originalText) : originalText;
 
 	QString formattedText=text;
 	//remove all prepend char that make doc.setContent() fail

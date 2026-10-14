@@ -63,6 +63,7 @@ option( RS_GXSFORUMS   "Enable GXS forums in GUI"   ON )
 option( RS_GXSPOSTED   "Enable GXS posted in GUI"   ON )
 option( RS_GXSCIRCLES  "Enable GXS circles in GUI"  ON )
 option( RS_GUI_CMARK    "Enable CommonMark support in GUI"  OFF )
+option( RS_GUI_CMARK_SYSTEM "Use the system cmark library for CommonMark support (implies RS_GUI_CMARK)" ON )
 set(RS_GXSIDENTITIES ON CACHE BOOL "Enable GXS identities in GUI" FORCE)
 set(RS_IDLE ON CACHE BOOL "Enable Idle support" FORCE)
 
@@ -328,7 +329,18 @@ endif(RS_WEBUI)
 
 ################################# CMark ########################################
 
-if(RS_GUI_CMARK)
+if(RS_GUI_CMARK_SYSTEM)
+	find_path(CMARK_INCLUDE_DIR NAMES cmark.h)
+	find_library(CMARK_LIBRARY NAMES cmark libcmark)
+	if(NOT CMARK_INCLUDE_DIR OR NOT CMARK_LIBRARY)
+		message(FATAL_ERROR "RS_GUI_CMARK_SYSTEM: cmark not found (MSYS2: pacman -S mingw-w64-x86_64-cmark, Debian/Ubuntu: apt install libcmark-dev)")
+	endif()
+	message(STATUS "Using system cmark ${CMARK_LIBRARY}")
+
+	target_compile_definitions(${PROJECT_NAME} PRIVATE USE_CMARK)
+	target_link_libraries(${PROJECT_NAME} PRIVATE ${CMARK_LIBRARY})
+	target_include_directories(${PROJECT_NAME} PRIVATE "${CMARK_INCLUDE_DIR}")
+elseif(RS_GUI_CMARK)
 	set(CMARK_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../supportlibs/cmark/")
 	if(EXISTS "${CMARK_DEVEL_DIR}/CMakeLists.txt" )
 		message( STATUS "cmark submodule found at ${CMARK_DEVEL_DIR} using it" )
@@ -350,7 +362,7 @@ if(RS_GUI_CMARK)
 	target_compile_definitions(${PROJECT_NAME} PRIVATE USE_CMARK)
 	target_link_libraries(${PROJECT_NAME} PRIVATE libcmark_static)
 	target_include_directories(${PROJECT_NAME} PRIVATE "${CMARK_INCLUDE_DIR}")
-endif(RS_GUI_CMARK)
+endif()
 
 ################################# LibSam v3 ####################################
 
@@ -594,7 +606,6 @@ endif(RS_SANITIZE)
 #                       	LIBS *= -lz
 #                       	LIBS *= -lixml
 #                       
-#                       	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 #                       	LIBS += -lsqlite3
 #                       }
 #                       
@@ -613,11 +624,6 @@ endif(RS_SANITIZE)
 #                       
 #                       ################################### COMMON stuff ##################################
 #                       
-#                       wikipoos {
-#                       	PRE_TARGETDEPS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-#                       	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-#                       	LIBS *= -lglib-2.0
-#                       }
 
 ################################ GENERAL #######################################
 

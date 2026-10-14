@@ -1365,6 +1365,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
     if(Settings->getForumLoadEmoticons())
         flags |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
     flags |= RSHTML_OPTIMIZEHTML_MASK;
+    flags |= RSHTML_FORMATTEXT_MARKDOWN;
 
     QColor backgroundColor = ui->postText->palette().base().color();
     qreal desiredContrast = Settings->valueFromGroup("Forum",
@@ -1804,7 +1805,7 @@ void GxsForumThreadWidget::replyForumMessageData(const RsGxsForumMsg &msg)
 
     RsHtml::makeQuotedText(ui->postText);
 
-    cfm->insertPastedText(RsHtml::makeQuotedText(ui->postText)) ;
+    cfm->insertPastedText(RsHtml::makeQuotedText(ui->postText) + "\n\n") ;
     cfm->show();
 
         /* window will destroy itself! */

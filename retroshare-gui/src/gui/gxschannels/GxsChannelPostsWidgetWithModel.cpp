@@ -1039,7 +1039,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     RsDbg() << "Showing details about selected index : "<< index.row() << "," << index.column() ;
 #endif
 
-    ui->postDetails_TE->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
+    ui->postDetails_TE->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_MARKDOWN));
 
     QPixmap postImage;
 

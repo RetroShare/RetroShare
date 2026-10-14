@@ -56,11 +56,9 @@
 
 #include <QTimer>
 
-#define USE_PEGMMD_RENDERER     1
-
-#ifdef USE_PEGMMD_RENDERER
-#include "markdown_lib.h"
-#endif
+// Wiki pages are Markdown, rendered with cmark (util/RsMarkdown)
+#include "util/HandleRichText.h"
+#include "util/RsMarkdown.h"
 
 /******
  * #define WIKI_DEBUG 1
@@ -440,22 +438,12 @@ void WikiDialog::markPageAsUnread()
 
 void WikiDialog::updateWikiPage(const RsWikiSnapshot &page)
 {
-#ifdef USE_PEGMMD_RENDERER
-	/* render as HTML */
-	int extensions = 0;
-	char *answer = markdown_to_string((char *) page.mPage.c_str(), extensions, HTML_FORMAT);
-
-	QString renderedText = QString::fromUtf8(answer);
-	ui.textBrowser->setHtml(renderedText);
-
-	// free answer.
-	free(answer);
-#else
-	/* render as HTML */
-	QString renderedText = "IN (dummy) RENDERED TEXT MODE:\n";
-	renderedText += QString::fromStdString(page.mPage);
-	ui.textBrowser->setPlainText(renderedText);
-#endif
+	/* render Markdown as HTML with cmark (standard line breaks for wiki pages),
+	 * then handle links, RetroShare links and embedded images as for posts */
+	const QString markdown = QString::fromUtf8(page.mPage.c_str());
+	ui.textBrowser->setHtml(RsHtml().formatText(ui.textBrowser->document(),
+	                                            RsMarkdown::toHtml(markdown, false),
+	                                            RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_MARKDOWN));
 
 	// Load comments for this page
 	loadComments(page.mMeta.mGroupId, page.mMeta.mMsgId);

@@ -34,7 +34,7 @@
 #include "util/misc.h"
 #include "util/rsdir.h"
 #include "util/qtthreadsutils.h"
-#include "util/RichTextEdit.h"
+#include "util/MarkdownTextEdit.h"
 #include "util/imageutil.h"
 
 #include <retroshare/rsfiles.h>
@@ -83,7 +83,7 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	connect(stackedWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
 	connect(generateCheckBox, SIGNAL(toggled(bool)), generateSpinBox, SLOT(setEnabled(bool)));
 	connect(aspectRatio_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(changeAspectRatio(int)));
-	connect(RichTextEditWidget, SIGNAL(textSizeOk(bool)),postButton, SLOT(setEnabled(bool)));
+	connect(markdownEditor, SIGNAL(textSizeOk(bool)),postButton, SLOT(setEnabled(bool)));
 
 	channelpostButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
 	attachmentsButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/attachements.png"));
@@ -524,7 +524,7 @@ void CreateGxsChannelMsg::addSubject(const QString& text)
 
 void CreateGxsChannelMsg::addHtmlText(const QString& text)
 {
-	RichTextEditWidget->setText(text) ;
+	markdownEditor->setText(text) ;
 }
 
 bool CreateGxsChannelMsg::addAttachment(const std::string &path)
@@ -727,8 +727,8 @@ void CreateGxsChannelMsg::sendMsg()
 	/* construct message bits */
 	std::string subject = std::string(misc::removeNewLine(subjectEdit->text()).toUtf8());
 
-	QString text;
-	text = RichTextEditWidget->toHtml();
+	// The post is stored as Markdown (rendered with cmark when displayed)
+	QString text = markdownEditor->toMarkdown();
 	std::string msg = std::string(text.toUtf8());
 
 	std::list<RsGxsFile> files;
@@ -872,7 +872,7 @@ void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
 			}
 
 			subjectEdit->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str())) ;
-			RichTextEditWidget->setText(QString::fromUtf8(post.mMsg.c_str()));
+			markdownEditor->setText(QString::fromUtf8(post.mMsg.c_str()));
 
 			for(std::list<RsGxsFile>::const_iterator it(post.mFiles.begin());it!=post.mFiles.end();++it)
 				addAttachment(it->mHash,it->mName,it->mSize,true,RsPeerId(),true);

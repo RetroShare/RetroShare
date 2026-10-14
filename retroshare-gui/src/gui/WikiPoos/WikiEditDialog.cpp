@@ -34,11 +34,8 @@
 #include <iostream>
 #include <set>
 
-#define USE_PEGMMD_RENDERER	1
-
-#ifdef USE_PEGMMD_RENDERER
-#include "markdown_lib.h"
-#endif
+// Wiki pages are Markdown: edited with MarkdownTextEdit, rendered with cmark
+#include "util/MarkdownTextEdit.h"
 
 
 #define WET_COL_DATE		0
@@ -70,6 +67,12 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 	connect(ui.toolButton_Show, SIGNAL( clicked() ), this, SLOT( detailsToggle() ) );
 	connect(ui.toolButton_Hide, SIGNAL( clicked() ), this, SLOT( detailsToggle() ) );
 	connect(ui.textEdit, SIGNAL( textChanged() ), this, SLOT( textChanged() ) );
+
+	// Markdown editor: standard Markdown line breaks for wiki pages, the
+	// dialog's own Preview button drives the preview
+	ui.textEdit->setHardBreaks(false);
+	ui.textEdit->setPreviewButtonVisible(false);
+	ui.textEdit->setPlaceholderText(tr("Write the page with Markdown: # Title, **bold**, *italic*, - lists, [link](https://...) ..."));
 	connect(ui.checkBox_OldHistory, SIGNAL( clicked() ), this, SLOT( oldHistoryChanged() ) );
 	connect(ui.checkBox_Merge, SIGNAL( clicked() ), this, SLOT( mergeModeToggle() ) );
 	connect(ui.pushButton_Merge, SIGNAL( clicked() ), this, SLOT( generateMerge() ) );
@@ -207,7 +210,7 @@ void WikiEditDialog::textChanged()
 
 	mTextChanged = true;
 	ui.pushButton_Revert->setEnabled(true);
-	ui.postButton->setEnabled(true);
+	ui.postButton->setEnabled(ui.textEdit->isTextSizeOk());
 	ui.label_Status->setText("Modified");
 
 	// Disable Selection in Edit History.
@@ -474,39 +477,12 @@ void WikiEditDialog::redrawPage()
 	std::cerr << "WikiEditDialog::redrawPage()";
 	std::cerr << std::endl;
 
-	if (mPreviewMode)
-	{
-#ifdef USE_PEGMMD_RENDERER
-		/* render as HTML */
-		QByteArray byte_array = mCurrentText.toUtf8();
+	/* Markdown source - for editing */
+	if (ui.textEdit->toMarkdown() != mCurrentText)
+		ui.textEdit->setMarkdown(mCurrentText);
 
-		int extensions = 0;
-		char *answer = markdown_to_string(byte_array.data(), extensions, HTML_FORMAT);
-
-		QString renderedText = QString::fromUtf8(answer);
-		ui.textEdit->setHtml(renderedText);
-
-		// free answer.
-		free(answer);
-#else
-		/* render as HTML */
-		QString renderedText = "IN (dummy) RENDERED TEXT MODE:\n";
-		renderedText += mCurrentText;
-		ui.textEdit->setPlainText(renderedText);
-#endif
-
-
-		/* disable edit */
-		ui.textEdit->setReadOnly(true);
-	}
-	else
-	{
-		/* plain text - for editing */
-		ui.textEdit->setPlainText(mCurrentText);
-
-		/* enable edit */
-		ui.textEdit->setReadOnly(false);
-	}
+	/* preview is rendered with cmark (read only) */
+	ui.textEdit->setPreviewVisible(mPreviewMode);
 }
 
 
@@ -589,8 +565,8 @@ void WikiEditDialog::revertEdit()
 	if (mNewPage) {
 		mCurrentText = "";
 	} else {//if (mNewPage
-		ui.textEdit->setPlainText(QString::fromStdString(mWikiSnapshot.mPage));
 		mCurrentText = QString::fromUtf8(mWikiSnapshot.mPage.c_str());
+		ui.textEdit->setMarkdown(mCurrentText);
 	}//if (mNewPage
         redrawPage();
 	textReset();

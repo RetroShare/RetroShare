@@ -25,7 +25,6 @@
 #include <QFile>
 #include <QDropEvent>
 #include <QPushButton>
-#include <QTextDocumentFragment>
 
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsgxscircles.h>
@@ -38,6 +37,8 @@
 #include "gui/common/FilesDefs.h"
 
 #include "util/HandleRichText.h"
+#include "util/MarkdownTextEdit.h"
+#include "util/RsMarkdown.h"
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
 
@@ -90,6 +91,11 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	ui->postButton->setText(tr ("Update"));
 
 	ui->forumMessage->setPlaceholderText(tr ("Text"));
+	// the dialog has its own picture button and size label
+	ui->forumMessage->setImageButtonVisible(false);
+	ui->forumMessage->setInfoVisible(false);
+	ui->forumMessage->setPreviewFlags(RSHTML_FORMATTEXT_EMBED_LINKS
+	                                  | (Settings->getForumLoadEmoticons() ? RSHTML_FORMATTEXT_EMBED_SMILEYS : 0));
 
     ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
 	ui->headerFrame->setHeaderText(text);
@@ -373,14 +379,13 @@ static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE = 199000;
 void CreateGxsForumMsg::checkLength()
 {
 	QString text;
-	RsHtml::optimizeHtml(ui->forumMessage, text);
-	std::wstring msg = text.toStdWString();
-	int charRemains = MAX_ALLOWED_GXS_MESSAGE_SIZE - msg.length();
+	// the message is stored as Markdown (UTF-8)
+	int charRemains = MAX_ALLOWED_GXS_MESSAGE_SIZE - ui->forumMessage->toMarkdown().toUtf8().size();
 	if(charRemains >= 0) {
-		text = tr("It remains %1 characters after HTML conversion.").arg(charRemains);
+		text = tr("It remains %1 characters.").arg(charRemains);
 		ui->info_Label->setStyleSheet("QLabel#info_Label { }");
 	}else{
-		text = tr("Warning: This message is too big of %1 characters after HTML conversion.").arg((0-charRemains));
+		text = tr("Warning: This message is too big of %1 characters.").arg((0-charRemains));
 	    ui->info_Label->setStyleSheet("QLabel#info_Label {color: red; font: bold; }");
 	}
 	ui->postButton->setToolTip(text);
@@ -391,11 +396,10 @@ void CreateGxsForumMsg::checkLength()
 void  CreateGxsForumMsg::createMsg()
 {
 	QString name = misc::removeNewLine(ui->forumSubject->text());
-	QString desc;
+	// The message is stored as Markdown (rendered with cmark when displayed)
+	QString desc = ui->forumMessage->toMarkdown();
 
-	RsHtml::optimizeHtml(ui->forumMessage, desc);
-
-	if(name.isEmpty() | desc.isEmpty()) {
+	if(name.isEmpty() || desc.trimmed().isEmpty()) {
 		/* error message */
 		QMessageBox::warning(this, tr("RetroShare"),tr("Please set a Forum Subject and Forum Message"), QMessageBox::Ok, QMessageBox::Ok);
 
@@ -529,9 +533,10 @@ void CreateGxsForumMsg::addSmileys()
 	// add trailing space
 	smiley += QString(" ");
 	// add preceding space when needed (not at start of text or preceding space already exists)
-	if(!ui->forumMessage->textCursor().atStart() && ui->forumMessage->toPlainText()[ui->forumMessage->textCursor().position() - 1] != QChar(' '))
+	QTextCursor cursor = ui->forumMessage->textCursor();
+	if(!cursor.atStart() && !ui->forumMessage->toPlainText().at(cursor.position() - 1).isSpace())
 		smiley = QString(" ") + smiley;
-	ui->forumMessage->textCursor().insertText(smiley);
+	ui->forumMessage->insertPlainText(smiley);
 }
 
 void CreateGxsForumMsg::addFile()
@@ -545,14 +550,8 @@ void CreateGxsForumMsg::addFile()
 
 void CreateGxsForumMsg::addPicture()
 {
-	QString file;
-	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg)", file)) {
-		QString encodedImage;
-		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480, MAX_ALLOWED_GXS_MESSAGE_SIZE - 200)) {
-			QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
-			ui->forumMessage->textCursor().insertFragment(fragment);
-		}
-	}
+	// embedded as ![image](data:image/...;base64,...)
+	ui->forumMessage->insertImage();
 }
 
 void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
@@ -567,12 +566,15 @@ void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
 		RetroShareLink link = RetroShareLink::createFile(hashedFile.filename, hashedFile.size,
 		                                                 QString::fromStdString(hashedFile.hash.toStdString()));
 		if (link.valid()) {
-			mesgString += link.toHtmlSize() + "<br>";
+			// Markdown link: [name (size)](retroshare://file?...)
+			const QString text = QString("%1 (%2)").arg(hashedFile.filename, misc::friendlyUnit(hashedFile.size));
+			mesgString += RsMarkdown::makeLink(text, link.toString()) + "\n";
 		}
 	}
 
 	if (!mesgString.isEmpty()) {
-		ui->forumMessage->textCursor().insertHtml(mesgString);
+		mesgString.chop(1);
+		ui->forumMessage->insertMarkdown(mesgString);
 	}
 
 	ui->forumMessage->setFocus( Qt::OtherFocusReason );
@@ -642,5 +644,15 @@ void CreateGxsForumMsg::setSubject(const QString& msg)
 
 void CreateGxsForumMsg::insertPastedText(const QString& msg)
 {
-	ui->forumMessage->append(msg);
+	// Old (HTML) messages are converted to Markdown
+	const QString markdown = RsMarkdown::isHtml(msg) ? RsMarkdown::fromHtml(msg) : msg;
+
+	if (ui->forumMessage->isEmpty()) {
+		ui->forumMessage->setMarkdown(markdown);
+		QTextCursor cursor = ui->forumMessage->textCursor();
+		cursor.movePosition(QTextCursor::End);
+		ui->forumMessage->setTextCursor(cursor);
+	} else {
+		ui->forumMessage->insertMarkdown("\n" + markdown);
+	}
 }

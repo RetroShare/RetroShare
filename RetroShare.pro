@@ -72,12 +72,6 @@ rs_webui {
     retroshare-webui.depends = retroshare_gui
 }
 
-wikipoos {
-    SUBDIRS += pegmarkdown
-    pegmarkdown.file = supportlibs/pegmarkdown/pegmarkdown.pro
-    retroshare_gui.depends += pegmarkdown
-}
-
 tests {
     SUBDIRS += librssimulator
     librssimulator.file = tests/librssimulator/librssimulator.pro

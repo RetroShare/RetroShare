@@ -34,6 +34,7 @@
 #include "util/qtthreadsutils.h"
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
+#include "util/RsMarkdown.h"
 #include "util/DateTime.h"
 #include "util/stringutil.h"
 #include "gui/gxschannels/CreateGxsChannelMsg.h"
@@ -374,7 +375,11 @@ void GxsChannelPostItem::fill()
 		// fill first 4 lines of message. (csoler) Disabled the replacement of smileys and links, because the cost is too crazy
 		//ui->subjectLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
-        ui->subjectLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 2)) ;
+        {
+            // Markdown posts: show text without the Markdown markup (and without embedded images)
+            const QString msg = QString::fromUtf8(mPost.mMsg.c_str());
+            ui->subjectLabel->setText(RsStringUtil::CopyLines(RsMarkdown::containsMarkdown(msg) ? RsMarkdown::toPlainText(msg) : msg, 2)) ;
+        }
 
         //QString score = QString::number(post.mTopScore);
 		// scoreLabel->setText(score); 
@@ -427,7 +432,7 @@ void GxsChannelPostItem::fill()
 
 	{
 		QTextDocument doc;
-		doc.setHtml( QString::fromUtf8(mPost.mMsg.c_str()) );
+		doc.setHtml( RsMarkdown::renderIfMarkdown(QString::fromUtf8(mPost.mMsg.c_str())) );
 
 		ui->msgFrame->setVisible(doc.toPlainText().length() > 0);
 	}
@@ -481,7 +486,7 @@ void GxsChannelPostItem::fill()
 
 void GxsChannelPostItem::fillExpandFrame()
 {
-    ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
+    ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_MARKDOWN));
 
 }
 

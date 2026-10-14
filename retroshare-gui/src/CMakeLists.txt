@@ -88,6 +88,8 @@ list(
 	src/util/ObjectPainter.cpp 
 	src/util/RsFile.cpp 
 	src/util/RichTextEdit.cpp 
+	src/util/MarkdownTextEdit.cpp 
+	src/util/RsMarkdown.cpp 
 	src/util/ClickableLabel.cpp 
 	src/util/AspectRatioPixmapLabel.cpp 
 	src/util/FontSizeHandler.cpp 
@@ -492,6 +494,8 @@ list(
 	src/util/RsSyntaxHighlighter.h 
 	src/util/imageutil.h 
 	src/util/RichTextEdit.h 
+	src/util/MarkdownTextEdit.h 
+	src/util/RsMarkdown.h 
 	src/util/retroshareWin32.h
 	src/util/RsProtectedTimer.h 
 	src/util/stringutil.h 
@@ -948,8 +952,6 @@ if(RS_GXSWIKIPOS)
 	target_compile_definitions(
 		${PROJECT_NAME} PUBLIC RS_USE_WIKI 
 		)
-
-	target_include_directories(${PROJECT_NAME} PUBLIC ../../supportlibs/pegmarkdown)
 
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS

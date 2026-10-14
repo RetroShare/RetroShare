@@ -382,7 +382,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item row="1" column="0" colspan="2">
-             <widget class="RichTextEdit" name="RichTextEditWidget" native="true">
+             <widget class="MarkdownTextEdit" name="markdownEditor" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -629,9 +629,9 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>RichTextEdit</class>
+   <class>MarkdownTextEdit</class>
    <extends>QWidget</extends>
-   <header>util/RichTextEdit.h</header>
+   <header>util/MarkdownTextEdit.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
