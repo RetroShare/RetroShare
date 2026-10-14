@@ -55,6 +55,7 @@ public:
 	virtual void getCumulatedValues(std::vector<float>& vals) const;
     virtual void getValues(std::map<std::string,float>& values) const;
     virtual QString displayValue(float v) const;
+    virtual qreal unitBase() const { return 1024.0 ; }
     virtual QString legend(int i,float v,bool show_value=true) const;
     virtual void update();
     QString unitName() const ;

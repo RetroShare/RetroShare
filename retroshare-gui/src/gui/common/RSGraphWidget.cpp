@@ -641,43 +641,59 @@ void RSGraphWidget::paintScale1()
 
     int top = _rec.y();
 	int bottom = _rec.height() - _graph_base;
-	qreal paintStep = (bottom - top) / 5;
-
-	/* Draw the other marks in their correctly scaled locations */
-	qreal scale;
-	qreal pos;
 
 	if(_source == NULL)
 		return ;
 
-	QString unit_name = _source->unitName() ;
+	// Marks at round values of the source's unit: 1, 10 and 100 of each unit in log scale, multiples
+	// of 1, 2 or 5 times a power of ten in linear scale, up to the top of the graph.
 
-	for (int i = 0; i < 5; i++)
+	const qreal base = _source->unitBase() ;
+	const qreal top_value = pixelsToValue(_graph_base + bottom - top) ;
+	std::vector<qreal> marks ;
+
+	if(_flags & RSGRAPH_FLAGS_LOG_SCALE_Y)
 	{
-		pos = bottom - (i * paintStep) ;
+		for(qreal unit = 1.0; unit <= top_value && unit < 1e15; unit *= base)
+			for(qreal m = 1.0; m < base && m*unit <= top_value; m *= 10.0)
+				marks.push_back(m*unit) ;
+	}
+	else if(top_value > 0.0)
+	{
+		qreal unit = 1.0 ;
+		while(top_value / unit >= base)
+			unit *= base ;
 
-		scale = pixelsToValue(_graph_base + i * paintStep);
+		qreal raw = top_value / unit / 5.0 ;
+		qreal mag = pow(10.0, floor(log10(raw))) ;
+		qreal step = mag * ((raw <= mag) ? 1.0 : (raw <= 2*mag) ? 2.0 : (raw <= 5*mag) ? 5.0 : 10.0) * unit ;
 
-        // If legend contains integers only the value should be rounded to the nearest integer
-		if(_flags & RSGRAPH_FLAGS_LEGEND_INTEGER)
-        {
-            scale = (int)scale ;
-            pos = bottom - (valueToPixels(scale) - _graph_base) ;
-        }
+		if((_flags & RSGRAPH_FLAGS_LEGEND_INTEGER) && step < 1.0)
+			step = 1.0 ;
 
-		QString text = _source->displayValue(scale) ;
+		for(int i = 0; i*step <= top_value; ++i)
+			marks.push_back(i*step) ;
+	}
 
-		if (_flags & RSGRAPH_FLAGS_DARK_STYLE){
-			_painter->setPen(SCALE_COLOR_DARK);
-			_painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetrics_horizontalAdvance(QFontMetricsF(font()), text) - 4*fact, pos+0.4*FS),  text);
-			_painter->setPen(GRID_COLOR_DARK);
-			_painter->drawLine(QPointF(SCALE_WIDTH*fact, pos),  QPointF(_rec.width(), pos));
-		}else{
-			_painter->setPen(SCALE_COLOR);
-			_painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetrics_horizontalAdvance(QFontMetricsF(font()), text) - 4*fact, pos+0.4*FS),  text);
-			_painter->setPen(GRID_COLOR);
-			_painter->drawLine(QPointF(SCALE_WIDTH*fact, pos),  QPointF(_rec.width(), pos));
-		}
+	if(marks.empty())
+		marks.push_back(0.0) ;
+
+	qreal last_pos = bottom + FS ;
+
+	for(qreal value : marks)
+	{
+		qreal pos = bottom - (valueToPixels(value) - _graph_base) ;
+
+		if(pos < top || last_pos - pos < FS)	// keep labels from overlapping
+			continue ;
+
+		last_pos = pos ;
+		QString text = _source->displayValue(value) ;
+
+		_painter->setPen((_flags & RSGRAPH_FLAGS_DARK_STYLE) ? SCALE_COLOR_DARK : SCALE_COLOR);
+		_painter->drawText(QPointF(SCALE_WIDTH*fact - QFontMetrics_horizontalAdvance(QFontMetricsF(font()), text) - 4*fact, pos+0.4*FS),  text);
+		_painter->setPen((_flags & RSGRAPH_FLAGS_DARK_STYLE) ? GRID_COLOR_DARK : GRID_COLOR);
+		_painter->drawLine(QPointF(SCALE_WIDTH*fact, pos),  QPointF(_rec.width(), pos));
 	}
 
 	/* Draw vertical separator */
@@ -686,25 +702,40 @@ void RSGraphWidget::paintScale1()
 
 void RSGraphWidget::paintScale2()
 {
-    // draw time below the graph
+    // draw time below the graph, at round durations at least 80 pixels apart
 
     float FS = QFontMetricsF(font()).height();
     float fact = FS/14.0 ;
 
-    //int bottom = _rec.height();
-    static const int npix = 100*fact ;
+    static const int steps[] = { 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600, 7200 } ;
+    int step = steps[sizeof(steps)/sizeof(steps[0]) - 1] ;
 
-    for(int i=_rec.width();i>SCALE_WIDTH*fact;i-=npix)
+    for(int s : steps)
+        if(s*_time_scale >= 80*fact)
+        {
+            step = s ;
+            break ;
+        }
+
+    _painter->setPen((_flags & RSGRAPH_FLAGS_DARK_STYLE) ? SCALE_COLOR_DARK : SCALE_COLOR);
+
+    for(int seconds = step; ; seconds += step)
     {
-        //qreal pos = bottom - FS;
+        qreal x = _rec.width() - seconds*_time_scale ;	// seconds * (pixels per second) => pixels
 
-        int seconds = (_rec.width()-i)/_time_scale ;	// pixels / (pixels per second) => seconds
-        QString text = QString::number(seconds)+ " secs";
-		if (_flags & RSGRAPH_FLAGS_DARK_STYLE)
-			_painter->setPen(SCALE_COLOR_DARK);
-		else
-			_painter->setPen(SCALE_COLOR);
-        _painter->drawText(QPointF(i, _rec.height()-0.5*FS),  text);
+        if(x <= SCALE_WIDTH*fact)
+            break ;
+
+        QString text ;
+
+        if(seconds < 60)
+            text = QString::number(seconds) + " s" ;
+        else if(seconds % 60)
+            text = QString("%1:%2").arg(seconds/60).arg(seconds%60, 2, 10, QChar('0')) ;
+        else
+            text = QString::number(seconds/60) + " min" ;
+
+        _painter->drawText(QPointF(x - QFontMetrics_horizontalAdvance(QFontMetricsF(font()), text)/2, _rec.height()-0.5*FS),  text);
     }
 }
 
