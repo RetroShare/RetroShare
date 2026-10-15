@@ -39,6 +39,7 @@
 #include "util/RsQtVersion.h"
 #include "util/qtthreadsutils.h"
 #include "util/misc.h"
+#include "util/rsthreads.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsturtle.h>
@@ -864,16 +865,26 @@ void SearchDialog::advancedSearch(RsRegularExpression::Expression* expression)
 
     initSearchResult(QString::fromStdString(e.GetStrings()),req_id, ui.FileTypeComboBox->currentIndex(), true) ;
 
-    std::list<DirDetails> results;
-
     FileSearchFlags flags(0);
     if(ui._ownFiles_CB->isChecked())         flags |= RS_FILE_HINTS_LOCAL;
     if(ui._friendListsearch_SB->isChecked()) flags |= RS_FILE_HINTS_REMOTE;
 
-    rsFiles -> SearchBoolExp(expression, results, flags);
+    QString txt = advSearchDialog->getSearchAsString();
 
-	/* abstraction to allow reusee of tree rendering code */
-    resultsToTree(advSearchDialog->getSearchAsString(),req_id, results);
+    // Scanning the file lists can take seconds (large lists, swapped-out memory): keep it off the GUI thread.
+    // The expression was allocated by AdvancedSearchDialog::getRsExpr() for us, so it is freed here.
+    RsThread::async([this,expression,flags,txt,req_id]()
+    {
+        std::list<DirDetails> results;
+        rsFiles -> SearchBoolExp(expression, results, flags);
+        delete expression;
+
+        RsQThreadUtils::postToObject([this,txt,req_id,results]()
+        {
+            /* abstraction to allow reusee of tree rendering code */
+            resultsToTree(txt,req_id, results);
+        }, this);
+    });
 }
 
 void SearchDialog::searchKeywords()
@@ -936,46 +947,31 @@ void SearchDialog::searchKeywords(const QString& keywords)
 
 	if(ui._friendListsearch_SB->isChecked() || ui._ownFiles_CB->isChecked())
 	{
-		/* extract keywords from lineEdit */
-		// make a compound expression with an AND
-		//
+		bool search_remote = ui._friendListsearch_SB->isChecked();
+		bool search_local = ui._ownFiles_CB->isChecked();
 
-		std::list<DirDetails> finalResults ;
-
-		if(ui._friendListsearch_SB->isChecked())
+		// Scanning the file lists can take seconds (large lists, swapped-out memory): keep it off the GUI thread.
+		RsThread::async([this,words,search_remote,search_local,keywords,req_id]()
 		{
-			std::list<DirDetails> initialResults;
+			RsRegularExpression::NameExpression exprs(RsRegularExpression::ContainsAllStrings,words,true) ;
+			std::list<DirDetails> finalResults ;
 
-			rsFiles->SearchBoolExp(&exprs, initialResults, RS_FILE_HINTS_REMOTE) ;
+			if(search_remote)
+				rsFiles->SearchBoolExp(&exprs, finalResults, RS_FILE_HINTS_REMOTE) ;
 
-			/* which extensions do we use? */
-			DirDetails dd;
-
-			for(std::list<DirDetails>::iterator resultsIter = initialResults.begin(); resultsIter != initialResults.end(); ++resultsIter)
+			if(search_local)
 			{
-				dd = *resultsIter;
-				finalResults.push_back(dd);
+				std::list<DirDetails> initialResults;
+				rsFiles->SearchBoolExp(&exprs, initialResults, RS_FILE_HINTS_LOCAL);// | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE) ;
+				finalResults.splice(finalResults.end(), initialResults);
 			}
-		}
 
-		if(ui._ownFiles_CB->isChecked())
-		{
-			std::list<DirDetails> initialResults;
-
-			rsFiles->SearchBoolExp(&exprs, initialResults, RS_FILE_HINTS_LOCAL);// | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE) ;
-
-			/* which extensions do we use? */
-			DirDetails dd;
-
-			for(std::list<DirDetails>::iterator resultsIter = initialResults.begin(); resultsIter != initialResults.end(); ++resultsIter)
+			RsQThreadUtils::postToObject([this,keywords,req_id,finalResults]()
 			{
-				dd = *resultsIter;
-				finalResults.push_back(dd);
-			}
-		}
-
-		/* abstraction to allow reusee of tree rendering code */
-		resultsToTree(keywords,req_id, finalResults);
+				/* abstraction to allow reusee of tree rendering code */
+				resultsToTree(keywords,req_id, finalResults);
+			}, this);
+		});
 	}
 }
 
