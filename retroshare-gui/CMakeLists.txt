@@ -39,8 +39,21 @@ project(retroshare-gui
 	LANGUAGES CXX C
 )
 
+set(PROJECT_NAME_PRETTY "RetroShare-GUI")
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
+
+
+################################################################################
+### options
+
 include(GNUInstallDirs)
 include(CMakeDependentOption)
+
+set(RS_VERSION_SUFFIX
+	""
+	CACHE STRING
+	"Custom version suffix; useful for downstream packaging."
+)
 
 set(
 	RS_INSTALL_DATADIR
@@ -52,36 +65,45 @@ set(
 option(
 	RS_DEVELOPMENT_BUILD
 	"Disable optimization to speed up build, enable verbose build log. \
-	 just for development purposes, not suitable for library usage"
-	 ON )
+		just for development purposes, not suitable for library usage"
+	ON
+)
 
-option(RS_JSON_API "Use restbed to expose libretroshare as JSON API via HTTP" ON)
+option(
+	RS_JSON_API
+	"Use restbed to expose libretroshare as JSON API via HTTP"
+	ON
+)
 
 # Mirrors the option of the same name in libretroshare/CMakeLists.txt.
 option(
 	RS_WARN_DEPRECATED
 	"Print warnings about deprecated RetroShare components usage during build"
-	OFF )
+	OFF
+)
 
 option(
 	RS_USE_NATIVE_DIALOGS
 	"Use the operating system native file/font/directory dialogs. When OFF, Qt's \
-	 own (non-native) dialogs are used instead (QFileDialog::DontUseNativeDialog)."
-	OFF )
+		own (non-native) dialogs are used instead \
+		(QFileDialog::DontUseNativeDialog)."
+	OFF
+)
 
 option(
 	RS_SERVICE_TERMINAL_LOGIN
 	"Enable RetroShare login via terminal"
-	ON )
+	ON
+)
 
-option( RS_GXSGUI      "Enable GXS services in GUI" ON )
-option( RS_GXSCHANNELS "Enable GXS channels in GUI" ON )
-option( RS_GXSFORUMS   "Enable GXS forums in GUI"   ON )
-option( RS_GXSPOSTED   "Enable GXS posted in GUI"   ON )
-option( RS_GXSCIRCLES  "Enable GXS circles in GUI"  ON )
-option( RS_GXSTHEWIRE  "Enable GXS The Wire in GUI" OFF)
-option( RS_GXSWIKIPOS  "Enable GXS Wiki in GUI"     OFF)
-option( RS_GUI_CMARK    "Enable CommonMark support in GUI"  OFF )
+option(RS_GXSGUI      "Enable GXS services in GUI" ON )
+option(RS_GXSCHANNELS "Enable GXS channels in GUI" ON )
+option(RS_GXSFORUMS   "Enable GXS forums in GUI"   ON )
+option(RS_GXSPOSTED   "Enable GXS posted in GUI"   ON )
+option(RS_GXSCIRCLES  "Enable GXS circles in GUI"  ON )
+option(RS_GXSTHEWIRE  "Enable GXS The Wire in GUI" OFF)
+option(RS_GXSWIKIPOS  "Enable GXS Wiki in GUI"     OFF)
+option(RS_GUI_CMARK    "Enable CommonMark support in GUI"  OFF )
 set(RS_GXSIDENTITIES ON CACHE BOOL "Enable GXS identities in GUI" FORCE)
 set(RS_IDLE ON CACHE BOOL "Enable Idle support" FORCE)
 
@@ -90,19 +112,16 @@ cmake_dependent_option(
 	"Enable settin Web UI password via terminal in retroshare-service"
 	OFF
 	"RS_WEBUI"
-	OFF )
+	OFF
+)
 
 cmake_dependent_option(
 	RS_WEBUI
 	"Install RetroShare Web UI"
 	OFF
 	"RS_JSON_API"
-	OFF )
-
-option(
-	RS_PLUGINS
-	"Build RetroShare Plugins"
-	OFF )
+	OFF
+)
 
 ################################################################################
 ### dependencies
@@ -115,26 +134,29 @@ set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 
 find_package(RetroShare REQUIRED)
 
+
 ################################################################################
 ### version
 
-set(RSGUI_VERSION_SUFFIX "" CACHE STRING
-	"Custom version suffix to use; mostly useful for downstream packaging."
-)
-include(GetGitRevisionDescription)
-if(DEFINED RSGUI_VERSION_SUFFIX AND NOT (RSGUI_VERSION_SUFFIX STREQUAL ""))
-	set(FULL_PROJECT_VERSION "${PROJECT_VERSION}-${RSGUI_VERSION_SUFFIX}")
+if(DEFINED RS_VERSION_SUFFIX AND NOT (RS_VERSION_SUFFIX STREQUAL ""))
+	set(PROJECT_VERSION_FULL "${PROJECT_VERSION}-${RS_VERSION_SUFFIX}")
 else()
-	git_describe_working_tree(FULL_PROJECT_VERSION
-		--tags --long --always --dirty --match v*.*.*
-	)
-	if(FULL_PROJECT_VERSION)
-		string(SUBSTRING "${FULL_PROJECT_VERSION}" 1 -1 FULL_PROJECT_VERSION)
+	include(GetGitRevisionDescription)
+	git_describe_working_tree(PROJECT_VERSION_FULL --match "v*.*.*")
+	if(PROJECT_VERSION_FULL)
+		string(SUBSTRING "${PROJECT_VERSION_FULL}" 1 -1 PROJECT_VERSION_FULL)
+		string(FIND "${PROJECT_VERSION_FULL}" ${PROJECT_VERSION} pos)
+		if(NOT pos EQUAL 0)
+			message(WARNING "Version mismatch!"
+				" ${PROJECT_NAME_PRETTY} version is ${PROJECT_VERSION},"
+				" but git describe returned ${PROJECT_VERSION_FULL}."
+			)
+		endif()
 	else()
-		set(FULL_PROJECT_VERSION "${PROJECT_VERSION}-unknown")
+		set(PROJECT_VERSION_FULL "${PROJECT_VERSION}-unknown")
 	endif()
 endif()
-message(STATUS "RetroShare-GUI version: ${FULL_PROJECT_VERSION}")
+message(STATUS "${PROJECT_NAME_PRETTY} version: ${PROJECT_VERSION_FULL}")
 
 ################################################################################
 ### general build options
@@ -168,7 +190,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 # "retroshare" so the single-instance lock/socket name stays unchanged.
 target_compile_definitions(${PROJECT_NAME}
 	PRIVATE
-	"RS_GUI_VERSION=\"${FULL_PROJECT_VERSION}\""
+	"RS_GUI_VERSION=\"${PROJECT_VERSION_FULL}\""
 	RS_RELEASE_VERSION
 	TARGET=\"retroshare\"
 	RS_DIRECT_CHAT
@@ -345,7 +367,6 @@ set(INSTALL_COMPONENT COMPONENT retroshare-gui)
 if(CMAKE_EXPERIMENTAL_EXPORT_PACKAGE_DEPENDENCIES)
 	set(EXPORT_PACKAGE_DEPENDENCIES EXPORT_PACKAGE_DEPENDENCIES)
 endif()
-string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 
 file(GLOB INSTALL_MODULES LIST_DIRECTORIES FALSE
 	"${PROJECT_SOURCE_DIR}/mk/cmake/*"
@@ -472,12 +493,12 @@ endif()
 set(CPACK_PACKAGE_CHECKSUM SHA256)
 
 ## package metadata
-set(CPACK_PACKAGE_NAME "RetroShare-GUI")
+set(CPACK_PACKAGE_NAME ${PROJECT_NAME_PRETTY})
 set(CPACK_PACKAGE_VENDOR "RetroShare")
 set(CPACK_PACKAGE_ICON ${PROJECT_SOURCE_DIR}/data/logos/128x128.png)
 # set(CPACK_RESOURCE_FILE_README "${PROJECT_SOURCE_DIR}/README.md")
 # set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/COPYING.txt")
-set(CPACK_PACKAGE_VERSION ${FULL_PROJECT_VERSION})
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION_FULL})
 
 ## NSIS generator
 # set(CPACK_NSIS_MUI_ICON ${PROJECT_SOURCE_DIR}/data/logos/${APPSTREAM_ID}.ico)

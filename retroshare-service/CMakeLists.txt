@@ -7,60 +7,115 @@
 
 cmake_minimum_required(VERSION 3.0...4.4)
 
-project(retroshare-service)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.24)
+	list(PREPEND CMAKE_PROJECT_TOP_LEVEL_INCLUDES
+		"${CMAKE_CURRENT_SOURCE_DIR}/mk/cmake/fetch_provider.cmake"
+	)
+else()
+	include(mk/cmake/fetch_provider.cmake)
+endif()
 
+project(retroshare-service
+	VERSION 0.0.0
+	LANGUAGES CXX
+)
+
+set(PROJECT_NAME_PRETTY "RetroShare-Service")
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
+
+
+################################################################################
+### options
 
 include(CMakeDependentOption)
+
+set(RS_VERSION_SUFFIX
+	""
+	CACHE STRING
+	"Custom version suffix; useful for downstream packaging."
+)
 
 option(
 	RS_DEVELOPMENT_BUILD
 	"Disable optimization to speed up build, enable verbose build log. \
-	 just for development purposes, not suitable for library usage"
-	OFF )
+		just for development purposes, not suitable for library usage"
+	OFF
+)
 
 option(
 	RS_RNPLIB
 	"Enable use RNP lib for PGP"
-	ON )
+	ON
+)
 
 option(
 	RS_JSON_API
 	"Use restbed to expose libretroshare as JSON API via HTTP"
-	ON )
+	ON
+)
 
 option(
 	RS_SERVICE_DESKTOP
 	"Install icons and shortcuts for desktop environements"
-	OFF )
+	OFF
+)
 
 option(
 	RS_SERVICE_TERMINAL_LOGIN
 	"Enable RetroShare login via terminal"
-	ON )
+	ON
+)
 
 cmake_dependent_option(
 	RS_SERVICE_TERMINAL_WEBUI_PASSWORD
 	"Enable settin Web UI password via terminal in retroshare-service"
 	OFF
 	"RS_WEBUI"
-	OFF )
+	OFF
+)
 
 cmake_dependent_option(
 	RS_WEBUI
 	"Install RetroShare Web UI"
 	OFF
 	"RS_JSON_API"
-	OFF )
+	OFF
+)
 
 ################################################################################
 ### dependencies
 
-# list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/mk/cmake")
+list(APPEND CMAKE_MODULE_PATH
+	${PROJECT_SOURCE_DIR}/mk/cmake
+	${PROJECT_SOURCE_DIR}/mk/cmake/fetch_provider_packages
+)
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 
 find_package(RetroShare REQUIRED)
-find_package(ZLIB REQUIRED)
-find_package(BZip2 REQUIRED)
+
+
+################################################################################
+### version
+
+if(DEFINED RS_VERSION_SUFFIX AND NOT (RS_VERSION_SUFFIX STREQUAL ""))
+	set(PROJECT_VERSION_FULL "${PROJECT_VERSION}-${RS_VERSION_SUFFIX}")
+else()
+	include(GetGitRevisionDescription)
+	git_describe_working_tree(PROJECT_VERSION_FULL --match "v*.*.*")
+	if(PROJECT_VERSION_FULL AND EXISTS ${PROJECT_SOURCE_DIR}/.git)
+		string(SUBSTRING "${PROJECT_VERSION_FULL}" 1 -1 PROJECT_VERSION_FULL)
+		string(FIND "${PROJECT_VERSION_FULL}" ${PROJECT_VERSION} pos)
+		if(NOT pos EQUAL 0)
+			message(WARNING "Version mismatch!"
+				" ${PROJECT_NAME_PRETTY} version is ${PROJECT_VERSION},"
+				" but git describe returned ${PROJECT_VERSION_FULL}."
+			)
+		endif()
+	else()
+		set(PROJECT_VERSION_FULL "${PROJECT_VERSION}-unknown")
+	endif()
+endif()
+message(STATUS "${PROJECT_NAME_PRETTY} version: ${PROJECT_VERSION_FULL}")
 
 ################################################################################
 ### global options
