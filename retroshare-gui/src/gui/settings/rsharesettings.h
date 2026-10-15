@@ -361,6 +361,9 @@ public:
 	void setForumLoadEmbeddedImages(bool value);
 	bool getForumLoadEmoticons();
 	void setForumLoadEmoticons(bool value);
+	/* show quotes in forum posts as colored "> line" text instead of indented quotes */
+	bool getForumClassicQuotes();
+	void setForumClassicQuotes(bool value);
 
 	/* Channel */
 	bool getChannelLoadThread();

@@ -1366,6 +1366,8 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
         flags |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
     flags |= RSHTML_OPTIMIZEHTML_MASK;
     flags |= RSHTML_FORMATTEXT_MARKDOWN;
+    if(Settings->getForumClassicQuotes())
+        flags |= RSHTML_FORMATTEXT_CLASSIC_QUOTES;   // "> line" quotes instead of indented ones
 
     QColor backgroundColor = ui->postText->palette().base().color();
     qreal desiredContrast = Settings->valueFromGroup("Forum",

@@ -26,13 +26,16 @@
 
 #include <retroshare/rsinit.h> //To get RsAccounts
 
+#include <QAbstractTextDocumentLayout>
 #include <QDesktopServices>
+#include <QFontMetricsF>
 #include <QDialog>
 #include <QDir>
 #include <QGridLayout>
 #include <QMenu>
 #include <QPainter>
 #include <QPlainTextEdit>
+#include <QTextBlock>
 #include <QTextDocumentFragment>
 #include <QScrollBar>
 #include <QRegExp>
@@ -99,6 +102,8 @@ void RSTextBrowser::paintEvent(QPaintEvent *event)
 {
 	QTextBrowser::paintEvent(event);
 
+	paintQuoteBars(event->rect());
+
 	if (mPlaceholderText.isEmpty() == false && document()->isEmpty()) {
 		QWidget *vieportWidget = viewport();
 		QPainter painter(vieportWidget);
@@ -128,6 +133,70 @@ void RSTextBrowser::paintEvent(QPaintEvent *event)
 	painter.setPen(pen);
 	painter.drawRect(mCursorRectEnd);
 #endif
+}
+
+/**
+ * Quoted text (Markdown "> ...", HTML <blockquote>) is indented by 40px per
+ * nesting level. Qt rich text can't draw borders on paragraphs, so draw a
+ * vertical bar in the color of each level inside that indent, like mail
+ * clients do. The text itself is colored by RsSyntaxHighlighter.
+ */
+void RSTextBrowser::paintQuoteBars(const QRect &rect)
+{
+	QTextDocument *doc = document();
+	QAbstractTextDocumentLayout *layout = doc->documentLayout();
+	if (!layout || doc->isEmpty())
+		return;
+
+	const QPointF offset(horizontalScrollBar()->value(), verticalScrollBar()->value());
+	const QRectF visible = QRectF(rect).translated(offset); // document coordinates
+
+	// 3px for a 14px font, follows the font size and screen DPI
+	const qreal barWidth = qMax<qreal>(2.0, qRound(3.0 * QFontMetricsF(font()).height() / 14.0));
+	const qreal textGap = 10.0;   // space between the bar and the quoted text
+
+	// start from the first visible block (chat histories can be long)
+	const int firstPos = layout->hitTest(visible.topLeft(), Qt::FuzzyHit);
+	QTextBlock block = doc->findBlock(qMax(0, firstPos));
+	if (!block.isValid())
+		block = doc->begin();
+	if (block.previous().isValid())
+		block = block.previous();
+
+	QPainter painter(viewport());
+	painter.translate(-offset);
+
+	for (; block.isValid(); block = block.next()) {
+		const QRectF blockRect = layout->blockBoundingRect(block);
+		if (blockRect.top() > visible.bottom())
+			break;
+
+		const int level = RsSyntaxHighlighter::quoteLevel(block.blockFormat());
+		if (level <= 0)
+			continue;
+
+		// levels still open in the next block continue down to it, over the
+		// paragraph spacing, so a quote shows as one continuous bar
+		const QTextBlock next = block.next();
+		const int nextLevel = next.isValid() ? RsSyntaxHighlighter::quoteLevel(next.blockFormat()) : 0;
+		const qreal nextTop = next.isValid() ? layout->blockBoundingRect(next).top() : blockRect.bottom();
+
+		if (qMax(blockRect.bottom(), nextTop) < visible.top())
+			continue;
+
+		// blockBoundingRect() starts before the block margins: this is the
+		// x of the level 1 indent, whatever the document margin / frame
+		const qreal left = blockRect.left();
+		// indent of one level (compact for Markdown), bar just before the text
+		const qreal indent = RsSyntaxHighlighter::quoteIndent(block.blockFormat());
+		const qreal barOffset = qMax<qreal>(0.0, indent - textGap - barWidth);
+
+		for (int k = 1; k <= level; ++k) {
+			const qreal bottom = (k <= nextLevel) ? nextTop : blockRect.bottom();
+			const QRectF bar(left + indent * (k - 1) + barOffset, blockRect.top(), barWidth, bottom - blockRect.top());
+			painter.fillRect(bar, highlighter->quoteColor(k));
+		}
+	}
 }
 
 QVariant RSTextBrowser::loadResource(int type, const QUrl &name)

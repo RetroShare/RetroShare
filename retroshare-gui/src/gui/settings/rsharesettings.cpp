@@ -1103,6 +1103,14 @@ void RshareSettings::setForumLoadEmoticons(bool value)
 {
 	setValueToGroup("Forum", "LoadEmoticons", value);
 }
+bool RshareSettings::getForumClassicQuotes()
+{
+	return valueFromGroup("Forum", "ClassicQuotes", false).toBool();
+}
+void RshareSettings::setForumClassicQuotes(bool value)
+{
+	setValueToGroup("Forum", "ClassicQuotes", value);
+}
 /* Channel */
 bool RshareSettings::getChannelLoadThread()
 {

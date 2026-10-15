@@ -234,9 +234,46 @@ QString RsMarkdown::linkifyBareUrls(const QString& markdown)
 	return lines.join(QLatin1Char('\n'));
 }
 
-QString RsMarkdown::toHtml(const QString& markdown, bool hardBreaks)
+QString RsMarkdown::escapeQuotes(const QString& markdown)
 {
-	const QString source = linkifyBareUrls(markdown);
+	static const QRegularExpression fenceRe("^ {0,3}(`{3,}|~{3,})");
+	static const QRegularExpression quoteRe("^( {0,3})>");
+
+	QStringList lines = markdown.split(QLatin1Char('\n'));
+	bool inFence = false;
+	QChar fenceChar;
+	int fenceLength = 0;
+
+	for (QString& line : lines) {
+		QRegularExpressionMatch fence = fenceRe.match(line);
+		if (fence.hasMatch()) {
+			const QString marker = fence.captured(1);
+			if (!inFence) {
+				inFence = true;
+				fenceChar = marker.at(0);
+				fenceLength = marker.size();
+			} else if (marker.at(0) == fenceChar && marker.size() >= fenceLength
+			           && line.mid(fence.capturedEnd()).trimmed().isEmpty()) {
+				inFence = false;
+			}
+			continue;
+		}
+
+		if (inFence)
+			continue;
+
+		// "\>" is a literal '>' for cmark, the following ones are plain text
+		QRegularExpressionMatch quote = quoteRe.match(line);
+		if (quote.hasMatch())
+			line.insert(quote.capturedEnd(1), QLatin1Char('\\'));
+	}
+
+	return lines.join(QLatin1Char('\n'));
+}
+
+QString RsMarkdown::toHtml(const QString& markdown, bool hardBreaks, bool classicQuotes)
+{
+	const QString source = linkifyBareUrls(classicQuotes ? escapeQuotes(markdown) : markdown);
 
 #ifdef USE_CMARK
 	const QByteArray utf8 = source.toUtf8();
@@ -257,6 +294,10 @@ QString RsMarkdown::toHtml(const QString& markdown, bool hardBreaks)
 		// free with cmark's allocator, the library may use another C runtime (Windows DLL)
 		cmark_get_default_mem_allocator()->free(html);
 	}
+
+	// compact quotes (Qt default: 40px on both sides for each level)
+	body.replace(QLatin1String("<blockquote>"),
+	             QString("<blockquote style=\"margin-left:%1px; margin-right:0px\">").arg(QUOTE_INDENT));
 
 	return QLatin1String("<html><body>") + body + QLatin1String("</body></html>");
 #else

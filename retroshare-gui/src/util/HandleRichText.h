@@ -45,6 +45,7 @@
 #define RSHTML_FORMATTEXT_NO_EMBED            0x0400//1024
 #define RSHTML_FORMATTEXT_USE_CMARK           0x0800//2048
 #define RSHTML_FORMATTEXT_MARKDOWN            0x1000//4096	/* Render text with Markdown syntax (RsMarkdown), keep HTML/plain text as is */
+#define RSHTML_FORMATTEXT_CLASSIC_QUOTES      0x2000//8192	/* With MARKDOWN: show quotes as colored "> line" text, not indented */
 /* Flags for RsHtml::optimizeHtml */
 #define RSHTML_OPTIMIZEHTML_MASK              (RSHTML_FORMATTEXT_CLEANSTYLE | RSHTML_FORMATTEXT_FIX_COLORS | RSHTML_FORMATTEXT_OPTIMIZE)
 

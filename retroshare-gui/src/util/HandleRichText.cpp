@@ -618,7 +618,7 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &originalT
 	// Markdown messages (channels, forums, boards) are rendered to HTML first,
 	// then links, RetroShare links, smileys and images are handled as for HTML.
 	const QString text = ((flag & RSHTML_FORMATTEXT_MARKDOWN) && RsMarkdown::containsMarkdown(originalText))
-	        ? RsMarkdown::toHtml(originalText) : originalText;
+	        ? RsMarkdown::toHtml(originalText, true, flag & RSHTML_FORMATTEXT_CLASSIC_QUOTES) : originalText;
 
 	QString formattedText=text;
 	//remove all prepend char that make doc.setContent() fail

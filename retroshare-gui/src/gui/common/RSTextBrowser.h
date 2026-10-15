@@ -83,6 +83,9 @@ private:
 	// Hide method from QTextBrowser
 	using QTextBrowser::createStandardContextMenu;
 
+	/* Draw a colored bar per level on the left of quoted text */
+	void paintQuoteBars(const QRect &rect);
+
 private:
 	QString mPlaceholderText;
 	bool mShowImages;

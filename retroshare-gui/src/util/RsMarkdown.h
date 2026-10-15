@@ -48,6 +48,11 @@
 class RsMarkdown
 {
 public:
+	/** Left indent of each quote level (px). Qt indents <blockquote> by 40px
+	 *  left and right, the rendered Markdown quotes use a compact indent,
+	 *  RSTextBrowser draws the quote bar inside it. */
+	static constexpr int QUOTE_INDENT = 16;
+
 	/** True when the GUI was compiled against libcmark */
 	static bool hasCMark();
 
@@ -63,7 +68,14 @@ public:
 	 * rich text composer (posts). Without, standard Markdown rules apply: a
 	 * single line break is a space (wiki pages).
 	 */
-	static QString toHtml(const QString& markdown, bool hardBreaks = true);
+	static QString toHtml(const QString& markdown, bool hardBreaks = true, bool classicQuotes = false);
+
+	/**
+	 * Classic quotes: escape the "> " quote markers (outside code blocks) so
+	 * quoted lines are shown as text, "> line", ">> line"..., colored by
+	 * RsSyntaxHighlighter like before Markdown, instead of indented quotes.
+	 */
+	static QString escapeQuotes(const QString& markdown);
 
 	/**
 	 * Return HTML for text that is Markdown, or text unchanged otherwise.
