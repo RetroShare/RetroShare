@@ -48,9 +48,11 @@
 #include <retroshare/rspeers.h>
 
 #include "gui/RetroShareLink.h"
+#include "gui/common/RSTextBrowser.h"
 #include "gui/common/FilesDefs.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/HandleRichText.h"
+#include "util/MarkdownSyntaxHighlighter.h"
 #include "util/RsMarkdown.h"
 #include "util/misc.h"
 
@@ -78,6 +80,27 @@ MarkdownPlainTextEdit::MarkdownPlainTextEdit(QWidget *parent)
     : QPlainTextEdit(parent), mMaxImageBytes(MAX_ALLOWED_GXS_MESSAGE_SIZE - 200)
 {
 	setTabChangesFocus(false);
+	mHighlighter = new MarkdownSyntaxHighlighter(document());
+}
+
+QColor MarkdownPlainTextEdit::textColorQuote() const
+{
+	return mHighlighter->textColorQuote();
+}
+
+QVariant MarkdownPlainTextEdit::textColorQuotes() const
+{
+	return mHighlighter->textColorQuotes();
+}
+
+void MarkdownPlainTextEdit::setTextColorQuote(QColor textColorQuote)
+{
+	mHighlighter->setTextColorQuote(textColorQuote);
+}
+
+void MarkdownPlainTextEdit::setTextColorQuotes(QVariant textColorQuotes)
+{
+	mHighlighter->setTextColorQuotes(textColorQuotes);
 }
 
 void MarkdownPlainTextEdit::insertMarkdown(const QString &markdown, bool block)
@@ -336,8 +359,10 @@ MarkdownTextEdit::MarkdownTextEdit(QWidget *parent)
 #endif
 	mStack->addWidget(mEditor);
 
-	mPreview = new QTextBrowser(mStack);
-	mPreview->setOpenLinks(false);
+	// RSTextBrowser: rendered with the same quote colors as forum/channel posts
+	RSTextBrowser *preview = new RSTextBrowser(mStack);
+	preview->activateLinkClick(false); // don't open links while composing
+	mPreview = preview;
 	mStack->addWidget(mPreview);
 
 	/* size info */

@@ -619,6 +619,7 @@ HEADERS +=  rshare.h \
             util/RichTextEdit.h \
             util/MarkdownTextEdit.h \
             util/RsMarkdown.h \
+            util/MarkdownSyntaxHighlighter.h \
             gui/NetworkDialog/pgpid_item_model.h \
             gui/NetworkDialog/pgpid_item_proxy.h \
             gui/common/RsCollection.h \
@@ -813,6 +814,7 @@ SOURCES +=  main.cpp \
             util/RichTextEdit.cpp \
             util/MarkdownTextEdit.cpp \
             util/RsMarkdown.cpp \
+            util/MarkdownSyntaxHighlighter.cpp \
             util/ClickableLabel.cpp \
             util/AspectRatioPixmapLabel.cpp \
             util/FontSizeHandler.cpp \

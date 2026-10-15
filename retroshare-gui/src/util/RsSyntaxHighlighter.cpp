@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QRegularExpression>
+#include <QTextBlock>
 
 #include "RsSyntaxHighlighter.h"
 
@@ -66,6 +67,37 @@ void RsSyntaxHighlighter::setTextColorQuotes(QVariant textColorQuotes)
 void RsSyntaxHighlighter::highlightBlock(const QString &text)
 {
 	if (text == "") return;
+
+	// Rendered Markdown: the '>' characters are gone, the quote nesting
+	// level comes from the block format instead.
+	const QTextBlockFormat blockFormat = currentBlock().blockFormat();
+	int quoteLevel = 0;
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+	if (blockFormat.hasProperty(QTextFormat::BlockQuoteLevel)) {
+		// cmark / HTML <blockquote>: the HTML importer always sets level 1
+		// but adds 40px left margin for each nested <blockquote>
+		quoteLevel = qMax(blockFormat.intProperty(QTextFormat::BlockQuoteLevel),
+		                  qRound(blockFormat.leftMargin() / 40.0));
+	}
+#endif
+
+	// Markdown rendered by Qt (GUI built without cmark): Qt's HTML export
+	// drops the quote marker and only keeps the quote margins, 40px on the
+	// right and 40px on the left for each nesting level.
+	if (!quoteLevel && qFuzzyCompare(blockFormat.rightMargin(), 40.0) && blockFormat.leftMargin() >= 40.0)
+		quoteLevel = qRound(blockFormat.leftMargin() / 40.0);
+
+	if (quoteLevel > 0) {
+		quoteLevel = qBound(1, quoteLevel, quotationFormats.size());
+		setFormat(0, text.length(), quotationFormats.at(quoteLevel - 1));
+		return;
+	}
+
+	// Code blocks (<pre>, Markdown ``` blocks) are shown verbatim: a line
+	// starting with '>' there is not a quote.
+	if (blockFormat.nonBreakableLines())
+		return;
 
 	QRegularExpression endl("[\\r\\n\\N{U+2028}]"); //Usually 0x2028 character is used for newline, no idea why
 	int index = 0;

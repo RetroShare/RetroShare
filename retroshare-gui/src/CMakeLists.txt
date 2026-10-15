@@ -90,6 +90,7 @@ list(
 	src/util/RichTextEdit.cpp 
 	src/util/MarkdownTextEdit.cpp 
 	src/util/RsMarkdown.cpp 
+	src/util/MarkdownSyntaxHighlighter.cpp 
 	src/util/ClickableLabel.cpp 
 	src/util/AspectRatioPixmapLabel.cpp 
 	src/util/FontSizeHandler.cpp 
@@ -496,6 +497,7 @@ list(
 	src/util/RichTextEdit.h 
 	src/util/MarkdownTextEdit.h 
 	src/util/RsMarkdown.h 
+	src/util/MarkdownSyntaxHighlighter.h 
 	src/util/retroshareWin32.h
 	src/util/RsProtectedTimer.h 
 	src/util/stringutil.h 

@@ -28,6 +28,7 @@
 
 #include "util/FontSizeHandler.h"
 
+class MarkdownSyntaxHighlighter;
 class QImage;
 class QLabel;
 class QStackedWidget;
@@ -48,8 +49,15 @@ class MarkdownPlainTextEdit : public QPlainTextEdit
 {
 	Q_OBJECT
 
+	// quote colors from the stylesheet, as for RSTextBrowser and MimeTextEdit
+	Q_PROPERTY(QColor textColorQuote READ textColorQuote WRITE setTextColorQuote)
+	Q_PROPERTY(QVariant textColorQuotes READ textColorQuotes WRITE setTextColorQuotes)
+
 public:
 	explicit MarkdownPlainTextEdit(QWidget *parent = nullptr);
+
+	QColor textColorQuote() const;
+	QVariant textColorQuotes() const;
 
 	/** Maximum size of an embedded image (bytes, base64 encoded) */
 	void setMaxImageBytes(int bytes) { mMaxImageBytes = bytes; }
@@ -63,6 +71,8 @@ public:
 public slots:
 	void pasteRetroShareLinks();
 	void pasteOwnCertificateLink();
+	void setTextColorQuote(QColor textColorQuote);
+	void setTextColorQuotes(QVariant textColorQuotes);
 
 protected:
 	bool canInsertFromMimeData(const QMimeData *source) const override;
@@ -74,6 +84,7 @@ private:
 	bool continueList();
 
 	int mMaxImageBytes;
+	MarkdownSyntaxHighlighter *mHighlighter;
 };
 
 /**
