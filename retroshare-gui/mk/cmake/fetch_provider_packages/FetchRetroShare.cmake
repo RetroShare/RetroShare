@@ -24,13 +24,13 @@
 # 3.14: FetchContent_MakeAvailable()
 cmake_minimum_required(VERSION 3.14...4.4)
 
-set(Fetch${FETCH_PROVIDER_PACKAGE_NAME}_GIT_TAG "" CACHE STRING
-	"git tag to use for fetching ${FETCH_PROVIDER_PACKAGE_NAME}"
+set(FETCH_RetroShare_GIT_TAG "" CACHE STRING
+	"git tag to use for fetching RetroShare"
 )
-mark_as_advanced(Fetch${FETCH_PROVIDER_PACKAGE_NAME}_GIT_TAG)
-if(NOT Fetch${FETCH_PROVIDER_PACKAGE_NAME}_GIT_TAG)
+mark_as_advanced(FETCH_RetroShare_GIT_TAG)
+if(NOT FETCH_RetroShare_GIT_TAG)
 	# TODO: when #361 is merged, consider tracking origin/master
-	set(Fetch${FETCH_PROVIDER_PACKAGE_NAME}_GIT_TAG
+	set(FETCH_RetroShare_GIT_TAG
 		395c887582f3f670e4b9ef83e741f6362fb0dc72
 	)
 endif()
@@ -38,8 +38,8 @@ endif()
 include(FetchContent)
 FetchContent_Declare(RetroShare
 	GIT_REPOSITORY "https://github.com/RetroShare/libretroshare.git"
-	GIT_TAG ${Fetch${FETCH_PROVIDER_PACKAGE_NAME}_GIT_TAG}
+	GIT_TAG ${FETCH_RetroShare_GIT_TAG}
 	GIT_PROGRESS TRUE
 )
 FetchContent_MakeAvailable(RetroShare)
-set(${FETCH_PROVIDER_PACKAGE_NAME}_FOUND TRUE)
+set(RetroShare_FOUND TRUE)

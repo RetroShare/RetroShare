@@ -29,8 +29,39 @@ else()
 	set(FETCH_DEPENDENCY_PROVIDER_DEFAULT OFF)
 endif()
 set(FETCH_DEPENDENCY_PROVIDER ${FETCH_DEPENDENCY_PROVIDER_DEFAULT} CACHE BOOL
-	"Use the Fetch dependency provider to get project dependencies"
+	"use the Fetch dependency provider to get project dependencies"
 )
+
+set(FETCH_DEPENDENCY_PROVIDER_MODE NORMAL CACHE STRING
+	"operation mode for the Fetch dependency provider \
+		(CMake will always fall back to the built-in find_package)"
+)
+set_property(CACHE FETCH_DEPENDENCY_PROVIDER_MODE PROPERTY STRINGS
+	NORMAL DISABLED FIND_ONLY FETCH_ONLY FIND_FIRST FETCH_FIRST
+)
+
+
+### configure the default mode
+set(fetch_dependency_provider_find TRUE)
+set(fetch_dependency_provider_fetch TRUE)
+set(fetch_dependency_provider_find1st TRUE)
+if(FETCH_DEPENDENCY_PROVIDER_MODE STREQUAL "NORMAL")
+elseif(FETCH_DEPENDENCY_PROVIDER_MODE STREQUAL "DISABLED")
+	set(fetch_dependency_provider_find FALSE)
+	set(fetch_dependency_provider_fetch FALSE)
+elseif(FETCH_DEPENDENCY_PROVIDER_MODE STREQUAL "FIND_ONLY")
+	set(fetch_dependency_provider_fetch FALSE)
+elseif(FETCH_DEPENDENCY_PROVIDER_MODE STREQUAL "FETCH_ONLY")
+	set(fetch_dependency_provider_find FALSE)
+elseif(FETCH_DEPENDENCY_PROVIDER_MODE STREQUAL "FIND_FIRST")
+	set(fetch_dependency_provider_find1st TRUE)
+elseif(FETCH_DEPENDENCY_PROVIDER_MODE STREQUAL "FETCH_FIRST")
+	set(fetch_dependency_provider_find1st FALSE)
+else()
+	message(FATAL_ERROR
+		"invalid fetch provider mode: ${FETCH_DEPENDENCY_PROVIDER_MODE}"
+	)
+endif()
 
 
 macro(fetch_provide_dependency method package)
@@ -41,6 +72,10 @@ macro(fetch_provide_dependency method package)
 			""
 			${ARGN}
 		)
+	elseif("${method}" STREQUAL "FETCHCONTENT_MAKEAVAILABLE_SERIAL")
+		message(FATAL_ERROR
+			"Fetch dependency provider does support method ${method}"
+		)
 	else()
 		message(FATAL_ERROR
 			"Unrecognized method for fetch_provide_dependency: ${method}"
@@ -50,22 +85,29 @@ macro(fetch_provide_dependency method package)
 		"control how the Fetch dependency provider handles ${package}"
 	)
 	set_property(CACHE FETCH_PROVIDER_${package}_MODE PROPERTY STRINGS
-		NORMAL FIND_ONLY FETCH_ONLY
+		NORMAL DISABLED FIND_ONLY FETCH_ONLY FIND_FIRST FETCH_FIRST
 	)
+	set(fetch_provider_${package}_find ${fetch_dependency_provider_find})
+	set(fetch_provider_${package}_fetch ${fetch_dependency_provider_fetch})
+	set(fetch_provider_${package}_find1st ${fetch_dependency_provider_find1st})
 	if(FETCH_PROVIDER_${package}_MODE STREQUAL "NORMAL")
-		set(fetch_provider_${package}_find TRUE)
-		set(fetch_provider_${package}_fetch TRUE)
+	elseif(FETCH_PROVIDER_${package}_MODE STREQUAL "DISABLED")
+		set(fetch_provider_${package}_find FALSE)
+		set(fetch_provider_${package}_fetch FALSE)
 	elseif(FETCH_PROVIDER_${package}_MODE STREQUAL "FIND_ONLY")
-		set(fetch_provider_${package}_find TRUE)
 		set(fetch_provider_${package}_fetch FALSE)
 	elseif(FETCH_PROVIDER_${package}_MODE STREQUAL "FETCH_ONLY")
 		set(fetch_provider_${package}_find FALSE)
-		set(fetch_provider_${package}_fetch TRUE)
+	elseif(FETCH_PROVIDER_${package}_MODE STREQUAL "FIND_FIRST")
+		set(fetch_provider_${package}_find1st TRUE)
+	elseif(FETCH_PROVIDER_${package}_MODE STREQUAL "FETCH_FIRST")
+		set(fetch_provider_${package}_find1st FALSE)
 	else()
 		message(FATAL_ERROR
 			"invalid fetch provider mode: ${fetch_provider_${package}_mode}"
 		)
 	endif()
+	set(${package}_FOUND FALSE)
 	set(fetch_provider_${package}_findargs
 		${fetch_provider_${package}_UNPARSED_ARGUMENTS}
 	)
@@ -76,24 +118,36 @@ macro(fetch_provide_dependency method package)
 	if(CMAKE_VERSION VERSION_GREATER_EQUAL 4.0)
 		list(APPEND fetch_provider_${package}_findargs OPTIONAL)
 	endif()
-	if(fetch_provider_${package}_find)
+	if(fetch_provider_${package}_find AND fetch_provider_${package}_find1st)
 		find_package(${package} ${fetch_provider_${package}_findargs})
 	endif()
 	if(NOT ${package}_FOUND AND fetch_provider_${package}_fetch)
-		message(STATUS "Fetching ${package}...")
+		# message(STATUS "Fetching ${package}...")
 		set(FETCH_PROVIDER_PACKAGE_NAME ${package})
+		set(FETCH_${package}_ARGS
+			${fetch_provider_${package}_UNPARSED_ARGUMENTS}
+		)
 		include(Fetch${package} OPTIONAL
 			RESULT_VARIABLE fetch_provider_${package}_fetchfile
 		)
 		if(NOT fetch_provider_${package}_fetchfile)
-			message(STATUS "No fetch module found for ${package}.")
+			# message(STATUS "No fetch module found for ${package}.")
 		elseif(NOT ${package}_FOUND)
 			message(WARNING
-				"The fetch module for ${package} was not able to get the package."
+				"Fetch module '${fetch_provider_${package}_fetchfile}'"
+				" failed to set `${package}_FOUND`."
+				" Either the package could not be fetched (unusual),"
+				" or the module has a bug."
 			)
 		else()
-			message(STATUS "Successfully fetched ${package}.")
+			# message(STATUS "Successfully fetched ${package}.")
 		endif()
+	endif()
+	if(NOT ${package}_FOUND AND
+		fetch_provider_${package}_find AND
+		NOT fetch_provider_${package}_find1st
+	)
+		find_package(${package} ${fetch_provider_${package}_findargs})
 	endif()
 endmacro(fetch_provide_dependency)
 

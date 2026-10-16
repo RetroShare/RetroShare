@@ -24,9 +24,6 @@ if(RS_GUI)
 	# don't accidentally find an installed version of RetroShare-GUI
 	include(RedirectFindPackage)
 	redirect_find_package(RetroShare-GUI)
-	file(WRITE ${CMAKE_FIND_PACKAGE_REDIRECTS_DIR}/RetroShare-GUIExtra.cmake
-		"message(STATUS \"using RetroShare-GUI from this build\")"
-	)
 
 	add_subdirectory(FeedReader)
 	add_subdirectory(VOIP)

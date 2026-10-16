@@ -29,4 +29,4 @@ FetchContent_Declare(RetroShare
 	SOURCE_DIR "${retroshare-superproject_SOURCE_DIR}/libretroshare"
 )
 FetchContent_MakeAvailable(RetroShare)
-set(${FETCH_PROVIDER_PACKAGE_NAME}_FOUND TRUE)
+set(RetroShare_FOUND TRUE)
