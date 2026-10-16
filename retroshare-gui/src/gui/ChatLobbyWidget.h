@@ -92,7 +92,7 @@ protected slots:
     void handleChatLobbyEvent(uint64_t lobby_id, RsChatLobbyEventCode event_type, const RsGxsId &gxs_id, const QString& str);
     void readChatLobbyInvites();
 	void showLobby(QTreeWidgetItem *lobby_item) ;
-	void showBlankPage(ChatLobbyId id, bool subscribed = false) ;
+	void showBlankPage(ChatLobbyId id, bool subscribed = false, bool hostedElsewhere = false) ;
     void unsubscribeChatLobby(ChatLobbyId id) ;
     void createIdentityAndSubscribe();
     void subscribeChatLobbyAs() ;
