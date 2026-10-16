@@ -32,7 +32,7 @@
  * RetroShare super-project, i.e. the repository that hosts retroshare-gui.
  *
  * This is the GUI application's OWN version, distinct from the core engine
- * version exposed by libretroshare (RS_HUMAN_READABLE_VERSION in
+ * version exposed by libretroshare (RS_VERSION_* in
  * retroshare/rsversion.h, reported to the GUI through RsInit::libRetroShareVersion()).
  * The GUI displays its own version as "the RetroShare version" and lists
  * libretroshare's version among the other libraries, like any dependency.

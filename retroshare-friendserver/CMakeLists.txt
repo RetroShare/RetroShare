@@ -20,7 +20,8 @@
  # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ## ------------------------------------------------------------------------- ##
 
-cmake_minimum_required(VERSION 3.0...4.4)
+# 3.10: string(PREPEND)
+cmake_minimum_required(VERSION 3.10...4.4)
 
 project(retroshare-friendserver
 	VERSION 0.0.0
@@ -61,19 +62,24 @@ find_package(RetroShare REQUIRED)
 
 
 ### version
+if(NOT PROJECT_VERSION)
+	message(SEND_ERROR "${PROJECT_NAME_PRETTY} version seems to be missing!")
+endif()
 if(DEFINED RS_VERSION_SUFFIX AND NOT (RS_VERSION_SUFFIX STREQUAL ""))
 	set(PROJECT_VERSION_FULL "${PROJECT_VERSION}-${RS_VERSION_SUFFIX}")
 else()
 	include(GetGitRevisionDescription)
-	git_describe_working_tree(PROJECT_VERSION_FULL --match "v*.*.*")
+	git_describe_working_tree(PROJECT_VERSION_FULL --dirty --match "v*.*.*")
 	if(PROJECT_VERSION_FULL AND EXISTS ${PROJECT_SOURCE_DIR}/.git)
-		string(SUBSTRING "${PROJECT_VERSION_FULL}" 1 -1 PROJECT_VERSION_FULL)
-		string(FIND "${PROJECT_VERSION_FULL}" ${PROJECT_VERSION} pos)
+		string(SUBSTRING ${PROJECT_VERSION_FULL} 1 -1 PROJECT_VERSION_FULL)
+		string(FIND ${PROJECT_VERSION_FULL}- ${PROJECT_VERSION}- pos)
 		if(NOT pos EQUAL 0)
-			message(WARNING "Version mismatch!"
-				" ${PROJECT_NAME_PRETTY} version is ${PROJECT_VERSION},"
+			message(WARNING "${PROJECT_NAME_PRETTY} version mismatch!"
+				" Declared version is ${PROJECT_VERSION},"
 				" but git describe returned ${PROJECT_VERSION_FULL}."
 			)
+			string(PREPEND PROJECT_VERSION *)
+			string(PREPEND PROJECT_VERSION_FULL *)
 		endif()
 	else()
 		set(PROJECT_VERSION_FULL "${PROJECT_VERSION}-unknown")
