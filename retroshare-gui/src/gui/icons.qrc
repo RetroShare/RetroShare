@@ -355,6 +355,7 @@
         <file>icons/textedit/code.png</file>
         <file>icons/textedit/heading.png</file>
         <file>icons/textedit/blockquote.png</file>
+        <file>icons/textedit/tasklist.png</file>
         <file>icons/fullscreen.png</file>
         <file>icons/fullscreen-exit.png</file>
         <file>icons/notification.png</file>

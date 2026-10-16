@@ -19,6 +19,9 @@
  *******************************************************************************/
 
 #include "util/RsMarkdown.h"
+#include <algorithm>
+#include <QPair>
+#include <QVector>
 
 #include <QRegularExpression>
 #include <QStringList>
@@ -271,6 +274,66 @@ QString RsMarkdown::escapeQuotes(const QString& markdown)
 	return lines.join(QLatin1Char('\n'));
 }
 
+QString RsMarkdown::renderTaskLists(const QString& html)
+{
+	// "[ ]" / "[x]" at the start of a list item (GitHub task lists) become check boxes
+	static const QRegularExpression taskRe(
+	        "(<li[^>]*>\\s*(?:<p[^>]*>)?(?:<span[^>]*>)?)\\[([ xX])\\](?=[ \\t]|<|$)");
+	static const QRegularExpression tagRe("<(/?)(ul|ol|li)\\b[^>]*>", QRegularExpression::CaseInsensitiveOption);
+	static const QRegularExpression itemStartRe("^\\s*(?:<p[^>]*>)?(?:<span[^>]*>)?");
+
+	const QString unchecked(QChar(0x2610)); // BALLOT BOX
+	const QString checked(QChar(0x2611));   // BALLOT BOX WITH CHECK
+
+	QString result;
+	int last = 0;
+	QRegularExpressionMatchIterator it = taskRe.globalMatch(html);
+	while (it.hasNext()) {
+		const QRegularExpressionMatch match = it.next();
+		result += html.midRef(last, match.capturedStart() - last);
+		result += match.captured(1) + (match.captured(2) == " " ? unchecked : checked);
+		last = match.capturedEnd();
+	}
+	if (last == 0)
+		return html; // no task list
+	result += html.midRef(last);
+
+	// no bullets for bulleted lists made of tasks only
+	struct List { int start; int length; bool bullet; bool tasksOnly; int items; };
+	QVector<List> stack;
+	QVector<QPair<int, int> > taskLists;
+
+	it = tagRe.globalMatch(result);
+	while (it.hasNext()) {
+		const QRegularExpressionMatch tag = it.next();
+		const bool closing = !tag.captured(1).isEmpty();
+		const QString name = tag.captured(2).toLower();
+
+		if (name == "li") {
+			if (closing || stack.isEmpty())
+				continue;
+			const QRegularExpressionMatch start = itemStartRe.match(result.mid(tag.capturedEnd(), 200));
+			const QString text = result.mid(tag.capturedEnd() + start.capturedLength(), 1);
+			if (text != unchecked && text != checked)
+				stack.last().tasksOnly = false;
+			++stack.last().items;
+		} else if (!closing) {
+			stack.append({ tag.capturedStart(), tag.capturedLength(), name == "ul", true, 0 });
+		} else if (!stack.isEmpty()) {
+			const List list = stack.takeLast();
+			if (list.bullet && list.tasksOnly && list.items > 0)
+				taskLists.append(qMakePair(list.start, list.length));
+		}
+	}
+
+	std::sort(taskLists.begin(), taskLists.end());
+	for (int i = taskLists.size() - 1; i >= 0; --i)
+		result.replace(taskLists[i].first, taskLists[i].second,
+		               QLatin1String("<ul style=\"list-style-type:none; margin-left:0px; -qt-list-indent:1;\">"));
+
+	return result;
+}
+
 QString RsMarkdown::toHtml(const QString& markdown, bool hardBreaks, bool classicQuotes)
 {
 	const QString source = linkifyBareUrls(classicQuotes ? escapeQuotes(markdown) : markdown);
@@ -299,7 +362,7 @@ QString RsMarkdown::toHtml(const QString& markdown, bool hardBreaks, bool classi
 	body.replace(QLatin1String("<blockquote>"),
 	             QString("<blockquote style=\"margin-left:%1px; margin-right:0px\">").arg(QUOTE_INDENT));
 
-	return QLatin1String("<html><body>") + body + QLatin1String("</body></html>");
+	return QLatin1String("<html><body>") + renderTaskLists(body) + QLatin1String("</body></html>");
 #else
 	Q_UNUSED(hardBreaks) // Qt's parser always uses soft breaks
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
@@ -307,7 +370,7 @@ QString RsMarkdown::toHtml(const QString& markdown, bool hardBreaks, bool classi
 	QTextDocument doc;
 	doc.setMarkdown(source, QTextDocument::MarkdownFeatures(QTextDocument::MarkdownDialectCommonMark
 	                                                        | QTextDocument::MarkdownNoHTML));
-	return doc.toHtml();
+	return renderTaskLists(doc.toHtml());
 #define RS_MARKDOWN_RENDERED
 #endif
 #endif

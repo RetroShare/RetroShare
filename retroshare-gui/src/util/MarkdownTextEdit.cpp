@@ -249,7 +249,7 @@ void MarkdownPlainTextEdit::keyPressEvent(QKeyEvent *event)
 /* Enter at the end of a list item starts the next item, on an empty item ends the list */
 bool MarkdownPlainTextEdit::continueList()
 {
-	static const QRegularExpression itemRe("^([ \\t]*)(?:([-*+])|(\\d{1,9})([.)]))([ \\t]+)(.*)$");
+	static const QRegularExpression itemRe("^([ \\t]*)(?:([-*+])|(\\d{1,9})([.)]))([ \\t]+)(\\[[ xX]\\][ \\t]+)?(.*)$");
 
 	QTextCursor cursor = textCursor();
 	if (cursor.hasSelection())
@@ -263,7 +263,7 @@ bool MarkdownPlainTextEdit::continueList()
 	if (!match.hasMatch())
 		return false;
 
-	if (match.captured(6).trimmed().isEmpty()) {
+	if (match.captured(7).trimmed().isEmpty()) {
 		// empty item: remove the marker and leave the list
 		cursor.movePosition(QTextCursor::StartOfBlock);
 		cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
@@ -276,7 +276,10 @@ bool MarkdownPlainTextEdit::continueList()
 	        ? QString::number(match.captured(3).toInt() + 1) + match.captured(4)
 	        : match.captured(2);
 
-	cursor.insertText(QLatin1Char('\n') + match.captured(1) + marker + match.captured(5));
+	// a task list continues with an open task
+	const QString task = match.captured(6).isEmpty() ? QString() : QStringLiteral("[ ] ");
+
+	cursor.insertText(QLatin1Char('\n') + match.captured(1) + marker + match.captured(5) + task);
 	setTextCursor(cursor);
 	ensureCursorVisible();
 	return true;
@@ -301,6 +304,16 @@ MarkdownTextEdit::MarkdownTextEdit(QWidget *parent)
 	toolLayout->setSpacing(1);
 	layout->addWidget(mToolBar);
 
+	/* undo / redo, cut / copy / paste (as RichTextEdit). The editor handles
+	 * the standard shortcuts itself, so the buttons get none. */
+	mUndoButton = addButton(":/icons/textedit/undo.png", QString(), tr("Undo (Ctrl+Z)"));
+	mRedoButton = addButton(":/icons/textedit/redo.png", QString(), tr("Redo (Ctrl+Y)"));
+	toolLayout->addSpacing(6);
+	mCutButton = addButton(":/icons/textedit/cut.png", QString(), tr("Cut (Ctrl+X)"));
+	mCopyButton = addButton(":/icons/textedit/copy.png", QString(), tr("Copy (Ctrl+C)"));
+	mPasteButton = addButton(":/icons/textedit/paste.png", QString(), tr("Paste (Ctrl+V)"));
+	toolLayout->addSpacing(6);
+
 	connect(addButton(":/icons/textedit/bold.png", QString(), tr("Bold (Ctrl+B)"), QKeySequence("Ctrl+B")),
 	        SIGNAL(clicked()), this, SLOT(textBold()));
 	connect(addButton(":/icons/textedit/italic.png", QString(), tr("Italic (Ctrl+I)"), QKeySequence("Ctrl+I")),
@@ -319,11 +332,9 @@ MarkdownTextEdit::MarkdownTextEdit(QWidget *parent)
 
 	connect(addButton(":/icons/textedit/blockquote.png", QString(), tr("Quote")), SIGNAL(clicked()), this, SLOT(textQuote()));
 	connect(addButton(":/icons/textedit/code.png", QString(), tr("Code")), SIGNAL(clicked()), this, SLOT(textCode()));
-	connect(addButton(":/icons/textedit/bullet-list.png", QString(), tr("Bulleted list")), SIGNAL(clicked()), this, SLOT(listBullet()));
 	connect(addButton(":/icons/textedit/numberd-list.png", QString(), tr("Numbered list")), SIGNAL(clicked()), this, SLOT(listOrdered()));
-	connect(addButton(QString(), QString::fromUtf8("\xE2\x80\x95"), tr("Horizontal line")), SIGNAL(clicked()), this, SLOT(insertRule()));
-
-	toolLayout->addSpacing(6);
+	connect(addButton(":/icons/textedit/bullet-list.png", QString(), tr("Bulleted list")), SIGNAL(clicked()), this, SLOT(listBullet()));
+	connect(addButton(":/icons/textedit/tasklist.png", QString(), tr("Task list")), SIGNAL(clicked()), this, SLOT(listTask()));
 
 	connect(addButton(":/icons/textedit/link.png", QString(), tr("Insert link (Ctrl+K)"), QKeySequence("Ctrl+K")),
 	        SIGNAL(clicked()), this, SLOT(textLink()));
@@ -337,6 +348,7 @@ MarkdownTextEdit::MarkdownTextEdit(QWidget *parent)
 	                          "**bold** &nbsp; *italic* &nbsp; `code`<br>"
 	                          "# Heading 1 &nbsp; ## Heading 2<br>"
 	                          "- list item &nbsp; 1. numbered item<br>"
+	                          "- [ ] task &nbsp; - [x] done task<br>"
 	                          "&gt; quote<br>"
 	                          "```<br>code block<br>```<br>"
 	                          "[text](https://...) &nbsp; [text](retroshare://...)<br>"
@@ -371,6 +383,17 @@ MarkdownTextEdit::MarkdownTextEdit(QWidget *parent)
 	layout->addWidget(mInfoLabel);
 
 	connect(mEditor, SIGNAL(textChanged()), this, SLOT(checkLength()));
+
+	connect(mUndoButton, SIGNAL(clicked()), mEditor, SLOT(undo()));
+	connect(mRedoButton, SIGNAL(clicked()), mEditor, SLOT(redo()));
+	connect(mCutButton, SIGNAL(clicked()), mEditor, SLOT(cut()));
+	connect(mCopyButton, SIGNAL(clicked()), mEditor, SLOT(copy()));
+	connect(mPasteButton, SIGNAL(clicked()), mEditor, SLOT(paste()));
+	connect(mEditor->document(), SIGNAL(undoAvailable(bool)), this, SLOT(updateEditButtons()));
+	connect(mEditor->document(), SIGNAL(redoAvailable(bool)), this, SLOT(updateEditButtons()));
+	connect(mEditor, SIGNAL(copyAvailable(bool)), this, SLOT(updateEditButtons()));
+	connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(updateEditButtons()));
+	updateEditButtons();
 	connect(mEditor, SIGNAL(textChanged()), this, SIGNAL(textChanged()));
 
 	mMessageFontSizeHandler.registerFontSize(mEditor);
@@ -562,6 +585,8 @@ void MarkdownTextEdit::setPreviewVisible(bool visible)
 		if (button != mPreviewButton && button->text() != "?")
 			button->setEnabled(!visible);
 
+	updateEditButtons();
+
 	if (mPreviewButton->isChecked() != visible) {
 		mPreviewButton->blockSignals(true);
 		mPreviewButton->setChecked(visible);
@@ -570,6 +595,18 @@ void MarkdownTextEdit::setPreviewVisible(bool visible)
 
 	if (!visible)
 		mEditor->setFocus();
+}
+
+void MarkdownTextEdit::updateEditButtons()
+{
+	const bool editing = mStack->currentWidget() == mEditor;
+	const bool selection = mEditor->textCursor().hasSelection();
+
+	mUndoButton->setEnabled(editing && mEditor->document()->isUndoAvailable());
+	mRedoButton->setEnabled(editing && mEditor->document()->isRedoAvailable());
+	mCutButton->setEnabled(editing && selection && !mEditor->isReadOnly());
+	mCopyButton->setEnabled(editing && selection);
+	mPasteButton->setEnabled(editing && mEditor->canPaste());
 }
 
 void MarkdownTextEdit::updatePreview()
@@ -647,7 +684,8 @@ void MarkdownTextEdit::toggleLinePrefix(LinePrefix type, int headingLevel)
 {
 	static const QRegularExpression quoteRe("^ {0,3}> ?");
 	static const QRegularExpression listRe("^ {0,3}([-*+]|\\d{1,9}[.)])[ \\t]+");
-	static const QRegularExpression bulletRe("^ {0,3}[-*+][ \\t]+");
+	static const QRegularExpression bulletRe("^ {0,3}[-*+][ \\t]+(?!\\[[ xX]\\](?:[ \\t]|$))");
+	static const QRegularExpression taskRe("^ {0,3}[-*+][ \\t]+\\[[ xX]\\](?:[ \\t]+|$)");
 	static const QRegularExpression orderedRe("^ {0,3}\\d{1,9}[.)][ \\t]+");
 	static const QRegularExpression headingRe("^ {0,3}#{1,6}[ \\t]+");
 
@@ -656,6 +694,7 @@ void MarkdownTextEdit::toggleLinePrefix(LinePrefix type, int headingLevel)
 	case PrefixQuote:   ownRe = quoteRe;   break;
 	case PrefixBullet:  ownRe = bulletRe;  break;
 	case PrefixOrdered: ownRe = orderedRe; break;
+	case PrefixTask:    ownRe = taskRe;    break;
 	case PrefixHeading:
 		ownRe = headingLevel > 0 ? QRegularExpression(QString("^ {0,3}#{%1}[ \\t]+").arg(headingLevel)) : headingRe;
 		break;
@@ -710,12 +749,17 @@ void MarkdownTextEdit::toggleLinePrefix(LinePrefix type, int headingLevel)
 			prefix = "> ";
 			break;
 		case PrefixBullet:
-			removePrefix(listRe);
+			removePrefix(taskRe.match(text).hasMatch() ? taskRe : listRe);
 			prefix = "- ";
 			break;
 		case PrefixOrdered:
-			removePrefix(listRe);
+			removePrefix(taskRe.match(text).hasMatch() ? taskRe : listRe);
 			prefix = QString("%1. ").arg(number++);
+			break;
+		case PrefixTask:
+			removePrefix(taskRe.match(text).hasMatch() ? taskRe : listRe);
+			// keep the state of existing tasks
+			prefix = text.contains(QRegularExpression("^ {0,3}[-*+][ \\t]+\\[[xX]\\]")) ? "- [x] " : "- [ ] ";
 			break;
 		case PrefixHeading:
 			removePrefix(headingRe);
@@ -788,16 +832,16 @@ void MarkdownTextEdit::listBullet()
 	toggleLinePrefix(PrefixBullet);
 }
 
+void MarkdownTextEdit::listTask()
+{
+	toggleLinePrefix(PrefixTask);
+}
+
 void MarkdownTextEdit::listOrdered()
 {
 	toggleLinePrefix(PrefixOrdered);
 }
 
-void MarkdownTextEdit::insertRule()
-{
-	mEditor->insertMarkdown("\n---", true);
-	mEditor->setFocus();
-}
 
 void MarkdownTextEdit::textLink()
 {

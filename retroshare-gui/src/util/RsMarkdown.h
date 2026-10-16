@@ -78,6 +78,12 @@ public:
 	static QString escapeQuotes(const QString& markdown);
 
 	/**
+	 * Task lists (GitHub): "- [ ] todo" / "- [x] done" list items are shown
+	 * with check boxes, without bullets. Applied by toHtml() to rendered HTML.
+	 */
+	static QString renderTaskLists(const QString& html);
+
+	/**
 	 * Return HTML for text that is Markdown, or text unchanged otherwise.
 	 * Use it where message bodies are loaded with QTextDocument::setHtml()
 	 * (summaries, thumbnails, tooltips...).

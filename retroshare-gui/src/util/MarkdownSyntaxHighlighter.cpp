@@ -140,7 +140,7 @@ void MarkdownSyntaxHighlighter::highlightBlock(const QString &text)
 	static const QRegularExpression quoteRe("^ {0,3}((?:>[ \\t]?)+)");
 	static const QRegularExpression headingRe("^ {0,3}#{1,6}(?:[ \\t].*)?$");
 	static const QRegularExpression ruleRe("^ {0,3}([-*_])(?:[ \\t]*\\1){2,}[ \\t]*$");
-	static const QRegularExpression listRe("^[ \\t]*(?:[-*+]|\\d{1,9}[.)])(?=[ \\t])");
+	static const QRegularExpression listRe("^[ \\t]*(?:[-*+]|\\d{1,9}[.)])(?:[ \\t]+\\[[ xX]\\])?(?=[ \\t]|$)");
 	static const QRegularExpression codeRe("(?<!`)(`+)(?!`)(.+?)(?<!`)\\1(?!`)");
 	static const QRegularExpression boldRe("(\\*\\*|__)(?=\\S)(.+?)(?<=\\S)\\1");
 	static const QRegularExpression italicRe("(?<![*\\w])\\*(?=[^*\\s])(.+?)(?<=[^*\\s])\\*(?![*\\w])"

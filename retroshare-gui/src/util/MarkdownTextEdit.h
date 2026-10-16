@@ -174,13 +174,14 @@ private slots:
 	void textHeading(int level);
 	void listBullet();
 	void listOrdered();
-	void insertRule();
+	void listTask();
 	void textLink();
 	void checkLength();
 	void updatePreview();
+	void updateEditButtons();
 
 private:
-	enum LinePrefix { PrefixQuote, PrefixBullet, PrefixOrdered, PrefixHeading };
+	enum LinePrefix { PrefixQuote, PrefixBullet, PrefixOrdered, PrefixTask, PrefixHeading };
 
 	QToolButton *addButton(const QString &icon, const QString &text, const QString &toolTip, const QKeySequence &shortcut = QKeySequence());
 	void wrapSelection(const QString &prefix, const QString &suffix, const QString &placeholder);
@@ -190,6 +191,11 @@ private:
 	QTextBrowser *mPreview;
 	QStackedWidget *mStack;
 	QWidget *mToolBar;
+	QToolButton *mUndoButton;
+	QToolButton *mRedoButton;
+	QToolButton *mCutButton;
+	QToolButton *mCopyButton;
+	QToolButton *mPasteButton;
 	QToolButton *mImageButton;
 	QToolButton *mPreviewButton;
 	QLabel *mInfoLabel;
