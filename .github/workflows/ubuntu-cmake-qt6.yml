@@ -64,7 +64,7 @@ jobs:
         libavcodec-dev libavutil-dev
         libx11-dev libxss-dev
         libxml2-dev libxslt1-dev libcurl4-openssl-dev
-        doxygen python3
+        doxygen python3 libcmark-dev
 
     - name: print working directory
       run: pwd && ls -la

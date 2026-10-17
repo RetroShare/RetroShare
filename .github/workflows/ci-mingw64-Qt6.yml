@@ -58,6 +58,7 @@ jobs:
             mingw-w64-x86_64-json-c
             mingw-w64-x86_64-libbotan
             mingw-w64-x86_64-asio
+            mingw-w64-x86_64-cmark
 
       - name: Checkout submodules
         run: |
