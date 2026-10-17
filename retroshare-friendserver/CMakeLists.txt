@@ -40,12 +40,6 @@ set(RS_VERSION_SUFFIX
 )
 
 option(
-	RS_DEVELOPMENT_BUILD
-	"Disable optimization to speed up build, enable verbose build log"
-	OFF
-)
-
-option(
 	RS_RNPLIB
 	"Enable use RNP lib for PGP"
 	ON
@@ -59,6 +53,41 @@ list(APPEND CMAKE_MODULE_PATH
 )
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 find_package(RetroShare REQUIRED)
+
+
+### build configurations
+get_property(BUILD_TYPES CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS)
+list(APPEND BUILD_TYPES
+	Release MinSizeRel RelWithDebInfo Debug BetaTest DebugO2 None
+)
+list(REMOVE_DUPLICATES BUILD_TYPES)
+set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${BUILD_TYPES})
+string(TOUPPER "${BUILD_TYPES}" BUILD_TYPES_UPPER)
+string(TOUPPER "${CMAKE_BUILD_TYPE}" BUILD_TYPE_UPPER)
+if(NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE RelWithDebInfo)
+	message(STATUS "No build type specified; defaulting to ${CMAKE_BUILD_TYPE}.")
+elseif(NOT BUILD_TYPE_UPPER IN_LIST BUILD_TYPES_UPPER)
+	message(FATAL_ERROR "Unrecognized build type: ${CMAKE_BUILD_TYPE}.")
+endif()
+get_property(LANGUAGES GLOBAL PROPERTY ENABLED_LANGUAGES)
+foreach(lang ${LANGUAGES})
+	string(APPEND CMAKE_${lang}_FLAGS_RELEASE        " -O3 -w -DNDEBUG")
+	string(APPEND CMAKE_${lang}_FLAGS_MINSIZEREL     " -Os -w -DNDEBUG")
+	string(APPEND CMAKE_${lang}_FLAGS_RELWITHDEBINFO " -O3 -g -DNDEBUG")
+	string(APPEND CMAKE_${lang}_FLAGS_DEBUG          " -O0 -g -UNDEBUG")
+	string(APPEND CMAKE_${lang}_FLAGS_BETATEST       " -O3 -g -UNDEBUG -w")
+	string(APPEND CMAKE_${lang}_FLAGS_DEBUGO2        " -O2 -g -UNDEBUG")
+	string(APPEND CMAKE_${lang}_FLAGS_NONE           "")
+endforeach()
+set(DEV_BUILD_TYPES RELWITHDEBINFO DEBUG DEBUGO2)
+set(VERSION_RELEASE "")
+set(VERSION_MINSIZEREL "")
+set(VERSION_RELWITHDEBINFO "debinfo")
+set(VERSION_BETATEST "beta")
+set(VERSION_DEBUG "debug")
+set(VERSION_DEBUGOPT "debug")
+set(VERSION_NONE "")
 
 
 ### version
@@ -84,6 +113,9 @@ else()
 	else()
 		set(PROJECT_VERSION_FULL "${PROJECT_VERSION}-unknown")
 	endif()
+	if(VERSION_${BUILD_TYPE_UPPER})
+		string(APPEND PROJECT_VERSION_FULL "-${VERSION_${BUILD_TYPE_UPPER}}")
+	endif()
 endif()
 message(STATUS "${PROJECT_NAME_PRETTY} version: ${PROJECT_VERSION_FULL}")
 
@@ -91,10 +123,6 @@ message(STATUS "${PROJECT_NAME_PRETTY} version: ${PROJECT_VERSION_FULL}")
 ### globals
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-if(RS_DEVELOPMENT_BUILD)
-	set(CMAKE_VERBOSE_MAKEFILE ON)
-	set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-endif(RS_DEVELOPMENT_BUILD)
 
 
 ### target
