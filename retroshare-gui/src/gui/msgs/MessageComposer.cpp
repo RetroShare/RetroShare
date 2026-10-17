@@ -28,7 +28,7 @@
 #include <QPrinter>
 #include <QTextList>
 #include <QColorDialog>
-#include <QTextDocumentFragment>
+#include <QTextDocument>
 #include <QTimer>
 #include <QCompleter>
 #include <QItemDelegate>
@@ -65,9 +65,9 @@
 #include "util/misc.h"
 #include "util/DateTime.h"
 #include "util/HandleRichText.h"
+#include "util/RsMarkdown.h"
 #include "util/qtthreadsutils.h"
 #include "util/RsQtVersion.h"
-#include "textformat.h"
 #include "TagsMenu.h"
 
 #define IMAGE_GROUP16    ":/images/user/group16.png"
@@ -156,29 +156,14 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     // connect up the buttons.
     connect( ui.actionSend, SIGNAL( triggered(bool)), this, SLOT( sendMessage() ), Qt::UniqueConnection );
     //connect( ui.actionReply, SIGNAL( triggered (bool)), this, SLOT( replyMessage( ) ) );
-    connect(ui.boldbtn, SIGNAL(clicked()), this, SLOT(textBold()));
-    connect(ui.underlinebtn, SIGNAL(clicked()), this, SLOT(textUnderline()));
-    connect(ui.italicbtn, SIGNAL(clicked()), this, SLOT(textItalic()));
-    connect(ui.colorbtn, SIGNAL(clicked()), this, SLOT(textColor()));
-    connect(ui.color2btn, SIGNAL(clicked()), this, SLOT(textbackgroundColor()));
-
-    connect(ui.imagebtn, SIGNAL(clicked()), this, SLOT(addImage()));
-    connect(ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
-    //connect(ui.linkbtn, SIGNAL(clicked()), this, SLOT(insertLink()));
     connect(ui.actionContactsView, SIGNAL(triggered()), this, SLOT(toggleContacts()));
     connect(ui.actionSaveas, SIGNAL(triggered()), this, SLOT(saveasDraft()));
     connect(ui.actionAttach, SIGNAL(triggered()), this, SLOT(attachFile()));
     connect(ui.titleEdit, SIGNAL(textChanged(QString)), this, SLOT(titleChanged()));
 
-    connect(ui.sizeincreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeIncrease()));
-    connect(ui.sizedecreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeDecrease()));
-    connect(ui.actionQuote, SIGNAL(triggered()), this, SLOT(blockQuote()));
-    connect(ui.codeButton, SIGNAL (clicked()), this, SLOT (toggleCode()));
-
-    connect(ui.msgText, SIGNAL( checkSpellingChanged(bool) ), this, SLOT( spellChecking(bool) ) );
-
-    connect(ui.msgText, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(currentCharFormatChanged(QTextCharFormat)));
-    connect(ui.msgText, SIGNAL(cursorPositionChanged()), this, SLOT(cursorPositionChanged()));
+    /* Markdown editor: the message is written and sent as Markdown text */
+    ui.msgText->setPreviewFlags(RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_EMBED_SMILEYS);
+    ui.msgText->setInfoVisible(false); // size is shown in the status bar
 
     connect(ui.msgText->document(), SIGNAL(modificationChanged(bool)), actionSave, SLOT(setEnabled(bool)));
     connect(ui.msgText->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
@@ -195,18 +180,18 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     actionUndo->setEnabled(ui.msgText->document()->isUndoAvailable());
     actionRedo->setEnabled(ui.msgText->document()->isRedoAvailable());
 
-    connect(actionUndo, SIGNAL(triggered()), ui.msgText, SLOT(undo()));
-    connect(actionRedo, SIGNAL(triggered()), ui.msgText, SLOT(redo()));
+    connect(actionUndo, SIGNAL(triggered()), ui.msgText->editor(), SLOT(undo()));
+    connect(actionRedo, SIGNAL(triggered()), ui.msgText->editor(), SLOT(redo()));
 
     actionCut->setEnabled(false);
     actionCopy->setEnabled(false);
 
-    connect(actionCut, SIGNAL(triggered()), ui.msgText, SLOT(cut()));
-    connect(actionCopy, SIGNAL(triggered()), ui.msgText, SLOT(copy()));
-    connect(actionPaste, SIGNAL(triggered()), ui.msgText, SLOT(paste()));
+    connect(actionCut, SIGNAL(triggered()), ui.msgText->editor(), SLOT(cut()));
+    connect(actionCopy, SIGNAL(triggered()), ui.msgText->editor(), SLOT(copy()));
+    connect(actionPaste, SIGNAL(triggered()), ui.msgText->editor(), SLOT(paste()));
 
-    connect(ui.msgText, SIGNAL(copyAvailable(bool)), actionCut, SLOT(setEnabled(bool)));
-    connect(ui.msgText, SIGNAL(copyAvailable(bool)), actionCopy, SLOT(setEnabled(bool)));
+    connect(ui.msgText->editor(), SIGNAL(copyAvailable(bool)), actionCut, SLOT(setEnabled(bool)));
+    connect(ui.msgText->editor(), SIGNAL(copyAvailable(bool)), actionCopy, SLOT(setEnabled(bool)));
 
     connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(clipboardDataChanged()));
     
@@ -251,44 +236,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 		);
     ui.friendSelectionWidget->start();
 
-    QActionGroup *grp = new QActionGroup(this);
-    connect(grp, SIGNAL(triggered(QAction*)), this, SLOT(textAlign(QAction*)));
-
-    actionAlignLeft = new QAction(QIcon(""), tr("&Left"), grp);
-    actionAlignLeft->setShortcut(Qt::CTRL + Qt::Key_L);
-    actionAlignLeft->setCheckable(true);
-    actionAlignCenter = new QAction(QIcon(""), tr("C&enter"), grp);
-    actionAlignCenter->setShortcut(Qt::CTRL + Qt::Key_E);
-    actionAlignCenter->setCheckable(true);
-    actionAlignRight = new QAction(QIcon(""), tr("&Right"), grp);
-    actionAlignRight->setShortcut(Qt::CTRL + Qt::Key_R);
-    actionAlignRight->setCheckable(true);
-    actionAlignJustify = new QAction(QIcon(""), tr("&Justify"), grp);
-    actionAlignJustify->setShortcut(Qt::CTRL + Qt::Key_J);
-    actionAlignJustify->setCheckable(true);
-    
-    QActionGroup *grp2 = new QActionGroup(this);
-    connect(grp2, SIGNAL(triggered(QAction*)), this, SLOT(textStyle(QAction*)));
-    
-    actionDisc = new QAction(QIcon(""), tr("Bullet list (disc)"), grp2);
-    actionDisc->setCheckable(true);
-    actionCircle = new QAction(QIcon(""), tr("Bullet list (circle)"), grp2);
-    actionCircle->setCheckable(true);
-    actionSquare = new QAction(QIcon(""), tr("Bullet list (square)"), grp2);
-    actionSquare->setCheckable(true);
-    actionDecimal= new QAction(QIcon(""), tr("Ordered list (decimal)"), grp2);
-    actionDecimal->setCheckable(true);
-    actionLowerAlpha = new QAction(QIcon(""), tr("Ordered list (alpha lower)"), grp2);
-    actionLowerAlpha->setCheckable(true);
-    actionUpperAlpha = new QAction(QIcon(""), tr("Ordered list (alpha upper)"), grp2);
-    actionUpperAlpha->setCheckable(true);
-    actionLowerRoman = new QAction(QIcon(""), tr("Ordered list (roman lower)"), grp2);
-    actionLowerRoman->setCheckable(true);
-    actionUpperRoman = new QAction(QIcon(""), tr("Ordered list (roman upper)"), grp2);
-    actionUpperRoman->setCheckable(true);
-
-    setupFormatActions();
-
     ui.respond_to_CB->setFlags(IDCHOOSER_ID_REQUIRED) ;
     
     /* Add filter types */
@@ -302,80 +249,12 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     if(rsIdentity->nbRegularContacts() > 0)
     	ui.filterComboBox->setCurrentIndex(3);
 
-    connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(changeFormatType(int)));
-    connect(ui.comboFont,  SIGNAL(activated(QString)), this, SLOT(textFamily(QString)));
-
-#if QT_VERSION < QT_VERSION_CHECK(5,11,0)
-    ui.comboFont->setMaximumWidth(QFontMetrics(ui.comboFont->font()).width("_")*20);
-#else
-    ui.comboFont->setMaximumWidth(QFontMetrics(ui.comboFont->font()).horizontalAdvance("_")*20);
-#endif
-
-    ui.comboSize->setEditable(true);
-    ui.comboSize->style()->polish(ui.comboSize); // Needed else QLineEdit inside QComboBox background is painted with black color.
-
-    QFontDatabase db;
-    foreach(int size, db.standardSizes())
-        ui.comboSize->addItem(QString::number(size), size);
-
-    QStyleOptionComboBox opt; QSize sh;
-    opt.initFrom(ui.comboSize);
-    opt.subControls = QStyle::SC_All;
-    opt.activeSubControls = QStyle::SC_None;
-    opt.editable = ui.comboSize->isEditable();
-    sh = ui.comboSize->style()->sizeFromContents(QStyle::CT_ComboBox, &opt, sh, ui.comboSize);
-    //+4 because there is hardcoded margins in QCommonStyle::drawControl(CE_ComboBoxLabel)
-#if QT_VERSION < QT_VERSION_CHECK(5,11,0)
-    sh.setWidth(sh.width() + ui.comboSize->fontMetrics().width("8")*2 + 4);
-#else
-    sh.setWidth(sh.width() + ui.comboSize->fontMetrics().horizontalAdvance("8")*2 + 4);
-#endif
-    ui.comboSize->setMaximumWidth(sh.width());
-    ui.comboSize->view()->setMinimumWidth(sh.width() + ui.comboSize->view()->verticalScrollBar()->minimumWidth() + 4);
-
-    connect(ui.comboSize, SIGNAL(activated(QString)),this, SLOT(textSize(QString)));
-    ui.comboSize->setCurrentIndex(ui.comboSize->findText(QString::number(QApplication::font().pointSize())));
-
-    ui.toolBarFrame->setMinimumHeight(  ui.comboStyle->height()
-                                      + ui.toolBarFrameHLayout->contentsMargins().top()
-                                      + ui.toolBarFrameHLayout->contentsMargins().bottom()
-                                      );
-
-    QMenu * alignmentmenu = new QMenu();
-    alignmentmenu->addAction(actionAlignLeft);
-    alignmentmenu->addAction(actionAlignCenter);
-    alignmentmenu->addAction(actionAlignRight);
-    alignmentmenu->addAction(actionAlignJustify);
-    ui.textalignmentbtn->setMenu(alignmentmenu);
-    
-    QMenu * formatlistmenu = new QMenu();
-    formatlistmenu->addAction(actionDisc);
-    formatlistmenu->addAction(actionCircle);
-    formatlistmenu->addAction(actionSquare);
-    formatlistmenu->addAction(actionDecimal);
-    formatlistmenu->addAction(actionLowerAlpha);
-    formatlistmenu->addAction(actionUpperAlpha);
-    formatlistmenu->addAction(actionLowerRoman);
-    formatlistmenu->addAction(actionUpperRoman);
-    ui.styleButton->setMenu(formatlistmenu);
-
-    QPixmap pxm(24,24);
-    pxm.fill(ui.msgText->palette().text().color());
-    ui.colorbtn->setIcon(pxm);
-    
-    QPixmap pxm2(24,24);
-    pxm2.fill(ui.msgText->palette().window().color());
-    ui.color2btn->setIcon(pxm2);
-
     /* Set header resize modes and initial section sizes */
     QHeaderView * _smheader = ui.msgFileList->header () ;
 
     _smheader->resizeSection(COLUMN_FILE_NAME, 200);
     _smheader->resizeSection(COLUMN_FILE_SIZE, 60);
     _smheader->resizeSection(COLUMN_FILE_HASH, 220);
-
-    QPalette palette = QApplication::palette();
-    codeBackground = palette.color( QPalette::Active, QPalette::Midlight );
 
     ui.recipientWidget->setColumnCount(COLUMN_RECIPIENT_COUNT);
 
@@ -425,14 +304,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.hashBox->setDropWidget(this);
     ui.hashBox->setAutoHide(true);
 
-    mMessageFontSizeHandler.registerFontSize(ui.msgText, [this, db] (QWidget*, int fontSize) {
-        ui.comboSize->setCurrentIndex(ui.comboSize->findData(fontSize));
-    });
-
-#if QT_VERSION < 0x040700
-    // embedded images are not supported before QT 4.7.0
-    ui.imagebtn->setVisible(false);
-#endif
 }
 
 MessageComposer::~MessageComposer()
@@ -584,6 +455,20 @@ void MessageComposer::processSettings(bool bLoad)
     pMsgDialog->show();
 
     /* window will destroy itself! */
+}
+
+static QString buildRecommendMarkdown(const std::set<RsPeerId> &sslIds)
+{
+    QString text;
+
+    for (const RsPeerId &sslId : sslIds) {
+        RetroShareLink link = RetroShareLink::createCertificate(sslId);
+        if (link.valid()) {
+            text += RsMarkdown::makeLink(link.name(), link.toString()) + "\n";
+        }
+    }
+
+    return text;
 }
 
 static QString buildRecommendHtml(const std::set<RsPeerId> &sslIds, const RsPeerId& excludeId = RsPeerId())
@@ -1114,106 +999,106 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
     return msgComposer;
 }
 
+static QString markdownLink(const RetroShareLink &link)
+{
+    return RsMarkdown::makeLink(link.name(), link.toString());
+}
+
 QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
 {
 	RetroShareLink link;
 
 	QString from;
 	if(msgInfo.msgflags & RS_MSG_DISTANT)
-	{
         link = RetroShareLink::createMessage(msgInfo.from.toGxsId(), "");
-		if (link.valid())
-		{
-			from += link.toHtml();
-		}
-	}
 	else
-	{
         link = RetroShareLink::createMessage(msgInfo.from.toRsPeerId(), "");
-		if (link.valid())
-		{
-			from += link.toHtml();
-		}
-	}
+
+	if (link.valid())
+		from = markdownLink(link);
+
     QString to,cc;
 
     for(auto m:msgInfo.destinations)
     {
-            RetroShareLink link;
+        RetroShareLink link;
 
         if(m.type()==MsgAddress::MSG_ADDRESS_TYPE_RSGXSID)
             link = RetroShareLink::createMessage(m.toGxsId(), "");
         else
             link = RetroShareLink::createMessage(m.toRsPeerId(), "");
 
-        if (link.valid())
-            if(m.mode()==MsgAddress::MSG_ADDRESS_MODE_TO)
-            {
-                if (!to.isEmpty())
-                    to += ", ";
+        if (!link.valid())
+            continue;
 
-                to += link.toHtml();
-            }
-            else if(m.mode()==MsgAddress::MSG_ADDRESS_MODE_CC)
-            {
-                if (!cc.isEmpty())
-                    cc += ", ";
+        if(m.mode()==MsgAddress::MSG_ADDRESS_MODE_TO)
+        {
+            if (!to.isEmpty())
+                to += ", ";
 
-                cc += link.toHtml();
-            }
+            to += markdownLink(link);
+        }
+        else if(m.mode()==MsgAddress::MSG_ADDRESS_MODE_CC)
+        {
+            if (!cc.isEmpty())
+                cc += ", ";
+
+            cc += markdownLink(link);
+        }
     }
 
-    QString header = QString("<span>-----%1-----").arg(tr("Original Message"));
-    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("From"), from);
-    header += QString("<font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("To"), to);
+    // Markdown, single line breaks are kept (hard breaks)
+    QString header = QString("-----%1-----\n").arg(tr("Original Message"));
+    header += QString("**%1:** %2\n").arg(tr("From"), from);
+    header += QString("**%1:** %2\n").arg(tr("To"), to);
 
     if (!cc.isEmpty()) {
-        header += QString("<font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("Cc"), cc);
+        header += QString("**%1:** %2\n").arg(tr("Cc"), cc);
     }
 
-    header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("Sent"), DateTime::formatDateTime(msgInfo.ts));
-    header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(tr("Subject"), QString::fromUtf8(msgInfo.title.c_str()));
-    header += "<br>";
+    header += QString("**%1:** %2\n").arg(tr("Sent"), DateTime::formatDateTime(msgInfo.ts));
+    header += QString("**%1:** %2\n").arg(tr("Subject"), RsMarkdown::escape(QString::fromUtf8(msgInfo.title.c_str())));
+    header += "\n";
 
     header += tr("On %1, %2 wrote:").arg(DateTime::formatDateTime(msgInfo.ts), from);
 
     return header;
 }
 
+QString MessageComposer::quoteMarkdown(const QString &msg)
+{
+    QString markdown = RsMarkdown::isHtml(msg) ? RsMarkdown::fromHtml(msg) : msg;
+    markdown.replace("\r\n", "\n");
+
+    while (markdown.endsWith('\n'))
+        markdown.chop(1);
+
+    QStringList lines = markdown.split('\n');
+    for (QString &line : lines)
+        line = line.isEmpty() ? QString(">") : QString("> ") + line;
+
+    return lines.join('\n');
+}
+
 void MessageComposer::setQuotedMsg(const QString &msg, const QString &header)
 {
-    ui.msgText->setUndoRedoEnabled(false);
+    // empty lines on top to write the answer, then header and "> " quoted message
+    QString text = "\n\n";
 
-    ui.msgText->setText(msg);
-
-    QTextBlock block = ui.msgText->document()->firstBlock();
-    while (block.isValid()) {
-        QTextCursor cursor = ui.msgText->textCursor();
-        cursor.setPosition(block.position());
-
-        QTextBlockFormat format;
-        format.setProperty(TextFormat::IsBlockQuote, true);
-        format.setLeftMargin(block.blockFormat().leftMargin() + 20);
-        format.setRightMargin(block.blockFormat().rightMargin() + 20);
-        cursor.mergeBlockFormat(format);
-
-        block = block.next();
+    if (!header.isEmpty()) {
+        // the header may come from other dialogs as HTML (forums)
+        text += Qt::mightBeRichText(header) ? RsMarkdown::fromHtml("<html><body>" + header + "</body></html>") : header;
+        text += "\n\n";
     }
 
-    ui.msgText->moveCursor(QTextCursor::Start);
-    ui.msgText->textCursor().insertBlock();
-    ui.msgText->moveCursor(QTextCursor::Start);
+    text += quoteMarkdown(msg);
 
-    if (header.isEmpty()) {
-        ui.msgText->insertHtml("<br><br>");
-    } else {
-        ui.msgText->insertHtml("<br><br>" + header + "<br>");
-    }
+    ui.msgText->setMarkdown(text);
 
-    ui.msgText->moveCursor(QTextCursor::Start);
+    QTextCursor cursor = ui.msgText->textCursor();
+    cursor.movePosition(QTextCursor::Start);
+    ui.msgText->setTextCursor(cursor);
 
-    ui.msgText->setUndoRedoEnabled(true);
-    std::cerr << "Setting modified 006 = true" << std::endl;
     ui.msgText->document()->setModified(true);
 
     ui.msgText->setFocus( Qt::OtherFocusReason );
@@ -1358,10 +1243,12 @@ void MessageComposer::setTitleText(const QString &title, enumMessageType type)
 
 void MessageComposer::setMsgText(const QString &msg, bool asHtml)
 {
-    if (asHtml) {
-        ui.msgText->setHtml(msg);
+    // the message is edited as Markdown, HTML text (links, invites, old drafts) is converted
+    if (asHtml || RsMarkdown::isHtml(msg) || Qt::mightBeRichText(msg)) {
+        ui.msgText->setMarkdown(RsMarkdown::isHtml(msg) ? RsMarkdown::fromHtml(msg)
+                                                         : RsMarkdown::fromHtml("<html><body>" + msg + "</body></html>"));
     } else {
-        ui.msgText->setText(msg);
+        ui.msgText->setMarkdown(msg);
     }
 
     ui.msgText->setFocus( Qt::OtherFocusReason );
@@ -1370,8 +1257,13 @@ void MessageComposer::setMsgText(const QString &msg, bool asHtml)
     c.movePosition(QTextCursor::End);
     ui.msgText->setTextCursor(c);
 
-    std::cerr << "Setting modified 007 = true" << std::endl;
     ui.msgText->document()->setModified(true);
+}
+
+QString MessageComposer::messageText() const
+{
+    // all mails are sent as plain text with Markdown, no HTML
+    return ui.msgText->toMarkdown();
 }
 
 void MessageComposer::sendMessage()
@@ -1398,9 +1290,7 @@ bool MessageComposer::buildMessage(MessageInfo& mi)
     // needed to send system flags with reply
     mi.msgflags = msgFlags;
 
-    QString text;
-    RsHtml::optimizeHtml(ui.msgText, text);
-    mi.msg = text.toUtf8().constData();
+    mi.msg = messageText().toUtf8().constData();
 
     int filesCount = ui.msgFileList->topLevelItemCount();
     for (int i = 0; i < filesCount; ++i) {
@@ -2086,30 +1976,9 @@ void MessageComposer::setupInsertActions()
     QMenu *menu = new QMenu(tr("&Insert"), this);
     menuBar()->addMenu(menu);
 
-    QAction *a;
-
-#if QT_VERSION >= 0x040700
-	// embedded images are not supported before QT 4.7.0
-    a = new QAction(QIcon(""), tr("&Image"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(addImage()));
+    QAction *a = new QAction(QIcon(""), tr("&Image"), this);
+    connect(a, SIGNAL(triggered()), ui.msgText, SLOT(insertImage()));
     menu->addAction(a);
-#endif
-
-    a = new QAction(QIcon(""), tr("&Horizontal Line"), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(addPostSplitter()));
-    menu->addAction(a);
-
-}
-
-void MessageComposer::setupFormatActions()
-{
-    QMenu *menu = new QMenu(tr("&Format"), this);
-    menuBar()->addMenu(menu);
-
-    menu->addAction(actionAlignLeft);
-    menu->addAction(actionAlignCenter);
-    menu->addAction(actionAlignRight);
-    menu->addAction(actionAlignJustify);
 
 }
 
@@ -2138,258 +2007,6 @@ void MessageComposer::setupContactActions()
     ui.friendSelectionWidget->addContextMenuAction(mActionContactDetails);
 }
 
-void MessageComposer::textBold()
-{
-    QTextCharFormat fmt;
-    fmt.setFontWeight(ui.boldbtn->isChecked() ? QFont::Bold : QFont::Normal);
-    mergeFormatOnWordOrSelection(fmt);
-}
-
-void MessageComposer::textUnderline()
-{
-    QTextCharFormat fmt;
-    fmt.setFontUnderline(ui.underlinebtn->isChecked());
-    mergeFormatOnWordOrSelection(fmt);
-}
-
-void MessageComposer::textItalic()
-{
-    QTextCharFormat fmt;
-    fmt.setFontItalic(ui.italicbtn->isChecked());
-    mergeFormatOnWordOrSelection(fmt);
-}
-
-void MessageComposer::textFamily(const QString &f)
-{
-    QTextCharFormat fmt;
-    fmt.setFontFamily(f);
-    mergeFormatOnWordOrSelection(fmt);
-}
-
-void MessageComposer::textSize(const QString &p)
-{
-    qreal pointSize = p.toFloat();
-    if (p.toFloat() > 0) {
-        QTextCharFormat fmt;
-        fmt.setFontPointSize(pointSize);
-        mergeFormatOnWordOrSelection(fmt);
-    }
-}
-
-void MessageComposer::changeFormatType(int styleIndex )
-{
-    ui.msgText->setFocus( Qt::OtherFocusReason );
-
-    QTextCursor cursor = ui.msgText->textCursor();
-    //QTextBlockFormat bformat = cursor.blockFormat();
-    QTextBlockFormat bformat;
-    QTextCharFormat cformat;
-
-    switch (styleIndex) {
-         default:
-            case 0:
-            bformat.setProperty( TextFormat::HtmlHeading, QVariant( 0 ) );
-            cformat.setFontWeight( QFont::Normal );
-            cformat.setProperty( QTextFormat::FontSizeAdjustment, QVariant( 0 ) );
-            break;
-        case 1:
-            bformat.setProperty( TextFormat::HtmlHeading, QVariant( 1 ) );
-            cformat.setFontWeight( QFont::Bold );
-            cformat.setProperty( QTextFormat::FontSizeAdjustment, QVariant( 3 ) );
-            break;
-        case 2:
-            bformat.setProperty( TextFormat::HtmlHeading, QVariant( 2 ) );
-            cformat.setFontWeight( QFont::Bold );
-            cformat.setProperty( QTextFormat::FontSizeAdjustment, QVariant( 2 ) );
-            break;
-        case 3:
-            bformat.setProperty( TextFormat::HtmlHeading, QVariant( 3 ) );
-            cformat.setFontWeight( QFont::Bold );
-            cformat.setProperty( QTextFormat::FontSizeAdjustment, QVariant( 1 ) );
-            break;
-        case 4:
-            bformat.setProperty( TextFormat::HtmlHeading, QVariant( 4 ) );
-            cformat.setFontWeight( QFont::Bold );
-            cformat.setProperty( QTextFormat::FontSizeAdjustment, QVariant( 0 ) );
-            break;
-        case 5:
-            bformat.setProperty( TextFormat::HtmlHeading, QVariant( 5 ) );
-            cformat.setFontWeight( QFont::Bold );
-            cformat.setProperty( QTextFormat::FontSizeAdjustment, QVariant( -1 ) );
-            break;
-        case 6:
-            bformat.setProperty( TextFormat::HtmlHeading, QVariant( 6 ) );
-            cformat.setFontWeight( QFont::Bold );
-            cformat.setProperty( QTextFormat::FontSizeAdjustment, QVariant( -2 ) );
-            break;
-    }
-    //cformat.clearProperty( TextFormat::HasCodeStyle );
-
-    cursor.beginEditBlock();
-    cursor.mergeBlockFormat( bformat );
-    cursor.select( QTextCursor::BlockUnderCursor );
-    cursor.mergeCharFormat( cformat );
-    cursor.endEditBlock();
-}
-
-void MessageComposer::textStyle(QAction *a)
-{
-    QTextCursor cursor = ui.msgText->textCursor();
-
-        QTextListFormat::Style style = QTextListFormat::ListDisc;
-        
-        if (a == actionDisc)
-                style = QTextListFormat::ListDisc;
-        else if (a == actionCircle)
-                style = QTextListFormat::ListCircle;
-        else if (a == actionSquare)
-                style = QTextListFormat::ListSquare;
-        else if (a == actionDecimal)
-                style = QTextListFormat::ListDecimal;
-        else if (a == actionLowerAlpha)
-                style = QTextListFormat::ListLowerAlpha;
-        else if (a == actionUpperAlpha)
-                style = QTextListFormat::ListUpperAlpha;
-        else if (a == actionLowerRoman)
-                style = QTextListFormat::ListLowerRoman;
-        else if (a == actionUpperRoman)
-                style = QTextListFormat::ListUpperRoman;
-
-        cursor.beginEditBlock();
-
-        QTextBlockFormat blockFmt = cursor.blockFormat();
-
-        QTextListFormat listFmt;
-
-        if (cursor.currentList()) {
-            listFmt = cursor.currentList()->format();
-        } else {
-            listFmt.setIndent(blockFmt.indent() + 1);
-            blockFmt.setIndent(0);
-            cursor.setBlockFormat(blockFmt);
-        }
-
-        listFmt.setStyle(style);
-
-        cursor.createList(listFmt);
-
-        cursor.endEditBlock();
-    /*} else {
-        // ####
-        QTextBlockFormat bfmt;
-        bfmt.setObjectIndex(-1);
-        cursor.mergeBlockFormat(bfmt);
-    }*/
-}
-
-void MessageComposer::textColor()
-{
-    QColor col = QColorDialog::getColor(ui.msgText->textColor(), this);
-    if (!col.isValid())
-        return;
-    QTextCharFormat fmt;
-    fmt.setForeground(col);
-    mergeFormatOnWordOrSelection(fmt);
-    colorChanged(col);
-}
-
-void MessageComposer::textbackgroundColor()
-{
-    QColor col2 = QColorDialog::getColor(ui.msgText->textBackgroundColor(), this);
-    if (!col2.isValid())
-        return;
-    QTextCharFormat fmt;
-    fmt.setBackground(col2);
-    mergeFormatOnWordOrSelection(fmt);
-    colorChanged2(col2);
-}
-
-void MessageComposer::textAlign(QAction *a)
-{
-    if (a == actionAlignLeft)
-        ui.msgText->setAlignment(Qt::AlignLeft);
-    else if (a == actionAlignCenter)
-        ui.msgText->setAlignment(Qt::AlignHCenter);
-    else if (a == actionAlignRight)
-        ui.msgText->setAlignment(Qt::AlignRight);
-    else if (a == actionAlignJustify)
-        ui.msgText->setAlignment(Qt::AlignJustify);
-}
-
-void MessageComposer::smileyWidget()
-{
-    Emoticons::showSmileyWidget(this, ui.emoticonButton, SLOT(addSmileys()), false);
-}
-
-void MessageComposer::addSmileys()
-{
-	QString smiley = qobject_cast<QPushButton*>(sender())->toolTip().split("|").first();
-	// add trailing space
-	smiley += QString(" ");
-	// add preceding space when needed (not at start of text or preceding space already exists)
-	QString plainText = ui.msgText->toPlainText();
-	if(!ui.msgText->textCursor().atStart() && plainText[ui.msgText->textCursor().position() - 1] != QChar(' '))
-		smiley = QString(" ") + smiley;
-	ui.msgText->textCursor().insertText(smiley);
-}
-
-void MessageComposer::currentCharFormatChanged(const QTextCharFormat &format)
-{
-    fontChanged(format.font());
-    colorChanged(format.foreground().color());
-    colorChanged2(format.background().color());
-}
-
-void MessageComposer::cursorPositionChanged()
-{
-    alignmentChanged(ui.msgText->alignment());
-}
-
-void MessageComposer::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
-{
-    QTextCursor cursor = ui.msgText->textCursor();
-    if (!cursor.hasSelection())
-        cursor.select(QTextCursor::WordUnderCursor);
-    cursor.mergeCharFormat(format);
-    ui.msgText->mergeCurrentCharFormat(format);
-}
-
-void MessageComposer::fontChanged(const QFont &f)
-{
-    ui.comboFont->setCurrentIndex(ui.comboFont->findText(QFontInfo(f).family()));
-    ui.comboSize->setCurrentIndex(ui.comboSize->findText(QString::number(f.pointSize())));
-    ui.boldbtn->setChecked(f.bold());
-    ui.italicbtn->setChecked(f.italic());
-    ui.underlinebtn->setChecked(f.underline());
-}
-
-void MessageComposer::colorChanged(const QColor &c)
-{
-    QPixmap pix(24, 24);
-    pix.fill(c);
-    ui.colorbtn->setIcon(pix);
-}
-
-void MessageComposer::colorChanged2(const QColor &c)
-{
-    QPixmap pix(24, 24);
-    pix.fill(c);
-    ui.color2btn->setIcon(pix);
-}
-
-void MessageComposer::alignmentChanged(Qt::Alignment a)
-{
-    if (a & Qt::AlignLeft) {
-        actionAlignLeft->setChecked(true);
-    } else if (a & Qt::AlignHCenter) {
-        actionAlignCenter->setChecked(true);
-    } else if (a & Qt::AlignRight) {
-        actionAlignRight->setChecked(true);
-    } else if (a & Qt::AlignJustify) {
-        actionAlignJustify->setChecked(true);
-    }
-}
-
 void MessageComposer::clipboardDataChanged()
 {
     actionPaste->setEnabled(!QApplication::clipboard()->text().isEmpty());
@@ -2406,7 +2023,7 @@ void MessageComposer::fileNew()
 void MessageComposer::fileOpen()
 {
     QString fn;
-    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_MESSAGES, tr("Open File..."), tr("HTML-Files (*.htm *.html);;All Files (*)"), fn)) {
+    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_MESSAGES, tr("Open File..."), tr("Markdown files (*.md *.txt);;HTML-Files (*.htm *.html);;All Files (*)"), fn)) {
         load(fn);
     }
 }
@@ -2422,11 +2039,10 @@ bool MessageComposer::fileSave()
     QTextStream ts(&file);
 #if QT_VERSION >= QT_VERSION_CHECK (6, 0, 0)
     ts.setEncoding(QStringConverter::Utf8);
-    ts << ui.msgText->document()->toHtml();
 #else
     ts.setCodec(QTextCodec::codecForName("UTF-8"));
-    ts << ui.msgText->document()->toHtml("UTF-8");
 #endif
+    ts << ui.msgText->toMarkdown();
     std::cerr << "Setting modified 002 = false" << std::endl;
     ui.msgText->document()->setModified(false);
     return true;
@@ -2435,7 +2051,7 @@ bool MessageComposer::fileSave()
 bool MessageComposer::fileSaveAs()
 {
     QString fn;
-    if (misc::getSaveFileName(this, RshareSettings::LASTDIR_MESSAGES, tr("Save as..."), tr("HTML-Files (*.htm *.html);;All Files (*)"), fn)) {
+    if (misc::getSaveFileName(this, RshareSettings::LASTDIR_MESSAGES, tr("Save as..."), tr("Markdown files (*.md);;All Files (*)"), fn)) {
         setCurrentFileName(fn);
         return fileSave();
     }
@@ -2454,11 +2070,11 @@ void MessageComposer::filePrint()
     QPrinter printer(QPrinter::HighResolution);
     printer.setFullPage(true);
     QPrintDialog *dlg = new QPrintDialog(&printer, this);
-    if (ui.msgText->textCursor().hasSelection())
-        dlg->setOption(QPrintDialog::PrintSelection);
     dlg->setWindowTitle(tr("Print Document"));
     if (dlg->exec() == QDialog::Accepted) {
-        ui.msgText->print(&printer);
+        QTextDocument doc;
+        doc.setHtml(ui.msgText->toHtml());
+        doc.print(&printer);
     }
     delete dlg;
 #endif
@@ -2474,7 +2090,9 @@ void MessageComposer::filePrintPdf()
         QPrinter printer(QPrinter::HighResolution);
         printer.setOutputFormat(QPrinter::PdfFormat);
         printer.setOutputFileName(fileName);
-        ui.msgText->document()->print(&printer);
+        QTextDocument doc;
+        doc.setHtml(ui.msgText->toHtml());
+        doc.print(&printer);
     }
 #endif
 }
@@ -2497,14 +2115,7 @@ bool MessageComposer::load(const QString &f)
         return false;
 
     QByteArray data = file.readAll();
-    QTextCodec *codec = Qt::codecForHtml(data);
-    QString str = codec->toUnicode(data);
-    if (Qt::mightBeRichText(str)) {
-        ui.msgText->setHtml(str);
-    } else {
-        str = QString::fromLocal8Bit(data);
-        ui.msgText->setPlainText(str);
-    }
+    setMsgText(QString::fromUtf8(data));
 
     setCurrentFileName(f);
     return true;
@@ -2549,104 +2160,6 @@ void MessageComposer::updatecontactsviewicons()
     }else{
       ui.actionContactsView->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/mail/contacts.png"));
     } 
-}
-
-void  MessageComposer::addImage()
-{
-	QString file;
-	if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Choose Image"), tr("Image Files supported (*.png *.jpeg *.jpg *.gif)"), file)) {
-		QString encodedImage;
-		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480)) {
-			QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
-			ui.msgText->textCursor().insertFragment(fragment);
-		}
-    }
-}
-
-void MessageComposer::fontSizeIncrease()
-{
-    if ( !( ui.msgText->textCursor().blockFormat().hasProperty( TextFormat::HtmlHeading ) &&
-        ui.msgText->textCursor().blockFormat().intProperty( TextFormat::HtmlHeading ) ) ) {
-        QTextCharFormat format;
-        int idx = ui.msgText->currentCharFormat().intProperty( QTextFormat::FontSizeAdjustment );
-        if ( idx < 3 ) {
-            format.setProperty( QTextFormat::FontSizeAdjustment, QVariant( ++idx ) );
-            ui.msgText->textCursor().mergeCharFormat( format );
-        }
-    }
-    ui.msgText->setFocus( Qt::OtherFocusReason );
-}
-
-void MessageComposer::fontSizeDecrease()
-{
-    if ( !( ui.msgText->textCursor().blockFormat().hasProperty( TextFormat::HtmlHeading ) &&
-        ui.msgText->textCursor().blockFormat().intProperty( TextFormat::HtmlHeading ) ) ) {
-        QTextCharFormat format;
-        int idx = ui.msgText->currentCharFormat().intProperty( QTextFormat::FontSizeAdjustment );
-        if ( idx > -1 ) {
-            format.setProperty( QTextFormat::FontSizeAdjustment, QVariant( --idx ) );
-            ui.msgText->textCursor().mergeCharFormat( format );
-        }
-    }
-    ui.msgText->setFocus( Qt::OtherFocusReason );
-}
-
-void MessageComposer::blockQuote()
-{
-    QTextBlockFormat blockFormat = ui.msgText->textCursor().blockFormat();
-    QTextBlockFormat f;
-
-    if ( blockFormat.hasProperty( TextFormat::IsBlockQuote ) &&
-         blockFormat.boolProperty( TextFormat::IsBlockQuote ) ) {
-        f.setProperty( TextFormat::IsBlockQuote, QVariant( false ) );
-        f.setLeftMargin( 0 );
-        f.setRightMargin( 0 );
-    } else {
-        f.setProperty( TextFormat::IsBlockQuote, QVariant( true ) );
-        f.setLeftMargin( 40 );
-        f.setRightMargin( 40 );
-    }
-    ui.msgText->textCursor().mergeBlockFormat( f );
-}
-
-void MessageComposer::toggleCode()
-{
-    static QString preFontFamily;
-
-    QTextCharFormat charFormat = ui.msgText->currentCharFormat();
-    QTextCharFormat f;
-
-    if ( charFormat.hasProperty( TextFormat::HasCodeStyle ) &&
-         charFormat.boolProperty( TextFormat::HasCodeStyle ) ) {
-        f.setProperty( TextFormat::HasCodeStyle, QVariant( false ) );
-        f.setBackground( defaultCharFormat.background() );
-        f.setFontFamily( preFontFamily );
-        ui.msgText->textCursor().mergeCharFormat( f );
-
-    } else {
-        preFontFamily = ui.msgText->fontFamily();
-        f.setProperty( TextFormat::HasCodeStyle, QVariant( true ) );
-        f.setBackground( codeBackground );
-        f.setFontFamily( "Dejavu Sans Mono" );
-        ui.msgText->textCursor().mergeCharFormat( f );
-    }
-    ui.msgText->setFocus( Qt::OtherFocusReason );
-}
-
-void MessageComposer::addPostSplitter()
-{
-    QTextBlockFormat f = ui.msgText->textCursor().blockFormat();
-    QTextBlockFormat f1 = f;
-
-    f.setProperty( TextFormat::IsHtmlTagSign, true );
-    f.setProperty( QTextFormat::BlockTrailingHorizontalRulerWidth,
-             QTextLength( QTextLength::PercentageLength, 80 ) );
-    if ( ui.msgText->textCursor().block().text().isEmpty() ) {
-        ui.msgText->textCursor().mergeBlockFormat( f );
-    } else {
-        ui.msgText->textCursor().insertBlock( f );
-    }
-    ui.msgText->textCursor().insertBlock( f1 );
 }
 
 void MessageComposer::attachFile()
@@ -2772,8 +2285,7 @@ void MessageComposer::addRecommend()
 	for( std::set<RsGxsId>::const_iterator it = gxsIds.begin(); it != gxsIds.end(); ++it)
 		addRecipient(TO, *it) ;
 
-	QString text = buildRecommendHtml(sslIds);
-	ui.msgText->textCursor().insertHtml(text);
+	ui.msgText->insertMarkdown(buildRecommendMarkdown(sslIds));
 	ui.msgText->setFocus(Qt::OtherFocusReason);
 }
 
@@ -2936,10 +2448,8 @@ void MessageComposer::sendInvite(const RsGxsId &to, bool autoSend)
 void MessageComposer::checkLength()
 {
 	QString text;
-	RsHtml::optimizeHtml(ui.msgText, text);
-	std::wstring msg = text.toStdWString();
-	int charlength = msg.length();
-	int charRemains = MAX_ALLOWED_GXS_MESSAGE_SIZE - msg.length();
+	int charlength = messageText().toUtf8().size();
+	int charRemains = MAX_ALLOWED_GXS_MESSAGE_SIZE - charlength;
 
 	text = tr("Message Size: %1").arg(misc::friendlyUnit(charlength));
 	lengthLabel->setText(text);
@@ -2948,9 +2458,9 @@ void MessageComposer::checkLength()
 
 	if(has_gxs) {
 		if(charRemains >= 0) {
-			text = tr("It remains %1 characters after HTML conversion.").arg(charRemains);
+			text = tr("It remains %1 characters.").arg(charRemains);
 		}else{
-			text = tr("Warning: This message is too big of %1 characters after HTML conversion.").arg((0-charRemains));
+			text = tr("Warning: This message is too big of %1 characters.").arg((0-charRemains));
 		}
 		ui.actionSend->setEnabled(charRemains>=0);
 		infoLabel->setText(text);
