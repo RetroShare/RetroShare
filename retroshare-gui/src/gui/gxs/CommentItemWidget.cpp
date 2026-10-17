@@ -25,6 +25,7 @@
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
+#include "util/RsMarkdown.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -122,6 +123,8 @@ void CommentItemWidget::setCommentText(const QString &text)
 	mFullSizeButton->setVisible(CommentText::setPreview(
 	        ui->commentTextBrowser->document(), text,
 	        ui->commentTextBrowser->viewport()->width()));
+	// "View Markdown Source" in the context menu (not for legacy HTML comments)
+	ui->commentTextBrowser->setMarkdownSource(RsMarkdown::isHtml(text) ? QString() : text);
 }
 
 void CommentItemWidget::setDateTime(const QString &datetime)

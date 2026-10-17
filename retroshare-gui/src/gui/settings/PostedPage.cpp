@@ -21,6 +21,7 @@
 #include "PostedPage.h"
 #include "ui_PostedPage.h"
 #include "rsharesettings.h"
+#include "util/misc.h"
 
 PostedPage::PostedPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags),
@@ -32,6 +33,8 @@ PostedPage::PostedPage(QWidget * parent, Qt::WindowFlags flags)
 	/* Initialize GroupFrameSettingsWidget */
 	ui->groupFrameSettingsWidget->setOpenAllInNewTabText(tr("Open each board in a new tab"));
 	ui->groupFrameSettingsWidget->setType(GroupFrameSettings::Posted);
+
+	connect(ui->loadEmoticonsPosts, SIGNAL(toggled(bool)), this, SLOT(updateLoadEmoticonsPosts()));
 }
 
 PostedPage::~PostedPage()
@@ -42,4 +45,10 @@ PostedPage::~PostedPage()
 void PostedPage::load()
 {
 	ui->groupFrameSettingsWidget->loadSettings(GroupFrameSettings::Posted);
+	whileBlocking(ui->loadEmoticonsPosts)->setChecked(Settings->getBoardsLoadEmoticons());
+}
+
+void PostedPage::updateLoadEmoticonsPosts()
+{
+	Settings->setBoardsLoadEmoticons(ui->loadEmoticonsPosts->isChecked());
 }

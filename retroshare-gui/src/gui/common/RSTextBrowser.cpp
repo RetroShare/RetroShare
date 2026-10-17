@@ -23,6 +23,7 @@
 #include "RSImageBlockWidget.h"
 #include "gui/common/FilesDefs.h"
 #include "util/imageutil.h"
+#include "util/MarkdownSyntaxHighlighter.h"
 
 #include <retroshare/rsinit.h> //To get RsAccounts
 
@@ -51,6 +52,7 @@ RSTextBrowser::RSTextBrowser(QWidget *parent) :
 	mShowImages = true;
 	mImageBlockWidget = NULL;
 	mLinkClickActive = true;
+	mMarkdownRevision = -1;
 
 	highlighter = new RsSyntaxHighlighter(this);
 
@@ -286,9 +288,26 @@ void RSTextBrowser::showImages()
 
 	mShowImages = true;
 
+	const bool markdown = hasMarkdownSource();
+
 	QString html = toHtml();
 	clear();
 	setHtml(html);
+
+	// same message, only the images changed
+	if (markdown)
+		mMarkdownRevision = document()->revision();
+}
+
+void RSTextBrowser::setMarkdownSource(const QString &markdown)
+{
+	mMarkdownSource = markdown;
+	mMarkdownRevision = document()->revision();
+}
+
+bool RSTextBrowser::hasMarkdownSource() const
+{
+	return !mMarkdownSource.isEmpty() && mMarkdownRevision == document()->revision();
 }
 
 void RSTextBrowser::resetImagesStatus(bool load)
@@ -368,6 +387,9 @@ QMenu *RSTextBrowser::createStandardContextMenuFromPoint(const QPoint &widgetPos
 	QAction *a = menu->addAction(FilesDefs::getIconFromQtResourcePath("://icons/textedit/code.png"), tr("View &Source"), this, SLOT(viewSource()));
 	a->setEnabled(!this->document()->isEmpty());
 
+	if (hasMarkdownSource())
+		menu->addAction(FilesDefs::getIconFromQtResourcePath("://icons/textedit/code.png"), tr("View &Markdown Source"), this, SLOT(viewMarkdownSource()));
+
 	if (ImageUtil::checkImage(this, widgetPos
 #ifdef RSTEXTBROWSER_CHECKIMAGE_DEBUG
 	                          , &mCursorRectStart, &mCursorRectLeft, &mCursorRectRight, &mCursorRectEnd
@@ -404,6 +426,27 @@ void RSTextBrowser::viewSource()
 	QGridLayout *gl = new QGridLayout(dialog);
 	gl->addWidget(pte,0,0,1,1);
 	dialog->setWindowTitle(tr("Document source"));
+	dialog->resize(500, 400);
+
+	dialog->exec();
+
+	delete dialog;
+}
+
+/* the message as it was written and sent (Markdown) */
+void RSTextBrowser::viewMarkdownSource()
+{
+	if (!hasMarkdownSource())
+		return;
+
+	QDialog *dialog = new QDialog(this);
+	QPlainTextEdit *pte = new QPlainTextEdit(dialog);
+	pte->setReadOnly(true);
+	pte->setPlainText(mMarkdownSource);
+	new MarkdownSyntaxHighlighter(pte->document());
+	QGridLayout *gl = new QGridLayout(dialog);
+	gl->addWidget(pte,0,0,1,1);
+	dialog->setWindowTitle(tr("Markdown source"));
 	dialog->resize(500, 400);
 
 	dialog->exec();

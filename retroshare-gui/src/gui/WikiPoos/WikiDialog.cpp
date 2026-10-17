@@ -444,6 +444,7 @@ void WikiDialog::updateWikiPage(const RsWikiSnapshot &page)
 	ui.textBrowser->setHtml(RsHtml().formatText(ui.textBrowser->document(),
 	                                            RsMarkdown::toHtml(markdown, false),
 	                                            RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_MARKDOWN));
+	ui.textBrowser->setMarkdownSource(markdown);
 
 	// Load comments for this page
 	loadComments(page.mMeta.mGroupId, page.mMeta.mMsgId);

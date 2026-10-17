@@ -41,6 +41,8 @@ GxsCreateCommentDialog::GxsCreateCommentDialog(RsGxsCommentService *service,  co
 	/* Comments are written in Markdown, the dialog shows its own size info */
 	ui->commentTextEdit->setMaxMessageSize(MAX_ALLOWED_GXS_MESSAGE_SIZE);
 	ui->commentTextEdit->setInfoVisible(false);
+	// comments are shown with emoticons (CommentText)
+	ui->commentTextEdit->setPreviewFlags(RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_EMBED_SMILEYS);
 	ui->commentTextEdit->setPlaceholderText(tr("Type in your comment"));
 	checkLength();
 

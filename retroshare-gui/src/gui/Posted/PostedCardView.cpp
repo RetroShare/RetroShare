@@ -33,6 +33,7 @@
 #include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
+#include "gui/settings/rsharesettings.h"
 #include "util/DateTime.h"
 
 #include "ui_PostedCardView.h"
@@ -302,7 +303,7 @@ void PostedCardView::fill()
 	ui->scoreLabel->setText(score);
 
 	// FIX THIS UP LATER.
-    ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_MARKDOWN));
+    ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), (Settings->getBoardsLoadEmoticons() ? RSHTML_FORMATTEXT_EMBED_SMILEYS : 0) | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_MARKDOWN));
 
 	QTextDocument doc;
 	doc.setHtml(ui->notes->text());

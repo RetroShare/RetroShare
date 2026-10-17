@@ -54,6 +54,7 @@
 #include "util/HandleRichText.h"
 #include "util/MarkdownSyntaxHighlighter.h"
 #include "util/RsMarkdown.h"
+#include "gui/common/Emoticons.h"
 #include "util/misc.h"
 
 static const int MAX_ALLOWED_GXS_MESSAGE_SIZE = 199000;
@@ -340,6 +341,12 @@ MarkdownTextEdit::MarkdownTextEdit(QWidget *parent)
 	        SIGNAL(clicked()), this, SLOT(textLink()));
 	mImageButton = addButton(":/icons/textedit/photo-of-a-landscape.png", QString(), tr("Insert image"));
 	connect(mImageButton, SIGNAL(clicked()), this, SLOT(insertImage()));
+	mEmojiButton = addButton(":/icons/textedit/smile.png", QString(), tr("Insert emoji"));
+	connect(mEmojiButton, SIGNAL(clicked()), this, SLOT(showEmojiPicker()));
+	// file attachments are handled by the dialog (forums), hidden by default
+	mAttachFileButton = addButton(":/icons/textedit/paperclip.png", QString(), tr("Attach file"));
+	mAttachFileButton->hide();
+	connect(mAttachFileButton, SIGNAL(clicked()), this, SIGNAL(attachFileRequested()));
 
 	toolLayout->addStretch();
 
@@ -489,6 +496,46 @@ void MarkdownTextEdit::setMaxMessageSize(int bytes)
 void MarkdownTextEdit::setImageButtonVisible(bool visible)
 {
 	mImageButton->setVisible(visible);
+}
+
+void MarkdownTextEdit::setAttachFileButtonVisible(bool visible)
+{
+	mAttachFileButton->setVisible(visible);
+}
+
+void MarkdownTextEdit::setEmojiButtonVisible(bool visible)
+{
+	mEmojiButton->setVisible(visible);
+}
+
+void MarkdownTextEdit::showEmojiPicker()
+{
+	Emoticons::showSmileyWidget(this, mEmojiButton, SLOT(insertEmoji()), false);
+}
+
+/* the picker buttons carry the smiley code(s) in their tool tip: ":smile:|:-)" */
+void MarkdownTextEdit::insertEmoji()
+{
+	QAbstractButton *button = qobject_cast<QAbstractButton*>(sender());
+	if (!button)
+		return;
+
+	QString code = button->toolTip().split(QLatin1Char('|')).first();
+	if (code.isEmpty())
+		return;
+
+	// codes are separate words: rendered as emoji by RsHtml (RSHTML_FORMATTEXT_EMBED_SMILEYS)
+	QTextCursor cursor = mEditor->textCursor();
+	const QString line = cursor.block().text();
+	const int pos = cursor.positionInBlock();
+	if (pos > 0 && !line.at(pos - 1).isSpace())
+		code.prepend(QLatin1Char(' '));
+	if (pos >= line.size() || !line.at(pos).isSpace())
+		code.append(QLatin1Char(' '));
+
+	cursor.insertText(code);
+	mEditor->setTextCursor(cursor);
+	mEditor->setFocus();
 }
 
 void MarkdownTextEdit::setInfoVisible(bool visible)

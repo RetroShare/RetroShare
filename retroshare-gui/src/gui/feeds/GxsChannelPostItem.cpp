@@ -34,6 +34,7 @@
 #include "util/qtthreadsutils.h"
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
+#include "gui/settings/rsharesettings.h"
 #include "util/RsMarkdown.h"
 #include "util/DateTime.h"
 #include "util/stringutil.h"
@@ -486,7 +487,7 @@ void GxsChannelPostItem::fill()
 
 void GxsChannelPostItem::fillExpandFrame()
 {
-    ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_MARKDOWN));
+    ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), (Settings->getChannelLoadEmoticons() ? RSHTML_FORMATTEXT_EMBED_SMILEYS : 0) | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_MARKDOWN));
 
 }
 

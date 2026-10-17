@@ -33,6 +33,7 @@
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
 #include "util/MarkdownTextEdit.h"
+#include "util/HandleRichText.h"
 #include "gui/feeds/SubFileItem.h"
 #include "util/rsdir.h"
 
@@ -74,6 +75,8 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
 	ui->markdownEditor->setPlaceHolderTextPosted();
+	// preview as the post will be shown
+	ui->markdownEditor->setPreviewFlags(RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_EMBED_SMILEYS);
 
 	ui->hashBox->setAutoHide(true);
 	ui->hashBox->setDefaultTransferRequestFlags(RS_FILE_REQ_ANONYMOUS_ROUTING);

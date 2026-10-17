@@ -132,6 +132,10 @@ public:
 
 	/** Hide the insert image button when the dialog has its own */
 	void setImageButtonVisible(bool visible);
+	/** Show the attach file button, the dialog handles attachFileRequested() */
+	void setAttachFileButtonVisible(bool visible);
+	/** Hide the emoji button */
+	void setEmojiButtonVisible(bool visible);
 	/** Hide the "remaining characters" label when the dialog shows its own */
 	void setInfoVisible(bool visible);
 
@@ -150,6 +154,8 @@ public:
 signals:
 	void textChanged();
 	void textSizeOk(bool ok);
+	/** The attach file button was clicked */
+	void attachFileRequested();
 
 public slots:
 	/** Set Markdown, plain text or legacy HTML (converted to Markdown) */
@@ -179,6 +185,8 @@ private slots:
 	void checkLength();
 	void updatePreview();
 	void updateEditButtons();
+	void showEmojiPicker();
+	void insertEmoji();
 
 private:
 	enum LinePrefix { PrefixQuote, PrefixBullet, PrefixOrdered, PrefixTask, PrefixHeading };
@@ -197,6 +205,8 @@ private:
 	QToolButton *mCopyButton;
 	QToolButton *mPasteButton;
 	QToolButton *mImageButton;
+	QToolButton *mEmojiButton;
+	QToolButton *mAttachFileButton;
 	QToolButton *mPreviewButton;
 	QLabel *mInfoLabel;
 

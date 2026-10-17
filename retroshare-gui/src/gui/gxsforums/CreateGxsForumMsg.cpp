@@ -31,7 +31,6 @@
 
 #include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
-#include "gui/common/Emoticons.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/Identity/IdEditDialog.h"
 #include "gui/common/FilesDefs.h"
@@ -91,11 +90,10 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	ui->postButton->setText(tr ("Update"));
 
 	ui->forumMessage->setPlaceholderText(tr ("Text"));
-	// the dialog has its own picture button and size label
-	ui->forumMessage->setImageButtonVisible(false);
+	// the dialog has its own size label; images, emoji and file attachments come from the editor toolbar
+	ui->forumMessage->setAttachFileButtonVisible(true);
 	ui->forumMessage->setInfoVisible(false);
-	ui->forumMessage->setPreviewFlags(RSHTML_FORMATTEXT_EMBED_LINKS
-	                                  | (Settings->getForumLoadEmoticons() ? RSHTML_FORMATTEXT_EMBED_SMILEYS : 0));
+	ui->forumMessage->setPreviewFlags(RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_EMBED_SMILEYS);
 
     ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/forums.png"));
 	ui->headerFrame->setHeaderText(text);
@@ -109,9 +107,7 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	// connect up the buttons.
 	connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
 	connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
-	connect(ui->emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
-	connect(ui->attachFileButton, SIGNAL(clicked()), this, SLOT(addFile()));
-	connect(ui->attachPictureButton, SIGNAL(clicked()), this, SLOT(addPicture()));
+	connect(ui->forumMessage, SIGNAL(attachFileRequested()), this, SLOT(addFile()));
 	connect(ui->forumMessage, SIGNAL(textChanged()), this, SLOT(checkLength()));
 	connect(ui->generateCheckBox, SIGNAL(toggled(bool)), ui->generateSpinBox, SLOT(setEnabled(bool)));
 
@@ -363,6 +359,7 @@ void  CreateGxsForumMsg::loadFormInformation()
 		ui->signBox->setChecked(true);
 		ui->signBox->setEnabled(false);
 		ui->signBox->hide();
+		ui->toolBarFrame->hide(); // nothing else left in it
 	}
 	else
 	{
@@ -522,22 +519,6 @@ void CreateGxsForumMsg::reject()
     QDialog::reject();
 }
 
-void CreateGxsForumMsg::smileyWidgetForums()
-{
-	Emoticons::showSmileyWidget(this, ui->emoticonButton, SLOT(addSmileys()), false);
-}
-
-void CreateGxsForumMsg::addSmileys()
-{
-	QString smiley = qobject_cast<QPushButton*>(sender())->toolTip().split("|").first();
-	// add trailing space
-	smiley += QString(" ");
-	// add preceding space when needed (not at start of text or preceding space already exists)
-	QTextCursor cursor = ui->forumMessage->textCursor();
-	if(!cursor.atStart() && !ui->forumMessage->toPlainText().at(cursor.position() - 1).isSpace())
-		smiley = QString(" ") + smiley;
-	ui->forumMessage->insertPlainText(smiley);
-}
 
 void CreateGxsForumMsg::addFile()
 {
@@ -548,11 +529,6 @@ void CreateGxsForumMsg::addFile()
 	}
 }
 
-void CreateGxsForumMsg::addPicture()
-{
-	// embedded as ![image](data:image/...;base64,...)
-	ui->forumMessage->insertImage();
-}
 
 void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
 {

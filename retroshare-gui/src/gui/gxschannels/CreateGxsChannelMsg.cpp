@@ -84,6 +84,8 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	connect(generateCheckBox, SIGNAL(toggled(bool)), generateSpinBox, SLOT(setEnabled(bool)));
 	connect(aspectRatio_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(changeAspectRatio(int)));
 	connect(markdownEditor, SIGNAL(textSizeOk(bool)),postButton, SLOT(setEnabled(bool)));
+	// preview as the post will be shown
+	markdownEditor->setPreviewFlags(RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_EMBED_SMILEYS);
 
 	channelpostButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
 	attachmentsButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/attachements.png"));

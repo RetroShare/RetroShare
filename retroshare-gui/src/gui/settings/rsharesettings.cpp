@@ -1103,6 +1103,27 @@ void RshareSettings::setForumLoadEmoticons(bool value)
 {
 	setValueToGroup("Forum", "LoadEmoticons", value);
 }
+
+/* the channel "Load Emoticons" setting (descriptions and posts) */
+bool RshareSettings::getChannelLoadEmoticons()
+{
+	return valueFromGroup("ChannelPostsWidget", "Emoteicons_ChannelDecription", true).toBool();
+}
+
+void RshareSettings::setChannelLoadEmoticons(bool value)
+{
+	setValueToGroup("ChannelPostsWidget", "Emoteicons_ChannelDecription", value);
+}
+
+bool RshareSettings::getBoardsLoadEmoticons()
+{
+	return valueFromGroup("Posted", "LoadEmoticons", false).toBool();
+}
+
+void RshareSettings::setBoardsLoadEmoticons(bool value)
+{
+	setValueToGroup("Posted", "LoadEmoticons", value);
+}
 bool RshareSettings::getForumClassicQuotes()
 {
 	return valueFromGroup("Forum", "ClassicQuotes", false).toBool();
