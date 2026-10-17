@@ -290,13 +290,13 @@ QString RsMarkdown::renderTaskLists(const QString& html)
 	QRegularExpressionMatchIterator it = taskRe.globalMatch(html);
 	while (it.hasNext()) {
 		const QRegularExpressionMatch match = it.next();
-		result += html.midRef(last, match.capturedStart() - last);
+		result += html.mid(last, int(match.capturedStart()) - last);
 		result += match.captured(1) + (match.captured(2) == " " ? unchecked : checked);
-		last = match.capturedEnd();
+		last = int(match.capturedEnd());
 	}
 	if (last == 0)
 		return html; // no task list
-	result += html.midRef(last);
+	result += html.mid(last);
 
 	// no bullets for bulleted lists made of tasks only
 	struct List { int start; int length; bool bullet; bool tasksOnly; int items; };
@@ -318,7 +318,7 @@ QString RsMarkdown::renderTaskLists(const QString& html)
 				stack.last().tasksOnly = false;
 			++stack.last().items;
 		} else if (!closing) {
-			stack.append({ tag.capturedStart(), tag.capturedLength(), name == "ul", true, 0 });
+			stack.append({ int(tag.capturedStart()), int(tag.capturedLength()), name == "ul", true, 0 });
 		} else if (!stack.isEmpty()) {
 			const List list = stack.takeLast();
 			if (list.bullet && list.tasksOnly && list.items > 0)
