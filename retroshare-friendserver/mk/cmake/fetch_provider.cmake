@@ -40,26 +40,40 @@ set_property(CACHE FETCH_DEPENDENCY_PROVIDER_MODE PROPERTY STRINGS
 	NORMAL DISABLED FIND_ONLY FETCH_ONLY FIND_FIRST FETCH_FIRST
 )
 
+set(FETCH_DEPENDENCY_PROVIDER_ORDER FIND_FIRST CACHE STRING
+	"operation mode for the Fetch dependency provider \
+		(CMake will always fall back to the built-in find_package)"
+)
+set_property(CACHE FETCH_DEPENDENCY_PROVIDER_ORDER PROPERTY STRINGS
+	FIND_FIRST FETCH_FIRST
+)
 
-### configure the default mode
-set(fetch_dependency_provider_find TRUE)
-set(fetch_dependency_provider_fetch TRUE)
-set(fetch_dependency_provider_find1st TRUE)
+
+### configure the default mode / order
 if(FETCH_DEPENDENCY_PROVIDER_MODE STREQUAL "NORMAL")
+	set(fetch_dependency_provider_find TRUE)
+	set(fetch_dependency_provider_fetch TRUE)
 elseif(FETCH_DEPENDENCY_PROVIDER_MODE STREQUAL "DISABLED")
 	set(fetch_dependency_provider_find FALSE)
 	set(fetch_dependency_provider_fetch FALSE)
 elseif(FETCH_DEPENDENCY_PROVIDER_MODE STREQUAL "FIND_ONLY")
+	set(fetch_dependency_provider_find TRUE)
 	set(fetch_dependency_provider_fetch FALSE)
 elseif(FETCH_DEPENDENCY_PROVIDER_MODE STREQUAL "FETCH_ONLY")
 	set(fetch_dependency_provider_find FALSE)
-elseif(FETCH_DEPENDENCY_PROVIDER_MODE STREQUAL "FIND_FIRST")
-	set(fetch_dependency_provider_find1st TRUE)
-elseif(FETCH_DEPENDENCY_PROVIDER_MODE STREQUAL "FETCH_FIRST")
-	set(fetch_dependency_provider_find1st FALSE)
+	set(fetch_dependency_provider_fetch TRUE)
 else()
 	message(FATAL_ERROR
 		"invalid fetch provider mode: ${FETCH_DEPENDENCY_PROVIDER_MODE}"
+	)
+endif()
+if(FETCH_DEPENDENCY_PROVIDER_ORDER STREQUAL "FIND_FIRST")
+	set(fetch_dependency_provider_find1st TRUE)
+elseif(FETCH_DEPENDENCY_PROVIDER_ORDER STREQUAL "FETCH_FIRST")
+	set(fetch_dependency_provider_find1st FALSE)
+else()
+	message(FATAL_ERROR
+		"invalid fetch provider order: ${FETCH_DEPENDENCY_PROVIDER_ORDER}"
 	)
 endif()
 
@@ -81,30 +95,47 @@ macro(fetch_provide_dependency method package)
 			"Unrecognized method for fetch_provide_dependency: ${method}"
 		)
 	endif()
-	set(FETCH_PROVIDER_${package}_MODE NORMAL CACHE STRING
+	set(FETCH_PROVIDER_${package}_MODE DEFAULT CACHE STRING
 		"control how the Fetch dependency provider handles ${package}"
 	)
 	set_property(CACHE FETCH_PROVIDER_${package}_MODE PROPERTY STRINGS
-		NORMAL DISABLED FIND_ONLY FETCH_ONLY FIND_FIRST FETCH_FIRST
+		DEFAULT NORMAL DISABLED FIND_ONLY FETCH_ONLY FIND_FIRST FETCH_FIRST
+	)
+	set(FETCH_PROVIDER_${package}_ORDER DEFAULT CACHE STRING
+		"control how the Fetch dependency provider handles ${package}"
+	)
+	set_property(CACHE FETCH_PROVIDER_${package}_ORDER PROPERTY STRINGS
+		DEFAULT FIND_FIRST FETCH_FIRST
 	)
 	set(fetch_provider_${package}_find ${fetch_dependency_provider_find})
 	set(fetch_provider_${package}_fetch ${fetch_dependency_provider_fetch})
 	set(fetch_provider_${package}_find1st ${fetch_dependency_provider_find1st})
-	if(FETCH_PROVIDER_${package}_MODE STREQUAL "NORMAL")
+	if(FETCH_PROVIDER_${package}_MODE STREQUAL "DEFAULT")
+	elseif(FETCH_PROVIDER_${package}_MODE STREQUAL "NORMAL")
+		set(fetch_provider_${package}_find TRUE)
+		set(fetch_provider_${package}_fetch TRUE)
 	elseif(FETCH_PROVIDER_${package}_MODE STREQUAL "DISABLED")
 		set(fetch_provider_${package}_find FALSE)
 		set(fetch_provider_${package}_fetch FALSE)
 	elseif(FETCH_PROVIDER_${package}_MODE STREQUAL "FIND_ONLY")
+		set(fetch_provider_${package}_find TRUE)
 		set(fetch_provider_${package}_fetch FALSE)
 	elseif(FETCH_PROVIDER_${package}_MODE STREQUAL "FETCH_ONLY")
+		set(fetch_provider_${package}_fetch TRUE)
 		set(fetch_provider_${package}_find FALSE)
-	elseif(FETCH_PROVIDER_${package}_MODE STREQUAL "FIND_FIRST")
+	else()
+		message(FATAL_ERROR
+			"invalid fetch provider mode: ${FETCH_PROVIDER_${package}_MODE}"
+		)
+	endif()
+	if(FETCH_PROVIDER_${package}_ORDER STREQUAL "DEFAULT")
+	elseif(FETCH_PROVIDER_${package}_ORDER STREQUAL "FIND_FIRST")
 		set(fetch_provider_${package}_find1st TRUE)
-	elseif(FETCH_PROVIDER_${package}_MODE STREQUAL "FETCH_FIRST")
+	elseif(FETCH_PROVIDER_${package}_ORDER STREQUAL "FETCH_FIRST")
 		set(fetch_provider_${package}_find1st FALSE)
 	else()
 		message(FATAL_ERROR
-			"invalid fetch provider mode: ${fetch_provider_${package}_mode}"
+			"invalid fetch provider order: ${FETCH_PROVIDER_${package}_ORDER}"
 		)
 	endif()
 	set(${package}_FOUND FALSE)
