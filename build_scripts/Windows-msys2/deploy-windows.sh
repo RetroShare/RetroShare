@@ -74,7 +74,7 @@ fi
 # "no Qt platform plugin could be initialized" crash at startup.
 # ------------------------------------------------------------------------------
 QT_MAJOR=""
-GUI_EXE_SRC=$(find "$BUILD_DIR" -path '*Portable*' -prune -o -name "retroshare-gui.exe" -print 2>/dev/null | head -n 1)
+GUI_EXE_SRC=$(find "$BUILD_DIR" -path "$BUILD_DIR/RetroShare-*" -prune -o -name "retroshare-gui.exe" -print 2>/dev/null | head -n 1)
 if [ -n "$GUI_EXE_SRC" ] && command -v objdump &> /dev/null; then
     if objdump -p "$GUI_EXE_SRC" 2>/dev/null | grep -qiE 'Qt6(Core|Gui|Widgets)\.dll'; then
         QT_MAJOR=6
@@ -153,8 +153,11 @@ echo "  Deploy Directory:    ${DEPLOY_DIR}"
 # Clean up previous deployment generations
 echo ">>> Cleaning up previous deployment directories..."
 # Only remove old deployment DIRECTORIES, not the .7z / .zip archives produced
-# by previous runs (which match the same pattern).
-find "$BUILD_DIR" -maxdepth 1 -type d -name "RetroShare-*-Windows-Portable*" -exec rm -rf {} + 2>/dev/null || true
+# by previous runs (which match the same pattern). The pattern must match the
+# ARCHIVE_BASE naming above: a stale deployment directory left behind here is
+# also a copy of every binary, and the "find ... -exec cp" steps below would
+# pick its outdated DLLs over the freshly built ones.
+find "$BUILD_DIR" -maxdepth 1 -type d -name "RetroShare-*" -exec rm -rf {} + 2>/dev/null || true
 mkdir -p "$DEPLOY_DIR"
 
 # 3. Create the full directory tree expected by RetroShare
@@ -174,7 +177,7 @@ touch "$DEPLOY_DIR/portable"
 # 5. Copy the executables and DLLs produced by the build
 echo ">>> Copying compiled binaries..."
 for exe in retroshare-gui.exe retroshare-service.exe retroshare-friendserver.exe; do
-    found_exe=$(find "$BUILD_DIR" -path "$DEPLOY_DIR" -prune -o -name "$exe" -print | head -n 1)
+    found_exe=$(find "$BUILD_DIR" -path "$BUILD_DIR/RetroShare-*" -prune -o -name "$exe" -print | head -n 1)
     if [ -n "$found_exe" ]; then
         echo "  Found and copying: $found_exe"
         cp "$found_exe" "$DEPLOY_DIR/"
@@ -185,15 +188,15 @@ done
 
 echo ">>> Copying local build libraries (DLLs)..."
 # Find and copy the DLLs built internally by the project (RNP, CMark, RetroShare, Restbed)
-# NB: we prune "$DEPLOY_DIR" (located under "$BUILD_DIR") to avoid re-finding the
-# DLLs already copied and mistakenly deploying a stale variant.
-find "$BUILD_DIR" -path "$DEPLOY_DIR" -prune -o -name "libcmark.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
-find "$BUILD_DIR" -path "$DEPLOY_DIR" -prune -o -name "*retroshare.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
-find "$BUILD_DIR" -path "$DEPLOY_DIR" -prune -o -name "*restbed*.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
+# NB: we prune every deployment directory under "$BUILD_DIR" (the current one and
+# any stale one) to avoid re-finding already deployed DLLs and shipping a stale variant.
+find "$BUILD_DIR" -path "$BUILD_DIR/RetroShare-*" -prune -o -name "libcmark.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
+find "$BUILD_DIR" -path "$BUILD_DIR/RetroShare-*" -prune -o -name "*retroshare.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
+find "$BUILD_DIR" -path "$BUILD_DIR/RetroShare-*" -prune -o -name "*restbed*.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
 if [ -d "supportlibs/librnp/Build" ]; then
     find "supportlibs/librnp/Build" -name "librnp.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
 fi
-find "$BUILD_DIR" -path "$DEPLOY_DIR" -prune -o -name "librnp.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
+find "$BUILD_DIR" -path "$BUILD_DIR/RetroShare-*" -prune -o -name "librnp.dll" -exec cp {} "$DEPLOY_DIR/" \; 2>/dev/null || true
 
 echo ">>> Copying RetroShare plugins..."
 if [ -d "$BUILD_DIR/plugins" ]; then
