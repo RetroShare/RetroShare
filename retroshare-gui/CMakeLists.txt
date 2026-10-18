@@ -394,9 +394,6 @@ set(BUILD_CONFIG_DIR "${PROJECT_BINARY_DIR}/cmake")
 set(INSTALL_CONFIG_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 set(TARGET_NAMESPACE retroshare)
 set(INSTALL_COMPONENT COMPONENT retroshare-gui)
-if(CMAKE_EXPERIMENTAL_EXPORT_PACKAGE_DEPENDENCIES)
-	set(EXPORT_PACKAGE_DEPENDENCIES EXPORT_PACKAGE_DEPENDENCIES)
-endif()
 
 file(GLOB INSTALL_MODULES LIST_DIRECTORIES FALSE
 	"${PROJECT_SOURCE_DIR}/mk/cmake/*"
@@ -450,6 +447,27 @@ install(TARGETS ${PROJECT_NAME}
 # If dependencies are fetched via FetchContent, then their targets might not
 # have export sets, and this prevents us from using our own export set.
 if(NOT FETCH_DEPENDENCY_PROVIDER)
+
+	if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.29)
+		set(CMAKE_EXPERIMENTAL_EXPORT_PACKAGE_DEPENDENCIES
+			1942b4fa-b2c5-4546-9385-83f254070067
+			CACHE STRING ""
+		)
+		set(EXPORT_PACKAGE_DEPENDENCIES EXPORT_PACKAGE_DEPENDENCIES)
+		set(PACKAGE_DEPENDENCIES "")
+	else()
+		set(PACKAGE_DEPENDENCIES
+			"RetroShare" "cmark" "sam3"
+		)
+		list(TRANSFORM PACKAGE_DEPENDENCIES REPLACE ".+" "find_dependency(\\0)")
+		if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.15)
+			list(PREPEND PACKAGE_DEPENDENCIES "include(CMakeFindDependencyMacro)")
+		else()
+			list(APPEND PACKAGE_DEPENDENCIES "include(CMakeFindDependencyMacro)")
+			list(REVERSE PACKAGE_DEPENDENCIES)
+		endif()
+		list(JOIN PACKAGE_DEPENDENCIES "\n" PACKAGE_DEPENDENCIES)
+	endif()
 
 	## config for install tree
 	install(EXPORT ${PROJECT_NAME}_export

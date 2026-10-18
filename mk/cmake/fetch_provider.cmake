@@ -138,7 +138,7 @@ macro(fetch_provide_dependency method package)
 			"invalid fetch provider order: ${FETCH_PROVIDER_${package}_ORDER}"
 		)
 	endif()
-	set(${package}_FOUND FALSE)
+	unset(${package}_FOUND)
 	set(fetch_provider_${package}_findargs
 		${fetch_provider_${package}_UNPARSED_ARGUMENTS}
 	)

@@ -26,6 +26,11 @@ cmake_minimum_required(VERSION 3.0...4.4)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/Modules)
 
-include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME_LOWER@-targets.cmake")
+@PACKAGE_DEPENDENCIES@
+
+include_nrs(
+	"${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME_LOWER@-targets.cmake"
+	NO_RETURN_SCOPE
+)
 
 check_required_components("${PACKAGE_FIND_NAME}")
