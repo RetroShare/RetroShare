@@ -40,7 +40,7 @@ CONFIG *= gxsdistsync
 
 # cmark (Markdown in channels, forums, boards, wiki and chat) is enabled by
 # default and links the cmark library installed on the system:
-#   MSYS2:         pacman -S mingw-w64-x86_64-cmark
+#   MSYS2:         pacman -S mingw-w64-ucrt-x86_64-cmark
 #   Debian/Ubuntu: sudo apt install libcmark-dev
 # To build the supportlibs/cmark submodule instead append the following
 # assignation to qmake command line "CONFIG+=no_rs_gui_cmark_system CONFIG+=rs_gui_cmark"

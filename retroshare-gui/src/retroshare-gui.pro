@@ -53,7 +53,7 @@ rs_gui_cmark {
 	DEFINES *= USE_CMARK
 	rs_gui_cmark_system|rs_cross_compiling {
 		# Use the system library
-		#   MSYS2:         pacman -S mingw-w64-x86_64-cmark
+		#   MSYS2:         pacman -S mingw-w64-ucrt-x86_64-cmark
 		#   Debian/Ubuntu: sudo apt install libcmark-dev
 		message("Using systems cmark")
 		LIBS *= -lcmark

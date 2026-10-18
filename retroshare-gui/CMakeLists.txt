@@ -333,7 +333,7 @@ if(RS_GUI_CMARK_SYSTEM)
 	find_path(CMARK_INCLUDE_DIR NAMES cmark.h)
 	find_library(CMARK_LIBRARY NAMES cmark libcmark)
 	if(NOT CMARK_INCLUDE_DIR OR NOT CMARK_LIBRARY)
-		message(FATAL_ERROR "RS_GUI_CMARK_SYSTEM: cmark not found (MSYS2: pacman -S mingw-w64-x86_64-cmark, Debian/Ubuntu: apt install libcmark-dev)")
+		message(FATAL_ERROR "RS_GUI_CMARK_SYSTEM: cmark not found (MSYS2: pacman -S mingw-w64-ucrt-x86_64-cmark, Debian/Ubuntu: apt install libcmark-dev)")
 	endif()
 	message(STATUS "Using system cmark ${CMARK_LIBRARY}")
 
