@@ -28,14 +28,10 @@
 #include "ui_MessageComposer.h"
 
 #include "gui/msgs/MessageInterface.h"
-#include "util/FontSizeHandler.h"
 
 class QAction;
 struct RsIdentityDetails;
 class QComboBox;
-class QFontComboBox;
-class QTextEdit;
-class QTextCharFormat;
 class RSTreeWidgetItemCompareRole;
 struct RsGxsChannelGroup;
 struct RsGxsForumGroup;
@@ -89,9 +85,6 @@ public slots:
     /* actions to take.... */
     void  sendMessage();
     void  cancelMessage();
-    void  addImage();
-    
-    void changeFormatType(int styleIndex );
 
 protected:
     void closeEvent (QCloseEvent * event);
@@ -119,33 +112,12 @@ private slots:
     //void filePrintPreview();
     void filePrintPdf();
 
-    void textBold();
-    void textUnderline();
-    void textItalic();
-    void textFamily(const QString &f);
-    void textSize(const QString &p);
-    void textStyle(QAction *a);
-    void textColor();
-    void textbackgroundColor();
-    void textAlign(QAction *a);
-    void smileyWidget();
-    void addSmileys();
-
-    void currentCharFormatChanged(const QTextCharFormat &format);
-    void cursorPositionChanged();
-
     void clipboardDataChanged();
 
     void fileHashingStarted();
     void fileHashingFinished(QList<HashedFile> hashedFiles);
 
     void attachFile();
-
-    void fontSizeIncrease();
-    void fontSizeDecrease();
-    void blockQuote();
-    void toggleCode();
-    void addPostSplitter();
 
     void titleChanged();
 
@@ -173,7 +145,11 @@ private slots:
 
 private:
     static QString buildReplyHeader(const Rs::Mail::MessageInfo &msgInfo);
+    /** Markdown "> " quote of a message (Markdown, plain text or old HTML) */
+    static QString quoteMarkdown(const QString &msg);
     bool buildMessage(Rs::Mail::MessageInfo& mi);
+    /** Text to send: plain text with Markdown */
+    QString messageText() const;
 
     void processSettings(bool bLoad);
 
@@ -181,24 +157,16 @@ private:
     static QString getRecipientEmailAddress(const RsPeerId& id,const RsPeerDetails& detail) ;
 
     void addContact(enumType type);
-    void setTextColor(const QColor& col) ;
     void setupFileActions();
     void setupEditActions();
     void setupViewActions();
     void setupInsertActions();
-    void setupFormatActions();
     void setupContactActions();
 
     bool load(const QString &f);
     bool maybeSave();
     //bool image_extension( QString nametomake );
     void setCurrentFileName(const QString &fileName);
-
-    void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
-    void fontChanged(const QFont &f);
-    void colorChanged(const QColor &c);
-    void colorChanged2(const QColor &c);
-    void alignmentChanged(Qt::Alignment a);
 
     bool sendMessage_internal(bool bDraftbox);
 
@@ -212,23 +180,11 @@ private:
     void showTagLabels();
 
     QAction *actionSave,
-    *actionAlignLeft,
-    *actionAlignCenter,
-    *actionAlignRight,
-    *actionAlignJustify,
     *actionUndo,
     *actionRedo,
     *actionCut,
     *actionCopy,
-    *actionPaste,   
-    *actionDisc,
-    *actionCircle,
-    *actionSquare,
-    *actionDecimal,
-    *actionLowerAlpha,
-    *actionUpperAlpha,
-    *actionLowerRoman,
-    *actionUpperRoman;
+    *actionPaste;
 
     QAction *contactSidebarAction;
     QAction *mActionAddTo;
@@ -241,9 +197,6 @@ private:
 
     QString fileName;
     QString nametomake;
-
-    QColor codeBackground;
-    QTextCharFormat defaultCharFormat;
 
     QHash<QString, QString> autoLinkDictionary;
     QHash<QString, QString> autoLinkTitleDictionary;
@@ -267,8 +220,6 @@ private:
 
 	bool has_gxs;
     bool mAlreadySent; // prevents a Qt bug that calls the same action twice.
-
-    MessageFontSizeHandler mMessageFontSizeHandler;
 
     /** Qt Designer generated object */
     Ui::MessageComposer ui;

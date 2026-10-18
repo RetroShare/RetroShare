@@ -11,7 +11,7 @@
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
-   <item row="1" column="0">
+   <item row="2" column="0">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -25,6 +25,25 @@
     </spacer>
    </item>
    <item row="0" column="0">
+    <widget class="QGroupBox" name="generalGroupBox">
+     <property name="title">
+      <string>General</string>
+     </property>
+     <layout class="QVBoxLayout" name="generalGroupBox_VL">
+      <item>
+       <widget class="QCheckBox" name="loadEmoticonsPosts">
+        <property name="toolTip">
+         <string>Show smiley codes like :smile: as emoticons in board posts</string>
+        </property>
+        <property name="text">
+         <string>Load emoticons in posts</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
     <widget class="QGroupBox" name="tabsGroupBox">
      <property name="title">
       <string>Tabs</string>

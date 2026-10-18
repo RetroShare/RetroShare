@@ -37,6 +37,8 @@
 #include "util/qtthreadsutils.h"
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
+#include "gui/settings/rsharesettings.h"
+#include "util/RsMarkdown.h"
 #include "util/DateTime.h"
 #include "util/stringutil.h"
 
@@ -401,7 +403,7 @@ void BoardsPostItem::fill()
 
 	{
 		QTextDocument doc;
-        doc.setHtml( QString::fromUtf8(mPost.mNotes.c_str()) );
+        doc.setHtml( RsMarkdown::renderIfMarkdown(QString::fromUtf8(mPost.mNotes.c_str())) );
 
 		ui->msgFrame->setVisible(doc.toPlainText().length() > 0);
 	}
@@ -511,7 +513,7 @@ void BoardsPostItem::readToggled(bool /*checked*/)
 
 void BoardsPostItem::fillExpandFrame()
 {
-    ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
+    ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), (Settings->getBoardsLoadEmoticons() ? RSHTML_FORMATTEXT_EMBED_SMILEYS : 0) | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_MARKDOWN));
 }
 
 void BoardsPostItem::doExpand(bool open)

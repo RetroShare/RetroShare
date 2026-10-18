@@ -43,6 +43,7 @@
 #include "util/misc.h"
 #include "util/printpreview.h"
 #include "util/HandleRichText.h"
+#include "util/RsMarkdown.h"
 #include "util/DateTime.h"
 #include "util/RsQtVersion.h"
 #include "util/qtthreadsutils.h"
@@ -714,15 +715,19 @@ void MessageWidget::fill(const std::string &msgId)
 
 	ui.subjectText->setText(QString::fromUtf8(msgInfo.title.c_str()));
 	
-	unsigned int formatTextFlag = RSHTML_FORMATTEXT_EMBED_LINKS ;
+	// Markdown messages are rendered, old HTML messages are shown as before
+	unsigned int formatTextFlag = RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_MARKDOWN ;
 
 	// embed smileys ?
 	if (Settings->valueFromGroup(QString("Messages"), QString::fromUtf8("Emoticons"), true).toBool()) {
 		formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
 	}
-    QString text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), formatTextFlag);
+    const QString msgText = QString::fromUtf8(msgInfo.msg.c_str());
+    QString text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), msgText, formatTextFlag);
 	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
 	ui.msgText->setHtml(text);
+	// "View Markdown Source" in the context menu (not for old HTML messages)
+	ui.msgText->setMarkdownSource(RsMarkdown::isHtml(msgText) ? QString() : msgText);
 
 	ui.filesText->setText(QString("%1").arg(msgInfo.count));
 	ui.filesSize->setText(QString(misc::friendlyUnit(msgInfo.size)));

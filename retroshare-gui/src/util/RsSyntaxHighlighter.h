@@ -23,6 +23,7 @@
 
 #include <QObject>
 #include <QSyntaxHighlighter>
+#include <QTextBlockFormat>
 #include <QTextEdit>
 
 class RsSyntaxHighlighter : public QSyntaxHighlighter
@@ -36,6 +37,15 @@ public:
 	RsSyntaxHighlighter(QTextEdit *parent = 0);
 	QColor textColorQuote () const;
 	QVariant textColorQuotes() const;
+
+	/** Quote nesting level of a rendered block (Markdown / HTML blockquote),
+	 *  0 when the block is not a quote */
+	static int quoteLevel(const QTextBlockFormat &blockFormat);
+	/** Left indent of one quote level of a rendered block (px): compact for
+	 *  Markdown rendered with cmark, 40 for other HTML / Qt's Markdown */
+	static int quoteIndent(const QTextBlockFormat &blockFormat);
+	/** Color of a quote level (1 = top level) from textColorQuotes */
+	QColor quoteColor(int level) const;
 
 public slots:
 	void setTextColorQuote (QColor textColorQuote);

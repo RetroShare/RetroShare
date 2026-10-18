@@ -60,6 +60,13 @@ public:
 
 	QMenu *createStandardContextMenuFromPoint(const QPoint &widgetPos);
 
+	/**
+	 * Original Markdown text of the displayed message, for "View Markdown Source".
+	 * Call it after setting the rendered HTML; it is forgotten when the content changes.
+	 */
+	void setMarkdownSource(const QString &markdown);
+	bool hasMarkdownSource() const;
+
 Q_SIGNALS:
 	void calculateContextMenuActions();
 
@@ -72,6 +79,7 @@ private slots:
 	void linkClicked(const QUrl &url);
 	void destroyImageBlockWidget();
 	void viewSource();
+	void viewMarkdownSource();
 	void saveImage();
 	void copyImage();
 
@@ -83,6 +91,12 @@ private:
 	// Hide method from QTextBrowser
 	using QTextBrowser::createStandardContextMenu;
 
+	/* Draw a colored bar per level on the left of quoted text */
+	void paintQuoteBars(const QRect &rect);
+	/* Markdown code blocks: rounded background instead of Qt's square one */
+	void prepareCodeBlocks();
+	void paintCodeBlocks(const QRect &rect);
+
 private:
 	QString mPlaceholderText;
 	bool mShowImages;
@@ -90,6 +104,9 @@ private:
 	bool mLinkClickActive;
 	RsSyntaxHighlighter *highlighter;
 	QList<QAction*> mContextMenuActions;
+	QString mMarkdownSource;
+	int mMarkdownRevision;   // document revision the Markdown source belongs to
+	int mCodeBlocksRevision; // document revision prepareCodeBlocks() handled
 #ifdef RSTEXTBROWSER_CHECKIMAGE_DEBUG
 	QRect mCursorRectStart;
 	QRect mCursorRectLeft;

@@ -34,6 +34,7 @@
 #include "util/qtthreadsutils.h"
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
+#include "gui/gxs/CommentText.h"
 #include "util/DateTime.h"
 #include "util/stringutil.h"
 #include "gui/gxschannels/CreateGxsChannelMsg.h"
@@ -364,7 +365,9 @@ void ChannelsCommentsItem::fill(bool missing_post)
     uint32_t autorized_lines = (int)floor( (ui->avatarLabel->height() - ui->button_HL->sizeHint().height())
                        / QFontMetricsF(ui->subjectLabel->font()).height());
 
-    ui->commLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(mComment.mComment.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_LINKS));
+    // Comments are Markdown: show the first lines and image previews (about 8 text lines high, click for full size)
+    const int maxImageHeight = qRound(8 * QFontMetricsF(ui->commLabel->font()).height());
+    CommentText::setFeedText(ui->commLabel, QString::fromUtf8(mComment.mComment.c_str()), autorized_lines, maxImageHeight);
     ui->nameLabel->setId(mComment.mMeta.mAuthorId);
     ui->datetimeLabel->setText(DateTime::formatDateTime(mComment.mMeta.mPublishTs));
 
@@ -375,6 +378,9 @@ void ChannelsCommentsItem::fill(bool missing_post)
     if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
         pixmap = GxsIdDetails::makeDefaultIcon(mComment.mMeta.mAuthorId,GxsIdDetails::LARGE);
     ui->avatarLabel->setPixmap(pixmap);
+
+    // the comment (and its image previews) changes the item height
+    emit sizeChanged(this);
 }
 
 QString ChannelsCommentsItem::messageName()

@@ -68,7 +68,7 @@
            <number>0</number>
           </property>
           <item row="2" column="0">
-           <widget class="RichTextEdit" name="RichTextEditWidget" native="true"/>
+           <widget class="MarkdownTextEdit" name="markdownEditor" native="true"/>
           </item>
          </layout>
         </widget>
@@ -683,9 +683,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>RichTextEdit</class>
+   <class>MarkdownTextEdit</class>
    <extends>QWidget</extends>
-   <header>util/RichTextEdit.h</header>
+   <header>util/MarkdownTextEdit.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

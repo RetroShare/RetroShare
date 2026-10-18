@@ -50,10 +50,7 @@ private slots:
 	/* actions to take.... */
 	void createMsg();
 
-	void smileyWidgetForums();
-	void addSmileys();
 	void addFile();
-	void addPicture();
 	void checkLength();
 	void reject();
 
