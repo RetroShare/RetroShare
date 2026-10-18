@@ -457,7 +457,7 @@ if(NOT FETCH_DEPENDENCY_PROVIDER)
 		set(PACKAGE_DEPENDENCIES "")
 	else()
 		set(PACKAGE_DEPENDENCIES
-			"RetroShare" "cmark" "sam3"
+			"RetroShare" "cmark" "sam3" "Qt${QT_VERSION_MAJOR}"
 		)
 		list(TRANSFORM PACKAGE_DEPENDENCIES REPLACE ".+" "find_dependency(\\0)")
 		if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.15)
