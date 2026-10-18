@@ -334,6 +334,28 @@ QString RsMarkdown::renderTaskLists(const QString& html)
 	return result;
 }
 
+/* Code background, like GitHub: a translucent gray readable on light and dark
+ * themes (alpha 0..255). Qt has no padding for blocks, code blocks are put in
+ * a one-cell table. Raw HTML is dropped by cmark, so <pre>/<code> only come
+ * from Markdown code. */
+static QString styleCode(QString html)
+{
+	const QString background = RsMarkdown::codeBackground();
+
+	// inline code spans (block code is <pre><code ...>)
+	static const QRegularExpression inlineCodeRe(QStringLiteral("(?<!<pre>)<code>"));
+	html.replace(inlineCodeRe, QString("<code style=\"background-color:%1;\">").arg(background));
+
+	// cmark ends code blocks with a line break: Qt would show an empty line
+	html.replace(QLatin1String("\n</code></pre>"), QLatin1String("</code></pre>"));
+	html.replace(QLatin1String("<pre>"),
+	             QString("<table width=\"100%\" cellspacing=\"0\" cellpadding=\"8\" style=\"background-color:%1; margin-top:4px; margin-bottom:4px;\">"
+	                     "<tr><td><pre style=\"margin:0px;\">").arg(background));
+	html.replace(QLatin1String("</pre>"), QLatin1String("</pre></td></tr></table>"));
+
+	return html;
+}
+
 QString RsMarkdown::toHtml(const QString& markdown, bool hardBreaks, bool classicQuotes)
 {
 	const QString source = linkifyBareUrls(classicQuotes ? escapeQuotes(markdown) : markdown);
@@ -362,7 +384,7 @@ QString RsMarkdown::toHtml(const QString& markdown, bool hardBreaks, bool classi
 	body.replace(QLatin1String("<blockquote>"),
 	             QString("<blockquote style=\"margin-left:%1px; margin-right:0px\">").arg(QUOTE_INDENT));
 
-	return QLatin1String("<html><body>") + renderTaskLists(body) + QLatin1String("</body></html>");
+	return QLatin1String("<html><body>") + styleCode(renderTaskLists(body)) + QLatin1String("</body></html>");
 #else
 	Q_UNUSED(hardBreaks) // Qt's parser always uses soft breaks
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)

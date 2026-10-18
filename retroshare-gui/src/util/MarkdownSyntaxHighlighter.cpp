@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include "util/MarkdownSyntaxHighlighter.h"
+#include "util/RsMarkdown.h"
 
 #include <QFont>
 #include <QFontDatabase>
@@ -70,6 +71,7 @@ MarkdownSyntaxHighlighter::MarkdownSyntaxHighlighter(QTextDocument *document)
 	mCodeFormat.setFontFamily(QFontDatabase::systemFont(QFontDatabase::FixedFont).family());
 	mCodeFormat.setFontFixedPitch(true);
 	mCodeFormat.setForeground(dimmed);
+	mCodeFormat.setBackground(RsMarkdown::codeBackgroundColor()); // same as rendered code
 
 	mLinkFormat.setForeground(QGuiApplication::palette().color(QPalette::Link));
 	mLinkFormat.setFontUnderline(true);

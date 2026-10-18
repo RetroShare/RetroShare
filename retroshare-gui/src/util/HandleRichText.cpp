@@ -1113,11 +1113,12 @@ static void styleCreate(QDomDocument& doc
 			}
 
 			if (flag & (RSHTML_FORMATTEXT_REMOVE_COLOR | RSHTML_FORMATTEXT_FIX_COLORS)) {
-				if (key == "background" || key == "background-color") {
+				if ((key == "background" || key == "background-color") && val != RsMarkdown::codeBackground()) {
 					// Remove background color because if we change the text color,
 					// it can become unreadable on the original background.
 					// Also, FIX_COLORS is intended to display text on the default
 					// background color of the operating system.
+					// Markdown code background is kept: translucent, readable on any background.
 					continue;
 				}
 			}

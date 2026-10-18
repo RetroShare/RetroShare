@@ -21,6 +21,7 @@
 #ifndef RS_MARKDOWN_H
 #define RS_MARKDOWN_H
 
+#include <QColor>
 #include <QString>
 
 /**
@@ -52,6 +53,14 @@ public:
 	 *  left and right, the rendered Markdown quotes use a compact indent,
 	 *  RSTextBrowser draws the quote bar inside it. */
 	static constexpr int QUOTE_INDENT = 16;
+
+	/** Background of code spans and code blocks (CSS color), like GitHub: a
+	 *  translucent gray readable on light and dark themes. RsHtml keeps it
+	 *  when it removes colors of messages (forums...). */
+	static QString codeBackground() { return QStringLiteral("rgba(135,145,155,56)"); }
+	static QColor codeBackgroundColor() { return QColor(135, 145, 155, 56); }
+	/** Corner radius of code blocks drawn by RSTextBrowser (px) */
+	static constexpr int CODE_RADIUS = 6;
 
 	/** True when the GUI was compiled against libcmark */
 	static bool hasCMark();

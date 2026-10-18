@@ -24,6 +24,7 @@
 #include "gui/common/FilesDefs.h"
 #include "util/imageutil.h"
 #include "util/MarkdownSyntaxHighlighter.h"
+#include "util/RsMarkdown.h"
 
 #include <retroshare/rsinit.h> //To get RsAccounts
 
@@ -37,6 +38,7 @@
 #include <QPainter>
 #include <QPlainTextEdit>
 #include <QTextBlock>
+#include <QTextTable>
 #include <QTextDocumentFragment>
 #include <QScrollBar>
 #include <QRegExp>
@@ -53,6 +55,7 @@ RSTextBrowser::RSTextBrowser(QWidget *parent) :
 	mImageBlockWidget = NULL;
 	mLinkClickActive = true;
 	mMarkdownRevision = -1;
+	mCodeBlocksRevision = -1;
 
 	highlighter = new RsSyntaxHighlighter(this);
 
@@ -102,6 +105,9 @@ void RSTextBrowser::setPlaceholderText(const QString &text)
 
 void RSTextBrowser::paintEvent(QPaintEvent *event)
 {
+	prepareCodeBlocks();
+	paintCodeBlocks(event->rect());
+
 	QTextBrowser::paintEvent(event);
 
 	paintQuoteBars(event->rect());
@@ -135,6 +141,102 @@ void RSTextBrowser::paintEvent(QPaintEvent *event)
 	painter.setPen(pen);
 	painter.drawRect(mCursorRectEnd);
 #endif
+}
+
+/* marks the code block tables whose background is painted by paintCodeBlocks() */
+static const int CodeBlockProperty = QTextFormat::UserProperty + 0x5243;
+
+static void findCodeBlocks(QTextFrame *frame, QList<QTextTable*> &tables)
+{
+	for (QTextFrame *child : frame->childFrames()) {
+		if (QTextTable *table = qobject_cast<QTextTable*>(child)) {
+			if (table->format().boolProperty(CodeBlockProperty))
+				tables.append(table);
+		}
+		findCodeBlocks(child, tables);
+	}
+}
+
+/**
+ * Markdown code blocks are one-cell tables with the code background
+ * (RsMarkdown). Qt rich text has no border-radius: remove the square table
+ * background once and let paintCodeBlocks() draw it with rounded corners,
+ * like GitHub. Other views (labels...) keep the square background.
+ */
+void RSTextBrowser::prepareCodeBlocks()
+{
+	QTextDocument *doc = document();
+	const int revision = doc->revision();
+	if (revision == mCodeBlocksRevision)
+		return;
+
+	const bool markdownSourceValid = (mMarkdownRevision == revision);
+	const QColor codeColor = RsMarkdown::codeBackgroundColor();
+
+	QList<QTextFrame*> frames;
+	frames.append(doc->rootFrame());
+	while (!frames.isEmpty()) {
+		QTextFrame *frame = frames.takeFirst();
+		for (QTextFrame *child : frame->childFrames()) {
+			frames.append(child);
+
+			QTextTable *table = qobject_cast<QTextTable*>(child);
+			if (!table)
+				continue;
+
+			QTextTableFormat format = table->format();
+			if (format.background().style() == Qt::NoBrush || format.background().color() != codeColor)
+				continue;
+
+			format.setBackground(Qt::NoBrush);
+			format.setProperty(CodeBlockProperty, true);
+			table->setFormat(format);
+		}
+	}
+
+	// changing formats increases the revision: it is still the same text
+	mCodeBlocksRevision = doc->revision();
+	if (markdownSourceValid)
+		mMarkdownRevision = mCodeBlocksRevision;
+}
+
+void RSTextBrowser::paintCodeBlocks(const QRect &rect)
+{
+	QTextDocument *doc = document();
+	QAbstractTextDocumentLayout *layout = doc->documentLayout();
+	if (!layout || doc->isEmpty())
+		return;
+
+	QList<QTextTable*> tables;
+	findCodeBlocks(doc->rootFrame(), tables);
+	if (tables.isEmpty())
+		return;
+
+	const QPointF offset(horizontalScrollBar()->value(), verticalScrollBar()->value());
+	const QRectF visible = QRectF(rect).translated(offset); // document coordinates
+
+	QPainter painter(viewport());
+	painter.setRenderHint(QPainter::Antialiasing);
+	painter.translate(-offset);
+	painter.setPen(Qt::NoPen);
+	painter.setBrush(RsMarkdown::codeBackgroundColor());
+
+	for (QTextTable *table : tables) {
+		// box = text of the cell + cell padding (frameBoundingRect() of tables
+		// is not reliable across Qt versions, block rects are)
+		const QTextTableCell cell = table->cellAt(0, 0);
+		if (!cell.isValid())
+			continue;
+
+		const QRectF first = layout->blockBoundingRect(cell.firstCursorPosition().block());
+		const QRectF last = layout->blockBoundingRect(cell.lastCursorPosition().block());
+		const qreal padding = table->format().cellPadding();
+
+		const QRectF box = QRectF(first.topLeft(), QPointF(qMax(first.right(), last.right()), last.bottom()))
+		                       .adjusted(-padding, -padding, padding, padding);
+		if (box.intersects(visible))
+			painter.drawRoundedRect(box, RsMarkdown::CODE_RADIUS, RsMarkdown::CODE_RADIUS);
+	}
 }
 
 /**

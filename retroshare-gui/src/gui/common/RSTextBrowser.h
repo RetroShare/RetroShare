@@ -93,6 +93,9 @@ private:
 
 	/* Draw a colored bar per level on the left of quoted text */
 	void paintQuoteBars(const QRect &rect);
+	/* Markdown code blocks: rounded background instead of Qt's square one */
+	void prepareCodeBlocks();
+	void paintCodeBlocks(const QRect &rect);
 
 private:
 	QString mPlaceholderText;
@@ -103,6 +106,7 @@ private:
 	QList<QAction*> mContextMenuActions;
 	QString mMarkdownSource;
 	int mMarkdownRevision;   // document revision the Markdown source belongs to
+	int mCodeBlocksRevision; // document revision prepareCodeBlocks() handled
 #ifdef RSTEXTBROWSER_CHECKIMAGE_DEBUG
 	QRect mCursorRectStart;
 	QRect mCursorRectLeft;
