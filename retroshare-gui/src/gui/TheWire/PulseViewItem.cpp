@@ -640,6 +640,16 @@ QPixmap WireRoundedPixmap(const QPixmap &src, int w, int h, int radius)
 	return out;
 }
 
+void WireFitButtonText(QAbstractButton *button)
+{
+	if (!button) {
+		return;
+	}
+	// text width + room for the padding of the qss button styles.
+	int textWidth = button->fontMetrics().boundingRect(button->text()).width();
+	button->setMinimumWidth(textWidth + 36);
+}
+
 void WireStyleActionButton(QToolButton *button, bool showText)
 {
 	if (!button) {

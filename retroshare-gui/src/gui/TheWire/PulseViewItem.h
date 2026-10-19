@@ -25,6 +25,7 @@
 #include <QPixmap>
 
 class QToolButton;
+class QAbstractButton;
 
 #include <retroshare/rswire.h>
 
@@ -172,6 +173,7 @@ QString WireShortId(const std::string &id);             // first 8 chars of an i
 QPixmap WireRoundPixmap(const QPixmap &src, int size);  // circular avatar
 QPixmap WireRoundedPixmap(const QPixmap &src, int w, int h, int radius); // cropped, rounded corners
 void    WireStyleActionButton(QToolButton *button, bool showText = true); // colors come from the qss stylesheets
+void    WireFitButtonText(QAbstractButton *button); // qss padding is not counted by Qt: avoid elided text ("F...w")
 
 
 #endif

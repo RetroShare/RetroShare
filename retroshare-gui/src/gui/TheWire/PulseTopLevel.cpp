@@ -99,6 +99,7 @@ void PulseTopLevel::applyFeedStyle()
 	// The counts are on the action buttons, so the extra stats row is not needed.
 	widget_replies->hide();
 	line_1->hide();
+	WireFitButtonText(followButton);
 	widget_prefix->setMinimumHeight(0);
 	widget_header->setMinimumHeight(0);
 	widget_publish->setMinimumHeight(0);

@@ -179,6 +179,9 @@ void PulseViewGroup::applyProfileStyle()
 	toolButton_copyProfileLink->setText(tr("Copy link"));
 
 	followButton->setText(tr("Follow"));
+	WireFitButtonText(followButton);
+	WireFitButtonText(toolButton_copyProfileLink);
+	WireFitButtonText(editButton);
 
 	QLabel *statLabels[] = { extra_pulses_Label, extra_replies_Label, extra_republishes_Label,
 	                         extra_likes_Label, extra_following_Label, extra_followers_Label };

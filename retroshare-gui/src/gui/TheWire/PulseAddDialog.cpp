@@ -20,6 +20,7 @@
 
 #include <iostream>
 #include <QtGui>
+#include <QMessageBox>
 
 #include "PulseReply.h"
 #include "gui/gxs/GxsIdDetails.h"
@@ -210,6 +211,13 @@ void PulseAddDialog::pulseTextChanged()
 {
 	std::string pulseText = ui.textEdit_Pulse->toPlainText().toStdString();
 	bool enable = (pulseText.size() > 0) && (pulseText.size() < PULSE_MAX_SIZE);
+
+	// A reply can only be posted once the parent pulse is loaded (setReplyTo() fetches it
+	// in the background). Before, typing enabled "Post" while it was still loading and the
+	// click was silently ignored ("reply data not ready yet").
+	if (mIsReply && mReplyToPulse.mMeta.mGroupId.isNull()) {
+		enable = false;
+	}
 	ui.postButton->setEnabled(enable);
 }
 
@@ -240,6 +248,7 @@ void PulseAddDialog::setReplyTo(const RsWirePulse &pulse, RsWirePulseSPtr pPulse
 	{
 		ui.postButton->setText(tr("Reply to Pulse"));
 		ui.textEdit_Pulse->setPlaceholderText(tr("Pulse your reply"));
+		pulseTextChanged(); // parent loaded: enable "Post" if text was typed meanwhile
 	}
 	else
 	{
@@ -462,10 +471,16 @@ void PulseAddDialog::postReplyPulse()
 		pPulse->mImage4 = mReplyToPulse.mImage4;
 	}
 
-    RsThread::async([this, pPulse](){
+	// some pulses have no OrigMsgId, use the MsgId then (same fallback as libretroshare).
+	RsGxsMessageId replyToMsgId = mReplyToPulse.mMeta.mOrigMsgId;
+	if (replyToMsgId.isNull()) {
+		replyToMsgId = mReplyToPulse.mMeta.mMsgId;
+	}
+
+    RsThread::async([this, pPulse, replyToMsgId](){
 
         if (!rsWire->createReplyPulse(mReplyToPulse.mMeta.mGroupId,
-                mReplyToPulse.mMeta.mOrigMsgId,
+                replyToMsgId,
                 mGroup.mMeta.mGroupId,
                 mReplyType,
                 pPulse))
@@ -476,6 +491,9 @@ void PulseAddDialog::postReplyPulse()
             {
                 setCursor(Qt::ArrowCursor);
                 ui.postButton->setEnabled(true);
+                QMessageBox::warning(this, tr("RetroShare"),
+                    tr("Could not post the pulse.\nYou can only reply to, republish or like pulses of Wire groups you follow."),
+                    QMessageBox::Ok, QMessageBox::Ok);
             }, this);
             return;
         }

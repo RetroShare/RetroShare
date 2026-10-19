@@ -109,6 +109,8 @@ void PulseReply::applyFeedStyle()
 	label_republishes->hide();
 	label_likes->hide();
 
+	WireFitButtonText(followButton);
+
 	widget_actions->setMinimumHeight(0);
 	widget_actions->setMaximumWidth(425);
 	plainFrame_GL->setAlignment(widget_actions, Qt::AlignLeft);

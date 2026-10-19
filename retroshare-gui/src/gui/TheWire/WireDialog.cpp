@@ -2297,11 +2297,13 @@ void WireDialog::updateGroupsToFollow()
 		QToolButton *follow = new QToolButton(row);
 		follow->setText(tr("Follow"));
 		follow->setObjectName("followButton"); // existing follow button style of default.qss
+		WireFitButtonText(follow);
 		follow->setCursor(Qt::PointingHandCursor);
 		connect(follow, &QToolButton::clicked, this, [this, groupId, follow]() {
 			RsGxsGroupId id = groupId;
 			subscribe(id);
 			follow->setText(tr("Following"));
+			WireFitButtonText(follow);
 			follow->setEnabled(false);
 		});
 		rowLayout->addWidget(follow);
@@ -2466,14 +2468,20 @@ void WireDialog::showReplyBox(PulseViewItem *after, RsWirePulseSPtr pulse)
 		return;
 	}
 
-	// a REF pulse can't be replied to (same rule as PulseDataItem::actionReply).
-	if (pulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE) {
+	// a REF pulse can't be replied to (same rule as PulseDataItem::actionReply),
+	// and libretroshare only accepts replies to groups we follow (or own).
+	bool followed = pulse->mGroupPtr && (pulse->mGroupPtr->mMeta.mSubscribeFlags &
+		(GXS_SERV::GROUP_SUBSCRIBE_ADMIN | GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED));
+	if ((pulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE) || !followed) {
 		mReplyBox->hide();
 		return;
 	}
 
 	mReplyToGroupId = pulse->mMeta.mGroupId;
 	mReplyToMsgId = pulse->mMeta.mOrigMsgId;
+	if (mReplyToMsgId.isNull()) {
+		mReplyToMsgId = pulse->mMeta.mMsgId;
+	}
 
 	// place it right below the pulse.
 	QBoxLayout *layout = ui.verticalLayout_2;
@@ -2538,7 +2546,9 @@ void WireDialog::postInlineReply()
 			if (ok) {
 				mReplyEdit->clear();
 			} else {
-				QMessageBox::warning(this, tr("RetroShare"), tr("Could not post the reply."), QMessageBox::Ok, QMessageBox::Ok);
+				QMessageBox::warning(this, tr("RetroShare"),
+					tr("Could not post the reply.\nYou can only reply to pulses of Wire groups you follow."),
+					QMessageBox::Ok, QMessageBox::Ok);
 			}
 			replyTextChanged();
 		}, this);
