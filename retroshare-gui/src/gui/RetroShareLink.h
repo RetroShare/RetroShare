@@ -77,7 +77,8 @@ class RetroShareLink
 			TYPE_FILE_TREE     = 0x0d,
 			TYPE_CHAT_ROOM     = 0x0e,
 			TYPE_WIRE          = 0x0f,
-			TYPE_CIRCLES        = 0x10
+			TYPE_CIRCLES       = 0x10,
+			TYPE_WIKI          = 0x11
 		};
 
 	public:
