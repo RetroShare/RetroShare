@@ -115,6 +115,13 @@ void PulseReply::applyFeedStyle()
 
 }
 
+void PulseReply::showReferenceHeader(bool show)
+{
+	if (!show) {
+		widget_reply_header->setVisible(false);
+	}
+}
+
 void PulseReply::showReplyLine(bool enable)
 {
 	line_replyLine->setVisible(enable);

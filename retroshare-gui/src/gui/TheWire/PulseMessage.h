@@ -35,6 +35,7 @@ public:
 	void setup(RsWirePulseSPtr pulse);
 	void setMessage(QString msg);
 	void setRefImageCount(uint32_t count);
+	void setLargeText(bool large); // detail view: bigger text, like Twitter
 
 private slots:
 	void viewPictureOne();

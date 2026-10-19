@@ -95,9 +95,18 @@ void PulseTopLevel::applyFeedStyle()
 	label_republishes->hide();
 	label_likes->hide();
 
+	// Twitter detail view: date, divider, action row over the full width.
+	// The counts are on the action buttons, so the extra stats row is not needed.
+	widget_replies->hide();
+	line_1->hide();
+	widget_prefix->setMinimumHeight(0);
+	widget_header->setMinimumHeight(0);
+	widget_publish->setMinimumHeight(0);
 	widget_actions->setMinimumHeight(0);
-	widget_actions->setMaximumWidth(425);
-	plainFrame_VL->setAlignment(widget_actions, Qt::AlignLeft);
+	widget_actionsFollow->setMinimumHeight(0);
+	plainFrame_VL->setSpacing(6);
+
+	widget_message->setLargeText(true);
 
 
 }

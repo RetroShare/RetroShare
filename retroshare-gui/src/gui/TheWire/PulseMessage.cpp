@@ -138,6 +138,13 @@ void PulseMessage::setMessage(QString msg)
 	textBrowser->setVisible(!msg.trimmed().isEmpty());
 }
 
+void PulseMessage::setLargeText(bool large)
+{
+	QFont f = textBrowser->font();
+	f.setPointSizeF(large ? 13.5 : 11);
+	textBrowser->setFont(f);
+}
+
 void PulseMessage::setRefImageCount(uint32_t count)
 {
 	QString msg = "Follow to see Image";

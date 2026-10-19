@@ -42,6 +42,7 @@ class UIStateHelper;
 class GxsMessageFrameWidget;
 class RsGxsIfaceHelper;
 class QTabBar;
+class QFrame;
 class QTextEdit;
 class QLabel;
 class QLineEdit;
@@ -177,6 +178,8 @@ private slots:
 	void updateNetworkCard();
 	void showOtherGroups();
 	void showOwnProfile();
+	void replyTextChanged();
+	void postInlineReply();
 
 protected:
 	void resizeEvent(QResizeEvent *event) override;
@@ -186,6 +189,8 @@ private:
 	void setupComposeBox();
 	void setupSidebar();
 	void setupLeftNavigation();
+	void setupReplyBox();
+	void showReplyBox(PulseViewItem *after, RsWirePulseSPtr pulse);
 	void setEmptyFeedMessage(const QString &text);
 	void setComposeVisible(bool visible);
 	void updateHashtags(const std::list<RsWirePulseSPtr> &pulses);
@@ -197,7 +202,8 @@ private:
 	void addGroup(const RsWireGroup &group);
 
 	void deleteGroups();
-	void showGroups(bool addToHistory = true);
+	void showGroups(bool addToHistory = true, bool loadPulses = true);
+	void restoreScrollPosition();
 	void showSelectedGroups();
 	void updateGroups(const std::vector<RsWireGroup> &groups);
 
@@ -265,6 +271,15 @@ private:
 	QLabel      *mNetworkNewest = nullptr;
 	QTimer      *mNetworkTimer = nullptr;
 	QLabel      *mEmptyFeedLabel = nullptr;
+	int          mRestoreScroll = -1; // scroll position to restore after a background refresh
+
+	// inline "Post your reply" box of the pulse (thread) view.
+	QFrame      *mReplyBox = nullptr;
+	QLabel      *mReplyAvatar = nullptr;
+	QTextEdit   *mReplyEdit = nullptr;
+	QPushButton *mReplyPost = nullptr;
+	RsGxsGroupId   mReplyToGroupId;
+	RsGxsMessageId mReplyToMsgId;
 };
 
 #endif

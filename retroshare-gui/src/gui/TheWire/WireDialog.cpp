@@ -57,6 +57,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QFrame>
+#include <QScrollBar>
 #include <QResizeEvent>
 #include <QRegularExpression>
 #include <QSet>
@@ -216,6 +217,7 @@ WireDialog::WireDialog(QWidget *parent)
 	setupComposeBox();
 	setupSidebar();
 	setupLeftNavigation();
+	setupReplyBox();
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
@@ -814,7 +816,7 @@ void WireDialog::showSelectedGroups()
 	}
 }
 
-void WireDialog::showGroups(bool addToHistory)
+void WireDialog::showGroups(bool addToHistory, bool loadPulses)
 {
 	deleteGroups();
 
@@ -879,7 +881,9 @@ void WireDialog::showGroups(bool addToHistory)
 		allGroupIds.push_back(group.mMeta.mGroupId);
 	}
 
-	requestGroupsPulses(allGroupIds, addToHistory);
+	if (loadPulses) {
+		requestGroupsPulses(allGroupIds, addToHistory);
+	}
 }
 
 
@@ -905,7 +909,36 @@ void WireDialog::requestGroupData()
 		{
 			mRequestGroupDataInProgress = false;
 			updateGroups(groups);
-			showGroups(false); // Background update, don't add to history
+
+			// Background update (new pulse, reply, like...): refresh the view the user
+			// is looking at instead of always jumping back to the feed, and keep the scroll position.
+			mRestoreScroll = ui.scrollArea->verticalScrollBar()->value();
+
+			bool haveView = (mHistoryIndex >= 0 && mHistoryIndex < (int)mHistory.size());
+			WireViewHistory current;
+			if (haveView) {
+				current = mHistory[mHistoryIndex];
+			}
+
+			if (haveView && current.viewType == WireViewType::PULSE_FOCUS)
+			{
+				showGroups(false, false); // account list only
+				showPulseFocus(current.groupId, current.msgId);
+			}
+			else if (haveView && current.viewType == WireViewType::GROUP_FOCUS)
+			{
+				showGroups(false, false); // account list only
+				WireGroupItem *item = findGroupItemWidget(current.groupId);
+				if (item) {
+					item->setSelected(true);
+					mGroupSelected = item;
+				}
+				showGroupFocus(current.groupId);
+			}
+			else
+			{
+				showGroups(false); // Background update, don't add to history
+			}
 
 			if (!mNavigatePendingGroupId.isNull()) {
 				if (!mNavigatePendingMsgId.isNull()) {
@@ -1217,6 +1250,7 @@ void WireDialog::LoadHistory(uint32_t index)
 
 void WireDialog::requestPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId msgId)
 {
+	mRestoreScroll = -1;
 	WireViewHistory view;
 	view.viewType = WireViewType::PULSE_FOCUS;
 	view.groupId = groupId;
@@ -1269,12 +1303,15 @@ void WireDialog::postPulseFocus(RsWirePulseSPtr pPulse)
 	setComposeVisible(false);
 	setEmptyFeedMessage(QString());
 
-	addTwitterView(new PulseTopLevel(this, pPulse));
+	PulseTopLevel *topLevel = new PulseTopLevel(this, pPulse);
+	addTwitterView(topLevel);
+	showReplyBox(topLevel, pPulse);
 
 	for(auto &it : pPulse->mReplies)
 	{
 		RsWirePulseSPtr reply = it;
 		PulseReply *firstReply = new PulseReply(this, reply);
+		firstReply->showReferenceHeader(false); // it's obvious in the thread
 		addTwitterView(firstReply);
 
 		if (reply->mReplies.size() > 0)
@@ -1317,10 +1354,13 @@ void WireDialog::postPulseFocus(RsWirePulseSPtr pPulse)
 	}
 
 
+
+	restoreScrollPosition();
 }
 
 void WireDialog::requestGroupFocus(const RsGxsGroupId groupId)
 {
+	mRestoreScroll = -1;
 	WireViewHistory view;
 	view.viewType = WireViewType::GROUP_FOCUS;
 	view.groupId = groupId;
@@ -1376,6 +1416,7 @@ void WireDialog::postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr
 
 	ui.label_viewMode->setText(tr("Profile"));
 	setComposeVisible(false);
+	if (mReplyBox) mReplyBox->hide();
 	setEmptyFeedMessage(QString());
 
 	addTwitterView(new PulseViewGroup(this, group));
@@ -1398,10 +1439,15 @@ void WireDialog::postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr
 		addTwitterView(new PulseReplySeperator());
 
 	}
+
+	restoreScrollPosition();
 }
 
 void WireDialog::requestGroupsPulses(const std::list<RsGxsGroupId>& groupIds, bool addToHistory)
 {
+	if (addToHistory) {
+		mRestoreScroll = -1;
+	}
 	if (addToHistory) {
 		WireViewHistory view;
 		view.viewType = WireViewType::GROUPS;
@@ -1447,6 +1493,7 @@ void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
 
 	ui.label_viewMode->setText(tr("Home"));
 	setComposeVisible(true);
+	if (mReplyBox) mReplyBox->hide();
 	updateHashtags(pulses);
 
 	// friendly message instead of an empty grey area.
@@ -1488,6 +1535,8 @@ void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
 	if (mSearchPulses) {
 		filterPulses(mSearchPulses->text());
 	}
+
+	restoreScrollPosition();
 }
 
 void WireDialog::getServiceStatistics(GxsServiceStatistic& stats) const
@@ -1923,6 +1972,10 @@ void WireDialog::composeAccountChanged(int index)
 		pixmap = FilesDefs::getPixmapFromQtResourcePath(IMAGE_WIRE);
 	}
 	mComposeAvatar->setPixmap(WireRoundPixmap(pixmap, 48));
+	if (mReplyAvatar) {
+		mReplyAvatar->setPixmap(WireRoundPixmap(pixmap, 40));
+	}
+	replyTextChanged();
 
 	if (mComposeEdit) {
 		mComposeEdit->setPlaceholderText(mOwnGroups.empty()
@@ -2364,4 +2417,145 @@ void WireDialog::showOwnProfile()
 		return;
 	}
 	requestGroupFocus(mOwnGroups[idx].mMeta.mGroupId);
+}
+
+
+// Inline "Post your reply" box shown below the pulse in the thread view (like Twitter).
+void WireDialog::setupReplyBox()
+{
+	QFrame *box = new QFrame(ui.scrollAreaWidgetContents);
+	box->setObjectName("wireComposeBox"); // same look as the compose box
+	box->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+	mReplyBox = box;
+
+	QHBoxLayout *layout = new QHBoxLayout(box);
+	layout->setContentsMargins(12, 8, 12, 8);
+	layout->setSpacing(10);
+
+	mReplyAvatar = new QLabel(box);
+	mReplyAvatar->setFixedSize(40, 40);
+	layout->addWidget(mReplyAvatar, 0, Qt::AlignTop);
+
+	mReplyEdit = new QTextEdit(box);
+	mReplyEdit->setObjectName("wireComposeEdit");
+	mReplyEdit->setAcceptRichText(false);
+	mReplyEdit->setPlaceholderText(tr("Post your reply"));
+	mReplyEdit->setFrameShape(QFrame::NoFrame);
+	mReplyEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	QFont f = mReplyEdit->font();
+	f.setPointSizeF(f.pointSizeF() * 1.3);
+	mReplyEdit->setFont(f);
+	mReplyEdit->setFixedHeight(mReplyEdit->fontMetrics().lineSpacing() + 16);
+	connect(mReplyEdit, SIGNAL(textChanged()), this, SLOT(replyTextChanged()));
+	layout->addWidget(mReplyEdit, 1);
+
+	mReplyPost = new QPushButton(tr("Reply"), box);
+	mReplyPost->setObjectName("postButton"); // existing blue button style of default.qss
+	setPostButtonFont(mReplyPost);
+	mReplyPost->setCursor(Qt::PointingHandCursor);
+	mReplyPost->setEnabled(false);
+	connect(mReplyPost, SIGNAL(clicked()), this, SLOT(postInlineReply()));
+	layout->addWidget(mReplyPost, 0, Qt::AlignTop);
+
+	box->hide();
+}
+
+void WireDialog::showReplyBox(PulseViewItem *after, RsWirePulseSPtr pulse)
+{
+	if (!mReplyBox || !pulse) {
+		return;
+	}
+
+	// a REF pulse can't be replied to (same rule as PulseDataItem::actionReply).
+	if (pulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE) {
+		mReplyBox->hide();
+		return;
+	}
+
+	mReplyToGroupId = pulse->mMeta.mGroupId;
+	mReplyToMsgId = pulse->mMeta.mOrigMsgId;
+
+	// place it right below the pulse.
+	QBoxLayout *layout = ui.verticalLayout_2;
+	layout->removeWidget(mReplyBox);
+	int idx = layout->indexOf(after);
+	layout->insertWidget(idx < 0 ? 0 : idx + 1, mReplyBox);
+	mReplyBox->show();
+	replyTextChanged();
+}
+
+void WireDialog::replyTextChanged()
+{
+	if (!mReplyEdit || !mReplyPost) {
+		return;
+	}
+
+	bool hasText = !mReplyEdit->toPlainText().trimmed().isEmpty();
+	mReplyPost->setEnabled(hasText && !mOwnGroups.empty());
+
+	// one line when empty, grows up to 6 lines.
+	int lineHeight = mReplyEdit->fontMetrics().lineSpacing();
+	int height = lineHeight + 16;
+	if (hasText && mReplyEdit->viewport()->width() > 50) {
+		height = (int) mReplyEdit->document()->size().height() + 16;
+	}
+	mReplyEdit->setFixedHeight(qBound(lineHeight + 16, height, lineHeight * 6 + 16));
+}
+
+void WireDialog::postInlineReply()
+{
+	if (!mReplyEdit) {
+		return;
+	}
+
+	QString text = mReplyEdit->toPlainText().trimmed();
+	if (text.isEmpty() || mReplyToGroupId.isNull() || mReplyToMsgId.isNull()) {
+		return;
+	}
+
+	int idx = ui.groupChooser->currentIndex();
+	if (idx < 0 || idx >= (int)mOwnGroups.size()) {
+		QMessageBox::warning(this, tr("RetroShare"), tr("Please create or choose Wire Groupd first"), QMessageBox::Ok, QMessageBox::Ok);
+		return;
+	}
+
+	RsGxsGroupId replyWith = mOwnGroups[idx].mMeta.mGroupId;
+	RsGxsGroupId parentGroupId = mReplyToGroupId;
+	RsGxsMessageId parentMsgId = mReplyToMsgId;
+
+	RsWirePulseSPtr pPulse(new RsWirePulse());
+	pPulse->mSentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
+	pPulse->mPulseText = text.toStdString();
+
+	mReplyPost->setEnabled(false);
+
+	RsThread::async([this, parentGroupId, parentMsgId, replyWith, pPulse]()
+	{
+		bool ok = rsWire->createReplyPulse(parentGroupId, parentMsgId, replyWith, WIRE_PULSE_TYPE_REPLY, pPulse);
+
+		RsQThreadUtils::postToObject([this, ok]()
+		{
+			if (ok) {
+				mReplyEdit->clear();
+			} else {
+				QMessageBox::warning(this, tr("RetroShare"), tr("Could not post the reply."), QMessageBox::Ok, QMessageBox::Ok);
+			}
+			replyTextChanged();
+		}, this);
+	});
+}
+
+// after a background refresh, go back to where the user was.
+void WireDialog::restoreScrollPosition()
+{
+	if (mRestoreScroll < 0) {
+		return;
+	}
+	int value = mRestoreScroll;
+	mRestoreScroll = -1;
+
+	// the layout is updated asynchronously, wait for the new size.
+	QTimer::singleShot(0, this, [this, value]() {
+		ui.scrollArea->verticalScrollBar()->setValue(value);
+	});
 }
