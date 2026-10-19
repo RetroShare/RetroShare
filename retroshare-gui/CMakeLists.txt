@@ -197,6 +197,7 @@ else()
 endif()
 message(STATUS "${PROJECT_NAME_PRETTY} version: ${PROJECT_VERSION_FULL}")
 
+
 ################################################################################
 ### general build options
 
@@ -223,9 +224,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 # name used in main.cpp / rshare.cpp (connectToServer(TARGET)). Kept as
 # "retroshare" so the single-instance lock/socket name stays unchanged.
 target_compile_definitions(${PROJECT_NAME}
+	PUBLIC
+	RSGUI_CMAKE
 	PRIVATE
-	"RS_GUI_VERSION=\"${PROJECT_VERSION_FULL}\""
-	RS_RELEASE_VERSION
+	RS_RELEASE_VERSION # just disables the plugin page
 	TARGET=\"retroshare\"
 	RS_DIRECT_CHAT
 )

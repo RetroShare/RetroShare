@@ -79,7 +79,6 @@ target_sources(${PROJECT_NAME}
 	rshare.h
 
 	${PRIVATE_FILESET_SOURCES_FILES}
-	rsguiversion.h
 	rshare.cpp
 	main.cpp
 
@@ -89,28 +88,38 @@ target_sources(${PROJECT_NAME}
 )
 
 
-# Compatibility shim: gui/AboutWidget.cpp unconditionally does
-# `#include "include/qmake_info.h"`` and prints
-# Rs_qmake_DEFINES / Rs_qmake_CONFIG in the About dialog. That header is
-# normally produced by the qmake build (and is git-ignored), so a CMake build
-# has nothing to include. We generate a minimal stand-in here to keep
-# AboutWidget compiling.
-# TODO: replace this by generating the file from the real CMake configuration
-# via configure_file(), or make AboutWidget obtain the build info without a
-# qmake-specific header.
-file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include")
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/include/qmake_info.h"
-	"#ifndef INFO_H\n"
-	"#define INFO_H\n\n"
-	"#include <QString>\n\n"
-	"static const QString Rs_qmake_DEFINES = QStringLiteral(\"CMake Build\");\n"
-	"static const QString Rs_qmake_CONFIG = QStringLiteral(\"CMake Build\");\n\n"
-	"#endif // INFO_H\n"
-)
+include(CDefine)
+set(version_default DEFAULT "version not available")
+string(REGEX REPLACE "^\\*" "" version_public ${PROJECT_VERSION})
+set(version_numeric 0)
+set(version_numeric2 0)
+foreach(comp MAJOR MINOR PATCH TWEAK)
+	math(EXPR version_numeric_version  "${version_numeric} * 100")
+	math(EXPR version_numeric2 "${version_numeric2} << 8")
+	if(PROJECT_VERSION_${comp})
+		math(EXPR version_numeric
+			"${version_numeric}  + ${PROJECT_VERSION_${comp}}"
+		)
+		math(EXPR version_numeric2
+			"${version_numeric2} + ${PROJECT_VERSION_${comp}}"
+		)
+	endif()
+endforeach()
+cdefine(RSGUI_VERSION ${PROJECT_VERSION} STRING ${version_default})
+cdefine(RSGUI_VERSION_FULL ${PROJECT_VERSION_FULL} STRING ${version_default})
+cdefine(RSGUI_VERSION_PUBLIC ${version_public} STRING ${version_default})
+cdefine(RSGUI_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+cdefine(RSGUI_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+cdefine(RSGUI_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+cdefine(RSGUI_VERSION_TWEAK ${PROJECT_VERSION_TWEAK})
+cdefine(RSGUI_VERSION_NUMERIC ${version_numeric} VALID_0)
+configure_file(rsguiversion.h.in rsguiversion.h)
+
 target_sources(${PROJECT_NAME}
-	${PRIVATE_FILESET_private_HEADERS_FILES}
-	"${CMAKE_CURRENT_BINARY_DIR}/include/qmake_info.h"
+	${PUBLIC_FILESET_HEADERS_FILES}
+	${CMAKE_CURRENT_BINARY_DIR}/rsguiversion.h
 )
+
 
 if(APPLE)
 	target_sources(${PROJECT_NAME}

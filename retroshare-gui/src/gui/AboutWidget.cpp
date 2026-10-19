@@ -21,8 +21,11 @@
 
 #include "AboutDialog.h"
 #include "HelpDialog.h"
-#include "include/qmake_info.h"
 #include "rshare.h"
+
+#ifdef RSGUI_QMAKE
+#include "include/qmake_info.h"
+#endif
 
 // #ifdef RS_JSONAPI
 // #include "restbed"
@@ -1002,8 +1005,10 @@ void AboutWidget::on_copy_button_clicked()
 		}
 	}
 
+	#ifdef RSGUI_QMAKE
 	verInfo+= "DEFINES:" + Rs_qmake_DEFINES + "\n";
 	verInfo+= "CONFIG:" + Rs_qmake_CONFIG + "\n";
+	#endif
 
 	QApplication::clipboard()->setText(verInfo);
 }

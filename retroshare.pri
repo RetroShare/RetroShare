@@ -457,6 +457,8 @@ defineReplace(fixQmakeCC) {
 ##   ("sqlcipher sqlite3", sqlite3) it is usually precalculated depending on
 ##   CONFIG.
 
+DEFINES += RSGUI_QMAKE
+
 isEmpty(QMAKE_HOST_SPEC):QMAKE_HOST_SPEC=$$[QMAKE_SPEC]
 isEmpty(QMAKE_TARGET_SPEC):QMAKE_TARGET_SPEC=$$[QMAKE_XSPEC]
 equals(QMAKE_HOST_SPEC, $$QMAKE_TARGET_SPEC) {
@@ -531,7 +533,7 @@ trough qmake command line arguments!")
 # consumes this define; harmless for the other sub-projects. When the version
 # could not be determined, rsguiversion.h falls back to its built-in default.
 !isEmpty(RS_MAJOR_VERSION) {
-    DEFINES += RS_GUI_VERSION=\\\"$${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\\\"
+    DEFINES += RSGUI_VERSION_FULL=\\\"$${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\\\"
 }
 
 # Some supportlibs compilation won't start if the intstalled CMAKE verison is >=3.5.
