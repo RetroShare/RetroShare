@@ -117,7 +117,9 @@ if(APPLE)
 		${PRIVATE_FILESET_RESOURCES_FILES}
 		rsMacIcon.icns
 	)
-	set_source_files_properties(rsMacIcon.icns PROPERTIES
+	set_property(SOURCE rsMacIcon.icns
+		TARGET_DIRECTORY ${PROJECT_NAME}
+		PROPERTY
 		MACOSX_PACKAGE_LOCATION "Resources"
 	)
 	set_target_properties(${PROJECT_NAME} PROPERTIES

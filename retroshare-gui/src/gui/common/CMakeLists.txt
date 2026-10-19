@@ -175,7 +175,9 @@ if(APPLE)
 		${PRIVATE_FILESET_SOURCES_FILES}
 		MacDockIconHandler.mm
 	)
-	set_source_files_properties(MacDockIconHandler.mm PROPERTIES
+	set_property(SOURCE MacDockIconHandler.mm
+		TARGET_DIRECTORY ${PROJECT_NAME}
+		PROPERTY
 		COMPILE_FLAGS "-x objective-c++"
 	)
 endif()
