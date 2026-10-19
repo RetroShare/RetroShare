@@ -2673,3 +2673,30 @@ StartDialog QPushButton#loadButton:hover {
 
 /* AvatarWidget */
 AvatarWidget{border-width: 10px;}
+
+/**** The Wire: Twitter like layout (theme colors) ****/
+PulseReply QFrame#feedFrame,
+PulseTopLevel QFrame#plainFrame,
+PulseViewGroup QFrame#plainFrame,
+QFrame#wireComposeBox,
+QFrame#wireSidebarCard,
+QFrame#wireNavLine {
+	border-color: #C9CDD0;
+}
+PulseReply QFrame#feedFrame:hover,
+QFrame#wireSidebarCard,
+QToolButton#wireNavButton:hover,
+QTabBar#wireFeedTabs::tab:hover,
+PulseReply QToolButton#toolButton_reply:hover, PulseReply QToolButton#toolButton_republish:hover,
+PulseReply QToolButton#toolButton_like:hover, PulseReply QToolButton#toolButton_view:hover {
+	background-color: #EEF1F3;
+}
+QLabel#wireMutedLabel,
+PulseReply QLabel#label_date, PulseReply QLabel#label_reference, PulseReply QLabel#label_follow_msg,
+PulseTopLevel QLabel#label_groupName, PulseTopLevel QLabel#label_date, PulseTopLevel QLabel#label_reference,
+PulseViewGroup QLabel#label_groupName, PulseViewGroup QLabel#label_date, PulseViewGroup QLabel#label_location,
+PulseViewGroup QLabel#extra_pulses_Label, PulseViewGroup QLabel#extra_replies_Label,
+PulseViewGroup QLabel#extra_republishes_Label, PulseViewGroup QLabel#extra_likes_Label,
+PulseViewGroup QLabel#extra_following_Label, PulseViewGroup QLabel#extra_followers_Label {
+	color: #54687A;
+}

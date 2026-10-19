@@ -22,6 +22,9 @@
 #define MRK_PULSE_VIEW_ITEM_H
 
 #include <QWidget>
+#include <QPixmap>
+
+class QToolButton;
 
 #include <retroshare/rswire.h>
 
@@ -101,6 +104,10 @@ class PulseDataItem : public PulseViewItem, public PulseDataInterface
 public:
 	PulseDataItem(PulseViewHolder *holder, RsWirePulseSPtr pulse);
 
+	// used by the feed search: true if the pulse text contains text.
+	bool matchesFilter(const QString &text) const;
+	RsWirePulseSPtr pulse() const { return mPulse; }
+
 
 private slots:
 
@@ -124,6 +131,9 @@ protected:
 	// top-level set data onto UI.
 	virtual void showPulse();
 
+	// group shown in the header (the referenced group for REF pulses).
+	RsGxsGroupId displayGroupId() const;
+
 	// UI elements.
 	// Group
 	void setGroupName(std::string name);
@@ -143,6 +153,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
 
 	bool mInFill;
+	QString mDateFull; // full date, used as tooltip for the short date.
 
 	// DATA.
 	RsWirePulseSPtr mPulse;
@@ -153,6 +164,14 @@ protected:
 // utilities.
 QString BoldString(QString input);
 QString ToNumberUnits(uint32_t count);
+
+// Twitter-like feed styling helpers.
+QString WireShortTime(rstime_t ts);                     // "now", "5m", "3h", "2d", "12 Oct"
+QString WireCountText(const QString &count);            // "" for 0, else trimmed count
+QString WireShortId(const std::string &id);             // first 8 chars of an id
+QPixmap WireRoundPixmap(const QPixmap &src, int size);  // circular avatar
+QPixmap WireRoundedPixmap(const QPixmap &src, int w, int h, int radius); // cropped, rounded corners
+void    WireStyleActionButton(QToolButton *button, bool showText = true); // colors come from the qss stylesheets
 
 
 #endif

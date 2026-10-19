@@ -41,6 +41,7 @@ protected slots:
 
 protected:
 	void setup();
+	void applyFeedStyle();
 
 // PulseDataInterface ===========
 	// Group

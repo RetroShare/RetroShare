@@ -41,6 +41,14 @@
 class UIStateHelper;
 class GxsMessageFrameWidget;
 class RsGxsIfaceHelper;
+class QTabBar;
+class QTextEdit;
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QScrollArea;
+class QVBoxLayout;
+class QResizeEvent;
 
 #define IMAGE_WIRE              ":/icons/wire.png"
 
@@ -160,7 +168,28 @@ private slots:
 
 	void updateGroupCountLabels();
 
+	// Twitter-like layout: feed tabs, inline compose box, right sidebar.
+	void selectFeedTab(int index);
+	void composeTextChanged();
+	void composeAccountChanged(int index);
+	void postInlinePulse();
+	void filterPulses(const QString &text);
+	void updateNetworkCard();
+	void showOtherGroups();
+	void showOwnProfile();
+
+protected:
+	void resizeEvent(QResizeEvent *event) override;
+
 private:
+	void setupFeedLayout();
+	void setupComposeBox();
+	void setupSidebar();
+	void setupLeftNavigation();
+	void setEmptyFeedMessage(const QString &text);
+	void setComposeVisible(bool visible);
+	void updateHashtags(const std::list<RsWirePulseSPtr> &pulses);
+	void updateGroupsToFollow();
 
 	bool setupPulseAddDialog();
 
@@ -220,6 +249,22 @@ private:
 
 	QTimer *mUpdateTimer;
 	bool mRequestGroupDataInProgress;
+
+	// Twitter-like layout widgets (created in code).
+	QWidget     *mFeedHeader = nullptr;
+	QTabBar     *mFeedTabs = nullptr;
+	QWidget     *mComposeBox = nullptr;
+	QLabel      *mComposeAvatar = nullptr;
+	QTextEdit   *mComposeEdit = nullptr;
+	QPushButton *mComposePost = nullptr;
+	QScrollArea *mSidebar = nullptr;
+	QLineEdit   *mSearchPulses = nullptr;
+	QVBoxLayout *mHashtagsLayout = nullptr;
+	QVBoxLayout *mFollowLayout = nullptr;
+	QLabel      *mNetworkOnline = nullptr;
+	QLabel      *mNetworkNewest = nullptr;
+	QTimer      *mNetworkTimer = nullptr;
+	QLabel      *mEmptyFeedLabel = nullptr;
 };
 
 #endif

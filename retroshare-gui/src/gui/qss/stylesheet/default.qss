@@ -364,3 +364,137 @@ StartDialog QPushButton#loadButton:hover {
 	background: transparent;
 	border-image: url(:/images/btn_blue_hover.png) 4;
 }
+
+/**** The Wire: Twitter like layout ****/
+/* Only shapes here. Theme colors (divider, hover, muted text) are in Standard_Dark.qss / Standard_Light.qss */
+
+/* Pulse cards and profile header: no box, a divider line at the bottom */
+PulseReply QFrame#feedFrame,
+PulseTopLevel QFrame#plainFrame,
+PulseViewGroup QFrame#plainFrame,
+QFrame#wireComposeBox {
+	border: none;
+	border-bottom: 1px solid palette(mid);
+	border-radius: 0px;
+}
+PulseReply QFrame#feedFrame QWidget[objectName^="widget"],
+PulseReply QFrame#feedFrame QLabel,
+PulseReply QFrame#feedFrame QToolButton,
+PulseTopLevel QFrame#plainFrame QWidget[objectName^="widget"],
+PulseTopLevel QFrame#plainFrame QLabel,
+PulseTopLevel QFrame#plainFrame QToolButton,
+PulseViewGroup QFrame#plainFrame QLabel,
+QFrame#wireComposeBox QLabel {
+	background: transparent;
+}
+PulseMessage QWidget#widget_indent,
+PulseMessage ClickableLabel {
+	background: transparent;
+}
+PulseMessage QTextBrowser,
+PulseMessage QFrame#frame_expand,
+QTextEdit#wireComposeEdit {
+	border: none;
+	background: transparent;
+}
+
+/* Action buttons: icon + count, accent color on hover */
+PulseReply QToolButton#toolButton_reply, PulseReply QToolButton#toolButton_republish,
+PulseReply QToolButton#toolButton_like, PulseReply QToolButton#toolButton_view,
+PulseTopLevel QToolButton#toolButton_reply, PulseTopLevel QToolButton#toolButton_republish,
+PulseTopLevel QToolButton#toolButton_like, PulseTopLevel QToolButton#toolButton_view,
+PulseTopLevel QToolButton#toolButton_copyLink,
+QToolButton#wireComposeImages {
+	border: none;
+	border-radius: 14px;
+	padding: 4px 8px;
+	background: transparent;
+}
+PulseReply QToolButton#toolButton_reply:hover, PulseTopLevel QToolButton#toolButton_reply:hover,
+PulseReply QToolButton#toolButton_view:hover, PulseTopLevel QToolButton#toolButton_view:hover,
+PulseTopLevel QToolButton#toolButton_copyLink:hover,
+QToolButton#wireComposeImages:hover {
+	color: #1d9bf0;
+}
+PulseReply QToolButton#toolButton_republish:hover, PulseTopLevel QToolButton#toolButton_republish:hover {
+	color: #00ba7c;
+}
+PulseReply QToolButton#toolButton_like:hover, PulseTopLevel QToolButton#toolButton_like:hover {
+	color: #f91880;
+}
+
+/* Profile header */
+PulseViewGroup QPushButton#editButton,
+PulseViewGroup QToolButton#toolButton_copyProfileLink {
+	border: 1px solid palette(mid);
+	border-radius: 14px;
+	padding: 4px 14px;
+	background: transparent;
+}
+
+/* Feed tabs */
+QTabBar#wireFeedTabs::tab {
+	padding: 10px 18px;
+	border: none;
+	border-bottom: 3px solid transparent;
+	background: transparent;
+}
+QTabBar#wireFeedTabs::tab:selected {
+	border-bottom: 3px solid #1d9bf0;
+}
+
+/* Rounded post buttons (color from QPushButton#postButton above) */
+QFrame#wireComposeBox QPushButton#postButton,
+QWidget#trans_wireNav QPushButton#postButton {
+	border-radius: 16px;
+	min-height: 4ex;
+	padding: 4px 18px;
+}
+QFrame#wireComposeBox QPushButton#postButton:disabled {
+	color: white;
+	background: #80cce6;
+}
+
+/* Left navigation */
+QToolButton#wireNavButton {
+	border: none;
+	border-radius: 14px;
+	padding: 4px 8px;
+	background: transparent;
+}
+QFrame#wireNavLine {
+	border: none;
+	border-top: 1px solid palette(mid);
+	max-height: 1px;
+}
+WireDialog QLineEdit#lineEdit_searchUsers,
+QLineEdit#wireSearchPulses {
+	border: 1px solid palette(mid);
+	border-radius: 14px;
+	padding: 4px 10px;
+}
+
+/* Right sidebar */
+QFrame#wireSidebarCard {
+	border: 1px solid palette(mid);
+	border-radius: 14px;
+}
+QFrame#wireSidebarCard QLabel {
+	background: transparent;
+}
+QPushButton#wireHashtagButton,
+QPushButton#wireLinkButton {
+	text-align: left;
+	border: none;
+	background: transparent;
+	padding: 4px 0px;
+}
+QPushButton#wireHashtagButton:hover {
+	text-decoration: underline;
+}
+QPushButton#wireLinkButton {
+	color: #1d9bf0;
+}
+QLabel#wireMutedLabel {
+	background: transparent;
+}

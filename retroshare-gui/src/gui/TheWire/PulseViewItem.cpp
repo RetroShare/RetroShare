@@ -22,6 +22,13 @@
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QBuffer>
+#include <QDate>
+#include <QLocale>
+#include <QPainter>
+#include <QPainterPath>
+#include <QToolButton>
+
+#include <time.h>
 
 #include "PulseViewItem.h"
 
@@ -45,6 +52,38 @@ PulseViewItem::PulseViewItem(PulseViewHolder *holder)
 PulseDataItem::PulseDataItem(PulseViewHolder *holder, RsWirePulseSPtr pulse)
 :PulseViewItem(holder), mPulse(pulse), mInFill(false)
 {
+}
+
+RsGxsGroupId PulseDataItem::displayGroupId() const
+{
+	if (!mPulse) {
+		return RsGxsGroupId();
+	}
+	return (mPulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE) ? mPulse->mRefGroupId : mPulse->mMeta.mGroupId;
+}
+
+bool PulseDataItem::matchesFilter(const QString &text) const
+{
+	if (text.isEmpty()) {
+		return true;
+	}
+	if (!mPulse) {
+		return false;
+	}
+
+	QString pulseText = QString::fromStdString(mPulse->mPulseText);
+	if (mPulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE) {
+		pulseText += " " + QString::fromStdString(mPulse->mRefPulseText);
+	}
+	if (pulseText.contains(text, Qt::CaseInsensitive)) {
+		return true;
+	}
+
+	// allow searching by account name too.
+	if (mPulse->mGroupPtr && QString::fromStdString(mPulse->mGroupPtr->mMeta.mGroupName).contains(text, Qt::CaseInsensitive)) {
+		return true;
+	}
+	return QString::fromStdString(mPulse->mRefGroupName).contains(text, Qt::CaseInsensitive);
 }
 
 void PulseDataItem::actionReply()
@@ -446,9 +485,10 @@ void PulseDataItem::setAuthor(std::string name)
 
 void PulseDataItem::setDate(rstime_t date)
 {
-	// could be more intelligent.
-	// eg. 3 Hr ago, if recent.
-	setDateString(DateTime::formatDateTime(date));
+	// short relative date like Twitter ("5m", "3h", "12 Oct"),
+	// the full date is kept for tooltips / detail view.
+	mDateFull = DateTime::formatDateTime(date);
+	setDateString(WireShortTime(date));
 }
 
 void PulseDataItem::setLikes(uint32_t count)
@@ -496,19 +536,120 @@ QString BoldString(QString msg)
 QString ToNumberUnits(uint32_t count)
 {
 	QString ans;
-	if (count > 1000000)
+	if (count >= 1000000)
 	{
-		ans = QString::asprintf("%6.2fm", count / 1000000.0);
+		ans = QString::number(count / 1000000.0, 'f', 1) + "M";
 	}
-	else if (count > 1000)
+	else if (count >= 1000)
 	{
-		ans = QString::asprintf("%6.2fk", count / 1000.0);
+		ans = QString::number(count / 1000.0, 'f', 1) + "K";
 	}
 	else
 	{
-		ans = QString::asprintf("%6d", count);
+		ans = QString::number(count);
 	}
 	return ans;
+}
+
+QString WireShortTime(rstime_t ts)
+{
+	if (ts <= 0) {
+		return QString();
+	}
+
+	qint64 diff = (qint64) time(NULL) - (qint64) ts;
+	if (diff < 0) {
+		diff = 0;
+	}
+
+	if (diff < 60) {
+		return QObject::tr("now");
+	}
+	if (diff < 3600) {
+		return QObject::tr("%1m").arg(diff / 60);
+	}
+	if (diff < 86400) {
+		return QObject::tr("%1h").arg(diff / 3600);
+	}
+	if (diff < 7 * 86400) {
+		return QObject::tr("%1d").arg(diff / 86400);
+	}
+
+	QDate date = QDateTime::fromMSecsSinceEpoch((qint64) ts * 1000).date();
+	if (date.year() == QDate::currentDate().year()) {
+		return QLocale().toString(date, "d MMM");
+	}
+	return QLocale().toString(date, "d MMM yyyy");
+}
+
+QString WireCountText(const QString &count)
+{
+	QString c = count.trimmed();
+	if (c.isEmpty() || c == "0") {
+		return QString();
+	}
+	return c;
+}
+
+QString WireShortId(const std::string &id)
+{
+	return QString::fromStdString(id).left(8);
+}
+
+QPixmap WireRoundPixmap(const QPixmap &src, int size)
+{
+	if (src.isNull()) {
+		return src;
+	}
+
+	QPixmap scaled = src.scaled(size, size, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+	QPixmap out(size, size);
+	out.fill(Qt::transparent);
+
+	QPainter painter(&out);
+	painter.setRenderHint(QPainter::Antialiasing, true);
+	painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+	QPainterPath path;
+	path.addEllipse(0, 0, size, size);
+	painter.setClipPath(path);
+	painter.drawPixmap((size - scaled.width()) / 2, (size - scaled.height()) / 2, scaled);
+	painter.end();
+
+	return out;
+}
+
+QPixmap WireRoundedPixmap(const QPixmap &src, int w, int h, int radius)
+{
+	if (src.isNull() || w <= 0 || h <= 0) {
+		return src;
+	}
+
+	QPixmap scaled = src.scaled(w, h, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+	QPixmap out(w, h);
+	out.fill(Qt::transparent);
+
+	QPainter painter(&out);
+	painter.setRenderHint(QPainter::Antialiasing, true);
+	painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+	QPainterPath path;
+	path.addRoundedRect(0, 0, w, h, radius, radius);
+	painter.setClipPath(path);
+	painter.drawPixmap((w - scaled.width()) / 2, (h - scaled.height()) / 2, scaled);
+	painter.end();
+
+	return out;
+}
+
+void WireStyleActionButton(QToolButton *button, bool showText)
+{
+	if (!button) {
+		return;
+	}
+
+	button->setAutoRaise(true);
+	button->setToolButtonStyle(showText ? Qt::ToolButtonTextBesideIcon : Qt::ToolButtonIconOnly);
+	button->setIconSize(QSize(18, 18));
+	button->setCursor(Qt::PointingHandCursor);
 }
 
 void PulseDataItem::mousePressEvent(QMouseEvent *event)

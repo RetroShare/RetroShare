@@ -22,6 +22,7 @@
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QBuffer>
+#include <QTextDocumentFragment>
 
 #include "PulseViewGroup.h"
 #include "CustomFrame.h"
@@ -55,11 +56,26 @@ void PulseViewGroup::setup()
         connect(followButton, SIGNAL(clicked()), this, SLOT(actionFollow()));
         connect(toolButton_copyProfileLink, SIGNAL(clicked()), this, SLOT(actionCopyProfileLink()));
 
-        label_groupName->setText("@" + QString::fromStdString(mGroup->mMeta.mGroupName));
-        label_authorName->setText(BoldString(QString::fromStdString(mGroup->mMeta.mAuthorId.toStdString())));
-        label_date->setText(DateTime::formatDateTime(mGroup->mMeta.mPublishTs));
+        // Twitter-like profile: name in bold, short id below (names are not unique),
+        // the author id only as tooltip.
+        QString groupId = QString::fromStdString(mGroup->mMeta.mGroupId.toStdString());
+        QFont nameFont = label_authorName->font();
+        nameFont.setBold(true);
+        nameFont.setPointSizeF(nameFont.pointSizeF() * 1.6);
+        label_authorName->setFont(nameFont);
+        label_authorName->setTextFormat(Qt::PlainText);
+        label_authorName->setText(QString::fromStdString(mGroup->mMeta.mGroupName));
+        label_authorName->setToolTip(tr("Author: %1").arg(QString::fromStdString(mGroup->mMeta.mAuthorId.toStdString())));
+        label_groupName->setTextFormat(Qt::PlainText);
+        label_groupName->setText(WireShortId(groupId.toStdString()));
+        label_groupName->setToolTip(groupId);
+        label_date->setTextFormat(Qt::PlainText);
+        label_date->setText(tr("Joined %1").arg(DateTime::formatDate(mGroup->mMeta.mPublishTs)));
         label_tagline->setText(QString::fromStdString(mGroup->mTagline));
+        label_tagline->setVisible(!mGroup->mTagline.empty());
+        label_location->setTextFormat(Qt::PlainText);
         label_location->setText(QString::fromStdString(mGroup->mLocation));
+        label_location->setVisible(!mGroup->mLocation.empty());
 
 
         if (mGroup->mMasthead.mData)
@@ -70,10 +86,8 @@ void PulseViewGroup::setup()
                     mGroup->mMasthead.mSize,
                     pixmap, GxsIdDetails::ORIGINAL))
             {
-                QSize frameSize = frame_masthead->size();
-
-                // Scale the pixmap based on the frame size
-                pixmap = pixmap.scaledToWidth(frameSize.width(), Qt::SmoothTransformation);
+                // feed column is 600px wide: cover image fills it.
+                pixmap = pixmap.scaled(600, 160, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
                 frame_masthead->setPixmap(pixmap);
             }
         }
@@ -97,16 +111,14 @@ void PulseViewGroup::setup()
                     mGroup->mHeadshot.mSize,
                     pixmap,GxsIdDetails::ORIGINAL))
             {
-                pixmap = pixmap.scaled(100,100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-                label_headshot->setPixmap(pixmap);
+                label_headshot->setPixmap(WireRoundPixmap(pixmap, 96));
             }
         }
         else
         {
             // default.
             QPixmap pixmap = GxsIdDetails::makeDefaultGroupIcon(mGroup->mMeta.mGroupId, IMAGE_WIRE, GxsIdDetails::ORIGINAL);
-            pixmap = pixmap.scaled(100,100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-            label_headshot->setPixmap(pixmap);
+            label_headshot->setPixmap(WireRoundPixmap(pixmap, 96));
         }
 
         if (mGroup->mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
@@ -126,6 +138,8 @@ void PulseViewGroup::setup()
 
             uint32_t followers = mGroup->mGroupFollowers;
             label_extra_followers->setText(BoldString(ToNumberUnits(followers)));
+            extra_followers_Label->setText(tr("Followers (friends)"));
+            extra_followers_Label->setToolTip(tr("Number of your friends who follow this Wire group.\nGXS has no global follower list."));
 
             // hide follow button but keep copy link visible.
             followButton->setVisible(false);
@@ -138,6 +152,44 @@ void PulseViewGroup::setup()
     }
 
 	setGroupSet();
+	applyProfileStyle();
+}
+
+// Twitter-like profile header: no box, cover image, round avatar at the left,
+// pill buttons, grey stat labels.
+void PulseViewGroup::applyProfileStyle()
+{
+	plainFrame->setFrameShape(QFrame::NoFrame);
+
+	frame_masthead->setMinimumSize(0, 160);
+	frame_masthead->setMaximumHeight(160);
+
+	// avatar at the bottom-left of the cover instead of centered.
+	QLayoutItem *first = horizontalLayout->itemAt(0);
+	if (first && first->spacerItem()) {
+		delete horizontalLayout->takeAt(0);
+	}
+	horizontalLayout->setContentsMargins(16, 0, 0, 8);
+	horizontalLayout->setAlignment(label_headshot, Qt::AlignLeft | Qt::AlignBottom);
+	label_headshot->setMinimumSize(96, 96);
+
+	line_1->hide();
+	line_2->hide();
+
+	toolButton_copyProfileLink->setText(tr("Copy link"));
+
+	followButton->setText(tr("Follow"));
+
+	QLabel *statLabels[] = { extra_pulses_Label, extra_replies_Label, extra_republishes_Label,
+	                         extra_likes_Label, extra_following_Label, extra_followers_Label };
+	for (QLabel *label : statLabels) {
+		// the .ui texts carry a hardcoded html color, keep only the text (color comes from the qss).
+		label->setText(label->text().isEmpty() ? QString() : QTextDocumentFragment::fromHtml(label->text()).toPlainText());
+	}
+	if (mGroup && (mGroup->mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)) {
+		extra_followers_Label->setText(tr("Followers (friends)"));
+	}
+	widget_replies->setMinimumHeight(0);
 }
 
 void PulseViewGroup::setGroupSet()
