@@ -47,6 +47,7 @@
 #include <QMenu>
 #include <QActionGroup>
 #include <QTabBar>
+#include <QComboBox>
 #include <QTextEdit>
 #include <QTextDocument>
 #include <QLabel>
@@ -717,19 +718,16 @@ void WireDialog::updateGroups(const std::vector<RsWireGroup>& groups)
 			// grab own groups.
 			// setup Chooser too.
 			mOwnGroups.push_back(it); 
+			// same picture as the avatar of the compose box: headshot, else the default group icon.
 			QPixmap pixmap;
-			if (it.mHeadshot.mData)
-			{
-				if (GxsIdDetails::loadPixmapFromData( it.mHeadshot.mData,it.mHeadshot.mSize,pixmap,GxsIdDetails::ORIGINAL))
-					pixmap = pixmap.scaled(32,32);
-			} 
-			else 
-			{
-				// default.
-				pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(32,32);
+			if (it.mHeadshot.mData) {
+				GxsIdDetails::loadPixmapFromData(it.mHeadshot.mData, it.mHeadshot.mSize, pixmap, GxsIdDetails::ORIGINAL);
+			}
+			if (pixmap.isNull()) {
+				pixmap = GxsIdDetails::makeDefaultGroupIcon(it.mMeta.mGroupId, IMAGE_WIRE, GxsIdDetails::ORIGINAL);
 			}
 
-			ui.groupChooser->addItem(QPixmap(pixmap),QString::fromStdString(it.mMeta.mGroupName));
+			ui.groupChooser->addItem(QIcon(WireRoundPixmap(pixmap, 32)), QString::fromStdString(it.mMeta.mGroupName));
 		}
 	}
 
@@ -1887,6 +1885,7 @@ void WireDialog::setupComposeBox()
 	boxLayout->setSpacing(10);
 
 	mComposeAvatar = new QLabel(box);
+	mComposeAvatar->setObjectName("wireAvatar"); // no qss padding, else the picture is cut
 	mComposeAvatar->setFixedSize(48, 48);
 	mComposeAvatar->setAlignment(Qt::AlignTop);
 	boxLayout->addWidget(mComposeAvatar, 0, Qt::AlignTop);
@@ -1918,6 +1917,8 @@ void WireDialog::setupComposeBox()
 	ui.toolBarFrame_HL->removeWidget(ui.groupChooser);
 	ui.groupChooser->setParent(box);
 	ui.groupChooser->setToolTip(tr("Post as"));
+	ui.groupChooser->setIconSize(QSize(20, 20));
+	ui.groupChooser->setSizeAdjustPolicy(QComboBox::AdjustToContents); // show the whole account name
 	bar->addWidget(ui.groupChooser);
 	connect(ui.groupChooser, SIGNAL(currentIndexChanged(int)), this, SLOT(composeAccountChanged(int)));
 
@@ -2265,6 +2266,7 @@ void WireDialog::updateGroupsToFollow()
 			pixmap = GxsIdDetails::makeDefaultGroupIcon(groupId, IMAGE_WIRE, GxsIdDetails::ORIGINAL);
 		}
 		QLabel *avatar = new QLabel(row);
+		avatar->setObjectName("wireAvatar");
 		avatar->setFixedSize(36, 36);
 		avatar->setPixmap(WireRoundPixmap(pixmap, 36));
 		rowLayout->addWidget(avatar);
@@ -2435,6 +2437,7 @@ void WireDialog::setupReplyBox()
 	layout->setSpacing(10);
 
 	mReplyAvatar = new QLabel(box);
+	mReplyAvatar->setObjectName("wireAvatar");
 	mReplyAvatar->setFixedSize(40, 40);
 	layout->addWidget(mReplyAvatar, 0, Qt::AlignTop);
 

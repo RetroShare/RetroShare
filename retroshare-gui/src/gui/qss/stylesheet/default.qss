@@ -498,3 +498,8 @@ QPushButton#wireLinkButton {
 QLabel#wireMutedLabel {
 	background: transparent;
 }
+/* Avatars: the theme gives every QLabel a padding, which would cut the round picture */
+QLabel#wireAvatar {
+	padding: 0px;
+	background: transparent;
+}
