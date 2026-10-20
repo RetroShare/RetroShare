@@ -22,16 +22,23 @@
 #include <QtGui>
 #include <QMessageBox>
 #include <QComboBox>
+#include <QFile>
+#include <QImageReader>
 
 #include "PulseReply.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
+#include "gui/Posted/BoardPostImageHelper.h"
 
 #include "PulseAddDialog.h"
 
 const uint32_t PULSE_MAX_SIZE = 1000; // 1k char.
+
+// A GXS message can't be bigger than RsSerialiser::MAX_SERIAL_SIZE (256 KB) in total
+// (text + 4 images + signatures), keep some room for the rest.
+const uint32_t PULSE_MAX_IMAGE_BYTES = 230 * 1024;
 
 /** Constructor */
 PulseAddDialog::PulseAddDialog(QWidget *parent)
@@ -655,6 +662,20 @@ void PulseAddDialog::addImage(const QString &path)
 	std::cerr << "PulseAddDialog::addImage() loading image from: " << path.toStdString();
 	std::cerr << std::endl;
 
+	// Animated GIF: keep the original bytes (saving it again would drop the animation).
+	{
+		QImageReader probe(path);
+		if (QString(probe.format()).toUpper() == "GIF" && probe.imageCount() > 1)
+		{
+			QFile file(path);
+			if (!file.open(QIODevice::ReadOnly)) {
+				return;
+			}
+			addAnimatedGif(file.readAll());
+			return;
+		}
+	}
+
     QPixmap qtn = FilesDefs::getPixmapFromQtResourcePath(path);
 	if (qtn.isNull()) {
 		std::cerr << "PulseAddDialog::addImage() Invalid Image";
@@ -677,41 +698,78 @@ void PulseAddDialog::addImage(const QString &path)
 	buffer.open(QIODevice::WriteOnly);
 	image.save(&buffer, "JPG");
 
+	installImage(ba, icon);
+}
+
+// Animated GIF: checked like the GIFs we receive (format, size, frames, canvas).
+void PulseAddDialog::addAnimatedGif(const QByteArray &bytes)
+{
+	if ((uint32_t) bytes.size() > BoardPostImageHelper::MAX_ANIMATED_SIZE)
+	{
+		QMessageBox::warning(this, tr("Animated GIF"),
+			tr("This animated GIF is too large (%1 KB). The maximum is %2 KB.")
+				.arg(bytes.size() / 1024).arg(BoardPostImageHelper::MAX_ANIMATED_SIZE / 1024));
+		return;
+	}
+
+	if (!WireIsSafeAnimatedGif(reinterpret_cast<const uint8_t *>(bytes.constData()), bytes.size()))
+	{
+		QMessageBox::warning(this, tr("Animated GIF"),
+			tr("This animated GIF can't be used: it may have at most 300 frames and 1024 x 1024 pixels."));
+		return;
+	}
+
+	QPixmap firstFrame;
+	firstFrame.loadFromData(bytes, "GIF");
+	QPixmap icon = firstFrame.scaled(256, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+	installImage(bytes, icon);
+}
+
+uint32_t PulseAddDialog::totalImageBytes() const
+{
+	return mImage1.mSize + mImage2.mSize + mImage3.mSize + mImage4.mSize;
+}
+
+// put the image into the first free slot, if the pulse stays under the size limit.
+bool PulseAddDialog::installImage(const QByteArray &bytes, const QPixmap &icon)
+{
+	if (totalImageBytes() + (uint32_t) bytes.size() > PULSE_MAX_IMAGE_BYTES)
+	{
+		QMessageBox::warning(this, tr("Image too large"),
+			tr("The images of a pulse can be at most %1 KB together (this one: %2 KB, already added: %3 KB).")
+				.arg(PULSE_MAX_IMAGE_BYTES / 1024).arg(bytes.size() / 1024).arg(totalImageBytes() / 1024));
+		return false;
+	}
+
+	uint8_t *data = (uint8_t *) bytes.data();
 	if (mImage1.empty()) {
-		std::cerr << "PulseAddDialog::addImage() Installing in Image1";
-		std::cerr << std::endl;
 		ui.label_image1->setPixmap(icon);
 		ui.label_image1->show();
 		ui.frame_picture->show();
-		mImage1.copy((uint8_t *) ba.data(), ba.size());
-		std::cerr << "PulseAddDialog::addImage() Installing in Image1 Size: " << mImage1.mSize;
-		std::cerr << std::endl;
+		mImage1.copy(data, bytes.size());
 	}
 	else if (mImage2.empty()) {
 		ui.label_image2->setPixmap(icon);
 		ui.label_image2->show();
-		mImage2.copy((uint8_t *) ba.data(), ba.size());
-		std::cerr << "PulseAddDialog::addImage() Installing in Image2 Size: " << mImage2.mSize;
-		std::cerr << std::endl;
+		mImage2.copy(data, bytes.size());
 	}
 	else if (mImage3.empty()) {
 		ui.label_image3->setPixmap(icon);
 		ui.label_image3->show();
-		mImage3.copy((uint8_t *) ba.data(), ba.size());
-		std::cerr << "PulseAddDialog::addImage() Installing in Image3 Size: " << mImage3.mSize;
-		std::cerr << std::endl;
+		mImage3.copy(data, bytes.size());
 	}
 	else if (mImage4.empty()) {
 		ui.label_image4->setPixmap(icon);
 		ui.label_image4->show();
-		mImage4.copy((uint8_t *) ba.data(), ba.size());
-		std::cerr << "PulseAddDialog::addImage() Installing in Image4 Size: " << mImage4.mSize;
-		std::cerr << std::endl;
+		mImage4.copy(data, bytes.size());
 	}
 	else {
-		std::cerr << "PulseAddDialog::addImage() Images all full";
+		std::cerr << "PulseAddDialog::installImage() Images all full";
 		std::cerr << std::endl;
+		return false;
 	}
+	return true;
 }
 
 void PulseAddDialog::toggle()

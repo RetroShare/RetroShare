@@ -23,6 +23,7 @@
 
 #include <QWidget>
 #include <QPixmap>
+#include <QSize>
 
 class QToolButton;
 class QAbstractButton;
@@ -176,6 +177,10 @@ QString ToNumberUnits(uint32_t count);
 // Twitter-like feed styling helpers.
 QString WireShortTime(rstime_t ts);                     // "now", "5m", "3h", "2d", "12 Oct"
 QString WireCountText(const QString &count);            // "" for 0, else trimmed count
+
+// Animated GIF check, for own files and for data received from other nodes:
+// only GIF, at most 194 KB, 2..300 frames, canvas at most 1024x1024 (no "decompression bombs").
+bool WireIsSafeAnimatedGif(const uint8_t *data, uint32_t size, QSize *frameSize = nullptr);
 QString WireShortId(const std::string &id);             // first 8 chars of an id
 QPixmap WireRoundPixmap(const QPixmap &src, int size);  // circular avatar
 QPixmap WireRoundedPixmap(const QPixmap &src, int w, int h, int radius); // cropped, rounded corners

@@ -79,6 +79,9 @@ protected:
 	void dropEvent(QDropEvent *event);
 
 	void addImage(const QString &path);
+	void addAnimatedGif(const QByteArray &bytes);
+	bool installImage(const QByteArray &bytes, const QPixmap &icon);
+	uint32_t totalImageBytes() const;
 
 	RsWireGroup mGroup; // replyWith.
 

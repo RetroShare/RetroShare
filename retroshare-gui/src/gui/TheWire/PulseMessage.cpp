@@ -24,6 +24,10 @@
 #include "util/misc.h"
 
 #include <QAbstractTextDocumentLayout>
+#include <QMovie>
+#include <QShowEvent>
+#include <QHideEvent>
+#include "gui/Posted/BoardPostImageHelper.h"
 #include <QTextDocument>
 #include <QtMath>
 
@@ -117,8 +121,34 @@ void PulseMessage::setup(RsWirePulseSPtr pulse)
 	bool imagesShown = false;
 	for (int i = 0; i < 4; ++i)
 	{
-		QPixmap pixmap = loadWireImage(*images[i]);
+		// remove an animation of a previous setup()
+		if (mMovies[i]) {
+			mMovies[i]->stop();
+			mMovies[i]->deleteLater();
+			mMovies[i] = nullptr;
+		}
+
+		// Animated GIF (data from other nodes): only after the safety checks,
+		// else it is shown as a still image (first frame) like before.
+		QMovie *movie = nullptr;
+		if (!images[i]->empty() && WireIsSafeAnimatedGif(images[i]->mData, images[i]->mSize)) {
+			movie = BoardPostImageHelper::createMovieFromData(images[i]->mData, images[i]->mSize);
+		}
+
+		QPixmap pixmap;
+		if (movie) {
+			movie->setParent(labels[i]);
+			movie->setCacheMode(QMovie::CacheNone); // don't keep all frames in memory
+			movie->jumpToFrame(0);
+			pixmap = movie->currentPixmap();
+		} else {
+			pixmap = loadWireImage(*images[i]);
+		}
+
 		if (pixmap.isNull()) {
+			if (movie) {
+				movie->deleteLater();
+			}
 			labels[i]->setVisible(false);
 			continue;
 		}
@@ -135,6 +165,29 @@ void PulseMessage::setup(RsWirePulseSPtr pulse)
 		labels[i]->setFixedSize(w, h);
 		labels[i]->setVisible(true);
 		imagesShown = true;
+
+		if (movie)
+		{
+			// every frame with the same size and rounded corners as a still image.
+			ClickableLabel *label = labels[i];
+			connect(movie, &QMovie::frameChanged, label, [label, movie, w, h](int) {
+				label->setPixmap(WireRoundedPixmap(movie->currentPixmap(), w, h, WIRE_IMAGE_RADIUS));
+			});
+			connect(movie, &QMovie::finished, movie, &QMovie::start); // loop
+			mMovies[i] = movie;
+			labels[i]->installEventFilter(this); // hover: play / pause (feed)
+
+			if (mLarge) {
+				// thread view: the pulse is open, play it.
+				labels[i]->setToolTip(tr("Animated GIF - click to view"));
+				if (isVisible()) {
+					movie->start();
+				}
+			} else {
+				// feed: first frame only, plays while the mouse is over it.
+				labels[i]->setToolTip(tr("Animated GIF - hover to play, click to view"));
+			}
+		}
 	}
 
 	frame_expand->setVisible(imagesShown);
@@ -195,15 +248,82 @@ void PulseMessage::setRefImageCount(uint32_t count)
 	}
 }
 
-void PulseMessage::viewPictureOne()
+static void playMovie(QMovie *movie)
 {
+	if (!movie) return;
+	if (movie->state() == QMovie::Paused) {
+		movie->setPaused(false);
+	} else if (movie->state() == QMovie::NotRunning) {
+		movie->start();
+	}
+}
+
+void PulseMessage::showEvent(QShowEvent *event)
+{
+	QWidget::showEvent(event);
+
+	// only the thread view plays without hover.
+	if (mLarge) {
+		for (QMovie *movie : mMovies) {
+			playMovie(movie);
+		}
+	}
+}
+
+bool PulseMessage::eventFilter(QObject *watched, QEvent *event)
+{
+	if (!mLarge && (event->type() == QEvent::Enter || event->type() == QEvent::Leave))
+	{
+		ClickableLabel *labels[4] = { label_image1, label_image2, label_image3, label_image4 };
+		for (int i = 0; i < 4; ++i)
+		{
+			if (watched == labels[i] && mMovies[i])
+			{
+				if (event->type() == QEvent::Enter) {
+					playMovie(mMovies[i]);
+				} else if (mMovies[i]->state() == QMovie::Running) {
+					mMovies[i]->setPaused(true);
+				}
+			}
+		}
+	}
+	return QWidget::eventFilter(watched, event);
+}
+
+void PulseMessage::hideEvent(QHideEvent *event)
+{
+	QWidget::hideEvent(event);
+	for (QMovie *movie : mMovies) {
+		if (movie && movie->state() == QMovie::Running) {
+			movie->setPaused(true);
+		}
+	}
+}
+
+void PulseMessage::openPhotoView(const RsGxsImage &image)
+{
+	if (!mPulse) {
+		return;
+	}
+
 	PhotoView *photoView = new PhotoView(window());
 
-	if (!mPulse->mImage1.empty()) {
-		// install image.
-		QPixmap pixmap;
-		pixmap.loadFromData(mPulse->mImage1.mData, mPulse->mImage1.mSize);
-		photoView->setPixmap(pixmap);
+	if (!image.empty())
+	{
+		QMovie *movie = nullptr;
+		if (WireIsSafeAnimatedGif(image.mData, image.mSize)) {
+			movie = BoardPostImageHelper::createMovieFromData(image.mData, image.mSize);
+		}
+
+		if (movie) {
+			movie->setParent(photoView); // PhotoView doesn't delete it, Qt does
+			movie->setCacheMode(QMovie::CacheNone);
+			photoView->setMovie(movie);
+		} else {
+			QPixmap pixmap;
+			pixmap.loadFromData(image.mData, image.mSize);
+			photoView->setPixmap(pixmap);
+		}
 	}
 
 	QString timestamp = misc::timeRelativeToNow(mPulse->mRefPublishTs);
@@ -211,86 +331,30 @@ void PulseMessage::viewPictureOne()
 	photoView->setTitle(QString::fromStdString(mPulse->mPulseText));
 	photoView->setGroupNameString(QString::fromStdString(mPulse->mRefGroupName));
 	photoView->setTime(timestamp);
-	//photoView->setGroupId(mPulse->mRefGroupId);
 
 	photoView->show();
 
 	emit pictureOpened();
 
 	/* window will destroy itself! */
+}
+
+void PulseMessage::viewPictureOne()
+{
+	if (mPulse) openPhotoView(mPulse->mImage1);
 }
 
 void PulseMessage::viewPictureTwo()
 {
-	PhotoView *photoView = new PhotoView(window());
-
-	if (!mPulse->mImage2.empty()) {
-		// install image.
-		QPixmap pixmap;
-		pixmap.loadFromData(mPulse->mImage2.mData, mPulse->mImage2.mSize);
-		photoView->setPixmap(pixmap);
-	}
-
-	QString timestamp = misc::timeRelativeToNow(mPulse->mRefPublishTs);
-
-	photoView->setTitle(QString::fromStdString(mPulse->mPulseText));
-	photoView->setGroupNameString(QString::fromStdString(mPulse->mRefGroupName));
-	photoView->setTime(timestamp);
-	//photoView->setGroupId(mPulse->mRefGroupId);
-
-	photoView->show();
-
-	emit pictureOpened();
-
-	/* window will destroy itself! */
+	if (mPulse) openPhotoView(mPulse->mImage2);
 }
 
 void PulseMessage::viewPictureThree()
 {
-	PhotoView *photoView = new PhotoView(window());
-
-	if (!mPulse->mImage3.empty()) {
-		// install image.
-		QPixmap pixmap;
-		pixmap.loadFromData(mPulse->mImage3.mData, mPulse->mImage3.mSize);
-		photoView->setPixmap(pixmap);
-	}
-
-	QString timestamp = misc::timeRelativeToNow(mPulse->mRefPublishTs);
-
-	photoView->setTitle(QString::fromStdString(mPulse->mPulseText));
-	photoView->setGroupNameString(QString::fromStdString(mPulse->mRefGroupName));
-	photoView->setTime(timestamp);
-	//photoView->setGroupId(mPulse->mRefGroupId);
-
-	photoView->show();
-
-	emit pictureOpened();
-
-	/* window will destroy itself! */
+	if (mPulse) openPhotoView(mPulse->mImage3);
 }
 
 void PulseMessage::viewPictureFour()
 {
-	PhotoView *photoView = new PhotoView(window());
-
-	if (!mPulse->mImage4.empty()) {
-		// install image.
-		QPixmap pixmap;
-		pixmap.loadFromData(mPulse->mImage4.mData, mPulse->mImage4.mSize);
-		photoView->setPixmap(pixmap);
-	}
-
-	QString timestamp = misc::timeRelativeToNow(mPulse->mRefPublishTs);
-
-	photoView->setTitle(QString::fromStdString(mPulse->mPulseText));
-	photoView->setGroupNameString(QString::fromStdString(mPulse->mRefGroupName));
-	photoView->setTime(timestamp);
-	//photoView->setGroupId(mPulse->mRefGroupId);
-
-	photoView->show();
-
-	emit pictureOpened();
-
-	/* window will destroy itself! */
+	if (mPulse) openPhotoView(mPulse->mImage4);
 }

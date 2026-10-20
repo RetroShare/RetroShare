@@ -27,6 +27,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QToolButton>
+#include <QImageReader>
 
 #include <time.h>
 
@@ -39,6 +40,10 @@
 #include "gui/RetroShareLink.h"
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
+#include "gui/Posted/BoardPostImageHelper.h"
+
+#define WIRE_GIF_MAX_DIMENSION  1024
+#define WIRE_GIF_MAX_FRAMES     300
 
 #define IMAGE_WIRE           ":icons/wire.png"
 
@@ -616,6 +621,37 @@ QString WireShortTime(rstime_t ts)
 		return QLocale().toString(date, "d MMM");
 	}
 	return QLocale().toString(date, "d MMM yyyy");
+}
+
+bool WireIsSafeAnimatedGif(const uint8_t *data, uint32_t size, QSize *frameSize)
+{
+	// format GIF, more than one frame, size <= BoardPostImageHelper::MAX_ANIMATED_SIZE
+	QString format;
+	if (!BoardPostImageHelper::isAnimatedImage(data, size, &format) || format != "GIF") {
+		return false;
+	}
+
+	// check the declared canvas and the frame count before anything is decoded.
+	QByteArray bytes = QByteArray::fromRawData(reinterpret_cast<const char *>(data), size);
+	QBuffer buffer(&bytes);
+	if (!buffer.open(QIODevice::ReadOnly)) {
+		return false;
+	}
+	QImageReader reader(&buffer, "gif");
+	QSize canvas = reader.size();
+	int frames = reader.imageCount();
+
+	if (!canvas.isValid() || canvas.width() > WIRE_GIF_MAX_DIMENSION || canvas.height() > WIRE_GIF_MAX_DIMENSION) {
+		return false;
+	}
+	if (frames <= 1 || frames > WIRE_GIF_MAX_FRAMES) {
+		return false;
+	}
+
+	if (frameSize) {
+		*frameSize = canvas;
+	}
+	return true;
 }
 
 QString WireCountText(const QString &count)
