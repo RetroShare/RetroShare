@@ -127,6 +127,10 @@ private slots:
 	void actionCopyLink();
 	// Action interfaces --------------------------
 
+protected slots:
+	// mark as read when the user looks at / acts on the pulse (open image, thread, reply...)
+	void markAsRead();
+
 protected:
 
 	// top-level set data onto UI.
@@ -134,6 +138,9 @@ protected:
 
 	// group shown in the header (the referenced group for REF pulses).
 	RsGxsGroupId displayGroupId() const;
+
+	// set read / unread: backend, local status flags and the card (dot, "New", highlight).
+	void setPulseRead(bool read);
 
 	// UI elements.
 	// Group

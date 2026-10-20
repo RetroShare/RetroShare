@@ -406,7 +406,7 @@ PulseTopLevel QToolButton#toolButton_like, PulseTopLevel QToolButton#toolButton_
 PulseTopLevel QToolButton#toolButton_copyLink,
 QToolButton#wireComposeImages {
 	border: none;
-	border-radius: 14px;
+	border-radius: 10px;
 	padding: 4px 8px;
 	background: transparent;
 }
@@ -427,7 +427,7 @@ PulseReply QToolButton#toolButton_like:hover, PulseTopLevel QToolButton#toolButt
 PulseViewGroup QPushButton#editButton,
 PulseViewGroup QToolButton#toolButton_copyProfileLink {
 	border: 1px solid palette(mid);
-	border-radius: 14px;
+	border-radius: 12px;
 	padding: 4px 14px;
 	background: transparent;
 }
@@ -446,7 +446,8 @@ QTabBar#wireFeedTabs::tab:selected {
 /* Rounded post buttons (color from QPushButton#postButton above) */
 QFrame#wireComposeBox QPushButton#postButton,
 QWidget#trans_wireNav QPushButton#postButton {
-	border-radius: 16px;
+	/* radius must be <= half the button height, else Qt draws square corners */
+	border-radius: 10px;
 	min-height: 4ex;
 	padding: 4px 18px;
 }
@@ -458,7 +459,7 @@ QFrame#wireComposeBox QPushButton#postButton:disabled {
 /* Left navigation */
 QToolButton#wireNavButton {
 	border: none;
-	border-radius: 14px;
+	border-radius: 12px;
 	padding: 4px 8px;
 	background: transparent;
 }
@@ -470,7 +471,7 @@ QFrame#wireNavLine {
 WireDialog QLineEdit#lineEdit_searchUsers,
 QLineEdit#wireSearchPulses {
 	border: 1px solid palette(mid);
-	border-radius: 14px;
+	border-radius: 10px;
 	padding: 4px 10px;
 }
 
@@ -501,5 +502,20 @@ QLabel#wireMutedLabel {
 /* Avatars: the theme gives every QLabel a padding, which would cut the round picture */
 QLabel#wireAvatar {
 	padding: 0px;
+	background: transparent;
+}
+/* Pulse text: ids needed, the theme's "QTextBrowser:hover, QTextBrowser:!hover" rule is more specific */
+PulseMessage QTextBrowser#textBrowser,
+PulseMessage QTextBrowser#textBrowser:hover,
+PulseMessage QTextBrowser#textBrowser:!hover {
+	border: none;
+	background: transparent;
+}
+/* Read/unread button: no background in the checked (unread) state */
+PulseReply QToolButton#readButton,
+PulseReply QToolButton#readButton:checked,
+PulseTopLevel QToolButton#readButton,
+PulseTopLevel QToolButton#readButton:checked {
+	border: none;
 	background: transparent;
 }

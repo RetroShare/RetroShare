@@ -21,6 +21,7 @@
 #include <iostream>
 #include <QtGui>
 #include <QMessageBox>
+#include <QComboBox>
 
 #include "PulseReply.h"
 #include "gui/gxs/GxsIdDetails.h"
@@ -34,9 +35,31 @@ const uint32_t PULSE_MAX_SIZE = 1000; // 1k char.
 
 /** Constructor */
 PulseAddDialog::PulseAddDialog(QWidget *parent)
-: QWidget(parent), mIsReply(false)
+: QWidget(parent), mAccountChooser(nullptr), mIsReply(false)
 {
 	ui.setupUi(this);
+
+	// "From": combo box to choose the account, in place of the group name label.
+	// (The headshot / name / id labels are shown by the combo box items now.)
+	mAccountChooser = new QComboBox(ui.frame_from);
+	mAccountChooser->setIconSize(QSize(20, 20));
+	mAccountChooser->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+	mAccountChooser->setToolTip(tr("Post as"));
+	{
+		int idx = ui.frame_from_GL->indexOf(ui.label_groupName);
+		int row = 0, col = 1, rowSpan = 1, colSpan = 1;
+		if (idx >= 0) {
+			ui.frame_from_GL->getItemPosition(idx, &row, &col, &rowSpan, &colSpan);
+		}
+		ui.frame_from_GL->addWidget(mAccountChooser, row, col, rowSpan, colSpan);
+	}
+	ui.label_groupName->hide();
+	ui.label_idName->hide();
+	ui.topheadshot->hide();
+	connect(mAccountChooser, SIGNAL(currentIndexChanged(int)), this, SLOT(accountChanged(int)));
+
+	// no Cancel button: the window has its close button.
+	ui.pushButton_Cancel->hide();
 
 	connect(ui.postButton, SIGNAL( clicked( void ) ), this, SLOT( postPulse( void ) ) );
 	connect(ui.pushButton_AddURL, SIGNAL( clicked( void ) ), this, SLOT( addURL( void ) ) );
@@ -95,6 +118,44 @@ void PulseAddDialog::setGroup(RsWireGroup &group)
 	}
 	
 	mGroup = group;
+}
+
+void PulseAddDialog::setOwnGroups(const std::vector<RsWireGroup> &groups, int selected)
+{
+	mOwnGroups = groups;
+
+	mAccountChooser->blockSignals(true);
+	mAccountChooser->clear();
+	for (const RsWireGroup &group : mOwnGroups)
+	{
+		// same picture as on the main page: headshot, else the default group icon.
+		QPixmap pixmap;
+		if (group.mHeadshot.mData) {
+			GxsIdDetails::loadPixmapFromData(group.mHeadshot.mData, group.mHeadshot.mSize, pixmap, GxsIdDetails::ORIGINAL);
+		}
+		if (pixmap.isNull()) {
+			pixmap = GxsIdDetails::makeDefaultGroupIcon(group.mMeta.mGroupId, ":/icons/wire.png", GxsIdDetails::ORIGINAL);
+		}
+		mAccountChooser->addItem(QIcon(WireRoundPixmap(pixmap, 32)), QString::fromStdString(group.mMeta.mGroupName));
+		mAccountChooser->setItemData(mAccountChooser->count() - 1,
+			QString::fromStdString(group.mMeta.mAuthorId.toStdString()), Qt::ToolTipRole);
+	}
+
+	if (selected < 0 || selected >= (int)mOwnGroups.size()) {
+		selected = 0;
+	}
+	mAccountChooser->setCurrentIndex(selected);
+	mAccountChooser->blockSignals(false);
+
+	accountChanged(selected);
+}
+
+void PulseAddDialog::accountChanged(int index)
+{
+	if (index < 0 || index >= (int)mOwnGroups.size()) {
+		return;
+	}
+	setGroup(mOwnGroups[index]); // sets mGroup = the account we post / reply with
 }
 
 // set ReplyWith Group.
@@ -180,7 +241,7 @@ void PulseAddDialog::cleanup()
 	ui.frame_input->setVisible(true);
 	ui.widget_sentiment->setVisible(true);
 	ui.pushButton_picture->show();
-	ui.topheadshot->show();
+	ui.topheadshot->setVisible(mAccountChooser == nullptr);
 
 	// cleanup images.
 	mImage1.clear();

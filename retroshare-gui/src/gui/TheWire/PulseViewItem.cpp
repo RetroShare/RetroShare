@@ -38,6 +38,7 @@
 #include "gui/common/FilesDefs.h"
 #include "gui/RetroShareLink.h"
 #include "util/DateTime.h"
+#include "util/qtthreadsutils.h"
 
 #define IMAGE_WIRE           ":icons/wire.png"
 
@@ -52,6 +53,37 @@ PulseViewItem::PulseViewItem(PulseViewHolder *holder)
 PulseDataItem::PulseDataItem(PulseViewHolder *holder, RsWirePulseSPtr pulse)
 :PulseViewItem(holder), mPulse(pulse), mInFill(false)
 {
+}
+
+void PulseDataItem::setPulseRead(bool read)
+{
+	if (!mPulse) {
+		return;
+	}
+
+	RsGxsGrpMsgIdPair msgPair = std::make_pair(mPulse->mMeta.mGroupId, mPulse->mMeta.mMsgId);
+	RsThread::async([msgPair, read]() {
+		rsWire->setMessageReadStatus(msgPair, read);
+	});
+
+	if (read) {
+		mPulse->mMeta.mMsgStatus &= ~(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD | GXS_SERV::GXS_MSG_STATUS_GUI_NEW);
+	} else {
+		mPulse->mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+	}
+
+	// update the card now, without firing readToggled() again.
+	bool wasInFill = mInFill;
+	mInFill = true;
+	setReadStatus(IS_MSG_NEW(mPulse->mMeta.mMsgStatus), IS_MSG_UNREAD(mPulse->mMeta.mMsgStatus));
+	mInFill = wasInFill;
+}
+
+void PulseDataItem::markAsRead()
+{
+	if (mPulse && (IS_MSG_UNREAD(mPulse->mMeta.mMsgStatus) || IS_MSG_NEW(mPulse->mMeta.mMsgStatus))) {
+		setPulseRead(true);
+	}
 }
 
 RsGxsGroupId PulseDataItem::displayGroupId() const
@@ -88,6 +120,7 @@ bool PulseDataItem::matchesFilter(const QString &text) const
 
 void PulseDataItem::actionReply()
 {
+	markAsRead();
 	std::cerr << "PulseDataItem::actionReply()";
 	std::cerr << std::endl;
 
@@ -103,6 +136,7 @@ void PulseDataItem::actionReply()
 
 void PulseDataItem::actionRepublish()
 {
+	markAsRead();
 	std::cerr << "PulseDataItem::actionRepublish()";
 	std::cerr << std::endl;
 
@@ -118,6 +152,7 @@ void PulseDataItem::actionRepublish()
 
 void PulseDataItem::actionLike()
 {
+	markAsRead();
 	std::cerr << "PulseDataItem::actionLike()";
 	std::cerr << std::endl;
 
@@ -193,6 +228,7 @@ void PulseDataItem::actionViewParent()
 
 void PulseDataItem::actionViewPulse()
 {
+	markAsRead();
 	std::cerr << "PulseDataItem::actionViewPulse()";
 	std::cerr << std::endl;
 
@@ -664,11 +700,8 @@ void WireStyleActionButton(QToolButton *button, bool showText)
 
 void PulseDataItem::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton && IS_MSG_UNPROCESSED(mPulse->mMeta.mMsgStatus))
-    {
-        uint32_t token;
-        RsGxsGrpMsgIdPair msgPair = std::make_pair(mPulse->mMeta.mGroupId, mPulse->mMeta.mMsgId);
-        rsWire->setMessageReadStatus(token, msgPair, true);
+    if (event->button() == Qt::LeftButton) {
+        markAsRead();
     }
     QWidget::mousePressEvent(event);
 }

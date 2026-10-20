@@ -37,6 +37,9 @@ public:
 	void setRefImageCount(uint32_t count);
 	void setLargeText(bool large); // detail view: bigger text, like Twitter
 
+signals:
+	void pictureOpened(); // the card marks the pulse as read
+
 private slots:
 	void viewPictureOne();
 	void viewPictureTwo();
@@ -45,6 +48,7 @@ private slots:
 
 private:
 	RsWirePulseSPtr mPulse;
+	bool mLarge = false; // thread (detail) view: bigger text, images over the full width
 
 };
 

@@ -31,6 +31,10 @@
 #define WIRE_IMAGE_FULL_WIDTH  500
 #define WIRE_IMAGE_HALF_WIDTH  248
 #define WIRE_IMAGE_MAX_HEIGHT  300
+// thread view: no avatar column, so the media can use the full width of the 600px column.
+#define WIRE_IMAGE_LARGE_FULL_WIDTH  530
+#define WIRE_IMAGE_LARGE_HALF_WIDTH  263
+#define WIRE_IMAGE_LARGE_MAX_HEIGHT  420
 #define WIRE_IMAGE_RADIUS      14
 
 /** Constructor */
@@ -44,6 +48,9 @@ PulseMessage::PulseMessage(QWidget *parent)
 	connect(label_image2, SIGNAL(clicked()), this, SLOT(viewPictureTwo()));
 	connect(label_image3, SIGNAL(clicked()), this, SLOT(viewPictureThree()));
 	connect(label_image4, SIGNAL(clicked()), this, SLOT(viewPictureFour()));
+
+	// the republish indent line is only shown by setup() for republishes.
+	widget_indent->setVisible(false);
 
 	// Text: no frame, no scrollbars, height follows the text (like Twitter).
 	textBrowser->setFrameShape(QFrame::NoFrame);
@@ -116,11 +123,12 @@ void PulseMessage::setup(RsWirePulseSPtr pulse)
 			continue;
 		}
 
-		int w = WIRE_IMAGE_HALF_WIDTH;
+		int w = mLarge ? WIRE_IMAGE_LARGE_HALF_WIDTH : WIRE_IMAGE_HALF_WIDTH;
 		int h = (count == 2) ? 280 : 160;
 		if (count == 1) {
-			w = WIRE_IMAGE_FULL_WIDTH;
-			h = qMin(WIRE_IMAGE_MAX_HEIGHT, qRound(pixmap.height() * (double) w / qMax(1, pixmap.width())));
+			w = mLarge ? WIRE_IMAGE_LARGE_FULL_WIDTH : WIRE_IMAGE_FULL_WIDTH;
+			h = qMin(mLarge ? WIRE_IMAGE_LARGE_MAX_HEIGHT : WIRE_IMAGE_MAX_HEIGHT,
+			         qRound(pixmap.height() * (double) w / qMax(1, pixmap.width())));
 		}
 
 		labels[i]->setPixmap(WireRoundedPixmap(pixmap, w, h, WIRE_IMAGE_RADIUS));
@@ -140,6 +148,17 @@ void PulseMessage::setMessage(QString msg)
 
 void PulseMessage::setLargeText(bool large)
 {
+	mLarge = large; // used by setup() for the image sizes
+
+	// thread view: same side margins as the header/date rows (the message had none,
+	// so text and image started further left than the rest), and the images centered.
+	if (large) {
+		gridLayout_2->setContentsMargins(10, 0, 10, 0);
+		gridLayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+	} else {
+		gridLayout_2->setContentsMargins(0, 0, 0, 0);
+		gridLayout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+	}
 	QFont f = textBrowser->font();
 	f.setPointSizeF(large ? 13.5 : 11);
 	textBrowser->setFont(f);
@@ -196,6 +215,8 @@ void PulseMessage::viewPictureOne()
 
 	photoView->show();
 
+	emit pictureOpened();
+
 	/* window will destroy itself! */
 }
 
@@ -218,6 +239,8 @@ void PulseMessage::viewPictureTwo()
 	//photoView->setGroupId(mPulse->mRefGroupId);
 
 	photoView->show();
+
+	emit pictureOpened();
 
 	/* window will destroy itself! */
 }
@@ -242,6 +265,8 @@ void PulseMessage::viewPictureThree()
 
 	photoView->show();
 
+	emit pictureOpened();
+
 	/* window will destroy itself! */
 }
 
@@ -264,6 +289,8 @@ void PulseMessage::viewPictureFour()
 	//photoView->setGroupId(mPulse->mRefGroupId);
 
 	photoView->show();
+
+	emit pictureOpened();
 
 	/* window will destroy itself! */
 }

@@ -41,6 +41,7 @@ PulseTopLevel::PulseTopLevel(PulseViewHolder *holder, RsWirePulseSPtr pulse)
 
 	if (mPulse) {
 		showPulse();
+		markAsRead();
 	}
 
 }
@@ -64,6 +65,7 @@ void PulseTopLevel::setup()
 	connect(toolButton_view, SIGNAL(clicked()), this, SLOT(actionViewPulse()));
 	connect(toolButton_copyLink, SIGNAL(clicked()), this, SLOT(actionCopyLink()));
 	connect(readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool))); 
+	connect(widget_message, SIGNAL(pictureOpened()), this, SLOT(markAsRead()));
 
 	applyFeedStyle();
 }
@@ -175,7 +177,8 @@ void PulseTopLevel::setRepliesString(QString reply)
 	
 void PulseTopLevel::setPulseStatus(PulseStatus status)
 {
-	widget_replies->setVisible(true); // this is only reachable if we have ORIG so show always.
+	// the counts are on the action buttons (Twitter style), no separate stats row.
+	widget_replies->setVisible(false);
 	widget_actions->setVisible(status == PulseStatus::FULL);
 	widget_actionsFollow->setVisible(status == PulseStatus::UNSUBSCRIBED);
 }
@@ -218,12 +221,12 @@ void PulseTopLevel::mousePressEvent(QMouseEvent */*event*/)
 {
 }
 
-void PulseTopLevel::readToggled(bool /*checked*/)
+void PulseTopLevel::readToggled(bool checked)
 {
     if (mInFill) return;
 
-    RsGxsGrpMsgIdPair msgPair = std::make_pair(mPulse->mMeta.mGroupId, mPulse->mMeta.mMsgId);
-    rsWire->setMessageReadStatus(msgPair, isUnread());
+    // checked = unread (green dot). Click toggles it and updates the view too.
+    setPulseRead(!checked);
 }
 
 void PulseTopLevel::setReadStatus(bool isNew, bool isUnread)

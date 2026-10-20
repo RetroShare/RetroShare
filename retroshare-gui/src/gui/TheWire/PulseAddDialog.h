@@ -25,8 +25,11 @@
 
 #include <retroshare/rswire.h>
 
+#include <vector>
+
 
 QT_BEGIN_NAMESPACE
+class QComboBox;
 class QDragEnterEvent;
 class QDropEvent;
 class QMouseEvent;
@@ -46,6 +49,9 @@ public:
 	void setGroup(const RsGxsGroupId &grpId);
 	void setGroup(RsWireGroup &group);
 
+	// accounts for the "From" chooser, selected = index in groups (the account chosen on the main page).
+	void setOwnGroups(const std::vector<RsWireGroup> &groups, int selected);
+
 private slots:
 	void addURL();
 	void clearDisplayAs();
@@ -56,6 +62,7 @@ private slots:
 	void toggle();
 	void onBrowseButtonClicked();
 	void removePictures();
+	void accountChanged(int index);
 
 private:
 	void setReplyTo(const RsWirePulse &pulse, RsWirePulseSPtr pPulse, std::string &groupName, uint32_t replyType);
@@ -74,6 +81,10 @@ protected:
 	void addImage(const QString &path);
 
 	RsWireGroup mGroup; // replyWith.
+
+	// "From" account chooser
+	QComboBox *mAccountChooser;
+	std::vector<RsWireGroup> mOwnGroups;
 
 	// if this is a reply
 	bool mIsReply;

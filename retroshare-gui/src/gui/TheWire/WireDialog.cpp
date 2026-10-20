@@ -540,8 +540,8 @@ bool WireDialog::setupPulseAddDialog()
 		return false;
 	}
 
-	RsWireGroup group = mOwnGroups[idx];
-	mAddDialog->setGroup(group);
+	// "From" chooser with all own accounts, the one chosen on the main page selected.
+	mAddDialog->setOwnGroups(mOwnGroups, idx);
 
 	return true;
 }
@@ -634,10 +634,9 @@ void WireDialog::createPulse()
 		return;
 	}
 
-	RsWireGroup group = mOwnGroups[idx];
-
 	mAddDialog->cleanup();
-	mAddDialog->setGroup(group.mMeta.mGroupId);
+	// "From" chooser with all own accounts, the one chosen on the main page selected.
+	mAddDialog->setOwnGroups(mOwnGroups, idx);
 	mAddDialog->show();
 }
 
@@ -2354,8 +2353,20 @@ void WireDialog::setEmptyFeedMessage(const QString &text)
 	if (!mEmptyFeedLabel) {
 		return;
 	}
+	bool show = !text.isEmpty();
 	mEmptyFeedLabel->setText(text);
-	mEmptyFeedLabel->setVisible(!text.isEmpty());
+	mEmptyFeedLabel->setVisible(show);
+
+	// center the message in the feed area: while it is shown the trailing spacer
+	// takes no space and the label expands over the whole height.
+	mEmptyFeedLabel->setSizePolicy(QSizePolicy::Preferred, show ? QSizePolicy::Expanding : QSizePolicy::Preferred);
+	QBoxLayout *layout = ui.verticalLayout_2;
+	int last = layout->count() - 1;
+	if (last >= 0 && layout->itemAt(last)->spacerItem()) {
+		layout->itemAt(last)->spacerItem()->changeSize(20, show ? 0 : 40, QSizePolicy::Minimum,
+			show ? QSizePolicy::Fixed : QSizePolicy::Expanding);
+		layout->invalidate();
+	}
 }
 
 // Left column like Twitter: navigation on top, then the account list.
