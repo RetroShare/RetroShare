@@ -482,9 +482,11 @@ defined in command line")
     DEFINES += RS_MINOR_VERSION=$${RS_MINOR_VERSION}
     DEFINES += RS_MINI_VERSION=$${RS_MINI_VERSION}
     DEFINES += RS_EXTRA_VERSION=\\\"$${RS_EXTRA_VERSION}\\\"
+    RSGUI_VERSION_FULL = "$${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}-qmake"
 } else {
     RS_GIT_DESCRIBE = $$system(git describe --long --dirty --match v*.*.*)
     contains(RS_GIT_DESCRIBE, ^v\d+\.\d+\.\d+.*) {
+        RSGUI_VERSION_FULL = "$$str_member(RS_GIT_DESCRIBE, 1, -1)-qmake"
         RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE, v)
         RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE_SPLIT, .)
 
@@ -532,8 +534,10 @@ trough qmake command line arguments!")
 # it as its own version (see retroshare-gui/src/rsguiversion.h). Only the GUI
 # consumes this define; harmless for the other sub-projects. When the version
 # could not be determined, rsguiversion.h falls back to its built-in default.
-!isEmpty(RS_MAJOR_VERSION) {
-    DEFINES += RSGUI_VERSION_FULL=\\\"$${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\\\"
+!isEmpty(RSGUI_VERSION_FULL) {
+    DEFINES += $$shell_quote(RSGUI_VERSION_FULL=\"$${RSGUI_VERSION_FULL}\")
+} else {
+    DEFINES += $$shell_quote(RSGUI_VERSION_FULL=\"no version available\")
 }
 
 # Some supportlibs compilation won't start if the intstalled CMAKE verison is >=3.5.

@@ -22,10 +22,7 @@
 #include "AboutDialog.h"
 #include "HelpDialog.h"
 #include "rshare.h"
-
-#ifdef RSGUI_QMAKE
-#include "include/qmake_info.h"
-#endif
+#include "rsguiversion.h"
 
 // #ifdef RS_JSONAPI
 // #include "restbed"

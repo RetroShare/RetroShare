@@ -1515,9 +1515,9 @@ RS_QMAKE_DEFINES=\\\"$${DEFINES}\\\"
 RS_QMAKE_CONFIG=\\\"$${CONFIG}\\\"
 
 INCLUDEPATH += $$OUT_PWD/include
-info_file.input = $$PWD/qmake_info.h.in
-info_file.output = $$OUT_PWD/include/qmake_info.h
+info_file.input = $$PWD/qmake_rsguiversion.h.in
+info_file.output = $$OUT_PWD/rsguiversion.h
 
 QMAKE_SUBSTITUTES += info_file
 OTHER_FILES += \
-    qmake_info.h.in
+    qmake_rsguiversion.h.in
