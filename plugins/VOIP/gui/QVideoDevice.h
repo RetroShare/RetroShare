@@ -41,6 +41,9 @@ class VideoEncoder ;
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 class QCameraImageCapture;
 #endif
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && defined(Q_OS_MACOS)
+class MacCameraCapture ;
+#endif
 
 // Responsible from displaying the video. The source of the video is
 // a VideoDecoder object, which uses a codec.
@@ -60,7 +63,9 @@ class QVideoOutputDevice: public QLabel
 // Qt5 grabs still images from the camera on a timer (QCameraImageCapture).
 // Qt6 removed that capture-to-buffer API, so there the camera feeds a
 // QVideoSink through a QMediaCaptureSession and we sample its frames at the
-// same period as the Qt5 timer.
+// same period as the Qt5 timer. On macOS with Qt6 that pipeline delivers no
+// frames at all, so the camera is driven straight from AVFoundation instead
+// (see MacCameraCapture).
 //
 class QVideoInputDevice: public QObject
 {
@@ -104,7 +109,7 @@ class QVideoInputDevice: public QObject
         static void getAvailableDevices(QList<QString>& device_desc);
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        QString currentCameraDescriptionString() const { return _capture_device_info.description(); }
+        QString currentCameraDescriptionString() const { return _current_camera_description; }
 #else
         QString currentCameraDescriptionString() const { return _capture_device_info.deviceName(); }
 #endif
@@ -127,10 +132,26 @@ protected slots:
 		VideoProcessor *_video_processor ;
         QCamera *_capture_device;
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        // Qt6 (and macOS AVFoundation) deliver frames at the camera's native rate;
+        // this keeps only one frame per grab period. Returns true when the frame
+        // is to be used.
+        bool passFrameThrottle() ;
+
         QMediaCaptureSession *_capture_session;
         QVideoSink *_video_sink;
-        QCameraDevice _capture_device_info;
-        QElapsedTimer _frame_throttle;	// paces the sink's native frame rate down to the grab period
+        QString _current_camera_description;
+        QElapsedTimer _frame_throttle;
+
+        // Once the camera authorization has been granted we stop re-requesting it,
+        // otherwise every start() would fire another request.
+        bool _camera_permission_granted ;
+#  if defined(Q_OS_MACOS)
+        // Frames from the AVFoundation capture (already QImage, on the GUI thread).
+        void handleMacFrame(const QImage& image) ;
+
+        // Owns the AVCaptureSession. NULL until the first start().
+        MacCameraCapture *_mac_capture ;
+#  endif
 #else
 		QTimer *_timer ;
         QCameraImageCapture *_image_capture;

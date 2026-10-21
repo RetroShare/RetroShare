@@ -50,6 +50,15 @@ set(VOIP_SOURCES
     gui/VOIPToasterNotify.cpp
 )
 
+# macOS + Qt6: the camera is driven straight from AVFoundation (Objective-C++),
+# both for the access request and for frame capture. Qt6's QPermission API never
+# contacts the OS for the camera on macOS, and its QMediaCaptureSession/QVideoSink
+# pipeline delivers no frames there. See gui/MacCamera{Permission,Capture}.{h,mm}.
+# Qt5 on macOS keeps the plain Qt camera pipeline.
+if(APPLE AND QT_VERSION_MAJOR EQUAL 6)
+    list(APPEND VOIP_SOURCES gui/MacCameraPermission.mm gui/MacCameraCapture.mm)
+endif()
+
 set(VOIP_FORMS
     gui/AudioStats.ui
     gui/AudioWizard.ui
@@ -135,6 +144,13 @@ target_link_libraries(VOIP PRIVATE
 )
 if(QT_VERSION_MAJOR EQUAL 6)
     target_link_libraries(VOIP PRIVATE Qt6::Core5Compat)
+endif()
+
+# macOS + Qt6: MacCameraPermission.mm / MacCameraCapture.mm call into AVFoundation.
+if(APPLE AND QT_VERSION_MAJOR EQUAL 6)
+    target_link_libraries(VOIP PRIVATE
+        "-framework AVFoundation" "-framework Foundation"
+        "-framework CoreVideo" "-framework CoreMedia")
 endif()
 
 target_compile_options(VOIP PRIVATE "-Wno-deprecated-declarations")
