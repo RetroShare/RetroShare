@@ -3,7 +3,22 @@ cmake_minimum_required(VERSION 3.18)
 project(VOIPPlugin)
 
 # --- Dependencies ---
-find_package(Qt5 COMPONENTS Core Widgets Multimedia Xml Network REQUIRED)
+# Version-agnostic Qt detection: probe Qt6 first, fall back to Qt5 (mirrors
+# retroshare-gui/CMakeLists.txt). All Qt usage goes through ${QT_VERSION_MAJOR}
+# so the plugin builds against whichever Qt the GUI uses.
+find_package(Qt6 QUIET COMPONENTS Core)
+if(Qt6_FOUND)
+    set(QT_VERSION_MAJOR 6)
+else()
+    find_package(Qt5 COMPONENTS Core REQUIRED)
+    set(QT_VERSION_MAJOR 5)
+endif()
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Multimedia Xml Network REQUIRED)
+if(QT_VERSION_MAJOR EQUAL 6)
+    # Core5Compat provides QRegExp/QTextCodec etc. referenced via shared
+    # retroshare-gui headers; matches the GUI's own link.
+    find_package(Qt6 COMPONENTS Core5Compat REQUIRED)
+endif()
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(AVCODEC REQUIRED libavcodec)
 pkg_check_modules(AVUTIL REQUIRED libavutil)
@@ -35,6 +50,24 @@ set(VOIP_SOURCES
     gui/VOIPToasterNotify.cpp
 )
 
+# macOS + Qt6: the camera is driven straight from AVFoundation (Objective-C++),
+# both for the access request and for frame capture. Qt6's QPermission API never
+# contacts the OS for the camera on macOS, and its QMediaCaptureSession/QVideoSink
+# pipeline delivers no frames there. See gui/MacCamera{Permission,Capture}.{h,mm}.
+# Qt5 on macOS keeps the plain Qt camera pipeline.
+if(APPLE AND QT_VERSION_MAJOR EQUAL 6)
+    list(APPEND VOIP_SOURCES gui/MacCameraPermission.mm gui/MacCameraCapture.mm)
+endif()
+
+# RsTurtleVOIPBridge implements distant (gxsid<->gxsid) VOIP. It is now a client
+# of p3GxsTunnelService (libretroshare) for the encrypted E2E transport and no
+# longer uses OpenSSL directly, so no extra crypto link is required. It is still
+# added conditionally so the plugin builds on a tree without the bridge (e.g.
+# master).
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/services/RsTurtleVOIPBridge.cpp")
+    list(APPEND VOIP_SOURCES services/RsTurtleVOIPBridge.cpp)
+endif()
+
 set(VOIP_FORMS
     gui/AudioStats.ui
     gui/AudioWizard.ui
@@ -50,10 +83,10 @@ set(VOIP_RESOURCES
 
 # --- Translations (.ts -> .qm) ---
 file(GLOB TS_FILES "lang/*.ts")
-if(Qt5LinguistTools_FOUND)
-    qt5_add_translation(QM_FILES ${TS_FILES})
+if(Qt${QT_VERSION_MAJOR}LinguistTools_FOUND)
+    qt_add_translation(QM_FILES ${TS_FILES})
 else()
-    find_program(LRELEASE_EXECUTABLE NAMES lrelease-qt5 lrelease)
+    find_program(LRELEASE_EXECUTABLE NAMES lrelease-qt${QT_VERSION_MAJOR} lrelease-qt5 lrelease)
     foreach(ts_file ${TS_FILES})
         get_filename_component(ts_name ${ts_file} NAME_WE)
         set(qm_src_file "${CMAKE_CURRENT_SOURCE_DIR}/lang/${ts_name}.qm")
@@ -105,19 +138,42 @@ if(WIN32)
     target_link_libraries(VOIP PRIVATE retroshare retroshare-gui)
 endif()
 
-# NOTE: VOIP makes no direct use of OpenSSL (it relies on libretroshare for any
-# cryptography), so it does not find_package/link OpenSSL itself.
+# pkg-config gives the FFmpeg/speex libs by name only (avcodec, avutil, ...);
+# their directory must be added explicitly or the linker won't find them when
+# they live outside the default search path (e.g. Homebrew /opt/homebrew/... on
+# macOS -> "ld: library 'avcodec' not found"). Harmless on Linux/Windows where
+# these dirs are already on the default path.
+target_link_directories(VOIP PRIVATE
+    ${AVCODEC_LIBRARY_DIRS}
+    ${AVUTIL_LIBRARY_DIRS}
+    ${SPEEX_LIBRARY_DIRS}
+    ${SPEEXDSP_LIBRARY_DIRS}
+)
+
+# NOTE: the VOIP plugin makes no direct use of OpenSSL. All cryptography for
+# distant VOIP is delegated to libretroshare's p3GxsTunnelService, so the plugin
+# stays OpenSSL-free.
 target_link_libraries(VOIP PRIVATE
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::Multimedia
-    Qt5::Xml
-    Qt5::Network
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Multimedia
+    Qt${QT_VERSION_MAJOR}::Xml
+    Qt${QT_VERSION_MAJOR}::Network
     ${AVCODEC_LIBRARIES}
     ${AVUTIL_LIBRARIES}
     ${SPEEX_LIBRARIES}
     ${SPEEXDSP_LIBRARIES}
 )
+if(QT_VERSION_MAJOR EQUAL 6)
+    target_link_libraries(VOIP PRIVATE Qt6::Core5Compat)
+endif()
+
+# macOS + Qt6: MacCameraPermission.mm / MacCameraCapture.mm call into AVFoundation.
+if(APPLE AND QT_VERSION_MAJOR EQUAL 6)
+    target_link_libraries(VOIP PRIVATE
+        "-framework AVFoundation" "-framework Foundation"
+        "-framework CoreVideo" "-framework CoreMedia")
+endif()
 
 target_compile_options(VOIP PRIVATE "-Wno-deprecated-declarations")
 target_compile_definitions(VOIP PRIVATE RS_NO_WARN_DEPRECATED)
