@@ -41,6 +41,15 @@
 class UIStateHelper;
 class GxsMessageFrameWidget;
 class RsGxsIfaceHelper;
+class QTabBar;
+class QFrame;
+class QTextEdit;
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QScrollArea;
+class QVBoxLayout;
+class QResizeEvent;
 
 #define IMAGE_WIRE              ":/icons/wire.png"
 
@@ -160,7 +169,32 @@ private slots:
 
 	void updateGroupCountLabels();
 
+	// Twitter-like layout: feed tabs, inline compose box, right sidebar.
+	void selectFeedTab(int index);
+	void composeTextChanged();
+	void composeAccountChanged(int index);
+	void postInlinePulse();
+	void filterPulses(const QString &text);
+	void updateNetworkCard();
+	void showOtherGroups();
+	void showOwnProfile();
+	void replyTextChanged();
+	void postInlineReply();
+
+protected:
+	void resizeEvent(QResizeEvent *event) override;
+
 private:
+	void setupFeedLayout();
+	void setupComposeBox();
+	void setupSidebar();
+	void setupLeftNavigation();
+	void setupReplyBox();
+	void showReplyBox(PulseViewItem *after, RsWirePulseSPtr pulse);
+	void setEmptyFeedMessage(const QString &text);
+	void setComposeVisible(bool visible);
+	void updateHashtags(const std::list<RsWirePulseSPtr> &pulses);
+	void updateGroupsToFollow();
 
 	bool setupPulseAddDialog();
 
@@ -168,7 +202,8 @@ private:
 	void addGroup(const RsWireGroup &group);
 
 	void deleteGroups();
-	void showGroups(bool addToHistory = true);
+	void showGroups(bool addToHistory = true, bool loadPulses = true);
+	void restoreScrollPosition();
 	void showSelectedGroups();
 	void updateGroups(const std::vector<RsWireGroup> &groups);
 
@@ -220,6 +255,31 @@ private:
 
 	QTimer *mUpdateTimer;
 	bool mRequestGroupDataInProgress;
+
+	// Twitter-like layout widgets (created in code).
+	QWidget     *mFeedHeader = nullptr;
+	QTabBar     *mFeedTabs = nullptr;
+	QWidget     *mComposeBox = nullptr;
+	QLabel      *mComposeAvatar = nullptr;
+	QTextEdit   *mComposeEdit = nullptr;
+	QPushButton *mComposePost = nullptr;
+	QScrollArea *mSidebar = nullptr;
+	QLineEdit   *mSearchPulses = nullptr;
+	QVBoxLayout *mHashtagsLayout = nullptr;
+	QVBoxLayout *mFollowLayout = nullptr;
+	QLabel      *mNetworkOnline = nullptr;
+	QLabel      *mNetworkNewest = nullptr;
+	QTimer      *mNetworkTimer = nullptr;
+	QLabel      *mEmptyFeedLabel = nullptr;
+	int          mRestoreScroll = -1; // scroll position to restore after a background refresh
+
+	// inline "Post your reply" box of the pulse (thread) view.
+	QFrame      *mReplyBox = nullptr;
+	QLabel      *mReplyAvatar = nullptr;
+	QTextEdit   *mReplyEdit = nullptr;
+	QPushButton *mReplyPost = nullptr;
+	RsGxsGroupId   mReplyToGroupId;
+	RsGxsMessageId mReplyToMsgId;
 };
 
 #endif

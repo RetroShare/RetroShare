@@ -43,6 +43,7 @@ protected:
 
 private:
 	void setGroupSet();
+	void applyProfileStyle();
 
 protected:
 	RsWireGroupSPtr mGroup;

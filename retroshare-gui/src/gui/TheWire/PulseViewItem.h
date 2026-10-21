@@ -22,6 +22,11 @@
 #define MRK_PULSE_VIEW_ITEM_H
 
 #include <QWidget>
+#include <QPixmap>
+#include <QSize>
+
+class QToolButton;
+class QAbstractButton;
 
 #include <retroshare/rswire.h>
 
@@ -101,6 +106,10 @@ class PulseDataItem : public PulseViewItem, public PulseDataInterface
 public:
 	PulseDataItem(PulseViewHolder *holder, RsWirePulseSPtr pulse);
 
+	// used by the feed search: true if the pulse text contains text.
+	bool matchesFilter(const QString &text) const;
+	RsWirePulseSPtr pulse() const { return mPulse; }
+
 
 private slots:
 
@@ -119,10 +128,20 @@ private slots:
 	void actionCopyLink();
 	// Action interfaces --------------------------
 
+protected slots:
+	// mark as read when the user looks at / acts on the pulse (open image, thread, reply...)
+	void markAsRead();
+
 protected:
 
 	// top-level set data onto UI.
 	virtual void showPulse();
+
+	// group shown in the header (the referenced group for REF pulses).
+	RsGxsGroupId displayGroupId() const;
+
+	// set read / unread: backend, local status flags and the card (dot, "New", highlight).
+	void setPulseRead(bool read);
 
 	// UI elements.
 	// Group
@@ -143,6 +162,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
 
 	bool mInFill;
+	QString mDateFull; // full date, used as tooltip for the short date.
 
 	// DATA.
 	RsWirePulseSPtr mPulse;
@@ -153,6 +173,19 @@ protected:
 // utilities.
 QString BoldString(QString input);
 QString ToNumberUnits(uint32_t count);
+
+// Twitter-like feed styling helpers.
+QString WireShortTime(rstime_t ts);                     // "now", "5m", "3h", "2d", "12 Oct"
+QString WireCountText(const QString &count);            // "" for 0, else trimmed count
+
+// Animated GIF check, for own files and for data received from other nodes:
+// only GIF, at most 194 KB, 2..300 frames, canvas at most 1024x1024 (no "decompression bombs").
+bool WireIsSafeAnimatedGif(const uint8_t *data, uint32_t size, QSize *frameSize = nullptr);
+QString WireShortId(const std::string &id);             // first 8 chars of an id
+QPixmap WireRoundPixmap(const QPixmap &src, int size);  // circular avatar
+QPixmap WireRoundedPixmap(const QPixmap &src, int w, int h, int radius); // cropped, rounded corners
+void    WireStyleActionButton(QToolButton *button, bool showText = true); // colors come from the qss stylesheets
+void    WireFitButtonText(QAbstractButton *button); // qss padding is not counted by Qt: avoid elided text ("F...w")
 
 
 #endif

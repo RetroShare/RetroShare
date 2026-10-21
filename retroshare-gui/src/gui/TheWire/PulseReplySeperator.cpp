@@ -27,6 +27,11 @@ PulseReplySeperator::PulseReplySeperator()
 {
 	setupUi(this);
 	setAttribute ( Qt::WA_DeleteOnClose, true );
+
+	// The pulse cards draw their own divider line now (Twitter style),
+	// so the separator takes no space anymore.
+	frame->hide();
+	setFixedHeight(0);
 }
 
 

@@ -46,6 +46,23 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <QActionGroup>
+#include <QTabBar>
+#include <QComboBox>
+#include <QTextEdit>
+#include <QTextDocument>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QToolButton>
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QFrame>
+#include <QScrollBar>
+#include <QResizeEvent>
+#include <QRegularExpression>
+#include <QSet>
+#include <QMap>
 
 /****************************************************************
  * TheWire Display Widget.
@@ -59,6 +76,73 @@
 // Future Extensions.
 // #define GROUP_SET_AUTO          (4)
 // #define GROUP_SET_RECOMMENDED   (5)
+
+// Feed tabs above the pulses, mapped to the group sets of the combo box.
+static const int sFeedTabGroupSets[] = { GROUP_SET_SUBSCRIBED, GROUP_SET_ALL, GROUP_SET_OWN, GROUP_SET_OTHERS };
+static const int sFeedTabCount = 4;
+
+#define WIRE_FEED_WIDTH          600
+#define WIRE_SIDEBAR_MIN_WINDOW  1000  // hide the right sidebar below this window width
+
+
+static int groupSetToFeedTab(int groupSet)
+{
+	for (int i = 0; i < sFeedTabCount; ++i) {
+		if (sFeedTabGroupSets[i] == groupSet) {
+			return i;
+		}
+	}
+	return 0;
+}
+
+static void clearWireLayout(QLayout *layout)
+{
+	if (!layout) {
+		return;
+	}
+	QLayoutItem *item;
+	while ((item = layout->takeAt(0)) != nullptr) {
+		if (item->widget()) {
+			item->widget()->deleteLater();
+		}
+		delete item;
+	}
+}
+
+// same font as the "Post" button of PulseAddDialog.ui (12pt bold).
+static void setPostButtonFont(QPushButton *button)
+{
+	QFont f = button->font();
+	f.setPointSize(12);
+	f.setBold(true);
+	button->setFont(f);
+}
+
+static QFrame *createSidebarCard(const QString &title, QVBoxLayout **contentLayout)
+{
+	QFrame *card = new QFrame();
+	card->setObjectName("wireSidebarCard");
+
+	QVBoxLayout *layout = new QVBoxLayout(card);
+	layout->setContentsMargins(14, 10, 14, 12);
+	layout->setSpacing(6);
+
+	QLabel *titleLabel = new QLabel(title);
+	QFont f = titleLabel->font();
+	f.setBold(true);
+	f.setPointSizeF(f.pointSizeF() * 1.35);
+	titleLabel->setFont(f);
+	titleLabel->setObjectName("wireSidebarTitle");
+	layout->addWidget(titleLabel);
+
+	QVBoxLayout *content = new QVBoxLayout();
+	content->setContentsMargins(0, 0, 0, 0);
+	content->setSpacing(2);
+	layout->addLayout(content);
+
+	*contentLayout = content;
+	return card;
+}
 
 
 /** Constructor */
@@ -128,6 +212,14 @@ WireDialog::WireDialog(QWidget *parent)
 
 	ui.toolButton_accountFilter->setMenu(accountMenu);
 
+	// Twitter-like layout (feed column, tabs, compose box, right sidebar).
+	// Must happen before processSettings() which restores the splitter.
+	setupFeedLayout();
+	setupComposeBox();
+	setupSidebar();
+	setupLeftNavigation();
+	setupReplyBox();
+
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
 	timer->start(1000);
@@ -138,8 +230,8 @@ WireDialog::WireDialog(QWidget *parent)
 
 	requestGroupData();
 
-	// just for testing
-	postTestTwitterView();
+	// just for testing (disabled: it showed empty pulse cards at startup)
+	// postTestTwitterView();
 
 	// load settings
 	processSettings(true);
@@ -349,7 +441,11 @@ void WireDialog::processSettings(bool load)
 		// load settings
 
 		// state of splitter
-		ui.splitter->restoreState(Settings->value("SplitterWire").toByteArray());
+		// new key: the splitter has 3 widgets now (groups | feed | sidebar)
+		QByteArray splitterState = Settings->value("SplitterWire3").toByteArray();
+		if (!splitterState.isEmpty()) {
+			ui.splitter->restoreState(splitterState);
+		}
 
 		// state of filter combobox
 		int index = Settings->value("ShowGroup", 0).toInt();
@@ -365,7 +461,7 @@ void WireDialog::processSettings(bool load)
 		Settings->setValue("ShowGroup", ui.comboBox_groupSet->currentIndex());
 
 		// state of splitter
-		Settings->setValue("SplitterWire", ui.splitter->saveState());
+		Settings->setValue("SplitterWire3", ui.splitter->saveState());
 
 		// state of sort filter
 		Settings->setValue("SortByActivity", sortByActivity->isChecked());
@@ -409,8 +505,17 @@ void WireDialog::filterUsers(const QString &text)
 
 void WireDialog::addGroup(QWidget *item)
 {
-	QLayout *alayout = ui.groupsWidget->layout();
-	alayout->addWidget(item);
+	// insert before the trailing spacer so the list starts at the top.
+	QBoxLayout *boxlayout = dynamic_cast<QBoxLayout *>(ui.groupsWidget->layout());
+	if (!boxlayout) {
+		ui.groupsWidget->layout()->addWidget(item);
+		return;
+	}
+	int pos = boxlayout->count();
+	if (pos > 0 && boxlayout->itemAt(pos - 1)->spacerItem()) {
+		--pos;
+	}
+	boxlayout->insertWidget(pos, item);
 }
 
 bool WireDialog::setupPulseAddDialog()
@@ -435,8 +540,8 @@ bool WireDialog::setupPulseAddDialog()
 		return false;
 	}
 
-	RsWireGroup group = mOwnGroups[idx];
-	mAddDialog->setGroup(group);
+	// "From" chooser with all own accounts, the one chosen on the main page selected.
+	mAddDialog->setOwnGroups(mOwnGroups, idx);
 
 	return true;
 }
@@ -529,10 +634,9 @@ void WireDialog::createPulse()
 		return;
 	}
 
-	RsWireGroup group = mOwnGroups[idx];
-
 	mAddDialog->cleanup();
-	mAddDialog->setGroup(group.mMeta.mGroupId);
+	// "From" chooser with all own accounts, the one chosen on the main page selected.
+	mAddDialog->setOwnGroups(mOwnGroups, idx);
 	mAddDialog->show();
 }
 
@@ -586,18 +690,26 @@ void WireDialog::deleteGroups()
 
 void WireDialog::updateGroups(const std::vector<RsWireGroup>& groups)
 {
+	// remember which account was selected in the "Post as" chooser.
+	RsGxsGroupId selectedOwnGroup;
+	int selectedIdx = ui.groupChooser->currentIndex();
+	if (selectedIdx >= 0 && selectedIdx < (int)mOwnGroups.size()) {
+		selectedOwnGroup = mOwnGroups[selectedIdx].mMeta.mGroupId;
+	}
+
 	mAllGroups.clear();
 	mOwnGroups.clear();
+	ui.groupChooser->blockSignals(true);
 	ui.groupChooser->clear();
 
 	for(auto &it : groups) {
 		// save list of all groups.
 		mAllGroups[it.mMeta.mGroupId] = it;
-        
-        if (it.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) {
-            mOwnGroups.push_back(it);
-        }
-        
+
+		// NB: mOwnGroups must only hold ADMIN groups, its index has to match
+		// ui.groupChooser (previously followed groups were added here too,
+		// which made "Post Pulse" use the wrong account).
+
         addGroup(it);
 
 		if (it.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
@@ -605,23 +717,31 @@ void WireDialog::updateGroups(const std::vector<RsWireGroup>& groups)
 			// grab own groups.
 			// setup Chooser too.
 			mOwnGroups.push_back(it); 
+			// same picture as the avatar of the compose box: headshot, else the default group icon.
 			QPixmap pixmap;
-			if (it.mHeadshot.mData)
-			{
-				if (GxsIdDetails::loadPixmapFromData( it.mHeadshot.mData,it.mHeadshot.mSize,pixmap,GxsIdDetails::ORIGINAL))
-					pixmap = pixmap.scaled(32,32);
-			} 
-			else 
-			{
-				// default.
-				pixmap = FilesDefs::getPixmapFromQtResourcePath(":/icons/wire.png").scaled(32,32);
+			if (it.mHeadshot.mData) {
+				GxsIdDetails::loadPixmapFromData(it.mHeadshot.mData, it.mHeadshot.mSize, pixmap, GxsIdDetails::ORIGINAL);
+			}
+			if (pixmap.isNull()) {
+				pixmap = GxsIdDetails::makeDefaultGroupIcon(it.mMeta.mGroupId, IMAGE_WIRE, GxsIdDetails::ORIGINAL);
 			}
 
-			ui.groupChooser->addItem(QPixmap(pixmap),QString::fromStdString(it.mMeta.mGroupName));
+			ui.groupChooser->addItem(QIcon(WireRoundPixmap(pixmap, 32)), QString::fromStdString(it.mMeta.mGroupName));
 		}
 	}
 
+	for (int i = 0; i < (int)mOwnGroups.size(); ++i) {
+		if (mOwnGroups[i].mMeta.mGroupId == selectedOwnGroup) {
+			ui.groupChooser->setCurrentIndex(i);
+			break;
+		}
+	}
+	ui.groupChooser->blockSignals(false);
+	composeAccountChanged(ui.groupChooser->currentIndex());
+
     updateGroupCountLabels();
+    updateGroupsToFollow();
+    updateNetworkCard();
 }
 
 
@@ -633,6 +753,13 @@ void WireDialog::selectGroupSet(int index)
 	mGroupSet = index;
 	if (mGroupSet < 0) {
 		mGroupSet = GROUP_SET_ALL;
+	}
+
+	// keep the feed tabs in sync with the combo box.
+	if (mFeedTabs) {
+		mFeedTabs->blockSignals(true);
+		mFeedTabs->setCurrentIndex(groupSetToFeedTab(mGroupSet));
+		mFeedTabs->blockSignals(false);
 	}
 
 	// show follow label and account filter only when All is selected
@@ -686,7 +813,7 @@ void WireDialog::showSelectedGroups()
 	}
 }
 
-void WireDialog::showGroups(bool addToHistory)
+void WireDialog::showGroups(bool addToHistory, bool loadPulses)
 {
 	deleteGroups();
 
@@ -751,7 +878,9 @@ void WireDialog::showGroups(bool addToHistory)
 		allGroupIds.push_back(group.mMeta.mGroupId);
 	}
 
-	requestGroupsPulses(allGroupIds, addToHistory);
+	if (loadPulses) {
+		requestGroupsPulses(allGroupIds, addToHistory);
+	}
 }
 
 
@@ -777,7 +906,36 @@ void WireDialog::requestGroupData()
 		{
 			mRequestGroupDataInProgress = false;
 			updateGroups(groups);
-			showGroups(false); // Background update, don't add to history
+
+			// Background update (new pulse, reply, like...): refresh the view the user
+			// is looking at instead of always jumping back to the feed, and keep the scroll position.
+			mRestoreScroll = ui.scrollArea->verticalScrollBar()->value();
+
+			bool haveView = (mHistoryIndex >= 0 && mHistoryIndex < (int)mHistory.size());
+			WireViewHistory current;
+			if (haveView) {
+				current = mHistory[mHistoryIndex];
+			}
+
+			if (haveView && current.viewType == WireViewType::PULSE_FOCUS)
+			{
+				showGroups(false, false); // account list only
+				showPulseFocus(current.groupId, current.msgId);
+			}
+			else if (haveView && current.viewType == WireViewType::GROUP_FOCUS)
+			{
+				showGroups(false, false); // account list only
+				WireGroupItem *item = findGroupItemWidget(current.groupId);
+				if (item) {
+					item->setSelected(true);
+					mGroupSelected = item;
+				}
+				showGroupFocus(current.groupId);
+			}
+			else
+			{
+				showGroups(false); // Background update, don't add to history
+			}
 
 			if (!mNavigatePendingGroupId.isNull()) {
 				if (!mNavigatePendingMsgId.isNull()) {
@@ -995,10 +1153,14 @@ void WireDialog::addTwitterView(PulseViewItem *item)
 		return;
 	}
 
-	// inserting as last item.
+	// inserting as last item, but before the trailing spacer (so pulses start at the top).
 	std::cerr << "WireDialog::addTwitterView() Inserting at end";
 	std::cerr << std::endl;
-	boxlayout->addWidget(item);
+	int pos = boxlayout->count();
+	if (pos > 0 && boxlayout->itemAt(pos - 1)->spacerItem()) {
+		--pos;
+	}
+	boxlayout->insertWidget(pos, item);
 }
 
 // HISTORY -------------------------------------------------------------------------------
@@ -1085,6 +1247,7 @@ void WireDialog::LoadHistory(uint32_t index)
 
 void WireDialog::requestPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId msgId)
 {
+	mRestoreScroll = -1;
 	WireViewHistory view;
 	view.viewType = WireViewType::PULSE_FOCUS;
 	view.groupId = groupId;
@@ -1133,14 +1296,19 @@ void WireDialog::postPulseFocus(RsWirePulseSPtr pPulse)
 		return;
 	}
 
-	ui.label_viewMode->setText("Pulse Focus");
+	ui.label_viewMode->setText(tr("Pulse"));
+	setComposeVisible(false);
+	setEmptyFeedMessage(QString());
 
-	addTwitterView(new PulseTopLevel(this, pPulse));
+	PulseTopLevel *topLevel = new PulseTopLevel(this, pPulse);
+	addTwitterView(topLevel);
+	showReplyBox(topLevel, pPulse);
 
 	for(auto &it : pPulse->mReplies)
 	{
 		RsWirePulseSPtr reply = it;
 		PulseReply *firstReply = new PulseReply(this, reply);
+		firstReply->showReferenceHeader(false); // it's obvious in the thread
 		addTwitterView(firstReply);
 
 		if (reply->mReplies.size() > 0)
@@ -1183,10 +1351,13 @@ void WireDialog::postPulseFocus(RsWirePulseSPtr pPulse)
 	}
 
 
+
+	restoreScrollPosition();
 }
 
 void WireDialog::requestGroupFocus(const RsGxsGroupId groupId)
 {
+	mRestoreScroll = -1;
 	WireViewHistory view;
 	view.viewType = WireViewType::GROUP_FOCUS;
 	view.groupId = groupId;
@@ -1240,7 +1411,10 @@ void WireDialog::postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr
 		return;
 	}
 
-	ui.label_viewMode->setText("Group Focus");
+	ui.label_viewMode->setText(tr("Profile"));
+	setComposeVisible(false);
+	if (mReplyBox) mReplyBox->hide();
+	setEmptyFeedMessage(QString());
 
 	addTwitterView(new PulseViewGroup(this, group));
 
@@ -1262,10 +1436,15 @@ void WireDialog::postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr
 		addTwitterView(new PulseReplySeperator());
 
 	}
+
+	restoreScrollPosition();
 }
 
 void WireDialog::requestGroupsPulses(const std::list<RsGxsGroupId>& groupIds, bool addToHistory)
 {
+	if (addToHistory) {
+		mRestoreScroll = -1;
+	}
 	if (addToHistory) {
 		WireViewHistory view;
 		view.viewType = WireViewType::GROUPS;
@@ -1309,7 +1488,27 @@ void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
 	std::cerr << "WireDialog::postGroupsPulses()";
 	std::cerr << std::endl;
 
-	ui.label_viewMode->setText("Groups Pulses");
+	ui.label_viewMode->setText(tr("Home"));
+	setComposeVisible(true);
+	if (mReplyBox) mReplyBox->hide();
+	updateHashtags(pulses);
+
+	// friendly message instead of an empty grey area.
+	int shown = 0;
+	for (auto &p : pulses) {
+		if (p && !(p->mPulseType & WIRE_PULSE_TYPE_LIKE)) {
+			++shown;
+		}
+	}
+	if (shown > 0) {
+		setEmptyFeedMessage(QString());
+	} else if (mGroupSet == GROUP_SET_OWN) {
+		setEmptyFeedMessage(tr("You have not posted any pulses yet.\nWrite your first pulse above."));
+	} else if (mGroupSet == GROUP_SET_SUBSCRIBED) {
+		setEmptyFeedMessage(tr("No pulses from the Wire groups you follow yet.\nFollow more groups on the right, or wait until your friends sync new pulses."));
+	} else {
+		setEmptyFeedMessage(tr("No pulses received yet.\nPulses appear here when your friends' nodes sync them."));
+	}
 
 	for(auto &it : pulses)
 	{
@@ -1328,6 +1527,13 @@ void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
 		addTwitterView(new PulseReplySeperator());
 
 	}
+
+	// keep the current search applied after a refresh.
+	if (mSearchPulses) {
+		filterPulses(mSearchPulses->text());
+	}
+
+	restoreScrollPosition();
 }
 
 void WireDialog::getServiceStatistics(GxsServiceStatistic& stats) const
@@ -1437,6 +1643,13 @@ void WireDialog::updateGroupCountLabels()
     ui.comboBox_groupSet->setItemText(GROUP_SET_OWN, tr("Yourself (%1)").arg(ownCount));
     ui.comboBox_groupSet->setItemText(GROUP_SET_SUBSCRIBED, tr("Following (%1)").arg(subscribedCount));
     ui.comboBox_groupSet->setItemText(GROUP_SET_OTHERS, tr("Others (%1)").arg(othersCount));
+
+    if (mFeedTabs) {
+        mFeedTabs->setTabText(groupSetToFeedTab(GROUP_SET_SUBSCRIBED), tr("Following"));
+        mFeedTabs->setTabText(groupSetToFeedTab(GROUP_SET_ALL), tr("All"));
+        mFeedTabs->setTabText(groupSetToFeedTab(GROUP_SET_OWN), tr("Yourself"));
+        mFeedTabs->setTabText(groupSetToFeedTab(GROUP_SET_OTHERS), tr("Discover"));
+    }
 }
 
 bool WireDialog::navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId)
@@ -1556,4 +1769,817 @@ void WireDialog::markGroupAsRead(const RsGxsGroupId &groupId)
 
         requestGroupData();
     });
+}
+
+
+/****************************************************************************************/
+// TWITTER-LIKE LAYOUT: feed column, tabs, inline compose box, right sidebar.
+/****************************************************************************************/
+
+void WireDialog::setupFeedLayout()
+{
+	// Feed as one centered column, like Twitter.
+	ui.scrollArea->setFrameShape(QFrame::NoFrame);
+	ui.scrollArea->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+	ui.scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	ui.scrollAreaWidgetContents->setMaximumWidth(WIRE_FEED_WIDTH);
+
+	// transparent feed background: "trans_" names use the transparent rule of the qss.
+	ui.scrollArea->setObjectName("trans_wireFeedScrollArea");
+
+	// title of the view ("Home", "Profile", "Pulse")
+	QFont titleFont = ui.label_viewMode->font();
+	titleFont.setBold(true);
+	titleFont.setPointSizeF(titleFont.pointSizeF() * 1.25);
+	ui.label_viewMode->setFont(titleFont);
+	ui.label_viewMode->setText(tr("Home"));
+
+	// The spacer used to be the first item, which pushed short feeds to the bottom.
+	// Move it to the end: pulses are inserted before it (see addTwitterView).
+	QVBoxLayout *feedLayout = ui.verticalLayout_2;
+	for (int i = 0; i < feedLayout->count(); ++i) {
+		QLayoutItem *item = feedLayout->itemAt(i);
+		if (item && item->spacerItem()) {
+			feedLayout->takeAt(i);
+			feedLayout->addItem(item);
+			break;
+		}
+	}
+
+	// message shown when a feed has no pulses (stays at the top of the feed).
+	mEmptyFeedLabel = new QLabel(ui.scrollAreaWidgetContents);
+	mEmptyFeedLabel->setObjectName("wireMutedLabel");
+	mEmptyFeedLabel->setAlignment(Qt::AlignCenter);
+	mEmptyFeedLabel->setWordWrap(true);
+	mEmptyFeedLabel->setContentsMargins(24, 40, 24, 40);
+	mEmptyFeedLabel->hide();
+	feedLayout->insertWidget(0, mEmptyFeedLabel);
+
+	// the left account list had the same problem (spacer first).
+	QBoxLayout *groupsLayout = dynamic_cast<QBoxLayout *>(ui.groupsWidget->layout());
+	if (groupsLayout) {
+		for (int i = 0; i < groupsLayout->count(); ++i) {
+			QLayoutItem *item = groupsLayout->itemAt(i);
+			if (item && item->spacerItem()) {
+				groupsLayout->takeAt(i);
+				groupsLayout->addItem(item);
+				break;
+			}
+		}
+	}
+
+	// Header above the feed: tabs + compose box, centered with the feed.
+	mFeedHeader = new QWidget(this);
+	mFeedHeader->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum); // never grow taller than needed
+	QHBoxLayout *centerLayout = new QHBoxLayout(mFeedHeader);
+	centerLayout->setContentsMargins(0, 0, 0, 0);
+
+	QWidget *column = new QWidget(mFeedHeader);
+	column->setMaximumWidth(WIRE_FEED_WIDTH);
+	column->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+	QVBoxLayout *columnLayout = new QVBoxLayout(column);
+	columnLayout->setContentsMargins(0, 0, 0, 0);
+	columnLayout->setSpacing(0);
+
+	mFeedTabs = new QTabBar(column);
+	mFeedTabs->setObjectName("wireFeedTabs");
+	mFeedTabs->setExpanding(true);
+	mFeedTabs->setDrawBase(false);
+	mFeedTabs->setDocumentMode(true);
+	for (int i = 0; i < sFeedTabCount; ++i) {
+		mFeedTabs->addTab(QString());
+	}
+	mFeedTabs->setCurrentIndex(groupSetToFeedTab(mGroupSet));
+	connect(mFeedTabs, SIGNAL(currentChanged(int)), this, SLOT(selectFeedTab(int)));
+	columnLayout->addWidget(mFeedTabs);
+
+	centerLayout->addStretch(1);
+	centerLayout->addWidget(column, 100);
+	centerLayout->addStretch(1);
+
+	// put the header between the range bar and the feed.
+	int idx = ui.verticalLayout_3->indexOf(ui.scrollArea);
+	ui.verticalLayout_3->insertWidget(idx < 0 ? 0 : idx, mFeedHeader);
+	ui.verticalLayout_3->setStretchFactor(mFeedHeader, 0);
+	ui.verticalLayout_3->setStretchFactor(ui.scrollArea, 1);
+	ui.verticalLayout_3->setSpacing(0);
+
+	updateGroupCountLabels(); // sets the tab texts
+}
+
+void WireDialog::setupComposeBox()
+{
+	QWidget *column = mFeedTabs ? mFeedTabs->parentWidget() : nullptr;
+	if (!column || !column->layout()) {
+		return;
+	}
+
+	QFrame *box = new QFrame(column);
+	box->setObjectName("wireComposeBox");
+	box->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+	mComposeBox = box;
+
+	QHBoxLayout *boxLayout = new QHBoxLayout(box);
+	boxLayout->setContentsMargins(12, 10, 12, 10);
+	boxLayout->setSpacing(10);
+
+	mComposeAvatar = new QLabel(box);
+	mComposeAvatar->setObjectName("wireAvatar"); // no qss padding, else the picture is cut
+	mComposeAvatar->setFixedSize(48, 48);
+	mComposeAvatar->setAlignment(Qt::AlignTop);
+	boxLayout->addWidget(mComposeAvatar, 0, Qt::AlignTop);
+
+	QVBoxLayout *right = new QVBoxLayout();
+	right->setSpacing(6);
+	right->setContentsMargins(0, 0, 0, 0);
+	boxLayout->addLayout(right, 1);
+
+	mComposeEdit = new QTextEdit(box);
+	mComposeEdit->setObjectName("wireComposeEdit");
+	mComposeEdit->setAcceptRichText(false);
+	mComposeEdit->setPlaceholderText(tr("What's happening?"));
+	mComposeEdit->setFrameShape(QFrame::NoFrame);
+	mComposeEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+	mComposeEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	QFont f = mComposeEdit->font();
+	f.setPointSizeF(f.pointSizeF() * 1.3);
+	mComposeEdit->setFont(f);
+	mComposeEdit->setFixedHeight(mComposeEdit->fontMetrics().lineSpacing() * 2 + 16);
+	connect(mComposeEdit, SIGNAL(textChanged()), this, SLOT(composeTextChanged()));
+	right->addWidget(mComposeEdit);
+
+	QHBoxLayout *bar = new QHBoxLayout();
+	bar->setSpacing(6);
+	right->addLayout(bar);
+
+	// "Post as": reuse the account chooser from the toolbar.
+	ui.toolBarFrame_HL->removeWidget(ui.groupChooser);
+	ui.groupChooser->setParent(box);
+	ui.groupChooser->setToolTip(tr("Post as"));
+	ui.groupChooser->setIconSize(QSize(20, 20));
+	ui.groupChooser->setSizeAdjustPolicy(QComboBox::AdjustToContents); // show the whole account name
+	bar->addWidget(ui.groupChooser);
+	connect(ui.groupChooser, SIGNAL(currentIndexChanged(int)), this, SLOT(composeAccountChanged(int)));
+
+	QToolButton *moreButton = new QToolButton(box);
+	moreButton->setObjectName("wireComposeImages");
+	moreButton->setText(tr("Images"));
+	moreButton->setToolTip(tr("Open the full editor to add images"));
+	WireStyleActionButton(moreButton);
+	moreButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/compose.png"));
+	connect(moreButton, SIGNAL(clicked()), this, SLOT(createPulse()));
+	bar->addWidget(moreButton);
+
+	bar->addStretch(1);
+
+	mComposePost = new QPushButton(tr("Post"), box);
+	mComposePost->setObjectName("postButton"); // existing blue button style of default.qss
+	setPostButtonFont(mComposePost);
+	mComposePost->setCursor(Qt::PointingHandCursor);
+	mComposePost->setEnabled(false);
+	connect(mComposePost, SIGNAL(clicked()), this, SLOT(postInlinePulse()));
+	bar->addWidget(mComposePost);
+
+	column->layout()->addWidget(box);
+}
+
+void WireDialog::setComposeVisible(bool visible)
+{
+	if (mComposeBox) {
+		mComposeBox->setVisible(visible);
+	}
+}
+
+void WireDialog::composeAccountChanged(int index)
+{
+	if (!mComposeAvatar) {
+		return;
+	}
+
+	QPixmap pixmap;
+	if (index >= 0 && index < (int)mOwnGroups.size())
+	{
+		const RsWireGroup &group = mOwnGroups[index];
+		if (group.mHeadshot.mData) {
+			GxsIdDetails::loadPixmapFromData(group.mHeadshot.mData, group.mHeadshot.mSize, pixmap, GxsIdDetails::ORIGINAL);
+		}
+		if (pixmap.isNull()) {
+			pixmap = GxsIdDetails::makeDefaultGroupIcon(group.mMeta.mGroupId, IMAGE_WIRE, GxsIdDetails::ORIGINAL);
+		}
+	}
+	else
+	{
+		pixmap = FilesDefs::getPixmapFromQtResourcePath(IMAGE_WIRE);
+	}
+	mComposeAvatar->setPixmap(WireRoundPixmap(pixmap, 48));
+	if (mReplyAvatar) {
+		mReplyAvatar->setPixmap(WireRoundPixmap(pixmap, 40));
+	}
+	replyTextChanged();
+
+	if (mComposeEdit) {
+		mComposeEdit->setPlaceholderText(mOwnGroups.empty()
+			? tr("Create a Wire account to post pulses")
+			: tr("What's happening?"));
+	}
+	composeTextChanged();
+}
+
+void WireDialog::composeTextChanged()
+{
+	if (!mComposeEdit || !mComposePost) {
+		return;
+	}
+
+	bool hasText = !mComposeEdit->toPlainText().trimmed().isEmpty();
+	mComposePost->setEnabled(hasText && !mOwnGroups.empty());
+
+	// grow with the text: 2 lines minimum, 6 lines maximum (then scroll).
+	int lineHeight = mComposeEdit->fontMetrics().lineSpacing();
+	int minHeight = lineHeight * 2 + 16;
+	int maxHeight = lineHeight * 6 + 16;
+	int height = minHeight;
+	if (mComposeEdit->viewport()->width() > 50 && hasText) {
+		height = (int) mComposeEdit->document()->size().height() + 16;
+	}
+	mComposeEdit->setFixedHeight(qBound(minHeight, height, maxHeight));
+}
+
+void WireDialog::postInlinePulse()
+{
+	if (!mComposeEdit) {
+		return;
+	}
+
+	QString text = mComposeEdit->toPlainText().trimmed();
+	if (text.isEmpty()) {
+		return;
+	}
+
+	int idx = ui.groupChooser->currentIndex();
+	if (idx < 0 || idx >= (int)mOwnGroups.size()) {
+		QMessageBox::warning(this, tr("RetroShare"), tr("Please create or choose Wire Groupd first"), QMessageBox::Ok, QMessageBox::Ok);
+		return;
+	}
+
+	RsGxsGroupId groupId = mOwnGroups[idx].mMeta.mGroupId;
+
+	RsWirePulseSPtr pPulse(new RsWirePulse());
+	pPulse->mSentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
+	pPulse->mPulseText = text.toStdString();
+
+	mComposePost->setEnabled(false);
+
+	RsThread::async([this, groupId, pPulse]()
+	{
+		bool ok = rsWire->createOriginalPulse(groupId, pPulse);
+
+		RsQThreadUtils::postToObject([this, ok]()
+		{
+			if (ok) {
+				mComposeEdit->clear();
+			} else {
+				QMessageBox::warning(this, tr("RetroShare"), tr("Could not post the pulse."), QMessageBox::Ok, QMessageBox::Ok);
+			}
+			composeTextChanged();
+		}, this);
+	});
+}
+
+void WireDialog::selectFeedTab(int index)
+{
+	if (index < 0 || index >= sFeedTabCount) {
+		return;
+	}
+
+	// back to the feed when a tab is clicked in a focus view.
+	mGroupSelected = nullptr;
+
+	int groupSet = sFeedTabGroupSets[index];
+	if (ui.comboBox_groupSet->currentIndex() != groupSet) {
+		ui.comboBox_groupSet->setCurrentIndex(groupSet); // calls selectGroupSet()
+	} else {
+		selectGroupSet(groupSet);
+	}
+}
+
+void WireDialog::setupSidebar()
+{
+	mSidebar = new QScrollArea(ui.splitter);
+	mSidebar->setObjectName("trans_wireSidebar");
+	mSidebar->setWidgetResizable(true);
+	mSidebar->setFrameShape(QFrame::NoFrame);
+	mSidebar->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	mSidebar->setMinimumWidth(260);
+	mSidebar->setMaximumWidth(360);
+
+	QWidget *content = new QWidget(mSidebar);
+	QVBoxLayout *layout = new QVBoxLayout(content);
+	layout->setContentsMargins(12, 8, 12, 12);
+	layout->setSpacing(12);
+
+	// Search (local: filters the loaded pulses).
+	mSearchPulses = new QLineEdit(content);
+	mSearchPulses->setObjectName("wireSearchPulses");
+	mSearchPulses->setPlaceholderText(tr("Search pulses"));
+	mSearchPulses->setClearButtonEnabled(true);
+	connect(mSearchPulses, SIGNAL(textChanged(const QString&)), this, SLOT(filterPulses(const QString&)));
+	layout->addWidget(mSearchPulses);
+
+	// Hashtags in the loaded feed (Wire has no server, so no global trends).
+	layout->addWidget(createSidebarCard(tr("Hashtags in your feed"), &mHashtagsLayout));
+
+	// Wire groups you don't follow yet.
+	QFrame *followCard = createSidebarCard(tr("Wire groups to follow"), &mFollowLayout);
+	QPushButton *showMore = new QPushButton(tr("Show more"), followCard);
+	showMore->setObjectName("wireLinkButton");
+	showMore->setFlat(true);
+	showMore->setCursor(Qt::PointingHandCursor);
+	connect(showMore, SIGNAL(clicked()), this, SLOT(showOtherGroups()));
+	followCard->layout()->addWidget(showMore);
+	layout->addWidget(followCard);
+
+	// Network status.
+	QVBoxLayout *networkLayout = nullptr;
+	layout->addWidget(createSidebarCard(tr("Network"), &networkLayout));
+	mNetworkOnline = new QLabel(content);
+	mNetworkNewest = new QLabel(content);
+	mNetworkNewest->setObjectName("wireMutedLabel");
+	networkLayout->addWidget(mNetworkOnline);
+	networkLayout->addWidget(mNetworkNewest);
+
+	QLabel *footer = new QLabel(tr("RetroShare Wire - decentralised pulses"), content);
+	footer->setObjectName("wireMutedLabel");
+	footer->setWordWrap(true);
+	layout->addWidget(footer);
+
+	layout->addStretch(1);
+	mSidebar->setWidget(content);
+
+	ui.splitter->addWidget(mSidebar);
+	ui.splitter->setStretchFactor(0, 0);
+	ui.splitter->setStretchFactor(1, 1);
+	ui.splitter->setStretchFactor(2, 0);
+
+	mNetworkTimer = new QTimer(this);
+	connect(mNetworkTimer, SIGNAL(timeout()), this, SLOT(updateNetworkCard()));
+	mNetworkTimer->start(30 * 1000);
+
+	updateHashtags(std::list<RsWirePulseSPtr>());
+	updateGroupsToFollow();
+	updateNetworkCard();
+}
+
+void WireDialog::resizeEvent(QResizeEvent *event)
+{
+	MainPage::resizeEvent(event);
+	if (mSidebar) {
+		mSidebar->setVisible(width() >= WIRE_SIDEBAR_MIN_WINDOW);
+	}
+}
+
+void WireDialog::filterPulses(const QString &text)
+{
+	QString filter = text.trimmed();
+	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+	for (int i = 0; i < alayout->count(); ++i)
+	{
+		PulseDataItem *item = dynamic_cast<PulseDataItem *>(alayout->itemAt(i)->widget());
+		if (item) {
+			item->setVisible(item->matchesFilter(filter));
+		}
+	}
+}
+
+void WireDialog::updateHashtags(const std::list<RsWirePulseSPtr> &pulses)
+{
+	if (!mHashtagsLayout) {
+		return;
+	}
+	clearWireLayout(mHashtagsLayout);
+
+	// count each tag once per pulse.
+	QMap<QString, int> counts;
+	QRegularExpression re("#(\\w+)", QRegularExpression::UseUnicodePropertiesOption);
+	for (auto &pulse : pulses)
+	{
+		if (!pulse || (pulse->mPulseType & WIRE_PULSE_TYPE_LIKE)) {
+			continue;
+		}
+
+		QString text = QString::fromStdString(pulse->mPulseText);
+		if (pulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE) {
+			text += " " + QString::fromStdString(pulse->mRefPulseText);
+		}
+
+		QSet<QString> tags;
+		QRegularExpressionMatchIterator it = re.globalMatch(text);
+		while (it.hasNext()) {
+			tags.insert("#" + it.next().captured(1).toLower());
+		}
+		for (const QString &tag : tags) {
+			counts[tag]++;
+		}
+	}
+
+	QList<QPair<int, QString> > sorted;
+	for (auto it = counts.begin(); it != counts.end(); ++it) {
+		sorted.append(qMakePair(it.value(), it.key()));
+	}
+	std::sort(sorted.begin(), sorted.end(), [](const QPair<int, QString> &a, const QPair<int, QString> &b) {
+		return (a.first != b.first) ? (a.first > b.first) : (a.second < b.second);
+	});
+
+	if (sorted.isEmpty())
+	{
+		QLabel *empty = new QLabel(tr("No hashtags in your feed yet."));
+		empty->setObjectName("wireMutedLabel");
+		mHashtagsLayout->addWidget(empty);
+		return;
+	}
+
+	for (int i = 0; i < sorted.size() && i < 5; ++i)
+	{
+		QString tag = sorted[i].second;
+		QPushButton *button = new QPushButton(QString("%1   %2").arg(tag, tr("%n pulse(s)", "", sorted[i].first)));
+		button->setObjectName("wireHashtagButton");
+		button->setFlat(true);
+		button->setCursor(Qt::PointingHandCursor);
+		button->setToolTip(tr("Show pulses with %1").arg(tag));
+		connect(button, &QPushButton::clicked, this, [this, tag]() {
+			if (mSearchPulses) {
+				mSearchPulses->setText(tag);
+			}
+		});
+		mHashtagsLayout->addWidget(button);
+	}
+}
+
+void WireDialog::updateGroupsToFollow()
+{
+	if (!mFollowLayout) {
+		return;
+	}
+	clearWireLayout(mFollowLayout);
+
+	std::vector<RsWireGroup> candidates;
+	for (auto &it : mAllGroups)
+	{
+		uint32_t flags = it.second.mMeta.mSubscribeFlags;
+		if (flags & (GXS_SERV::GROUP_SUBSCRIBE_ADMIN | GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)) {
+			continue;
+		}
+		candidates.push_back(it.second);
+	}
+
+	// most recently active first.
+	std::sort(candidates.begin(), candidates.end(), [](const RsWireGroup &a, const RsWireGroup &b) {
+		return a.mMeta.mLastPost > b.mMeta.mLastPost;
+	});
+
+	if (candidates.empty())
+	{
+		QLabel *empty = new QLabel(tr("You already follow every Wire group you know."));
+		empty->setObjectName("wireMutedLabel");
+		empty->setWordWrap(true);
+		mFollowLayout->addWidget(empty);
+		return;
+	}
+
+	for (size_t i = 0; i < candidates.size() && i < 3; ++i)
+	{
+		const RsWireGroup &group = candidates[i];
+		RsGxsGroupId groupId = group.mMeta.mGroupId;
+
+		QWidget *row = new QWidget();
+		row->setObjectName("trans_wireFollowRow");
+		QHBoxLayout *rowLayout = new QHBoxLayout(row);
+		rowLayout->setContentsMargins(0, 4, 0, 4);
+		rowLayout->setSpacing(8);
+
+		QPixmap pixmap;
+		if (group.mHeadshot.mData) {
+			GxsIdDetails::loadPixmapFromData(group.mHeadshot.mData, group.mHeadshot.mSize, pixmap, GxsIdDetails::ORIGINAL);
+		}
+		if (pixmap.isNull()) {
+			pixmap = GxsIdDetails::makeDefaultGroupIcon(groupId, IMAGE_WIRE, GxsIdDetails::ORIGINAL);
+		}
+		QLabel *avatar = new QLabel(row);
+		avatar->setObjectName("wireAvatar");
+		avatar->setFixedSize(36, 36);
+		avatar->setPixmap(WireRoundPixmap(pixmap, 36));
+		rowLayout->addWidget(avatar);
+
+		QString subtitle = group.mTagline.empty()
+			? WireShortId(groupId.toStdString())
+			: QString::fromStdString(group.mTagline);
+		QWidget *names = new QWidget(row);
+		names->setObjectName("trans_wireFollowNames");
+		names->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+		names->setToolTip(QString::fromStdString(groupId.toStdString()));
+		QVBoxLayout *namesLayout = new QVBoxLayout(names);
+		namesLayout->setContentsMargins(0, 0, 0, 0);
+		namesLayout->setSpacing(0);
+
+		QLabel *name = new QLabel(QString::fromStdString(group.mMeta.mGroupName), names);
+		name->setTextFormat(Qt::PlainText);
+		QFont nameFont = name->font();
+		nameFont.setBold(true);
+		name->setFont(nameFont);
+		namesLayout->addWidget(name);
+
+		QLabel *sub = new QLabel(subtitle, names);
+		sub->setObjectName("wireMutedLabel");
+		sub->setTextFormat(Qt::PlainText);
+		namesLayout->addWidget(sub);
+
+		rowLayout->addWidget(names, 1);
+
+		QToolButton *follow = new QToolButton(row);
+		follow->setText(tr("Follow"));
+		follow->setObjectName("followButton"); // existing follow button style of default.qss
+		WireFitButtonText(follow);
+		follow->setCursor(Qt::PointingHandCursor);
+		connect(follow, &QToolButton::clicked, this, [this, groupId, follow]() {
+			RsGxsGroupId id = groupId;
+			subscribe(id);
+			follow->setText(tr("Following"));
+			WireFitButtonText(follow);
+			follow->setEnabled(false);
+		});
+		rowLayout->addWidget(follow);
+
+		mFollowLayout->addWidget(row);
+	}
+}
+
+void WireDialog::showOtherGroups()
+{
+	if (mFeedTabs) {
+		mFeedTabs->setCurrentIndex(groupSetToFeedTab(GROUP_SET_OTHERS));
+	}
+}
+
+void WireDialog::updateNetworkCard()
+{
+	if (!mNetworkOnline || !mNetworkNewest) {
+		return;
+	}
+
+	std::list<RsPeerId> online;
+	if (rsPeers) {
+		rsPeers->getOnlineList(online);
+	}
+	mNetworkOnline->setText(tr("%n friend(s) online", "", (int) online.size()));
+
+	// newest pulse from groups we follow (not our own).
+	rstime_t newest = 0;
+	for (auto &it : mAllGroups)
+	{
+		uint32_t flags = it.second.mMeta.mSubscribeFlags;
+		if ((flags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) && !(flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)) {
+			newest = std::max(newest, (rstime_t) it.second.mMeta.mLastPost);
+		}
+	}
+
+	mNetworkNewest->setText(newest > 0
+		? tr("Newest pulse received: %1").arg(WireShortTime(newest))
+		: tr("No pulses received yet"));
+}
+
+
+void WireDialog::setEmptyFeedMessage(const QString &text)
+{
+	if (!mEmptyFeedLabel) {
+		return;
+	}
+	bool show = !text.isEmpty();
+	mEmptyFeedLabel->setText(text);
+	mEmptyFeedLabel->setVisible(show);
+
+	// center the message in the feed area: while it is shown the trailing spacer
+	// takes no space and the label expands over the whole height.
+	mEmptyFeedLabel->setSizePolicy(QSizePolicy::Preferred, show ? QSizePolicy::Expanding : QSizePolicy::Preferred);
+	QBoxLayout *layout = ui.verticalLayout_2;
+	int last = layout->count() - 1;
+	if (last >= 0 && layout->itemAt(last)->spacerItem()) {
+		layout->itemAt(last)->spacerItem()->changeSize(20, show ? 0 : 40, QSizePolicy::Minimum,
+			show ? QSizePolicy::Fixed : QSizePolicy::Expanding);
+		layout->invalidate();
+	}
+}
+
+// Left column like Twitter: navigation on top, then the account list.
+void WireDialog::setupLeftNavigation()
+{
+	// Compact navigation: one row [Home] [Profile] ........ [+], then "Post Pulse".
+	QWidget *nav = new QWidget(ui.plainFrame_GroupSet);
+	nav->setObjectName("trans_wireNav");
+	QVBoxLayout *navLayout = new QVBoxLayout(nav);
+	navLayout->setContentsMargins(0, 2, 0, 4);
+	navLayout->setSpacing(4);
+
+	QHBoxLayout *row = new QHBoxLayout();
+	row->setContentsMargins(0, 0, 0, 0);
+	row->setSpacing(2);
+	navLayout->addLayout(row);
+
+	auto addNavButton = [&](const QIcon &icon, const QString &text, const QString &tooltip, const char *slot) {
+		QToolButton *button = new QToolButton(nav);
+		button->setObjectName("wireNavButton");
+		button->setIcon(icon);
+		button->setIconSize(QSize(20, 20));
+		button->setText(text);
+		button->setToolTip(tooltip);
+		button->setToolButtonStyle(text.isEmpty() ? Qt::ToolButtonIconOnly : Qt::ToolButtonTextBesideIcon);
+		button->setAutoRaise(true);
+		button->setCursor(Qt::PointingHandCursor);
+		connect(button, SIGNAL(clicked()), this, slot);
+		row->addWidget(button);
+		return button;
+	};
+
+	addNavButton(ui.toolButton_home->icon(), tr("Home"), tr("Show the pulses of the groups you follow"), SLOT(showHomeFeed()));
+	addNavButton(FilesDefs::getIconFromQtResourcePath(":/icons/png/wire-circle.png"), tr("Profile"), tr("Show your profile"), SLOT(showOwnProfile()));
+	row->addStretch(1);
+	addNavButton(ui.toolButton_createAccount->icon(), QString(), tr("Create account"), SLOT(createGroup()));
+
+	QPushButton *postButton = new QPushButton(tr("Post Pulse"), nav);
+	postButton->setObjectName("postButton"); // existing blue button style of default.qss
+	setPostButtonFont(postButton);
+	postButton->setCursor(Qt::PointingHandCursor);
+	connect(postButton, SIGNAL(clicked()), this, SLOT(createPulse()));
+	navLayout->addWidget(postButton);
+
+	QFrame *line = new QFrame(nav);
+	line->setObjectName("wireNavLine");
+	line->setFrameShape(QFrame::HLine);
+	navLayout->addWidget(line);
+
+	ui.plainFrame_GroupSet_VL->insertWidget(0, nav);
+
+	// The old toolbar is replaced by this navigation, the group set combo by the feed tabs.
+	ui.toolBarFrame->hide();
+	ui.comboBox_groupSet->hide();
+	ui.lineEdit_searchUsers->setPlaceholderText(tr("Search accounts"));
+}
+
+void WireDialog::showOwnProfile()
+{
+	int idx = ui.groupChooser->currentIndex();
+	if (idx < 0 || idx >= (int)mOwnGroups.size()) {
+		QMessageBox::warning(this, tr("RetroShare"), tr("Please create or choose Wire Groupd first"), QMessageBox::Ok, QMessageBox::Ok);
+		return;
+	}
+	requestGroupFocus(mOwnGroups[idx].mMeta.mGroupId);
+}
+
+
+// Inline "Post your reply" box shown below the pulse in the thread view (like Twitter).
+void WireDialog::setupReplyBox()
+{
+	QFrame *box = new QFrame(ui.scrollAreaWidgetContents);
+	box->setObjectName("wireComposeBox"); // same look as the compose box
+	box->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+	mReplyBox = box;
+
+	QHBoxLayout *layout = new QHBoxLayout(box);
+	layout->setContentsMargins(12, 8, 12, 8);
+	layout->setSpacing(10);
+
+	mReplyAvatar = new QLabel(box);
+	mReplyAvatar->setObjectName("wireAvatar");
+	mReplyAvatar->setFixedSize(40, 40);
+	layout->addWidget(mReplyAvatar, 0, Qt::AlignTop);
+
+	mReplyEdit = new QTextEdit(box);
+	mReplyEdit->setObjectName("wireComposeEdit");
+	mReplyEdit->setAcceptRichText(false);
+	mReplyEdit->setPlaceholderText(tr("Post your reply"));
+	mReplyEdit->setFrameShape(QFrame::NoFrame);
+	mReplyEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	QFont f = mReplyEdit->font();
+	f.setPointSizeF(f.pointSizeF() * 1.3);
+	mReplyEdit->setFont(f);
+	mReplyEdit->setFixedHeight(mReplyEdit->fontMetrics().lineSpacing() + 16);
+	connect(mReplyEdit, SIGNAL(textChanged()), this, SLOT(replyTextChanged()));
+	layout->addWidget(mReplyEdit, 1);
+
+	mReplyPost = new QPushButton(tr("Reply"), box);
+	mReplyPost->setObjectName("postButton"); // existing blue button style of default.qss
+	setPostButtonFont(mReplyPost);
+	mReplyPost->setCursor(Qt::PointingHandCursor);
+	mReplyPost->setEnabled(false);
+	connect(mReplyPost, SIGNAL(clicked()), this, SLOT(postInlineReply()));
+	layout->addWidget(mReplyPost, 0, Qt::AlignTop);
+
+	box->hide();
+}
+
+void WireDialog::showReplyBox(PulseViewItem *after, RsWirePulseSPtr pulse)
+{
+	if (!mReplyBox || !pulse) {
+		return;
+	}
+
+	// a REF pulse can't be replied to (same rule as PulseDataItem::actionReply),
+	// and libretroshare only accepts replies to groups we follow (or own).
+	bool followed = pulse->mGroupPtr && (pulse->mGroupPtr->mMeta.mSubscribeFlags &
+		(GXS_SERV::GROUP_SUBSCRIBE_ADMIN | GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED));
+	if ((pulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE) || !followed) {
+		mReplyBox->hide();
+		return;
+	}
+
+	mReplyToGroupId = pulse->mMeta.mGroupId;
+	mReplyToMsgId = pulse->mMeta.mOrigMsgId;
+	if (mReplyToMsgId.isNull()) {
+		mReplyToMsgId = pulse->mMeta.mMsgId;
+	}
+
+	// place it right below the pulse.
+	QBoxLayout *layout = ui.verticalLayout_2;
+	layout->removeWidget(mReplyBox);
+	int idx = layout->indexOf(after);
+	layout->insertWidget(idx < 0 ? 0 : idx + 1, mReplyBox);
+	mReplyBox->show();
+	replyTextChanged();
+}
+
+void WireDialog::replyTextChanged()
+{
+	if (!mReplyEdit || !mReplyPost) {
+		return;
+	}
+
+	bool hasText = !mReplyEdit->toPlainText().trimmed().isEmpty();
+	mReplyPost->setEnabled(hasText && !mOwnGroups.empty());
+
+	// one line when empty, grows up to 6 lines.
+	int lineHeight = mReplyEdit->fontMetrics().lineSpacing();
+	int height = lineHeight + 16;
+	if (hasText && mReplyEdit->viewport()->width() > 50) {
+		height = (int) mReplyEdit->document()->size().height() + 16;
+	}
+	mReplyEdit->setFixedHeight(qBound(lineHeight + 16, height, lineHeight * 6 + 16));
+}
+
+void WireDialog::postInlineReply()
+{
+	if (!mReplyEdit) {
+		return;
+	}
+
+	QString text = mReplyEdit->toPlainText().trimmed();
+	if (text.isEmpty() || mReplyToGroupId.isNull() || mReplyToMsgId.isNull()) {
+		return;
+	}
+
+	int idx = ui.groupChooser->currentIndex();
+	if (idx < 0 || idx >= (int)mOwnGroups.size()) {
+		QMessageBox::warning(this, tr("RetroShare"), tr("Please create or choose Wire Groupd first"), QMessageBox::Ok, QMessageBox::Ok);
+		return;
+	}
+
+	RsGxsGroupId replyWith = mOwnGroups[idx].mMeta.mGroupId;
+	RsGxsGroupId parentGroupId = mReplyToGroupId;
+	RsGxsMessageId parentMsgId = mReplyToMsgId;
+
+	RsWirePulseSPtr pPulse(new RsWirePulse());
+	pPulse->mSentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
+	pPulse->mPulseText = text.toStdString();
+
+	mReplyPost->setEnabled(false);
+
+	RsThread::async([this, parentGroupId, parentMsgId, replyWith, pPulse]()
+	{
+		bool ok = rsWire->createReplyPulse(parentGroupId, parentMsgId, replyWith, WIRE_PULSE_TYPE_REPLY, pPulse);
+
+		RsQThreadUtils::postToObject([this, ok]()
+		{
+			if (ok) {
+				mReplyEdit->clear();
+			} else {
+				QMessageBox::warning(this, tr("RetroShare"),
+					tr("Could not post the reply.\nYou can only reply to pulses of Wire groups you follow."),
+					QMessageBox::Ok, QMessageBox::Ok);
+			}
+			replyTextChanged();
+		}, this);
+	});
+}
+
+// after a background refresh, go back to where the user was.
+void WireDialog::restoreScrollPosition()
+{
+	if (mRestoreScroll < 0) {
+		return;
+	}
+	int value = mRestoreScroll;
+	mRestoreScroll = -1;
+
+	// the layout is updated asynchronously, wait for the new size.
+	QTimer::singleShot(0, this, [this, value]() {
+		ui.scrollArea->verticalScrollBar()->setValue(value);
+	});
 }

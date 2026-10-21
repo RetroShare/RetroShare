@@ -34,6 +34,7 @@ public:
 	PulseReply(PulseViewHolder *holder, RsWirePulseSPtr pulse);
 
 	void showReplyLine(bool enable);
+	void showReferenceHeader(bool show); // hide "In reply to @..." inside a thread
 	bool isUnread() const ;
 
 protected slots:
@@ -41,6 +42,7 @@ protected slots:
 
 protected:
 	void setup();
+	void applyFeedStyle();
 
 // PulseDataInterface ===========
 	// Group
