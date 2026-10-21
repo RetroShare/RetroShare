@@ -3,7 +3,22 @@ cmake_minimum_required(VERSION 3.18)
 project(VOIPPlugin)
 
 # --- Dependencies ---
-find_package(Qt5 COMPONENTS Core Widgets Multimedia Xml Network REQUIRED)
+# Version-agnostic Qt detection: probe Qt6 first, fall back to Qt5 (mirrors
+# retroshare-gui/CMakeLists.txt). All Qt usage goes through ${QT_VERSION_MAJOR}
+# so the plugin builds against whichever Qt the GUI uses.
+find_package(Qt6 QUIET COMPONENTS Core)
+if(Qt6_FOUND)
+    set(QT_VERSION_MAJOR 6)
+else()
+    find_package(Qt5 COMPONENTS Core REQUIRED)
+    set(QT_VERSION_MAJOR 5)
+endif()
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Multimedia Xml Network REQUIRED)
+if(QT_VERSION_MAJOR EQUAL 6)
+    # Core5Compat provides QRegExp/QTextCodec etc. referenced via shared
+    # retroshare-gui headers; matches the GUI's own link.
+    find_package(Qt6 COMPONENTS Core5Compat REQUIRED)
+endif()
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(AVCODEC REQUIRED libavcodec)
 pkg_check_modules(AVUTIL REQUIRED libavutil)
@@ -35,6 +50,15 @@ set(VOIP_SOURCES
     gui/VOIPToasterNotify.cpp
 )
 
+# macOS + Qt6: the camera is driven straight from AVFoundation (Objective-C++),
+# both for the access request and for frame capture. Qt6's QPermission API never
+# contacts the OS for the camera on macOS, and its QMediaCaptureSession/QVideoSink
+# pipeline delivers no frames there. See gui/MacCamera{Permission,Capture}.{h,mm}.
+# Qt5 on macOS keeps the plain Qt camera pipeline.
+if(APPLE AND QT_VERSION_MAJOR EQUAL 6)
+    list(APPEND VOIP_SOURCES gui/MacCameraPermission.mm gui/MacCameraCapture.mm)
+endif()
+
 set(VOIP_FORMS
     gui/AudioStats.ui
     gui/AudioWizard.ui
@@ -50,10 +74,10 @@ set(VOIP_RESOURCES
 
 # --- Translations (.ts -> .qm) ---
 file(GLOB TS_FILES "lang/*.ts")
-if(Qt5LinguistTools_FOUND)
-    qt5_add_translation(QM_FILES ${TS_FILES})
+if(Qt${QT_VERSION_MAJOR}LinguistTools_FOUND)
+    qt_add_translation(QM_FILES ${TS_FILES})
 else()
-    find_program(LRELEASE_EXECUTABLE NAMES lrelease-qt5 lrelease)
+    find_program(LRELEASE_EXECUTABLE NAMES lrelease-qt${QT_VERSION_MAJOR} lrelease-qt5 lrelease)
     foreach(ts_file ${TS_FILES})
         get_filename_component(ts_name ${ts_file} NAME_WE)
         set(qm_src_file "${CMAKE_CURRENT_SOURCE_DIR}/lang/${ts_name}.qm")
@@ -108,16 +132,26 @@ endif()
 # NOTE: VOIP makes no direct use of OpenSSL (it relies on libretroshare for any
 # cryptography), so it does not find_package/link OpenSSL itself.
 target_link_libraries(VOIP PRIVATE
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::Multimedia
-    Qt5::Xml
-    Qt5::Network
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Multimedia
+    Qt${QT_VERSION_MAJOR}::Xml
+    Qt${QT_VERSION_MAJOR}::Network
     ${AVCODEC_LIBRARIES}
     ${AVUTIL_LIBRARIES}
     ${SPEEX_LIBRARIES}
     ${SPEEXDSP_LIBRARIES}
 )
+if(QT_VERSION_MAJOR EQUAL 6)
+    target_link_libraries(VOIP PRIVATE Qt6::Core5Compat)
+endif()
+
+# macOS + Qt6: MacCameraPermission.mm / MacCameraCapture.mm call into AVFoundation.
+if(APPLE AND QT_VERSION_MAJOR EQUAL 6)
+    target_link_libraries(VOIP PRIVATE
+        "-framework AVFoundation" "-framework Foundation"
+        "-framework CoreVideo" "-framework CoreMedia")
+endif()
 
 target_compile_options(VOIP PRIVATE "-Wno-deprecated-declarations")
 target_compile_definitions(VOIP PRIVATE RS_NO_WARN_DEPRECATED)
