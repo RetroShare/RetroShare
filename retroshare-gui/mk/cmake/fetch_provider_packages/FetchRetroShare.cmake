@@ -35,6 +35,8 @@ if(NOT FETCH_RetroShare_GIT_TAG)
 	)
 endif()
 
+set(RS_USE_I2P_SAM3 TRUE)
+
 include(FetchContent)
 FetchContent_Declare(RetroShare
 	GIT_REPOSITORY "https://github.com/RetroShare/libretroshare.git"

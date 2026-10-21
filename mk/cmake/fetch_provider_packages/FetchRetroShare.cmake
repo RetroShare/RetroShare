@@ -24,6 +24,8 @@
 # 3.14: FetchContent_MakeAvailable()
 cmake_minimum_required(VERSION 3.14...4.4)
 
+set(RS_USE_I2P_SAM3 TRUE)
+
 include(FetchContent)
 FetchContent_Declare(RetroShare
 	SOURCE_DIR "${retroshare-superproject_SOURCE_DIR}/libretroshare"

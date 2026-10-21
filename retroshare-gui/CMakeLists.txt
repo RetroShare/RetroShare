@@ -126,7 +126,7 @@ list(APPEND CMAKE_MODULE_PATH
 )
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 
-find_package(RetroShare REQUIRED)
+find_package(RetroShare REQUIRED COMPONENTS SAM3)
 
 
 ################################################################################
@@ -327,19 +327,6 @@ if(RS_GUI_CMARK)
 	target_compile_definitions(${PROJECT_NAME} PRIVATE USE_CMARK)
 	target_link_libraries(${PROJECT_NAME} PRIVATE cmark::cmark)
 endif(RS_GUI_CMARK)
-
-################################# LibSam v3 ####################################
-
-# sam3 is used in gui/settings/ServerPage.cpp
-if(RS_USE_I2P_SAM3)
-	find_package(sam3 REQUIRED)
-	target_link_libraries(${PROJECT_NAME} PRIVATE sam3::libsam3)
-	target_compile_definitions(${PROJECT_NAME}
-		PRIVATE
-		RS_USE_I2P_SAM3
-		RS_USE_I2P_SAM3_LIBSAM3
-	)
-endif()
 
 ################################################################################
 ### platforms

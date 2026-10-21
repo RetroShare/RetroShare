@@ -39,7 +39,6 @@ option(RS_GUI "Build RetroShare GUI" ON)
 option(RS_SERVICE "Build RetroShare Service" ON)
 option(RS_FRIENDSERVER "Build RetroShare Friendserver" ON)
 option(RS_PLUGINS "Build RetroShare Plugins" OFF)
-option(RS_USE_I2P_SAM3 "Enable I2P SAMv3 support" ON)
 set(RS_PLUGIN_BINARY_DIR ${PROJECT_BINARY_DIR}/plugins CACHE PATH
 	"directory to place plugin shared objects at build time"
 	" (does not affect install location)"

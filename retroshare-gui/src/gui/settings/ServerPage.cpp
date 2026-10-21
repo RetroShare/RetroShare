@@ -47,10 +47,6 @@
 #include <QTcpSocket>
 #include <QTimer>
 
-#ifdef RS_USE_I2P_SAM3
-#include <libsam3.h>
-#endif
-
 #define ICON_STATUS_UNKNOWN ":/images/ledoff1.png"
 #define ICON_STATUS_WORKING ":/images/yellowled.png"
 #define ICON_STATUS_OK      ":/images/ledon1.png"
@@ -80,7 +76,7 @@ const static uint32_t TAB_RELAYS                  = 3;
 //#define SERVER_DEBUG 1
 
 ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
-    : ConfigPage(parent, flags)
+	: ConfigPage(parent, flags)
     , manager(NULL), mOngoingConnectivityCheck(-1)
     , mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
     , mSamAccessible(false)
@@ -90,9 +86,8 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
   mSamSettings.initDefault();
 
-#ifndef RS_USE_I2P_SAM3
-  ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P);	// warning: the order of operation here is very important.
-#endif
+	// FIXME: RetroShare GUI assumes libretroshare supports SAM3
+  // ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P);	// warning: the order of operation here is very important.
 
   if(RsAccounts::isHiddenNode())
   {
@@ -1452,13 +1447,13 @@ void ServerPage::updateInProxyIndicator()
 
 	if (mHiddenType == RS_HIDDEN_TYPE_I2P && mSamSettings.enable) {
 		// there is no inproxy for SAMv3, since every connection goes through sam itself
-		auto secw = new samEstablishConnectionWrapper();
-		secw->address = mSamSettings.address;
-		secw->connection = nullptr;
-		rsAutoProxyMonitor::taskAsync(autoProxyType::I2PSAM3, autoProxyTask::establishConnection, this, secw);
-
-        return;
-    }
+		samStatus ss;
+		rsAutoProxyMonitor::taskSync(autoProxyType::I2PSAM3, autoProxyTask::status,
+			&ss
+		);
+		updateInProxyIndicatorResult(ss.state == samStatus::samState::online);
+		return;
+	}
 
     if(manager == NULL) {
         manager = new  QNetworkAccessManager(this);
@@ -1598,7 +1593,6 @@ void ServerPage::syncI2PProxyAddrSam(QString t)
 
 void ServerPage::taskFinished(taskTicket *&ticket)
 {
-#ifdef RS_USE_I2P_SAM3
 	switch (ticket->task) {
 	case autoProxyTask::receiveKey:
 	{
@@ -1606,7 +1600,7 @@ void ServerPage::taskFinished(taskTicket *&ticket)
 		addr = static_cast<i2p::address *>(ticket->data);
 
 		if (ticket->types.front() != autoProxyType::I2PSAM3)
-			RS_WARN("auto proxy task finished but not for SMA, not exptected! Also not a serious problem.");
+      RS_WARN("auto proxy task finished but not for SAM, not exptected! Also not a serious problem.");
 		else {
 			// update settings
 			auto copy = *addr;
@@ -1627,36 +1621,6 @@ void ServerPage::taskFinished(taskTicket *&ticket)
 
 		break;
 	}
-	case autoProxyTask::establishConnection:
-	{
-		samEstablishConnectionWrapper *secw = nullptr;
-		secw = static_cast<samEstablishConnectionWrapper *>(ticket->data);
-
-		if (ticket->types.front() != autoProxyType::I2PSAM3)
-			RS_WARN("auto proxy task finished but not for SMA, not exptected! Also not a serious problem.");
-		else {
-			bool res = ticket->result == autoProxyStatus::ok && !!secw->connection->ses;
-			// update settings
-			if (res) {
-				sam3CloseConnection(secw->connection);
-				secw->connection = nullptr; // freed by above call
-			}
-
-			RsQThreadUtils::postToObject(
-			            [this, res]()
-			{
-				updateInProxyIndicatorResult(res);
-
-			});
-		}
-
-		if (secw->connection)
-			delete secw->connection;
-		delete secw;
-		secw = nullptr;
-		ticket->data = nullptr;
-		break;
-	}
 	default:
 		RS_DBG("unsupported task!", ticket->task);
 	}
@@ -1666,7 +1630,6 @@ void ServerPage::taskFinished(taskTicket *&ticket)
 
     delete ticket;
 	ticket = nullptr;
- #endif //RS_USE_I2P_SAM3
 }
 
 void ServerPage::loadCommon()
