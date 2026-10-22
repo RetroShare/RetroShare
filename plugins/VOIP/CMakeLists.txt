@@ -125,7 +125,7 @@ target_link_libraries(VOIP PRIVATE
 	${SPEEX_LIBRARIES}
 	${SPEEXDSP_LIBRARIES}
 	retroshare::retroshare
-	retroshare-gui
+	retroshare::retroshare-gui
 )
 
 set_target_properties(VOIP PROPERTIES

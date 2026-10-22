@@ -128,8 +128,8 @@ target_link_libraries(FeedReader PRIVATE
 	LibXslt::LibXslt
 	OpenSSL::SSL
 	OpenSSL::Crypto
-	retroshare-gui
 	retroshare::retroshare
+	retroshare::retroshare-gui
 )
 
 set_target_properties(FeedReader PROPERTIES
