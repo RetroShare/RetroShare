@@ -102,7 +102,10 @@ SecurityItem::~SecurityItem()
 
 uint64_t SecurityItem::uniqueIdentifier() const
 {
-    return hash_64bits("SecurityItem " + QString::number((uint)mType).toStdString() + " " + mIP + " " + mSslId.toStdString());
+    // One item per (type, node), not per source address: a dual-stack node
+    // shows up from several addresses and would otherwise get one item each.
+    // The replacing item carries the latest address.
+    return hash_64bits("SecurityItem " + QString::number((uint)mType).toStdString() + " " + mSslId.toStdString());
 }
 
 void SecurityItem::updateItemStatic()
