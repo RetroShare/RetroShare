@@ -31,7 +31,9 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsposted.h>
+#ifdef RS_USE_WIRE
 #include <retroshare/rswire.h>
+#endif
 
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
@@ -50,8 +52,10 @@
 #include "feeds/PostedGroupItem.h"
 #include "feeds/SecurityItem.h"
 #include "feeds/SecurityIpItem.h"
+#ifdef RS_USE_WIRE
 #include "feeds/WireNotifyGroupItem.h"
 #include "feeds/WireNotifyPostItem.h"
+#endif
 #include "feeds/TLSItem.h"
 
 #include "settings/rsettingswin.h"

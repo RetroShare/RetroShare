@@ -11,10 +11,9 @@ function git_del_tag()
 	git tag --delete $mTag
 }
 
-for mModule in . build_scripts/OBS/ libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/ ; do
+for mModule in . build_scripts/OBS/ libretroshare/ retroshare-webui/ ; do
 	pushd $mModule
 	git_del_tag v0.6.7a
 	git tag --list | grep untagged | while read mTag; do git_del_tag $mTag ; done
 	popd
 done
-
