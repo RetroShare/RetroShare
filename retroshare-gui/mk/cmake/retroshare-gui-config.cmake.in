@@ -28,9 +28,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/Modules)
 
 @PACKAGE_DEPENDENCIES@
 
-include_nrs(
-	"${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME_LOWER@-targets.cmake"
-	NO_RETURN_SCOPE
-)
+include(${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME_LOWER@-targets.cmake)
 
 check_required_components("${PACKAGE_FIND_NAME}")
