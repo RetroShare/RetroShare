@@ -126,7 +126,11 @@ list(APPEND CMAKE_MODULE_PATH
 )
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 
-find_package(RetroShare REQUIRED COMPONENTS SAM3)
+set(RetroShareComponents SAM3)
+if(RS_JSON_API)
+	list(APPEND RetroShareComponents JSON_API)
+endif()
+find_package(RetroShare REQUIRED COMPONENTS ${RetroShareComponents})
 
 
 ################################################################################
