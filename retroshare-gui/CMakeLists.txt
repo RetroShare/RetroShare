@@ -431,10 +431,66 @@ endif()
 install(TARGETS ${PROJECT_NAME}
 	EXPORT ${PROJECT_NAME}_export
 	${INSTALL_COMPONENT}
+	RUNTIME_DEPENDENCY_SET retroshare-gui-dependencies
 	${FILESET_HEADERS_INSTALL}
-	BUNDLE
-		DESTINATION ${CMAKE_INSTALL_BINDIR}
+	BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+if(WIN32)
+	if(MINGW AND CMAKE_CROSSCOMPILING)
+		# workaround for https://gitlab.kitware.com/cmake/cmake/-/issues/20753
+		install(CODE [==[
+			set(CMAKE_GET_RUNTIME_DEPENDENCIES_PLATFORM "windows+pe")
+			set(CMAKE_GET_RUNTIME_DEPENDENCIES_TOOL "objdump")
+			set(CMAKE_GET_RUNTIME_DEPENDENCIES_COMMAND "${CMAKE_OBJDUMP}")
+		]==])
+
+		# workaround https://gitlab.kitware.com/cmake/cmake/-/issues/27557
+		if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
+			set(DEPENDENCY_SEARCH_DIRS ${CMAKE_FIND_ROOT_PATH})
+			list(TRANSFORM DEPENDENCY_SEARCH_DIRS APPEND /bin)
+		endif()
+	endif()
+
+	install(RUNTIME_DEPENDENCY_SET retroshare-gui-dependencies
+		DIRECTORIES ${DEPENDENCY_SEARCH_DIRS}
+		PRE_EXCLUDE_REGEXES
+			# libretroshare shipped seperately
+			"^libretroshare\\.dll\$"
+			# Windows built-ins
+			"^advapi32\\.dll\$"
+			"^aleaut32\\.dll\$"
+			"^api-ms-win-(core|crt)-.*\\.dll\$"
+			"^authz\\.dll\$"
+			"^avrt\\.dll\$"
+			"^comdlg32\\.dll\$"
+			"^crypt32\\.dll\$"
+			"^d3d11\\.dll\$"
+			"^d3d12\\.dll\$"
+			"^dnsapi\\.dll\$"
+			"^dwmapi\\.dll\$"
+			"^dwrite\\.dll\$"
+			"^dxgi\\.dll\$"
+			"^gdi32\\.dll\$"
+			"^kernel32\\.dll\$"
+			"^iphlpapi\\.dll\$"
+			"^mpr\\.dll\$"
+			"^netapi32\\.dll\$"
+			"^ntdll\\.dll\$"
+			"^ole32\\.dll\$"
+			"^oleaut32\\.dll\$"
+			"^propsys\\.dll\$"
+			"^shell32\\.dll\$"
+			"^secur32\\.dll\$"
+			"^user32\\.dll\$"
+			"^userenv\\.dll\$"
+			"^uxtheme\\.dll\$"
+			"^version\\.dll\$"
+			"^winhttp\\.dll\$"
+			"^winmm\\.dll\$"
+			"^ws2_32\\.dll\$"
+	)
+endif()
 
 
 # If dependencies are fetched via FetchContent, then their targets might not
@@ -546,7 +602,7 @@ set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION_FULL})
 set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL YES)
 set(CPACK_NSIS_MODIFY_PATH YES)
 set(CPACK_NSIS_IGNORE_LICENSE_PAGE YES)
-set(CPACK_NSIS_DISPLAY_NAME "RetroShare-GUI")
+set(CPACK_NSIS_DISPLAY_NAME ${PROJECT_NAME_PRETTY})
 
 ## misc packaging options
 set(CPACK_VERBATIM_VARIABLES TRUE)
@@ -558,7 +614,7 @@ set(CPACK_COMPONENTS_ALL retroshare-gui)
 # endif()
 set(CPACK_SOURCE_IGNORE_FILES
   "${PROJECT_BINARY_DIR}/"
-  "${PROJECT_SOURCE_DIR}/\\.git/"
+  "${PROJECT_SOURCE_DIR}/\\.git(/|\$)"
   "${PROJECT_SOURCE_DIR}/build/"
 )
 set(CPACK_THREADS 0)
