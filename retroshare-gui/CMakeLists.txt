@@ -438,12 +438,14 @@ install(TARGETS ${PROJECT_NAME}
 
 if(WIN32)
 	if(MINGW AND CMAKE_CROSSCOMPILING)
-		# workaround for https://gitlab.kitware.com/cmake/cmake/-/issues/20753
+		# workaround https://gitlab.kitware.com/cmake/cmake/-/issues/20753
 		install(CODE [==[
-			set(CMAKE_GET_RUNTIME_DEPENDENCIES_PLATFORM "windows+pe")
-			set(CMAKE_GET_RUNTIME_DEPENDENCIES_TOOL "objdump")
-			set(CMAKE_GET_RUNTIME_DEPENDENCIES_COMMAND "${CMAKE_OBJDUMP}")
-		]==])
+				set(CMAKE_GET_RUNTIME_DEPENDENCIES_PLATFORM "windows+pe")
+				set(CMAKE_GET_RUNTIME_DEPENDENCIES_TOOL "objdump")
+				set(CMAKE_GET_RUNTIME_DEPENDENCIES_COMMAND "${CMAKE_OBJDUMP}")
+			]==]
+			${INSTALL_COMPONENT}
+		)
 
 		# workaround https://gitlab.kitware.com/cmake/cmake/-/issues/27557
 		if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
@@ -453,6 +455,7 @@ if(WIN32)
 	endif()
 
 	install(RUNTIME_DEPENDENCY_SET retroshare-gui-dependencies
+		${INSTALL_COMPONENT}
 		DIRECTORIES ${DEPENDENCY_SEARCH_DIRS}
 		PRE_EXCLUDE_REGEXES
 			# libretroshare shipped seperately
@@ -603,6 +606,21 @@ set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL YES)
 set(CPACK_NSIS_MODIFY_PATH YES)
 set(CPACK_NSIS_IGNORE_LICENSE_PAGE YES)
 set(CPACK_NSIS_DISPLAY_NAME ${PROJECT_NAME_PRETTY})
+# workaround https://gitlab.kitware.com/cmake/cmake/-/issues/19982
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
+	string(JOIN "\n" workaround_19982 ""
+		"; Component installation is disabled as a workaround for #19982."
+		"; See https://gitlab.kitware.com/cmake/cmake/-/issues/19982."
+	)
+	set(CPACK_NSIS_INSTALLATION_TYPES ${workaround_19982})
+	set(CPACK_NSIS_INSTALLER_MUI_COMPONENTS_DESC ${workaround_19982})
+	set(CPACK_NSIS_PAGE_COMPONENTS ${workaround_19982})
+	set(CPACK_NSIS_FULL_INSTALL ${workaround_19982})
+	string(APPEND CPACK_NSIS_FULL_INSTALL "\n" [=[File /r "${INST_DIR}\*.*"]=])
+	set(CPACK_NSIS_COMPONENT_SECTIONS ${workaround_19982})
+	set(CPACK_NSIS_COMPONENT_SECTION_LIST ${workaround_19982})
+	set(CPACK_NSIS_SECTION_SELECTED_VARS ${workaround_19982})
+endif()
 
 ## misc packaging options
 set(CPACK_VERBATIM_VARIABLES TRUE)
