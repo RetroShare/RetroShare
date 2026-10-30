@@ -64,6 +64,14 @@ else
     GIT_SUFFIX="-${DATE_STR}"
 fi
 
+# libretroshare is a separate repository with its own history: name its commit
+# too, or two builds of the same root commit against different libretroshare
+# commits get the same name (e.g. ...-1225-g60bada54a-lib-749-g3e6b4d0c7-...).
+LIB_DESC=$(git -C libretroshare describe --tags --always --dirty 2>/dev/null || echo "unknown")
+[[ "$LIB_DESC" == *-*-g* ]] && LIB_DESC="${LIB_DESC#*-}"   # strip the tag
+GIT_SUFFIX="${GIT_SUFFIX}-lib-${LIB_DESC}"
+REVISION_VAL="${REVISION_VAL}-lib-${LIB_DESC}"
+
 # ------------------------------------------------------------------------------
 # Detect the MAJOR Qt version actually used by the build. We extract it from the
 # compiled binary's imports (objdump), NOT from whichever qmake happens to be
@@ -139,10 +147,10 @@ fi
 # that lied on UCRT64/CLANG64 builds.
 #
 # Naming mirrors the Linux AppImage scheme:
-#   RetroShare-v<ver>-<YYYYMMDD>-<count>-g<hash>-Qt-<qtver>-<env>-msys2-x86_64
-# GIT_SUFFIX already carries "-<YYYYMMDD>-<count>-g<hash>" (or just the date when
-# exactly on a tag). The runtime slot is the MSYS2 environment (ucrt64-msys2),
-# the Windows analog of the AppImage's glibc-<ver>.
+#   RetroShare-v<ver>-<YYYYMMDD>-<count>-g<hash>-lib-<count>-g<hash>-Qt-<qtver>-<env>-msys2-x86_64
+# GIT_SUFFIX already carries "-<YYYYMMDD>-<count>-g<hash>-lib-<count>-g<hash>" (just
+# "-<YYYYMMDD>-lib-..." when exactly on a tag). The runtime slot is the MSYS2
+# environment (ucrt64-msys2), the Windows analog of the AppImage's glibc-<ver>.
 ENV_TAG=$(echo "${MSYSTEM:-mingw64}" | tr '[:upper:]' '[:lower:]')
 ARCHIVE_BASE="RetroShare-v${VERSION}${GIT_SUFFIX}-Qt-${QT_VERSION}-${ENV_TAG}-msys2-x86_64"
 DEPLOY_DIR="${BUILD_DIR}/${ARCHIVE_BASE}"
