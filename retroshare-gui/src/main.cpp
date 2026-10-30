@@ -22,7 +22,6 @@
 
 #include "util/stacktrace.h"
 #include "util/argstream.h"
-#include "retroshare/rswebui.h"
 
 CrashStackTrace gCrashStackTrace;
 
@@ -65,6 +64,7 @@ CrashStackTrace gCrashStackTrace;
 #include "gui/MessengerWindow.h"
 #endif
 #ifdef RS_WEBUI
+# include "retroshare/rswebui.h"
 #	include "gui/settings/WebuiPage.h"
 #endif
 

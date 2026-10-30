@@ -134,8 +134,8 @@ if [ -d "retroshare-gui/src/sounds" ]; then
     cp -r retroshare-gui/src/sounds/* "$APP_RESOURCES/sounds/" 2>/dev/null || true
 fi
 
-if [ -f "libbitdht/src/bitdht/bdboot.txt" ]; then
-    cp "libbitdht/src/bitdht/bdboot.txt" "$APP_RESOURCES/"
+if [ -f "supportlibs/libbitdht/src/bitdht/bdboot.txt" ]; then
+    cp "supportlibs/libbitdht/src/bitdht/bdboot.txt" "$APP_RESOURCES/"
     echo "  Copied bdboot.txt"
 fi
 
@@ -186,10 +186,10 @@ if command -v macdeployqt &> /dev/null; then
             EXTRA_EXECS="$EXTRA_EXECS -executable=$plugin"
         fi
     done
-    
+
     # macdeployqt copie les frameworks et ajuste les rpaths
     macdeployqt "$TARGET_APP" -always-overwrite $EXTRA_EXECS
-    
+
     echo ">>> Ad-hoc code signing (required for Apple Silicon)..."
     if command -v codesign &> /dev/null; then
         # On signe d'abord toutes les bibliothèques, plugins (.so/.dylib) et frameworks individuellement
@@ -204,7 +204,7 @@ if command -v macdeployqt &> /dev/null; then
     rm -f "$DMG_FILE"
     if command -v hdiutil &> /dev/null; then
         hdiutil create -volname "${APP_NAME}" -srcfolder "$TARGET_APP" -ov -format UDZO "$DMG_FILE"
-        
+
         if [ -f "$DMG_FILE" ]; then
             echo "================================================================================"
             echo "SUCCESS: Standalone package created at: $DMG_FILE"

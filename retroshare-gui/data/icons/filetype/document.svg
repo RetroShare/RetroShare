@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg9"
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   sodipodi:docname="document.svg"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs13" />
+  <sodipodi:namedview
+     id="namedview11"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="true"
+     inkscape:zoom="0.97070312"
+     inkscape:cx="234.3662"
+     inkscape:cy="254.96982"
+     inkscape:window-width="1366"
+     inkscape:window-height="705"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g15">
+    <inkscape:grid
+       type="xygrid"
+       id="grid381" />
+  </sodipodi:namedview>
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Image"
+     id="g15">
+    <path
+       style="fill:#000000"
+       id="path117"
+       d="" />
+    <path
+       d="M 194,210.75499 H 312.51924 V 240 H 194 Z m 0,59.25965 h 118.51924 v 29.24495 H 194 Z m 0,59.25958 h 118.51924 v 29.24501 H 194 Z M 401.02383,62.990733 H 164.75498 c -32.32339,0 -59.25958,26.166571 -59.25958,59.259587 V 388.53387 H 46.235747 c 0,32.32339 26.16657,59.25959 59.259653,59.25959 h 237.03847 c 32.32339,0 59.25959,-26.16657 59.25959,-59.25959 V 151.49533 h 59.25965 V 122.25032 C 460.28349,89.157304 434.11692,62.990733 401.02383,62.990733 Z M 371.77888,383.14663 c 0,19.24006 -15.39213,34.63219 -34.63225,34.63219 H 120.1179 c 14.62245,-10.00487 14.62245,-29.24495 14.62245,-29.24495 V 122.25032 c 0,-16.1617 13.08331,-29.245015 29.24501,-29.245015 16.16175,0 29.24501,13.083315 29.24501,29.245015 v 29.24501 h 177.77889 v 231.6513 z M 224.01464,122.25032 V 93.005305 h 177.77882 c 26.93619,0 29.24501,16.931315 29.24501,29.245015 z"
+       fill="#999999"
+       stroke="#999999"
+       stroke-width="5.76151"
+       stroke-miterlimit="10"
+       id="path6" />
+  </g>
+</svg>
