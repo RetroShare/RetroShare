@@ -175,16 +175,25 @@ xcode-select --install
 
 Dependencies — **Qt5**:
 ```bash
-brew install cmake ninja qt@5 openssl@3 botan@2 sqlcipher miniupnpc \
+brew install cmake ninja pkgconf qt@5 openssl@3 botan@2 sqlcipher miniupnpc \
   json-c asio speex speexdsp ffmpeg libxml2 libxslt bzip2 zlib rapidjson doxygen
 ```
 Dependencies — **Qt6** (only the Qt package differs). Homebrew ships Qt6 as a
 **single `qt` formula** that already bundles qt5compat / svg / multimedia /
 tools:
 ```bash
-brew install cmake ninja qt openssl@3 botan@2 sqlcipher miniupnpc \
+brew install cmake ninja pkgconf qt openssl@3 botan@2 sqlcipher miniupnpc \
   json-c asio speex speexdsp ffmpeg libxml2 libxslt bzip2 zlib rapidjson doxygen
 ```
+
+> **If `openssl@4` is installed** (`brew list openssl@4` prints files),
+> unlink it before configuring, or the build fails in `sslfns.cc` /
+> `authssl.cc` with `ASN1_STRING_data` errors:
+> ```bash
+> brew unlink openssl@4
+> ```
+> If a build already failed this way, delete `Build-cmake` before configuring
+> again. Once RetroShare is built, `brew link openssl@4` restores it.
 
 > **If `brew install qt` fails with** `Cannot install qtbase because conflicting
 > formulae are installed … qt@5: because both link conflicting binaries`, your
