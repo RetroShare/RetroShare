@@ -57,6 +57,13 @@ else
     GIT_SUFFIX="-${DATE_STR}"
 fi
 
+# libretroshare is a separate repository with its own history: name its commit
+# too, or two builds of the same root commit against different libretroshare
+# commits get the same name (e.g. ...-1225-g60bada54a-lib-749-g3e6b4d0c7-...).
+LIB_DESC=$(git -C libretroshare describe --tags --always --dirty 2>/dev/null || echo "unknown")
+[[ "$LIB_DESC" == *-*-g* ]] && LIB_DESC="${LIB_DESC#*-}"   # strip the tag
+GIT_SUFFIX="${GIT_SUFFIX}-lib-${LIB_DESC}"
+
 # Detect the Qt version for the archive name from the ACTUAL built binary, NOT
 # from whichever qmake is first in PATH. With both qt (Qt6) and qt@5 installed,
 # `qmake` resolves to one of them regardless of what the app was built against,
@@ -98,9 +105,9 @@ MINOS=$(otool -l "$GUI_BIN" 2>/dev/null \
 [ -n "$MINOS" ] || MINOS="$MACVERSION"
 
 # Naming mirrors the Linux AppImage and Windows schemes:
-#   RetroShare-v<ver>-<YYYYMMDD>-<count>-g<hash>-Qt-<qtver>-macos-<min>-<arch>.dmg
-# GIT_SUFFIX already carries "-<YYYYMMDD>-<count>-g<hash>" (or just the date when
-# exactly on a tag).
+#   RetroShare-v<ver>-<YYYYMMDD>-<count>-g<hash>-lib-<count>-g<hash>-Qt-<qtver>-macos-<min>-<arch>.dmg
+# GIT_SUFFIX already carries "-<YYYYMMDD>-<count>-g<hash>-lib-<count>-g<hash>" (just
+# "-<YYYYMMDD>-lib-..." when exactly on a tag).
 ARCHIVE_BASE="RetroShare-v${VERSION}${GIT_SUFFIX}-Qt-${QT_VERSION}-macos-${MINOS}-${ARCH}"
 DEPLOY_DIR="${BUILD_DIR}/${ARCHIVE_BASE}"
 
