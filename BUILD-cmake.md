@@ -221,6 +221,13 @@ brew install cmake ninja pkgconf qt openssl@3 botan@2 sqlcipher miniupnpc \
 > `botan` in place of `botan@2` and replace `$(brew --prefix botan@2)` with
 > `$(brew --prefix botan)` in the command; librnp then links `libbotan-3`.
 
+> **Which macOS versions the build runs on:** Homebrew installs libraries built
+> for the macOS of the machine, so what you build runs on that macOS version and
+> later ones, not on older ones. The commands below set
+> `CMAKE_OSX_DEPLOYMENT_TARGET` to that same version; without it, the linker warns
+> `building for macOS-X, but linking with dylib … built for newer version Y`
+> whenever the Command Line Tools are older than the system.
+
 The commands below first collect the include/lib directories of every Homebrew
 package into compiler and linker flags. The loop skips every `qt*` package on
 purpose: Qt is found through `Qt5_DIR` / `Qt6_DIR`, and pulling the other Qt's
@@ -240,6 +247,7 @@ done
 rm -rf Build-cmake
 cmake -G Ninja -B Build-cmake -S . \
   -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_OSX_DEPLOYMENT_TARGET="$(sw_vers -productVersion | cut -d. -f1).0" \
   -DCMAKE_PREFIX_PATH="$PREFIX" -DQt5_DIR="$QT5/lib/cmake/Qt5" \
   -DCMAKE_DISABLE_FIND_PACKAGE_Qt6=ON \
   -DOPENSSL_ROOT_DIR="$(brew --prefix openssl@3)" \
@@ -269,6 +277,7 @@ done
 rm -rf Build-cmake
 cmake -G Ninja -B Build-cmake -S . \
   -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_OSX_DEPLOYMENT_TARGET="$(sw_vers -productVersion | cut -d. -f1).0" \
   -DCMAKE_PREFIX_PATH="$PREFIX" -DQt6_DIR="$QT6/lib/cmake/Qt6" \
   -DOPENSSL_ROOT_DIR="$(brew --prefix openssl@3)" \
   -DBOTAN_ROOT_DIR="$(brew --prefix botan@2)" \
