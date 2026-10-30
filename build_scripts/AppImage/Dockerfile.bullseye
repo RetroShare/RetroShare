@@ -1,0 +1,47 @@
+# Debian 11 (bullseye) = glibc 2.31 — "build on old, run everywhere".
+# An AppImage produced here runs on any distro with glibc >= 2.31
+# (MX 21, Slackware 15, Debian 11/12, Ubuntu 20.04+, Fedora 34+, ...).
+#
+# This image only carries the TOOLCHAIN + deps + the AppImage tools.
+# The actual RetroShare source is bind-mounted at /src at run time and built
+# by build_scripts/AppImage/_appimage-inside.sh.
+FROM debian:11
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Build toolchain + RetroShare deps (Qt5), mirrors BUILD-cmake.md's Qt5 list,
+# plus what linuxdeploy needs (file, patchelf, desktop-file-utils, wget).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      build-essential g++ ninja-build pkg-config git ca-certificates \
+      wget file patchelf desktop-file-utils python3 python3-pip \
+      qtbase5-dev qtbase5-dev-tools qt5-qmake qtmultimedia5-dev libqt5svg5-dev \
+      libqt5x11extras5-dev qttools5-dev qttools5-dev-tools \
+      libssl-dev zlib1g-dev libbz2-dev libbotan-2-dev libjson-c-dev \
+      libasio-dev libsqlcipher-dev \
+      libspeex-dev libspeexdsp-dev libminiupnpc-dev \
+      libavcodec-dev libavutil-dev \
+      libxml2-dev libxslt1-dev libcurl4-openssl-dev \
+      doxygen \
+  && rm -rf /var/lib/apt/lists/*
+
+# Modern CMake (bullseye ships 3.18, some subprojects want newer) — pin via pip
+# so it lands in /usr/local/bin ahead of the distro one.
+RUN pip3 install --no-cache-dir "cmake>=3.27"
+
+# Bake the AppImage bundling tools into the image (no re-download per run).
+RUN mkdir -p /opt/linuxdeploy && cd /opt/linuxdeploy && \
+    wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage && \
+    wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage && \
+    chmod +x /opt/linuxdeploy/*.AppImage
+
+# AppImage tools can't FUSE-mount inside a container — extract instead.
+ENV APPIMAGE_EXTRACT_AND_RUN=1
+ENV PATH=/opt/linuxdeploy:/usr/local/bin:$PATH
+
+# Extra deps discovered after the first image build. Kept in a SEPARATE layer on
+# purpose: the big apt layer above stays a cache hit, so adding a package here
+# only installs that package instead of reinstalling the whole toolchain.
+#   libxss-dev  -> xscrnsaver.pc (GUI idle detection, retroshare-gui CMakeLists:408)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libx11-dev libxss-dev libsqlite3-dev \
+  && rm -rf /var/lib/apt/lists/*
