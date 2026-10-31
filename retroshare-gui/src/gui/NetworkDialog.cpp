@@ -61,8 +61,6 @@ NetworkDialog::NetworkDialog(QWidget */*parent*/)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
   
-    connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
-    connect( ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
 
     //list data model
@@ -72,7 +70,7 @@ NetworkDialog::NetworkDialog(QWidget */*parent*/)
     PGPIdItemProxy = new pgpid_item_proxy(this);
     connect(ui.onlyTrustedKeys, SIGNAL(toggled(bool)), PGPIdItemProxy, SLOT(use_only_trusted_keys(bool)));
     PGPIdItemProxy->setSourceModel(PGPIdItemModel);
-    PGPIdItemProxy->setFilterKeyColumn(pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERNAME);
+    PGPIdItemProxy->setFilterKeyColumn(-1);	// search the text of every column
     PGPIdItemProxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
     PGPIdItemProxy->setSortRole(Qt::EditRole); //use edit role to get raw data since we do not have edit for this model.
     ui.connectTreeWidget->setModel(PGPIdItemProxy);
@@ -88,10 +86,6 @@ NetworkDialog::NetworkDialog(QWidget */*parent*/)
 
     ui.onlyTrustedKeys->setMinimumWidth(20*f);
 
-    /* add filter actions */
-    ui.filterLineEdit->addFilter(QIcon(), tr("Name"), pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERNAME, tr("Search name"));
-    ui.filterLineEdit->addFilter(QIcon(), tr("Peer ID"), pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERID, tr("Search peer ID"));
-    ui.filterLineEdit->setCurrentFilter(pgpid_item_model::PGP_ITEM_MODEL_COLUMN_PEERNAME);
     connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), PGPIdItemProxy, SLOT(setFilterWildcard(QString)));
 }
 
@@ -287,13 +281,6 @@ void NetworkDialog::copyLink()
 // 	ProfileManager prof ;
 // 	prof.exec() ;
 // }
-
-void NetworkDialog::filterColumnChanged(int col)
-{
-    if(PGPIdItemProxy)
-        PGPIdItemProxy->setFilterKeyColumn(col);
-    //filterItems(ui.filterLineEdit->text());
-}
 
 void NetworkDialog::updateDisplay()
 {

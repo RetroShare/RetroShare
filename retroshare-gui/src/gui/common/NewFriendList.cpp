@@ -177,8 +177,8 @@ public:
 
 		QModelIndex index = sourceModel()->index(source_row,0,source_parent);
 
-		if(index.data(RsFriendListModel::TypeRole) == RsFriendListModel::ENTRY_TYPE_GROUP)  // always show groups, so we can delete them even when empty
-			return true;
+		if(index.data(RsFriendListModel::TypeRole) == RsFriendListModel::ENTRY_TYPE_GROUP)  // always show groups when not searching, so we can delete them even when empty
+			return index.data(RsFriendListModel::FilterRole).toString() == RsFriendListModel::FilterString ;
 
 		// Filter offline friends
 
@@ -246,16 +246,9 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
 	ui->peerTreeWidget->setItemDelegate(itemDelegate);
 	ui->peerTreeWidget->setWordWrap(false);
 
-    /* Add filter actions */
-    QString headerText = mModel->headerData(RsFriendListModel::COLUMN_THREAD_NAME,Qt::Horizontal,Qt::DisplayRole).toString();
-    ui->filterLineEdit->addFilter(QIcon(), headerText, RsFriendListModel::COLUMN_THREAD_NAME, QString("%1 %2").arg(tr("Search"), headerText));
-    ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RsFriendListModel::COLUMN_THREAD_ID, tr("Search ID"));
-
     mActionSortByState = new QAction(tr("Online friends on top"), this);
     mActionSortByState->setCheckable(true);
 
-    //setting default filter by column as subject
-    ui->filterLineEdit->setCurrentFilter(RsFriendListModel::COLUMN_THREAD_NAME);
 	ui->peerTreeWidget->setSortingEnabled(true);
 
     /* Set sort */
@@ -1659,6 +1652,8 @@ void NewFriendList::setColumnVisible(int col,bool visible)
     std::cerr << "Setting column " << col << " to be visible: " << visible << std::endl;
 #endif
     ui->peerTreeWidget->setColumnHidden(col, !visible);
+    if(!ui->filterLineEdit->text().isEmpty())
+        filterItems(ui->filterLineEdit->text());
 }
 void NewFriendList::toggleColumnVisible()
 {
@@ -1671,6 +1666,8 @@ void NewFriendList::toggleColumnVisible()
 	bool visible = action->isChecked();
 
     ui->peerTreeWidget->setColumnHidden(column, !visible);
+    if(!ui->filterLineEdit->text().isEmpty())
+        filterItems(ui->filterLineEdit->text());
 }
 
 void NewFriendList::setShowState(bool show)
@@ -1692,17 +1689,19 @@ void NewFriendList::setShowGroups(bool show)
 }
 
 /**
- * Hides all items that don't contain text in the name column.
+ * Hides all items that don't contain text in one of the visible columns.
  */
 void NewFriendList::filterItems(const QString &text)
 {
     QStringList lst = text.split(' ',QtSkipEmptyParts);
-	int filterColumn = ui->filterLineEdit->currentFilter();
 
-    if(filterColumn == 0)
-		mModel->setFilter(RsFriendListModel::FILTER_TYPE_NAME,lst);
-    else
-		mModel->setFilter(RsFriendListModel::FILTER_TYPE_ID,lst);
+    uint8_t ft = RsFriendListModel::FILTER_TYPE_NONE;
+
+    if(!ui->peerTreeWidget->isColumnHidden(RsFriendListModel::COLUMN_THREAD_NAME)) ft |= RsFriendListModel::FILTER_TYPE_NAME;
+    if(!ui->peerTreeWidget->isColumnHidden(RsFriendListModel::COLUMN_THREAD_IP))   ft |= RsFriendListModel::FILTER_TYPE_IP;
+    if(!ui->peerTreeWidget->isColumnHidden(RsFriendListModel::COLUMN_THREAD_ID))   ft |= RsFriendListModel::FILTER_TYPE_ID;
+
+    mModel->setFilter(ft,lst);
 
     // We do this in order to trigger a new filtering action in the proxy model.
 	QSortFilterProxyModel_setFilterRegularExpression(mProxyModel, QString(RsFriendListModel::FilterString)) ;

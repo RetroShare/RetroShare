@@ -86,7 +86,6 @@ private slots:
   //void on_actionExportKey_activated();
   //void on_actionCreate_New_Profile_activated();
     
-  void filterColumnChanged(int);
 
 private:
 

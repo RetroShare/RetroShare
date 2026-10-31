@@ -118,6 +118,25 @@ QVariant pgpid_item_model::headerData(int section, Qt::Orientation orientation, 
 }
 
 
+bool pgpid_item_model::getDetails(int row, RsPeerDetails& detail) const
+{
+    if((unsigned)row >= mRows.size())
+        return false;
+
+    if(mCachedId != mRows[row])
+    {
+        if (!rsPeers->getGPGDetails(mRows[row], mCachedDetails))
+        {
+            mCachedId.clear();
+            return false;
+        }
+        mCachedId = mRows[row];
+    }
+
+    detail = mCachedDetails;
+    return true;
+}
+
 int pgpid_item_model::rowCount(const QModelIndex &/*parent*/) const
 {
     return neighs.size();
@@ -134,19 +153,9 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    if((unsigned)index.row() >= neighs.size())
-        return QVariant();
-
-
-    //shit code (please rewrite it)
-
-    std::list<RsPgpId>::iterator it = neighs.begin();
-    for(int i = 0; i < index.row(); i++)
-        it++;
     RsPeerDetails detail;
-    if (!rsPeers->getGPGDetails(*it, detail))
+    if (!getDetails(index.row(), detail))
         return QVariant();
-    //shit code end
     if(role == Qt::EditRole) //some columns return raw data for editrole, used for proper filtering and sorting
     {
         switch(index.column())
@@ -324,6 +333,8 @@ void pgpid_item_model::data_updated(std::list<RsPgpId> &new_neighs)
     neighs = new_neighs;
     neighs.sort();
     neighs.unique(); //remove possible dups
+    mRows.assign(neighs.begin(), neighs.end());
+    mCachedId.clear();
 
     //reflect actual row count in model
     if(old_size < new_size)

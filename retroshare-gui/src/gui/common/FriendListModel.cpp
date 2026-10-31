@@ -65,6 +65,7 @@ static const uint32_t NODE_DETAILS_UPDATE_DELAY = 5;	// update each node every 5
 
 RsFriendListModel::RsFriendListModel(QObject *parent)
     : QAbstractItemModel(parent)
+    , mFilterType(FILTER_TYPE_NONE)
     , mDisplayGroups(true), mDisplayStatusString(true), mDisplayStatusIcon (false)
     , mLastInternalDataUpdate(0), mLastNodeUpdate(0)
 {
@@ -463,32 +464,121 @@ QVariant RsFriendListModel::statusRole(const EntryIndex& fmpe,int /*column*/) co
     return QVariant();
 }
 
+// An entry is shown when it matches the filter, or when one of its children does, so that the path to a
+// match stays visible in the tree. The locations of a matching profile are shown too. A matching group
+// does not show its profiles: its text holds counts and a hex id, which would match most searches.
+
 bool RsFriendListModel::passesFilter(const EntryIndex& e,int /*column*/) const
 {
-	QString s ;
-	bool passes_strings = true ;
+	if(mFilterStrings.empty())
+		return true;
 
-	if(e.type == ENTRY_TYPE_PROFILE && !mFilterStrings.empty())
+	if(mGroupMatches.size() != mGroups.size() || mProfileMatches.size() != mProfiles.size() || mLocationMatches.size() != mLocations.size())
+		return true;	// data is being rebuilt, the matches are refreshed at the end
+
+	if(e.type == ENTRY_TYPE_GROUP)
 	{
-		switch(mFilterType)
-		{
-		case FILTER_TYPE_ID: 	s = displayRole(e,COLUMN_THREAD_ID).toString();
-			break;
+		const HierarchicalGroupInformation *group = getGroupInfo(e);
 
-		case FILTER_TYPE_NAME:  s = displayRole(e,COLUMN_THREAD_NAME).toString();
-			if(s.isNull())
-				passes_strings = false;
-			break;
-		case FILTER_TYPE_NONE:
-			RS_ERR("None Type for Filter.");
-		};
+		if(!group)
+			return false;
+
+		if(mGroupMatches[e.group_index])
+			return true;
+
+		for(uint32_t i=0;i<group->child_profile_indices.size();++i)
+			if(profileOrChildMatchesFilter(group->child_profile_indices[i]))
+				return true;
+
+		return false;
 	}
 
-	if(!s.isNull())
-		for(auto iter(mFilterStrings.begin()); iter != mFilterStrings.end(); ++iter)
-			passes_strings = passes_strings && s.contains(*iter,Qt::CaseInsensitive);
+	if(e.type == ENTRY_TYPE_PROFILE)
+	{
+		const HierarchicalProfileInformation *profile = getProfileInfo(e);
 
-	return passes_strings;
+		return profile && profileOrChildMatchesFilter(profile - mProfiles.data());
+	}
+
+	if(e.type == ENTRY_TYPE_NODE)
+	{
+		const HierarchicalProfileInformation *profile = getProfileInfo(e.parent());
+		const HierarchicalNodeInformation *node = getNodeInfo(e);
+
+		return profile && node && (mProfileMatches[profile - mProfiles.data()] || mLocationMatches[node - mLocations.data()]);
+	}
+
+	return false;
+}
+
+bool RsFriendListModel::profileOrChildMatchesFilter(uint32_t profile_index) const
+{
+	if(mProfileMatches[profile_index])
+		return true;
+
+	for(uint32_t i=0;i<mProfiles[profile_index].child_node_indices.size();++i)
+		if(mLocationMatches[mProfiles[profile_index].child_node_indices[i]])
+			return true;
+
+	return false;
+}
+
+void RsFriendListModel::updateFilterMatches()
+{
+	mGroupMatches.assign(mGroups.size(),false);
+	mProfileMatches.assign(mProfiles.size(),false);
+	mLocationMatches.assign(mLocations.size(),false);
+
+	if(mFilterStrings.empty())
+		return;
+
+	for(uint32_t i=0;i<mGroups.size();++i)
+	{
+		EntryIndex e;
+		e.type = ENTRY_TYPE_GROUP;
+		e.group_index = i;
+
+		mGroupMatches[i] = matchesFilter(e);
+	}
+
+	for(uint32_t i=0;i<mProfiles.size();++i)
+	{
+		EntryIndex e;
+		e.type = ENTRY_TYPE_PROFILE;
+		e.profile_index = i;
+
+		mProfileMatches[i] = matchesFilter(e);
+
+		for(uint32_t j=0;j<mProfiles[i].child_node_indices.size();++j)
+		{
+			EntryIndex n(e);
+			n.type = ENTRY_TYPE_NODE;
+			n.node_index = j;
+
+			mLocationMatches[mProfiles[i].child_node_indices[j]] = matchesFilter(n);
+		}
+	}
+}
+
+// Only the text of the visible columns is searched. The last contact column is left out: it holds a raw
+// timestamp that the delegate formats, so its text would not match what is displayed.
+
+bool RsFriendListModel::matchesFilter(const EntryIndex& e) const
+{
+	auto passes_strings = [&](const QString& s) -> bool {
+		bool res = true;
+
+		for(auto iter(mFilterStrings.begin()); iter != mFilterStrings.end(); ++iter)
+			res = res && s.contains(*iter,Qt::CaseInsensitive);
+
+		return res;
+	};
+
+	if((mFilterType & FILTER_TYPE_NAME) && passes_strings(displayRole(e,COLUMN_THREAD_NAME).toString())) return true;
+	if((mFilterType & FILTER_TYPE_IP  ) && passes_strings(displayRole(e,COLUMN_THREAD_IP  ).toString())) return true;
+	if((mFilterType & FILTER_TYPE_ID  ) && passes_strings(displayRole(e,COLUMN_THREAD_ID  ).toString())) return true;
+
+	return false;
 }
 
 QVariant RsFriendListModel::filterRole(const EntryIndex& e,int column) const
@@ -505,7 +595,7 @@ uint32_t RsFriendListModel::updateFilterStatus(ForumModelIndex /*i*/,int /*colum
 }
 
 
-void RsFriendListModel::setFilter(FilterType filter_type, const QStringList& strings)
+void RsFriendListModel::setFilter(uint8_t filter_type, const QStringList& strings)
 {
 #ifdef DEBUG_MODEL
     std::cerr << "Setting filter to filter_type=" << int(filter_type) << " and strings to " ;
@@ -518,6 +608,7 @@ void RsFriendListModel::setFilter(FilterType filter_type, const QStringList& str
 
     mFilterType = filter_type;
 	mFilterStrings = strings;
+	updateFilterMatches();
 
 	postMods();
 }
@@ -1117,6 +1208,7 @@ void RsFriendListModel::clear()
     mProfiles.clear();
     mLocations.clear();
     mTopLevel.clear();
+    updateFilterMatches();
 
 	postMods();
 
@@ -1450,6 +1542,7 @@ void RsFriendListModel::updateInternalData()
 	// finally, tell the model client that layout has changed.
 
 	mTopLevel = TL;
+	updateFilterMatches();
 
 //	if (TL.size()>0)
 //	{

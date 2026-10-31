@@ -60,7 +60,14 @@ public slots:
     void data_updated(std::list<RsPgpId> &new_neighs);
 
 private:
+    bool getDetails(int row, RsPeerDetails& detail) const;
+
     std::list<RsPgpId> &neighs;
+    std::vector<RsPgpId> mRows;		// same ids as neighs, for direct access by row
+
+    // A row is read once per column, so keep the details of the last one read. Cleared in data_updated().
+    mutable RsPgpId mCachedId;
+    mutable RsPeerDetails mCachedDetails;
     float font_height;
     QColor mBackgroundColorSelf;
     QColor mBackgroundColorOwnSign;
