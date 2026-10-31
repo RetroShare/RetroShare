@@ -375,7 +375,7 @@ QString ChatStyle::formatMessage(enumFormatMessage type
 
 	QString strName = RsHtml::plainText(name).prepend(QString("<a name=\"name\">")).append(QString("</a>"));
 	QString strDate = DateTime::formatDate(timestamp.date()).prepend(QString("<a name=\"date\">")).append(QString("</a>"));
-	QString strTime = DateTime::formatTime(timestamp.time()).prepend(QString("<a name=\"time\">")).append(QString("</a>"));
+	QString strTime = timestamp.time().toString("HH:mm:ss").prepend(QString("<a name=\"time\">")).append(QString("</a>"));
 
 	int bi = name.lastIndexOf(QRegularExpression(" \\(.*\\)")); //trim location from the end
 	QString strShortName = RsHtml::plainText(name.left(bi)).prepend(QString("<a name=\"name\">")).append(QString("</a>"));

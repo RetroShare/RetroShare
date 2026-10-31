@@ -69,6 +69,7 @@
 #define ROLE_PRIVACYLEVEL  Qt::UserRole + 3
 #define ROLE_AUTOSUBSCRIBE Qt::UserRole + 4
 #define ROLE_FLAGS         Qt::UserRole + 5
+#define ROLE_BASE_NAME     Qt::UserRole + 6	// name without the counters appended for display
 
 
 #define TYPE_FOLDER       0
@@ -173,6 +174,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
     privateSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
     privateSubLobbyItem->setText(COLUMN_NAME, tr("Private Subscribed"));
+	privateSubLobbyItem->setData(COLUMN_NAME, ROLE_BASE_NAME, tr("Private Subscribed"));
 	privateSubLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "1");
 	//	privateLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
     privateSubLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE);
@@ -180,6 +182,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
 	publicSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
 	publicSubLobbyItem->setText(COLUMN_NAME, tr("Public Subscribed"));
+	publicSubLobbyItem->setData(COLUMN_NAME, ROLE_BASE_NAME, tr("Public Subscribed"));
 	publicSubLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "2");
 	//	publicLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
     publicSubLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
@@ -187,6 +190,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
 	privateLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
 	privateLobbyItem->setText(COLUMN_NAME, tr("Private"));
+	privateLobbyItem->setData(COLUMN_NAME, ROLE_BASE_NAME, tr("Private"));
 	privateLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "3");
 	//	privateLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
     privateLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE);
@@ -194,6 +198,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
 	publicLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
 	publicLobbyItem->setText(COLUMN_NAME, tr("Public"));
+	publicLobbyItem->setData(COLUMN_NAME, ROLE_BASE_NAME, tr("Public"));
 	publicLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "4");
 	//	publicLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
     publicLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
@@ -291,6 +296,15 @@ UserNotify *ChatLobbyWidget::createUserNotify(QObject *parent)
 
 void ChatLobbyWidget::updateNotify(ChatLobbyId id, unsigned int count)
 {
+	// Keep the per room unread count, so that the tree can show it on the room and
+	// on its parent branch. Do this before any early return below.
+	if (count)
+		_unread_counts[id] = count;
+	else
+		_unread_counts.erase(id);
+
+	updateUnreadCounters();
+
 	ChatLobbyDialog *dialog=NULL;
 	dialog=_lobby_infos[id].dialog;
 	if(!dialog) return;
@@ -304,6 +318,92 @@ void ChatLobbyWidget::updateNotify(ChatLobbyId id, unsigned int count)
 		notifyButton->setToolTip(QString("(%1)").arg(count));
 	} else {
 		notifyButton->setVisible(false);
+	}
+}
+
+/*!
+ * \brief Refresh the counters displayed in the room tree.
+ *
+ * Each room shows "[n]" when it holds n unread messages, and each branch shows the
+ * number of rooms it contains "(n)" plus the total of unread messages of its rooms
+ * "[n]". Counters that would be zero are simply omitted, and the item is put in bold
+ * when it has unread messages, so that a collapsed branch still tells that something
+ * is waiting inside.
+ */
+/*!
+ * \brief Put an item of the room tree in bold, or back to normal.
+ *
+ * The tree itself carries the font size taken from the settings (see FontSizeHandler),
+ * but QTreeWidgetItem::font() returns a default constructed font when the item has no
+ * Qt::FontRole yet, and RSElidedItemDelegate paints the item with the model font as is,
+ * without merging it into the font of the view. Deriving the bold font from the item
+ * would therefore shrink the whole list down to the application font. So derive it from
+ * the tree, and remove the role altogether when the item is not bold, so that it keeps
+ * following the font size of the settings.
+ */
+static void setItemBold(QTreeWidget *treeWidget, QTreeWidgetItem *item, bool bold)
+{
+	if(bold)
+	{
+		QFont font = treeWidget->font();
+		font.setBold(true);
+		item->setFont(COLUMN_NAME, font);
+	}
+	else
+		item->setData(COLUMN_NAME, Qt::FontRole, QVariant());
+}
+
+void ChatLobbyWidget::updateUnreadCounters()
+{
+	QTreeWidgetItem *branches[4] = { privateSubLobbyItem, publicSubLobbyItem, privateLobbyItem, publicLobbyItem };
+
+	for(int b=0; b<4; ++b)
+	{
+		QTreeWidgetItem *branch = branches[b];
+
+		if(branch == NULL)
+			continue;
+
+		unsigned int branch_unread = 0;
+		int room_count = 0;
+
+		for(int c=0; c<branch->childCount(); ++c)
+		{
+			QTreeWidgetItem *item = branch->child(c);
+
+			if(item->type() != TYPE_LOBBY)
+				continue;
+
+			++room_count;
+
+			ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
+			std::map<ChatLobbyId,unsigned int>::const_iterator it = _unread_counts.find(id);
+			unsigned int unread = (it == _unread_counts.end()) ? 0 : it->second;
+
+			branch_unread += unread;
+
+			QString name = item->data(COLUMN_NAME, ROLE_BASE_NAME).toString();
+
+			if(name.isEmpty())	// item not filled by updateItem() yet
+				continue;
+
+			item->setText(COLUMN_NAME, unread ? QString("%1 [%2]").arg(name).arg(unread) : name);
+
+			setItemBold(ui.lobbyTreeWidget, item, unread > 0);
+		}
+
+		QString label = branch->data(COLUMN_NAME, ROLE_BASE_NAME).toString();
+
+		if(room_count > 0)
+			label += QString(" (%1)").arg(room_count);
+
+		if(branch_unread > 0)
+			label += QString(" [%1]").arg(branch_unread);
+
+		branch->setText(COLUMN_NAME, label);
+		branch->setToolTip(COLUMN_NAME, branch_unread ? tr("%n unread message(s)", "", branch_unread) : QString());
+
+		setItemBold(ui.lobbyTreeWidget, branch, branch_unread > 0);
 	}
 }
 
@@ -418,6 +518,9 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
 {
 	item->setText(COLUMN_NAME, QString::fromUtf8(name.c_str()));
 	item->setData(COLUMN_NAME, ROLE_SORT, QString::fromUtf8(name.c_str()));
+	// Keep the bare name aside: the displayed text gets an unread counter appended by
+	// ChatLobbyWidget::updateUnreadCounters(), which needs to rebuild it from scratch.
+	item->setData(COLUMN_NAME, ROLE_BASE_NAME, QString::fromUtf8(name.c_str()));
 
 	if(topic.empty())
 	{
@@ -760,9 +863,10 @@ void ChatLobbyWidget::updateDisplay()
         }
 	}
 	publicSubLobbyItem->setHidden(publicSubLobbyItem->childCount()==0);
-	publicSubLobbyItem->setText(COLUMN_NAME, tr("Public Subscribed")+ QString(" (") + QString::number(publicSubLobbyItem->childCount())+QString(")"));
 	privateSubLobbyItem->setHidden(privateSubLobbyItem->childCount()==0);
-	publicLobbyItem->setText(COLUMN_NAME, tr("Public")+ " (" + QString::number(publicLobbyItem->childCount())+QString(")"));
+
+	// re-append the counters, since updateItem() above has reset the room names
+	updateUnreadCounters();
 }
 
 void ChatLobbyWidget::createChatLobby()
@@ -1002,7 +1106,7 @@ void ChatLobbyWidget::copyItemLink()
 	}
 
 	ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
-	QString name = item->text(COLUMN_NAME);
+	QString name = item->data(COLUMN_NAME, ROLE_BASE_NAME).toString();	// without the unread counter
 
 	RetroShareLink link = RetroShareLink::createChatRoom(ChatId(id),name);
 	if (link.valid()) {
