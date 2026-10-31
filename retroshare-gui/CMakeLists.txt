@@ -150,7 +150,28 @@ endif()
 set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)
 
-find_package(Git REQUIRED)
+################################################################################
+## Offline build guard. Several dependencies fall back to FetchContent (network
+## download at configure time) when their local sources are absent. For
+## offline/distribution builds (e.g. a Debian source package) that fallback must
+## be a hard error: it would silently build against an unpinned upstream tip.
+option(
+	RS_FETCH_MISSING_DEPS
+	"Allow downloading missing dependencies at configure time via FetchContent. Turn OFF for offline/distribution builds: a missing dependency then stops the configure with an explicit error instead of a silent network download." ON )
+
+macro(rs_fetch_fallback_guard RS_FFG_DEP_NAME)
+	if(RS_FETCH_MISSING_DEPS)
+		message(STATUS "${RS_FFG_DEP_NAME} not found locally, downloading it via FetchContent (pass -DRS_FETCH_MISSING_DEPS=OFF to make this an error)")
+	else()
+		message(FATAL_ERROR "${RS_FFG_DEP_NAME} not found locally and RS_FETCH_MISSING_DEPS is OFF: refusing to download it at configure time. Provide its sources (git submodule / complete source tarball) or the system library." )
+	endif()
+endmacro()
+################################################################################
+
+# Git is optional: it is only used to stamp versions (git describe, with a
+# Source_Version file fallback for source tarballs) and by the FetchContent
+# network fallbacks, which are guarded by RS_FETCH_MISSING_DEPS.
+find_package(Git)
 
 ################################################################################
 
@@ -257,6 +278,7 @@ if(NOT TARGET retroshare)
 		add_subdirectory(
 			"${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libretroshare" )
 	else()
+		rs_fetch_fallback_guard(libretroshare)
 		FetchContent_Declare(
 			libretroshare
 			GIT_REPOSITORY "https://gitlab.com/RetroShare/libretroshare.git"
@@ -335,6 +357,7 @@ if(RS_GUI_CMARK)
 		add_subdirectory( "${CMARK_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/cmark" )
 		set(CMARK_INCLUDE_DIR "${CMARK_DEVEL_DIR}/src")
 	else()
+		rs_fetch_fallback_guard(cmark)
 		FetchContent_Declare(
 			cmark
 			GIT_REPOSITORY "https://github.com/commonmark/cmark.git"
@@ -649,6 +672,18 @@ execute_process(
 	OUTPUT_VARIABLE RS_GUI_VERSION
 	OUTPUT_STRIP_TRAILING_WHITESPACE
 	RESULT_VARIABLE RS_GUI_GIT_RESULT ) # Avoid CMake failure if git fails
+
+# Source tarball fallback: an unpacked source tarball carries no git metadata,
+# so the tarball preparation script stores the super-project `git describe`
+# output in a Source_Version file at the super-project root.
+if(NOT RS_GUI_GIT_RESULT EQUAL 0 OR RS_GUI_VERSION STREQUAL "")
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../Source_Version")
+		file(READ "${CMAKE_CURRENT_SOURCE_DIR}/../Source_Version" RS_GUI_VERSION)
+		string(STRIP "${RS_GUI_VERSION}" RS_GUI_VERSION)
+		set(RS_GUI_GIT_RESULT 0)
+	endif()
+endif()
+
 if(RS_GUI_GIT_RESULT EQUAL 0 AND NOT RS_GUI_VERSION STREQUAL "")
 	string(REGEX REPLACE "^v" "" RS_GUI_VERSION "${RS_GUI_VERSION}")
 	message(STATUS "RetroShare GUI version ${RS_GUI_VERSION}")
