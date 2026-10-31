@@ -75,12 +75,8 @@ void RsGxsChannelPostsModel::initEmptyHierarchy()
 	mPosts.clear();
 	mFilteredPosts.clear();
 
-	// Reset the active filter on every (re)load. initEmptyHierarchy() is run by
-	// setPosts(), and the widget clears the search box silently (whileBlocking)
-	// without notifying the model; a filter left over from a previously viewed
-	// channel would otherwise be re-applied by updateFilter() on the next incoming
-	// post and could hide every post. Doing it here keeps the fix independent of
-	// how setPosts() is implemented.
+	// The widget clears the search box without notifying the model, so reset the
+	// filter here or the previous channel's filter may hide the new posts.
 	mFilteredStrings.clear();
 	mFilterUnread = false;
 
@@ -158,10 +154,7 @@ void RsGxsChannelPostsModel::updateFilter(uint32_t& count)
 
 	// The row<->post mapping is fully rebuilt above (posts may have been added,
 	// removed or reordered by the caller), so we signal a layout change through the
-	// preMods()/postMods() pair rather than faking a row insertion. Emitting
-	// beginInsertRows() with a range that does not match a real insertion left the
-	// attached view inconsistent and could randomly blank the grid right after a
-	// post was added (only a full channel reload fixed it).
+	// preMods()/postMods() pair hereafter.
 	postMods();
 }
 
@@ -470,10 +463,7 @@ void RsGxsChannelPostsModel::updateSinglePost(const RsGxsChannelPost& post,std::
     added_files.clear();
     removed_files.clear();
 
-    // NB: no emit layoutAboutToBeChanged() here. The single balanced layout-change
-    // signal is emitted by updateFilter() below (preMods()/postMods()). Opening a
-    // second, unmatched layoutAboutToBeChanged() here left the view stuck in a
-    // "layout changing" state and could randomly blank the grid after a new post.
+    // The layout change is signaled by updateFilter() below.
 
     // linear search. Not good at all, but normally this is just for a single post.
 

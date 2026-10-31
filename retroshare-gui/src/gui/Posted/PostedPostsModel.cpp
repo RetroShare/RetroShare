@@ -223,10 +223,7 @@ void RsPostedPostsModel::setFilter(const QStringList& strings, uint32_t& count)
 
 	std::cerr << "After filtering: " << count << " posts remain." << std::endl;
 
-	// No beginInsertRows() here: the filtered set is rebuilt from scratch above, so
-	// the surrounding reset + postMods() (layoutChanged) refresh the view. Faking a
-	// row insertion with a mismatched range is a lie to the view (same anti-pattern
-	// that could blank the channels grid) and is not needed.
+	// The filtered set is rebuilt above, postMods() signals the layout change.
 	postMods();
 }
 
@@ -570,9 +567,6 @@ void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPost
     mDisplayedNbPosts = std::min((uint32_t)mFilteredPosts.size(),mDefaultDisplayedNbPosts);
 	mDisplayedStartIndex = 0;
 
-	// No beginInsertRows() here: setFilter() above already reset and repopulated the
-	// model, so postMods() (layoutChanged) is enough. Faking a row insertion with a
-	// mismatched range is the same anti-pattern that could blank the channels grid.
 	postMods();
 
 	emit boardPostsLoaded();
