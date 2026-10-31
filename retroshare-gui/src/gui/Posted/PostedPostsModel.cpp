@@ -223,12 +223,7 @@ void RsPostedPostsModel::setFilter(const QStringList& strings, uint32_t& count)
 
 	std::cerr << "After filtering: " << count << " posts remain." << std::endl;
 
-	if (rowCount()>0)
-	{
-		beginInsertRows(QModelIndex(),0,rowCount()-1);
-		endInsertRows();
-	}
-
+	// The filtered set is rebuilt above, postMods() signals the layout change.
 	postMods();
 }
 
@@ -571,12 +566,6 @@ void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPost
 
     mDisplayedNbPosts = std::min((uint32_t)mFilteredPosts.size(),mDefaultDisplayedNbPosts);
 	mDisplayedStartIndex = 0;
-
-	if (rowCount()>0)
-	{
-		beginInsertRows(QModelIndex(),0,rowCount()-1);
-		endInsertRows();
-	}
 
 	postMods();
 

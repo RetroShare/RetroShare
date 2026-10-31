@@ -75,6 +75,11 @@ void RsGxsChannelPostsModel::initEmptyHierarchy()
 	mPosts.clear();
 	mFilteredPosts.clear();
 
+	// The widget clears the search box without notifying the model, so reset the
+	// filter here or the previous channel's filter may hide the new posts.
+	mFilteredStrings.clear();
+	mFilterUnread = false;
+
 	endResetModel();
 }
 
@@ -147,12 +152,9 @@ void RsGxsChannelPostsModel::updateFilter(uint32_t& count)
 
     count = mFilteredPosts.size();
 
-	if (rowCount()>0)
-	{
-		beginInsertRows(QModelIndex(),0,rowCount()-1);
-		endInsertRows();
-	}
-
+	// The row<->post mapping is fully rebuilt above (posts may have been added,
+	// removed or reordered by the caller), so we signal a layout change through the
+	// preMods()/postMods() pair hereafter.
 	postMods();
 }
 
@@ -461,7 +463,7 @@ void RsGxsChannelPostsModel::updateSinglePost(const RsGxsChannelPost& post,std::
     added_files.clear();
     removed_files.clear();
 
-    emit layoutAboutToBeChanged();
+    // The layout change is signaled by updateFilter() below.
 
     // linear search. Not good at all, but normally this is just for a single post.
 
