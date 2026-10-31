@@ -36,6 +36,7 @@ public:
 
 protected:
 	void setup();
+	void applyFeedStyle();
 
 // PulseDataInterface ===========
 	// Group

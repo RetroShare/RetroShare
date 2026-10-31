@@ -65,9 +65,74 @@ void PulseReply::setup()
 	connect(toolButton_like, SIGNAL(clicked()), this, SLOT(actionLike()));
 	connect(toolButton_view, SIGNAL(clicked()), this, SLOT(actionViewPulse()));
 	connect(readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool))); 
+	connect(widget_message, SIGNAL(pictureOpened()), this, SLOT(markAsRead()));
 
 	// hided it takes to much space
 	label_authorName->hide();
+
+	applyFeedStyle();
+}
+
+// Twitter-like look: borderless card with a divider line, one-line header
+// "Name  shortId · 5m", icon action row with counts (hidden when 0).
+void PulseReply::applyFeedStyle()
+{
+	feedFrame->setFrameShape(QFrame::NoFrame);
+	feedFrame->setAttribute(Qt::WA_Hover, true);
+
+	QFont nameFont = label_groupName->font();
+	nameFont.setBold(true);
+	label_groupName->setFont(nameFont);
+
+	// header on one line: name, id, date, then stretch, then read/new markers.
+	horizontalLayout_12->setSpacing(4);
+	horizontalLayout_12->removeWidget(label_date);
+	horizontalLayout_12->insertWidget(horizontalLayout_12->indexOf(label_groupName) + 1, label_date);
+
+
+	// actions: icon + count, compact row aligned left.
+	WireStyleActionButton(toolButton_reply);
+	WireStyleActionButton(toolButton_republish);
+	WireStyleActionButton(toolButton_like);
+	WireStyleActionButton(toolButton_view, false);
+
+	toolButton_reply->setToolTip(tr("Reply"));
+	toolButton_republish->setToolTip(tr("Republish"));
+	toolButton_like->setToolTip(tr("Like"));
+	toolButton_view->setToolTip(tr("Open thread"));
+
+	toolButton_reply->setText(QString());
+	toolButton_republish->setText(QString());
+	toolButton_like->setText(QString());
+	toolButton_view->setText(QString());
+
+	label_replies->hide();
+	label_republishes->hide();
+	label_likes->hide();
+
+	// compact follow row: small button at the left instead of a big centered one.
+	QLayoutItem *firstFollowItem = horizontalLayout_6->itemAt(0);
+	if (firstFollowItem && firstFollowItem->spacerItem()) {
+		delete horizontalLayout_6->takeAt(0);
+	}
+	widget_follow->setMinimumHeight(0);
+	followButton->setText(tr("Follow"));
+	QFont followFont = followButton->font();
+	followFont.setPointSize(9);
+	followButton->setFont(followFont);
+	WireFitButtonText(followButton);
+
+	widget_actions->setMinimumHeight(0);
+	widget_actions->setMaximumWidth(425);
+	plainFrame_GL->setAlignment(widget_actions, Qt::AlignLeft);
+
+}
+
+void PulseReply::showReferenceHeader(bool show)
+{
+	if (!show) {
+		widget_reply_header->setVisible(false);
+	}
 }
 
 void PulseReply::showReplyLine(bool enable)
@@ -79,12 +144,15 @@ void PulseReply::showReplyLine(bool enable)
 	// Group
 void PulseReply::setHeadshot(const QPixmap &pixmap)
 {
-	label_headshot->setPixmap(pixmap);
+	label_headshot->setPixmap(WireRoundPixmap(pixmap, 48));
 }
 
 void PulseReply::setGroupNameString(QString name)
 {
-	label_groupName->setText("@" + name);
+	// name in bold (font), the short id + date are in label_date (muted color from qss).
+	label_groupName->setTextFormat(Qt::PlainText);
+	label_groupName->setText(name);
+	label_groupName->setToolTip(QString::fromStdString(displayGroupId().toStdString()));
 }
 
 void PulseReply::setAuthorString(QString name)
@@ -106,29 +174,37 @@ void PulseReply::setMessage(RsWirePulseSPtr pulse)
 
 void PulseReply::setDateString(QString date)
 {
-	label_date->setText(date);
+	// Wire names are not unique, so show the start of the group id next to the name.
+	label_date->setTextFormat(Qt::PlainText);
+	label_date->setText(QString("%1 %2 %3").arg(WireShortId(displayGroupId().toStdString()), QChar(0x00B7), date));
+	label_date->setToolTip(mDateFull);
 }
 
 	// Refs
 void PulseReply::setLikesString(QString likes)
 {
 	label_likes->setText(likes);
+	toolButton_like->setText(WireCountText(likes));
 }
 
 void PulseReply::setRepublishesString(QString repub)
 {
 	label_republishes->setText(repub);
+	toolButton_republish->setText(WireCountText(repub));
 }
 
 void PulseReply::setRepliesString(QString reply)
 {
-	label_replies->setText(reply);	
+	label_replies->setText(reply);
+	toolButton_reply->setText(WireCountText(reply));
 }
 
 void PulseReply::setPulseStatus(PulseStatus status)
 {
 	widget_actions->setVisible(status == PulseStatus::FULL);
 	widget_follow->setVisible(status != PulseStatus::FULL);
+	// only show "Follow" when we can follow; a disabled one gets the red disabled style of default.qss.
+	followButton->setVisible(status == PulseStatus::UNSUBSCRIBED);
 	followButton->setEnabled(status == PulseStatus::UNSUBSCRIBED);
 
 	switch(status)
@@ -136,12 +212,14 @@ void PulseReply::setPulseStatus(PulseStatus status)
 		case PulseStatus::FULL:
 			break;
 		case PulseStatus::UNSUBSCRIBED:
+			label_follow_msg->setText(tr("Follow to reply, republish or like"));
 			break;
 		case PulseStatus::NO_GROUP:
-			label_follow_msg->setText("Group unavailable");
+			label_follow_msg->setText(tr("Group unavailable"));
 			break;
 		case PulseStatus::REF_MSG:
-			label_follow_msg->setText("Full Pulse unavailable");
+			// following the group, but its full pulse is not synced yet.
+			label_follow_msg->setText(tr("Full pulse not synced yet"));
 			break;
 	}
 }
@@ -161,11 +239,8 @@ void PulseReply::setReferenceString(QString ref)
 
 void PulseReply::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton && IS_MSG_UNPROCESSED(mPulse->mMeta.mMsgStatus))
-    {
-        uint32_t token;
-        RsGxsGrpMsgIdPair msgPair = std::make_pair(mPulse->mMeta.mGroupId, mPulse->mMeta.mMsgId);
-        rsWire->setMessageReadStatus(token, msgPair, true);
+    if (event->button() == Qt::LeftButton) {
+        markAsRead();
     }
     QWidget::mousePressEvent(event);
 }
@@ -176,10 +251,8 @@ void PulseReply::readToggled(bool checked)
         return;
     }
 
-    RsGxsGrpMsgIdPair msgPair = std::make_pair(mPulse->mMeta.mGroupId, mPulse->mMeta.mMsgId);
-        
-    // Use the wire service to update the backend
-    rsWire->setMessageReadStatus(msgPair, isUnread()); 
+    // checked = unread (green dot). Click toggles it and updates the card too.
+    setPulseRead(!checked);
 }
 
 void PulseReply::setReadStatus(bool isNew, bool isUnread)
@@ -198,7 +271,8 @@ void PulseReply::setReadStatus(bool isNew, bool isUnread)
 	}
 	else
 	{
-		mPulse->mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+		// was "|=": the read state was never kept, so the pulse stayed unread
+		mPulse->mMeta.mMsgStatus &= ~GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
 		readButton->setChecked(false);
 		readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 	}

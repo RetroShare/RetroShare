@@ -41,6 +41,7 @@ PulseTopLevel::PulseTopLevel(PulseViewHolder *holder, RsWirePulseSPtr pulse)
 
 	if (mPulse) {
 		showPulse();
+		markAsRead();
 	}
 
 }
@@ -64,6 +65,53 @@ void PulseTopLevel::setup()
 	connect(toolButton_view, SIGNAL(clicked()), this, SLOT(actionViewPulse()));
 	connect(toolButton_copyLink, SIGNAL(clicked()), this, SLOT(actionCopyLink()));
 	connect(readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool))); 
+	connect(widget_message, SIGNAL(pictureOpened()), this, SLOT(markAsRead()));
+
+	applyFeedStyle();
+}
+
+// Twitter-like detail view of a single pulse.
+void PulseTopLevel::applyFeedStyle()
+{
+	plainFrame->setFrameShape(QFrame::NoFrame);
+
+	WireStyleActionButton(toolButton_reply);
+	WireStyleActionButton(toolButton_republish);
+	WireStyleActionButton(toolButton_like);
+	WireStyleActionButton(toolButton_view, false);
+	WireStyleActionButton(toolButton_copyLink, false);
+
+	toolButton_reply->setToolTip(tr("Reply"));
+	toolButton_republish->setToolTip(tr("Republish"));
+	toolButton_like->setToolTip(tr("Like"));
+	toolButton_view->setToolTip(tr("Open thread"));
+	toolButton_copyLink->setToolTip(tr("Copy link"));
+
+	toolButton_reply->setText(QString());
+	toolButton_republish->setText(QString());
+	toolButton_like->setText(QString());
+	toolButton_view->setText(QString());
+	toolButton_copyLink->setText(QString());
+
+	label_replies->hide();
+	label_republishes->hide();
+	label_likes->hide();
+
+	// Twitter detail view: date, divider, action row over the full width.
+	// The counts are on the action buttons, so the extra stats row is not needed.
+	widget_replies->hide();
+	line_1->hide();
+	WireFitButtonText(followButton);
+	widget_prefix->setMinimumHeight(0);
+	widget_header->setMinimumHeight(0);
+	widget_publish->setMinimumHeight(0);
+	widget_actions->setMinimumHeight(0);
+	widget_actionsFollow->setMinimumHeight(0);
+	plainFrame_VL->setSpacing(6);
+
+	widget_message->setLargeText(true);
+
+
 }
 
 void PulseTopLevel::setRefMessage(QString /*msg*/, uint32_t /*image_count*/)
@@ -80,45 +128,57 @@ void PulseTopLevel::setMessage(RsWirePulseSPtr pulse)
 // Set UI elements.
 void PulseTopLevel::setHeadshot(const QPixmap &pixmap)
 {
-	label_headshot->setPixmap(pixmap);
+	label_headshot->setPixmap(WireRoundPixmap(pixmap, 48));
 }
 
 void PulseTopLevel::setGroupNameString(QString name)
 {
-	label_groupName->setText("@" + name);
+	// Name in bold, the start of the group id below it (names are not unique).
+	RsGxsGroupId groupId = displayGroupId();
+
+	label_authorName->setText(BoldString(name.toHtmlEscaped()));
+	label_groupName->setTextFormat(Qt::PlainText);
+	label_groupName->setText(WireShortId(groupId.toStdString()));
+	label_groupName->setToolTip(QString::fromStdString(groupId.toStdString()));
 }
 
 void PulseTopLevel::setAuthorString(QString name)
 {
-	label_authorName->setText(BoldString(name));
+	label_authorName->setToolTip(tr("Author: %1").arg(name));
 }
 
-void PulseTopLevel::setDateString(QString date)
+void PulseTopLevel::setDateString(QString /*date*/)
 {
-	label_date->setText(date);
+	// detail view shows the full date, like Twitter.
+	label_date->setTextFormat(Qt::PlainText);
+	label_date->setText(mDateFull);
 }
 
 void PulseTopLevel::setLikesString(QString likes)
 {
 	label_extra_likes->setText(BoldString(likes));
 	label_likes->setText(likes);
+	toolButton_like->setText(WireCountText(likes));
 }
 
 void PulseTopLevel::setRepublishesString(QString repub)
 {
 	label_extra_republishes->setText(BoldString(repub));
 	label_republishes->setText(repub);
+	toolButton_republish->setText(WireCountText(repub));
 }
 
 void PulseTopLevel::setRepliesString(QString reply)
 {
 	label_extra_replies->setText(BoldString(reply));
 	label_replies->setText(reply);
+	toolButton_reply->setText(WireCountText(reply));
 }
 	
 void PulseTopLevel::setPulseStatus(PulseStatus status)
 {
-	widget_replies->setVisible(true); // this is only reachable if we have ORIG so show always.
+	// the counts are on the action buttons (Twitter style), no separate stats row.
+	widget_replies->setVisible(false);
 	widget_actions->setVisible(status == PulseStatus::FULL);
 	widget_actionsFollow->setVisible(status == PulseStatus::UNSUBSCRIBED);
 }
@@ -161,12 +221,12 @@ void PulseTopLevel::mousePressEvent(QMouseEvent */*event*/)
 {
 }
 
-void PulseTopLevel::readToggled(bool /*checked*/)
+void PulseTopLevel::readToggled(bool checked)
 {
     if (mInFill) return;
 
-    RsGxsGrpMsgIdPair msgPair = std::make_pair(mPulse->mMeta.mGroupId, mPulse->mMeta.mMsgId);
-    rsWire->setMessageReadStatus(msgPair, isUnread());
+    // checked = unread (green dot). Click toggles it and updates the view too.
+    setPulseRead(!checked);
 }
 
 void PulseTopLevel::setReadStatus(bool isNew, bool isUnread)

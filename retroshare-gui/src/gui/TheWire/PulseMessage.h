@@ -25,6 +25,8 @@
 
 #include <retroshare/rswire.h>
 
+class QMovie;
+
 class PulseMessage : public QWidget, private Ui::PulseMessage
 {
   Q_OBJECT
@@ -35,6 +37,17 @@ public:
 	void setup(RsWirePulseSPtr pulse);
 	void setMessage(QString msg);
 	void setRefImageCount(uint32_t count);
+	void setLargeText(bool large); // detail view: bigger text, like Twitter
+
+signals:
+	void pictureOpened(); // the card marks the pulse as read
+
+protected:
+	// animated GIFs: in the feed they play only while the mouse is over the image,
+	// in the thread view while it is shown; always paused when hidden.
+	void showEvent(QShowEvent *event) override;
+	void hideEvent(QHideEvent *event) override;
+	bool eventFilter(QObject *watched, QEvent *event) override;
 
 private slots:
 	void viewPictureOne();
@@ -44,6 +57,10 @@ private slots:
 
 private:
 	RsWirePulseSPtr mPulse;
+	bool mLarge = false; // thread (detail) view: bigger text, images over the full width
+
+	QMovie *mMovies[4] = { nullptr, nullptr, nullptr, nullptr }; // animated GIFs (owned by the labels)
+	void openPhotoView(const RsGxsImage &image);
 
 };
 

@@ -20,22 +20,53 @@
 
 #include <iostream>
 #include <QtGui>
+#include <QMessageBox>
+#include <QComboBox>
+#include <QFile>
+#include <QImageReader>
 
 #include "PulseReply.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
+#include "gui/Posted/BoardPostImageHelper.h"
 
 #include "PulseAddDialog.h"
 
 const uint32_t PULSE_MAX_SIZE = 1000; // 1k char.
 
+// A GXS message can't be bigger than RsSerialiser::MAX_SERIAL_SIZE (256 KB) in total
+// (text + 4 images + signatures), keep some room for the rest.
+const uint32_t PULSE_MAX_IMAGE_BYTES = 230 * 1024;
+
 /** Constructor */
 PulseAddDialog::PulseAddDialog(QWidget *parent)
-: QWidget(parent), mIsReply(false)
+: QWidget(parent), mAccountChooser(nullptr), mIsReply(false)
 {
 	ui.setupUi(this);
+
+	// "From": combo box to choose the account, in place of the group name label.
+	// (The headshot / name / id labels are shown by the combo box items now.)
+	mAccountChooser = new QComboBox(ui.frame_from);
+	mAccountChooser->setIconSize(QSize(20, 20));
+	mAccountChooser->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+	mAccountChooser->setToolTip(tr("Post as"));
+	{
+		int idx = ui.frame_from_GL->indexOf(ui.label_groupName);
+		int row = 0, col = 1, rowSpan = 1, colSpan = 1;
+		if (idx >= 0) {
+			ui.frame_from_GL->getItemPosition(idx, &row, &col, &rowSpan, &colSpan);
+		}
+		ui.frame_from_GL->addWidget(mAccountChooser, row, col, rowSpan, colSpan);
+	}
+	ui.label_groupName->hide();
+	ui.label_idName->hide();
+	ui.topheadshot->hide();
+	connect(mAccountChooser, SIGNAL(currentIndexChanged(int)), this, SLOT(accountChanged(int)));
+
+	// no Cancel button: the window has its close button.
+	ui.pushButton_Cancel->hide();
 
 	connect(ui.postButton, SIGNAL( clicked( void ) ), this, SLOT( postPulse( void ) ) );
 	connect(ui.pushButton_AddURL, SIGNAL( clicked( void ) ), this, SLOT( addURL( void ) ) );
@@ -94,6 +125,44 @@ void PulseAddDialog::setGroup(RsWireGroup &group)
 	}
 	
 	mGroup = group;
+}
+
+void PulseAddDialog::setOwnGroups(const std::vector<RsWireGroup> &groups, int selected)
+{
+	mOwnGroups = groups;
+
+	mAccountChooser->blockSignals(true);
+	mAccountChooser->clear();
+	for (const RsWireGroup &group : mOwnGroups)
+	{
+		// same picture as on the main page: headshot, else the default group icon.
+		QPixmap pixmap;
+		if (group.mHeadshot.mData) {
+			GxsIdDetails::loadPixmapFromData(group.mHeadshot.mData, group.mHeadshot.mSize, pixmap, GxsIdDetails::ORIGINAL);
+		}
+		if (pixmap.isNull()) {
+			pixmap = GxsIdDetails::makeDefaultGroupIcon(group.mMeta.mGroupId, ":/icons/wire.png", GxsIdDetails::ORIGINAL);
+		}
+		mAccountChooser->addItem(QIcon(WireRoundPixmap(pixmap, 32)), QString::fromStdString(group.mMeta.mGroupName));
+		mAccountChooser->setItemData(mAccountChooser->count() - 1,
+			QString::fromStdString(group.mMeta.mAuthorId.toStdString()), Qt::ToolTipRole);
+	}
+
+	if (selected < 0 || selected >= (int)mOwnGroups.size()) {
+		selected = 0;
+	}
+	mAccountChooser->setCurrentIndex(selected);
+	mAccountChooser->blockSignals(false);
+
+	accountChanged(selected);
+}
+
+void PulseAddDialog::accountChanged(int index)
+{
+	if (index < 0 || index >= (int)mOwnGroups.size()) {
+		return;
+	}
+	setGroup(mOwnGroups[index]); // sets mGroup = the account we post / reply with
 }
 
 // set ReplyWith Group.
@@ -179,7 +248,7 @@ void PulseAddDialog::cleanup()
 	ui.frame_input->setVisible(true);
 	ui.widget_sentiment->setVisible(true);
 	ui.pushButton_picture->show();
-	ui.topheadshot->show();
+	ui.topheadshot->setVisible(mAccountChooser == nullptr);
 
 	// cleanup images.
 	mImage1.clear();
@@ -210,6 +279,13 @@ void PulseAddDialog::pulseTextChanged()
 {
 	std::string pulseText = ui.textEdit_Pulse->toPlainText().toStdString();
 	bool enable = (pulseText.size() > 0) && (pulseText.size() < PULSE_MAX_SIZE);
+
+	// A reply can only be posted once the parent pulse is loaded (setReplyTo() fetches it
+	// in the background). Before, typing enabled "Post" while it was still loading and the
+	// click was silently ignored ("reply data not ready yet").
+	if (mIsReply && mReplyToPulse.mMeta.mGroupId.isNull()) {
+		enable = false;
+	}
 	ui.postButton->setEnabled(enable);
 }
 
@@ -240,6 +316,7 @@ void PulseAddDialog::setReplyTo(const RsWirePulse &pulse, RsWirePulseSPtr pPulse
 	{
 		ui.postButton->setText(tr("Reply to Pulse"));
 		ui.textEdit_Pulse->setPlaceholderText(tr("Pulse your reply"));
+		pulseTextChanged(); // parent loaded: enable "Post" if text was typed meanwhile
 	}
 	else
 	{
@@ -307,7 +384,8 @@ void PulseAddDialog::setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId 
              * Qt::QueuedConnection is important!
              */
 
-            mGroup = *pGroup;
+            // NB: don't overwrite mGroup here: it is the account we reply WITH
+            // (set by setGroup() before), pGroup is the group of the parent pulse.
             setReplyTo(*pPulse, pPulse, pGroup->mMeta.mGroupName, replyType);
         }, this );
 
@@ -461,10 +539,16 @@ void PulseAddDialog::postReplyPulse()
 		pPulse->mImage4 = mReplyToPulse.mImage4;
 	}
 
-    RsThread::async([this, pPulse](){
+	// some pulses have no OrigMsgId, use the MsgId then (same fallback as libretroshare).
+	RsGxsMessageId replyToMsgId = mReplyToPulse.mMeta.mOrigMsgId;
+	if (replyToMsgId.isNull()) {
+		replyToMsgId = mReplyToPulse.mMeta.mMsgId;
+	}
+
+    RsThread::async([this, pPulse, replyToMsgId](){
 
         if (!rsWire->createReplyPulse(mReplyToPulse.mMeta.mGroupId,
-                mReplyToPulse.mMeta.mOrigMsgId,
+                replyToMsgId,
                 mGroup.mMeta.mGroupId,
                 mReplyType,
                 pPulse))
@@ -475,6 +559,9 @@ void PulseAddDialog::postReplyPulse()
             {
                 setCursor(Qt::ArrowCursor);
                 ui.postButton->setEnabled(true);
+                QMessageBox::warning(this, tr("RetroShare"),
+                    tr("Could not post the pulse.\nYou can only reply to, republish or like pulses of Wire groups you follow."),
+                    QMessageBox::Ok, QMessageBox::Ok);
             }, this);
             return;
         }
@@ -575,6 +662,20 @@ void PulseAddDialog::addImage(const QString &path)
 	std::cerr << "PulseAddDialog::addImage() loading image from: " << path.toStdString();
 	std::cerr << std::endl;
 
+	// Animated GIF: keep the original bytes (saving it again would drop the animation).
+	{
+		QImageReader probe(path);
+		if (QString(probe.format()).toUpper() == "GIF" && probe.imageCount() > 1)
+		{
+			QFile file(path);
+			if (!file.open(QIODevice::ReadOnly)) {
+				return;
+			}
+			addAnimatedGif(file.readAll());
+			return;
+		}
+	}
+
     QPixmap qtn = FilesDefs::getPixmapFromQtResourcePath(path);
 	if (qtn.isNull()) {
 		std::cerr << "PulseAddDialog::addImage() Invalid Image";
@@ -597,41 +698,78 @@ void PulseAddDialog::addImage(const QString &path)
 	buffer.open(QIODevice::WriteOnly);
 	image.save(&buffer, "JPG");
 
+	installImage(ba, icon);
+}
+
+// Animated GIF: checked like the GIFs we receive (format, size, frames, canvas).
+void PulseAddDialog::addAnimatedGif(const QByteArray &bytes)
+{
+	if ((uint32_t) bytes.size() > BoardPostImageHelper::MAX_ANIMATED_SIZE)
+	{
+		QMessageBox::warning(this, tr("Animated GIF"),
+			tr("This animated GIF is too large (%1 KB). The maximum is %2 KB.")
+				.arg(bytes.size() / 1024).arg(BoardPostImageHelper::MAX_ANIMATED_SIZE / 1024));
+		return;
+	}
+
+	if (!WireIsSafeAnimatedGif(reinterpret_cast<const uint8_t *>(bytes.constData()), bytes.size()))
+	{
+		QMessageBox::warning(this, tr("Animated GIF"),
+			tr("This animated GIF can't be used: it may have at most 300 frames and 1024 x 1024 pixels."));
+		return;
+	}
+
+	QPixmap firstFrame;
+	firstFrame.loadFromData(bytes, "GIF");
+	QPixmap icon = firstFrame.scaled(256, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+	installImage(bytes, icon);
+}
+
+uint32_t PulseAddDialog::totalImageBytes() const
+{
+	return mImage1.mSize + mImage2.mSize + mImage3.mSize + mImage4.mSize;
+}
+
+// put the image into the first free slot, if the pulse stays under the size limit.
+bool PulseAddDialog::installImage(const QByteArray &bytes, const QPixmap &icon)
+{
+	if (totalImageBytes() + (uint32_t) bytes.size() > PULSE_MAX_IMAGE_BYTES)
+	{
+		QMessageBox::warning(this, tr("Image too large"),
+			tr("The images of a pulse can be at most %1 KB together (this one: %2 KB, already added: %3 KB).")
+				.arg(PULSE_MAX_IMAGE_BYTES / 1024).arg(bytes.size() / 1024).arg(totalImageBytes() / 1024));
+		return false;
+	}
+
+	uint8_t *data = (uint8_t *) bytes.data();
 	if (mImage1.empty()) {
-		std::cerr << "PulseAddDialog::addImage() Installing in Image1";
-		std::cerr << std::endl;
 		ui.label_image1->setPixmap(icon);
 		ui.label_image1->show();
 		ui.frame_picture->show();
-		mImage1.copy((uint8_t *) ba.data(), ba.size());
-		std::cerr << "PulseAddDialog::addImage() Installing in Image1 Size: " << mImage1.mSize;
-		std::cerr << std::endl;
+		mImage1.copy(data, bytes.size());
 	}
 	else if (mImage2.empty()) {
 		ui.label_image2->setPixmap(icon);
 		ui.label_image2->show();
-		mImage2.copy((uint8_t *) ba.data(), ba.size());
-		std::cerr << "PulseAddDialog::addImage() Installing in Image2 Size: " << mImage2.mSize;
-		std::cerr << std::endl;
+		mImage2.copy(data, bytes.size());
 	}
 	else if (mImage3.empty()) {
 		ui.label_image3->setPixmap(icon);
 		ui.label_image3->show();
-		mImage3.copy((uint8_t *) ba.data(), ba.size());
-		std::cerr << "PulseAddDialog::addImage() Installing in Image3 Size: " << mImage3.mSize;
-		std::cerr << std::endl;
+		mImage3.copy(data, bytes.size());
 	}
 	else if (mImage4.empty()) {
 		ui.label_image4->setPixmap(icon);
 		ui.label_image4->show();
-		mImage4.copy((uint8_t *) ba.data(), ba.size());
-		std::cerr << "PulseAddDialog::addImage() Installing in Image4 Size: " << mImage4.mSize;
-		std::cerr << std::endl;
+		mImage4.copy(data, bytes.size());
 	}
 	else {
-		std::cerr << "PulseAddDialog::addImage() Images all full";
+		std::cerr << "PulseAddDialog::installImage() Images all full";
 		std::cerr << std::endl;
+		return false;
 	}
+	return true;
 }
 
 void PulseAddDialog::toggle()
