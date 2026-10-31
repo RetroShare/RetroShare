@@ -190,7 +190,7 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 		RsDbg(" RSEID: for item size = ", moSize.width(), "x", moSize.height());
 #endif
 
-		QImage moImg(moSize,QImage::Format_ARGB32);
+		QImage moImg(moSize,QImage::Format_ARGB32_Premultiplied);
 		QPainter moPnt;
 		moPnt.begin(&moImg);
 		moPnt.setCompositionMode (QPainter::CompositionMode_Source);
