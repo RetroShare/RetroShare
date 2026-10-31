@@ -24,7 +24,6 @@
 #include "gui/common/FilesDefs.h"
 #include "util/imageutil.h"
 
-#include "retroshare/rswiki.h"
 #include <iostream>
 
 const uint32_t PostedCreateEnabledFlags = ( 
