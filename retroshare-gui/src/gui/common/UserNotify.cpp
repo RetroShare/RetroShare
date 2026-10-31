@@ -21,10 +21,67 @@
 #include <QMenu>
 #include <QToolBar>
 #include <QToolButton>
+#include <QApplication>
+#include <QIconEngine>
+#include <QPainter>
 
 #include "UserNotify.h"
 #include "rshare.h"
 #include "gui/settings/rsharesettings.h"
+
+namespace
+{
+// Paint at the requested size so badges also follow toolbar size and DPI changes.
+class NotificationIconEngine : public QIconEngine
+{
+public:
+	NotificationIconEngine(const QIcon& icon, unsigned int count)
+	    : mIcon(icon), mText(count > 999 ? QStringLiteral("999+") : QString::number(count)) {}
+
+	QIconEngine* clone() const override { return new NotificationIconEngine(*this); }
+
+	void paint(QPainter* painter, const QRect& rect, QIcon::Mode mode, QIcon::State state) override
+	{
+		mIcon.paint(painter, rect, Qt::AlignCenter, mode, state);
+		painter->save();
+		painter->setRenderHint(QPainter::Antialiasing);
+		const qreal size = qMin(rect.width(), rect.height());
+		QFont font = QApplication::font();
+		font.setBold(true);
+		font.setPixelSize(qMax(1, qRound(size * 0.32)));
+		painter->setFont(font);
+		const QFontMetricsF metrics(font);
+		qreal height = qMax(size * 0.50, metrics.height() + size * 0.04);
+		const qreal width = qMax(height, metrics.boundingRect(mText).width() + size * 0.16);
+		// Keep one- and two-digit badges circular, including with wider fonts.
+		if (mText.size() <= 2) height = width;
+		// The outline reaches the icon edge; only half the stroke is inset.
+		const qreal border = size / 64.0;
+		const QRectF badge(rect.x() + rect.width() - width - border / 2,
+		                   rect.y() + rect.height() - height - border / 2,
+		                   width, height);
+		painter->setPen(QPen(Qt::white, border));
+		painter->setBrush(QColor(QStringLiteral("#E21D3A")));
+		painter->drawRoundedRect(badge, height / 2, height / 2);
+		painter->setPen(Qt::white);
+		painter->drawText(badge, Qt::AlignCenter, mText);
+		painter->restore();
+	}
+
+	QPixmap pixmap(const QSize& size, QIcon::Mode mode, QIcon::State state) override
+	{
+		QPixmap result(size);
+		result.fill(Qt::transparent);
+		QPainter painter(&result);
+		paint(&painter, QRect(QPoint(0, 0), size), mode, state);
+		return result;
+	}
+
+private:
+	QIcon mIcon;
+	QString mText;
+};
+}
 
 UserNotify::UserNotify(QObject *parent)
     : QObject(parent)
@@ -160,11 +217,12 @@ void UserNotify::update()
 	unsigned int count = getNewCount();
 
 	if (mMainAction) {
-		mMainAction->setIcon(getMainIcon(count > 0));
+		const QIcon icon = getMainIcon(count > 0);
+		mMainAction->setIcon(count > 0 ? QIcon(new NotificationIconEngine(icon, count)) : icon);
+		mMainAction->setText(mButtonText);
 
 		if(count > 0)
 		{
-			mMainAction->setText(QString("%1 (%2)").arg(mButtonText).arg(count));
 			mMainAction->setToolTip(QString("%1 (%2)").arg(mButtonText, getNotifyMessage(count > 1).arg(count) ));
 		}
 		else
@@ -174,7 +232,7 @@ void UserNotify::update()
 		}
 
 		QFont font = mMainAction->font();
-		font.setBold(count > 0);
+		font.setBold(false);
 		mMainAction->setFont(font);
 	}
 
@@ -187,10 +245,8 @@ void UserNotify::update()
 		mListItem->setFont(font);
 	}
 	if (mMainToolButton) {
-		mMainToolButton->setStyleSheet((count > 0) ? "QToolButton { color: #E21D3A; }" : "");
-
 		QFont font = mMainToolButton->font();
-		font.setBold(count > 0);
+		font.setBold(false);
 		mMainToolButton->setFont(font);
 	}
 
