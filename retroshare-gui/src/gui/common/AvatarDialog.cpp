@@ -167,7 +167,9 @@ void AvatarDialog::loadAvatarWidget()
 		ui->info_Frame->hide();
 	}
 
-	bool bOnlyOneGroup = (stickerTabs.count() == 1);
+	// No sticker folder at all is handled like a single group: no tab widget,
+	// whose currentWidget() would be null when no tab is ever added.
+	bool bOnlyOneGroup = (stickerTabs.count() <= 1);
 
 	QTabWidget *avatarTab = nullptr;
 	if (! bOnlyOneGroup)
@@ -282,6 +284,9 @@ QString AvatarDialog::importedStickerPath()
 
 void AvatarDialog::loadToolTips(QWidget *container)
 {
+	if (!container)
+		return;
+
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QList<QPushButton *> children = container->findChildren<QPushButton *>();
 	for(int i = 0; i < children.length(); ++i) {

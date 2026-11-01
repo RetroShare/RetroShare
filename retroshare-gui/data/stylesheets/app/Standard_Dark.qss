@@ -2559,4 +2559,4 @@ OpModeStatus[opMode="Minimal"] {
 }
 
 /* AvatarWidget */
-AvatarWidget{border-width: 10px;}
+AvatarWidget{border-width: 1px;}
