@@ -80,7 +80,9 @@ void AudioBar::paintEvent(QPaintEvent *) {
 
         if (highContrast) {
             // Draw monochrome representation
-            QColor fg = QPalette().foreground().color();
+            // QPalette::foreground() was a deprecated alias for windowText(),
+            // removed in Qt6; windowText() exists in both Qt5 and Qt6.
+            QColor fg = QPalette().windowText().color();
 
             p.fillRect(0, 0, below, h, QBrush(fg, qlReplacementBrushes.value(qlReplacableColors.indexOf(qcBelow), Qt::CrossPattern)));
             p.fillRect(below, 0, above - below, h, QBrush(fg, qlReplacementBrushes.value(qlReplacableColors.indexOf(qcInside), Qt::NoBrush)));

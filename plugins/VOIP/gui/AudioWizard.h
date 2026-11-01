@@ -21,8 +21,7 @@
 
 #pragma once
 
-#include <QAudioInput>
-#include <QAudioOutput>
+#include "gui/qtmultimedia_compat.h"
 #include <QQueue>
 
 #include "AudioStats.h"
@@ -39,8 +38,8 @@ class AudioWizard: public QWizard, public Ui::AudioWizard {
 		Q_DISABLE_COPY(AudioWizard)
                 AudioBar* abAmplify;
                 AudioBar* abVAD;
-                QAudioInput* inputDevice;
-                QAudioOutput* outputDevice;
+                RsAudioInput* inputDevice;
+                RsAudioOutput* outputDevice;
                 QtSpeex::SpeexInputProcessor* inputProcessor;
                 QtSpeex::SpeexOutputProcessor* outputProcessor;
                 QQueue<QByteArray>packetQueue;

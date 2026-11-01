@@ -20,7 +20,7 @@
  *******************************************************************************/
 #pragma once
 
-#include <QAudioInput>
+#include "gui/qtmultimedia_compat.h"
 #include <QWidget>
 
 #include "retroshare-gui/configpage.h"
@@ -53,7 +53,7 @@ class VOIPConfigPanel : public ConfigPage
 
 	private:
 		Ui::AudioInput ui;
-		QAudioInput* inputAudioDevice;
+		RsAudioInput* inputAudioDevice;
 		QtSpeex::SpeexInputProcessor* inputAudioProcessor;
 		AudioBar* abSpeech;
 		//VideoDecoder *videoDecoder ;
@@ -71,7 +71,7 @@ class VOIPConfigPanel : public ConfigPage
         void clearPipeline();
 	public:
 		/** Default Constructor */
-		VOIPConfigPanel(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+		VOIPConfigPanel(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 		/** Default Destructor */
 		~VOIPConfigPanel();
 
