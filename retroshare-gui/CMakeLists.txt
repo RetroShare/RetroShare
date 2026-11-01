@@ -117,6 +117,12 @@ cmake_dependent_option(
 	OFF
 )
 
+set(RUNTIME_DEPENDENCY_PATH
+	""
+	CACHE STRING
+	"Extra paths to search for runtime dependencies."
+)
+
 ################################################################################
 ### dependencies
 
@@ -436,65 +442,6 @@ install(TARGETS ${PROJECT_NAME}
 	BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-if(WIN32)
-	if(MINGW AND CMAKE_CROSSCOMPILING)
-		# workaround https://gitlab.kitware.com/cmake/cmake/-/issues/20753
-		install(CODE [==[
-				set(CMAKE_GET_RUNTIME_DEPENDENCIES_PLATFORM "windows+pe")
-				set(CMAKE_GET_RUNTIME_DEPENDENCIES_TOOL "objdump")
-				set(CMAKE_GET_RUNTIME_DEPENDENCIES_COMMAND "${CMAKE_OBJDUMP}")
-			]==]
-			${INSTALL_COMPONENT}
-		)
-
-		# workaround https://gitlab.kitware.com/cmake/cmake/-/issues/27557
-		if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
-			set(DEPENDENCY_SEARCH_DIRS ${CMAKE_FIND_ROOT_PATH})
-			list(TRANSFORM DEPENDENCY_SEARCH_DIRS APPEND /bin)
-		endif()
-	endif()
-
-	install(RUNTIME_DEPENDENCY_SET retroshare-gui-dependencies
-		${INSTALL_COMPONENT}
-		DIRECTORIES ${DEPENDENCY_SEARCH_DIRS}
-		PRE_EXCLUDE_REGEXES
-			# libretroshare shipped seperately
-			"^libretroshare\\.dll\$"
-			# Windows built-ins
-			"^advapi32\\.dll\$"
-			"^aleaut32\\.dll\$"
-			"^api-ms-win-(core|crt)-.*\\.dll\$"
-			"^authz\\.dll\$"
-			"^avrt\\.dll\$"
-			"^comdlg32\\.dll\$"
-			"^crypt32\\.dll\$"
-			"^d3d11\\.dll\$"
-			"^d3d12\\.dll\$"
-			"^dnsapi\\.dll\$"
-			"^dwmapi\\.dll\$"
-			"^dwrite\\.dll\$"
-			"^dxgi\\.dll\$"
-			"^gdi32\\.dll\$"
-			"^kernel32\\.dll\$"
-			"^iphlpapi\\.dll\$"
-			"^mpr\\.dll\$"
-			"^netapi32\\.dll\$"
-			"^ntdll\\.dll\$"
-			"^ole32\\.dll\$"
-			"^oleaut32\\.dll\$"
-			"^propsys\\.dll\$"
-			"^shell32\\.dll\$"
-			"^secur32\\.dll\$"
-			"^user32\\.dll\$"
-			"^userenv\\.dll\$"
-			"^uxtheme\\.dll\$"
-			"^version\\.dll\$"
-			"^winhttp\\.dll\$"
-			"^winmm\\.dll\$"
-			"^ws2_32\\.dll\$"
-	)
-endif()
-
 
 # If dependencies are fetched via FetchContent, then their targets might not
 # have export sets, and this prevents us from using our own export set.
@@ -637,9 +584,40 @@ set(CPACK_SOURCE_IGNORE_FILES
 )
 set(CPACK_THREADS 0)
 
+## runtime dependencies
+if(WIN32 AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.16)
+	set(RUNTIME_DEPENDENCY_EXECUTABLES "$<TARGET_FILE:${PROJECT_NAME}>")
+	set(RUNTIME_DEPENDENCY_LIBRARIES "")
+	set(RUNTIME_DEPENDENCY_MODULES "")
+	set(RUNTIME_DEPENDENCY_DIRECTORIES ${RUNTIME_DEPENDENCY_PATH})
+	if(CMAKE_IMPORT_LIBRARY_SUFFIX)
+		# DLL platform -- DLLs go in runtime directory
+		set(RUNTIME_DEPENDENCY_DESTINATION ${CMAKE_INSTALL_BINDIR})
+	else()
+		# non-DLL platform -- SOs go in library directory
+		set(RUNTIME_DEPENDENCY_DESTINATION ${CMAKE_INSTALL_LIBDIR})
+	endif()
+
+	configure_file(
+		${CMAKE_CURRENT_SOURCE_DIR}/mk/cmake/install_runtime_dependencies.cmake.in
+		${CMAKE_CURRENT_BINARY_DIR}/install_runtime_dependencies.cmake.gen
+		@ONLY
+	)
+	file(GENERATE
+		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/install_runtime_dependencies.cmake
+		INPUT ${CMAKE_CURRENT_BINARY_DIR}/install_runtime_dependencies.cmake.gen
+	)
+	list(APPEND CPACK_INSTALL_SCRIPTS
+		${CMAKE_CURRENT_BINARY_DIR}/install_runtime_dependencies.cmake
+	)
+endif()
+
+## config file
 find_package(Git QUIET)
 configure_file(mk/cmake/RSCPackConfig.cmake.in RSCPackConfig.cmake @ONLY)
 set(CPACK_PROJECT_CONFIG_FILE ${CMAKE_CURRENT_BINARY_DIR}/RSCPackConfig.cmake)
+
+
 include(CPack)
 
 endif()
