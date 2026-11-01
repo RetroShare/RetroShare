@@ -53,7 +53,9 @@
 
 #include <util/argstream.h>
 #include <retroshare/rsinit.h>
+#ifndef RSGUI_QMAKE
 #include "rsguiversion.h"
+#endif
 #include <retroshare/rsplugin.h>
 
 #include "rshare.h"
@@ -244,7 +246,7 @@ void RsApplication::slotConnectionEstablished()
 /* The GUI reports its OWN version here (RS_GUI_VERSION, injected from the
  * super-project git describe), independent from libretroshare. libretroshare's
  * version is obtained separately through RsInit::libRetroShareVersion(). */
-QString RsApplication::retroshareVersion(bool) { return RS_GUI_HUMAN_READABLE_VERSION; }
+QString RsApplication::retroshareVersion(bool) { return RSGUI_VERSION_FULL; }
 
 /** Enters the main event loop and waits until exit() is called. The signal
  * running() will be emitted when the event loop has started. */
@@ -493,7 +495,7 @@ void RsApplication::loadStyleSheet(const QString &sheetName)
         qApp->setPalette(darkPalette);
 
         qApp->setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
-    } 
+    }
 #endif
     qApp->setStyleSheet(styleSheet);
 }

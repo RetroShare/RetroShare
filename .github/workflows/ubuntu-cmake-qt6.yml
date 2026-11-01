@@ -40,13 +40,7 @@ jobs:
     # are checked out. librnp needs --recursive for its nested src/libsexpp.
     - name: Init submodules (pinned commits)
       run: |
-        git submodule update --init \
-          libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/
-        git submodule update --init --recursive \
-          supportlibs/librnp
-        git submodule update --init \
-          supportlibs/restbed supportlibs/libsam3 \
-          supportlibs/udp-discovery-cpp supportlibs/rapidjson
+        git submodule update --init libretroshare retroshare-webui
         git --no-pager -C libretroshare log --max-count 1 --oneline
 
     - name: apt update
@@ -81,6 +75,7 @@ jobs:
         -DRS_PLUGINS=OFF -DRS_FORUM_DEEP_INDEX=OFF
         -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON
         -DRS_BRODCAST_DISCOVERY=ON -DRS_SQLCIPHER=ON
+        -DCMAKE_CXX_FLAGS="-Wno-deprecated-declarations"
 
     - name: CMake build
       run: cmake --build Build-cmake -j$(nproc)

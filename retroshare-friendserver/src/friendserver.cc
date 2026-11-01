@@ -563,7 +563,3 @@ void FriendServer::debugPrint(bool force)
     }
 
 }
-
-
-
-
