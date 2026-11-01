@@ -20,6 +20,8 @@
 
 #pragma once
 
+// Load the version macros directly before moc evaluates the camera guards.
+#include <QtGlobal>
 #include <QLabel>
 #include <QCamera>
 #include <QVideoFrame>
@@ -58,7 +60,7 @@ class QVideoOutputDevice: public QLabel
 		void showFrameOff() ;
 };
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 // Qt5: viewfinder surface of the QCamera. Receives the continuous frame stream,
 // keeps one frame per grab period and converts it to a QImage.
 // (Replaces the former QCameraImageCapture still-image grabbing, which does not
