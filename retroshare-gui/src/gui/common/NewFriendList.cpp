@@ -237,6 +237,7 @@ NewFriendList::NewFriendList(QWidget */*parent*/) : /* RsAutoUpdatePage(5000,par
     mProxyModel->setSortRole(RsFriendListModel::SortRole);
     mProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
 	mProxyModel->setFilterRole(RsFriendListModel::FilterRole);
+	mProxyModel->setRecursiveFilteringEnabled(true);	// show the parents of a match
 	QSortFilterProxyModel_setFilterRegularExpression(mProxyModel, RsFriendListModel::FilterString);
 
 	ui->peerTreeWidget->setModel(mProxyModel);

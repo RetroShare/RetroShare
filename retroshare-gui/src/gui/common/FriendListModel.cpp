@@ -464,100 +464,16 @@ QVariant RsFriendListModel::statusRole(const EntryIndex& fmpe,int /*column*/) co
     return QVariant();
 }
 
-// An entry is shown when it matches the filter, or when one of its children does, so that the path to a
-// match stays visible in the tree. The locations of a matching profile are shown too. A matching group
-// does not show its profiles: its text holds counts and a hex id, which would match most searches.
+// An entry is shown when it matches the filter, and so are the locations of a matching profile. The
+// proxy model filters recursively, so the parents of a match are shown too. Groups are not searched as
+// parents: their text holds counts and a hex id, which would match most searches.
 
 bool RsFriendListModel::passesFilter(const EntryIndex& e,int /*column*/) const
 {
-	if(mFilterStrings.empty())
+	if(mFilterStrings.empty() || matchesFilter(e))
 		return true;
 
-	if(mGroupMatches.size() != mGroups.size() || mProfileMatches.size() != mProfiles.size() || mLocationMatches.size() != mLocations.size())
-		return true;	// data is being rebuilt, the matches are refreshed at the end
-
-	if(e.type == ENTRY_TYPE_GROUP)
-	{
-		const HierarchicalGroupInformation *group = getGroupInfo(e);
-
-		if(!group)
-			return false;
-
-		if(mGroupMatches[e.group_index])
-			return true;
-
-		for(uint32_t i=0;i<group->child_profile_indices.size();++i)
-			if(profileOrChildMatchesFilter(group->child_profile_indices[i]))
-				return true;
-
-		return false;
-	}
-
-	if(e.type == ENTRY_TYPE_PROFILE)
-	{
-		const HierarchicalProfileInformation *profile = getProfileInfo(e);
-
-		return profile && profileOrChildMatchesFilter(profile - mProfiles.data());
-	}
-
-	if(e.type == ENTRY_TYPE_NODE)
-	{
-		const HierarchicalProfileInformation *profile = getProfileInfo(e.parent());
-		const HierarchicalNodeInformation *node = getNodeInfo(e);
-
-		return profile && node && (mProfileMatches[profile - mProfiles.data()] || mLocationMatches[node - mLocations.data()]);
-	}
-
-	return false;
-}
-
-bool RsFriendListModel::profileOrChildMatchesFilter(uint32_t profile_index) const
-{
-	if(mProfileMatches[profile_index])
-		return true;
-
-	for(uint32_t i=0;i<mProfiles[profile_index].child_node_indices.size();++i)
-		if(mLocationMatches[mProfiles[profile_index].child_node_indices[i]])
-			return true;
-
-	return false;
-}
-
-void RsFriendListModel::updateFilterMatches()
-{
-	mGroupMatches.assign(mGroups.size(),false);
-	mProfileMatches.assign(mProfiles.size(),false);
-	mLocationMatches.assign(mLocations.size(),false);
-
-	if(mFilterStrings.empty())
-		return;
-
-	for(uint32_t i=0;i<mGroups.size();++i)
-	{
-		EntryIndex e;
-		e.type = ENTRY_TYPE_GROUP;
-		e.group_index = i;
-
-		mGroupMatches[i] = matchesFilter(e);
-	}
-
-	for(uint32_t i=0;i<mProfiles.size();++i)
-	{
-		EntryIndex e;
-		e.type = ENTRY_TYPE_PROFILE;
-		e.profile_index = i;
-
-		mProfileMatches[i] = matchesFilter(e);
-
-		for(uint32_t j=0;j<mProfiles[i].child_node_indices.size();++j)
-		{
-			EntryIndex n(e);
-			n.type = ENTRY_TYPE_NODE;
-			n.node_index = j;
-
-			mLocationMatches[mProfiles[i].child_node_indices[j]] = matchesFilter(n);
-		}
-	}
+	return e.type == ENTRY_TYPE_NODE && matchesFilter(e.parent());
 }
 
 // Only the text of the visible columns is searched. The last contact column is left out: it holds a raw
@@ -608,7 +524,6 @@ void RsFriendListModel::setFilter(uint8_t filter_type, const QStringList& string
 
     mFilterType = filter_type;
 	mFilterStrings = strings;
-	updateFilterMatches();
 
 	postMods();
 }
@@ -1208,7 +1123,6 @@ void RsFriendListModel::clear()
     mProfiles.clear();
     mLocations.clear();
     mTopLevel.clear();
-    updateFilterMatches();
 
 	postMods();
 
@@ -1542,7 +1456,6 @@ void RsFriendListModel::updateInternalData()
 	// finally, tell the model client that layout has changed.
 
 	mTopLevel = TL;
-	updateFilterMatches();
 
 //	if (TL.size()>0)
 //	{

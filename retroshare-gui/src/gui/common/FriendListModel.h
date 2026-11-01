@@ -213,8 +213,6 @@ private:
 	void updateInternalData();
 	bool passesFilter(const EntryIndex &e, int column) const;
 	bool matchesFilter(const EntryIndex &e) const;
-	bool profileOrChildMatchesFilter(uint32_t profile_index) const;
-	void updateFilterMatches();
 
 	void preMods() ;
 	void postMods() ;
@@ -232,11 +230,6 @@ private:
 
     QStringList mFilterStrings;
     uint8_t     mFilterType;
-
-    // matchesFilter() of each group, profile and location, computed once when the filter or the data change.
-    std::vector<bool> mGroupMatches;
-    std::vector<bool> mProfileMatches;
-    std::vector<bool> mLocationMatches;
 
     bool mDisplayGroups ;
     bool mDisplayStatusString ;

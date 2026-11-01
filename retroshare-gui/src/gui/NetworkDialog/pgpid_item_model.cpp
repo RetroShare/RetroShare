@@ -31,8 +31,8 @@
 /*TODO:
  * using list here for internal data storage is not best option
 */
-pgpid_item_model::pgpid_item_model(std::list<RsPgpId> &neighs_, float &_font_height,  QObject *parent)
-    : QAbstractTableModel(parent), neighs(neighs_), font_height(_font_height)
+pgpid_item_model::pgpid_item_model(float &_font_height,  QObject *parent)
+    : QAbstractTableModel(parent), font_height(_font_height)
 {
 }
 
@@ -120,17 +120,17 @@ QVariant pgpid_item_model::headerData(int section, Qt::Orientation orientation, 
 
 bool pgpid_item_model::getDetails(int row, RsPeerDetails& detail) const
 {
-    if((unsigned)row >= mRows.size())
+    if((unsigned)row >= neighs.size())
         return false;
 
-    if(mCachedId != mRows[row])
+    if(mCachedId != neighs[row])
     {
-        if (!rsPeers->getGPGDetails(mRows[row], mCachedDetails))
+        if (!rsPeers->getGPGDetails(neighs[row], mCachedDetails))
         {
             mCachedId.clear();
             return false;
         }
-        mCachedId = mRows[row];
+        mCachedId = neighs[row];
     }
 
     detail = mCachedDetails;
@@ -326,14 +326,13 @@ void pgpid_item_model::data_updated(std::list<RsPgpId> &new_neighs)
 
     //shit code follow (rewrite this please)
     size_t old_size = neighs.size(), new_size = 0;
-    std::list<RsPgpId> old_neighs = neighs;
+    std::vector<RsPgpId> old_neighs = neighs;
 
-    new_size = new_neighs.size();
     //set model data to new cleaned up data
-    neighs = new_neighs;
-    neighs.sort();
-    neighs.unique(); //remove possible dups
-    mRows.assign(neighs.begin(), neighs.end());
+    new_neighs.sort();
+    new_neighs.unique(); //remove possible dups
+    neighs.assign(new_neighs.begin(), new_neighs.end());
+    new_size = neighs.size();
     mCachedId.clear();
 
     //reflect actual row count in model

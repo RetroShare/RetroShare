@@ -66,7 +66,7 @@ NetworkDialog::NetworkDialog(QWidget */*parent*/)
     //list data model
     float f = QFontMetricsF(font()).height()/14.0 ;
 
-    PGPIdItemModel = new pgpid_item_model(neighs, f, this);
+    PGPIdItemModel = new pgpid_item_model(f, this);
     PGPIdItemProxy = new pgpid_item_proxy(this);
     connect(ui.onlyTrustedKeys, SIGNAL(toggled(bool)), PGPIdItemProxy, SLOT(use_only_trusted_keys(bool)));
     PGPIdItemProxy->setSourceModel(PGPIdItemModel);

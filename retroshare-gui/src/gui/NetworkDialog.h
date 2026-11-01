@@ -101,9 +101,6 @@ private:
 
   RSTreeWidgetItemCompareRole *compareNetworkRole ;
 
-  //iinternal long lived data
-  std::list<RsPgpId> neighs;
-
   pgpid_item_model *PGPIdItemModel;
   pgpid_item_proxy *PGPIdItemProxy;
 
