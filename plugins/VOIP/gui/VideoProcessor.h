@@ -89,17 +89,36 @@ struct AVCodecContext ;
 struct AVFrame ;
 struct AVPacket ;
 
+// Video codec based on FFmpeg (libavcodec).
+//   KIND_H264  : H.264. Encoder: libx264, else libopenh264, else Windows Media
+//                Foundation (h264_mf). canEncode() is false when none is available.
+//   KIND_MPEG4 : MPEG-4 part 2 (always available in libavcodec), used as fallback.
+// The encoder bitrate follows the target bandwidth given to encodeData().
 class FFmpegVideo: public VideoCodec
 {
 public:
-    FFmpegVideo() ;
+    enum Kind { KIND_MPEG4 = 0, KIND_H264 = 1 } ;
+
+    // header_codec_id: codec id written in the 4-byte header of each encoded packet.
+    FFmpegVideo(Kind kind, uint16_t header_codec_id) ;
     ~FFmpegVideo() ;
 
-protected:
+    bool canEncode() const { return encoding_codec != NULL ; }
+    bool canDecode() const { return decoding_context != NULL ; }
+
+    // target_encoding_bitrate is in bytes per second.
     virtual bool encodeData(const QImage& Image, uint32_t target_encoding_bitrate, NetQueue<RsVOIPDataChunk>& dst) ;
     virtual bool decodeData(const RsVOIPDataChunk& chunk,QImage& image) ;
 
 private:
+    bool openEncoder(int64_t bitrate_bits_per_sec) ;
+
+    Kind _kind ;
+    uint16_t _header_codec_id ;
+    int64_t _encoder_bitrate ;		// bits/s the encoder is currently configured with
+    time_t _last_encoder_reopen ;
+    bool _encoder_can_change_bitrate ;	// libx264 reconfigures the bitrate on the fly
+
     const AVCodec *encoding_codec;
     const AVCodec *decoding_codec;
     AVCodecContext *encoding_context;
@@ -127,7 +146,8 @@ class VideoProcessor
                 		VIDEO_PROCESSOR_CODEC_ID_UNKNOWN    = 0x0000,
                 		VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO = 0x0001,
                 		VIDEO_PROCESSOR_CODEC_ID_DDWT_VIDEO = 0x0002,
-                		VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO = 0x0003
+                		VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO = 0x0003,
+                		VIDEO_PROCESSOR_CODEC_ID_H264_VIDEO = 0x0004
             };
 
 // =====================================================================================
@@ -180,6 +200,7 @@ class VideoProcessor
 
 	    JPEGVideo    _jpeg_video_codec ;
             FFmpegVideo  _mpeg_video_codec ;
+            FFmpegVideo  _h264_video_codec ;
 
             uint16_t _encoding_current_codec ;
 

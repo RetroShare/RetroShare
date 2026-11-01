@@ -131,13 +131,17 @@ void av_frame_free(AVFrame **frame)
 #endif // MINGW
 
 VideoProcessor::VideoProcessor()
-    : _encoded_out_queue(8), _encoded_frame_size(640,480)
+    : _encoded_out_queue(8), _encoded_frame_size(640,480),
+      _mpeg_video_codec(FFmpegVideo::KIND_MPEG4, VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO),
+      _h264_video_codec(FFmpegVideo::KIND_H264, VIDEO_PROCESSOR_CODEC_ID_H264_VIDEO)
 {
     //_lastTimeToShowFrame = time(NULL);
     _decoded_output_device = NULL ;
 
-  //_encoding_current_codec = VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO;
-    _encoding_current_codec = VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO;
+    // H.264 gives a much better picture for the same bandwidth. MPEG-4 is the
+    // fallback when libavcodec has no usable H.264 encoder.
+    _encoding_current_codec = _h264_video_codec.canEncode() ? VIDEO_PROCESSOR_CODEC_ID_H264_VIDEO
+                                                            : VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO;
 
     _estimated_bandwidth_in = 0 ;
     _estimated_bandwidth_out = 0 ;
@@ -171,15 +175,35 @@ bool VideoProcessor::processImage(const QImage& img)
 	    break ;
     case VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO: codec = &_mpeg_video_codec ;
 	    break ;
+    case VIDEO_PROCESSOR_CODEC_ID_H264_VIDEO: codec = &_h264_video_codec ;
+	    break ;
     default:
 	    codec = NULL ;
     }
 
-    //    std::cerr << "reducing to " << _frame_size.width() << " x " << _frame_size.height() << std::endl;
-
     if(codec)
     {
-      codec->encodeData(img.scaled(_encoded_frame_size,Qt::IgnoreAspectRatio,Qt::SmoothTransformation),_target_bandwidth_out, _encoded_out_queue);
+      // Crop to the aspect ratio of the encoded frame (4:3) instead of squashing
+      // e.g. 16:9 webcam images.
+      QImage src = img ;
+      const int w = img.width(), h = img.height() ;
+      const int fw = _encoded_frame_size.width(), fh = _encoded_frame_size.height() ;
+
+      if(w > 0 && h > 0 && fw > 0 && fh > 0)
+      {
+          if((int64_t)w * fh > (int64_t)h * fw)		// too wide
+          {
+              const int nw = (int)((int64_t)h * fw / fh) ;
+              src = img.copy((w - nw) / 2, 0, nw, h) ;
+          }
+          else if((int64_t)w * fh < (int64_t)h * fw)	// too tall
+          {
+              const int nh = (int)((int64_t)w * fh / fw) ;
+              src = img.copy(0, (h - nh) / 2, w, nh) ;
+          }
+      }
+
+      codec->encodeData(src.scaled(_encoded_frame_size,Qt::IgnoreAspectRatio,Qt::SmoothTransformation),_target_bandwidth_out, _encoded_out_queue);
 
 	    time_t now = time(NULL) ;
 
@@ -246,6 +270,8 @@ void VideoProcessor::receiveEncodedData(const RsVOIPDataChunk& chunk)
     case VIDEO_PROCESSOR_CODEC_ID_JPEG_VIDEO: codec = &_jpeg_video_codec ;
 	    break ;
     case VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO: codec = &_mpeg_video_codec ;
+	    break ;
+    case VIDEO_PROCESSOR_CODEC_ID_H264_VIDEO: codec = _h264_video_codec.canDecode() ? &_h264_video_codec : NULL ;
 	    break ;
     default:
 	    codec = NULL ;
@@ -416,278 +442,330 @@ bool JPEGVideo::encodeData(const QImage& image,uint32_t /* size_hint */, NetQueu
     return true ;
 }
 
-FFmpegVideo::FFmpegVideo()
+#if LIBAVCODEC_VERSION_MAJOR < 54
+#  define RS_AV_CODEC_ID(x) CODEC_ID_##x
+#  define RS_AV_PIX_FMT(x)  PIX_FMT_##x
+#else
+#  define RS_AV_CODEC_ID(x) AV_CODEC_ID_##x
+#  define RS_AV_PIX_FMT(x)  AV_PIX_FMT_##x
+#endif
+
+static const int     VIDEO_WIDTH       = 640 ;
+static const int     VIDEO_HEIGHT      = 480 ;
+static const int     VIDEO_FPS         = 20 ;		// = camera grab period of QVideoInputDevice (50 ms)
+static const int64_t MIN_VIDEO_BITRATE = 64*1000 ;	// bits/s
+static const int64_t MAX_VIDEO_BITRATE = 4*1000*1000 ;	// bits/s
+static const int64_t DEFAULT_VIDEO_BITRATE = 30*1024*8 ;	// bits/s, until a target bandwidth is given
+
+FFmpegVideo::FFmpegVideo(Kind kind, uint16_t header_codec_id)
+    : _kind(kind), _header_codec_id(header_codec_id), _encoder_bitrate(0), _last_encoder_reopen(0),
+      _encoder_can_change_bitrate(false)
 {
 #if LIBAVCODEC_VERSION_MAJOR < 58
     avcodec_register_all();
 #endif
-    // Encoding
-
     encoding_codec = NULL ;
-    encoding_frame_buffer = NULL ;
+    decoding_codec = NULL ;
     encoding_context = NULL ;
-
-    //AVCodecID codec_id = AV_CODEC_ID_H264 ;
-    //AVCodecID codec_id = AV_CODEC_ID_MPEG2VIDEO;
-#if LIBAVCODEC_VERSION_MAJOR < 54
-    CodecID codec_id = CODEC_ID_MPEG4;
-#else
-    AVCodecID codec_id = AV_CODEC_ID_MPEG4;
-#endif
-
-    /* find the video encoder */
-    encoding_codec = avcodec_find_encoder(codec_id);
-
-    if (!encoding_codec) std::cerr << "AV codec not found for codec id " << std::endl;
-    if (!encoding_codec) throw std::runtime_error("AV codec not found for codec id ") ;
-
-    encoding_context = avcodec_alloc_context3(encoding_codec);
-
-    if (!encoding_context) std::cerr << "AV: Could not allocate video codec encoding context" << std::endl;
-    if (!encoding_context) throw std::runtime_error("AV: Could not allocate video codec encoding context");
-
-    /* put sample parameters */
-    encoding_context->bit_rate = 10*1024 ; // default bitrate is 30KB/s
-    encoding_context->bit_rate_tolerance = encoding_context->bit_rate ;
-
-#ifdef USE_VARIABLE_BITRATE
-    encoding_context->rc_min_rate = 0;
-    encoding_context->rc_max_rate = 10*1024;//encoding_context->bit_rate;
-    encoding_context->rc_buffer_size = 10*1024*1024;
-    encoding_context->rc_initial_buffer_occupancy = (int) ( 0.9 * encoding_context->rc_buffer_size);
-    encoding_context->rc_max_available_vbv_use = 1.0;
-    encoding_context->rc_min_vbv_overflow_use = 0.0;
-#else
-    encoding_context->rc_min_rate = 0;
-    encoding_context->rc_max_rate = 0;
-    encoding_context->rc_buffer_size = 0;
-#endif
-#if LIBAVCODEC_VERSION_MAJOR < 58
-	if (encoding_codec->capabilities & AV_CODEC_CAP_TRUNCATED)
-		encoding_context->flags |= AV_CODEC_FLAG_TRUNCATED;
-#endif
-	encoding_context->flags |= AV_CODEC_FLAG_PSNR;//Peak signal-to-noise ratio
-	encoding_context->flags |= AV_CODEC_CAP_PARAM_CHANGE;
-    encoding_context->i_quant_factor = 0.769f;
-    encoding_context->b_quant_factor = 1.4f;
-    encoding_context->time_base.num = 1;
-    encoding_context->time_base.den = 15;//framesPerSecond;
-    encoding_context->qmin =  1;
-    encoding_context->qmax = 51;
-    encoding_context->max_qdiff = 4;
-
-    //encoding_context->me_method = ME_HEX;
-    //encoding_context->max_b_frames = 4;
-    //encoding_context->flags |= CODEC_FLAG_LOW_DELAY;	// MPEG2 only
-    //encoding_context->partitions = X264_PART_I4X4 | X264_PART_I8X8 | X264_PART_P8X8 | X264_PART_P4X4 | X264_PART_B8X8;
-    //encoding_context->crf = 0.0f;
-    //encoding_context->cqp = 26;
-
-    /* resolution must be a multiple of two */
-    encoding_context->width = 640;//176;
-    encoding_context->height = 480;//144;
-    /* frames per second */
-    encoding_context->time_base = av_make_q(1, 25);
-    /* emit one intra frame every ten frames
-     * check frame pict_type before passing frame
-     * to encoder, if frame->pict_type is AV_PICTURE_TYPE_I
-     * then gop_size is ignored and the output of encoder
-     * will always be I frame irrespective to gop_size
-     */
-    encoding_context->gop_size = 100;
-    //encoding_context->max_b_frames = 1;
-#if LIBAVCODEC_VERSION_MAJOR < 54
-    encoding_context->pix_fmt = PIX_FMT_YUV420P; //context->pix_fmt = PIX_FMT_RGB24;
-    if (codec_id == CODEC_ID_H264)
-#else
-    encoding_context->pix_fmt = AV_PIX_FMT_YUV420P; //context->pix_fmt = AV_PIX_FMT_RGB24;
-    if (codec_id == AV_CODEC_ID_H264)
-#endif
-    {
-        av_opt_set(encoding_context->priv_data, "preset", "slow", 0);
-    }
-
-    /* open it */
-    if (avcodec_open2(encoding_context, encoding_codec, NULL) < 0)
-    {
-        std::cerr << "AV: Could not open codec context. Something's wrong." << std::endl;
-        throw std::runtime_error( "AV: Could not open codec context. Something's wrong.");
-    }
-
-#if (LIBAVCODEC_VERSION_MAJOR < 57) | (LIBAVCODEC_VERSION_MAJOR == 57 && LIBAVCODEC_VERSION_MINOR <3 )
-    encoding_frame_buffer = avcodec_alloc_frame() ;//(AVFrame*)malloc(sizeof(AVFrame)) ;
-#else
-    encoding_frame_buffer = av_frame_alloc() ;
-#endif
-
-    if(!encoding_frame_buffer) std::cerr << "AV: could not allocate frame buffer." << std::endl;
-    if(!encoding_frame_buffer)
-        throw std::runtime_error("AV: could not allocate frame buffer.") ;
-
-    encoding_frame_buffer->format = encoding_context->pix_fmt;
-    encoding_frame_buffer->width  = encoding_context->width;
-    encoding_frame_buffer->height = encoding_context->height;
-
-    /* the image can be allocated by any means and av_image_alloc() is
-     * just the most convenient way if av_malloc() is to be used */
-
-    int ret = av_image_alloc(encoding_frame_buffer->data, encoding_frame_buffer->linesize,
-                             encoding_context->width, encoding_context->height, encoding_context->pix_fmt, 32);
-
-    if (ret < 0) std::cerr << "AV: Could not allocate raw picture buffer" << std::endl;
-    if (ret < 0)
-        throw std::runtime_error("AV: Could not allocate raw picture buffer");
-
+    decoding_context = NULL ;
+    encoding_frame_buffer = NULL ;
+    decoding_frame_buffer = NULL ;
     encoding_frame_count = 0 ;
 
-    // Decoding
-    decoding_codec = avcodec_find_decoder(codec_id);
+    // ------------------------------- Encoder ---------------------------------
 
-    if (!decoding_codec) std::cerr << "AV codec not found for codec id " << std::endl;
-    if (!decoding_codec)
-        throw("AV codec not found for codec id ") ;
-
-    decoding_context = avcodec_alloc_context3(decoding_codec);
-
-    if(!decoding_context) std::cerr << "AV: Could not allocate video codec decoding context" << std::endl;
-    if(!decoding_context)
-        throw std::runtime_error("AV: Could not allocate video codec decoding context");
-
-    decoding_context->width = encoding_context->width;
-    decoding_context->height = encoding_context->height;
-#if LIBAVCODEC_VERSION_MAJOR < 54
-    decoding_context->pix_fmt = PIX_FMT_YUV420P;
-#else
-    decoding_context->pix_fmt = AV_PIX_FMT_YUV420P;
-#endif
-
-#if LIBAVCODEC_VERSION_MAJOR < 58
-	if(decoding_codec->capabilities & AV_CODEC_CAP_TRUNCATED)
-		decoding_context->flags |= AV_CODEC_FLAG_TRUNCATED; // we do not send complete frames
-#endif
-    //we can receive truncated frames
-	decoding_context->flags2 |= AV_CODEC_FLAG2_CHUNKS;
-
-    AVDictionary* dictionary = NULL;
-    if(avcodec_open2(decoding_context, decoding_codec, &dictionary) < 0)
+    if(kind == KIND_H264)
     {
-        std::cerr << "AV codec open action failed! " << std::endl;
-        throw("AV codec open action failed! ") ;
+        // Try the H.264 encoders in order of preference, keep the first one that opens.
+        static const char *h264_encoders[] = { "libx264", "libopenh264", "h264_mf", NULL } ;
+
+        for(int i=0; h264_encoders[i] != NULL; ++i)
+        {
+            encoding_codec = avcodec_find_encoder_by_name(h264_encoders[i]) ;
+
+            if(encoding_codec != NULL && openEncoder(DEFAULT_VIDEO_BITRATE))
+            {
+                _encoder_can_change_bitrate = (i == 0) ;	// libx264
+                break ;
+            }
+            encoding_codec = NULL ;
+        }
+        if(encoding_codec == NULL)
+            std::cerr << "VOIP: no usable H.264 encoder in libavcodec (libx264/libopenh264/h264_mf). Falling back to MPEG-4." << std::endl;
+    }
+    else
+    {
+        encoding_codec = avcodec_find_encoder(RS_AV_CODEC_ID(MPEG4)) ;
+
+        if(encoding_codec == NULL || !openEncoder(DEFAULT_VIDEO_BITRATE))
+        {
+            std::cerr << "VOIP: cannot open the MPEG-4 video encoder." << std::endl;
+            encoding_codec = NULL ;
+        }
     }
 
-    //decoding_frame_buffer = avcodec_alloc_frame() ;//(AVFrame*)malloc(sizeof(AVFrame)) ;
-    decoding_frame_buffer = av_frame_alloc() ;
+    if(encoding_codec != NULL)
+    {
+#if (LIBAVCODEC_VERSION_MAJOR < 57) | (LIBAVCODEC_VERSION_MAJOR == 57 && LIBAVCODEC_VERSION_MINOR <3 )
+        encoding_frame_buffer = avcodec_alloc_frame() ;
+#else
+        encoding_frame_buffer = av_frame_alloc() ;
+#endif
+        if(encoding_frame_buffer)
+        {
+            encoding_frame_buffer->format = RS_AV_PIX_FMT(YUV420P) ;
+            encoding_frame_buffer->width  = VIDEO_WIDTH ;
+            encoding_frame_buffer->height = VIDEO_HEIGHT ;
 
-    av_init_packet(&decoding_buffer);
-    decoding_buffer.data = NULL ;
-    decoding_buffer.size = 0 ;
+            if(av_image_alloc(encoding_frame_buffer->data, encoding_frame_buffer->linesize,
+                              VIDEO_WIDTH, VIDEO_HEIGHT, RS_AV_PIX_FMT(YUV420P), 32) < 0)
+            {
+                std::cerr << "AV: Could not allocate raw picture buffer" << std::endl;
+                av_frame_free(&encoding_frame_buffer) ;
+            }
+        }
+        if(!encoding_frame_buffer)
+        {
+            avcodec_free_context(&encoding_context) ;
+            encoding_codec = NULL ;
+        }
+    }
 
-    //ret = av_image_alloc(decoding_frame_buffer->data, decoding_frame_buffer->linesize, decoding_context->width, decoding_context->height, decoding_context->pix_fmt, 32);
+    // ------------------------------- Decoder ---------------------------------
 
-    //if (ret < 0)
-    //throw std::runtime_error("AV: Could not allocate raw picture buffer");
+    decoding_codec = avcodec_find_decoder(kind == KIND_H264 ? RS_AV_CODEC_ID(H264) : RS_AV_CODEC_ID(MPEG4)) ;
 
-    // debug
+    if(decoding_codec != NULL)
+        decoding_context = avcodec_alloc_context3(decoding_codec) ;
+
+    if(decoding_context != NULL)
+    {
+        decoding_context->width   = VIDEO_WIDTH ;
+        decoding_context->height  = VIDEO_HEIGHT ;
+        decoding_context->pix_fmt = RS_AV_PIX_FMT(YUV420P) ;
+
+#if LIBAVCODEC_VERSION_MAJOR < 58
+        if(decoding_codec->capabilities & AV_CODEC_CAP_TRUNCATED)
+            decoding_context->flags |= AV_CODEC_FLAG_TRUNCATED; // we do not send complete frames
+#endif
+        decoding_context->flags2 |= AV_CODEC_FLAG2_CHUNKS;	// we can receive truncated frames
+        decoding_context->flags  |= AV_CODEC_FLAG_LOW_DELAY;
+        // Frame threading delays every picture by one frame per thread: use slice threads only.
+        decoding_context->thread_type = FF_THREAD_SLICE ;
+
+        if(avcodec_open2(decoding_context, decoding_codec, NULL) < 0)
+        {
+            std::cerr << "AV: cannot open the video decoder." << std::endl;
+            avcodec_free_context(&decoding_context) ;
+        }
+    }
+    if(decoding_context != NULL)
+    {
+        decoding_frame_buffer = av_frame_alloc() ;
+
+        av_init_packet(&decoding_buffer);
+        decoding_buffer.data = NULL ;
+        decoding_buffer.size = 0 ;
+    }
+
 #ifdef DEBUG_MPEG_VIDEO
     std::cerr << "Dumping captured data to file tmpvideo.mpg" << std::endl;
     encoding_debug_file = fopen("tmpvideo.mpg","w") ;
 #endif
 }
 
+bool FFmpegVideo::openEncoder(int64_t bitrate)
+{
+    if(encoding_codec == NULL)
+        return false ;
+
+    if(encoding_context != NULL)
+        avcodec_free_context(&encoding_context) ;
+
+    encoding_context = avcodec_alloc_context3(encoding_codec) ;
+
+    if(encoding_context == NULL)
+        return false ;
+
+    encoding_context->width   = VIDEO_WIDTH ;
+    encoding_context->height  = VIDEO_HEIGHT ;
+    encoding_context->pix_fmt = RS_AV_PIX_FMT(YUV420P) ;
+    encoding_context->time_base = av_make_q(1, VIDEO_FPS) ;
+#if LIBAVCODEC_VERSION_MAJOR >= 57
+    encoding_context->framerate = av_make_q(VIDEO_FPS, 1) ;
+#endif
+
+    // Bitrate in bits/s, with a ~1 second rate control buffer.
+    encoding_context->bit_rate       = bitrate ;
+    encoding_context->rc_max_rate    = bitrate ;
+    encoding_context->rc_buffer_size = (int)bitrate ;
+
+    // A key frame every 2 seconds: the picture recovers quickly after a lost packet,
+    // and a peer that starts receiving later gets a picture quickly.
+    encoding_context->gop_size     = 2*VIDEO_FPS ;
+    encoding_context->max_b_frames = 0 ;	// B-frames add latency
+
+    if(_kind == KIND_MPEG4)
+    {
+        encoding_context->qmin = 2 ;
+        encoding_context->qmax = 31 ;		// MPEG-4 quantizer range is 1..31
+        encoding_context->max_qdiff = 3 ;
+        av_opt_set(encoding_context, "mbd", "rd", AV_OPT_SEARCH_CHILDREN) ;	// better macroblock decisions
+        av_opt_set(encoding_context, "flags", "+mv4", AV_OPT_SEARCH_CHILDREN) ;
+    }
+    else
+    {
+        // libx264: fast, no frame lookahead, one packet per frame. (Options unknown to the
+        // other H.264 encoders are simply ignored.)
+        av_opt_set(encoding_context->priv_data, "preset", "veryfast", 0) ;
+        av_opt_set(encoding_context->priv_data, "tune", "zerolatency", 0) ;
+    }
+
+    if(avcodec_open2(encoding_context, encoding_codec, NULL) < 0)
+    {
+        std::cerr << "AV: Could not open video encoder " << encoding_codec->name << std::endl;
+        avcodec_free_context(&encoding_context) ;
+        return false ;
+    }
+
+    _encoder_bitrate = bitrate ;
+    _last_encoder_reopen = time(NULL) ;
+
+    std::cerr << "VOIP: video encoder " << encoding_codec->name << " opened at " << bitrate/1000 << " kbit/s" << std::endl;
+    return true ;
+}
+
 FFmpegVideo::~FFmpegVideo()
 {
+    if(encoding_frame_buffer)
+        av_freep(&encoding_frame_buffer->data[0]) ;	// allocated by av_image_alloc()
+
     avcodec_free_context(&encoding_context);
     avcodec_free_context(&decoding_context);
     av_frame_free(&encoding_frame_buffer);
     av_frame_free(&decoding_frame_buffer);
 }
 
-#define MAX_FFMPEG_ENCODING_BITRATE 81920
+static inline uint8_t clip8(int v) { return (uint8_t)(v < 0 ? 0 : (v > 255 ? 255 : v)) ; }
 
-static void imageToFrame(AVFrame *frame, const QImage& image) {
-  QImage input;
-  if(image.width() == frame->width && image.height() == frame->height)
-    input = image;
-  else
-    input = image.scaled(QSize(frame->width, frame->height),
-      Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-
-  for (int y = 0; y < frame->height - 1; y += 2)
-  for (int x = 0; x < frame->width - 1; x += 2) {
-    QRgb pix00 = input.pixel(QPoint(x+0,y+0));
-    QRgb pix10 = input.pixel(QPoint(x+1,y+0));
-    QRgb pix01 = input.pixel(QPoint(x+0,y+1));
-    QRgb pix11 = input.pixel(QPoint(x+1,y+1));
-
-    int R00 = pix00>>16 & 0xff, G00 = pix00>>8 & 0xff, B00 = pix00>>0 & 0xff;
-    int R10 = pix10>>16 & 0xff, G10 = pix10>>8 & 0xff, B10 = pix10>>0 & 0xff;
-    int R01 = pix01>>16 & 0xff, G01 = pix01>>8 & 0xff, B01 = pix01>>0 & 0xff;
-    int R11 = pix11>>16 & 0xff, G11 = pix11>>8 & 0xff, B11 = pix11>>0 & 0xff;
-
-    float R = 0.25*(R00+R01+R10+R11);
-    float G = 0.25*(G00+G01+G10+G11);
-    float B = 0.25*(B00+B01+B10+B11);
-
-    int Y00 = (0.257 * R00) + (0.504 * G00) + (0.098 * B00) + 16.5;
-    int Y01 = (0.257 * R01) + (0.504 * G01) + (0.098 * B01) + 16.5;
-    int Y10 = (0.257 * R10) + (0.504 * G10) + (0.098 * B10) + 16.5;
-    int Y11 = (0.257 * R11) + (0.504 * G11) + (0.098 * B11) + 16.5;
-
-    int U =  (0.439 * R) - (0.368 * G) - (0.071 * B) + 128.5 ;
-    int V = -(0.148 * R) - (0.291 * G) + (0.439 * B) + 128.5 ;
-
-    frame->data[0][(y+0) * frame->linesize[0] + x+0] = Y00; // Y
-    frame->data[0][(y+0) * frame->linesize[0] + x+1] = Y01; // Y
-    frame->data[0][(y+1) * frame->linesize[0] + x+0] = Y10; // Y
-    frame->data[0][(y+1) * frame->linesize[0] + x+1] = Y11; // Y
-
-    frame->data[1][y/2 * frame->linesize[1] + x/2] = U; // Cr
-    frame->data[2][y/2 * frame->linesize[2] + x/2] = V; // Cb
-  }
-}
-
-static void frameToImage(QImage& image, const AVFrame *frame) {
-  image = QImage(QSize(frame->width,frame->height),QImage::Format_ARGB32);
-
-#ifdef DEBUG_MPEG_VIDEO
-  std::cerr << "Decoded frame. Size=" << image.width() << "x" << image.height() << std::endl;
-#endif
-
-  for (int y = 0; y < frame->height; y++)
-  for (int x = 0; x < frame->width; x++) {
-    int Y = frame->data[0][y * frame->linesize[0] + x];
-    int U = frame->data[1][(y/2) * frame->linesize[1] + x/2];
-    int V = frame->data[2][(y/2) * frame->linesize[2] + x/2];
-
-    int B = (int)(1.164*Y           + 1.596*V - 222.421);
-    int G = (int)(1.164*Y - 0.391*U - 0.813*V + 136.076);
-    int R = (int)(1.164*Y + 2.018*U           - 277.336);
-    B = std::max(0,std::min(255,B));
-    G = std::max(0,std::min(255,G));
-    R = std::max(0,std::min(255,R));
-
-    image.setPixel(QPoint(x,y), QRgb(0xff000000 | (R << 16) | (G << 8) | B));
-  }
-}
-
-bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitrate, NetQueue<RsVOIPDataChunk>& dst)
+// RGB -> YUV 4:2:0, ITU-R BT.601, limited range (what H.264/MPEG-4 decoders expect).
+static void imageToFrame(AVFrame *frame, const QImage& image)
 {
+    QImage input = image ;
+
+    if(input.width() != frame->width || input.height() != frame->height)
+        input = input.scaled(QSize(frame->width, frame->height), Qt::IgnoreAspectRatio, Qt::SmoothTransformation) ;
+
+    if(input.format() != QImage::Format_RGB32 && input.format() != QImage::Format_ARGB32)
+        input = input.convertToFormat(QImage::Format_RGB32) ;
+
+    for(int y = 0; y + 1 < frame->height; y += 2)
+    {
+        const QRgb *l0 = reinterpret_cast<const QRgb*>(input.constScanLine(y)) ;
+        const QRgb *l1 = reinterpret_cast<const QRgb*>(input.constScanLine(y+1)) ;
+
+        uint8_t *Y0 = frame->data[0] + (y+0) * frame->linesize[0] ;
+        uint8_t *Y1 = frame->data[0] + (y+1) * frame->linesize[0] ;
+        uint8_t *U  = frame->data[1] + (y/2) * frame->linesize[1] ;
+        uint8_t *V  = frame->data[2] + (y/2) * frame->linesize[2] ;
+
+        for(int x = 0; x + 1 < frame->width; x += 2)
+        {
+            const QRgb p[4] = { l0[x], l0[x+1], l1[x], l1[x+1] } ;
+            int rs = 0, gs = 0, bs = 0 ;
+            uint8_t yv[4] ;
+
+            for(int k=0;k<4;++k)
+            {
+                const int r = qRed(p[k]), g = qGreen(p[k]), b = qBlue(p[k]) ;
+                yv[k] = clip8(((66*r + 129*g + 25*b + 128) >> 8) + 16) ;
+                rs += r ; gs += g ; bs += b ;
+            }
+            Y0[x] = yv[0] ; Y0[x+1] = yv[1] ;
+            Y1[x] = yv[2] ; Y1[x+1] = yv[3] ;
+
+            const int r = rs >> 2, g = gs >> 2, b = bs >> 2 ;
+            U[x/2] = clip8(((-38*r -  74*g + 112*b + 128) >> 8) + 128) ;	// Cb
+            V[x/2] = clip8(((112*r -  94*g -  18*b + 128) >> 8) + 128) ;	// Cr
+        }
+    }
+}
+
+// YUV 4:2:0 (BT.601, limited range) -> RGB
+static bool frameToImage(QImage& image, const AVFrame *frame)
+{
+    if(frame->format != RS_AV_PIX_FMT(YUV420P) && frame->format != RS_AV_PIX_FMT(YUVJ420P))
+    {
+        std::cerr << "VOIP: unsupported decoded pixel format " << frame->format << std::endl;
+        return false ;
+    }
+
+    image = QImage(QSize(frame->width,frame->height),QImage::Format_RGB32);
+
+    for(int y = 0; y < frame->height; y++)
+    {
+        QRgb *line = reinterpret_cast<QRgb*>(image.scanLine(y)) ;
+        const uint8_t *Yp = frame->data[0] + y * frame->linesize[0] ;
+        const uint8_t *Up = frame->data[1] + (y/2) * frame->linesize[1] ;
+        const uint8_t *Vp = frame->data[2] + (y/2) * frame->linesize[2] ;
+
+        for(int x = 0; x < frame->width; x++)
+        {
+            const int C = 298 * (Yp[x] - 16) ;
+            const int D = Up[x/2] - 128 ;	// Cb
+            const int E = Vp[x/2] - 128 ;	// Cr
+
+            line[x] = qRgb(clip8((C + 409*E + 128) >> 8),
+                           clip8((C - 100*D - 208*E + 128) >> 8),
+                           clip8((C + 516*D + 128) >> 8)) ;
+        }
+    }
+    return true ;
+}
+
+bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_bytes_per_sec, NetQueue<RsVOIPDataChunk>& dst)
+{
+  if(encoding_codec == NULL || encoding_frame_buffer == NULL)
+    return false ;
+
 #if LIBAVCODEC_VERSION_MAJOR < 58
   if(dst.full()) return false;
 #endif
 
+  // ---- follow the target bandwidth (bytes/s -> bits/s) ----
+  {
+    int64_t wanted = (int64_t)target_bytes_per_sec * 8 ;
+    if(wanted < MIN_VIDEO_BITRATE) wanted = MIN_VIDEO_BITRATE ;
+    if(wanted > MAX_VIDEO_BITRATE) wanted = MAX_VIDEO_BITRATE ;
+
+    if(encoding_context == NULL)
+    {
+      if(!openEncoder(wanted))
+        return false ;
+    }
+    else if(wanted != _encoder_bitrate)
+    {
+      if(_encoder_can_change_bitrate)
+      {
+        // libx264 applies bitrate changes on the next frame (x264_encoder_reconfig)
+        encoding_context->bit_rate       = wanted ;
+        encoding_context->rc_max_rate    = wanted ;
+        encoding_context->rc_buffer_size = (int)wanted ;
+        _encoder_bitrate = wanted ;
+      }
+      else if((wanted > _encoder_bitrate * 5 / 4 || wanted < _encoder_bitrate * 4 / 5)
+              && time(NULL) > _last_encoder_reopen + 2)
+      {
+        // Other encoders read the bitrate only when opened: reopen (starts with a key frame).
+        if(!openEncoder(wanted))
+          return false ;
+      }
+    }
+  }
+
 #ifdef DEBUG_MPEG_VIDEO
 	std::cerr << "Encoding frame of size " << image.width() << "x" << image.height() << ", resized to " << encoding_frame_buffer->width << "x" << encoding_frame_buffer->height << " : ";
 #endif
-
-    if(target_encoding_bitrate > MAX_FFMPEG_ENCODING_BITRATE)
-    {
-        std::cerr << "Max encodign bitrate eexceeded. Capping to " << MAX_FFMPEG_ENCODING_BITRATE << std::endl;
-        target_encoding_bitrate = MAX_FFMPEG_ENCODING_BITRATE ;
-    }
-	//encoding_context->bit_rate = target_encoding_bitrate;
-	encoding_context->rc_max_rate = target_encoding_bitrate;
-	//encoding_context->bit_rate_tolerance = target_encoding_bitrate;
 
   imageToFrame(encoding_frame_buffer, image);
 
@@ -701,8 +779,6 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 	pkt.size = avpicture_get_size(encoding_context->pix_fmt, encoding_context->width, encoding_context->height);
 	pkt.data = (uint8_t*)av_malloc(pkt.size);
 
-	//    do
-	//    {
   int got_output = 0;
 	int ret = avcodec_encode_video(encoding_context, pkt.data, pkt.size, encoding_frame_buffer) ;
 	if (ret > 0) {
@@ -712,11 +788,11 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 	pkt.data = NULL;    // packet data will be allocated by the encoder
 	pkt.size = 0;
 
-	//    do
-	//    {
 	int got_output = 0;
 	int ret = avcodec_encode_video2(encoding_context, &pkt, encoding_frame_buffer, &got_output) ;
 #else
+  pkt.data = NULL;
+  pkt.size = 0;
 
   int ret = avcodec_send_frame(encoding_context, encoding_frame_buffer);
   if(ret == AVERROR(EAGAIN))
@@ -728,9 +804,6 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 		std::cerr << "Error encoding frame!" << std::endl;
     goto fail;
 	}
-	//        frame = NULL ;	// next attempts: do not encode anything. Do this to just flush the buffer
-	//
-	//    } while(got_output) ;
 
 #if LIBAVCODEC_VERSION_MAJOR >= 58
   while(!dst.full() && !(ret = avcodec_receive_packet(encoding_context, &pkt)))
@@ -752,8 +825,8 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 
 		uint32_t flags = 0;
 
-		((unsigned char *)voip_chunk.data)[0] =  VideoProcessor::VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO       & 0xff ;
-		((unsigned char *)voip_chunk.data)[1] = (VideoProcessor::VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO >> 8) & 0xff ;
+		((unsigned char *)voip_chunk.data)[0] =  _header_codec_id       & 0xff ;
+		((unsigned char *)voip_chunk.data)[1] = (_header_codec_id >> 8) & 0xff ;
 		((unsigned char *)voip_chunk.data)[2] = flags & 0xff ;
 		((unsigned char *)voip_chunk.data)[3] = (flags >> 8) & 0xff ;
 
@@ -768,6 +841,9 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 		std::cerr << "Output : " << pkt.size << " bytes." << std::endl;
 		fwrite(pkt.data,1,pkt.size,encoding_debug_file) ;
 		fflush(encoding_debug_file) ;
+#endif
+#if LIBAVCODEC_VERSION_MAJOR >= 58
+    av_packet_unref(&pkt);
 #endif
 	}
 
@@ -797,6 +873,9 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk, QImage& image)
 	std::cerr << "Decoding data of size " << chunk.size << std::endl;
 	std::cerr << "Allocating new buffer of size " << chunk.size - HEADER_SIZE << std::endl;
 #endif
+
+	if(decoding_context == NULL || decoding_frame_buffer == NULL)
+		return false ;
 
 	uint32_t s = chunk.size - HEADER_SIZE ;
   unsigned char *tmp =
@@ -836,7 +915,8 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk, QImage& image)
     return false ;
   }
 
-  frameToImage(image, decoding_frame_buffer);
+  if(!frameToImage(image, decoding_frame_buffer))
+    return false ;
 
 #ifdef DEBUG_MPEG_VIDEO
   std::cerr << "debug(MPEG_VIDEO): decoded frame: size="
@@ -849,7 +929,7 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk, QImage& image)
   // Ideally, we would render the most recent frame and discard earlier ones,
   // but that would require copying of frames that is not worth it.
   while(!avcodec_receive_frame(decoding_context, decoding_frame_buffer)) {
-    std::cerr << "warning: dropping decoded frame";
+    std::cerr << "warning: dropping decoded frame" << std::endl;
   }
 
 #else

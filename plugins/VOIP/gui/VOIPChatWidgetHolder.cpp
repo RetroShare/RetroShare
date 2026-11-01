@@ -682,6 +682,7 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 
 		//activate video input
 		videoWidget->show();
+		videoProcessor->setMaximumBandwidth(rsVOIP->getVoipVideoMaxBandwidth()) ;	// user setting (wizard / settings page)
 		inputVideoDevice->start(QVideoInputDevice::preferredCamera()) ;
 
 		//send system message
@@ -883,7 +884,12 @@ void VOIPChatWidgetHolder::botMouseLeaveDecline()
 
 void VOIPChatWidgetHolder::setAcceptedBandwidth(uint32_t bytes_per_sec)
 {
-	videoProcessor->setMaximumBandwidth(bytes_per_sec) ;
+	// The peer reports the video bandwidth it actually received. That is just what we
+	// sent (smoothed, and starting from zero), not what the connection can carry, so
+	// using it as the encoder limit only ever lowered the quality. The encoder uses
+	// the bandwidth chosen by the user instead.
+	std::cerr << "VOIP: peer reports " << bytes_per_sec << " B/s of incoming video (target: "
+	          << rsVOIP->getVoipVideoMaxBandwidth() << " B/s)" << std::endl;
 }
 
 void VOIPChatWidgetHolder::addAudioData(const RsPeerId &peer_id, QByteArray* array)
