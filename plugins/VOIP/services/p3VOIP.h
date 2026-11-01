@@ -115,6 +115,14 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		virtual void setVoipiMinLoudness(int) ;
 		virtual bool getVoipEchoCancel() const 	 { return _echo_cancel ; }
 		virtual void setVoipEchoCancel(bool) ;
+		virtual std::string getVoipAudioInputDevice() const  { return _audio_input_device ; }
+		virtual void setVoipAudioInputDevice(const std::string&) ;
+		virtual std::string getVoipAudioOutputDevice() const { return _audio_output_device ; }
+		virtual void setVoipAudioOutputDevice(const std::string&) ;
+		virtual std::string getVoipVideoInputDevice() const  { return _video_input_device ; }
+		virtual void setVoipVideoInputDevice(const std::string&) ;
+		virtual int  getVoipVideoMaxBandwidth() const { return _video_max_bandwidth ; }
+		virtual void setVoipVideoMaxBandwidth(int) ;
 
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
@@ -166,4 +174,8 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		int _min_loudness ;
 		int _noise_suppress ;
 		bool _echo_cancel ;
+		std::string _audio_input_device ;
+		std::string _audio_output_device ;
+		std::string _video_input_device ;
+		int _video_max_bandwidth ;
 };

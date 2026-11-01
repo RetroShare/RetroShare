@@ -682,7 +682,7 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 
 		//activate video input
 		videoWidget->show();
-		inputVideoDevice->start() ;
+		inputVideoDevice->start(QVideoInputDevice::preferredCamera()) ;
 
 		//send system message
 		if (mChatWidget)
@@ -895,7 +895,7 @@ void VOIPChatWidgetHolder::addAudioData(const RsPeerId &peer_id, QByteArray* arr
     }
 
     if (!outputAudioDevice) {
-        outputAudioDevice = AudioDeviceHelper::getDefaultOutputDevice();
+        outputAudioDevice = AudioDeviceHelper::getPreferedOutputDevice();
     }
 
     if (!outputAudioProcessor) {

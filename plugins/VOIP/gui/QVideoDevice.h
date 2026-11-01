@@ -23,6 +23,7 @@
 #include <QLabel>
 #include <QCamera>
 #include <QVideoFrame>
+#include <QPair>
 #include "interface/rsVOIP.h"
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -33,14 +34,14 @@
 #  include <QElapsedTimer>
 #else
 #  include <QCameraInfo>
+#  include <QAbstractVideoSurface>
+#  include <QVideoSurfaceFormat>
+#  include <QElapsedTimer>
 #endif
 
 #include "gui/VideoProcessor.h"
 
 class VideoEncoder ;
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-class QCameraImageCapture;
-#endif
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && defined(Q_OS_MACOS)
 class MacCameraCapture ;
 #endif
@@ -57,11 +58,35 @@ class QVideoOutputDevice: public QLabel
 		void showFrameOff() ;
 };
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+// Qt5: viewfinder surface of the QCamera. Receives the continuous frame stream,
+// keeps one frame per grab period and converts it to a QImage.
+// (Replaces the former QCameraImageCapture still-image grabbing, which does not
+// work with the DirectShow backend on Windows: no capture-to-buffer support, and
+// buffers that are not always JPEG.)
+class VideoFrameGrabber: public QAbstractVideoSurface
+{
+	Q_OBJECT
+
+	public:
+		VideoFrameGrabber(QObject *parent = 0) ;
+
+		virtual QList<QVideoFrame::PixelFormat> supportedPixelFormats(QAbstractVideoBuffer::HandleType type = QAbstractVideoBuffer::NoHandle) const override ;
+		virtual bool present(const QVideoFrame& frame) override ;
+
+	signals:
+		void frameAvailable(QImage) ;
+
+	private:
+		QElapsedTimer _last_frame_time ;
+};
+#endif
+
 // Responsible for grabbing the video from the webcam and sending it to the 
 // VideoEncoder object.
 //
-// Qt5 grabs still images from the camera on a timer (QCameraImageCapture).
-// Qt6 removed that capture-to-buffer API, so there the camera feeds a
+// Qt5 grabs the frames of the camera viewfinder (VideoFrameGrabber).
+// Qt6 removed QAbstractVideoSurface, so there the camera feeds a
 // QVideoSink through a QMediaCaptureSession and we sample its frames at the
 // same period as the Qt5 timer. On macOS with Qt6 that pipeline delivers no
 // frames at all, so the camera is driven straight from AVFoundation instead
@@ -108,6 +133,21 @@ class QVideoInputDevice: public QObject
 
         static void getAvailableDevices(QList<QString>& device_desc);
 
+        // ---- Camera selection ----
+        // Pairs of (camera id usable with start(), human readable name).
+        static void getAvailableDevices(QList<QPair<QString,QString> >& devices);
+        // Name of the system default camera (empty if there is no camera).
+        static QString defaultCameraLabel();
+        static bool cameraExists(const QString& id);
+        // Camera chosen by the user (rsVOIP setting), or a null string (= default
+        // camera) if nothing was chosen or the chosen camera is not plugged in.
+        static QString preferredCamera();
+
+        // Human readable name of the running camera.
+        QString currentCameraHumanName() const;
+        // Number of frames received since start().
+        uint32_t framesReceived() const { return _frames_received ; }
+
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         QString currentCameraDescriptionString() const { return _current_camera_description; }
 #else
@@ -117,13 +157,16 @@ protected slots:
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         void handleSinkFrame(const QVideoFrame& f) ;
 #else
-        void grabFrame(int id, QVideoFrame f) ;
+        void grabImage(const QImage& image) ;
+        void cameraError(QCamera::Error error) ;
 #endif
         void errorHandling(CameraStatus status,QCamera::Error error);
 
 	signals:
 		void networkPacketReady() ;
         void cameraCaptureInfo(CameraStatus status,QCamera::Error qt_cam_err_code);
+        // Human readable camera problem (camera not found, cannot start...)
+        void cameraErrorString(QString);
 
 	private:
         // Common tail of the capture path: encode the image and echo it locally.
@@ -153,12 +196,12 @@ protected slots:
         MacCameraCapture *_mac_capture ;
 #  endif
 #else
-		QTimer *_timer ;
-        QCameraImageCapture *_image_capture;
+        VideoFrameGrabber *_grabber;
         QCameraInfo _capture_device_info;
 #endif
 
 		QVideoOutputDevice *_echo_output_device ;
+        uint32_t _frames_received ;
 
 		std::list<RsVOIPDataChunk> _out_queue ;
 };

@@ -34,6 +34,7 @@
 //
 // Device enumeration also moved: Qt5 QAudioDeviceInfo -> Qt6 QAudioDevice
 // enumerated through QMediaDevices (handled directly in audiodevicehelper.cpp).
+// RsAudioDevice names the device-description class of either version.
 
 #include <QtGlobal>
 
@@ -44,10 +45,12 @@
 #  include <QMediaDevices>
 using RsAudioInput  = QAudioSource;
 using RsAudioOutput = QAudioSink;
+using RsAudioDevice = QAudioDevice;
 #else
 #  include <QAudioInput>
 #  include <QAudioOutput>
 #  include <QAudioDeviceInfo>
 using RsAudioInput  = QAudioInput;
 using RsAudioOutput = QAudioOutput;
+using RsAudioDevice = QAudioDeviceInfo;
 #endif

@@ -31,6 +31,8 @@
 #include "gui/common/RSGraphWidget.h"
 
 class voipGraphSource ;
+class QVideoInputDevice ;
+class RSComboBox ;
 
 class voipGraph: public RSGraphWidget
 {
@@ -55,20 +57,25 @@ class VOIPConfigPanel : public ConfigPage
 		Ui::AudioInput ui;
 		RsAudioInput* inputAudioDevice;
 		QtSpeex::SpeexInputProcessor* inputAudioProcessor;
-		AudioBar* abSpeech;
-		//VideoDecoder *videoDecoder ;
-		//VideoEncoder *videoEncoder ;
 		QVideoInputDevice *videoInput ;
-        VideoProcessor *videoProcessor ;
+		VideoProcessor *videoProcessor ;
+		RSComboBox *qcbAudioInput ;
+		RSComboBox *qcbAudioOutput ;
 		bool loaded;
-        QString currentCameraDescription;
 
-        voipGraphSource *graph_source ;
+		voipGraphSource *graph_source ;
 
 	protected:
 		QTimer *qtTick;
 
-        void clearPipeline();
+		void clearPipeline();
+		void createPipeline();
+		void startAudioInput();
+		void stopAudioInput();
+		void startVideoPreview();
+		void fillCameraCombo(const QString& selected);
+		void fillAudioCombos();
+
 	public:
 		/** Default Constructor */
 		VOIPConfigPanel(QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
@@ -76,23 +83,26 @@ class VOIPConfigPanel : public ConfigPage
 		~VOIPConfigPanel();
 
 		/** Saves the changes on this page */
-        virtual bool save(QString &errmsg)override ;
+		virtual bool save(QString &errmsg)override ;
 		/** Loads the settings for this page */
-        virtual void load()override ;
+		virtual void load()override ;
 
-        virtual QPixmap iconPixmap() const override { return QPixmap(":/images/talking_on.svg") ; }
-        virtual QString pageName() const override { return tr("VOIP") ; }
-        virtual QString helpText() const override { return ""; }
-        
-        virtual void showEvent(QShowEvent *) override;
-        virtual void hideEvent(QHideEvent *event) override;
-private slots:
-        void on_changedCurrentInputDevice(int i);
-        void checkAvailableCameras();
-        void updateAvailableBW(double r);
+		virtual QPixmap iconPixmap() const override { return QPixmap(":/images/talking_on.svg") ; }
+		virtual QString pageName() const override { return tr("VOIP") ; }
+		virtual QString helpText() const override { return ""; }
+
+		virtual void showEvent(QShowEvent *) override;
+		virtual void hideEvent(QHideEvent *event) override;
+
+	private slots:
+		void on_changedCurrentInputDevice(int i);
+		void checkAvailableCameras();
+		void updateAvailableBW(double r);
 		void loadSettings();
 		void emptyBuffer();
 		void togglePreview(bool) ;
+		void audioInputDeviceChanged(int);
+		void audioOutputDeviceChanged(int);
 
 		void on_qsTransmitHold_valueChanged(int v);
 		void on_qsAmp_valueChanged(int v);
