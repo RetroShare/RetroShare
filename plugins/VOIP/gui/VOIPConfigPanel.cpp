@@ -24,10 +24,14 @@
 #include "VOIPConfigPanel.h"
 #include "audiodevicehelper.h"
 #include "AudioWizard.h"
+#include "QVideoDevice.h"
 #include "gui/VideoProcessor.h"
-#include "gui/VideoProcessor.h"
+#include "gui/common/RSComboBox.h"
 #include "util/misc.h"
 #include "util/RsProtectedTimer.h"
+#include "VOIPTrace.h"
+
+#include <QFormLayout>
 
 #include <interface/rsVOIP.h>
 
@@ -105,46 +109,142 @@ VOIPConfigPanel::VOIPConfigPanel(QWidget * parent, Qt::WindowFlags flags)
     ui.abSpeech->qcInside = Qt::yellow;
     ui.abSpeech->qcAbove = Qt::green;
 
-    QList<QString> input_devices;
-    QVideoInputDevice::getAvailableDevices(input_devices);
-    ui.inputDevice_CB->clear();
-    ui.inputDevice_CB->addItem(tr("[No video]"),QString(""));
-    for(auto& s:input_devices)
-        ui.inputDevice_CB->addItem(s,QVariant(s));
+    ui.qpbAudioWizard->setText(tr("Audio && Video Wizard..."));
+    ui.qpbAudioWizard->setToolTip(tr("Step by step selection and tuning of microphone, speakers and camera"));
+    ui.label_3->setText(tr("Camera:"));
 
-    if(!input_devices.empty())
-        whileBlocking(ui.inputDevice_CB)->setCurrentIndex(1);	// select default cam
+    // Audio device selection, added on top of the audio group box.
+    QFormLayout *audioDevLayout = new QFormLayout;
+    qcbAudioInput = new RSComboBox(ui.qgbAudio);
+    qcbAudioOutput = new RSComboBox(ui.qgbAudio);
+    qcbAudioInput->setToolTip(tr("Microphone used for calls"));
+    qcbAudioOutput->setToolTip(tr("Speakers or headphones used for calls"));
+    audioDevLayout->addRow(tr("Microphone:"), qcbAudioInput);
+    audioDevLayout->addRow(tr("Speakers:"), qcbAudioOutput);
+    ui.verticalLayout->insertLayout(0, audioDevLayout);
+    fillAudioCombos();
+
+    fillCameraCombo(QString::fromStdString(rsVOIP->getVoipVideoInputDevice()));
+
+    ui.availableBW_SB->setValue(rsVOIP->getVoipVideoMaxBandwidth() / 1024.0);
 
     connect( ui.qsTransmitHold, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsTransmitHold_valueChanged(int) ) );
     connect( ui.qsNoise, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsNoise_valueChanged(int) ) );
     connect( ui.qsAmp, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsAmp_valueChanged(int) ) );
     connect( ui.qcbTransmit, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( on_qcbTransmit_currentIndexChanged(int) ) );
     connect( ui.inputDevice_CB, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( on_changedCurrentInputDevice(int) ) );
+    connect( qcbAudioInput, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( audioInputDeviceChanged(int) ) );
+    connect( qcbAudioOutput, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( audioOutputDeviceChanged(int) ) );
+    QObject::connect(ui.showEncoded_CB,SIGNAL(toggled(bool)),this,SLOT(togglePreview(bool))) ;
+    QObject::connect(ui.availableBW_SB,SIGNAL(valueChanged(double)),this,SLOT(updateAvailableBW(double))) ;
 }
 
-void VOIPConfigPanel::showEvent(QShowEvent *)
+void VOIPConfigPanel::fillAudioCombos()
 {
-    std::cerr << "Creating the audio pipeline" << std::endl;
+    QString in  = QString::fromStdString(rsVOIP->getVoipAudioInputDevice());
+    QString out = QString::fromStdString(rsVOIP->getVoipAudioOutputDevice());
+
+    for(int pass=0;pass<2;++pass)
+    {
+        bool input = (pass == 0);
+        RSComboBox *cb = input ? qcbAudioInput : qcbAudioOutput;
+        const QString& selected = input ? in : out;
+
+        whileBlocking(cb)->clear();
+
+        RsAudioDevice def = input ? AudioDeviceHelper::inputDeviceInfo(QString()) : AudioDeviceHelper::outputDeviceInfo(QString());
+        whileBlocking(cb)->addItem(def.isNull() ? tr("System default") : tr("System default (%1)").arg(AudioDeviceHelper::deviceLabel(def)), QString());
+
+        const QList<RsAudioDevice> devs = input ? AudioDeviceHelper::availableInputDevices() : AudioDeviceHelper::availableOutputDevices();
+        for(const RsAudioDevice& dev : devs)
+            whileBlocking(cb)->addItem(AudioDeviceHelper::deviceLabel(dev), AudioDeviceHelper::deviceKey(dev));
+
+        int idx = cb->findData(selected);
+        if(idx < 0 && !selected.isEmpty())
+        {
+            whileBlocking(cb)->addItem(tr("%1 (not connected)").arg(selected), selected);
+            idx = cb->count()-1;
+        }
+        whileBlocking(cb)->setCurrentIndex(idx < 0 ? 0 : idx);
+    }
+}
+
+void VOIPConfigPanel::fillCameraCombo(const QString& selected)
+{
+    QList<QPair<QString,QString> > cams;
+    QVideoInputDevice::getAvailableDevices(cams);
+
+    whileBlocking(ui.inputDevice_CB)->clear();
+
+    if(cams.empty())
+    {
+        whileBlocking(ui.inputDevice_CB)->addItem(tr("[No camera found]"), QString());
+        ui.inputDevice_CB->setEnabled(false);
+        return;
+    }
+    ui.inputDevice_CB->setEnabled(true);
+
+    const QString def = QVideoInputDevice::defaultCameraLabel();
+    whileBlocking(ui.inputDevice_CB)->addItem(def.isEmpty() ? tr("System default camera") : tr("System default camera (%1)").arg(def), QString());
+
+    for(auto& c:cams)
+    {
+        whileBlocking(ui.inputDevice_CB)->addItem(c.second, c.first);
+        whileBlocking(ui.inputDevice_CB)->setItemData(ui.inputDevice_CB->count()-1, c.second, Qt::ToolTipRole);
+    }
+
+    int idx = ui.inputDevice_CB->findData(selected);
+    whileBlocking(ui.inputDevice_CB)->setCurrentIndex(idx < 0 ? 0 : idx);
+}
+
+void VOIPConfigPanel::startAudioInput()
+{
+    stopAudioInput();
 
     inputAudioProcessor = new QtSpeex::SpeexInputProcessor();
     inputAudioProcessor->open(QIODevice::WriteOnly | QIODevice::Unbuffered);
 
-    inputAudioDevice = AudioDeviceHelper::getPreferedInputDevice();
+    inputAudioDevice = AudioDeviceHelper::createInputDevice(qcbAudioInput->currentData().toString());
     inputAudioDevice->start(inputAudioProcessor);
 
     connect(inputAudioProcessor, SIGNAL(networkPacketReady()), this, SLOT(emptyBuffer()));
+}
+
+void VOIPConfigPanel::stopAudioInput()
+{
+    if (inputAudioDevice) {
+        inputAudioDevice->stop();
+        delete inputAudioDevice ;
+        inputAudioDevice = nullptr ;
+    }
+    if(inputAudioProcessor)
+    {
+        inputAudioProcessor->disconnect();
+        delete inputAudioProcessor ;
+        inputAudioProcessor = nullptr ;
+    }
+}
+
+void VOIPConfigPanel::showEvent(QShowEvent *)
+{
+    createPipeline();
+}
+
+void VOIPConfigPanel::createPipeline()
+{
+    if(videoInput != nullptr)	// already running
+        return;
+
+    std::cerr << "Creating the audio pipeline" << std::endl;
+    startAudioInput();
 
     std::cerr << "Creating the video pipeline" << std::endl;
-
-    // Create the video pipeline.
-    //
 
     videoInput = new QVideoInputDevice(this) ;
 
     videoProcessor = new VideoProcessor() ;
     videoProcessor->setDisplayTarget(NULL) ;
-
-    videoProcessor->setMaximumBandwidth(ui.availableBW_SB->value()) ;
+    videoProcessor->setMaximumBandwidth((uint32_t)(ui.availableBW_SB->value()*1024)) ;
 
     videoInput->setVideoProcessor(videoProcessor) ;
 
@@ -155,19 +255,7 @@ void VOIPConfigPanel::showEvent(QShowEvent *)
     graph_source->setCollectionTimeLimit(1000*300) ;
     graph_source->start() ;
 
-    if(ui.showEncoded_CB->isChecked())
-    {
-        videoInput->setEchoVideoTarget(nullptr) ;
-        videoProcessor->setDisplayTarget(ui.videoDisplay) ;
-    }
-    else
-    {
-        videoInput->setEchoVideoTarget(ui.videoDisplay) ;
-        videoProcessor->setDisplayTarget(nullptr);
-    }
-
-    QObject::connect(ui.showEncoded_CB,SIGNAL(toggled(bool)),this,SLOT(togglePreview(bool))) ;
-    QObject::connect(ui.availableBW_SB,SIGNAL(valueChanged(double)),this,SLOT(updateAvailableBW(double))) ;
+    togglePreview(ui.showEncoded_CB->isChecked());
 
     loadSettings();
 
@@ -175,7 +263,21 @@ void VOIPConfigPanel::showEvent(QShowEvent *)
     connect( qtTick, SIGNAL( timeout ( ) ), this, SLOT( on_Tick_timeout() ) );
     qtTick->start(20);
 
-    videoInput->start();
+    startVideoPreview();
+}
+
+void VOIPConfigPanel::startVideoPreview()
+{
+    if(!videoInput)
+        return;
+
+    videoInput->stop();
+
+    if(!ui.inputDevice_CB->isEnabled())	// no camera
+        return;
+
+    const QString cam = ui.inputDevice_CB->currentData().toString();
+    videoInput->start(cam.isEmpty() ? QString() : cam);	// null string = default camera
 }
 
 void VOIPConfigPanel::hideEvent(QHideEvent *)
@@ -188,11 +290,18 @@ void VOIPConfigPanel::hideEvent(QHideEvent *)
 void VOIPConfigPanel::updateAvailableBW(double r)
 {
     std::cerr << "Setting max bandwidth to " << r << " KB/s" << std::endl;
-    videoProcessor->setMaximumBandwidth((uint32_t)(r*1024)) ;
+    if(videoProcessor)
+        videoProcessor->setMaximumBandwidth((uint32_t)(r*1024)) ;
+
+    if(loaded)
+        rsVOIP->setVoipVideoMaxBandwidth((int)(r*1024));
 }
 
 void VOIPConfigPanel::togglePreview(bool b)
 {
+    if(!videoInput || !videoProcessor)
+        return;
+
     if(b)
     {
         videoInput->setEchoVideoTarget(NULL) ;
@@ -223,9 +332,12 @@ void VOIPConfigPanel::clearPipeline()
         graph_source=nullptr; // is deleted by setSource below. This is a bad design.
     }
 
-    ui.voipBwGraph->setSource(nullptr);
+    // Never give a NULL source to the graph: RSGraphWidget::paintLegend() dereferences it
+    // without checking, so painting the (still visible) page with a NULL source crashes
+    // RetroShare. That is what froze RetroShare when opening the wizard. An empty source is safe.
+    ui.voipBwGraph->setSource(new voipGraphSource);
 
-	std::cerr << "Deleting audioInputConfig object" << std::endl;
+	VOIP_TRACE("panel: clearPipeline video");
 	if(videoInput != NULL)
 	{
 		videoInput->stop() ;
@@ -238,17 +350,9 @@ void VOIPConfigPanel::clearPipeline()
         videoProcessor = nullptr;
     }
 
-    if (inputAudioDevice) {
-        inputAudioDevice->stop();
-		  delete inputAudioDevice ;
-          inputAudioDevice = nullptr ;
-    }
-
-	 if(inputAudioProcessor)
-	 {
-		 delete inputAudioProcessor ;
-         inputAudioProcessor = nullptr ;
-	 }
+    VOIP_TRACE("panel: clearPipeline audio");
+    stopAudioInput();
+    VOIP_TRACE("panel: clearPipeline done");
 }
 
 void VOIPConfigPanel::load()
@@ -259,6 +363,8 @@ void VOIPConfigPanel::load()
 
 void VOIPConfigPanel::loadSettings()
 {
+    loaded = false;
+
     ui.qcbTransmit->setCurrentIndex(rsVOIP->getVoipATransmit());
     on_qcbTransmit_currentIndexChanged(rsVOIP->getVoipATransmit());
     ui.qsTransmitHold->setValue(rsVOIP->getVoipVoiceHold());
@@ -267,15 +373,18 @@ void VOIPConfigPanel::loadSettings()
     ui.qsTransmitMax->setValue(rsVOIP->getVoipfVADmax());
     ui.qcbEchoCancel->setChecked(rsVOIP->getVoipEchoCancel());
 
-    if (rsVOIP->getVoipiNoiseSuppress() != 0)
-        ui.qsNoise->setValue(-rsVOIP->getVoipiNoiseSuppress());
+    int noise = rsVOIP->getVoipiNoiseSuppress();
+    if (noise != 0)
+        ui.qsNoise->setValue(-noise);
     else
         ui.qsNoise->setValue(14);
 
-    on_qsNoise_valueChanged(-rsVOIP->getVoipiNoiseSuppress());
+    on_qsNoise_valueChanged(ui.qsNoise->value());
 
     ui.qsAmp->setValue(20000 - rsVOIP->getVoipiMinLoudness());
     on_qsAmp_valueChanged(20000 - rsVOIP->getVoipiMinLoudness());
+
+    whileBlocking(ui.availableBW_SB)->setValue(rsVOIP->getVoipVideoMaxBandwidth() / 1024.0);
 
     loaded = true;
 }
@@ -283,15 +392,18 @@ void VOIPConfigPanel::loadSettings()
 bool VOIPConfigPanel::save(QString &/*errmsg*/)
 {
     //mainly useless beacause saving occurs in realtime
-    //s.iQuality = qsQuality->value();
     rsVOIP->setVoipiNoiseSuppress((ui.qsNoise->value() == 14) ? 0 : - ui.qsNoise->value());
     rsVOIP->setVoipiMinLoudness(20000 - ui.qsAmp->value());
     rsVOIP->setVoipVoiceHold(ui.qsTransmitHold->value());
     rsVOIP->setVoipfVADmin(ui.qsTransmitMin->value());
     rsVOIP->setVoipfVADmax(ui.qsTransmitMax->value());
-    /*s.uiDoublePush = qsDoublePush->value() * 1000;*/
     rsVOIP->setVoipATransmit(static_cast<RsVOIP::enumAudioTransmit>(ui.qcbTransmit->currentIndex() ));
     rsVOIP->setVoipEchoCancel(ui.qcbEchoCancel->isChecked());
+    rsVOIP->setVoipAudioInputDevice(qcbAudioInput->currentData().toString().toStdString());
+    rsVOIP->setVoipAudioOutputDevice(qcbAudioOutput->currentData().toString().toStdString());
+    if(ui.inputDevice_CB->isEnabled())
+        rsVOIP->setVoipVideoInputDevice(ui.inputDevice_CB->currentData().toString().toStdString());
+    rsVOIP->setVoipVideoMaxBandwidth((int)(ui.availableBW_SB->value()*1024));
 
     return true;
 }
@@ -300,7 +412,8 @@ void VOIPConfigPanel::on_qsTransmitHold_valueChanged(int v) {
         float val = static_cast<float>(v * FRAME_SIZE);
         val = val / SAMPLING_RATE;
         ui.qlTransmitHold->setText(tr("%1 s").arg(val, 0, 'f', 2));
-        rsVOIP->setVoipVoiceHold(v);
+        if (loaded)
+            rsVOIP->setVoipVoiceHold(v);
 }
 
 void VOIPConfigPanel::on_qsNoise_valueChanged(int v) {
@@ -313,14 +426,17 @@ void VOIPConfigPanel::on_qsNoise_valueChanged(int v) {
                 ui.qlNoise->setText(tr("-%1 dB").arg(v));
 	}
         ui.qlNoise->setPalette(pal);
-        rsVOIP->setVoipiNoiseSuppress(- ui.qsNoise->value());
+        if (loaded)
+            rsVOIP->setVoipiNoiseSuppress((v < 15) ? 0 : - v);
 }
 
 void VOIPConfigPanel::on_qsAmp_valueChanged(int v) {
         v = 20000 - v;
+        if (v <= 0) v = 1;
 	float d = 20000.0f/static_cast<float>(v);
         ui.qlAmp->setText(QString::fromLatin1("%1").arg(d, 0, 'f', 2));
-        rsVOIP->setVoipiMinLoudness(20000 - ui.qsAmp->value());
+        if (loaded)
+            rsVOIP->setVoipiMinLoudness(20000 - ui.qsAmp->value());
 }
 
 void VOIPConfigPanel::on_qcbEchoCancel_clicked() {
@@ -347,14 +463,19 @@ void VOIPConfigPanel::on_qcbTransmit_currentIndexChanged(int v) {
 
 void VOIPConfigPanel::on_Tick_timeout()
 {
+    if(!inputAudioProcessor || !videoInput)
+        return;
+
     // update the sound capture bar
 
     ui.abSpeech->iBelow = ui.qsTransmitMin->value();
     ui.abSpeech->iAbove = ui.qsTransmitMax->value();
 
     if (loaded) {
-        rsVOIP->setVoipfVADmin(ui.qsTransmitMin->value());
-        rsVOIP->setVoipfVADmax(ui.qsTransmitMax->value());
+        if (rsVOIP->getVoipfVADmin() != ui.qsTransmitMin->value())
+            rsVOIP->setVoipfVADmin(ui.qsTransmitMin->value());
+        if (rsVOIP->getVoipfVADmax() != ui.qsTransmitMax->value())
+            rsVOIP->setVoipfVADmax(ui.qsTransmitMax->value());
     }
 
     ui.abSpeech->iValue = iroundf(inputAudioProcessor->dVoiceAcivityLevel * 32767.0f + 0.5f);
@@ -372,102 +493,67 @@ void VOIPConfigPanel::on_Tick_timeout()
 }
 
 void VOIPConfigPanel::emptyBuffer() {
-    while(inputAudioProcessor->hasPendingPackets()) {
+    while(inputAudioProcessor && inputAudioProcessor->hasPendingPackets()) {
         inputAudioProcessor->getNetworkPacket(); //that will purge the buffer
     }
 }
 
-void VOIPConfigPanel::on_qpbAudioWizard_clicked() {
-    AudioWizard aw(this);
-    aw.exec();
+void VOIPConfigPanel::on_qpbAudioWizard_clicked()
+{
+    // The wizard needs the microphone and the camera for itself: some systems (e.g. Windows)
+    // do not allow two applications/objects to open the same camera.
+    VOIP_TRACE("panel: wizard button clicked, stopping preview");
+    clearPipeline();
+
+    {
+        VOIP_TRACE("panel: creating wizard");
+        AudioWizard aw(this);
+        VOIP_TRACE("panel: wizard exec()");
+        aw.exec();
+        VOIP_TRACE("panel: wizard closed");
+    }
+
+    fillAudioCombos();
+    fillCameraCombo(QString::fromStdString(rsVOIP->getVoipVideoInputDevice()));
     loadSettings();
+
+    if(isVisible())
+        createPipeline();
 }
 
-void VOIPConfigPanel::on_changedCurrentInputDevice(int i)
+void VOIPConfigPanel::audioInputDeviceChanged(int)
 {
-    QString s = dynamic_cast<RSComboBox*>(sender())->itemData(i).toString();
+    rsVOIP->setVoipAudioInputDevice(qcbAudioInput->currentData().toString().toStdString());
 
-    videoInput->stop();
+    if(inputAudioProcessor)	// pipeline running: restart the level meter on the new device
+        startAudioInput();
+}
 
-    // check that the camera still exists
+void VOIPConfigPanel::audioOutputDeviceChanged(int)
+{
+    rsVOIP->setVoipAudioOutputDevice(qcbAudioOutput->currentData().toString().toStdString());
+}
 
-    QList<QString> input_devices;
-    QVideoInputDevice::getAvailableDevices(input_devices);
+void VOIPConfigPanel::on_changedCurrentInputDevice(int)
+{
+    QString s = ui.inputDevice_CB->currentData().toString();
 
-    for(const QString& cams:input_devices)
-        if(s == cams)
-        {
-            std::cerr << "Switching to camera \"" << s.toStdString() << "\"" << std::endl;
+    // check that the camera still exists (empty string = default camera)
 
-            videoInput->start(s);
+    if(!s.isEmpty() && !QVideoInputDevice::cameraExists(s))
+    {
+        checkAvailableCameras();
+        return;
+    }
 
-            return;
-        }
+    std::cerr << "Switching to camera \"" << s.toStdString() << "\"" << std::endl;
+    rsVOIP->setVoipVideoInputDevice(s.toStdString());
 
-    // if not, re-create the ComboBox
-
-    checkAvailableCameras();
+    startVideoPreview();
 }
 
 void VOIPConfigPanel::checkAvailableCameras()
 {
-    // save current camera
-    QString current_cam = videoInput->currentCameraDescriptionString();
-
-    // Check that the list of cams we had previously is the same than the list of available camera.
-
-    QList<QString> input_devices;
-    QVideoInputDevice::getAvailableDevices(input_devices);
-
-    bool same = true;
-    if(input_devices.size() != ui.inputDevice_CB->count())
-        same = false;
-
-    if(same)
-    {
-        int n=0;
-        for(auto& s:input_devices)
-        {
-            if(ui.inputDevice_CB->itemData(n).toString() != s)
-            {
-                same = false;
-                break;
-            }
-            n++;
-        }
-    }
-
-    // If not, re-add them to the comboBox and make sure to re-select the same camera.
-
-    if(!same)
-    {
-        whileBlocking(ui.inputDevice_CB)->clear();	// remove existing entries
-        whileBlocking(ui.inputDevice_CB)->addItem(tr("[No video]"),QString(""));
-        int n=0;
-        int found_index = -1;
-
-        for(auto& s:input_devices)
-        {
-            whileBlocking(ui.inputDevice_CB)->addItem(s,QVariant(s));
-
-            if(s == current_cam)
-                found_index = n;
-
-            n++;
-        }
-
-        if(found_index >= 0)
-            ui.inputDevice_CB->setCurrentIndex(found_index);
-        else
-            ui.inputDevice_CB->setCurrentIndex(0);	// no video
-    }
+    fillCameraCombo(ui.inputDevice_CB->currentData().toString());
+    startVideoPreview();
 }
-
-
-
-
-
-
-
-
-

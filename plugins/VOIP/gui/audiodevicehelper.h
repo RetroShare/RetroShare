@@ -20,17 +20,45 @@
 
 #pragma once
 
+#include <QList>
+#include <QString>
 #include "gui/qtmultimedia_compat.h"
 
 class AudioDeviceHelper
 {
 public:
     AudioDeviceHelper();
-    static RsAudioInput* getDefaultInputDevice();
-    static RsAudioInput* getPreferedInputDevice();
-    //static list getInputDeviceList();
 
+    // System default devices.
+    static RsAudioInput* getDefaultInputDevice();
     static RsAudioOutput* getDefaultOutputDevice();
+
+    // Devices chosen by the user (rsVOIP settings, see the audio/video wizard).
+    // Fall back to the default devices above when nothing was chosen or when the
+    // chosen device is not plugged in.
+    static RsAudioInput* getPreferedInputDevice();
     static RsAudioOutput* getPreferedOutputDevice();
-    //static list getOutputDeviceList();
+
+    // ---- Device selection ----
+    // A device is identified by a key string (saved in the settings):
+    //   Qt5: QAudioDeviceInfo::deviceName()   Qt6: QAudioDevice::id()
+    // An empty key means "system default".
+
+    static QString deviceKey(const RsAudioDevice& dev);
+    static QString deviceLabel(const RsAudioDevice& dev);	// human readable name
+
+    // Available devices, without duplicates and without the "null" device.
+    static QList<RsAudioDevice> availableInputDevices();
+    static QList<RsAudioDevice> availableOutputDevices();
+
+    // Device for a key. Empty or unknown key: the system default device.
+    static RsAudioDevice inputDeviceInfo(const QString& key);
+    static RsAudioDevice outputDeviceInfo(const QString& key);
+
+    // Create a device from a key (empty/unknown key: same as getDefault*Device()).
+    static RsAudioInput* createInputDevice(const QString& key, QObject *parent = nullptr);
+    static RsAudioOutput* createOutputDevice(const QString& key, QObject *parent = nullptr);
+
+    // 16 kHz, mono, 16 bit signed: the format used by the speex processors.
+    static QAudioFormat voipAudioFormat();
 };

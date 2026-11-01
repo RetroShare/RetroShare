@@ -95,6 +95,19 @@ class RsVOIP
 		virtual bool getVoipEchoCancel() const = 0 ;
 		virtual void setVoipEchoCancel(bool) = 0 ;
 
+		// Device selection. Empty string means "use the system default device".
+		// Audio devices: AudioDeviceHelper::deviceKey() (Qt5 deviceName(), Qt6 id()).
+		// Cameras: the ids of QVideoInputDevice::getAvailableDevices() (Qt5 deviceName(), Qt6 description()).
+		virtual std::string getVoipAudioInputDevice() const = 0 ;
+		virtual void setVoipAudioInputDevice(const std::string&) = 0 ;
+		virtual std::string getVoipAudioOutputDevice() const = 0 ;
+		virtual void setVoipAudioOutputDevice(const std::string&) = 0 ;
+		virtual std::string getVoipVideoInputDevice() const = 0 ;
+		virtual void setVoipVideoInputDevice(const std::string&) = 0 ;
+		// Maximum outgoing video bandwidth in bytes per second.
+		virtual int getVoipVideoMaxBandwidth() const = 0 ;
+		virtual void setVoipVideoMaxBandwidth(int) = 0 ;
+
 		virtual uint32_t getPongResults(const RsPeerId& id, int n, std::list<RsVOIPPongResult> &results) = 0;
 };
 

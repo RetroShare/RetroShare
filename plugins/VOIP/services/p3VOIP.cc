@@ -128,6 +128,7 @@ p3VOIP::p3VOIP(RsPluginHandler *handler,VOIPNotify *notifier)
         _min_loudness = 4702;
         _noise_suppress = -45;
         _echo_cancel = true;
+        _video_max_bandwidth = 80*1024; // bytes/s
 
 }
 RsServiceInfo p3VOIP::getServiceInfo()
@@ -723,6 +724,27 @@ void p3VOIP::setVoipEchoCancel(bool b)
 	IndicateConfigChanged() ;
 }
 
+void p3VOIP::setVoipAudioInputDevice(const std::string& d)
+{
+	_audio_input_device = d ;
+	IndicateConfigChanged() ;
+}
+void p3VOIP::setVoipAudioOutputDevice(const std::string& d)
+{
+	_audio_output_device = d ;
+	IndicateConfigChanged() ;
+}
+void p3VOIP::setVoipVideoInputDevice(const std::string& d)
+{
+	_video_input_device = d ;
+	IndicateConfigChanged() ;
+}
+void p3VOIP::setVoipVideoMaxBandwidth(int b)
+{
+	_video_max_bandwidth = b ;
+	IndicateConfigChanged() ;
+}
+
 RsTlvKeyValue p3VOIP::push_int_value(const std::string& key,int value)
 {
 	RsTlvKeyValue kv ;
@@ -754,6 +776,10 @@ bool p3VOIP::saveList(bool& cleanup, std::list<RsItem*>& lst)
 	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_NOISE_SUP",_noise_suppress)) ;
 	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_MIN_LOUDN",_min_loudness)) ;
 	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_ECHO_CNCL",_echo_cancel)) ;
+	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_VIDEO_BW" ,_video_max_bandwidth)) ;
+	{ RsTlvKeyValue kv ; kv.key = "P3VOIP_CONFIG_AUDIO_IN"  ; kv.value = _audio_input_device  ; vitem->tlvkvs.pairs.push_back(kv) ; }
+	{ RsTlvKeyValue kv ; kv.key = "P3VOIP_CONFIG_AUDIO_OUT" ; kv.value = _audio_output_device ; vitem->tlvkvs.pairs.push_back(kv) ; }
+	{ RsTlvKeyValue kv ; kv.key = "P3VOIP_CONFIG_VIDEO_IN"  ; kv.value = _video_input_device  ; vitem->tlvkvs.pairs.push_back(kv) ; }
 
 	lst.push_back(vitem) ;
 
@@ -785,6 +811,14 @@ bool p3VOIP::loadList(std::list<RsItem*>& load)
 					_min_loudness = pop_int_value(kit->value) ;
 				else if(kit->key == "P3VOIP_CONFIG_ECHO_CNCL")
 					_echo_cancel = pop_int_value(kit->value) ;
+				else if(kit->key == "P3VOIP_CONFIG_VIDEO_BW")
+					_video_max_bandwidth = pop_int_value(kit->value) ;
+				else if(kit->key == "P3VOIP_CONFIG_AUDIO_IN")
+					_audio_input_device = kit->value ;
+				else if(kit->key == "P3VOIP_CONFIG_AUDIO_OUT")
+					_audio_output_device = kit->value ;
+				else if(kit->key == "P3VOIP_CONFIG_VIDEO_IN")
+					_video_input_device = kit->value ;
 		}
 		delete vitem ;
 	}

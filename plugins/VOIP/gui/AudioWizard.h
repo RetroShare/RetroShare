@@ -21,66 +21,144 @@
 
 #pragma once
 
-#include "gui/qtmultimedia_compat.h"
+#include <QElapsedTimer>
+#include <QPair>
+#include <QPixmap>
 #include <QQueue>
+#include <QDialog>
 
 #include "AudioStats.h"
 #include "SpeexProcessor.h"
+#include "gui/qtmultimedia_compat.h"
 
 #include "ui_AudioWizard.h"
 
-class QGraphicsScene;
-class QGraphicsItem;
+class QBuffer;
+class QComboBox;
+class QTimer;
+class QVideoInputDevice;
+class VideoProcessor;
 
-class AudioWizard: public QWizard, public Ui::AudioWizard {
-	private:
-		Q_OBJECT
-		Q_DISABLE_COPY(AudioWizard)
-                AudioBar* abAmplify;
-                AudioBar* abVAD;
-                RsAudioInput* inputDevice;
-                RsAudioOutput* outputDevice;
-                QtSpeex::SpeexInputProcessor* inputProcessor;
-                QtSpeex::SpeexOutputProcessor* outputProcessor;
-                QQueue<QByteArray>packetQueue;
+// Audio & video setup wizard of the VOIP plugin. Everything is designed in AudioWizard.ui:
+// a QDialog with a QStackedWidget (qswPages) holding one QWidget per page, and
+// Back / Next / Finish / Cancel buttons. Each page has two dynamic properties,
+// "pageTitle" and "pageSubTitle", shown in the header (editable in Designer).
+//
+// (QWizard is not used on purpose: QWizard in ClassicStyle froze RetroShare when opened.)
+//
+//   0. qwpIntro         Introduction
+//   1. qwpAudioDevices  choose microphone and speakers, live microphone level, speaker test tone
+//   2. qwpVolume        amplification, local echo to hear yourself
+//   3. qwpTransmit      voice activity detection / continuous, thresholds, hold time, noise suppression
+//   4. qwpVideo         choose the camera, live preview, maximum video bandwidth
+//   5. qwpDone          summary
+//
+// Settings are changed live while the wizard runs (so that the meters show the real
+// behaviour) and are restored if the wizard is cancelled.
+class AudioWizard: public QDialog, private Ui::AudioWizard
+{
+	Q_OBJECT
+	Q_DISABLE_COPY(AudioWizard)
 
-        protected:
-                bool bTransmitChanged;
+public:
+	// Page indexes, in the order of the pages of qswPages in AudioWizard.ui
+	enum PageId { PageIntro = 0, PageAudioDevices, PageVolume, PageTransmit, PageVideo, PageDone };
 
-		QGraphicsScene *qgsScene;
-		QGraphicsItem *qgiSource;
-                //AudioOutputSample *aosSource;
-		float fAngle;
-		float fX, fY;
+	AudioWizard(QWidget *parent);
+	~AudioWizard();
 
-                //Settings sOldSettings;
+	virtual void accept() override;
+	virtual void reject() override;
 
-		QTimer *ticker;
+private slots:
+	void goBack();
+	void goNext();
+	void onPageChanged(int id);
+	void onTicker();
+	void loopAudio();
 
-		bool bInit;
-		bool bDelay;
-		bool bLastActive;
+	// audio device page
+	void onInputDeviceChanged(int);
+	void onOutputDeviceChanged(int);
+	void refreshAudioDevices();
+	void playTestSound();
+	void onTestSoundStateChanged(QAudio::State);
+	void onTestSoundFinished() { stopTestSound() ; }
+	void onEchoCancelToggled(bool);
 
-		QPixmap qpTalkingOn, qpTalkingOff;
+	// volume page
+	void onMaxAmpChanged(int);
+	void onHighContrastToggled(bool);
 
-		int iMaxPeak;
-                int iTicks;
-        public slots:
-                void on_playEcho_timeout();
-                void on_Ticker_timeout();
-                void on_qsMaxAmp_valueChanged(int);
-                void on_qrPTT_clicked(bool);
-                void on_qrVAD_clicked(bool);
-                void on_qrContinuous_clicked(bool);
-                void on_qsTransmitMin_valueChanged(int);
-                void on_qsTransmitMax_valueChanged(int);
-                void on_qcbHighContrast_clicked(bool);
-                void updateTriggerWidgets(bool);
-	public:
-                AudioWizard(QWidget *parent);
-                ~AudioWizard();
+	// transmission page
+	void onTransmitModeChanged();
+	void onVADMinChanged(int);
+	void onVADMaxChanged(int);
+	void onVoiceHoldChanged(int);
+	void onNoiseChanged(int);
 
-        private slots :
-                void loopAudio();
+	// video page
+	void onCameraChanged(int);
+	void refreshCameras();
+	void onShowEncodedToggled(bool);
+	void onBandwidthChanged(double);
+	void onCameraError(QString);
 
+private:
+	int  currentId() const;
+	void updateHeaderAndButtons();
+	void fillAudioDeviceCombo(QComboBox *cb, bool input, const QString& selected);
+	QString selectedInputDevice() const;
+	QString selectedOutputDevice() const;
+	QString selectedCamera() const;
+
+	void startAudio();
+	void stopAudio();
+	void stopTestSound();
+
+	void startVideo();
+	void stopVideo();
+
+	void stopEverything();
+	void updateTransmitWidgets();
+	void updateSummary();
+	void restoreSettings();
+	int  chosenTransmitMode() const;
+
+	// ---- saved settings, restored on cancel ----
+	struct SavedSettings {
+		int atransmit, voiceHold, vadMin, vadMax, noiseSuppress, minLoudness, videoBandwidth;
+		bool echoCancel;
+		std::string audioIn, audioOut, videoIn;
+	} mSaved;
+
+	// device lists are only filled when their page is shown for the first time
+	bool mAudioDevicesFilled;
+	bool mCamerasFilled;
+
+	// ---- audio engine ----
+	RsAudioInput  *inputDevice;
+	RsAudioOutput *outputDevice;
+	QtSpeex::SpeexInputProcessor  *inputProcessor;
+	QtSpeex::SpeexOutputProcessor *outputProcessor;
+	QQueue<QPair<qint64,QByteArray> > packetQueue;   // (time stamp in ms, packet) for the delayed local echo
+	QElapsedTimer echoClock;
+
+	RsAudioOutput *testOutput;
+	QBuffer         *testBuffer;
+	QByteArray       testTone;
+
+	// ---- video engine ----
+	QVideoInputDevice *videoInput;
+	VideoProcessor    *videoProcessor;
+	QElapsedTimer      videoStartTime;    // to warn when the camera delivers no image
+	bool               videoNoFrameWarned;
+
+	QTimer *ticker;
+	bool bInit;
+	bool bLastActive;
+	int iMaxPeak;
+	int iTicks;
+	int iHeartbeats;
+	QPixmap qpTalkingOn, qpTalkingOff;
 };
