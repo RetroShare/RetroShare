@@ -240,20 +240,49 @@ void QVideoInputDevice::start(const QString& description)
     }
 
     // QCamera can silently stay inactive when no capture format is selected.
-    // Pick one explicitly, preferring a 640-1280 wide format, else the first.
+    // Pick one explicitly. Video is encoded as 640x480, so prefer that size,
+    // then any other 4:3 format 640-1280 wide, then any 640-1280 wide format,
+    // else the first one. Formats under 15 fps are only taken as a last resort.
+    // A 4:3 source avoids the black bars the encoder adds around 16:9 images.
     {
         const QList<QCameraFormat> formats = caminfo.videoFormats();
 
         if(!formats.isEmpty())
         {
-            QCameraFormat chosen = formats.first();
+            auto inRange = [](const QCameraFormat& f) {
+                return f.resolution().width() >= 640 && f.resolution().width() <= 1280; };
+            auto is4by3 = [](const QCameraFormat& f) {
+                return f.resolution().width() * 3 == f.resolution().height() * 4; };
+            auto is640x480 = [](const QCameraFormat& f) {
+                return f.resolution() == QSize(640, 480); };
 
-            for(const QCameraFormat& f : formats)
-                if(f.resolution().width() >= 640 && f.resolution().width() <= 1280)
+            const std::function<bool(const QCameraFormat&)> preferences[] = {
+                is640x480,
+                [&](const QCameraFormat& f) { return inRange(f) && is4by3(f); },
+                inRange };
+
+            QCameraFormat chosen = formats.first();
+            bool found = false;
+
+            for(bool need_fps : { true, false })
+            {
+                for(const auto& accept : preferences)
                 {
-                    chosen = f;
-                    break;
+                    for(const QCameraFormat& f : formats)
+                        if(accept(f) && (!need_fps || f.maxFrameRate() >= 15.0f))
+                        {
+                            chosen = f;
+                            found = true;
+                            break;
+                        }
+                    if(found) break;
                 }
+                if(found) break;
+            }
+
+            std::cerr << "VOIP: camera format " << chosen.resolution().width() << "x"
+                      << chosen.resolution().height() << " @ " << chosen.maxFrameRate()
+                      << " fps" << std::endl;
 
             _capture_device->setCameraFormat(chosen);
         }

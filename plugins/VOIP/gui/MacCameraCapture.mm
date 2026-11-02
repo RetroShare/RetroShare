@@ -107,6 +107,12 @@ bool MacCameraCapture::start(const QString& description, std::function<void(cons
 	AVCaptureSession* session = [[AVCaptureSession alloc] init];
 	if([session canAddInput:in]) [session addInput:in];
 
+	// Video is encoded as 640x480: ask the camera for a 4:3 source of that size
+	// when it supports it. The default preset is 16:9 (often 1280x720), which
+	// the encoder has to fit between black bars.
+	if([session canSetSessionPreset:AVCaptureSessionPreset640x480])
+		session.sessionPreset = AVCaptureSessionPreset640x480;
+
 	AVCaptureVideoDataOutput* out = [[AVCaptureVideoDataOutput alloc] init];
 	out.videoSettings = @{ (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA) };
 	out.alwaysDiscardsLateVideoFrames = YES;
