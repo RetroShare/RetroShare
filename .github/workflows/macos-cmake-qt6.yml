@@ -29,8 +29,8 @@ permissions:
 
 jobs:
   build:
-    name: macOS 14 / Qt6 / CMake
-    runs-on: macos-14
+    name: macOS 15 / Qt6 / CMake
+    runs-on: macos-15
     defaults:
       run:
         shell: bash
@@ -67,15 +67,24 @@ jobs:
       run: |
         HB="$(brew --prefix)"
         QT6="$(brew --prefix qt)"
-        IFLAGS="-I$HB/include"; for d in "$HB"/opt/*/include; do IFLAGS="$IFLAGS -I$d"; done
-        LFLAGS="-L$HB/lib";     for d in "$HB"/opt/*/lib;     do LFLAGS="$LFLAGS -L$d"; done
+        # The runner carries several OpenSSL kegs (1.1, 3, 4) and openssl@4 may be linked
+        # into $HB/include: put openssl@3 (the one CMake links) first and leave the other
+        # kegs out, or libretroshare compiles against foreign headers and the link fails.
+        OSSL="$(brew --prefix openssl@3)"
+        IFLAGS="-I$OSSL/include -I$HB/include"
+        LFLAGS="-L$OSSL/lib -L$HB/lib"
+        for d in "$HB"/opt/*; do
+          case "${d##*/}" in openssl*) continue;; esac
+          [ -d "$d/include" ] && IFLAGS="$IFLAGS -I$d/include"
+          [ -d "$d/lib" ]     && LFLAGS="$LFLAGS -L$d/lib"
+        done
         # qt (Qt6) first so find_package(QT NAMES Qt6 Qt5) resolves to this config.
         PREFIX="$QT6;$HB";      for d in "$HB"/opt/*;          do PREFIX="$PREFIX;$d"; done
         cmake -G Ninja -B Build-cmake -S . \
           -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release \
           -DCMAKE_PREFIX_PATH="$PREFIX" \
           -DQt6_DIR="$QT6/lib/cmake/Qt6" \
-          -DOPENSSL_ROOT_DIR="$(brew --prefix openssl@3)" \
+          -DOPENSSL_ROOT_DIR="$OSSL" \
           -DRS_RNPLIB=ON -DRS_JSON_API=ON -DRS_WEBUI=ON \
           -DRS_GUI=ON -DRS_SERVICE=ON -DRS_FRIENDSERVER=ON -DRS_PLUGINS=OFF -DRS_FORUM_DEEP_INDEX=OFF \
           -DRS_USE_I2P_SAM3=ON -DRS_BITDHT=ON -DRS_MINIUPNPC=ON \
