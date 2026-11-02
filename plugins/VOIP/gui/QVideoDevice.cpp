@@ -661,8 +661,10 @@ void QVideoInputDevice::processImage(const QImage& image)
 
         emit networkPacketReady() ;
     }
+    // The self-view is mirrored, like in other video call applications. The
+    // frame sent to the peer (processImage above) is not.
     if(_echo_output_device != NULL)
-        _echo_output_device->showFrame(image) ;
+        _echo_output_device->showFrame(image.mirrored(true, false)) ;
 }
 
 // =====================================================================================
