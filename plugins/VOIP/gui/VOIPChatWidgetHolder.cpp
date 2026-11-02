@@ -990,7 +990,7 @@ void VOIPChatWidgetHolder::sendVideoData()
 
 	// Switch to H.264 once the peer has said it decodes it. Until then (older
 	// plugin, or its answer not received yet) video is sent as MPEG-4.
-	if(videoProcessor && (rsVOIP->getVoipPeerCapabilities(mChatWidget->getChatId().toPeerId()) & RS_VOIP_CAPS_H264_VIDEO))
+	if(videoProcessor && (rsVOIP->getVoipPeerCapabilities(targetId) & RS_VOIP_CAPS_H264_VIDEO))
 		videoProcessor->setPeerDecodesH264(true) ;
 
 	while(inputVideoDevice && inputVideoDevice->getNextEncodedPacket(chunk))
