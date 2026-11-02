@@ -425,25 +425,40 @@ QString BWGraphSource::unitName() const { return (_current_unit == UNIT_KILOBYTE
 //    return QString("[error]");
 //}
 
+// At most three significant digits and no trailing zeros: "10 KB/s", not "10.00 KB/s".
+static QString shortNumber(double v)
+{
+    QString s = QString::number(v, 'f', (v < 10) ? 2 : ((v < 100) ? 1 : 0)) ;
+
+    if(s.contains('.'))
+    {
+        while(s.endsWith('0'))
+            s.chop(1) ;
+        if(s.endsWith('.'))
+            s.chop(1) ;
+    }
+    return s ;
+}
+
 QString BWGraphSource::displayValue(float v) const
 {
     if(_current_unit == UNIT_KILOBYTES)
     {
-	    if(v < 1000)
-		    return QString::number(v,'f',2) + " B/s" ;
-	    else if(v < 1000*1024)
-		    return QString::number(v/1024.0,'f',2) + " KB/s" ;
+	    if(v < 1024)
+		    return shortNumber(v) + " B/s" ;
+	    else if(v < 1024*1024)
+		    return shortNumber(v/1024.0) + " KB/s" ;
 	    else
-		    return QString::number(v/(1024.0*1024),'f',2) + " MB/s" ;
+		    return shortNumber(v/(1024.0*1024)) + " MB/s" ;
     }
     else if(_current_unit == UNIT_COUNT)
     {
-	    if(v < 1000)
-		    return QString::number(v,'f',0) ;
-	    else if(v < 1000*1024)
-		    return QString::number(v/1024.0,'f',1) + "k" ;
+	    if(v < 1024)
+		    return shortNumber(v) ;
+	    else if(v < 1024*1024)
+		    return shortNumber(v/1024.0) + "k" ;
 	    else
-		    return QString::number(v/(1024.0*1024),'f',1) + "M" ;
+		    return shortNumber(v/(1024.0*1024)) + "M" ;
     }
     else
     return QString() ;

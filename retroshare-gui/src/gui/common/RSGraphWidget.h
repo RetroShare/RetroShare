@@ -79,6 +79,10 @@ public:
     // The default is to return v + unitName()
     virtual QString displayValue(float v) const ;
 
+    // Step between the units displayValue() switches to (B/s, KB/s...): grid marks are placed at round
+    // values of these units. Overload for units based on 1024.
+    virtual qreal unitBase() const { return 1000.0 ; }
+
     // return the vector of last values up to date
     virtual void getCurrentValues(std::vector<QPointF>& vals) const ;
 
