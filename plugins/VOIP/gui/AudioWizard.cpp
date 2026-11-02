@@ -447,6 +447,7 @@ void AudioWizard::startVideo()
 	VOIP_TRACE("wizard: startVideo \"" + selectedCamera() + "\"");
 
 	videoProcessor = new VideoProcessor() ;
+	videoProcessor->setPeerDecodesH264(true) ;	// the preview decodes its own stream
 	videoProcessor->setMaximumBandwidth(static_cast<uint32_t>(qsbBandwidth->value() * 1024)) ;
 
 	videoInput = new QVideoInputDevice(this) ;

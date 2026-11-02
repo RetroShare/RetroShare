@@ -184,6 +184,16 @@ class VideoProcessor
 		// Used to tweak the compression ratio so that the video can stream ok.
 		//
 		void setMaximumBandwidth(uint32_t bytes_per_second) ;
+
+		// Video is sent as MPEG-4 until the peer is known to decode H.264, because
+		// older plugins drop H.264 packets (unknown codec id): they would see no
+		// picture at all. The peer is known to decode H.264 when it says so
+		// (VOIP capabilities item) or when it sends H.264 itself. Local previews,
+		// which decode their own stream, call it with true.
+		void setPeerDecodesH264(bool) ;
+
+		// True when this build can decode H.264, i.e. what to advertise to peers.
+		static bool canDecodeH264() ;
         	void setInternalFrameSize(QSize) ;
 
         	// returns the current encoding frame rate in bytes per second.
@@ -204,6 +214,7 @@ class VideoProcessor
             FFmpegVideo  _h264_video_codec ;
 
             uint16_t _encoding_current_codec ;
+            bool _peer_decodes_h264 ;
 
 	    time_t _last_bw_estimate_in_TS;
 	    time_t _last_bw_estimate_out_TS;

@@ -139,10 +139,9 @@ VideoProcessor::VideoProcessor()
     //_lastTimeToShowFrame = time(NULL);
     _decoded_output_device = NULL ;
 
-    // H.264 gives a much better picture for the same bandwidth. MPEG-4 is the
-    // fallback when libavcodec has no usable H.264 encoder.
-    _encoding_current_codec = _h264_video_codec.canEncode() ? VIDEO_PROCESSOR_CODEC_ID_H264_VIDEO
-                                                            : VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO;
+    // MPEG-4 until the peer is known to decode H.264, see setPeerDecodesH264().
+    _peer_decodes_h264 = false ;
+    _encoding_current_codec = VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO;
 
     _estimated_bandwidth_in = 0 ;
     _estimated_bandwidth_out = 0 ;
@@ -273,6 +272,9 @@ void VideoProcessor::receiveEncodedData(const RsVOIPDataChunk& chunk)
     case VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO: codec = &_mpeg_video_codec ;
 	    break ;
     case VIDEO_PROCESSOR_CODEC_ID_H264_VIDEO: codec = _h264_video_codec.canDecode() ? &_h264_video_codec : NULL ;
+	    // A peer that sends H.264 decodes it too.
+	    if(!_peer_decodes_h264)
+	        setPeerDecodesH264(true) ;
 	    break ;
     default:
 	    codec = NULL ;
@@ -316,6 +318,20 @@ void VideoProcessor::receiveEncodedData(const RsVOIPDataChunk& chunk)
 //            _lastTimeToShowFrame = time(NULL) ;//+ 1000/25;
 #warning \plugins\VOIP\gui\VideoProcessor.cpp:210 Phenom: TODO: Get CPU usage to pass image.
 //        }
+}
+
+void VideoProcessor::setPeerDecodesH264(bool b)
+{
+    // H.264 gives a much better picture for the same bandwidth. MPEG-4 stays when
+    // libavcodec has no usable H.264 encoder.
+    const uint16_t codec = (b && _h264_video_codec.canEncode()) ? VIDEO_PROCESSOR_CODEC_ID_H264_VIDEO
+                                                                : VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO ;
+    _peer_decodes_h264 = b ;
+
+    if(codec != _encoding_current_codec)
+        std::cerr << "VOIP: sending video as " << (codec == VIDEO_PROCESSOR_CODEC_ID_H264_VIDEO ? "H.264" : "MPEG-4") << std::endl;
+
+    _encoding_current_codec = codec ;
 }
 
 void VideoProcessor::setMaximumBandwidth(uint32_t bytes_per_sec)
@@ -978,4 +994,9 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk, QImage& image)
 #endif
 
 	return true ;
+}
+
+bool VideoProcessor::canDecodeH264()
+{
+    return avcodec_find_decoder(RS_AV_CODEC_ID(H264)) != NULL ;
 }
