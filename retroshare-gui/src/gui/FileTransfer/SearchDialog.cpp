@@ -653,20 +653,16 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
 				it!=srcIds.end();++it)
 			std::cout << *it << "-" << std::endl ;
 	} else {
-		QDir dwlDir(QString::fromStdString(rsFiles->getDownloadDirectory()));
 		QString path;
 		if (base == tr(""))
 			path = item->text(SR_NAME_COL);
 		else
                         path = base + "/" + item->text(SR_NAME_COL);
-		QString cleanPath = QDir::cleanPath(path);
 
-		// create this folder in download path
-		if (!dwlDir.mkpath(cleanPath)) {
-			std::cerr << "SearchDialog::downloadDirectory() - can't create "
-				<< cleanPath.toStdString() << " directory" << std::endl;
-			return;
-		}
+		// No need to pre-create this folder here: FileRequest() stages
+		// into the Partials directory, and RsDirUtil::moveFile() creates
+		// any missing destination directories lazily once a file
+		// completes.
 
 		// recursive call for every child - file or folder
 		for (int i = 0, cnt = item->childCount(); i < cnt; ++i) {
