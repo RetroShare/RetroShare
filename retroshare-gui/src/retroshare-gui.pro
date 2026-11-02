@@ -111,6 +111,7 @@ CONFIG += gxschannels
 CONFIG += posted
 CONFIG += gxsgui
 CONFIG += gxscircles
+CONFIG += gxspeople
 
 # Other Disabled Bits.
 #CONFIG += framecatcher
@@ -1277,22 +1278,24 @@ identities {
 		gui/Identity/IdentityListModel.h \
 		gui/Identity/IdEditDialog.h \
 		gui/Identity/IdDetailsDialog.h \
+		gui/Identity/UsageStatistics.h \
 	
 	FORMS += gui/Identity/IdDialog.ui \
 		gui/Identity/IdEditDialog.ui \
 		gui/Identity/IdDetailsDialog.ui \
+		gui/Identity/UsageStatistics.ui \
 
 	SOURCES +=  \
 		gui/Identity/IdDialog.cpp \
 		gui/Identity/IdentityListModel.cpp \
 		gui/Identity/IdEditDialog.cpp \
 		gui/Identity/IdDetailsDialog.cpp \
+		gui/Identity/UsageStatistics.cpp \
 	
 }
 	
 gxscircles {
 	DEFINES += RS_USE_CIRCLES
-#	DEFINES += RS_USE_NEW_PEOPLE_DIALOG
 
 	HEADERS +=  \
 		gui/Circles/CirclesDialog.h \
@@ -1304,27 +1307,24 @@ gxscircles {
 	SOURCES +=  \
 		gui/Circles/CirclesDialog.cpp \
 		gui/Circles/CreateCircleDialog.cpp \
+}
+
+gxspeople {
+	# Enable the new PeopleDialog by adding CONFIG += rs_new_people_dialog
+	# on the qmake command line or at the top of this .pro file.
+	DEFINES += RS_USE_NEW_PEOPLE
 
 	HEADERS += gui/People/PeopleDialog.h
 	HEADERS += gui/People/CircleWidget.h
 	HEADERS += gui/People/IdentityWidget.h
 
-	FORMS   += gui/People/PeopleDialog.ui 
+	FORMS   += gui/People/PeopleDialog.ui
 	FORMS   += gui/People/CircleWidget.ui
 	FORMS   += gui/People/IdentityWidget.ui
 
-	SOURCES += gui/People/PeopleDialog.cpp 
+	SOURCES += gui/People/PeopleDialog.cpp
 	SOURCES += gui/People/CircleWidget.cpp
 	SOURCES += gui/People/IdentityWidget.cpp
-
-#HEADERS += gui/People/IdentityItem.h
-#HEADERS += gui/People/CircleItem.h
-#HEADERS += gui/People/GroupListView.h
-#SOURCES += gui/People/GroupListView.cpp
-#SOURCES += gui/People/IdentityItem.cpp
-#SOURCES += gui/People/CircleItem.cpp
-
-
 }
 	
 	
