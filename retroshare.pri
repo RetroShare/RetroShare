@@ -38,10 +38,19 @@ no_retroshare_gui:CONFIG -= retroshare_gui
 # Enable GXS distant syncronization
 CONFIG *= gxsdistsync
 
-# To enable cmark append the following
-# assignation to qmake command line "CONFIG+=rs_gui_cmark"
-CONFIG *= no_rs_gui_cmark
-rs_gui_cmark:CONFIG -= no_rs_gui_cmark
+# cmark (Markdown in channels, forums, boards, wiki and chat) is enabled by
+# default and links the cmark library installed on the system:
+#   MSYS2:         pacman -S mingw-w64-ucrt-x86_64-cmark
+#   Debian/Ubuntu: sudo apt install libcmark-dev
+# To build the supportlibs/cmark submodule instead append the following
+# assignation to qmake command line "CONFIG+=no_rs_gui_cmark_system CONFIG+=rs_gui_cmark"
+# To disable cmark append the following assignation to qmake command line
+# "CONFIG+=no_rs_gui_cmark"
+CONFIG *= rs_gui_cmark_system
+no_rs_gui_cmark_system:CONFIG -= rs_gui_cmark_system
+no_rs_gui_cmark:CONFIG -= rs_gui_cmark_system rs_gui_cmark
+rs_gui_cmark_system:CONFIG *= rs_gui_cmark
+!rs_gui_cmark:CONFIG *= no_rs_gui_cmark
 
 # To enable RetroShare plugins append the following
 # assignation to qmake command line "CONFIG+=retroshare_plugins"

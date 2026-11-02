@@ -21,6 +21,7 @@
 #include "GxsCreateCommentDialog.h"
 #include "ui_GxsCreateCommentDialog.h"
 #include "util/HandleRichText.h"
+#include "util/RsMarkdown.h"
 
 #include <QPushButton>
 #include <QMessageBox>
@@ -37,6 +38,14 @@ GxsCreateCommentDialog::GxsCreateCommentDialog(RsGxsCommentService *service,  co
 	connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 	connect(ui->commentTextEdit, SIGNAL(textChanged()), this, SLOT(checkLength()));
 
+	/* Comments are written in Markdown, the dialog shows its own size info */
+	ui->commentTextEdit->setMaxMessageSize(MAX_ALLOWED_GXS_MESSAGE_SIZE);
+	ui->commentTextEdit->setInfoVisible(false);
+	// comments are shown with emoticons (CommentText)
+	ui->commentTextEdit->setPreviewFlags(RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_EMBED_SMILEYS);
+	ui->commentTextEdit->setPlaceholderText(tr("Type in your comment"));
+	checkLength();
+
 	/* fill in the available OwnIds for signing */
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, default_author);
 }
@@ -46,7 +55,8 @@ void GxsCreateCommentDialog::loadComment(const QString &msgText, const QString &
 
 	setWindowTitle(tr("Reply to Comment") );
 	ui->titleLabel->setId(msgAuthorId);
-	ui->commentLabel->setText(msgText);
+	// The comment replied to may be Markdown, legacy HTML or plain text
+	ui->commentLabel->setText(RsMarkdown::renderIfMarkdown(msgText));
 
 	ui->avatarLabel->setGxsId(msgAuthorId);
 	ui->avatarLabel->setFrameType(AvatarWidget::NO_FRAME);
@@ -63,8 +73,8 @@ void GxsCreateCommentDialog::createComment()
 {
 	RsGxsComment comment;
 
-    QString text = ui->commentTextEdit->toPlainText();
-    // RsHtml::optimizeHtml(text);
+	// Stored as Markdown, rendered with cmark by RsHtml::formatText()
+	const QString text = ui->commentTextEdit->toMarkdown();
 	std::string msg = text.toUtf8().constData();
 
 	comment.mComment = msg;
@@ -110,16 +120,14 @@ GxsCreateCommentDialog::~GxsCreateCommentDialog()
 
 void GxsCreateCommentDialog::checkLength(){
 	QString text;
-	RsHtml::optimizeHtml(ui->commentTextEdit, text);
-	std::wstring msg = text.toStdWString();
-	int charRemains = MAX_ALLOWED_GXS_MESSAGE_SIZE - msg.length();
+	int charRemains = MAX_ALLOWED_GXS_MESSAGE_SIZE - ui->commentTextEdit->toMarkdown().toUtf8().size();
 	if(charRemains >= 0) {
-		text = tr("It remains %1 characters after HTML conversion.").arg(charRemains);
+		text = tr("It remains %1 characters.").arg(charRemains);
 		ui->info_Label->setStyleSheet("QLabel#info_Label { }");
 	}else{
-		text = tr("Warning: This message is too big of %1 characters after HTML conversion.").arg((0-charRemains));
+		text = tr("Warning: This message is too big of %1 characters.").arg((0-charRemains));
 		ui->info_Label->setStyleSheet("QLabel#info_Label {color: red; font: bold; }");
 	}
-	ui->postButton->setEnabled(charRemains>=0);
+	ui->postButton->setEnabled(charRemains>=0 && !ui->commentTextEdit->isEmpty());
 	ui->info_Label->setText(text);
 }

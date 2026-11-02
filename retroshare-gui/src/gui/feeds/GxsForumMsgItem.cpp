@@ -259,7 +259,7 @@ void GxsForumMsgItem::fillParentMessage()
 
     RetroShareLink linkParent = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_FORUM, mParentMessage.mMeta.mGroupId, mParentMessage.mMeta.mMsgId, QString::fromUtf8(mParentMessage.mMeta.mMsgName.c_str()));
     ui->parentSubLabel->setText(linkParent.toHtml());
-    ui->parentMsgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mParentMessage.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+    ui->parentMsgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mParentMessage.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_MARKDOWN));
     ui->parentNameLabel->setId(mParentMessage.mMeta.mAuthorId);
 
     RsIdentityDetails idDetails ;
@@ -333,7 +333,7 @@ void GxsForumMsgItem::fillGroup()
 
 void GxsForumMsgItem::fillExpandFrame()
 {
-	ui->currMsgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mMessage.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+	ui->currMsgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mMessage.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_MARKDOWN));
 }
 
 QString GxsForumMsgItem::messageName()

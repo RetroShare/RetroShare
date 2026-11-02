@@ -34,6 +34,7 @@
 #include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
+#include "gui/settings/rsharesettings.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/MainWindow.h"
 #include "util/DateTime.h"
@@ -256,8 +257,8 @@ void BoardPostDisplayWidgetBase::baseSetup()
     scoreLabel()->setText(score);
 
     // FIX THIS UP LATER. Smileys are extra costly, so we only use them where really necessary
-    notes()->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
-    pictureLabel()->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), /* RSHTML_FORMATTEXT_EMBED_SMILEYS |*/ RSHTML_FORMATTEXT_EMBED_LINKS));
+    notes()->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), (Settings->getBoardsLoadEmoticons() ? RSHTML_FORMATTEXT_EMBED_SMILEYS : 0) | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_MARKDOWN));
+    pictureLabel()->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), (Settings->getBoardsLoadEmoticons() ? RSHTML_FORMATTEXT_EMBED_SMILEYS : 0) | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_MARKDOWN));
 
     // feed.
     //frame_comment->show();
@@ -360,7 +361,7 @@ void BoardPostDisplayWidget_compact::setup()
             ui->pictureLabel->setPicture( FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png") );
     }
 
-    ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_LINKS));
+    ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), (Settings->getBoardsLoadEmoticons() ? RSHTML_FORMATTEXT_EMBED_SMILEYS : 0) | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_MARKDOWN));
 
     QObject::connect(ui->expandButton, SIGNAL(toggled(bool)), this, SLOT(doExpand(bool)));
 

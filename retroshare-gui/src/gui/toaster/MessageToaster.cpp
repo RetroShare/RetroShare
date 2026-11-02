@@ -20,6 +20,7 @@
 
 #include "MessageToaster.h"
 #include "../MainWindow.h"
+#include "util/RsMarkdown.h"
 
 #include <retroshare/rsmail.h>
 #include <retroshare/rspeers.h>
@@ -40,8 +41,10 @@ MessageToaster::MessageToaster(const std::string &peerId, const QString &title, 
 	/* set informations */
 	ui.subjectLabel->setText(tr("Sub:") + " " + title);
 	ui.subjectLabel->setToolTip(title);
-	ui.textLabel->setText(message);
-	ui.textLabel->setToolTip(message);
+	// Markdown messages: show the text without markup
+	const QString text = RsMarkdown::isHtml(message) ? message : RsMarkdown::toPlainText(message);
+	ui.textLabel->setText(text);
+	ui.textLabel->setToolTip(text);
 
     Rs::Mail::MessageInfo mi;
 

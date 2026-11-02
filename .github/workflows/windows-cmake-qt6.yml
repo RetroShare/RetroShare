@@ -75,6 +75,7 @@ jobs:
             mingw-w64-ucrt-x86_64-ffmpeg
             mingw-w64-ucrt-x86_64-bzip2
             mingw-w64-ucrt-x86_64-zlib
+            mingw-w64-ucrt-x86_64-cmark
 
       # Same pinned-commit init as the Ubuntu/macOS CMake CI (no --remote); librnp
       # needs --recursive for its nested src/libsexpp.
