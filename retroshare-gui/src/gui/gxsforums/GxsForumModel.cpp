@@ -923,11 +923,31 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 	}
 	else
 	{
-		// Emit dataChanged only for the changed message and its parents
+		// Emit dataChanged for the changed post and for every one of its
+		// ancestors: their bold state (FLAG_POST_HAS_UNREAD_CHILDREN) may have
+		// changed too.
+		//
+		// The ancestors are walked through the post table, not through
+		// QModelIndex::parent(). In flat view parent() deliberately returns an
+		// invalid index -- the view shows no hierarchy -- so a loop on i.parent()
+		// silently repaints nothing there, and a parent post stayed bold after
+		// its last unread reply had been read until some unrelated repaint. The
+		// has-unread-children flag is computed on the real hierarchy in both view
+		// modes, so the ancestors' rows must be refreshed in both modes as well.
 		emit dataChanged(i, i.sibling(i.row(), COLUMN_THREAD_NB_COLUMNS - 1));
-		for(QModelIndex j = i.parent(); j.isValid(); j = j.parent())
+
+		size_t guard = 0;	// the parent chain always ends at the root sentinel; never trust it blindly
+		for(ForumModelIndex p = mPosts[entry].mParent; p != 0 && p < mPosts.size() && guard < mPosts.size(); p = mPosts[p].mParent, ++guard)
 		{
-			emit dataChanged(j, j.sibling(j.row(), COLUMN_THREAD_NB_COLUMNS - 1));
+			void *pref = nullptr;
+			convertTabEntryToRefPointer(p, pref);
+
+			// Same row convention as getIndexOfMessage(): table slot minus one in
+			// flat view, position among the parent's children in tree view.
+			QModelIndex pi = (mTreeMode == TREE_MODE_FLAT) ? createIndex(p - 1, 0, pref)
+			                                               : createIndex(mPosts[p].prow, 0, pref);
+
+			emit dataChanged(pi, pi.sibling(pi.row(), COLUMN_THREAD_NB_COLUMNS - 1));
 		}
 	}
 }
