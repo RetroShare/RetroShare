@@ -340,12 +340,16 @@ fi
 
 # 10. Déploiement de la WebUI (si présente)
 echo ">>> Deploying WebUI static assets..."
-if [ -d "retroshare-webui/src" ]; then
+# The generated web files live in retroshare-webui/webui (retroshare-webui/src
+# never existed, so this copy silently did nothing). RetroShare looks for them
+# in ./webui relative to the executable, which is exactly $DEPLOY_DIR/webui.
+if [ -d "retroshare-webui/webui" ]; then
     mkdir -p "$DEPLOY_DIR/webui"
-    cp -r retroshare-webui/src/* "$DEPLOY_DIR/webui/" 2>/dev/null || true
+    cp -r retroshare-webui/webui/. "$DEPLOY_DIR/webui/"
     echo "  WebUI copied to deployment folder."
 else
-    echo "  WebUI source folder not found. Skipping WebUI packaging."
+    echo "  WARNING: retroshare-webui/webui not found, the archive will ship no web interface."
+    echo "           Configure the build with -DRS_WEBUI=ON to generate it."
 fi
 
 # 11. Création de l'archive finale (7z en priorité, zip en fallback)
