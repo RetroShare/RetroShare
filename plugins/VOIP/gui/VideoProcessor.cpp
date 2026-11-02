@@ -37,6 +37,7 @@
 
 #include <math.h>
 #include <time.h>
+#include <string.h>
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -574,6 +575,11 @@ FFmpegVideo::FFmpegVideo(Kind kind, uint16_t header_codec_id)
 #endif
 }
 
+bool FFmpegVideo::isLibx264() const
+{
+    return encoding_codec != NULL && strcmp(encoding_codec->name, "libx264") == 0 ;
+}
+
 bool FFmpegVideo::openEncoder(int64_t bitrate)
 {
     if(encoding_codec == NULL)
@@ -619,6 +625,16 @@ bool FFmpegVideo::openEncoder(int64_t bitrate)
         // other H.264 encoders are simply ignored.)
         av_opt_set(encoding_context->priv_data, "preset", "veryfast", 0) ;
         av_opt_set(encoding_context->priv_data, "tune", "zerolatency", 0) ;
+
+        // libx264: capped CRF. The bandwidth setting is a maximum, not a target:
+        // constant quality, with the bitrate bounded by the VBV ceiling above, so a
+        // still picture uses far less than the maximum. A non-zero bit_rate would
+        // make x264 fill the target whatever the picture.
+        if(isLibx264())
+        {
+            av_opt_set_double(encoding_context->priv_data, "crf", 23.0, 0) ;
+            encoding_context->bit_rate = 0 ;
+        }
     }
 
     if(avcodec_open2(encoding_context, encoding_codec, NULL) < 0)
@@ -631,7 +647,7 @@ bool FFmpegVideo::openEncoder(int64_t bitrate)
     _encoder_bitrate = bitrate ;
     _last_encoder_reopen = time(NULL) ;
 
-    std::cerr << "VOIP: video encoder " << encoding_codec->name << " opened at " << bitrate/1000 << " kbit/s" << std::endl;
+    std::cerr << "VOIP: video encoder " << encoding_codec->name << (isLibx264() ? " opened, constant quality up to " : " opened at ") << bitrate/1000 << " kbit/s" << std::endl;
     return true ;
 }
 
@@ -747,8 +763,8 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_bytes_per_sec,
     {
       if(_encoder_can_change_bitrate)
       {
-        // libx264 applies bitrate changes on the next frame (x264_encoder_reconfig)
-        encoding_context->bit_rate       = wanted ;
+        // libx264 applies the new ceiling on the next frame (x264_encoder_reconfig).
+        // bit_rate stays 0: capped CRF, see openEncoder().
         encoding_context->rc_max_rate    = wanted ;
         encoding_context->rc_buffer_size = (int)wanted ;
         _encoder_bitrate = wanted ;
