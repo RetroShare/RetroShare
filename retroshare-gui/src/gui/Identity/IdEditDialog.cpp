@@ -154,7 +154,7 @@ void IdEditDialog::setupNewId(bool pseudo,bool enable_anon)
             std::cerr << "IdEditDialog::setupNewId: Error. Cannot init with pseudo-anonymous id when anon ids are disabled." << std::endl;
             pseudo = false ;
         }
-        
+
 	mIsNew = true;
 	mGroupId.clear();
 
@@ -177,7 +177,7 @@ void IdEditDialog::setupNewId(bool pseudo,bool enable_anon)
 
 	ui->frame_Tags->setHidden(true);
 	ui->radioButton_GpgId->setEnabled(true);
-    
+
     	if(enable_anon)
 		ui->radioButton_Pseudo->setEnabled(true);
         else
@@ -320,9 +320,15 @@ void IdEditDialog::loadExistingId(const RsGxsIdGroup& id_group)
 	{
 		ui->radioButton_Pseudo->setChecked(true);
 	}
-	// these are not editable for existing Id.
-	ui->radioButton_GpgId->setEnabled(false);
-	ui->radioButton_Pseudo->setEnabled(false);
+  // typically don't allow switching from linked to anonymous because it could
+  // lead a false sense of security
+  #ifndef ALLOW_ID_SWITCH_TO_ANONYMOUS
+  if(realid)
+  {
+    ui->radioButton_GpgId->setEnabled(false);
+    ui->radioButton_Pseudo->setEnabled(false);
+  }
+  #endif
 
 	// DOES THIS TRIGGER ALREADY???
 	// force - incase it wasn't triggered.
@@ -426,7 +432,7 @@ void IdEditDialog::rmTag5()
 {
 	rmTag(4);
 }
-	
+
 void IdEditDialog::rmTag(int idx)
 {
 	std::list<std::string>::iterator it;
@@ -447,7 +453,7 @@ bool IdEditDialog::tagDetails(const RsGxsId &id, const std::string &name, const 
 		desc += "Empty Tag";
 		return false;
 	}
-		
+
 	/* extract details for each tag */
 	RsRecognTagDetails tagDetails;
 
@@ -664,6 +670,7 @@ void IdEditDialog::updateId()
 
     RsGxsId keyId;
     std::string gpg_password;
+    mEditGroup.mPgpLinked = ui->radioButton_GpgId->isChecked();
 
     if(mEditGroup.mPgpLinked)
     {
@@ -682,7 +689,7 @@ void IdEditDialog::updateId()
         }
     }
 
-    if(!rsIdentity->updateIdentity(RsGxsId(mEditGroup.mMeta.mGroupId),mEditGroup.mMeta.mGroupName,mEditGroup.mImage,mEditGroup.mPgpId.isNull(),gpg_password))
+    if(!rsIdentity->updateIdentity(RsGxsId(mEditGroup.mMeta.mGroupId),mEditGroup.mMeta.mGroupName,mEditGroup.mImage,!mEditGroup.mPgpLinked,gpg_password))
     {
         QMessageBox::critical(NULL,tr("Identity update failed"),tr("Cannot update identity. Something went wrong. Check your profile password."));
         return;
