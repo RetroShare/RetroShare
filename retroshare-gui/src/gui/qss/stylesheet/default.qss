@@ -147,6 +147,7 @@ QLabel#newLabel:enabled {
 /* AvatarWidget */
 
 AvatarWidget{border-width: 10px;}
+AvatarWidget[frameState="NOTHING"]{border-width: 0px;}
 AvatarWidget[frameState="NORMAL"]{border-image:url(:/images/avatarstatus-bg-116.png);}
 AvatarWidget[frameState="OFFLINE"]{border-image:url(:/images/avatarstatus-bg-offline-116.png);}
 AvatarWidget[frameState="INACTIVE"]{border-image:url(:/images/avatarstatus-bg-idle-116.png);}
