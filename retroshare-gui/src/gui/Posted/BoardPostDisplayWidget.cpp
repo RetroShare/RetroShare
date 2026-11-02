@@ -263,6 +263,10 @@ void BoardPostDisplayWidgetBase::baseSetup()
     //frame_comment->show();
     commentButton()->show();
 
+    feedFrame()->setProperty("pinned", mDisplayFlags & SHOW_PINNED);
+    feedFrame()->style()->unpolish(feedFrame());
+    feedFrame()->style()->polish(feedFrame());
+
     setCommentsSize(mPost.mComments);
 
     setReadStatus(IS_MSG_NEW(mPost.mMeta.mMsgStatus), IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) || IS_MSG_NEW(mPost.mMeta.mMsgStatus));
