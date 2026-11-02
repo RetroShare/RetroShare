@@ -121,6 +121,8 @@ private:
 
 	bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 
+	void updateUnreadCounters();
+
 	RSTreeWidgetItemCompareRole *compareRole;
 	QTreeWidgetItem *privateLobbyItem;
 	QTreeWidgetItem *publicLobbyItem;
@@ -131,6 +133,8 @@ private:
 	ChatTabWidget *tabWidget ;
 
 	std::map<ChatLobbyId,ChatLobbyInfoStruct> _lobby_infos ;
+
+	std::map<ChatLobbyId,unsigned int> _unread_counts ;	// unread messages per room, for the tree counters
 
 	std::map<QTreeWidgetItem*,time_t> _icon_changed_map ;
 

@@ -209,6 +209,7 @@ private slots:
 	void quote();
 	void dropPlacemark();
 	void saveSticker();
+	void checkVisibleAnchors();
 
 private:
 	bool findText(const QString& qsStringToFind);
