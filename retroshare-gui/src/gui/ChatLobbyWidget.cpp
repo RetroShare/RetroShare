@@ -793,6 +793,8 @@ void ChatLobbyWidget::showLobby(QTreeWidgetItem *item)
         _lobby_infos[id].dialog->showDialog(RsChatFlags::RS_CHAT_FOCUS);
 		if (_lobby_infos[id].dialog->isWindowed())
 			showBlankPage(id, true);
+		else if (ui.stackedWidget->indexOf(_lobby_infos[id].dialog) == -1)
+			showBlankPage(id, true, true);
 	}
 }
 
@@ -856,6 +858,8 @@ bool ChatLobbyWidget::showLobbyAnchor(ChatLobbyId id, QString anchor)
                 _lobby_infos[id].dialog->showDialog(RsChatFlags::RS_CHAT_FOCUS);
 				if (_lobby_infos[id].dialog->isWindowed())
 					showBlankPage(id, true);
+				else if (ui.stackedWidget->indexOf(_lobby_infos[id].dialog) == -1)
+					showBlankPage(id, true, true);
 
 				_lobby_infos[id].dialog->getChatWidget()->scrollToAnchor(anchor);
 			}
@@ -932,7 +936,9 @@ void ChatLobbyWidget::autoSubscribeLobby(QTreeWidgetItem *item)
         subscribeChatLobbyAtItem(item);
 }
 
-void ChatLobbyWidget::showBlankPage(ChatLobbyId id, bool subscribed /*= false*/)
+// hostedElsewhere: the room's dialog was re-parented out of our stacked widget (a plugin
+// embeds it in its own page), so selecting the room here can show nothing but this page.
+void ChatLobbyWidget::showBlankPage(ChatLobbyId id, bool subscribed /*= false*/, bool hostedElsewhere /*= false*/)
 {
 	// show the default blank page.
 	ui.stackedWidget->setCurrentWidget(ui._lobby_blank_page) ;
@@ -957,7 +963,9 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id, bool subscribed /*= false*/)
 			ui.lobbypeers_lineEdit->setText( QString::number((*it).total_number_of_peers) );
 
 			QString text = tr("You're subscribed to this chat room; Double click to show window and chat.") ;
-			if (!subscribed)
+			if (hostedElsewhere)
+				text = tr("You're subscribed to this chat room, but it is currently displayed in another page (for instance a plugin's), so it cannot be shown here.") ;
+			else if (!subscribed)
 			{
 				text = tr("You're not subscribed to this chat room; Double click-it to enter and chat.") ;
 				if(my_ids.empty())
