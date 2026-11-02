@@ -489,7 +489,16 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 
 		/* Set color */
 
-        if(itemInfo.deprecated_format)
+        if(!itemInfo.circle_warning.isEmpty())
+        {
+            // Subscribed, but the circle's members do not include us: the posts are encrypted for them
+            // and will never reach this node. Say it where the user looks, on the group itself.
+            item->setText(GTW_COLUMN_NAME, itemInfo.name + " " + tr("(not in circle)"));
+            item->setData(GTW_COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_WARNING);
+            item->setData(GTW_COLUMN_NAME, Qt::ForegroundRole, QBrush(textColorWarning()));
+            item->setToolTip(GTW_COLUMN_NAME, itemInfo.circle_warning + "\n\n" + tooltip);
+        }
+        else if(itemInfo.deprecated_format)
         {
             item->setData(GTW_COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_WARNING);
             item->setData(GTW_COLUMN_NAME, Qt::ForegroundRole, QBrush(textColorWarning()));
