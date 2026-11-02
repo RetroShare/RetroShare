@@ -19,6 +19,8 @@
  *******************************************************************************/
 
 #include <QPixmap>
+#include <QDir>
+#include <QFile>
 
 #include <retroshare/rschats.h>
 #include <retroshare/rspeers.h>
@@ -27,6 +29,66 @@
 
 #include "AvatarDefs.h"
 #include "gui/common/FilesDefs.h"
+
+#define AVATAR_CACHE_DIR "avatars"
+
+QString AvatarDefs::getAvatarCacheDir()
+{
+    QString cacheDir = QDir::homePath() + "/.cache/RetroShare/";
+    if (!QDir(cacheDir).exists()) {
+        QDir().mkpath(cacheDir);
+    }
+    return cacheDir + AVATAR_CACHE_DIR + "/";
+}
+
+bool AvatarDefs::loadAvatarFromDiskCache(const RsPeerId& sslId, QPixmap &avatar)
+{
+    QString cacheDir = getAvatarCacheDir();
+    if (!QDir(cacheDir).exists()) {
+        QDir().mkpath(cacheDir);
+    }
+
+    QString filePath = cacheDir + QString::fromStdString(sslId.toStdString()) + ".png";
+    QFile file(filePath);
+
+    if (file.exists()) {
+        if (avatar.load(filePath)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool AvatarDefs::saveAvatarToDiskCache(const RsPeerId& sslId, const QPixmap &avatar)
+{
+    QString cacheDir = getAvatarCacheDir();
+    if (!QDir(cacheDir).exists()) {
+        QDir().mkpath(cacheDir);
+    }
+
+    QString filePath = cacheDir + QString::fromStdString(sslId.toStdString()) + ".png";
+    return avatar.save(filePath, "PNG");
+}
+
+void AvatarDefs::cleanupAvatarDiskCache()
+{
+    QString cacheDir = getAvatarCacheDir();
+    QDir dir(cacheDir);
+
+    if (!dir.exists()) {
+        return;
+    }
+
+    // Remove avatars older than 30 days
+    QDateTime threshold = QDateTime::currentDateTime().addDays(-30);
+    QFileInfoList files = dir.entryInfoList(QStringList() << "*.png", QDir::Files);
+
+    for (const QFileInfo &file : files) {
+        if (file.lastModified() < threshold) {
+            dir.remove(file.fileName());
+        }
+    }
+}
 
 void AvatarDefs::getOwnAvatar(QPixmap &avatar, const QString& defaultImage)
 {
@@ -46,12 +108,30 @@ void AvatarDefs::getOwnAvatar(QPixmap &avatar, const QString& defaultImage)
 
 	free(data);
 }
+
 bool AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, const QString& defaultImage)
 {
     unsigned char *data = NULL;
     int size = 0;
 
-    /* get avatar */
+    // First try to load from disk cache
+    if (loadAvatarFromDiskCache(sslId, avatar)) {
+        // Got from cache, now check if network has newer version
+        rsChats->getAvatarData(RsPeerId(sslId), data, size);
+        if (size > 0) {
+            // Network has a newer avatar, update cache
+            QPixmap networkAvatar;
+            GxsIdDetails::loadPixmapFromData(data, size, networkAvatar, GxsIdDetails::LARGE);
+            saveAvatarToDiskCache(sslId, networkAvatar);
+            avatar = networkAvatar;
+            free(data);
+            return true;
+        }
+        // No network avatar, use cached one
+        return true;
+    }
+
+    /* get avatar from network */
     rsChats->getAvatarData(RsPeerId(sslId), data, size);
     if (size == 0) {
         if (!defaultImage.isEmpty()) {
@@ -63,9 +143,13 @@ bool AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, cons
     /* load image */
     GxsIdDetails::loadPixmapFromData(data, size, avatar, GxsIdDetails::LARGE) ;
 
+    // Save to disk cache for persistence
+    saveAvatarToDiskCache(sslId, avatar);
+
     free(data);
     return true;
 }
+
 bool AvatarDefs::getAvatarFromGxsId(const RsGxsId& gxsId, QPixmap &avatar, const QString& defaultImage)
 {
     //int size = 0;
