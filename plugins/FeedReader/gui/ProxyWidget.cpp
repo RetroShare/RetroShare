@@ -17,14 +17,19 @@ ProxyWidget::ProxyWidget(QWidget *parent)
 	ui->schemeComboBox->setItemData(ui->schemeComboBox->count() - 1, tr("HTTP Proxy."), Qt::ToolTipRole);
 	ui->schemeComboBox->addItem("HTTPS", "https://");
 	ui->schemeComboBox->setItemData(ui->schemeComboBox->count() - 1, tr("HTTPS Proxy."), Qt::ToolTipRole);
-	ui->schemeComboBox->addItem("SOCKS4", "socks4://");
-	ui->schemeComboBox->setItemData(ui->schemeComboBox->count() - 1, tr("SOCKS4 Proxy."), Qt::ToolTipRole);
-	ui->schemeComboBox->addItem("SOCKS4a", "socks4a://");
-	ui->schemeComboBox->setItemData(ui->schemeComboBox->count() - 1, tr("SOCKS4a Proxy. Proxy resolves URL hostname."), Qt::ToolTipRole);
-	ui->schemeComboBox->addItem("SOCKS5", "socks5://");
-	ui->schemeComboBox->setItemData(ui->schemeComboBox->count() - 1, tr("SOCKS5 Proxy."), Qt::ToolTipRole);
-	ui->schemeComboBox->addItem("SOCKS5h", "socks5h://");
-	ui->schemeComboBox->setItemData(ui->schemeComboBox->count() - 1, tr("SOCKS5 Proxy. Proxy resolves URL hostname."), Qt::ToolTipRole);
+	ui->schemeComboBox->addItem(tr("SOCKS4 (local DNS)"), "socks4://");
+	ui->schemeComboBox->setItemData(ui->schemeComboBox->count() - 1, tr("SOCKS4 Proxy. Hostnames are resolved locally and leak to your DNS resolver."), Qt::ToolTipRole);
+	ui->schemeComboBox->addItem(tr("SOCKS4a (remote DNS)"), "socks4a://");
+	ui->schemeComboBox->setItemData(ui->schemeComboBox->count() - 1, tr("SOCKS4a Proxy. Hostnames are resolved by the proxy."), Qt::ToolTipRole);
+	ui->schemeComboBox->addItem(tr("SOCKS5 (local DNS)"), "socks5://");
+	ui->schemeComboBox->setItemData(ui->schemeComboBox->count() - 1, tr("SOCKS5 Proxy. Hostnames are resolved locally and leak to your DNS resolver."), Qt::ToolTipRole);
+	ui->schemeComboBox->addItem(tr("SOCKS5h (remote DNS, use with Tor)"), "socks5h://");
+	ui->schemeComboBox->setItemData(ui->schemeComboBox->count() - 1, tr("SOCKS5 Proxy. Hostnames are resolved by the proxy. Recommended with Tor."), Qt::ToolTipRole);
+
+	/* The warning only reflects the selected scheme, so it does not need to be
+	 * disconnected while the widget updates itself (unlike the "changed" signal). */
+	connect(ui->schemeComboBox, (void(QComboBox::*)(int))&QComboBox::currentIndexChanged, this, &ProxyWidget::updateWarning);
+	updateWarning();
 }
 
 ProxyWidget::~ProxyWidget()
@@ -91,6 +96,19 @@ int ProxyWidget::port()
 void ProxyWidget::setPort(int value)
 {
 	ui->portSpinBox->setValue(value);
+}
+
+void ProxyWidget::updateWarning()
+{
+	QString scheme = ui->schemeComboBox->currentData().toString();
+
+	if (scheme == "socks4://" || scheme == "socks5://") {
+		ui->warningLabel->setText(tr("Hostnames of the feeds will be resolved locally and leak to your DNS resolver. With Tor, use SOCKS5h (or SOCKS4a) instead."));
+		ui->warningLabel->show();
+	} else {
+		ui->warningLabel->clear();
+		ui->warningLabel->hide();
+	}
 }
 
 void ProxyWidget::addressChanged(const QString &value)
