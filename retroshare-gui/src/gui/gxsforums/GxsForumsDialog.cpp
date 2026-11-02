@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include "GxsForumsDialog.h"
+#include "gui/gxs/GxsPerfProbe.h"
 #include "GxsForumGroupDialog.h"
 #include "GxsForumThreadWidget.h"
 #include "CreateGxsForumMsg.h"
@@ -54,6 +55,8 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent) :
 
 void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
+    RsGuiPerf::Probe prof("forumsDialog::handleEvent");
+
     if(event->mType == RsEventType::GXS_FORUMS)
     {
         const RsGxsForumEvent *e = dynamic_cast<const RsGxsForumEvent*>(event.get());
@@ -77,8 +80,19 @@ void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
             break;
 
         case RsForumEventCode::STATISTICS_CHANGED:
+            // This event means a *peer* reported new statistics for a forum (how
+            // many messages it holds, how many suppliers). It says nothing about
+            // our own database, so the local message and unread counts cannot
+            // have changed and there is nothing to recompute here. The group
+            // summary refresh below already picks up the network side.
+            //
+            // Recomputing them anyway was ruinous: during a sync the node gets
+            // one such event per known forum, and each one rebuilt that forum's
+            // whole post hierarchy in its own detached thread. Measured on a node
+            // knowing ~1300 forums: 839 statistics jobs finishing in the same
+            // second and 104 requests dying on the 5 s waitToken cap, which is
+            // why the unread counters took forever to show up at startup.
             if(!mUpdateTimer->isActive()) mUpdateTimer->start(1000);
-            updateGroupStatisticsReal(e->mForumGroupId);
             break;
 
         default:
