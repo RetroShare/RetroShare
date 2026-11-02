@@ -112,6 +112,7 @@ public:
 
 private:
     bool openEncoder(int64_t bitrate_bits_per_sec) ;
+    bool isLibx264() const ;
 
     Kind _kind ;
     uint16_t _header_codec_id ;
