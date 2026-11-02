@@ -818,8 +818,11 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
         std::string error_string;
         RsGxsMessageId post_id;
 
-        if(!rsGxsChannels->createPostV2(mChannelId,subject,msg,files,image,mOrigPostId,post_id,error_string))
+        if(!rsGxsChannels->createPostV2(mChannelId,subject,msg,files,image,mOrigPostId,post_id,error_string)) {
             QMessageBox::critical(nullptr,tr("Cannot publish post"),QString::fromStdString(error_string));
+            // Don't close on error
+            return;
+        }
 	}
 
 	accept();
