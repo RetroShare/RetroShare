@@ -86,6 +86,9 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		virtual int sendVoipRinging(const RsPeerId& peer_id, uint32_t flags) ;
 		virtual int sendVoipAcceptCall(const RsPeerId &peer_id, uint32_t flags) ;
 
+		virtual void setVoipLocalCapabilities(uint32_t caps) ;
+		virtual uint32_t getVoipPeerCapabilities(const RsPeerId& peer_id) const ;
+
 		/***** overloaded from p3Service *****/
 		/*!
 		 * This retrieves all chat msg items and also (important!)
@@ -142,6 +145,7 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		void 	sendBandwidthInfo();
 
 		int sendVoipBandwidth(const RsPeerId &peer_id,uint32_t bytes_per_sec) ;
+		void sendVoipCapabilities(const RsPeerId &peer_id) ;
 
 		int 	handlePing(RsVOIPPingItem *item);
 		int 	handlePong(RsVOIPPongItem *item);
@@ -152,7 +156,10 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		void handleProtocol(RsVOIPProtocolItem*) ;
 		void handleData(RsVOIPDataItem*) ;
 
-		RsMutex mVOIPMtx;
+		mutable RsMutex mVOIPMtx;
+
+		uint32_t mLocalCapabilities ;				// RS_VOIP_CAPS_* we send
+		std::map<RsPeerId, uint32_t> mPeerCapabilities ;	// RS_VOIP_CAPS_* received, per peer
 
 		VOIPPeerInfo *locked_GetPeerInfo(const RsPeerId& id);
 

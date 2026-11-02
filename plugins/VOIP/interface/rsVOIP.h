@@ -61,12 +61,21 @@ struct RsVOIPDataChunk
 	void clear() ;
 };
 
+// Capabilities a peer advertises when a call starts.
+const uint32_t RS_VOIP_CAPS_H264_VIDEO = 0x0001 ;	// decodes H.264 video
+
 class RsVOIP
 {
 	public:
 		virtual int sendVoipHangUpCall(const RsPeerId& peer_id, uint32_t flags) = 0;
 		virtual int sendVoipRinging(const RsPeerId& peer_id, uint32_t flags) = 0;
 		virtual int sendVoipAcceptCall(const RsPeerId& peer_id, uint32_t flags) = 0;
+
+		// Our own RS_VOIP_CAPS_* flags, sent to the peer after each ring and accept.
+		virtual void setVoipLocalCapabilities(uint32_t caps) = 0;
+		// RS_VOIP_CAPS_* flags received from the peer for the current call, 0 if
+		// none (older plugin, or not received yet).
+		virtual uint32_t getVoipPeerCapabilities(const RsPeerId& peer_id) const = 0;
 
 		// Sending data. The client keeps the memory ownership and must delete it after calling this.
 		virtual int sendVoipData(const RsPeerId& peer_id,const RsVOIPDataChunk& chunk) = 0;

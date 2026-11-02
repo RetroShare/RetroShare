@@ -243,6 +243,7 @@ void VOIPConfigPanel::createPipeline()
     videoInput = new QVideoInputDevice(this) ;
 
     videoProcessor = new VideoProcessor() ;
+    videoProcessor->setPeerDecodesH264(true) ;	// the preview decodes its own stream
     videoProcessor->setDisplayTarget(NULL) ;
     videoProcessor->setMaximumBandwidth((uint32_t)(ui.availableBW_SB->value()*1024)) ;
 
