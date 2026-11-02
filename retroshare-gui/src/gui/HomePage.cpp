@@ -25,14 +25,15 @@
 
 #include "util/qtthreadsutils.h"
 #include "util/misc.h"
+#include "util/DateTime.h"
 
 #include "gui/common/FilesDefs.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/connect/ConfCertDialog.h"
-#include <gui/QuickStartWizard.h>
 #include "gui/connect/FriendRecommendDialog.h"
 #include "settings/rsharesettings.h"
+#include "retroshare/rsgxschannels.h"
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 #include <QUrlQuery>
@@ -393,6 +394,7 @@ void HomePage::showEvent(QShowEvent *event)
 {
 	if (!event->spontaneous()) {
 		updateHomeLogo();
+		loadChannelContent();
 	}
 }
 
@@ -402,4 +404,83 @@ void HomePage::updateHomeLogo()
 		ui->label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":images/logo/logo_web_nobackground_black.png"));
 	else
 		ui->label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":images/logo/logo_web_nobackground.png"));
+}
+
+void HomePage::loadChannelContent()
+{
+	if(!rsGxsChannels)
+		return;
+
+	// Get all subscribed channels
+	std::list<RsGroupMetaData> channelSummaries;
+	if(!rsGxsChannels->getChannelsSummaries(channelSummaries))
+		return;
+
+	QWidget *channelWidget = ui->channelContentWidget;
+	QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(channelWidget->layout());
+	if(!layout)
+	{
+		mChannelContentLayout = new QVBoxLayout(channelWidget);
+		layout = mChannelContentLayout;
+	}
+
+	// Clear existing items (except label and spacer)
+	while(layout->count() > 2)
+	{
+		QLayoutItem *item = layout->takeAt(1);
+		if(item->widget())
+			delete item->widget();
+		delete item;
+	}
+
+	std::vector<RsGxsChannelGroup> groups;
+	std::vector<RsGxsChannelPost> posts;
+	std::vector<RsGxsComment> comments;
+	std::vector<RsGxsVote> votes;
+
+	int itemCount = 0;
+	const int MAX_ITEMS = 10;
+
+	for(const auto &summary : channelSummaries)
+	{
+		if(itemCount >= MAX_ITEMS)
+			break;
+
+		if(!IS_GROUP_SUBSCRIBED(summary.mSubscribeFlags))
+			continue;
+
+
+		RsGxsGroupId grpId(summary.mGroupId);
+
+		// Get latest post for this channel
+		std::vector<RsGxsChannelPost> channelPosts;
+		std::vector<RsGxsComment> channelComments;
+		std::vector<RsGxsVote> channelVotes;
+
+		if(!rsGxsChannels->getChannelContent(grpId, std::set<RsGxsMessageId>(), channelPosts, channelComments, channelVotes))
+			continue;
+
+		if(channelPosts.empty())
+			continue;
+
+		// Get most recent post
+		RsGxsChannelPost mostRecentPost = channelPosts[0];
+		for(const auto &post : channelPosts)
+		{
+			if(post.mMeta.mPublishTs > mostRecentPost.mMeta.mPublishTs)
+				mostRecentPost = post;
+		}
+
+		// Create a simple label for each post
+		QLabel *postLabel = new QLabel(channelWidget);
+		QString title = QString::fromUtf8(mostRecentPost.mMeta.mMsgName.c_str());
+		QString channelName = QString::fromUtf8(summary.mGroupName.c_str());
+		QString timestamp = DateTime::formatDateTime(DateTime::DateTimeFromTime_t(mostRecentPost.mMeta.mPublishTs));
+
+		postLabel->setText(QString("<b>%1</b> - %2<br/><font color='gray'>%3</font>").arg(channelName, title, timestamp));
+		postLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+		layout->insertWidget(layout->count() - 1, postLabel);
+
+		itemCount++;
+	}
 }
