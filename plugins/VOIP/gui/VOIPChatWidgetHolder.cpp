@@ -682,7 +682,8 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 
 		//activate video input
 		videoWidget->show();
-		inputVideoDevice->start() ;
+		videoProcessor->setMaximumBandwidth(rsVOIP->getVoipVideoMaxBandwidth()) ;	// user setting (wizard / settings page)
+		inputVideoDevice->start(QVideoInputDevice::preferredCamera()) ;
 
 		//send system message
 		if (mChatWidget)
@@ -883,7 +884,12 @@ void VOIPChatWidgetHolder::botMouseLeaveDecline()
 
 void VOIPChatWidgetHolder::setAcceptedBandwidth(uint32_t bytes_per_sec)
 {
-	videoProcessor->setMaximumBandwidth(bytes_per_sec) ;
+	// The peer reports the video bandwidth it actually received. That is just what we
+	// sent (smoothed, and starting from zero), not what the connection can carry, so
+	// using it as the encoder limit only ever lowered the quality. The encoder uses
+	// the bandwidth chosen by the user instead.
+	std::cerr << "VOIP: peer reports " << bytes_per_sec << " B/s of incoming video (target: "
+	          << rsVOIP->getVoipVideoMaxBandwidth() << " B/s)" << std::endl;
 }
 
 void VOIPChatWidgetHolder::addAudioData(const RsPeerId &peer_id, QByteArray* array)
@@ -895,7 +901,7 @@ void VOIPChatWidgetHolder::addAudioData(const RsPeerId &peer_id, QByteArray* arr
     }
 
     if (!outputAudioDevice) {
-        outputAudioDevice = AudioDeviceHelper::getDefaultOutputDevice();
+        outputAudioDevice = AudioDeviceHelper::getPreferedOutputDevice();
     }
 
     if (!outputAudioProcessor) {
@@ -930,6 +936,11 @@ void VOIPChatWidgetHolder::addAudioData(const RsPeerId &peer_id, QByteArray* arr
 void VOIPChatWidgetHolder::sendVideoData()
 {
 	RsVOIPDataChunk chunk ;
+
+	// Switch to H.264 once the peer has said it decodes it. Until then (older
+	// plugin, or its answer not received yet) video is sent as MPEG-4.
+	if(videoProcessor && (rsVOIP->getVoipPeerCapabilities(mChatWidget->getChatId().toPeerId()) & RS_VOIP_CAPS_H264_VIDEO))
+		videoProcessor->setPeerDecodesH264(true) ;
 
 	while(inputVideoDevice && inputVideoDevice->getNextEncodedPacket(chunk))
 		rsVOIP->sendVoipData(mChatWidget->getChatId().toPeerId(),chunk) ;

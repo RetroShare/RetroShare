@@ -102,7 +102,10 @@ class RsVOIPProtocolItem: public RsVOIPItem
 	public:
 		RsVOIPProtocolItem() :RsVOIPItem(RS_PKT_SUBTYPE_VOIP_PROTOCOL) {}
 
-		typedef enum { VoipProtocol_Ring = 1, VoipProtocol_Ackn = 2, VoipProtocol_Close = 3, VoipProtocol_Bandwidth = 4 } en_Protocol;
+		// VoipProtocol_Capabilities: flags = RS_VOIP_CAPS_* of the sender. Sent after
+		// each Ring and Ackn. Older plugins log it as unknown and ignore it.
+		typedef enum { VoipProtocol_Ring = 1, VoipProtocol_Ackn = 2, VoipProtocol_Close = 3, VoipProtocol_Bandwidth = 4,
+		               VoipProtocol_Capabilities = 5 } en_Protocol;
 
 		virtual ~RsVOIPProtocolItem() {}
 		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);

@@ -128,6 +128,9 @@ p3VOIP::p3VOIP(RsPluginHandler *handler,VOIPNotify *notifier)
         _min_loudness = 4702;
         _noise_suppress = -45;
         _echo_cancel = true;
+        _video_max_bandwidth = 80*1024; // bytes/s
+        _video_wide_mode = RsVOIP::VideoWideCropTo4by3 ;
+        mLocalCapabilities = 0 ;
 
 }
 RsServiceInfo p3VOIP::getServiceInfo()
@@ -239,6 +242,7 @@ int p3VOIP::sendVoipAcceptCall(const RsPeerId& peer_id, uint32_t flags)
 	item->PeerId(peer_id) ;
 
 	sendItem(item) ;
+	sendVoipCapabilities(peer_id) ;
 
 	return true ;
 }
@@ -250,10 +254,49 @@ int p3VOIP::sendVoipRinging(const RsPeerId &peer_id, uint32_t flags)
 	item->flags = flags ;
 	item->PeerId(peer_id) ;
 
+	{
+		// New call: forget what the peer advertised before, it answers with its
+		// capabilities after its Ackn.
+		RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
+		mPeerCapabilities.erase(peer_id) ;
+	}
 	sendItem(item) ;
+	sendVoipCapabilities(peer_id) ;
 
 	return true ;
 }
+void p3VOIP::sendVoipCapabilities(const RsPeerId &peer_id)
+{
+	uint32_t caps ;
+	{
+		RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
+		caps = mLocalCapabilities ;
+	}
+	if(caps == 0)
+		return ;
+
+	RsVOIPProtocolItem *item = new RsVOIPProtocolItem ;
+
+	item->protocol = RsVOIPProtocolItem::VoipProtocol_Capabilities ;
+	item->flags = caps ;
+	item->PeerId(peer_id) ;
+
+	sendItem(item) ;
+}
+
+void p3VOIP::setVoipLocalCapabilities(uint32_t caps)
+{
+	RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
+	mLocalCapabilities = caps ;
+}
+
+uint32_t p3VOIP::getVoipPeerCapabilities(const RsPeerId& peer_id) const
+{
+	RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
+	std::map<RsPeerId,uint32_t>::const_iterator it = mPeerCapabilities.find(peer_id) ;
+	return (it == mPeerCapabilities.end()) ? 0 : it->second ;
+}
+
 int p3VOIP::sendVoipBandwidth(const RsPeerId &peer_id,uint32_t bytes_per_sec)
 {
 	RsVOIPProtocolItem *item = new RsVOIPProtocolItem ;
@@ -360,7 +403,13 @@ void p3VOIP::handleProtocol(RsVOIPProtocolItem *item)
 
 	switch(item->protocol)
 	{
-		case RsVOIPProtocolItem::VoipProtocol_Ring: mNotify->notifyReceivedVoipInvite(item->PeerId(), (uint32_t)item->flags);
+		case RsVOIPProtocolItem::VoipProtocol_Ring:
+			{
+				// New call: the peer's capabilities follow this item.
+				RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
+				mPeerCapabilities.erase(item->PeerId()) ;
+			}
+			mNotify->notifyReceivedVoipInvite(item->PeerId(), (uint32_t)item->flags);
 #ifdef DEBUG_VOIP
 			std::cerr << "p3VOIP::handleProtocol(): Received protocol ring item." << std::endl;
 #endif
@@ -381,6 +430,13 @@ void p3VOIP::handleProtocol(RsVOIPProtocolItem *item)
 #ifdef DEBUG_VOIP
 			std::cerr << "p3VOIP::handleProtocol(): Received protocol bandwidth. Value=" << item->flags << std::endl;
 #endif
+		break ;
+		case RsVOIPProtocolItem::VoipProtocol_Capabilities:
+			{
+				RsStackMutex stack(mVOIPMtx); /****** LOCKED MUTEX *******/
+				mPeerCapabilities[item->PeerId()] = item->flags ;
+			}
+			std::cerr << "VOIP: peer " << item->PeerId() << " capabilities: " << std::hex << item->flags << std::dec << std::endl;
 		break ;
 		default:
 			std::cerr << "p3VOIP::handleProtocol(): Received protocol item # " << item->protocol << ": not handled yet ! Sorry" << std::endl;
@@ -723,6 +779,32 @@ void p3VOIP::setVoipEchoCancel(bool b)
 	IndicateConfigChanged() ;
 }
 
+void p3VOIP::setVoipAudioInputDevice(const std::string& d)
+{
+	_audio_input_device = d ;
+	IndicateConfigChanged() ;
+}
+void p3VOIP::setVoipAudioOutputDevice(const std::string& d)
+{
+	_audio_output_device = d ;
+	IndicateConfigChanged() ;
+}
+void p3VOIP::setVoipVideoInputDevice(const std::string& d)
+{
+	_video_input_device = d ;
+	IndicateConfigChanged() ;
+}
+void p3VOIP::setVoipVideoMaxBandwidth(int b)
+{
+	_video_max_bandwidth = b ;
+	IndicateConfigChanged() ;
+}
+void p3VOIP::setVoipVideoWideMode(int m)
+{
+	_video_wide_mode = (m == RsVOIP::VideoWideNative) ? RsVOIP::VideoWideNative : RsVOIP::VideoWideCropTo4by3 ;
+	IndicateConfigChanged() ;
+}
+
 RsTlvKeyValue p3VOIP::push_int_value(const std::string& key,int value)
 {
 	RsTlvKeyValue kv ;
@@ -754,6 +836,11 @@ bool p3VOIP::saveList(bool& cleanup, std::list<RsItem*>& lst)
 	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_NOISE_SUP",_noise_suppress)) ;
 	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_MIN_LOUDN",_min_loudness)) ;
 	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_ECHO_CNCL",_echo_cancel)) ;
+	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_VIDEO_BW" ,_video_max_bandwidth)) ;
+	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_VIDEO_WIDE",_video_wide_mode)) ;
+	{ RsTlvKeyValue kv ; kv.key = "P3VOIP_CONFIG_AUDIO_IN"  ; kv.value = _audio_input_device  ; vitem->tlvkvs.pairs.push_back(kv) ; }
+	{ RsTlvKeyValue kv ; kv.key = "P3VOIP_CONFIG_AUDIO_OUT" ; kv.value = _audio_output_device ; vitem->tlvkvs.pairs.push_back(kv) ; }
+	{ RsTlvKeyValue kv ; kv.key = "P3VOIP_CONFIG_VIDEO_IN"  ; kv.value = _video_input_device  ; vitem->tlvkvs.pairs.push_back(kv) ; }
 
 	lst.push_back(vitem) ;
 
@@ -785,6 +872,16 @@ bool p3VOIP::loadList(std::list<RsItem*>& load)
 					_min_loudness = pop_int_value(kit->value) ;
 				else if(kit->key == "P3VOIP_CONFIG_ECHO_CNCL")
 					_echo_cancel = pop_int_value(kit->value) ;
+				else if(kit->key == "P3VOIP_CONFIG_VIDEO_BW")
+					_video_max_bandwidth = pop_int_value(kit->value) ;
+				else if(kit->key == "P3VOIP_CONFIG_VIDEO_WIDE")
+					_video_wide_mode = (pop_int_value(kit->value) == RsVOIP::VideoWideNative) ? RsVOIP::VideoWideNative : RsVOIP::VideoWideCropTo4by3 ;
+				else if(kit->key == "P3VOIP_CONFIG_AUDIO_IN")
+					_audio_input_device = kit->value ;
+				else if(kit->key == "P3VOIP_CONFIG_AUDIO_OUT")
+					_audio_output_device = kit->value ;
+				else if(kit->key == "P3VOIP_CONFIG_VIDEO_IN")
+					_video_input_device = kit->value ;
 		}
 		delete vitem ;
 	}

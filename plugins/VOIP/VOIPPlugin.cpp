@@ -35,6 +35,7 @@
 #include "gui/VOIPChatWidgetHolder.h"
 #include "gui/VOIPGUIHandler.h"
 #include "gui/VOIPNotify.h"
+#include "gui/VideoProcessor.h"
 #include "gui/SoundManager.h"
 #include "gui/chat/ChatWidget.h"
 
@@ -158,7 +159,10 @@ ChatWidgetHolder *VOIPPlugin::qt_get_chat_widget_holder(ChatWidget *chatWidget) 
 p3Service *VOIPPlugin::p3_service() const
 {
 	if(mVOIP == NULL)
+	{
 		rsVOIP = mVOIP = new p3VOIP(mPlugInHandler,mVOIPNotify) ; // , 3600 * 24 * 30 * 6); // 6 Months
+		mVOIP->setVoipLocalCapabilities(VideoProcessor::canDecodeH264() ? RS_VOIP_CAPS_H264_VIDEO : 0) ;
+	}
 
 	return mVOIP ;
 }
