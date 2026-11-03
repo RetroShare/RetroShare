@@ -93,7 +93,7 @@ static AVCaptureDevice* rsPickDevice(const QString& description)
 	return [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
 }
 
-bool MacCameraCapture::start(const QString& description, std::function<void(const QImage&)> onFrame)
+bool MacCameraCapture::start(const QString& description, bool prefer_wide, std::function<void(const QImage&)> onFrame)
 {
 	stop();
 
@@ -107,10 +107,17 @@ bool MacCameraCapture::start(const QString& description, std::function<void(cons
 	AVCaptureSession* session = [[AVCaptureSession alloc] init];
 	if([session canAddInput:in]) [session addInput:in];
 
-	// Video is encoded as 640x480: ask the camera for a 4:3 source of that size
-	// when it supports it. The default preset is 16:9 (often 1280x720), which
-	// the encoder has to fit between black bars.
-	if([session canSetSessionPreset:AVCaptureSessionPreset640x480])
+	// Video is encoded 640 pixels wide. Ask for a 4:3 640x480 source, or for a
+	// 16:9 one when wide pictures are sent whole. A camera without a 4:3 mode
+	// still delivers 16:9, which the encoder crops (VideoProcessor::pictureToSend).
+	if(prefer_wide)
+	{
+		if([session canSetSessionPreset:AVCaptureSessionPreset1280x720])
+			session.sessionPreset = AVCaptureSessionPreset1280x720;
+		else if([session canSetSessionPreset:AVCaptureSessionPreset960x540])
+			session.sessionPreset = AVCaptureSessionPreset960x540;
+	}
+	else if([session canSetSessionPreset:AVCaptureSessionPreset640x480])
 		session.sessionPreset = AVCaptureSessionPreset640x480;
 
 	AVCaptureVideoDataOutput* out = [[AVCaptureVideoDataOutput alloc] init];

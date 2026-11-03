@@ -116,6 +116,12 @@ class RsVOIP
 		// Maximum outgoing video bandwidth in bytes per second.
 		virtual int getVoipVideoMaxBandwidth() const = 0 ;
 		virtual void setVoipVideoMaxBandwidth(int) = 0 ;
+		// What to send when the camera image is wider than 4:3 (e.g. a 16:9 webcam):
+		// crop it to 4:3, or send it whole at its own aspect ratio (e.g. 640x360).
+		// Both are decoded by every plugin version: the frame size comes from the stream.
+		typedef enum { VideoWideCropTo4by3 = 0, VideoWideNative = 1 } enumVideoWideMode ;
+		virtual int getVoipVideoWideMode() const = 0 ;
+		virtual void setVoipVideoWideMode(int) = 0 ;
 
 		virtual uint32_t getPongResults(const RsPeerId& id, int n, std::list<RsVOIPPongResult> &results) = 0;
 };

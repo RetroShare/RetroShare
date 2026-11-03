@@ -126,6 +126,8 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		virtual void setVoipVideoInputDevice(const std::string&) ;
 		virtual int  getVoipVideoMaxBandwidth() const { return _video_max_bandwidth ; }
 		virtual void setVoipVideoMaxBandwidth(int) ;
+		virtual int  getVoipVideoWideMode() const { return _video_wide_mode ; }
+		virtual void setVoipVideoWideMode(int) ;
 
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
@@ -185,4 +187,5 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		std::string _audio_output_device ;
 		std::string _video_input_device ;
 		int _video_max_bandwidth ;
+		int _video_wide_mode ;
 };

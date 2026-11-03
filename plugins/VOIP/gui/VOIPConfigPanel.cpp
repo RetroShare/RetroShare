@@ -126,6 +126,20 @@ VOIPConfigPanel::VOIPConfigPanel(QWidget * parent, Qt::WindowFlags flags)
 
     fillCameraCombo(QString::fromStdString(rsVOIP->getVoipVideoInputDevice()));
 
+    // What to send from a camera wider than 4:3, next to the camera choice.
+    qcbVideoWide = new RSComboBox(this);
+    qcbVideoWide->addItem(tr("16:9 camera: crop to 4:3"), (int)RsVOIP::VideoWideCropTo4by3);
+    qcbVideoWide->addItem(tr("16:9 camera: send as is"), (int)RsVOIP::VideoWideNative);
+    qcbVideoWide->setToolTip(tr("<p>What your correspondent receives when your camera gives a wide (e.g. 16:9) picture.</p>"
+                                "<p><b>Crop to 4:3:</b> the picture fills your correspondent's video frame, the left and right edges are cut.</p>"
+                                "<p><b>Send as is:</b> your correspondent sees the whole field of the camera, with black bars above and below.</p>"
+                                "<p>No effect with a 4:3 camera.</p>"));
+    {
+        const int idx = qcbVideoWide->findData(rsVOIP->getVoipVideoWideMode());
+        qcbVideoWide->setCurrentIndex(idx < 0 ? 0 : idx);
+    }
+    ui.horizontalLayout_3->insertWidget(ui.horizontalLayout_3->indexOf(ui.inputDevice_CB) + 1, qcbVideoWide);
+
     ui.availableBW_SB->setValue(rsVOIP->getVoipVideoMaxBandwidth() / 1024.0);
 
     connect( ui.qsTransmitHold, SIGNAL( valueChanged ( int ) ), this, SLOT( on_qsTransmitHold_valueChanged(int) ) );
@@ -135,6 +149,7 @@ VOIPConfigPanel::VOIPConfigPanel(QWidget * parent, Qt::WindowFlags flags)
     connect( ui.inputDevice_CB, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( on_changedCurrentInputDevice(int) ) );
     connect( qcbAudioInput, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( audioInputDeviceChanged(int) ) );
     connect( qcbAudioOutput, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( audioOutputDeviceChanged(int) ) );
+    connect( qcbVideoWide, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( videoWideModeChanged(int) ) );
     QObject::connect(ui.showEncoded_CB,SIGNAL(toggled(bool)),this,SLOT(togglePreview(bool))) ;
     QObject::connect(ui.availableBW_SB,SIGNAL(valueChanged(double)),this,SLOT(updateAvailableBW(double))) ;
 }
@@ -386,6 +401,10 @@ void VOIPConfigPanel::loadSettings()
     on_qsAmp_valueChanged(20000 - rsVOIP->getVoipiMinLoudness());
 
     whileBlocking(ui.availableBW_SB)->setValue(rsVOIP->getVoipVideoMaxBandwidth() / 1024.0);
+    {
+        const int idx = qcbVideoWide->findData(rsVOIP->getVoipVideoWideMode());
+        whileBlocking(qcbVideoWide)->setCurrentIndex(idx < 0 ? 0 : idx);
+    }
 
     loaded = true;
 }
@@ -405,6 +424,7 @@ bool VOIPConfigPanel::save(QString &/*errmsg*/)
     if(ui.inputDevice_CB->isEnabled())
         rsVOIP->setVoipVideoInputDevice(ui.inputDevice_CB->currentData().toString().toStdString());
     rsVOIP->setVoipVideoMaxBandwidth((int)(ui.availableBW_SB->value()*1024));
+    rsVOIP->setVoipVideoWideMode(qcbVideoWide->currentData().toInt());
 
     return true;
 }
@@ -550,6 +570,15 @@ void VOIPConfigPanel::on_changedCurrentInputDevice(int)
     std::cerr << "Switching to camera \"" << s.toStdString() << "\"" << std::endl;
     rsVOIP->setVoipVideoInputDevice(s.toStdString());
 
+    startVideoPreview();
+}
+
+void VOIPConfigPanel::videoWideModeChanged(int)
+{
+    rsVOIP->setVoipVideoWideMode(qcbVideoWide->currentData().toInt());
+
+    // Restart the camera: the capture format it asks for depends on the mode
+    // (16:9 when wide pictures are sent as they are). Calls started later use it.
     startVideoPreview();
 }
 
