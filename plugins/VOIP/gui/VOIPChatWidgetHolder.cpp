@@ -25,9 +25,13 @@
 #include <QLayout>
 #include <QPropertyAnimation>
 #include <QToolButton>
+#include <QMessageBox>
+
 //VOIP
 #include <gui/audiodevicehelper.h>
+#include <util/rsdebug.h>
 #include "interface/rsVOIP.h"
+#include "services/RsTurtleVOIPBridge.h"
 #include "VOIPChatWidgetHolder.h"
 #include "VideoProcessor.h"
 #include "QVideoDevice.h"
@@ -315,6 +319,11 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	connect(timerVideoRing, SIGNAL(timeout()), this, SLOT(timerVideoRingTimeOut()));
 
 	lastTimePlayOccurs = time(NULL);
+    
+    mTunnelWaitTimer = new QTimer(this);
+    mTunnelWaitTimer->setInterval(1000);
+    mTunnelWaitTimer->setSingleShot(false);
+    connect(mTunnelWaitTimer, SIGNAL(timeout()), this, SLOT(checkTunnelAndAutoCall()));
 }
 
 VOIPChatWidgetHolder::~VOIPChatWidgetHolder()
@@ -333,6 +342,7 @@ VOIPChatWidgetHolder::~VOIPChatWidgetHolder()
 	delete(timerAudioRing);
 	timerVideoRing->stop();
 	delete(timerVideoRing);
+    mTunnelWaitTimer->stop();
 }
 
 void VOIPChatWidgetHolder::deleteButtonMap(int flags)
@@ -567,17 +577,31 @@ void VOIPChatWidgetHolder::toggleAudioCaptureFS()
 
 void VOIPChatWidgetHolder::toggleAudioCapture()
 {
+    RsDbg() << "DISTANT_VOIP: >>> EVENT DETECTED: User just clicked TOGGLE AUDIO button! Checking button checkState...";
 	if (audioCaptureToggleButton->isChecked()) {
+        RsDbg() << "DISTANT_VOIP: Button IS CHECKED. Proceeding to resolution logic...";
+        RsPeerId targetId = getEffectivePeerId(true); // Explicitly prompt only on call start
+        if (targetId.isNull()) {
+            RsDbg() << "DISTANT_VOIP: Resolution returned NULL. [AUTO-CALL ACTIVATED] Leaving button pushed and starting Background Watcher.";
+            mTunnelWaitTimer->start(); // Start background poller
+            return; // Do NOT reset button. Let it visually wait.
+        }
+        
+        // Success! Turn off auto-poller just in case it triggered this.
+        mTunnelWaitTimer->stop();
+
+        RsDbg() << "DISTANT_VOIP: Resolution succeeded. TargetId=" << targetId.toStdString() << ". Initializing Audio stack...";
+
 		if (recAudioRingTime == -1) {
 			if (sendAudioRingTime == -1) {
 				sendAudioRingTime = 0;
 				timerAudioRingTimeOut();
-				rsVOIP->sendVoipRinging(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_AUDIO_DATA);
+				rsVOIP->sendVoipRinging(targetId, RS_VOIP_FLAGS_AUDIO_DATA);
 				return; //Start Audio when accept received
 			}
 		}
 		if (recAudioRingTime != -1)
-			rsVOIP->sendVoipAcceptCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_AUDIO_DATA);
+			rsVOIP->sendVoipAcceptCall(targetId, RS_VOIP_FLAGS_AUDIO_DATA);
 		recAudioRingTime = -1; //Stop ringing
 
 		//activate buttons
@@ -609,6 +633,11 @@ void VOIPChatWidgetHolder::toggleAudioCapture()
 
 		deleteButtonMap(RS_VOIP_FLAGS_AUDIO_DATA);
 	} else {
+        // Abort condition
+        mTunnelWaitTimer->stop();
+        if (rsTurtleBridge) {
+             rsTurtleBridge->cancelSearchForChat(mChatWidget->getChatId());
+        }
 		//desactivate buttons
 		audioListenToggleButton->setEnabled(false);
 		audioListenToggleButton->setChecked(false);
@@ -632,7 +661,8 @@ void VOIPChatWidgetHolder::toggleAudioCapture()
 				mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
 				                        , tr("Outgoing Audio Call stopped."), ChatWidget::MSGTYPE_SYSTEM);
 
-			rsVOIP->sendVoipHangUpCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_AUDIO_DATA);
+			RsPeerId targetId = getEffectivePeerId(false); // Quiet resolution for hangup
+			rsVOIP->sendVoipHangUpCall(targetId, RS_VOIP_FLAGS_AUDIO_DATA);
 		}
 
 		sendAudioRingTime = -1;
@@ -658,18 +688,29 @@ void VOIPChatWidgetHolder::toggleVideoCaptureFS()
 
 void VOIPChatWidgetHolder::toggleVideoCapture()
 {
+    RsDbg() << "DISTANT_VOIP: >>> EVENT DETECTED: User just clicked TOGGLE VIDEO button! Checking checkState...";
 	if (videoCaptureToggleButton->isChecked()) 
 	{
+        RsDbg() << "DISTANT_VOIP: Button IS CHECKED. Proceeding to resolution logic...";
+        RsPeerId targetId = getEffectivePeerId(true); // Prompt only on outgoing video
+        if (targetId.isNull()) {
+            RsDbg() << "DISTANT_VOIP: Resolution returned NULL. [AUTO-CALL ACTIVATED] Starting Background Watcher for Camera activation.";
+            mTunnelWaitTimer->start();
+            return; // Wait silently
+        }
+        mTunnelWaitTimer->stop();
+        RsDbg() << "DISTANT_VOIP: Resolution succeeded. TargetId=" << targetId.toStdString() << ". Initializing Camera...";
+
 		if (recVideoRingTime == -1) {
 			if (sendVideoRingTime == -1) {
 				sendVideoRingTime = 0;
 				timerVideoRingTimeOut();
-				rsVOIP->sendVoipRinging(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_VIDEO_DATA);
+				rsVOIP->sendVoipRinging(targetId, RS_VOIP_FLAGS_VIDEO_DATA);
 				return; //Start Video when accept received
 			}
 		}
 		if (recVideoRingTime != -1)
-			rsVOIP->sendVoipAcceptCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_VIDEO_DATA);
+			rsVOIP->sendVoipAcceptCall(targetId, RS_VOIP_FLAGS_VIDEO_DATA);
 		recVideoRingTime = -1; //Stop ringing
 
 		//activate buttons
@@ -682,7 +723,8 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 
 		//activate video input
 		videoWidget->show();
-		inputVideoDevice->start() ;
+		videoProcessor->setMaximumBandwidth(rsVOIP->getVoipVideoMaxBandwidth()) ;	// user setting (wizard / settings page)
+		inputVideoDevice->start(QVideoInputDevice::preferredCamera()) ;
 
 		//send system message
 		if (mChatWidget)
@@ -691,6 +733,11 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 
 		deleteButtonMap(RS_VOIP_FLAGS_VIDEO_DATA);
 	} else {
+        // Abort condition
+        mTunnelWaitTimer->stop();
+        if (rsTurtleBridge) {
+             rsTurtleBridge->cancelSearchForChat(mChatWidget->getChatId());
+        }
 		//desactivate buttons
 		hideChatTextToggleButton->setEnabled(false);
 		hideChatTextToggleButton->setChecked(false);
@@ -717,7 +764,8 @@ void VOIPChatWidgetHolder::toggleVideoCapture()
 				mChatWidget->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime()
 				                        , tr("Video call stopped"), ChatWidget::MSGTYPE_SYSTEM);
 
-			rsVOIP->sendVoipHangUpCall(mChatWidget->getChatId().toPeerId(), RS_VOIP_FLAGS_VIDEO_DATA);
+			RsPeerId targetId = getEffectivePeerId(false); // Quiet resolution
+			rsVOIP->sendVoipHangUpCall(targetId, RS_VOIP_FLAGS_VIDEO_DATA);
 		}
 
 		sendVideoRingTime = -1;
@@ -883,7 +931,12 @@ void VOIPChatWidgetHolder::botMouseLeaveDecline()
 
 void VOIPChatWidgetHolder::setAcceptedBandwidth(uint32_t bytes_per_sec)
 {
-	videoProcessor->setMaximumBandwidth(bytes_per_sec) ;
+	// The peer reports the video bandwidth it actually received. That is just what we
+	// sent (smoothed, and starting from zero), not what the connection can carry, so
+	// using it as the encoder limit only ever lowered the quality. The encoder uses
+	// the bandwidth chosen by the user instead.
+	std::cerr << "VOIP: peer reports " << bytes_per_sec << " B/s of incoming video (target: "
+	          << rsVOIP->getVoipVideoMaxBandwidth() << " B/s)" << std::endl;
 }
 
 void VOIPChatWidgetHolder::addAudioData(const RsPeerId &peer_id, QByteArray* array)
@@ -895,7 +948,7 @@ void VOIPChatWidgetHolder::addAudioData(const RsPeerId &peer_id, QByteArray* arr
     }
 
     if (!outputAudioDevice) {
-        outputAudioDevice = AudioDeviceHelper::getDefaultOutputDevice();
+        outputAudioDevice = AudioDeviceHelper::getPreferedOutputDevice();
     }
 
     if (!outputAudioProcessor) {
@@ -930,20 +983,33 @@ void VOIPChatWidgetHolder::addAudioData(const RsPeerId &peer_id, QByteArray* arr
 void VOIPChatWidgetHolder::sendVideoData()
 {
 	RsVOIPDataChunk chunk ;
+    RsPeerId targetId = getEffectivePeerId(false);
+
+    if (targetId.isNull())
+        return;
+
+	// Switch to H.264 once the peer has said it decodes it. Until then (older
+	// plugin, or its answer not received yet) video is sent as MPEG-4.
+	if(videoProcessor && (rsVOIP->getVoipPeerCapabilities(targetId) & RS_VOIP_CAPS_H264_VIDEO))
+		videoProcessor->setPeerDecodesH264(true) ;
 
 	while(inputVideoDevice && inputVideoDevice->getNextEncodedPacket(chunk))
-		rsVOIP->sendVoipData(mChatWidget->getChatId().toPeerId(),chunk) ;
+		rsVOIP->sendVoipData(targetId,chunk) ;
 }
 
 void VOIPChatWidgetHolder::sendAudioData()
 {
+    RsPeerId targetId = getEffectivePeerId(false);
+    if (targetId.isNull())
+        return;
+
     while(inputAudioProcessor && inputAudioProcessor->hasPendingPackets()) {
         QByteArray qbarray = inputAudioProcessor->getNetworkPacket();
         RsVOIPDataChunk chunk;
         chunk.size = qbarray.size();
         chunk.data = (void*)qbarray.constData();
         chunk.type = RsVOIPDataChunk::RS_VOIP_DATA_TYPE_AUDIO ;
-        rsVOIP->sendVoipData(mChatWidget->getChatId().toPeerId(),chunk);
+        rsVOIP->sendVoipData(targetId,chunk);
     }
 }
 
@@ -1179,4 +1245,55 @@ void VOIPChatWidgetHolder::timerVideoRingTimeOut()
 		pbVideoRing->setToolTip("");
 		videoCaptureToggleButton->setGraphicsEffect(0);
 	}
+}
+
+RsPeerId VOIPChatWidgetHolder::getEffectivePeerId(bool /*allowPopup*/)
+{
+    ChatId cid = mChatWidget->getChatId();
+    RsDbg() << "DISTANT_VOIP: [VOIPChatWidgetHolder] ENTER getEffectivePeerId() called for chatId=" << cid.toStdString();
+
+    if (!cid.isDistantChatId()) {
+        RsDbg() << "DISTANT_VOIP: This is a DIRECT CHAT. Standard PeerId=" << cid.toPeerId().toStdString();
+        return cid.toPeerId();
+    }
+    
+    RsDbg() << "DISTANT_VOIP: This is a DISTANT ANONYMOUS CHAT. Preparing to query Turtle Bridge...";
+
+    if (rsTurtleBridge == NULL) {
+        RsDbg() << "DISTANT_VOIP: CRITICAL ERROR! Global rsTurtleBridge pointer is NULL! Cannot tunnel!";
+        return RsPeerId();
+    }
+    
+    RsDbg() << "DISTANT_VOIP: Handing over resolution to rsTurtleBridge->getOrCreateTunnelForChat()...";
+    RsPeerId res = rsTurtleBridge->getOrCreateTunnelForChat(cid);
+    
+    if (res.isNull()) {
+        RsDbg() << "DISTANT_VOIP: The Bridge returned NULL (Tunnel is not ready or currently searching).";
+    } else {
+        RsDbg() << "DISTANT_VOIP: The Bridge SUCCEEDED! Got VirtualPeerId=" << res.toStdString();
+    }
+    
+    return res;
+}
+
+void VOIPChatWidgetHolder::checkTunnelAndAutoCall()
+{
+    RsDbg() << "DISTANT_VOIP: Auto-Poller Tick. Checking if background tunnel search completed...";
+    RsPeerId checkId = getEffectivePeerId(false); // Silently poll
+    
+    if (!checkId.isNull()) {
+        RsDbg() << "DISTANT_VOIP: [!!! AUTO-POLLER SUCCESS !!!] Tunnel found! Re-triggering Call Logic Automatically NOW.";
+        mTunnelWaitTimer->stop();
+        
+        // Re-trigger call execution directly. 
+        // The button is already checked, so it will execute the TRUE branch smoothly.
+        if (audioCaptureToggleButton->isChecked()) {
+            toggleAudioCapture();
+        }
+        if (videoCaptureToggleButton->isChecked()) {
+            toggleVideoCapture();
+        }
+    } else {
+        RsDbg() << "DISTANT_VOIP: Auto-Poller still waiting for background route... Retrying next second.";
+    }
 }

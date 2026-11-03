@@ -100,7 +100,6 @@
           <property name="font">
            <font>
             <pointsize>12</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -263,7 +262,6 @@ background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67,
           <property name="font">
            <font>
             <pointsize>12</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>

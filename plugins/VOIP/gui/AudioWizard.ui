@@ -1,223 +1,66 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <ui version="4.0">
  <class>AudioWizard</class>
- <widget class="QWizard" name="AudioWizard">
+ <widget class="QDialog" name="AudioWizard">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>757</width>
-    <height>640</height>
+    <width>720</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Audio Tuning Wizard</string>
+   <string>Audio &amp; Video Setup Wizard</string>
   </property>
-  <widget class="QWizardPage" name="qwpIntro">
-   <property name="title">
-    <string>Introduction</string>
-   </property>
-   <property name="subTitle">
-    <string>Welcome to the RetroShare Audio Wizard</string>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>This is the audio tuning wizard for RetroShare. This will help you correctly set the input levels of your sound card, and also set the correct parameters for sound processing in Retroshare. </string>
+  <layout class="QVBoxLayout" name="qvlMain">
+   <item>
+    <widget class="QLabel" name="qlPageTitle">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Title</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="qlPageSubTitle">
+     <property name="text">
+      <string>Subtitle</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="qlineTop">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="qswPages">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="qwpIntro">
+      <property name="pageTitle" stdset="0">
+       <string>Introduction</string>
       </property>
-      <property name="wordWrap">
-       <bool>true</bool>
+      <property name="pageSubTitle" stdset="0">
+       <string>Welcome to the RetroShare audio and video wizard</string>
       </property>
-     </widget>
-    </item>
-    <item>
-     <spacer name="verticalSpacer_3">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>291</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWizardPage" name="qwpVolume">
-   <property name="title">
-    <string>Volume tuning</string>
-   </property>
-   <property name="subTitle">
-    <string>Tuning microphone hardware volume to optimal settings.</string>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_3">
-    <item>
-     <widget class="QLabel" name="qliVolumeTuningText">
-      <property name="text">
-       <string>&lt;p&gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there's an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it's checked. &lt;/p&gt;
-&lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays as high as possible in the green and orange but not the red zone while you speak. &lt;/p&gt;</string>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="qliAmpTuningText">
-      <property name="text">
-       <string>Talk normally, and adjust the slider below so that the bar moves into green when you talk, and doesn't go into the orange zone.</string>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QSlider" name="qsMaxAmp">
-      <property name="minimum">
-       <number>1</number>
-      </property>
-      <property name="maximum">
-       <number>32767</number>
-      </property>
-      <property name="singleStep">
-       <number>100</number>
-      </property>
-      <property name="pageStep">
-       <number>1000</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <spacer name="verticalSpacer_4">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>552</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QCheckBox" name="qcbStopEcho">
-        <property name="text">
-         <string>Stop looping echo for this wizard</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="qcbHighContrast">
-        <property name="toolTip">
-         <string>Apply some high contrast optimizations for visually impaired users</string>
-        </property>
-        <property name="text">
-         <string>Use high contrast graphics</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWizardPage" name="qwpTrigger">
-   <property name="title">
-    <string>Voice Activity Detection</string>
-   </property>
-   <property name="subTitle">
-    <string>Letting RetroShare figure out when you're talking and when you're silent.</string>
-   </property>
-   <layout class="QGridLayout" name="gridLayout_4">
-    <item row="0" column="0" colspan="2">
-     <widget class="QLabel" name="qliVADText">
-      <property name="text">
-       <string>This will help Retroshare figure out when you are talking. The first step is selecting which data value to use.</string>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QRadioButton" name="qrPTT">
-        <property name="text">
-         <string>Push To Talk:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string notr="true">todo shortcut</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="1" rowspan="3">
-     <widget class="QLabel" name="qlTalkIcon">
-      <property name="minimumSize">
-       <size>
-        <width>64</width>
-        <height>64</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QRadioButton" name="qrVAD">
-      <property name="text">
-       <string>Voice Detection</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0" colspan="2">
-     <widget class="QWidget" name="qwVAD" native="true">
-      <layout class="QVBoxLayout" name="verticalLayout_6">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
+      <layout class="QVBoxLayout" name="qvlIntro">
        <item>
-        <widget class="QLabel" name="qliVadTuningText">
+        <widget class="QLabel" name="qlIntro">
          <property name="text">
-          <string>Next you need to adjust the following slider. The first few utterances you say should end up in the green area (definitive speech). While talking, you should stay inside the yellow (might be speech) and when you're not talking, everything should be in the red (definitively not speech).</string>
+          <string>&lt;p&gt;This wizard helps you to set up voice and video calls:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;choose the &lt;b&gt;microphone&lt;/b&gt; and the &lt;b&gt;speakers / headphones&lt;/b&gt; to use,&lt;/li&gt;&lt;li&gt;adjust the microphone level and the voice detection,&lt;/li&gt;&lt;li&gt;choose your &lt;b&gt;camera&lt;/b&gt; and check the picture.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;While the wizard is open your microphone may be played back to you locally, so that you can hear yourself. Nothing is sent to your friends.&lt;/p&gt;&lt;p&gt;You can cancel the wizard at any time: your previous settings will then be restored.&lt;/p&gt;</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -225,12 +68,232 @@
         </widget>
        </item>
        <item>
-        <widget class="QSlider" name="qsTransmitMin">
+        <spacer name="qsIntro">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="qwpAudioDevices">
+      <property name="pageTitle" stdset="0">
+       <string>Audio devices</string>
+      </property>
+      <property name="pageSubTitle" stdset="0">
+       <string>Select the microphone and the speakers or headphones used for calls.</string>
+      </property>
+      <layout class="QVBoxLayout" name="qvlAudioDevices">
+       <item>
+        <widget class="QGroupBox" name="qgbInput">
+         <property name="title">
+          <string>Microphone (input)</string>
+         </property>
+         <layout class="QGridLayout" name="qglInput">
+          <item row="0" column="0" colspan="3">
+           <widget class="QLabel" name="qliInputText">
+            <property name="text">
+             <string>This is the device your microphone is connected to. Speak: the bar below should move.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="qliInputDevice">
+            <property name="text">
+             <string>Device</string>
+            </property>
+            <property name="buddy">
+             <cstring>qcbInput</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="qcbInput">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Input device to use</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="qpbRefreshAudio">
+            <property name="toolTip">
+             <string>Search again for audio devices (e.g. after plugging in a headset)</string>
+            </property>
+            <property name="text">
+             <string>Refresh</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="qliLevel">
+            <property name="text">
+             <string>Level</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" colspan="2">
+           <widget class="AudioBar" name="abDeviceLevel" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>22</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" colspan="2">
+           <widget class="QCheckBox" name="qcbEcho">
+            <property name="toolTip">
+             <string>Removes the sound of your speakers from what your microphone records. Recommended when you do not use a headset.</string>
+            </property>
+            <property name="text">
+             <string>Use echo cancellation</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="qgbOutput">
+         <property name="title">
+          <string>Speakers / headphones (output)</string>
+         </property>
+         <layout class="QGridLayout" name="qglOutput">
+          <item row="0" column="0" colspan="3">
+           <widget class="QLabel" name="qliOutputText">
+            <property name="text">
+             <string>This is the device your speakers or headphones are connected to.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="qliOutputDevice">
+            <property name="text">
+             <string>Device</string>
+            </property>
+            <property name="buddy">
+             <cstring>qcbOutput</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="qcbOutput">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Output device to use</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="qpbTestSound">
+            <property name="toolTip">
+             <string>Plays a short sound on the selected output device</string>
+            </property>
+            <property name="text">
+             <string>Play test sound</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="qlAudioStatus">
+         <property name="text">
+          <string />
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="qsAudioDevices">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="qwpVolume">
+      <property name="pageTitle" stdset="0">
+       <string>Volume tuning</string>
+      </property>
+      <property name="pageSubTitle" stdset="0">
+       <string>Tuning microphone volume to optimal settings.</string>
+      </property>
+      <layout class="QVBoxLayout" name="qvlVolume">
+       <item>
+        <widget class="QLabel" name="qliVolumeTuningText">
+         <property name="text">
+          <string>&lt;p&gt;Open your sound control panel and go to the recording settings. Make sure the microphone is selected as active input with maximum recording volume. If there's an option to enable a &amp;quot;Microphone boost&amp;quot; make sure it's checked.&lt;/p&gt;&lt;p&gt;Speak loudly, as when you are annoyed or excited. Decrease the volume in the sound control panel until the bar below stays in the green and orange zone but &lt;b&gt;not&lt;/b&gt; in the red zone while you speak.&lt;/p&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="AudioBar" name="abAmplify" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>30</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="qliAmpTuningText">
+         <property name="text">
+          <string>Now talk softly, as you would when talking late at night. Adjust the slider below so that the bar moves into green when you talk, but doesn't go into the orange zone. Moving the slider to the left increases the amplification.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="qsMaxAmp">
+         <property name="toolTip">
+          <string>Maximum amplification of input sound</string>
+         </property>
          <property name="minimum">
-          <number>1</number>
+          <number>1000</number>
          </property>
          <property name="maximum">
-          <number>32767</number>
+          <number>30000</number>
          </property>
          <property name="singleStep">
           <number>100</number>
@@ -244,83 +307,579 @@
         </widget>
        </item>
        <item>
-        <widget class="QSlider" name="qsTransmitMax">
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>32767</number>
-         </property>
-         <property name="singleStep">
-          <number>100</number>
-         </property>
-         <property name="pageStep">
-          <number>1000</number>
-         </property>
+        <spacer name="qsVolume">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Vertical</enum>
          </property>
-        </widget>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="qhlVolumeOptions">
+         <item>
+          <widget class="QCheckBox" name="qcbStopEcho">
+           <property name="toolTip">
+            <string>By default you hear yourself with a small delay, so that you can judge the sound quality.</string>
+           </property>
+           <property name="text">
+            <string>Do not play my voice back to me</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="qsVolumeOptions">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="qcbHighContrast">
+           <property name="toolTip">
+            <string>Apply some high contrast optimizations for visually impaired users</string>
+           </property>
+           <property name="text">
+            <string>Use high contrast graphics</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
-    </item>
-    <item row="5" column="0">
-     <spacer name="verticalSpacer_7">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
+     <widget class="QWidget" name="qwpTransmit">
+      <property name="pageTitle" stdset="0">
+       <string>Voice activity detection</string>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
+      <property name="pageSubTitle" stdset="0">
+       <string>Letting RetroShare figure out when you're talking and when you're silent.</string>
       </property>
-     </spacer>
-    </item>
-    <item row="3" column="0">
-     <widget class="QRadioButton" name="qrContinuous">
-      <property name="text">
-       <string>Continuous transmission</string>
-      </property>
+      <layout class="QGridLayout" name="qglTransmit">
+       <item row="0" column="0">
+        <layout class="QVBoxLayout" name="qvlModes">
+         <item>
+          <widget class="QRadioButton" name="qrVAD">
+           <property name="text">
+            <string>Voice activity detection: only send sound while you talk (recommended)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="qrContinuous">
+           <property name="text">
+            <string>Continuous transmission: always send sound</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="qlPTTNote">
+           <property name="text">
+            <string>&lt;i&gt;Push-to-talk was selected before, but it is not implemented yet (no sound would be sent). Voice activity detection is used instead.&lt;/i&gt;</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="1" alignment="Qt::AlignRight|Qt::AlignTop">
+        <widget class="QLabel" name="qlTalkIcon">
+         <property name="minimumSize">
+          <size>
+           <width>64</width>
+           <height>64</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Lights up when RetroShare considers that you are talking</string>
+         </property>
+         <property name="text">
+          <string />
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QWidget" name="qwVAD" native="true">
+         <layout class="QVBoxLayout" name="qvlVAD">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="AudioBar" name="abVAD" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>30</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="qliVadTuningText">
+            <property name="text">
+             <string>Adjust the two sliders below. When you start talking the bar should reach the green area (definitive speech). While talking it should stay at least in the yellow area (might be speech), and when you're silent it should stay in the red area (definitively not speech).</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QFormLayout" name="qflVAD">
+            <item row="0" column="0">
+             <widget class="QLabel" name="qliTransmitMin">
+              <property name="text">
+               <string>Silence below</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QSlider" name="qsTransmitMin">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>32767</number>
+              </property>
+              <property name="singleStep">
+               <number>100</number>
+              </property>
+              <property name="pageStep">
+               <number>1000</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="qliTransmitMax">
+              <property name="text">
+               <string>Speech above</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSlider" name="qsTransmitMax">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>32767</number>
+              </property>
+              <property name="singleStep">
+               <number>100</number>
+              </property>
+              <property name="pageStep">
+               <number>1000</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="qliVoiceHold">
+              <property name="text">
+               <string>Voice hold</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <layout class="QHBoxLayout" name="qhlVoiceHold">
+              <item>
+               <widget class="QSlider" name="qsVoiceHold">
+                <property name="toolTip">
+                 <string>How long to keep transmitting after you stopped talking</string>
+                </property>
+                <property name="minimum">
+                 <number>20</number>
+                </property>
+                <property name="maximum">
+                 <number>250</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="qlVoiceHold">
+                <property name="minimumSize">
+                 <size>
+                  <width>50</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string />
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QGroupBox" name="qgbNoise">
+         <property name="title">
+          <string>Noise suppression</string>
+         </property>
+         <layout class="QHBoxLayout" name="qhlNoise">
+          <item>
+           <widget class="QSlider" name="qsNoise">
+            <property name="toolTip">
+             <string>Amount of background noise (fans, keyboard...) to remove. Too much makes your voice sound robotic.</string>
+            </property>
+            <property name="minimum">
+             <number>14</number>
+            </property>
+            <property name="maximum">
+             <number>60</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="qlNoise">
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string />
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <spacer name="qsTransmit">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWizardPage" name="qwpDone">
-   <property name="title">
-    <string>Finished</string>
-   </property>
-   <property name="subTitle">
-    <string>Enjoy using RetroShare</string>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_4">
-    <item>
-     <widget class="QLabel" name="qlDone">
-      <property name="text">
-       <string>Congratulations. You should now be ready to enjoy a richer sound experience with Retroshare.</string>
+     <widget class="QWidget" name="qwpVideo">
+      <property name="pageTitle" stdset="0">
+       <string>Video</string>
       </property>
-      <property name="wordWrap">
-       <bool>true</bool>
+      <property name="pageSubTitle" stdset="0">
+       <string>Select the camera used for video calls and check the picture.</string>
       </property>
+      <layout class="QVBoxLayout" name="qvlVideo">
+       <item>
+        <layout class="QHBoxLayout" name="qhlCamera">
+         <item>
+          <widget class="QLabel" name="qliCamera">
+           <property name="text">
+            <string>Camera</string>
+           </property>
+           <property name="buddy">
+            <cstring>qcbCamera</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="qcbCamera">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="qpbRefreshCameras">
+           <property name="toolTip">
+            <string>Search again for cameras (e.g. after plugging in a webcam)</string>
+           </property>
+           <property name="text">
+            <string>Refresh</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QVideoOutputDevice" name="videoPreview">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+           <horstretch>0</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>320</width>
+           <height>240</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="qlVideoStatus">
+         <property name="text">
+          <string />
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="qhlBandwidth">
+         <item>
+          <widget class="QLabel" name="qliBandwidth">
+           <property name="text">
+            <string>Maximum video bandwidth</string>
+           </property>
+           <property name="buddy">
+            <cstring>qsbBandwidth</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="qsbBandwidth">
+           <property name="toolTip">
+            <string>Upper limit of the bandwidth used to send your video. Lower it if your connection is slow.</string>
+           </property>
+           <property name="suffix">
+            <string> KB/s</string>
+           </property>
+           <property name="decimals">
+            <number>0</number>
+           </property>
+           <property name="minimum">
+            <double>5.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>2000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>10.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>80.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="qsBandwidth">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="qcbShowEncoded">
+           <property name="toolTip">
+            <string>Shows the picture after compression, i.e. the quality your friends receive with this bandwidth</string>
+           </property>
+           <property name="text">
+            <string>Preview what my friends will see (encoded)</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
-    </item>
-    <item>
-     <spacer name="verticalSpacer_5">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
+     <widget class="QWidget" name="qwpDone">
+      <property name="pageTitle" stdset="0">
+       <string>Finished</string>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>267</height>
-       </size>
+      <property name="pageSubTitle" stdset="0">
+       <string>Enjoy using RetroShare</string>
       </property>
-     </spacer>
-    </item>
-   </layout>
-  </widget>
+      <layout class="QVBoxLayout" name="qvlDone">
+       <item>
+        <widget class="QLabel" name="qlDone">
+         <property name="text">
+          <string>Congratulations. You should now be ready for voice and video calls. Click &lt;b&gt;Finish&lt;/b&gt; to save these settings:</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="qlSummary">
+         <property name="text">
+          <string />
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="qsDone">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="qlineBottom">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="qhlButtons">
+     <item>
+      <spacer name="qsButtons">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="qpbBack">
+       <property name="text">
+        <string>&lt; &amp;Back</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="qpbNext">
+       <property name="text">
+        <string>&amp;Next &gt;</string>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="qpbFinish">
+       <property name="text">
+        <string>&amp;Finish</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="qpbCancel">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
- <resources/>
- <connections/>
+ <customwidgets>
+  <customwidget>
+   <class>AudioBar</class>
+   <extends>QWidget</extends>
+   <header>gui/AudioStats.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QVideoOutputDevice</class>
+   <extends>QLabel</extends>
+   <header>gui/QVideoDevice.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>qcbInput</tabstop>
+  <tabstop>qpbRefreshAudio</tabstop>
+  <tabstop>qcbEcho</tabstop>
+  <tabstop>qcbOutput</tabstop>
+  <tabstop>qpbTestSound</tabstop>
+  <tabstop>qsMaxAmp</tabstop>
+  <tabstop>qcbStopEcho</tabstop>
+  <tabstop>qcbHighContrast</tabstop>
+  <tabstop>qrVAD</tabstop>
+  <tabstop>qrContinuous</tabstop>
+  <tabstop>qsTransmitMin</tabstop>
+  <tabstop>qsTransmitMax</tabstop>
+  <tabstop>qsVoiceHold</tabstop>
+  <tabstop>qsNoise</tabstop>
+  <tabstop>qcbCamera</tabstop>
+  <tabstop>qpbRefreshCameras</tabstop>
+  <tabstop>qsbBandwidth</tabstop>
+  <tabstop>qcbShowEncoded</tabstop>
+  <tabstop>qpbBack</tabstop>
+  <tabstop>qpbNext</tabstop>
+  <tabstop>qpbFinish</tabstop>
+  <tabstop>qpbCancel</tabstop>
+ </tabstops>
+ <resources />
+ <connections />
 </ui>
