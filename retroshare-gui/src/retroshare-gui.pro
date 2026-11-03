@@ -32,6 +32,11 @@ INCLUDEPATH *= $${PWD}
 
 !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 
+# GUI version derived from the Git version calculated in retroshare.pri.
+!isEmpty(RS_MAJOR_VERSION) {
+    DEFINES += RS_GUI_VERSION=\\\"$${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\\\"
+}
+
 rs_webui {
 rs_jsonapi {
     HEADERS *= gui/settings/WebuiPage.h
