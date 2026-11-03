@@ -335,7 +335,7 @@ bool JPEGVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 
 	    QImage res = _decoded_reference_frame ;
 
-	    for(int i=0;i<image.byteCount();++i)
+	    for(int i=0;i<image.sizeInBytes();++i)
 	    {
 		    int new_val = (int)res.bits()[i] + ((int)image.bits()[i] - 128) ;
 
@@ -362,12 +362,12 @@ bool JPEGVideo::encodeData(const QImage& image,uint32_t /* size_hint */, NetQueu
 
     if (_encoded_ref_frame_count++ < _encoded_ref_frame_max_distance
         && image.size() == _encoded_reference_frame.size()
-        && image.byteCount() == _encoded_reference_frame.byteCount())
+        && image.sizeInBytes() == _encoded_reference_frame.sizeInBytes())
 	{
 	    // compute difference with reference frame.
 	    encoded_frame = image ;
 
-	    for(int i=0;i<image.byteCount();++i)
+	    for(int i=0;i<image.sizeInBytes();++i)
 	    {
 		    // We cannot use basic modulo 256 arithmetic, because the decompressed JPeg frames do not follow the same rules (values are clamped)
 		    // and cause color blotches when perturbated by a differential frame.
