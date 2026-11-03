@@ -57,6 +57,12 @@ set(VOIP_SOURCES
 # Qt5 on macOS keeps the plain Qt camera pipeline.
 if(APPLE AND QT_VERSION_MAJOR EQUAL 6)
     list(APPEND VOIP_SOURCES gui/MacCameraPermission.mm gui/MacCameraCapture.mm)
+    # Both files are written for ARC (__bridge_transfer, strong properties, no
+    # release calls). Without -fobjc-arc nothing they allocate is ever freed: every
+    # camera start leaked the capture session, its input and output and the frame
+    # grabber.
+    set_source_files_properties(gui/MacCameraPermission.mm gui/MacCameraCapture.mm
+                                PROPERTIES COMPILE_OPTIONS "-fobjc-arc")
 endif()
 
 set(VOIP_FORMS
