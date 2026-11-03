@@ -112,6 +112,7 @@ public:
 
 private:
     bool openEncoder(int64_t bitrate_bits_per_sec) ;
+    bool allocEncodingFrame() ;	// (re)allocates encoding_frame_buffer at _width x _height
     bool isLibx264() const ;
 
     Kind _kind ;
@@ -119,6 +120,7 @@ private:
     int64_t _encoder_bitrate ;		// bits/s the encoder is currently configured with
     time_t _last_encoder_reopen ;
     bool _encoder_can_change_bitrate ;	// libx264 reconfigures the bitrate on the fly
+    int _width, _height ;		// encoded frame size, follows the pictures given to encodeData()
 
     const AVCodec *encoding_codec;
     const AVCodec *decoding_codec;
@@ -195,6 +197,13 @@ class VideoProcessor
 		// True when this build can decode H.264, i.e. what to advertise to peers.
 		static bool canDecodeH264() ;
         	void setInternalFrameSize(QSize) ;
+
+		// The part of a camera image that is sent: the whole image when it is 4:3,
+		// else cropped to 4:3 at the centre, or kept whole when it is wider than
+		// 4:3 and the user chose to send wide pictures as they are
+		// (RsVOIP::VideoWideNative). The self-view shows this too, so the user
+		// sees what the peer gets.
+		static QImage pictureToSend(const QImage& camera_image) ;
 
         	// returns the current encoding frame rate in bytes per second.
         	//

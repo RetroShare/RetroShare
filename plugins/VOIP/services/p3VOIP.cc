@@ -129,6 +129,7 @@ p3VOIP::p3VOIP(RsPluginHandler *handler,VOIPNotify *notifier)
         _noise_suppress = -45;
         _echo_cancel = true;
         _video_max_bandwidth = 80*1024; // bytes/s
+        _video_wide_mode = RsVOIP::VideoWideCropTo4by3 ;
         mLocalCapabilities = 0 ;
 
 }
@@ -798,6 +799,11 @@ void p3VOIP::setVoipVideoMaxBandwidth(int b)
 	_video_max_bandwidth = b ;
 	IndicateConfigChanged() ;
 }
+void p3VOIP::setVoipVideoWideMode(int m)
+{
+	_video_wide_mode = (m == RsVOIP::VideoWideNative) ? RsVOIP::VideoWideNative : RsVOIP::VideoWideCropTo4by3 ;
+	IndicateConfigChanged() ;
+}
 
 RsTlvKeyValue p3VOIP::push_int_value(const std::string& key,int value)
 {
@@ -831,6 +837,7 @@ bool p3VOIP::saveList(bool& cleanup, std::list<RsItem*>& lst)
 	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_MIN_LOUDN",_min_loudness)) ;
 	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_ECHO_CNCL",_echo_cancel)) ;
 	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_VIDEO_BW" ,_video_max_bandwidth)) ;
+	vitem->tlvkvs.pairs.push_back(push_int_value("P3VOIP_CONFIG_VIDEO_WIDE",_video_wide_mode)) ;
 	{ RsTlvKeyValue kv ; kv.key = "P3VOIP_CONFIG_AUDIO_IN"  ; kv.value = _audio_input_device  ; vitem->tlvkvs.pairs.push_back(kv) ; }
 	{ RsTlvKeyValue kv ; kv.key = "P3VOIP_CONFIG_AUDIO_OUT" ; kv.value = _audio_output_device ; vitem->tlvkvs.pairs.push_back(kv) ; }
 	{ RsTlvKeyValue kv ; kv.key = "P3VOIP_CONFIG_VIDEO_IN"  ; kv.value = _video_input_device  ; vitem->tlvkvs.pairs.push_back(kv) ; }
@@ -867,6 +874,8 @@ bool p3VOIP::loadList(std::list<RsItem*>& load)
 					_echo_cancel = pop_int_value(kit->value) ;
 				else if(kit->key == "P3VOIP_CONFIG_VIDEO_BW")
 					_video_max_bandwidth = pop_int_value(kit->value) ;
+				else if(kit->key == "P3VOIP_CONFIG_VIDEO_WIDE")
+					_video_wide_mode = (pop_int_value(kit->value) == RsVOIP::VideoWideNative) ? RsVOIP::VideoWideNative : RsVOIP::VideoWideCropTo4by3 ;
 				else if(kit->key == "P3VOIP_CONFIG_AUDIO_IN")
 					_audio_input_device = kit->value ;
 				else if(kit->key == "P3VOIP_CONFIG_AUDIO_OUT")

@@ -61,6 +61,7 @@ class VOIPConfigPanel : public ConfigPage
 		VideoProcessor *videoProcessor ;
 		RSComboBox *qcbAudioInput ;
 		RSComboBox *qcbAudioOutput ;
+		RSComboBox *qcbVideoWide ;
 		bool loaded;
 
 		voipGraphSource *graph_source ;
@@ -103,6 +104,7 @@ class VOIPConfigPanel : public ConfigPage
 		void togglePreview(bool) ;
 		void audioInputDeviceChanged(int);
 		void audioOutputDeviceChanged(int);
+		void videoWideModeChanged(int);
 
 		void on_qsTransmitHold_valueChanged(int v);
 		void on_qsAmp_valueChanged(int v);

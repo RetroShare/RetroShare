@@ -109,7 +109,7 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Checked:&lt;/b&gt; shows the encoded then decoded video, i.e. what your correspondent receives, to judge the quality at the current bandwidth.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Unchecked:&lt;/b&gt; shows the frame grabbed from your camera, mirrored like a self-view.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Checked:&lt;/b&gt; shows the encoded then decoded video, i.e. what your correspondent receives, to judge the quality at the current bandwidth.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Unchecked:&lt;/b&gt; shows the picture sent, before compression (same crop), mirrored like a self-view.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
            <string>preview</string>

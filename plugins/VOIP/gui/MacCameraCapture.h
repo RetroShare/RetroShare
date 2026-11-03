@@ -45,7 +45,9 @@ public:
 	// Start capturing from the camera whose localized name equals `description`
 	// (or the default camera when empty/null). Frames are delivered as QImage on
 	// the GUI/main thread through onFrame. Returns true if the session is running.
-	bool start(const QString& description, std::function<void(const QImage&)> onFrame);
+	// prefer_wide: ask for a 16:9 source (the user sends wide pictures whole),
+	// else for 640x480.
+	bool start(const QString& description, bool prefer_wide, std::function<void(const QImage&)> onFrame);
 	void stop();
 	bool isRunning() const;
 

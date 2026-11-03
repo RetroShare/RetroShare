@@ -34,6 +34,7 @@
 
 #include "VideoProcessor.h"
 #include "QVideoDevice.h"
+#include "interface/rsVOIP.h"
 
 #include <math.h>
 #include <time.h>
@@ -183,27 +184,21 @@ bool VideoProcessor::processImage(const QImage& img)
 
     if(codec)
     {
-      // Crop to the aspect ratio of the encoded frame (4:3) instead of squashing
-      // e.g. 16:9 webcam images.
-      QImage src = img ;
-      const int w = img.width(), h = img.height() ;
-      const int fw = _encoded_frame_size.width(), fh = _encoded_frame_size.height() ;
+      // Never squash the picture: crop it to what is sent (see pictureToSend()),
+      // then scale it to the encoded width (640) at that aspect ratio. A 4:3 picture
+      // is encoded as 640x480, a 16:9 one sent whole as 640x360.
+      const QImage src = pictureToSend(img) ;
+      QSize size = _encoded_frame_size ;
 
-      if(w > 0 && h > 0 && fw > 0 && fh > 0)
+      if(src.width() > 0 && src.height() > 0)
       {
-          if((int64_t)w * fh > (int64_t)h * fw)		// too wide
-          {
-              const int nw = (int)((int64_t)h * fw / fh) ;
-              src = img.copy((w - nw) / 2, 0, nw, h) ;
-          }
-          else if((int64_t)w * fh < (int64_t)h * fw)	// too tall
-          {
-              const int nh = (int)((int64_t)w * fh / fw) ;
-              src = img.copy(0, (h - nh) / 2, w, nh) ;
-          }
+          const int h = (int)((int64_t)size.width() * src.height() / src.width()) & ~1 ;	// even, for YUV 4:2:0
+
+          if(h > 0 && h < size.height())
+              size.setHeight(h) ;
       }
 
-      codec->encodeData(src.scaled(_encoded_frame_size,Qt::IgnoreAspectRatio,Qt::SmoothTransformation),_target_bandwidth_out, _encoded_out_queue);
+      codec->encodeData(src.scaled(size,Qt::IgnoreAspectRatio,Qt::SmoothTransformation),_target_bandwidth_out, _encoded_out_queue);
 
 	    time_t now = time(NULL) ;
 
@@ -237,6 +232,29 @@ bool VideoProcessor::nextEncodedPacket(RsVOIPDataChunk& chunk)
 void VideoProcessor::setInternalFrameSize(QSize s)
 {
     _encoded_frame_size = s ;
+}
+
+QImage VideoProcessor::pictureToSend(const QImage& img)
+{
+    const int w = img.width(), h = img.height() ;
+
+    if(w <= 0 || h <= 0)
+        return img ;
+
+    if((int64_t)w * 3 > (int64_t)h * 4)		// wider than 4:3 (e.g. 16:9)
+    {
+        if(rsVOIP != NULL && rsVOIP->getVoipVideoWideMode() == RsVOIP::VideoWideNative)
+            return img ;
+
+        const int nw = (int)((int64_t)h * 4 / 3) ;
+        return img.copy((w - nw) / 2, 0, nw, h) ;
+    }
+    if((int64_t)w * 3 < (int64_t)h * 4)		// taller than 4:3 (portrait): always cropped
+    {
+        const int nh = (int)((int64_t)w * 3 / 4) ;
+        return img.copy(0, (h - nh) / 2, w, nh) ;
+    }
+    return img ;
 }
 
 void VideoProcessor::receiveEncodedData(const RsVOIPDataChunk& chunk)
@@ -476,7 +494,7 @@ static const int64_t DEFAULT_VIDEO_BITRATE = 30*1024*8 ;	// bits/s, until a targ
 
 FFmpegVideo::FFmpegVideo(Kind kind, uint16_t header_codec_id)
     : _kind(kind), _header_codec_id(header_codec_id), _encoder_bitrate(0), _last_encoder_reopen(0),
-      _encoder_can_change_bitrate(false)
+      _encoder_can_change_bitrate(false), _width(VIDEO_WIDTH), _height(VIDEO_HEIGHT)
 {
 #if LIBAVCODEC_VERSION_MAJOR < 58
     avcodec_register_all();
@@ -521,31 +539,10 @@ FFmpegVideo::FFmpegVideo(Kind kind, uint16_t header_codec_id)
         }
     }
 
-    if(encoding_codec != NULL)
+    if(encoding_codec != NULL && !allocEncodingFrame())
     {
-#if (LIBAVCODEC_VERSION_MAJOR < 57) | (LIBAVCODEC_VERSION_MAJOR == 57 && LIBAVCODEC_VERSION_MINOR <3 )
-        encoding_frame_buffer = avcodec_alloc_frame() ;
-#else
-        encoding_frame_buffer = av_frame_alloc() ;
-#endif
-        if(encoding_frame_buffer)
-        {
-            encoding_frame_buffer->format = RS_AV_PIX_FMT(YUV420P) ;
-            encoding_frame_buffer->width  = VIDEO_WIDTH ;
-            encoding_frame_buffer->height = VIDEO_HEIGHT ;
-
-            if(av_image_alloc(encoding_frame_buffer->data, encoding_frame_buffer->linesize,
-                              VIDEO_WIDTH, VIDEO_HEIGHT, RS_AV_PIX_FMT(YUV420P), 32) < 0)
-            {
-                std::cerr << "AV: Could not allocate raw picture buffer" << std::endl;
-                av_frame_free(&encoding_frame_buffer) ;
-            }
-        }
-        if(!encoding_frame_buffer)
-        {
-            avcodec_free_context(&encoding_context) ;
-            encoding_codec = NULL ;
-        }
+        avcodec_free_context(&encoding_context) ;
+        encoding_codec = NULL ;
     }
 
     // ------------------------------- Decoder ---------------------------------
@@ -609,8 +606,8 @@ bool FFmpegVideo::openEncoder(int64_t bitrate)
     if(encoding_context == NULL)
         return false ;
 
-    encoding_context->width   = VIDEO_WIDTH ;
-    encoding_context->height  = VIDEO_HEIGHT ;
+    encoding_context->width   = _width ;
+    encoding_context->height  = _height ;
     encoding_context->pix_fmt = RS_AV_PIX_FMT(YUV420P) ;
     encoding_context->time_base = av_make_q(1, VIDEO_FPS) ;
 #if LIBAVCODEC_VERSION_MAJOR >= 57
@@ -664,6 +661,35 @@ bool FFmpegVideo::openEncoder(int64_t bitrate)
     _last_encoder_reopen = time(NULL) ;
 
     std::cerr << "VOIP: video encoder " << encoding_codec->name << (isLibx264() ? " opened, constant quality up to " : " opened at ") << bitrate/1000 << " kbit/s" << std::endl;
+    return true ;
+}
+
+bool FFmpegVideo::allocEncodingFrame()
+{
+    if(encoding_frame_buffer == NULL)
+    {
+#if (LIBAVCODEC_VERSION_MAJOR < 57) | (LIBAVCODEC_VERSION_MAJOR == 57 && LIBAVCODEC_VERSION_MINOR <3 )
+        encoding_frame_buffer = avcodec_alloc_frame() ;
+#else
+        encoding_frame_buffer = av_frame_alloc() ;
+#endif
+        if(encoding_frame_buffer == NULL)
+            return false ;
+    }
+    else
+        av_freep(&encoding_frame_buffer->data[0]) ;	// allocated by av_image_alloc()
+
+    encoding_frame_buffer->format = RS_AV_PIX_FMT(YUV420P) ;
+    encoding_frame_buffer->width  = _width ;
+    encoding_frame_buffer->height = _height ;
+
+    if(av_image_alloc(encoding_frame_buffer->data, encoding_frame_buffer->linesize,
+                      _width, _height, RS_AV_PIX_FMT(YUV420P), 32) < 0)
+    {
+        std::cerr << "AV: Could not allocate raw picture buffer" << std::endl;
+        av_frame_free(&encoding_frame_buffer) ;
+        return false ;
+    }
     return true ;
 }
 
@@ -763,6 +789,25 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_bytes_per_sec,
 #if LIBAVCODEC_VERSION_MAJOR < 58
   if(dst.full()) return false;
 #endif
+
+  // ---- follow the picture size (640x480, or e.g. 640x360 for a wide picture sent
+  // whole). Peers read the size from the stream. The encoder is reopened below,
+  // which starts the new size with a key frame.
+  {
+    const int w = image.width() & ~1, h = image.height() & ~1 ;	// even, for YUV 4:2:0
+
+    if(w > 0 && h > 0 && (w != _width || h != _height))
+    {
+      _width = w ;
+      _height = h ;
+      avcodec_free_context(&encoding_context) ;
+
+      if(!allocEncodingFrame())
+        return false ;
+
+      std::cerr << "VOIP: video encoded as " << _width << "x" << _height << std::endl;
+    }
+  }
 
   // ---- follow the target bandwidth (bytes/s -> bits/s) ----
   {

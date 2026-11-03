@@ -179,7 +179,9 @@ void QVideoInputDevice::start(const QString& description)
 
     QObject::connect(this,SIGNAL(cameraCaptureInfo(CameraStatus,QCamera::Error)),this,SLOT(errorHandling(CameraStatus,QCamera::Error)));
 
-    if(_mac_capture->start(description, [this](const QImage& image){ handleMacFrame(image); }))
+    const bool prefer_wide = rsVOIP != NULL && rsVOIP->getVoipVideoWideMode() == RsVOIP::VideoWideNative ;
+
+    if(_mac_capture->start(description, prefer_wide, [this](const QImage& image){ handleMacFrame(image); }))
         emit cameraCaptureInfo(CAMERA_IS_READY, QCamera::NoError);
     else
         emit cameraCaptureInfo(CANNOT_INITIALIZE_CAMERA, QCamera::NoError);
@@ -240,23 +242,30 @@ void QVideoInputDevice::start(const QString& description)
     }
 
     // QCamera can silently stay inactive when no capture format is selected.
-    // Pick one explicitly. Video is encoded as 640x480, so prefer that size,
+    // Pick one explicitly. Video is encoded 640 pixels wide, so prefer 640x480,
     // then any other 4:3 format 640-1280 wide, then any 640-1280 wide format,
-    // else the first one. Formats under 15 fps are only taken as a last resort.
-    // A 4:3 source avoids the black bars the encoder adds around 16:9 images.
+    // else the first one. When the user sends wide pictures whole
+    // (RsVOIP::VideoWideNative), a 16:9 format 640-1280 wide comes first.
+    // Formats under 15 fps are only taken as a last resort. A picture wider than
+    // 4:3 is otherwise cropped to 4:3 (VideoProcessor::pictureToSend()).
     {
         const QList<QCameraFormat> formats = caminfo.videoFormats();
 
         if(!formats.isEmpty())
         {
+            const bool prefer_wide = rsVOIP != NULL && rsVOIP->getVoipVideoWideMode() == RsVOIP::VideoWideNative ;
+
             auto inRange = [](const QCameraFormat& f) {
                 return f.resolution().width() >= 640 && f.resolution().width() <= 1280; };
             auto is4by3 = [](const QCameraFormat& f) {
                 return f.resolution().width() * 3 == f.resolution().height() * 4; };
+            auto is16by9 = [](const QCameraFormat& f) {
+                return f.resolution().width() * 9 == f.resolution().height() * 16; };
             auto is640x480 = [](const QCameraFormat& f) {
                 return f.resolution() == QSize(640, 480); };
 
             const std::function<bool(const QCameraFormat&)> preferences[] = {
+                [&](const QCameraFormat& f) { return prefer_wide && inRange(f) && is16by9(f); },
                 is640x480,
                 [&](const QCameraFormat& f) { return inRange(f) && is4by3(f); },
                 inRange };
@@ -576,8 +585,9 @@ void QVideoInputDevice::start(const QString& description)
     _capture_device->setViewfinder(_grabber);
     _capture_device->setCaptureMode(QCamera::CaptureViewfinder);
 
-    // Pick a resolution close to 640x480: cameras default to their highest
-    // resolution, which is a waste of CPU since the encoder downscales anyway.
+    // Pick a resolution close to 640x480 (640x360 when the user sends wide pictures
+    // whole): cameras default to their highest resolution, which is a waste of CPU
+    // since the encoder downscales anyway.
     // (load() is synchronous with the DirectShow backend; with others the list may
     // still be empty here, then the default resolution is kept.)
     _capture_device->load();
@@ -585,12 +595,13 @@ void QVideoInputDevice::start(const QString& description)
     const QList<QSize> resolutions = _capture_device->supportedViewfinderResolutions();
     if(!resolutions.isEmpty())
     {
+        const int target_h = (rsVOIP != NULL && rsVOIP->getVoipVideoWideMode() == RsVOIP::VideoWideNative) ? 360 : 480 ;
         QSize best ;
         int best_score = -1 ;
 
         for(const QSize& sz:resolutions)
         {
-            int score = std::abs(sz.width() - 640) + std::abs(sz.height() - 480) ;
+            int score = std::abs(sz.width() - 640) + std::abs(sz.height() - target_h) ;
             if(best_score < 0 || score < best_score)
             {
                 best = sz ;
@@ -661,10 +672,11 @@ void QVideoInputDevice::processImage(const QImage& image)
 
         emit networkPacketReady() ;
     }
-    // The self-view is mirrored, like in other video call applications. The
-    // frame sent to the peer (processImage above) is not.
+    // The self-view shows what the peer gets (same crop, see
+    // VideoProcessor::pictureToSend()), mirrored like in other video call
+    // applications. The frame sent to the peer is not mirrored.
     if(_echo_output_device != NULL)
-        _echo_output_device->showFrame(image.mirrored(true, false)) ;
+        _echo_output_device->showFrame(VideoProcessor::pictureToSend(image).mirrored(true, false)) ;
 }
 
 // =====================================================================================
