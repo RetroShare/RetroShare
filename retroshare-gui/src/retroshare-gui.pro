@@ -32,9 +32,12 @@ INCLUDEPATH *= $${PWD}
 
 !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 
-# GUI version derived from the Git version calculated in retroshare.pri.
-!isEmpty(RS_MAJOR_VERSION) {
-    DEFINES += RS_GUI_VERSION=\\\"$${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\\\"
+# Resolve the GUI version directly in this qmake target. This avoids relying
+# on RS_MAJOR_VERSION variables being propagated from the shared .pri file.
+RS_GUI_GIT_VERSION = $$system(git describe --tags --long --dirty --match v*.*.*)
+!isEmpty(RS_GUI_GIT_VERSION) {
+    RS_GUI_GIT_VERSION ~= s/^v//
+    DEFINES += RS_GUI_VERSION=\\\"$${RS_GUI_GIT_VERSION}\\\"
 }
 
 rs_webui {
