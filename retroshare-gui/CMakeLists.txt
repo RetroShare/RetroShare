@@ -571,15 +571,15 @@ endif()
 ## misc packaging options
 set(CPACK_VERBATIM_VARIABLES TRUE)
 set(CPACK_COMPONENTS_ALL retroshare-gui)
-# if(CMAKE_CXX_FLAGS_${BUILD_TYPE_UPPER} MATCHES "(^| )-g( |$)")
-#   set(CPACK_STRIP_FILES FALSE)
-# else()
-#   set(CPACK_STRIP_FILES TRUE)
-# endif()
+if(BUILD_TYPE_UPPER IN_LIST DEV_BUILD_TYPES)
+  set(CPACK_STRIP_FILES FALSE)
+else()
+  set(CPACK_STRIP_FILES TRUE)
+endif()
 set(CPACK_SOURCE_IGNORE_FILES
-  "${PROJECT_BINARY_DIR}/"
-  "${PROJECT_SOURCE_DIR}/\\.git(/|\$)"
-  "${PROJECT_SOURCE_DIR}/build/"
+  "^${PROJECT_BINARY_DIR}/"
+  "^${PROJECT_SOURCE_DIR}/\\.git(/|\$)"
+  "^${PROJECT_SOURCE_DIR}/build/"
 )
 set(CPACK_THREADS 0)
 
@@ -615,7 +615,6 @@ endif()
 find_package(Git QUIET)
 configure_file(mk/cmake/RSCPackConfig.cmake.in RSCPackConfig.cmake @ONLY)
 set(CPACK_PROJECT_CONFIG_FILE ${CMAKE_CURRENT_BINARY_DIR}/RSCPackConfig.cmake)
-
 
 include(CPack)
 

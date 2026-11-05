@@ -21,7 +21,7 @@
 ## ------------------------------------------------------------------------- ##
 
 # 3.7 : cmake_parse_arguments(PARSE_ARGV)
-# 3.7 : VERSION_GREATER_EQUAL
+# 3.7 : if(VERSION_GREATER_EQUAL)
 cmake_minimum_required(VERSION 3.7...4.4)
 
 function(cdefine macro)

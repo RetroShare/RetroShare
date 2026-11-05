@@ -20,6 +20,7 @@
  # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ## ------------------------------------------------------------------------- ##
 
+# 3.7 : if(VERSION_GREATER_EQUAL)
 # 3.15: file(INSTALL FOLLOW_SYMLINK_CHAIN)
 # 3.16: file(GET_RUNTIME_DEPENDENCIES)
 cmake_minimum_required(VERSION 3.16...4.4)
@@ -48,6 +49,17 @@ if([===[@MINGW@]===] AND [===[@CMAKE_CROSSCOMPILING@]===])
 	set(CMAKE_GET_RUNTIME_DEPENDENCIES_COMMAND [===[@CMAKE_OBJDUMP@]===])
 endif()
 
+# don't install system libraries
+if([===[@WIN32@]===])
+	set(EXCLUDE_LIBS
+		[===[@PROJECT_SOURCE_DIR@/mk/runtime_dependencies_exclude-windows.txt]===]
+	)
+endif()
+if(DEFINED EXCLUDE_LIBS)
+	file(READ ${EXCLUDE_LIBS} EXCLUDE_LIBS)
+	string(REPLACE "\n" ";" EXCLUDE_LIBS "${EXCLUDE_LIBS}")
+endif()
+
 file(GET_RUNTIME_DEPENDENCIES
 	RESOLVED_DEPENDENCIES_VAR RUNTIME_DEPENDENCIES_RESOLVED
 	UNRESOLVED_DEPENDENCIES_VAR RUNTIME_DEPENDENCIES_UNRESOLVED
@@ -56,38 +68,7 @@ file(GET_RUNTIME_DEPENDENCIES
 	LIBRARIES ${RUNTIME_DEPENDENCY_LIBRARIES}
 	MODULES ${RUNTIME_DEPENDENCY_MODULES}
 	DIRECTORIES ${RUNTIME_DEPENDENCY_DIRECTORIES}
-	PRE_EXCLUDE_REGEXES
-		"^advapi32\\.dll\$"
-		"^aleaut32\\.dll\$"
-		"^api-ms-win-.*\\.dll\$"
-		"^authz\\.dll\$"
-		"^avrt\\.dll\$"
-		"^comdlg32\\.dll\$"
-		"^crypt32\\.dll\$"
-		"^d3d11\\.dll\$"
-		"^d3d12\\.dll\$"
-		"^dnsapi\\.dll\$"
-		"^dwmapi\\.dll\$"
-		"^dwrite\\.dll\$"
-		"^dxgi\\.dll\$"
-		"^gdi32\\.dll\$"
-		"^kernel32\\.dll\$"
-		"^iphlpapi\\.dll\$"
-		"^mpr\\.dll\$"
-		"^netapi32\\.dll\$"
-		"^ntdll\\.dll\$"
-		"^ole32\\.dll\$"
-		"^oleaut32\\.dll\$"
-		"^propsys\\.dll\$"
-		"^shell32\\.dll\$"
-		"^secur32\\.dll\$"
-		"^user32\\.dll\$"
-		"^userenv\\.dll\$"
-		"^uxtheme\\.dll\$"
-		"^version\\.dll\$"
-		"^winhttp\\.dll\$"
-		"^winmm\\.dll\$"
-		"^ws2_32\\.dll\$"
+	PRE_EXCLUDE_REGEXES ${EXCLUDE_LIBS}
 )
 
 if(RUNTIME_DEPENDENCIES_UNRESOLVED)
