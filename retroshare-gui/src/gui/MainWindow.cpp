@@ -962,11 +962,16 @@ void MainWindow::updateFriends()
 
     bool overlay = notifyMenu && notifyMenu->menuAction()->isVisible();
 
+#if defined(Q_OS_UNIX) && !defined(Q_OS_DARWIN)
     // Every setIcon() re-sends the pixmap over D-Bus on SNI trays: skip it when nothing changed.
+    // Linux only: on Windows an icon update the shell drops (e.g. at autostart, before the
+    // taskbar is ready) would never be retried, leaving the tray stuck on the grey
+    // "0 connected" icon. There a re-send is one cheap Shell_NotifyIcon(NIM_MODIFY).
     QString trayIconKey = trayIconResource + (overlay ? "+" : "");
     if (trayIconKey == mLastTrayIconKey)
         return;
     mLastTrayIconKey = trayIconKey;
+#endif
 
     QIcon icon;
     if (overlay) {
