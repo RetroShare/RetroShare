@@ -23,6 +23,7 @@
 
 #include <QLineEdit>
 #include <QSystemTrayIcon>
+#include <QTimer>
 #include <set>
 
 #include "retroshare/rsevents.h"
@@ -310,6 +311,7 @@ private slots:
     void showabout();
     void openShareManager();
     void displaySystrayMsg(const QString&,const QString&) ;
+    void flushPendingSystrayMsg();
 
     /** Displays the help browser and displays the most recently viewed help
     * topic. */
@@ -361,6 +363,13 @@ private:
 #endif
 
     QSystemTrayIcon *trayIcon;
+    QString mLastTrayIconKey;
+    // Systray balloons are rate-limited; while one is up, later ones are folded into a single summary.
+    QTimer *mSystrayMsgTimer;
+    QString mPendingSystrayTitle;
+    QString mPendingSystrayMsg;
+    unsigned int mPendingSystrayCount;
+    bool mPendingSystrayMixed;
     QMenu *notifyMenu;
     QMenu *trayMenu;
     QString notifyToolTip;
