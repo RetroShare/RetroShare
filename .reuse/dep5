@@ -202,10 +202,102 @@ License: LGPL-2.0-or-later
 Comment: Torchlight icon set; its source states LGPL without a version.
 
 Files: plugins/VOIP/gui/images/deafened_self.svg
+       plugins/VOIP/gui/images/muted_self.svg
        plugins/VOIP/gui/images/self_undeafened.svg
+       plugins/VOIP/gui/images/talking_off.svg
+       plugins/VOIP/gui/images/talking_on.svg
 Copyright: Martin Skilnand, Mumble team
 License: BSD-3-Clause
 Comment: from Mumble.
+
+Files: retroshare-gui/src/gui/PhotoShare/images/kuickshow.png
+       retroshare-gui/src/gui/icons/flag-green.png
+       retroshare-gui/src/gui/icons/help_128.png
+       retroshare-gui/src/gui/icons/information_128.png
+       retroshare-gui/src/gui/icons/internet_128.png
+       retroshare-gui/src/gui/icons/plugins_128.png
+       retroshare-gui/src/gui/icons/quit_128.png
+       retroshare-gui/src/gui/icons/security_high_128.png
+       retroshare-gui/src/gui/icons/security_low_128.png
+       retroshare-gui/src/gui/icons/security_medium_128.png
+       retroshare-gui/src/gui/icons/system_128.png
+       retroshare-gui/src/gui/icons/user-away-extended_64.png
+       retroshare-gui/src/gui/icons/user-away_64.png
+       retroshare-gui/src/gui/icons/user-busy_64.png
+       retroshare-gui/src/gui/icons/user-offline_64.png
+       retroshare-gui/src/gui/icons/user-online_64.png
+       retroshare-gui/src/gui/images/document-edit-sign.png
+       retroshare-gui/src/gui/images/document_save.png
+       retroshare-gui/src/gui/images/edit-clear-history.png
+       retroshare-gui/src/gui/images/filetype-association.png
+       retroshare-gui/src/gui/images/go-bottom.png
+       retroshare-gui/src/gui/images/go-down.png
+       retroshare-gui/src/gui/images/go-top.png
+       retroshare-gui/src/gui/images/go-up.png
+       retroshare-gui/src/gui/images/im-user-away.png
+       retroshare-gui/src/gui/images/im-user-busy.png
+       retroshare-gui/src/gui/images/im-user-offline.png
+       retroshare-gui/src/gui/images/im-user.png
+       retroshare-gui/src/gui/images/mail-encrypted-full.png
+       retroshare-gui/src/gui/images/mail-signature-unknown.png
+       retroshare-gui/src/gui/images/mail-signed-full.png
+       retroshare-gui/src/gui/images/mail-signed.png
+       retroshare-gui/src/gui/images/office-chart-area-stacked.png
+       retroshare-gui/src/gui/images/office-chart-line.png
+       retroshare-gui/src/gui/images/player_play.png
+       retroshare-gui/src/gui/images/tags/dev-ambassador.png
+       retroshare-gui/src/gui/images/tags/dev-translator.png
+       retroshare-gui/src/gui/images/tags/developer.png
+       retroshare-gui/src/gui/images/tools_wizard.png
+Copyright: 2007, David Vignoni, Nuno Pinheiro, Kenneth Wimer, David Miller, Johann Ollivier Lapeyre, Riccardo Iaconelli
+           KDE Oxygen artists
+License: LGPL-3.0-or-later
+Comment: Oxygen icon theme; identical (or a resize) of the Debian oxygen-icon-theme files.
+
+Files: retroshare-gui/src/gui/images/delete.png
+       retroshare-gui/src/gui/images/diskSave.png
+       retroshare-gui/src/gui/images/reset.png
+Copyright: 2002, KDE Artists
+License: LGPL-2.1-only
+Comment: KDE 3 Crystal SVG icons (kdelibs 3.5).
+
+Files: plugins/FeedReader/gui/images/FeedProcess.png
+       plugins/FeedReader/gui/images/Update.png
+       retroshare-gui/src/gui/images/sort_decrease.png
+       retroshare-gui/src/gui/images/sort_incr.png
+       retroshare-gui/src/gui/images/update.png
+Copyright: 2002-2008, KDE Artists, Everaldo Coelho
+License: GPL-2.0-or-later
+Comment: KDE 3 kdeartwork icon themes (kdeclassic, kids).
+
+Files: retroshare-gui/src/gui/images/star-on-16.png
+Copyright: elementary and Xfce artists
+License: GPL-3.0-or-later
+Comment: elementary-xfce icon theme.
+
+Files: retroshare-gui/src/gui/images/emblem-web.png
+Copyright: GNOME Project
+License: GPL-2.0-or-later
+Comment: GNOME icon theme.
+
+Files: retroshare-gui/src/sounds/chat1.wav
+       retroshare-gui/src/sounds/chat2.wav
+       retroshare-gui/src/sounds/ft_complete.wav
+       retroshare-gui/src/sounds/ft_incoming.wav
+       retroshare-gui/src/sounds/offline.wav
+       retroshare-gui/src/sounds/online2.wav
+       retroshare-gui/src/sounds/send2.wav
+Copyright: 2001-2008, Justin Karneges and the Psi developers
+License: GPL-2.0-or-later
+Comment: sounds of the Psi chat client, identical sample for sample.
+
+Files: retroshare-gui/src/sounds/alert.wav
+       retroshare-gui/src/sounds/online1.wav
+       retroshare-gui/src/sounds/receive.wav
+       retroshare-gui/src/sounds/send1.wav
+Copyright: Pidgin developers
+License: GPL-2.0-or-later
+Comment: sounds of Pidgin (alert, login, receive, send), identical sample for sample.
 
 Files: plugins/FeedReader/interface/rsFeedReader.h
 Copyright: 2012, Thunder
