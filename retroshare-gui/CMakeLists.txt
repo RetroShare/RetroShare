@@ -65,7 +65,7 @@ set(
 
 option(
 	RS_JSON_API
-	"Use restbed to expose libretroshare as JSON API via HTTP"
+	"Enable GUI support for libretroshare JSON API"
 	ON
 )
 
@@ -102,16 +102,8 @@ set(RS_GXSIDENTITIES ON CACHE BOOL "Enable GXS identities in GUI" FORCE)
 set(RS_IDLE ON CACHE BOOL "Enable Idle support" FORCE)
 
 cmake_dependent_option(
-	RS_SERVICE_TERMINAL_WEBUI_PASSWORD
-	"Enable settin Web UI password via terminal in retroshare-service"
-	OFF
-	"RS_WEBUI"
-	OFF
-)
-
-cmake_dependent_option(
 	RS_WEBUI
-	"Install RetroShare Web UI"
+	"Enable GUI support for RetroShare Web UI"
 	OFF
 	"RS_JSON_API"
 	OFF
