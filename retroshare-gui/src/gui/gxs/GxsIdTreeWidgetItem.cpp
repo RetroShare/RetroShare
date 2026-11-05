@@ -84,6 +84,9 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
         GxsIdDetails::GenerateCombinedPixmap(combinedPixmap, icons, QFontMetricsF(item->font(item->idColumn())).height()*1.4);
 	}
 	item->setData(column, Qt::DecorationRole, combinedPixmap);
+	if (item->iconTypeMask() == GxsIdDetails::ICON_TYPE_AVATAR)
+		item->setData(column, GxsIdRSTreeWidgetItem::AvatarIconRole,
+		              icons.isEmpty() ? QVariant() : QVariant(icons.first()));
 	item->setAvatar(details.mAvatar);
 }
 

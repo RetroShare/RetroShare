@@ -24,6 +24,7 @@
 #include <QMessageBox>
 #include <QWidgetAction>
 #include <QActionGroup>
+#include <QStyledItemDelegate>
 
 #include "ChatLobbyDialog.h"
 
@@ -63,6 +64,34 @@
 const static uint32_t timeToInactivity = 60 * 10;   // in seconds
 const static uint32_t timeToInactivity2 = 60 * 5;   // in seconds
 
+namespace
+{
+class ParticipantAvatarDelegate : public QStyledItemDelegate
+{
+public:
+	explicit ParticipantAvatarDelegate(QObject *parent)
+	    : QStyledItemDelegate(parent) {}
+
+protected:
+	void initStyleOption(QStyleOptionViewItem *option,
+	                     const QModelIndex &index) const override
+	{
+		QStyledItemDelegate::initStyleOption(option, index);
+
+		// Use the source icon, before the identity item reduces it to a small
+		// combined pixmap, so larger fonts do not magnify that thumbnail.
+		const QIcon avatar = qvariant_cast<QIcon>(
+		        index.data(GxsIdRSTreeWidgetItem::AvatarIconRole));
+		if (!avatar.isNull())
+		{
+			const int size = qRound(option->fontMetrics.height() * 1.4);
+			option->icon = avatar;
+			option->decorationSize = QSize(size, size);
+		}
+	}
+};
+}
+
 /** Default constructor */
 ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WindowFlags flags)
         : ChatDialog(parent, flags), lobbyId(lid), mWindowedSetted(false), mPCWindow(nullptr),
@@ -82,10 +111,10 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
 		int S = QFontMetricsF(font()).height() ;
-    ui.participantsList->setIconSize(QSize(1.4*S,1.4*S));
+    ui.participantsList->setItemDelegateForColumn(
+            COLUMN_NAME, new ParticipantAvatarDelegate(ui.participantsList));
 
     ui.participantsList->setColumnCount(COLUMN_COUNT);
-    ui.participantsList->setColumnWidth(COLUMN_ICON, 1.7*S);
     ui.participantsList->setColumnHidden(COLUMN_ACTIVITY,true);
     ui.participantsList->setColumnHidden(COLUMN_ID,true);
 
@@ -211,7 +240,12 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
 	getChatWidget()->addTitleBarWidget(unsubscribeButton) ;
 
-	mFontSizeHandler.registerFontSize(ui.participantsList);
+	// Status icons are smaller than the avatars sized by ParticipantAvatarDelegate.
+	mFontSizeHandler.registerFontSize(ui.participantsList, 1.0f,
+	        [this](QAbstractItemView *view, int) {
+		        ui.participantsList->setColumnWidth(
+		                COLUMN_ICON, qRound(QFontMetricsF(view->font()).height() * 1.3));
+	        });
     
     mEventHandlerId_identity = 0; // Initialize
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { RsQThreadUtils::postToObject([=](){ handleIdentityEvent(event); }, this); }, mEventHandlerId_identity, RsEventType::GXS_IDENTITY );
