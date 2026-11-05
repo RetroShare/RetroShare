@@ -320,6 +320,80 @@ if [ -x "$MACDEPLOY_BIN" ]; then
         echo "  OK: third-party libs self-contained (no /opt/homebrew or /usr/local references left)."
     fi
 
+    # --------------------------------------------------------------------------
+    # Real minimum macOS of the whole bundle.
+    #
+    # Our own binaries follow CMAKE_OSX_DEPLOYMENT_TARGET, which is what MINOS
+    # was read from. The Homebrew dylibs copied above (Qt, ffmpeg, freetype...)
+    # do not: Homebrew builds one bottle per macOS major, on a recent point
+    # release, so a bundled dylib may need a newer macOS than our binary says.
+    # Two ways that shows up:
+    #   - its own minos is higher: the .dmg is then named after the highest one;
+    #   - it links a /usr/lib library that older point releases lack (freetype
+    #     2.15.0 links /usr/lib/libhvf.dylib, absent from macOS 15.0: dyld aborts
+    #     before main()). Its minos does not tell, so any /usr/lib dependency
+    #     outside a list of long-standing system libraries is reported.
+    # --------------------------------------------------------------------------
+    echo ">>> Checking the minimum macOS required by every bundled binary..."
+    macho_minos() {
+        otool -l "$1" 2>/dev/null \
+            | grep -A3 -E 'LC_BUILD_VERSION|LC_VERSION_MIN_MACOSX' \
+            | grep -oE '(minos|version) [0-9]+(\.[0-9]+)+' \
+            | grep -oE '[0-9]+(\.[0-9]+)+' | head -1
+    }
+    # True when version $1 is strictly greater than version $2.
+    ver_gt() {
+        [ "$1" != "$2" ] && \
+        [ "$(printf '%s\n%s\n' "$1" "$2" | sort -t. -k1,1n -k2,2n -k3,3n | tail -1)" = "$1" ]
+    }
+    # /usr/lib libraries that every macOS we target has shipped for years.
+    known_system_lib() {
+        case "$1" in
+            libSystem.B.dylib|libc++.1.dylib|libc++abi.dylib|libobjc.A.dylib|\
+            libz.1.dylib|libbz2.1.0.dylib|libiconv.2.dylib|libcharset.1.dylib|\
+            libresolv.9.dylib|libsqlite3.dylib|libxml2.2.dylib|libxslt.1.dylib|\
+            libexslt.0.dylib|libexpat.1.dylib|libcurl.4.dylib|libcups.2.dylib|\
+            libncurses.5.4.dylib|libedit.3.dylib|libffi.dylib|liblzma.5.dylib|\
+            libcompression.dylib|libarchive.2.dylib|libpam.2.dylib|libutil.dylib|\
+            libicucore.A.dylib|libDiagnosticMessagesClient.dylib|libnetwork.dylib|\
+            libbsm.0.dylib|libmecabra.dylib|libapple_nghttp2.dylib)
+                return 0 ;;
+        esac
+        return 1
+    }
+
+    BUNDLE_MINOS="$MINOS"
+    BUNDLE_MINOS_FILE="retroshare-gui"
+    UNUSUAL_SYSLIBS=""
+    while IFS= read -r f; do
+        v=$(macho_minos "$f")
+        [ -n "$v" ] || continue        # not a Mach-O file
+        if ver_gt "$v" "$BUNDLE_MINOS"; then
+            BUNDLE_MINOS="$v"
+            BUNDLE_MINOS_FILE="${f#"$TARGET_APP"/}"
+        fi
+        for lib in $(otool -L "$f" 2>/dev/null | awk 'NR>1{print $1}' | grep '^/usr/lib/' || true); do
+            known_system_lib "$(basename "$lib")" \
+                || UNUSUAL_SYSLIBS="${UNUSUAL_SYSLIBS}${lib} (needed by ${f#"$TARGET_APP"/})"$'\n'
+        done
+    done < <(find "$TARGET_APP" -type f)
+
+    if ver_gt "$BUNDLE_MINOS" "$MINOS"; then
+        echo "  WARNING: $BUNDLE_MINOS_FILE requires macOS $BUNDLE_MINOS, above the $MINOS our binaries target."
+        echo "           The .dmg is named after the real floor: macos-$BUNDLE_MINOS."
+        ARCHIVE_BASE="RetroShare-v${VERSION}${GIT_SUFFIX}-Qt-${QT_VERSION}-macos-${BUNDLE_MINOS}-${ARCH}"
+    else
+        echo "  OK: every bundled binary runs on macOS $MINOS (minos)."
+    fi
+
+    if [ -n "$UNUSUAL_SYSLIBS" ]; then
+        echo "  WARNING: bundled binaries link system libraries that older macOS releases may lack:"
+        printf '%s' "$UNUSUAL_SYSLIBS" | sort -u | sed 's/^/    /'
+        echo "           The .dmg may not start below the macOS release that introduced them,"
+        echo "           whatever its name says. Usual cause: a Homebrew bottle built on a newer"
+        echo "           point release. Fix: brew reinstall --build-from-source <formula>, then redeploy."
+    fi
+
 
     echo ">>> Ad-hoc code signing (required for Apple Silicon)..."
     if command -v codesign &> /dev/null; then
