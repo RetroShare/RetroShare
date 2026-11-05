@@ -1,0 +1,20 @@
+Sound credits
+=============
+
+chat1.wav, chat2.wav, ft_complete.wav, ft_incoming.wav, offline.wav,
+online2.wav (Psi's online.wav), send2.wav (Psi's send.wav)
+    From Psi, https://psi-im.org
+    Copyright the Psi developers
+    License: GPL-2.0-or-later
+
+alert.wav, online1.wav (Pidgin's login.wav), receive.wav,
+send1.wav (Pidgin's send.wav)
+    From Pidgin, https://pidgin.im
+    Copyright the Pidgin developers
+    License: GPL-2.0-or-later
+
+incomingchat.wav
+    message-new-instant.oga from the freedesktop.org sound theme 0.8,
+    converted to WAV
+    Copyright Damien Sandras <dsandras@seconix.com>
+    License: GPL-2.0-or-later
