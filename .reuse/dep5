@@ -299,6 +299,24 @@ Copyright: Pidgin developers
 License: GPL-2.0-or-later
 Comment: sounds of Pidgin (alert, login, receive, send), identical sample for sample.
 
+Files: retroshare-gui/src/gui/icons/png/feed-other.png
+       retroshare-gui/src/gui/icons/png/feed-popular.png
+       retroshare-gui/src/gui/icons/png/feed-subscribed.png
+       retroshare-gui/src/gui/icons/png/feedreader.png
+       retroshare-gui/src/gui/icons/png/feedreader-notify.png
+       retroshare-gui/src/gui/icons/svg/feed-other.svg
+       retroshare-gui/src/gui/icons/svg/feed-popular.svg
+       retroshare-gui/src/gui/icons/svg/feed-subscribed.svg
+       plugins/FeedReader/gui/images/FeedReader.png
+       plugins/FeedReader/gui/images/feedreader-notify.png
+Copyright: Mozilla Foundation
+           defnax
+License: GPL-2.0-or-later
+Comment: the feed symbol is the Mozilla feed icon (Wikimedia Commons
+ File:Generic_Feed-icon.svg), tri-licensed GPL-2.0-or-later, LGPL-2.1-or-later
+ or MPL-1.1, used here under GPL-2.0-or-later; the coloured disc is
+ defnax's own work (RetroShare#3342).
+
 Files: plugins/FeedReader/interface/rsFeedReader.h
 Copyright: 2012, Thunder
 License: GPL-2.0-or-later
