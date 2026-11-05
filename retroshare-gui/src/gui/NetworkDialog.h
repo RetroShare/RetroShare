@@ -86,7 +86,6 @@ private slots:
   //void on_actionExportKey_activated();
   //void on_actionCreate_New_Profile_activated();
     
-  void filterColumnChanged(int);
 
 private:
 
@@ -101,9 +100,6 @@ private:
   QColor mTextColor;
 
   RSTreeWidgetItemCompareRole *compareNetworkRole ;
-
-  //iinternal long lived data
-  std::list<RsPgpId> neighs;
 
   pgpid_item_model *PGPIdItemModel;
   pgpid_item_proxy *PGPIdItemProxy;

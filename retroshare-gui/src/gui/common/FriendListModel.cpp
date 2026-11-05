@@ -65,6 +65,7 @@ static const uint32_t NODE_DETAILS_UPDATE_DELAY = 5;	// update each node every 5
 
 RsFriendListModel::RsFriendListModel(QObject *parent)
     : QAbstractItemModel(parent)
+    , mFilterType(FILTER_TYPE_NONE)
     , mDisplayGroups(true), mDisplayStatusString(true), mDisplayStatusIcon (false)
     , mLastInternalDataUpdate(0), mLastNodeUpdate(0)
 {
@@ -463,32 +464,37 @@ QVariant RsFriendListModel::statusRole(const EntryIndex& fmpe,int /*column*/) co
     return QVariant();
 }
 
+// An entry is shown when it matches the filter, and so are the locations of a matching profile. The
+// proxy model filters recursively, so the parents of a match are shown too. Groups are not searched as
+// parents: their text holds counts and a hex id, which would match most searches.
+
 bool RsFriendListModel::passesFilter(const EntryIndex& e,int /*column*/) const
 {
-	QString s ;
-	bool passes_strings = true ;
+	if(mFilterStrings.empty() || matchesFilter(e))
+		return true;
 
-	if(e.type == ENTRY_TYPE_PROFILE && !mFilterStrings.empty())
-	{
-		switch(mFilterType)
-		{
-		case FILTER_TYPE_ID: 	s = displayRole(e,COLUMN_THREAD_ID).toString();
-			break;
+	return e.type == ENTRY_TYPE_NODE && matchesFilter(e.parent());
+}
 
-		case FILTER_TYPE_NAME:  s = displayRole(e,COLUMN_THREAD_NAME).toString();
-			if(s.isNull())
-				passes_strings = false;
-			break;
-		case FILTER_TYPE_NONE:
-			RS_ERR("None Type for Filter.");
-		};
-	}
+// Only the text of the visible columns is searched. The last contact column is left out: it holds a raw
+// timestamp that the delegate formats, so its text would not match what is displayed.
 
-	if(!s.isNull())
+bool RsFriendListModel::matchesFilter(const EntryIndex& e) const
+{
+	auto passes_strings = [&](const QString& s) -> bool {
+		bool res = true;
+
 		for(auto iter(mFilterStrings.begin()); iter != mFilterStrings.end(); ++iter)
-			passes_strings = passes_strings && s.contains(*iter,Qt::CaseInsensitive);
+			res = res && s.contains(*iter,Qt::CaseInsensitive);
 
-	return passes_strings;
+		return res;
+	};
+
+	if((mFilterType & FILTER_TYPE_NAME) && passes_strings(displayRole(e,COLUMN_THREAD_NAME).toString())) return true;
+	if((mFilterType & FILTER_TYPE_IP  ) && passes_strings(displayRole(e,COLUMN_THREAD_IP  ).toString())) return true;
+	if((mFilterType & FILTER_TYPE_ID  ) && passes_strings(displayRole(e,COLUMN_THREAD_ID  ).toString())) return true;
+
+	return false;
 }
 
 QVariant RsFriendListModel::filterRole(const EntryIndex& e,int column) const
@@ -505,7 +511,7 @@ uint32_t RsFriendListModel::updateFilterStatus(ForumModelIndex /*i*/,int /*colum
 }
 
 
-void RsFriendListModel::setFilter(FilterType filter_type, const QStringList& strings)
+void RsFriendListModel::setFilter(uint8_t filter_type, const QStringList& strings)
 {
 #ifdef DEBUG_MODEL
     std::cerr << "Setting filter to filter_type=" << int(filter_type) << " and strings to " ;

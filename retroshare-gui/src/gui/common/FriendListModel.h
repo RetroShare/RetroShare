@@ -88,7 +88,8 @@ public:
 
     enum FilterType{ FILTER_TYPE_NONE = 0x00,
         			 FILTER_TYPE_ID   = 0x01,
-                     FILTER_TYPE_NAME = 0x02
+                     FILTER_TYPE_NAME = 0x02,
+                     FILTER_TYPE_IP   = 0x04
                    };
 
     enum EntryType{ ENTRY_TYPE_UNKNOWN   = 0x00,
@@ -141,7 +142,7 @@ public:
     bool getProfileData(const QModelIndex&,RsProfileDetails&) const;
     bool getNodeData   (const QModelIndex&,RsNodeDetails   &) const;
 
-    void setFilter(FilterType filter_type, const QStringList& strings) ;
+    void setFilter(uint8_t filter_type, const QStringList& strings) ;
 
     void expandItem(const QModelIndex&) ;
     void collapseItem(const QModelIndex&) ;
@@ -211,6 +212,7 @@ signals:
 private:
 	void updateInternalData();
 	bool passesFilter(const EntryIndex &e, int column) const;
+	bool matchesFilter(const EntryIndex &e) const;
 
 	void preMods() ;
 	void postMods() ;
@@ -227,7 +229,7 @@ private:
     const HierarchicalNodeInformation *getBestNodeInformation(const HierarchicalProfileInformation *profileInfo, RsStatusValue *status = NULL) const;
 
     QStringList mFilterStrings;
-    FilterType  mFilterType;
+    uint8_t     mFilterType;
 
     bool mDisplayGroups ;
     bool mDisplayStatusString ;

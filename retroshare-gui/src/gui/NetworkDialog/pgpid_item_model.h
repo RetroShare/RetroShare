@@ -30,7 +30,7 @@ class pgpid_item_model : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    explicit pgpid_item_model(std::list<RsPgpId> &neighs, float &font_height, QObject *parent = nullptr);
+    explicit pgpid_item_model(float &font_height, QObject *parent = nullptr);
 
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const ;
@@ -60,7 +60,13 @@ public slots:
     void data_updated(std::list<RsPgpId> &new_neighs);
 
 private:
-    std::list<RsPgpId> &neighs;
+    bool getDetails(int row, RsPeerDetails& detail) const;
+
+    std::vector<RsPgpId> neighs;
+
+    // A row is read once per column, so keep the details of the last one read. Cleared in data_updated().
+    mutable RsPgpId mCachedId;
+    mutable RsPeerDetails mCachedDetails;
     float font_height;
     QColor mBackgroundColorSelf;
     QColor mBackgroundColorOwnSign;
