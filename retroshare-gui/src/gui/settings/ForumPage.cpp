@@ -18,8 +18,13 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <QPushButton>
+#include <QMessageBox>
+#include "retroshare/rsgxsforums.h"
 #include "ForumPage.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
+#include "util/rsthreads.h"
 #include "rsharesettings.h"
 
 ForumPage::ForumPage(QWidget * parent, Qt::WindowFlags flags)
@@ -39,6 +44,53 @@ ForumPage::ForumPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.minimumContrast    , SIGNAL(valueChanged(int)), this, SLOT(updateFonts()));
 
     ui.groupFrameSettingsWidget->setType(GroupFrameSettings::Forum) ;
+
+#ifdef RS_DEEP_FORUMS_INDEX
+    mReindexButton = new QPushButton(tr("Rebuild the search index"), this);
+    mReindexButton->setToolTip(
+                tr("Rebuild the index used to search the content of the "
+                   "forum posts. This may take a few minutes.") );
+    connect(mReindexButton, SIGNAL(clicked()), this, SLOT(reindexAll()));
+    layout()->addWidget(mReindexButton);
+#endif
+}
+
+void ForumPage::reindexAll()
+{
+#ifdef RS_DEEP_FORUMS_INDEX
+    if( QMessageBox::question(
+                this, tr("Rebuild the search index"),
+                tr("Rebuild the index used to search the content of the forum "
+                   "posts?\nIt may take a few minutes on a big profile, the "
+                   "search keeps working meanwhile."),
+                QMessageBox::Yes | QMessageBox::No ) != QMessageBox::Yes )
+        return;
+
+    mReindexButton->setEnabled(false);
+    mReindexButton->setText(tr("Rebuilding the search index..."));
+
+    // Blocking and long: off the GUI thread
+    RsThread::async([this]()
+    {
+        const bool done = rsGxsForums->reindexAll();
+
+        RsQThreadUtils::postToObject([this, done]()
+        {
+            mReindexButton->setEnabled(true);
+            mReindexButton->setText(tr("Rebuild the search index"));
+            if(done)
+                QMessageBox::information(
+                            this, tr("Rebuild the search index"),
+                            tr("The search index has been rebuilt.") );
+            else
+                QMessageBox::warning(
+                            this, tr("Rebuild the search index"),
+                            tr("The search index could not be fully rebuilt, "
+                               "or a rebuild was already running. See the "
+                               "log for details.") );
+        }, this);
+    });
+#endif
 }
 
 ForumPage::~ForumPage()
