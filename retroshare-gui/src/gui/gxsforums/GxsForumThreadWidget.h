@@ -225,6 +225,9 @@ private:
 	unsigned int mNewCount;
 	bool mDisplayBannedText;
 	bool mForceSearch;
+	QStringList mContentSearchWords; // words of the current content search
+
+	void highlightContentSearchWords();
 
 	/* Color definitions (for standard see default.qss) */
 	QColor mTextColorRead;

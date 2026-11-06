@@ -24,6 +24,9 @@
 #include <QScrollBar>
 #include <QPainter>
 #include <QTimer>
+#include <QRegularExpression>
+#include <QTextCursor>
+#include <QTextDocument>
 
 #include "util/qtthreadsutils.h"
 #include "util/misc.h"
@@ -1382,10 +1385,62 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
             , backgroundColor, desiredContrast, desiredMinimumFontSize
         );
     ui->postText->setHtml(extraTxt);
+    highlightContentSearchWords();
 
     QStringList urls;
     RsHtml::findAnchors(ui->postText->toHtml(), urls);
     ui->downloadButton->setEnabled(urls.count() > 0);
+}
+
+void GxsForumThreadWidget::highlightContentSearchWords()
+{
+    /* Extra selections are painted over the document without changing it:
+     * copy, links and the post HTML are left untouched. Same matching as the
+     * index: words starting with one of the searched words, any case. */
+    QList<QTextEdit::ExtraSelection> selections;
+
+    if(!mContentSearchWords.isEmpty())
+    {
+        QStringList alternatives;
+        for(const QString& w : mContentSearchWords)
+            alternatives << QRegularExpression::escape(w);
+
+        const QRegularExpression re(
+                    "\\b(?:" + alternatives.join('|') + ")\\w*",
+                    QRegularExpression::CaseInsensitiveOption |
+                    QRegularExpression::UseUnicodePropertiesOption );
+
+        // Same colour as the chat search, with a readable text on top of it
+        const QColor background = Settings->getChatSearchFoundColor();
+        QTextCharFormat format;
+        format.setBackground(background);
+        format.setForeground(background.lightness() > 128 ? Qt::black : Qt::white);
+
+        constexpr int MAX_HIGHLIGHTS = 1000;
+        QTextDocument* doc = ui->postText->document();
+        QTextCursor found(doc);
+        while(selections.size() < MAX_HIGHLIGHTS)
+        {
+            found = doc->find(re, found);
+            if(found.isNull() || !found.hasSelection()) break;
+
+            QTextEdit::ExtraSelection selection;
+            selection.cursor = found;
+            selection.format = format;
+            selections << selection;
+        }
+
+        // Bring the first match into view, useful in long posts
+        if(!selections.isEmpty())
+        {
+            QTextCursor first = selections.first().cursor;
+            first.clearSelection();
+            ui->postText->setTextCursor(first);
+            ui->postText->ensureCursorVisible();
+        }
+    }
+
+    ui->postText->setExtraSelections(selections);
 }
 
 void GxsForumThreadWidget::previousMessage()
@@ -1877,6 +1932,17 @@ void GxsForumThreadWidget::filterItems(const QString& text)
     uint32_t count;
     if(filterColumn == RsGxsForumModel::COLUMN_THREAD_CONTENT && !lst.empty())
     {
+        /* Split like the forum index does: runs of letters and digits, non
+         * ASCII characters included. Kept to highlight them in the posts. */
+        mContentSearchWords.clear();
+        QString word;
+        for(const QChar c : text)
+        {
+            if(c.isLetterOrNumber() || c.unicode() >= 0x80) word += c;
+            else if(!word.isEmpty()) { mContentSearchWords << word; word.clear(); }
+        }
+        if(!word.isEmpty()) mContentSearchWords << word;
+
         // Clear the current selection, the shown post may not match
         mThreadId = RsGxsMessageId();
         blankPost();
@@ -1898,6 +1964,7 @@ void GxsForumThreadWidget::filterItems(const QString& text)
     else
     {
         // Title, date or author search, or search cleared
+        mContentSearchWords.clear();
         mThreadModel->setFilter(filterColumn, lst, count);
     }
 
