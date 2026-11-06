@@ -50,12 +50,14 @@
 #include "gui/FriendServerControl.h"
 #endif
 #include "gui/Identity/IdDialog.h"
+#include "gui/FriendRequestsDialog.h"
 /* Images for Newsfeed icons */
 //#define IMAGE_NEWSFEED           ""
 //#define IMAGE_NEWSFEED_NEW       ":/images/message-state-new.png"
 #define IMAGE_NETWORK2          ":/icons/png/netgraph2.png"
 #define IMAGE_PEERS         	":/icons/png/digital-key.png"
 #define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
+#define IMAGE_FRIENDREQUESTS    ":/images/user/user_request48.png"
 
 /******
  * #define FRIENDS_DEBUG 1
@@ -130,14 +132,14 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
     if(RsAccounts::isTorAuto())
         ui.tabWidget->addTab(friendServerControl = new FriendServerControl(),QIcon(IMAGE_PEERS), tr("Friend Server"));
 #endif
+    ui.tabWidget->addTab(friendRequestsDialog = new FriendRequestsDialog(),QIcon(IMAGE_FRIENDREQUESTS), tr("Friend Requests"));
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Network graph"));
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
 
-    ui.tabWidget->hideCloseButton(0);
-    ui.tabWidget->hideCloseButton(1);
-    ui.tabWidget->hideCloseButton(2);
-    ui.tabWidget->hideCloseButton(3);
-    ui.tabWidget->hideCloseButton(4);
+    connect(friendRequestsDialog, SIGNAL(requestCountChanged(int)), this, SLOT(updateFriendRequestsTabCount(int)));
+
+    for (int i = 0; i < ui.tabWidget->count(); ++i)
+        ui.tabWidget->hideCloseButton(i);
 
     /* Set initial size the splitter */
     ui.splitter->setStretchFactor(0, 0);
@@ -332,4 +334,16 @@ void FriendsDialog::statusmessage()
 	MainWindow::showWindow(MainWindow::Friends);
 	friendsDialog->ui.tabWidget->setCurrentWidget(friendsDialog->ui.groupChatTab);
     friendsDialog->ui.chatWidget->focusDialog();
+}
+
+void FriendsDialog::updateFriendRequestsTabCount(int count)
+{
+	int tabIndex = ui.tabWidget->indexOf(friendRequestsDialog);
+	if (tabIndex < 0)
+		return;
+
+	if (count > 0)
+		ui.tabWidget->setTabText(tabIndex, tr("Friend Requests (%1)").arg(count));
+	else
+		ui.tabWidget->setTabText(tabIndex, tr("Friend Requests"));
 }
