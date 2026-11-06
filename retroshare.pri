@@ -291,7 +291,7 @@ isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
 #
 #  V07_NON_BACKWARD_COMPATIBLE_CHANGE_002:
 #
-#     What: Use RSA+SHA256 instead of RSA+SHA1 for SSL certificates 
+#     What: Use RSA+SHA256 instead of RSA+SHA1 for SSL certificates
 #
 #     Why:  Sha1 is likely to be prone to primary collisions anytime soon, so it is urgent to turn to a more secure solution.
 #
@@ -317,7 +317,7 @@ isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
 #
 #    What: Stop accepting certificates signed with sha1 algorithm
 #
-#    Why:  Sha1 has been declared insecure and shouldn't be used anymore. 
+#    Why:  Sha1 has been declared insecure and shouldn't be used anymore.
 #
 #    BackwardCompat: Retroshare profiles generated before Nov.2024 with openpgp-sdk may still use sha1
 #
@@ -457,6 +457,8 @@ defineReplace(fixQmakeCC) {
 ##   ("sqlcipher sqlite3", sqlite3) it is usually precalculated depending on
 ##   CONFIG.
 
+DEFINES += RSGUI_QMAKE
+
 isEmpty(QMAKE_HOST_SPEC):QMAKE_HOST_SPEC=$$[QMAKE_SPEC]
 isEmpty(QMAKE_TARGET_SPEC):QMAKE_TARGET_SPEC=$$[QMAKE_XSPEC]
 equals(QMAKE_HOST_SPEC, $$QMAKE_TARGET_SPEC) {
@@ -480,9 +482,11 @@ defined in command line")
     DEFINES += RS_MINOR_VERSION=$${RS_MINOR_VERSION}
     DEFINES += RS_MINI_VERSION=$${RS_MINI_VERSION}
     DEFINES += RS_EXTRA_VERSION=\\\"$${RS_EXTRA_VERSION}\\\"
+    RSGUI_VERSION_FULL = "$${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}-qmake"
 } else {
     RS_GIT_DESCRIBE = $$system(git describe --long --dirty --match v*.*.*)
     contains(RS_GIT_DESCRIBE, ^v\d+\.\d+\.\d+.*) {
+        RSGUI_VERSION_FULL = "$$str_member(RS_GIT_DESCRIBE, 1, -1)-qmake"
         RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE, v)
         RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE_SPLIT, .)
 
@@ -530,8 +534,10 @@ trough qmake command line arguments!")
 # it as its own version (see retroshare-gui/src/rsguiversion.h). Only the GUI
 # consumes this define; harmless for the other sub-projects. When the version
 # could not be determined, rsguiversion.h falls back to its built-in default.
-!isEmpty(RS_MAJOR_VERSION) {
-    DEFINES += RS_GUI_VERSION=\\\"$${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\\\"
+!isEmpty(RSGUI_VERSION_FULL) {
+    DEFINES += $$shell_quote(RSGUI_VERSION_FULL=\"$${RSGUI_VERSION_FULL}\")
+} else {
+    DEFINES += $$shell_quote(RSGUI_VERSION_FULL=\"no version available\")
 }
 
 # Some supportlibs compilation won't start if the intstalled CMAKE verison is >=3.5.
@@ -555,7 +561,7 @@ rs_service_terminal_login:DEFINES *= RS_SERVICE_TERMINAL_LOGIN
 
 sqlcipher {
     DEFINES -= NO_SQLCIPHER
-    RS_SQL_LIB = sqlcipher 
+    RS_SQL_LIB = sqlcipher
 }
 no_sqlcipher {
     DEFINES *= NO_SQLCIPHER
@@ -909,7 +915,7 @@ isEmpty(RS_UPNP_LIB) {
 
 rs_openpgpsdk {
         SUBDIRS += openpgpsdk
-        openpgpsdk.file = openpgpsdk/src/openpgpsdk.pro
+        openpgpsdk.file = supportlibs/openpgpsdk/src/openpgpsdk.pro
         libretroshare.depends += openpgpsdk
         message("Using OpenPGP-SDK for PGP")
 }

@@ -52,10 +52,14 @@ Other notes:
 build. librnp needs `--recursive` for its nested `src/libsexpp`.
 
 ```bash
-git submodule update --init libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/
+git submodule update --init libretroshare/ retroshare-webui/
 git submodule update --init --recursive supportlibs/librnp
-git submodule update --init supportlibs/restbed supportlibs/libsam3 \
-                              supportlibs/udp-discovery-cpp supportlibs/rapidjson
+git submodule update --init supportlibs/restbed \
+                            supportlibs/libsam3 \
+                            supportlibs/udp-discovery-cpp \
+                            supportlibs/rapidjson \
+                            supportlibs/libbitdht \
+                            supportlibs/openpgpsdk
 ```
 
 **rapidjson / GCC >= 13:** the commit pinned by the super-project (`f54b0e47`)
@@ -466,4 +470,3 @@ BUILD_DIR=MyCustomBuildDir ./build_scripts/Windows-msys2/deploy-windows.sh
     ```bash
     pacman -S --needed mingw-w64-x86_64-nsis
     ```
-

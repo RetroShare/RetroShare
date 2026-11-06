@@ -42,7 +42,7 @@ mv $APP.dmg "$APP-$RSVERSION-$GITHEAD-$DATE-MacOS-$MACVERSION-$QTVERSION.dmg"
 # appdmg json-path YourApp_${TRAVIS_TAG}.dmg
 
 # Copy other project files
-cp "../../libbitdht/src/bitdht/bdboot.txt" "retroshare.app/Contents/Resources/"
+cp "../../supportlibs/libbitdht/src/bitdht/bdboot.txt" "retroshare.app/Contents/Resources/"
 cp "../../plugins/FeedReader/lib/libFeedReader.dylib" "retroshare.app/Contents/Resources/"
 cp -R "sounds" "retroshare.app/Contents/Resources/sounds"
 

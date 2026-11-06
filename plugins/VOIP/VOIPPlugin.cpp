@@ -71,9 +71,10 @@ extern "C" {
 
 void VOIPPlugin::getPluginVersion(int& major, int& minor, int& build, int& svn_rev) const
 {
-	major = RS_MAJOR_VERSION ;
-	minor = RS_MINOR_VERSION ;
-	build = RS_MINI_VERSION ;
+	// TODO: This should report the *plugin* version--not the RetroShare version.
+	major = RS_VERSION_MAJOR;
+	minor = RS_VERSION_MINOR;
+	build = RS_VERSION_PATCH;
 	svn_rev = 0;
 }
 

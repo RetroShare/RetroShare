@@ -27,15 +27,15 @@ Additional dependencies for Feedreader plugin:
 
 ### Checkout the source code
 ```bash
-   cd ~ 
+   cd ~
    git clone https://github.com/RetroShare/RetroShare.git retroshare
 ```
 
 ### Checkout the submodules
 ```bash
    cd retroshare
-   git submodule update --init --remote libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/
-   git submodule update --init --remote supportlibs/librnp supportlibs/restbed supportlibs/rapidjson
+   git submodule update --init --remote libretroshare/ retroshare-webui/
+   git submodule update --init --remote supportlibs/libbitdht supportlibs/librnp supportlibs/openpgpsdk supportlibs/restbed supportlibs/rapidjson
 ```
 
 ### Compile
@@ -95,7 +95,7 @@ You need to place sqlcipher so that the hierarchy is:
 Note: If you installed Qt6 you need to use `qmake6` on the command line.
 
 For the `FeedReader` it is required to append the config option `CONFIG+=retroshare_plugins`.
-Make sure `plugins/plugins.pro` contains `FeedReader` in the list of plugins to compile. 
+Make sure `plugins/plugins.pro` contains `FeedReader` in the list of plugins to compile.
 
 Do not mix plugins compiled with Qt5 with those compiled with Qt6. They work only if they are compiled
 with the same Qt version as RetroShare.

@@ -168,8 +168,8 @@ if [ -d "retroshare-gui/src/license" ]; then
     cp -r retroshare-gui/src/license/* "$DEPLOY_DIR/license/" 2>/dev/null || true
 fi
 
-if [ -f "libbitdht/src/bitdht/bdboot.txt" ]; then
-    cp "libbitdht/src/bitdht/bdboot.txt" "$DEPLOY_DIR/"
+if [ -f "supportlibs/libbitdht/src/bitdht/bdboot.txt" ]; then
+    cp "supportlibs/libbitdht/src/bitdht/bdboot.txt" "$DEPLOY_DIR/"
     echo "  Copied bdboot.txt"
 fi
 
@@ -276,7 +276,7 @@ while true; do
     # Scanner tous les exe et dll présents dans le dossier de déploiement
     find "$DEPLOY_DIR" \( -name "*.exe" -o -name "*.dll" \) -exec ldd {} \; 2>/dev/null \
         | grep -i "$MINGW_PREFIX/bin" | awk '{print $3}' | sort -u > "$TEMP_DEPENDENCY_LIST"
-    
+
     CURR_COUNT=$(wc -l < "$TEMP_DEPENDENCY_LIST")
     if [ "$CURR_COUNT" -eq "$PREV_COUNT" ]; then
         break

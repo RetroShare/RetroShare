@@ -53,7 +53,7 @@ class EntropyCollectorWidget: public QTextBrowser
 {
 	public:
 		explicit EntropyCollectorWidget(QProgressBar *pr,QWidget *p = NULL)
-			: QTextBrowser(p) 
+			: QTextBrowser(p)
 		{
 			progress = pr ;
 			setMouseTracking(true) ;
@@ -131,7 +131,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
-	
+
     //ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/svg/profile.svg"));
 	//ui.headerFrame->setHeaderText(tr("Create a new profile"));
 
@@ -180,7 +180,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	/* get all available pgp private certificates....
 	 * mark last one as default.
 	 */
-	 
+
 	//QMenu *menu = new QMenu(tr("Advanced options"));
 	//menu->addAction(ui.adv_checkbox);
 	//menu->addAction(ui.reuse_existing_node_CB);
@@ -332,10 +332,9 @@ void GenCertDialog::setupState()
 	ui.hiddenport_spinBox->setVisible(hidden_state && !tor_auto);
 
 	ui.cbUseBob->setVisible(hidden_state && !tor_auto);
-#ifndef RS_USE_I2P_SAM3
-	ui.cbUseBob->setDisabled(true);
-	ui.cbUseBob->setToolTip(tr("SAMv3 support is not available"));
-#endif
+	// FIXME: RetroShare-GUI assumes SAM3 support is enabled
+	// ui.cbUseBob->setDisabled(true);
+	// ui.cbUseBob->setToolTip(tr("SAMv3 support is not available"));
 
 	if(!mAllFieldsOk)
 	{
