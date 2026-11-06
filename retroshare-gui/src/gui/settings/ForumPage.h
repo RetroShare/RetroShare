@@ -25,6 +25,8 @@
 #include "ui_ForumPage.h"
 #include "gui/common/FilesDefs.h"
 
+class QPushButton;
+
 class ForumPage : public ConfigPage
 {
 	Q_OBJECT
@@ -48,9 +50,11 @@ protected slots:
 
 private slots:
 	void updateFonts();
+	void reindexAll();
 
 private:
 	Ui::ForumPage ui;
+	QPushButton* mReindexButton = nullptr;
 };
 
 #endif // !FORUMPAGE_H

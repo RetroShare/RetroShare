@@ -43,7 +43,7 @@ std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsew
 const QString RsGxsForumModel::FilterString("filtered");
 
 RsGxsForumModel::RsGxsForumModel(QObject *parent)
-    : QAbstractItemModel(parent), mUseChildTS(false),mFilteringEnabled(false),mTreeMode(TREE_MODE_TREE)
+    : QAbstractItemModel(parent), mUseChildTS(false),mFilteringEnabled(false),mContentFilteringEnabled(false),mTreeMode(TREE_MODE_TREE)
 {
     initEmptyHierarchy(mPosts);
     mFont = QApplication::font();
@@ -436,6 +436,13 @@ QVariant RsGxsForumModel::textColorRole(const ForumModelPostEntry& fmpe,int /*co
     if( (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING))
         return QVariant(mTextColorMissing);
 
+    // While filtering, the ancestors of the matching posts are shown to keep
+    // the threads readable: grey them so the matches stand out.
+    if( mFilteringEnabled &&
+            !(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_PASSES_FILTER) )
+        return QVariant( QApplication::palette().color(
+                             QPalette::Disabled, QPalette::Text ) );
+
     if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
         return QVariant(mTextColorPinned);
 
@@ -484,7 +491,23 @@ uint32_t RsGxsForumModel::recursUpdateFilterStatus(ForumModelIndex i,int column,
 		break;
 	}
 
-	if(!strings.empty())
+	if(mContentFilteringEnabled)
+    {
+        // The posts found by the search in the forum index
+        bool found = !mPosts[i].mMsgId.isNull() && // null = dummy root
+                mContentFilterIds.find(mPosts[i].mMsgId) != mContentFilterIds.end();
+
+        if(found)
+        {
+            mPosts[i].mPostFlags |= ForumModelPostEntry::FLAG_POST_PASSES_FILTER | ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER;
+            count++;
+        }
+        else
+        {
+            mPosts[i].mPostFlags &= ~(ForumModelPostEntry::FLAG_POST_PASSES_FILTER | ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER);
+        }
+    }
+	else if(!strings.empty())
 	{
 		mPosts[i].mPostFlags &= ~(ForumModelPostEntry::FLAG_POST_PASSES_FILTER | ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER);
 
@@ -517,6 +540,22 @@ uint32_t RsGxsForumModel::recursUpdateFilterStatus(ForumModelIndex i,int column,
 
 
 void RsGxsForumModel::setFilter(int column,const QStringList& strings,uint32_t& count)
+{
+    mContentFilteringEnabled = false;
+    mContentFilterIds.clear();
+    applyFilter(column, strings, count);
+}
+
+void RsGxsForumModel::setContentFilter(
+        const std::set<RsGxsMessageId>& ids, const QStringList& strings,
+        uint32_t& count )
+{
+    mContentFilteringEnabled = true;
+    mContentFilterIds = ids;
+    applyFilter(COLUMN_THREAD_CONTENT, strings, count);
+}
+
+void RsGxsForumModel::applyFilter(int column,const QStringList& strings,uint32_t& count)
 {
     preMods();
 
