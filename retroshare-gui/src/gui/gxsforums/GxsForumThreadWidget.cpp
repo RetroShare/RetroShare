@@ -1882,7 +1882,7 @@ void GxsForumThreadWidget::filterItems(const QString& text)
         blankPost();
         insertMessage(); // Will display forum description if mThreadId is null
 
-        std::set<RsGxsMessageId> ids;
+        std::map<RsGxsMessageId, std::string> matches; // id -> snippet
         std::vector<RsGxsSearchResult> results;
 
 #ifdef RS_DEEP_FORUMS_INDEX
@@ -1891,9 +1891,9 @@ void GxsForumThreadWidget::filterItems(const QString& text)
 
         for(const auto& res : results)
             if(!res.mMsgId.isNull())
-                ids.insert(res.mMsgId);
+                matches[res.mMsgId] = res.mSearchContext;
 #endif
-        mThreadModel->setContentFilter(ids, lst, count);
+        mThreadModel->setContentFilter(matches, lst, count);
     }
     else
     {

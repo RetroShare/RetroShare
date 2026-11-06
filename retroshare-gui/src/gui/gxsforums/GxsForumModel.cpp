@@ -402,6 +402,8 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
     {
         QFont font = mFont;
         font.setBold( (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN) || IS_MSG_UNREAD(fmpe.mMsgStatus));
+        // Ancestor shown only to keep its thread readable, see textColorRole()
+        font.setItalic(isFilterContextOnly(fmpe));
         return QVariant(font);
     }
 
@@ -438,8 +440,7 @@ QVariant RsGxsForumModel::textColorRole(const ForumModelPostEntry& fmpe,int /*co
 
     // While filtering, the ancestors of the matching posts are shown to keep
     // the threads readable: grey them so the matches stand out.
-    if( mFilteringEnabled &&
-            !(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_PASSES_FILTER) )
+    if(isFilterContextOnly(fmpe))
         return QVariant( QApplication::palette().color(
                              QPalette::Disabled, QPalette::Text ) );
 
@@ -495,7 +496,7 @@ uint32_t RsGxsForumModel::recursUpdateFilterStatus(ForumModelIndex i,int column,
     {
         // The posts found by the search in the forum index
         bool found = !mPosts[i].mMsgId.isNull() && // null = dummy root
-                mContentFilterIds.find(mPosts[i].mMsgId) != mContentFilterIds.end();
+                mContentMatches.find(mPosts[i].mMsgId) != mContentMatches.end();
 
         if(found)
         {
@@ -542,16 +543,16 @@ uint32_t RsGxsForumModel::recursUpdateFilterStatus(ForumModelIndex i,int column,
 void RsGxsForumModel::setFilter(int column,const QStringList& strings,uint32_t& count)
 {
     mContentFilteringEnabled = false;
-    mContentFilterIds.clear();
+    mContentMatches.clear();
     applyFilter(column, strings, count);
 }
 
 void RsGxsForumModel::setContentFilter(
-        const std::set<RsGxsMessageId>& ids, const QStringList& strings,
-        uint32_t& count )
+        const std::map<RsGxsMessageId, std::string>& matches,
+        const QStringList& strings, uint32_t& count )
 {
     mContentFilteringEnabled = true;
-    mContentFilterIds = ids;
+    mContentMatches = matches;
     applyFilter(COLUMN_THREAD_CONTENT, strings, count);
 }
 
@@ -590,8 +591,31 @@ QVariant RsGxsForumModel::missingRole(const ForumModelPostEntry& fmpe,int /*colu
         return QVariant(false);
 }
 
+bool RsGxsForumModel::isFilterContextOnly(const ForumModelPostEntry& fmpe) const
+{
+    return mFilteringEnabled &&
+            !(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_PASSES_FILTER);
+}
+
 QVariant RsGxsForumModel::toolTipRole(const ForumModelPostEntry& fmpe,int column) const
 {
+    if(column == COLUMN_THREAD_TITLE && mFilteringEnabled)
+    {
+        if(isFilterContextOnly(fmpe))
+            return QVariant(tr("Does not match the search, shown because a reply below does"));
+
+        // Content search: show where the words were found
+        auto it = mContentMatches.find(fmpe.mMsgId);
+        if(mContentFilteringEnabled && it != mContentMatches.end() && !it->second.empty())
+        {
+            /* The snippet is plain text with the matches wrapped in <b></b>:
+             * escape it, then restore the markers only. */
+            QString snippet = QString::fromUtf8(it->second.c_str()).toHtmlEscaped();
+            snippet.replace("&lt;b&gt;", "<b>").replace("&lt;/b&gt;", "</b>");
+            return QVariant("<p>" + snippet + "</p>");
+        }
+    }
+
     if(column == COLUMN_THREAD_DISTRIBUTION)
 		switch(fmpe.mReputationWarningLevel)
 		{
