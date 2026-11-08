@@ -26,9 +26,9 @@ cmake_minimum_required(VERSION 3.13...4.4)
 
 target_sources(${PROJECT_NAME}
 	${PUBLIC_FILESET_HEADERS_FILES}
+	PluginInterface.h
 
 	${PRIVATE_FILESET_private_HEADERS_FILES}
-	PluginInterface.h
 
 	${PRIVATE_FILESET_SOURCES_FILES}
 

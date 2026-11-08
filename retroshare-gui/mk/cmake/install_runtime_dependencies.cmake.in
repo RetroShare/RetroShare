@@ -21,7 +21,7 @@
 ## ------------------------------------------------------------------------- ##
 
 # 3.7 : if(VERSION_GREATER_EQUAL)
-# 3.15: file(INSTALL FOLLOW_SYMLINK_CHAIN)
+# 3.15: file(COPY FOLLOW_SYMLINK_CHAIN)
 # 3.16: file(GET_RUNTIME_DEPENDENCIES)
 cmake_minimum_required(VERSION 3.16...4.4)
 
