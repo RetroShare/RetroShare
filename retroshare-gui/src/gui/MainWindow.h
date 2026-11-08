@@ -271,6 +271,7 @@ protected:
     MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
     void closeEvent(QCloseEvent *);
+    bool eventFilter(QObject *obj, QEvent *event);
     
     /** Called when the user changes the UI translation. */
     virtual void retranslateUi();
@@ -332,6 +333,7 @@ private:
     void initStackedPage();
     void addPage(MainPage *page, QActionGroup *grp, 	QList<QPair<MainPage *, QPair<QAction *, QListWidgetItem *> > > *notify);
     void createTrayIcon();
+    void makeClickable(QWidget *widget);
 #if defined(Q_OS_DARWIN)
     /** Creates a default menubar on Mac */
     void createMenuBar();

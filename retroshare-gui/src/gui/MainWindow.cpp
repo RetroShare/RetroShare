@@ -23,6 +23,7 @@
 #include <QIcon>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <QPixmap>
 #include <QStatusBar>
 #include <QString>
@@ -305,6 +306,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 		else dhtstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowDHT", QVariant(true)).toBool());
 		statusBar()->addWidget(dhtstatus);
 		dhtstatus->getDHTStatus();
+
+		makeClickable(natstatus);
+		makeClickable(dhtstatus);
 	}
 
     hashingstatus = new HashingStatus();
@@ -318,6 +322,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     ratesstatus = new RatesStatus();
     ratesstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowRate", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(ratesstatus);
+    makeClickable(ratesstatus);
 
     opModeStatus = new OpModeStatus();
     opModeStatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowOpMode", QVariant(false)).toBool());
@@ -744,6 +749,29 @@ void MainWindow::showBandwidthGraph()
 		_bandwidthGraph = new BandwidthGraph();
 
 	_bandwidthGraph->showWindow();
+}
+
+/** Lets a status bar widget open its window when clicked, see eventFilter() */
+void MainWindow::makeClickable(QWidget *widget)
+{
+    widget->setCursor(Qt::PointingHandCursor);
+    widget->installEventFilter(this);
+    for (QWidget *child : widget->findChildren<QWidget *>())
+        child->installEventFilter(this);
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::MouseButtonPress && static_cast<QMouseEvent *>(event)->button() == Qt::LeftButton) {
+        QWidget *widget = static_cast<QWidget *>(obj);
+
+        if (widget == ratesstatus || ratesstatus->isAncestorOf(widget))
+            showBandwidthGraph();
+        else
+            showStatisticsWindow();
+    }
+
+    return RWindow::eventFilter(obj, event);
 }
 
 void MainWindow::createNotifyIcons()
