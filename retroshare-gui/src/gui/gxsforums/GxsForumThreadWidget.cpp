@@ -40,6 +40,7 @@
 #include "gui/Identity/IdDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/HandleRichText.h"
+#include "util/RsMarkdown.h"
 #include "CreateGxsForumMsg.h"
 #include "gui/MainWindow.h"
 #include "gui/msgs/MessageComposer.h"
@@ -1365,6 +1366,9 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
     if(Settings->getForumLoadEmoticons())
         flags |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
     flags |= RSHTML_OPTIMIZEHTML_MASK;
+    flags |= RSHTML_FORMATTEXT_MARKDOWN;
+    if(Settings->getForumClassicQuotes())
+        flags |= RSHTML_FORMATTEXT_CLASSIC_QUOTES;   // "> line" quotes instead of indented ones
 
     QColor backgroundColor = ui->postText->palette().base().color();
     qreal desiredContrast = Settings->valueFromGroup("Forum",
@@ -1372,11 +1376,14 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
     int desiredMinimumFontSize = Settings->valueFromGroup("Forum",
         "MinimumFontSize", 10).toInt();
 
+    const QString msgText = QString::fromUtf8(msg.mMsg.c_str());
     QString extraTxt = banned_text_info + RsHtml().formatText(ui->postText->document(),
-        QString::fromUtf8(msg.mMsg.c_str()), flags
+        msgText, flags
             , backgroundColor, desiredContrast, desiredMinimumFontSize
         );
     ui->postText->setHtml(extraTxt);
+    // "View Markdown Source" in the context menu (not for legacy HTML messages)
+    ui->postText->setMarkdownSource(RsMarkdown::isHtml(msgText) ? QString() : msgText);
 
     QStringList urls;
     RsHtml::findAnchors(ui->postText->toHtml(), urls);
@@ -1804,7 +1811,7 @@ void GxsForumThreadWidget::replyForumMessageData(const RsGxsForumMsg &msg)
 
     RsHtml::makeQuotedText(ui->postText);
 
-    cfm->insertPastedText(RsHtml::makeQuotedText(ui->postText)) ;
+    cfm->insertPastedText(RsHtml::makeQuotedText(ui->postText) + "\n\n") ;
     cfm->show();
 
         /* window will destroy itself! */

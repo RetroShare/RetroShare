@@ -46,10 +46,18 @@ rs_jsonapi {
     FORMS *= gui/settings/JsonApiPage.ui
 }
 
-# Auto detect installed version of cmark
+# CommonMark (Markdown) support with libcmark: Markdown composer and rendering
+# of channels, forums and boards posts (util/RsMarkdown, util/MarkdownTextEdit)
+# and CommonMark in chat.
 rs_gui_cmark {
 	DEFINES *= USE_CMARK
-	no_rs_cross_compiling {
+	rs_gui_cmark_system|rs_cross_compiling {
+		# Use the system library
+		#   MSYS2:         pacman -S mingw-w64-ucrt-x86_64-cmark
+		#   Debian/Ubuntu: sudo apt install libcmark-dev
+		message("Using systems cmark")
+		LIBS *= -lcmark
+	} else {
 		message("Using compiled cmark")
 		CMARK_SRC_PATH=$$clean_path($${RS_SRC_PATH}/supportlibs/cmark)
 		CMARK_BUILD_PATH=$$clean_path($${RS_BUILD_PATH}/supportlibs/cmark/build)
@@ -82,9 +90,6 @@ rs_gui_cmark {
 		        -H$$shell_path($${CMARK_SRC_PATH}) && \
 		    $(MAKE)
 		QMAKE_EXTRA_COMPILERS += gencmarklib
-	} else {
-		message("Using systems cmark")
-		sLibs *= libcmark
 	}
 }
 
@@ -336,7 +341,6 @@ haiku-* {
 	LIBS *= -lz
 	LIBS *= -lixml
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS += -lsqlite3
 }
 
@@ -354,15 +358,6 @@ openbsd-* {
 }
 
 ################################### COMMON stuff ##################################
-
-wikipoos {
-	PRE_TARGETDEPS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-
-	!win32 {
-		LIBS *= -lglib-2.0
-	}
-}
 
 ################################### HEADERS & SOURCES #############################
 
@@ -622,6 +617,9 @@ HEADERS +=  rshare.h \
             util/RsSyntaxHighlighter.h \
             util/imageutil.h \
             util/RichTextEdit.h \
+            util/MarkdownTextEdit.h \
+            util/RsMarkdown.h \
+            util/MarkdownSyntaxHighlighter.h \
             gui/NetworkDialog/pgpid_item_model.h \
             gui/NetworkDialog/pgpid_item_proxy.h \
             gui/common/RsCollection.h \
@@ -814,6 +812,9 @@ SOURCES +=  main.cpp \
             util/RsQtVersion.cpp \
             util/RsFile.cpp \
             util/RichTextEdit.cpp \
+            util/MarkdownTextEdit.cpp \
+            util/RsMarkdown.cpp \
+            util/MarkdownSyntaxHighlighter.cpp \
             util/ClickableLabel.cpp \
             util/AspectRatioPixmapLabel.cpp \
             util/FontSizeHandler.cpp \
@@ -1190,7 +1191,6 @@ gxsphotoshare {
 wikipoos {
     message(Including WikiPoos)
     DEFINES += RS_USE_WIKI
-    INCLUDEPATH += ../../supportlibs/pegmarkdown
 
     HEADERS += gui/WikiPoos/WikiDialog.h \
                gui/WikiPoos/WikiAddDialog.h \
@@ -1452,6 +1452,9 @@ gxsgui {
 		gui/gxs/GxsCommentTreeWidget.h \
 		gui/gxs/GxsCommentContainer.h \
 		gui/gxs/GxsCommentDialog.h \
+		gui/gxs/CommentItemWidget.h \
+		gui/gxs/CommentText.h \
+		gui/gxs/FlatViewCommentWidget.h \
 		gui/gxs/GxsCreateCommentDialog.h \
 		gui/gxs/GxsGroupFrameDialog.h \
 		gui/gxs/GxsMessageFrameWidget.h \
@@ -1467,6 +1470,8 @@ gxsgui {
 	FORMS += gui/gxs/GxsGroupDialog.ui \
 		gui/gxs/GxsCommentContainer.ui \
 		gui/gxs/GxsCommentDialog.ui \
+		gui/gxs/CommentItemWidget.ui \
+		gui/gxs/FlatViewCommentWidget.ui \
 		gui/gxs/GxsCreateCommentDialog.ui \
 		gui/gxs/GxsGroupFrameDialog.ui\
 		gui/gxs/GxsGroupShareKey.ui 
@@ -1484,6 +1489,8 @@ gxsgui {
 		gui/gxs/GxsCommentTreeWidget.cpp \
 		gui/gxs/GxsCommentContainer.cpp \
 		gui/gxs/GxsCommentDialog.cpp \
+		gui/gxs/CommentItemWidget.cpp \
+		gui/gxs/FlatViewCommentWidget.cpp \
 		gui/gxs/GxsCreateCommentDialog.cpp \
 		gui/gxs/GxsGroupFrameDialog.cpp \
 		gui/gxs/GxsMessageFrameWidget.cpp \

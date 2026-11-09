@@ -43,6 +43,9 @@ public:
 	virtual QString pageName() const { return tr("Boards") ; }
 	virtual QString helpText() const { return ""; }
 
+private slots:
+	void updateLoadEmoticonsPosts();
+
 private:
 	Ui::PostedPage *ui;
 };

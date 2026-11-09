@@ -35,6 +35,7 @@ ForumPage::ForumPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.expandNewMessages  , SIGNAL(toggled(bool)), this, SLOT( updateExpandNewMessages()));
 	connect(ui.loadEmbeddedImages , SIGNAL(toggled(bool)), this, SLOT(updateLoadEmbeddedImages() ));
 	connect(ui.loadEmoticons      , SIGNAL(toggled(bool)), this, SLOT(   updateLoadEmoticons()	 ));
+	connect(ui.classicQuotes      , SIGNAL(toggled(bool)), this, SLOT(   updateClassicQuotes()   ));
 	connect(ui.minimumFontSize    , SIGNAL(valueChanged(int)), this, SLOT(updateFonts()));
 	connect(ui.minimumContrast    , SIGNAL(valueChanged(int)), this, SLOT(updateFonts()));
 
@@ -49,6 +50,7 @@ void ForumPage::updateMsgReadOnActivate()   { Settings->setForumMsgSetToReadOnAc
 void ForumPage::updateExpandNewMessages()	{ Settings->setForumExpandNewMessages(     ui.expandNewMessages     ->isChecked());}
 void ForumPage::updateLoadEmbeddedImages()	{ Settings->setForumLoadEmbeddedImages(    ui.loadEmbeddedImages    ->isChecked());}
 void ForumPage::updateLoadEmoticons()		{ Settings->setForumLoadEmoticons(         ui.loadEmoticons         ->isChecked()); }
+void ForumPage::updateClassicQuotes()		{ Settings->setForumClassicQuotes(         ui.classicQuotes         ->isChecked()); }
 
 /** Loads the settings for this page */
 void ForumPage::load()
@@ -58,6 +60,7 @@ void ForumPage::load()
 	whileBlocking(ui.expandNewMessages)->setChecked(Settings->getForumExpandNewMessages());
 	whileBlocking(ui.loadEmbeddedImages)->setChecked(Settings->getForumLoadEmbeddedImages());
 	whileBlocking(ui.loadEmoticons)->setChecked(Settings->getForumLoadEmoticons());
+	whileBlocking(ui.classicQuotes)->setChecked(Settings->getForumClassicQuotes());
 	whileBlocking(ui.minimumFontSize)->setValue(Settings->value("MinimumFontSize", 10).toInt());
 	whileBlocking(ui.minimumContrast)->setValue(Settings->value("MinimumContrast", 4.5).toDouble());
 	Settings->endGroup();

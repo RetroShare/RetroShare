@@ -23,16 +23,22 @@
 #include "RSImageBlockWidget.h"
 #include "gui/common/FilesDefs.h"
 #include "util/imageutil.h"
+#include "util/MarkdownSyntaxHighlighter.h"
+#include "util/RsMarkdown.h"
 
 #include <retroshare/rsinit.h> //To get RsAccounts
 
+#include <QAbstractTextDocumentLayout>
 #include <QDesktopServices>
+#include <QFontMetricsF>
 #include <QDialog>
 #include <QDir>
 #include <QGridLayout>
 #include <QMenu>
 #include <QPainter>
 #include <QPlainTextEdit>
+#include <QTextBlock>
+#include <QTextTable>
 #include <QTextDocumentFragment>
 #include <QScrollBar>
 #include <QRegExp>
@@ -48,6 +54,8 @@ RSTextBrowser::RSTextBrowser(QWidget *parent) :
 	mShowImages = true;
 	mImageBlockWidget = NULL;
 	mLinkClickActive = true;
+	mMarkdownRevision = -1;
+	mCodeBlocksRevision = -1;
 
 	highlighter = new RsSyntaxHighlighter(this);
 
@@ -97,7 +105,12 @@ void RSTextBrowser::setPlaceholderText(const QString &text)
 
 void RSTextBrowser::paintEvent(QPaintEvent *event)
 {
+	prepareCodeBlocks();
+	paintCodeBlocks(event->rect());
+
 	QTextBrowser::paintEvent(event);
+
+	paintQuoteBars(event->rect());
 
 	if (mPlaceholderText.isEmpty() == false && document()->isEmpty()) {
 		QWidget *vieportWidget = viewport();
@@ -128,6 +141,166 @@ void RSTextBrowser::paintEvent(QPaintEvent *event)
 	painter.setPen(pen);
 	painter.drawRect(mCursorRectEnd);
 #endif
+}
+
+/* marks the code block tables whose background is painted by paintCodeBlocks() */
+static const int CodeBlockProperty = QTextFormat::UserProperty + 0x5243;
+
+static void findCodeBlocks(QTextFrame *frame, QList<QTextTable*> &tables)
+{
+	for (QTextFrame *child : frame->childFrames()) {
+		if (QTextTable *table = qobject_cast<QTextTable*>(child)) {
+			if (table->format().boolProperty(CodeBlockProperty))
+				tables.append(table);
+		}
+		findCodeBlocks(child, tables);
+	}
+}
+
+/**
+ * Markdown code blocks are one-cell tables with the code background
+ * (RsMarkdown). Qt rich text has no border-radius: remove the square table
+ * background once and let paintCodeBlocks() draw it with rounded corners,
+ * like GitHub. Other views (labels...) keep the square background.
+ */
+void RSTextBrowser::prepareCodeBlocks()
+{
+	QTextDocument *doc = document();
+	const int revision = doc->revision();
+	if (revision == mCodeBlocksRevision)
+		return;
+
+	const bool markdownSourceValid = (mMarkdownRevision == revision);
+	const QColor codeColor = RsMarkdown::codeBackgroundColor();
+
+	QList<QTextFrame*> frames;
+	frames.append(doc->rootFrame());
+	while (!frames.isEmpty()) {
+		QTextFrame *frame = frames.takeFirst();
+		for (QTextFrame *child : frame->childFrames()) {
+			frames.append(child);
+
+			QTextTable *table = qobject_cast<QTextTable*>(child);
+			if (!table)
+				continue;
+
+			QTextTableFormat format = table->format();
+			if (format.background().style() == Qt::NoBrush || format.background().color() != codeColor)
+				continue;
+
+			format.setBackground(Qt::NoBrush);
+			format.setProperty(CodeBlockProperty, true);
+			table->setFormat(format);
+		}
+	}
+
+	// changing formats increases the revision: it is still the same text
+	mCodeBlocksRevision = doc->revision();
+	if (markdownSourceValid)
+		mMarkdownRevision = mCodeBlocksRevision;
+}
+
+void RSTextBrowser::paintCodeBlocks(const QRect &rect)
+{
+	QTextDocument *doc = document();
+	QAbstractTextDocumentLayout *layout = doc->documentLayout();
+	if (!layout || doc->isEmpty())
+		return;
+
+	QList<QTextTable*> tables;
+	findCodeBlocks(doc->rootFrame(), tables);
+	if (tables.isEmpty())
+		return;
+
+	const QPointF offset(horizontalScrollBar()->value(), verticalScrollBar()->value());
+	const QRectF visible = QRectF(rect).translated(offset); // document coordinates
+
+	QPainter painter(viewport());
+	painter.setRenderHint(QPainter::Antialiasing);
+	painter.translate(-offset);
+	painter.setPen(Qt::NoPen);
+	painter.setBrush(RsMarkdown::codeBackgroundColor());
+
+	for (QTextTable *table : tables) {
+		// box = text of the cell + cell padding (frameBoundingRect() of tables
+		// is not reliable across Qt versions, block rects are)
+		const QTextTableCell cell = table->cellAt(0, 0);
+		if (!cell.isValid())
+			continue;
+
+		const QRectF first = layout->blockBoundingRect(cell.firstCursorPosition().block());
+		const QRectF last = layout->blockBoundingRect(cell.lastCursorPosition().block());
+		const qreal padding = table->format().cellPadding();
+
+		const QRectF box = QRectF(first.topLeft(), QPointF(qMax(first.right(), last.right()), last.bottom()))
+		                       .adjusted(-padding, -padding, padding, padding);
+		if (box.intersects(visible))
+			painter.drawRoundedRect(box, RsMarkdown::CODE_RADIUS, RsMarkdown::CODE_RADIUS);
+	}
+}
+
+/**
+ * Quoted text (Markdown "> ...", HTML <blockquote>) is indented by 40px per
+ * nesting level. Qt rich text can't draw borders on paragraphs, so draw a
+ * vertical bar in the color of each level inside that indent, like mail
+ * clients do. The text itself is colored by RsSyntaxHighlighter.
+ */
+void RSTextBrowser::paintQuoteBars(const QRect &rect)
+{
+	QTextDocument *doc = document();
+	QAbstractTextDocumentLayout *layout = doc->documentLayout();
+	if (!layout || doc->isEmpty())
+		return;
+
+	const QPointF offset(horizontalScrollBar()->value(), verticalScrollBar()->value());
+	const QRectF visible = QRectF(rect).translated(offset); // document coordinates
+
+	// 3px for a 14px font, follows the font size and screen DPI
+	const qreal barWidth = qMax<qreal>(2.0, qRound(3.0 * QFontMetricsF(font()).height() / 14.0));
+	const qreal textGap = 10.0;   // space between the bar and the quoted text
+
+	// start from the first visible block (chat histories can be long)
+	const int firstPos = layout->hitTest(visible.topLeft(), Qt::FuzzyHit);
+	QTextBlock block = doc->findBlock(qMax(0, firstPos));
+	if (!block.isValid())
+		block = doc->begin();
+	if (block.previous().isValid())
+		block = block.previous();
+
+	QPainter painter(viewport());
+	painter.translate(-offset);
+
+	for (; block.isValid(); block = block.next()) {
+		const QRectF blockRect = layout->blockBoundingRect(block);
+		if (blockRect.top() > visible.bottom())
+			break;
+
+		const int level = RsSyntaxHighlighter::quoteLevel(block.blockFormat());
+		if (level <= 0)
+			continue;
+
+		// levels still open in the next block continue down to it, over the
+		// paragraph spacing, so a quote shows as one continuous bar
+		const QTextBlock next = block.next();
+		const int nextLevel = next.isValid() ? RsSyntaxHighlighter::quoteLevel(next.blockFormat()) : 0;
+		const qreal nextTop = next.isValid() ? layout->blockBoundingRect(next).top() : blockRect.bottom();
+
+		if (qMax(blockRect.bottom(), nextTop) < visible.top())
+			continue;
+
+		// blockBoundingRect() starts before the block margins: this is the
+		// x of the level 1 indent, whatever the document margin / frame
+		const qreal left = blockRect.left();
+		// indent of one level (compact for Markdown), bar just before the text
+		const qreal indent = RsSyntaxHighlighter::quoteIndent(block.blockFormat());
+		const qreal barOffset = qMax<qreal>(0.0, indent - textGap - barWidth);
+
+		for (int k = 1; k <= level; ++k) {
+			const qreal bottom = (k <= nextLevel) ? nextTop : blockRect.bottom();
+			const QRectF bar(left + indent * (k - 1) + barOffset, blockRect.top(), barWidth, bottom - blockRect.top());
+			painter.fillRect(bar, highlighter->quoteColor(k));
+		}
+	}
 }
 
 QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
@@ -217,9 +390,26 @@ void RSTextBrowser::showImages()
 
 	mShowImages = true;
 
+	const bool markdown = hasMarkdownSource();
+
 	QString html = toHtml();
 	clear();
 	setHtml(html);
+
+	// same message, only the images changed
+	if (markdown)
+		mMarkdownRevision = document()->revision();
+}
+
+void RSTextBrowser::setMarkdownSource(const QString &markdown)
+{
+	mMarkdownSource = markdown;
+	mMarkdownRevision = document()->revision();
+}
+
+bool RSTextBrowser::hasMarkdownSource() const
+{
+	return !mMarkdownSource.isEmpty() && mMarkdownRevision == document()->revision();
 }
 
 void RSTextBrowser::resetImagesStatus(bool load)
@@ -289,10 +479,18 @@ QMenu *RSTextBrowser::createStandardContextMenuFromPoint(const QPoint &widgetPos
 	transform.translate(horizontalScrollBar()->value(), verticalScrollBar()->value());
 
 	QMenu *menu = QTextBrowser::createStandardContextMenu(transform.map(widgetPos));
+	// Keep rich-text context menus readable when the application palette is dark.
+	menu->setStyleSheet(
+		"QMenu { background-color: #ffffff; color: #202020; }"
+		"QMenu::item { padding: 4px 24px 4px 8px; }"
+		"QMenu::item:selected { background-color: #dcecff; color: #202020; }");
 
 	menu->addSeparator();
 	QAction *a = menu->addAction(FilesDefs::getIconFromQtResourcePath("://icons/textedit/code.png"), tr("View &Source"), this, SLOT(viewSource()));
 	a->setEnabled(!this->document()->isEmpty());
+
+	if (hasMarkdownSource())
+		menu->addAction(FilesDefs::getIconFromQtResourcePath("://icons/textedit/code.png"), tr("View &Markdown Source"), this, SLOT(viewMarkdownSource()));
 
 	if (ImageUtil::checkImage(this, widgetPos
 #ifdef RSTEXTBROWSER_CHECKIMAGE_DEBUG
@@ -330,6 +528,27 @@ void RSTextBrowser::viewSource()
 	QGridLayout *gl = new QGridLayout(dialog);
 	gl->addWidget(pte,0,0,1,1);
 	dialog->setWindowTitle(tr("Document source"));
+	dialog->resize(500, 400);
+
+	dialog->exec();
+
+	delete dialog;
+}
+
+/* the message as it was written and sent (Markdown) */
+void RSTextBrowser::viewMarkdownSource()
+{
+	if (!hasMarkdownSource())
+		return;
+
+	QDialog *dialog = new QDialog(this);
+	QPlainTextEdit *pte = new QPlainTextEdit(dialog);
+	pte->setReadOnly(true);
+	pte->setPlainText(mMarkdownSource);
+	new MarkdownSyntaxHighlighter(pte->document());
+	QGridLayout *gl = new QGridLayout(dialog);
+	gl->addWidget(pte,0,0,1,1);
+	dialog->setWindowTitle(tr("Markdown source"));
 	dialog->resize(500, 400);
 
 	dialog->exec();
