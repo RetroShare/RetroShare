@@ -44,16 +44,20 @@
 #define RSDHT_COLOR        Qt::magenta
 #define ALLDHT_COLOR       Qt::yellow
 
-struct ZeroInitFloat
+template<typename T>
+struct t_ZeroInitVal
 {
-	ZeroInitFloat() { v=0; }
-	ZeroInitFloat(float f) { v=f; }
+    t_ZeroInitVal() { v=0; }
+    t_ZeroInitVal(T f) { v=f; }
 
-	float operator()() const { return v ; }
-	float& operator()() { return v ; }
+    T operator()() const { return v ; }
+    T& operator()() { return v ; }
 
-	float v ;
+    T& operator+=(const T& t) { v+=t.v; return *this; }
+    T v ;
 };
+typedef t_ZeroInitVal<float> ZeroInitFloat;
+typedef t_ZeroInitVal<int> ZeroInitInt;
 
 // This class provides a source value that the graph can retrieve on demand.
 // In order to use your own source, derive from RSGraphSource and overload the value() method.
@@ -73,6 +77,7 @@ public:
 
     virtual QString unitName() const { return "" ; }// overload to give your own unit name (KB/s, Users, etc)
 
+    // Number of curves available
     int n_values() const ;
 
     // Might be overloaded in order to show a fancy digit number with adaptive units.
@@ -84,6 +89,10 @@ public:
 
     // return the vector of cumulated values up to date
 	virtual void getCumulatedValues(std::vector<float>& vals) const;
+
+    // returns the vector of latest values with time stamp within the given ts. The returned vector
+    // always has the size of n_values(), but some of the returned values may be zero (e.g. when data is missing).
+    virtual void getSlicedValues(uint min_secs_ago,uint max_secs_ago,std::vector<float>& vals) const;
 
     // returns what to display in the legend. Derive this to show additional info.
     virtual QString legend(int i, float v, bool show_value=true) const ;
@@ -104,6 +113,9 @@ public:
     void setFiltering(bool b) { _filtering_enabled = b; }
 
     void setDigits(int d) { _digits = d ;}
+
+    // returns the total time of available data in ms
+    qint64 totalCollectedTime() const { return getTime() ; }
 
 protected slots:
     // Calls the internal source for a new data points; called by the timer. You might want to overload this
@@ -155,6 +167,11 @@ public:
 		SolidLine = 0,  /**< Plot bandwidth as solid lines. */
 		AreaGraph = 1   /**< Plot bandwidth as alpha blended area graphs. */
 	};
+    enum ViewMode
+    {
+        History = 0x00,  /**< Plots the full curves with time . */
+        Slice   = 0x01,  /**< Plots a slice of the curves at some point in time. */
+    };
 
 	/** Default Constructor */
 	RSGraphWidget(QWidget *parent = 0);
@@ -166,6 +183,8 @@ public:
 	void setTimerPeriod(int miliseconds) ;				
 	void setSource(RSGraphSource *gs) ;
 	void setTimeScale(float pixels_per_second) ;
+    void setViewMode(ViewMode m) ;
+    void setSliceProportion(float f) { _slice_proportion = std::max(0.0f,std::min(f,1.0f)); } ; // float between 0 and 1. 0 means newest 1 means oldest.
 
 	/** Add data points. */
 	//void addPoints(qreal rsDHT, qreal allDHT);
@@ -184,7 +203,7 @@ public:
 	void resetFlags(uint32_t flag) { _flags &= ~flag ; }
 protected:
 	/** Overloaded QWidget::paintEvent() */
-	void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent *event) override;
 
 //QSize QFrame::sizeHint() const;
 //	virtual QSizeF sizeHint( Qt::SizeHint which, const QSizeF & constraint = QSizeF() ) const;
@@ -192,7 +211,13 @@ protected:
 protected slots:
 	void updateIfPossible() ;
 
-	virtual void wheelEvent(QWheelEvent *e);
+    virtual void wheelEvent(QWheelEvent *e) override;
+
+protected:
+    virtual void mousePressEvent(QMouseEvent *e) override;
+    virtual void mouseMoveEvent(QMouseEvent *e) override;
+    virtual void mouseReleaseEvent(QMouseEvent *e) override;
+
 private:
 	/** Gets the width of the desktop, the max # of points. */
 	int getNumPoints();
@@ -243,8 +268,9 @@ private:
 	std::set<std::string> _masked_entries ;
 
 	qreal _time_scale ; // horizontal scale in pixels per sec.
-        qreal _time_filter ; // time filter. Goes from 0 to infinity. Will be converted into 1-1/(1+f)
-        float _linewidthscale ;
+    qreal _time_filter ; // time filter. Goes from 0 to infinity. Will be converted into 1-1/(1+f)
+    float _linewidthscale ;
+    float _slice_proportion; // part of the recorded data tht is averaged for pie charts. Goes between 0 (most recent) and 1 (oldest)
 
 	/** Show the respective lines and counters. */
 	//bool _showRSDHT;
@@ -254,5 +280,8 @@ private:
 	QTimer *_timer ;
 
 	RSGraphSource *_source ;
+
+    bool _mousePressed;
+    ViewMode _viewMode;
 };
 
