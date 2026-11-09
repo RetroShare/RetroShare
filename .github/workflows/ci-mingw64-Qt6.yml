@@ -53,6 +53,7 @@ jobs:
             mingw-w64-x86_64-qt6-base
             mingw-w64-x86_64-qt6-multimedia
             mingw-w64-x86_64-qt6
+            mingw-w64-x86_64-qt6-charts
             mingw-w64-x86_64-ccmake
             mingw-w64-x86_64-rapidjson
             mingw-w64-x86_64-json-c
