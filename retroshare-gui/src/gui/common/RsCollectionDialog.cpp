@@ -739,10 +739,9 @@ void RsCollectionDialog::download()
             const auto& sdd = mCollection->fileTree().directoryData(e.index);
             std::string subpath = RsDirUtil::makePath(path,sdd.name);
 
-            std::cerr << "Creating subdir " << sdd.name << " to directory " << path << std::endl;
-
-            if(!QDir(QApplication::applicationDirPath()).mkpath(QString::fromUtf8(subpath.c_str())))
-                QMessageBox::warning(NULL,tr("Unable to make path"),tr("Unable to make path:")+"<br>  "+QString::fromUtf8(subpath.c_str())) ;
+            // No need to pre-create subpath here: FileRequest() stages into
+            // the Partials directory, and RsDirUtil::moveFile() creates any
+            // missing destination directories lazily once a file completes.
 
             recursDL(dirdata.subdirs[i],subpath);
         }
