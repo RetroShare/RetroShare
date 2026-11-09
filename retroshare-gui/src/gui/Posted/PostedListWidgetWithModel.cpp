@@ -198,6 +198,9 @@ uint8_t PostedPostDelegate::displayFlags(const RsGxsMessageId &id) const
     if(mShowCommentItems.find(id) != mShowCommentItems.end())
         flags |= BoardPostDisplayWidget_compact::SHOW_COMMENTS;
 
+    if(mPostListWidget && mPostListWidget->groupData().mPinnedPosts.ids.find(id) != mPostListWidget->groupData().mPinnedPosts.ids.end())
+        flags |= BoardPostDisplayWidget_compact::SHOW_PINNED;
+
     return flags;
 }
 
@@ -366,12 +369,15 @@ void PostedListWidgetWithModel::postContextMenu(const QPoint& point)
 
     menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR), tr("Show author in People tab"), this, SLOT(showAuthorInPeople()))->setData(index);
 
-#ifdef TODO
-    // This feature is not implemented yet in libretroshare.
-
     if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
-        menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
-#endif
+    {
+        bool is_pinned = mGroup.mPinnedPosts.ids.find(post.mMeta.mMsgId) != mGroup.mPinnedPosts.ids.end();
+
+        if(is_pinned)
+            menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/pin32.png"), tr("Unpin post"), this, SLOT(unpinPost()))->setData(index);
+        else
+            menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/pin32.png"), tr("Pin post"), this, SLOT(pinPost()))->setData(index);
+    }
 
     menu.exec(QCursor::pos());
 }
@@ -1009,6 +1015,48 @@ void PostedListWidgetWithModel::voteMsg(RsGxsGrpMsgIdPair msg,bool up_or_down)
         QMessageBox::critical(nullptr,tr("Could not vote"), tr("Error occured while voting: ")+QString::fromStdString(error_str));
     else
         updateDisplay(true);
+}
+
+void PostedListWidgetWithModel::pinPost()
+{
+    QModelIndex index = qobject_cast<QAction*>(QObject::sender())->data().toModelIndex();
+
+    if(!index.isValid())
+        return;
+
+    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>();
+
+    if(post.mMeta.mMsgId.isNull())
+        return;
+
+    RsGxsGroupId grpId = groupId();
+    RsGxsMessageId msgId = post.mMeta.mMsgId;
+
+    RsThread::async([grpId, msgId]()
+    {
+        rsPosted->pinPost(grpId, msgId);
+    });
+}
+
+void PostedListWidgetWithModel::unpinPost()
+{
+    QModelIndex index = qobject_cast<QAction*>(QObject::sender())->data().toModelIndex();
+
+    if(!index.isValid())
+        return;
+
+    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>();
+
+    if(post.mMeta.mMsgId.isNull())
+        return;
+
+    RsGxsGroupId grpId = groupId();
+    RsGxsMessageId msgId = post.mMeta.mMsgId;
+
+    RsThread::async([grpId, msgId]()
+    {
+        rsPosted->unpinPost(grpId, msgId);
+    });
 }
 
 void PostedListWidgetWithModel::handleViewGallery(const RsGxsMessageId& startMsgId) 
