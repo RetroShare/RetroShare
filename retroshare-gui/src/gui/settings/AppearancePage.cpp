@@ -48,6 +48,9 @@
 #include <QStatusBar>
 #include <QStyledItemDelegate>
 #include <QStyleFactory>
+#include <QTimer>
+#include <QProgressDialog>
+#include <QCoreApplication>
 #include <QDateTime>
 #include <QLocale>
 
@@ -121,8 +124,16 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.cmboTollButtonsStyle,          SIGNAL(currentIndexChanged(int)), this, SLOT(updateCmboToolButtonStyle()));
 	connect(ui.cmboLanguage,                  SIGNAL(currentIndexChanged(int)), this, SLOT(updateLanguageCode()       ));
 	connect(ui.cmboStyle,                     SIGNAL(currentIndexChanged(int)), this, SLOT(updateInterfaceStyle()     ));
-	connect(ui.cmboStyleSheet,                SIGNAL(currentIndexChanged(int)), this, SLOT(updateSheetName()          ));
-	connect(ui.cmboStyleSheet,                SIGNAL(activated(int))          , this, SLOT(loadStyleSheet(int)        ));
+	/* Stylesheet: one signal only. activated(int) is also emitted on every
+	 * mouse-wheel notch / arrow key and when re-selecting the same entry, and
+	 * each emission did a full synchronous re-polish of the whole GUI -> freeze.
+	 * Now we save the name immediately and apply it once, after a short delay. */
+	mStyleSheetTimer = new QTimer(this);
+	mStyleSheetTimer->setSingleShot(true);
+	mStyleSheetTimer->setInterval(300);
+	connect(mStyleSheetTimer, SIGNAL(timeout()), this, SLOT(applyPendingStyleSheet()));
+
+	connect(ui.cmboStyleSheet,                SIGNAL(currentIndexChanged(int)), this, SLOT(loadStyleSheet(int)        ));
 	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool))           , this, SLOT(updateStatusToolTip()      ));
 
 	connect(ui.mainPageButtonType_CB,  SIGNAL(currentIndexChanged(int)),           this, SLOT(updateRbtPageOnToolBar()    ));
@@ -178,13 +189,51 @@ void AppearancePage::updateSheetName()
 
 void AppearancePage::loadStyleSheet(int index)
 {
+	if (index < 0)
+		return;
+
+	updateSheetName();
+	mStyleSheetTimer->start(); // (re)start: only the last selection gets applied
+}
+
+void AppearancePage::applyPendingStyleSheet()
+{
+	int index = ui.cmboStyleSheet->currentIndex();
+	if (index < 0)
+		return;
+
+	QString sheet = ui.cmboStyleSheet->itemData(index).toString();
+	if (sheet == mAppliedSheet)
+		return; // nothing changed, skip the expensive re-polish
+
+	// Don't restyle while the combo popup is still open/closing.
+	if (ui.cmboStyleSheet->view() && ui.cmboStyleSheet->view()->isVisible()) {
+		mStyleSheetTimer->start();
+		return;
+	}
+
+	/* qApp->setStyleSheet() re-polishes every widget of the application in one
+	 * blocking call (several seconds with big sheets). Show a small message
+	 * first, painted once before the freeze, so the user knows it's expected. */
+	QProgressDialog progress(tr("Applying stylesheet, please wait..."), QString(), 0, 0, window());
+	progress.setWindowTitle(tr("Appearance"));
+	progress.setWindowModality(Qt::ApplicationModal);
+	progress.setCancelButton(nullptr);
+	progress.setMinimumDuration(0);
+	progress.show();
+	progress.repaint();
+	// Paint only; no user input, so nothing can re-enter this slot meanwhile.
+	QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+
 #ifndef QT_NO_CURSOR
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 #endif
-	RsApplication::loadStyleSheet(ui.cmboStyleSheet->itemData(index).toString());
+	RsApplication::loadStyleSheet(sheet);
+	mAppliedSheet = sheet;
 #ifndef QT_NO_CURSOR
 	QApplication::restoreOverrideCursor();
 #endif
+	progress.close();
 }
 
 void AppearancePage::updateRbtPageOnToolBar()
@@ -306,6 +355,7 @@ void AppearancePage::load()
 		index = ui.cmboStyleSheet->findData("");
 	}
 	whileBlocking(ui.cmboStyleSheet)->setCurrentIndex(index);
+	mAppliedSheet = ui.cmboStyleSheet->itemData(index).toString();
 	
 	index = ui.mainPageButtonType_CB->findData(Settings->getPageButtonLoc());
 	if (index != 0) {
