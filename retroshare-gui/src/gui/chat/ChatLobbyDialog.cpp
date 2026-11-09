@@ -414,9 +414,9 @@ void ChatLobbyDialog::fetchHistory()
 			mIsWaitingForProbes = true;
 			mBufferedProbeResponses.clear();
 			
-			// Send the general probe request to ALL peers (the backend distributes it). 
-			// We will filter responses matching mSelectedPeersForHistory.
-			if (rsChats->requestLobbyHistory(lobbyId)) {
+			// Probe only the selected peers; responses are still filtered on
+			// mSelectedPeersForHistory.
+			if (rsChats->requestLobbyHistory(lobbyId, mSelectedPeersForHistory)) {
 				ui.chatWidget->addChatMsg(true, tr("Chat room management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("--- Requesting history from %1 peers. Waiting 5s for responses... ---").arg(mSelectedPeersForHistory.size()), ChatWidget::MSGTYPE_SYSTEM);
 				
 				mHistoryProbeTimer->start(5000); // Wait 5 seconds for probes
