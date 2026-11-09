@@ -20,6 +20,8 @@
 
 #include "gui/gxs/GxsCommentDialog.h"
 #include "gui/gxs/GxsCommentTreeWidget.h"
+#include "gui/gxs/YouTubeStyleCommentWidget.h"
+#include "gui/gxs/GxsCreateCommentDialog.h"
 #include "ui_GxsCommentDialog.h"
 
 #include <iostream>
@@ -28,12 +30,14 @@
 #include <QTimer>
 #include <QMessageBox>
 #include <QDateTime>
+#include <QToolButton>
+#include <QVBoxLayout>
 
 //#define DEBUG_COMMENT_DIALOG 1
 
 /** Constructor */
 GxsCommentDialog::GxsCommentDialog(QWidget *parent, const RsGxsId &default_author, RsGxsCommentService *comment_service)
-	: QWidget(parent), ui(new Ui::GxsCommentDialog)
+	: QWidget(parent), ui(new Ui::GxsCommentDialog), mUseYouTubeStyle(false), mYouTubeStyleWidget(nullptr), mCommentService(nullptr)
 {
 	/* Invoke the Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
@@ -60,7 +64,9 @@ void GxsCommentDialog::init(const RsGxsId& default_author)
 	
 	connect(ui->commentButton, SIGNAL(clicked()), ui->treeWidget, SLOT(makeComment()));
 	connect(ui->sortBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sortComments(int)));
-	
+
+	connect(ui->viewModeButton, &QToolButton::toggled, this, &GxsCommentDialog::onYouTubeStyleToggled);
+
 	// default sort method "HOT".
 	ui->treeWidget->sortByColumn(4, Qt::DescendingOrder);
 	
@@ -71,11 +77,12 @@ void GxsCommentDialog::init(const RsGxsId& default_author)
 
 void GxsCommentDialog::setGxsService(RsGxsCommentService *comment_service)
 {
+	mCommentService = comment_service;
     ui->treeWidget->setup(comment_service);
 }
 
 GxsCommentDialog::GxsCommentDialog(QWidget *parent,const RsGxsId &default_author)
-	: QWidget(parent), ui(new Ui::GxsCommentDialog)
+	: QWidget(parent), ui(new Ui::GxsCommentDialog), mUseYouTubeStyle(false), mYouTubeStyleWidget(nullptr), mCommentService(nullptr)
 {
 	/* Invoke the Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
@@ -91,6 +98,9 @@ GxsCommentDialog::~GxsCommentDialog()
 void GxsCommentDialog::commentClear()
 {
     ui->treeWidget->clear();
+    if (mYouTubeStyleWidget) {
+        mYouTubeStyleWidget->clearComments();
+    }
     mGrpId.clear();
     mMostRecentMsgId.clear();
     mMsgVersions.clear();
@@ -131,6 +141,7 @@ void GxsCommentDialog::idChooserReady()
 
 void GxsCommentDialog::voterSelectionChanged( int index )
 {
+	Q_UNUSED(index)
 #ifdef DEBUG_COMMENT_DIALOG
 	std::cerr << "GxsCommentDialog::voterSelectionChanged(" << index << ")";
 	std::cerr << std::endl;
@@ -145,6 +156,8 @@ void GxsCommentDialog::voterSelectionChanged( int index )
 		std::cerr << std::endl;
 #endif
 		ui->treeWidget->setVoteId(voterId);
+		if (mYouTubeStyleWidget)
+			mYouTubeStyleWidget->setVoterId(voterId);
 
 		break;
 		case GxsIdChooser::NoId:
@@ -198,19 +211,125 @@ void GxsCommentDialog::setCommentHeader(QWidget *header)
 
 void GxsCommentDialog::sortComments(int i)
 {
-
 	switch(i)
 	{
 	default:
 	case 0:
-		ui->treeWidget->sortByColumn(4, Qt::DescendingOrder); 
+		if (mUseYouTubeStyle && mYouTubeStyleWidget) {
+			mYouTubeStyleWidget->sortComments(0);
+		} else {
+			ui->treeWidget->sortByColumn(4, Qt::DescendingOrder);
+		}
 		break;
 	case 1:
-		ui->treeWidget->sortByColumn(2, Qt::DescendingOrder); 
+		if (mUseYouTubeStyle && mYouTubeStyleWidget) {
+			mYouTubeStyleWidget->sortComments(1);
+		} else {
+			ui->treeWidget->sortByColumn(2, Qt::DescendingOrder);
+		}
 		break;
 	case 2:
-		ui->treeWidget->sortByColumn(3, Qt::DescendingOrder); 
+		if (mUseYouTubeStyle && mYouTubeStyleWidget) {
+			mYouTubeStyleWidget->sortComments(2);
+		} else {
+			ui->treeWidget->sortByColumn(3, Qt::DescendingOrder);
+		}
 		break;
 	}
+}
 
+void GxsCommentDialog::setupYouTubeStyleWidget()
+{
+	if (mYouTubeStyleWidget)
+		return;
+
+	mYouTubeStyleWidget = new YouTubeStyleCommentWidget(ui->youTubePage);
+	mYouTubeStyleWidget->setCommentService(mCommentService);
+
+	// Issue 2: wire the reply signal so clicking Reply opens GxsCreateCommentDialog
+	connect(mYouTubeStyleWidget, &YouTubeStyleCommentWidget::commentReply,
+	        this, &GxsCommentDialog::onYouTubeCommentReply);
+
+	// Propagate the already-chosen voter ID if one was selected before the widget was created
+	{
+		RsGxsId voterId;
+		GxsIdChooser::ChosenId_Ret ret = ui->idChooser->getChosenId(voterId);
+		if (ret == GxsIdChooser::KnowId || ret == GxsIdChooser::UnKnowId)
+			mYouTubeStyleWidget->setVoterId(voterId);
+	}
+
+	QVBoxLayout *pageLayout = new QVBoxLayout(ui->youTubePage);
+	pageLayout->setContentsMargins(0, 0, 0, 0);
+	pageLayout->addWidget(mYouTubeStyleWidget);
+}
+
+void GxsCommentDialog::loadYouTubeStyleComments(const std::vector<RsGxsComment> &comments)
+{
+	if (!mYouTubeStyleWidget)
+		setupYouTubeStyleWidget();
+
+	mUseYouTubeStyle = true;
+	ui->viewModeButton->setChecked(true);
+	ui->commentStackedWidget->setCurrentWidget(ui->youTubePage);
+
+	mYouTubeStyleWidget->clearComments();
+
+	// Collect all comment msgIds to distinguish top-level (parent not a comment) from replies
+	std::set<RsGxsMessageId> commentIds;
+	for (const auto &c : comments)
+		commentIds.insert(c.mMeta.mMsgId);
+
+	// First pass: top-level comments
+	for (const auto &comment : comments) {
+		if (!commentIds.count(comment.mMeta.mParentId))
+			mYouTubeStyleWidget->addComment(comment, RsGxsMessageId());
+	}
+	// Second pass: replies
+	for (const auto &comment : comments) {
+		if (commentIds.count(comment.mMeta.mParentId))
+			mYouTubeStyleWidget->addComment(comment, comment.mMeta.mParentId);
+	}
+
+	mYouTubeStyleWidget->updateReplyCountButtons();
+}
+
+void GxsCommentDialog::loadYouTubeStyle()
+{
+	mUseYouTubeStyle = true;
+	ui->viewModeButton->setChecked(true);
+	setupYouTubeStyleWidget();
+	ui->commentStackedWidget->setCurrentWidget(ui->youTubePage);
+
+	if (mYouTubeStyleWidget)
+		mYouTubeStyleWidget->loadCommentsForPost(mGrpId, mMsgVersions, mMostRecentMsgId);
+}
+
+void GxsCommentDialog::onYouTubeStyleToggled(bool checked)
+{
+	if (checked) {
+		mUseYouTubeStyle = true;
+		setupYouTubeStyleWidget();
+		ui->commentStackedWidget->setCurrentWidget(ui->youTubePage);
+		if (mYouTubeStyleWidget)
+			mYouTubeStyleWidget->loadCommentsForPost(mGrpId, mMsgVersions, mMostRecentMsgId);
+	} else {
+		mUseYouTubeStyle = false;
+		ui->commentStackedWidget->setCurrentWidget(ui->classicPage);
+	}
+}
+
+// Issue 2: open a reply dialog for the YouTube-style view, mirroring GxsCommentTreeWidget::replyToComment()
+void GxsCommentDialog::onYouTubeCommentReply(const RsGxsMessageId &parentId)
+{
+	RsGxsId voterId;
+	ui->idChooser->getChosenId(voterId);
+
+	GxsCreateCommentDialog dlg(mCommentService,
+	    RsGxsGrpMsgIdPair(mGrpId, parentId),
+	    mMostRecentMsgId, voterId, this);
+	dlg.exec();
+
+	// Reload so the new reply appears
+	if (mYouTubeStyleWidget)
+		mYouTubeStyleWidget->loadCommentsForPost(mGrpId, mMsgVersions, mMostRecentMsgId);
 }
