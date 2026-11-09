@@ -37,8 +37,12 @@ public:
 	/*!
 	 * @param tokenQ parent callee token
 	 * @param posted
+	 * @param existingPostId When non null, the dialog edits the given
+	 *        already existing post instead of creating a new one. Editing
+	 *        a post requires either being its original author, or being
+	 *        the board admin.
 	 */
-    explicit PostedCreatePostDialog(RsPosted* posted, const RsGxsGroupId& grpId, const RsGxsId& default_author=RsGxsId(),QWidget *parent = 0);
+    explicit PostedCreatePostDialog(RsPosted* posted, const RsGxsGroupId& grpId, const RsGxsId& default_author=RsGxsId(), const RsGxsMessageId& existingPostId=RsGxsMessageId(), QWidget *parent = 0);
 	~PostedCreatePostDialog();
 
 	void setTitle(const QString& title);
@@ -62,12 +66,14 @@ private slots:
 	void setPage(int viewMode);
 private:
 	void processSettings(bool load);
+	void loadExistingPost();
 	int viewMode();
 
 	QString mLink;
 	QString mNotes;
 	RsPosted* mPosted;
 	RsGxsGroupId mGrpId;
+	RsGxsMessageId mOrigPostId;
 
 	Ui::PostedCreatePostDialog *ui;
 };
