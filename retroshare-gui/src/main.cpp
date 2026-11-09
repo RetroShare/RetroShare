@@ -367,6 +367,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
     as      >> option(   's',"stderr"             ,conf.outStderr                ,"output to stderr instead of log file "                                                      )
             >> option(   'u',"udp"                ,conf.udpListenerOnly          ,"Only listen to UDP "                                                                        )
             >> option(   'R',"reset"              ,conf.optResetParams           ,"reset retroshare parameters "                                                               )
+            >> option(   'n',"new-instance"       ,conf.newInstance              ,"start a new instance even if one is already running"                                          )
             >> parameter('c',"base-dir"           ,conf.optBaseDir               ,"directory"                             ,"Set base directory "                                  ,false)
             >> parameter('l',"log-file"           ,logfilename                   ,"logfile"                               ,"Set Log filename "                                    ,false)
             >> parameter('d',"debug-level"        ,loglevel                      ,"level (debug,info,notice,warn,error,off)","Set debug level "                                   ,false)
@@ -410,12 +411,16 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
         showHelp(as);
         return 0;
     }
-    // Look for parameters to be transmitted to running server
+    // Look for parameters to be transmitted to running server.
+    // If a retroshare instance is already running, hand over the arguments to it
+    // (or simply ask it to show its main window when there are none) instead of
+    // starting a second instance, unless the user explicitly requested one with
+    // -n/--new-instance or pointed to a different base directory with -c.
 
-    if((!rslink.empty() || !rsfile.empty() || !links_and_files.empty() || !conf.opModeStr.empty()) && notifyRunningInstance())
+    if(!conf.newInstance && conf.optBaseDir.empty() && notifyRunningInstance())
     {
         QStringList args;
-        RsErr() << "Sending rscollection files, retroshare links and opmode parameters to the runnning retroshare server." ;
+        RsErr() << "RetroShare is already running. Sending arguments to the running instance and exiting." ;
 
         if(!rslink.empty()) { args.push_back("-l"); args.push_back(QString::fromUtf8(rslink.c_str())); }
         if(!rsfile.empty()) { args.push_back("-f"); args.push_back(QString::fromUtf8(rsfile.c_str())); }
