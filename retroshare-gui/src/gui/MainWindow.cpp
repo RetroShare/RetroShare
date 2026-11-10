@@ -152,6 +152,9 @@
  * showMessage() calls, which a busy chat room used to produce one per message. */
 #define SYSTRAY_MSG_INTERVAL_MS 3000
 
+/* updateStatus() runs every second; every TRAY_ICON_REFRESH_TICKS runs it re-sends the tray icon. */
+#define TRAY_ICON_REFRESH_TICKS 30
+
 #define IMAGE_BWGRAPH           ":/icons/png/bandwidth.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_NEWRSCOLLECTION   ":/images/library.png"
@@ -189,6 +192,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     ui = new Ui::MainWindow;
     trayIcon = NULL;
 
+    mTrayIconRefreshTicks = 0;
     mPendingSystrayCount = 0;
     mPendingSystrayMixed = false;
     mSystrayMsgTimer = new QTimer(this);
@@ -891,6 +895,16 @@ void MainWindow::updateStatus()
     // This call is essential to remove locks due to QEventLoop re-entrance while asking gpg passwds. Dont' remove it!
     if(RsAutoUpdatePage::eventsLocked())
         return;
+
+    // The tray icon is otherwise only refreshed on FRIEND_LIST events, and updateFriends()
+    // drops those while events are locked and skips unchanged icons. Re-send it now and then
+    // so that a lost event or an update the tray host dropped does not stick.
+    if (++mTrayIconRefreshTicks >= TRAY_ICON_REFRESH_TICKS) {
+        mTrayIconRefreshTicks = 0;
+        mLastTrayIconKey.clear();
+        updateFriends();
+    }
+
     float downKb = 0;
     float upKb = 0;
     rsConfig->GetCurrentDataRates(downKb, upKb);
@@ -962,16 +976,14 @@ void MainWindow::updateFriends()
 
     bool overlay = notifyMenu && notifyMenu->menuAction()->isVisible();
 
-#if defined(Q_OS_UNIX) && !defined(Q_OS_DARWIN)
     // Every setIcon() re-sends the pixmap over D-Bus on SNI trays: skip it when nothing changed.
-    // Linux only: on Windows the shell occasionally drops an icon update, which would then
-    // never be retried, leaving the tray stuck on the grey "0 connected" icon. There a
-    // re-send is one cheap Shell_NotifyIcon(NIM_MODIFY).
+    // The tray host can still drop an update (seen with xfce4-panel and the Windows shell),
+    // which would leave it on the grey "0 connected" icon: updateStatus() clears the key
+    // every TRAY_ICON_REFRESH_TICKS seconds to force a re-send.
     QString trayIconKey = trayIconResource + (overlay ? "+" : "");
     if (trayIconKey == mLastTrayIconKey)
         return;
     mLastTrayIconKey = trayIconKey;
-#endif
 
     QIcon icon;
     if (overlay) {

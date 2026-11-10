@@ -364,6 +364,7 @@ private:
 
     QSystemTrayIcon *trayIcon;
     QString mLastTrayIconKey;
+    unsigned int mTrayIconRefreshTicks;
     // Systray balloons are rate-limited; while one is up, later ones are folded into a single summary.
     QTimer *mSystrayMsgTimer;
     QString mPendingSystrayTitle;
