@@ -51,7 +51,7 @@ struct RsGUIConfigOptions: public RsConfigOptions
 {
     RsGUIConfigOptions()
         : optResetParams(false), logLevel("Off"), argc(0)
-    {}
+    { argv[0] = argv[1] = nullptr; }
 
     bool optResetParams;		// reset all GUI parameters
 
@@ -65,7 +65,7 @@ struct RsGUIConfigOptions: public RsConfigOptions
     QString guiStyleSheetFile;  // CSS Style for the GUI
 
     int argc ;					// stores argc parameter. Only used by the creator of QApplication
-    char *argv[1] ;				// stores argv parameter. Only used by the creator of QApplication
+    char *argv[2] ;				// argv[0] and a null terminator. Only used by the creator of QApplication
 };
 
 class RsApplication : public QApplication
