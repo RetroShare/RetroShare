@@ -556,15 +556,19 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
         ui.chatWidget->addChatMsg(msg.incoming, name, gxs_id, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
         emit messageReceived(msg.incoming, id(), sendTime, name, message) ;
 
-        // This is a trick to translate HTML into text.
-        QTextEdit editor;
-        editor.setHtml(message);
-        QString notifyMsg = name + ": " + editor.toPlainText();
+        // Same rule as the toaster: no systray balloon for our own messages or while the room is on screen.
+        if(msg.incoming && !ui.chatWidget->isActive())
+        {
+            // This is a trick to translate HTML into text.
+            QTextEdit editor;
+            editor.setHtml(message);
+            QString notifyMsg = name + ": " + editor.toPlainText();
 
-        if(notifyMsg.length() > 30)
-            MainWindow::displayLobbySystrayMsg(tr("Room chat") + ": " + _lobby_name, notifyMsg.left(30) + QString("..."));
-        else
-            MainWindow::displayLobbySystrayMsg(tr("Room chat") + ": " + _lobby_name, notifyMsg);
+            if(notifyMsg.length() > 30)
+                MainWindow::displayLobbySystrayMsg(tr("Room chat") + ": " + _lobby_name, notifyMsg.left(30) + QString("..."));
+            else
+                MainWindow::displayLobbySystrayMsg(tr("Room chat") + ": " + _lobby_name, notifyMsg);
+        }
     }
 
 	// also update peer list.
