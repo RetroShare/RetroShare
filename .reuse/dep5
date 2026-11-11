@@ -38,6 +38,11 @@ Files: libretroshare/src/deep_search/*
 Copyright: 2018-2023, Gioacchino Mazzurco <gio@retroshare.cc>
 License: AGPL-3.0-only
 
+Files: libretroshare/src/content_search/*
+Copyright: 2018-2023, Gioacchino Mazzurco <gio@retroshare.cc>
+           2026, jolavillette
+License: AGPL-3.0-only
+
 Files: libretroshare/src/retroshare/rsgxstrans.h
 Copyright: 2016-2019, Gioacchino Mazzurco <gio@retroshare.cc>
 License: LGPL-3.0-only
