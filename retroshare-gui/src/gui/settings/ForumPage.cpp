@@ -45,7 +45,7 @@ ForumPage::ForumPage(QWidget * parent, Qt::WindowFlags flags)
 
     ui.groupFrameSettingsWidget->setType(GroupFrameSettings::Forum) ;
 
-#ifdef RS_DEEP_FORUMS_INDEX
+#ifdef RS_FORUM_CONTENT_SEARCH
     mReindexButton = new QPushButton(tr("Rebuild the search index"), this);
     mReindexButton->setToolTip(
                 tr("Rebuild the index used to search the content of the "
@@ -57,7 +57,7 @@ ForumPage::ForumPage(QWidget * parent, Qt::WindowFlags flags)
 
 void ForumPage::reindexAll()
 {
-#ifdef RS_DEEP_FORUMS_INDEX
+#ifdef RS_FORUM_CONTENT_SEARCH
     if( QMessageBox::question(
                 this, tr("Rebuild the search index"),
                 tr("Rebuild the index used to search the content of the forum "

@@ -117,8 +117,6 @@ For `Autologin` it is required to append the config option `CONFIG+=rs_autologin
   * gxsthewire:					enable Wire service (experimental)
   * wikipoos:					enable Wiki service
   * rs_use_native_dialogs:		enable native dialogs (may cause crashes with some versions of Gtk)
-  * rs_deep_channels_index:		build with deep channel indexing support
-  * rs_deep_files_index:		build with deep file indexing support
   * "CONFIG+=..."				enable other extra compile time features, you can find the almost complete list in file *&lt;sourcefolder&gt;\retroshare.pri*
 
 Example:

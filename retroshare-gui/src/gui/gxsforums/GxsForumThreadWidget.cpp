@@ -333,7 +333,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->filterLineEdit->addFilter(QIcon(), tr("Title"), RsGxsForumModel::COLUMN_THREAD_TITLE, tr("Search Title"));
     ui->filterLineEdit->addFilter(QIcon(), tr("Date"), RsGxsForumModel::COLUMN_THREAD_DATE, tr("Search Date"));
     ui->filterLineEdit->addFilter(QIcon(), tr("Author"), RsGxsForumModel::COLUMN_THREAD_AUTHOR, tr("Search Author"));
-#ifdef RS_DEEP_FORUMS_INDEX
+#ifdef RS_FORUM_CONTENT_SEARCH
     ui->filterLineEdit->addFilter(QIcon(), tr("Content"), RsGxsForumModel::COLUMN_THREAD_CONTENT, tr("Search Content"));
 #endif
 
@@ -1951,7 +1951,7 @@ void GxsForumThreadWidget::filterItems(const QString& text)
         std::map<RsGxsMessageId, std::string> matches; // id -> snippet
         std::vector<RsGxsSearchResult> results;
 
-#ifdef RS_DEEP_FORUMS_INDEX
+#ifdef RS_FORUM_CONTENT_SEARCH
         // Post bodies of this forum only, no result limit
         rsGxsForums->localForumSearch(groupId(), text.toStdString(), results, 0);
 
