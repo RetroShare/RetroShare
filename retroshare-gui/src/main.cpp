@@ -433,6 +433,12 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
     conf.main_executable_path = applicationFilePath.toStdString();
 
+    /* Hand QApplication our argv[0], and only that: RetroShare parses its own options above.
+       With argc == 0 Qt has no application name and sets no WM_CLASS on X11 windows, so the
+       window list of XFCE (libwnck) shows RetroShare as "Untitled application". */
+    conf.argc = 1;
+    conf.argv[0] = argv[0];
+
     int initResult = RsInit::InitRetroShare(conf);
 
     if(initResult == RS_INIT_NO_KEYRING)	// happens when we already have accounts, but no pgp key. This is when switching to the openpgp-sdk version.

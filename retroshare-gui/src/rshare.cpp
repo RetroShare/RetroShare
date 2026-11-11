@@ -115,6 +115,14 @@ RsApplication::RsApplication(const RsGUIConfigOptions& conf)
     localServer = NULL;
     options = conf;
 
+    /* Sets the X11 WM_CLASS class "RetroShare" (the instance is argv[0]'s basename, e.g.
+       "retroshare-gui") and, below, the Wayland app id; must be set before the first window
+       is created. */
+    setApplicationName("RetroShare");
+#if QT_VERSION >= QT_VERSION_CHECK (5, 7, 0)
+    setDesktopFileName("retroshare");
+#endif
+
     // So we start a Local Server to listen for connections from new process
     localServer= new QLocalServer();
     QObject::connect(localServer, SIGNAL(newConnection()), this, SLOT(slotConnectionEstablished()));
