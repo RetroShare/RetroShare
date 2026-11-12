@@ -707,8 +707,15 @@ void RSGraphWidget::paintScale2()
     float FS = QFontMetricsF(font()).height();
     float fact = FS/14.0 ;
 
+    // The wheel divides the time scale by 1.1 per notch, with no floor: a few
+    // hundred notches make it tiny, and it ends at 0 when the float underflows.
+    // Without this check the loop below drew one label per step all the way
+    // across (hundreds of thousands per repaint), then never ended at 0.
+    if(!(_time_scale > 0.0f) || 80*fact/_time_scale > 1e9)
+        return ;
+
     static const int steps[] = { 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600, 7200 } ;
-    int step = steps[sizeof(steps)/sizeof(steps[0]) - 1] ;
+    qint64 step = 0 ;
 
     for(int s : steps)
         if(s*_time_scale >= 80*fact)
@@ -717,9 +724,13 @@ void RSGraphWidget::paintScale2()
             break ;
         }
 
+    // zoomed out beyond the largest step: whole hours, still 80 pixels apart
+    if(step == 0)
+        step = 3600 * (qint64)std::ceil(80*fact / _time_scale / 3600.0) ;
+
     _painter->setPen((_flags & RSGRAPH_FLAGS_DARK_STYLE) ? SCALE_COLOR_DARK : SCALE_COLOR);
 
-    for(int seconds = step; ; seconds += step)
+    for(qint64 seconds = step; ; seconds += step)
     {
         qreal x = _rec.width() - seconds*_time_scale ;	// seconds * (pixels per second) => pixels
 
