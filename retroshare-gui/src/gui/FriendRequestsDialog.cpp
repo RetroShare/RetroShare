@@ -101,9 +101,21 @@ FriendRequestsDialog::~FriendRequestsDialog()
 	rsEvents->unregisterEventsHandler(mFriendEventHandlerId);
 }
 
-QString FriendRequestsDialog::requestKey(const AttemptEntry &entry) const
+bool FriendRequestsDialog::isRejected(const AttemptEntry &entry) const
 {
-	return entry.pgpId.isEmpty() ? entry.sslId : entry.pgpId;
+	if (!entry.pgpId.isEmpty() && mRejectedPeers.contains(entry.pgpId))
+		return true;
+	if (!entry.sslId.isEmpty() && mRejectedPeers.contains(entry.sslId))
+		return true;
+	return false;
+}
+
+void FriendRequestsDialog::rememberRejected(const AttemptEntry &entry)
+{
+	if (!entry.pgpId.isEmpty())
+		mRejectedPeers.insert(entry.pgpId);
+	if (!entry.sslId.isEmpty())
+		mRejectedPeers.insert(entry.sslId);
 }
 
 bool FriendRequestsDialog::shouldIgnoreRequest(const AttemptEntry &entry) const
@@ -120,7 +132,8 @@ bool FriendRequestsDialog::shouldIgnoreRequest(const AttemptEntry &entry) const
 			return true;
 
 		RsPeerDetails gpgDetails;
-		if (rsPeers->getGPGDetails(pgpId, gpgDetails) && gpgDetails.accept_connection)
+		if (rsPeers->getGPGDetails(pgpId, gpgDetails) &&
+		    (gpgDetails.accept_connection || gpgDetails.skip_pgp_signature_validation))
 			return true;
 	}
 
@@ -142,7 +155,8 @@ bool FriendRequestsDialog::shouldIgnoreRequest(const AttemptEntry &entry) const
 		{
 			if (sslDetails.id == rsPeers->getOwnId() ||
 			    sslDetails.gpg_id == rsPeers->getGPGOwnId() ||
-			    sslDetails.accept_connection)
+			    sslDetails.accept_connection ||
+			    sslDetails.skip_pgp_signature_validation)
 				return true;
 		}
 	}
@@ -172,7 +186,7 @@ void FriendRequestsDialog::loadStoredRequests()
 		entry.timestamp = map["timestamp"].toLongLong();
 
 		/* Ignore if rejected */
-		if (mRejectedPeers.contains(requestKey(entry)))
+		if (isRejected(entry))
 		{
 			changedStored = true;
 			continue;
@@ -208,12 +222,11 @@ void FriendRequestsDialog::loadStoredRequests()
 			if (!rsPeers->getGPGDetails(pgpId, details))
 				continue;
 
-			if (pgpId == rsPeers->getGPGOwnId() || !details.hasSignedMe || details.accept_connection)
+			if (pgpId == rsPeers->getGPGOwnId() || !details.hasSignedMe ||
+			    details.accept_connection || details.skip_pgp_signature_validation)
 				continue;
 
 			QString pgpStr = QString::fromStdString(pgpId.toStdString());
-			if (mRejectedPeers.contains(pgpStr))
-				continue;
 
 			AttemptEntry entry;
 			entry.pgpId = pgpStr;
@@ -226,7 +239,7 @@ void FriendRequestsDialog::loadStoredRequests()
 				sslId = sslIds.front();
 			entry.sslId = QString::fromStdString(sslId.toStdString());
 
-			if (shouldIgnoreRequest(entry))
+			if (isRejected(entry) || shouldIgnoreRequest(entry))
 				continue;
 
 			if (!mStoredAttempts.contains(entry))
@@ -285,7 +298,7 @@ void FriendRequestsDialog::handleAuthSslEvent(std::shared_ptr<const RsEvent> eve
 		entry.locator = QString::fromStdString(pe->mLocator.toString());
 		entry.timestamp = QDateTime::currentDateTime().toMSecsSinceEpoch();
 
-		if (mRejectedPeers.contains(requestKey(entry)) || shouldIgnoreRequest(entry))
+		if (isRejected(entry) || shouldIgnoreRequest(entry))
 			return;
 
 		int idx = mStoredAttempts.indexOf(entry);
@@ -373,11 +386,7 @@ void FriendRequestsDialog::onItemDestroyed(QObject *obj)
 void FriendRequestsDialog::clearAll()
 {
 	for (const AttemptEntry &entry : mStoredAttempts)
-	{
-		QString rejKey = requestKey(entry);
-		if (!rejKey.isEmpty())
-			mRejectedPeers.insert(rejKey);
-	}
+		rememberRejected(entry);
 
 	Settings->beginGroup("FriendRequests");
 	Settings->setValue("Rejected", QStringList(mRejectedPeers.values()));
@@ -415,14 +424,11 @@ void FriendRequestsDialog::deleteFeedItem(FeedItem *item, uint32_t /*type*/)
 	if (mItemMap.contains(item))
 	{
 		AttemptEntry entry = mItemMap.value(item);
-		QString rejKey = requestKey(entry);
-		if (!rejKey.isEmpty())
-		{
-			mRejectedPeers.insert(rejKey);
-			Settings->beginGroup("FriendRequests");
-			Settings->setValue("Rejected", QStringList(mRejectedPeers.values()));
-			Settings->endGroup();
-		}
+		rememberRejected(entry);
+
+		Settings->beginGroup("FriendRequests");
+		Settings->setValue("Rejected", QStringList(mRejectedPeers.values()));
+		Settings->endGroup();
 
 		mStoredAttempts.removeAll(entry);
 		saveStoredRequests();

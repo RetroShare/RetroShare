@@ -137,6 +137,7 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
 
     connect(friendRequestsDialog, SIGNAL(requestCountChanged(int)), this, SLOT(updateFriendRequestsTabCount(int)));
+    updateFriendRequestsTabCount(friendRequestsDialog->pendingRequestCount());
 
     for (int i = 0; i < ui.tabWidget->count(); ++i)
         ui.tabWidget->hideCloseButton(i);
