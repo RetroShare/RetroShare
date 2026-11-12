@@ -41,6 +41,8 @@
 #include "util/misc.h"
 #include "util/rsthreads.h"
 
+#include <QPointer>
+
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsturtle.h>
 #include <retroshare/rsexpr.h>
@@ -873,17 +875,20 @@ void SearchDialog::advancedSearch(RsRegularExpression::Expression* expression)
 
     // Scanning the file lists can take seconds (large lists, swapped-out memory): keep it off the GUI thread.
     // The expression was allocated by AdvancedSearchDialog::getRsExpr() for us, so it is freed here.
-    RsThread::async([this,expression,flags,txt,req_id]()
+    // The results go to qApp, which outlives the search: this dialog may be gone by then (exit).
+    QPointer<SearchDialog> self(this);
+    RsThread::async([self,expression,flags,txt,req_id]()
     {
         std::list<DirDetails> results;
         rsFiles -> SearchBoolExp(expression, results, flags);
         delete expression;
 
-        RsQThreadUtils::postToObject([this,txt,req_id,results]()
+        RsQThreadUtils::postToObject([self,txt,req_id,results]()
         {
+            if(!self) return;
             /* abstraction to allow reusee of tree rendering code */
-            resultsToTree(txt,req_id, results);
-        }, this);
+            self->resultsToTree(txt,req_id, results);
+        }, qApp);
     });
 }
 
@@ -951,7 +956,9 @@ void SearchDialog::searchKeywords(const QString& keywords)
 		bool search_local = ui._ownFiles_CB->isChecked();
 
 		// Scanning the file lists can take seconds (large lists, swapped-out memory): keep it off the GUI thread.
-		RsThread::async([this,words,search_remote,search_local,keywords,req_id]()
+		// The results go to qApp, which outlives the search: this dialog may be gone by then (exit).
+		QPointer<SearchDialog> self(this);
+		RsThread::async([self,words,search_remote,search_local,keywords,req_id]()
 		{
 			RsRegularExpression::NameExpression exprs(RsRegularExpression::ContainsAllStrings,words,true) ;
 			std::list<DirDetails> finalResults ;
@@ -966,11 +973,12 @@ void SearchDialog::searchKeywords(const QString& keywords)
 				finalResults.splice(finalResults.end(), initialResults);
 			}
 
-			RsQThreadUtils::postToObject([this,keywords,req_id,finalResults]()
+			RsQThreadUtils::postToObject([self,keywords,req_id,finalResults]()
 			{
+				if(!self) return;
 				/* abstraction to allow reusee of tree rendering code */
-				resultsToTree(keywords,req_id, finalResults);
-			}, this);
+				self->resultsToTree(keywords,req_id, finalResults);
+			}, qApp);
 		});
 	}
 }
