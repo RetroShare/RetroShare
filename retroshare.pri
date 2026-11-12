@@ -148,35 +148,10 @@ rs_macos15.5:CONFIG -= rs_macos10.13
 CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
-# To enable forums indexing append the following assignation to qmake command
-# line "CONFIG+=rs_deep_forums_index"
-CONFIG *= no_rs_deep_forums_index
-rs_deep_forums_index:CONFIG -= no_rs_deep_forums_index
-
-# To enable channel indexing append the following assignation to qmake command
-# line "CONFIG+=rs_deep_channels_index"
-CONFIG *= no_rs_deep_channels_index
-rs_deep_channels_index:CONFIG -= no_rs_deep_channels_index
-
-# To enable deep files indexing append the following assignation to qmake
-# command line "CONFIG+=rs_deep_files_index"
-CONFIG *= no_rs_deep_files_index
-rs_deep_files_index:CONFIG -= no_rs_deep_files_index
-
-# To enable Ogg files deep indexing append the following assignation to qmake
-# command line "CONFIG+=rs_deep_files_index_ogg"
-CONFIG *= no_rs_deep_files_index_ogg
-rs_deep_files_index_ogg:CONFIG -= no_rs_deep_files_index_ogg
-
-# To enable FLAC files deep indexing append the following assignation to qmake
-# command line "CONFIG+=rs_deep_files_index_flac"
-CONFIG *= no_rs_deep_files_index_flac
-rs_deep_files_index_flac:CONFIG -= no_rs_deep_files_index_flac
-
-# To enable taglib files deep indexing append the following assignation to qmake
-# command line "CONFIG+=rs_deep_files_index_taglib"
-CONFIG *= no_rs_deep_files_index_taglib
-rs_deep_files_index_taglib:CONFIG -= no_rs_deep_files_index_taglib
+# To enable the forum content search append the following assignation to qmake
+# command line "CONFIG+=rs_forum_content_search"
+CONFIG *= no_rs_forum_content_search
+rs_forum_content_search:CONFIG -= no_rs_forum_content_search
 
 # To enable native dialogs append the following assignation to qmake command
 # line "CONFIG+=rs_use_native_dialogs"
@@ -640,13 +615,7 @@ rs_webui {
     DEFINES *= RS_WEBUI
 }
 
-rs_deep_forums_index:DEFINES *= RS_DEEP_FORUMS_INDEX
-rs_deep_channels_index:DEFINES *= RS_DEEP_CHANNEL_INDEX
-
-rs_deep_files_index:DEFINES *= RS_DEEP_FILES_INDEX
-rs_deep_files_index_ogg:DEFINES *= RS_DEEP_FILES_INDEX_OGG
-rs_deep_files_index_flac:DEFINES *= RS_DEEP_FILES_INDEX_FLAC
-rs_deep_files_index_taglib:DEFINES *= RS_DEEP_FILES_INDEX_TAGLIB
+rs_forum_content_search:DEFINES *= RS_FORUM_CONTENT_SEARCH
 
 rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
 

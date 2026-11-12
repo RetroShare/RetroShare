@@ -147,7 +147,7 @@ if "%ParamWebui%"=="1" (
 )
 
 if "%ParamIndexing%"=="1" (
-	set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=rs_deep_channels_index" "CONFIG+=rs_deep_files_index" "CONFIG+=rs_deep_files_index_ogg" "CONFIG+=rs_deep_files_index_flac" "CONFIG+=rs_deep_files_index_taglib"
+	set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=rs_forum_content_search"
 )
 
 if "%ParamFriendserver%"=="1" (

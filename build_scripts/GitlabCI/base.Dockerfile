@@ -53,6 +53,6 @@ RUN git clone $REPO_DEPTH $REPO_URL -b $REPO_BRANCH && \
 RUN \
 	mkdir RetroShare-build && cd RetroShare-build && \
 	cmake -B. -S../RetroShare/retroshare-service \
-		-DRS_FORUM_DEEP_INDEX=ON -DRS_JSON_API=ON -DRS_WEBUI=ON && \
+		-DRS_JSON_API=ON -DRS_WEBUI=ON && \
 	make -j$(nproc) && make install && \
 	cd .. && rm -rf RetroShare-build
