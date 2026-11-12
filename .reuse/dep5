@@ -3,41 +3,570 @@ Upstream-Name: RetroShare
 Upstream-Contact: RetroShare Team <contact@retroshare.cc>
 
 Files: *
-Copyright: 2004-2019, Retroshare Team <contact@retroshare.cc>
+Copyright: 2004-2026, Retroshare Team <contact@retroshare.cc>
+License: AGPL-3.0-or-later
+
+Files: tests/unittests/libretroshare/dbase/*
+       tests/unittests/libretroshare/serialiser/rsconfigitem_test.cc
+       tests/unittests/libretroshare/serialiser/rsgrouteritem_test.cc
+       tests/unittests/libretroshare/serialiser/rsphotoitem_test.cc
+Copyright: 2004-2014, Robert Fernie
+License: LGPL-2.0-only
+
+Files: tests/test_JSON_API_DirDetails_handle_correct_64bit_integer_type.sh
+       build_scripts/OBS/prepare_source_tarball.sh
+Copyright: Retroshare Team <contact@retroshare.cc>
 License: AGPL-3.0-only
 
+Files: build_scripts/Windows/installer/lang/ts/xsltproc.exe
+       build_scripts/Windows-msys2/installer/lang/ts/xsltproc.exe
+Copyright: Daniel Veillard and libxslt contributors
+License: MIT
+Comment: prebuilt libxslt binary used by the Windows installer scripts.
+
+Files: libretroshare/*
+Copyright: 2004-2026, Retroshare Team <contact@retroshare.cc>
+License: AGPL-3.0-only
+
+Files: libretroshare/src/*
+Copyright: 2004-2026, Retroshare Team <contact@retroshare.cc>
+License: LGPL-3.0-or-later
+
+Files: libretroshare/src/deep_search/*
+       libretroshare/src/jsonapi/*
+       libretroshare/misc/Android/*
+Copyright: 2018-2023, Gioacchino Mazzurco <gio@retroshare.cc>
+License: AGPL-3.0-only
+
+Files: libretroshare/src/content_search/*
+Copyright: 2018-2023, Gioacchino Mazzurco <gio@retroshare.cc>
+           2026, jolavillette
+License: AGPL-3.0-only
+
+Files: libretroshare/src/retroshare/rsgxstrans.h
+Copyright: 2016-2019, Gioacchino Mazzurco <gio@retroshare.cc>
+License: LGPL-3.0-only
+
+Files: libretroshare/src/util/rsurl.*
+       libretroshare/src/rs_android/retroshareserviceandroid.*
+       libretroshare/src/rs_android/org/retroshare/service/*
+       libretroshare/tests/*
+Copyright: 2004-2026, Retroshare Team <contact@retroshare.cc>
+           2016-2023, Gioacchino Mazzurco <gio@retroshare.cc>
+License: AGPL-3.0-or-later
+
+Files: libretroshare/tests/test_JSON_API_DirDetails_handle_correct_64bit_integer_type.sh
+Copyright: Retroshare Team <contact@retroshare.cc>
+License: AGPL-3.0-only
+
+Files: libretroshare/src/rs_android/ScopedFd.h
+       libretroshare/src/rs_android/LocalArray.h
+       libretroshare/src/rs_android/ifaddrs-android.h
+Copyright: 2009, The Android Open Source Project
+License: Apache-2.0
+
+Files: libretroshare/src/tests/*
+       libretroshare/src/unfinished/*
+       libretroshare/tests/unittests/libretroshare/dbase/*
+       libretroshare/tests/unittests/libretroshare/serialiser/rsconfigitem_test.cc
+       libretroshare/tests/unittests/libretroshare/serialiser/rsgrouteritem_test.cc
+       libretroshare/tests/unittests/libretroshare/serialiser/rsphotoitem_test.cc
+Copyright: 2004-2014, Robert Fernie
+License: LGPL-2.0-only
+
+Files: libretroshare/src/tests/network_simulator/gui/*
+Copyright: 2011, Retroshare Team <contact@retroshare.cc>
+License: GPL-2.0-or-later
+
+Files: libretroshare/src/tor/*
+Copyright: 2014, John Brooks <john.brooks@dereferenced.net>
+License: BSD-3-Clause
+
+Files: libretroshare/src/tor/TorTypes.h
+       libretroshare/src/tor/bytearray.h
+Copyright: 2004-2026, Retroshare Team <contact@retroshare.cc>
+License: LGPL-3.0-or-later
+
+Files: libretroshare/gradle/wrapper/*
+Copyright: Gradle, Inc.
+License: Apache-2.0
+
+Files: libretroshare/CMakeLists.txt
+       libretroshare/build.gradle
+       libretroshare/src/CMakeLists.txt
+       libretroshare/src/Doxyfile
+       libretroshare/src/jsonapi/README.adoc
+       libretroshare/src/libretroshare.pro
+       libretroshare/src/use_libretroshare.pri
+Copyright: 2004-2024, Retroshare Team <contact@retroshare.cc>
+           2021-2026, Gioacchino Mazzurco <gio@retroshare.cc>
+License: CC0-1.0
+Comment: build files and notes that carry their own SPDX tag.
+
+Files: libretroshare/.github/workflows/*
+Copyright: Retroshare Team <contact@retroshare.cc>
+License: AGPL-3.0-or-later
+
+Files: libretroshare/README.asciidoc
+       libretroshare/misc/Android/README.asciidoc
+Copyright: 2018-2026, Gioacchino Mazzurco <gio@retroshare.cc>
+           2022, Retroshare Team <contact@retroshare.cc>
+License: CC-BY-SA-4.0
+
 Files: libbitdht/*
+Copyright: 2004-2026, Retroshare Team <contact@retroshare.cc>
+License: AGPL-3.0-or-later
+
+Files: libbitdht/src/tests/*
+Copyright: 2010, Robert Fernie
+License: LGPL-3.0-only
+
+Files: libbitdht/src/example/*
+Copyright: 2009-2010, Robert Fernie
+License: LGPL-2.0-only
+
+Files: libbitdht/CMakeLists.txt
+       libbitdht/src/README.txt
+Copyright: 2004-2022, Retroshare Team <contact@retroshare.cc>
+           2021-2022, Gioacchino Mazzurco <gio@retroshare.cc>
+License: CC0-1.0
+Comment: build files and notes that carry their own SPDX tag.
+
+Files: libbitdht/src/libbitdht.pro
+       libbitdht/src/use_libbitdht.pri
 Copyright: 2004-2019, Retroshare Team <contact@retroshare.cc>
 License: LGPL-3.0-or-later
 
 Files: openpgpsdk/*
 Copyright: 2005-2008, Ben Laurie
            2005-2008, Rachel Willmer
-           2008-2019, Retroshare Team <contact@retroshare.cc>
+           2008-2022, Retroshare Team <contact@retroshare.cc>
 License: Apache-2.0
 
-Files: libretroshare/*
+Files: openpgpsdk/CMakeLists.txt
+       openpgpsdk/src/openpgpsdk.pro
+       openpgpsdk/src/use_openpgpsdk.pri
 Copyright: 2004-2019, Retroshare Team <contact@retroshare.cc>
-License: LGPL-3.0-or-later
-
-Files: libretroshare/src/deep_search/*
-Copyright: 2018-2019, Gioacchino Mazzurco <gio@eigenlab.org>
-License: AGPL-3.0-only
+           2021, Gioacchino Mazzurco <gio@eigenlab.org>
+License: CC0-1.0
+Comment: build files that carry their own SPDX tag.
 
 Files: jsonapi-generator/*
-       libretroshare/src/jsonapi/*
 Copyright: 2018-2019, Gioacchino Mazzurco <gio@eigenlab.org>
 License: AGPL-3.0-or-later
 
-Files: retroshare-gui/*
-Copyright: 2004-2019, Retroshare Team <contact@retroshare.cc>
-License: GPL-3.0-or-later
+Files: retroshare-gui/src/gui/unfinished/*
+       retroshare-gui/src/Unused/*
+Copyright: 2006-2008, crypton
+           2008, Robert Fernie
+           2008, defnax
+License: GPL-2.0-or-later
 
-Files: retroshare-gui/src/TorControl/
-Copyright: 2014, John Brooks <john.brooks@dereferenced.net>
-License: BSD-3-Clause
+Files: retroshare-gui/src/gui/unfinished/ApplicationWindow.*
+Copyright: 2006, Crypton <retroshare.project@gmail.com>
+License: AGPL-3.0-or-later
+
+Files: retroshare-gui/src/gui/WikiPoos/WikiDialog.cpp
+Copyright: 2012, Robert Fernie
+License: LGPL-2.1-only
 
 Files: retroshare-gui/src/gui/common/PictureFlow.*
-       retroshare-gui/src/qss/qdarkstyle.qss
 Copyright: 2013, Jeff Weinstein <jeff.weinstein@gmail.com>
 License: MIT
+
+Files: retroshare-gui/src/gui/common/MacDockIconHandler.*
+Copyright: 2011-2019, The Bitcoin Core developers
+License: MIT
+
+Files: retroshare-gui/src/gui/emojione/*
+Copyright: 2016, Emoji One, Inc.
+License: CC-BY-4.0
+Comment: EmojiOne 2.2.7 artwork (npm emojione@2.2.7) and its category icons,
+ see retroshare-gui/src/gui/emojione/LICENSE.md. EmojiOne 3.0 and later are
+ not free and must not be added.
+
+Files: retroshare-gui/src/gui/emojione/1F394.png
+       retroshare-gui/src/gui/emojione/1F395.png
+       retroshare-gui/src/gui/emojione/1F398.png
+       retroshare-gui/src/gui/emojione/1F39C.png
+       retroshare-gui/src/gui/emojione/1F39D.png
+       retroshare-gui/src/gui/emojione/1F3F1.png
+       retroshare-gui/src/gui/emojione/1F3F2.png
+       retroshare-gui/src/gui/emojione/1F3F6.png
+       retroshare-gui/src/gui/emojione/1F4FE.png
+       retroshare-gui/src/gui/emojione/1F546.png
+       retroshare-gui/src/gui/emojione/1F547.png
+       retroshare-gui/src/gui/emojione/1F548.png
+       retroshare-gui/src/gui/emojione/1F568.png
+       retroshare-gui/src/gui/emojione/1F569.png
+       retroshare-gui/src/gui/emojione/1F56A.png
+       retroshare-gui/src/gui/emojione/1F56B.png
+       retroshare-gui/src/gui/emojione/1F56C.png
+       retroshare-gui/src/gui/emojione/1F56D.png
+       retroshare-gui/src/gui/emojione/1F56E.png
+       retroshare-gui/src/gui/emojione/1F571.png
+       retroshare-gui/src/gui/emojione/1F572.png
+       retroshare-gui/src/gui/emojione/1F57B.png
+       retroshare-gui/src/gui/emojione/1F57E.png
+       retroshare-gui/src/gui/emojione/1F57F.png
+       retroshare-gui/src/gui/emojione/1F581.png
+       retroshare-gui/src/gui/emojione/1F582.png
+       retroshare-gui/src/gui/emojione/1F583.png
+       retroshare-gui/src/gui/emojione/1F585.png
+       retroshare-gui/src/gui/emojione/1F586.png
+       retroshare-gui/src/gui/emojione/1F588.png
+       retroshare-gui/src/gui/emojione/1F589.png
+       retroshare-gui/src/gui/emojione/1F58E.png
+       retroshare-gui/src/gui/emojione/1F58F.png
+       retroshare-gui/src/gui/emojione/1F591.png
+       retroshare-gui/src/gui/emojione/1F592.png
+       retroshare-gui/src/gui/emojione/1F593.png
+       retroshare-gui/src/gui/emojione/1F594.png
+       retroshare-gui/src/gui/emojione/1F597.png
+       retroshare-gui/src/gui/emojione/1F598.png
+       retroshare-gui/src/gui/emojione/1F599.png
+       retroshare-gui/src/gui/emojione/1F59E.png
+       retroshare-gui/src/gui/emojione/1F59F.png
+       retroshare-gui/src/gui/emojione/1F5A6.png
+       retroshare-gui/src/gui/emojione/1F5A7.png
+       retroshare-gui/src/gui/emojione/1F5A9.png
+       retroshare-gui/src/gui/emojione/1F5AA.png
+       retroshare-gui/src/gui/emojione/1F5AB.png
+       retroshare-gui/src/gui/emojione/1F5AD.png
+       retroshare-gui/src/gui/emojione/1F5AE.png
+       retroshare-gui/src/gui/emojione/1F5AF.png
+       retroshare-gui/src/gui/emojione/1F5B3.png
+       retroshare-gui/src/gui/emojione/1F5B4.png
+       retroshare-gui/src/gui/emojione/1F5B8.png
+       retroshare-gui/src/gui/emojione/1F5B9.png
+       retroshare-gui/src/gui/emojione/1F5BD.png
+       retroshare-gui/src/gui/emojione/1F5BE.png
+       retroshare-gui/src/gui/emojione/1F5C0.png
+       retroshare-gui/src/gui/emojione/1F5C1.png
+       retroshare-gui/src/gui/emojione/1F5C6.png
+       retroshare-gui/src/gui/emojione/1F5C7.png
+       retroshare-gui/src/gui/emojione/1F5C9.png
+       retroshare-gui/src/gui/emojione/1F5CA.png
+       retroshare-gui/src/gui/emojione/1F5CE.png
+       retroshare-gui/src/gui/emojione/1F5CF.png
+       retroshare-gui/src/gui/emojione/1F5D0.png
+       retroshare-gui/src/gui/emojione/1F5D4.png
+       retroshare-gui/src/gui/emojione/1F5D8.png
+       retroshare-gui/src/gui/emojione/1F5D9.png
+       retroshare-gui/src/gui/emojione/1F5E0.png
+       retroshare-gui/src/gui/emojione/1F5E2.png
+       retroshare-gui/src/gui/emojione/1F5E9.png
+       retroshare-gui/src/gui/emojione/1F5EA.png
+       retroshare-gui/src/gui/emojione/1F5EB.png
+       retroshare-gui/src/gui/emojione/1F5EC.png
+       retroshare-gui/src/gui/emojione/1F5ED.png
+       retroshare-gui/src/gui/emojione/1F5EE.png
+       retroshare-gui/src/gui/emojione/1F5F0.png
+       retroshare-gui/src/gui/emojione/1F5F1.png
+       retroshare-gui/src/gui/emojione/1F5F2.png
+       retroshare-gui/src/gui/emojione/1F5F4.png
+       retroshare-gui/src/gui/emojione/1F5F5.png
+       retroshare-gui/src/gui/emojione/1F5F8.png
+       retroshare-gui/src/gui/emojione/1F5F9.png
+       retroshare-gui/src/gui/emojione/1F6C6.png
+       retroshare-gui/src/gui/emojione/1F6C7.png
+       retroshare-gui/src/gui/emojione/1F6C8.png
+       retroshare-gui/src/gui/emojione/1F6C9.png
+       retroshare-gui/src/gui/emojione/1F6CA.png
+       retroshare-gui/src/gui/emojione/1F6E6.png
+       retroshare-gui/src/gui/emojione/1F6E7.png
+       retroshare-gui/src/gui/emojione/1F6E8.png
+       retroshare-gui/src/gui/emojione/1F6EA.png
+       retroshare-gui/src/gui/emojione/1F6F1.png
+       retroshare-gui/src/gui/emojione/1F6F2.png
+Copyright: 2015, Emoji One, Inc.
+License: CC-BY-SA-4.0
+Comment: the 27x27 symbol images of the EmojiOne set added in December 2015.
+
+Files: retroshare-gui/src/gui/emojione/LICENSE.md
+       retroshare-gui/src/gui/emojione/emotes.acs
+       retroshare-gui/src/gui/emojione/theme
+Copyright: 2015-2026, Retroshare Team <contact@retroshare.cc>
+License: AGPL-3.0-or-later
+
+Files: retroshare-gui/src/gui/qss/stylesheet/Standard_Dark.qss
+       retroshare-gui/src/gui/qss/stylesheet/Standard_Light.qss
+       retroshare-gui/src/gui/qss/stylesheet/qdarkstyle/*
+Copyright: 2013-2019, Colin Duquesnoy
+           2019, Daniel Cosmo Pizetta
+License: MIT
+Comment: derived from QDarkStyleSheet v3.0.2.
+
+Files: retroshare-gui/src/gui/qss/stylesheet/qdarkstyle/dark/rc/*
+       retroshare-gui/src/gui/qss/stylesheet/qdarkstyle/light/rc/*
+Copyright: 2013-2019, Colin Duquesnoy
+           2019, Daniel Cosmo Pizetta
+License: CC-BY-4.0
+Comment: QDarkStyleSheet v3.0.2 images.
+
+Files: retroshare-gui/src/gui/images/extension.svg
+Copyright: Andreas Nilsson, Tango Desktop Project
+License: CC-BY-SA-2.0
+
+Files: retroshare-gui/src/gui/icons/help_64.png
+Copyright: Yan Shuangchun
+License: LGPL-2.0-or-later
+Comment: Torchlight icon set; its source states LGPL without a version.
+
+Files: plugins/VOIP/gui/images/deafened_self.svg
+       plugins/VOIP/gui/images/muted_self.svg
+       plugins/VOIP/gui/images/self_undeafened.svg
+       plugins/VOIP/gui/images/talking_off.svg
+       plugins/VOIP/gui/images/talking_on.svg
+Copyright: Martin Skilnand, Mumble team
+License: BSD-3-Clause
+Comment: from Mumble.
+
+Files: retroshare-gui/src/gui/PhotoShare/images/kuickshow.png
+       retroshare-gui/src/gui/icons/flag-green.png
+       retroshare-gui/src/gui/icons/help_128.png
+       retroshare-gui/src/gui/icons/information_128.png
+       retroshare-gui/src/gui/icons/internet_128.png
+       retroshare-gui/src/gui/icons/plugins_128.png
+       retroshare-gui/src/gui/icons/quit_128.png
+       retroshare-gui/src/gui/icons/security_high_128.png
+       retroshare-gui/src/gui/icons/security_low_128.png
+       retroshare-gui/src/gui/icons/security_medium_128.png
+       retroshare-gui/src/gui/icons/system_128.png
+       retroshare-gui/src/gui/icons/user-away-extended_64.png
+       retroshare-gui/src/gui/icons/user-away_64.png
+       retroshare-gui/src/gui/icons/user-busy_64.png
+       retroshare-gui/src/gui/icons/user-offline_64.png
+       retroshare-gui/src/gui/icons/user-online_64.png
+       retroshare-gui/src/gui/images/document-edit-sign.png
+       retroshare-gui/src/gui/images/document_save.png
+       retroshare-gui/src/gui/images/edit-clear-history.png
+       retroshare-gui/src/gui/images/filetype-association.png
+       retroshare-gui/src/gui/images/go-bottom.png
+       retroshare-gui/src/gui/images/go-down.png
+       retroshare-gui/src/gui/images/go-top.png
+       retroshare-gui/src/gui/images/go-up.png
+       retroshare-gui/src/gui/images/im-user-away.png
+       retroshare-gui/src/gui/images/im-user-busy.png
+       retroshare-gui/src/gui/images/im-user-offline.png
+       retroshare-gui/src/gui/images/im-user.png
+       retroshare-gui/src/gui/images/mail-encrypted-full.png
+       retroshare-gui/src/gui/images/mail-signature-unknown.png
+       retroshare-gui/src/gui/images/mail-signed-full.png
+       retroshare-gui/src/gui/images/mail-signed.png
+       retroshare-gui/src/gui/images/office-chart-area-stacked.png
+       retroshare-gui/src/gui/images/office-chart-line.png
+       retroshare-gui/src/gui/images/player_play.png
+       retroshare-gui/src/gui/images/tags/dev-ambassador.png
+       retroshare-gui/src/gui/images/tags/dev-translator.png
+       retroshare-gui/src/gui/images/tags/developer.png
+       retroshare-gui/src/gui/images/tools_wizard.png
+Copyright: 2007, David Vignoni, Nuno Pinheiro, Kenneth Wimer, David Miller, Johann Ollivier Lapeyre, Riccardo Iaconelli
+           KDE Oxygen artists
+License: LGPL-3.0-or-later
+Comment: Oxygen icon theme; identical (or a resize) of the Debian oxygen-icon-theme files.
+
+Files: retroshare-gui/src/gui/images/delete.png
+       retroshare-gui/src/gui/images/diskSave.png
+       retroshare-gui/src/gui/images/reset.png
+Copyright: 2002, KDE Artists
+License: LGPL-2.1-only
+Comment: KDE 3 Crystal SVG icons (kdelibs 3.5).
+
+Files: plugins/FeedReader/gui/images/FeedProcess.png
+       plugins/FeedReader/gui/images/Update.png
+       retroshare-gui/src/gui/images/sort_decrease.png
+       retroshare-gui/src/gui/images/sort_incr.png
+       retroshare-gui/src/gui/images/update.png
+Copyright: 2002-2008, KDE Artists, Everaldo Coelho
+License: GPL-2.0-or-later
+Comment: KDE 3 kdeartwork icon themes (kdeclassic, kids).
+
+Files: retroshare-gui/src/gui/images/star-on-16.png
+Copyright: elementary and Xfce artists
+License: GPL-3.0-or-later
+Comment: elementary-xfce icon theme.
+
+Files: retroshare-gui/src/gui/images/emblem-web.png
+Copyright: GNOME Project
+License: GPL-2.0-or-later
+Comment: GNOME icon theme.
+
+Files: retroshare-gui/src/sounds/chat1.wav
+       retroshare-gui/src/sounds/chat2.wav
+       retroshare-gui/src/sounds/ft_complete.wav
+       retroshare-gui/src/sounds/ft_incoming.wav
+       retroshare-gui/src/sounds/offline.wav
+       retroshare-gui/src/sounds/online2.wav
+       retroshare-gui/src/sounds/send2.wav
+Copyright: 2001-2008, Justin Karneges and the Psi developers
+License: GPL-2.0-or-later
+Comment: sounds of the Psi chat client, identical sample for sample.
+
+Files: retroshare-gui/src/sounds/alert.wav
+       retroshare-gui/src/sounds/online1.wav
+       retroshare-gui/src/sounds/receive.wav
+       retroshare-gui/src/sounds/send1.wav
+Copyright: Pidgin developers
+License: GPL-2.0-or-later
+Comment: sounds of Pidgin (alert, login, receive, send), identical sample for sample.
+
+Files: retroshare-gui/src/sounds/incomingchat.wav
+       plugins/VOIP/gui/sounds/incomingcall.wav
+       plugins/VOIP/gui/sounds/outgoingcall.wav
+Copyright: Damien Sandras <dsandras@seconix.com>
+License: GPL-2.0-or-later
+Comment: freedesktop.org sound theme 0.8 (message-new-instant,
+ phone-incoming-call, phone-outgoing-calling), converted to WAV.
+
+Files: retroshare-gui/src/gui/icons/png/feed-other.png
+       retroshare-gui/src/gui/icons/png/feed-popular.png
+       retroshare-gui/src/gui/icons/png/feed-subscribed.png
+       retroshare-gui/src/gui/icons/png/feedreader.png
+       retroshare-gui/src/gui/icons/png/feedreader-notify.png
+       retroshare-gui/src/gui/icons/svg/feed-other.svg
+       retroshare-gui/src/gui/icons/svg/feed-popular.svg
+       retroshare-gui/src/gui/icons/svg/feed-subscribed.svg
+       plugins/FeedReader/gui/images/FeedReader.png
+       plugins/FeedReader/gui/images/feedreader-notify.png
+Copyright: Mozilla Foundation
+           defnax
+License: GPL-2.0-or-later
+Comment: the feed symbol is the Mozilla feed icon (Wikimedia Commons
+ File:Generic_Feed-icon.svg), tri-licensed GPL-2.0-or-later, LGPL-2.1-or-later
+ or MPL-1.1, used here under GPL-2.0-or-later; the coloured disc is
+ defnax's own work (RetroShare#3342).
+
+Files: plugins/FeedReader/interface/rsFeedReader.h
+Copyright: 2012, Thunder
+License: GPL-2.0-or-later
+
+Files: retroshare-webui/webui-src/app/mithril.js
+Copyright: 2017, Leo Horie and Mithril contributors
+License: MIT
+
+Files: retroshare-webui/webui-src/app/channels/sha1.js
+Copyright: 2014-2017, Chen, Yi-Cyuan <emn178@gmail.com>
+License: MIT
+
+Files: retroshare-webui/webui-src/app/scss/vendors/*
+Copyright: Fonticons, Inc.
+License: MIT
+Comment: Font Awesome Free 5.9.0 stylesheets.
+
+Files: retroshare-webui/webui-src/assets/webfonts/fa-solid-900.*
+Copyright: Fonticons, Inc.
+License: OFL-1.1
+Comment: Font Awesome Free 5.9.0 font.
+
+Files: retroshare-webui/webui-src/assets/webfonts/Roboto-*
+Copyright: 2011, Google Inc.
+License: Apache-2.0
+
+Files: supportlibs/pegmarkdown/*
+Copyright: 2008-2011, John MacFarlane
+           2011, Fletcher T. Penney
+License: GPL-2.0-or-later OR MIT
+
+Files: supportlibs/cmark/*
+Copyright: 2014, John MacFarlane
+License: BSD-2-Clause
+Comment: some files are MIT and the CommonMark spec (test/spec.txt) is
+ CC-BY-SA-4.0; see supportlibs/cmark/COPYING.
+
+Files: supportlibs/cmark/FindAsan.cmake
+Copyright: 2013, Matthew Arsenault
+License: MIT
+
+Files: supportlibs/cmark/bench/statistics.py
+Copyright: 2013, Steven D'Aprano
+License: Apache-2.0
+
+Files: supportlibs/restbed/*
+Copyright: 2013-2025, Corvusoft Limited
+License: AGPL-3.0-or-later
+
+Files: supportlibs/udp-discovery-cpp/*
+Copyright: 2017, Dmitrii Tokarev
+License: MIT
+
+Files: supportlibs/libsam3/*
+Copyright: 2023, I2P
+License: MIT
+
+Files: supportlibs/libsam3/src/ext/*
+Copyright: 2009-2012, Nick Mathewson
+License: BSD-3-Clause
+
+Files: supportlibs/librnp/*
+Copyright: 2017-2021, Ribose Inc.
+License: BSD-2-Clause
+Comment: some components carry other permissive licences (BSD-3-Clause,
+ Apache-2.0, MIT); see supportlibs/librnp/LICENSE.md.
+
+Files: supportlibs/librnp/src/lib/pgp-key.*
+       supportlibs/librnp/src/lib/crypto/symmetric.h
+Copyright: 2017-2021, Ribose Inc.
+           2009, The NetBSD Foundation, Inc.
+           2005-2008, Nominet UK
+License: BSD-2-Clause AND Apache-2.0
+
+Files: supportlibs/librnp/src/libsexpp/*
+Copyright: 2021-2022, Ribose Inc.
+           1997, Ronald L. Rivest, Butler Lampson
+           1997, MIT Laboratory for Computer Science
+License: MIT
+
+Files: supportlibs/rapidjson/*
+Copyright: 2015, THL A29 Limited, a Tencent company, and Milo Yip
+License: MIT
+
+Files: supportlibs/rapidjson/include/rapidjson/msinttypes/*
+       supportlibs/rapidjson/thirdparty/gtest/*
+Copyright: 2006-2013, Alexander Chemeris
+           2008, Google Inc.
+License: BSD-3-Clause
+
+Files: supportlibs/rapidjson/thirdparty/gtest/googletest/scripts/upload.py
+       supportlibs/rapidjson/thirdparty/gtest/googlemock/scripts/upload.py
+       supportlibs/rapidjson/thirdparty/gtest/googlemock/scripts/generator/*
+Copyright: 2007, Neal Norwitz
+           2007-2009, Google Inc.
+License: Apache-2.0
+
+Files: supportlibs/rapidjson/bin/jsonchecker/*
+Copyright: 2002, JSON.org
+License: JSON
+
+Files: supportlibs/jni.hpp/*
+Copyright: 2016, Mapbox
+License: ISC
+
+Files: supportlibs/jni.hpp/test/android/*
+Copyright: 2006, The Android Open Source Project
+License: Apache-2.0
+
+Files: supportlibs/jni.hpp/test/openjdk/*
+Copyright: 1996-2013, Oracle and/or its affiliates
+License: GPL-2.0-only WITH Classpath-exception-2.0
+
+Files: .gitignore
+       .travis.yml
+       jsonapi-generator/README.adoc
+       jsonapi-generator/src/jsonapi-generator.pro
+       retroshare-service/CMakeLists.txt
+       retroshare-webui/CMakeLists.txt
+Copyright: 2004-2024, Retroshare Team <contact@retroshare.cc>
+           2021-2026, Gioacchino Mazzurco <gio@retroshare.cc>
+License: CC0-1.0
+Comment: build files and notes that carry their own SPDX tag.
+
+Files: RetroShare.pro
+       retroshare.pri
+Copyright: 2004-2019, Retroshare Team <contact@retroshare.cc>
+License: LGPL-3.0-or-later
+
+Files: retroshare-service/src/retroshare-service.inkscape.svg.license
+Copyright: 2018-2026, Gioacchino Mazzurco <gio@retroshare.cc>
+           2022, Retroshare Team <contact@retroshare.cc>
+License: CC-BY-SA-4.0
