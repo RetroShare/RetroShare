@@ -179,8 +179,115 @@ Copyright: 2011-2019, The Bitcoin Core developers
 License: MIT
 
 Files: retroshare-gui/src/gui/emojione/*
-Copyright: Emoji One contributors
+Copyright: 2016, Emoji One, Inc.
+License: CC-BY-4.0
+Comment: EmojiOne 2.2.7 artwork (npm emojione@2.2.7) and its category icons,
+ see retroshare-gui/src/gui/emojione/LICENSE.md. EmojiOne 3.0 and later are
+ not free and must not be added.
+
+Files: retroshare-gui/src/gui/emojione/1F394.png
+       retroshare-gui/src/gui/emojione/1F395.png
+       retroshare-gui/src/gui/emojione/1F398.png
+       retroshare-gui/src/gui/emojione/1F39C.png
+       retroshare-gui/src/gui/emojione/1F39D.png
+       retroshare-gui/src/gui/emojione/1F3F1.png
+       retroshare-gui/src/gui/emojione/1F3F2.png
+       retroshare-gui/src/gui/emojione/1F3F6.png
+       retroshare-gui/src/gui/emojione/1F4FE.png
+       retroshare-gui/src/gui/emojione/1F546.png
+       retroshare-gui/src/gui/emojione/1F547.png
+       retroshare-gui/src/gui/emojione/1F548.png
+       retroshare-gui/src/gui/emojione/1F568.png
+       retroshare-gui/src/gui/emojione/1F569.png
+       retroshare-gui/src/gui/emojione/1F56A.png
+       retroshare-gui/src/gui/emojione/1F56B.png
+       retroshare-gui/src/gui/emojione/1F56C.png
+       retroshare-gui/src/gui/emojione/1F56D.png
+       retroshare-gui/src/gui/emojione/1F56E.png
+       retroshare-gui/src/gui/emojione/1F571.png
+       retroshare-gui/src/gui/emojione/1F572.png
+       retroshare-gui/src/gui/emojione/1F57B.png
+       retroshare-gui/src/gui/emojione/1F57E.png
+       retroshare-gui/src/gui/emojione/1F57F.png
+       retroshare-gui/src/gui/emojione/1F581.png
+       retroshare-gui/src/gui/emojione/1F582.png
+       retroshare-gui/src/gui/emojione/1F583.png
+       retroshare-gui/src/gui/emojione/1F585.png
+       retroshare-gui/src/gui/emojione/1F586.png
+       retroshare-gui/src/gui/emojione/1F588.png
+       retroshare-gui/src/gui/emojione/1F589.png
+       retroshare-gui/src/gui/emojione/1F58E.png
+       retroshare-gui/src/gui/emojione/1F58F.png
+       retroshare-gui/src/gui/emojione/1F591.png
+       retroshare-gui/src/gui/emojione/1F592.png
+       retroshare-gui/src/gui/emojione/1F593.png
+       retroshare-gui/src/gui/emojione/1F594.png
+       retroshare-gui/src/gui/emojione/1F597.png
+       retroshare-gui/src/gui/emojione/1F598.png
+       retroshare-gui/src/gui/emojione/1F599.png
+       retroshare-gui/src/gui/emojione/1F59E.png
+       retroshare-gui/src/gui/emojione/1F59F.png
+       retroshare-gui/src/gui/emojione/1F5A6.png
+       retroshare-gui/src/gui/emojione/1F5A7.png
+       retroshare-gui/src/gui/emojione/1F5A9.png
+       retroshare-gui/src/gui/emojione/1F5AA.png
+       retroshare-gui/src/gui/emojione/1F5AB.png
+       retroshare-gui/src/gui/emojione/1F5AD.png
+       retroshare-gui/src/gui/emojione/1F5AE.png
+       retroshare-gui/src/gui/emojione/1F5AF.png
+       retroshare-gui/src/gui/emojione/1F5B3.png
+       retroshare-gui/src/gui/emojione/1F5B4.png
+       retroshare-gui/src/gui/emojione/1F5B8.png
+       retroshare-gui/src/gui/emojione/1F5B9.png
+       retroshare-gui/src/gui/emojione/1F5BD.png
+       retroshare-gui/src/gui/emojione/1F5BE.png
+       retroshare-gui/src/gui/emojione/1F5C0.png
+       retroshare-gui/src/gui/emojione/1F5C1.png
+       retroshare-gui/src/gui/emojione/1F5C6.png
+       retroshare-gui/src/gui/emojione/1F5C7.png
+       retroshare-gui/src/gui/emojione/1F5C9.png
+       retroshare-gui/src/gui/emojione/1F5CA.png
+       retroshare-gui/src/gui/emojione/1F5CE.png
+       retroshare-gui/src/gui/emojione/1F5CF.png
+       retroshare-gui/src/gui/emojione/1F5D0.png
+       retroshare-gui/src/gui/emojione/1F5D4.png
+       retroshare-gui/src/gui/emojione/1F5D8.png
+       retroshare-gui/src/gui/emojione/1F5D9.png
+       retroshare-gui/src/gui/emojione/1F5E0.png
+       retroshare-gui/src/gui/emojione/1F5E2.png
+       retroshare-gui/src/gui/emojione/1F5E9.png
+       retroshare-gui/src/gui/emojione/1F5EA.png
+       retroshare-gui/src/gui/emojione/1F5EB.png
+       retroshare-gui/src/gui/emojione/1F5EC.png
+       retroshare-gui/src/gui/emojione/1F5ED.png
+       retroshare-gui/src/gui/emojione/1F5EE.png
+       retroshare-gui/src/gui/emojione/1F5F0.png
+       retroshare-gui/src/gui/emojione/1F5F1.png
+       retroshare-gui/src/gui/emojione/1F5F2.png
+       retroshare-gui/src/gui/emojione/1F5F4.png
+       retroshare-gui/src/gui/emojione/1F5F5.png
+       retroshare-gui/src/gui/emojione/1F5F8.png
+       retroshare-gui/src/gui/emojione/1F5F9.png
+       retroshare-gui/src/gui/emojione/1F6C6.png
+       retroshare-gui/src/gui/emojione/1F6C7.png
+       retroshare-gui/src/gui/emojione/1F6C8.png
+       retroshare-gui/src/gui/emojione/1F6C9.png
+       retroshare-gui/src/gui/emojione/1F6CA.png
+       retroshare-gui/src/gui/emojione/1F6E6.png
+       retroshare-gui/src/gui/emojione/1F6E7.png
+       retroshare-gui/src/gui/emojione/1F6E8.png
+       retroshare-gui/src/gui/emojione/1F6EA.png
+       retroshare-gui/src/gui/emojione/1F6F1.png
+       retroshare-gui/src/gui/emojione/1F6F2.png
+Copyright: 2015, Emoji One, Inc.
 License: CC-BY-SA-4.0
+Comment: the 27x27 symbol images of the EmojiOne set added in December 2015.
+
+Files: retroshare-gui/src/gui/emojione/LICENSE.md
+       retroshare-gui/src/gui/emojione/emotes.acs
+       retroshare-gui/src/gui/emojione/theme
+Copyright: 2015-2026, Retroshare Team <contact@retroshare.cc>
+License: AGPL-3.0-or-later
 
 Files: retroshare-gui/src/gui/qss/stylesheet/Standard_Dark.qss
        retroshare-gui/src/gui/qss/stylesheet/Standard_Light.qss
@@ -303,6 +410,14 @@ Files: retroshare-gui/src/sounds/alert.wav
 Copyright: Pidgin developers
 License: GPL-2.0-or-later
 Comment: sounds of Pidgin (alert, login, receive, send), identical sample for sample.
+
+Files: retroshare-gui/src/sounds/incomingchat.wav
+       plugins/VOIP/gui/sounds/incomingcall.wav
+       plugins/VOIP/gui/sounds/outgoingcall.wav
+Copyright: Damien Sandras <dsandras@seconix.com>
+License: GPL-2.0-or-later
+Comment: freedesktop.org sound theme 0.8 (message-new-instant,
+ phone-incoming-call, phone-outgoing-calling), converted to WAV.
 
 Files: retroshare-gui/src/gui/icons/png/feed-other.png
        retroshare-gui/src/gui/icons/png/feed-popular.png
