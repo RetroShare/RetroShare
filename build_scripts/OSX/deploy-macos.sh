@@ -115,7 +115,11 @@ echo "  Target Package Name: ${ARCHIVE_BASE}"
 echo "  Deploy Directory:    ${DEPLOY_DIR}"
 
 echo ">>> Cleaning up previous deployment directories..."
-rm -rf "${BUILD_DIR}/RetroShare-"*"-macOS-"*
+# Remove every previous deployment DIRECTORY (the .dmg files are kept). The
+# pattern must match the ARCHIVE_BASE naming above ("-macos-", lower case): a
+# stale deployment directory is a full copy of the bundle, and the binary search
+# below would otherwise pick its outdated retroshare-service/-friendserver.
+find "$BUILD_DIR" -maxdepth 1 -type d -name "RetroShare-*" -exec rm -rf {} + 2>/dev/null || true
 mkdir -p "$DEPLOY_DIR"
 
 # 3. Copy the app into our deployment directory
@@ -135,7 +139,7 @@ mkdir -p "$APP_RESOURCES/webui"
 # 4. Copy the extra executables (service, friendserver) if present (non-blocking)
 echo ">>> Copying additional executables if they exist..."
 for exe in retroshare-service retroshare-friendserver; do
-    found_exe=$(find "$BUILD_DIR" -type f -name "$exe" -perm -0111 | grep -v "CMakeFiles" | head -n 1)
+    found_exe=$(find "$BUILD_DIR" -path "$BUILD_DIR/RetroShare-*" -prune -o -type f -name "$exe" -perm -0111 -print | grep -v "CMakeFiles" | head -n 1)
     if [ -n "$found_exe" ]; then
         echo "  Found and copying: $found_exe"
         cp "$found_exe" "$APP_MACOS/"
