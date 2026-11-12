@@ -407,7 +407,13 @@ bool JPEGVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 
     if(flags & JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME)
     {
-	    if(_decoded_reference_frame.size() != image.size())
+	    // Same size is not enough: a grayscale reference (1 byte per pixel)
+	    // followed by a colour differential frame (4 bytes per pixel) of the
+	    // same size made the loop below write past the end of the reference.
+	    // Both pictures come from the peer.
+	    if(_decoded_reference_frame.size() != image.size() ||
+	       _decoded_reference_frame.format() != image.format() ||
+	       _decoded_reference_frame.sizeInBytes() != image.sizeInBytes())
 	    {
 		    std::cerr << "Bad reference frame!" << std::endl;
 		    return false ;
@@ -585,6 +591,11 @@ FFmpegVideo::FFmpegVideo(Kind kind, uint16_t header_codec_id)
         decoding_context->flags  |= AV_CODEC_FLAG_LOW_DELAY;
         // Frame threading delays every picture by one frame per thread: use slice threads only.
         decoding_context->thread_type = FF_THREAD_SLICE ;
+#if LIBAVCODEC_VERSION_MAJOR >= 58
+        // The picture size comes from the peer's stream: refuse more than 4K
+        // instead of allocating whatever it declares.
+        decoding_context->max_pixels = MAX_DECODED_SIDE * MAX_DECODED_SIDE ;
+#endif
 
         if(avcodec_open2(decoding_context, decoding_codec, NULL) < 0)
         {
@@ -771,6 +782,16 @@ static void imageToFrame(AVFrame *frame, const QImage& image)
 // YUV 4:2:0 (BT.601, limited range) -> RGB
 static bool frameToImage(QImage& image, const AVFrame *frame)
 {
+    // The size comes from the peer's stream: no camera sends more than 4K, and
+    // a forged size must not make us allocate gigabytes (or write through the
+    // null scan lines of a QImage that could not be allocated).
+    if(frame->width <= 0 || frame->height <= 0 ||
+       frame->width > MAX_DECODED_SIDE || frame->height > MAX_DECODED_SIDE)
+    {
+        std::cerr << "VOIP: refusing a decoded picture of " << frame->width << "x" << frame->height << std::endl;
+        return false ;
+    }
+
     if(frame->format != RS_AV_PIX_FMT(YUV420P) && frame->format != RS_AV_PIX_FMT(YUVJ420P))
     {
         std::cerr << "VOIP: unsupported decoded pixel format " << frame->format << std::endl;
@@ -778,6 +799,8 @@ static bool frameToImage(QImage& image, const AVFrame *frame)
     }
 
     image = QImage(QSize(frame->width,frame->height),QImage::Format_RGB32);
+    if(image.isNull())
+        return false ;
 
     for(int y = 0; y < frame->height; y++)
     {
