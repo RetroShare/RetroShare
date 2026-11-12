@@ -47,6 +47,8 @@ public:
 	/* Standard System Short Format for time */
 	static QString formatTime(time_t timeValue);
 	static QString formatTime(const QTime &timeValue);
+	/* Same convention as formatTime() (ISO, or the system's 12/24 h), with the seconds */
+	static QString formatTimeWithSeconds(const QTime &timeValue);
 
 	/* Combined format: formatDate + formatTime */
 	static QString formatDateTime(time_t datetimeValue);

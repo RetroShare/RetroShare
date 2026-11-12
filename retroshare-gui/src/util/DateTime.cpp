@@ -120,6 +120,19 @@ QString DateTime::formatTime(const QTime &timeValue)
 	return QLocale::system().toString(timeValue, QLocale::ShortFormat);
 }
 
+QString DateTime::formatTimeWithSeconds(const QTime &timeValue)
+{
+	if (getDateFormat() == RshareSettings::DateFormat_ISO)
+		return timeValue.toString("HH:mm:ss");
+
+	/* The system's short format, with the seconds added after the minutes when it
+	 * has none, so that the 12h/24h convention of the locale is kept. */
+	QString format = QLocale::system().timeFormat(QLocale::ShortFormat);
+	if (!format.contains('s'))
+		format.replace("mm", "mm:ss");
+	return QLocale::system().toString(timeValue, format);
+}
+
 // --- Combined Functions ---
 
 QString DateTime::formatDateTime(time_t datetimeValue)

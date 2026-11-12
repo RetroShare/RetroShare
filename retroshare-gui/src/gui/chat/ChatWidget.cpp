@@ -801,7 +801,10 @@ void ChatWidget::checkVisibleAnchors()
 		QRegExp rx("<a name=\"(.*)\"", Qt::CaseSensitive, QRegExp::RegExp2);
 		rx.setMinimal(true);
 
-		for (QTextBlock block = doc->begin(); block.isValid(); block = block.next()) {
+		// Start at the block shown at the top of the viewport: walking from the
+		// beginning of the document made every scroll step O(history size).
+		QTextBlock first = ui->textBrowser->cursorForPosition(QPoint(0, 0)).block();
+		for (QTextBlock block = first.isValid() ? first : doc->begin(); block.isValid(); block = block.next()) {
 			QRectF blockRect = doc->documentLayout()->blockBoundingRect(block);
 
 			// document coordinates -> viewport coordinates
