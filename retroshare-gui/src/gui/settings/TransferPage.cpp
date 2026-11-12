@@ -140,19 +140,6 @@ void TransferPage::updateFilePermDirectDL(int i)
 
 void TransferPage::load()
 {
-    // Fix persistence issue: Load saved strategy from GUI config and enforce it on rsFiles
-    Settings->beginGroup(QString("Transfer"));
-    int savedStrat = Settings->value("DefaultChunkStrategy", -1).toInt();
-    Settings->endGroup();
-
-    if (savedStrat >= 0) {
-        FileChunksInfo::ChunkStrategy s = FileChunksInfo::CHUNK_STRATEGY_SEQUENTIAL;
-        if(savedStrat == 1) s = FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE;
-        if(savedStrat == 2) s = FileChunksInfo::CHUNK_STRATEGY_RANDOM;
-        if(savedStrat == 3) s = FileChunksInfo::CHUNK_STRATEGY_STREAMING;
-        rsFiles->setDefaultChunkStrategy(s);
-    }
-
 	ui.ignoreDuplicates_CB->setEnabled(rsFiles->followSymLinks()) ;
 
     whileBlocking(ui.shareDownloadDirectoryCB)->setChecked(rsFiles->getShareDownloadDirectory());
@@ -236,17 +223,13 @@ void TransferPage::load()
 
 void TransferPage::updateDefaultStrategy(int i)
 {
-    // Save to GUI settings
-    Settings->beginGroup(QString("Transfer"));
-    Settings->setValue("DefaultChunkStrategy", i);
-    Settings->endGroup();
-
 	switch(i)
 	{
 		case 0: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_SEQUENTIAL) ;
 				  break ;
 
         case 2:
+        case 3:
 #ifdef WINDOWS_SYS
                 if(QMessageBox::Yes != QMessageBox::warning(nullptr,tr("Warning"),tr("On Windows systems, writing to the end of large empty files (Random or Streaming) may hang the software for several seconds during allocation. Do you want to use this option anyway (otherwise use \"Sequential\" or \"Progressive\")?"),QMessageBox::Yes,QMessageBox::No))
                 {
@@ -254,12 +237,10 @@ void TransferPage::updateDefaultStrategy(int i)
                     return;
                 }
 #endif
-                rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
+                rsFiles->setDefaultChunkStrategy(i == 3 ? FileChunksInfo::CHUNK_STRATEGY_STREAMING : FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
                 break ;
 
 		case 1: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE) ;
-                break ;
-		case 3: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_STREAMING) ;
                 break ;
 		default: ;
 	}
