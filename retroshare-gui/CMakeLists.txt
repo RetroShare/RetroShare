@@ -587,51 +587,60 @@ endif()
 
 ## runtime dependencies
 if(RS_PACKAGE_RUNTIME_DEPENDENCIES)
-	set(RUNTIME_DEPENDENCY_EXECUTABLES "$<TARGET_FILE:${PROJECT_NAME}>")
-	set(RUNTIME_DEPENDENCY_LIBRARIES "")
-	set(RUNTIME_DEPENDENCY_MODULES "")
-	set(RUNTIME_DEPENDENCY_DIRECTORIES ${RUNTIME_DEPENDENCY_PATH})
-	if(CMAKE_IMPORT_LIBRARY_SUFFIX)
-		# DLL platform -- DLLs go in runtime directory
-		set(RUNTIME_DEPENDENCY_DESTINATION ${CMAKE_INSTALL_BINDIR})
-	else()
-		# non-DLL platform -- SOs go in library directory
-		set(RUNTIME_DEPENDENCY_DESTINATION ${CMAKE_INSTALL_LIBDIR})
-	endif()
-
-	configure_file(
-		${CMAKE_CURRENT_SOURCE_DIR}/mk/cmake/install_runtime_dependencies.cmake.in
-		${CMAKE_CURRENT_BINARY_DIR}/install_runtime_dependencies.cmake.gen
-		@ONLY
-	)
-	file(GENERATE
-		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/install_runtime_dependencies.cmake
-		INPUT ${CMAKE_CURRENT_BINARY_DIR}/install_runtime_dependencies.cmake.gen
-	)
-	list(APPEND CPACK_INSTALL_SCRIPTS
-		${CMAKE_CURRENT_BINARY_DIR}/install_runtime_dependencies.cmake
-	)
-
-	# QT plugins
-	if(QT_VERSION_MAJOR GREATER_EQUAL 6)
-		qt_deploy_runtime_dependencies(
-			EXECUTABLE "$<TARGET_FILE:${PROJECT_NAME}>"
-			NO_OVERWRITE
+	if(CMAKE_VERSION VERSION_LESS 3.16)
+		message(WARNING
+			"Packaging runtime dependencies with CMake version <3.16. "
+			"This is unlikely to work."
 		)
 	endif()
 
-	file(GENERATE
-		OUTPUT package_QWindowsIntegrationPlugin.cmake
-		CONTENT "
-			file(COPY $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::QWindowsIntegrationPlugin>
-				DESTINATION \${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/platforms/
-				NO_SOURCE_PERMISSIONS
-				FOLLOW_SYMLINK_CHAIN
-			)
-		"
+	include(RuntimeDependenciesInstallScript)
+	runtime_dependencies_install_script(
+		install-${PROJECT_NAME}-deps.cmake
+		EXECUTABLES "$<TARGET_FILE:${PROJECT_NAME}>"
+		DIRECTORIES ${RUNTIME_DEPENDENCY_PATH}
 	)
 	list(APPEND CPACK_INSTALL_SCRIPTS
-		${CMAKE_CURRENT_BINARY_DIR}/package_QWindowsIntegrationPlugin.cmake
+		${CMAKE_CURRENT_BINARY_DIR}/install-${PROJECT_NAME}-deps.cmake
+	)
+
+	# QT plugins
+	# QT doesn't offer a good way to precisely determine which plugins are needed,
+	# so we just install all of them.
+	get_property(qtplugins DIRECTORY PROPERTY IMPORTED_TARGETS)
+	list(FILTER qtplugins INCLUDE REGEX "^Qt[0-9.]+::.*Plugin\$")
+	string(CONCAT qtplugins.cmake
+		"# 3.15: file(FOLLOW_SYMLINK_CHAIN)\n"
+		"cmake_minimum_required(VERSION 3.15)\n\n"
+	)
+	foreach(plugin ${qtplugins})
+		string(APPEND qtplugins.cmake
+			"file(COPY $<TARGET_FILE:${plugin}>\n"
+				"DESTINATION "
+					"\${CMAKE_INSTALL_PREFIX}/"
+					"${CMAKE_INSTALL_SODIR}/"
+					"$<TARGET_PROPERTY:${plugin},QT_PLUGIN_TYPE>/\n"
+				"NO_SOURCE_PERMISSIONS\n"
+				"FOLLOW_SYMLINK_CHAIN\n"
+			")\n\n"
+		)
+	endforeach()
+	file(GENERATE OUTPUT install-qtplugins.cmake CONTENT "${qtplugins.cmake}")
+
+	# also install DLL dependencies of plugins
+	list(TRANSFORM qtplugins
+		REPLACE ".+" "$<TARGET_FILE:\\0>"
+		OUTPUT_VARIABLE qtplugin_files
+	)
+	runtime_dependencies_install_script(
+		install-qtplugins-deps.cmake
+		MODULES ${qtplugin_files}
+		DIRECTORIES ${RUNTIME_DEPENDENCY_PATH}
+	)
+
+	list(APPEND CPACK_INSTALL_SCRIPTS
+		${CMAKE_CURRENT_BINARY_DIR}/install-qtplugins.cmake
+		${CMAKE_CURRENT_BINARY_DIR}/install-qtplugins-deps.cmake
 	)
 endif()
 

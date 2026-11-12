@@ -51,8 +51,9 @@ endif()
 
 # don't install system libraries
 if([===[@WIN32@]===])
-	set(EXCLUDE_LIBS
-		[===[@PROJECT_SOURCE_DIR@/mk/runtime_dependencies_exclude-windows.txt]===]
+	string(CONCAT EXCLUDE_LIBS
+		[===[@CMAKE_CURRENT_FUNCTION_LIST_DIR@/]===]
+		RuntimeDependenciesInstallScript-exclude-windows.txt
 	)
 endif()
 if(DEFINED EXCLUDE_LIBS)
@@ -71,17 +72,21 @@ file(GET_RUNTIME_DEPENDENCIES
 	PRE_EXCLUDE_REGEXES ${EXCLUDE_LIBS}
 )
 
-if(RUNTIME_DEPENDENCIES_UNRESOLVED)
-	message(FATAL_ERROR
+if(RUNTIME_DEPENDENCIES_UNRESOLVED AND
+	NOT [===[@RUNTIME_DEPENDENCY_UNRESOLVED@]===] STREQUAL "QUIET"
+)
+	message([===[@RUNTIME_DEPENDENCY_UNRESOLVED@]===]
 		"unresolved runtime dependencies: ${RUNTIME_DEPENDENCIES_UNRESOLVED}\n"
 	)
 endif()
 
 foreach(conflict ${RUNTIME_DEPENDENCIES_CONFLICT_FILENAMES})
 	set(files ${RUNTIME_DEPENDENCIES_CONFLICT_${conflict}})
-	message(WARNING
-		"conflicting runtime dependencies: ${files}"
-	)
+	if(NOT [===[@RUNTIME_DEPENDENCY_CONFLICT@]===] STREQUAL "QUIET")
+		message([===[@RUNTIME_DEPENDENCY_CONFLICT@]===]
+			"conflicting runtime dependencies: ${files}"
+		)
+	endif()
 	list(GET files 0 first)
 	list(APPEND RUNTIME_DEPENDENCIES_RESOLVED ${first})
 endforeach()
