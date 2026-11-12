@@ -81,8 +81,17 @@ if(RS_WEBUI)
 	endif()
 
 	# On Windows the WebUI CMakeLists defines no target, so drive the build
-	# script through a shell (MSYS2/MinGW) here.
-	if(NOT TARGET retroshare-webui)
+	# script through a shell (MSYS2/MinGW) here. Without a retroshare-webui
+	# checkout there is nothing to build: say so instead of failing the build
+	# on a missing directory.
+	if(NOT TARGET retroshare-webui AND
+	   NOT EXISTS "${RS_WEBUI_DEVEL_DIR}/webui-src/make-src/build.sh")
+		message(
+			WARNING
+			"RS_WEBUI is ON but ${RS_WEBUI_DEVEL_DIR} holds no web UI sources "
+			"(git submodule update --init retroshare-webui): it is not built "
+			"here. retroshare-service, when enabled, downloads it on its own." )
+	elseif(NOT TARGET retroshare-webui)
 		add_custom_target(
 			retroshare-webui ALL
 			COMMAND sh ./build.sh

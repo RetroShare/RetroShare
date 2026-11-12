@@ -174,8 +174,8 @@ if(RS_SERVICE_TERMINAL_LOGIN)
 endif(RS_SERVICE_TERMINAL_LOGIN)
 
 if(RS_WEBUI AND NOT TARGET retroshare-webui)
-	# Only reached when retroshare-service is built standalone: in a super
-	# project build the root CMakeLists already created the target.
+	# Reached when retroshare-service is built standalone, or when the root
+	# CMakeLists found no retroshare-webui checkout and created no target.
 	set(RS_WEBUI_DEVEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../retroshare-webui/")
 	get_filename_component(RS_WEBUI_DEVEL_DIR "${RS_WEBUI_DEVEL_DIR}" ABSOLUTE)
 	if(EXISTS "${RS_WEBUI_DEVEL_DIR}/CMakeLists.txt" )
