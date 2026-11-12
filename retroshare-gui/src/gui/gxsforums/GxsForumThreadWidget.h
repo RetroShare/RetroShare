@@ -226,8 +226,13 @@ private:
 	bool mDisplayBannedText;
 	bool mForceSearch;
 	QStringList mContentSearchWords; // words of the current content search
+	/// bumped by each search or clear, a content search result is applied only
+	/// if no newer one was started meanwhile
+	uint32_t mContentSearchGeneration = 0;
 
 	void highlightContentSearchWords();
+	/// refresh the tree once the model filter changed
+	void showFilterResult(const QStringList& lst, uint32_t count);
 
 	/* Color definitions (for standard see default.qss) */
 	QColor mTextColorRead;

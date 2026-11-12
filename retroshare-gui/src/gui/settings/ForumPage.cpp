@@ -20,6 +20,7 @@
 
 #include <QPushButton>
 #include <QMessageBox>
+#include <QPointer>
 #include "retroshare/rsgxsforums.h"
 #include "ForumPage.h"
 #include "util/misc.h"
@@ -51,7 +52,7 @@ ForumPage::ForumPage(QWidget * parent, Qt::WindowFlags flags)
                 tr("Rebuild the index used to search the content of the "
                    "forum posts. This may take a few minutes.") );
     connect(mReindexButton, SIGNAL(clicked()), this, SLOT(reindexAll()));
-    layout()->addWidget(mReindexButton);
+    ui.gridLayout_3->addWidget(mReindexButton, 3, 0, Qt::AlignLeft);
 #endif
 }
 
@@ -61,34 +62,40 @@ void ForumPage::reindexAll()
     if( QMessageBox::question(
                 this, tr("Rebuild the search index"),
                 tr("Rebuild the index used to search the content of the forum "
-                   "posts?\nIt may take a few minutes on a big profile, the "
-                   "search keeps working meanwhile."),
+                   "posts?\nIt may take a few minutes on a big profile. "
+                   "Meanwhile the search only finds the posts already "
+                   "indexed again."),
                 QMessageBox::Yes | QMessageBox::No ) != QMessageBox::Yes )
         return;
 
     mReindexButton->setEnabled(false);
     mReindexButton->setText(tr("Rebuilding the search index..."));
 
-    // Blocking and long: off the GUI thread
-    RsThread::async([this]()
+    /* Blocking and long: off the GUI thread. The settings window is deleted
+     * when closed, maybe before the end: the result is posted to qApp and
+     * shown only if this page still exists. */
+    QPointer<ForumPage> self(this);
+    RsThread::async([self]()
     {
         const bool done = rsGxsForums->reindexAll();
 
-        RsQThreadUtils::postToObject([this, done]()
+        RsQThreadUtils::postToObject([self, done]()
         {
-            mReindexButton->setEnabled(true);
-            mReindexButton->setText(tr("Rebuild the search index"));
+            if(!self) return;
+
+            self->mReindexButton->setEnabled(true);
+            self->mReindexButton->setText(tr("Rebuild the search index"));
             if(done)
                 QMessageBox::information(
-                            this, tr("Rebuild the search index"),
+                            self, tr("Rebuild the search index"),
                             tr("The search index has been rebuilt.") );
             else
                 QMessageBox::warning(
-                            this, tr("Rebuild the search index"),
+                            self, tr("Rebuild the search index"),
                             tr("The search index could not be fully rebuilt, "
                                "or a rebuild was already running. See the "
                                "log for details.") );
-        }, this);
+        }, qApp );
     });
 #endif
 }

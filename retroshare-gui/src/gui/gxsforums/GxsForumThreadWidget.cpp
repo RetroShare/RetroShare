@@ -25,8 +25,10 @@
 #include <QPainter>
 #include <QTimer>
 #include <QRegularExpression>
+#include <QTextBlock>
 #include <QTextCursor>
 #include <QTextDocument>
+#include <QPointer>
 
 #include "util/qtthreadsutils.h"
 #include "util/misc.h"
@@ -536,6 +538,10 @@ void GxsForumThreadWidget::changedSelection(const QModelIndex& current,const QMo
 
 void GxsForumThreadWidget::groupIdChanged()
 {
+    /* The search of the previous forum does not apply to this one: with a
+     * content search, its matches would hide every post of the new forum. */
+    ui->filterLineEdit->clear();
+
     ui->forumName->setText(groupId().isNull () ? "" : tr("Loading..."));
 
     mNewCount = 0;
@@ -1392,21 +1398,71 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
     ui->downloadButton->setEnabled(urls.count() > 0);
 }
 
+/* Fold a text like the forum index does (unicode61 tokenizer with
+ * remove_diacritics=1): canonical decomposition, combining marks dropped, so
+ * "ete" finds the accented forms and the reverse. If map is given, map[i]
+ * is the position in text of the character i of the result. */
+static QString foldDiacritics(const QString& text, QVector<int>* map = nullptr)
+{
+    QString folded;
+    folded.reserve(text.size());
+    if(map) map->reserve(text.size());
+
+    for(int i = 0; i < text.size(); ++i)
+    {
+        const QChar c = text.at(i);
+        if(c.unicode() < 0x80) // fast path, nothing to fold
+        {
+            folded += c;
+            if(map) map->append(i);
+            continue;
+        }
+
+        const int len = ( c.isHighSurrogate() && i + 1 < text.size() &&
+                          text.at(i + 1).isLowSurrogate() ) ? 2 : 1;
+        const QString decomposed =
+                text.mid(i, len).normalized(QString::NormalizationForm_D);
+        for(const QChar d : decomposed)
+            if(d.category() != QChar::Mark_NonSpacing)
+            {
+                folded += d;
+                if(map) map->append(i);
+            }
+        i += len - 1;
+    }
+    return folded;
+}
+
 void GxsForumThreadWidget::highlightContentSearchWords()
 {
     /* Extra selections are painted over the document without changing it:
      * copy, links and the post HTML are left untouched. Same matching as the
-     * index: words starting with one of the searched words, any case. */
+     * index: any case, no diacritics, words starting with one of the searched
+     * words, except a single letter word which must match exactly. */
     QList<QTextEdit::ExtraSelection> selections;
 
     if(!mContentSearchWords.isEmpty())
     {
+        // Word characters of the index tokenizer: letters and digits only
+        const QString wordChar("[\\p{L}\\p{N}]");
+
         QStringList alternatives;
         for(const QString& w : mContentSearchWords)
-            alternatives << QRegularExpression::escape(w);
+        {
+            // A word with no letter nor digit is no word for the index
+            const QString f = foldDiacritics(w);
+            if(!std::any_of(f.begin(), f.end(),
+                            [](QChar c) { return c.isLetterOrNumber(); }))
+                continue;
+
+            // Same rule as ForumContentIndex::buildMatchExpression()
+            const bool exact = w.toUcs4().size() == 1 && w.toUtf8().size() <= 2;
+            alternatives << QRegularExpression::escape(f) +
+                            (exact ? "(?!" + wordChar + ")" : wordChar + "*");
+        }
 
         const QRegularExpression re(
-                    "\\b(?:" + alternatives.join('|') + ")\\w*",
+                    "(?<!" + wordChar + ")(?:" + alternatives.join('|') + ")",
                     QRegularExpression::CaseInsensitiveOption |
                     QRegularExpression::UseUnicodePropertiesOption );
 
@@ -1418,16 +1474,38 @@ void GxsForumThreadWidget::highlightContentSearchWords()
 
         constexpr int MAX_HIGHLIGHTS = 1000;
         QTextDocument* doc = ui->postText->document();
-        QTextCursor found(doc);
-        while(selections.size() < MAX_HIGHLIGHTS)
-        {
-            found = doc->find(re, found);
-            if(found.isNull() || !found.hasSelection()) break;
 
-            QTextEdit::ExtraSelection selection;
-            selection.cursor = found;
-            selection.format = format;
-            selections << selection;
+        // Blocks cover the whole document, table cells included
+        for( QTextBlock block = doc->begin();
+             block.isValid() && !alternatives.isEmpty() &&
+             selections.size() < MAX_HIGHLIGHTS; block = block.next() )
+        {
+            const QString text = block.text();
+            QVector<int> map;
+            const QString folded = foldDiacritics(text, &map);
+
+            QRegularExpressionMatchIterator it = re.globalMatch(folded);
+            while(it.hasNext() && selections.size() < MAX_HIGHLIGHTS)
+            {
+                const QRegularExpressionMatch m = it.next();
+                if(m.capturedLength() <= 0) continue;
+
+                // Back to the positions in the block, combining marks included
+                const int start = map[m.capturedStart()];
+                const int last = map[m.capturedEnd() - 1];
+                int end = qMin( text.size(),
+                                last + (text.at(last).isHighSurrogate() ? 2 : 1) );
+                while(end < text.size() && text.at(end).isMark()) ++end;
+
+                QTextCursor found(doc);
+                found.setPosition(block.position() + start);
+                found.setPosition(block.position() + end, QTextCursor::KeepAnchor);
+
+                QTextEdit::ExtraSelection selection;
+                selection.cursor = found;
+                selection.format = format;
+                selections << selection;
+            }
         }
 
         // Bring the first match into view, useful in long posts
@@ -1929,7 +2007,9 @@ void GxsForumThreadWidget::filterItems(const QString& text)
     int filterColumn = ui->filterLineEdit->currentFilter();
     QStringList lst = text.split(" ",QtSkipEmptyParts) ;
 
-    uint32_t count;
+    // A content search still running is now obsolete
+    ++mContentSearchGeneration;
+
     if(filterColumn == RsGxsForumModel::COLUMN_THREAD_CONTENT && !lst.empty())
     {
         /* Split like the forum index does: runs of letters and digits, non
@@ -1948,26 +2028,56 @@ void GxsForumThreadWidget::filterItems(const QString& text)
         blankPost();
         insertMessage(); // Will display forum description if mThreadId is null
 
-        std::map<RsGxsMessageId, std::string> matches; // id -> snippet
-        std::vector<RsGxsSearchResult> results;
+        ui->filterLineEdit->setToolTip(tr("Searching..."));
 
+        /* The search reads the index and the post metadata through blocking
+         * GXS requests: off the GUI thread. The widget may be closed, or the
+         * search replaced, before it ends: the result is posted to qApp and
+         * dropped unless this widget still waits for it. */
+        const uint32_t generation = mContentSearchGeneration;
+        const RsGxsGroupId forumId = groupId();
+        const std::string query = text.toStdString();
+        QPointer<GxsForumThreadWidget> self(this);
+
+        RsThread::async([self, generation, forumId, query, lst]()
+        {
+            std::map<RsGxsMessageId, std::string> matches; // id -> snippet
 #ifdef RS_FORUM_CONTENT_SEARCH
-        // Post bodies of this forum only, no result limit
-        rsGxsForums->localForumSearch(groupId(), text.toStdString(), results, 0);
+            // Post bodies of this forum only, no result limit
+            std::vector<RsGxsSearchResult> results;
+            rsGxsForums->localForumSearch(forumId, query, results, 0);
 
-        for(const auto& res : results)
-            if(!res.mMsgId.isNull())
-                matches[res.mMsgId] = res.mSearchContext;
+            for(const auto& res : results)
+                if(!res.mMsgId.isNull())
+                    matches[res.mMsgId] = res.mSearchContext;
+#else
+            (void)query;
 #endif
-        mThreadModel->setContentFilter(matches, lst, count);
-    }
-    else
-    {
-        // Title, date or author search, or search cleared
-        mContentSearchWords.clear();
-        mThreadModel->setFilter(filterColumn, lst, count);
+            RsQThreadUtils::postToObject(
+                        [self, generation, forumId, lst, matches = std::move(matches)]()
+            {
+                if( !self || generation != self->mContentSearchGeneration ||
+                        forumId != self->groupId() )
+                    return;
+
+                uint32_t count;
+                self->mThreadModel->setContentFilter(matches, lst, count);
+                self->showFilterResult(lst, count);
+            }, qApp );
+        });
+        return;
     }
 
+    // Title, date or author search, or search cleared
+    mContentSearchWords.clear();
+
+    uint32_t count;
+    mThreadModel->setFilter(filterColumn, lst, count);
+    showFilterResult(lst, count);
+}
+
+void GxsForumThreadWidget::showFilterResult(const QStringList& lst, uint32_t count)
+{
     // We do this in order to trigger a new filtering action in the proxy model.
     QSortFilterProxyModel_setFilterRegularExpression(mThreadProxyModel, QString(RsGxsForumModel::FilterString)) ;
 
@@ -2013,7 +2123,9 @@ void GxsForumThreadWidget::filterItems(const QString& text)
         }
     }
 
-    if(count == 0 && !text.isEmpty())
+    if(lst.empty())
+        ui->filterLineEdit->setToolTip(QString());
+    else if(count == 0)
         ui->filterLineEdit->setToolTip(tr("No result.")) ;
     else
         ui->filterLineEdit->setToolTip(tr("Found %1 results.").arg(count)) ;
