@@ -327,7 +327,13 @@ bool JPEGVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 
     if(flags & JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME)
     {
-	    if(_decoded_reference_frame.size() != image.size())
+	    // Same size is not enough: a grayscale reference (1 byte per pixel)
+	    // followed by a colour differential frame (4 bytes per pixel) of the
+	    // same size made the loop below write past the end of the reference.
+	    // Both pictures come from the peer.
+	    if(_decoded_reference_frame.size() != image.size() ||
+	       _decoded_reference_frame.format() != image.format() ||
+	       _decoded_reference_frame.sizeInBytes() != image.sizeInBytes())
 	    {
 		    std::cerr << "Bad reference frame!" << std::endl;
 		    return false ;
@@ -646,8 +652,22 @@ static void imageToFrame(AVFrame *frame, const QImage& image) {
   }
 }
 
-static void frameToImage(QImage& image, const AVFrame *frame) {
+// The size comes from the peer's stream: no camera sends more than 4K, and a
+// forged size must not make us allocate gigabytes, or write through the null
+// scan lines of a QImage that could not be allocated.
+static const int MAX_DECODED_SIDE = 4096 ;
+
+static bool frameToImage(QImage& image, const AVFrame *frame) {
+  if(frame->width <= 0 || frame->height <= 0 ||
+     frame->width > MAX_DECODED_SIDE || frame->height > MAX_DECODED_SIDE)
+  {
+    std::cerr << "VOIP: refusing a decoded picture of " << frame->width << "x" << frame->height << std::endl;
+    image = QImage() ;
+    return false ;
+  }
   image = QImage(QSize(frame->width,frame->height),QImage::Format_ARGB32);
+  if(image.isNull())
+    return false ;
 
 #ifdef DEBUG_MPEG_VIDEO
   std::cerr << "Decoded frame. Size=" << image.width() << "x" << image.height() << std::endl;
@@ -668,6 +688,7 @@ static void frameToImage(QImage& image, const AVFrame *frame) {
 
     image.setPixel(QPoint(x,y), QRgb(0xff000000 | (R << 16) | (G << 8) | B));
   }
+  return true ;
 }
 
 bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitrate, NetQueue<RsVOIPDataChunk>& dst)
@@ -836,7 +857,8 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk, QImage& image)
     return false ;
   }
 
-  frameToImage(image, decoding_frame_buffer);
+  if(!frameToImage(image, decoding_frame_buffer))
+    return false ;
 
 #ifdef DEBUG_MPEG_VIDEO
   std::cerr << "debug(MPEG_VIDEO): decoded frame: size="
@@ -868,7 +890,8 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk, QImage& image)
 
 		if(got_frame)
 		{
-			frameToImage(image, decoding_frame_buffer);
+			if(!frameToImage(image, decoding_frame_buffer))
+				return false ;
 
 #ifdef DEBUG_MPEG_VIDEO
 			std::cerr << "Decoded frame. Size=" << image.width() << "x" << image.height() << std::endl;
