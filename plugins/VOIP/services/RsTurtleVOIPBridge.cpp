@@ -219,9 +219,6 @@ void RsTurtleVOIPBridge::receiveData(const RsGxsTunnelId& tunnel_id, unsigned ch
     // gxstunnel transfers memory ownership of 'data' to us: we must free() it.
     const RsPeerId virtual_peer_id = RsPeerId(tunnel_id);
 
-    RsDbg() << "DISTANT_VOIP: receiveData from virtual peer " << virtual_peer_id.toStdString()
-            << " size=" << data_size;
-
     if (mVOIP == NULL || data == NULL || data_size == 0) {
         if (data) free(data);
         return;
@@ -237,6 +234,17 @@ void RsTurtleVOIPBridge::receiveData(const RsGxsTunnelId& tunnel_id, unsigned ch
     // 1. Peel identity header (same envelope p3VOIP::sendItem builds on the sender side).
     DistantChatPeerId incomingId;
     memcpy(&incomingId, data, headerSize);
+
+    // The header is chosen by the remote peer: only accept a distant chat that
+    // links the same two identities as the tunnel the packet came through, or
+    // any tunnel peer could get its call shown in another correspondent's chat
+    // window.
+    if (!distantChatMatchesTunnel(incomingId, tunnel_id)) {
+        RsWarn() << "DISTANT_VOIP: dropping packet whose distant chat id does not "
+                 << "match tunnel " << tunnel_id.toStdString();
+        free(data);
+        return;
+    }
     registerVirtualToDistantMapping(virtual_peer_id, incomingId);
 
     // 2. Deserialise the remaining payload and hand it to the VOIP engine.
@@ -257,6 +265,19 @@ void RsTurtleVOIPBridge::receiveData(const RsGxsTunnelId& tunnel_id, unsigned ch
     }
 
     free(data);
+}
+
+bool RsTurtleVOIPBridge::distantChatMatchesTunnel(const DistantChatPeerId& chat_id, const RsGxsTunnelId& tunnel_id)
+{
+    if (mChats == NULL || mGxsTunnels == NULL) return false;
+
+    DistantChatPeerInfo chatInfo;
+    RsGxsTunnelService::GxsTunnelInfo tunnelInfo;
+    if (!mChats->getDistantChatStatus(chat_id, chatInfo)) return false;
+    if (!mGxsTunnels->getTunnelInfo(tunnel_id, tunnelInfo)) return false;
+
+    return chatInfo.to_id == tunnelInfo.destination_gxs_id
+        && chatInfo.own_id == tunnelInfo.source_gxs_id;
 }
 
 void RsTurtleVOIPBridge::registerVirtualToDistantMapping(const RsPeerId& virtual_id, const DistantChatPeerId& chat_id)

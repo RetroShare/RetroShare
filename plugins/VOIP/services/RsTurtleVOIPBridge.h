@@ -55,6 +55,7 @@ public:
     // Maps a virtual peer id back to the distant chat it belongs to (used by the
     // GUI to route incoming calls to the right chat window).
     ChatId resolveVirtualToDistantChat(const RsPeerId& virtual_id);
+    bool distantChatMatchesTunnel(const DistantChatPeerId& chat_id, const RsGxsTunnelId& tunnel_id);
     void registerVirtualToDistantMapping(const RsPeerId& virtual_id, const DistantChatPeerId& chat_id);
 
     // True if this RsPeerId is one of our active (CAN_TALK) gxs tunnels.
