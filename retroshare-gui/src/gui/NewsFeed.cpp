@@ -482,6 +482,11 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
         return;
 
     auto& e(*pe);
+    
+    // Profiles in the ignore list raise no security notification.
+    if(rsPeers->isIgnored(e.mPgpId))
+        return;
+
     RsFeedTypeFlags flags = (RsFeedTypeFlags)Settings->getNewsFeedFlags();
 
     // 1 - treat the case of unknown PeerID

@@ -85,6 +85,12 @@ public:
 	 virtual QString pageName() const { return tr("Notify") ; }
 	 virtual QString helpText() const ;
 
+protected:
+	void showEvent(QShowEvent *event) override;
+
+private:
+	void loadIgnoredUsers();
+
 private slots:
 	void notifyToggled();
 	void testToaster();
@@ -102,6 +108,9 @@ private slots:
 	void updateToasterMargin();
 
 	void updateToasterPosition();
+
+	void addIgnoredUser();
+	void removeIgnoredUser();
 
 private:
     RsFeedTypeFlags getNewsFlags();

@@ -33,6 +33,9 @@
 #include "gui/NewsFeed.h"
 #include "util/misc.h"
 
+#include <QMessageBox>
+#include "gui/common/FriendSelectionDialog.h"
+
 /** Constructor */
 NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
   : ConfigPage(parent, flags)
@@ -46,6 +49,9 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.testToasterButton, SIGNAL(clicked()), this, SLOT(testToaster()));
     connect(ui.pushButtonDisableAll,SIGNAL(toggled(bool)), RsGUIEventManager::getInstance(), SLOT(SetDisableAll(bool)));
     connect(RsGUIEventManager::getInstance(),SIGNAL(disableAllChanged(bool)), ui.pushButtonDisableAll, SLOT(setChecked(bool)));
+
+    connect(ui.addIgnoredButton, SIGNAL(clicked()), this, SLOT(addIgnoredUser()));
+    connect(ui.removeIgnoredButton, SIGNAL(clicked()), this, SLOT(removeIgnoredUser()));
 
 	ui.notify_Blogs->hide();
 
@@ -394,6 +400,32 @@ void NotifyPage::load()
 
 	notifyToggled() ;
 
+	loadIgnoredUsers();
+}
+
+void NotifyPage::loadIgnoredUsers()
+{
+    ui.ignoredTreeWidget->clear();
+    QStringList headers; 
+    headers << tr("Name") << tr("PGP Id");
+    ui.ignoredTreeWidget->setHeaderLabels(headers);
+
+    std::map<RsPgpId, std::string> ids;
+    if(rsPeers)
+        rsPeers->getIgnoreList(ids);
+    for(const auto& pair : ids) {
+         QTreeWidgetItem* item = new QTreeWidgetItem(ui.ignoredTreeWidget);
+         
+         std::string displayName = pair.second;
+         if(displayName.empty()) {
+             RsPeerDetails details;
+             if(rsPeers && rsPeers->getGPGDetails(pair.first, details))
+                 displayName = details.name;
+         }
+         
+         item->setText(0, QString::fromStdString(displayName));
+         item->setText(1, QString::fromStdString(pair.first.toStdString()));
+    }
 }
 
 void NotifyPage::notifyToggled()
@@ -442,5 +474,53 @@ void NotifyPage::testToaster()
                 RsGUIEventManager::getInstance()->testToaster(toasterNotifyIt->mEnabledCheckBox->accessibleName(), toasterNotifyIt->mToasterNotify, pos, margin) ;
             }
         }
+    }
+}
+
+void NotifyPage::showEvent(QShowEvent *event)
+{
+    loadIgnoredUsers();
+    ConfigPage::showEvent(event);
+}
+
+void NotifyPage::addIgnoredUser()
+{
+    std::set<RsPgpId> ids = FriendSelectionDialog::selectFriends_PGP(this, tr("Ignore a friend"), tr("Select the friend to ignore"), FriendSelectionWidget::MODUS_SINGLE, FriendSelectionWidget::SHOW_GPG);
+
+    if (ids.empty() || !rsPeers) {
+        return;
+    }
+
+    if (QMessageBox::question(this, tr("Ignore a friend"),
+                              tr("This friend will be removed from your friends, and its connection attempts will no longer be notified. Continue?"),
+                              QMessageBox::Yes|QMessageBox::No) != QMessageBox::Yes) {
+        return;
+    }
+
+    // Since MODUS_SINGLE, we should have at most one ID, but loop just in case or take first.
+    for(const RsPgpId& id : ids) {
+        if (id.isNull()) continue;
+
+        // Try to get name from peers interface if possible, otherwise empty
+        std::string name; 
+        RsPeerDetails details; 
+        if(rsPeers->getGPGDetails(id, details)) name = details.name;
+
+        rsPeers->addToIgnoreList(id, name);
+        rsPeers->removeFriend(id);
+    }
+    
+    // Refresh list
+    loadIgnoredUsers();
+}
+
+void NotifyPage::removeIgnoredUser()
+{
+    QTreeWidgetItem* item = ui.ignoredTreeWidget->currentItem();
+    if(item) {
+        RsPgpId id(item->text(1).toStdString());
+        if(rsPeers)
+            rsPeers->removeFromIgnoreList(id);
+        delete item;
     }
 }
