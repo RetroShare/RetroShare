@@ -961,9 +961,6 @@ if(RS_GXSWIKIPOS)
 		src/gui/WikiPoos/WikiEditDialog.h
 		src/gui/WikiPoos/WikiUserNotify.h
 		src/gui/gxs/WikiGroupDialog.h
-		src/gui/gxs/RsGxsUpdateBroadcastBase.h
-		src/gui/gxs/RsGxsUpdateBroadcastWidget.h 
-		src/gui/gxs/RsGxsUpdateBroadcastPage.h 
 		)
 
 	list(
@@ -980,9 +977,6 @@ if(RS_GXSWIKIPOS)
 		src/gui/WikiPoos/WikiEditDialog.cpp
 		src/gui/WikiPoos/WikiUserNotify.cpp
 		src/gui/gxs/WikiGroupDialog.cpp
-		src/gui/gxs/RsGxsUpdateBroadcastBase.cpp
-		src/gui/gxs/RsGxsUpdateBroadcastWidget.cpp 
-		src/gui/gxs/RsGxsUpdateBroadcastPage.cpp 
 		)
 
 	list(
