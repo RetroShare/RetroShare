@@ -40,6 +40,8 @@ class TurtleGraphSource: public RSGraphSource
             values.insert(std::make_pair(QObject::tr("Data forward").toStdString(),(float)info.unknown_updn_Bps)) ;
 		}
 
+    virtual qreal unitBase() const { return 1024.0 ; }
+
     virtual QString displayValue(float v) const
     {
         if(v < 1000)
