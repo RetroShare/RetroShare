@@ -19,6 +19,9 @@
  *******************************************************************************/
 
 #include <QDateTime>
+#include <QRegularExpression>
+#include <QTextDocumentFragment>
+#include <QFontMetrics>
 #include <QMenu>
 #include <QSignalMapper>
 #include <QPainter>
@@ -248,6 +251,11 @@ QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 	w->updateGeometry();
 	w->adjustSize();
 
+    // Ensure all parts of the editor bubble right-clicks to the view.
+    w->setContextMenuPolicy(Qt::NoContextMenu);
+    foreach(QWidget *child, w->findChildren<QWidget*>())
+        child->setContextMenuPolicy(Qt::NoContextMenu);
+
 	return w;
 }
 
@@ -341,39 +349,78 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 
 void PostedListWidgetWithModel::postContextMenu(const QPoint& point)
 {
-    QMenu menu(this);
+	QMenu menu(this);
 
-    // 1 - check that we are clicking on a post
+	// 1 - check that we are clicking on a post
 
-    QModelIndex index = ui->postsTree->indexAt(point);
+	QModelIndex index = ui->postsTree->indexAt(point);
 
-    if(!index.isValid())
-        return;
+	if(!index.isValid())
+		return;
 
-    // 2 - generate the menu for that post.
+	// 2 - generate the menu for that post.
 
-    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
+	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
 
-    menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()))->setData(index);
+	// Add "Copy selected text" for expanded posts
+	QWidget *editor = ui->postsTree->indexWidget(index);
+	QLabel *notesLabel = editor ? editor->findChild<QLabel*>("notes") : NULL;
 
+	if (notesLabel && !notesLabel->selectedText().isEmpty())
+	{
+		QString sel = notesLabel->selectedText();
+		menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/copy.png"), tr("Copy selected text"), [sel]() {
+			QApplication::clipboard()->setText(sel);
+		});
+	}
+
+	menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()))->setData(index);
+
+    // Each http link entry shows the link it copies, elided when long.
+    const QFontMetrics fm(menu.font());
+    QStringList links;
+
+    // The post's own link is always offered, expanded or not.
     QByteArray urlarray(post.mLink.c_str());
     QUrl url = QUrl::fromEncoded(urlarray.trimmed());
 
-    std::cerr << "Using link: \"" << post.mLink << "\"" << std::endl;
-
     if(url.scheme()=="http" || url.scheme()=="https")
-        menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYHTTP), tr("Copy http Link"), this, SLOT(copyHttpLink()))->setData(index);
+    {
+        const QString link = QString::fromStdString(post.mLink).trimmed();
+        links << link;
+        menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYHTTP), tr("Copy link: %1").arg(fm.elidedText(link, Qt::ElideMiddle, 400)), this, SLOT(copyHttpLink()))->setData(index);
+    }
 
-    menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR), tr("Show author in People tab"), this, SLOT(showAuthorInPeople()))->setData(index);
+    if (notesLabel && notesLabel->isVisible())
+    {
+        // Also offer the http links found in the notes of an expanded post.
+        static const QRegularExpression rx("<a\\s+href=\"(https?://[^\"]+)\"", QRegularExpression::CaseInsensitiveOption);
+        const QString notesHtml = QString::fromUtf8(post.mNotes.c_str());
+        QRegularExpressionMatchIterator it = rx.globalMatch(notesHtml);
+        while (it.hasNext()) {
+            // href values are HTML-escaped (&amp;...): unescape before copying.
+            QTextDocumentFragment frag = QTextDocumentFragment::fromHtml(it.next().captured(1));
+            const QString link = frag.toPlainText();
+            if(links.contains(link))
+                continue;
+            links << link;
+            QAction *copyLinkAction = menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYHTTP), tr("Copy link: %1").arg(fm.elidedText(link, Qt::ElideMiddle, 400)));
+            connect(copyLinkAction, &QAction::triggered, [link]() {
+                QApplication::clipboard()->setText(link);
+            });
+        }
+    }
+
+	menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_AUTHOR), tr("Show author in People tab"), this, SLOT(showAuthorInPeople()))->setData(index);
 
 #ifdef TODO
-    // This feature is not implemented yet in libretroshare.
+	// This feature is not implemented yet in libretroshare.
 
-    if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
-        menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
+	if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
+		menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
 #endif
 
-    menu.exec(QCursor::pos());
+	menu.exec(QCursor::pos());
 }
 
 void PostedListWidgetWithModel::switchDisplayMode()
