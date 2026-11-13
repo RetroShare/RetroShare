@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="/help/">
+    <file>authors.html</file>
+    <file>licence.html</file>
+    <file>thanks.html</file>
+  </qresource>
+</RCC>

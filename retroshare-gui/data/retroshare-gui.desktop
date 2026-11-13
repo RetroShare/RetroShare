@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Name=RetroShare
+Comment=Securely communicate with your friends
+Exec=retroshare-gui %U
+Icon=retroshare
+Terminal=false
+Type=Application
+Categories=Network;Email;InstantMessaging;Chat;Feed;FileTransfer;P2P
+MimeType=x-scheme-handler/retroshare;
