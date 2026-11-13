@@ -30,7 +30,8 @@
 #include <retroshare/rstypes.h>
 
 class RsVOIP ;
-extern RsVOIP *rsVOIP;
+extern class RsVOIP *rsVOIP;
+extern class RsTurtleVOIPBridge *rsTurtleBridge;
  
 static const uint32_t CONFIG_TYPE_VOIP_PLUGIN 		= 0xe001 ;
 
@@ -61,12 +62,21 @@ struct RsVOIPDataChunk
 	void clear() ;
 };
 
+// Capabilities a peer advertises when a call starts.
+const uint32_t RS_VOIP_CAPS_H264_VIDEO = 0x0001 ;	// decodes H.264 video
+
 class RsVOIP
 {
 	public:
 		virtual int sendVoipHangUpCall(const RsPeerId& peer_id, uint32_t flags) = 0;
 		virtual int sendVoipRinging(const RsPeerId& peer_id, uint32_t flags) = 0;
 		virtual int sendVoipAcceptCall(const RsPeerId& peer_id, uint32_t flags) = 0;
+
+		// Our own RS_VOIP_CAPS_* flags, sent to the peer after each ring and accept.
+		virtual void setVoipLocalCapabilities(uint32_t caps) = 0;
+		// RS_VOIP_CAPS_* flags received from the peer for the current call, 0 if
+		// none (older plugin, or not received yet).
+		virtual uint32_t getVoipPeerCapabilities(const RsPeerId& peer_id) const = 0;
 
 		// Sending data. The client keeps the memory ownership and must delete it after calling this.
 		virtual int sendVoipData(const RsPeerId& peer_id,const RsVOIPDataChunk& chunk) = 0;
@@ -94,6 +104,25 @@ class RsVOIP
 		virtual void setVoipiMinLoudness(int) = 0 ;
 		virtual bool getVoipEchoCancel() const = 0 ;
 		virtual void setVoipEchoCancel(bool) = 0 ;
+
+		// Device selection. Empty string means "use the system default device".
+		// Audio devices: AudioDeviceHelper::deviceKey() (Qt5 deviceName(), Qt6 id()).
+		// Cameras: the ids of QVideoInputDevice::getAvailableDevices() (Qt5 deviceName(), Qt6 description()).
+		virtual std::string getVoipAudioInputDevice() const = 0 ;
+		virtual void setVoipAudioInputDevice(const std::string&) = 0 ;
+		virtual std::string getVoipAudioOutputDevice() const = 0 ;
+		virtual void setVoipAudioOutputDevice(const std::string&) = 0 ;
+		virtual std::string getVoipVideoInputDevice() const = 0 ;
+		virtual void setVoipVideoInputDevice(const std::string&) = 0 ;
+		// Maximum outgoing video bandwidth in bytes per second.
+		virtual int getVoipVideoMaxBandwidth() const = 0 ;
+		virtual void setVoipVideoMaxBandwidth(int) = 0 ;
+		// What to send when the camera image is wider than 4:3 (e.g. a 16:9 webcam):
+		// crop it to 4:3, or send it whole at its own aspect ratio (e.g. 640x360).
+		// Both are decoded by every plugin version: the frame size comes from the stream.
+		typedef enum { VideoWideCropTo4by3 = 0, VideoWideNative = 1 } enumVideoWideMode ;
+		virtual int getVoipVideoWideMode() const = 0 ;
+		virtual void setVoipVideoWideMode(int) = 0 ;
 
 		virtual uint32_t getPongResults(const RsPeerId& id, int n, std::list<RsVOIPPongResult> &results) = 0;
 };
