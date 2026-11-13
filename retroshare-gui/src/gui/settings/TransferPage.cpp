@@ -159,9 +159,10 @@ void TransferPage::load()
 
     switch(rsFiles->defaultChunkStrategy())
     {
-    case FileChunksInfo::CHUNK_STRATEGY_STREAMING: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(0) ; break ;
+    case FileChunksInfo::CHUNK_STRATEGY_SEQUENTIAL: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(0) ; break ;
     case FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(1) ; break ;
     case FileChunksInfo::CHUNK_STRATEGY_RANDOM: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(2) ; break ;
+    case FileChunksInfo::CHUNK_STRATEGY_STREAMING: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(3) ; break ;
     }
 
 #ifdef TO_REMOVE
@@ -224,18 +225,19 @@ void TransferPage::updateDefaultStrategy(int i)
 {
 	switch(i)
 	{
-		case 0: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_STREAMING) ;
+		case 0: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_SEQUENTIAL) ;
 				  break ;
 
         case 2:
+        case 3:
 #ifdef WINDOWS_SYS
-                if(QMessageBox::Yes != QMessageBox::warning(nullptr,tr("Warning"),tr("On Windows systems, randomly writing in the middle of large empty files may hang the software for several seconds. Do you want to use this option anyway (otherwise use \"progressive\")?"),QMessageBox::Yes,QMessageBox::No))
+                if(QMessageBox::Yes != QMessageBox::warning(nullptr,tr("Warning"),tr("On Windows systems, writing to the end of large empty files (Random or Streaming) may hang the software for several seconds during allocation. Do you want to use this option anyway (otherwise use \"Sequential\" or \"Progressive\")?"),QMessageBox::Yes,QMessageBox::No))
                 {
                     ui._defaultStrategy_CB->setCurrentIndex(1);
                     return;
                 }
 #endif
-                rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
+                rsFiles->setDefaultChunkStrategy(i == 3 ? FileChunksInfo::CHUNK_STRATEGY_STREAMING : FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
                 break ;
 
 		case 1: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE) ;
