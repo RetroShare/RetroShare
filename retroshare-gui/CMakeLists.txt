@@ -666,22 +666,20 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE RS_DIRECT_CHAT)
 # what the GUI should report as its own version. Drop the leading 'v' to match the
 # usual version style. rsguiversion.h provides a default, so a build without git
 # metadata (or the qmake/Android build path) still compiles.
-execute_process(
-	COMMAND ${GIT_EXECUTABLE} describe --tags --always --dirty
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	OUTPUT_VARIABLE RS_GUI_VERSION
-	OUTPUT_STRIP_TRAILING_WHITESPACE
-	RESULT_VARIABLE RS_GUI_GIT_RESULT ) # Avoid CMake failure if git fails
-
-# Source tarball fallback: an unpacked source tarball carries no git metadata,
-# so the tarball preparation script stores the super-project `git describe`
-# output in a Source_Version file at the super-project root.
-if(NOT RS_GUI_GIT_RESULT EQUAL 0 OR RS_GUI_VERSION STREQUAL "")
-	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../Source_Version")
-		file(READ "${CMAKE_CURRENT_SOURCE_DIR}/../Source_Version" RS_GUI_VERSION)
-		string(STRIP "${RS_GUI_VERSION}" RS_GUI_VERSION)
-		set(RS_GUI_GIT_RESULT 0)
-	endif()
+# A source tarball made by build_scripts/make-source-tarball.sh carries the
+# super-project `git describe` in Source_Version: use it first, because the
+# tarball may be unpacked inside another git repository (git-buildpackage).
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../Source_Version")
+	file(READ "${CMAKE_CURRENT_SOURCE_DIR}/../Source_Version" RS_GUI_VERSION)
+	string(STRIP "${RS_GUI_VERSION}" RS_GUI_VERSION)
+	set(RS_GUI_GIT_RESULT 0)
+else()
+	execute_process(
+		COMMAND ${GIT_EXECUTABLE} describe --tags --always --dirty
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		OUTPUT_VARIABLE RS_GUI_VERSION
+		OUTPUT_STRIP_TRAILING_WHITESPACE
+		RESULT_VARIABLE RS_GUI_GIT_RESULT ) # Avoid CMake failure if git fails
 endif()
 
 if(RS_GUI_GIT_RESULT EQUAL 0 AND NOT RS_GUI_VERSION STREQUAL "")
