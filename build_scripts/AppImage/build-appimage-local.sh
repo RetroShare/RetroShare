@@ -154,6 +154,21 @@ else
     echo "    will start the DHT with no bootstrap peers."
 fi
 
+# Sounds, chat styles and the extra GUI theme, which the GUI reads from the data
+# directory (SoundManager, ChatStyle, Rshare). Only the standard and compact chat
+# styles are compiled into the binary; Bubble and Bubble_Compact are not. The
+# Windows package and the distribution packages ship the same set.
+RSDATA="$APPDIR/usr/share/retroshare"
+mkdir -p "$RSDATA/sounds" "$RSDATA/stylesheets" "$RSDATA/qss"
+cp -r "$ROOT/retroshare-gui/src/sounds/." "$RSDATA/sounds/"
+cp -r "$ROOT/retroshare-gui/src/qss/." "$RSDATA/qss/"
+for style in "$ROOT"/retroshare-gui/src/gui/qss/chat/*/; do
+    style="${style%/}"
+    case "$(basename "$style")" in standard|compact) continue ;; esac
+    cp -r "$style" "$RSDATA/stylesheets/"
+done
+echo ">>> sounds, chat styles ($(ls "$RSDATA/stylesheets" | xargs)) and qss themes bundled"
+
 # plugins (VOIP, FeedReader): built into Build-cmake/plugins when RS_PLUGINS=ON.
 # RetroShare searches <exedir>/../lib/retroshare/extensions6/ for them, which from
 # usr/bin/retroshare-gui is exactly usr/lib/retroshare/extensions6 — the only

@@ -121,10 +121,19 @@ AppDir/usr/share/applications/retroshare.desktop <- Icon=retroshare, Exec=retros
 AppDir/usr/share/icons/hicolor/{24,48,64,128,scalable}/apps/retroshare.*
 AppDir/usr/share/retroshare/webui/               <- the web UI (data directory)
 AppDir/usr/share/retroshare/bdboot.txt           <- DHT bootstrap list, copied into new accounts
+AppDir/usr/share/retroshare/sounds/              <- notification sounds
+AppDir/usr/share/retroshare/stylesheets/         <- chat styles not built into the binary (Bubble, Bubble_Compact)
+AppDir/usr/share/retroshare/qss/                 <- extra GUI theme (RetroClassic)
 AppDir/usr/lib/retroshare/extensions6/*.so       <- the plugins
 ```
 
 then `linuxdeploy --plugin qt --output appimage` bundles Qt + all non-system libs.
+
+Known limitation: at first start the GUI saves the absolute path of each
+default sound, and inside an AppImage that path goes through the mount point
+(`/tmp/.mount_*`), which changes at every launch. The default sounds therefore
+play during the first session only; sound files picked from outside the
+AppImage in the settings keep working.
 
 **We use `linuxdeploy`, not `linuxdeployqt`.** The probonopd `linuxdeployqt`
 "continuous" build 107 fails silently right after the icon stage on this
