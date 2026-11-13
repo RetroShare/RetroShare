@@ -25,23 +25,30 @@ AudioDeviceHelper::AudioDeviceHelper()
 {
 }
 
-QAudioInput* AudioDeviceHelper::getDefaultInputDevice() 
+RsAudioInput* AudioDeviceHelper::getDefaultInputDevice()
 {
     QAudioFormat fmt;
-#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
     fmt.setSampleRate(16000);
     fmt.setChannelCount(1);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    // Qt6 replaced setSampleSize()+setSampleType() (and dropped byteOrder/codec)
+    // with a single sample-format enum; 16-bit signed PCM is QAudioFormat::Int16.
+    fmt.setSampleFormat(QAudioFormat::Int16);
+
+    // Qt6: QAudioDeviceInfo -> QAudioDevice, enumerated via QMediaDevices. The old
+    // "pulse"/"null" deviceName() heuristic was PulseAudio-backend specific and has
+    // no Qt6 equivalent (QAudioDevice exposes description()/id(), not the backend
+    // node name), so we take the system default input directly.
+    QAudioDevice dev = QMediaDevices::defaultAudioInput();
+    std::cerr << "input device : " << dev.description().toStdString() << std::endl;
 #else
-    fmt.setFrequency(16000);
-    fmt.setChannels(1);
-#endif
     fmt.setSampleSize(16);
     fmt.setSampleType(QAudioFormat::SignedInt);
     fmt.setByteOrder(QAudioFormat::LittleEndian);
     fmt.setCodec("audio/pcm");
 
     QAudioDeviceInfo it, dev;
-	 QList<QAudioDeviceInfo> input_list = QAudioDeviceInfo::availableDevices(QAudio::AudioInput) ;
+    QList<QAudioDeviceInfo> input_list = QAudioDeviceInfo::availableDevices(QAudio::AudioInput) ;
 
     dev = QAudioDeviceInfo::defaultInputDevice();
     if (dev.deviceName() != "pulse") {
@@ -62,27 +69,29 @@ QAudioInput* AudioDeviceHelper::getDefaultInputDevice()
         }
     }
     std::cerr << "input device : " << dev.deviceName().toStdString() << std::endl;
-    return new QAudioInput(dev, fmt);
+#endif
+    return new RsAudioInput(dev, fmt);
 }
-QAudioInput* AudioDeviceHelper::getPreferedInputDevice() {
+RsAudioInput* AudioDeviceHelper::getPreferedInputDevice() {
     return AudioDeviceHelper::getDefaultInputDevice();
 }
 
-QAudioOutput* AudioDeviceHelper::getDefaultOutputDevice() {
+RsAudioOutput* AudioDeviceHelper::getDefaultOutputDevice() {
     QAudioFormat fmt;
-#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
     fmt.setSampleRate(16000);
     fmt.setChannelCount(1);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    fmt.setSampleFormat(QAudioFormat::Int16);
+
+    QAudioDevice dev = QMediaDevices::defaultAudioOutput();
+    std::cerr << "output device : " << dev.description().toStdString() << std::endl;
 #else
-    fmt.setFrequency(16000);
-    fmt.setChannels(1);
-#endif
     fmt.setSampleSize(16);
     fmt.setSampleType(QAudioFormat::SignedInt);
     fmt.setByteOrder(QAudioFormat::LittleEndian);
     fmt.setCodec("audio/pcm");
 
-	 QList<QAudioDeviceInfo> list_output = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput) ;
+    QList<QAudioDeviceInfo> list_output = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput) ;
 
     QAudioDeviceInfo it, dev;
     dev = QAudioDeviceInfo::defaultOutputDevice();
@@ -104,8 +113,9 @@ QAudioOutput* AudioDeviceHelper::getDefaultOutputDevice() {
         }
     }
     std::cerr << "output device : " << dev.deviceName().toStdString() << std::endl;
-    return new QAudioOutput(dev, fmt);
+#endif
+    return new RsAudioOutput(dev, fmt);
 }
-QAudioOutput* AudioDeviceHelper::getPreferedOutputDevice() {
+RsAudioOutput* AudioDeviceHelper::getPreferedOutputDevice() {
     return AudioDeviceHelper::getDefaultOutputDevice();
 }
