@@ -163,6 +163,7 @@ protected:
 	bool eventFilter(QObject *obj, QEvent *event);
 	virtual void showEvent(QShowEvent *event);
 	virtual void resizeEvent(QResizeEvent *event);
+	virtual bool event(QEvent *event);
 	void updateTitle();
 
 private slots:

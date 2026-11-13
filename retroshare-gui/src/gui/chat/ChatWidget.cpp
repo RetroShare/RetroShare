@@ -1019,6 +1019,16 @@ void ChatWidget::showEvent(QShowEvent */*event*/)
 	QTimer::singleShot(0, this, SLOT(checkVisibleAnchors()));
 }
 
+// Reading a room does not always scroll it: coming back to the window, or a room
+// short enough to have no scroll bar, must also mark the visible messages read.
+bool ChatWidget::event(QEvent *event)
+{
+	if (event->type() == QEvent::WindowActivate)
+		QTimer::singleShot(0, this, SLOT(checkVisibleAnchors()));
+
+	return QWidget::event(event);
+}
+
 void ChatWidget::resizeEvent(QResizeEvent */*event*/)
 {
 	// it's about resize all chat window, not about chattextedit
@@ -1193,6 +1203,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 	textCursor.movePosition(QTextCursor::End);
 	textCursor.setBlockFormat(QTextBlockFormat ());
 	ui->textBrowser->append(formatMsg);
+	QTimer::singleShot(0, this, SLOT(checkVisibleAnchors()));	// shown without scrolling if the room has no scroll bar
 
 	if (ui->leSearch->isVisible()) {
 		QString qsTextToFind=ui->leSearch->text();
