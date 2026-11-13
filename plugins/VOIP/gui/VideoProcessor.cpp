@@ -29,6 +29,7 @@
 #include <QByteArray>
 #include <QBuffer>
 #include <QImage>
+#include <QImageReader>
 
 #include "util/rsmemory.h"
 
@@ -49,6 +50,10 @@ extern "C" {
 //#include <libavutil/samplefmt.h>
 }
 //#define DEBUG_MPEG_VIDEO 1
+
+// Picture sizes come from the peer's stream: no camera sends more than 4K, and a
+// forged size must not make us allocate gigabytes.
+static const int MAX_DECODED_SIDE = 4096 ;
 
 #ifndef AV_INPUT_BUFFER_PADDING_SIZE
 #ifndef FF_INPUT_BUFFER_PADDING_SIZE
@@ -319,9 +324,23 @@ bool JPEGVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 
     QByteArray qb((char*)&((uint8_t*)chunk.data)[HEADER_SIZE],(int)chunk.size - HEADER_SIZE) ;
 
-    if(!image.loadFromData(qb,"JPEG"))
+    // Read the size from the JPEG header before decoding: Qt5 has no allocation
+    // limit, and a few hundred bytes claiming 30000x30000 make us allocate 3.6 GB.
+    QBuffer buffer ;
+    buffer.setData(qb) ;
+    buffer.open(QIODevice::ReadOnly) ;
+    QImageReader reader(&buffer,"JPEG") ;
+    QSize size = reader.size() ;
+
+    if(!size.isValid() || size.width() > MAX_DECODED_SIDE || size.height() > MAX_DECODED_SIDE)
     {
-	    std::cerr << "image.loadFromData(): returned an error.: " << std::endl;
+	    std::cerr << "VOIP: refusing a JPEG picture of " << size.width() << "x" << size.height() << std::endl;
+	    return false ;
+    }
+
+    if(!reader.read(&image))
+    {
+	    std::cerr << "VOIP: could not decode a JPEG picture: " << reader.errorString().toStdString() << std::endl;
 	    return false ;
     }
 
@@ -574,6 +593,12 @@ FFmpegVideo::FFmpegVideo()
     //we can receive truncated frames
 	decoding_context->flags2 |= AV_CODEC_FLAG2_CHUNKS;
 
+#if LIBAVCODEC_VERSION_MAJOR >= 58
+    // The picture size comes from the peer's stream: refuse more than 4K instead
+    // of letting the decoder allocate whatever it declares.
+    decoding_context->max_pixels = (int64_t)MAX_DECODED_SIDE * MAX_DECODED_SIDE ;
+#endif
+
     AVDictionary* dictionary = NULL;
     if(avcodec_open2(decoding_context, decoding_codec, &dictionary) < 0)
     {
@@ -652,11 +677,8 @@ static void imageToFrame(AVFrame *frame, const QImage& image) {
   }
 }
 
-// The size comes from the peer's stream: no camera sends more than 4K, and a
-// forged size must not make us allocate gigabytes, or write through the null
-// scan lines of a QImage that could not be allocated.
-static const int MAX_DECODED_SIDE = 4096 ;
-
+// The size comes from the peer's stream (see MAX_DECODED_SIDE): do not write
+// through the null scan lines of a QImage that could not be allocated either.
 static bool frameToImage(QImage& image, const AVFrame *frame) {
   if(frame->width <= 0 || frame->height <= 0 ||
      frame->width > MAX_DECODED_SIDE || frame->height > MAX_DECODED_SIDE)
@@ -832,7 +854,11 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk, QImage& image)
 	/* set end of buffer to 0 (this ensures that no overreading happens for damaged mpeg streams) */
 	memset(&tmp[s], 0, AV_INPUT_BUFFER_PADDING_SIZE) ;
 
-  av_packet_from_data(&decoding_buffer, tmp, s);
+  if(av_packet_from_data(&decoding_buffer, tmp, s) < 0)
+  {
+    av_free(tmp) ;	// not owned by the packet when this fails
+    return false ;
+  }
 
 
 #if LIBAVCODEC_VERSION_MAJOR >= 58
