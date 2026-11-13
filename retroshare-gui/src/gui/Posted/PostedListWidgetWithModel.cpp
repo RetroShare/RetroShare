@@ -19,6 +19,9 @@
  *******************************************************************************/
 
 #include <QDateTime>
+#include <QRegularExpression>
+#include <QTextDocumentFragment>
+#include <QFontMetrics>
 #include <QMenu>
 #include <QSignalMapper>
 #include <QPainter>
@@ -373,30 +376,38 @@ void PostedListWidgetWithModel::postContextMenu(const QPoint& point)
 
 	menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()))->setData(index);
 
+    // Each http link entry shows the link it copies, elided when long.
+    const QFontMetrics fm(menu.font());
+    QStringList links;
+
+    // The post's own link is always offered, expanded or not.
+    QByteArray urlarray(post.mLink.c_str());
+    QUrl url = QUrl::fromEncoded(urlarray.trimmed());
+
+    if(url.scheme()=="http" || url.scheme()=="https")
+    {
+        const QString link = QString::fromStdString(post.mLink).trimmed();
+        links << link;
+        menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYHTTP), tr("Copy link: %1").arg(fm.elidedText(link, Qt::ElideMiddle, 400)), this, SLOT(copyHttpLink()))->setData(index);
+    }
+
     if (notesLabel && notesLabel->isVisible())
     {
-        QByteArray urlarray(post.mLink.c_str());
-        QUrl url = QUrl::fromEncoded(urlarray.trimmed());
-
-        if(url.scheme()=="http" || url.scheme()=="https")
-            menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYHTTP), tr("Copy http Link"), this, SLOT(copyHttpLink()))->setData(index);
-
-        // Also extract and add any HTTP links found in the notes
-        QRegExp rx("<a\\s+href=\"(https?://[^\"]+)\"", Qt::CaseInsensitive);
-        rx.setMinimal(true);
-        QString notesHtml = QString::fromUtf8(post.mNotes.c_str());
-        int pos = 0;
-        QStringList links;
-        while ((pos = rx.indexIn(notesHtml, pos)) != -1) {
-            QString link = rx.cap(1);
-            if(!links.contains(link)) {
-                links << link;
-                QAction *copyLinkAction = menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYHTTP), tr("Copy link: %1").arg(link));
-                connect(copyLinkAction, &QAction::triggered, [link]() {
-                    QApplication::clipboard()->setText(link);
-                });
-            }
-            pos += rx.matchedLength();
+        // Also offer the http links found in the notes of an expanded post.
+        static const QRegularExpression rx("<a\\s+href=\"(https?://[^\"]+)\"", QRegularExpression::CaseInsensitiveOption);
+        const QString notesHtml = QString::fromUtf8(post.mNotes.c_str());
+        QRegularExpressionMatchIterator it = rx.globalMatch(notesHtml);
+        while (it.hasNext()) {
+            // href values are HTML-escaped (&amp;...): unescape before copying.
+            QTextDocumentFragment frag = QTextDocumentFragment::fromHtml(it.next().captured(1));
+            const QString link = frag.toPlainText();
+            if(links.contains(link))
+                continue;
+            links << link;
+            QAction *copyLinkAction = menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYHTTP), tr("Copy link: %1").arg(fm.elidedText(link, Qt::ElideMiddle, 400)));
+            connect(copyLinkAction, &QAction::triggered, [link]() {
+                QApplication::clipboard()->setText(link);
+            });
         }
     }
 
