@@ -34,6 +34,10 @@ else()
 	set(CMAKE_INSTALL_SODIR ${CMAKE_INSTALL_LIBDIR})
 endif()
 
+if(CMAKE_VERSION VERSION_LESS 3.17)
+	set(runtime_dependencies_install_script-list_dir ${CMAKE_CURRENT_LIST_DIR})
+endif()
+
 function(runtime_dependencies_install_script output_file)
 	cmake_parse_arguments(PARSE_ARGV 1 RUNTIME_DEPENDENCY
 		""
@@ -63,6 +67,11 @@ function(runtime_dependencies_install_script output_file)
 	endif()
 
 	set(templateName RuntimeDependenciesInstallScript-template.cmake.in)
+	if(CMAKE_VERSION VERSION_LESS 3.17)
+		set(CMAKE_CURRENT_FUNCTION_LIST_DIR
+			${runtime_dependencies_install_script-list_dir}
+		)
+	endif()
 	configure_file(
 		${CMAKE_CURRENT_FUNCTION_LIST_DIR}/${templateName}
 		${output_file}.gen
