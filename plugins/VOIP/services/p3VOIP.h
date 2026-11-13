@@ -86,6 +86,9 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		virtual int sendVoipRinging(const RsPeerId& peer_id, uint32_t flags) ;
 		virtual int sendVoipAcceptCall(const RsPeerId &peer_id, uint32_t flags) ;
 
+		virtual void setVoipLocalCapabilities(uint32_t caps) ;
+		virtual uint32_t getVoipPeerCapabilities(const RsPeerId& peer_id) const ;
+
 		/***** overloaded from p3Service *****/
 		/*!
 		 * This retrieves all chat msg items and also (important!)
@@ -115,6 +118,16 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		virtual void setVoipiMinLoudness(int) ;
 		virtual bool getVoipEchoCancel() const 	 { return _echo_cancel ; }
 		virtual void setVoipEchoCancel(bool) ;
+		virtual std::string getVoipAudioInputDevice() const  { return _audio_input_device ; }
+		virtual void setVoipAudioInputDevice(const std::string&) ;
+		virtual std::string getVoipAudioOutputDevice() const { return _audio_output_device ; }
+		virtual void setVoipAudioOutputDevice(const std::string&) ;
+		virtual std::string getVoipVideoInputDevice() const  { return _video_input_device ; }
+		virtual void setVoipVideoInputDevice(const std::string&) ;
+		virtual int  getVoipVideoMaxBandwidth() const { return _video_max_bandwidth ; }
+		virtual void setVoipVideoMaxBandwidth(int) ;
+		virtual int  getVoipVideoWideMode() const { return _video_wide_mode ; }
+		virtual void setVoipVideoWideMode(int) ;
 
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
@@ -134,6 +147,7 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		void 	sendBandwidthInfo();
 
 		int sendVoipBandwidth(const RsPeerId &peer_id,uint32_t bytes_per_sec) ;
+		void sendVoipCapabilities(const RsPeerId &peer_id) ;
 
 		int 	handlePing(RsVOIPPingItem *item);
 		int 	handlePong(RsVOIPPongItem *item);
@@ -144,7 +158,10 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		void handleProtocol(RsVOIPProtocolItem*) ;
 		void handleData(RsVOIPDataItem*) ;
 
-		RsMutex mVOIPMtx;
+		mutable RsMutex mVOIPMtx;
+
+		uint32_t mLocalCapabilities ;				// RS_VOIP_CAPS_* we send
+		std::map<RsPeerId, uint32_t> mPeerCapabilities ;	// RS_VOIP_CAPS_* received, per peer
 
 		VOIPPeerInfo *locked_GetPeerInfo(const RsPeerId& id);
 
@@ -166,4 +183,9 @@ class p3VOIP: public RsPQIService, public RsVOIP
 		int _min_loudness ;
 		int _noise_suppress ;
 		bool _echo_cancel ;
+		std::string _audio_input_device ;
+		std::string _audio_output_device ;
+		std::string _video_input_device ;
+		int _video_max_bandwidth ;
+		int _video_wide_mode ;
 };
