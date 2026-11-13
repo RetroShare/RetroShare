@@ -141,6 +141,19 @@ else
     echo "    no web interface. Configure the build with -DRS_WEBUI=ON."
 fi
 
+# DHT bootstrap list: a new account copies <data dir>/bdboot.txt into its own
+# directory at first start (rsinit.cc). A CMake install puts the file in
+# share/retroshare, which the hand-built AppDir does not get, so ship it next to
+# the web UI or a fresh account starts the DHT with no bootstrap peers.
+if [ -f "$ROOT/libbitdht/src/bitdht/bdboot.txt" ]; then
+    mkdir -p "$APPDIR/usr/share/retroshare"
+    cp "$ROOT/libbitdht/src/bitdht/bdboot.txt" "$APPDIR/usr/share/retroshare/"
+    echo ">>> DHT bootstrap list bundled from libbitdht"
+else
+    echo ">>> WARNING: libbitdht/src/bitdht/bdboot.txt is missing — a new account"
+    echo "    will start the DHT with no bootstrap peers."
+fi
+
 # plugins (VOIP, FeedReader): built into Build-cmake/plugins when RS_PLUGINS=ON.
 # RetroShare searches <exedir>/../lib/retroshare/extensions6/ for them, which from
 # usr/bin/retroshare-gui is exactly usr/lib/retroshare/extensions6 — the only

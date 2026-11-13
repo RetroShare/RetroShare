@@ -119,6 +119,9 @@ default and would put the `.desktop` under `prefix/data/`):
 AppDir/usr/bin/retroshare-gui                    <- the CMake binary
 AppDir/usr/share/applications/retroshare.desktop <- Icon=retroshare, Exec=retroshare-gui
 AppDir/usr/share/icons/hicolor/{24,48,64,128,scalable}/apps/retroshare.*
+AppDir/usr/share/retroshare/webui/               <- the web UI (data directory)
+AppDir/usr/share/retroshare/bdboot.txt           <- DHT bootstrap list, copied into new accounts
+AppDir/usr/lib/retroshare/extensions6/*.so       <- the plugins
 ```
 
 then `linuxdeploy --plugin qt --output appimage` bundles Qt + all non-system libs.
