@@ -375,7 +375,9 @@ QString ChatStyle::formatMessage(enumFormatMessage type
 
 	QString strName = RsHtml::plainText(name).prepend(QString("<a name=\"name\">")).append(QString("</a>"));
 	QString strDate = DateTime::formatDate(timestamp.date()).prepend(QString("<a name=\"date\">")).append(QString("</a>"));
-	QString strTime = DateTime::formatTime(timestamp.time()).prepend(QString("<a name=\"time\">")).append(QString("</a>"));
+	// Displayed in the user's 12/24 h convention. The anchor key that tracks the unread
+	// state is built separately, in a fixed format (see ChatWidget::addChatMsg()).
+	QString strTime = DateTime::formatTimeWithSeconds(timestamp.time()).prepend(QString("<a name=\"time\">")).append(QString("</a>"));
 
 	int bi = name.lastIndexOf(QRegularExpression(" \\(.*\\)")); //trim location from the end
 	QString strShortName = RsHtml::plainText(name.left(bi)).prepend(QString("<a name=\"name\">")).append(QString("</a>"));

@@ -163,6 +163,7 @@ protected:
 	bool eventFilter(QObject *obj, QEvent *event);
 	virtual void showEvent(QShowEvent *event);
 	virtual void resizeEvent(QResizeEvent *event);
+	virtual bool event(QEvent *event);
 	void updateTitle();
 
 private slots:
@@ -209,6 +210,7 @@ private slots:
 	void quote();
 	void dropPlacemark();
 	void saveSticker();
+	void checkVisibleAnchors();
 
 private:
 	bool findText(const QString& qsStringToFind);
