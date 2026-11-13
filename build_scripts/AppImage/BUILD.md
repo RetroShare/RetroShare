@@ -129,11 +129,13 @@ AppDir/usr/lib/retroshare/extensions6/*.so       <- the plugins
 
 then `linuxdeploy --plugin qt --output appimage` bundles Qt + all non-system libs.
 
-Known limitation: at first start the GUI saves the absolute path of each
-default sound, and inside an AppImage that path goes through the mount point
-(`/tmp/.mount_*`), which changes at every launch. The default sounds therefore
-play during the first session only; sound files picked from outside the
-AppImage in the settings keep working.
+Default sounds: at first start the GUI saves the path of each default sound.
+Saved as an absolute path, it goes through the AppImage mount point
+(`/tmp/.mount_*`), which changes at every launch, and the sounds play during the
+first session only. The GUI change on branch `fix/sound-paths-relative-to-data-dir`
+(jolavillette/RetroShare) saves these paths relative to the data directory and
+repairs the ones saved before; without it, only sound files picked from outside
+the AppImage keep working.
 
 **We use `linuxdeploy`, not `linuxdeployqt`.** The probonopd `linuxdeployqt`
 "continuous" build 107 fails silently right after the icon stage on this
