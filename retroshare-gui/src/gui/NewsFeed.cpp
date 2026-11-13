@@ -23,8 +23,6 @@
 #include "NewsFeed.h"
 #include "ui_NewsFeed.h"
 
-#include "pqi/authssl.h"
-
 #include <retroshare/rsbanlist.h>
 #include <retroshare/rsgxschannels.h>
 #include <retroshare/rsgxsforums.h>
@@ -481,11 +479,9 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 
     auto& e(*pe);
     
-    // Check if denied by AuthSSL (backend)
-    if(AuthSSL::instance().isNotifyDenied(e.mPgpId))
-    {
+    // Profiles in the ignore list raise no security notification.
+    if(rsPeers->isIgnored(e.mPgpId))
         return;
-    }
 
     RsFeedTypeFlags flags = (RsFeedTypeFlags)Settings->getNewsFeedFlags();
 

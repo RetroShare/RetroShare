@@ -39,7 +39,6 @@
 
 #include <retroshare/rsmail.h>
 #include <retroshare/rspeers.h>
-#include "pqi/authssl.h"
 
 /*****
  * #define DEBUG_ITEM 1
@@ -393,12 +392,15 @@ void SecurityItem::removeFriend()
 
 void SecurityItem::banUser()
 {
+    if (mGpgId.isNull())
+        return;
+
     // Confirmation dialog
     QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, tr("Ignore User"), tr("Are you sure you want to ignore this user? They will be added to the Ignored Users list and you will not receive further notifications from them. You can manage the list in Preferences -> Notify."),
+    reply = QMessageBox::question(this, tr("Ignore User"), tr("Are you sure you want to ignore this user? They will be added to the Ignored Users list and you will not receive further notifications from them. If they are a friend, they are also removed from your friends. You can manage the list in Preferences -> Notify."),
                                   QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
-        AuthSSL::instance().addNotifyDeny(mGpgId, mSslCn);
+        rsPeers->addToIgnoreList(mGpgId, mSslCn);
         rsPeers->removeFriend(mGpgId);
         // Remove this item from the feed as it is now handled
         removeItem(); 

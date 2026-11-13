@@ -33,10 +33,6 @@
 #include "gui/NewsFeed.h"
 #include "util/misc.h"
 
-#include "pqi/authssl.h"
-//#include "gui/common/Rsdialogs.h" // For getting ID
-//#include "gui/peers/PeersDialog.h" // Maybe for friend selection?
-#include <QInputDialog>
 #include <QMessageBox>
 #include "gui/common/FriendSelectionDialog.h"
 
@@ -415,19 +411,16 @@ void NotifyPage::loadIgnoredUsers()
     ui.ignoredTreeWidget->setHeaderLabels(headers);
 
     std::map<RsPgpId, std::string> ids;
-    AuthSSL::instance().getNotifyDenyList(ids);
+    if(rsPeers)
+        rsPeers->getIgnoreList(ids);
     for(const auto& pair : ids) {
          QTreeWidgetItem* item = new QTreeWidgetItem(ui.ignoredTreeWidget);
          
          std::string displayName = pair.second;
          if(displayName.empty()) {
              RsPeerDetails details;
-             if(rsPeers && rsPeers->getGPGDetails(pair.first, details)) {
+             if(rsPeers && rsPeers->getGPGDetails(pair.first, details))
                  displayName = details.name;
-                 // Optionally update the list in AuthSSL? 
-                 // AuthSSL::instance().addNotifyDeny(pair.first, displayName); 
-                 // Better not to modify state during load, just display it.
-             }
          }
          
          item->setText(0, QString::fromStdString(displayName));
@@ -492,9 +485,15 @@ void NotifyPage::showEvent(QShowEvent *event)
 
 void NotifyPage::addIgnoredUser()
 {
-    std::set<RsPgpId> ids = FriendSelectionDialog::selectFriends_PGP(this, tr("Ban Friend"), tr("Select a friend to ban"), FriendSelectionWidget::MODUS_SINGLE, FriendSelectionWidget::SHOW_GPG);
+    std::set<RsPgpId> ids = FriendSelectionDialog::selectFriends_PGP(this, tr("Ignore a friend"), tr("Select the friend to ignore"), FriendSelectionWidget::MODUS_SINGLE, FriendSelectionWidget::SHOW_GPG);
 
-    if (ids.empty()) {
+    if (ids.empty() || !rsPeers) {
+        return;
+    }
+
+    if (QMessageBox::question(this, tr("Ignore a friend"),
+                              tr("This friend will be removed from your friends, and its connection attempts will no longer be notified. Continue?"),
+                              QMessageBox::Yes|QMessageBox::No) != QMessageBox::Yes) {
         return;
     }
 
@@ -505,12 +504,10 @@ void NotifyPage::addIgnoredUser()
         // Try to get name from peers interface if possible, otherwise empty
         std::string name; 
         RsPeerDetails details; 
-        if(rsPeers && rsPeers->getGPGDetails(id, details)) name = details.name;
+        if(rsPeers->getGPGDetails(id, details)) name = details.name;
 
-        AuthSSL::instance().addNotifyDeny(id, name);
-        if(rsPeers) {
-            rsPeers->removeFriend(id);
-        }
+        rsPeers->addToIgnoreList(id, name);
+        rsPeers->removeFriend(id);
     }
     
     // Refresh list
@@ -522,7 +519,8 @@ void NotifyPage::removeIgnoredUser()
     QTreeWidgetItem* item = ui.ignoredTreeWidget->currentItem();
     if(item) {
         RsPgpId id(item->text(1).toStdString());
-        AuthSSL::instance().removeNotifyDeny(id);
+        if(rsPeers)
+            rsPeers->removeFromIgnoreList(id);
         delete item;
     }
 }
