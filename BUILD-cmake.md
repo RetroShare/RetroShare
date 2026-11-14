@@ -369,7 +369,7 @@ git submodule update --init supportlibs/restbed supportlibs/libsam3 \
 ```
 
 Then apply the rapidjson fix of [§1](#fix-rapidjson-all-platforms) — MSYS2
-ships GCC ≥ 13, so it is required here:
+ships GCC ≥ 14, so it is required here:
 ```bash
 git -C supportlibs/rapidjson fetch origin
 git -C supportlibs/rapidjson checkout 9bd618f5
