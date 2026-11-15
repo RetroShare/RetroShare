@@ -28,6 +28,7 @@
 #include <QFileInfo>
 #include <QRegularExpression>
 #include <QStringList>
+#include <QTemporaryDir>
 
 #include <cstring>
 #include <list>
@@ -432,10 +433,23 @@ bool ProfileArchive::exportProfile(const RsPeerId& sslId, const QString& archive
 		info.createdBy = "RetroShare " + RsApplication::retroshareVersion(true);
 	}
 
-	std::string pgpData, pgpError;
-	if(!RsAccounts::exportIdentityToString(pgpData, info.pgpId, pgpError, true) || pgpData.empty())
+	// Export the PGP key pair through a temporary file: the RNP backend does
+	// not implement exportIdentityToString().
+	QByteArray pgpData;
 	{
-		error = tr("Cannot export the PGP key of this profile:") + " " + QString::fromStdString(pgpError);
+		QTemporaryDir tmpDir;
+		const QString keyFile = tmpDir.path() + "/identity.asc";
+
+		if(tmpDir.isValid() && RsAccounts::ExportIdentity(keyFile.toUtf8().constData(), info.pgpId))
+		{
+			QFile f(keyFile);
+			if(f.open(QIODevice::ReadOnly))
+				pgpData = f.readAll();
+		}
+	}
+	if(pgpData.isEmpty())
+	{
+		error = tr("Cannot export the PGP key of this profile.");
 		return false;
 	}
 
@@ -495,7 +509,7 @@ bool ProfileArchive::exportProfile(const RsPeerId& sslId, const QString& archive
 	bool ok = true;
 
 	ok = ok && tar.addData(MANIFEST_NAME, makeManifest(info), now);
-	ok = ok && tar.addData(PGP_IDENTITY_NAME, QByteArray(pgpData.data(), int(pgpData.size())), now);
+	ok = ok && tar.addData(PGP_IDENTITY_NAME, pgpData, now);
 	ok = ok && tar.addDirectory(info.accountDirName, now);
 
 	for(const QString& d : dirs)
