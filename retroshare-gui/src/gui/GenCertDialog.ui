@@ -161,6 +161,16 @@
              </property>
             </spacer>
            </item>
+           <item>
+            <widget class="QPushButton" name="restoreNode_PB">
+             <property name="toolTip">
+              <string>Restore a node saved with "Back up the selected node" (for example from another computer)</string>
+             </property>
+             <property name="text">
+              <string>Restore node from backup...</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>

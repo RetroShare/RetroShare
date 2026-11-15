@@ -23,6 +23,8 @@
 
 #include "ui_StartDialog.h"
 
+#include "retroshare/rsids.h"
+
 class StartDialog : public QDialog
 {
 	Q_OBJECT
@@ -49,7 +51,14 @@ private slots:
 
 	void on_labelProfile_linkActivated(QString link);
 
+	void backupNode();
+	void restoreNode();
+	void upgradeNode();
+
 private:
+	void fillNodeList(const RsPeerId& selectId);
+	RsPeerId selectedNode() const;
+
 	/** Qt Designer generated object */
 	Ui::StartDialog ui;
 

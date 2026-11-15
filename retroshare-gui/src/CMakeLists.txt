@@ -95,6 +95,9 @@ list(
 	src/gui/profile/ProfileWidget.cpp 
 	src/gui/profile/StatusMessage.cpp 
 	src/gui/profile/ProfileManager.cpp 
+	src/gui/profile/ProfileArchive.cpp 
+	src/gui/profile/ProfileUpgrader.cpp 
+	src/gui/profile/ProfileUpgradeDialog.cpp 
 
 	src/gui/chat/PopupChatWindow.cpp 
 	src/gui/chat/PopupChatDialog.cpp 
@@ -312,6 +315,7 @@ list(
 	src/gui/profile/ProfileWidget.ui 
 	src/gui/profile/StatusMessage.ui 
 	src/gui/profile/ProfileManager.ui 
+	src/gui/profile/ProfileUpgradeDialog.ui 
 
 	src/gui/chat/PopupChatWindow.ui 
 	src/gui/chat/PopupChatDialog.ui 
@@ -524,6 +528,9 @@ list(
 
 	src/gui/profile/ProfileWidget.h 
 	src/gui/profile/ProfileManager.h 
+	src/gui/profile/ProfileArchive.h 
+	src/gui/profile/ProfileUpgrader.h 
+	src/gui/profile/ProfileUpgradeDialog.h 
 	src/gui/profile/StatusMessage.h 
 
 	src/gui/chat/PopupChatWindow.h 

@@ -319,6 +319,25 @@
       <item row="3" column="1">
        <layout class="QHBoxLayout" name="newHLayout">
         <item>
+         <widget class="QToolButton" name="nodeToolsButton">
+          <property name="toolTip">
+           <string>Back up, restore or upgrade a node</string>
+          </property>
+          <property name="text">
+           <string>Backup &amp;&amp; upgrade</string>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::InstantPopup</enum>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextOnly</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="newHSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -356,6 +375,30 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
   </layout>
+  <action name="actionBackupNode">
+   <property name="text">
+    <string>Back up the selected node...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save the selected node (keys, friends, settings, forums, channels...) into one backup file</string>
+   </property>
+  </action>
+  <action name="actionRestoreNode">
+   <property name="text">
+    <string>Restore a node from a backup...</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a node saved with "Back up" to this computer</string>
+   </property>
+  </action>
+  <action name="actionUpgradeNode">
+   <property name="text">
+    <string>Upgrade the selected node to new keys...</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a new node with strong SSL keys and move all data of the selected node to it</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
