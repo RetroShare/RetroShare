@@ -201,12 +201,34 @@ DEPS_ONLY=()
 [ -d "$PLUGINDIR" ] && DEPS_ONLY=( --deploy-deps-only "$PLUGINDIR" )
 
 cd "$OUTDIR"
+# Pass 1: bundle Qt and every library, but do not emit the AppImage yet.
 "$LD" --appdir "$APPDIR" \
     --executable "$APPDIR/usr/bin/retroshare-gui" \
     --desktop-file "$DESKTOP" \
     --icon-file "$ROOT/data/128x128/apps/retroshare.png" --icon-filename retroshare \
     ${DEPS_ONLY[@]+"${DEPS_ONLY[@]}"} \
-    --plugin qt \
+    --plugin qt
+
+# Qt 6 Multimedia: keep the FFmpeg backend only.
+# linuxdeploy-plugin-qt copies both backends, GStreamer and FFmpeg, plus the
+# GStreamer libraries, but no GStreamer plugin (the elements). The bundled
+# libgstreamer looks for its plugins next to itself, inside the AppImage, finds
+# none, every element creation fails, and Qt 6.4 crashes in the
+# QGstreamerMediaPlayer constructor at the first QMediaPlayer (RetroChess
+# creates one at startup). Without the GStreamer backend Qt uses FFmpeg, whose
+# libraries are bundled anyway. Qt 5 has no FFmpeg backend: left untouched.
+QTMM="$APPDIR/usr/plugins/multimedia"
+if [ -f "$QTMM/libffmpegmediaplugin.so" ] && [ -f "$QTMM/libgstreamermediaplugin.so" ]; then
+    echo ">>> Qt Multimedia: GStreamer backend removed, FFmpeg only"
+    rm -f "$QTMM/libgstreamermediaplugin.so" \
+          "$APPDIR"/usr/lib/libgst*-1.0.so* "$APPDIR"/usr/lib/liborc-0.4.so*
+fi
+
+# Pass 2: emit the AppImage. linuxdeploy re-deploys the dependencies of every
+# ELF already in the AppDir first, so a library removed above that something
+# else still links comes back.
+"$LD" --appdir "$APPDIR" \
+    ${DEPS_ONLY[@]+"${DEPS_ONLY[@]}"} \
     --output appimage
 
 # --- 4. rename to the descriptive scheme --------------------------------------

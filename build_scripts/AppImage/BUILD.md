@@ -129,6 +129,14 @@ AppDir/usr/lib/retroshare/extensions6/*.so       <- the plugins
 
 then `linuxdeploy --plugin qt --output appimage` bundles Qt + all non-system libs.
 
+Media backend (Qt 6): `linuxdeploy-plugin-qt` copies both Qt Multimedia
+backends, GStreamer and FFmpeg, but none of the GStreamer plugins. The bundled
+`libgstreamer` looks for them next to itself, inside the AppImage, finds none,
+and Qt 6.4 crashes at the first `QMediaPlayer` (RetroChess creates one at
+startup). `build-appimage-local.sh` therefore runs linuxdeploy in two passes and
+removes the GStreamer backend and its libraries in between: Qt then uses FFmpeg,
+whose libraries the AppImage ships anyway.
+
 Default sounds: at first start the GUI saves the path of each default sound.
 Saved as an absolute path, it goes through the AppImage mount point
 (`/tmp/.mount_*`), which changes at every launch, and the sounds play during the
