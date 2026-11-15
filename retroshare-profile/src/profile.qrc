@@ -1,0 +1,11 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+    <file>images/logo.png</file>
+    <file>images/backup.svg</file>
+    <file>images/restore.svg</file>
+    <file>images/upgrade.svg</file>
+    <file>images/folder-open.svg</file>
+    <file>images/node.svg</file>
+    <file>images/warning.png</file>
+</qresource>
+</RCC>

@@ -53,6 +53,12 @@ retroshare_plugins:CONFIG -= no_retroshare_plugins
 CONFIG *= retroshare_service
 no_retroshare_service:CONFIG -= retroshare_service
 
+# To disable the RetroShare profile (node backup/restore/upgrade) append
+# the following assignation to qmake command line
+# "CONFIG+=no_retroshare_profile"
+CONFIG *= retroshare_profile
+no_retroshare_profile:CONFIG -= retroshare_profile
+
 # To disable RetroShare FriendServer append the following assignation to
 # qmake command line "CONFIG+=no_retroshare_friendserver"
 CONFIG *= retroshare_friendserver
