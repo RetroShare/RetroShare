@@ -31,7 +31,7 @@ class ProfileToolWindow : public QDialog
 	Q_OBJECT
 
 public:
-	explicit ProfileToolWindow(QWidget *parent = nullptr);
+	explicit ProfileToolWindow(bool rnpExistedAtStart, QWidget *parent = nullptr);
 
 private slots:
 	void backupNode();
@@ -48,6 +48,8 @@ private:
 	void lockTool(const QString& message);
 
 	Ui::ProfileToolWindow ui;
+	void showKeyring(bool rnpExistedAtStart);
+
 	bool mLocked;	// a node was logged in by an upgrade: the tool must be closed
 };
 

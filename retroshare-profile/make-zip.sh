@@ -100,8 +100,8 @@ done
 
 # 4. short readme
 cat > "$OUT/README.txt" <<'TXT'
-RetroShare Profile
-==================
+RetroShare Profile Backup & Restore
+===================================
 
 Back up, restore and upgrade RetroShare nodes.
 

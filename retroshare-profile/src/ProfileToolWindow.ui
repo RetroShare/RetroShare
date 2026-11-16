@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>820</width>
+    <width>900</width>
     <height>560</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>RetroShare Profile</string>
+   <string>RetroShare Profile Backup &amp; Restore</string>
   </property>
   <property name="windowIcon">
    <iconset resource="profile.qrc">
@@ -68,7 +68,7 @@
           </font>
          </property>
          <property name="text">
-          <string>RetroShare Profile</string>
+          <string>RetroShare Profile Backup &amp; Restore</string>
          </property>
         </widget>
        </item>
@@ -267,6 +267,16 @@
          </column>
          <column>
           <property name="text">
+           <string>Keys</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Last used</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
            <string>Node ID</string>
           </property>
          </column>
@@ -341,13 +351,27 @@
            </widget>
           </item>
           <item row="4" column="0">
+           <widget class="QLabel" name="keysTitleLabel">
+            <property name="text">
+             <string>Keys:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLabel" name="keysValueLabel">
+            <property name="textInteractionFlags">
+             <set>Qt::TextSelectableByMouse</set>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
            <widget class="QLabel" name="folderTitleLabel">
             <property name="text">
              <string>Folder:</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="5" column="1">
            <layout class="QHBoxLayout" name="folderHLayout">
             <item>
              <widget class="QLabel" name="folderValueLabel">
@@ -544,6 +568,16 @@
         <bool>true</bool>
        </property>
       </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="keyringTitleLabel">
+       <property name="text">
+        <string>PGP keyring:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="keyringLabel"/>
      </item>
      <item>
       <widget class="QToolButton" name="changeDataDirButton">

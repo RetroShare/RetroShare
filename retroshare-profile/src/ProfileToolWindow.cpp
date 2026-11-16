@@ -22,6 +22,7 @@
 
 #include "ProfileArchive.h"
 #include "ProfileUpgradeDialog.h"
+#include "NodeInfo.h"
 
 #include "retroshare/rsinit.h"
 
@@ -31,6 +32,7 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QHeaderView>
+#include <QLocale>
 #include <QMessageBox>
 #include <QProcess>
 #include <QProgressDialog>
@@ -40,16 +42,19 @@
 
 #include <list>
 
-#define COLUMN_PROFILE 0
-#define COLUMN_NODE    1
-#define COLUMN_TYPE    2
-#define COLUMN_ID      3
+#define COLUMN_PROFILE  0
+#define COLUMN_NODE     1
+#define COLUMN_TYPE     2
+#define COLUMN_KEYS     3
+#define COLUMN_LASTUSED 4
+#define COLUMN_ID       5
 
 #define ROLE_NODE_ID   Qt::UserRole
 #define ROLE_PGP_ID    (Qt::UserRole + 1)
 #define ROLE_PGP_NAME  (Qt::UserRole + 2)
+#define ROLE_KEYS_WEAK (Qt::UserRole + 3)
 
-ProfileToolWindow::ProfileToolWindow(QWidget *parent)
+ProfileToolWindow::ProfileToolWindow(bool rnpExistedAtStart, QWidget *parent)
     : QDialog(parent, Qt::Window), mLocked(false)
 {
 	ui.setupUi(this);
@@ -62,6 +67,8 @@ ProfileToolWindow::ProfileToolWindow(QWidget *parent)
 	header->setSectionResizeMode(COLUMN_PROFILE, QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(COLUMN_NODE, QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(COLUMN_TYPE, QHeaderView::ResizeToContents);
+	header->setSectionResizeMode(COLUMN_KEYS, QHeaderView::ResizeToContents);
+	header->setSectionResizeMode(COLUMN_LASTUSED, QHeaderView::ResizeToContents);
 	header->setStretchLastSection(true);
 	ui.nodeTree->sortByColumn(COLUMN_PROFILE, Qt::AscendingOrder);
 
@@ -83,9 +90,38 @@ ProfileToolWindow::ProfileToolWindow(QWidget *parent)
 	ui.portableFrame->setVisible(!portable);
 	connect(ui.choosePortableButton, SIGNAL(clicked()), this, SLOT(changeDataDirectory()));
 
+	showKeyring(rnpExistedAtStart);
+
 	RsPeerId preferredId;
 	RsAccounts::GetPreferredAccountId(preferredId);
 	fillNodeList(preferredId);
+}
+
+void ProfileToolWindow::showKeyring(bool rnpExistedAtStart)
+{
+	const QString dataDir = QDir(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str())).absolutePath();
+
+	switch(NodeInfo::keyring(dataDir, rnpExistedAtStart))
+	{
+	case NodeInfo::Keyring::Rnp:
+		ui.keyringLabel->setText(tr("RNP"));
+		ui.keyringLabel->setToolTip(tr("Current PGP keyring (folder \"rnp\")."));
+		break;
+	case NodeInfo::Keyring::RnpConvertedFromOpenPgpSdk:
+		ui.keyringLabel->setText(tr("RNP (converted from OpenPGP-SDK)"));
+		ui.keyringLabel->setToolTip(tr("This data folder only had the old OpenPGP-SDK keyring (folder \"pgp\").\n"
+		                               "It was copied to a new RNP keyring (folder \"rnp\"), as newer RetroShare versions do.\n"
+		                               "The old keyring was not changed."));
+		break;
+	case NodeInfo::Keyring::OpenPgpSdk:
+		ui.keyringLabel->setText(tr("OpenPGP-SDK (old)"));
+		ui.keyringLabel->setToolTip(tr("Old PGP keyring (folder \"pgp\")."));
+		break;
+	default:
+		ui.keyringLabel->setText(tr("none"));
+		ui.keyringLabel->setToolTip(QString());
+		break;
+	}
 }
 
 void ProfileToolWindow::fillNodeList(const RsPeerId& selectId)
@@ -114,6 +150,20 @@ void ProfileToolWindow::fillNodeList(const RsPeerId& selectId)
 		item->setText(COLUMN_PROFILE, pgpName);
 		item->setText(COLUMN_NODE, QString::fromUtf8(node.c_str()));
 		item->setText(COLUMN_TYPE, hidden ? tr("Hidden (Tor/I2P)") : tr("Standard"));
+
+		const QString folder = ProfileArchive::accountDirectory(id);
+		const NodeInfo::Certificate cert = NodeInfo::readCertificate(folder);
+		item->setText(COLUMN_KEYS, cert.summary());
+		item->setData(COLUMN_PROFILE, ROLE_KEYS_WEAK, cert.weak);
+		if(cert.weak)
+		{
+			item->setIcon(COLUMN_KEYS, QIcon(":/images/warning.png"));
+			item->setToolTip(COLUMN_KEYS, tr("Old keys: newer RetroShare versions may refuse them. Use \"Upgrade to new keys\"."));
+		}
+
+		const QDateTime last = NodeInfo::lastUsed(folder);
+		item->setData(COLUMN_LASTUSED, Qt::DisplayRole, last.isValid() ? QVariant(last.date()) : QVariant());
+		item->setToolTip(COLUMN_LASTUSED, last.isValid() ? QLocale().toString(last, QLocale::ShortFormat) : QString());
 		item->setText(COLUMN_ID, QString::fromStdString(id.toStdString()));
 		item->setToolTip(COLUMN_PROFILE, pgpName + " (" + pgpHex + ")");
 		item->setData(COLUMN_PROFILE, ROLE_NODE_ID, QString::fromStdString(id.toStdString()));
@@ -163,6 +213,10 @@ void ProfileToolWindow::updateButtons()
 	ui.pgpIdValueLabel->setText(item ? item->data(COLUMN_PROFILE, ROLE_PGP_ID).toString() : QString());
 	ui.nodeValueLabel->setText(item ? item->text(COLUMN_NODE) + "  (" + item->text(COLUMN_TYPE) + ")" : QString());
 	ui.nodeIdValueLabel->setText(item ? item->text(COLUMN_ID) : QString());
+	ui.keysValueLabel->setText(!item ? QString() :
+	        item->data(COLUMN_PROFILE, ROLE_KEYS_WEAK).toBool()
+	            ? item->text(COLUMN_KEYS) + " - " + tr("upgrade recommended")
+	            : item->text(COLUMN_KEYS));
 	ui.folderValueLabel->setText(QDir::toNativeSeparators(folder));
 	ui.folderValueLabel->setToolTip(QDir::toNativeSeparators(folder));
 	ui.openNodeFolderButton->setEnabled(!folder.isEmpty());

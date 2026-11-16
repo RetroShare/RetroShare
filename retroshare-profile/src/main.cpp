@@ -22,6 +22,7 @@
 #include "retroshare/rsiface.h"
 
 #include "ProfileToolWindow.h"
+#include "NodeInfo.h"
 
 #include <QApplication>
 #include <QCommandLineParser>
@@ -50,7 +51,7 @@ static QString resolveDataDirectory(const QString& path)
 int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
-	QApplication::setApplicationName("RetroShare Profile");
+	QApplication::setApplicationName("RetroShare Profile Backup & Restore");
 	QApplication::setOrganizationName("RetroShare");
 
 	QCommandLineParser parser;
@@ -85,6 +86,19 @@ int main(int argc, char *argv[])
 			}
 	}
 
+	// Remember whether the RNP keyring was already there: RetroShare (and so
+	// this tool) creates it from an old OpenPGP-SDK keyring when it is missing.
+	QString dataDir = QString::fromUtf8(conf.optBaseDir.c_str());
+	if(dataDir.isEmpty())
+	{
+#ifdef Q_OS_WIN
+		dataDir = QString::fromLocal8Bit(qgetenv("APPDATA")) + "/RetroShare";
+#else
+		dataDir = QDir::homePath() + "/.retroshare";
+#endif
+	}
+	const bool rnpExistedAtStart = NodeInfo::hasRnpKeyring(dataDir);
+
 	// Only sets up the base directory, the PGP keyring and the list of nodes:
 	// no node is logged in and no service is started.
 	int initResult = RsInit::InitRetroShare(conf);
@@ -97,7 +111,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	ProfileToolWindow window;
+	ProfileToolWindow window(rnpExistedAtStart);
 	window.show();
 
 	return app.exec();

@@ -34,6 +34,7 @@ DEPENDPATH  += $$PWD
 
 HEADERS += \
     ProfileToolWindow.h \
+    NodeInfo.h \
     ProfileArchive.h \
     ProfileUpgrader.h \
     ProfileUpgradeDialog.h
@@ -41,6 +42,7 @@ HEADERS += \
 SOURCES += \
     main.cpp \
     ProfileToolWindow.cpp \
+    NodeInfo.cpp \
     ProfileArchive.cpp \
     ProfileUpgrader.cpp \
     ProfileUpgradeDialog.cpp
@@ -50,6 +52,9 @@ FORMS += \
     ProfileUpgradeDialog.ui
 
 RESOURCES += profile.qrc
+
+# NodeInfo reads the node certificates directly
+LIBS *= -lcrypto
 
 MOC_DIR = temp/moc
 UI_DIR  = temp/ui
