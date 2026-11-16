@@ -109,12 +109,20 @@ Close RetroShare before using this tool.
 
 - Normal installation: start retroshare-profile.exe, it uses
   %APPDATA%\RetroShare.
-- Portable RetroShare: copy these files into the portable RetroShare
-  folder (next to retroshare.exe), or start the tool and click
-  "Choose portable folder...".
+- Portable RetroShare: start the tool and click "Choose portable
+  folder...", then choose the folder of your portable RetroShare
+  (the one with retroshare.exe). Do not copy these files into that
+  folder: it would replace RetroShare's own retroshare.dll.
 
-This tool only works with the RetroShare version it was built with
-(the retroshare.dll in this folder).
+The tool is self-contained: it does not need RetroShare to be installed
+and does not use the installed RetroShare files. Keep all files of this
+folder together (do not replace retroshare.dll with another one).
+
+It works with nodes of any RetroShare 0.6 version: backups contain the
+node folder unchanged, plus the PGP key.
+Very old RetroShare versions (PGP keyring in Data\pgp instead of
+Data\rnp) can be backed up, but a node restored for them only appears
+after updating RetroShare.
 TXT
 sed -i 's/$/\r/' "$OUT/README.txt"
 
