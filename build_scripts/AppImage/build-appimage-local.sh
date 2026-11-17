@@ -132,12 +132,21 @@ sed -i 's|^Exec=/usr/bin/retroshare|Exec=retroshare-gui|' "$DESKTOP"
 # web UI: inside a relocated tree RetroShare looks for its data directory as
 # <exedir>/../share/retroshare, so the web files must land exactly there — an
 # absolute /usr/share path would resolve on the host, outside the AppImage.
-if [ -d "$ROOT/retroshare-webui/webui" ]; then
-    mkdir -p "$APPDIR/usr/share/retroshare/webui"
-    cp -r "$ROOT/retroshare-webui/webui/." "$APPDIR/usr/share/retroshare/webui/"
-    echo ">>> web UI bundled from retroshare-webui/webui"
+# The CMake build of retroshare-webui (the one that ships mk/build-app.cmake)
+# writes the web files into the build tree; its older build script writes them
+# into retroshare-webui/webui. Pick by which one this checkout has, so that a
+# folder left by an earlier build of the other kind is never bundled.
+if [ -f "$ROOT/retroshare-webui/mk/build-app.cmake" ]; then
+    WEBUI_OUT="$BUILDDIR/webui/webui"
 else
-    echo ">>> WARNING: retroshare-webui/webui is missing — the AppImage will ship"
+    WEBUI_OUT="$ROOT/retroshare-webui/webui"
+fi
+if [ -f "$WEBUI_OUT/index.html" ]; then
+    mkdir -p "$APPDIR/usr/share/retroshare/webui"
+    cp -r "$WEBUI_OUT/." "$APPDIR/usr/share/retroshare/webui/"
+    echo ">>> web UI bundled from $WEBUI_OUT"
+else
+    echo ">>> WARNING: $WEBUI_OUT/index.html is missing — the AppImage will ship"
     echo "    no web interface. Configure the build with -DRS_WEBUI=ON."
 fi
 

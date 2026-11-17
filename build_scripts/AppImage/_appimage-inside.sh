@@ -71,12 +71,21 @@ sed -i 's|^Exec=/usr/bin/retroshare|Exec=retroshare-gui|' "$DESKTOP"
 
 # web UI: RetroShare resolves its data directory as <exedir>/../share/retroshare
 # when running from a relocated tree, so the web files must land exactly there.
-if [ -d "$SRC/retroshare-webui/webui" ]; then
-    mkdir -p "$APPDIR/usr/share/retroshare/webui"
-    cp -r "$SRC/retroshare-webui/webui/." "$APPDIR/usr/share/retroshare/webui/"
-    echo ">>> web UI bundled from retroshare-webui/webui"
+# The CMake build of retroshare-webui (the one that ships mk/build-app.cmake)
+# writes the web files into the build tree; its older build script writes them
+# into retroshare-webui/webui. Pick by which one this checkout has, so that a
+# folder left by an earlier build of the other kind is never bundled.
+if [ -f "$SRC/retroshare-webui/mk/build-app.cmake" ]; then
+    WEBUI_OUT="$BUILD/webui/webui"
 else
-    echo ">>> WARNING: retroshare-webui/webui is missing — no web interface bundled"
+    WEBUI_OUT="$SRC/retroshare-webui/webui"
+fi
+if [ -f "$WEBUI_OUT/index.html" ]; then
+    mkdir -p "$APPDIR/usr/share/retroshare/webui"
+    cp -r "$WEBUI_OUT/." "$APPDIR/usr/share/retroshare/webui/"
+    echo ">>> web UI bundled from $WEBUI_OUT"
+else
+    echo ">>> WARNING: $WEBUI_OUT/index.html is missing — no web interface bundled"
 fi
 
 # DHT bootstrap list: a new account copies <data dir>/bdboot.txt into its own
