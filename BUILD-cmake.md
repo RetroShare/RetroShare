@@ -53,25 +53,6 @@ git submodule update --init supportlibs/restbed supportlibs/libsam3 \
                               supportlibs/udp-discovery-cpp supportlibs/rapidjson
 ```
 
-### Fix rapidjson (all platforms)
-
-The rapidjson commit pinned by the super-project (`f54b0e47`) carries a broken
-assignment operator that recent compilers reject: with **GCC 14 or newer**
-(Debian 13, current MSYS2) the build fails with *"assignment of read-only member
-'length'"*, and recent Clang may reject it too (GCC 13, e.g. Ubuntu 24.04, still
-accepts it). Check out the upstream fix (Tencent/rapidjson #719), which only
-removes that operator — it is harmless everywhere, so do it whatever your
-compiler:
-
-```bash
-git -C supportlibs/rapidjson fetch origin
-git -C supportlibs/rapidjson checkout 9bd618f5
-```
-
-Side effect: `git status` now shows `supportlibs/rapidjson` as modified, and the
-version stamped into the build gets a `-dirty` suffix (see
-[Version numbering](#version-numbering)). Both are harmless.
-
 ---
 
 ## 2. Qt5 or Qt6
@@ -91,8 +72,12 @@ If you want the plugins, build with Qt5.
 
 ## 3. Linux (Ubuntu/Debian)
 
-The CMake CI builds Qt5 on Ubuntu 22.04 and Qt6 on Ubuntu 24.04. Ubuntu 20.04
-ships CMake 3.16, which is too old.
+The CMake CI builds Qt5 on Ubuntu 22.04 and Qt6 on Ubuntu 24.04 and 26.04.
+Ubuntu 20.04 ships CMake 3.16, which is too old.
+
+> **Ubuntu 26.04:** Botan 2 is gone from the archive. In the lists below, install
+> **`libbotan-3-dev`** instead of `libbotan-2-dev`; nothing else changes (GCC 15,
+> Qt 6.10, same Qt6 package names).
 
 Dependencies — **Qt5**:
 ```bash
@@ -368,13 +353,6 @@ git submodule update --init supportlibs/restbed supportlibs/libsam3 \
                               supportlibs/udp-discovery-cpp supportlibs/rapidjson
 ```
 
-Then apply the rapidjson fix of [§1](#fix-rapidjson-all-platforms) — MSYS2
-ships GCC ≥ 14, so it is required here:
-```bash
-git -C supportlibs/rapidjson fetch origin
-git -C supportlibs/rapidjson checkout 9bd618f5
-```
-
 ### 5.4 Build
 
 Notes on the commands below:
@@ -640,8 +618,8 @@ libRetroShare version.
 
 Notes:
 - **`-dirty`** is appended whenever the working tree has *tracked* modifications
-  at configure time. Modified **submodule pointers count**, so the rapidjson fix
-  of [§1](#fix-rapidjson-all-platforms) alone makes the GUI version
+  at configure time. Modified **submodule pointers count**: a submodule checked
+  out on another commit than the pinned one alone makes the GUI version
   `-dirty`. Untracked files never trigger it.
 - libretroshare uses `--long`, which **always** prints the `-<N>-g<hash>` suffix —
   even on a tagged commit you get `v0.6.7-0-g…`, never a bare `0.6.7`.
