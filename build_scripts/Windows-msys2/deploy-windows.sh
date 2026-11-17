@@ -340,15 +340,25 @@ fi
 
 # 10. Déploiement de la WebUI (si présente)
 echo ">>> Deploying WebUI static assets..."
-# The generated web files live in retroshare-webui/webui (retroshare-webui/src
-# never existed, so this copy silently did nothing). RetroShare looks for them
-# in ./webui relative to the executable, which is exactly $DEPLOY_DIR/webui.
-if [ -d "retroshare-webui/webui" ]; then
-    mkdir -p "$DEPLOY_DIR/webui"
-    cp -r retroshare-webui/webui/. "$DEPLOY_DIR/webui/"
-    echo "  WebUI copied to deployment folder."
+# RetroShare looks for the web files in ./webui relative to the executable,
+# which is exactly $DEPLOY_DIR/webui (retroshare-webui/src never existed, so
+# the old copy from there silently did nothing).
+# Where the build left the generated web files. The CMake build of
+# retroshare-webui (the one that ships mk/build-app.cmake) writes them into the
+# build tree; its older build script writes them into retroshare-webui/webui.
+# Pick by which one this checkout has, so that a folder left by an earlier
+# build of the other kind is never shipped.
+if [ -f "retroshare-webui/mk/build-app.cmake" ]; then
+    WEBUI_OUT="$BUILD_DIR/webui/webui"
 else
-    echo "  WARNING: retroshare-webui/webui not found, the archive will ship no web interface."
+    WEBUI_OUT="retroshare-webui/webui"
+fi
+if [ -f "$WEBUI_OUT/index.html" ]; then
+    mkdir -p "$DEPLOY_DIR/webui"
+    cp -r "$WEBUI_OUT/." "$DEPLOY_DIR/webui/"
+    echo "  WebUI copied to deployment folder from $WEBUI_OUT."
+else
+    echo "  WARNING: $WEBUI_OUT/index.html not found, the archive will ship no web interface."
     echo "           Configure the build with -DRS_WEBUI=ON to generate it."
 fi
 

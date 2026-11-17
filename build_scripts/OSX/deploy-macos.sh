@@ -143,14 +143,24 @@ if [ -d "retroshare-gui/src/translations" ]; then
     find "retroshare-gui/src/translations" -name "*.qm" -exec cp {} "$APP_RESOURCES/translations/" \; 2>/dev/null || true
 fi
 
-# The generated web files live in retroshare-webui/webui (retroshare-webui/src
-# never existed, so this copy silently did nothing and shipped an empty webui
-# folder). Contents/Resources/webui is where libretroshare looks for them.
-if [ -d "retroshare-webui/webui" ]; then
-    cp -r retroshare-webui/webui/. "$APP_RESOURCES/webui/"
-    echo "  WebUI copied to app resources."
+# Contents/Resources/webui is where libretroshare looks for the web files
+# (retroshare-webui/src never existed, so the old copy from there silently did
+# nothing and shipped an empty webui folder).
+# Where the build left the generated web files. The CMake build of
+# retroshare-webui (the one that ships mk/build-app.cmake) writes them into the
+# build tree; its older build script writes them into retroshare-webui/webui.
+# Pick by which one this checkout has, so that a folder left by an earlier
+# build of the other kind is never shipped.
+if [ -f "retroshare-webui/mk/build-app.cmake" ]; then
+    WEBUI_OUT="$BUILD_DIR/webui/webui"
 else
-    echo "  WARNING: retroshare-webui/webui not found, the bundle will ship no web interface."
+    WEBUI_OUT="retroshare-webui/webui"
+fi
+if [ -f "$WEBUI_OUT/index.html" ]; then
+    cp -r "$WEBUI_OUT/." "$APP_RESOURCES/webui/"
+    echo "  WebUI copied to app resources from $WEBUI_OUT."
+else
+    echo "  WARNING: $WEBUI_OUT/index.html not found, the bundle will ship no web interface."
     echo "           Configure the build with -DRS_WEBUI=ON to generate it."
 fi
 
