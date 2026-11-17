@@ -470,9 +470,10 @@ password on the console and enables the WebUI. This requires the
 `RS_WEBUI=ON` alone the WebUI is built but can never be switched on. Run from the
 build tree (Linux / macOS), the service looks for the web files where
 `cmake --install` would put them (`/usr/local/share/retroshare/webui/` on
-Linux); point it at the generated ones with `-B` instead:
+Linux); point it at the generated ones, which the build writes into
+`Build-cmake/webui/webui/`, with `-B` instead:
 ```bash
-./Build-cmake/retroshare-service/retroshare-service -W -B retroshare-webui/webui/
+./Build-cmake/retroshare-service/retroshare-service -W -B Build-cmake/webui/webui/
 ```
 On Windows,
 the portable folder does not ship the WebUI files yet (see [§5.5](#55-package-it)).
