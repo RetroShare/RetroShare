@@ -288,8 +288,9 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 	 {
 		 case FileChunksInfo::CHUNK_STRATEGY_RANDOM:      painter->drawText(tab_size,y,"Random") ; break ;
 		 case FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE: painter->drawText(tab_size,y,"Progressive") ; break ;
-		 default:
 		 case FileChunksInfo::CHUNK_STRATEGY_STREAMING:   painter->drawText(tab_size,y,"Streaming") ; break ;
+		 default:
+		 case FileChunksInfo::CHUNK_STRATEGY_SEQUENTIAL:  painter->drawText(tab_size,y,"Sequential") ; break ;
 	 }
 	 y += block_sep ;
      y += text_height ; painter->drawText(2*S,y,tr("Transfer type") + ":") ;

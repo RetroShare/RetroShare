@@ -30,6 +30,8 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QFontDialog>
+#include <QMessageBox>
+#include <QStorageInfo>
 #include <QString>
 
 #include <time.h>
@@ -65,6 +67,24 @@ QString misc::fingerPrintStyleSplit(const QString& in)
 		res += rest.mid(i,4)+' ' ;
 
 	return res.left(res.length()-1) ;
+}
+
+bool misc::confirmFarWriteChunkStrategy(QWidget *parent, const QString& partialsDirectory)
+{
+#ifdef WINDOWS_SYS
+    // libretroshare marks every partial file as sparse, which NTFS and ReFS honour. The FAT family
+    // (FAT, FAT32, exFAT) has no sparse files. Nothing is asked when the filesystem is unknown.
+    const QString fileSystem = QString::fromLatin1(QStorageInfo(partialsDirectory).fileSystemType()).toUpper();
+
+    if(!fileSystem.contains("FAT"))
+        return true;
+
+    return QMessageBox::Yes == QMessageBox::warning(parent, tr("Warning"), tr("The partials directory is on a filesystem without sparse file support (FAT32 or exFAT). Writing near the end of a large empty file (Random or Streaming) may hang the software for several seconds while the whole file is allocated. Do you want to use this option anyway (otherwise use \"Sequential\" or \"Progressive\")?"), QMessageBox::Yes, QMessageBox::No);
+#else
+    Q_UNUSED(parent);
+    Q_UNUSED(partialsDirectory);
+    return true;
+#endif
 }
 
 bool misc::isPreviewable(QString extension)

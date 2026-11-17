@@ -157,13 +157,7 @@ void TransferPage::load()
 
 	whileBlocking(ui._queueSize_SB)->setValue(rsFiles->getQueueSize()) ;
 
-    switch(rsFiles->defaultChunkStrategy())
-    {
-    case FileChunksInfo::CHUNK_STRATEGY_SEQUENTIAL: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(0) ; break ;
-    case FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(1) ; break ;
-    case FileChunksInfo::CHUNK_STRATEGY_RANDOM: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(2) ; break ;
-    case FileChunksInfo::CHUNK_STRATEGY_STREAMING: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(3) ; break ;
-    }
+    showDefaultStrategy();
 
 #ifdef TO_REMOVE
     switch(rsFiles->defaultEncryptionPolicy())
@@ -221,6 +215,17 @@ void TransferPage::load()
 	Settings->endGroup();
 }
 
+void TransferPage::showDefaultStrategy()
+{
+    switch(rsFiles->defaultChunkStrategy())
+    {
+    case FileChunksInfo::CHUNK_STRATEGY_SEQUENTIAL: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(0) ; break ;
+    case FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(1) ; break ;
+    case FileChunksInfo::CHUNK_STRATEGY_RANDOM: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(2) ; break ;
+    case FileChunksInfo::CHUNK_STRATEGY_STREAMING: whileBlocking(ui._defaultStrategy_CB)->setCurrentIndex(3) ; break ;
+    }
+}
+
 void TransferPage::updateDefaultStrategy(int i)
 {
 	switch(i)
@@ -230,13 +235,11 @@ void TransferPage::updateDefaultStrategy(int i)
 
         case 2:
         case 3:
-#ifdef WINDOWS_SYS
-                if(QMessageBox::Yes != QMessageBox::warning(nullptr,tr("Warning"),tr("On Windows systems, writing to the end of large empty files (Random or Streaming) may hang the software for several seconds during allocation. Do you want to use this option anyway (otherwise use \"Sequential\" or \"Progressive\")?"),QMessageBox::Yes,QMessageBox::No))
+                if(!misc::confirmFarWriteChunkStrategy(this, QString::fromUtf8(rsFiles->getPartialsDirectory().c_str())))
                 {
-                    ui._defaultStrategy_CB->setCurrentIndex(1);
+                    showDefaultStrategy();	// refused: back to the strategy in force
                     return;
                 }
-#endif
                 rsFiles->setDefaultChunkStrategy(i == 3 ? FileChunksInfo::CHUNK_STRATEGY_STREAMING : FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
                 break ;
 

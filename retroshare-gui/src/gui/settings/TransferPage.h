@@ -42,6 +42,9 @@ class TransferPage: public ConfigPage
         virtual QString pageName() const { return tr("Files") ; }
 		virtual QString helpText() const { return ""; }
 
+	private:
+		void showDefaultStrategy() ;	// puts the strategy in force back into the selector
+
 	public slots:
 		void updateQueueSize(int) ;
 		void updateDefaultStrategy(int) ;

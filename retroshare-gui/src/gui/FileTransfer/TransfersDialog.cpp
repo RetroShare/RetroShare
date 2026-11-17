@@ -2229,18 +2229,14 @@ void TransfersDialog::chunkSequential()
 }
 void TransfersDialog::chunkStreaming()
 {
-#ifdef WINDOWS_SYS
-    if(QMessageBox::Yes != QMessageBox::warning(nullptr,tr("Warning"),tr("On Windows systems, writing to the end of large empty files (Random or Streaming) may hang the software for several seconds during allocation. Do you want to use this option anyway (otherwise use \"Sequential\" or \"Progressive\")?"),QMessageBox::Yes,QMessageBox::No))
+    if(!misc::confirmFarWriteChunkStrategy(this, QString::fromUtf8(rsFiles->getPartialsDirectory().c_str())))
         return;
-#endif
 	setChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_STREAMING) ;
 }
 void TransfersDialog::chunkRandom()
 {
-#ifdef WINDOWS_SYS
-    if(QMessageBox::Yes != QMessageBox::warning(nullptr,tr("Warning"),tr("On Windows systems, writing to the end of large empty files (Random or Streaming) may hang the software for several seconds during allocation. Do you want to use this option anyway (otherwise use \"Sequential\" or \"Progressive\")?"),QMessageBox::Yes,QMessageBox::No))
+    if(!misc::confirmFarWriteChunkStrategy(this, QString::fromUtf8(rsFiles->getPartialsDirectory().c_str())))
         return;
-#endif
 	setChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
 }
 void TransfersDialog::chunkProgressive()

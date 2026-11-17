@@ -106,6 +106,13 @@ class misc : public QObject
 
     static bool isPreviewable(QString extension);
 
+    // Random and Streaming write far into an empty partial file. Where the partials directory is on
+    // a filesystem without sparse files (Windows: FAT32, exFAT), the whole file is then allocated at
+    // once, which can freeze the application for a while. Asks the user in that case only (never when
+    // the filesystem is unknown); returns
+    // true when the strategy can be used.
+    static bool confirmFarWriteChunkStrategy(QWidget *parent, const QString& partialsDirectory);
+
 	 static QString fingerPrintStyleSplit(const QString& in) ;
 
     // return qBittorrent config path
