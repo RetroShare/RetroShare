@@ -307,7 +307,6 @@
              <property name="autoRaise">
               <bool>false</bool>
              </property>
-
             </widget>
            </item>
            <item>

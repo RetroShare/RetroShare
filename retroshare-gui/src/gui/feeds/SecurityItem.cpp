@@ -21,8 +21,6 @@
 #include <QDateTime>
 #include <QTimer>
 #include <QMessageBox>
-#include <QMenu>
-#include <QMouseEvent>
 
 #include "SecurityItem.h"
 #include "FeedHolder.h"
@@ -57,8 +55,8 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 	removeFriendButton->setEnabled(false);
 	removeFriendButton->hide();
 	banButton->hide();
-	banButton->setToolTip(tr("Ignore this profile: it is added to the Ignored Users list, its connection attempts are denied automatically "
-	                         "and no longer shown here. You can manage the list in Preferences -> Notify."));
+	banButton->setToolTip(tr("Ignore this profile: it is added to the Ignored Users list and its connection attempts are no longer "
+	                         "shown here. It leaves the list if you make it a friend. You can manage the list in Preferences -> Notify."));
     
     QPalette pal = banButton->palette();
     pal.setColor(QPalette::ButtonText, Qt::red);
@@ -252,7 +250,7 @@ void SecurityItem::updateItem()
 
 			removeFriendButton->setEnabled(false);
 			removeFriendButton->hide();
-			banButton->show();
+			banButton->setVisible(!mGpgId.isNull()); // nothing to ignore without a PGP id
 			peerDetailsButton->setEnabled(false);
 			
             if(mType == RsFeedTypeFlags::RS_FEED_ITEM_SEC_BAD_CERTIFICATE)
@@ -335,7 +333,7 @@ void SecurityItem::updateItem()
 			}
 			removeFriendButton->setEnabled(false);
 			removeFriendButton->hide();
-			banButton->show();
+			banButton->setVisible(!mGpgId.isNull()); // nothing to ignore without a PGP id
 		}
 
 		//quickmsgButton->show();
@@ -400,10 +398,26 @@ void SecurityItem::banUser()
     reply = QMessageBox::question(this, tr("Ignore User"), tr("Are you sure you want to ignore this user? They will be added to the Ignored Users list and you will not receive further notifications from them. If they are a friend, they are also removed from your friends. You can manage the list in Preferences -> Notify."),
                                   QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
-        rsPeers->addToIgnoreList(mGpgId, mSslCn);
+        // Keep the profile name when the key is known: the list stays readable
+        // if the key later leaves the keyring.
+        std::string name;
+        RsPeerDetails details;
+        if (rsPeers->getGPGDetails(mGpgId, details))
+            name = details.name;
+
+        rsPeers->addToIgnoreList(mGpgId, name);
         rsPeers->removeFriend(mGpgId);
-        // Remove this item from the feed as it is now handled
-        removeItem(); 
+
+        // Every item of this profile is now handled: remove them from the feed,
+        // this one last.
+        QList<SecurityItem*> others;
+        for (SecurityItem *item : window()->findChildren<SecurityItem*>())
+            if (item != this && item->mFeedHolder == mFeedHolder && item->mGpgId == mGpgId)
+                others << item;
+        for (SecurityItem *item : others)
+            item->removeItem();
+
+        removeItem();
     }
 }
 

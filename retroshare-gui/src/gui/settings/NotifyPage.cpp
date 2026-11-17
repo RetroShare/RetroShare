@@ -52,6 +52,8 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
     connect(ui.addIgnoredButton, SIGNAL(clicked()), this, SLOT(addIgnoredUser()));
     connect(ui.removeIgnoredButton, SIGNAL(clicked()), this, SLOT(removeIgnoredUser()));
+    connect(ui.ignoredTreeWidget, &QTreeWidget::currentItemChanged, this,
+            [this](QTreeWidgetItem *current, QTreeWidgetItem*) { ui.removeIgnoredButton->setEnabled(current != nullptr); });
 
 	ui.notify_Blogs->hide();
 
@@ -406,9 +408,6 @@ void NotifyPage::load()
 void NotifyPage::loadIgnoredUsers()
 {
     ui.ignoredTreeWidget->clear();
-    QStringList headers; 
-    headers << tr("Name") << tr("PGP Id");
-    ui.ignoredTreeWidget->setHeaderLabels(headers);
 
     std::map<RsPgpId, std::string> ids;
     if(rsPeers)
@@ -426,6 +425,8 @@ void NotifyPage::loadIgnoredUsers()
          item->setText(0, QString::fromStdString(displayName));
          item->setText(1, QString::fromStdString(pair.first.toStdString()));
     }
+
+    ui.removeIgnoredButton->setEnabled(ui.ignoredTreeWidget->currentItem() != nullptr);
 }
 
 void NotifyPage::notifyToggled()
@@ -499,7 +500,7 @@ void NotifyPage::addIgnoredUser()
 
     // Since MODUS_SINGLE, we should have at most one ID, but loop just in case or take first.
     for(const RsPgpId& id : ids) {
-        if (id.isNull()) continue;
+        if (id.isNull() || id == rsPeers->getGPGOwnId()) continue; // the own profile cannot be ignored
 
         // Try to get name from peers interface if possible, otherwise empty
         std::string name; 
