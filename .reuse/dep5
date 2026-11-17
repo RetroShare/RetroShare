@@ -191,8 +191,15 @@ Comment: help pages and their table of contents, started from the help
  system of Vidalia.
 
 Files: retroshare-gui/src/gui/common/PictureFlow.*
-Copyright: 2013, Jeff Weinstein <jeff.weinstein@gmail.com>
+Copyright: 2007-2008, Ariya Hidayat <ariya@kde.org>
 License: MIT
+
+Files: retroshare-gui/src/cmark_export.h
+       retroshare-gui/src/cmark_version.h
+       retroshare-gui/src/config.h
+Copyright: 2014, John MacFarlane
+License: BSD-2-Clause
+Comment: configuration headers of cmark 0.28.0, see supportlibs/cmark.
 
 Files: retroshare-gui/src/gui/common/MacDockIconHandler.*
 Copyright: 2011-2019, The Bitcoin Core developers
@@ -327,6 +334,12 @@ Comment: QDarkStyleSheet v3.0.2 images.
 Files: retroshare-gui/src/gui/images/extension.svg
 Copyright: Andreas Nilsson, Tango Desktop Project
 License: CC-BY-SA-2.0
+
+Files: retroshare-gui/src/gui/TheWire/images/external-link.svg
+       retroshare-gui/src/gui/TheWire/images/link.svg
+Copyright: 2013-2017, Cole Bennett
+License: MIT
+Comment: Feather icons, recoloured.
 
 Files: retroshare-gui/src/gui/icons/help_64.png
 Copyright: Yan Shuangchun
@@ -586,7 +599,8 @@ Files: RetroShare.pro
 Copyright: 2004-2019, Retroshare Team <contact@retroshare.cc>
 License: LGPL-3.0-or-later
 
-Files: retroshare-service/src/retroshare-service.inkscape.svg.license
+Files: retroshare-service/src/retroshare-service.inkscape.svg
+       retroshare-service/src/retroshare-service.inkscape.svg.license
 Copyright: 2018-2026, Gioacchino Mazzurco <gio@retroshare.cc>
            2022, Retroshare Team <contact@retroshare.cc>
 License: CC-BY-SA-4.0
