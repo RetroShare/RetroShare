@@ -50,6 +50,7 @@ License: LGPL-3.0-only
 Files: libretroshare/src/util/rsurl.*
        libretroshare/src/rs_android/retroshareserviceandroid.*
        libretroshare/src/rs_android/org/retroshare/service/*
+       libretroshare/src/jsonapi/method-wrapper-template.cpp.tmpl
        libretroshare/tests/*
 Copyright: 2004-2026, Retroshare Team <contact@retroshare.cc>
            2016-2023, Gioacchino Mazzurco <gio@retroshare.cc>
@@ -88,6 +89,8 @@ Copyright: 2004-2026, Retroshare Team <contact@retroshare.cc>
 License: LGPL-3.0-or-later
 
 Files: libretroshare/gradle/wrapper/*
+       libretroshare/gradlew
+       libretroshare/gradlew.bat
 Copyright: Gradle, Inc.
 License: Apache-2.0
 
@@ -155,6 +158,10 @@ Files: jsonapi-generator/*
 Copyright: 2018-2019, Gioacchino Mazzurco <gio@eigenlab.org>
 License: AGPL-3.0-or-later
 
+Files: jsonapi-generator/src/async-method-wrapper-template.cpp.tmpl
+Copyright: 2018-2019, Gioacchino Mazzurco <gio@retroshare.cc>
+License: AGPL-3.0-only
+
 Files: retroshare-gui/src/gui/unfinished/*
        retroshare-gui/src/Unused/*
 Copyright: 2006-2008, crypton
@@ -169,6 +176,19 @@ License: AGPL-3.0-or-later
 Files: retroshare-gui/src/gui/WikiPoos/WikiDialog.cpp
 Copyright: 2012, Robert Fernie
 License: LGPL-2.1-only
+
+Files: retroshare-gui/src/gui/help/authors.html
+       retroshare-gui/src/gui/help/licence.html
+       retroshare-gui/src/gui/help/thanks.html
+       retroshare-gui/src/gui/help/content/contents.dtd
+       retroshare-gui/src/gui/help/content/de/*
+       retroshare-gui/src/gui/help/content/en/*
+Copyright: 2006-2012, Retroshare Team <contact@retroshare.cc>
+           2008, defnax
+           2008, Matt Edman, Justin Hipple
+License: GPL-2.0-or-later
+Comment: help pages and their table of contents, started from the help
+ system of Vidalia.
 
 Files: retroshare-gui/src/gui/common/PictureFlow.*
 Copyright: 2013, Jeff Weinstein <jeff.weinstein@gmail.com>
