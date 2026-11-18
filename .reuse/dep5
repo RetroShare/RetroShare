@@ -520,6 +520,15 @@ Comment: the symbols are Flaticon icons by Freepik and Eleonor Wang, credited
  set, and circles-gray and forums-newpost/nopost/red (2018-19) are recolours.
  The coloured discs are defnax's own work (RetroShare#3342).
 
+Files: retroshare-gui/src/gui/icons/svg/flame.svg
+       retroshare-gui/src/gui/icons/png/flame.png
+       retroshare-gui/src/gui/icons/svg/design.svg
+Copyright: Google LLC
+License: Apache-2.0
+Comment: Material Icons "whatshot" and "display_settings"
+ (google/material-design-icons 10ecc147), recoloured, as of the icon
+ replacement PR (fix/replace-untraced-icons).
+
 Files: retroshare-gui/src/gui/icons/png/markdown-mark.png
 Copyright: Dustin Curtis
 License: CC0-1.0
