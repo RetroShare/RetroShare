@@ -452,6 +452,80 @@ License: GPL-2.0-or-later
 Comment: freedesktop.org sound theme 0.8 (message-new-instant,
  phone-incoming-call, phone-outgoing-calling), converted to WAV.
 
+Files: retroshare-gui/src/gui/icons/png/channels.png
+       retroshare-gui/src/gui/icons/png/channels-notify.png
+       retroshare-gui/src/gui/icons/png/chat-lobbies.png
+       retroshare-gui/src/gui/icons/png/chat-lobbies-notify.png
+       retroshare-gui/src/gui/icons/png/circles.png
+       retroshare-gui/src/gui/icons/png/circles-gray.png
+       retroshare-gui/src/gui/icons/png/exit.png
+       retroshare-gui/src/gui/icons/png/filesharing.png
+       retroshare-gui/src/gui/icons/png/filesharing-notify.png
+       retroshare-gui/src/gui/icons/png/forums.png
+       retroshare-gui/src/gui/icons/png/forums-notify.png
+       retroshare-gui/src/gui/icons/png/forums-newpost.png
+       retroshare-gui/src/gui/icons/png/forums-nopost.png
+       retroshare-gui/src/gui/icons/png/forums-red.png
+       retroshare-gui/src/gui/icons/png/info.png
+       retroshare-gui/src/gui/icons/png/messages.png
+       retroshare-gui/src/gui/icons/png/messages-notify.png
+       retroshare-gui/src/gui/icons/png/network.png
+       retroshare-gui/src/gui/icons/png/network-notify.png
+       retroshare-gui/src/gui/icons/png/newsfeed.png
+       retroshare-gui/src/gui/icons/png/newsfeed-notify.png
+       retroshare-gui/src/gui/icons/png/options.png
+       retroshare-gui/src/gui/icons/png/people.png
+       retroshare-gui/src/gui/icons/png/people-notify.png
+       retroshare-gui/src/gui/icons/png/posted.png
+       retroshare-gui/src/gui/icons/png/posted-notify.png
+       retroshare-gui/src/gui/icons/svg/channels.svg
+       retroshare-gui/src/gui/icons/svg/channels-notify.svg
+       retroshare-gui/src/gui/icons/svg/chat-lobbies.svg
+       retroshare-gui/src/gui/icons/svg/chat-lobbies-notify.svg
+       retroshare-gui/src/gui/icons/svg/circles.svg
+       retroshare-gui/src/gui/icons/svg/circles-gray.svg
+       retroshare-gui/src/gui/icons/svg/download.svg
+       retroshare-gui/src/gui/icons/svg/exit.svg
+       retroshare-gui/src/gui/icons/svg/exit-red.svg
+       retroshare-gui/src/gui/icons/svg/filesharing.svg
+       retroshare-gui/src/gui/icons/svg/filesharing-notify.svg
+       retroshare-gui/src/gui/icons/svg/folders.svg
+       retroshare-gui/src/gui/icons/svg/folders1.svg
+       retroshare-gui/src/gui/icons/svg/forums.svg
+       retroshare-gui/src/gui/icons/svg/forums-notify.svg
+       retroshare-gui/src/gui/icons/svg/forums-newpost.svg
+       retroshare-gui/src/gui/icons/svg/forums-nopost.svg
+       retroshare-gui/src/gui/icons/svg/forums-red.svg
+       retroshare-gui/src/gui/icons/svg/info.svg
+       retroshare-gui/src/gui/icons/svg/magnifying-glass.svg
+       retroshare-gui/src/gui/icons/svg/messages.svg
+       retroshare-gui/src/gui/icons/svg/messages-notify.svg
+       retroshare-gui/src/gui/icons/svg/network.svg
+       retroshare-gui/src/gui/icons/svg/network-notify.svg
+       retroshare-gui/src/gui/icons/svg/newsfeed.svg
+       retroshare-gui/src/gui/icons/svg/newsfeed-notify.svg
+       retroshare-gui/src/gui/icons/svg/options.svg
+       retroshare-gui/src/gui/icons/svg/people.svg
+       retroshare-gui/src/gui/icons/svg/people-notify.svg
+       retroshare-gui/src/gui/icons/svg/posted.svg
+       retroshare-gui/src/gui/icons/svg/posted-notify.svg
+       retroshare-gui/src/gui/icons/svg/upload.svg
+Copyright: Freepik (www.flaticon.com)
+           Eleonor Wang (www.flaticon.com/authors/eleonor-wang)
+           defnax
+License: CC-BY-3.0
+Comment: the symbols are Flaticon icons by Freepik and Eleonor Wang, credited
+ "licensed by CC 3.0 BY" in gui/help/licence.html when they were added
+ (6682a7a49, 5241a7d4c, 2016); circles (45198121f, 2016) belongs to the same
+ set, and circles-gray and forums-newpost/nopost/red (2018-19) are recolours.
+ The coloured discs are defnax's own work (RetroShare#3342).
+
+Files: retroshare-gui/src/gui/icons/png/markdown-mark.png
+Copyright: Dustin Curtis
+License: CC0-1.0
+Comment: the Markdown Mark (github.com/dcurtis/markdown-mark), dedicated to
+ the public domain; the 2017 file is identical to its png/1664x1024.png.
+
 Files: retroshare-gui/src/gui/icons/png/feed-other.png
        retroshare-gui/src/gui/icons/png/feed-popular.png
        retroshare-gui/src/gui/icons/png/feed-subscribed.png
@@ -460,6 +534,8 @@ Files: retroshare-gui/src/gui/icons/png/feed-other.png
        retroshare-gui/src/gui/icons/svg/feed-other.svg
        retroshare-gui/src/gui/icons/svg/feed-popular.svg
        retroshare-gui/src/gui/icons/svg/feed-subscribed.svg
+       retroshare-gui/src/gui/icons/svg/feedreader.svg
+       retroshare-gui/src/gui/icons/svg/feedreader-notify.svg
        plugins/FeedReader/gui/images/FeedReader.png
        plugins/FeedReader/gui/images/feedreader-notify.png
 Copyright: Mozilla Foundation
@@ -588,7 +664,6 @@ Files: .gitignore
        jsonapi-generator/README.adoc
        jsonapi-generator/src/jsonapi-generator.pro
        retroshare-service/CMakeLists.txt
-       retroshare-webui/CMakeLists.txt
 Copyright: 2004-2024, Retroshare Team <contact@retroshare.cc>
            2021-2026, Gioacchino Mazzurco <gio@retroshare.cc>
 License: CC0-1.0
