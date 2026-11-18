@@ -158,10 +158,6 @@ Files: jsonapi-generator/*
 Copyright: 2018-2019, Gioacchino Mazzurco <gio@eigenlab.org>
 License: AGPL-3.0-or-later
 
-Files: jsonapi-generator/src/async-method-wrapper-template.cpp.tmpl
-Copyright: 2018-2019, Gioacchino Mazzurco <gio@retroshare.cc>
-License: AGPL-3.0-only
-
 Files: retroshare-gui/src/gui/unfinished/*
        retroshare-gui/src/Unused/*
 Copyright: 2006-2008, crypton
