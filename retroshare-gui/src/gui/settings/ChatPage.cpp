@@ -179,7 +179,8 @@ void ChatPage::updateHistoryParams()
     rsHistory->setSaveCount(RS_HISTORY_TYPE_LOBBY  , ui.lobbyChatSaveCount->value());
 	rsHistory->setSaveCount(RS_HISTORY_TYPE_DISTANT, ui.distantChatSaveCount->value());
 
-	rsChats->allowHistorySharing(ui.allowHistorySharing->isChecked()) ;
+	if(rsChats->isHistorySharingAllowed() != ui.allowHistorySharing->isChecked())
+		rsChats->allowHistorySharing(ui.allowHistorySharing->isChecked()) ;
 }
 
 void ChatPage::updatePublicStyle()

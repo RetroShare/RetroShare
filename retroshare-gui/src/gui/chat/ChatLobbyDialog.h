@@ -28,8 +28,8 @@
 #include "PopupChatWindow.h"
 #include "util/FontSizeHandler.h"
 
-#include <QSet>
-#include <QMap>
+#include <QElapsedTimer>
+#include <QStringList>
 #include <QTimer>
 #include <retroshare/rshistory.h>
 
@@ -153,20 +153,27 @@ private:
 private slots:
     void onHistoryProbeTimeout();
     void onHistoryDataTimeout();
+    void displayNextHistoryBatch();
 
 private:
-    // Variables for Step 13 custom history fetching logic
+    // Chat history retrieval: probe phase, then data phase, then display
+    void finishHistoryFetch();
+
     QTimer* mHistoryProbeTimer;
     QTimer* mHistoryDataTimer;
-    
+    QElapsedTimer mHistoryDataElapsed; // time since the data requests were sent
+
     bool mIsWaitingForProbes;
     bool mIsWaitingForData;
     uint32_t mRequestedOldestTs;
-    
+
     std::set<RsPeerId> mSelectedPeersForHistory;
+    std::set<RsPeerId> mPendingHistoryPeers; // friends we sent a request to, that have not finished answering
     std::map<RsPeerId, uint32_t> mBufferedProbeResponses; // PeerId -> oldest available timestamp
-    std::list<HistoryMsg> mBufferedHistoryData; // All messages received during the data timeout
+    std::list<HistoryMsg> mBufferedHistoryData; // All messages received from the friends
     std::list<HistoryMsg> mBufferedLocalHistoryData; // Local history buffered for merged display
+    QStringList mHistoryRelayNames; // friends that sent lines, for the header of the block
+    std::list<HistoryMsg> mHistoryDisplayQueue; // lines waiting to be shown, a batch at a time
 };
 
 #endif
