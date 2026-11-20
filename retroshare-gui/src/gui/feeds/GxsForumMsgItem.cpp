@@ -167,42 +167,33 @@ void GxsForumMsgItem::loadGroup()
 #endif
 
 		std::vector<RsGxsForumGroup> groups;
+		bool ok = rsGxsForums->getForumsInfo({ grpId },groups);
 
-        if(!rsGxsForums->getForumsInfo({ grpId },groups))
-		{
+		if(!ok)
 			RsErr() << "GxsForumGroupItem::loadGroup() ERROR getting data" << std::endl;
-            RsQThreadUtils::postToObject( [self]()
-            {
-                if(!self) return;
-                self->mLoadingGroup = false;
-                self->deferred_update();
-            }, qApp );
-            return;
-		}
-
-		if (groups.size() != 1)
+		else if (groups.size() != 1)
 		{
 			std::cerr << "GxsForumGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
-            RsQThreadUtils::postToObject( [self]()
-            {
-                if(!self) return;
-                self->mLoadingGroup = false;
-                self->deferred_update();
-            }, qApp );
-            return;
+			ok = false;
 		}
-		RsGxsForumGroup group(groups[0]);
 
-		RsQThreadUtils::postToObject( [self,group]()
+		RsGxsForumGroup group;
+		if(ok)
+			group = groups[0];
+
+		// Success and failure share this single continuation: the item can only be
+		// checked for liveness on the GUI thread, and deferred_update() touches it too.
+		RsQThreadUtils::postToObject( [self,ok,group]()
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
-            if(!self) return;
+			if(!self) return;
 
-            self->mGroup = group;
-            self->mLoadingGroup = false;
+			self->mLoadingGroup = false;
+
+			if(ok)
+				self->mGroup = group;
+			else
+				self->deferred_update();
 
 		}, qApp );
 	});
@@ -247,32 +238,31 @@ void GxsForumMsgItem::loadMessage()
 
         RsGxsForumMsg msg,parent_msg;
 
-        if(!getMessageData(grpId,msgId,msg))
-        {
+        const bool ok = getMessageData(grpId,msgId,msg);
+
+        if(!ok)
             std::cerr << "GxsForumMsgItem::loadMessage() ERROR getting message data";
-            RsQThreadUtils::postToObject( [self]()
-            {
-                if(!self) return;
-                self->mLoadingMessage = false;
-                self->deferred_update();
-            }, qApp );
-            return;
-        }
+
         // now load the parent message. If not found, it's not a problem.
 
-        if(!msg.mMeta.mParentId.isNull() && !getMessageData(grpId,msg.mMeta.mParentId,parent_msg))
+        if(ok && !msg.mMeta.mParentId.isNull() && !getMessageData(grpId,msg.mMeta.mParentId,parent_msg))
             std::cerr << "GxsForumMsgItem::loadMessage() ERROR getting parent message data. Maybe the parent msg is not available.";
 
-        RsQThreadUtils::postToObject( [self,msg,parent_msg]()
+        // Success and failure share this single continuation: the item can only be
+        // checked for liveness on the GUI thread, and deferred_update() touches it too.
+        RsQThreadUtils::postToObject( [self,ok,msg,parent_msg]()
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
             if(!self) return;
 
-            self->mMessage = msg;
-            self->mParentMessage = parent_msg;
             self->mLoadingMessage = false;
+
+            if(ok)
+            {
+                self->mMessage = msg;
+                self->mParentMessage = parent_msg;
+            }
+            else
+                self->deferred_update();
 
 		}, qApp );
 	});
