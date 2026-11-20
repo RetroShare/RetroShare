@@ -30,9 +30,15 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 
 greaterThan(QT_MAJOR_VERSION,5): QT += core5compat
 
+# RapidJSON 1.1 triggers GCC 15's eager template-body diagnostic.
+gcc:greaterThan(QMAKE_GCC_MAJOR_VERSION, 14): QMAKE_CXXFLAGS += -Wno-template-body
+
+INCLUDEPATH += ../../supportlibs/restbed/include
+
 target.files = lib/libFeedReader.so
 
 SOURCES =	FeedReaderPlugin.cpp \
+			services/FeedReaderJsonApi.cpp \
 			services/p3FeedReader.cc \
 			services/p3FeedReaderThread.cc \
 			services/rsFeedReaderItems.cc \
@@ -54,6 +60,7 @@ SOURCES =	FeedReaderPlugin.cpp \
 			util/XPathWrapper.cpp
 
 HEADERS =	FeedReaderPlugin.h \
+			services/FeedReaderJsonApi.h \
 			interface/rsFeedReader.h \
 			services/p3FeedReader.h \
 			services/p3FeedReaderThread.h \
@@ -117,10 +124,11 @@ linux-* {
 }
 
 win32 {
-	DEFINES += CURL_STATICLIB LIBXML_STATIC LIBXSLT_STATIC LIBEXSLT_STATIC
+	DEFINES += CURL_STATICLIB LIBXML_STATIC LIBXSLT_STATIC LIBEXSLT_STATIC WIN_DLL_EXPORT
 
 	#Have to reorder libs, else got /libs/lib/libcrypto.a(bio_lib.o):bio_lib.c:(.text+0x0): multiple definition of `BIO_new'
 	LIBS = -lcurl -lxml2 -lz -lxslt -lws2_32 -lwldap32 -lssl -lcrypto -lgdi32 $${LIBS}
+	LIBS += -L$$PWD/../../supportlibs/restbed -lrestbed
 
 	isEmpty(QMAKE_SH) {
 		# MinGW
