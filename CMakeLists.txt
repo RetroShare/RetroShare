@@ -80,6 +80,16 @@ if(RS_FRIENDSERVER)
 	add_subdirectory(retroshare-friendserver)
 endif()
 
+# A new account copies its DHT bootstrap list from the data directory
+# (RS_DATA_DIR, compiled into libretroshare on Linux). Without it a fresh
+# install starts the DHT with no known node.
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND RS_BITDHT AND
+   EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/libbitdht/src/bitdht/bdboot.txt")
+	install(
+		FILES "${CMAKE_CURRENT_SOURCE_DIR}/libbitdht/src/bitdht/bdboot.txt"
+		DESTINATION "${RS_DATA_DIR}" )
+endif()
+
 # ---------------------------------------------------------------------------
 # Per-target Windows fixups (applied to the specific targets that need them,
 # rather than globally, per review feedback). These run after the subdirectories

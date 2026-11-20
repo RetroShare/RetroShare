@@ -278,41 +278,41 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${LIBRETROSHARE_DEVEL_DIR}/sr
 
 if(RS_SERVICE_DESKTOP)
 	if(UNIX AND NOT APPLE)
-		install(
-			FILES data/retroshare.svg
-			DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/ )
+		# freedesktop.org integration: menu entry, AppStream metadata and icons
+		# (the files live in data/ at the top of the tree), plus the files the
+		# GUI looks for in its data directory, RS_DATA_DIR on Linux: chat
+		# styles in stylesheets/, sounds/ and extra stylesheets in qss/.
+		set(RS_DESKTOP_DATA "${CMAKE_CURRENT_SOURCE_DIR}/../data")
 
 		install(
-			FILES data/retroshare.xpm
-			DESTINATION ${CMAKE_INSTALL_PREFIX}/share/pixmaps/ )
+			FILES "${RS_DESKTOP_DATA}/retroshare.desktop"
+			DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications" )
 
 		install(
-			FILES data/24x24/apps/retroshare.png
-			DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/24x24/apps/retroshare.png )
+			FILES "${RS_DESKTOP_DATA}/cc.retroshare.RetroShare.metainfo.xml"
+			DESTINATION "${CMAKE_INSTALL_PREFIX}/share/metainfo" )
 
 		install(
-			FILES data/48x48/apps/retroshare.png
-			DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps/retroshare.png )
+			FILES "${RS_DESKTOP_DATA}/retroshare.svg"
+			DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps" )
+
+		foreach(RS_ICON_SIZE 24x24 48x48 64x64 128x128)
+			install(
+				FILES "${RS_DESKTOP_DATA}/${RS_ICON_SIZE}/apps/retroshare.png"
+				DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/${RS_ICON_SIZE}/apps" )
+		endforeach()
 
 		install(
-			FILES data/64x64/apps/retroshare.png
-			DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/64x64/apps/retroshare.png )
+			FILES "${RS_DESKTOP_DATA}/retroshare.xpm"
+			DESTINATION "${CMAKE_INSTALL_PREFIX}/share/pixmaps" )
 
 		install(
-			FILES data/128x128/apps/retroshare.png
-			DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/128x128/apps/retroshare.png )
+			DIRECTORY src/gui/qss/chat/Bubble src/gui/qss/chat/Bubble_Compact
+			DESTINATION "${RS_DATA_DIR}/stylesheets" )
 
 		install(
-			FILES data/retroshare.desktop
-			DESTINATION ${CMAKE_INSTALL_PREFIX}/data/retroshare.desktop )
-
-		install(
-			FILES gui/qss/chat/Bubble gui/qss/chat/Bubble_Compact
-			DESTINATION ${CMAKE_INSTALL_PREFIX}/data/stylesheets/ )
-
-		install(
-			FILES src/sounds/ src/qss/
-			DESTINATION ${CMAKE_INSTALL_PREFIX}/ )
+			DIRECTORY src/sounds src/qss
+			DESTINATION "${RS_DATA_DIR}" )
 	endif(UNIX AND NOT APPLE)
 endif(RS_SERVICE_DESKTOP)
 
