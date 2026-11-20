@@ -360,7 +360,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     createNotifyIcons();
 
     /* intialize friend count */
-    updateFriends();
+    updateTrayIcon();
 
     loadOwnStatus();
 
@@ -391,7 +391,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
             if(!fe)
                 return;
 
-            updateFriends();
+            updateTrayIcon();
         }
         , this );
     }, mEventHandlerId_friends, RsEventType::FRIEND_LIST );
@@ -837,7 +837,8 @@ void MainWindow::flushPendingSystrayMsg()
     if (mPendingSystrayCount == 0 || !trayIcon)
         return;
 
-    QString title = mPendingSystrayMixed ? tr("Chat") : mPendingSystrayTitle;
+    // Balloons with different titles were folded together: name none of their sources.
+    QString title = mPendingSystrayMixed ? QString("RetroShare") : mPendingSystrayTitle;
     QString msg = (mPendingSystrayCount == 1) ? mPendingSystrayMsg : tr("%1 new messages").arg(mPendingSystrayCount);
 
     mPendingSystrayCount = 0;
@@ -880,7 +881,7 @@ void MainWindow::updateTrayCombine()
         notifyMenu->menuAction()->setVisible(visible);
 
     // update tray icon
-    updateFriends();
+    updateTrayIcon();
 }
 
 void MainWindow::toggleStatusToolTip(bool toggle){
@@ -896,13 +897,13 @@ void MainWindow::updateStatus()
     if(RsAutoUpdatePage::eventsLocked())
         return;
 
-    // The tray icon is otherwise only refreshed on FRIEND_LIST events, and updateFriends()
+    // The tray icon is otherwise only refreshed on FRIEND_LIST events, and updateTrayIcon()
     // drops those while events are locked and skips unchanged icons. Re-send it now and then
     // so that a lost event or an update the tray host dropped does not stick.
     if (++mTrayIconRefreshTicks >= TRAY_ICON_REFRESH_TICKS) {
         mTrayIconRefreshTicks = 0;
         mLastTrayIconKey.clear();
-        updateFriends();
+        updateTrayIcon();
     }
 
     float downKb = 0;
@@ -951,7 +952,7 @@ void MainWindow::updateStatus()
     }
 }
 
-void MainWindow::updateFriends()
+void MainWindow::updateTrayIcon()
 {
 	if(RsAutoUpdatePage::eventsLocked())
 		return ;
@@ -1901,7 +1902,7 @@ void MainWindow::setCompactStatusMode(bool compact)
 {
 	//statusComboBox: TODO Show only icon
 	peerstatus->setCompactMode(compact);
-	updateFriends();
+	updateTrayIcon();
     if(!hiddenmode)
     {
 	natstatus->setCompactMode(compact);

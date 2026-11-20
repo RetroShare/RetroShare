@@ -280,7 +280,7 @@ private slots:
 
     void updateMenu();
     void updateStatus();
-    void updateFriends();
+    void updateTrayIcon();
 
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
