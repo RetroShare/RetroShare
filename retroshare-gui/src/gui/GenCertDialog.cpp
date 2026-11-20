@@ -30,6 +30,8 @@
 #include <QTextBrowser>
 #include <QTimer>
 #include <QProgressBar>
+#include <QProgressDialog>
+#include <QApplication>
 
 #include <rshare.h>
 #include "gui/settings/rsharesettings.h"
@@ -41,6 +43,7 @@
 #include "retroshare/rsinit.h"
 #include "rsserver/rsaccounts.h"
 #include "util/rsrandom.h"
+#include "gui/profile/ProfileArchive.h"
 
 #include <time.h>
 #include <math.h>
@@ -140,6 +143,8 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	connect(ui.nodeType_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(setupState()));
 
 	connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
+	connect(ui.restoreNode_PB, SIGNAL(clicked()), this, SLOT(restoreNode()));
+	ui.restoreNode_PB->setVisible(!onlyGenerateIdentity);
 	connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
 	connect(ui.exportIdentity_PB, SIGNAL(clicked()), this, SLOT(exportIdentity()));
 
@@ -444,6 +449,53 @@ void GenCertDialog::useI2pChecked(bool checked)
 
 		ui.hiddenport_spinBox->setEnabled(true);
 	}
+}
+
+void GenCertDialog::restoreNode()
+{
+	QString file;
+	if(!misc::getOpenFileName(this, RshareSettings::LASTDIR_CERT, tr("Restore node"),
+	                          tr("RetroShare node backup (*.%1);;All files (*)").arg(ProfileArchive::fileExtension()), file))
+		return;
+
+	ProfileArchive::Info info;
+	QString error;
+	if(!ProfileArchive::readInfo(file, info, error))
+	{
+		QMessageBox::warning(this, tr("Restore node"), error);
+		return;
+	}
+
+	QString question = tr("Restore this node?") + "\n\n"
+	        + tr("Profile:") + " " + info.pgpName + " (" + QString::fromStdString(info.pgpId.toStdString()) + ")\n"
+	        + tr("Node:") + " " + info.locationName + "\n"
+	        + tr("Saved:") + " " + info.createdAt + "\n\n"
+	        + tr("Do not run the same node on two computers at the same time.");
+
+	if(QMessageBox::question(this, tr("Restore node"), question, QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+		return;
+
+	QProgressDialog progress(tr("Restoring the node..."), tr("Cancel"), 0, 1000, this);
+	progress.setWindowModality(Qt::WindowModal);
+	progress.setMinimumDuration(500);
+
+	bool ok = ProfileArchive::importProfile(file, info, error,
+	        [&progress](qint64 done, qint64 total, const QString&)
+	{
+		progress.setValue(total > 0 ? int(done * 1000 / total) : 0);
+		QApplication::processEvents();
+		return !progress.wasCanceled();
+	});
+	progress.reset();
+
+	if(!ok)
+	{
+		QMessageBox::warning(this, tr("Restore node"), tr("The node could not be restored:") + "\n" + error);
+		return;
+	}
+
+	QMessageBox::information(this, tr("Restore node"), tr("The node was restored. Enter your password to log in."));
+	done(NodeRestored);
 }
 
 bool GenCertDialog::importIdentity()

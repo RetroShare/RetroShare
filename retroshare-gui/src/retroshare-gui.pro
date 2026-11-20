@@ -460,6 +460,9 @@ HEADERS +=  rshare.h \
             util/FontSizeHandler.h \
             gui/profile/ProfileWidget.h \
             gui/profile/ProfileManager.h \
+            gui/profile/ProfileArchive.h \
+            gui/profile/ProfileUpgrader.h \
+            gui/profile/ProfileUpgradeDialog.h \
             gui/profile/StatusMessage.h \
             gui/chat/PopupChatWindow.h \
             gui/chat/PopupChatDialog.h \
@@ -650,6 +653,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/profile/ProfileWidget.ui \
             gui/profile/StatusMessage.ui \
             gui/profile/ProfileManager.ui \
+            gui/profile/ProfileUpgradeDialog.ui \
             gui/chat/PopupChatWindow.ui \
             gui/chat/PopupChatDialog.ui \
             gui/chat/ChatTabWidget.ui \
@@ -820,6 +824,9 @@ SOURCES +=  main.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
             gui/profile/ProfileManager.cpp \
+            gui/profile/ProfileArchive.cpp \
+            gui/profile/ProfileUpgrader.cpp \
+            gui/profile/ProfileUpgradeDialog.cpp \
             gui/chat/PopupChatWindow.cpp \
             gui/chat/PopupChatDialog.cpp \
             gui/chat/PopupDistantChatDialog.cpp \
