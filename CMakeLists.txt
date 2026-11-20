@@ -64,6 +64,16 @@ endif()
 # 1. First add the core library (libretroshare)
 add_subdirectory(libretroshare)
 
+# A new account copies its DHT bootstrap list from the data directory
+# (RS_DATA_DIR, compiled into libretroshare on Linux). Without it a fresh
+# install starts the DHT with no known node.
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND RS_BITDHT AND
+   EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/libbitdht/src/bitdht/bdboot.txt")
+	install(
+		FILES "${CMAKE_CURRENT_SOURCE_DIR}/libbitdht/src/bitdht/bdboot.txt"
+		DESTINATION "${RS_DATA_DIR}" )
+endif()
+
 # 2. Then add the dependent executables
 if(RS_GUI)
 	add_subdirectory(retroshare-gui)

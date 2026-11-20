@@ -146,7 +146,7 @@ if(RS_SERVICE_DESKTOP)
 	if(UNIX AND NOT APPLE)
 		install(
 			FILES data/retroshare-service.svg
-			DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/ )
+			DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps )
 
 		install(
 			FILES data/retroshare-service_48x48.png
@@ -160,7 +160,7 @@ if(RS_SERVICE_DESKTOP)
 
 		install(
 			FILES data/retroshare-service.desktop
-			DESTINATION ${CMAKE_INSTALL_PREFIX}/data/ )
+			DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications )
 	endif(UNIX AND NOT APPLE)
 endif(RS_SERVICE_DESKTOP)
 
