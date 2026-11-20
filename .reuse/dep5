@@ -667,6 +667,7 @@ License: GPL-2.0-only WITH Classpath-exception-2.0
 Files: .gitignore
        .travis.yml
        jsonapi-generator/README.adoc
+       data/cc.retroshare.RetroShare.metainfo.xml
        jsonapi-generator/src/jsonapi-generator.pro
        retroshare-service/CMakeLists.txt
 Copyright: 2004-2024, Retroshare Team <contact@retroshare.cc>
