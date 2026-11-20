@@ -378,6 +378,7 @@ HEADERS +=  rshare.h \
             gui/QuickStartWizard.h \
             gui/StartDialog.h \
             gui/HomePage.h\
+            gui/HomeChannelsWidget.h\
             gui/NetworkDialog.h \
             gui/GenCertDialog.h \
             gui/linetypes.h \
@@ -760,6 +761,7 @@ SOURCES +=  main.cpp \
             gui/QuickStartWizard.cpp \
             gui/StartDialog.cpp \
             gui/HomePage.cpp\
+            gui/HomeChannelsWidget.cpp\
             gui/GenCertDialog.cpp \
             gui/NetworkDialog.cpp \
             gui/mainpagestack.cpp \
