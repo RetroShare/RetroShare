@@ -458,7 +458,7 @@
      </property>
     </spacer>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item row="1" column="0">
     <widget class="QGroupBox" name="grpStyle">
      <property name="minimumSize">
       <size>
@@ -505,7 +505,7 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="2" column="0">
     <widget class="QGroupBox" name="grpStyleSheet">
      <property name="minimumSize">
       <size>
@@ -539,6 +539,110 @@
          </size>
         </property>
        </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="1" rowspan="2">
+    <widget class="QGroupBox" name="grpLogo">
+     <property name="title">
+      <string>RetroShare Logo</string>
+     </property>
+     <layout class="QGridLayout" name="grpLogoGLayout">
+      <item row="0" column="0" rowspan="3">
+       <widget class="QLabel" name="labelLogoPreview">
+        <property name="minimumSize">
+         <size>
+          <width>48</width>
+          <height>48</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>48</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Preview of the logo used for the tray icon and the window icons</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="labelLogoBackground">
+        <property name="text">
+         <string>Background color:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="pushButtonLogoColor">
+        <property name="toolTip">
+         <string>Choose the background color of the RetroShare logo</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>16</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="pushButtonLogoDefault">
+        <property name="toolTip">
+         <string>Reset to the default colors (black background, blue symbol)</string>
+        </property>
+        <property name="text">
+         <string>Default</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <spacer name="grpLogoHSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="labelLogoForeground">
+        <property name="text">
+         <string>Symbol color:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="pushButtonLogoForegroundColor">
+        <property name="toolTip">
+         <string>Choose the color of the RetroShare symbol</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>16</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="4">
+       <widget class="QLabel" name="labelLogoInfo">
+        <property name="text">
+         <string>Used for the tray icon and the window icons. A different color for each node helps to tell several running RetroShare instances apart.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
