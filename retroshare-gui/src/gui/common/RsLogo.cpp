@@ -391,7 +391,15 @@ void RsLogo::applyToApplication()
 	if (!filter && qApp) {
 		filter = new RsLogoWindowIconFilter(qApp);
 		qApp->installEventFilter(filter);
+
+		/* release the cached pixmaps before the application is destroyed */
+		QObject::connect(qApp, &QCoreApplication::aboutToQuit, filter, []() {
+			sIconCache.clear();
+		});
 	}
+
+	/* the colors may have changed, keep only the icons of the current colors */
+	sIconCache.clear();
 
 	QApplication::setWindowIcon(icon());
 
