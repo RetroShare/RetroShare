@@ -23,11 +23,30 @@ option(
 	"Enable use RNP lib for PGP"
 	ON )
 
+## Offline build guard. libretroshare falls back to FetchContent (network
+## download at configure time) when its local sources are absent. For
+## offline/distribution builds (e.g. a Debian source package) that fallback must
+## be a hard error: it would silently build against an unpinned upstream tip.
+option(
+	RS_FETCH_MISSING_DEPS
+	"Allow downloading missing dependencies at configure time via FetchContent. Turn OFF for offline/distribution builds: a missing dependency then stops the configure with an explicit error instead of a silent network download." ON )
+
+macro(rs_fetch_fallback_guard RS_FFG_DEP_NAME)
+	if(RS_FETCH_MISSING_DEPS)
+		message(STATUS "${RS_FFG_DEP_NAME} not found locally, downloading it via FetchContent (pass -DRS_FETCH_MISSING_DEPS=OFF to make this an error)")
+	else()
+		message(FATAL_ERROR "${RS_FFG_DEP_NAME} not found locally and RS_FETCH_MISSING_DEPS is OFF: refusing to download it at configure time. Provide its sources (git submodule / complete source tarball) or the system library." )
+	endif()
+endmacro()
+
 # NOTE: ZLIB, BZip2 and OpenSSL are NOT direct dependencies of the friendserver.
 # They are only used through libretroshare and are propagated transitively by the
 # "retroshare" target's link interface, so they are intentionally not searched or
 # linked here.
-find_package(Git REQUIRED)
+# Git is optional: it is only used to stamp versions (git describe, with a
+# Source_Version file fallback for source tarballs) and by the FetchContent
+# network fallbacks, which are guarded by RS_FETCH_MISSING_DEPS.
+find_package(Git)
 
 if(RS_DEVELOPMENT_BUILD)
 	set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -59,6 +78,7 @@ if(NOT TARGET retroshare)
 		add_subdirectory("${LIBRETROSHARE_DEVEL_DIR}" "${CMAKE_BINARY_DIR}/libretroshare" )
 	else()
 		include(FetchContent)
+		rs_fetch_fallback_guard(libretroshare)
 		FetchContent_Declare(
 			libretroshare
 			GIT_REPOSITORY "https://github.com/RetroShare/libretroshare.git"
