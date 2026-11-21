@@ -44,6 +44,7 @@
 #include <stdlib.h>
 
 #include "gui/common/FilesDefs.h"
+#include "gui/common/RsLogo.h"
 #include <gui/common/rshtml.h>
 #include <gui/common/vmessagebox.h>
 #include <gui/gxs/GxsIdDetails.h>
@@ -135,7 +136,7 @@ RsApplication::RsApplication(const RsGUIConfigOptions& conf)
 #ifndef __APPLE__
 
     /* set default window icon */
-    setWindowIcon(FilesDefs::getIconFromQtResourcePath(":/icons/logo_128.png"));
+    RsLogo::applyToApplication();
 
 #endif
 

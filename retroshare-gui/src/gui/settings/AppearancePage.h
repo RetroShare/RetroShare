@@ -74,8 +74,16 @@ private slots:
 	void updateStyle() ;
 	void updateFontSize();
 
+	void chooseLogoBackgroundColor();
+	void chooseLogoForegroundColor();
+	void resetLogoColors();
+
 private:
 	void switch_status(MainWindow::StatusElement s,const QString& key,bool b);
+
+	void applyLogoColors();
+	void updateLogoPreview();
+	void updateColorButton(QPushButton *button, const QColor& color);
 
 	/** Qt Designer generated object */
 	Ui::AppearancePage ui;

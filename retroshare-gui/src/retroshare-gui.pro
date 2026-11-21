@@ -19,7 +19,7 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = app
-QT     += network xml 
+QT     += network xml svg
 CONFIG += qt gui uic qrc resources idle 
 CONFIG += console
 TARGET = retroshare
@@ -549,6 +549,7 @@ HEADERS +=  rshare.h \
             gui/common/RSItemDelegate.h \
             gui/common/PeerDefs.h \
             gui/common/FilesDefs.h \
+            gui/common/RsLogo.h \
             gui/common/PopularityDefs.h \
             gui/common/RsBanListDefs.h \
             gui/common/GroupTreeWidget.h \
@@ -871,6 +872,7 @@ SOURCES +=  main.cpp \
             gui/common/RSItemDelegate.cpp \
             gui/common/PeerDefs.cpp \
             gui/common/FilesDefs.cpp \
+            gui/common/RsLogo.cpp \
             gui/common/PopularityDefs.cpp \
             gui/common/RsBanListDefs.cpp \
             gui/common/GroupTreeWidget.cpp \

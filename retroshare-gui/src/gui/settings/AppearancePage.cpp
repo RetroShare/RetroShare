@@ -24,6 +24,7 @@
 #include "gui/MainWindow.h"
 #include "gui/RsGUIEventManager.h"
 #include "gui/common/FilesDefs.h"
+#include "gui/common/RsLogo.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/statusbar/peerstatus.h"
 #include "gui/statusbar/natstatus.h"
@@ -42,6 +43,8 @@
 #include <QAbstractItemView>
 #include <QComboBox>
 #include <QCheckBox>
+#include <QColorDialog>
+#include <QPainter>
 #include <QDir>
 #include <QFileInfo>
 #include <QGroupBox>
@@ -129,6 +132,10 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 //	connect(ui.menuItemsButtonType_CB, SIGNAL(currentIndexChanged(int)),           this, SLOT(updateActionButtonLoc()    ));
 
 	connect(ui.minimumFontSize_SB, SIGNAL(valueChanged(int)), this, SLOT(updateFontSize())) ;
+
+	connect(ui.pushButtonLogoColor,   SIGNAL(clicked()), this, SLOT(chooseLogoBackgroundColor()));
+	connect(ui.pushButtonLogoForegroundColor, SIGNAL(clicked()), this, SLOT(chooseLogoForegroundColor()));
+	connect(ui.pushButtonLogoDefault, SIGNAL(clicked()), this, SLOT(resetLogoColors()));
 
 }
 
@@ -398,6 +405,8 @@ void AppearancePage::load()
 	whileBlocking(ui.checkBoxShowSystrayOnStatus)->setChecked(Settings->valueFromGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(false)).toBool());
 
 	whileBlocking(ui.minimumFontSize_SB)->setValue(Settings->getFontSize());
+
+	updateLogoPreview();
 }
 
 void AppearancePage::updateFontSize()
@@ -415,3 +424,67 @@ void AppearancePage::updateDateFormat()
     RsGUIEventManager::getInstance()->notifySettingsChanged();
 }
 
+void AppearancePage::chooseLogoBackgroundColor()
+{
+	QColor color = QColorDialog::getColor(Settings->getLogoBackgroundColor(), this, tr("Choose the background color of the RetroShare logo"), QColorDialog::ShowAlphaChannel);
+	if (color.isValid()) {
+		Settings->setLogoBackgroundColor(color);
+		applyLogoColors();
+	}
+}
+
+void AppearancePage::chooseLogoForegroundColor()
+{
+	QColor color = QColorDialog::getColor(Settings->getLogoForegroundColor(), this, tr("Choose the color of the RetroShare symbol"));
+	if (color.isValid()) {
+		Settings->setLogoForegroundColor(color);
+		applyLogoColors();
+	}
+}
+
+void AppearancePage::resetLogoColors()
+{
+	Settings->setLogoBackgroundColor(RsLogo::defaultBackgroundColor());
+	Settings->setLogoForegroundColor(RsLogo::defaultForegroundColor());
+	applyLogoColors();
+}
+
+void AppearancePage::applyLogoColors()
+{
+	/* update application/window icons and the tray icon */
+	RsLogo::applyToApplication();
+
+	MainWindow *pMainWindow = MainWindow::getInstance();
+	if (pMainWindow) {
+		pMainWindow->setWindowIcon(RsLogo::icon());
+		pMainWindow->refreshTrayIcon();
+	}
+
+	updateLogoPreview();
+}
+
+void AppearancePage::updateLogoPreview()
+{
+	QColor background = Settings->getLogoBackgroundColor();
+	QColor foreground = Settings->getLogoForegroundColor();
+
+	ui.labelLogoPreview->setPixmap(RsLogo::pixmap(background, foreground, 48));
+
+	updateColorButton(ui.pushButtonLogoColor, background);
+	updateColorButton(ui.pushButtonLogoForegroundColor, foreground);
+}
+
+void AppearancePage::updateColorButton(QPushButton *button, const QColor& color)
+{
+	/* color swatch on the button */
+	QPixmap swatch(button->iconSize());
+	swatch.fill(Qt::transparent);
+	QPainter painter(&swatch);
+	painter.setPen(palette().color(QPalette::WindowText));
+	painter.setBrush(color);
+	painter.drawRect(swatch.rect().adjusted(0, 0, -1, -1));
+	painter.end();
+
+	button->setIcon(QIcon(swatch));
+	button->setText(color.alpha() == 255 ? color.name() : color.name(QColor::HexArgb));
+}
