@@ -1258,7 +1258,7 @@ QString RsHtml::makeQuotedText(RSTextBrowser *browser)
 	QStringList sl = text.split(QRegularExpression("[\r\n]"),QtSkipEmptyParts);
 	text = sl.join("\n> ");
 	text.replace("\n> >","\n>>"); // Don't add space for already quotted lines.
-	text.replace(QChar(-4)," ");//Char used when image on text.
+	text.replace(QChar(QChar::ObjectReplacementCharacter)," ");//Char used when image on text.
 	QString quote = (text.left(1) == ">") ? QString(">") : QString("> ");
 	return quote + text;
 }

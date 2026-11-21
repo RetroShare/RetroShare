@@ -1309,7 +1309,7 @@ void ChatWidget::sendChat()
 	QString text;
 	if (ui->actionSendAsPlainText->isChecked()){
 		text = chatWidget->toPlainText();
-		text.replace(QChar(-4),"");//Char used when image on text.
+		text.replace(QChar(QChar::ObjectReplacementCharacter),"");//Char used when image on text.
 	} else {
 		RsHtml::optimizeHtml(chatWidget, text,
 		                     (ui->actionNoEmbed->isChecked() ? RSHTML_FORMATTEXT_NO_EMBED : 0)
