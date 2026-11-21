@@ -193,7 +193,7 @@ void TunnelStatisticsDialog::updateTunnels()
         tunnelItem->setData(COLUMN_TUNNELID,          Qt::DisplayRole, QString::fromStdString(tunnel_infos[i].tunnel_id.toStdString()));
         tunnelItem->setData(COLUMN_FROM,              Qt::DisplayRole, QString::fromStdString(tunnel_infos[i].source_gxs_id.toStdString())+ " (" + srcName + ")");
         tunnelItem->setData(COLUMN_DESTINATION,       Qt::DisplayRole, QString::fromStdString(tunnel_infos[i].destination_gxs_id.toStdString()) + " (" + dstName + ")");
-        tunnelItem->setData(COLUMN_STATUS,            Qt::DisplayRole, QString::number(tunnel_infos[i].tunnel_status));
+        tunnelItem->setData(COLUMN_STATUS,            Qt::DisplayRole, QString::number(static_cast<int>(tunnel_infos[i].tunnel_status)));
         tunnelItem->setData(COLUMN_TOTALSENT,         Qt::DisplayRole, misc::friendlyUnit(tunnel_infos[i].total_size_sent ));
         tunnelItem->setData(COLUMN_TOTALRECEIVED,     Qt::DisplayRole, misc::friendlyUnit(tunnel_infos[i].total_size_received));
 
