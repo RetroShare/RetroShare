@@ -1365,11 +1365,11 @@ void RetroshareDirModel::downloadDirectory(const DirDetails & dirDetails, int pr
 	}
 	else if (dirDetails.type & DIR_TYPE_DIR)
 	{
+		// No need to pre-create the destination folder here: each file's
+		// FileRequest() stages into the Partials directory, and
+		// RsDirUtil::moveFile() creates any missing destination directories
+		// lazily once that file actually completes.
 		std::list<DirStub>::const_iterator it;
-		QDir dwlDir(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()));
-		QString cleanPath = QDir::cleanPath(QString::fromUtf8(dirDetails.path.substr(prefixLen).c_str()));
-
-		if (!dwlDir.mkpath(cleanPath)) return;
 
         for(uint32_t i=0;i<dirDetails.children.size();++i)
 		{
