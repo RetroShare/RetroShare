@@ -22,6 +22,7 @@
 #include <QFontMetrics>
 #include <QModelIndex>
 #include <QIcon>
+#include <QTimer>
 
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsexpr.h"
@@ -43,9 +44,17 @@ const uint32_t RsPostedPostsModel::DEFAULT_DISPLAYED_NB_POSTS = 10;
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
 RsPostedPostsModel::RsPostedPostsModel(int default_chunk_size, QObject *parent)
-    : QAbstractItemModel(parent), mTreeMode(TREE_MODE_PLAIN)
+    : QAbstractItemModel(parent), mTreeMode(TREE_MODE_PLAIN), mRefreshInFlight(false)
 {
     mDefaultDisplayedNbPosts = default_chunk_size;
+
+    // Single-post events come in bursts (one per post after a "mark all as
+    // read" on a large board, or after a sync): refresh their posts together,
+    // at most once per interval.
+    mRefreshTimer = new QTimer(this);
+    mRefreshTimer->setSingleShot(true);
+    mRefreshTimer->setInterval(200);
+    connect(mRefreshTimer, &QTimer::timeout, this, &RsPostedPostsModel::refreshPendingPosts);
 
     initEmptyHierarchy();
 
@@ -104,53 +113,116 @@ void RsPostedPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> 
 				return;
 			}
 
-			// Normally we should just emit dataChanged() on the index of the data that has changed:
-			//
-			// We need to update the data!
+			// Do not start one thread per event: the events of a burst (e.g. one
+			// MESSAGE_VOTES_UPDATED per post after a "mark all as read" on a
+			// board of thousands of posts) each blocked a thread on the
+			// database, until the process ran out of threads and aborted
+			// ("thread constructor failed: Resource temporarily unavailable").
+			// Collect the ids and re-read them all in one request instead.
 
-			RsGxsPostedEvent E(*e);
+			if(e->mPostedGroupId != mPostedGroup.mMeta.mGroupId || e->mPostedMsgId.isNull())
+				return;
 
-			if(E.mPostedGroupId == mPostedGroup.mMeta.mGroupId)
-				RsThread::async([this, E]()
-				{
-					// 1 - get message data from p3GxsChannels
+			if(mPendingRefreshGroupId != e->mPostedGroupId)
+			{
+				mPendingRefreshIds.clear();
+				mPendingRefreshGroupId = e->mPostedGroupId;
+			}
 
-					std::vector<RsPostedPost> posts;
-					std::vector<RsGxsComment> comments;
-					std::vector<RsGxsVote>    votes;
+			mPendingRefreshIds.insert(e->mPostedMsgId);
 
-					if(!rsPosted->getBoardContent(mPostedGroup.mMeta.mGroupId,std::set<RsGxsMessageId>{ E.mPostedMsgId }, posts,comments,votes))
-					{
-						RS_ERR(" failed to retrieve channel message data for channel/msg ", E.mPostedGroupId, "/", E.mPostedMsgId);
-						return;
-					}
-
-					// 2 - update the model in the UI thread.
-
-					RsQThreadUtils::postToObject( [posts,comments,votes,this]()
-					{
-						for(uint32_t i=0;i<posts.size();++i)
-						{
-							// linear search. Not good at all, but normally this is for a single post.
-
-							for(uint32_t j=0;j<mPosts.size();++j)
-								if(mPosts[j].mMeta.mMsgId == posts[i].mMeta.mMsgId)
-								{
-									mPosts[j] = posts[i];
-
-									//emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),0,(void*)NULL));
-
-									preMods();
-									postMods();
-								}
-						}
-					},this);
-				});
-
+			// Not restarted by every event, so a steady flow still gets refreshed.
+			if(!mRefreshTimer->isActive())
+				mRefreshTimer->start();
 		}
 		default:
 		break;
 	}
+}
+
+void RsPostedPostsModel::refreshPendingPosts()
+{
+	if(mPendingRefreshIds.empty())
+		return;
+
+	if(mPendingRefreshGroupId != mPostedGroup.mMeta.mGroupId)
+	{
+		mPendingRefreshIds.clear();	// the board was switched meanwhile
+		return;
+	}
+
+	// One batch at a time: two batches holding the same post could finish
+	// out of order and leave the older read on screen. The ids keep piling up
+	// meanwhile, and the batch in flight restarts the timer when it is done.
+	if(mRefreshInFlight)
+		return;
+
+	mRefreshInFlight = true;
+
+	// Hand the id set over through a pointer: the lambda capture would
+	// otherwise deep copy it.
+	auto* ids = new std::set<RsGxsMessageId>();
+	ids->swap(mPendingRefreshIds);
+
+	RsThread::async([this, grpId=mPendingRefreshGroupId, ids]()
+	{
+		// 1 - get message data from p3Posted
+
+		auto posts = std::make_shared<std::vector<RsPostedPost> >();
+		std::vector<RsGxsComment> comments;
+		std::vector<RsGxsVote>    votes;
+
+		bool ok = rsPosted->getBoardContent(grpId, *ids, *posts, comments, votes);
+
+		if(!ok)
+		{
+			RS_ERR("failed to retrieve ", ids->size(), " updated posts of board ", grpId);
+			posts->clear();
+		}
+
+		delete ids;
+
+		// 2 - update the model in the UI thread. Always go there, even with
+		// nothing read, to end the batch.
+
+		RsQThreadUtils::postToObject( [posts,grpId,this]()
+		{
+			mRefreshInFlight = false;
+
+			// Events that came in while this batch was read.
+			if(!mPendingRefreshIds.empty() && !mRefreshTimer->isActive())
+				mRefreshTimer->start();
+
+			if(grpId != mPostedGroup.mMeta.mGroupId)
+				return;
+
+			std::map<RsGxsMessageId,uint32_t> index;
+
+			for(uint32_t j=0;j<mPosts.size();++j)
+				index[mPosts[j].mMeta.mMsgId] = j;
+
+			bool changed = false;
+
+			for(auto& post:*posts)
+			{
+				auto it = index.find(post.mMeta.mMsgId);
+
+				if(it == index.end())
+					continue;
+
+				mPosts[it->second] = post;
+				changed = true;
+			}
+
+			// One model refresh for the whole batch.
+
+			if(changed)
+			{
+				preMods();
+				postMods();
+			}
+		},this);
+	});
 }
 
 void RsPostedPostsModel::initEmptyHierarchy()

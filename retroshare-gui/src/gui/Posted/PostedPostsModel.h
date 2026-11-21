@@ -25,6 +25,10 @@
 #include <QModelIndex>
 #include <QColor>
 
+#include <set>
+
+class QTimer;
+
 // This class holds the actual hierarchy of posts, represented by identifiers
 // It is responsible for auto-updating when necessary and holds a mutex to allow the Model to
 // safely access the data.
@@ -242,6 +246,7 @@ private:
 	void setPosts(const RsPostedGroup& group, std::vector<RsPostedPost> &posts);
 	void initEmptyHierarchy();
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+	void refreshPendingPosts();
 
     std::vector<RsPostedPost> mPosts ;
     std::vector<int> mFilteredPosts;
@@ -249,6 +254,13 @@ private:
     uint32_t mDisplayedNbPosts;
     uint32_t mDefaultDisplayedNbPosts;
     SortingStrategy mSortingStrategy;
+
+	// Posts to re-read after single-post events, refreshed in one go
+	// by refreshPendingPosts() when mRefreshTimer fires.
+	std::set<RsGxsMessageId> mPendingRefreshIds;
+	RsGxsGroupId mPendingRefreshGroupId;
+	QTimer *mRefreshTimer;
+	bool mRefreshInFlight;	// a refreshPendingPosts() batch is being read
 
 	RsEventsHandlerId_t mEventHandlerId ;
 };
