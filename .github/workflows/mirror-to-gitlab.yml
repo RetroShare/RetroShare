@@ -11,6 +11,11 @@ on:
 jobs:
   mirror:
     runs-on: ubuntu-latest
+    # This mirrors to the official project's GitLab remote and needs a
+    # secret that only exists in RetroShare/RetroShare - skip it entirely
+    # on forks instead of failing (or, worse, trying to push a fork's
+    # history over the real project's GitLab mirror).
+    if: github.repository == 'RetroShare/RetroShare'
 
     steps:
       - name: Install GitLab deploy key
