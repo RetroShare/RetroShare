@@ -24,6 +24,7 @@
 
 #include <stdint.h>
 #include <QHash>
+#include <QColor>
 #include <QRgb>
 #include <QSettings>
 
@@ -389,6 +390,14 @@ public:
 
     int getFontSize();
     void setFontSize(int value);
+
+    /* background color of the RetroShare logo (tray and window icons) */
+    QColor getLogoBackgroundColor();
+    void setLogoBackgroundColor(const QColor& color);
+
+    /* color of the symbol of the RetroShare logo */
+    QColor getLogoForegroundColor();
+    void setLogoForegroundColor(const QColor& color);
 
     int getMessageFontSize();
     void setMessageFontSize(int value);

@@ -125,6 +125,7 @@
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/RsGUIEventManager.h"
 #include "gui/common/RsCollectionDialog.h"
+#include "gui/common/RsLogo.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
 #include "common/StatusDefs.h"
@@ -143,10 +144,6 @@
 #define IMAGE_CLOSE             ":/icons/png/exit2.png"
 
 #define IMAGE_ADDFRIEND         ":/icons/png/invite.png"
-#define IMAGE_RETROSHARE        ":/icons/logo_128.png"
-#define IMAGE_NOONLINE          ":/icons/logo_0_connected_128.png"
-#define IMAGE_ONEONLINE         ":/icons/logo_1_connected_128.png"
-#define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
 #define IMAGE_BWGRAPH           ":/icons/png/bandwidth.png"
@@ -226,8 +223,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     QDesktopServices::setUrlHandler("http", this, "externalLinkActivated");
     QDesktopServices::setUrlHandler("https", this, "externalLinkActivated");
 
-    // Setting icons
-    this->setWindowIcon(QIcon(QString::fromUtf8(":/icons/logo_128.png")));
+    // Setting icons (logo background color is configurable in Appearance settings)
+    RsLogo::applyToApplication();
+    this->setWindowIcon(RsLogo::icon());
 
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = NULL ;
@@ -631,7 +629,7 @@ void MainWindow::createTrayIcon()
     trayMenu = new QMenu(this);
     if (sysTrayStatus) sysTrayStatus->trayMenu = trayMenu;
     QObject::connect(trayMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
-    toggleVisibilityAction = trayMenu->addAction(QIcon(IMAGE_RETROSHARE), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
+    toggleVisibilityAction = trayMenu->addAction(RsLogo::icon(), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
     if (sysTrayStatus) sysTrayStatus->toggleVisibilityAction = toggleVisibilityAction;
 
     /* Create status menu */
@@ -672,7 +670,7 @@ void MainWindow::createTrayIcon()
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setToolTip(tr("RetroShare"));
     trayIcon->setContextMenu(trayMenu);
-    trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
+    trayIcon->setIcon(RsLogo::icon(0));
 
 #if defined(Q_OS_DARWIN)
     // Note: On macOS, the Dock icon is used to provide the tray's functionality.
@@ -933,21 +931,25 @@ void MainWindow::updateFriends()
     if (peerstatus)
         peerstatus->getPeerStatus(friendCount, onlineCount);
 
-    QString trayIconResource;
+    updateTrayIcon();
+}
+
+void MainWindow::updateTrayIcon()
+{
+    /* number of highlighted nodes of the logo */
+    int litNodes = RsLogo::AllNodes;
 
     if (onlineCount == 0) {
-        trayIconResource = IMAGE_NOONLINE;
+        litNodes = 0;
     } else if (onlineCount < 2) {
-        trayIconResource = IMAGE_ONEONLINE;
+        litNodes = 1;
     } else if (onlineCount < 3) {
-        trayIconResource = IMAGE_TWOONLINE;
-    } else {
-        trayIconResource = IMAGE_RETROSHARE;
+        litNodes = 2;
     }
 
     QIcon icon;
     if (notifyMenu && notifyMenu->menuAction()->isVisible()) {
-        QPixmap trayImage(trayIconResource);
+        QPixmap trayImage = RsLogo::pixmap(128, litNodes);
         QPixmap overlayImage(IMAGE_OVERLAY);
 
         QPainter painter(&trayImage);
@@ -955,7 +957,7 @@ void MainWindow::updateFriends()
 
         icon.addPixmap(trayImage);
     } else {
-        icon = QIcon(trayIconResource);
+        icon = RsLogo::icon(litNodes);
     }
 
     if (trayIcon) trayIcon->setIcon(icon);
