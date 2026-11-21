@@ -20,6 +20,7 @@
  *******************************************************************************/
 
 #include <math.h>
+#include <QCryptographicHash>
 #include <QDir>
 #include <QCoreApplication>
 #include <QStyleFactory>
@@ -69,7 +70,45 @@
 
 #if defined(Q_OS_WIN)
 #define STARTUP_REG_KEY        "Software\\Microsoft\\Windows\\CurrentVersion\\Run"
-#define RETROSHARE_REG_KEY         "RetroShare" 
+#define RETROSHARE_REG_KEY     "RetroShare"
+
+namespace
+{
+QString startupExecutablePath()
+{
+	return QDir::toNativeSeparators(
+	            QDir::cleanPath(QCoreApplication::applicationFilePath()));
+}
+
+QString startupRegistryValueName()
+{
+	/* Windows paths are case-insensitive. Hashing the normalized executable path
+	 * gives every installation its own Run value while keeping the name stable. */
+	const QByteArray path = startupExecutablePath().toCaseFolded().toUtf8();
+	const QByteArray pathHash =
+	        QCryptographicHash::hash(path, QCryptographicHash::Sha256).toHex().left(16);
+	return QStringLiteral(RETROSHARE_REG_KEY "-") + QString::fromLatin1(pathHash);
+}
+
+QString startupCommand(bool minimized)
+{
+	QString command = QStringLiteral("\"") + startupExecutablePath() + QStringLiteral("\"");
+	if(minimized) command += QStringLiteral(" -m");
+	return command;
+}
+
+bool startupValueBelongsToThisExecutable(const QString& value)
+{
+	const QString command = value.trimmed();
+	const QString executable = startupExecutablePath();
+	const QString quotedExecutable = QStringLiteral("\"") + executable + QStringLiteral("\"");
+
+	return command.compare(executable, Qt::CaseInsensitive) == 0
+	        || command.compare(executable + QStringLiteral(" -m"), Qt::CaseInsensitive) == 0
+	        || command.compare(quotedExecutable, Qt::CaseInsensitive) == 0
+	        || command.compare(quotedExecutable + QStringLiteral(" -m"), Qt::CaseInsensitive) == 0;
+}
+}
 #endif
 
 /* Default bandwidth graph settings */
@@ -775,7 +814,17 @@ RshareSettings::runRetroshareOnBoot(bool &minimized)
 	minimized = false;
 
 #if defined(Q_OS_WIN)
-	QString value = win32_registry_get_key_value(STARTUP_REG_KEY, RETROSHARE_REG_KEY);
+	QString value = win32_registry_get_key_value(
+	            STARTUP_REG_KEY, startupRegistryValueName());
+
+	/* Accept the old shared value only when it points at this executable. It is
+	 * migrated to the per-installation value the next time the setting is saved. */
+	if(value.isEmpty())
+	{
+		const QString legacyValue = win32_registry_get_key_value(
+		            STARTUP_REG_KEY, RETROSHARE_REG_KEY);
+		if(startupValueBelongsToThisExecutable(legacyValue)) value = legacyValue;
+	}
 
 	if (!value.isEmpty()) {
 		/* Simple check for "-m" */
@@ -795,16 +844,18 @@ RshareSettings::setRunRetroshareOnBoot(bool run, bool minimized)
 {
 #if defined(Q_OS_WIN)
 	if (run) {
-		QString value = "\"" + QDir::toNativeSeparators(QCoreApplication::applicationFilePath()) + "\"";
-
-		if (minimized) {
-			value += " -m";
-		}
-
-		win32_registry_set_key_value(STARTUP_REG_KEY, RETROSHARE_REG_KEY, value);
+		win32_registry_set_key_value(
+		            STARTUP_REG_KEY, startupRegistryValueName(),
+		            startupCommand(minimized));
 	} else {
-		win32_registry_remove_key(STARTUP_REG_KEY, RETROSHARE_REG_KEY);
+		win32_registry_remove_key(STARTUP_REG_KEY, startupRegistryValueName());
 	}
+
+	/* Do not disturb another installation which still owns the legacy value. */
+	const QString legacyValue = win32_registry_get_key_value(
+	            STARTUP_REG_KEY, RETROSHARE_REG_KEY);
+	if(startupValueBelongsToThisExecutable(legacyValue))
+		win32_registry_remove_key(STARTUP_REG_KEY, RETROSHARE_REG_KEY);
 #else
 	/* Platforms othe rthan windows aren't supported yet */
 	Q_UNUSED(run);
