@@ -18,6 +18,8 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <QPointer>
+
 #include "WireNotifyGroupItem.h"
 #include "ui_WireNotifyGroupItem.h"
 
@@ -118,42 +120,46 @@ bool WireNotifyGroupItem::setGroup(const RsWireGroup &group)
 
 void WireNotifyGroupItem::loadGroup()
 {
-    RsThread::async([this]()
+    // The worker only uses these copies; `self` is checked on the GUI thread.
+    const RsGxsGroupId grpId = groupId();
+    QPointer<WireNotifyGroupItem> self(this);
+
+    RsThread::async([self,grpId]()
     {
         // 1 - get group data
 
 #ifdef DEBUG_ITEM
-        std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+        std::cerr << "Retrieving group data for group " << grpId << std::endl;
 #endif
 
         std::vector<RsWireGroup> groups;
-        const std::list<RsGxsGroupId> groupIds = { groupId() };
+        const std::list<RsGxsGroupId> groupIds = { grpId };
 
-        if(!rsWire->getGroups(groupIds,groups))
-        {
+        bool ok = rsWire->getGroups(groupIds,groups);
+
+        if(!ok)
             RsErr() << "WireNotifyGroupItem::loadGroup() ERROR getting data" << std::endl;
-            deferred_update();
-            return;
-        }
-
-        if (groups.size() != 1)
+        else if (groups.size() != 1)
         {
             std::cerr << "WireNotifyGroupItem::loadGroup() Wrong number of Items";
             std::cerr << std::endl;
-            deferred_update();
-            return;
+            ok = false;
         }
-        RsWireGroup group(groups[0]);
 
-        RsQThreadUtils::postToObject( [group,this]()
+        RsWireGroup group;
+        if(ok)
+            group = groups[0];
+
+        RsQThreadUtils::postToObject( [self,ok,group]()
         {
-            /* Here it goes any code you want to be executed on the Qt Gui
-             * thread, for example to update the data model with new information
-             * after a blocking call to RetroShare API complete */
+            if(!self) return;
 
-            setGroup(group);
+            if(ok)
+                self->setGroup(group);
+            else
+                self->deferred_update();
 
-        }, this );
+        }, qApp );
     });
 }
 

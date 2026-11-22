@@ -18,6 +18,8 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <QPointer>
+
 #include "gui/gxs/GxsIdDetails.h"
 #include "GxsChannelGroupItem.h"
 #include "ui_GxsChannelGroupItem.h"
@@ -99,14 +101,8 @@ void GxsChannelGroupItem::paintEvent(QPaintEvent *e)
 }
 GxsChannelGroupItem::~GxsChannelGroupItem()
 {
-    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
-
-    while( mLoadingGroup && std::chrono::steady_clock::now() < timeout )
-    {
-        RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for data to load " << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-
+    // A pending loadGroup() never uses this item from its worker thread, and its
+    // GUI-thread continuation checks a QPointer to it first.
     rsEvents->unregisterEventsHandler(mEventHandlerId);
 	delete(ui);
 }
@@ -139,41 +135,44 @@ void GxsChannelGroupItem::loadGroup()
 {
     mLoadingGroup = true;
 
-	RsThread::async([this]()
+    // The worker only uses these copies; `self` is checked on the GUI thread.
+    const RsGxsGroupId grpId = groupId();
+    QPointer<GxsChannelGroupItem> self(this);
+
+	RsThread::async([self,grpId]()
 	{
 		// 1 - get group data
 
 		std::vector<RsGxsChannelGroup> groups;
-		const std::list<RsGxsGroupId> groupIds = { groupId() };
+		const std::list<RsGxsGroupId> groupIds = { grpId };
 
-		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))
-		{
+		bool ok = rsGxsChannels->getChannelsInfo(groupIds,groups);
+
+		if(!ok)
 			RsErr() << "PostedItem::loadGroup() ERROR getting data" << std::endl;
-            mLoadingGroup = false;
-            deferred_update();
-            return;
-		}
-
-		if (groups.size() != 1)
+		else if (groups.size() != 1)
 		{
 			std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
-            deferred_update();
-            mLoadingGroup = false;
-            return;
+			ok = false;
 		}
-		RsGxsChannelGroup group(groups[0]);
 
-		RsQThreadUtils::postToObject( [group,this]()
+		RsGxsChannelGroup group;
+		if(ok)
+			group = groups[0];
+
+		RsQThreadUtils::postToObject( [self,ok,group]()
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
+			if(!self) return;
 
-            mGroup = group;
-            mLoadingGroup = false;
+			self->mLoadingGroup = false;
 
-		}, this );
+			if(ok)
+				self->mGroup = group;
+			else
+				self->deferred_update();
+
+		}, qApp );
 	});
 }
 

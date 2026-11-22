@@ -22,6 +22,7 @@
 #include <QMenu>
 #include <QStyle>
 #include <QTextDocument>
+#include <QPointer>
 
 #include "rshare.h"
 #include "PostedItem.h"
@@ -75,17 +76,8 @@ BasePostedItem::BasePostedItem( FeedHolder *feedHolder, uint32_t feedId
 
 BasePostedItem::~BasePostedItem()
 {
-    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(200);
-	while( (mIsLoadingGroup || mIsLoadingMessage || mIsLoadingComment)
-	       && std::chrono::steady_clock::now() < timeout)
-	{
-		RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
-		        << (mIsLoadingGroup ? "Group " : "")
-		        << (mIsLoadingMessage ? "Message " : "")
-		        << (mIsLoadingComment ? "Comment " : "")
-		        << "loading finished." << std::endl;
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-	}
+	// Pending loaders never use this item from their worker thread, and their
+	// GUI-thread continuation checks a QPointer to it first.
 }
 
 void BasePostedItem::paintEvent(QPaintEvent *e)
@@ -123,49 +115,59 @@ bool BasePostedItem::setPost(const RsPostedPost &post, bool doFill)
 void BasePostedItem::loadGroup()
 {
 	mIsLoadingGroup = true;
-	RsThread::async([this]()
+
+	// The worker only uses these copies; `self` is checked on the GUI thread.
+	const RsGxsGroupId grpId = groupId();
+	QPointer<BasePostedItem> self(this);
+
+	RsThread::async([self,grpId]()
 	{
 		// 1 - get group data
 
 #ifdef DEBUG_FORUMS
-		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+		std::cerr << "Retrieving group data for group " << grpId << std::endl;
 #endif
 
 		std::vector<RsPostedGroup> groups;
-		const std::list<RsGxsGroupId> groupIds = { groupId() };
+		const std::list<RsGxsGroupId> groupIds = { grpId };
 
-		if(!rsPosted->getBoardsInfo(groupIds,groups))
-		{
+		bool ok = rsPosted->getBoardsInfo(groupIds,groups);
+
+		if(!ok)
 			RsErr() << "GxsPostedGroupItem::loadGroup() ERROR getting data" << std::endl;
-			mIsLoadingGroup = false;
-			return;
-		}
-
-		if (groups.size() != 1)
+		else if (groups.size() != 1)
 		{
 			std::cerr << "GxsPostedGroupItem::loadGroup() Wrong number of Items" << std::endl;
-			mIsLoadingGroup = false;
-			return;
+			ok = false;
 		}
-		RsPostedGroup group(groups[0]);
 
-		RsQThreadUtils::postToObject( [group,this]()
+		RsPostedGroup group;
+		if(ok)
+			group = groups[0];
+
+		RsQThreadUtils::postToObject( [self,ok,group]()
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
+			if(!self) return;
 
-			mGroupMeta = group.mMeta;
-			mIsLoadingGroup = false;
+			self->mIsLoadingGroup = false;
 
-		}, this );
+			if(ok)
+				self->mGroupMeta = group.mMeta;
+
+		}, qApp );
 	});
 }
 
 void BasePostedItem::loadMessage()
 {
 	mIsLoadingMessage = true;
-	RsThread::async([this]()
+
+	// The worker only uses these copies; `self` is checked on the GUI thread.
+	const RsGxsGroupId   grpId = groupId();
+	const RsGxsMessageId msgId = messageId();
+	QPointer<BasePostedItem> self(this);
+
+	RsThread::async([self,grpId,msgId]()
 	{
 		// 1 - get group data
 
@@ -173,43 +175,41 @@ void BasePostedItem::loadMessage()
 		std::vector<RsGxsComment> comments;
 		std::vector<RsGxsVote> votes;
 
-		if(! rsPosted->getBoardContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments,votes))
-		{
+		const bool ok = rsPosted->getBoardContent( grpId, std::set<RsGxsMessageId>( { msgId } ),posts,comments,votes);
+
+		if(!ok)
 			RsErr() << "BasePostedItem::loadMessage() ERROR getting data" << std::endl;
-			mIsLoadingMessage = false;
-			return;
-		}
-
-		if (posts.size() == 1)
-		{
-			std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
-			const RsPostedPost& post(posts[0]);
-
-			RsQThreadUtils::postToObject( [post,this]() { setPost(post,true); mIsLoadingMessage = false;}, this );
-		}
+		else if (posts.size() == 1)
+			std::cerr << "Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
 		else if(comments.size() == 1)
-		{
-			const RsGxsComment& cmt = comments[0];
-			std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
-
-			RsQThreadUtils::postToObject( [cmt,this]()
-			{
-				setComment(cmt);
-
-				//Change this item to be uploaded with thread element.
-				setMessageId(cmt.mMeta.mThreadId);
-				requestMessage();
-
-				mIsLoadingMessage = false;
-			}, this );
-
-		}
+			std::cerr << "Obtained comment, setting messageId to threadID = " << comments[0].mMeta.mThreadId << std::endl;
 		else
-		{
 			std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It." << std::endl;
 
-			RsQThreadUtils::postToObject( [this]() {  removeItem(); mIsLoadingMessage = false;}, this );
-		}
+		RsQThreadUtils::postToObject( [self,ok,posts,comments]()
+		{
+			if(!self) return;
+
+			self->mIsLoadingMessage = false;
+
+			if(!ok)
+				return;
+
+			if (posts.size() == 1)
+				self->setPost(posts[0],true);
+			else if(comments.size() == 1)
+			{
+				const RsGxsComment& cmt(comments[0]);
+				self->setComment(cmt);
+
+				//Change this item to be uploaded with thread element.
+				self->setMessageId(cmt.mMeta.mThreadId);
+				self->requestMessage();
+			}
+			else
+				self->removeItem();
+
+		}, qApp );
 	});
 }
 
@@ -221,33 +221,41 @@ void BasePostedItem::loadComment()
 	std::cerr << std::endl;
 #endif
 	mIsLoadingComment = true;
-	RsThread::async([this]()
+
+	// The worker only uses these copies; `self` is checked on the GUI thread.
+	const RsGxsGroupId grpId = groupId();
+	std::set<RsGxsMessageId> msgIds;
+
+	for(auto MsgId: messageVersions())
+		msgIds.insert(MsgId);
+
+	QPointer<BasePostedItem> self(this);
+
+	RsThread::async([self,grpId,msgIds]()
 	{
 		// 1 - get group data
-
-        std::set<RsGxsMessageId> msgIds;
-
-        for(auto MsgId: messageVersions())
-            msgIds.insert(MsgId);
 
 		std::vector<RsPostedPost> posts;
 		std::vector<RsGxsComment> comments;
 		std::vector<RsGxsVote> votes;
 
-		if(! rsPosted->getBoardContent( groupId(),msgIds,posts,comments,votes))
-		{
+		const bool ok = rsPosted->getBoardContent( grpId,msgIds,posts,comments,votes);
+
+		if(!ok)
 			RsErr() << "BasePostedItem::loadGroup() ERROR getting data" << std::endl;
-			mIsLoadingComment = false;
-			return;
-		}
 
 		int comNb = comments.size();
 
-		RsQThreadUtils::postToObject( [comNb,this]()
+		RsQThreadUtils::postToObject( [self,ok,comNb]()
 		{
-			setCommentsSize(comNb);
-			mIsLoadingComment = false;
-		}, this );
+			if(!self) return;
+
+			self->mIsLoadingComment = false;
+
+			if(ok)
+				self->setCommentsSize(comNb);
+
+		}, qApp );
 	});
 }
 
@@ -285,9 +293,10 @@ void BasePostedItem::readToggled(bool checked)
     }
     setReadStatus(false, checked);
 
-    RsThread::async([this,checked]()
+    const RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
+
+    RsThread::async([msgPair,checked]()
     {
-        RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
         rsPosted->setPostReadStatus(msgPair, !checked);
     });
 }
