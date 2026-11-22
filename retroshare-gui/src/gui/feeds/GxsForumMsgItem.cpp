@@ -92,17 +92,9 @@ void GxsForumMsgItem::paintEvent(QPaintEvent *e)
 
 GxsForumMsgItem::~GxsForumMsgItem()
 {
-    // The background loaders (loadGroup / loadMessage / setAsRead) no longer keep a
-    // raw pointer to this item: they capture the ids they need by value and post their
-    // GUI-thread continuation to qApp, guarded by a QPointer<GxsForumMsgItem>. The item
-    // can therefore be destroyed at any time while a detached worker is still running --
-    // the pending continuation just sees a null guard and drops.
-    //
-    // Hence no wait/timeout loop here. The previous one was both ineffective and unsafe:
-    // it blocked the GUI thread (so the queued lambda that clears the loading flag could
-    // never run, forcing the full timeout) and then freed the item anyway, while the
-    // detached worker was still about to call postToObject(this) on freed memory
-    // -> use-after-free SIGSEGV (crash in qobject_cast<QThread*> / QMetaObject::cast).
+    // Nothing to wait for: the loaders (loadGroup / loadMessage / setAsRead) never use
+    // this item from their worker thread. They post their result to qApp, and the posted
+    // code checks a QPointer to this item first, so it does nothing once the item is gone.
 	delete(ui);
 }
 
