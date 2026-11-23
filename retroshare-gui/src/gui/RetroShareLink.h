@@ -44,6 +44,7 @@
 #include <QVector>
 
 #include <stdint.h>
+#include <functional>
 
 #define RSLINK_PROCESS_NOTIFY_SUCCESS     0x01u // notify on success
 #define RSLINK_PROCESS_NOTIFY_ERROR       0x02u // notify on error
@@ -53,6 +54,9 @@
 #define RSLINK_PROCESS_NOTIFY_ALL         0x0Fu
 
 #define RSLINK_SCHEME          "retroshare"
+
+// RetroShareLink::registerPluginHost() is available (plugins can test this at compile time)
+#define RSLINK_HAS_PLUGIN_HOSTS 1
 
 #define RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST 1
 #define RSLINK_SUBTYPE_FILE_EXTRA               2
@@ -77,7 +81,8 @@ class RetroShareLink
 			TYPE_FILE_TREE     = 0x0d,
 			TYPE_CHAT_ROOM     = 0x0e,
 			TYPE_WIRE          = 0x0f,
-			TYPE_CIRCLES        = 0x10
+			TYPE_CIRCLES        = 0x10,
+			TYPE_PLUGIN        = 0x11 // handled by a plugin, see registerPluginHost()
 		};
 
 	public:
@@ -100,6 +105,12 @@ class RetroShareLink
 		static RetroShareLink createFileTree(const QString& name, uint64_t size,uint32_t count,const QString& radix_data);
 		static RetroShareLink createChatRoom(const ChatId &chatId, const QString& name);
 		static RetroShareLink createCircle(const RsGxsCircleId& circleId, const QString& name);
+
+		/// Let a plugin open retroshare://<host>?... links (e.g. host "git" for RetroGit).
+		/// @p open runs in the GUI thread when such a link is activated and returns false if it
+		/// could not be opened; @p description is the link tooltip. RetroShare's own hosts are refused.
+		static bool registerPluginHost(const QString& host, const QString& description, const std::function<bool(const QUrl&)>& open);
+		static void unregisterPluginHost(const QString& host);
 
 		bool valid() const { return _valid; }
 		enumType type() const {return _type; }
