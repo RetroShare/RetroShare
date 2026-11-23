@@ -23,6 +23,7 @@
 #include <QModelIndex>
 #include <QIcon>
 #include <QTimer>
+#include <QPointer>
 
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsexpr.h"
@@ -164,7 +165,10 @@ void RsPostedPostsModel::refreshPendingPosts()
 	auto* ids = new std::set<RsGxsMessageId>();
 	ids->swap(mPendingRefreshIds);
 
-	RsThread::async([this, grpId=mPendingRefreshGroupId, ids]()
+	// `this` is used on the GUI thread only, once `self` shows the model is alive.
+	QPointer<RsPostedPostsModel> self(this);
+
+	RsThread::async([this, self, grpId=mPendingRefreshGroupId, ids]()
 	{
 		// 1 - get message data from p3Posted
 
@@ -185,8 +189,10 @@ void RsPostedPostsModel::refreshPendingPosts()
 		// 2 - update the model in the UI thread. Always go there, even with
 		// nothing read, to end the batch.
 
-		RsQThreadUtils::postToObject( [posts,grpId,this]()
+		RsQThreadUtils::postToObject( [posts,grpId,self,this]()
 		{
+			if(!self) return;
+
 			mRefreshInFlight = false;
 
 			// Events that came in while this batch was read.
@@ -221,7 +227,7 @@ void RsPostedPostsModel::refreshPendingPosts()
 				preMods();
 				postMods();
 			}
-		},this);
+		},qApp);
 	});
 }
 
@@ -649,7 +655,10 @@ void RsPostedPostsModel::update_posts(const RsGxsGroupId& group_id)
 	if(group_id.isNull())
 		return;
 
-	RsThread::async([this, group_id]()
+	// `this` is used on the GUI thread only, once `self` shows the model is alive.
+	QPointer<RsPostedPostsModel> self(this);
+
+	RsThread::async([this, self, group_id]()
 	{
         // 1 - get message data from p3GxsChannels
 
@@ -681,7 +690,7 @@ void RsPostedPostsModel::update_posts(const RsGxsGroupId& group_id)
 
         // 2 - update the model in the UI thread.
 
-        RsQThreadUtils::postToObject( [group,posts,comments,votes,this]()
+        RsQThreadUtils::postToObject( [group,posts,comments,votes,self,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -689,13 +698,14 @@ void RsPostedPostsModel::update_posts(const RsGxsGroupId& group_id)
 			 * Qt::QueuedConnection is important!
 			 */
 
-            setPosts(group,*posts) ;
+            if(self)
+                setPosts(group,*posts) ;
 
             delete posts;
             delete comments;
             delete votes;
 
-		}, this );
+		}, qApp );
 
     });
 }
