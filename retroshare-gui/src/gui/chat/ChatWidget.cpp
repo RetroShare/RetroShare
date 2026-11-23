@@ -204,8 +204,11 @@ ChatWidget::ChatWidget(QWidget *parent)
 	connect(ui->textBrowser, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
 
 	//connect(ui->chatTextEdit, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
-	// reset text and color after removing all characters from the QTextEdit and after calling QTextEdit::clear
-	connect(ui->chatTextEdit, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(chatCharFormatChanged()));
+	// reset text and color after removing all characters from the QTextEdit and after calling QTextEdit::clear.
+	// Queued: QTextEdit::clear() emits this signal from inside QTextDocument::clear(), and changing the
+	// edit's cursor at that point drops it from the document's cursor list (Qt >= 6.11.2): the cursor then
+	// reads the freed document when the widget is destroyed.
+	connect(ui->chatTextEdit, &QTextEdit::currentCharFormatChanged, this, &ChatWidget::chatCharFormatChanged, Qt::QueuedConnection);
 	connect(ui->chatTextEdit, SIGNAL(textChanged()), this, SLOT(updateLenOfChatTextEdit()));
 
 	ui->info_Frame->setVisible(false);
