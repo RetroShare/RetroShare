@@ -50,3 +50,19 @@ if(CPACK_TOPLEVEL_TAG STREQUAL CPACK_SOURCE_TOPLEVEL_TAG AND "@GIT_FOUND@")
 		list(APPEND CPACK_IGNORE_FILES "^${IGN_FILE_QUOTED}(/|\$)")
 	endforeach()
 endif()
+
+
+if(NOT [===[@RS_PACKAGE_RUNTIME_DEPENDENCIES@]===] AND (
+	CPACK_GENERATOR STREQUAL "AppImage" OR
+	CPACK_GENERATOR STREQUAL "NSIS"
+))
+	message(WARNING
+		"Creating ${CPACK_GENERATOR} package without runtime dependencies. "
+		"Consider setting `RS_PACKAGE_RUNTIME_DEPENDENCIES` to `TRUE`."
+	)
+endif()
+
+
+if(CPACK_GENERATOR STREQUAL "AppImage")
+	set(CPACK_PACKAGE_ICON retroshare.png)
+endif()
