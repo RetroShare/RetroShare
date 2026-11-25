@@ -24,6 +24,7 @@
 #include <QMenu>
 #include <QDir>
 #include <QMimeData>
+#include <QPointer>
 #include <QTextDocumentFragment>
 
 #include "CreateGxsChannelMsg.h"
@@ -848,47 +849,49 @@ void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
 	std::cerr << "CreateGxsChannelMsg::loadChannelPostInfo()";
 	std::cerr << std::endl;
 #endif
-	RsThread::async([this]()
+	// The worker only uses these copies; `self` is checked on the GUI thread.
+	const RsGxsGroupId channelId = mChannelId;
+	const RsGxsMessageId origPostId = mOrigPostId;
+	QPointer<CreateGxsChannelMsg> self(this);
+
+	RsThread::async([self,channelId,origPostId]()
 	{
 		std::vector<RsGxsChannelPost> posts;
 		std::vector<RsGxsComment> comments;
 		std::vector<RsGxsVote> votes;
 
-		if( !rsGxsChannels->getChannelContent(mChannelId,std::set<RsGxsMessageId>({mOrigPostId}),posts,comments,votes) || posts.size() != 1)
+		if( !rsGxsChannels->getChannelContent(channelId,std::set<RsGxsMessageId>({origPostId}),posts,comments,votes) || posts.size() != 1)
 		{
-			std::cerr << "Cannot get channel post data for channel " << mChannelId << " and post " << mOrigPostId << std::endl;
+			std::cerr << "Cannot get channel post data for channel " << channelId << " and post " << origPostId << std::endl;
 			return;
 		}
 
-		RsQThreadUtils::postToObject( [posts,this]()
+		RsQThreadUtils::postToObject( [self,posts]()
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
+			if(!self) return;
 
             const RsGxsChannelPost& post(posts[0]);
 
-			if(post.mMeta.mGroupId != mChannelId || post.mMeta.mMsgId != mOrigPostId)
+			if(post.mMeta.mGroupId != self->mChannelId || post.mMeta.mMsgId != self->mOrigPostId)
 			{
 				std::cerr << "CreateGxsChannelMsg::loadChannelPostInfo() ERROR INVALID post ID or channel ID" << std::endl;
 				return ;
 			}
 
-			subjectEdit->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str())) ;
-			RichTextEditWidget->setText(QString::fromUtf8(post.mMsg.c_str()));
+			self->subjectEdit->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str())) ;
+			self->RichTextEditWidget->setText(QString::fromUtf8(post.mMsg.c_str()));
 
 			for(std::list<RsGxsFile>::const_iterator it(post.mFiles.begin());it!=post.mFiles.end();++it)
-				addAttachment(it->mHash,it->mName,it->mSize,true,RsPeerId(),true);
+				self->addAttachment(it->mHash,it->mName,it->mSize,true,RsPeerId(),true);
 
 			if(post.mThumbnail.mData != NULL)
 			{
-				GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData,post.mThumbnail.mSize,picture,GxsIdDetails::ORIGINAL);
-				preview_W->setPixmap(picture,true);
-				removeButton->show();
+				GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData,post.mThumbnail.mSize,self->picture,GxsIdDetails::ORIGINAL);
+				self->preview_W->setPixmap(self->picture,true);
+				self->removeButton->show();
 			}
 
-
-		}, this );
+		}, qApp );
 	});
 
 }
@@ -901,26 +904,28 @@ void CreateGxsChannelMsg::loadChannelInfo()
 #endif
 
 
-	RsThread::async([this]()
+	// The worker only uses this copy; `self` is checked on the GUI thread.
+	const RsGxsGroupId channelId = mChannelId;
+	QPointer<CreateGxsChannelMsg> self(this);
+
+	RsThread::async([self,channelId]()
 	{
 		std::vector<RsGxsChannelGroup> groups;
 
-        if( !rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>({mChannelId}),groups) || groups.size() != 1)
+        if( !rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>({channelId}),groups) || groups.size() != 1)
         {
-            std::cerr << "Cannot get channel group data for channel " << mChannelId << std::endl;
+            std::cerr << "Cannot get channel group data for channel " << channelId << std::endl;
             return;
         }
 
-        RsQThreadUtils::postToObject( [groups,this]()
+        RsQThreadUtils::postToObject( [self,groups]()
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
+			if(!self) return;
 
 			if (groups.size() == 1)
 			{
 				const RsGroupMetaData& fi = groups.front().mMeta;
-				saveChannelInfo(fi);
+				self->saveChannelInfo(fi);
 			}
 			else
 			{
@@ -928,7 +933,7 @@ void CreateGxsChannelMsg::loadChannelInfo()
 				std::cerr << std::endl;
 			}
 
-		}, this );
+		}, qApp );
 	});
 }
 
