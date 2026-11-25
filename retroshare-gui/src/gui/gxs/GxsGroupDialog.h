@@ -190,7 +190,12 @@ protected:
      * \param data   Generic group data for this group. /!\ The pointer should be deleted by the client when released.
      * \return       True if everything does fine.
      */
-    virtual bool service_getGroupData(const RsGxsGroupId& grpId,RsGxsGenericGroupData *& data) = 0;
+    typedef bool (*GroupDataLoader)(const RsGxsGroupId& grpId,RsGxsGenericGroupData *& data);
+
+    /*!
+     * \return The function retrieving the group data of the service. It runs in a worker thread, without the dialog.
+     */
+    virtual GroupDataLoader service_groupDataLoader() const = 0;
 
 	/*!
 	 * It is up to the service to do the actual group creation

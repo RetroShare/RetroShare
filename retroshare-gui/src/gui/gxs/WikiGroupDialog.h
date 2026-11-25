@@ -43,7 +43,8 @@ protected:
 	virtual bool service_createGroup(RsGroupMetaData &meta) override;
 	virtual bool service_updateGroup(const RsGroupMetaData &editedMeta) override;
 	virtual bool service_loadGroup(const RsGxsGenericGroupData *data, Mode mode, QString &description) override;
-	virtual bool service_getGroupData(const RsGxsGroupId &groupId, RsGxsGenericGroupData *&data) override;
+	static bool service_getGroupData(const RsGxsGroupId &groupId, RsGxsGenericGroupData *&data);
+	GroupDataLoader service_groupDataLoader() const override { return &service_getGroupData; }
 
 private:
 	void loadModerators(const RsGxsGroupId &groupId);

@@ -38,7 +38,8 @@ protected:
 	bool service_createGroup(RsGroupMetaData& meta) override;
 	bool service_loadGroup(const RsGxsGenericGroupData *data,Mode mode, QString &description) override;
 	bool service_updateGroup(const RsGroupMetaData& editedMeta) override;
-    bool service_getGroupData(const RsGxsGroupId& grpId,RsGxsGenericGroupData *& data) override;
+    static bool service_getGroupData(const RsGxsGroupId& grpId,RsGxsGenericGroupData *& data);
+    GroupDataLoader service_groupDataLoader() const override { return &service_getGroupData; }
 
 private:
     RsGxsForumGroup mGroupData;

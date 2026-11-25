@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QMessageBox>
+#include <QPointer>
 #include <QPushButton>
 
 #include "util/misc.h"
@@ -30,6 +31,7 @@
 #include "retroshare/rsgxsflags.h"
 
 #include <algorithm>
+#include <memory>
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsgxscircles.h>
@@ -981,34 +983,34 @@ void GxsGroupDialog::filterComboBoxChanged(int i)
 
 void GxsGroupDialog::loadGroup(const RsGxsGroupId& grpId)
 {
-	RsThread::async([this,grpId]()
-	{
-		RsGxsGenericGroupData *groupData;
+	// The worker does not use the dialog; `self` is checked on the GUI thread.
+	const GroupDataLoader loader = service_groupDataLoader();
+	QPointer<GxsGroupDialog> self(this);
 
-		if(!service_getGroupData(grpId,groupData))
+	RsThread::async([self,loader,grpId]()
+	{
+		RsGxsGenericGroupData *groupData = nullptr;
+
+		if(!loader(grpId,groupData))
 		{
 			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info " << std::endl;
 			return;
 		}
 
-		RsQThreadUtils::postToObject( [this,groupData]()
-		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete, note that
-			 * Qt::QueuedConnection is important!
-			 */
+		std::shared_ptr<const RsGxsGenericGroupData> data(groupData);
 
-            mGrpMeta = groupData->mMeta;
+		RsQThreadUtils::postToObject( [self,data]()
+		{
+			if(!self) return;
+
+			self->mGrpMeta = data->mMeta;
 
 			QString description;
 
-			if (service_loadGroup(groupData, mMode, description))
-				updateFromExistingMeta(description);
+			if (self->service_loadGroup(data.get(), self->mMode, description))
+				self->updateFromExistingMeta(description);
 
-            delete groupData;
-
-		}, this );
+		}, qApp );
 	});
 }
 
