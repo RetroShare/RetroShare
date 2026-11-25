@@ -1211,7 +1211,7 @@ QString RsHtml::toHtml(QString text, bool realHtml)
 }
 
 /** Loads image and converts image to embedded image HTML fragment **/
-bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels, const int maxBytes)
+bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels, const int maxBytes, const QString &cssClass)
 {
 	QImage image;
 
@@ -1219,15 +1219,15 @@ bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, 
 		fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", fileName.toLatin1().constData());
 		return false;
 	}
-    return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels, maxBytes);
+    return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels, maxBytes, cssClass);
 }
 
 /** Converts image to embedded image HTML fragment **/
-bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels, const int maxBytes)
+bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels, const int maxBytes, const QString &cssClass)
 {
 	rstime::RsScopeTimer s("Embed image");
 	QImage opt;
-    return ImageUtil::optimizeSizeHtml(embeddedImage, originalImage, opt, maxPixels, maxBytes);
+    return ImageUtil::optimizeSizeHtml(embeddedImage, originalImage, opt, maxPixels, maxBytes, cssClass);
 }
 
 QString RsHtml::plainText(const QString &text)
@@ -1258,7 +1258,7 @@ QString RsHtml::makeQuotedText(RSTextBrowser *browser)
 	QStringList sl = text.split(QRegularExpression("[\r\n]"),QtSkipEmptyParts);
 	text = sl.join("\n> ");
 	text.replace("\n> >","\n>>"); // Don't add space for already quotted lines.
-	text.replace(QChar(-4)," ");//Char used when image on text.
+	text.replace(QChar(QChar::ObjectReplacementCharacter)," ");//Char used when image on text.
 	QString quote = (text.left(1) == ">") ? QString(">") : QString("> ");
 	return quote + text;
 }

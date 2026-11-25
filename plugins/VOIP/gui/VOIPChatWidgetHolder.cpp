@@ -328,6 +328,13 @@ VOIPChatWidgetHolder::~VOIPChatWidgetHolder()
 	delete videoProcessor ;
 	deleteButtonMap();
 
+	// The fullscreen frame is a top-level window (no parent), so nothing else
+	// deletes it. Left alive, it outlives the plugin: ~QApplication destroys it
+	// after the plugin library is unloaded and crashes on the vtables of its
+	// QVideoOutputDevice children.
+	fullScreenFrame->removeEventFilter(this);
+	delete fullScreenFrame;
+
 	// stop and delete timers
 	timerAudioRing->stop();
 	delete(timerAudioRing);

@@ -31,8 +31,8 @@
 /*TODO:
  * using list here for internal data storage is not best option
 */
-pgpid_item_model::pgpid_item_model(std::list<RsPgpId> &neighs_, float &_font_height,  QObject *parent)
-    : QAbstractTableModel(parent), neighs(neighs_), font_height(_font_height)
+pgpid_item_model::pgpid_item_model(float &_font_height,  QObject *parent)
+    : QAbstractTableModel(parent), font_height(_font_height)
 {
 }
 
@@ -118,6 +118,25 @@ QVariant pgpid_item_model::headerData(int section, Qt::Orientation orientation, 
 }
 
 
+bool pgpid_item_model::getDetails(int row, RsPeerDetails& detail) const
+{
+    if((unsigned)row >= neighs.size())
+        return false;
+
+    if(mCachedId != neighs[row])
+    {
+        if (!rsPeers->getGPGDetails(neighs[row], mCachedDetails))
+        {
+            mCachedId.clear();
+            return false;
+        }
+        mCachedId = neighs[row];
+    }
+
+    detail = mCachedDetails;
+    return true;
+}
+
 int pgpid_item_model::rowCount(const QModelIndex &/*parent*/) const
 {
     return neighs.size();
@@ -134,19 +153,9 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    if((unsigned)index.row() >= neighs.size())
-        return QVariant();
-
-
-    //shit code (please rewrite it)
-
-    std::list<RsPgpId>::iterator it = neighs.begin();
-    for(int i = 0; i < index.row(); i++)
-        it++;
     RsPeerDetails detail;
-    if (!rsPeers->getGPGDetails(*it, detail))
+    if (!getDetails(index.row(), detail))
         return QVariant();
-    //shit code end
     if(role == Qt::EditRole) //some columns return raw data for editrole, used for proper filtering and sorting
     {
         switch(index.column())
@@ -317,13 +326,14 @@ void pgpid_item_model::data_updated(std::list<RsPgpId> &new_neighs)
 
     //shit code follow (rewrite this please)
     size_t old_size = neighs.size(), new_size = 0;
-    std::list<RsPgpId> old_neighs = neighs;
+    std::vector<RsPgpId> old_neighs = neighs;
 
-    new_size = new_neighs.size();
     //set model data to new cleaned up data
-    neighs = new_neighs;
-    neighs.sort();
-    neighs.unique(); //remove possible dups
+    new_neighs.sort();
+    new_neighs.unique(); //remove possible dups
+    neighs.assign(new_neighs.begin(), new_neighs.end());
+    new_size = neighs.size();
+    mCachedId.clear();
 
     //reflect actual row count in model
     if(old_size < new_size)

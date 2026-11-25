@@ -52,3 +52,8 @@ install(
 	DESTINATION "${CMAKE_INSTALL_DATADIR}/applications/"
 	COMPONENT retroshare-gui
 )
+install(
+	FILES cc.retroshare.RetroShare.metainfo.xml
+	DESTINATION "${CMAKE_INSTALL_DATADIR}/metainfo/"
+	COMPONENT retroshare-gui
+)

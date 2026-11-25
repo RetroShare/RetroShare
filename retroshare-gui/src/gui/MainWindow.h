@@ -23,6 +23,7 @@
 
 #include <QLineEdit>
 #include <QSystemTrayIcon>
+#include <QTimer>
 #include <set>
 
 #include "retroshare/rsevents.h"
@@ -271,6 +272,7 @@ protected:
     MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
     void closeEvent(QCloseEvent *);
+    bool eventFilter(QObject *obj, QEvent *event);
     
     /** Called when the user changes the UI translation. */
     virtual void retranslateUi();
@@ -279,7 +281,7 @@ private slots:
 
     void updateMenu();
     void updateStatus();
-    void updateFriends();
+    void updateTrayIcon();
 
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
@@ -310,6 +312,7 @@ private slots:
     void showabout();
     void openShareManager();
     void displaySystrayMsg(const QString&,const QString&) ;
+    void flushPendingSystrayMsg();
 
     /** Displays the help browser and displays the most recently viewed help
     * topic. */
@@ -332,6 +335,7 @@ private:
     void initStackedPage();
     void addPage(MainPage *page, QActionGroup *grp, 	QList<QPair<MainPage *, QPair<QAction *, QListWidgetItem *> > > *notify);
     void createTrayIcon();
+    void makeClickable(QWidget *widget);
 #if defined(Q_OS_DARWIN)
     /** Creates a default menubar on Mac */
     void createMenuBar();
@@ -361,6 +365,14 @@ private:
 #endif
 
     QSystemTrayIcon *trayIcon;
+    QString mLastTrayIconKey;
+    unsigned int mTrayIconRefreshTicks;
+    // Systray balloons are rate-limited; while one is up, later ones are folded into a single summary.
+    QTimer *mSystrayMsgTimer;
+    QString mPendingSystrayTitle;
+    QString mPendingSystrayMsg;
+    unsigned int mPendingSystrayCount;
+    bool mPendingSystrayMixed;
     QMenu *notifyMenu;
     QMenu *trayMenu;
     QString notifyToolTip;

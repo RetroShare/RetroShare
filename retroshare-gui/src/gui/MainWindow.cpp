@@ -23,6 +23,7 @@
 #include <QIcon>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <QPixmap>
 #include <QStatusBar>
 #include <QString>
@@ -148,6 +149,13 @@
 #define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
+/* Minimum spacing between two systray balloons. D-Bus trays (xfce4-panel, ...) choke on a burst of
+ * showMessage() calls, which a busy chat room used to produce one per message. */
+#define SYSTRAY_MSG_INTERVAL_MS 3000
+
+/* updateStatus() runs every second; every TRAY_ICON_REFRESH_TICKS runs it re-sends the tray icon. */
+#define TRAY_ICON_REFRESH_TICKS 30
+
 #define IMAGE_BWGRAPH           ":/icons/png/bandwidth.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_NEWRSCOLLECTION   ":/images/library.png"
@@ -184,6 +192,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 {
     ui = new Ui::MainWindow;
     trayIcon = NULL;
+
+    mTrayIconRefreshTicks = 0;
+    mPendingSystrayCount = 0;
+    mPendingSystrayMixed = false;
+    mSystrayMsgTimer = new QTimer(this);
+    mSystrayMsgTimer->setSingleShot(true);
+    connect(mSystrayMsgTimer, SIGNAL(timeout()), this, SLOT(flushPendingSystrayMsg()));
 
 	friendsDialog=NULL;
 	idDialog=NULL;
@@ -305,6 +320,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 		else dhtstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowDHT", QVariant(true)).toBool());
 		statusBar()->addWidget(dhtstatus);
 		dhtstatus->getDHTStatus();
+
+		makeClickable(natstatus);
+		makeClickable(dhtstatus);
 	}
 
     hashingstatus = new HashingStatus();
@@ -318,6 +336,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     ratesstatus = new RatesStatus();
     ratesstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowRate", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(ratesstatus);
+    makeClickable(ratesstatus);
 
     opModeStatus = new OpModeStatus();
     opModeStatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowOpMode", QVariant(false)).toBool());
@@ -346,7 +365,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     createNotifyIcons();
 
     /* intialize friend count */
-    updateFriends();
+    updateTrayIcon();
 
     loadOwnStatus();
 
@@ -377,7 +396,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
             if(!fe)
                 return;
 
-            updateFriends();
+            updateTrayIcon();
         }
         , this );
     }, mEventHandlerId_friends, RsEventType::FRIEND_LIST );
@@ -746,6 +765,29 @@ void MainWindow::showBandwidthGraph()
 	_bandwidthGraph->showWindow();
 }
 
+/** Lets a status bar widget open its window when clicked, see eventFilter() */
+void MainWindow::makeClickable(QWidget *widget)
+{
+    widget->setCursor(Qt::PointingHandCursor);
+    widget->installEventFilter(this);
+    for (QWidget *child : widget->findChildren<QWidget *>())
+        child->installEventFilter(this);
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::MouseButtonPress && static_cast<QMouseEvent *>(event)->button() == Qt::LeftButton) {
+        QWidget *widget = static_cast<QWidget *>(obj);
+
+        if (widget == ratesstatus || ratesstatus->isAncestorOf(widget))
+            showBandwidthGraph();
+        else
+            showStatisticsWindow();
+    }
+
+    return RWindow::eventFilter(obj, event);
+}
+
 void MainWindow::createNotifyIcons()
 {
     /* create notify icons */
@@ -799,7 +841,41 @@ const QList<UserNotify*> &MainWindow::getUserNotifyList()
 
 void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
 {
-    trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, 3000);
+    if (!trayIcon)
+        return;
+
+    if (mSystrayMsgTimer->isActive()) {
+        // A balloon is still up: fold this one into the next flush instead of stacking calls.
+        if (mPendingSystrayCount == 0)
+            mPendingSystrayTitle = title;
+        else if (mPendingSystrayTitle != title)
+            mPendingSystrayMixed = true;
+
+        mPendingSystrayMsg = msg;
+        ++mPendingSystrayCount;
+        return;
+    }
+
+    trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, SYSTRAY_MSG_INTERVAL_MS);
+    mSystrayMsgTimer->start(SYSTRAY_MSG_INTERVAL_MS);
+}
+
+void MainWindow::flushPendingSystrayMsg()
+{
+    if (mPendingSystrayCount == 0 || !trayIcon)
+        return;
+
+    // Balloons with different titles were folded together: name none of their sources.
+    QString title = mPendingSystrayMixed ? QString("RetroShare") : mPendingSystrayTitle;
+    QString msg = (mPendingSystrayCount == 1) ? mPendingSystrayMsg : tr("%1 new messages").arg(mPendingSystrayCount);
+
+    mPendingSystrayCount = 0;
+    mPendingSystrayMixed = false;
+    mPendingSystrayTitle.clear();
+    mPendingSystrayMsg.clear();
+
+    trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, SYSTRAY_MSG_INTERVAL_MS);
+    mSystrayMsgTimer->start(SYSTRAY_MSG_INTERVAL_MS);
 }
 
 void MainWindow::updateTrayCombine()
@@ -833,7 +909,7 @@ void MainWindow::updateTrayCombine()
         notifyMenu->menuAction()->setVisible(visible);
 
     // update tray icon
-    updateFriends();
+    updateTrayIcon();
 }
 
 void MainWindow::toggleStatusToolTip(bool toggle){
@@ -848,6 +924,16 @@ void MainWindow::updateStatus()
     // This call is essential to remove locks due to QEventLoop re-entrance while asking gpg passwds. Dont' remove it!
     if(RsAutoUpdatePage::eventsLocked())
         return;
+
+    // The tray icon is otherwise only refreshed on FRIEND_LIST events, and updateTrayIcon()
+    // drops those while events are locked and skips unchanged icons. Re-send it now and then
+    // so that a lost event or an update the tray host dropped does not stick.
+    if (++mTrayIconRefreshTicks >= TRAY_ICON_REFRESH_TICKS) {
+        mTrayIconRefreshTicks = 0;
+        mLastTrayIconKey.clear();
+        updateTrayIcon();
+    }
+
     float downKb = 0;
     float upKb = 0;
     rsConfig->GetCurrentDataRates(downKb, upKb);
@@ -894,7 +980,7 @@ void MainWindow::updateStatus()
     }
 }
 
-void MainWindow::updateFriends()
+void MainWindow::updateTrayIcon()
 {
 	if(RsAutoUpdatePage::eventsLocked())
 		return ;
@@ -917,8 +1003,19 @@ void MainWindow::updateFriends()
         trayIconResource = IMAGE_RETROSHARE;
     }
 
+    bool overlay = notifyMenu && notifyMenu->menuAction()->isVisible();
+
+    // Every setIcon() re-sends the pixmap over D-Bus on SNI trays: skip it when nothing changed.
+    // The tray host can still drop an update (seen with xfce4-panel and the Windows shell),
+    // which would leave it on the grey "0 connected" icon: updateStatus() clears the key
+    // every TRAY_ICON_REFRESH_TICKS seconds to force a re-send.
+    QString trayIconKey = trayIconResource + (overlay ? "+" : "");
+    if (trayIconKey == mLastTrayIconKey)
+        return;
+    mLastTrayIconKey = trayIconKey;
+
     QIcon icon;
-    if (notifyMenu && notifyMenu->menuAction()->isVisible()) {
+    if (overlay) {
         QPixmap trayImage(trayIconResource);
         QPixmap overlayImage(IMAGE_OVERLAY);
 
@@ -1833,7 +1930,7 @@ void MainWindow::setCompactStatusMode(bool compact)
 {
 	//statusComboBox: TODO Show only icon
 	peerstatus->setCompactMode(compact);
-	updateFriends();
+	updateTrayIcon();
     if(!hiddenmode)
     {
 	natstatus->setCompactMode(compact);

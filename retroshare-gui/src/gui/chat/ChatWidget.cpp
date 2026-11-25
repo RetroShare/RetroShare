@@ -1309,7 +1309,7 @@ void ChatWidget::sendChat()
 	QString text;
 	if (ui->actionSendAsPlainText->isChecked()){
 		text = chatWidget->toPlainText();
-		text.replace(QChar(-4),"");//Char used when image on text.
+		text.replace(QChar(QChar::ObjectReplacementCharacter),"");//Char used when image on text.
 	} else {
 		RsHtml::optimizeHtml(chatWidget, text,
 		                     (ui->actionNoEmbed->isChecked() ? RSHTML_FORMATTEXT_NO_EMBED : 0)
@@ -1673,7 +1673,7 @@ void ChatWidget::sendSticker()
 	if(sendingBlocked) return;
 	QString sticker = qobject_cast<QPushButton*>(sender())->statusTip();
 	QString encodedImage;
-	if (RsHtml::makeEmbeddedImage(sticker, encodedImage, 640*480, maxMessageSize() - 200)) {		//-200 for the html stuff
+	if (RsHtml::makeEmbeddedImage(sticker, encodedImage, 640*480, maxMessageSize() - 200, "sticker")) {		//-200 for the html stuff
 		RsHtml::optimizeHtml(encodedImage, 0);
 		std::string msg = encodedImage.toUtf8().constData();
         rsChats->sendChat(chatId, msg);

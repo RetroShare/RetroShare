@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-FileCopyrightText: 2026 RetroShare Team <contact@retroshare.cc> -->
+<!-- SPDX-License-Identifier: CC0-1.0 -->
+<component type="desktop-application">
+  <id>cc.retroshare.RetroShare</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>AGPL-3.0-or-later</project_license>
+  <name>RetroShare</name>
+  <summary>Secure decentralized friend-to-friend communication</summary>
+  <description>
+    <p>
+      RetroShare creates encrypted connections between you and your friends,
+      with no central server involved. On top of this friend-to-friend
+      network it provides:
+    </p>
+    <ul>
+      <li>Instant messaging, chat rooms and private mail</li>
+      <li>Forums, channels and boards</li>
+      <li>File sharing and anonymous file transfers</li>
+      <li>Access through Tor and I2P</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">retroshare.desktop</launchable>
+  <provides>
+    <binary>retroshare-gui</binary>
+  </provides>
+  <categories>
+    <category>Network</category>
+    <category>InstantMessaging</category>
+    <category>P2P</category>
+  </categories>
+  <url type="homepage">https://retroshare.cc</url>
+  <url type="bugtracker">https://github.com/RetroShare/RetroShare/issues</url>
+  <url type="vcs-browser">https://github.com/RetroShare/RetroShare</url>
+  <developer id="cc.retroshare">
+    <name>RetroShare Team</name>
+  </developer>
+  <content_rating type="oars-1.1">
+    <content_attribute id="social-chat">intense</content_attribute>
+    <content_attribute id="social-info">mild</content_attribute>
+    <content_attribute id="social-contacts">intense</content_attribute>
+  </content_rating>
+  <releases>
+    <release version="0.6.7.3" date="2023-12-27"/>
+  </releases>
+</component>
