@@ -23,6 +23,7 @@
 
 #include <QMessageBox>
 #include <QFile>
+#include <QPointer>
 #include <QDropEvent>
 #include <QPushButton>
 #include <QTextDocumentFragment>
@@ -220,86 +221,94 @@ void  CreateGxsForumMsg::newMsg()
         mOrigMsgLoaded = false;
     }
 
-    RsThread::async( [this]()
+    // The worker only uses these copies; `self` is checked on the GUI thread.
+    const RsGxsGroupId forumId = mForumId;
+    const RsGxsMessageId parentId = mParentId;
+    const RsGxsMessageId origMsgId = mOrigMsgId;
+    QPointer<CreateGxsForumMsg> self(this);
+
+    RsThread::async( [self,forumId,parentId,origMsgId]()
     {
         // We only need group Meta information, but forums do not provide it currently
 
         std::vector<RsGxsForumGroup> forums_info;
-        rsGxsForums->getForumsInfo(std::list<RsGxsGroupId>{ mForumId },forums_info);
+        rsGxsForums->getForumsInfo(std::list<RsGxsGroupId>{ forumId },forums_info);
 
         // Load parent message
 
         RsGxsForumMsg parent_msg;
 
-        if(!mParentId.isNull())
+        if(!parentId.isNull())
         {
             std::vector<RsGxsForumMsg> parent_msgs;
-            rsGxsForums->getForumContent(mForumId,std::set<RsGxsMessageId>{ mParentId },parent_msgs);
+            rsGxsForums->getForumContent(forumId,std::set<RsGxsMessageId>{ parentId },parent_msgs);
 
             if(parent_msgs.size() == 1)
                 parent_msg = *parent_msgs.begin();
             else
-                RsErr() << "Cannot get parent message " << mParentId << " from forum." ;
+                RsErr() << "Cannot get parent message " << parentId << " from forum." ;
         }
 
         // Load original message (edit mode)
 
         RsGxsForumMsg orig_msg;
 
-        if(!mOrigMsgId.isNull())
+        if(!origMsgId.isNull())
         {
             std::vector<RsGxsForumMsg> orig_msgs;
-            rsGxsForums->getForumContent(mForumId,std::set<RsGxsMessageId>{ mOrigMsgId },orig_msgs);
+            rsGxsForums->getForumContent(forumId,std::set<RsGxsMessageId>{ origMsgId },orig_msgs);
 
             if(orig_msgs.size() == 1)
                 orig_msg = *orig_msgs.begin();
             else
-                RsErr() << "Cannot get orig message " << mOrigMsgId << " from forum." ;
+                RsErr() << "Cannot get orig message " << origMsgId << " from forum." ;
         }
 
         // Now update GUI with all that nice data
 
-        RsQThreadUtils::postToObject( [this,forums_info,parent_msg,orig_msg]()
+        RsQThreadUtils::postToObject( [self,forums_info,parent_msg,orig_msg]()
         {
+            if(!self) return;
+
             if(forums_info.size() != 1)
             {
-                RsErr() << "Cannot retrieve group information for forum " << mForumId ;
+                RsErr() << "Cannot retrieve group information for forum " << self->mForumId ;
 
                 return;
             }
             auto fg(forums_info.front());
 
-            mForumMetaLoaded = true;
-            mForumMeta = fg.mMeta;
+            self->mForumMetaLoaded = true;
+            self->mForumMeta = fg.mMeta;
 
             if(!parent_msg.mMsg.empty())
             {
-                mParentMsg = parent_msg;
-                mParentMsgLoaded = true;
+                self->mParentMsg = parent_msg;
+                self->mParentMsgLoaded = true;
             }
             if(!orig_msg.mMsg.empty())
             {
-                mOrigMsg = orig_msg;
-                mOrigMsgLoaded = true;
+                self->mOrigMsg = orig_msg;
+                self->mOrigMsgLoaded = true;
             }
 
-            if(!mForumMeta.mCircleId.isNull())
-                loadCircleInfo(RsGxsGroupId(mForumMeta.mCircleId));
+            if(!self->mForumMeta.mCircleId.isNull())
+                self->loadCircleInfo(RsGxsGroupId(self->mForumMeta.mCircleId));
 
             // Now update the GUI
 
-            mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, mParentMsgLoaded);
-            mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, false);
+            self->mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, self->mParentMsgLoaded);
+            self->mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, false);
 
-            mStateHelper->setActive(CREATEGXSFORUMMSG_ORIGMSG, mOrigMsgLoaded);
-            mStateHelper->setLoading(CREATEGXSFORUMMSG_ORIGMSG, false);
+            self->mStateHelper->setActive(CREATEGXSFORUMMSG_ORIGMSG, self->mOrigMsgLoaded);
+            self->mStateHelper->setLoading(CREATEGXSFORUMMSG_ORIGMSG, false);
 
-            mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, mForumMetaLoaded);
-            mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, false);
+            self->mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, self->mForumMetaLoaded);
+            self->mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, false);
 
-            loadFormInformation();
+            self->loadFormInformation();
 
-        },this);
+        },qApp);
     });
 }
 
@@ -583,7 +592,9 @@ void CreateGxsForumMsg::loadCircleInfo(const RsGxsGroupId& circle_id)
 {
     //std::cerr << "Loading forum circle info" << std::endl;
 
-    RsThread::async( [circle_id,this]()
+    QPointer<CreateGxsForumMsg> self(this);
+
+    RsThread::async( [circle_id,self]()
     {
         // get set of eligible ids
         RsGxsCircleDetails circleDetails;
@@ -617,21 +628,24 @@ void CreateGxsForumMsg::loadCircleInfo(const RsGxsGroupId& circle_id)
 
         RsGxsCircleGroup cg = circle_grp_v.front();
 
-        RsQThreadUtils::postToObject( [cg,ids,this]()
+        RsQThreadUtils::postToObject( [cg,ids,self]()
         {
-            mForumCircleData = cg;
-            mForumCircleLoaded = true;
+            if(!self) return;
 
-            ui->idChooser->intersectIdConstraintSet(ids);
-            ui->idChooser->setFlags(IDCHOOSER_NO_CREATE | ui->idChooser->flags()) ;	// since there's a circle involved, no ID creation can be needed
+            self->mForumCircleData = cg;
+            self->mForumCircleLoaded = true;
+
+            self->ui->idChooser->intersectIdConstraintSet(ids);
+            self->ui->idChooser->setFlags(IDCHOOSER_NO_CREATE | self->ui->idChooser->flags()) ;	// since there's a circle involved, no ID creation can be needed
 
             RsGxsId tmpid ;
-            if(ui->idChooser->countEnabledEntries() == 0)
+            if(self->ui->idChooser->countEnabledEntries() == 0)
             {
                 QMessageBox::information(NULL,tr("No compatible ID for this forum"),tr("None of your identities is allowed to post in this forum. This could be due to the forum being limited to a circle that contains none of your identities, or forum flags requiring a PGP-signed identity.")) ;
-                close() ;
+                if(self)	// the message box runs an event loop
+                    self->close() ;
             }
-        }, this);
+        }, qApp);
     });
 }
 
