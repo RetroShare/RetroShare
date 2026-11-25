@@ -50,15 +50,23 @@ if([===[@MINGW@]===] AND [===[@CMAKE_CROSSCOMPILING@]===])
 endif()
 
 # don't install system libraries
+if([===[@LINUX@]===] OR CMAKE_VERSION VERSION_LESS 3.25)
+	string(CONCAT EXCLUDE_LIBS_LINUX
+		[===[@CMAKE_CURRENT_FUNCTION_LIST_DIR@/]===]
+		RuntimeDependenciesInstallScript-exclude-linux.txt
+	)
+	file(READ ${EXCLUDE_LIBS_LINUX} EXCLUDE_LIBS_LINUX)
+	string(REPLACE "\n" ";" EXCLUDE_LIBS_LINUX "${EXCLUDE_LIBS_LINUX}")
+	list(APPEND EXCLUDE_LIBS ${EXCLUDE_LIBS_LINUX})
+endif()
 if([===[@WIN32@]===])
-	string(CONCAT EXCLUDE_LIBS
+	string(CONCAT EXCLUDE_LIBS_WIN32
 		[===[@CMAKE_CURRENT_FUNCTION_LIST_DIR@/]===]
 		RuntimeDependenciesInstallScript-exclude-windows.txt
 	)
-endif()
-if(DEFINED EXCLUDE_LIBS)
-	file(READ ${EXCLUDE_LIBS} EXCLUDE_LIBS)
-	string(REPLACE "\n" ";" EXCLUDE_LIBS "${EXCLUDE_LIBS}")
+	file(READ ${EXCLUDE_LIBS_WIN32} EXCLUDE_LIBS_WIN32)
+	string(REPLACE "\n" ";" EXCLUDE_LIBS_WIN32 "${EXCLUDE_LIBS_WIN32}")
+	list(APPEND EXCLUDE_LIBS ${EXCLUDE_LIBS_WIN32})
 endif()
 
 file(GET_RUNTIME_DEPENDENCIES
