@@ -25,6 +25,7 @@
 #include <QWidgetAction>
 #include <QActionGroup>
 #include <QStyledItemDelegate>
+#include <QEvent>
 
 #include "ChatLobbyDialog.h"
 
@@ -66,6 +67,29 @@ const static uint32_t timeToInactivity2 = 60 * 5;   // in seconds
 
 namespace
 {
+class ParticipantToolbarAlignment : public QObject
+{
+public:
+	ParticipantToolbarAlignment(QWidget *chatToolbar, QWidget *participantToolbar)
+	    : QObject(participantToolbar), mParticipantToolbar(participantToolbar)
+	{
+		chatToolbar->installEventFilter(this);
+		mParticipantToolbar->setFixedHeight(chatToolbar->sizeHint().height());
+	}
+
+protected:
+	bool eventFilter(QObject *object, QEvent *event) override
+	{
+		if (event->type() == QEvent::Resize || event->type() == QEvent::Show)
+			mParticipantToolbar->setFixedHeight(
+			        static_cast<QWidget *>(object)->height());
+		return QObject::eventFilter(object, event);
+	}
+
+private:
+	QWidget *mParticipantToolbar;
+};
+
 class ParticipantAvatarDelegate : public QStyledItemDelegate
 {
 public:
@@ -239,6 +263,12 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	connect(unsubscribeButton, SIGNAL(clicked()), this , SLOT(leaveLobby()));
 
 	getChatWidget()->addTitleBarWidget(unsubscribeButton) ;
+
+	// Both panels use the same spacing below their toolbars. Keep their
+	// toolbar heights equal so the participant list starts at the chat area.
+	ui.toolBarFrame_HL->setAlignment(Qt::AlignBottom);
+	if (QWidget *chatToolbar = getChatWidget()->findChild<QWidget *>("headerBFrame"))
+		new ParticipantToolbarAlignment(chatToolbar, ui.toolBarFrame);
 
 	// Status icons are smaller than the avatars sized by ParticipantAvatarDelegate.
 	mFontSizeHandler.registerFontSize(ui.participantsList, 1.0f,
