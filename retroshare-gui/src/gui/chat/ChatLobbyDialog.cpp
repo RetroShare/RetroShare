@@ -266,7 +266,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
 	// Both panels use the same spacing below their toolbars. Keep their
 	// toolbar heights equal so the participant list starts at the chat area.
-	ui.toolBarFrame_HL->setAlignment(Qt::AlignBottom);
+	ui.toolBarFrame_HL->setAlignment(Qt::AlignVCenter);
 	if (QWidget *chatToolbar = getChatWidget()->findChild<QWidget *>("headerBFrame"))
 		new ParticipantToolbarAlignment(chatToolbar, ui.toolBarFrame);
 
