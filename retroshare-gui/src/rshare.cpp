@@ -468,7 +468,9 @@ void RsApplication::loadStyleSheet(const QString &sheetName)
 #ifdef Q_OS_WIN
     QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",QSettings::NativeFormat);
     if(/*sheetName == ":default" && */settings.value("AppsUseLightTheme")==0){
-        qApp->setStyle(QStyleFactory::create("Fusion"));
+        // QApplication::setStyle() re-polishes every widget: only do it once.
+        if (qApp->style()->objectName().compare("fusion", Qt::CaseInsensitive) != 0)
+            qApp->setStyle(QStyleFactory::create("Fusion"));
         QPalette darkPalette;
         QColor darkColor = QColor(45,45,45);
         QColor disabledColor = QColor(127,127,127);
@@ -490,11 +492,18 @@ void RsApplication::loadStyleSheet(const QString &sheetName)
         darkPalette.setColor(QPalette::HighlightedText, Qt::black);
         darkPalette.setColor(QPalette::Disabled, QPalette::HighlightedText, disabledColor);
 
-        qApp->setPalette(darkPalette);
+        if (qApp->palette() != darkPalette)
+            qApp->setPalette(darkPalette);
 
-        qApp->setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
-    } 
+        // Was a separate qApp->setStyleSheet() call (one more full re-polish),
+        // and it was immediately overwritten below anyway. Prepend it instead.
+        styleSheet.prepend("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }\n");
+    }
 #endif
+    // Re-applying an identical stylesheet still re-polishes the whole GUI.
+    if (qApp->styleSheet() == styleSheet)
+        return;
+
     qApp->setStyleSheet(styleSheet);
 }
 
