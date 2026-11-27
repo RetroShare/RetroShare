@@ -21,6 +21,7 @@
 #include <QTimer>
 #include <QFileInfo>
 #include <QStyle>
+#include <QPointer>
 
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
@@ -98,19 +99,8 @@ void ChannelsCommentsItem::paintEvent(QPaintEvent *e)
 
 ChannelsCommentsItem::~ChannelsCommentsItem()
 {
-    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
-
-    while( (mLoadingGroup || mLoadingComment)
-           && std::chrono::steady_clock::now() < timeout )
-    {
-        RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for data to load "
-                << (mLoadingGroup ? "Group " : "")
-                << (mLoadingMessage ? "Message " : "")
-                << (mLoadingComment ? "Comment " : "")
-                << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-
+    // Pending loaders never use this item from their worker thread, and their
+    // GUI-thread continuation checks a QPointer to it first.
 	delete(ui);
 }
 
@@ -200,43 +190,47 @@ void ChannelsCommentsItem::loadGroupData()
 
     mLoadingGroup = true;
 
-    RsThread::async([this]()
+    // The worker only uses these copies; `self` is checked on the GUI thread.
+    const RsGxsGroupId grpId = groupId();
+    QPointer<ChannelsCommentsItem> self(this);
+
+    RsThread::async([self,grpId]()
     {
         // 1 - get group data
 
         std::vector<RsGxsChannelGroup> groups;
-        const std::list<RsGxsGroupId> groupIds = { groupId() };
+        const std::list<RsGxsGroupId> groupIds = { grpId };
 
-        if(!rsGxsChannels->getChannelsInfo(groupIds,groups))	// would be better to call channel Summaries for a single group
-        {
-            RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data for group " << groupId() << std::endl;
-            mLoadingGroup = false;
-            deferred_update();
-            return;
-        }
+        bool ok = rsGxsChannels->getChannelsInfo(groupIds,groups);	// would be better to call channel Summaries for a single group
 
-        if (groups.size() != 1)
+        if(!ok)
+            RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data for group " << grpId << std::endl;
+        else if (groups.size() != 1)
         {
-            std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items for group " << groupId() ;
+            std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items for group " << grpId ;
             std::cerr << std::endl;
-            mLoadingGroup = false;
-            deferred_update();
-            return;
+            ok = false;
         }
-        RsGxsChannelGroup group(groups[0]);
 
-        RsQThreadUtils::postToObject( [group,this]()
+        RsGxsChannelGroup group;
+        if(ok)
+            group = groups[0];
+
+        RsQThreadUtils::postToObject( [self,ok,group]()
         {
-            /* Here it goes any code you want to be executed on the Qt Gui
-             * thread, for example to update the data model with new information
-             * after a blocking call to RetroShare API complete */
+            if(!self) return;
 
-            mGroupMeta = group.mMeta;
-            mLoadingGroup = false;
+            self->mLoadingGroup = false;
 
-            update();	// this triggers a paintEvent if needed.
+            if(ok)
+            {
+                self->mGroupMeta = group.mMeta;
+                self->update();	// this triggers a paintEvent if needed.
+            }
+            else
+                self->deferred_update();
 
-        }, this );
+        }, qApp );
     });
 }
 void ChannelsCommentsItem::loadMessageData()
@@ -247,7 +241,12 @@ void ChannelsCommentsItem::loadMessageData()
 #endif
     mLoadingMessage = true;
 
-    RsThread::async([this]()
+    // The worker only uses these copies; `self` is checked on the GUI thread.
+    const RsGxsGroupId   grpId = groupId();
+    const RsGxsMessageId threadId = mThreadId;
+    QPointer<ChannelsCommentsItem> self(this);
+
+    RsThread::async([self,grpId,threadId]()
     {
         // 1 - get message and comment data
 
@@ -255,35 +254,29 @@ void ChannelsCommentsItem::loadMessageData()
         std::vector<RsGxsComment> comments;
         std::vector<RsGxsVote> votes;
 
-        if(! rsGxsChannels->getChannelContent( groupId(), std::set<RsGxsMessageId>( { mThreadId } ),posts,comments,votes))
-        {
+        const bool ok = rsGxsChannels->getChannelContent( grpId, std::set<RsGxsMessageId>( { threadId } ),posts,comments,votes);
+
+        if(!ok)
             RsErr() << "GxsGxsChannelGroupItem::loadMessage() ERROR getting data" << std::endl;
-            mLoadingMessage = false;
-            deferred_update();
-            return;
-        }
 
         // now that everything is in place, update the UI
 
-        RsQThreadUtils::postToObject( [posts,this]()
+        RsQThreadUtils::postToObject( [self,ok,posts]()
         {
-            /* Here it goes any code you want to be executed on the Qt Gui
-             * thread, for example to update the data model with new information
-             * after a blocking call to RetroShare API complete */
+            if(!self) return;
 
-            if(posts.size()!=1)	// the original post cannot be found. Removing the comment item.
+            self->mLoadingMessage = false;
+
+            if(!ok)
+                self->deferred_update();
+            else if(posts.size()!=1)	// the original post cannot be found. Removing the comment item.
+                self->removeItem();
+            else
             {
-                mLoadingMessage = false;
-                removeItem();
-                return;
+                self->mPost = posts[0];
+                self->update();
             }
-
-            mPost = posts[0];
-            mLoadingMessage = false;
-
-            update();
-
-        }, this );
+        }, qApp );
     });
 }
 void ChannelsCommentsItem::loadCommentData()
@@ -294,7 +287,13 @@ void ChannelsCommentsItem::loadCommentData()
 #endif
     mLoadingComment = true;
 
-    RsThread::async([this]()
+    // The worker only uses these copies; `self` is checked on the GUI thread.
+    const RsGxsGroupId   grpId = groupId();
+    const RsGxsMessageId msgId = messageId();
+    const RsGxsMessageId threadId = mThreadId;
+    QPointer<ChannelsCommentsItem> self(this);
+
+    RsThread::async([self,grpId,msgId,threadId]()
 	{
         // 1 - get message and comment data
 
@@ -302,34 +301,34 @@ void ChannelsCommentsItem::loadCommentData()
 		std::vector<RsGxsComment> comments;
 		std::vector<RsGxsVote> votes;
 
-        if(! rsGxsChannels->getChannelContent( groupId(), std::set<RsGxsMessageId>( { messageId(),mThreadId } ),posts,comments,votes))
-		{
+        bool ok = rsGxsChannels->getChannelContent( grpId, std::set<RsGxsMessageId>( { msgId,threadId } ),posts,comments,votes);
+
+        if(!ok)
             RsErr() << "GxsGxsChannelGroupItem::loadComment() ERROR getting data" << std::endl;
-            mLoadingComment = false;
-            deferred_update();
-            return;
-		}
-        if(comments.size()!=1)
-        {
-            mLoadingComment = false;
-            deferred_update();
-            return;
-        }
+        else if(comments.size()!=1)
+            ok = false;
+
+        RsGxsComment comment;
+        if(ok)
+            comment = comments[0];
 
         // now that everything is in place, update the UI
 
-        RsQThreadUtils::postToObject( [comments,this]()
+        RsQThreadUtils::postToObject( [self,ok,comment]()
         {
-            /* Here it goes any code you want to be executed on the Qt Gui
-             * thread, for example to update the data model with new information
-             * after a blocking call to RetroShare API complete */
+            if(!self) return;
 
-            mComment = comments[0];
-            mLoadingComment = false;
+            self->mLoadingComment = false;
 
-            update();
+            if(ok)
+            {
+                self->mComment = comment;
+                self->update();
+            }
+            else
+                self->deferred_update();
 
-        }, this );
+        }, qApp );
     });
 }
 

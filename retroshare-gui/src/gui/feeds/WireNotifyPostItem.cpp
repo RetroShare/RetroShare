@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QStyle>
+#include <QPointer>
 
 #include "WireNotifyPostItem.h"
 #include "ui_WireNotifyPostItem.h"
@@ -91,19 +92,8 @@ void WireNotifyPostItem::paintEvent(QPaintEvent *e)
 
 WireNotifyPostItem::~WireNotifyPostItem()
 {
-    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
-
-    while( (mLoadingGroup || mLoadingMessage || mLoadingComment)
-           && std::chrono::steady_clock::now() < timeout)
-    {
-        RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for "
-                << (mLoadingGroup ? "Group " : "")
-                << (mLoadingMessage ? "Message " : "")
-                << (mLoadingComment ? "Comment " : "")
-                << "loading." << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-
+    // Pending loaders never use this item from their worker thread, and their
+    // GUI-thread continuation checks a QPointer to it first.
     delete ui;
 }
 
@@ -218,44 +208,47 @@ void WireNotifyPostItem::loadMessage()
 #endif
     mLoadingMessage = true;
 
+    // The worker only uses these copies; `self` is checked on the GUI thread.
     RsGxsGroupId grpId = groupId();
     RsGxsMessageId msgId = messageId();
+    QPointer<WireNotifyPostItem> self(this);
 
-    RsThread::async([this, grpId, msgId]()
+    RsThread::async([self, grpId, msgId]()
     {
         RsWirePulseSPtr pPulse;
 
-        if (!rsWire->getWirePulse(grpId, msgId, pPulse))
-        {
+        const bool ok = rsWire->getWirePulse(grpId, msgId, pPulse);
+        const bool found = ok && pPulse;
+
+        if (!ok)
             RsErr() << "WireNotifyPostItem::loadMessage() ERROR getting pulse" << std::endl;
-            mLoadingMessage = false;
-            deferred_update();
-            return;
-        }
-
-        if (pPulse)
-        {
 #ifdef DEBUG_ITEM
-            std::cerr << (void*)this << ": Obtained post, with msgId = " << pPulse->mMeta.mMsgId << std::endl;
+        else if (found)
+            std::cerr << "Obtained post, with msgId = " << pPulse->mMeta.mMsgId << std::endl;
 #endif
-            const RsWirePulse pulse(*pPulse);
 
-            RsQThreadUtils::postToObject([pulse, this]()
-            {
-                mPulse = pulse;
-                mLoadingMessage = false;
-                update();	// triggers paintEvent if needed
-            }, this);
-        }
-        else
+        RsWirePulse pulse;
+        if (found)
+            pulse = *pPulse;
+
+        RsQThreadUtils::postToObject([self, ok, found, pulse]()
         {
-            RsQThreadUtils::postToObject([this]()
+            if(!self) return;
+
+            self->mLoadingMessage = false;
+
+            if (!ok)
+                self->deferred_update();
+            else
             {
-                removeItem();
-                mLoadingMessage = false;
-                update();
-            }, this);
-        }
+                if (found)
+                    self->mPulse = pulse;
+                else
+                    self->removeItem();
+
+                self->update();	// triggers paintEvent if needed
+            }
+        }, qApp);
     });
 }
 
@@ -272,45 +265,49 @@ void WireNotifyPostItem::loadGroup()
 #endif
     mLoadingGroup = true;
 
-    RsThread::async([this]()
+    // The worker only uses these copies; `self` is checked on the GUI thread.
+    const RsGxsGroupId grpId = groupId();
+    QPointer<WireNotifyPostItem> self(this);
+
+    RsThread::async([self,grpId]()
     {
         // 1 - get group data
 
 //        std::vector<RsWireGroup> groups;
 //        std::list<std::shared_ptr<RsWireGroup>> groups;
-        const std::list<RsGxsGroupId> groupIds = { groupId() };
+        const std::list<RsGxsGroupId> groupIds = { grpId };
         std::vector<RsWireGroup> groups;
-        if(!rsWire->getGroups(groupIds,groups))	// would be better to call channel Summaries for a single group
-        {
-            RsErr() << "WireNotifyPostItem::loadGroup() ERROR getting data" << std::endl;
-            mLoadingGroup = false;
-            deferred_update();
-            return;
-        }
+        bool ok = rsWire->getGroups(groupIds,groups);	// would be better to call channel Summaries for a single group
 
-        if (groups.size() != 1)
+        if(!ok)
+            RsErr() << "WireNotifyPostItem::loadGroup() ERROR getting data" << std::endl;
+        else if (groups.size() != 1)
         {
             std::cerr << "WireNotifyPostItem::loadGroup() Wrong number of Items";
             std::cerr << std::endl;
-            mLoadingGroup = false;
-            deferred_update();
-            return;
+            ok = false;
         }
-        RsWireGroup group = groups[0];
 
-        RsQThreadUtils::postToObject( [group,this]()
+        RsWireGroup group;
+        if(ok)
+            group = groups[0];
+
+        RsQThreadUtils::postToObject( [self,ok,group]()
         {
-            /* Here it goes any code you want to be executed on the Qt Gui
-             * thread, for example to update the data model with new information
-             * after a blocking call to RetroShare API complete */
+            if(!self) return;
 
-            mGroup = group;
-            mGroupMeta = group.mMeta;
-            mLoadingGroup = false;
+            self->mLoadingGroup = false;
 
-            update();	// triggers paintEvent if needed
+            if(ok)
+            {
+                self->mGroup = group;
+                self->mGroupMeta = group.mMeta;
+                self->update();	// triggers paintEvent if needed
+            }
+            else
+                self->deferred_update();
 
-        }, this );
+        }, qApp );
     });
 }
 

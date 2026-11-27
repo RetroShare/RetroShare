@@ -21,6 +21,7 @@
 #include <QTimer>
 #include <QFileInfo>
 #include <QStyle>
+#include <QPointer>
 
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/common/FilesDefs.h"
@@ -97,18 +98,8 @@ void GxsChannelPostItem::paintEvent(QPaintEvent *e)
 
 GxsChannelPostItem::~GxsChannelPostItem()
 {
-    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
-
-    while( (mLoadingGroup || mLoadingMessage)
-           && std::chrono::steady_clock::now() < timeout)
-    {
-        RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for "
-                << (mLoadingGroup ? "Group " : "")
-                << (mLoadingMessage ? "Message " : "")
-                << "loading." << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-
+    // Pending loaders never use this item from their worker thread, and their
+    // GUI-thread continuation checks a QPointer to it first.
 	delete(ui);
 }
 
@@ -208,43 +199,47 @@ void GxsChannelPostItem::loadGroup()
 
     mLoadingGroup = true;
 
-	RsThread::async([this]()
+    // The worker only uses these copies; `self` is checked on the GUI thread.
+    const RsGxsGroupId grpId = groupId();
+    QPointer<GxsChannelPostItem> self(this);
+
+	RsThread::async([self,grpId]()
 	{
 		// 1 - get group data
 
 		std::vector<RsGxsChannelGroup> groups;
-		const std::list<RsGxsGroupId> groupIds = { groupId() };
+		const std::list<RsGxsGroupId> groupIds = { grpId };
 
-		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))	// would be better to call channel Summaries for a single group
-		{
-            RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data for group " << groupId() << std::endl;
-            mLoadingGroup = false;
-            deferred_update();
-            return;
-		}
+		bool ok = rsGxsChannels->getChannelsInfo(groupIds,groups);	// would be better to call channel Summaries for a single group
 
-		if (groups.size() != 1)
+		if(!ok)
+            RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data for group " << grpId << std::endl;
+		else if (groups.size() != 1)
 		{
-            std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items for group " << groupId() ;
+            std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items for group " << grpId ;
 			std::cerr << std::endl;
-            mLoadingGroup = false;
-            deferred_update();
-            return;
+			ok = false;
 		}
-		RsGxsChannelGroup group(groups[0]);
 
-		RsQThreadUtils::postToObject( [group,this]()
+		RsGxsChannelGroup group;
+		if(ok)
+			group = groups[0];
+
+		RsQThreadUtils::postToObject( [self,ok,group]()
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
+			if(!self) return;
 
-			mGroupMeta = group.mMeta;
-            mLoadingGroup = false;
+			self->mLoadingGroup = false;
 
-            update();	// this triggers a paintEvent if needed.
+			if(ok)
+			{
+				self->mGroupMeta = group.mMeta;
+				self->update();	// this triggers a paintEvent if needed.
+			}
+			else
+				self->deferred_update();
 
-		}, this );
+		}, qApp );
 	});
 }
 void GxsChannelPostItem::loadMessage()
@@ -255,7 +250,12 @@ void GxsChannelPostItem::loadMessage()
 #endif
     mLoadingMessage = true;
 
-	RsThread::async([this]()
+    // The worker only uses these copies; `self` is checked on the GUI thread.
+    const RsGxsGroupId   grpId = groupId();
+    const RsGxsMessageId msgId = messageId();
+    QPointer<GxsChannelPostItem> self(this);
+
+	RsThread::async([self,grpId,msgId]()
 	{
 		// 1 - get group data
 
@@ -263,43 +263,40 @@ void GxsChannelPostItem::loadMessage()
 		std::vector<RsGxsComment> comments;
 		std::vector<RsGxsVote> votes;
 
-		if(! rsGxsChannels->getChannelContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments,votes))
-		{
+		const bool ok = rsGxsChannels->getChannelContent( grpId, std::set<RsGxsMessageId>( { msgId } ),posts,comments,votes);
+		const bool found = ok && posts.size() == 1;
+
+		if(!ok)
 			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
-            mLoadingMessage = false;
-            deferred_update();
-            return;
-		}
-
-		if (posts.size() == 1)
-		{
 #ifdef DEBUG_ITEM
-			std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
-#endif
-            const RsGxsChannelPost& post(posts[0]);
-
-            RsQThreadUtils::postToObject( [post,this]()
-            {
-                mPost = post;
-                mLoadingMessage = false;
-                update();	// this triggers a paintEvent if needed.
-
-            }, this );
-		}
+		else if(found)
+			std::cerr << "Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
 		else
-		{
-#ifdef DEBUG_ITEM
-			std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It.";
-			std::cerr << std::endl;
+			std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It." << std::endl;
 #endif
 
-            RsQThreadUtils::postToObject( [this]()
-            {
-                removeItem();
-                mLoadingMessage = false;
-                update();	// this triggers a paintEvent if needed.
-            }, this );
-		}
+		RsGxsChannelPost post;
+		if(found)
+			post = posts[0];
+
+		RsQThreadUtils::postToObject( [self,ok,found,post]()
+		{
+			if(!self) return;
+
+			self->mLoadingMessage = false;
+
+			if(!ok)
+				self->deferred_update();
+			else
+			{
+				if(found)
+					self->mPost = post;
+				else
+					self->removeItem();
+
+				self->update();	// this triggers a paintEvent if needed.
+			}
+		}, qApp );
 	});
 }
 

@@ -224,15 +224,18 @@ void GxsCircleItem::toggleCircleMembership()
 
 void GxsCircleItem::toggleCircleInvite()
 {
+    const RsGxsId gxsId = mGxsId;
+    const RsGxsCircleId circleId = mCircleId;
+
     if(mType == RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_JOIN)
-		RsThread::async([this]()
+		RsThread::async([gxsId,circleId]()
 		{
-			rsGxsCircles->revokeIdsFromCircle(std::set<RsGxsId>( { mGxsId } ),mCircleId);
+			rsGxsCircles->revokeIdsFromCircle(std::set<RsGxsId>( { gxsId } ),circleId);
 		});
     else if(mType == RsFeedTypeFlags::RS_FEED_ITEM_CIRCLE_MEMB_REQ)
-		RsThread::async([this]()
+		RsThread::async([gxsId,circleId]()
 		{
-			rsGxsCircles->inviteIdsToCircle(std::set<RsGxsId>( { mGxsId } ),mCircleId);
+			rsGxsCircles->inviteIdsToCircle(std::set<RsGxsId>( { gxsId } ),circleId);
 		});
     else
         RsErr() << __PRETTY_FUNCTION__ << ": inconsistent call. mType is " << mType << std::endl;
