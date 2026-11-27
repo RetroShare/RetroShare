@@ -44,6 +44,9 @@ class GxsIdRSTreeWidgetItem : public QObject, public RSTreeWidgetItem
 	Q_OBJECT
 
 public:
+    // Unflattened icon for views that render avatar-only items at variable sizes.
+    enum { AvatarIconRole = Qt::UserRole + 0x100 };
+
     GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,bool auto_tooltip=true,QTreeWidget *parent = NULL);
 
 	void setId(const RsGxsId &id, int column, bool retryWhenFailed);
