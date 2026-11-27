@@ -50,6 +50,7 @@
 #include <QClipboard>
 #include <QDesktopServices>
 #include <QIcon>
+#include <QMap>
 #include <QMessageBox>
 #include <QMimeData>
 #include <QObject>
@@ -145,6 +146,40 @@
 
 #define CIRCLE_NAME    "name"
 #define CIRCLE_ID      "id"
+
+#define PLUGIN_NAME    "name"
+
+namespace {
+// Link hosts registered by plugins, see RetroShareLink::registerPluginHost()
+struct PluginLinkHost {
+	QString description;
+	std::function<bool(const QUrl&)> open;
+};
+
+QMap<QString, PluginLinkHost>& pluginLinkHosts()
+{
+	static QMap<QString, PluginLinkHost> hosts;
+	return hosts;
+}
+}
+
+/*static*/ bool RetroShareLink::registerPluginHost(const QString& host, const QString& description, const std::function<bool(const QUrl&)>& open)
+{
+	const QString key = host.toLower();
+	// Plain host names only, and never one of RetroShare's own link types.
+	if (key.isEmpty() || !open || !QRegExp("[a-z0-9_-]+").exactMatch(key) || QRegExp(HOST_REGEXP).exactMatch(key))
+		return false;
+	PluginLinkHost entry;
+	entry.description = description;
+	entry.open = open;
+	pluginLinkHosts()[key] = entry;
+	return true;
+}
+
+/*static*/ void RetroShareLink::unregisterPluginHost(const QString& host)
+{
+	pluginLinkHosts().remove(host.toLower());
+}
 
 RetroShareLink::RetroShareLink(const QUrl& url)
 {
@@ -453,6 +488,16 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		std::cerr << "Got a circle link!!" << std::endl;
 #endif
 		check() ;
+		return;
+	}
+
+	if (pluginLinkHosts().contains(url.host())) {
+		_type = TYPE_PLUGIN;
+		_name = decodedQueryItemValue(urlQuery, PLUGIN_NAME);
+		if (_name.isEmpty())
+			_name = url.host();
+		_hash = QString::fromLatin1(url.toEncoded()); // the whole link, opened by the plugin
+		check();
 		return;
 	}
 
@@ -922,6 +967,11 @@ void RetroShareLink::check()
 				_valid = false;
 		break;
 
+		case TYPE_PLUGIN:
+			if(_hash.isEmpty() || !pluginLinkHosts().contains(QUrl::fromEncoded(_hash.toLatin1()).host()))
+				_valid = false;
+		break;
+
 		case TYPE_CIRCLES:
 			if(_size != 0)
 				_valid = false;
@@ -1007,6 +1057,9 @@ QString RetroShareLink::title() const
 
 		case TYPE_CIRCLES:
 		return _name ;
+
+		case TYPE_PLUGIN:
+		return pluginLinkHosts().value(QUrl::fromEncoded(_hash.toLatin1()).host()).description;
 	}
 
 	return "";
@@ -1031,6 +1084,9 @@ QString RetroShareLink::toString() const
 			/* fallthrough */
 		case TYPE_PRIVATE_CHAT:
 		return "";
+
+		case TYPE_PLUGIN:
+		return _hash;
 
 		case TYPE_FILE:
 			url.setScheme(RSLINK_SCHEME);
@@ -1418,6 +1474,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				case TYPE_FILE_TREE:
 				case TYPE_CHAT_ROOM:
 				case TYPE_CIRCLES:
+				case TYPE_PLUGIN:
 					// no need to ask
 				break;
 
@@ -1487,12 +1544,15 @@ static void processList(const QStringList &list, const QString &textSingular, co
 	QStringList chatroomFound;
 	QStringList chatroomUnknown;
 
+	// plugin links
+	QStringList pluginUnknown;
+
 	// for summary at end
 	QList<QStringList*> processedList;
 	QList<QStringList*> errorList;
 
 	processedList << &fileAdded << &personAdded << &forumFound << &channelFound << &wireFound << &searchStarted << &messageStarted << &postedFound << &chatroomFound;
-	errorList << &fileExist << &personExist << &personFailed << &personNotFound << &forumUnknown << &forumMsgUnknown << &channelUnknown << &channelMsgUnknown << &wireUnknown << &wireMsgUnknown << &messageReceipientNotAccepted << &messageReceipientUnknown << &postedUnknown << &postedMsgUnknown << &chatroomUnknown;
+	errorList << &fileExist << &personExist << &personFailed << &personNotFound << &forumUnknown << &forumMsgUnknown << &channelUnknown << &channelMsgUnknown << &wireUnknown << &wireMsgUnknown << &messageReceipientNotAccepted << &messageReceipientUnknown << &postedUnknown << &postedMsgUnknown << &chatroomUnknown << &pluginUnknown;
 	// not needed: forumFound, channelFound, wireFound, messageStarted
 
 	// we want to merge all single file links into one collection
@@ -1933,6 +1993,19 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			}
 			break;
 
+			case TYPE_PLUGIN:
+			{
+				const QUrl url = link.toUrl();
+				const auto host = pluginLinkHosts().constFind(url.host());
+				// Copy: the plugin may (un)register hosts while opening the link.
+				std::function<bool(const QUrl&)> open;
+				if (host != pluginLinkHosts().constEnd())
+					open = host->open;
+				if (!open || !open(url))
+					pluginUnknown.append(link.name());
+			}
+			break;
+
 			default:
 				std::cerr << " RetroShareLink::process unknown type: " << link.type() << std::endl;
 				++countUnknown;
@@ -2056,6 +2129,13 @@ static void processList(const QStringList &list, const QString &textSingular, co
 		}
 	}
 
+	// plugin links
+	if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+		if (!pluginUnknown.isEmpty()) {
+			processList(pluginUnknown, QObject::tr("Link could not be opened"), QObject::tr("Links could not be opened"), result);
+		}
+	}
+
 	if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
 		if (countUnknown) {
 			result += QString("<br>%1: %2").arg(QObject::tr("Malformed links")).arg(countUnknown);
@@ -2176,7 +2256,10 @@ void RSLinkClipboard::parseText(QString text, QList<RetroShareLink> &links,Retro
 	std::cerr << "Parsing text:" << text.toStdString() << std::endl ;
 #endif
 
-	QRegExp rx(QString("retroshare://(%1)[^\r\n]+").arg(HOST_REGEXP));
+	QString hosts(HOST_REGEXP);
+	for (const QString& host : pluginLinkHosts().keys())
+		hosts += "|" + QRegExp::escape(host);
+	QRegExp rx(QString("retroshare://(%1)[^\r\n]+").arg(hosts));
 
 	int pos = 0;
 
