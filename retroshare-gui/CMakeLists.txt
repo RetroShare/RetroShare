@@ -306,9 +306,12 @@ if(RS_SERVICE_DESKTOP)
 			FILES "${RS_DESKTOP_DATA}/retroshare.xpm"
 			DESTINATION "${CMAKE_INSTALL_PREFIX}/share/pixmaps" )
 
+		# Bubble/src holds the SVG and the script that generate the images of
+		# the style, not files the GUI reads.
 		install(
 			DIRECTORY src/gui/qss/chat/Bubble src/gui/qss/chat/Bubble_Compact
-			DESTINATION "${RS_DATA_DIR}/stylesheets" )
+			DESTINATION "${RS_DATA_DIR}/stylesheets"
+			PATTERN "src" EXCLUDE )
 
 		install(
 			DIRECTORY src/sounds src/qss
