@@ -242,6 +242,9 @@ public slots:
 
     void toggleStatusToolTip(bool toggle);
 
+    /** Redraws the tray icon (e.g. after the logo colors were changed) */
+    void refreshTrayIcon();
+
 	/**
 	 * @brief Create a QInputDialog. This must be called in MainWindow thread because Widgets must be created in the GUI thread.
 	 * Here an exemple how to call it:

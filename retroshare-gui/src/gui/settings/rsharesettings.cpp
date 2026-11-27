@@ -1227,6 +1227,34 @@ void RshareSettings::setFontSize(int value)
 	setValue("FontSize", value);
 }
 
+QColor RshareSettings::getLogoBackgroundColor()
+{
+	QColor color(valueFromGroup("Appearance", "LogoBackgroundColor", QString("#ff000000")).toString());
+	if (!color.isValid()) {
+		color = QColor(Qt::black);
+	}
+	return color;
+}
+
+void RshareSettings::setLogoBackgroundColor(const QColor& color)
+{
+	setValueToGroup("Appearance", "LogoBackgroundColor", color.name(QColor::HexArgb));
+}
+
+QColor RshareSettings::getLogoForegroundColor()
+{
+	QColor color(valueFromGroup("Appearance", "LogoForegroundColor", QString("#ff0e8ecb")).toString());
+	if (!color.isValid()) {
+		color = QColor(0x0e, 0x8e, 0xcb);
+	}
+	return color;
+}
+
+void RshareSettings::setLogoForegroundColor(const QColor& color)
+{
+	setValueToGroup("Appearance", "LogoForegroundColor", color.name(QColor::HexArgb));
+}
+
 int RshareSettings::getMessageFontSize()
 {
 #if defined(Q_OS_DARWIN)
