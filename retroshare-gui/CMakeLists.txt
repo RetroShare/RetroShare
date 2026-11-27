@@ -68,7 +68,7 @@ set(RS_IDLE ON CACHE BOOL "Enable Idle support" FORCE)
 
 cmake_dependent_option(
 	RS_SERVICE_TERMINAL_WEBUI_PASSWORD
-	"Enable settin Web UI password via terminal in retroshare-service"
+	"Enable setting Web UI password via terminal in retroshare-service"
 	OFF
 	"RS_WEBUI"
 	OFF )
