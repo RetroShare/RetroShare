@@ -8,8 +8,8 @@ IDI_ICON1               ICON    "logo/logo_256.ico"
 #define VERSION_STRING(major,minor,mini,extra) STRINGIZER(major) "." STRINGIZER(minor) "." STRINGIZER(mini) STRINGIZER(extra)
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION     RS_MAJOR_VERSION,RS_MINOR_VERSION,RS_MINI_VERSION,0
-PRODUCTVERSION  RS_MAJOR_VERSION,RS_MINOR_VERSION,RS_MINI_VERSION,0
+FILEVERSION     RS_VERSION_MAJOR,RS_VERSION_MINOR,RS_VERSION_PATCH,0
+PRODUCTVERSION  RS_VERSION_MAJOR,RS_VERSION_MINOR,RS_VERSION_PATCH,0
 FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
 FILEFLAGS       0
 FILEOS          VOS_NT_WINDOWS32
@@ -22,11 +22,11 @@ BEGIN
         BEGIN
             VALUE "CompanyName", ""
             VALUE "FileDescription", "RetroShare"
-            VALUE "FileVersion", VERSION_STRING(RS_MAJOR_VERSION, RS_MINOR_VERSION, RS_MINI_VERSION, RS_EXTRA_VERSION)
+            VALUE "FileVersion", RS_VERSION_FULL
             VALUE "InternalName", "RetroShare"
             VALUE "OriginalFilename", "RetroShare.exe"
             VALUE "ProductName", "RetroShare"
-            VALUE "ProductVersion", VERSION_STRING(RS_MAJOR_VERSION, RS_MINOR_VERSION, RS_MINI_VERSION, RS_EXTRA_VERSION)
+            VALUE "ProductVersion", RS_VERSION_FULL
             VALUE "LegalCopyright", ""
         END
     END

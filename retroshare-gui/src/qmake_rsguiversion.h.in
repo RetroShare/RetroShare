@@ -1,0 +1,16 @@
+#ifndef INFO_H
+#define INFO_H
+
+#include <QString>
+
+#define STRINGIFY_(_) #_
+#define STRINGIFY(_) STRINGIFY_(_)
+
+#define QMAKE_DEFINES_RAW $$DEFINES
+#define QMAKE_DEFINES STRINGIFY(QMAKE_DEFINES_RAW)
+#define QMAKE_CONFIG_RAW $$CONFIG
+#define QMAKE_CONFIG STRINGIFY(QMAKE_CONFIG_RAW)
+
+static const QString Rs_qmake_DEFINES = QStringLiteral(QMAKE_DEFINES);
+static const QString Rs_qmake_CONFIG = QStringLiteral(QMAKE_CONFIG);
+#endif // INFO_H

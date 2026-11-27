@@ -10,8 +10,8 @@ RUN \
 	git checkout --force FETCH_HEAD && \
 	git submodule deinit -f --all && \
 	git submodule update --init \
-		libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/ \
-		supportlibs/restbed/ && \
+		supportlibs/libbitdht/ libretroshare/ supportlibs/openpgpsdk/ \
+		retroshare-webui/ supportlibs/restbed/ && \
 	git --no-pager log --max-count 1
 RUN \
 	mkdir RetroShare-build && cd RetroShare-build && \

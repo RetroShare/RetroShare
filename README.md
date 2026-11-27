@@ -18,7 +18,7 @@ RetroShare provides file sharing, chat, messages, forums, channels, boards and m
 Clone this repository, enter the directory and then get the submodules with the
 following command
 
-    git submodule update --init --remote --force libbitdht/ libretroshare/ openpgpsdk/
+    git submodule update --init --remote --force libretroshare/ supportlibs/libbitdht/ supportlibs/openpgpsdk/
 
 
 
@@ -52,4 +52,3 @@ Other Builds [RetroShare Downloads](https://retroshare.cc/downloads.html)
 ## Documentation
 
 - [RetroShare Docs](https://retrosharedocs.readthedocs.io/en/latest/)
-

@@ -55,7 +55,7 @@ extern "C" {
 #ifdef WIN32
 	__declspec(dllexport)
 #endif
-	uint32_t RETROSHARE_PLUGIN_revision = (uint32_t)atoi(RS_EXTRA_VERSION);
+	uint32_t RETROSHARE_PLUGIN_revision = 0;
 
 	// This symbol contains the svn revision number grabbed from the executable.
 	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
@@ -69,10 +69,11 @@ extern "C" {
 
 void FeedReaderPlugin::getPluginVersion(int& major, int& minor, int &build, int& svn_rev) const
 {
-	major = RS_MAJOR_VERSION;
-	minor = RS_MINOR_VERSION;
-	build = RS_MINI_VERSION;
-	svn_rev = abs(atoi(RS_EXTRA_VERSION)) ;
+	// TODO: This should report the *plugin* version--not the RetroShare version.
+	major = RS_VERSION_MAJOR;
+	minor = RS_VERSION_MINOR;
+	build = RS_VERSION_PATCH;
+	svn_rev = 0;
 }
 
 FeedReaderPlugin::FeedReaderPlugin()

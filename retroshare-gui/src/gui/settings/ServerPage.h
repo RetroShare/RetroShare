@@ -28,12 +28,13 @@
  * 	struct sockaddr_storage
  */
 #ifndef WINDOWS_SYS
-    #include <sys/socket.h>
+	#include <sys/socket.h>
 #else
-    #include <winsock2.h>
+	#include <winsock2.h>
 #endif
 
 #include <services/autoproxy/rsautoproxymonitor.h>
+// FIXME: this assumes SAM3 support is enabled in libRetroShare
 #include <services/autoproxy/p3i2psam3.h>
 
 #include "retroshare-gui/configpage.h"
@@ -155,6 +156,7 @@ private:
 
 	bool mIsHiddenNode;
 	uint32_t mHiddenType;
+	// FIXME: this assumes SAM3 support is enabled in libRetroShare
 	samSettings mSamSettings;
 	bool mSamAccessible; // keeps track wether SAM is accessable or not to en/disable the corresponding buttons
 
@@ -163,4 +165,3 @@ private:
 };
 
 #endif // !SERVERPAGE_H
-

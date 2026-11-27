@@ -19,7 +19,7 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = lib
-CONFIG += staticlib 
+CONFIG += staticlib
 CONFIG -= qt
 TARGET = rssimulator
 
@@ -85,8 +85,8 @@ linux-* {
 	# These two lines fixe compilation on ubuntu natty. Probably a ubuntu packaging error.
 	INCLUDEPATH += $$system(pkg-config --cflags glib-2.0 | sed -e "s/-I//g")
 
-	OPENPGPSDK_DIR = ../../openpgpsdk/src
-	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
+	OPENPGPSDK_DIR = ../../supportlibs/openpgpsdk/src
+	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../supportlibs/openpgpsdk
 
 	DESTDIR = lib
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
@@ -109,7 +109,7 @@ linux-* {
 
 
 	# linux/bsd can use either - libupnp is more complete and packaged.
-	#CONFIG += upnp_miniupnpc 
+	#CONFIG += upnp_miniupnpc
 	CONFIG += upnp_libupnp
 
 	# Check if the systems libupnp has been Debian-patched
@@ -141,7 +141,7 @@ version_detail_bash_script {
 
 #################### Cross compilation for windows under Linux ####################
 
-win32-x-g++ {	
+win32-x-g++ {
 	OBJECTS_DIR = temp/win32xgcc/obj
 	DESTDIR = lib.win32xgcc
 	DEFINES *= WINDOWS_SYS WIN32 WIN_CROSS_UBUNTU
@@ -215,7 +215,7 @@ mac {
 	#UPNPC_DIR = ../../../miniupnpc-1.0
 	#GPG_ERROR_DIR = ../../../../libgpg-error-1.7
 	#GPGME_DIR  = ../../../../gpgme-1.1.8
-	#OPENPGPSDK_DIR = ../../openpgpsdk/src
+	#OPENPGPSDK_DIR = ../../supportlibs/openpgpsdk/src
 	#INCLUDEPATH += . $${UPNPC_DIR}
 	#INCLUDEPATH += $${OPENPGPSDK_DIR}
 
@@ -241,7 +241,7 @@ freebsd-* {
 	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
 
 	# linux/bsd can use either - libupnp is more complete and packaged.
-	#CONFIG += upnp_miniupnpc 
+	#CONFIG += upnp_miniupnpc
 	CONFIG += upnp_libupnp
 
 	DESTDIR = lib
@@ -253,8 +253,8 @@ openbsd-* {
 	INCLUDEPATH *= /usr/local/include
 	INCLUDEPATH += $$system(pkg-config --cflags glib-2.0 | sed -e "s/-I//g")
 
-	OPENPGPSDK_DIR = ../../openpgpsdk/src
-	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
+	OPENPGPSDK_DIR = ../../supportlibs/openpgpsdk/src
+	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../supportlibs/openpgpsdk
 
 	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
 

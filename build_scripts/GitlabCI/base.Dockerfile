@@ -47,8 +47,8 @@ RUN git clone $REPO_DEPTH $REPO_URL -b $REPO_BRANCH && \
 	cd RetroShare && \
 	git fetch --tags && \
 	git submodule update --init \
-		libbitdht/ libretroshare/ openpgpsdk/ retroshare-webui/ \
-		supportlibs/restbed/
+		supportlibs/libbitdht/ libretroshare/ supportlibs/openpgpsdk/ \
+		retroshare-webui/ supportlibs/restbed/
 
 RUN \
 	mkdir RetroShare-build && cd RetroShare-build && \

@@ -30,8 +30,8 @@ gxs {
 TEMPLATE = app
 TARGET = unittests
 
-OPENPGPSDK_DIR = ../../openpgpsdk/src
-INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
+OPENPGPSDK_DIR = ../../supportlibs/openpgpsdk/src
+INCLUDEPATH *= $${OPENPGPSDK_DIR} ../supportlibs/openpgpsdk
 
 # it is impossible to use precompield googletest lib
 # because googletest must be compiled with same compiler flags as the tests!
@@ -55,11 +55,11 @@ linux-* {
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+	PRE_TARGETDEPS *= ../../supportlibs/openpgpsdk/src/lib/libops.a
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../librssimulator/lib/librssimulator.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
+	LIBS += ../../supportlibs/openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
 	LIBS *= -lcrypto -ldl -lX11 -lz -lpthread
 
@@ -153,14 +153,14 @@ win32 {
 
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 	PRE_TARGETDEPS *= ../librssimulator/lib/librssimulator.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+	PRE_TARGETDEPS *= ../../supportlibs/openpgpsdk/src/lib/libops.a
 
 	for(lib, LIB_DIR):LIBS += -L"$$lib"
 	for(bin, BIN_DIR):LIBS += -L"$$bin"
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../librssimulator/lib/librssimulator.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
+	LIBS += ../../supportlibs/openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -L"$$PWD/../../../lib"
 
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
@@ -196,7 +196,7 @@ macx {
 	CONFIG += version_detail_bash_script
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../librssimulator/lib/librssimulator.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
+	LIBS += ../../supportlibs/openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -lssl -lcrypto -lz
 	#LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
 	for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
@@ -245,11 +245,11 @@ openbsd-* {
 	INCLUDEPATH *= /usr/local/include
 
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+	PRE_TARGETDEPS *= ../../supportlibs/openpgpsdk/src/lib/libops.a
 
 	LIBS *= ../../libretroshare/src/lib/libretroshare.a
 	LIBS *= ../librssimulator/lib/librssimulator.a
-	LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
+	LIBS *= ../../supportlibs/openpgpsdk/src/lib/libops.a -lbz2
 	LIBS *= -lssl -lcrypto
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
@@ -274,8 +274,8 @@ openbsd-* {
 # ###########################################
 
 bitdht {
-	LIBS += ../../libbitdht/src/lib/libbitdht.a
-	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+	LIBS += ../../supportlibs/libbitdht/src/lib/libbitdht.a
+	PRE_TARGETDEPS *= ../../supportlibs/libbitdht/src/lib/libbitdht.a
 }
 
 win32 {
@@ -343,9 +343,9 @@ SOURCES +=  libretroshare/gxs/nxs_test/nxsdummyservices.cc \
 	libretroshare/gxs/nxs_test/nxstesthub.cc \
 	libretroshare/gxs/nxs_test/rsgxsnetservice_test.cc \
 	libretroshare/gxs/nxs_test/nxsmsgsync_test.cc \
-	libretroshare/gxs/nxs_test/nxsgrpsync_test.cc \ 
+	libretroshare/gxs/nxs_test/nxsgrpsync_test.cc \
 	libretroshare/gxs/nxs_test/nxsgrpsyncdelayed.cc
-	
+
 HEADERS += libretroshare/gxs/gen_exchange/genexchangetester.h \
 	libretroshare/gxs/gen_exchange/gxspublishmsgtest.h \
 	libretroshare/gxs/gen_exchange/genexchangetestservice.h \

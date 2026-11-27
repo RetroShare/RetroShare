@@ -30,6 +30,7 @@ DEPENDPATH += $$PWD/../../libretroshare/src/
 INCLUDEPATH += $$PWD/../../libretroshare/src/
 # rapidjson headers are required for libretroshare
 INCLUDEPATH += ../../supportlibs/rapidjson/include
+DEFINES += RS_QMAKE
 
 
 linux-* {
