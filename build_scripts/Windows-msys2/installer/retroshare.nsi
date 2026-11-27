@@ -3,6 +3,7 @@
 ; Adapted to msys2 and 64 bit by anmo
 
 !include ifexist.nsh
+!include autostart.nsh
 !include x64.nsh
 
 # Needed defines
@@ -255,6 +256,7 @@ SectionEnd
 SectionGroupEnd
 
 Section $(Section_AutoStart) Section_AutoStart
+  Call RemoveRunEntriesForInstDir
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroShare"   "$INSTDIR\retroshare.exe -m"
 SectionEnd
 
@@ -306,7 +308,7 @@ Section "Uninstall"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}"
   DeleteRegKey HKLM SOFTWARE\${APPNAME}
 
-  DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroShare"
+  Call un.RemoveRunEntriesForInstDir
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\${APPNAME}\*.*"
