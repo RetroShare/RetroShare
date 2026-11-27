@@ -21,6 +21,7 @@
 #include <QTimer>
 #include <QFileInfo>
 #include <QStyle>
+#include <QPointer>
 
 #include "rshare.h"
 #include "GxsForumMsgItem.h"
@@ -91,18 +92,9 @@ void GxsForumMsgItem::paintEvent(QPaintEvent *e)
 
 GxsForumMsgItem::~GxsForumMsgItem()
 {
-    auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(GROUP_ITEM_LOADING_TIMEOUT_ms);
-
-    while( (mLoadingGroup || mLoadingMessage || mLoadingSetAsRead)
-           && std::chrono::steady_clock::now() < timeout)
-    {
-        RsDbg() << __PRETTY_FUNCTION__ << " is Waiting for "
-                << (mLoadingGroup ? "Group " : "")
-                << (mLoadingMessage ? "Message " : "")
-                << (mLoadingSetAsRead ? "Set as read" : "")
-                << "loading." << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
+    // Nothing to wait for: the loaders (loadGroup / loadMessage / setAsRead) never use
+    // this item from their worker thread. They post their result to qApp, and the posted
+    // code checks a QPointer to this item first, so it does nothing once the item is gone.
 	delete(ui);
 }
 
@@ -153,44 +145,49 @@ void GxsForumMsgItem::loadGroup()
 {
     mLoadingGroup = true;
 
-	RsThread::async([this]()
+    // Capture the id by value and guard the item with a QPointer so the detached
+    // worker never dereferences a possibly-freed `this`. See ~GxsForumMsgItem().
+    const RsGxsGroupId grpId = groupId();
+    QPointer<GxsForumMsgItem> self(this);
+
+	RsThread::async([self,grpId]()
 	{
 		// 1 - get group data
 
 #ifndef DEBUG_FORUMS
-        std::cerr << "Retrieving forum group data for forum " << groupId() << std::endl;
+        std::cerr << "Retrieving forum group data for forum " << grpId << std::endl;
 #endif
 
 		std::vector<RsGxsForumGroup> groups;
+		bool ok = rsGxsForums->getForumsInfo({ grpId },groups);
 
-        if(!rsGxsForums->getForumsInfo({ groupId() },groups))
-		{
+		if(!ok)
 			RsErr() << "GxsForumGroupItem::loadGroup() ERROR getting data" << std::endl;
-            mLoadingGroup = false;
-            deferred_update();
-            return;
-		}
-
-		if (groups.size() != 1)
+		else if (groups.size() != 1)
 		{
 			std::cerr << "GxsForumGroupItem::loadGroup() Wrong number of Items";
 			std::cerr << std::endl;
-            mLoadingGroup = false;
-            deferred_update();
-            return;
+			ok = false;
 		}
-		RsGxsForumGroup group(groups[0]);
 
-		RsQThreadUtils::postToObject( [group,this]()
+		RsGxsForumGroup group;
+		if(ok)
+			group = groups[0];
+
+		// Success and failure share this single continuation: the item can only be
+		// checked for liveness on the GUI thread, and deferred_update() touches it too.
+		RsQThreadUtils::postToObject( [self,ok,group]()
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
+			if(!self) return;
 
-            mGroup = group;
-            mLoadingGroup = false;
+			self->mLoadingGroup = false;
 
-		}, this );
+			if(ok)
+				self->mGroup = group;
+			else
+				self->deferred_update();
+
+		}, qApp );
 	});
 }
 
@@ -202,12 +199,18 @@ void GxsForumMsgItem::loadMessage()
 #endif
     mLoadingMessage = true;
 
-	RsThread::async([this]()
+    // Capture the ids by value and guard the item with a QPointer so the detached
+    // worker never dereferences a possibly-freed `this`. See ~GxsForumMsgItem().
+    const RsGxsGroupId   grpId = groupId();
+    const RsGxsMessageId msgId = messageId();
+    QPointer<GxsForumMsgItem> self(this);
+
+	RsThread::async([self,grpId,msgId]()
 	{
 		// 1 - get group data
 
 #ifdef DEBUG_FORUMS
-		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+		std::cerr << "Retrieving post data for post " << msgId << std::endl;
 #endif
 
         auto getMessageData = [](const RsGxsGroupId& gid,const RsGxsMessageId& msg_id,RsGxsForumMsg& msg) -> bool
@@ -227,29 +230,33 @@ void GxsForumMsgItem::loadMessage()
 
         RsGxsForumMsg msg,parent_msg;
 
-        if(!getMessageData(groupId(),messageId(),msg))
-        {
+        const bool ok = getMessageData(grpId,msgId,msg);
+
+        if(!ok)
             std::cerr << "GxsForumMsgItem::loadMessage() ERROR getting message data";
-            mLoadingMessage = false;
-            deferred_update();
-            return;
-        }
+
         // now load the parent message. If not found, it's not a problem.
 
-        if(!msg.mMeta.mParentId.isNull() && !getMessageData(groupId(),msg.mMeta.mParentId,parent_msg))
+        if(ok && !msg.mMeta.mParentId.isNull() && !getMessageData(grpId,msg.mMeta.mParentId,parent_msg))
             std::cerr << "GxsForumMsgItem::loadMessage() ERROR getting parent message data. Maybe the parent msg is not available.";
 
-        RsQThreadUtils::postToObject( [msg,parent_msg,this]()
+        // Success and failure share this single continuation: the item can only be
+        // checked for liveness on the GUI thread, and deferred_update() touches it too.
+        RsQThreadUtils::postToObject( [self,ok,msg,parent_msg]()
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
+            if(!self) return;
 
-            mMessage = msg;
-            mParentMessage = parent_msg;
-            mLoadingMessage = false;
+            self->mLoadingMessage = false;
 
-		}, this );
+            if(ok)
+            {
+                self->mMessage = msg;
+                self->mParentMessage = parent_msg;
+            }
+            else
+                self->deferred_update();
+
+		}, qApp );
 	});
 }
 
@@ -427,16 +434,21 @@ void GxsForumMsgItem::setAsRead(bool doUpdate)
     if(doUpdate)
         mLoadingSetAsRead = true;
 
-    RsThread::async( [this, doUpdate]() {
-        RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
+    // Capture the ids by value and guard the item with a QPointer so the detached
+    // worker never dereferences a possibly-freed `this`. See ~GxsForumMsgItem().
+    const RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
+    QPointer<GxsForumMsgItem> self(this);
+
+    RsThread::async( [self, msgPair, doUpdate]() {
 
         rsGxsForums->markRead(msgPair, true);
 
         if (doUpdate) {
-            RsQThreadUtils::postToObject( [this]() {
-                setReadStatus(false, true);
-                mLoadingSetAsRead = false;
-            } );
+            RsQThreadUtils::postToObject( [self]() {
+                if(!self) return;
+                self->setReadStatus(false, true);
+                self->mLoadingSetAsRead = false;
+            }, qApp );
         }
     });
 }
