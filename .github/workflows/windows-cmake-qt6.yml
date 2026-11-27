@@ -61,6 +61,7 @@ jobs:
             mingw-w64-ucrt-x86_64-qt6-svg
             mingw-w64-ucrt-x86_64-qt6-5compat
             mingw-w64-ucrt-x86_64-qt6-tools
+            mingw-w64-ucrt-x86_64-qt6-charts
             mingw-w64-ucrt-x86_64-openssl
             mingw-w64-ucrt-x86_64-libbotan
             mingw-w64-ucrt-x86_64-sqlcipher

@@ -45,6 +45,7 @@
 #include <gui/statistics/GxsTransportStatistics.h>
 #include <gui/statistics/BwCtrlWindow.h>
 #include <gui/statistics/DhtWindow.h>
+#include <gui/statistics/CumulativeStatsWidget.h>
 
 /****
  * #define SHOW_RTT_STATISTICS		1
@@ -62,6 +63,7 @@
 #define IMAGE_GLOBALROUTER  ":/icons/GRouter128.png"
 #define IMAGE_GXSTRANSPORT  ":/icons/transport128.png"
 #define IMAGE_RTT           ":/icons/RTT128.png"
+#define IMAGE_CUMULATIVE    ":/icons/pie-chart.png"
 
 //#define IMAGE_BANDWIDTH     ":images/office-chart-area-stacked.png"
 
@@ -169,6 +171,9 @@ void StatisticsWindow::initStackedPage()
 
   ui->stackPages->add(rttdlg = new RttStatistics(ui->stackPages),
                    action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_RTT), tr("RTT Statistics"), grp));
+
+  ui->stackPages->add(cumdlg = new CumulativeStatsWidget(ui->stackPages),
+                   action = createPageAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CUMULATIVE), tr("Cumulative Traffic"), grp));
                    
 	bool showdht = true;
 	RsPeerDetails detail;
