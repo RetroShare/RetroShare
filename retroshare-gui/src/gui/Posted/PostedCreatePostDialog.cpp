@@ -21,6 +21,7 @@
 #include <QBuffer>
 #include <QClipboard>
 #include <QMessageBox>
+#include <QPointer>
 #include <QByteArray>
 #include <QStringList>
 #include <QSignalMapper>
@@ -186,19 +187,23 @@ void PostedCreatePostDialog::createPost()
 		return;
 	}
 
-    RsThread::async([this,post]()
+    // The worker does not use the dialog; `self` is checked on the GUI thread.
+    QPointer<PostedCreatePostDialog> self(this);
+
+    RsThread::async([self,post]()
     {
         RsGxsMessageId post_id;
 
         bool res = rsPosted->createPost(post,post_id);
 
-        RsQThreadUtils::postToObject( [res,this]()
+        RsQThreadUtils::postToObject( [res,self]()
         {
             if(!res)
                 QMessageBox::information(nullptr,tr("Error while creating post"),tr("An error occurred while creating the post."));
 
-            accept();
-        }, this );
+            if(self)
+                self->accept();
+        }, qApp );
     });
 }
 
