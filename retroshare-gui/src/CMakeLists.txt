@@ -88,6 +88,9 @@ list(
 	src/util/ObjectPainter.cpp 
 	src/util/RsFile.cpp 
 	src/util/RichTextEdit.cpp 
+	src/util/MarkdownTextEdit.cpp 
+	src/util/RsMarkdown.cpp 
+	src/util/MarkdownSyntaxHighlighter.cpp 
 	src/util/ClickableLabel.cpp 
 	src/util/AspectRatioPixmapLabel.cpp 
 	src/util/FontSizeHandler.cpp 
@@ -492,6 +495,9 @@ list(
 	src/util/RsSyntaxHighlighter.h 
 	src/util/imageutil.h 
 	src/util/RichTextEdit.h 
+	src/util/MarkdownTextEdit.h 
+	src/util/RsMarkdown.h 
+	src/util/MarkdownSyntaxHighlighter.h 
 	src/util/retroshareWin32.h
 	src/util/RsProtectedTimer.h 
 	src/util/stringutil.h 
@@ -949,8 +955,6 @@ if(RS_GXSWIKIPOS)
 		${PROJECT_NAME} PUBLIC RS_USE_WIKI 
 		)
 
-	target_include_directories(${PROJECT_NAME} PUBLIC ../../supportlibs/pegmarkdown)
-
 	list(
 		APPEND RS_IMPLEMENTATION_HEADERS
 		src/gui/WikiPoos/WikiDialog.h 
@@ -1115,6 +1119,8 @@ if(RS_GXSGUI)
 		src/gui/gxs/GxsCommentTreeWidget.h 
 		src/gui/gxs/GxsCommentContainer.h 
 		src/gui/gxs/GxsCommentDialog.h 
+		src/gui/gxs/CommentItemWidget.h
+		src/gui/gxs/FlatViewCommentWidget.h
 		src/gui/gxs/GxsCreateCommentDialog.h 
 		src/gui/gxs/GxsGroupFrameDialog.h 
 		src/gui/gxs/GxsMessageFrameWidget.h 
@@ -1134,6 +1140,8 @@ if(RS_GXSGUI)
 		src/gui/gxs/GxsGroupDialog.ui 
 		src/gui/gxs/GxsCommentContainer.ui 
 		src/gui/gxs/GxsCommentDialog.ui 
+		src/gui/gxs/CommentItemWidget.ui
+		src/gui/gxs/FlatViewCommentWidget.ui
 		src/gui/gxs/GxsCreateCommentDialog.ui 
 		src/gui/gxs/GxsGroupFrameDialog.ui
 		src/gui/gxs/GxsGroupShareKey.ui 
@@ -1152,6 +1160,8 @@ if(RS_GXSGUI)
 		src/gui/gxs/GxsCommentTreeWidget.cpp 
 		src/gui/gxs/GxsCommentContainer.cpp 
 		src/gui/gxs/GxsCommentDialog.cpp 
+		src/gui/gxs/CommentItemWidget.cpp
+		src/gui/gxs/FlatViewCommentWidget.cpp
 		src/gui/gxs/GxsCreateCommentDialog.cpp 
 		src/gui/gxs/GxsGroupFrameDialog.cpp 
 		src/gui/gxs/GxsMessageFrameWidget.cpp 

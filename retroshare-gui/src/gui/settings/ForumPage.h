@@ -45,6 +45,7 @@ protected slots:
     void updateExpandNewMessages();
     void updateLoadEmbeddedImages();
     void updateLoadEmoticons();
+    void updateClassicQuotes();
 
 private slots:
 	void updateFonts();

@@ -49,6 +49,16 @@
        </widget>
       </item>
       <item row="4" column="0">
+       <widget class="QCheckBox" name="classicQuotes">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show quoted text like &amp;quot;&amp;gt; text&amp;quot; and &amp;quot;&amp;gt;&amp;gt; text&amp;quot; lines, colored by quote level, instead of indented quotes with colored bars.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>Show quotes in classic style (&amp;gt; lines)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
          <widget class="QLabel" name="minimumFontSizeLabel">

@@ -35,6 +35,7 @@
 #include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
+#include "gui/gxs/CommentText.h"
 #include "gui/MainWindow.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/Posted/PostedDialog.h"
@@ -433,7 +434,9 @@ void BoardsCommentsItem::setComment(const RsGxsComment& cmt)
 {
 	uint32_t autorized_lines = (int)floor((ui->avatarLabel->height() - ui->buttonHLayout->sizeHint().height())/QFontMetricsF(ui->subjectLabel->font()).height());
 
-	ui->commLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(cmt.mComment.c_str()), autorized_lines), RSHTML_FORMATTEXT_EMBED_LINKS));;
+	// Comments are Markdown: show the first lines and image previews (about 8 text lines high, click for full size)
+	const int maxImageHeight = qRound(8 * QFontMetricsF(ui->commLabel->font()).height());
+	CommentText::setFeedText(ui->commLabel, QString::fromUtf8(cmt.mComment.c_str()), autorized_lines, maxImageHeight);
 
 	ui->nameLabel->setId(cmt.mMeta.mAuthorId);
 	ui->datetimeLabel->setText(DateTime::formatDateTime(cmt.mMeta.mPublishTs));

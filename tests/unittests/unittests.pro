@@ -63,7 +63,6 @@ linux-* {
 	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
 	LIBS *= -lcrypto -ldl -lX11 -lz -lpthread
 
-        #LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
         no_sqlcipher {
                 DEFINES *= NO_SQLCIPHER
@@ -210,7 +209,6 @@ macx {
 	DEPENDPATH += . $$INC_DIR
 	INCLUDEPATH += . $$INC_DIR
 
-	#LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
 	# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
 	LIBS += /usr/local/lib/libsqlcipher.a
@@ -233,7 +231,6 @@ freebsd-* {
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 
         gxs {
-                LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
                 LIBS += -lsqlite3
         }
 
@@ -257,7 +254,6 @@ openbsd-* {
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 
         gxs {
-                LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
                 LIBS += -lsqlite3
         }
 

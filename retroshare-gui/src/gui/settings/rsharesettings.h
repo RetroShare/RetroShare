@@ -362,6 +362,15 @@ public:
 	bool getForumLoadEmoticons();
 	void setForumLoadEmoticons(bool value);
 
+	/* show smiley codes as emoticons: channels (Load Emoticons, descriptions and posts), board posts (off by default) */
+	bool getChannelLoadEmoticons();
+	void setChannelLoadEmoticons(bool value);
+	bool getBoardsLoadEmoticons();
+	void setBoardsLoadEmoticons(bool value);
+	/* show quotes in forum posts as colored "> line" text instead of indented quotes */
+	bool getForumClassicQuotes();
+	void setForumClassicQuotes(bool value);
+
 	/* Channel */
 	bool getChannelLoadThread();
 	void setChannelLoadThread(bool value);

@@ -164,17 +164,7 @@ p, li { white-space: pre-wrap; }
        </spacer>
       </item>
       <item row="2" column="0" colspan="3">
-       <widget class="MimeTextEdit" name="commentTextEdit">
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="acceptRichText">
-         <bool>false</bool>
-        </property>
-        <property name="placeholderText">
-         <string>Type in your comment</string>
-        </property>
-       </widget>
+       <widget class="MarkdownTextEdit" name="commentTextEdit" native="true"/>
       </item>
       <item row="5" column="2">
        <widget class="QPushButton" name="cancelButton">
@@ -270,9 +260,10 @@ p, li { white-space: pre-wrap; }
    <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
   <customwidget>
-   <class>MimeTextEdit</class>
-   <extends>QTextEdit</extends>
-   <header location="global">gui/common/MimeTextEdit.h</header>
+   <class>MarkdownTextEdit</class>
+   <extends>QWidget</extends>
+   <header>util/MarkdownTextEdit.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

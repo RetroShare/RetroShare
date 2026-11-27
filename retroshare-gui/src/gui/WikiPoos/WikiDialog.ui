@@ -366,7 +366,7 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QTextBrowser" name="textBrowser"/>
+                <widget class="RSTextBrowser" name="textBrowser"/>
                </item>
               </layout>
              </widget>
@@ -420,6 +420,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
+  </customwidget>
   <customwidget>
    <class>GroupTreeWidget</class>
    <extends>QWidget</extends>

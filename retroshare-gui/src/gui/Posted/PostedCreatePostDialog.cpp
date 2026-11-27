@@ -32,7 +32,8 @@
 
 #include "util/misc.h"
 #include "util/qtthreadsutils.h"
-#include "util/RichTextEdit.h"
+#include "util/MarkdownTextEdit.h"
+#include "util/HandleRichText.h"
 #include "gui/feeds/SubFileItem.h"
 #include "util/rsdir.h"
 
@@ -66,14 +67,16 @@ PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGrou
 	connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createPost()));
 	connect(ui->addPicButton, SIGNAL(clicked() ), this , SLOT(addPicture()));
 	connect(ui->pasteButton, SIGNAL(clicked() ), this , SLOT(pastePicture()));
-	connect(ui->RichTextEditWidget, SIGNAL(textSizeOk(bool)),ui->postButton, SLOT(setEnabled(bool)));
+	connect(ui->markdownEditor, SIGNAL(textSizeOk(bool)),ui->postButton, SLOT(setEnabled(bool)));
 
 	ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/postedlinks.png"));
 	ui->headerFrame->setHeaderText(tr("Create a new Post"));
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
-	ui->RichTextEditWidget->setPlaceHolderTextPosted();
+	ui->markdownEditor->setPlaceHolderTextPosted();
+	// preview as the post will be shown
+	ui->markdownEditor->setPreviewFlags(RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_EMBED_SMILEYS);
 
 	ui->hashBox->setAutoHide(true);
 	ui->hashBox->setDefaultTransferRequestFlags(RS_FILE_REQ_ANONYMOUS_ROUTING);
@@ -164,10 +167,9 @@ void PostedCreatePostDialog::createPost()
 	post.mMeta.mGroupId = mGrpId;
 	post.mLink = std::string(ui->linkEdit->text().toUtf8());
 	
-	if(!ui->RichTextEditWidget->toPlainText().trimmed().isEmpty()) {
-		QString text;
-		text = ui->RichTextEditWidget->toHtml();
-		post.mNotes = std::string(text.toUtf8());
+	if(!ui->markdownEditor->isEmpty()) {
+		// The notes are stored as Markdown (rendered with cmark when displayed)
+		post.mNotes = std::string(ui->markdownEditor->toMarkdown().toUtf8());
 	}
 
 	post.mMeta.mAuthorId = authorId;
@@ -394,7 +396,7 @@ void PostedCreatePostDialog::setTitle(const QString& title)
 
 void PostedCreatePostDialog::setNotes(const QString& notes)
 {
-	ui->RichTextEditWidget->setText(notes);
+	ui->markdownEditor->setText(notes);
 }
 
 void PostedCreatePostDialog::setLink(const QString& link)

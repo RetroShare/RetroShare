@@ -58,7 +58,7 @@ jobs:
         brew install
         ninja qt openssl@3 botan@2 sqlcipher miniupnpc
         json-c asio speex speexdsp ffmpeg
-        libxml2 libxslt bzip2 zlib rapidjson doxygen
+        libxml2 libxslt bzip2 zlib rapidjson doxygen cmark
 
     # Mirrors the validated local macOS command: harvest every Homebrew opt/*
     # include/lib dir into the compiler/linker flags, and additionally expose them

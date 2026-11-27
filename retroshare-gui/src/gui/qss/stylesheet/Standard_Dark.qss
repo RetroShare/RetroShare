@@ -2506,7 +2506,7 @@ NewFriendList {
 	qproperty-textColorGroup: rgb(123, 123, 123);
 }
 
-RSTextBrowser, MimeTextEdit
+RSTextBrowser, MimeTextEdit, MarkdownPlainTextEdit
 {
 	/*qproperty-textColorQuote: rgb(125, 125, 255);*/
 	qproperty-textColorQuotes: ColorList(#789922 #039bd5 #800000 #800080 #008080 #b10dc9 #85144b #3d9970);

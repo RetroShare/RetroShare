@@ -19,8 +19,10 @@
  *******************************************************************************/
 
 #include <QRegularExpression>
+#include <QTextBlock>
 
 #include "RsSyntaxHighlighter.h"
+#include "util/RsMarkdown.h"
 
 RsSyntaxHighlighter::RsSyntaxHighlighter(QTextEdit *parent)
 	: QSyntaxHighlighter(parent)
@@ -63,9 +65,59 @@ void RsSyntaxHighlighter::setTextColorQuotes(QVariant textColorQuotes)
 	this->rehighlight();
 }
 
+int RsSyntaxHighlighter::quoteIndent(const QTextBlockFormat &blockFormat)
+{
+	// RsMarkdown sets a compact left indent and no right margin on quotes,
+	// Qt's default for <blockquote> is 40px on both sides
+	return qFuzzyIsNull(blockFormat.rightMargin()) ? RsMarkdown::QUOTE_INDENT : 40;
+}
+
+int RsSyntaxHighlighter::quoteLevel(const QTextBlockFormat &blockFormat)
+{
+	int level = 0;
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+	if (blockFormat.hasProperty(QTextFormat::BlockQuoteLevel)) {
+		// cmark / HTML <blockquote>: the HTML importer always sets level 1
+		// but adds one indent of left margin for each nested <blockquote>
+		level = qMax(blockFormat.intProperty(QTextFormat::BlockQuoteLevel),
+		             qRound(blockFormat.leftMargin() / quoteIndent(blockFormat)));
+	}
+#endif
+
+	// Markdown rendered by Qt (GUI built without cmark): Qt's HTML export
+	// drops the quote marker and only keeps the quote margins, 40px on the
+	// right and 40px on the left for each nesting level.
+	if (!level && qFuzzyCompare(blockFormat.rightMargin(), 40.0) && blockFormat.leftMargin() >= 40.0)
+		level = qRound(blockFormat.leftMargin() / 40.0);
+
+	return level;
+}
+
+QColor RsSyntaxHighlighter::quoteColor(int level) const
+{
+	level = qBound(1, level, quotationFormats.size());
+	return quotationFormats.at(level - 1).foreground().color();
+}
+
 void RsSyntaxHighlighter::highlightBlock(const QString &text)
 {
 	if (text == "") return;
+
+	// Rendered Markdown: the '>' characters are gone, the quote nesting
+	// level comes from the block format instead (RSTextBrowser also draws
+	// the quote bars from it).
+	const QTextBlockFormat blockFormat = currentBlock().blockFormat();
+	const int level = quoteLevel(blockFormat);
+	if (level > 0) {
+		setFormat(0, text.length(), quotationFormats.at(qBound(1, level, quotationFormats.size()) - 1));
+		return;
+	}
+
+	// Code blocks (<pre>, Markdown ``` blocks) are shown verbatim: a line
+	// starting with '>' there is not a quote.
+	if (blockFormat.nonBreakableLines())
+		return;
 
 	QRegularExpression endl("[\\r\\n\\N{U+2028}]"); //Usually 0x2028 character is used for newline, no idea why
 	int index = 0;
