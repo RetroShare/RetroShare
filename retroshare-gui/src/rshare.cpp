@@ -36,6 +36,12 @@
 #include <QTextStream>
 #include <QTimer>
 #include <QScreen>
+#include <QClipboard>
+#include <QKeyEvent>
+#include <QMimeData>
+#include <QMouseEvent>
+#include <QPlainTextEdit>
+#include <QTextEdit>
 #ifdef __APPLE__
 #include <QUrl>
 #endif
@@ -101,6 +107,84 @@ void qt_msg_handler(QtMsgType type, const char *msg)
   }
 }
 
+namespace {
+
+/* Drops a paste whose data has no format at all before it reaches a text editor.
+ * In Qt 6.4, QWidgetTextControl::insertFromMimeData() reads the first format of
+ * the pasted data without checking that there is one (QTBUG-111758), so such a
+ * paste crashes every QTextEdit and QPlainTextEdit. Some applications
+ * (spreadsheets, the X2Go selection bridge) serve clipboard data with no
+ * format; there is nothing to insert from it anyway. */
+class EmptyPasteFilter : public QObject
+{
+public:
+    explicit EmptyPasteFilter(QObject *parent) : QObject(parent) {}
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override
+    {
+        switch (event->type())
+        {
+        case QEvent::MouseButtonRelease:
+            // A middle click pastes the X11 selection; the click lands on the editor's viewport.
+            if (static_cast<QMouseEvent*>(event)->button() == Qt::MiddleButton
+                    && isEditorViewport(watched)
+                    && QGuiApplication::clipboard()->supportsSelection()
+                    && hasNoFormat(QClipboard::Selection))
+                return true;
+            break;
+        case QEvent::KeyPress:
+        {
+            const QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if (keyEvent->matches(QKeySequence::Paste) && isEditor(watched)
+                    && hasNoFormat(pasteMode(keyEvent)))
+                return true;
+            break;
+        }
+        default:
+            break;
+        }
+        return QObject::eventFilter(watched, event);
+    }
+
+private:
+    static bool isEditor(const QObject *object)
+    {
+        if (const QTextEdit *edit = qobject_cast<const QTextEdit*>(object))
+            return edit->textInteractionFlags() & Qt::TextEditable;
+        if (const QPlainTextEdit *edit = qobject_cast<const QPlainTextEdit*>(object))
+            return edit->textInteractionFlags() & Qt::TextEditable;
+        return false;
+    }
+
+    static bool isEditorViewport(const QObject *object)
+    {
+        const QWidget *widget = qobject_cast<const QWidget*>(object);
+        if (!widget)
+            return false;
+        const QAbstractScrollArea *area = qobject_cast<const QAbstractScrollArea*>(widget->parentWidget());
+        return area && area->viewport() == widget && isEditor(area);
+    }
+
+    // The clipboard QWidgetTextControl pastes from for this key event.
+    static QClipboard::Mode pasteMode(const QKeyEvent *keyEvent)
+    {
+        if (QGuiApplication::clipboard()->supportsSelection()
+                && keyEvent->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier)
+                && keyEvent->key() == Qt::Key_Insert)
+            return QClipboard::Selection;
+        return QClipboard::Clipboard;
+    }
+
+    static bool hasNoFormat(QClipboard::Mode mode)
+    {
+        const QMimeData *data = QGuiApplication::clipboard()->mimeData(mode);
+        return data && data->formats().isEmpty();
+    }
+};
+
+} // namespace
+
 /** Constructor. Parses the command-line arguments, resets RsApplication's
  * configuration (if requested), and sets up the GUI style and language
  * translation.
@@ -131,6 +215,9 @@ RsApplication::RsApplication(const RsGUIConfigOptions& conf)
 #else
     qInstallMsgHandler(qt_msg_handler);
 #endif
+
+    /* A paste without any format would crash the text editors, see EmptyPasteFilter. */
+    installEventFilter(new EmptyPasteFilter(this));
 
 #ifndef __APPLE__
 
