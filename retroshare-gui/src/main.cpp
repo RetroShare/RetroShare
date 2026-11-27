@@ -519,31 +519,41 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
         {
             /* Login Dialog */
             /* check for existing Certificate */
-            bool genCert = false;
-            std::list<RsPeerId> accountIds;
-            if (RsAccounts::GetAccountIds(accountIds) && (accountIds.size() > 0))
+            bool loggedIn = false;
+            while (!loggedIn)
             {
-                StartDialog sd;
-                if (sd.exec() == QDialog::Rejected) {
-                    return 1;
+                bool genCert = false;
+                std::list<RsPeerId> accountIds;
+                if (RsAccounts::GetAccountIds(accountIds) && (accountIds.size() > 0))
+                {
+                    StartDialog sd;
+                    if (sd.exec() == QDialog::Rejected) {
+                        return 1;
+                    }
+
+                    /* if we're logged in */
+                    genCert = sd.requestedNewCert();
+                }
+                else
+                {
+                    genCert = true;
                 }
 
-                /* if we're logged in */
-                genCert = sd.requestedNewCert();
-            }
-            else
-            {
-                genCert = true;
-            }
+                if (genCert)
+                {
+                    GenCertDialog gd(false);
+                    int result = gd.exec();
 
-            if (genCert)
-            {
-                GenCertDialog gd(false);
+                    /* a node was restored from a backup: go to the login dialog */
+                    if (result == GenCertDialog::NodeRestored)
+                        continue;
 
-                if (gd.exec () == QDialog::Rejected)
-                    return 1;
+                    if (result == QDialog::Rejected)
+                        return 1;
 
-                sDefaultGXSIdToCreate = gd.getGXSNickname();
+                    sDefaultGXSIdToCreate = gd.getGXSNickname();
+                }
+                loggedIn = true;
             }
 
             //splashScreen.show();

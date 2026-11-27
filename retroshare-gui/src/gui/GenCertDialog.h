@@ -33,6 +33,9 @@ public:
 	/** Default constructor */
 	explicit GenCertDialog(bool onlyGenerateIdentity, QWidget *parent = 0);
 
+	/// exec() result when a node was restored from a backup instead of created
+	enum { NodeRestored = 2 };
+
 	virtual ~GenCertDialog() ;
 	virtual void mouseMoveEvent(QMouseEvent *e) ;
 	QString getGXSNickname() {return mGXSNickname;}
@@ -40,6 +43,7 @@ private slots:
 	void genPerson();
 	bool importIdentity();
 	void exportIdentity();
+	void restoreNode();
 	void setupState();
     void switchReuseExistingNode();
 	void grabMouse();

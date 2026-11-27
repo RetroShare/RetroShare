@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ProfileUpgradeDialog</class>
+ <widget class="QDialog" name="ProfileUpgradeDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>560</width>
+    <height>520</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Upgrade node</string>
+  </property>
+  <layout class="QVBoxLayout" name="mainVLayout">
+   <item>
+    <widget class="QLabel" name="infoLabel">
+     <property name="text">
+      <string>&lt;p&gt;Creates a &lt;b&gt;new node&lt;/b&gt; of the same profile with new, strong SSL keys and moves everything of the selected node to it: friends, settings, identities, forums, channels, messages, chat history and the Tor hidden service.&lt;/p&gt;&lt;p&gt;Use it when your node is too old for the OpenSSL version of this RetroShare. Your PGP key does not change. The new node gets a new node ID: outgoing connections work right away, and for incoming connections send your new certificate to your friends.&lt;/p&gt;&lt;p&gt;The old node is not modified and is not deleted.&lt;/p&gt;</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::RichText</enum>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="nodeTitleLabel">
+       <property name="text">
+        <string>Node:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="nodeLabel">
+       <property name="textInteractionFlags">
+        <set>Qt::TextSelectableByMouse</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="passwordTitleLabel">
+       <property name="text">
+        <string>Password:</string>
+       </property>
+       <property name="buddy">
+        <cstring>passwordEdit</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="passwordEdit">
+       <property name="echoMode">
+        <enum>QLineEdit::Password</enum>
+       </property>
+       <property name="placeholderText">
+        <string>Password of your profile</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="locationTitleLabel">
+       <property name="text">
+        <string>New node name:</string>
+       </property>
+       <property name="buddy">
+        <cstring>locationEdit</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="locationEdit"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="backupCheckBox">
+     <property name="text">
+      <string>Save a backup of the node first</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="backupHLayout">
+     <item>
+      <widget class="QLineEdit" name="backupPathEdit"/>
+     </item>
+     <item>
+      <widget class="QToolButton" name="backupBrowseButton">
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="toolTip">
+        <string>Choose where to save the backup</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QProgressBar" name="progressBar">
+     <property name="maximum">
+      <number>1000</number>
+     </property>
+     <property name="value">
+      <number>0</number>
+     </property>
+     <property name="textVisible">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPlainTextEdit" name="logEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="statusLabel">
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="buttonsHLayout">
+     <item>
+      <spacer name="buttonsHSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="upgradeButton">
+       <property name="text">
+        <string>Upgrade</string>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="closeButton">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>passwordEdit</tabstop>
+  <tabstop>locationEdit</tabstop>
+  <tabstop>backupCheckBox</tabstop>
+  <tabstop>backupPathEdit</tabstop>
+  <tabstop>backupBrowseButton</tabstop>
+  <tabstop>upgradeButton</tabstop>
+  <tabstop>closeButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>closeButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ProfileUpgradeDialog</receiver>
+   <slot>reject()</slot>
+  </connection>
+  <connection>
+   <sender>backupCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>backupPathEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+  </connection>
+  <connection>
+   <sender>backupCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>backupBrowseButton</receiver>
+   <slot>setEnabled(bool)</slot>
+  </connection>
+ </connections>
+</ui>
