@@ -99,11 +99,14 @@ public:
 public:
 	FeedInfo()
 	{
+		feedId = 0;
+		parentId = 0;
 		proxyPort = 0;
 		updateInterval = 0;
 		lastUpdate = 0;
 		storageTime = 0;
 		errorState = RS_FEED_ERRORSTATE_OK;
+		workstate = WAITING;
 		flag.folder = false;
 		flag.infoFromFeed = false;
 		flag.standardStorageTime = false;
@@ -115,6 +118,9 @@ public:
 		flag.updateForumInfo = false;
 		flag.posted = false;
 		flag.updatePostedInfo = false;
+		flag.postedFirstImage = false;
+		flag.postedOnlyImage = false;
+		flag.postedShrinkImage = false;
 		flag.embedImages = false;
 		flag.saveCompletePage = false;
 		flag.preview = false;
