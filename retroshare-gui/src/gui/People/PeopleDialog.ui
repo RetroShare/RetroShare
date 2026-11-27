@@ -33,6 +33,97 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
+    <widget class="QWidget" name="viewModeBar">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <layout class="QHBoxLayout" name="viewModeLayout">
+      <item>
+       <widget class="QToolButton" name="listViewButton">
+        <property name="text">
+         <string>List</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <property name="toolTip">
+         <string>List View</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="thumbnailViewButton">
+        <property name="text">
+         <string>Thumbnail</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="toolTip">
+         <string>Thumbnail View</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="viewModeSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="searchPeopleLineEdit">
+        <property name="placeholderText">
+         <string>Search people...</string>
+        </property>
+        <property name="maximumWidth">
+         <number>200</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="sortPeopleComboBox">
+        <property name="maximumWidth">
+         <number>150</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>Sort: Reputation</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sort: Recommended</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sort: Popularity</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sort: Name</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="enabled">
       <bool>true</bool>
