@@ -74,6 +74,9 @@
 #define IMAGE_VOTEUP        ":/images/vote_up.png"
 #define IMAGE_VOTEDOWN      ":/images/vote_down.png"
 
+#include "CommentText.h"
+#include <QtMath>
+
 std::map<RsGxsMessageId, std::vector<RsGxsComment> > GxsCommentTreeWidget::mCommentsCache;
 QMutex GxsCommentTreeWidget::mCacheMutex;
 
@@ -85,70 +88,56 @@ QMutex GxsCommentTreeWidget::mCacheMutex;
 class MultiLinesCommentDelegate: public QStyledItemDelegate
 {
 public:
-    MultiLinesCommentDelegate(QFontMetricsF f) : qf(f){}
+    explicit MultiLinesCommentDelegate(QTreeWidget *tree)
+        : QStyledItemDelegate(tree), mTree(tree) {}
 
-    QSize sizeHint(const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const
+    int textWidth(const QModelIndex &index) const
     {
-        return index.data(POST_CELL_SIZE_ROLE).toSize() ;
+        int depth = 1;
+        for (QModelIndex parent = index.parent(); parent.isValid(); parent = parent.parent())
+            ++depth;
+        return qMax(1, mTree->columnWidth(index.column()) - depth * mTree->indentation() - 16);
     }
 
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override
     {
-        Q_ASSERT(index.isValid());
+        QTextDocument document;
+        document.setDefaultFont(option.font);
+        CommentText::setPreview(&document, index.data().toString(), textWidth(index) - 8);
+        document.setTextWidth(textWidth(index));
+        return QSize(textWidth(index) + 16, qCeil(document.size().height()) + 12);
+    }
 
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
+    {
         QStyleOptionViewItem opt = option;
         initStyleOption(&opt, index);
-        // disable default icon
+        opt.text.clear();
         opt.icon = QIcon();
-        opt.text = QString();
+        const QWidget *widget = opt.widget;
+        QStyle *style = widget ? widget->style() : QApplication::style();
+        style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, widget);
 
-        // draw default item background
-        if (option.state & QStyle::State_Selected) {
-            painter->fillRect(option.rect, option.palette.highlight());
-        } else {
-            const QWidget *widget = opt.widget;
-            QStyle *style = widget ? widget->style() : QApplication::style();
-            style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, widget);
-        }
-
-        const QRect r = option.rect.adjusted(0,0,-option.decorationSize.width(),0);
-
-        QTextDocument td ;
-        td.setHtml("<html>"+index.data(Qt::DisplayRole).toString()+"</html>");
-        td.setTextWidth(r.width());
-        QSizeF s = td.documentLayout()->documentSize();
-
-        int m = QFontMetricsF(QFont()).height();
-        QSize full_area(std::min(r.width(),(int)s.width())+m,std::min(r.height(),(int)s.height())+m);
-
-        QPixmap px(full_area.width(),full_area.height());
-        px.fill(QColor(0,0,0,0));//Transparent background as item background is already paint.
-        QPainter p(&px) ;
-        p.setRenderHint(QPainter::Antialiasing);
-
-
-        QPainterPath path ;
-        path.addRoundedRect(QRectF(m/4.0,m/4.0,s.width()+m/2.0,s.height()+m/2.0),m,m) ;
-        QPen pen(Qt::gray,m/7.0f);
-        p.setPen(pen);
-        p.fillPath(path,QColor::fromHsv( index.data(POST_COLOR_ROLE).toInt()/255.0*360,40,220));	// varies the color according to the post author
-        p.drawPath(path);
-
-        QAbstractTextDocumentLayout::PaintContext ctx;
-        ctx.clip = QRectF(0,0,s.width(),s.height());
-        p.translate(QPointF(m/2.0,m/2.0));
-        td.documentLayout()->draw( &p, ctx );
-
-
-        painter->drawPixmap(r.topLeft(),px);
-
-        const_cast<QAbstractItemModel*>(index.model())->setData(index,px.size(),POST_CELL_SIZE_ROLE);
+        QTextDocument document;
+        document.setDefaultFont(option.font);
+        const int width = qMax(1, qMin(textWidth(index), option.rect.width() - 16));
+        CommentText::setPreview(&document, index.data().toString(), width - 8);
+        document.setTextWidth(width);
+        painter->save();
+        painter->setClipRect(option.rect);
+        const QRectF bubble(option.rect.x() + 2, option.rect.y() + 2,
+                            width + 12, document.size().height() + 8);
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setPen(Qt::gray);
+        painter->setBrush(QColor::fromHsv(index.data(POST_COLOR_ROLE).toInt() / 255.0 * 360, 40, 220));
+        painter->drawRoundedRect(bubble, 10, 10);
+        painter->translate(bubble.topLeft() + QPointF(6, 4));
+        document.drawContents(painter);
+        painter->restore();
     }
-
 private:
-	QFontMetricsF qf;
+    QTreeWidget *mTree;
 };
-
 #ifdef USE_NEW_DELEGATE
 class NoEditDelegate: public QStyledItemDelegate
 {
@@ -285,7 +274,8 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 
     setEditTriggers(QAbstractItemView::CurrentChanged | QAbstractItemView::SelectedClicked);
 #else
-    setItemDelegateForColumn(PCITEM_COLUMN_COMMENT,new MultiLinesCommentDelegate(QFontMetricsF(font()))) ;
+    setItemDelegateForColumn(PCITEM_COLUMN_COMMENT,new MultiLinesCommentDelegate(this)) ;
+    connect(header(), &QHeaderView::sectionResized, this, [this]() { doItemsLayout(); });
 #endif
 
 	commentsRole = new RSTreeWidgetItemCompareRole;
@@ -331,6 +321,13 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& point)
     QTreeWidgetItem *item = itemAt(point);
 
 	QMenu contextMnu( this );
+    if (item) {
+        const QString text = item->text(PCITEM_COLUMN_COMMENT);
+        contextMnu.addAction(tr("View full size"), this, [this, text]() {
+            CommentText::showFullSize(this, text);
+        });
+        contextMnu.addSeparator();
+    }
 	QAction* action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REPLY), tr("Reply to Comment"), this, SLOT(replyToComment()));
 	action->setDisabled(!item || mCurrentCommentMsgId.isNull());
 
@@ -625,7 +622,10 @@ void GxsCommentTreeWidget::completeItems()
 	QTreeWidgetItem *parent = NULL;
 	QList<QTreeWidgetItem *> topLevelItems;
 
-	std::map<RsGxsMessageId, QTreeWidgetItem *>::iterator lit;
+	#include "CommentText.h"
+#include <QtMath>
+
+std::map<RsGxsMessageId, QTreeWidgetItem *>::iterator lit;
 	std::multimap<RsGxsMessageId, QTreeWidgetItem *>::iterator pit;
 
 #ifdef DEBUG_GXSCOMMENT_TREEWIDGET
@@ -712,7 +712,10 @@ void GxsCommentTreeWidget::addItem(RsGxsMessageId itemId, RsGxsMessageId parentI
 	/* store in map -> for children */
 	mLoadingMap[itemId] = item;
 
-	std::map<RsGxsMessageId, QTreeWidgetItem *>::iterator it;
+	#include "CommentText.h"
+#include <QtMath>
+
+std::map<RsGxsMessageId, QTreeWidgetItem *>::iterator it;
 	it = mLoadingMap.find(parentId);
 	if (it != mLoadingMap.end())
 	{
