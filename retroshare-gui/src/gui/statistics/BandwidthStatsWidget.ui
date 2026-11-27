@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>1158</width>
     <height>385</height>
    </rect>
   </property>
@@ -80,6 +80,11 @@
           <string>Down</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>Up+Down</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item>
@@ -134,6 +139,26 @@
        </widget>
       </item>
       <item>
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Values:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="RSComboBox" name="timing_CB"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Data:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="RSComboBox" name="data_CB"/>
+      </item>
+      <item>
        <widget class="QCheckBox" name="logScale_CB">
         <property name="text">
          <string>Log scale</string>
@@ -152,6 +177,13 @@
           <string>Dark</string>
          </property>
         </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="clear_PB">
+        <property name="text">
+         <string>Clear</string>
+        </property>
        </widget>
       </item>
       <item>
