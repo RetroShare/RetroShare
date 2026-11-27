@@ -63,9 +63,15 @@ public:
 	const QString nickname() const { return _nickname; }
 	const QString gxsId() const { return _gxsId; }
 	const QImage avatar() const { return _avatar; }
+    
+    uint32_t getReputation() const;
 
 signals:
 	void addButtonClicked();
+	void clicked();
+	
+protected:
+    virtual void mousePressEvent(QMouseEvent *event) override;
 
 private slots:
 	void pbAdd_clicked();
