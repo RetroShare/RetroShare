@@ -21,11 +21,19 @@
 #include <QDateTime>
 #include <QMessageBox>
 #include <QTreeWidgetItemIterator>
+#include <QToolButton>
+#include <QHBoxLayout>
+#include <QTextBlock>
+#include <QTextCursor>
+#include <QFileDialog>
+#include <QFile>
+#include <QFileInfo>
 
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "gui/WikiPoos/WikiEditDialog.h"
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
+#include "util/HandleRichText.h"
 
 #include <retroshare/rsidentity.h>
 #include "util/rstime.h"
@@ -95,6 +103,16 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 	ui.toolButton_Hide->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 	ui.pushButton_Preview->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/search.png")));
 	ui.pushButton_History->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/history-clock-white.png")));
+
+	connect(ui.btnHeading, SIGNAL(clicked()), this, SLOT(onMarkdownHeading()));
+	connect(ui.btnBold, SIGNAL(clicked()), this, SLOT(onMarkdownBold()));
+	connect(ui.btnItalic, SIGNAL(clicked()), this, SLOT(onMarkdownItalic()));
+	connect(ui.btnQuote, SIGNAL(clicked()), this, SLOT(onMarkdownQuote()));
+	connect(ui.btnCode, SIGNAL(clicked()), this, SLOT(onMarkdownCode()));
+	connect(ui.btnLink, SIGNAL(clicked()), this, SLOT(onMarkdownLink()));
+	connect(ui.btnImage, SIGNAL(clicked()), this, SLOT(onMarkdownImage()));
+	connect(ui.btnUnorderedList, SIGNAL(clicked()), this, SLOT(onMarkdownUnorderedList()));
+	connect(ui.btnOrderedList, SIGNAL(clicked()), this, SLOT(onMarkdownOrderedList()));
 
 	ui.checkBox_OldHistory->setChecked(false);
 	mOldHistoryEnabled = false;
@@ -1183,4 +1201,170 @@ QTreeWidgetItem *WikiEditDialog::findHistoryItem(const RsGxsMessageId &msgId) co
 	}
 
 	return nullptr;
+}
+
+void WikiEditDialog::insertMarkdownWrap(const QString &prefix, const QString &suffix)
+{
+	QTextCursor cursor = ui.textEdit->textCursor();
+	if (cursor.hasSelection()) {
+		QString selectedText = cursor.selectedText();
+		cursor.insertText(prefix + selectedText + suffix);
+	} else {
+		cursor.insertText(prefix + suffix);
+		// Move cursor inside the wrapper
+		cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, suffix.length());
+		ui.textEdit->setTextCursor(cursor);
+	}
+	ui.textEdit->setFocus();
+}
+
+void WikiEditDialog::insertMarkdownBlockPrefix(const QString &prefix)
+{
+	QTextCursor cursor = ui.textEdit->textCursor();
+	cursor.beginEditBlock();
+
+	int startPos = cursor.selectionStart();
+	int endPos = cursor.selectionEnd();
+
+	QTextBlock startBlock = ui.textEdit->document()->findBlock(startPos);
+	QTextBlock endBlock = ui.textEdit->document()->findBlock(endPos);
+
+	QTextBlock block = startBlock;
+	while (block.isValid()) {
+		QTextCursor blockCursor(block);
+		blockCursor.movePosition(QTextCursor::StartOfBlock);
+		blockCursor.insertText(prefix);
+
+		if (block == endBlock) {
+			break;
+		}
+		block = block.next();
+	}
+
+	cursor.endEditBlock();
+	ui.textEdit->setFocus();
+}
+
+void WikiEditDialog::onMarkdownHeading()
+{
+	insertMarkdownBlockPrefix("### ");
+}
+
+void WikiEditDialog::onMarkdownBold()
+{
+	insertMarkdownWrap("**", "**");
+}
+
+void WikiEditDialog::onMarkdownItalic()
+{
+	insertMarkdownWrap("*", "*");
+}
+
+void WikiEditDialog::onMarkdownQuote()
+{
+	insertMarkdownBlockPrefix("> ");
+}
+
+void WikiEditDialog::onMarkdownCode()
+{
+	insertMarkdownWrap("`", "`");
+}
+
+void WikiEditDialog::onMarkdownLink()
+{
+	QTextCursor cursor = ui.textEdit->textCursor();
+	if (cursor.hasSelection()) {
+		QString selectedText = cursor.selectedText();
+		cursor.insertText("[" + selectedText + "](http://)");
+		// Position cursor inside parentheses (right after http://)
+		cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 1);
+		ui.textEdit->setTextCursor(cursor);
+	} else {
+		cursor.insertText("[text](http://)");
+		// Position cursor inside parentheses (right after http://)
+		cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 8);
+		ui.textEdit->setTextCursor(cursor);
+	}
+	ui.textEdit->setFocus();
+}
+
+void WikiEditDialog::onMarkdownImage()
+{
+	QString fileName = QFileDialog::getOpenFileName(this,
+		tr("Select Image to Embed"), "",
+		tr("Images (*.png *.jpg *.jpeg *.gif *.bmp);;All Files (*)"));
+	if (fileName.isEmpty()) {
+		return;
+	}
+
+	// Try to optimize, scale, and compress the image using RsHtml::makeEmbeddedImage
+	QString encodedImage;
+	static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE = 199000;
+	if (RsHtml::makeEmbeddedImage(fileName, encodedImage, 640 * 480, MAX_ALLOWED_GXS_MESSAGE_SIZE - 200)) {
+		int srcStart = encodedImage.indexOf("src=\"");
+		if (srcStart != -1) {
+			srcStart += 5;
+			int srcEnd = encodedImage.indexOf("\"", srcStart);
+			if (srcEnd != -1) {
+				QString src = encodedImage.mid(srcStart, srcEnd - srcStart);
+				QTextCursor cursor = ui.textEdit->textCursor();
+				QString altText = cursor.selectedText();
+				if (altText.isEmpty()) {
+					altText = "image";
+				}
+				cursor.insertText(QString("![%1](%2)").arg(altText, src));
+				ui.textEdit->setFocus();
+				return;
+			}
+		}
+	}
+
+	// Fallback to raw unoptimized embedding if makeEmbeddedImage fails
+	QFile file(fileName);
+	if (!file.open(QIODevice::ReadOnly)) {
+		QMessageBox::warning(this, tr("Error"), tr("Could not open image file."));
+		return;
+	}
+
+	QByteArray data = file.readAll();
+	if (data.size() > 150 * 1024) {
+		QMessageBox::StandardButton reply = QMessageBox::warning(this,
+			tr("Image Too Large"),
+			tr("The selected image is %1 KB. Wiki pages have a total message limit of 200 KB, "
+			   "and base64 encoding will increase this size further.\n\n"
+			   "Are you sure you want to embed this image anyway?").arg(data.size() / 1024),
+			QMessageBox::Yes | QMessageBox::No);
+		if (reply == QMessageBox::No) {
+			return;
+		}
+	}
+
+	QFileInfo fileInfo(fileName);
+	QString ext = fileInfo.suffix().toLower();
+	if (ext == "jpg") ext = "jpeg";
+	QString mimeType = "image/" + ext;
+
+	QString base64Data = QString::fromLatin1(data.toBase64());
+
+	QTextCursor cursor = ui.textEdit->textCursor();
+	QString altText = cursor.selectedText();
+	if (altText.isEmpty()) {
+		altText = "image";
+	}
+
+	cursor.insertText(QString("![%1](data:%2;base64,%3)")
+		.arg(altText)
+		.arg(mimeType)
+		.arg(base64Data));
+	ui.textEdit->setFocus();
+}
+
+void WikiEditDialog::onMarkdownUnorderedList()
+{
+	insertMarkdownBlockPrefix("- ");
+}
+
+void WikiEditDialog::onMarkdownOrderedList()
+{
+	insertMarkdownBlockPrefix("1. ");
 }
