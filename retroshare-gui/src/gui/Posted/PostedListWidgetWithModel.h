@@ -101,6 +101,7 @@ public:
 	void updateDisplay(bool complete) ;
     void forceRedraw(); // does not re-load the data, but makes sure the underlying model triggers a full redraw, recomputes indexes, etc.
     void redraw(); // does not re-load the data, but makes sure the underlying model triggers a full redraw, recomputes only sizes.
+    const RsPostedGroup& groupData() const { return mGroup; }
 
 #ifdef TODO
 	/* FeedHolder */
@@ -153,6 +154,8 @@ private slots:
 	void filterItems(QString s);
 	void updateShowLabel();
 	void handleViewGallery(const RsGxsMessageId& startMsgId);
+    void pinPost();
+    void unpinPost();
 
 public slots:
 	void handlePostsTreeSizeChange(QSize size);

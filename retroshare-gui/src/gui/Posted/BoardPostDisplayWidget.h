@@ -50,6 +50,7 @@ public:
         SHOW_NONE                  = 0x00,
         SHOW_COMMENTS              = 0x01,
         SHOW_NOTES                 = 0x02,
+        SHOW_PINNED                = 0x04,
     };
 
     enum DisplayMode: uint8_t {
